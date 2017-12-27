@@ -12,8 +12,26 @@ Obniz = function(id, options) {
   this.init();
 
   if (!options) options = {};
+  if (isNode == false && (!id || id === "<OBNIZ ID HERE>")) {
+    var self = this;
+    this.prompt(function(obnizid){
+      self.id = obnizid;
+      self.wsconnect(options.obniz_server);
+    })
+    return;
+  }
   this.wsconnect(options.obniz_server)
 };
+
+Obniz.prototype.prompt = function(callback) {
+  var obnizid = prompt("Please enter obniz id", "");
+
+  if (obnizid == null || obnizid == "") {
+    
+  } else {
+    callback(obnizid);
+  }
+}
 
 Obniz.prototype.wsconnect = function(desired_server) {
   var server = "wss://obniz.io"
@@ -102,7 +120,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
   };
 
   var wsOnError = function(err){
-    self.print_debug("err: " +err);
+    console.error(err);
   };
 
   if (isNode) {
