@@ -12,14 +12,14 @@ Obniz = function(id, options) {
   this.init();
 
   if (!options) options = {};
-  if (isNode == false && (!id || id === "<OBNIZ ID HERE>")) {
-    var self = this;
-    this.prompt(function(obnizid){
-      self.id = obnizid;
-      self.wsconnect(options.obniz_server);
-    })
-    return;
-  }
+  // if (isNode == false && (!id || id === "<OBNIZ ID HERE>")) {
+  //   var self = this;
+  //   this.prompt(function(obnizid){
+  //     self.id = obnizid;
+  //     self.wsconnect(options.obniz_server);
+  //   })
+  //   return;
+  // }
   this.wsconnect(options.obniz_server)
 };
 
