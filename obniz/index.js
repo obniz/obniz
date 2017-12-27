@@ -305,6 +305,14 @@ Obniz.prototype.wait = async function(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
 }
 
+Obniz.prototype.resetOnDisconnect = function(mustReset) {
+  this.send({
+    system: {
+      reset_on_disconnect: mustReset
+    }
+  })
+}
+
 /*===================*/
 /* Parts */
 /*===================*/

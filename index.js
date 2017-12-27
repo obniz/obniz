@@ -305,6 +305,14 @@ Obniz.prototype.wait = async function(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
 }
 
+Obniz.prototype.resetOnDisconnect = function(mustReset) {
+  this.send({
+    system: {
+      reset_on_disconnect: mustReset
+    }
+  })
+}
+
 /*===================*/
 /* Parts */
 /*===================*/
@@ -553,7 +561,12 @@ PeripheralUART.prototype.send = function(data) {
 PeripheralUART.prototype.readtext = function() {
   var string = null;
   try {
-    string = new TextDecoder("utf-8").decode(new Uint8Array(obj.data));
+    if (this.received && this.received.length > 0) {
+      string = "";
+      for (var i=0;i<this.received.length; i++) {
+        string += new TextDecoder("utf-8").decode(new Uint8Array(this.received[i]));
+      }
+    }
   }catch(e) {
     
   }
