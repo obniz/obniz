@@ -789,7 +789,7 @@ Display.prototype.clear = function() {
 Display.prototype.print = function(text) {
   var obj = {};
   obj["display"] = {
-    text: text
+    text: ""+text
   };
   this.Obniz.send(obj);
 }
