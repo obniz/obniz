@@ -12,7 +12,11 @@ Obniz = function(id, options) {
   this.init();
 
   if (!options) options = {};
-  // if (isNode == false && (!id || id === "<OBNIZ ID HERE>")) {
+  if (id === "OBNIZ ID HERE") {
+    console.error("invalid obniz id");
+    return;
+  }
+  // if (isNode == false && (!id || id === "OBNIZ ID HERE")) {
   //   var self = this;
   //   this.prompt(function(obnizid){
   //     self.id = obnizid;
