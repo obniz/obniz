@@ -1,0 +1,19 @@
+{
+  "name": "obniz-tools",
+  "version": "1.0.0",
+  "description": "Obniz development tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "obniz"
+  ],
+  "author": "yukisato",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "path": "^0.12.7"
+  },
+  "private": false
+}

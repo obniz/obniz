@@ -1,0 +1,42 @@
+<h1>
+    JoyStick
+</h1>
+<p>
+    X軸Y軸とプッシュスイッチをもつジョイスティックです。<br>出力がアナログ値の一般的なものに対して利用できます。
+</p>
+<h2>
+    wired(obniz, sw, y, x, vdd, gnd)
+</h2>
+<p>
+    obnizと接続します。<br>vddはジョイスティックの5v入力へ。gndはマイナスへ接続します。<br>sw: スイッチ<br>y: y軸のアナログ値出力<br>x: x軸のアナログ値出力<br>へ接続して下さい
+</p>
+<pre>var joystick = Parts("JoyStick");
+joystick.wired(obniz, 0,1,2,3,4);</pre>
+<h2>
+    onChangeX(callback)
+</h2>
+<p>
+    X軸方向へ動いた場合に呼ばれる関数を指定できます。
+</p>
+<pre>var joystick = Parts("JoyStick");
+joystick.wired(obniz, 0,1,2,3,4)
+joystick.onChangeX(function(val){
+  console.log(val);
+})</pre>
+<h2>
+    onChangeY(callback)
+</h2>
+<p>
+    onChangeXと同じでY軸に関してです。
+</p>
+<h2>
+    onChangeSW(callback)
+</h2>
+<p>
+    ボタンが押されたり離された時に呼ばれます。
+</p>
+<pre>var joystick = Parts("JoyStick");
+joystick.wired(obniz, 0,1,2,3,4)
+joystick.onChangeSW(function(pressed){
+  console.log(pressed);
+})</pre>

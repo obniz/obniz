@@ -1,0 +1,23 @@
+<h1>
+    Speaker
+</h1>
+<p>
+    ピエゾなどのスピーカーです。<br>２本の線で接続し、電流によって音を出します。
+</p>
+<h2>
+    wired(obniz, con0, con1)
+</h2>
+<p>
+    スピーカーに接続します。<br>プラスとマイナスがある場合はマイナスをcon0の方に指定して下さい。
+</p>
+<pre>var speaker = Parts("Speaker");
+speaker.wired(obniz, 0, 1);</pre>
+<h2>
+    freq(frequency)
+</h2>
+<p>
+    スピーカーから鳴る音の周波数を指定します。
+</p>
+<pre>var speaker = Parts("Speaker");
+speaker.wired(obniz, 0, 1);
+speaker.freq(1000); //1khz</pre>

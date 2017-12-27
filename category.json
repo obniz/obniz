@@ -1,0 +1,56 @@
+{
+  "categories": [
+    {
+      "name": "Light",
+      "parts": [
+        {
+          "name": "LED"
+        },
+        {
+          "name": "Button"
+        }
+      ]
+    },
+    {
+      "name": "Moving",
+      "parts": [
+        {
+          "name": "DCMotor"
+        },
+        {
+          "name": "ServoMotor"
+        }
+      ]
+    },
+    {
+      "name": "Sensor Move",
+      "parts": [
+        {
+          "name": "PotentionMeter"
+        },
+        {
+          "name": "KXSC7-2050"
+        },
+        {
+          "name": "JoyStick"
+        }
+      ]
+    },
+    {
+      "name": "Memory",
+      "parts": [
+        {
+          "name": "24LC256"
+        }
+      ]
+    },
+    {
+      "name": "Sound",
+      "parts": [
+        {
+          "name": "Speaker"
+        }
+      ]
+    }
+  ]
+}
