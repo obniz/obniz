@@ -1209,7 +1209,7 @@ KXSC7_2050 = function() {
 };
 
 
-KXSC7_2050.prototype.wired = function(obniz, pwr, sig_x, sig_y, sig_z, gnd) {
+KXSC7_2050.prototype.wired = async function(obniz, pwr, sig_x, sig_y, sig_z, gnd) {
   this.obniz = obniz;
   this.io_pwr = obniz.getIO(pwr);
   this.io_gnd = obniz.getIO(gnd);
@@ -1225,8 +1225,15 @@ KXSC7_2050.prototype.wired = function(obniz, pwr, sig_x, sig_y, sig_z, gnd) {
     this.io_gnd.output(false);
   }
   
-  var sensitivity = 0.54;  //Set sensitivity (unit:V) 0.66
-  var offsetVoltage = 0.14; //Set offset voltage (Output voltage at 0g, unit:V) 1.65
+
+  await obniz.wait(500);
+  var ad = obniz.getAD(pwr);
+  var pwrVoltage = await ad.getWait();
+  console.log(pwrVoltage);
+  var horizontalZ = await this.ad_z.getWait();
+  console.log(horizontalZ);
+  var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+  var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
       
   var self = this;
   this.ad_x.start(function(value){
