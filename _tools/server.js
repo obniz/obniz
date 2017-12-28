@@ -10,6 +10,7 @@ app.get('/', (request, response) => {
 
 app.get('/obniz.js', (request, response) => {
   build();
+  response.header('Access-Control-Allow-Origin', '*');
   response.sendFile(path.join(__dirname, '../index.js'));
 })
 

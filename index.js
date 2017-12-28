@@ -79,9 +79,13 @@ Obniz.prototype.wsconnect = function(desired_server) {
     }
     // debug
     if (typeof(obj.debug) == "object") {
-      self.debugs.push(obj.debug);
-      if (self.debugs.length > 1000) {
-        self.debugs.shift();
+      if (obj.debug.warning) {
+        var msg = "Warning: "+obj.debug.warning;
+        if (isNode){
+          console.error(msg);
+        } else {
+          throw new Error(msg);
+        }
       }
       if (self.ondebug) {
         self.ondebug(obj.debug);
@@ -303,6 +307,14 @@ Obniz.prototype.repeat = function(callback, interval) {
 
 Obniz.prototype.wait = async function(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
+}
+
+Obniz.prototype.resetOnDisconnect = function(mustReset) {
+  this.send({
+    system: {
+      reset_on_disconnect: mustReset
+    }
+  })
 }
 
 /*===================*/
@@ -553,7 +565,12 @@ PeripheralUART.prototype.send = function(data) {
 PeripheralUART.prototype.readtext = function() {
   var string = null;
   try {
-    string = new TextDecoder("utf-8").decode(new Uint8Array(obj.data));
+    if (this.received && this.received.length > 0) {
+      string = "";
+      for (var i=0;i<this.received.length; i++) {
+        string += new TextDecoder("utf-8").decode(new Uint8Array(this.received[i]));
+      }
+    }
   }catch(e) {
     
   }
@@ -776,7 +793,7 @@ Display.prototype.clear = function() {
 Display.prototype.print = function(text) {
   var obj = {};
   obj["display"] = {
-    text: text
+    text: ""+text
   };
   this.Obniz.send(obj);
 }
