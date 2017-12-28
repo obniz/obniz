@@ -79,9 +79,13 @@ Obniz.prototype.wsconnect = function(desired_server) {
     }
     // debug
     if (typeof(obj.debug) == "object") {
-      self.debugs.push(obj.debug);
-      if (self.debugs.length > 1000) {
-        self.debugs.shift();
+      if (obj.debug.warning) {
+        var msg = "Warning: "+obj.debug.warning;
+        if (isNode){
+          console.error(msg);
+        } else {
+          throw new Error(msg);
+        }
       }
       if (self.ondebug) {
         self.ondebug(obj.debug);
