@@ -1,7 +1,7 @@
 var isNode = (typeof window === 'undefined') ? true : false; 
 
 Obniz = function(id, options) {
-  if (isNode == false && typeof(showOffLine) === "function") {
+  if (isNode === false && typeof(showOffLine) === "function") {
     showOffLine();
   }
   this.id = id;
@@ -24,21 +24,21 @@ Obniz = function(id, options) {
   //   })
   //   return;
   // }
-  this.wsconnect(options.obniz_server)
+  this.wsconnect(options.obniz_server);
 };
 
 Obniz.prototype.prompt = function(callback) {
   var obnizid = prompt("Please enter obniz id", "");
 
-  if (obnizid == null || obnizid == "") {
+  if (obnizid === null || obnizid === "") {
     
   } else {
     callback(obnizid);
   }
-}
+};
 
 Obniz.prototype.wsconnect = function(desired_server) {
-  var server = "wss://obniz.io"
+  var server = "wss://obniz.io";
   if (desired_server) {
     server = ""+desired_server;
   }
@@ -52,7 +52,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
 
   var wsOnOpen = function () {
     self.print_debug("ws connected");
-    if (isNode == false && typeof(showOnLine) === "function") {
+    if (isNode === false && typeof(showOnLine) === "function") {
       showOnLine();
     }
     if (self.onconnect)
@@ -62,7 +62,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
   var wsOnMessage = function (data) {
     self.print_debug(data);
     var obj = {};
-    if (typeof(data) == "string") {
+    if (typeof(data) === "string") {
       obj = JSON.parse(data);
     } else {
       // not treat binary
@@ -70,11 +70,11 @@ Obniz.prototype.wsconnect = function(desired_server) {
       return;
     }
     // User's defined callback
-    if (self.onwsmessage != null) {
+    if (self.onwsmessage !== null) {
       self.onwsmessage(obj);
     }
     // notify messaging
-    if (typeof(obj.message) == "object" && self.onmessage) {
+    if (typeof(obj.message) === "object" && self.onmessage) {
       self.onmessage(obj.message.data, obj.message.from);
     }
     // debug
@@ -102,7 +102,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
       var peripheral = notifyHandlers[handerIndex];
       while(true) {
         i++;
-        if (self[peripheral+""+i] == undefined) { break; }
+        if (self[peripheral+""+i] === undefined) { break; }
         var module_value = obj[peripheral+""+i];
         if (module_value === undefined)continue;
         self[peripheral+""+i].notified(module_value);
@@ -116,7 +116,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
 
   var wsOnClose = function(event) {
     self.print_debug("closed");
-    if (isNode == false && typeof(showOffLine) === "function") {
+    if (isNode === false && typeof(showOffLine) === "function") {
       showOffLine();
     }
     if (self.looper) {
@@ -147,7 +147,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
     this.socket.onopen = wsOnOpen;
     this.socket.onmessage = function(event) {
       wsOnMessage(event.data);
-    }
+    };
     this.socket.onclose = wsOnClose;
     this.socket.onerror = wsOnError;
   }
@@ -169,8 +169,8 @@ Obniz.prototype.wired = function(partsname) {
   args.shift();
   args.unshift(this);
   parts.wired.apply(parts, args);
-  return parts
-}
+  return parts;
+};
 
 Obniz.prototype.print_debug = function(str) {
   if (this.debugprint) {
@@ -195,7 +195,7 @@ Obniz.prototype.console_exception = function(err) {
 };
 
 Obniz.prototype.send = function(value) {
-  if (typeof(value) == "object") {
+  if (typeof(value) === "object") {
     value = JSON.stringify(value);
   }
   this.print_debug("send: "+value);
@@ -219,49 +219,49 @@ Obniz.prototype.init = function() {
   this["display"] = new Display(this);
   this["logicanalyzer"] = new LogicAnalyzer(this);
   this["ble"] = new Ble(this);
-}
+};
 
 Obniz.prototype.getIO = function(id) {
   return this["io"+id];
-}
+};
 
 Obniz.prototype.getAD = function(id) {
   return this["ad"+id];
-}
+};
 
 Obniz.prototype.getpwm = function() {
   var i=0;
   while(true){
     var pwm = this["pwm"+i];
-    if (pwm == null) {
+    if (pwm === null) {
       break;
     }
-    if (pwm.state.io == null) {
+    if (pwm.state.io === null) {
       return pwm;
     }
     i++;
   }
   throw new Error("No More PWM Available. max = " + i);
-}
+};
 
 Obniz.prototype.getFreeI2C = function() {
   var i=0;
   while(true){
     var pwm = this["i2c"+i];
-    if (pwm == null) {
+    if (pwm === null) {
       break;
     }
-    if (pwm.state.io == null) {
+    if (pwm.state.io === null) {
       return pwm;
     }
     i++;
   }
   throw new Error("No More PWM Available. max = " + i);
-}
+};
 
 Obniz.prototype.message = function(target, message) {
   var targets = [];
-  if (typeof(target) == "string") {
+  if (typeof(target) === "string") {
     targets.push(target);
   } else {
     targets = target;
@@ -272,7 +272,7 @@ Obniz.prototype.message = function(target, message) {
       data: message
     }
   });
-}
+};
 
 // --- System ---
 Obniz.prototype.reset = function() {
@@ -280,17 +280,17 @@ Obniz.prototype.reset = function() {
     system: {
       reset: true
     }
-  })
+  });
   this.init();
-}
+};
 
 Obniz.prototype.selfCheck = function() {
   this.send({
     system: {
       self_check: true
     }
-  })
-}
+  });
+};
 
 Obniz.prototype.repeat = function(callback, interval) {
   if (this.looper) {
@@ -301,17 +301,17 @@ Obniz.prototype.repeat = function(callback, interval) {
   var self = this;
   if (!interval) interval = 100;
   async function loop() {
-    if (typeof (self.looper) == "function") {
+    if (typeof (self.looper) === "function") {
       await self.looper();
       setTimeout(loop, interval);
     }
   }
   loop();
-}
+};
 
 Obniz.prototype.wait = async function(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
-}
+};
 
 Obniz.prototype.resetOnDisconnect = function(mustReset) {
   this.send({
@@ -353,14 +353,14 @@ PeripheralIO.prototype.addObserver = function(callback) {
   if(callback) {
     this.observers.push(callback);
   }
-}
+};
 
 PeripheralIO.prototype.output = function(value) {
   var obj = {};
   obj["io"+this.id] = value;
   this.value = value;
   this.Obniz.send(obj);
-}
+};
 
 PeripheralIO.prototype.outputType = function(type) {
   var obj = {};
@@ -368,7 +368,7 @@ PeripheralIO.prototype.outputType = function(type) {
     output_type: type
   };
   this.Obniz.send(obj);
-}
+};
 
 PeripheralIO.prototype.pullType = function(type) {
   var obj = {};
@@ -376,23 +376,23 @@ PeripheralIO.prototype.pullType = function(type) {
     pull_type: type
   };
   this.Obniz.send(obj);
-}
+};
 
 PeripheralIO.prototype.pullup5v = function(type) {
-  this.pullType("pullup5v")
-}
+  this.pullType("pullup5v");
+};
 
 PeripheralIO.prototype.pullup = function(type) {
-  this.pullType("pullup")
-}
+  this.pullType("pullup");
+};
 
 PeripheralIO.prototype.pulldown = function(type) {
-  this.pullType("pulldown")
-}
+  this.pullType("pulldown");
+};
 
 PeripheralIO.prototype.float = function(type) {
-  this.pullType("float")
-}
+  this.pullType("float");
+};
 
 PeripheralIO.prototype.input = function(callback) {
   this.onchange = callback;
@@ -400,10 +400,10 @@ PeripheralIO.prototype.input = function(callback) {
   obj["io"+this.id] = {
     direction: "input",
     stream: true
-  }
+  };
   this.Obniz.send(obj);
   return this.value;
-}
+};
 
 PeripheralIO.prototype.inputWait = function() {
   var self = this;
@@ -412,11 +412,11 @@ PeripheralIO.prototype.inputWait = function() {
     obj["io"+self.id] = {
       direction: "input",
       stream: false
-    }
+    };
     self.Obniz.send(obj);
     self.addObserver(resolve);
   });
-}
+};
 
 PeripheralIO.prototype.notified = function(obj) {
   this.value = obj;
@@ -427,7 +427,7 @@ PeripheralIO.prototype.notified = function(obj) {
   if (typeof(this.onchange) === "function") {
     this.onchange(obj);
   }
-}
+};
 
 // --- peripheral PWM ---
 PeripheralPWM = function(Obniz, id) {
@@ -438,9 +438,9 @@ PeripheralPWM = function(Obniz, id) {
 
 PeripheralPWM.prototype.sendWS = function(obj) {
   var wsObj = {};
-  wsObj["pwm"+this.id] = obj
+  wsObj["pwm"+this.id] = obj;
   this.Obniz.send(wsObj);
-}
+};
 
 PeripheralPWM.prototype.start = function(io) {
   var obj = {};
@@ -448,7 +448,7 @@ PeripheralPWM.prototype.start = function(io) {
   this.sendWS({
     io: io
   });
-}
+};
 
 PeripheralPWM.prototype.freq = function(freq) {
   var obj = {};
@@ -456,7 +456,7 @@ PeripheralPWM.prototype.freq = function(freq) {
   this.sendWS({
     freq: freq
   });
-}
+};
 
 PeripheralPWM.prototype.pulse = function(pulse_width) {
   var obj = {};
@@ -464,7 +464,7 @@ PeripheralPWM.prototype.pulse = function(pulse_width) {
   this.sendWS({
     pulse: pulse_width
   });
-}
+};
 
 PeripheralPWM.prototype.duty = function(duty) {
   var obj = {};
@@ -472,7 +472,7 @@ PeripheralPWM.prototype.duty = function(duty) {
   this.sendWS({
     duty: duty
   });
-}
+};
 
 PeripheralPWM.prototype.forceWorking = function(working) {
   var obj = {};
@@ -480,13 +480,13 @@ PeripheralPWM.prototype.forceWorking = function(working) {
   this.sendWS({
     force_working: working
   });
-}
+};
 
 PeripheralPWM.prototype.end = function() {
   var obj = {};
   this.state = {};
   this.sendWS(null);
-}
+};
 
 PeripheralPWM.prototype.modulate = function(type, symbol_sec, data) {
   var obj = {};
@@ -497,7 +497,7 @@ PeripheralPWM.prototype.modulate = function(type, symbol_sec, data) {
       data: data
     }
   });
-}
+};
 
 // --- peripheral uart ---
 
@@ -536,7 +536,7 @@ PeripheralUART.prototype.start = function(tx, rx, baud, stop, bits, parity, flow
   }
   this.Obniz.send(obj);
   this.received = new Uint8Array([]);
-}
+};
 
 // node only
 PeripheralUART.prototype.send = function(data) {
@@ -552,11 +552,11 @@ PeripheralUART.prototype.send = function(data) {
     }
     send_data = arr;
   } else if (data.constructor === Array) {
-    send_data = data
+    send_data = data;
   } else if (typeof(data) === "string") {
     key = "text";
     send_data = data;
-  } else if (typeof(data) === "object" && data != null) {
+  } else if (typeof(data) === "object" && data !== null) {
     key = "text";
     send_data = JSON.stringify(data);
   }
@@ -564,7 +564,7 @@ PeripheralUART.prototype.send = function(data) {
   obj["uart"+this.id] = {};
   obj["uart"+this.id][key] = send_data;
   this.Obniz.send(obj);
-}
+};
 
 PeripheralUART.prototype.readtext = function() {
   var string = null;
@@ -580,7 +580,7 @@ PeripheralUART.prototype.readtext = function() {
   }
   this.received = [];
   return string;
-}
+};
 
 PeripheralUART.prototype.notified = function(obj) {
   if (this.onreceive) {
@@ -595,15 +595,15 @@ PeripheralUART.prototype.notified = function(obj) {
     if (!this.received) {
       this.received = [];
     }
-    this.received.push.apply(this.received, obj.data)
+    this.received.push.apply(this.received, obj.data);
   }
-}
+};
 
 PeripheralUART.prototype.end = function() {
   var obj = {};
   obj["uart"+this.id] = null;
   this.Obniz.send(obj);
-}
+};
 
 // --- peripheral I2C ---
 PeripheralSPI = function(Obniz, id) {
@@ -616,7 +616,7 @@ PeripheralSPI.prototype.addObserver = function(callback) {
   if(callback) {
     this.observers.push(callback);
   }
-}
+};
 
 PeripheralSPI.prototype.start = function(mode, clk, mosi, miso, clock_speed) {
   var obj = {};
@@ -628,7 +628,7 @@ PeripheralSPI.prototype.start = function(mode, clk, mosi, miso, clock_speed) {
     miso: miso
   };
   this.Obniz.send(obj);
-}
+};
 
 PeripheralSPI.prototype.writeWait = function(data) {
   var self = this;
@@ -640,7 +640,7 @@ PeripheralSPI.prototype.writeWait = function(data) {
     self.Obniz.send(obj);
     self.addObserver(resolve);
   });
-}
+};
 
 PeripheralSPI.prototype.notified = function(obj) {
   // TODO: we should compare byte length from sent
@@ -648,7 +648,7 @@ PeripheralSPI.prototype.notified = function(obj) {
   if (callback) {
     callback(obj.readed);
   }
-}
+};
 
 // --- peripheral I2C ---
 PeripheralI2C = function(Obniz, id) {
@@ -662,7 +662,7 @@ PeripheralI2C.prototype.addObserver = function(callback) {
   if(callback) {
     this.observers.push(callback);
   }
-}
+};
 
 PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
   var obj = {};
@@ -673,11 +673,11 @@ PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
     clock: clock
   };
   if (pullType) {
-    this.state.pull_type = pullType
+    this.state.pull_type = pullType;
   }
   obj["i2c"+this.id] = this.state;
   this.Obniz.send(obj);
-}
+};
 
 PeripheralI2C.prototype.write = function(address, data) {
   var obj = {};
@@ -686,11 +686,11 @@ PeripheralI2C.prototype.write = function(address, data) {
     write: data
   };
   this.Obniz.send(obj);
-}
+};
 
 PeripheralI2C.prototype.write10bit = function(address, data) {
   return this.write(address | 0x8000, data);
-}
+};
 
 PeripheralI2C.prototype.readWait = function(address, length) {
   var self = this;
@@ -703,11 +703,11 @@ PeripheralI2C.prototype.readWait = function(address, length) {
     self.Obniz.send(obj);
     self.addObserver(resolve);
   });
-}
+};
 
 PeripheralI2C.prototype.read10bitWait = function(address, length) {
   return this.read(address | 0x8000, length);
-}
+};
 
 PeripheralI2C.prototype.notified = function(obj) {
   // TODO: we should compare byte length from sent
@@ -715,14 +715,14 @@ PeripheralI2C.prototype.notified = function(obj) {
   if (callback) {
     callback(obj.readed);
   }
-}
+};
 
 PeripheralI2C.prototype.end = function() {
   this.state = {};
   var obj = {};
   obj["i2c"+self.id] = null;
   self.Obniz.send(obj);
-}
+};
 
 // --- peripheral A/D ---
 PeripheralAD = function(Obniz, id) {
@@ -736,7 +736,7 @@ PeripheralAD.prototype.addObserver = function(callback) {
   if(callback) {
     this.observers.push(callback);
   }
-}
+};
 
 PeripheralAD.prototype.start = function(callback) {
   this.onchange = callback;
@@ -747,7 +747,7 @@ PeripheralAD.prototype.start = function(callback) {
   };
   this.Obniz.send(obj);
   return this.value;
-}
+};
 
 PeripheralAD.prototype.getWait = function() {
   var self = this;
@@ -760,7 +760,7 @@ PeripheralAD.prototype.getWait = function() {
     self.Obniz.send(obj);
     self.addObserver(resolve);
   });
-}
+};
 
 PeripheralAD.prototype.end = function() {
   this.onchange = null;
@@ -768,7 +768,7 @@ PeripheralAD.prototype.end = function() {
   obj["ad"+this.id] = null;
   this.Obniz.send(obj);
   return;
-}
+};
 
 PeripheralAD.prototype.notified = function(obj) {
   this.value = obj;
@@ -779,7 +779,7 @@ PeripheralAD.prototype.notified = function(obj) {
   if (callback) {
     callback(obj);
   }
-}
+};
 
 // --- Module Display ---
 Display = function(Obniz) {
@@ -792,7 +792,7 @@ Display.prototype.clear = function() {
     clear: true
   };
   this.Obniz.send(obj);
-}
+};
 
 Display.prototype.print = function(text) {
   var obj = {};
@@ -800,7 +800,7 @@ Display.prototype.print = function(text) {
     text: ""+text
   };
   this.Obniz.send(obj);
-}
+};
 
 Display.prototype.qr = function(data, correction) {
   var obj = {};
@@ -813,7 +813,7 @@ Display.prototype.qr = function(data, correction) {
     obj["display"].qr.correction = correction;
   }
   this.Obniz.send(obj);
-}
+};
 
 // --- Module LogicAnalyzer ---
 LogicAnalyzer = function(Obniz) {
@@ -829,26 +829,26 @@ LogicAnalyzer.prototype.start = function(io, interval, length) {
   };
   this.Obniz.send(obj);
   return;
-}
+};
 
 LogicAnalyzer.prototype.end = function() {
   var obj = {};
   obj["logicanalyzer"] = null;
   this.Obniz.send(obj);
   return;
-}
+};
 
 LogicAnalyzer.prototype.notified = function(obj) {
   if (this.onmeasured) {
     this.onmeasured(obj.measured);
   } else {
-    if (this.measured == null) {
+    if (this.measured === null) {
       this.measured = [];
     }
     this.measured.push(obj.measured);
   }
   return;
-}
+};
 
 //BLE
 Ble = function(Obniz) {
@@ -863,7 +863,7 @@ Ble.prototype.start = function() {
   };
   this.Obniz.send(obj);
   return;
-}
+};
 Ble.prototype.stop = function() {
   var obj = {};
   obj["ble"] = {};
@@ -872,7 +872,7 @@ Ble.prototype.stop = function() {
   };
   this.Obniz.send(obj);
   return;
-}
+};
 
 Ble.prototype.setAdvData = function(adv_data) {
   var obj = {};
@@ -882,7 +882,25 @@ Ble.prototype.setAdvData = function(adv_data) {
   };
   this.Obniz.send(obj);
   return;
-}
+};
+
+
+Ble.prototype.setAdvDataAsShortenedLocalName = function(name) {
+  var data = [];
+  data.push(0x02, 0x01, 0x06); //flags
+  data.push(name.length+1);
+  data.push(0x08);  //BLE_AD_TYPE_NAME_SHRT
+  
+  for(var i=0;i<name.length; i++){
+      data.push(name.charCodeAt(i));
+  }
+  
+  this.setAdvData(data);
+  return;
+};
+
+
+
 
 
 Ble.prototype.setScanRespData = function(scan_resp) {
@@ -893,7 +911,24 @@ Ble.prototype.setScanRespData = function(scan_resp) {
   };
   this.Obniz.send(obj);
   return;
-}
+};
+
+
+
+Ble.prototype.setScanRespDataAsName = function(name) {
+  var data = [];
+  data.push(name.length+1);
+  data.push(0x09);  //BLE_AD_TYPE_NAME_CMPL
+  
+  for(var i=0;i<name.length; i++){
+      data.push(name.charCodeAt(i));
+  }
+  
+  this.setScanRespData(data);
+  return;
+};
+
+
 _24LC256 = function() {
 
 };
