@@ -5,9 +5,6 @@
       "parts": [
         {
           "name": "LED"
-        },
-        {
-          "name": "Button"
         }
       ]
     },
@@ -23,8 +20,30 @@
       ]
     },
     {
+      "name": "Sound",
+      "parts": [
+        {
+          "name": "Speaker"
+        }
+      ]
+    },
+    {
+      "name": "Accessory",
+      "parts": [
+        {
+          "name": "USB"
+        }
+      ]
+    },
+    {
       "name": "Sensor Move",
       "parts": [
+        {
+          "name": "Button"
+        },
+        {
+          "name": "JoyStick"
+        },
         {
           "name": "PotentionMeter"
         },
@@ -41,14 +60,6 @@
       "parts": [
         {
           "name": "24LC256"
-        }
-      ]
-    },
-    {
-      "name": "Sound",
-      "parts": [
-        {
-          "name": "Speaker"
         }
       ]
     }
