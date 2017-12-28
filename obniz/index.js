@@ -885,6 +885,24 @@ Ble.prototype.setAdvData = function(adv_data) {
 };
 
 
+Ble.prototype.setAdvDataAsShortenedLocalName = function(name) {
+  var data = [];
+  data.push(0x02, 0x01, 0x06); //flags
+  data.push(name.length+1);
+  data.push(0x08);  //BLE_AD_TYPE_NAME_SHRT
+  
+  for(var i=0;i<name.length; i++){
+      data.push(name.charCodeAt(i));
+  }
+  
+  this.setAdvData(data);
+  return;
+};
+
+
+
+
+
 Ble.prototype.setScanRespData = function(scan_resp) {
   var obj = {};
   obj["ble"] = {};
@@ -894,3 +912,19 @@ Ble.prototype.setScanRespData = function(scan_resp) {
   this.Obniz.send(obj);
   return;
 };
+
+
+
+Ble.prototype.setScanRespDataAsName = function(name) {
+  var data = [];
+  data.push(name.length+1);
+  data.push(0x09);  //BLE_AD_TYPE_NAME_CMPL
+  
+  for(var i=0;i<name.length; i++){
+      data.push(name.charCodeAt(i));
+  }
+  
+  this.setScanRespData(data);
+  return;
+};
+
