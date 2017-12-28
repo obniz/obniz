@@ -70,7 +70,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
       return;
     }
     // User's defined callback
-    if (self.onwsmessage !== null) {
+    if (typeof(self.onwsmessage) === "function") {
       self.onwsmessage(obj);
     }
     // notify messaging
