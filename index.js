@@ -84,7 +84,11 @@ Obniz.prototype.wsconnect = function(desired_server) {
         if (isNode){
           console.error(msg);
         } else {
-          throw new Error(msg);
+          if (typeof(showObnizDebugError)=="function") {
+            showObnizDebugError(new Error(msg));
+          } else {
+            throw new Error(msg);
+          }
         }
       }
       if (self.ondebug) {

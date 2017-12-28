@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const fs = require('fs')
+const chokidar = require("chokidar");
 const app = express()
 const port = 3100
 
@@ -21,6 +22,29 @@ app.listen(port, (err) => {
 
   console.log(`server is listening on ${port}`)
 })
+
+var watcher = chokidar.watch(['../obniz/', '../parts/'],{
+  ignored:/[\/\\]\./,
+  persistent:true
+});
+
+watcher.on('ready',function(){
+  console.log("ready watching file change");
+  watcher.on('add',function(path){
+      if (path.indexOf('.js') >= 0) {
+        console.log(path + " added");
+        build();
+      }
+  });
+  watcher.on('change',function(path){
+    if (path.indexOf('.js') >= 0) {
+      console.log(path + " changed");
+      build();
+    }
+  });
+});
+
+build();
 
 function build() {
   var partsPath = path.join(__dirname, '../parts')
