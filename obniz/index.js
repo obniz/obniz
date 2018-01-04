@@ -108,7 +108,10 @@ Obniz.prototype.wsconnect = function(desired_server) {
         self[peripheral+""+i].notified(module_value);
       }
     }
-    // notify logiana
+    // notify others
+    if (obj["switch"]) {
+      self["switch"].notified(obj["switch"]);
+    }
     if (obj["logicanalyzer"]) {
       self["logicanalyzer"].notified(obj["logicanalyzer"]);
     }
@@ -216,9 +219,10 @@ Obniz.prototype.init = function() {
   // PWM
   for (var i=0; i<=5; i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
   // Display
-  this["display"] = new Display(this);
-  this["logicanalyzer"] = new LogicAnalyzer(this);
-  this["ble"] = new Ble(this);
+  this.display = new Display(this);
+  this.switch = new ObnizSwitch(this);
+  this.logicanalyzer = new LogicAnalyzer(this);
+  this.ble = new Ble(this);
 };
 
 Obniz.prototype.getIO = function(id) {
@@ -813,6 +817,39 @@ Display.prototype.qr = function(data, correction) {
     obj["display"].qr.correction = correction;
   }
   this.Obniz.send(obj);
+};
+
+// --- Module Switch ---
+ObnizSwitch = function(Obniz) {
+  this.Obniz = Obniz;
+  this.observers = [];
+};
+
+ObnizSwitch.prototype.addObserver = function(callback) {
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+ObnizSwitch.prototype.getWait = function() {
+  var self = this;
+  return new Promise(function(resolve, reject){
+    var obj = {};
+    obj["switch"] = "get";
+    self.Obniz.send(obj);
+    self.addObserver(resolve);
+  });
+};
+
+ObnizSwitch.prototype.notified = function(obj) {
+  this.state = obj.state;
+  if (this.onchange) {
+    this.onchange(this.state);
+  }
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(this.state);
+  }
 };
 
 // --- Module LogicAnalyzer ---
