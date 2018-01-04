@@ -5,8 +5,9 @@ This is [obniz](https://obniz.io/) javascript library.
 See details at [Document](https://obniz.io/doc)
 
 ## Build
-index.js is obniz.js and this is build result.  
-index.js is made from  
+index.js is what we called obniz.js.  
+and this is build result.  
+index.js is made from two js below
 ```
   obniz/index.js  
   parts/*/index.js  
@@ -40,6 +41,8 @@ Put this on top of the program
 </body>
 ```
 It will OVERWRITE //parts.obniz.io/obniz.js
+
+When you make something changed, server.js will generate index.js automatically.
 
 ## Lisence
 
