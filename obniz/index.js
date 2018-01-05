@@ -112,6 +112,10 @@ Obniz.prototype.wsconnect = function(desired_server) {
     if (obj["switch"]) {
       self["switch"].notified(obj["switch"]);
     }
+    // notify others
+    if (obj["ble"]) {
+      self["ble"].notified(obj["ble"]);
+    }
     if (obj["logicanalyzer"]) {
       self["logicanalyzer"].notified(obj["logicanalyzer"]);
     }
@@ -1017,4 +1021,28 @@ Ble.prototype.startScan = function(scan_resp) {
   };
   this.Obniz.send(obj);
   return;
+};
+
+
+Ble.prototype.notified = function(obj) {
+  if(obj.scan_results){
+    var val = new BleScanResponse(obj.scan_results);
+    if(this.onscan){
+      this.onscan(val);
+    }else{
+      this.scanResults = this.scanResults || [];
+      this.scanResults.push(val);
+    }
+  }
+};
+
+Ble.prototype.getScanResponse = function(obj) {
+  return this.scanResults ? this.scanResults.shift() : null;  
+};
+
+BleScanResponse = function(rawData){
+  
+  for(var key in rawData){
+    this[key] = rawData.key;
+  }
 };
