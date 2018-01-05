@@ -1002,3 +1002,19 @@ Ble.prototype.setScanRespDataAsName = function(name) {
   return;
 };
 
+
+
+Ble.prototype.startScan = function(scan_resp) {
+  var obj = {};
+  obj["ble"] = {};
+  obj["ble"]["scan"] = {
+    "settings" : {
+      "type" : "once_per_peripheral",
+      "interval" : 30,
+      "duration" : 30,
+    },
+    "status":"start"
+  };
+  this.Obniz.send(obj);
+  return;
+};
