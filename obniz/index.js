@@ -892,7 +892,7 @@ Ble = function(Obniz) {
   this.Obniz = Obniz;
 };
 
-Ble.prototype.start = function() {
+Ble.prototype.startAdvertisement = function() {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
@@ -901,7 +901,7 @@ Ble.prototype.start = function() {
   this.Obniz.send(obj);
   return;
 };
-Ble.prototype.stop = function() {
+Ble.prototype.stopAdvertisement = function() {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
@@ -935,8 +935,6 @@ Ble.prototype.setAdvDataAsShortenedLocalName = function(name) {
   this.setAdvData(data);
   return;
 };
-
-
 
 
 
