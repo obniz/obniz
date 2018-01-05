@@ -44,7 +44,6 @@ It will OVERWRITE //parts.obniz.io/obniz.js
 
 When you make something changed, server.js will generate index.js automatically.
 
-
 ## Lisence
 
 All rights reserved.
