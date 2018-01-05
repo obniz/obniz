@@ -925,12 +925,37 @@ Ble.prototype.setAdvData = function(adv_data) {
 Ble.prototype.setAdvDataAsShortenedLocalName = function(name) {
   var data = [];
   data.push(0x02, 0x01, 0x06); //flags
-  data.push(name.length+1);
+  data.push(name.length+1); //length
   data.push(0x08);  //BLE_AD_TYPE_NAME_SHRT
   
   for(var i=0;i<name.length; i++){
       data.push(name.charCodeAt(i));
   }
+  
+  this.setAdvData(data);
+  return;
+};
+
+Ble.prototype.setAdvDataAsIbeacon = function(uuid, major, minor, txPower) {
+  var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+  if(uuidNumeric.length !== (8+4+4+4+12) ){
+    throw Error("BLE iBeacon uuid digit must be 32. (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb )");
+  }
+  
+  var data = [];
+  data.push(0x02, 0x01, 0x06); //flags
+  data.push(0x1A, 0xFF, 0x4C, 0x00, 0x02, 0x15); //length, type, capmanycode
+ 
+  // uuid
+  for(var i=0;i<uuidNumeric.length; i+=2){
+      data.push(parseInt(uuidNumeric[i] + uuidNumeric[i+1],16 ));
+  }
+  
+  data.push((major >> 2 ) & 0xFF);
+  data.push((major >> 0 ) & 0xFF);
+  data.push((minor >> 2 ) & 0xFF);
+  data.push((minor >> 0 ) & 0xFF);
+  data.push((txPower >> 0 ) & 0xFF);
   
   this.setAdvData(data);
   return;
@@ -948,6 +973,20 @@ Ble.prototype.setScanRespData = function(scan_resp) {
   return;
 };
 
+
+
+Ble.prototype.setScanRespDataAsName = function(name) {
+  var data = [];
+  data.push(name.length+1);
+  data.push(0x09);  //BLE_AD_TYPE_NAME_CMPL
+  
+  for(var i=0;i<name.length; i++){
+      data.push(name.charCodeAt(i));
+  }
+  
+  this.setScanRespData(data);
+  return;
+};
 
 
 Ble.prototype.setScanRespDataAsName = function(name) {
