@@ -241,10 +241,11 @@ Obniz.prototype.getpwm = function() {
   var i=0;
   while(true){
     var pwm = this["pwm"+i];
-    if (pwm === null) {
+    if (!pwm) {
       break;
     }
-    if (pwm.state.io === null) {
+    console.log(pwm);
+    if (typeof(pwm.state.io) != "number") {
       return pwm;
     }
     i++;
@@ -255,16 +256,16 @@ Obniz.prototype.getpwm = function() {
 Obniz.prototype.getFreeI2C = function() {
   var i=0;
   while(true){
-    var pwm = this["i2c"+i];
-    if (pwm === null) {
+    var i2c = this["i2c"+i];
+    if (!i2c) {
       break;
     }
-    if (pwm.state.io === null) {
-      return pwm;
+    if (typeof(i2c.state.scl) != "number") {
+      return i2c;
     }
     i++;
   }
-  throw new Error("No More PWM Available. max = " + i);
+  throw new Error("No More I2C Available. max = " + i);
 };
 
 Obniz.prototype.message = function(target, message) {
