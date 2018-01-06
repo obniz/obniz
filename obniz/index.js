@@ -894,6 +894,7 @@ LogicAnalyzer.prototype.notified = function(obj) {
 //BLE
 Ble = function(Obniz) {
   this.Obniz = Obniz;
+  this.scanResults =  [];
 };
 
 Ble.prototype.startAdvertisement = function() {
@@ -1008,36 +1009,54 @@ Ble.prototype.setScanRespDataAsName = function(name) {
 
 
 
-Ble.prototype.startScan = function(scan_resp) {
+Ble.prototype.startScan = function(settings) {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["scan"] = {
     "settings" : {
-      "type" : "once_per_peripheral",
-      "interval" : 30,
-      "duration" : 30,
+      "targetUuid" : settings.targetUuid ? settings.targetUuid : null,
+      "interval" : settings.interval ? settings.interval : 30,
+      "duration" : settings.duration ? settings.duration : 30,
     },
     "status":"start"
   };
+  
+  this.scanResults =  [];
+  
   this.Obniz.send(obj);
   return;
 };
 
 
-Ble.prototype.notified = function(obj) {
-  if(obj.scan_results){
-    var val = new BleScanResponse(obj.scan_results);
-    if(this.onscan){
-      this.onscan(val);
-    }else{
-      this.scanResults = this.scanResults || [];
-      this.scanResults.push(val);
+Ble.prototype.stopScan = function() {
+  var obj = {};
+  obj["ble"] = {};
+   obj["ble"]["scan"] = {
+    "status":"stop"
+  };
+  this.Obniz.send(obj);
+  return;
+}
+Ble.prototype.notified = function (obj) {
+  if (obj.scan_results) {
+    var isFinished = false;
+    for (var id in obj.scan_results) {
+      var val = new BleScanResponse(obj.scan_results[id]);
+
+      if (val.event_type === "inquiry_complete") {
+        isFinished = true;
+      } else if (val.event_type === "inquiry_result") {
+
+        this.scanResults.push(val);
+        if (this.onscan) {
+          this.onscan(val);
+        }
+      }
+    }
+    if (isFinished && this.onscanfinish) {
+          this.onscanfinish(this.scanResults);
     }
   }
-};
-
-Ble.prototype.getScanResponse = function(obj) {
-  return this.scanResults ? this.scanResults.shift() : null;  
 };
 
 BleScanResponse = function(rawData){
