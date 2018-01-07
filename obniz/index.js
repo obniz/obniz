@@ -244,7 +244,6 @@ Obniz.prototype.getpwm = function() {
     if (!pwm) {
       break;
     }
-    console.log(pwm);
     if (typeof(pwm.state.io) != "number") {
       return pwm;
     }
