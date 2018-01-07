@@ -3,13 +3,13 @@
 
 ## wired(obniz, con0, con1)
 スピーカーに接続します。プラスとマイナスがある場合はマイナスをcon0の方に指定して下さい。
-```
+```Javascript
 var speaker = Parts("Speaker");
 speaker.wired(obniz, 0, 1);
 ```
 ## freq(frequency)
 スピーカーから鳴る音の周波数を指定します。
-```
+```Javascript
 var speaker = Parts("Speaker");
 speaker.wired(obniz, 0, 1);
 speaker.freq(1000); //1khz

@@ -49,7 +49,7 @@ motor.move(true); // = motor.forward();
 ## power(float)
 モーターのパワーを変更します。0~100で指定することが出来ます。
 ### Example
-```
+```Javascript
 var motor = Parts("DCMotor");
 motor.wired(obniz, 1, 2);
 

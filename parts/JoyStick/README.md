@@ -7,13 +7,13 @@ sw: スイッチ
 y: y軸のアナログ値出力  
 x: x軸のアナログ値出力  
 へ接続して下さい
-```
+```Javascript
 var joystick = Parts("JoyStick");
 joystick.wired(obniz, 0,1,2,3,4);
 ```
 ## onChangeX(callback)
 X軸方向へ動いた場合に呼ばれる関数を指定できます。
-```
+```Javascript
 var joystick = Parts("JoyStick");
 joystick.wired(obniz, 0,1,2,3,4)
 joystick.onChangeX(function(val){
@@ -24,7 +24,7 @@ joystick.onChangeX(function(val){
 onChangeXと同じでY軸に関してです。
 ## onChangeSW(callback)
 ボタンが押されたり離された時に呼ばれます。
-```
+```Javascript
 var joystick = Parts("JoyStick");
 joystick.wired(obniz, 0,1,2,3,4)
 joystick.onChangeSW(function(pressed){
