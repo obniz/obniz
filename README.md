@@ -20,25 +20,22 @@ You can clone this and use this from your HTML.
 After cloning. You are able to launch local server
 
 ```
- cd ./_tools
- node server.js
+ cd ./
+ node _tools/server.js
 ```
 Then, http://localhost:3100/obniz.js is avaiable.
 So, You can include this from your HTML.
 Put this on top of the program
 ```
+<div id="online-status"></div>
+<h1>obniz instant html</h1>
+
 <script src="http://localhost:3100/obniz.js" crossorigin="anonymous"></script>
-
-<body>
-  <div id="online-status"></div>
-  <h1>obniz instant html</h1>
-
 <script>
   var obniz = new Obniz("00000000");
   obniz.onconnect = async function () {
   }
 </script>
-</body>
 ```
 It will OVERWRITE //parts.obniz.io/obniz.js
 
