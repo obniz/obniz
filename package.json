@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Obniz Basic Library",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,9 @@
   "keywords": [
     "obniz"
   ],
-  "author": "yukisato",
+  "repository": "obniz/obniz",
+  "author": "yukisato <yuki@yuki-sato.com>",
+  "homepage": "https://obniz.io/",
   "license": "ISC",
   "dependencies": {
     "ws": "^3.1.0"
