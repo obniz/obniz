@@ -1,0 +1,66 @@
+{
+  "title": "obniz.js",
+  "contents": [
+    {
+      "title": "Overview",
+      "filename": "README.md"
+    },
+    {
+      "section": "Utilities"
+    },
+    {
+      "title": "Utils",
+      "filename": "utils.md"
+    },
+    {
+      "title": "Messaging",
+      "filename": "messaging.md"
+    },
+    {
+      "section": "Embed Components"
+    },
+    {
+      "title": "Display",
+      "filename": "display.md"
+    },
+    {
+      "title": "Switch",
+      "filename": "switch.md"
+    },
+    {
+      "title": "BLE",
+      "filename": "ble.md"
+    },
+    {
+      "section": "Pin Peripherals"
+    },
+    {
+      "title": "IO",
+      "filename": "io.md"
+    },
+    {
+      "title": "AD",
+      "filename": "ad.md"
+    },
+    {
+      "title": "PWM",
+      "filename": "pwm.md"
+    },
+    {
+      "title": "UART",
+      "filename": "uart.md"
+    },
+    {
+      "title": "SPI",
+      "filename": "spi.md"
+    },
+    {
+      "title": "I2C",
+      "filename": "i2c.md"
+    },
+    {
+      "title": "LogicAnalyzer",
+      "filename": "logicanalyzer.md"
+    }
+  ]
+}
