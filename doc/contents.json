@@ -3,64 +3,67 @@
   "contents": [
     {
       "title": "Overview",
-      "filename": "README.md"
+      "filename": "README"
     },
     {
       "section": "Utilities"
     },
     {
       "title": "Utils",
-      "filename": "utils.md"
+      "filename": "utils"
     },
     {
       "title": "Messaging",
-      "filename": "messaging.md"
-    },
-    {
-      "section": "Embed Components"
-    },
-    {
-      "title": "Display",
-      "filename": "display.md"
-    },
-    {
-      "title": "Switch",
-      "filename": "switch.md"
-    },
-    {
-      "title": "BLE",
-      "filename": "ble.md"
+      "filename": "messaging"
     },
     {
       "section": "Pin Peripherals"
     },
     {
       "title": "IO",
-      "filename": "io.md"
+      "filename": "io"
     },
     {
       "title": "AD",
-      "filename": "ad.md"
+      "filename": "ad"
     },
     {
       "title": "PWM",
-      "filename": "pwm.md"
+      "filename": "pwm"
     },
     {
       "title": "UART",
-      "filename": "uart.md"
+      "filename": "uart"
     },
     {
       "title": "SPI",
-      "filename": "spi.md"
+      "filename": "spi"
     },
     {
       "title": "I2C",
-      "filename": "i2c.md"
+      "filename": "i2c"
+    },
+    {
+      "section": "Pin Advanced Functions"
     },
     {
       "title": "LogicAnalyzer",
-      "filename": "logicanalyzer.md"
+      "filename": "logicanalyzer"
+    },
+    {
+      "section": "Embed Components"
+    },
+    {
+      "title": "Display",
+      "filename": "display"
+    },
+    {
+      "title": "Switch",
+      "filename": "switch"
+    },
+    {
+      "title": "BLE",
+      "filename": "ble"
     }
   ]
 }
