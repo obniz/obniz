@@ -68,26 +68,6 @@ Ble.prototype.dataBuliderPrototype = function(){
     return data;
   };
   
-  builder.prototype.setFlags = function(flag){
-    var data = this.getRow(0x01);
-    data[0] = (data[0] || 0) | flag;
-    this.setRow(0x01,data);
-  };
-  builder.prototype.setLeLimitedDiscoverableModeFlag = function (){
-    this.setFlags(0x01);
-  };
-  builder.prototype.setLeGeneralDiscoverableModeFlag = function (){
-    this.setFlags(0x02);
-  };
-  builder.prototype.setBrEdrNotSupportedFlag = function (){
-    this.setFlags(0x04);
-  };
-  builder.prototype.setLeBrEdrControllerFlag = function (){
-    this.setFlags(0x08);
-  };
-  builder.prototype.setLeBrEdrHostFlag = function (){
-    this.setFlags(0x10);
-  };
   
   builder.prototype.setStringData = function (type, string){
     var data = [];
@@ -162,6 +142,28 @@ Ble.prototype.advDataBulider = function(){
     }
     return true;
   };
+  
+  builder.prototype.setFlags = function(flag){
+    var data = this.getRow(0x01);
+    data[0] = (data[0] || 0) | flag;
+    this.setRow(0x01,data);
+  };
+  builder.prototype.setLeLimitedDiscoverableModeFlag = function (){
+    this.setFlags(0x01);
+  };
+  builder.prototype.setLeGeneralDiscoverableModeFlag = function (){
+    this.setFlags(0x02);
+  };
+  builder.prototype.setBrEdrNotSupportedFlag = function (){
+    this.setFlags(0x04);
+  };
+  builder.prototype.setLeBrEdrControllerFlag = function (){
+    this.setFlags(0x08);
+  };
+  builder.prototype.setLeBrEdrHostFlag = function (){
+    this.setFlags(0x10);
+  };
+  
   return new builder();
 };
 Ble.prototype.scanRespDataBuilder = function(){
