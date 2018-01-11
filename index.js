@@ -657,11 +657,12 @@ Ble.prototype.stopScan = function() {
   this.Obniz.send(obj);
   return;
 }
+
 Ble.prototype.notified = function (obj) {
   if (obj.scan_results) {
     var isFinished = false;
     for (var id in obj.scan_results) {
-      var val = new BleScanResponse(obj.scan_results[id]);
+      var val = new BleRemotePeripheral(obj.scan_results[id]);
 
       if (val.event_type === "inquiry_complete") {
         isFinished = true;
@@ -679,7 +680,18 @@ Ble.prototype.notified = function (obj) {
   }
 };
 
-BleScanResponse = function(rawData){
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * 
+ * @param {type} rawData
+ * @return {BleRemotePeripheral}
+ */
+BleRemotePeripheral = function(rawData){
   
   for(var key in rawData){
     this[key] = rawData[key];
@@ -695,10 +707,26 @@ BleScanResponse = function(rawData){
     this.advertise_data_rows.push(arr);
     i=i+length;
   }
-  
 };
 
-BleScanResponse.prototype.serarchTypeVal = function(type){
+/**
+ * 
+ * @return {String} json value
+ */
+BleRemotePeripheral.prototype.toString = function() {
+  return JSON.stringify({
+    id: this.id,
+    address: this.address,
+    addressType: this.addressType,
+    connectable: this.connectable,
+    advertisement: this.advertisement,
+    rssi: this.rssi,
+    state: this.state
+  });
+};
+
+
+BleRemotePeripheral.prototype.serarchTypeVal = function(type){
   for(var i = 0;i<this.advertise_data_rows.length;i++){
     if(this.advertise_data_rows[i][0] === type){
       var results = [].concat(this.advertise_data_rows[i]);
@@ -709,7 +737,7 @@ BleScanResponse.prototype.serarchTypeVal = function(type){
   return undefined;
 };
 
-BleScanResponse.prototype.localName = function(){
+BleRemotePeripheral.prototype.localName = function(){
   var data = this.serarchTypeVal(0x09);
   if(!data){
      data = this.serarchTypeVal(0x08);
@@ -719,7 +747,7 @@ BleScanResponse.prototype.localName = function(){
 };
 
 
-BleScanResponse.prototype.iBeacon = function(){
+BleRemotePeripheral.prototype.iBeacon = function(){
   var data = this.serarchTypeVal(0xFF);
   if(!data 
       || data[0] !== 0x4c
@@ -747,33 +775,10 @@ BleScanResponse.prototype.iBeacon = function(){
     major: major,
     minor :minor,
     power :power,
-    rssi :this.rssi,
+    rssi :this.rssi
   };
 };
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-
-BleRemotePeripheral = function(dic){
-  this.id = scanData;
-  
-  
-};
-
-BleRemotePeripheral.prototype.toString = function() {
-  return JSON.stringify({
-    id: this.id,
-    address: this.address,
-    addressType: this.addressType,
-    connectable: this.connectable,
-    advertisement: this.advertisement,
-    rssi: this.rssi,
-    state: this.state
-  });
-};
 
 BleRemotePeripheral.prototype.connect = function(){
   throw new Error("todo");
@@ -798,6 +803,7 @@ BleRemotePeripheral.prototype.discoverAllServicesAndCharacteristics = function()
 BleRemotePeripheral.prototype.discoverSomeServicesAndCharacteristics = function(){
   throw new Error("todo");
 };
+
 
 
 

@@ -62,18 +62,13 @@ obniz.ble.startAdvertisement();
 
 ```Javascript
 {
-     flags: ["limited_discoverable_mode", 
-             "general_discoverable_mode",
-             "br_edr_not_supported",
-             "le_br_edr_controller",
-             "le_br_edr_host"],        
-     serviceUuids : [ "c28e", "f351", 
-                      "efae3a2c",
-                      "efae3a2c-f84d-4f39-82f4-c7dd21cb696b"],
-     localName : "obniz ble",
+     flags: ["<flag>", ...] // <flag> = "limited_discoverable_mode", "general_discoverable_mode", 
+                            //          "br_edr_not_supported", "le_br_edr_controller", "le_br_edr_host"        
+     serviceUuids : [ "<service UUID>", ... ],  
+     localName : "<name>",
      manufacturerData:{
-     	campanyCode : 0x004C,
-        data : [ 0x02, 0x15,... ],
+     	campanyCode : <int>,
+        data : [ <int>, ... ],
      },
    
 }
@@ -114,14 +109,11 @@ obniz.ble.startAdvertisement();
 
 ```Javascript
 {
-     serviceUuids : [ "c28e", "f351", 
-                      "efae3a2c",
-                      "efae3a2c-f84d-4f39-82f4-c7dd21cb696b"],
-     localName : "obniz ble",
+     serviceUuids : [ "<service UUID>", ... ],  
+     localName : "<name>",
      manufacturerData:{
-     	campanyCode : 0x004C,
-        data : [ 0x02, 0x15,... ],
+     	campanyCode : <int>,
+        data : [ <int>, ... ],
      },
-   
 }
 ```
