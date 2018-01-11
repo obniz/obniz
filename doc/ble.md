@@ -22,14 +22,14 @@ obniz.ble.stopAdvertisement();
 ```
 
 
-
-
 ## setAdvData(bytes[])
 
 BLEのAdvertisementで出力するデータバイト列を設定します
 BLEの規格に従い，bytesの長さは31以下にする必要があります．
 
 Advertisementで出力するデータバイト列を生成するadvDataBuilderも参照ください
+
+
 
 ```Javascript
 obniz.ble.setAdvData([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);

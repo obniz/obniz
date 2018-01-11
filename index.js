@@ -1,3 +1,5 @@
+/* global showObnizDebugError */
+
 var isNode = (typeof window === 'undefined') ? true : false; 
 
 Obniz = function(id, options) {
@@ -297,9 +299,16 @@ Obniz.prototype.resetOnDisconnect = function(mustReset) {
     system: {
       reset_on_disconnect: mustReset
     }
-  })
-}
+  });
+};
 
+Obniz.prototype.error = function (msg) {
+  if (typeof (showObnizDebugError) === "function") {
+    showObnizDebugError(new Error(msg));
+  } else {
+    throw new Error(msg);
+  }
+};
 /*===================*/
 /* Parts */
 /*===================*/
@@ -319,6 +328,8 @@ Parts = function(name) {
 if (isNode) {
   module.exports = Obniz;
 }
+
+
 
 
 PeripheralAD = function(Obniz, id) {
@@ -401,7 +412,8 @@ Ble.prototype.stopAdvertisement = function() {
   return;
 };
 
-Ble.prototype.setAdvData = function(adv_data) {
+Ble.prototype.setAdvDataRaw = function(adv_data) {
+  console.log(adv_data);
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
@@ -411,9 +423,40 @@ Ble.prototype.setAdvData = function(adv_data) {
   return;
 };
 
+Ble.prototype.setAdvData = function(json) {
+  var builder = this.advDataBulider();
+ 
+  if(json){
+    if(json.flags){
+      if(json.flags.includes("limited_discoverable_mode") ) builder.setLeLimitedDiscoverableModeFlag();
+      if(json.flags.includes("general_discoverable_mode") ) builder.setLeGeneralDiscoverableModeFlag();
+      if(json.flags.includes("br_edr_not_supported")) builder.setBrEdrNotSupportedFlag();
+      if(json.flags.includes("le_br_edr_controller") ) builder.setLeBrEdrControllerFlag();
+      if(json.flags.includes("le_br_edr_host")) builder.setLeBrEdrHostFlag();
+    }
+    if(json.localName){
+       builder.setCompleteLocalName(json.localName);
+    }
+    if(json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data){
+      builder.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data)
+    }
+    if(json.serviceUuids){
+      for(var key in json.serviceUuids){
+        builder.setUuid(json.serviceUuids[key]);
+      }
+    }
+  }
+  
+  
+  this.setAdvDataRaw(builder.build());
+  
+  return;
+};
+
 
 Ble.prototype.dataBuliderPrototype = function(){
-  var builder = function(){
+  var builder = function(Obniz){
+    this.Obniz = Obniz;
     this.rows  = {};
   };
   builder.prototype.setRow = function(type,data){
@@ -440,7 +483,7 @@ Ble.prototype.dataBuliderPrototype = function(){
       Array.prototype.push.apply(data, this.rows[key]);
     }
     if(data.length > 31){
-      throw new Error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
+      this.Obniz.error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
     }
     
     return data;
@@ -472,12 +515,18 @@ Ble.prototype.dataBuliderPrototype = function(){
     this.setRow(0xFF, row);
   };
   
-  builder.prototype.convertUUid = function(uuid){
+  builder.prototype.setUuid =function(uuid){
+    var uuidData = this.convertUuid(uuid);
+    var type = { 16:0x06, 4:0x04, 2:0x02 }[uuidData.length]; 
+    this.setRow(type,uuidData);
+  }
+  
+  builder.prototype.convertUuid = function(uuid){
     var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
     if (uuidNumeric.length !== 32 
-        && uuidNumeric.length !== 16 
-        && uuidNumeric.length !== 8 ) {
-      throw Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+        && uuidNumeric.length !== 8 
+        && uuidNumeric.length !== 4 ) {
+      this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
     }
     
     var data = [];
@@ -491,7 +540,7 @@ Ble.prototype.dataBuliderPrototype = function(){
     var data = [];
     data.push(0x02, 0x15); // fixed data
 
-    var uuidData = this.convertUUid(uuid);
+    var uuidData = this.convertUuid(uuid);
     Array.prototype.push.apply(data, uuidData);
     
     
@@ -514,10 +563,7 @@ Ble.prototype.advDataBulider = function(){
   var builder = this.dataBuliderPrototype();
   
   builder.prototype.check = function(){
-    if(!this.row[0x01] || this.row[0x01].length === 0){
-        throw new Error("No flags. Advertise data must need flags.");
-        return false;
-    }
+  
     return true;
   };
   
@@ -542,11 +588,11 @@ Ble.prototype.advDataBulider = function(){
     this.setFlags(0x10);
   };
   
-  return new builder();
+  return new builder(this.Obniz);
 };
 Ble.prototype.scanRespDataBuilder = function(){
   var builder = this.dataBuliderPrototype();
-  return new builder();
+  return new builder(this.Obniz);
 };
 
 
@@ -685,6 +731,59 @@ BleScanResponse.prototype.iBeacon = function(){
     rssi :this.rssi,
   };
 };
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
+BleRemotePeripheral = function(dic){
+  this.id = scanData;
+  
+  
+};
+
+BleRemotePeripheral.prototype.toString = function() {
+  return JSON.stringify({
+    id: this.id,
+    address: this.address,
+    addressType: this.addressType,
+    connectable: this.connectable,
+    advertisement: this.advertisement,
+    rssi: this.rssi,
+    state: this.state
+  });
+};
+
+BleRemotePeripheral.prototype.connect = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.disconnect = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.updateRssi = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.discoverServices = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.discoverAllServicesAndCharacteristics = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.discoverSomeServicesAndCharacteristics = function(){
+  throw new Error("todo");
+};
+
+
+
+
+
 
 Display = function(Obniz) {
   this.Obniz = Obniz;

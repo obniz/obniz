@@ -1,3 +1,5 @@
+/* global showObnizDebugError */
+
 var isNode = (typeof window === 'undefined') ? true : false; 
 
 Obniz = function(id, options) {
@@ -297,9 +299,16 @@ Obniz.prototype.resetOnDisconnect = function(mustReset) {
     system: {
       reset_on_disconnect: mustReset
     }
-  })
-}
+  });
+};
 
+Obniz.prototype.error = function (msg) {
+  if (typeof (showObnizDebugError) === "function") {
+    showObnizDebugError(new Error(msg));
+  } else {
+    throw new Error(msg);
+  }
+};
 /*===================*/
 /* Parts */
 /*===================*/
@@ -319,3 +328,5 @@ Parts = function(name) {
 if (isNode) {
   module.exports = Obniz;
 }
+
+
