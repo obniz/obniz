@@ -622,13 +622,8 @@ Ble.prototype.setScanRespRawData = function(scan_resp) {
   return;
 };
 
-Ble.prototype.setScanRespData = function(scan_resp) {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "scan_resp":scan_resp
-  };
-  this.Obniz.send(obj);
+Ble.prototype.setScanRespData = function(json) {
+  this.setScanRespRawData(this.scanRespDataBuilder(json).build());
   return;
 };
 
