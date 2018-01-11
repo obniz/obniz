@@ -412,44 +412,143 @@ Ble.prototype.setAdvData = function(adv_data) {
 };
 
 
-Ble.prototype.setAdvDataAsShortenedLocalName = function(name) {
-  var data = [];
-  data.push(0x02, 0x01, 0x06); //flags
-  data.push(name.length+1); //length
-  data.push(0x08);  //BLE_AD_TYPE_NAME_SHRT
+Ble.prototype.dataBuliderPrototype = function(){
+  var builder = function(){
+    this.rows  = {};
+  };
+  builder.prototype.setRow = function(type,data){
+    this.rows[type] = data;
+  };
+  builder.prototype.getRow = function(type){
+    return this.rows[type] || [];
+  };
   
-  for(var i=0;i<name.length; i++){
-      data.push(name.charCodeAt(i));
-  }
+  builder.prototype.check = function(){
+    return true;
+  };
   
-  this.setAdvData(data);
-  return;
+  builder.prototype.build = function(){
+    if(!this.check){
+      return;
+    }
+    var data = [];
+    for(var key in this.rows){
+      if(this.rows[key].length === 0)continue;
+      
+      data.push(this.rows[key].length+1);
+      data.push(parseInt(key));
+      Array.prototype.push.apply(data, this.rows[key]);
+    }
+    if(data.length > 31){
+      throw new Error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
+    }
+    
+    return data;
+  };
+  
+  
+  builder.prototype.setStringData = function (type, string){
+    var data = [];
+    
+    for (var i = 0; i < string.length; i++) {
+      data.push(string.charCodeAt(i));
+    }
+
+    this.setRow(type, data);
+  };
+  
+  builder.prototype.setShortenedLocalName = function (name){
+    this.setStringData(0x08,name);
+  };
+  builder.prototype.setCompleteLocalName = function (name){
+    this.setStringData(0x09,name);
+  };
+  
+  builder.prototype.setManufacturerSpecificData = function (campanyCode, data){
+    var row = [];
+    row.push(campanyCode & 0xFF);
+    row.push((campanyCode >> 8) & 0xFF);
+    Array.prototype.push.apply(row , data);
+    this.setRow(0xFF, row);
+  };
+  
+  builder.prototype.convertUUid = function(uuid){
+    var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    if (uuidNumeric.length !== 32 
+        && uuidNumeric.length !== 16 
+        && uuidNumeric.length !== 8 ) {
+      throw Error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+    }
+    
+    var data = [];
+    for (var i = 0; i < uuidNumeric.length; i += 2) {
+      data.push(parseInt(uuidNumeric[i] + uuidNumeric[i + 1], 16));
+    }
+    return data;
+  };
+  
+  builder.prototype.setIbeaconData = function (uuid, major, minor, txPower) {
+    var data = [];
+    data.push(0x02, 0x15); // fixed data
+
+    var uuidData = this.convertUUid(uuid);
+    Array.prototype.push.apply(data, uuidData);
+    
+    
+    data.push((major >> 8) & 0xFF);
+    data.push((major >> 0) & 0xFF);
+    data.push((minor >> 8) & 0xFF);
+    data.push((minor >> 0) & 0xFF);
+    data.push((txPower >> 0) & 0xFF);
+
+    this.setManufacturerSpecificData(0x004c, data);
+    return;
+  };
+
+      
+  return builder;
+} 
+
+
+Ble.prototype.advDataBulider = function(){
+  var builder = this.dataBuliderPrototype();
+  
+  builder.prototype.check = function(){
+    if(!this.row[0x01] || this.row[0x01].length === 0){
+        throw new Error("No flags. Advertise data must need flags.");
+        return false;
+    }
+    return true;
+  };
+  
+  builder.prototype.setFlags = function(flag){
+    var data = this.getRow(0x01);
+    data[0] = (data[0] || 0) | flag;
+    this.setRow(0x01,data);
+  };
+  builder.prototype.setLeLimitedDiscoverableModeFlag = function (){
+    this.setFlags(0x01);
+  };
+  builder.prototype.setLeGeneralDiscoverableModeFlag = function (){
+    this.setFlags(0x02);
+  };
+  builder.prototype.setBrEdrNotSupportedFlag = function (){
+    this.setFlags(0x04);
+  };
+  builder.prototype.setLeBrEdrControllerFlag = function (){
+    this.setFlags(0x08);
+  };
+  builder.prototype.setLeBrEdrHostFlag = function (){
+    this.setFlags(0x10);
+  };
+  
+  return new builder();
+};
+Ble.prototype.scanRespDataBuilder = function(){
+  var builder = this.dataBuliderPrototype();
+  return new builder();
 };
 
-Ble.prototype.setAdvDataAsIbeacon = function(uuid, major, minor, txPower) {
-  var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
-  if(uuidNumeric.length !== (8+4+4+4+12) ){
-    throw Error("BLE iBeacon uuid digit must be 32. (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb )");
-  }
-  
-  var data = [];
-  data.push(0x02, 0x01, 0x06); //flags
-  data.push(0x1A, 0xFF, 0x4C, 0x00, 0x02, 0x15); //length, type, capmanycode
- 
-  // uuid
-  for(var i=0;i<uuidNumeric.length; i+=2){
-      data.push(parseInt(uuidNumeric[i] + uuidNumeric[i+1],16 ));
-  }
-  
-  data.push((major >> 2 ) & 0xFF);
-  data.push((major >> 0 ) & 0xFF);
-  data.push((minor >> 2 ) & 0xFF);
-  data.push((minor >> 0 ) & 0xFF);
-  data.push((txPower >> 0 ) & 0xFF);
-  
-  this.setAdvData(data);
-  return;
-};
 
 
 
@@ -463,34 +562,6 @@ Ble.prototype.setScanRespData = function(scan_resp) {
   return;
 };
 
-
-
-Ble.prototype.setScanRespDataAsName = function(name) {
-  var data = [];
-  data.push(name.length+1);
-  data.push(0x09);  //BLE_AD_TYPE_NAME_CMPL
-  
-  for(var i=0;i<name.length; i++){
-      data.push(name.charCodeAt(i));
-  }
-  
-  this.setScanRespData(data);
-  return;
-};
-
-
-Ble.prototype.setScanRespDataAsName = function(name) {
-  var data = [];
-  data.push(name.length+1);
-  data.push(0x09);  //BLE_AD_TYPE_NAME_CMPL
-  
-  for(var i=0;i<name.length; i++){
-      data.push(name.charCodeAt(i));
-  }
-  
-  this.setScanRespData(data);
-  return;
-};
 
 
 
