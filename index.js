@@ -424,30 +424,8 @@ Ble.prototype.setAdvDataRaw = function(adv_data) {
 };
 
 Ble.prototype.setAdvData = function(json) {
-  var builder = this.advDataBulider();
+  var builder = this.advDataBulider(json);
  
-  if(json){
-    if(json.flags){
-      if(json.flags.includes("limited_discoverable_mode") ) builder.setLeLimitedDiscoverableModeFlag();
-      if(json.flags.includes("general_discoverable_mode") ) builder.setLeGeneralDiscoverableModeFlag();
-      if(json.flags.includes("br_edr_not_supported")) builder.setBrEdrNotSupportedFlag();
-      if(json.flags.includes("le_br_edr_controller") ) builder.setLeBrEdrControllerFlag();
-      if(json.flags.includes("le_br_edr_host")) builder.setLeBrEdrHostFlag();
-    }
-    if(json.localName){
-       builder.setCompleteLocalName(json.localName);
-    }
-    if(json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data){
-      builder.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data)
-    }
-    if(json.serviceUuids){
-      for(var key in json.serviceUuids){
-        builder.setUuid(json.serviceUuids[key]);
-      }
-    }
-  }
-  
-  
   this.setAdvDataRaw(builder.build());
   
   return;
@@ -455,9 +433,28 @@ Ble.prototype.setAdvData = function(json) {
 
 
 Ble.prototype.dataBuliderPrototype = function(){
-  var builder = function(Obniz){
+  var builder = function(Obniz,json){
     this.Obniz = Obniz;
     this.rows  = {};
+    
+    if (json) {
+      if (json.localName) {
+        this.setCompleteLocalName(json.localName);
+      }
+      if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
+        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data)
+      }
+      if (json.serviceUuids) {
+        for (var key in json.serviceUuids) {
+          this.setUuid(json.serviceUuids[key]);
+        }
+      }
+    }
+    if(typeof(this.extendEvalJson) === "function"){
+      this.extendEvalJson(json);
+    }
+  
+  
   };
   builder.prototype.setRow = function(type,data){
     this.rows[type] = data;
@@ -559,13 +556,30 @@ Ble.prototype.dataBuliderPrototype = function(){
 } 
 
 
-Ble.prototype.advDataBulider = function(){
+Ble.prototype.advDataBulider = function(jsonVal){
   var builder = this.dataBuliderPrototype();
   
   builder.prototype.check = function(){
   
     return true;
   };
+  
+  builder.prototype.extendEvalJson = function(json){
+    if(json){
+      if (json.flags) {
+        if (json.flags.includes("limited_discoverable_mode"))
+          this.setLeLimitedDiscoverableModeFlag();
+        if (json.flags.includes("general_discoverable_mode"))
+          this.setLeGeneralDiscoverableModeFlag();
+        if (json.flags.includes("br_edr_not_supported"))
+          this.setBrEdrNotSupportedFlag();
+        if (json.flags.includes("le_br_edr_controller"))
+          this.setLeBrEdrControllerFlag();
+        if (json.flags.includes("le_br_edr_host"))
+          this.setLeBrEdrHostFlag();
+      }
+    }
+  }
   
   builder.prototype.setFlags = function(flag){
     var data = this.getRow(0x01);
@@ -588,15 +602,25 @@ Ble.prototype.advDataBulider = function(){
     this.setFlags(0x10);
   };
   
-  return new builder(this.Obniz);
+  return new builder(this.Obniz,jsonVal);
 };
-Ble.prototype.scanRespDataBuilder = function(){
+Ble.prototype.scanRespDataBuilder = function(json){
   var builder = this.dataBuliderPrototype();
-  return new builder(this.Obniz);
+  return new builder(this.Obniz,json);
 };
 
 
 
+
+Ble.prototype.setScanRespRawData = function(scan_resp) {
+  var obj = {};
+  obj["ble"] = {};
+  obj["ble"]["advertisement"] = {
+      "scan_resp":scan_resp
+  };
+  this.Obniz.send(obj);
+  return;
+};
 
 Ble.prototype.setScanRespData = function(scan_resp) {
   var obj = {};
