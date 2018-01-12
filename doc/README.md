@@ -9,11 +9,11 @@ htmlでは、obniz.jsを読み込むことで利用できます。
 これにより最新のobniz.js取り込まれ、Obnizというオブジェクトがhtml内で使えるようになります。
 
 nodejsの場合はnpmによりinstallが可能です。
-```
+```shell
 npm install obniz
 ```
 installを行ったらjs内で
-```
+```javascript
 const Obniz = require('obniz');
 ```
 のようにすればobniz.jsが使えるようになります。
@@ -21,7 +21,7 @@ const Obniz = require('obniz');
 ## obnizに接続
 インターネット上のobnizに接続するにはobnizのidを指定してインスタンス化します。
 そして、接続が完了した時に呼ばれる関数を用意しておきます。
-```Javascript
+```javascript
 obniz = new Obniz("1234-5678");
 obniz.onconnect = function() {
   console.log("connected");
@@ -30,7 +30,7 @@ obniz.onconnect = function() {
 onconnectがなくてもObnizをインスタンス化した段階で常時接続を行います。
 また、切断されたら再度呼び出されます。
 切断されたときにはoncloseが呼ばれます
-```Javascript
+```javascript
 obniz = new Obniz("1234-5678");
 obniz.onconnect = function() {
   console.log("connected");
