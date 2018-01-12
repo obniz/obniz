@@ -1,6 +1,6 @@
-# Obniz
+# obniz SDK for javascript
 
-This is [obniz](https://obniz.io/) javascript library.
+This is [obniz](https://obniz.io/) javascript SDK.
 
 See details at [Document](https://obniz.io/doc)
 
