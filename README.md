@@ -1,6 +1,6 @@
-# Obniz
+# obniz SDK for javascript
 
-This is [obniz](https://obniz.io/) javascript library.
+This is [obniz](https://obniz.io/) javascript SDK.
 
 See details at [Document](https://obniz.io/doc)
 
@@ -19,14 +19,14 @@ You can build index.js by using _tools/server.js.
 You can clone this and use this from your HTML.
 After cloning. You are able to launch local server
 
-```
+```shell
  cd ./
  node _tools/server.js
 ```
 Then, http://localhost:3100/obniz.js is avaiable.
 So, You can include this from your HTML.
 Put this on top of the program
-```
+```html
 <div id="online-status"></div>
 <h1>obniz instant html</h1>
 

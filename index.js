@@ -112,7 +112,8 @@ Obniz.prototype.wsconnect = function(desired_server) {
     }
     if (obj["switch"]) { self["switch"].notified(obj["switch"]); }
     if (obj["ble"]) { self["ble"].notified(obj["ble"]); }
-    if (obj["logicanalyzer"]) { self["logicanalyzer"].notified(obj["logicanalyzer"]); }
+    if (obj["logicanalyzer"]) { self.logicanalyzer.notified(obj["logicanalyzer"]); }
+    if (obj["measure"]){ self.measure.notified(obj["measure"]); }
   };
 
   var wsOnClose = function(event) {
@@ -200,6 +201,7 @@ Obniz.prototype.init = function() {
   this.switch = new ObnizSwitch(this);
   this.logicanalyzer = new LogicAnalyzer(this);
   this.ble = new Ble(this);
+  this.measure = new ObnizMeasure(this);
 };
 
 Obniz.prototype.getIO = function(id) {
@@ -1038,6 +1040,38 @@ LogicAnalyzer.prototype.notified = function(obj) {
   return;
 };
 
+ObnizMeasure = function(Obniz) {
+  this.Obniz = Obniz;
+  this.observers = [];
+};
+
+ObnizMeasure.prototype.echo = function(io_pulse, pulse, pulse_widthUs, io_echo, measure_edges, timeoutUs, callback) {
+  var echo = {};
+  echo.io_pulse = io_pulse;
+  echo.pulse = pulse;
+  echo.pulse_width = pulse_widthUs;
+  echo.io_echo = io_echo;
+  echo.measure_edges = measure_edges;
+  echo.timeout = timeoutUs;
+
+  this.Obniz.send({
+    measure: {
+      echo: echo
+    }
+  });
+
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+ObnizMeasure.prototype.notified = function(obj) {
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(obj.echo);
+  }
+};
+
 PeripheralPWM = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
@@ -1497,6 +1531,62 @@ PIR_ekmc.prototype.isPressedWait = async function() {
 if (PartsRegistrate) {
   PartsRegistrate("PIR_ekmc", PIR_ekmc);
 }
+HCSR04 = function() {
+
+};
+
+HCSR04.prototype.wired = function(obniz, vcc, triger, echo, gnd) {
+  this.obniz = obniz;
+
+  this.gndIO = obniz.getIO(gnd);
+  this.vccIO = obniz.getIO(vcc);
+  this.triger = triger;
+  this.echo = echo;
+
+  this.gndIO.output(false);
+
+  this.unit = "mm";
+}
+
+HCSR04.prototype.measure = async function(callback) {
+
+  this.vccIO.output(true);
+  await this.obniz.wait(10);
+  var self = this;
+  this.obniz.measure.echo(this.triger, "positive", 0.02, this.echo, 2, 10/340*1000, function(edges){
+    self.vccIO.output(false);
+    self.obniz.getIO(self.triger).output(false);
+    self.obniz.getIO(self.echo).output(false);
+    var distance = null;
+    if (edges.length == 2) {
+      distance = (edges[1].timing-edges[0].timing) * 1000;
+      if (self.unit === "mm") {
+        distance = distance / 5.8;
+      } else if (self.unit === "inch") {
+        distance = distance / 148.0;
+      }
+    }
+    if (typeof(callback) === "function") {
+      callback(distance);
+    }
+  })
+}
+
+HCSR04.prototype.unit = function(unit) {
+  if (unit === "mm") {
+    this.unit = "mm";
+  } else if (unit === "inch") {
+    this.unit = "inch"
+  } else {
+    throw new Error("HCSR04: unknown unit "+unit);
+  }
+}
+
+// Module functions
+
+if (PartsRegistrate) {
+  PartsRegistrate("HC-SR04", HCSR04);
+}
 JoyStick = function() {
   
 };
@@ -1746,6 +1836,89 @@ PotentionMeter.prototype.onChange = function(callback) {
 
 if (PartsRegistrate) {
   PartsRegistrate("PotentionMeter", PotentionMeter);
+}
+RN42 = function() {
+
+};
+
+RN42.prototype.wired = function(obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gnd) {
+  this.obniz = obniz;
+
+  if(typeof(gnd) == "number") {
+    obniz.getIO(gnd).output(false);
+  }
+
+  this.uart = obniz.uart0;
+
+  obniz.getIO(tx_obniz_to_rn42).outputType("push-pull3v");
+  this.uart.start(tx_obniz_to_rn42, rx_obniz_from_rn42, 9600);
+  var self = this;
+  this.uart.onreceive = function(data, text) {
+    // this is not perfect. separation is possible.
+    if (text.indexOf("CONNECT") >= 0) {
+      console.log("connected");
+    } else if(text.indexOf("DISCONNECT") >= 0) {
+      console.log("disconnected");
+    }
+    if (typeof(self.onreceive) == "function") {
+      self.onreceive(data, text);
+    }
+  }
+}
+
+RN42.prototype.send = function(data) {
+  this.uart.send(data);
+}
+
+RN42.prototype.enterCommandModeWait = async function() {
+  this.send('$$$');
+  await this.obniz.wait(500);
+}
+
+/* configration is under construction */
+    // // SM,0 Slave
+    // // SH,0200 HID Flag register. Descriptor=keyboard
+    // // SA,2 no pin code
+    // // SY,FFF4  power -5dbm
+    // // SI,0050 inqury scna interval
+    // // SJ,0050 pagescan interval
+    // // SW,00A0 sniff interval 100ms
+    // // SO,I show connection state start with 'I'
+RN42.prototype.configWait = async function(json) {
+  await this.enterCommandModeWait();
+  if (typeof(json) !== "object") {
+    // TODO: warning
+    return;
+  }
+  if (json.profile) {
+    this.config_profile(json.profile);
+  }
+  if (json.name) {
+    this.config_deviceName(json.name);
+  }
+  this.config_reboot();
+}
+
+RN42.prototype.config_reboot = async function() {
+  this.send('R,1');
+}
+
+RN42.prototype.config_deviceName = async function(name) {
+  this.send('SN,'+name);
+}
+
+RN42.prototype.config_profile = async function(id) {
+  if (id==="HID") {
+    id = 6;
+  }
+  this.send('S~,'+id);
+}
+/* configration is under construction */
+
+// Module functions
+
+if (PartsRegistrate) {
+  PartsRegistrate("RN42", RN42);
 }
 ServoMotor = function() {
 
