@@ -112,7 +112,8 @@ Obniz.prototype.wsconnect = function(desired_server) {
     }
     if (obj["switch"]) { self["switch"].notified(obj["switch"]); }
     if (obj["ble"]) { self["ble"].notified(obj["ble"]); }
-    if (obj["logicanalyzer"]) { self["logicanalyzer"].notified(obj["logicanalyzer"]); }
+    if (obj["logicanalyzer"]) { self.logicanalyzer.notified(obj["logicanalyzer"]); }
+    if (obj["measure"]){ self.measure.notified(obj["measure"]); }
   };
 
   var wsOnClose = function(event) {
@@ -200,6 +201,7 @@ Obniz.prototype.init = function() {
   this.switch = new ObnizSwitch(this);
   this.logicanalyzer = new LogicAnalyzer(this);
   this.ble = new Ble(this);
+  this.measure = new ObnizMeasure(this);
 };
 
 Obniz.prototype.getIO = function(id) {

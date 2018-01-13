@@ -36,7 +36,15 @@
       ]
     },
     {
-      "name": "Sensor Move",
+      "name": "Bluetooth",
+      "parts": [
+        {
+          "name": "RN42"
+        }
+      ]
+    },
+    {
+      "name": "Sensor Movement",
       "parts": [
         {
           "name": "Button"
@@ -52,6 +60,14 @@
         },
         {
           "name": "JoyStick"
+        }
+      ]
+    },
+    {
+      "name": "Sensor Distance",
+      "parts": [
+        {
+          "name": "HC-SR04"
         }
       ]
     },

@@ -112,7 +112,8 @@ Obniz.prototype.wsconnect = function(desired_server) {
     }
     if (obj["switch"]) { self["switch"].notified(obj["switch"]); }
     if (obj["ble"]) { self["ble"].notified(obj["ble"]); }
-    if (obj["logicanalyzer"]) { self["logicanalyzer"].notified(obj["logicanalyzer"]); }
+    if (obj["logicanalyzer"]) { self.logicanalyzer.notified(obj["logicanalyzer"]); }
+    if (obj["measure"]){ self.measure.notified(obj["measure"]); }
   };
 
   var wsOnClose = function(event) {
@@ -200,6 +201,7 @@ Obniz.prototype.init = function() {
   this.switch = new ObnizSwitch(this);
   this.logicanalyzer = new LogicAnalyzer(this);
   this.ble = new Ble(this);
+  this.measure = new ObnizMeasure(this);
 };
 
 Obniz.prototype.getIO = function(id) {
@@ -1037,6 +1039,38 @@ LogicAnalyzer.prototype.notified = function(obj) {
   return;
 };
 
+ObnizMeasure = function(Obniz) {
+  this.Obniz = Obniz;
+  this.observers = [];
+};
+
+ObnizMeasure.prototype.echo = function(io_pulse, pulse, pulse_widthUs, io_echo, measure_edges, timeoutUs, callback) {
+  var echo = {};
+  echo.io_pulse = io_pulse;
+  echo.pulse = pulse;
+  echo.pulse_width = pulse_widthUs;
+  echo.io_echo = io_echo;
+  echo.measure_edges = measure_edges;
+  echo.timeout = timeoutUs;
+
+  this.Obniz.send({
+    measure: {
+      echo: echo
+    }
+  });
+
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+ObnizMeasure.prototype.notified = function(obj) {
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(obj.echo);
+  }
+};
+
 PeripheralPWM = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
@@ -1495,6 +1529,62 @@ PIR_ekmc.prototype.isPressedWait = async function() {
 
 if (PartsRegistrate) {
   PartsRegistrate("PIR_ekmc", PIR_ekmc);
+}
+HCSR04 = function() {
+
+};
+
+HCSR04.prototype.wired = function(obniz, vcc, triger, echo, gnd) {
+  this.obniz = obniz;
+
+  this.gndIO = obniz.getIO(gnd);
+  this.vccIO = obniz.getIO(vcc);
+  this.triger = triger;
+  this.echo = echo;
+
+  this.gndIO.output(false);
+
+  this.unit = "mm";
+}
+
+HCSR04.prototype.measure = async function(callback) {
+
+  this.vccIO.output(true);
+  await this.obniz.wait(10);
+  var self = this;
+  this.obniz.measure.echo(this.triger, "positive", 0.02, this.echo, 2, 10/340*1000, function(edges){
+    self.vccIO.output(false);
+    self.obniz.getIO(self.triger).output(false);
+    self.obniz.getIO(self.echo).output(false);
+    var distance = null;
+    if (edges.length == 2) {
+      distance = (edges[1].timing-edges[0].timing) * 1000;
+      if (self.unit === "mm") {
+        distance = distance / 5.8;
+      } else if (self.unit === "inch") {
+        distance = distance / 148.0;
+      }
+    }
+    if (typeof(callback) === "function") {
+      callback(distance);
+    }
+  })
+}
+
+HCSR04.prototype.unit = function(unit) {
+  if (unit === "mm") {
+    this.unit = "mm";
+  } else if (unit === "inch") {
+    this.unit = "inch"
+  } else {
+    throw new Error("HCSR04: unknown unit "+unit);
+  }
+}
+
+// Module functions
+
+if (PartsRegistrate) {
+  PartsRegistrate("HC-SR04", HCSR04);
 }
 JoyStick = function() {
   
