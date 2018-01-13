@@ -635,9 +635,9 @@ Ble.prototype.startScan = function(settings) {
   obj["ble"] = {};
   obj["ble"]["scan"] = {
     "settings" : {
-      "targetUuid" : settings.targetUuid ? settings.targetUuid : null,
-      "interval" : settings.interval ? settings.interval : 30,
-      "duration" : settings.duration ? settings.duration : 30,
+      "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+      "interval" : settings && settings.interval ? settings.interval : 30,
+      "duration" : settings && settings.duration ? settings.duration : 30,
     },
     "status":"start"
   };
@@ -781,6 +781,7 @@ BleRemotePeripheral.prototype.iBeacon = function(){
 
 
 BleRemotePeripheral.prototype.connect = function(){
+  
   throw new Error("todo");
 };
 

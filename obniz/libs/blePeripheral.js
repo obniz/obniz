@@ -99,6 +99,7 @@ BleRemotePeripheral.prototype.iBeacon = function(){
 
 
 BleRemotePeripheral.prototype.connect = function(){
+  
   throw new Error("todo");
 };
 
