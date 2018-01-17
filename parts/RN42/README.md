@@ -2,6 +2,9 @@
 BluetoothClassic Module.
 SPP and HID profile can be used.
 
+<p data-height="367" data-theme-id="32184" data-slug-hash="JMmEJW" data-default-tab="js,result" data-user="obniz" data-embed-version="2" data-pen-title="Parts: RN42-HID" class="codepen">See the Pen <a href="https://codepen.io/obniz/pen/JMmEJW/">Parts: RN42-HID</a> by obniz (<a href="https://codepen.io/obniz">@obniz</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
 ## wired(obniz, tx_to_RN42, rx_from_RN42)
 RN42 require 3.3v supply. You should supply stable 3.3v to RN42.
 
