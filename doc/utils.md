@@ -40,6 +40,22 @@ console.log("before");
 await obniz.wait(1000);
 console.log("after 1 second");
 ```
+## freeze(ms)
+obniz wait for ms.
+Difference between wait() and freeze() is wait will wait on user size javascript but freeze will freeze obniz itself.
+And freeze will return soon.
+
+For example
+```Javascript
+console.log("before");
+obniz.io0.output(true);
+obniz.freeze(1000);
+obniz.io0.output(false);
+console.log("after 0 second");
+```
+"After 0 second" will be shown soon. Not 1000 msec after.
+But obniz will output io0 1sec. Because it freeze 1000msec.
+
 ## resetOnDisconnect(mustReset)
 obnizがWifiから切断した時に、ioの状態などをリセットするかどうかを設定できます。
 通常はリセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。

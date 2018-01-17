@@ -296,6 +296,14 @@ Obniz.prototype.wait = async function(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
 };
 
+Obniz.prototype.freeze = async function(msec) {
+  this.send({
+    system: {
+      wait: msec
+    }
+  });
+};
+
 Obniz.prototype.resetOnDisconnect = function(mustReset) {
   this.send({
     system: {

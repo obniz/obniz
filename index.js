@@ -296,6 +296,14 @@ Obniz.prototype.wait = async function(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
 };
 
+Obniz.prototype.freeze = async function(msec) {
+  this.send({
+    system: {
+      wait: msec
+    }
+  });
+};
+
 Obniz.prototype.resetOnDisconnect = function(mustReset) {
   this.send({
     system: {
@@ -1851,7 +1859,7 @@ RN42.prototype.wired = function(obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gnd
   this.uart = obniz.uart0;
 
   obniz.getIO(tx_obniz_to_rn42).outputType("push-pull3v");
-  this.uart.start(tx_obniz_to_rn42, rx_obniz_from_rn42, 9600);
+  this.uart.start(tx_obniz_to_rn42, rx_obniz_from_rn42, 115200);
   var self = this;
   this.uart.onreceive = function(data, text) {
     // this is not perfect. separation is possible.
@@ -1870,50 +1878,152 @@ RN42.prototype.send = function(data) {
   this.uart.send(data);
 }
 
-RN42.prototype.enterCommandModeWait = async function() {
-  this.send('$$$');
-  await this.obniz.wait(500);
+RN42.prototype.sendCommand = function(data) {
+  this.uart.send(data+'\n');
+  this.obniz.freeze(100);
 }
 
-/* configration is under construction */
-    // // SM,0 Slave
-    // // SH,0200 HID Flag register. Descriptor=keyboard
-    // // SA,2 no pin code
-    // // SY,FFF4  power -5dbm
-    // // SI,0050 inqury scna interval
-    // // SJ,0050 pagescan interval
-    // // SW,00A0 sniff interval 100ms
-    // // SO,I show connection state start with 'I'
-RN42.prototype.configWait = async function(json) {
-  await this.enterCommandModeWait();
+RN42.prototype.enterCommandMode = function() {
+  this.send('$$$');
+  this.obniz.freeze(100);
+}
+
+RN42.prototype.config = function(json) {
+  this.enterCommandMode();
   if (typeof(json) !== "object") {
     // TODO: warning
     return;
   }
+  // remove noize data
+  this.sendCommand("");
+
+  if (json.master_slave) {
+    this.config_masterslave(json.master_slave);
+  }
+  if (json.auth) {
+    this.config_auth(json.auth);
+  }
+  if (json.hid_flag) {
+    this.config_HIDflag(json.hid_flag);
+  }
   if (json.profile) {
     this.config_profile(json.profile);
   }
-  if (json.name) {
-    this.config_deviceName(json.name);
+  if (json.power) {
+    this.config_power(json.power);
+  }
+  if (json.display_name) {
+    this.config_displayName(json.display_name);
   }
   this.config_reboot();
 }
 
-RN42.prototype.config_reboot = async function() {
-  this.send('R,1');
+RN42.prototype.config_reboot = function() {
+  this.sendCommand('R,1');
 }
 
-RN42.prototype.config_deviceName = async function(name) {
-  this.send('SN,'+name);
-}
-
-RN42.prototype.config_profile = async function(id) {
-  if (id==="HID") {
-    id = 6;
+RN42.prototype.config_masterslave = function(mode) {
+  var val = -1;
+  if (typeof(mode) == "number") {
+    val = mode;
+  } else if (typeof(mode) === "string") {
+    var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"]
+    for (var i=0; i<modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
   }
-  this.send('S~,'+id);
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('SM,'+val);
 }
-/* configration is under construction */
+
+RN42.prototype.config_displayName = function(name) {
+  this.sendCommand('SN,'+name);
+}
+
+    // // SH,0200 HID Flag register. Descriptor=keyboard
+RN42.prototype.config_HIDflag = function(flag) {
+  this.sendCommand('SH,'+flag);
+}
+
+RN42.prototype.config_profile = function(mode) {
+  var val = -1;
+  if (typeof(id) == "number") {
+    val = mode;
+  } else if (typeof(mode) === "string") {
+    var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"]
+    for (var i=0; i<modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('S~,'+val);
+}
+
+RN42.prototype.config_revert_localecho = function() {
+  this.sendCommand('+');
+}
+
+RN42.prototype.config_auth = function(mode) {
+  var val = -1;
+  if (typeof(mode) == "number") {
+    val = mode;
+  } else if (typeof(mode) === "string") {
+    var modes = ["open", "ssp-keyboard", "just-work", "pincode"]
+    for (var i=0; i<modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('SA,'+val);
+}
+
+RN42.prototype.config_power = function(dbm) {
+  
+  var val = "0010";
+  if (16 > dbm && dbm >= 12) {
+    val = "000C"
+  } else if (12 > dbm && dbm >= 8) {
+    val = "0008"
+  } else if (8 > dbm && dbm >= 4) {
+    val = "0004"
+  } else if (4 > dbm && dbm >= 0) {
+    val = "0000"
+  } else if (0 > dbm && dbm >= -4) {
+    val = "FFFC"
+  } else if (-4 > dbm && dbm >= -8) {
+    val = "FFF8"
+  } else if (-8 > dbm) {
+    val = "FFF4"
+  }
+
+  this.sendCommand('SY,'+val);
+}
+
+RN42.prototype.config_get_setting = function() {
+  this.sendCommand('D');
+}
+
+RN42.prototype.config_get_extendSetting = function() {
+  this.sendCommand('E');
+}
 
 // Module functions
 
