@@ -12,9 +12,12 @@
   "repository": "obniz/obniz",
   "author": "yukisato <yuki@yuki-sato.com>",
   "homepage": "https://obniz.io/",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "ws": "^3.1.0"
+  },
+  "bugs": {
+    "url": "https://web.obniz.io/forums/forum/obniz-forum/"
   },
   "private": false
 }
