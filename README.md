@@ -2,46 +2,42 @@
 
 This is [obniz](https://obniz.io/) javascript SDK.
 
-See details at [Document](https://obniz.io/doc)
+This document available on our site [Document](https://obniz.io/doc)
 
-## Build
-index.js is what we called obniz.js.  
-and this is build result.  
-index.js is made from two js below
-```
-  obniz/index.js  
-  parts/*/index.js  
-```
-So you should edit these js files. Not index.js on root directory.
-You can build index.js by using _tools/server.js.
+## install
 
-## Development
-You can clone this and use this from your HTML.
-After cloning. You are able to launch local server
+### on browser
 
-```shell
- cd ./
- node _tools/server.js
-```
-Then, http://localhost:3100/obniz.js is avaiable.
-So, You can include this from your HTML.
-Put this on top of the program
+Include index.js
 ```html
-<div id="online-status"></div>
-<h1>obniz instant html</h1>
-
-<script src="http://localhost:3100/obniz.js" crossorigin="anonymous"></script>
-<script>
-  var obniz = new Obniz("00000000");
-  obniz.onconnect = async function () {
-  }
-</script>
+  <script src="//parts.obniz.io/obniz.js"></script>
 ```
-It will OVERWRITE //parts.obniz.io/obniz.js
+### on nodejs
+Install obniz
+```shell
+  npm install obniz
+```
+and import it on js file.
+```javascript
+  const Obniz = require('obniz');
+```
 
-When you make something changed, server.js will generate index.js automatically.
+## connect and use hardwares
+Connect obniz and use hardwares
+```javascript
+  const Obniz = require('obniz');
 
+  var obniz = new Obniz("0000-0000");
+  obniz.onconnect = async function () {
+    obniz.display.print("hello!");
+    
+    var servo = obniz.wired("ServoMotor", 0, 1, 2);
+    servo.angle(90);
+  }
+```
+
+See more details on [Document](https://obniz.io/doc)
 
 ## Lisence
 
-All rights reserved.
+See [LICENSE.txt](./LICENSE.txt)
