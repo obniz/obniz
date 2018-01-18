@@ -1,11 +1,11 @@
-# Temperature Sensor - MCP9700
-温度センサMCP9700です。センサで取得した温度を知ることができます。
+# Temperature Sensor - MCP9701
+温度センサMCP9701です。センサで取得した温度を知ることができます。
 
 wired(obniz, 0, 1, 2)
 Obnizに温度センサをつなぎます。
 0,1,2はそれぞれ温度センサの電源,センサ出力,GNDへ接続してください。
 
-var tempsens = Parts("MCP9700");
+var tempsens = Parts("MCP9701");
 tempsens.wired(obniz, 0, 1, 2);
 
 

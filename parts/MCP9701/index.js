@@ -1,8 +1,8 @@
-MCP9700 = function() {
+MCP9701 = function() {
 
 };
 
-MCP9700.prototype.wired = function(obniz, pwr, signal, gnd) {
+MCP9701.prototype.wired = function(obniz, pwr, signal, gnd) {
   this.obniz = obniz;
   this.io_pwr = obniz.getIO(pwr);
   this.io_gnd = obniz.getIO(gnd);
@@ -16,7 +16,7 @@ MCP9700.prototype.wired = function(obniz, pwr, signal, gnd) {
 
   var self = this;
   this.ad.start(function(value){
-    self.temp = (value-0.5)/0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+    self.temp = (value-0.4)/0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
     if (self.onchange) {
       self.onchange(self.temp);
     }
@@ -24,10 +24,10 @@ MCP9700.prototype.wired = function(obniz, pwr, signal, gnd) {
 
 };
 
-MCP9700.prototype.onChange = function(callback) {
+MCP9701.prototype.onChange = function(callback) {
   this.onchange = callback;
 };
 
 if (PartsRegistrate) {
-  PartsRegistrate("MCP9700", MCP9700);
+  PartsRegistrate("MCP9701", MCP9701);
 }
