@@ -1,25 +1,29 @@
 # Peripherals IO
 General purpose IO
-io0からio11まで利用できます。
+available io0 to io11
 
 ## output(value)
-ObnizのX番ピンを出力ピンにして１または０を出力します。
+Make ioX to output mode and output ture or false.
 
 ```Javascript
 // Example
 obniz.io1.output(true); // io1 is 5V
 ```
+
 ## outputType(type)
-出力するときのドライブ方法を変更します。
-デフォルトではpush-pullとなっています。
+Change output drive method.
+By default, it is "push-pull".
 
 1. push-pull
+  - push-pull 5v mode. up to 1A available
 2. push-pull3v
+  - push-pull 3v mode. up to around 1mA. It's voltage will reduce by current.
 3. open-drain
+  - open-drain mode. It sink up to around 1mA.
 
-が利用可能です。
-既にoff()やon()などで出力しているときはpush-pull3vとopen-drainタイプの切り替えは即座に行われますが。push-pullへの切り替えやpush-pullから他のものへの切り替えは出力中は切り替えられません。
-inputにしてから次にoutputとして利用する時に適用されます。
+You can change "push-pull3v" and "open-drain" while output.
+But "push-pull" is not granted while output. You should change it to input onece.
+
 ```Javascript
 // Example
 obniz.io1.output(true); // output push-pull
@@ -28,11 +32,10 @@ obniz.io1.outputType("open-drain"); // changed immediately
 ```
 
 ## pullup5v()
-IOピンを5vで内部プルアップします。
-入力、もしくはオープンドレイン出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の状態のうちどれかとなります。
+intenal pullup to 5v with weak resistor.
+The state is one of them.
 
-1. float
+1. float (default) 
 2. pullup
 3. pullup5v
 4. pulldown
@@ -44,27 +47,24 @@ obniz.io1.outputType("open-drain"); // output open-drain
 ```
 
 ## pullup()
-IOピンを内部プルアップします。
-入力、もしくは3.3V出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の4状態のうちどれかとなります。
+intenal pullup to 3v with weak resistor.
+The state is one of them.
 
-1. float
+1. float (default) 
 2. pullup
 3. pullup5v
 4. pulldown
 
-オープンドレインの時にはpullupをすることが多いかと思います。
 ```Javascript
 // Example
 obniz.io1.pullup();
 obniz.io1.outputType("open-drain"); // output open-drain
 ```
 ## pulldown()
-IOピンを内部プルダウンします。
-入力、もしくは3.3V出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の4状態のうちどれかとなります。
+intenal pulldown to GND with weak resistor.
+The state is one of them.
 
-1. float
+1. float (default) 
 2. pullup
 3. pullup5v
 4. pulldown
@@ -76,11 +76,11 @@ obniz.io1.get();
 ```
 
 ## float()
-IOピンの内部プルアップを解除します。これがデフォルトです。
-入力、もしくは3.3V出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の4状態のうちどれかとなります。
+no pull-up pull-down.
+This is default state.
+The state is one of them.
 
-1. float
+1. float (default) 
 2. pullup
 3. pullup5v
 4. pulldown
@@ -92,8 +92,8 @@ var val = await obniz.io1.inputWait();
 ```
 
 ## input(callback)
-ピンに加わっている電圧を読みtrue/falseを読み取ります。
-true/falseの値が変わるたびにcallbackを呼び出します。
+Make ioX to input mode.
+and callback function will be called when io changed it's input value.
 ```Javascript
 // Example
 obniz.io0.input(function(value){
@@ -101,8 +101,9 @@ obniz.io0.input(function(value){
 });
 ```
 ## [await] inputWait
-ピンに加わっている電圧を読み結果をture/falseで返します。
-この関数を呼ぶことでピンをinputに設定し、値が返ってくるまで関数はwaitします。
+Make ioX to input mode.
+And This will return current input value.
+It will pause process.
 ```Javascript
 // Example
 var value = await obniz.io0.inputWait();

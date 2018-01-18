@@ -1,24 +1,20 @@
 # Peripherals PWM
-PWMを出力します。
-流せる電流はObnizによりますが、基本的に最大1Aまでです。詳しくはObnizのハードウェア仕様書を御覧ください。
-PWMは6チャンネル利用可能です。
-pwm0からpwm5までが利用できます。
+Output PWM.
+Maximum current is depends on driving mode. see [io](./io).
+pwm0 to pwm5 are available.
 
 ## obniz.getpwm()
-obnizが利用していないpwmモジュールを取得します。
-pwmはpwm０〜pwm５の６つが利用できますが、
-この関数を呼ぶことで利用中でないpwmを取得することが出来ます。
+it reutrn pwm module which currently not used.
 
 ```Javascript
 // Example
 var pwm = obniz.getpwm();
 ```
-もし利用できるpwmがない場合は例外が発生しプログラムは停止します。
+It will throw Error when no free pwm.
 
 ## start(io)
-
-pwmをnumberで指定したピンで開始します。
-開始直後はパルスは出力されません。
+start a pwm on given io.
+No pulse output on start.
 
 ```Javascript
 // Example
@@ -26,10 +22,8 @@ var pwm = obniz.getpwm();
 pwm.start(11); // start pwm. output at io11
 ```
 ## freq(frequency)
-
-PWMの発振周波数を指定します。
-パルスの幅ではなくパルスの出る間隔を規定します。
-DCモーターなどでは1khzなどが一般的です。
+set frequency. Not pulse duration.
+For example, this value will be 1khz with DC motor.
 
 ```Javascript
 // Example
@@ -38,37 +32,34 @@ pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm. frequency to 1khz
 ```
 ## pulse(width ms)
-
-PWMのパルス幅をミリ秒で指定します。
+set pulse duty with ms.
 
 ```Javascript
 // Example
 var pwm = obniz.getpwm();
 pwm.start(11); // start pwm. output at io11
-pwm.freq(1000); // set pwm frequency to 1khz
-pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  50% ratio.
+pwm.freq(2000); // set pwm frequency to 2khz
+pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  25% ratio.
 ```
 ## duty(ratio)
-
-PWMのパルス幅をデューティー比で指定します。
+set duty with ratio.
 
 ```Javascript
 // Example
 var pwm = obniz.getpwm();
 pwm.start(11); // start pwm. output at io11
-pwm.freq(1000); // set pwm frequency to 1khz
+pwm.freq(2000); // set pwm frequency to 2khz
 pwm.duty(50) // set pwm pulse witdh 50%
 ```
 ## forceWorking(true/false)
+obniz has overcurrent protection when outputType is "push-pull" 1A mode. Possibly, obniz will stop pwm when small DC motor or small coil is connected.
+In that case, set forceWorking(true).
+It let obniz to retry output pwm.
+This will work but it makes pulse shape dirty.
+So this setting will be used when pulse shape is not import such as dc motor and coils.
 
-5Vで小さなDCモーターなどをPWMから使う時に、抵抗が小さいためにちょっとしたノイズなどで過電流検知してしまいなかなか動かない場合があります。
-forceWorkingを指定することで過電流検知しても可能な限りリトライしPWMを継続します。
-これにより小さなDCモーターでも思った通りに動かすことが出来ます。
-ただ、PWMの波形が乱れるので、きれいな矩形波が出したい場合などには向かないです。
-DCモーターやコイルなどの多少乱れてでも継続して動いてほしい場合に利用して下さい。
-
-forceWorkingを指定しても過電流検知がOFFになるわけではありません。
-定期的にリセットを行うので、安全性に変わりはありません。
+Important. forceWorking never cancel overcurrent protection on "push-pull" mode.
+It just resetting it periodically. It still safe.
 
 ```Javascript
 // Example
@@ -79,14 +70,13 @@ pwm.duty(50) // set pwm pulse witdh 50%
 pwm.forceWorking(true)
 ```
 ## modulate(modulation type, interval sec, data)
-
-PWMの出力をarrayのデータにより変調します。
-変調方式は以下より選べます。
+modulate pwm with datas
+modulation can be choosed from below.
 
 1. "am"
 
-am変調は1であれば現在の周波数によりpwmの出力をONにして、duty比50%で出力し、０のときは出力しなくなります。
-信号のシンボル長も指定できます。
+In am modulation, data "1" measn output the pwm with duty 50%. "0" means stop pwm. io will be 0.
+You can configure symbol length.
 
 ```Javascript
 // Example
@@ -100,9 +90,7 @@ var arr = [255,0,0,0,0,0,0,255,255,254,1,192,62,3,255,254,3,192,63,255,192,60,3,
 pwm.modulate("am", 0.00007, arr); // am modulate. symbol length = 70usec.
 ```
 ## end();
-
-PWMの発振を停止します。
-出力で使われていたピンは開放されて入力になります。
+stop pwm. It will release io.
 
 ```Javascript
 // Example

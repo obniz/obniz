@@ -1,46 +1,38 @@
 # LogicAnalyzer
-ピンの状態を監視し、一定間隔で1,0の状態を取得します。
-信号が送られているかの確認などに利用できます。
-データ量の制限から、ピンの状態が変化してからある時間だけのデータを取得します。
+LogicAnalyzer collect values readed from io periodically.
+This is useful when digital bus signal check.
+This monitors will start when io changed.
 
-## logicanalyzer.start(number, float, float);
 
-ioでのロジックアナライザーをスタートさせます。
-モニター間隔と全体の時間を指定できます。
-ピンに状態の変化がない場合。もしくは、変化があっても検出できないぐらい短かった場合は何もデータを受け取ることが出来ません。
-変化が見つかってから決められた間隔・決められた時間分のデータを受け取れます。
-データの受け取り方はonmeasured callbackを設定するか、もしくはmeasured変数から読み出す方法があります。
-例えば変化があってから1msごとに1秒分のピンの1,0を取得したい場合は以下のように設定します。
+## logicanalyzer.start(io, interval, data_long);
+start logic analyzer on given io.
+interval measn period(second) reading io value.
+data_long measn how long does logcanalyzer collect the data.
 
+For example, collect the data from io0 changed, 1msec period and 1sec long
 ```Javascript
 // Example
 obniz.logicanalyzer.start(0, 0.001, 1);  // start on io0. 1msec interval and 1sec long.
-logicanalyzer.onmeasured = function(array) {
+obniz.logicanalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
-## logicanalyzer.onmeasured
-
-実際にデータを受け取るためのcallbackです。
-データはioのピン状態の配列になっています。
-1bitがある瞬間のioの0,1を表しています。
-例えば1msec intervalの場合で
-[0x01, 0x00]
-といったデータを受け取った場合、
-最初の瞬間だけioが1でそれ以降の15bit分は0だったことがわかります。
-つまり、1msecだけioは1で、それ以降の15msecはioは0だったと推定されます。
+## logicanalyzer.onmeasured(bytes)
+callback function which be called when data arrived.
+arrived data is byte array.
+and it's every bit is measured data on every period.
+For example, [0x01, 0x00] means io0 is onece high(around 1msec) but after that, it stay 0.
 
 ```Javascript
 // Example
 obniz.logicanalyzer.start(0, 0.001, 1);  // start on io0. 1msec interval and 1sec long.
 
-logicanalyzer.onmeasured = function(array) {
+obniz.logicanalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
 ## logicanalyzer.end()
-
-ロジックアナライザーを停止します。
+Stop the logic analyzer.
 
 ```Javascript
 // Example

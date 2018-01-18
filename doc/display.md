@@ -1,33 +1,30 @@
 # Display
-ObnizにあるOLEDディスプレイに文字を出したり絵を出したり出来ます。
+OLED display on obniz.
 
 ## display.clear();
-
-画面に表示されているものをすべてクリアします。
+clear the display.
 
 ```Javascript
 // Example
 obniz.display.clear();
 ```
 ## display.print(string);
-
-文字を表示します。半角英数字にのみ対応しています。
+print text on display.
 
 ```Javascript
 // Example
 obniz.display.print("Hello!");
 ```
 ## display.qr(data, correction)
-
-QRコードを表示します。dataは現在文字列にのみ対応しています。
-correctionはエラー訂正レベルで
+show QR code with given text and correction level.
+correction level can be choosed from
 
 1. L
 2. M(default)
 3. Q
 4. H
 
-から選べます。Lにすると強いエラー訂正が入ります。
+H is the strongest error correction.
 
 ```Javascript
 // Example

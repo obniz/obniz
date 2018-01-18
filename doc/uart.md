@@ -1,41 +1,33 @@
 # Peripherals UART
-UARTモジュールです。
-UARTは２つ利用可能で、
-uart0からuart1までです。
+uart0 and uart1 is available
 
-## start(tx, rx)
-
-uartを開始します。
-txで指定したピンが送信でそこからデータがobnizから送信され、rxで指定したピンで受信します。
-通信設定は以下のとおりです。
+## start(tx, rx, baud, stop, bits, parity, flow control, rts, cts)
+start uart on io tx, rx.
+tx is used for send data from obniz to parts.
+rx is used for receive data from parts to obniz.
+you can start uart without many configration. Just use like
+```javascript
+obniz.uart0.start(1, 2)
+```
+default configrations are
 
 Defaults
-- 速度 115200bps
-- 非同期
-- フローコントロールなし
+- 115200bps
+- Async
+- Now Flow Control
 - 8bit
-- パリティなし
-- 1 ストップビット
+- No Parity
+- 1 Stopbit
 
-```Javascript
-// Example
-obniz.uart0.start(1, 2); // pin 1 is output, 2 is input
-obniz.uart0.send("Hi");
-```
-## start(tx, rx, baud, stop, bits, parity, flow control, rts, cts)
-
-オプション付きでuartを開始します。
-通信速度やフローコントロールの有無を指定して開始します。
-設定をデフォルトのまま変えたくない場合はその箇所でnullを渡します。
-利用可能な設定は
+available configrations are
 
 1. baud: number (default 115200)
-2. stop: ストップビット幅 数値で 1(default)/1.5/2
-3. bits: データ幅 数値で 8(default)/5/6/7
-4. parity: パリティチェック 文字列で "off"(default)/"odd"/"even"
-5. flowcontrol: フローコントロール 文字列で "off"(default)/"rts"/"cts"/"rts-cts"
-6. rts: rtsで利用するピン番号 数値
-7. cts: ctsで利用するピン番号 数値
+2. stop: stopbit length 1(default)/1.5/2
+3. bits: data bits 8(default)/5/6/7
+4. parity: paritty check "off"(default)/"odd"/"even"
+5. flowcontrol: flow control "off"(default)/"rts"/"cts"/"rts-cts"
+6. rts: io for rts
+7. cts: io for cts
 
 
 ```Javascript
@@ -44,28 +36,25 @@ obniz.uart0.start(1, 2, 9200, null, 7);  // speed changed to 9200. bits = 7bit
 obniz.uart0.send("Hi");
 ```
 ## send(data)
+send a data.
+available formats are
 
-データを送信します。
-dataで送れるものは
-
-- 文字
-- 数字 => 1byteのデータになります
-- 数字の配列 => １つ１つ1byteのデータとして送信されます
-- オブジェクト => 文字になります
-- Buffer => そのまま送信されます
+- string
+- number => will be one byte data
+- array of number => array of bytes
+- object => converted to json string
+- Buffer => array of bytes
 
 ```Javascript
 // Example
 obniz.uart0.start(1, 2); // 1 is output, 2 is input
 obniz.uart0.send("Hi");
-Example
-
-obniz.uart0.start(1, 2); // 1 is output, 2 is input
+obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
+obniz.uart0.send({success: true});
 ```
 ## end()
-
-uartを停止します。uartで使われていたピンは入力となります
+stop uart. it will release io.
 
 ```Javascript
 // Example
@@ -73,11 +62,14 @@ obniz.uart0.start(1, 2);
 obniz.uart0.send("Hi");
 obniz.uart0.end();
 ```
-## onreceive
+## onreceive(data, text)
+callback function when data recieved.
+data is array of bytes.
+text is same data. but it was text representation.
 
-データを受信した時に呼び出されます。
-第一引数のdataは受信したデータをarrayとして受け取れます。
-第二引数のtextは受信したarrayをtextとして変換したものです。
+So, if obniz receive 'A'.  
+data is [0x41]  
+text is "A"  
 
 ```Javascript
 // Example

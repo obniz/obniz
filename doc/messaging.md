@@ -1,15 +1,50 @@
 # Messaging
-obnizはHTTPリクエストやTwitterでのイベントなど、
-インターネット上で何か起きた時にそれをメッセージとして受け取る機能があります。
+obniz can receive and transfer datas from HTTP request to an obniz.
 
-また、その機能を使ってobnizから他のobnizにメッセージを送ることが出来ます。
-メッセージは文字でもデータでもOKです。
 
-## Example
-実際に見てみましょう。
-仮にボタンを押すことで世界中にある別々の10台のロボットの右手を同時に上げたい場合です。
 
-まず、ボタンだけが繋がったobnizを用意して、押された時にmessageを送るようにします。
+## API - obniz messaging
+you can send a message to an obniz by calling the REST API.
+
+```
+GET https://obniz.io/obniz/{obniz_id}/message?data={what you want to send}
+```
+
+for example send "move" text message to obniz 0000-0000
+```
+GET https://obniz.io/obniz/0000-0000/message?data=move
+```
+
+And then, obniz 0000-0000 will get the message.
+You can do something on that event.
+404 return when obniz is not online.
+
+```Javascript
+// Example
+obniz.onconnect = function() {
+  var motor = obniz.wired("ServoMotor", 0 , 1, 2);
+
+  motor.angle(0);
+  obniz.onmessage = function(message, from) {
+    if (message === "move") {
+      motor.angle(85);
+    }
+  };
+}
+```
+
+You can do with POST method. It accept multiple destinations.
+```
+POST https://obniz.io/obniz/message
+```
+Parameters
+
+- to:  destionation separated "," 
+- data: message
+
+## obniz - obniz messaging
+For example, press one button to move 10 robot's hand.
+First prepare obniz with one button connected. and send a message to 10 obniz when button pressed.
 ```Javascript
 // Example
 obniz.onconnect = function(){
@@ -33,44 +68,19 @@ obniz.onconnect = function(){
     });
  }
 ```
-targetsで書かれているのは送りたい相手のobnizのidです。
+targets is destination. and "pressed" is message.
 
-そしてこれを受け取りたいobnizではメッセージを受け取ったら右手につながっているサーボモーターを回すようにします。
+10 obniz will handle this message on onmessage function. In that function, move servomotor regarding the message.
 ```Javascript
 // Example
 obniz.onconnect = function() {
-    var motor = Parts("ServoMotor");
-    motor.wired(obniz, 0 , 1, 2);
+  var motor = obniz.wired("ServoMotor", 0 , 1, 2);
 
-    motor.angle(0);
-    obniz.onmessage = function(message, from) {
-      if (message === "pressed") {
-        motor.angle(85);
-      }
-    };
+  motor.angle(0);
+  obniz.onmessage = function(message, from) {
+    if (message === "pressed") {
+      motor.angle(85);
+    }
+  };
 }
 ```
-これを1234-1234-1231を始めとする１０台で実行しておけば、
-ボタンが押された時に"pressed"メッセージが10台に届き、一斉にモーターが回りロボットの右手が上がります。
-
-## API
-obnizにHTTPリクエストでメッセージを送ることが出来ます。
-obnizごとにAPIが用意されています。
-
-```
-GET https://obniz.io/obniz/{obniz_id}/message?data={what you want to send}
-```
-
-obniz_idのobnizに対してdataのメッセージを送信できます。
-この場合fromはnullになります。 
-また、送信した時にobnizがオフラインの場合は404となります。
-
-一斉に多くのobnizにメッセージを送る場合はPOSTメソッドを利用できます。
-```
-POST https://obniz.io/obniz/message
-```
-Parameters
-
-- to:  宛先を,で分けた文字列
-- data: 送りたいmessage
-

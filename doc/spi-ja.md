@@ -1,10 +1,11 @@
 # Peripherals SPI
-General Purpose SPI
-spi0 and spi1 are available.
-Max speed is 80Mhz.
+General Purpose SPIです。spi0, spi1の２つが利用できます。
+最大通信速度は80Mhzです。
 
 ## start(mode, io_clk, io_mosi, io_miso, frequency);
-start spi. now mode is only "master"
+
+spiをスタートさせます。
+modeは"master"のみに対応しています。
 
 ```Javascript
 // Example
@@ -14,8 +15,9 @@ var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
 ```
 ## [await] writeWait(data);
-send a data to spi and wait until receive the data.
-receive data length is same as sent data.
+
+spiにデータを送信します。
+spiは送信したデータの分だけ受信します。受信したデータは返り値として返ってきます
 
 ```Javascript
 // Example

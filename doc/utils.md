@@ -1,11 +1,8 @@
 # Utils
-obnizをプログラムから使う上で便利な関数を用意しています。
+Useful functions on obniz
 
 ## reset()
-obnizとの接続が切れても、obnizは最後の状態を保ちます。
-例えばLEDをonにしたまま切れたとしてもLEDはついたままです。
-もし、そういったすべての設定をもとに戻したい場合はobniz.reset()を呼ぶと
-obnizを電源を入れた時と同じ状態に出来ます。
+force set obniz the state same as power on.
 
 ```Javascript
 // Example
@@ -16,10 +13,8 @@ obniz.onconnect = function() {
 ```
 
 ## repeat(callback)
-obnizがつながっている間に繰り返し実行したい関数を渡すと実行します。
-obniz切断時には呼ばれなくなります。
-待つための関数を呼ばなくてもスレッドがフリーズすることはありません。
-javascript言語から考えると、無限にループするよりはcallback関数を利用することをおすすめします。
+repeat will call callback function periodically.
+It stop calling when disconnected from obniz.
 ```Javascript
 // Example
 obniz.ad0.start();
@@ -32,8 +27,7 @@ obniz.repeat(function(){
 })
 ```
 ## [await] wait(ms)
-ms(ミリ秒)で指定された値だけ停止します。
-await を利用することでその時間だけ実際にプログラムを停止させることが可能です。
+Pause javascript processing until givem ms.
 ```Javascript
 // Example
 console.log("before");
@@ -57,10 +51,10 @@ console.log("after 0 second");
 But obniz will output io0 1sec. Because it freeze 1000msec.
 
 ## resetOnDisconnect(mustReset)
-obnizがWifiから切断した時に、ioの状態などをリセットするかどうかを設定できます。
-通常はリセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
-この関数でそれを無効にし、リセットしないようにできます。
-この設定はobnizの電源が切れない限りはずっと保持されます。
+By default. obniz will reset after disconnect from cloud.
+It measn output value and pwms are all stop at that time.
+this function can set "do not reset when offline".
+This configration will consist until obniz power down.
 ```Javascript
 // Example
 obniz.resetOnDisconnect(false);

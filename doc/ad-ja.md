@@ -1,13 +1,15 @@
 # Peripheral AD
-Read analog voltage of io.
-ad0(on io0) to ad11 are available.
+ピンの電圧読み取りができます。
+obnizにあるピン全てで利用可能です。
+ad0(io0)からad11まであります。
 
-ad is independent peripheral.
-ad will work while IO is used for another function like io.output, io.input, pwm, etc.  
+adは他のペリフェラルとは独立しています。
+adはioのoutputやpwmなどが使われていても同じピンで同時につかうことができます。
+
 
 ## start(callback)
-start measuring voltage on ioX until end() called.
-call callback function when voltage was changed.
+X番ピンでの電圧計測を開始します。
+X番ピンの電圧が変わったときはコールバック関数を呼び出します。
 
 ```Javascript
 // Example
@@ -16,8 +18,8 @@ obniz.ad0.start(function(voltage){
   console.log("changed to "+voltage+" v")
 });
 ```
-You can start without callback function.
-callback function can be set at anytime.
+callbackはなくても大丈夫です。
+後で設定することも可能です。
 
 ```Javascript
 // Example
@@ -28,8 +30,7 @@ obniz.ad0.onchange = function(voltage){
 }
 ```
 
-You can get voltage without callback.
-The value will be stored ```value``` variable.
+また、関数を使わなくても値は```value```に保存されるので、それを読み出すこともできます。
 
 ```Javascript
 // Example
@@ -41,7 +42,7 @@ while(true) {
 }
 ```
 ## [await] getWait()
-measure voltage onece. and reutrn it's value.
+adを１度だけ実行して値を受け取ります。
 
 ```Javascript
 // Example
@@ -50,7 +51,7 @@ var voltage = await obniz.ad0.getWait();
 console.log("voltage = "+voltage+" v");
 ```
 ## end()
-Stop measuring voltage on ioX.
+Xピンでの電圧計測を停止します。
 
 ```Javascript
 // Example
@@ -58,7 +59,7 @@ obniz.ad0.start();
 obniz.ad0.stop();
 ```
 ## onchange
-This is callback function when voltage of ioX changed.
+startした後に電圧が変化したら呼び出されるコールバック関数です。
 
 ```Javascript
 // Example
