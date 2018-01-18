@@ -6,14 +6,12 @@
 ## wired(obniz, pin0, pin1, pin2)
 ポテンションメーターの３本のピンをそれぞれpin0, 1, 2として接続します。pin0とpin2は逆でも構いません。（回転が逆になりますが）
 ```Javascript
-var meter = Parts("PotentionMeter");
-meter.wired(obniz, 0, 1, 2);
+var meter = obniz.wired("PotentionMeter", 0, 1, 2);
 ```
 ## onChange(callback)
 回転を監視し、回転された時にcallback関数を呼び出します。回転に合わせて0~1の値が返ります。例えばちょうど真ん中であれば0.5です。
 ```Javascript
-var meter = Parts("PotentionMeter");
-meter.wired(obniz, 0, 1, 2);
+var meter = obniz.wired("PotentionMeter", 0, 1, 2);
 meter.onChange(function(position) {
   console.log("position: "+position);
 });

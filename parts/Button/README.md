@@ -8,15 +8,13 @@ wired(obniz, button_0, button_1)
 
 
 ```Javascript
-var button = Parts("Button");
-button.wired(obniz, 0, 1);
+var button = obniz.wired("Button", 0, 1);
 ```
 ## onChange(callback)
  ボタンの状態を監視し、ボタンが押された時、離された時に<br>callback関数を呼び出します。
 
 ```Javascript
-var button = Parts("Button");
-button.wired(obniz, 0, 1);
+var button = obniz.wired("Button", 0, 1);
 button.onChange(function(pressed){
   console.log("pressed:" + pressed)
 });
@@ -25,8 +23,7 @@ button.onChange(function(pressed){
 ## [async] isPressedWait
 ボタンが押されているかを確認します。
 ```Javascript
-var button = Parts("Button");
-button.wired(obniz, 0, 1);
+var button = obniz.wired("Button", 0, 1);
 var pressed = await button.isPressedWait();
 console.log("Pressed = " + pressed);
 ```

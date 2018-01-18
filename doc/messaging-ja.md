@@ -50,8 +50,7 @@ obniz間のメッセージングです。実際に見てみましょう。
 ```Javascript
 // Example
 obniz.onconnect = function(){
-    var button = Parts("Button");
-    button.wired(obniz, 0 , 1);
+    var button = obniz.wired("Button", 0, 1);
 
     button.onChange(function(){
       var targets = [
@@ -76,8 +75,7 @@ targetsで書かれているのは送りたい相手のobnizのidです。
 ```Javascript
 // Example
 obniz.onconnect = function() {
-    var motor = Parts("ServoMotor");
-    motor.wired(obniz, 0 , 1, 2);
+    var motor = obniz.wired("ServoMotor", 0 , 1, 2);
 
     motor.angle(0);
     obniz.onmessage = function(message, from) {

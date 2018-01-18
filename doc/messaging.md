@@ -48,8 +48,7 @@ First prepare obniz with one button connected. and send a message to 10 obniz wh
 ```Javascript
 // Example
 obniz.onconnect = function(){
-    var button = Parts("Button");
-    button.wired(obniz, 0 , 1);
+    var button = obniz.wired("Button", 0, 1);
 
     button.onChange(function(){
       var targets = [

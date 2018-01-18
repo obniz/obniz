@@ -23,7 +23,7 @@ and import it on js file.
 ```
 
 ## connect and use hardwares
-To use obniz, intantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
+To use obniz, instantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
