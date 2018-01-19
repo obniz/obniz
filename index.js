@@ -1781,8 +1781,111 @@ if (PartsRegistrate) {
   PartsRegistrate("LED", LED);
 }
 
+LM35DZ = function() {
+
+};
+
+LM35DZ.prototype.wired = function(obniz, pwr, signal, gnd) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(signal);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = value * 100; //Temp(Celsius) = [AD Voltage] * 100
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+LM35DZ.prototype.onChange = function(callback) {
+  this.onchange = callback;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM35DZ", LM35DZ);
+}
+
+LM60 = function() {
+
+};
+
+LM60.prototype.wired = function(obniz, pwr, signal, gnd) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(signal);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad.start(function(value){
+    console.log(value)
+    self.temp = Math.round(((value-0.424)/0.00625)*10)/10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+LM60.prototype.onChange = function(callback) {
+  this.onchange = callback;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM60", LM60);
+}
+
+LM61 = function() {
+
+};
+
+LM61.prototype.wired = function(obniz, pwr, signal, gnd) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(signal);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = Math.round((value-0.6)/0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+LM61.prototype.onChange = function(callback) {
+  this.onchange = callback;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM61", LM61);
+}
+
 MCP9700 = function() {
-  
+
 };
 
 MCP9700.prototype.wired = function(obniz, pwr, signal, gnd) {
@@ -1790,21 +1893,21 @@ MCP9700.prototype.wired = function(obniz, pwr, signal, gnd) {
   this.io_pwr = obniz.getIO(pwr);
   this.io_gnd = obniz.getIO(gnd);
   this.ad = obniz.getAD(signal);
-  
+
   this.io_pwr.output(true);
   if (gnd) {
     this.io_gnd = obniz.getIO(gnd);
     this.io_gnd.output(false);
   }
-    
+
   var self = this;
   this.ad.start(function(value){
-    self.temp = (value-0.5)/0.01;
+    self.temp = (value-0.5)/0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
     if (self.onchange) {
       self.onchange(self.temp);
     }
   });
-  
+
 };
 
 MCP9700.prototype.onChange = function(callback) {
@@ -1814,6 +1917,41 @@ MCP9700.prototype.onChange = function(callback) {
 if (PartsRegistrate) {
   PartsRegistrate("MCP9700", MCP9700);
 }
+
+MCP9701 = function() {
+
+};
+
+MCP9701.prototype.wired = function(obniz, pwr, signal, gnd) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(signal);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = (value-0.4)/0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+MCP9701.prototype.onChange = function(callback) {
+  this.onchange = callback;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("MCP9701", MCP9701);
+}
+
 PotentionMeter = function() {
   
 };
@@ -2030,6 +2168,92 @@ RN42.prototype.config_get_extendSetting = function() {
 if (PartsRegistrate) {
   PartsRegistrate("RN42", RN42);
 }
+//センサから出力が無い(出力インピーダンス高すぎ？)
+S8100B = function() {
+
+};
+
+S8100B.prototype.wired = function(obniz, pwr, signal, gnd) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(signal);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = 30 + ((1.508 - value)/(-0.08)); //Temp(Celsius) =
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+S8100B.prototype.onChange = function(callback) {
+  this.onchange = callback;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("S8100B", S8100B);
+}
+
+SHT31 = function() {
+
+};
+
+SHT31.prototype.wired = function(obniz, pwr, sda, scl, gnd, adr, adr_select) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.io_sda = obniz.getIO(sda);
+  this.io_scl = obniz.getIO(scl);
+  this.io_adr = obniz.getIO(adr);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+  if (adr_select == 4){
+    this.io_adr.output(false);
+    address = 0x44;
+  }else if(adr_select == 5){
+    this.io_adr.float();
+    address = 0x45;
+  }
+
+  obniz.i2c0.start("master", sda, scl, 400000, "float");
+  //obniz.i2c0.write(address, [0x20, 0x24]);
+}
+
+  SHT31.prototype.getTempWait = async function() {
+    obniz.i2c0.write(address, [0x20, 0x24]);
+    obniz.i2c0.write(address, [0xE0, 0x00]);
+    var ret = await obniz.i2c0.readWait(address, 4);
+    var tempBin = (ret[0]).toString(2) + ( '00000000' + (ret[1]).toString(2) ).slice( -8 );
+    var temperature = (-45)+(175*(parseInt(tempBin,2)/(65536-1)));
+    return temperature;
+  }
+
+  SHT31.prototype.getHumdWait = async function() {
+    obniz.i2c0.write(address, [0x20, 0x24]);
+    obniz.i2c0.write(address, [0xE0, 0x00]);
+    var ret = await obniz.i2c0.readWait(address, 4);
+    var humdBin = (ret[2]).toString(2) + ( '00000000' + (ret[3]).toString(2) ).slice( -8 );
+    var humidity = 100 * (parseInt(humdBin,2)/(65536-1));
+    return humidity;
+  }
+
+if (PartsRegistrate) {
+  PartsRegistrate("SHT31", SHT31);
+}
+
 ServoMotor = function() {
 
 };

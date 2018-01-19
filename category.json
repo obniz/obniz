@@ -44,7 +44,7 @@
       ]
     },
     {
-      "name": "Sensor Movement",
+      "name": "Sensor: Movement",
       "parts": [
         {
           "name": "Button"
@@ -64,10 +64,33 @@
       ]
     },
     {
-      "name": "Sensor Distance",
+      "name": "Sensor: Distance",
       "parts": [
         {
           "name": "HC-SR04"
+        }
+      ]
+    },
+    {
+      "name": "Sensor: Temperature",
+      "parts": [
+        {
+          "name": "LM35DZ"
+        },
+        {
+          "name": "LM60"
+        },
+        {
+          "name": "LM61"
+        },
+        {
+          "name": "MCP9700"
+        },
+        {
+          "name": "MCP9701"
+        },
+        {
+          "name": "SHT31"
         }
       ]
     },
