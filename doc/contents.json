@@ -1,0 +1,69 @@
+{
+  "title": "obniz sdk for javascript",
+  "contents": [
+    {
+      "title": "Overview",
+      "filename": "README"
+    },
+    {
+      "section": "Utilities"
+    },
+    {
+      "title": "Utils",
+      "filename": "utils"
+    },
+    {
+      "title": "Messaging",
+      "filename": "messaging"
+    },
+    {
+      "section": "Pin Peripherals"
+    },
+    {
+      "title": "IO",
+      "filename": "io"
+    },
+    {
+      "title": "AD",
+      "filename": "ad"
+    },
+    {
+      "title": "PWM",
+      "filename": "pwm"
+    },
+    {
+      "title": "UART",
+      "filename": "uart"
+    },
+    {
+      "title": "SPI",
+      "filename": "spi"
+    },
+    {
+      "title": "I2C",
+      "filename": "i2c"
+    },
+    {
+      "section": "Pin Advanced Functions"
+    },
+    {
+      "title": "LogicAnalyzer",
+      "filename": "logicanalyzer"
+    },
+    {
+      "section": "Embed Components"
+    },
+    {
+      "title": "Display",
+      "filename": "display"
+    },
+    {
+      "title": "Switch",
+      "filename": "switch"
+    },
+    {
+      "title": "BLE",
+      "filename": "ble"
+    }
+  ]
+}

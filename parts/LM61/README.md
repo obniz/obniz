@@ -1,14 +1,20 @@
 # Temperature Sensor - LM61
-温度センサLM61BIZ/LM61CIZです。センサで取得した温度を知ることができます。
+Temperature sensor LM61BIZ/LM61CIZ
 
-wired(obniz, 0, 1, 2)
-Obnizに温度センサをつなぎます。
-0,1,2はそれぞれ温度センサの電源,センサ出力,GNDへ接続してください。
+## wired(obniz, vcc, output, gnd)
 
-var tempsens = Parts("LM61");
-tempsens.wired(obniz, 0, 1, 2);
+```javascript
+var tempsens = obniz.wired("LM61", 0, 1, 2);
+```
 
+## onChange(callback(temp))
+callback function for temperature change
+Unit is Celsius.
+It's step is 1 degree.
 
-onChange(callback)
-温度センサの値に変化があった場合にcallback関数を呼び出します。
-温度は摂氏で返されます。小数点以下の温度は表示されません。
+```javascript
+var tempsens = obniz.wired("LM61", 0, 1, 2);
+tempsens.onChange(function(temp){
+  console.log(temp);
+})
+```

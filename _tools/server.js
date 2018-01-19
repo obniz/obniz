@@ -47,6 +47,20 @@ watcher.on('ready',function(){
 build();
 
 function build() {
+
+  // obniz libs
+  var obnizlibPath = path.join(__dirname, '../obniz/libs')
+  var obnizlibs = fs.readdirSync(obnizlibPath);
+  var libnames = [];
+  for (var i=0; i<obnizlibs.length; i++) {
+    const lib = obnizlibs[i];
+    if (lib.indexOf('.js')>0) {
+      libnames.push(lib);
+    }
+  }
+  console.log(libnames);
+
+  //parts
   var partsPath = path.join(__dirname, '../parts')
   var parts = fs.readdirSync(partsPath);
   var names = [];
@@ -57,10 +71,19 @@ function build() {
     }
   }
 
+  // obniz
   var combined = fs.readFileSync(path.join(__dirname, '../obniz/index.js'), 'utf8');
+
+  // parts
+  for (var i=0; i<libnames.length; i++) {
+    var string = fs.readFileSync(path.join(obnizlibPath, libnames[i]), 'utf8');
+    combined += "\n" + string;
+  }
+
+  // parts
   for (var i=0; i<names.length; i++) {
-    var anParts = fs.readFileSync(path.join(__dirname, '../parts/', names[i], '/index.js'), 'utf8');
-    combined += "\n" + anParts;
+    var string = fs.readFileSync(path.join(partsPath, names[i], '/index.js'), 'utf8');
+    combined += "\n" + string;
   }
   fs.writeFileSync(path.join(__dirname, '../index.js'), combined);
 }

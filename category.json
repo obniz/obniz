@@ -36,7 +36,15 @@
       ]
     },
     {
-      "name": "Sensor Move",
+      "name": "Bluetooth",
+      "parts": [
+        {
+          "name": "RN42"
+        }
+      ]
+    },
+    {
+      "name": "Sensor: Movement",
       "parts": [
         {
           "name": "Button"
@@ -52,6 +60,37 @@
         },
         {
           "name": "JoyStick"
+        }
+      ]
+    },
+    {
+      "name": "Sensor: Distance",
+      "parts": [
+        {
+          "name": "HC-SR04"
+        }
+      ]
+    },
+    {
+      "name": "Sensor: Temperature",
+      "parts": [
+        {
+          "name": "LM35DZ"
+        },
+        {
+          "name": "LM60"
+        },
+        {
+          "name": "LM61"
+        },
+        {
+          "name": "MCP9700"
+        },
+        {
+          "name": "MCP9701"
+        },
+        {
+          "name": "SHT31"
         }
       ]
     },

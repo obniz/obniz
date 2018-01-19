@@ -27,7 +27,7 @@ SHT31.prototype.wired = function(obniz, pwr, sda, scl, gnd, adr, adr_select) {
   //obniz.i2c0.write(address, [0x20, 0x24]);
 }
 
-  SHT31.prototype.getTemp = async function() {
+  SHT31.prototype.getTempWait = async function() {
     obniz.i2c0.write(address, [0x20, 0x24]);
     obniz.i2c0.write(address, [0xE0, 0x00]);
     var ret = await obniz.i2c0.readWait(address, 4);
@@ -36,7 +36,7 @@ SHT31.prototype.wired = function(obniz, pwr, sda, scl, gnd, adr, adr_select) {
     return temperature;
   }
 
-  SHT31.prototype.getHumd = async function() {
+  SHT31.prototype.getHumdWait = async function() {
     obniz.i2c0.write(address, [0x20, 0x24]);
     obniz.i2c0.write(address, [0xE0, 0x00]);
     var ret = await obniz.i2c0.readWait(address, 4);

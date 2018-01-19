@@ -1,3 +1,5 @@
+/* global showObnizDebugError */
+
 var isNode = (typeof window === 'undefined') ? true : false; 
 
 Obniz = function(id, options) {
@@ -108,10 +110,10 @@ Obniz.prototype.wsconnect = function(desired_server) {
         self[peripheral+""+i].notified(module_value);
       }
     }
-    // notify logiana
-    if (obj["logicanalyzer"]) {
-      self["logicanalyzer"].notified(obj["logicanalyzer"]);
-    }
+    if (obj["switch"]) { self["switch"].notified(obj["switch"]); }
+    if (obj["ble"]) { self["ble"].notified(obj["ble"]); }
+    if (obj["logicanalyzer"]) { self.logicanalyzer.notified(obj["logicanalyzer"]); }
+    if (obj["measure"]){ self.measure.notified(obj["measure"]); }
   };
 
   var wsOnClose = function(event) {
@@ -178,22 +180,6 @@ Obniz.prototype.print_debug = function(str) {
   }
 };
 
-Obniz.prototype.console_log = function(obj) {
-  this.send({
-    debug:{
-      log: obj
-    }
-  });
-};
-
-Obniz.prototype.console_exception = function(err) {
-  this.send({
-    debug:{
-      exception: err
-    }
-  });
-};
-
 Obniz.prototype.send = function(value) {
   if (typeof(value) === "object") {
     value = JSON.stringify(value);
@@ -203,22 +189,19 @@ Obniz.prototype.send = function(value) {
 };
 
 Obniz.prototype.init = function() {
-  // IO
-  for (var i=0; i<=11; i++) { this["io"+i]  = new PeripheralIO(this, i); }
-  // AD
-  for (var i=0; i<=11; i++) { this["ad"+i]  = new PeripheralAD(this, i); }
-  // UART
-  for (var i=0; i<=1; i++) { this["uart"+i] = new PeripheralUART(this, i); }
-  // SPI
-  for (var i=0; i<=0; i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
-  // I2C
-  for (var i=0; i<=0; i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
-  // PWM
-  for (var i=0; i<=5; i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
-  // Display
-  this["display"] = new Display(this);
-  this["logicanalyzer"] = new LogicAnalyzer(this);
-  this["ble"] = new Ble(this);
+
+  for (var i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
+  for (var i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
+  for (var i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
+  for (var i=0; i<1;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
+  for (var i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
+  for (var i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
+
+  this.display = new Display(this);
+  this.switch = new ObnizSwitch(this);
+  this.logicanalyzer = new LogicAnalyzer(this);
+  this.ble = new Ble(this);
+  this.measure = new ObnizMeasure(this);
 };
 
 Obniz.prototype.getIO = function(id) {
@@ -233,10 +216,10 @@ Obniz.prototype.getpwm = function() {
   var i=0;
   while(true){
     var pwm = this["pwm"+i];
-    if (pwm === null) {
+    if (!pwm) {
       break;
     }
-    if (pwm.state.io === null) {
+    if (typeof(pwm.state.io) != "number") {
       return pwm;
     }
     i++;
@@ -247,16 +230,16 @@ Obniz.prototype.getpwm = function() {
 Obniz.prototype.getFreeI2C = function() {
   var i=0;
   while(true){
-    var pwm = this["i2c"+i];
-    if (pwm === null) {
+    var i2c = this["i2c"+i];
+    if (!i2c) {
       break;
     }
-    if (pwm.state.io === null) {
-      return pwm;
+    if (typeof(i2c.state.scl) != "number") {
+      return i2c;
     }
     i++;
   }
-  throw new Error("No More PWM Available. max = " + i);
+  throw new Error("No More I2C Available. max = " + i);
 };
 
 Obniz.prototype.message = function(target, message) {
@@ -313,14 +296,29 @@ Obniz.prototype.wait = async function(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
 };
 
+Obniz.prototype.freeze = async function(msec) {
+  this.send({
+    system: {
+      wait: msec
+    }
+  });
+};
+
 Obniz.prototype.resetOnDisconnect = function(mustReset) {
   this.send({
     system: {
       reset_on_disconnect: mustReset
     }
-  })
-}
+  });
+};
 
+Obniz.prototype.error = function (msg) {
+  if (typeof (showObnizDebugError) === "function") {
+    showObnizDebugError(new Error(msg));
+  } else {
+    throw new Error(msg);
+  }
+};
 /*===================*/
 /* Parts */
 /*===================*/
@@ -341,7 +339,594 @@ if (isNode) {
   module.exports = Obniz;
 }
 
-// --- peripheral IO ---
+
+
+
+PeripheralAD = function(Obniz, id) {
+  this.Obniz = Obniz;
+  this.id = id;
+  this.value = 0.0;
+  this.observers = [];
+};
+
+PeripheralAD.prototype.addObserver = function(callback) {
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+PeripheralAD.prototype.start = function(callback) {
+  this.onchange = callback;
+  var obj = {};
+  obj["ad"+this.id] = {
+    on: true,
+    stream: true
+  };
+  this.Obniz.send(obj);
+  return this.value;
+};
+
+PeripheralAD.prototype.getWait = function() {
+  var self = this;
+  return new Promise(function(resolve, reject){
+    var obj = {};
+    obj["ad"+self.id] = {
+      on: true,
+      stream: false
+    };
+    self.Obniz.send(obj);
+    self.addObserver(resolve);
+  });
+};
+
+PeripheralAD.prototype.end = function() {
+  this.onchange = null;
+  var obj = {};
+  obj["ad"+this.id] = null;
+  this.Obniz.send(obj);
+  return;
+};
+
+PeripheralAD.prototype.notified = function(obj) {
+  this.value = obj;
+  if (this.onchange) {
+    this.onchange(obj);
+  }
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(obj);
+  }
+};
+
+Ble = function(Obniz) {
+  this.Obniz = Obniz;
+  this.scanResults =  [];
+};
+
+Ble.prototype.startAdvertisement = function() {
+  var obj = {};
+  obj["ble"] = {};
+  obj["ble"]["advertisement"] = {
+      "status":"start"
+  };
+  this.Obniz.send(obj);
+  return;
+};
+Ble.prototype.stopAdvertisement = function() {
+  var obj = {};
+  obj["ble"] = {};
+  obj["ble"]["advertisement"] = {
+      "status":"stop"
+  };
+  this.Obniz.send(obj);
+  return;
+};
+
+Ble.prototype.setAdvDataRaw = function(adv_data) {
+  console.log(adv_data);
+  var obj = {};
+  obj["ble"] = {};
+  obj["ble"]["advertisement"] = {
+      "adv_data":adv_data
+  };
+  this.Obniz.send(obj);
+  return;
+};
+
+Ble.prototype.setAdvData = function(json) {
+  var builder = this.advDataBulider(json);
+ 
+  this.setAdvDataRaw(builder.build());
+  
+  return;
+};
+
+
+Ble.prototype.dataBuliderPrototype = function(){
+  var builder = function(Obniz,json){
+    this.Obniz = Obniz;
+    this.rows  = {};
+    
+    if (json) {
+      if (json.localName) {
+        this.setCompleteLocalName(json.localName);
+      }
+      if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
+        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data)
+      }
+      if (json.serviceUuids) {
+        for (var key in json.serviceUuids) {
+          this.setUuid(json.serviceUuids[key]);
+        }
+      }
+    }
+    if(typeof(this.extendEvalJson) === "function"){
+      this.extendEvalJson(json);
+    }
+  
+  
+  };
+  builder.prototype.setRow = function(type,data){
+    this.rows[type] = data;
+  };
+  builder.prototype.getRow = function(type){
+    return this.rows[type] || [];
+  };
+  
+  builder.prototype.check = function(){
+    return true;
+  };
+  
+  builder.prototype.build = function(){
+    if(!this.check){
+      return;
+    }
+    var data = [];
+    for(var key in this.rows){
+      if(this.rows[key].length === 0)continue;
+      
+      data.push(this.rows[key].length+1);
+      data.push(parseInt(key));
+      Array.prototype.push.apply(data, this.rows[key]);
+    }
+    if(data.length > 31){
+      this.Obniz.error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
+    }
+    
+    return data;
+  };
+  
+  
+  builder.prototype.setStringData = function (type, string){
+    var data = [];
+    
+    for (var i = 0; i < string.length; i++) {
+      data.push(string.charCodeAt(i));
+    }
+
+    this.setRow(type, data);
+  };
+  
+  builder.prototype.setShortenedLocalName = function (name){
+    this.setStringData(0x08,name);
+  };
+  builder.prototype.setCompleteLocalName = function (name){
+    this.setStringData(0x09,name);
+  };
+  
+  builder.prototype.setManufacturerSpecificData = function (campanyCode, data){
+    var row = [];
+    row.push(campanyCode & 0xFF);
+    row.push((campanyCode >> 8) & 0xFF);
+    Array.prototype.push.apply(row , data);
+    this.setRow(0xFF, row);
+  };
+  
+  builder.prototype.setUuid =function(uuid){
+    var uuidData = this.convertUuid(uuid);
+    var type = { 16:0x06, 4:0x04, 2:0x02 }[uuidData.length]; 
+    this.setRow(type,uuidData);
+  }
+  
+  builder.prototype.convertUuid = function(uuid){
+    var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    if (uuidNumeric.length !== 32 
+        && uuidNumeric.length !== 8 
+        && uuidNumeric.length !== 4 ) {
+      this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+    }
+    
+    var data = [];
+    for (var i = 0; i < uuidNumeric.length; i += 2) {
+      data.push(parseInt(uuidNumeric[i] + uuidNumeric[i + 1], 16));
+    }
+    return data;
+  };
+  
+  builder.prototype.setIbeaconData = function (uuid, major, minor, txPower) {
+    var data = [];
+    data.push(0x02, 0x15); // fixed data
+
+    var uuidData = this.convertUuid(uuid);
+    Array.prototype.push.apply(data, uuidData);
+    
+    
+    data.push((major >> 8) & 0xFF);
+    data.push((major >> 0) & 0xFF);
+    data.push((minor >> 8) & 0xFF);
+    data.push((minor >> 0) & 0xFF);
+    data.push((txPower >> 0) & 0xFF);
+
+    this.setManufacturerSpecificData(0x004c, data);
+    return;
+  };
+
+      
+  return builder;
+} 
+
+
+Ble.prototype.advDataBulider = function(jsonVal){
+  var builder = this.dataBuliderPrototype();
+  
+  builder.prototype.check = function(){
+  
+    return true;
+  };
+  
+  builder.prototype.extendEvalJson = function(json){
+    if(json){
+      if (json.flags) {
+        if (json.flags.includes("limited_discoverable_mode"))
+          this.setLeLimitedDiscoverableModeFlag();
+        if (json.flags.includes("general_discoverable_mode"))
+          this.setLeGeneralDiscoverableModeFlag();
+        if (json.flags.includes("br_edr_not_supported"))
+          this.setBrEdrNotSupportedFlag();
+        if (json.flags.includes("le_br_edr_controller"))
+          this.setLeBrEdrControllerFlag();
+        if (json.flags.includes("le_br_edr_host"))
+          this.setLeBrEdrHostFlag();
+      }
+    }
+  }
+  
+  builder.prototype.setFlags = function(flag){
+    var data = this.getRow(0x01);
+    data[0] = (data[0] || 0) | flag;
+    this.setRow(0x01,data);
+  };
+  builder.prototype.setLeLimitedDiscoverableModeFlag = function (){
+    this.setFlags(0x01);
+  };
+  builder.prototype.setLeGeneralDiscoverableModeFlag = function (){
+    this.setFlags(0x02);
+  };
+  builder.prototype.setBrEdrNotSupportedFlag = function (){
+    this.setFlags(0x04);
+  };
+  builder.prototype.setLeBrEdrControllerFlag = function (){
+    this.setFlags(0x08);
+  };
+  builder.prototype.setLeBrEdrHostFlag = function (){
+    this.setFlags(0x10);
+  };
+  
+  return new builder(this.Obniz,jsonVal);
+};
+Ble.prototype.scanRespDataBuilder = function(json){
+  var builder = this.dataBuliderPrototype();
+  return new builder(this.Obniz,json);
+};
+
+
+
+
+Ble.prototype.setScanRespRawData = function(scan_resp) {
+  var obj = {};
+  obj["ble"] = {};
+  obj["ble"]["advertisement"] = {
+      "scan_resp":scan_resp
+  };
+  this.Obniz.send(obj);
+  return;
+};
+
+Ble.prototype.setScanRespData = function(json) {
+  this.setScanRespRawData(this.scanRespDataBuilder(json).build());
+  return;
+};
+
+
+
+
+Ble.prototype.startScan = function(settings) {
+  var obj = {};
+  obj["ble"] = {};
+  obj["ble"]["scan"] = {
+    "settings" : {
+      "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+      "interval" : settings && settings.interval ? settings.interval : 30,
+      "duration" : settings && settings.duration ? settings.duration : 30,
+    },
+    "status":"start"
+  };
+  
+  this.scanResults =  [];
+  
+  this.Obniz.send(obj);
+  return;
+};
+
+Ble.prototype.stopScan = function() {
+  var obj = {};
+  obj["ble"] = {};
+   obj["ble"]["scan"] = {
+    "status":"stop"
+  };
+  this.Obniz.send(obj);
+  return;
+}
+
+Ble.prototype.notified = function (obj) {
+  if (obj.scan_results) {
+    var isFinished = false;
+    for (var id in obj.scan_results) {
+      var val = new BleRemotePeripheral(obj.scan_results[id]);
+
+      if (val.event_type === "inquiry_complete") {
+        isFinished = true;
+      } else if (val.event_type === "inquiry_result") {
+
+        this.scanResults.push(val);
+        if (this.onscan) {
+          this.onscan(val);
+        }
+      }
+    }
+    if (isFinished && this.onscanfinish) {
+          this.onscanfinish(this.scanResults);
+    }
+  }
+};
+
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * 
+ * @param {type} rawData
+ * @return {BleRemotePeripheral}
+ */
+BleRemotePeripheral = function(rawData){
+  
+  for(var key in rawData){
+    this[key] = rawData[key];
+  }
+//  return;
+  this.advertise_data_rows = [];
+  for(var i = 0; i < this.advertise_data.length;i++){
+    var length = this.advertise_data[i];
+    var arr = new Array(length);
+    for(var j=0;j<length;j++){
+      arr[j] = this.advertise_data[i+j+1];
+    }
+    this.advertise_data_rows.push(arr);
+    i=i+length;
+  }
+};
+
+/**
+ * 
+ * @return {String} json value
+ */
+BleRemotePeripheral.prototype.toString = function() {
+  return JSON.stringify({
+    id: this.id,
+    address: this.address,
+    addressType: this.addressType,
+    connectable: this.connectable,
+    advertisement: this.advertisement,
+    rssi: this.rssi,
+    state: this.state
+  });
+};
+
+
+BleRemotePeripheral.prototype.serarchTypeVal = function(type){
+  for(var i = 0;i<this.advertise_data_rows.length;i++){
+    if(this.advertise_data_rows[i][0] === type){
+      var results = [].concat(this.advertise_data_rows[i]);
+      results.shift();
+      return results;
+    }
+  }
+  return undefined;
+};
+
+BleRemotePeripheral.prototype.localName = function(){
+  var data = this.serarchTypeVal(0x09);
+  if(!data){
+     data = this.serarchTypeVal(0x08);
+  }
+  if(!data)return undefined;
+  return String.fromCharCode.apply(null, data);
+};
+
+
+BleRemotePeripheral.prototype.iBeacon = function(){
+  var data = this.serarchTypeVal(0xFF);
+  if(!data 
+      || data[0] !== 0x4c
+      || data[1] !== 0x00
+      || data[2] !== 0x02
+      || data[3] !== 0x15 
+      || data.length !== 25)return undefined;
+  
+  var uuidData = data.slice(4, 20);
+  var uuid = "";
+  for(var i = 0; i< uuidData.length;i++){
+    uuid = uuid + (( '00' + uuidData[i].toString(16) ).slice( -2 ));
+    if(i === (4-1) ||i === (4+2-1) ||i === (4+2*2-1) ||i === (4+2*3-1) ){
+      uuid += "-";
+    }
+  }
+  
+  var major = (data[20]<<8) + data[21];
+  var minor = (data[22]<<8) + data[23];
+  var power = data[24];
+  
+  
+  return {
+    uuid : uuid,
+    major: major,
+    minor :minor,
+    power :power,
+    rssi :this.rssi
+  };
+};
+
+
+BleRemotePeripheral.prototype.connect = function(){
+  
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.disconnect = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.updateRssi = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.discoverServices = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.discoverAllServicesAndCharacteristics = function(){
+  throw new Error("todo");
+};
+
+BleRemotePeripheral.prototype.discoverSomeServicesAndCharacteristics = function(){
+  throw new Error("todo");
+};
+
+
+
+
+
+
+
+Display = function(Obniz) {
+  this.Obniz = Obniz;
+};
+
+Display.prototype.clear = function() {
+  var obj = {};
+  obj["display"] = {
+    clear: true
+  };
+  this.Obniz.send(obj);
+};
+
+Display.prototype.print = function(text) {
+  var obj = {};
+  obj["display"] = {
+    text: ""+text
+  };
+  this.Obniz.send(obj);
+};
+
+Display.prototype.qr = function(data, correction) {
+  var obj = {};
+  obj["display"] = {
+    qr: {
+      data: data
+    }
+  };
+  if (correction) {
+    obj["display"].qr.correction = correction;
+  }
+  this.Obniz.send(obj);
+};
+
+PeripheralI2C = function(Obniz, id) {
+  this.Obniz = Obniz;
+  this.id = id;
+  this.observers = [];
+  this.state = {};
+};
+
+PeripheralI2C.prototype.addObserver = function(callback) {
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
+  var obj = {};
+  this.state = {
+    mode: mode,
+    sda: sda,
+    scl: scl,
+    clock: clock
+  };
+  if (pullType) {
+    this.state.pull_type = pullType;
+  }
+  obj["i2c"+this.id] = this.state;
+  this.Obniz.send(obj);
+};
+
+PeripheralI2C.prototype.write = function(address, data) {
+  var obj = {};
+  obj["i2c"+this.id] = {
+    address: address,
+    write: data
+  };
+  this.Obniz.send(obj);
+};
+
+PeripheralI2C.prototype.write10bit = function(address, data) {
+  return this.write(address | 0x8000, data);
+};
+
+PeripheralI2C.prototype.readWait = function(address, length) {
+  var self = this;
+  return new Promise(function(resolve, reject){
+    var obj = {};
+    obj["i2c"+self.id] = {
+      address: address,
+      read: length
+    };
+    self.Obniz.send(obj);
+    self.addObserver(resolve);
+  });
+};
+
+PeripheralI2C.prototype.read10bitWait = function(address, length) {
+  return this.read(address | 0x8000, length);
+};
+
+PeripheralI2C.prototype.notified = function(obj) {
+  // TODO: we should compare byte length from sent
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(obj.readed);
+  }
+};
+
+PeripheralI2C.prototype.end = function() {
+  this.state = {};
+  var obj = {};
+  obj["i2c"+self.id] = null;
+  self.Obniz.send(obj);
+};
+
 PeripheralIO = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
@@ -429,7 +1014,72 @@ PeripheralIO.prototype.notified = function(obj) {
   }
 };
 
-// --- peripheral PWM ---
+LogicAnalyzer = function(Obniz) {
+  this.Obniz = Obniz;
+};
+
+LogicAnalyzer.prototype.start = function(io, interval, length) {
+  var obj = {};
+  obj["logicanalyzer"] = {
+    io: [io],
+    interval: interval,
+    length: length
+  };
+  this.Obniz.send(obj);
+  return;
+};
+
+LogicAnalyzer.prototype.end = function() {
+  var obj = {};
+  obj["logicanalyzer"] = null;
+  this.Obniz.send(obj);
+  return;
+};
+
+LogicAnalyzer.prototype.notified = function(obj) {
+  if (this.onmeasured) {
+    this.onmeasured(obj.measured);
+  } else {
+    if (this.measured === null) {
+      this.measured = [];
+    }
+    this.measured.push(obj.measured);
+  }
+  return;
+};
+
+ObnizMeasure = function(Obniz) {
+  this.Obniz = Obniz;
+  this.observers = [];
+};
+
+ObnizMeasure.prototype.echo = function(io_pulse, pulse, pulse_widthUs, io_echo, measure_edges, timeoutUs, callback) {
+  var echo = {};
+  echo.io_pulse = io_pulse;
+  echo.pulse = pulse;
+  echo.pulse_width = pulse_widthUs;
+  echo.io_echo = io_echo;
+  echo.measure_edges = measure_edges;
+  echo.timeout = timeoutUs;
+
+  this.Obniz.send({
+    measure: {
+      echo: echo
+    }
+  });
+
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+ObnizMeasure.prototype.notified = function(obj) {
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(obj.echo);
+  }
+};
+
 PeripheralPWM = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
@@ -499,7 +1149,82 @@ PeripheralPWM.prototype.modulate = function(type, symbol_sec, data) {
   });
 };
 
-// --- peripheral uart ---
+
+PeripheralSPI = function(Obniz, id) {
+  this.Obniz = Obniz;
+  this.id = id;
+  this.observers = [];
+};
+
+PeripheralSPI.prototype.addObserver = function(callback) {
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+PeripheralSPI.prototype.start = function(mode, clk, mosi, miso, clock_speed) {
+  var obj = {};
+  obj["spi"+this.id] = {
+    mode: mode,
+    clock: clock_speed,
+    clk: clk,
+    mosi: mosi,
+    miso: miso
+  };
+  this.Obniz.send(obj);
+};
+
+PeripheralSPI.prototype.writeWait = function(data) {
+  var self = this;
+  return new Promise(function(resolve, reject){
+    var obj = {};
+    obj["spi"+self.id] = {
+      writeread: data
+    };
+    self.Obniz.send(obj);
+    self.addObserver(resolve);
+  });
+};
+
+PeripheralSPI.prototype.notified = function(obj) {
+  // TODO: we should compare byte length from sent
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(obj.readed);
+  }
+};
+
+ObnizSwitch = function(Obniz) {
+  this.Obniz = Obniz;
+  this.observers = [];
+};
+
+ObnizSwitch.prototype.addObserver = function(callback) {
+  if(callback) {
+    this.observers.push(callback);
+  }
+};
+
+ObnizSwitch.prototype.getWait = function() {
+  var self = this;
+  return new Promise(function(resolve, reject){
+    var obj = {};
+    obj["switch"] = "get";
+    self.Obniz.send(obj);
+    self.addObserver(resolve);
+  });
+};
+
+ObnizSwitch.prototype.notified = function(obj) {
+  this.state = obj.state;
+  if (this.onchange) {
+    this.onchange(this.state);
+  }
+  var callback = this.observers.shift();
+  if (callback) {
+    callback(this.state);
+  }
+};
 
 PeripheralUART = function(Obniz, id) {
   this.Obniz = Obniz;
@@ -604,331 +1329,6 @@ PeripheralUART.prototype.end = function() {
   obj["uart"+this.id] = null;
   this.Obniz.send(obj);
 };
-
-// --- peripheral I2C ---
-PeripheralSPI = function(Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.observers = [];
-};
-
-PeripheralSPI.prototype.addObserver = function(callback) {
-  if(callback) {
-    this.observers.push(callback);
-  }
-};
-
-PeripheralSPI.prototype.start = function(mode, clk, mosi, miso, clock_speed) {
-  var obj = {};
-  obj["spi"+this.id] = {
-    mode: mode,
-    clock: clock_speed,
-    clk: clk,
-    mosi: mosi,
-    miso: miso
-  };
-  this.Obniz.send(obj);
-};
-
-PeripheralSPI.prototype.writeWait = function(data) {
-  var self = this;
-  return new Promise(function(resolve, reject){
-    var obj = {};
-    obj["spi"+self.id] = {
-      writeread: data
-    };
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-PeripheralSPI.prototype.notified = function(obj) {
-  // TODO: we should compare byte length from sent
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj.readed);
-  }
-};
-
-// --- peripheral I2C ---
-PeripheralI2C = function(Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.observers = [];
-  this.state = {};
-};
-
-PeripheralI2C.prototype.addObserver = function(callback) {
-  if(callback) {
-    this.observers.push(callback);
-  }
-};
-
-PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
-  var obj = {};
-  this.state = {
-    mode: mode,
-    sda: sda,
-    scl: scl,
-    clock: clock
-  };
-  if (pullType) {
-    this.state.pull_type = pullType;
-  }
-  obj["i2c"+this.id] = this.state;
-  this.Obniz.send(obj);
-};
-
-PeripheralI2C.prototype.write = function(address, data) {
-  var obj = {};
-  obj["i2c"+this.id] = {
-    address: address,
-    write: data
-  };
-  this.Obniz.send(obj);
-};
-
-PeripheralI2C.prototype.write10bit = function(address, data) {
-  return this.write(address | 0x8000, data);
-};
-
-PeripheralI2C.prototype.readWait = function(address, length) {
-  var self = this;
-  return new Promise(function(resolve, reject){
-    var obj = {};
-    obj["i2c"+self.id] = {
-      address: address,
-      read: length
-    };
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-PeripheralI2C.prototype.read10bitWait = function(address, length) {
-  return this.read(address | 0x8000, length);
-};
-
-PeripheralI2C.prototype.notified = function(obj) {
-  // TODO: we should compare byte length from sent
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj.readed);
-  }
-};
-
-PeripheralI2C.prototype.end = function() {
-  this.state = {};
-  var obj = {};
-  obj["i2c"+self.id] = null;
-  self.Obniz.send(obj);
-};
-
-// --- peripheral A/D ---
-PeripheralAD = function(Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.value = 0.0;
-  this.observers = [];
-};
-
-PeripheralAD.prototype.addObserver = function(callback) {
-  if(callback) {
-    this.observers.push(callback);
-  }
-};
-
-PeripheralAD.prototype.start = function(callback) {
-  this.onchange = callback;
-  var obj = {};
-  obj["ad"+this.id] = {
-    on: true,
-    stream: true
-  };
-  this.Obniz.send(obj);
-  return this.value;
-};
-
-PeripheralAD.prototype.getWait = function() {
-  var self = this;
-  return new Promise(function(resolve, reject){
-    var obj = {};
-    obj["ad"+self.id] = {
-      on: true,
-      stream: false
-    };
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-PeripheralAD.prototype.end = function() {
-  this.onchange = null;
-  var obj = {};
-  obj["ad"+this.id] = null;
-  this.Obniz.send(obj);
-  return;
-};
-
-PeripheralAD.prototype.notified = function(obj) {
-  this.value = obj;
-  if (this.onchange) {
-    this.onchange(obj);
-  }
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj);
-  }
-};
-
-// --- Module Display ---
-Display = function(Obniz) {
-  this.Obniz = Obniz;
-};
-
-Display.prototype.clear = function() {
-  var obj = {};
-  obj["display"] = {
-    clear: true
-  };
-  this.Obniz.send(obj);
-};
-
-Display.prototype.print = function(text) {
-  var obj = {};
-  obj["display"] = {
-    text: ""+text
-  };
-  this.Obniz.send(obj);
-};
-
-Display.prototype.qr = function(data, correction) {
-  var obj = {};
-  obj["display"] = {
-    qr: {
-      data: data
-    }
-  };
-  if (correction) {
-    obj["display"].qr.correction = correction;
-  }
-  this.Obniz.send(obj);
-};
-
-// --- Module LogicAnalyzer ---
-LogicAnalyzer = function(Obniz) {
-  this.Obniz = Obniz;
-};
-
-LogicAnalyzer.prototype.start = function(io, interval, length) {
-  var obj = {};
-  obj["logicanalyzer"] = {
-    io: [io],
-    interval: interval,
-    length: length
-  };
-  this.Obniz.send(obj);
-  return;
-};
-
-LogicAnalyzer.prototype.end = function() {
-  var obj = {};
-  obj["logicanalyzer"] = null;
-  this.Obniz.send(obj);
-  return;
-};
-
-LogicAnalyzer.prototype.notified = function(obj) {
-  if (this.onmeasured) {
-    this.onmeasured(obj.measured);
-  } else {
-    if (this.measured === null) {
-      this.measured = [];
-    }
-    this.measured.push(obj.measured);
-  }
-  return;
-};
-
-//BLE
-Ble = function(Obniz) {
-  this.Obniz = Obniz;
-};
-
-Ble.prototype.start = function() {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "status":"start"
-  };
-  this.Obniz.send(obj);
-  return;
-};
-Ble.prototype.stop = function() {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "status":"stop"
-  };
-  this.Obniz.send(obj);
-  return;
-};
-
-Ble.prototype.setAdvData = function(adv_data) {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "adv_data":adv_data
-  };
-  this.Obniz.send(obj);
-  return;
-};
-
-
-Ble.prototype.setAdvDataAsShortenedLocalName = function(name) {
-  var data = [];
-  data.push(0x02, 0x01, 0x06); //flags
-  data.push(name.length+1);
-  data.push(0x08);  //BLE_AD_TYPE_NAME_SHRT
-  
-  for(var i=0;i<name.length; i++){
-      data.push(name.charCodeAt(i));
-  }
-  
-  this.setAdvData(data);
-  return;
-};
-
-
-
-
-
-Ble.prototype.setScanRespData = function(scan_resp) {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "scan_resp":scan_resp
-  };
-  this.Obniz.send(obj);
-  return;
-};
-
-
-
-Ble.prototype.setScanRespDataAsName = function(name) {
-  var data = [];
-  data.push(name.length+1);
-  data.push(0x09);  //BLE_AD_TYPE_NAME_CMPL
-  
-  for(var i=0;i<name.length; i++){
-      data.push(name.charCodeAt(i));
-  }
-  
-  this.setScanRespData(data);
-  return;
-};
-
-
 _24LC256 = function() {
 
 };
@@ -1138,6 +1538,62 @@ PIR_ekmc.prototype.isPressedWait = async function() {
 
 if (PartsRegistrate) {
   PartsRegistrate("PIR_ekmc", PIR_ekmc);
+}
+HCSR04 = function() {
+
+};
+
+HCSR04.prototype.wired = function(obniz, vcc, triger, echo, gnd) {
+  this.obniz = obniz;
+
+  this.gndIO = obniz.getIO(gnd);
+  this.vccIO = obniz.getIO(vcc);
+  this.triger = triger;
+  this.echo = echo;
+
+  this.gndIO.output(false);
+
+  this.unit = "mm";
+}
+
+HCSR04.prototype.measure = async function(callback) {
+
+  this.vccIO.output(true);
+  await this.obniz.wait(10);
+  var self = this;
+  this.obniz.measure.echo(this.triger, "positive", 0.02, this.echo, 2, 10/340*1000, function(edges){
+    self.vccIO.output(false);
+    self.obniz.getIO(self.triger).output(false);
+    self.obniz.getIO(self.echo).output(false);
+    var distance = null;
+    if (edges.length == 2) {
+      distance = (edges[1].timing-edges[0].timing) * 1000;
+      if (self.unit === "mm") {
+        distance = distance / 5.8;
+      } else if (self.unit === "inch") {
+        distance = distance / 148.0;
+      }
+    }
+    if (typeof(callback) === "function") {
+      callback(distance);
+    }
+  })
+}
+
+HCSR04.prototype.unit = function(unit) {
+  if (unit === "mm") {
+    this.unit = "mm";
+  } else if (unit === "inch") {
+    this.unit = "inch"
+  } else {
+    throw new Error("HCSR04: unknown unit "+unit);
+  }
+}
+
+// Module functions
+
+if (PartsRegistrate) {
+  PartsRegistrate("HC-SR04", HCSR04);
 }
 JoyStick = function() {
   
@@ -1527,6 +1983,191 @@ PotentionMeter.prototype.onChange = function(callback) {
 if (PartsRegistrate) {
   PartsRegistrate("PotentionMeter", PotentionMeter);
 }
+RN42 = function() {
+
+};
+
+RN42.prototype.wired = function(obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gnd) {
+  this.obniz = obniz;
+
+  if(typeof(gnd) == "number") {
+    obniz.getIO(gnd).output(false);
+  }
+
+  this.uart = obniz.uart0;
+
+  obniz.getIO(tx_obniz_to_rn42).outputType("push-pull3v");
+  this.uart.start(tx_obniz_to_rn42, rx_obniz_from_rn42, 115200);
+  var self = this;
+  this.uart.onreceive = function(data, text) {
+    // this is not perfect. separation is possible.
+    if (text.indexOf("CONNECT") >= 0) {
+      console.log("connected");
+    } else if(text.indexOf("DISCONNECT") >= 0) {
+      console.log("disconnected");
+    }
+    if (typeof(self.onreceive) == "function") {
+      self.onreceive(data, text);
+    }
+  }
+}
+
+RN42.prototype.send = function(data) {
+  this.uart.send(data);
+}
+
+RN42.prototype.sendCommand = function(data) {
+  this.uart.send(data+'\n');
+  this.obniz.freeze(100);
+}
+
+RN42.prototype.enterCommandMode = function() {
+  this.send('$$$');
+  this.obniz.freeze(100);
+}
+
+RN42.prototype.config = function(json) {
+  this.enterCommandMode();
+  if (typeof(json) !== "object") {
+    // TODO: warning
+    return;
+  }
+  // remove noize data
+  this.sendCommand("");
+
+  if (json.master_slave) {
+    this.config_masterslave(json.master_slave);
+  }
+  if (json.auth) {
+    this.config_auth(json.auth);
+  }
+  if (json.hid_flag) {
+    this.config_HIDflag(json.hid_flag);
+  }
+  if (json.profile) {
+    this.config_profile(json.profile);
+  }
+  if (json.power) {
+    this.config_power(json.power);
+  }
+  if (json.display_name) {
+    this.config_displayName(json.display_name);
+  }
+  this.config_reboot();
+}
+
+RN42.prototype.config_reboot = function() {
+  this.sendCommand('R,1');
+}
+
+RN42.prototype.config_masterslave = function(mode) {
+  var val = -1;
+  if (typeof(mode) == "number") {
+    val = mode;
+  } else if (typeof(mode) === "string") {
+    var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"]
+    for (var i=0; i<modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('SM,'+val);
+}
+
+RN42.prototype.config_displayName = function(name) {
+  this.sendCommand('SN,'+name);
+}
+
+    // // SH,0200 HID Flag register. Descriptor=keyboard
+RN42.prototype.config_HIDflag = function(flag) {
+  this.sendCommand('SH,'+flag);
+}
+
+RN42.prototype.config_profile = function(mode) {
+  var val = -1;
+  if (typeof(id) == "number") {
+    val = mode;
+  } else if (typeof(mode) === "string") {
+    var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"]
+    for (var i=0; i<modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('S~,'+val);
+}
+
+RN42.prototype.config_revert_localecho = function() {
+  this.sendCommand('+');
+}
+
+RN42.prototype.config_auth = function(mode) {
+  var val = -1;
+  if (typeof(mode) == "number") {
+    val = mode;
+  } else if (typeof(mode) === "string") {
+    var modes = ["open", "ssp-keyboard", "just-work", "pincode"]
+    for (var i=0; i<modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('SA,'+val);
+}
+
+RN42.prototype.config_power = function(dbm) {
+  
+  var val = "0010";
+  if (16 > dbm && dbm >= 12) {
+    val = "000C"
+  } else if (12 > dbm && dbm >= 8) {
+    val = "0008"
+  } else if (8 > dbm && dbm >= 4) {
+    val = "0004"
+  } else if (4 > dbm && dbm >= 0) {
+    val = "0000"
+  } else if (0 > dbm && dbm >= -4) {
+    val = "FFFC"
+  } else if (-4 > dbm && dbm >= -8) {
+    val = "FFF8"
+  } else if (-8 > dbm) {
+    val = "FFF4"
+  }
+
+  this.sendCommand('SY,'+val);
+}
+
+RN42.prototype.config_get_setting = function() {
+  this.sendCommand('D');
+}
+
+RN42.prototype.config_get_extendSetting = function() {
+  this.sendCommand('E');
+}
+
+// Module functions
+
+if (PartsRegistrate) {
+  PartsRegistrate("RN42", RN42);
+}
 //センサから出力が無い(出力インピーダンス高すぎ？)
 S8100B = function() {
 
@@ -1560,6 +2201,57 @@ S8100B.prototype.onChange = function(callback) {
 
 if (PartsRegistrate) {
   PartsRegistrate("S8100B", S8100B);
+}
+
+SHT31 = function() {
+
+};
+
+SHT31.prototype.wired = function(obniz, pwr, sda, scl, gnd, adr, adr_select) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.io_sda = obniz.getIO(sda);
+  this.io_scl = obniz.getIO(scl);
+  this.io_adr = obniz.getIO(adr);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+  if (adr_select == 4){
+    this.io_adr.output(false);
+    address = 0x44;
+  }else if(adr_select == 5){
+    this.io_adr.float();
+    address = 0x45;
+  }
+
+  obniz.i2c0.start("master", sda, scl, 400000, "float");
+  //obniz.i2c0.write(address, [0x20, 0x24]);
+}
+
+  SHT31.prototype.getTempWait = async function() {
+    obniz.i2c0.write(address, [0x20, 0x24]);
+    obniz.i2c0.write(address, [0xE0, 0x00]);
+    var ret = await obniz.i2c0.readWait(address, 4);
+    var tempBin = (ret[0]).toString(2) + ( '00000000' + (ret[1]).toString(2) ).slice( -8 );
+    var temperature = (-45)+(175*(parseInt(tempBin,2)/(65536-1)));
+    return temperature;
+  }
+
+  SHT31.prototype.getHumdWait = async function() {
+    obniz.i2c0.write(address, [0x20, 0x24]);
+    obniz.i2c0.write(address, [0xE0, 0x00]);
+    var ret = await obniz.i2c0.readWait(address, 4);
+    var humdBin = (ret[2]).toString(2) + ( '00000000' + (ret[3]).toString(2) ).slice( -8 );
+    var humidity = 100 * (parseInt(humdBin,2)/(65536-1));
+    return humidity;
+  }
+
+if (PartsRegistrate) {
+  PartsRegistrate("SHT31", SHT31);
 }
 
 ServoMotor = function() {
@@ -1609,57 +2301,6 @@ ServoMotor.prototype.off = function() {
 if (PartsRegistrate) {
   PartsRegistrate("ServoMotor", ServoMotor);
 }
-SHT31 = function() {
-
-};
-
-SHT31.prototype.wired = function(obniz, pwr, sda, scl, gnd, adr, adr_select) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.io_sda = obniz.getIO(sda);
-  this.io_scl = obniz.getIO(scl);
-  this.io_adr = obniz.getIO(adr);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
-  if (adr_select == 4){
-    this.io_adr.output(false);
-    address = 0x44;
-  }else if(adr_select == 5){
-    this.io_adr.float();
-    address = 0x45;
-  }
-
-  obniz.i2c0.start("master", sda, scl, 400000, "float");
-  //obniz.i2c0.write(address, [0x20, 0x24]);
-}
-
-  SHT31.prototype.getTemp = async function() {
-    obniz.i2c0.write(address, [0x20, 0x24]);
-    obniz.i2c0.write(address, [0xE0, 0x00]);
-    var ret = await obniz.i2c0.readWait(address, 4);
-    var tempBin = (ret[0]).toString(2) + ( '00000000' + (ret[1]).toString(2) ).slice( -8 );
-    var temperature = (-45)+(175*(parseInt(tempBin,2)/(65536-1)));
-    return temperature;
-  }
-
-  SHT31.prototype.getHumd = async function() {
-    obniz.i2c0.write(address, [0x20, 0x24]);
-    obniz.i2c0.write(address, [0xE0, 0x00]);
-    var ret = await obniz.i2c0.readWait(address, 4);
-    var humdBin = (ret[2]).toString(2) + ( '00000000' + (ret[3]).toString(2) ).slice( -8 );
-    var humidity = 100 * (parseInt(humdBin,2)/(65536-1));
-    return humidity;
-  }
-
-if (PartsRegistrate) {
-  PartsRegistrate("SHT31", SHT31);
-}
-
 Speaker = function() {
   
 };

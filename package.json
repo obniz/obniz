@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Obniz Basic Library",
   "main": "index.js",
   "scripts": {
@@ -9,10 +9,15 @@
   "keywords": [
     "obniz"
   ],
-  "author": "yukisato",
-  "license": "ISC",
+  "repository": "obniz/obniz",
+  "author": "yukisato <yuki@yuki-sato.com>",
+  "homepage": "https://obniz.io/",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "ws": "^3.1.0"
+  },
+  "bugs": {
+    "url": "https://web.obniz.io/forums/forum/obniz-forum/"
   },
   "private": false
 }

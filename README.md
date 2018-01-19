@@ -1,46 +1,47 @@
-# Obniz
+# obniz.js: sdk for javascript
 
-This is [obniz](https://obniz.io/) javascript library.
+This is [obniz](https://obniz.io/) sdk for javascript.
 
-See details at [Document](https://obniz.io/doc)
+This document available on our site [https://obniz.io/doc/obnizjs/doc/README](https://obniz.io/doc/obnizjs/doc/README)
 
-## Build
-index.js is obniz.js and this is build result.  
-index.js is made from  
+## install
+
+### on browser
+
+Include index.js
+```html
+  <script src="//parts.obniz.io/obniz.js"></script>
 ```
-  obniz/index.js  
-  parts/*/index.js  
+### on nodejs
+Install obniz
+```shell
+  npm install obniz
 ```
-So you should edit these js files. Not index.js on root directory.
-You can build index.js by using _tools/server.js.
-
-## Development
-You can clone this and use this from your HTML.
-After cloning. You are able to launch local server
-
+and import it on js file.
+```javascript
+  const Obniz = require('obniz');
 ```
- cd ./_tools
- node server.js
-```
-Then, http://localhost:3100/obniz.js is avaiable.
-So, You can include this from your HTML.
-Put this on top of the program
-```
-<script src="http://localhost:3100/obniz.js" crossorigin="anonymous"></script>
 
-<body>
-  <div id="online-status"></div>
-  <h1>obniz instant html</h1>
-
-<script>
-  var obniz = new Obniz("00000000");
+## connect and use hardwares
+To use obniz, instantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
+```javascript
+  var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
+    obniz.display.print("hello!");
+    
+    obniz.io.outputType("push-pull")
+    obniz.io0.output(true)
+    obniz.io1.pullup();
+    obniz.io1.outputType("open-drain");
+    obniz.io1.output(false);
+
+    var servo = obniz.wired("ServoMotor", 2, 3, 4);
+    servo.angle(90);
   }
-</script>
-</body>
 ```
-It will OVERWRITE //parts.obniz.io/obniz.js
+
+See more details on [https://obniz.io/doc/obnizjs/doc/README](https://obniz.io/doc/obnizjs/doc/README)
 
 ## Lisence
 
-All rights reserved.
+See [LICENSE.txt](./LICENSE.txt)
