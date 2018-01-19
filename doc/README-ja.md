@@ -57,9 +57,9 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
     });
 
     var pwm = obniz.getpwm();
-    pwm.start(4);   // start pwm at io2
-    pwm.freq(1000); // set pwm. frequency to 1khz
-    pwm.duty(50)    // set pwm pulse witdh 50%
+    pwm.start(4);
+    pwm.freq(1000);
+    pwm.duty(50);
 
     obniz.uart0.start(5, 6, 119200);
     obniz.uart0.onreceive = function(data, text) {
