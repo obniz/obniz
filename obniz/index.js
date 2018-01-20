@@ -14,7 +14,7 @@ Obniz = function(id, options) {
   this.init();
 
   if (!options) options = {};
-  if (id === "OBNIZ ID HERE") {
+  if ((""+id).indexOf("OBNIZ") >= 0) {
     console.error("invalid obniz id");
     return;
   }
@@ -31,22 +31,21 @@ Obniz = function(id, options) {
 
 Obniz.prototype.prompt = function(callback) {
   var obnizid = prompt("Please enter obniz id", "");
-
   if (obnizid === null || obnizid === "") {
-    
   } else {
     callback(obnizid);
   }
 };
 
 Obniz.prototype.wsconnect = function(desired_server) {
-  var server = "wss://obniz.io";
+  var server_obnizio = "wss://obniz.io";
+  var server = server_obnizio;
   if (desired_server) {
     server = ""+desired_server;
   }
   if (this.socket) {
     this.socket.close();
-    this.socket = null;
+    this.clearSocket(this.socket);
   }
   var url = server+"/obniz/"+this.id+"/ws";
   this.print_debug("connecting to " + url);
@@ -54,11 +53,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
 
   var wsOnOpen = function () {
     self.print_debug("ws connected");
-    if (isNode === false && typeof(showOnLine) === "function") {
-      showOnLine();
-    }
-    if (self.onconnect)
-      self.onconnect(self);
+    // wait for {ws:{ready:true}} object
   };
 
   var wsOnMessage = function (data) {
@@ -67,8 +62,6 @@ Obniz.prototype.wsconnect = function(desired_server) {
     if (typeof(data) === "string") {
       obj = JSON.parse(data);
     } else {
-      // not treat binary
-      // obj = data;
       return;
     }
     // User's defined callback
@@ -97,6 +90,12 @@ Obniz.prototype.wsconnect = function(desired_server) {
         self.ondebug(obj.debug);
       }
     }
+    // ws command
+    if (obj["ws"]) {
+      self.handleWSCommand(obj["ws"]) ;
+      return;
+    }
+
     // notify
     var notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
     for (var handerIndex=0; handerIndex<notifyHandlers.length; handerIndex++) {
@@ -110,10 +109,10 @@ Obniz.prototype.wsconnect = function(desired_server) {
         self[peripheral+""+i].notified(module_value);
       }
     }
-    if (obj["switch"]) { self["switch"].notified(obj["switch"]); }
-    if (obj["ble"]) { self["ble"].notified(obj["ble"]); }
-    if (obj["logicanalyzer"]) { self.logicanalyzer.notified(obj["logicanalyzer"]); }
-    if (obj["measure"]){ self.measure.notified(obj["measure"]); }
+    var names= ["switch", "ble", "logicanalyzer", "measure"];
+    for (var i=0; i<names.length; i++) {
+      if(obj[names[i]])  { self[names[i]].notified(obj[names[i]]) }
+    }
   };
 
   var wsOnClose = function(event) {
@@ -124,40 +123,57 @@ Obniz.prototype.wsconnect = function(desired_server) {
     if (self.looper) {
       self.looper = null;
     }
+    // user defined onclose function
     if(self.onclose) {
       self.onclose(self);
     }
-    self.socket = null;
+    self.clearSocket(self.socket);
     setTimeout(function(){
+      // redirect先でつながらないなら切り替える
+      if (desired_server !== server_obnizio) {
+        desired_server = server_obnizio;
+      }
       self.wsconnect(desired_server);
     }, 1000);
   };
 
   var wsOnError = function(err){
-    console.error(err);
+    console.log(err);
   };
 
   if (isNode) {
     WebSocket = require('ws');
     this.socket = new WebSocket(url);
-    this.socket.on('open', wsOnOpen);
+    this.socket.on('open',    wsOnOpen);
     this.socket.on('message', wsOnMessage);
-    this.socket.on('close', wsOnClose);
-    this.socket.on('error', wsOnError);
+    this.socket.on('close',   wsOnClose);
+    this.socket.on('error',   wsOnError);
   } else {
     this.socket = new WebSocket(url);
-    this.socket.onopen = wsOnOpen;
-    this.socket.onmessage = function(event) {
-      wsOnMessage(event.data);
-    };
-    this.socket.onclose = wsOnClose;
-    this.socket.onerror = wsOnError;
+    this.socket.onopen    = wsOnOpen;
+    this.socket.onmessage = function(event) { wsOnMessage(event.data); };
+    this.socket.onclose   = wsOnClose;
+    this.socket.onerror   = wsOnError;
   }
+};
+
+Obniz.prototype.clearSocket = function(socket) {
+  if (isNode) {
+    var shouldRemoveObservers = ['open', 'message', 'close', 'error'];
+    for (var i=0; i<shouldRemoveObservers.length; i++) { socket.removeAllListeners(shouldRemoveObservers[i]); }
+  } else {
+    socket.onopen = null;
+    socket.onmessage = null;
+    socket.onclose = null;
+    socket.onerror = null;
+  }
+  this.socket = null;
 };
 
 Obniz.prototype.close = function() {
   if (this.socket) {
     this.socket.close(1000, 'close');
+    this.clearSocket(this.socket);
   }
 };
 
@@ -240,6 +256,25 @@ Obniz.prototype.getFreeI2C = function() {
     i++;
   }
   throw new Error("No More I2C Available. max = " + i);
+};
+
+Obniz.prototype.handleWSCommand = function(wsObj) {
+  // ready
+  if (wsObj.ready) {
+    if (isNode === false && typeof(showOnLine) === "function") {
+      showOnLine();
+    }
+    if (this.onconnect) {
+      this.onconnect(this);
+    }
+  }
+  if (wsObj.redirect) {
+    var server = wsObj.redirect;
+    this.print_debug("WS connection changed to " + server);
+    this.close();
+    this.wsconnect(server);
+  }
+
 };
 
 Obniz.prototype.message = function(target, message) {

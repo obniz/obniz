@@ -62,3 +62,15 @@ obnizがWifiから切断した時に、ioの状態などをリセットするか
 // Example
 obniz.resetOnDisconnect(false);
 ```
+
+## debugprint
+obniz.jsの内部のログを出力するかどうかを設定できます。デフォルトでfalseです。
+
+```Javascript
+// Example
+obniz = new Obniz("1234-5678");
+obniz.debugprint = true;
+obniz.onconnect = function() {
+  obniz.reset();
+}
+```

@@ -59,3 +59,15 @@ This configration will consist until obniz power down.
 // Example
 obniz.resetOnDisconnect(false);
 ```
+
+## debugprint
+show logs or not inside of obniz.js. default is false.
+
+```Javascript
+// Example
+obniz = new Obniz("1234-5678");
+obniz.debugprint = true;
+obniz.onconnect = function() {
+  obniz.reset();
+}
+```
