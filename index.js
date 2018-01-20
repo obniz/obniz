@@ -435,7 +435,7 @@ PeripheralAD.prototype.notified = function(obj) {
 
 Ble = function(Obniz) {
   this.Obniz = Obniz;
-  this.scanResults =  [];
+  this.peripherals =  [];
 };
 
 Ble.prototype.startAdvertisement = function() {
@@ -443,7 +443,7 @@ Ble.prototype.startAdvertisement = function() {
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
       "status":"start"
-  };
+  }; 
   this.Obniz.send(obj);
   return;
 };
@@ -679,15 +679,14 @@ Ble.prototype.startScan = function(settings) {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["scan"] = {
-    "settings" : {
-      "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-      "interval" : settings && settings.interval ? settings.interval : 30,
-      "duration" : settings && settings.duration ? settings.duration : 30,
-    },
+    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+    "interval" : settings && settings.interval ? settings.interval : 30,
+    "duration" : settings && settings.duration ? settings.duration : 30,
+    
     "status":"start"
   };
   
-  this.scanResults =  [];
+  this.peripherals =  [];
   
   this.Obniz.send(obj);
   return;
@@ -701,29 +700,91 @@ Ble.prototype.stopScan = function() {
   };
   this.Obniz.send(obj);
   return;
-}
+};
+
+Ble.prototype.findPeripheral = function (device_address) {
+  for( var key in this.peripherals){
+    if(this.peripherals[key].device_address === device_address){
+      return this.peripherals[key];
+    }
+  }
+  return null;
+};
+
+
 
 Ble.prototype.notified = function (obj) {
   if (obj.scan_results) {
     var isFinished = false;
     for (var id in obj.scan_results) {
-      var val = new BleRemotePeripheral(obj.scan_results[id]);
-
-      if (val.event_type === "inquiry_complete") {
+      
+      if (obj.scan_results[id].event_type === "inquiry_complete") {
         isFinished = true;
-      } else if (val.event_type === "inquiry_result") {
-
-        this.scanResults.push(val);
+      } else if (obj.scan_results[id].event_type === "inquiry_result") {
+        var val = new BleRemotePeripheral(this.Obniz,obj.scan_results[id].device_address);
+        val.setParams(obj.scan_results[id]);
+        this.peripherals.push(val);
         if (this.onscan) {
           this.onscan(val);
         }
       }
     }
     if (isFinished && this.onscanfinish) {
-          this.onscanfinish(this.scanResults);
+          this.onscanfinish(this.peripherals);
     }
   }
+  
+  if (obj.connect_results) {
+    obj.connect_results.map((function (params) {
+      if (!params.device_address)
+        return;
+      var p = this.findPeripheral(params.device_address);
+      if (p) {
+        if (params.status === "connected") {
+          p.notify("onconnect");
+        }
+        if (params.status === "disconnected") {
+          p.notify("ondisconnect");
+        }
+      }
+    }), this);
+  }
+  
+  if (obj.get_service_results) {
+    obj.get_service_results.map((function (params) {
+      if (!params.device_address)
+        return;
+      var p = this.findPeripheral(params.device_address);
+      if (p) {
+        p.notify("ondiscoverservice",params.service_uuid);
+      }
+    }), this);
+  }
+  if (obj.get_characteristic_results) {
+    obj.get_characteristic_results.map((function (params) {
+      if (!params.device_address)
+        return;
+      var p = this.findPeripheral(params.device_address);
+      if (p) {
+        p.notify("ondiscovercharacteristic",params.service_uuid,params.characteristic_uuid);
+      }
+    }), this);
+  }
+  if (obj.write_characteristic_results) {
+    obj.write_characteristic_results.map((function (params) {
+      if (!params.device_address)
+        return;
+      var p = this.findPeripheral(params.device_address);
+      if (p) {
+        p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,params);
+      }
+    }), this);
+  }
+  
+  
 };
+
+
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -736,22 +797,22 @@ Ble.prototype.notified = function (obj) {
  * @param {type} rawData
  * @return {BleRemotePeripheral}
  */
-BleRemotePeripheral = function(rawData){
+BleRemotePeripheral = function(Obniz, deviceAddress){
+  this.Obniz = Obniz;
+  this.device_address = deviceAddress;
   
-  for(var key in rawData){
-    this[key] = rawData[key];
-  }
-//  return;
-  this.advertise_data_rows = [];
-  for(var i = 0; i < this.advertise_data.length;i++){
-    var length = this.advertise_data[i];
-    var arr = new Array(length);
-    for(var j=0;j<length;j++){
-      arr[j] = this.advertise_data[i+j+1];
-    }
-    this.advertise_data_rows.push(arr);
-    i=i+length;
-  }
+  this.keys = [
+    "device_type",
+    "address_type",
+    "ble_event_type",
+    "rssi",
+    "advertise_data",
+    "advertise_length",
+    "scan_response_length"
+  ];
+  
+  
+  this.services = [];
 };
 
 /**
@@ -771,7 +832,35 @@ BleRemotePeripheral.prototype.toString = function() {
 };
 
 
+BleRemotePeripheral.prototype.setParams = function(dic) {
+  
+  for(var key in dic){
+    if(this.keys.includes(key)){
+      this[key] = dic[key] ;
+    }
+  }
+};
+
+
+BleRemotePeripheral.prototype.analyseAdvertisement = function() {
+  
+  if(this.advertise_data && !this.advertise_data_rows  ){
+    this.advertise_data_rows = [];
+    for(var i = 0; i < this.advertise_data.length;i++){
+      var length = this.advertise_data[i];
+      var arr = new Array(length);
+      for(var j=0;j<length;j++){
+        arr[j] = this.advertise_data[i+j+1];
+      }
+      this.advertise_data_rows.push(arr);
+      i=i+length;
+    }
+  } 
+};
+
+
 BleRemotePeripheral.prototype.serarchTypeVal = function(type){
+  this.analyseAdvertisement();
   for(var i = 0;i<this.advertise_data_rows.length;i++){
     if(this.advertise_data_rows[i][0] === type){
       var results = [].concat(this.advertise_data_rows[i]);
@@ -790,6 +879,9 @@ BleRemotePeripheral.prototype.localName = function(){
   if(!data)return undefined;
   return String.fromCharCode.apply(null, data);
 };
+
+
+
 
 
 BleRemotePeripheral.prototype.iBeacon = function(){
@@ -825,30 +917,194 @@ BleRemotePeripheral.prototype.iBeacon = function(){
 };
 
 
-BleRemotePeripheral.prototype.connect = function(){
+BleRemotePeripheral.prototype.connect = function(callbacks){
+  var keys = ["onconnect","ondisconnect"];
+  this.setParams(keys, callbacks);
   
-  throw new Error("todo");
+  var obj = {
+    "ble" :{
+      "connect" :{
+        "device_address" : this.device_address
+      }
+    }
+  };
+  this.Obniz.send(obj);
 };
 
 BleRemotePeripheral.prototype.disconnect = function(){
-  throw new Error("todo");
+  var obj = {
+    "ble" :{
+      "disconnect" :{
+        "device_address" : this.device_address
+      }
+    }
+  };
+  this.Obniz.send(obj);
+  
 };
 
 BleRemotePeripheral.prototype.updateRssi = function(){
   throw new Error("todo");
 };
 
-BleRemotePeripheral.prototype.discoverServices = function(){
-  throw new Error("todo");
+BleRemotePeripheral.prototype.getService = function(uuid){
+  for(var key in this.services){
+    if(this.services[key].uuid === uuid){
+      return this.services[key];
+    }
+  }
+  var newService = new BleRemoteService(this.Obniz,this, uuid);
+  this.services.push(newService);
+  return newService;
 };
 
-BleRemotePeripheral.prototype.discoverAllServicesAndCharacteristics = function(){
-  throw new Error("todo");
+BleRemotePeripheral.prototype.discoverAllServices = function(){
+  var obj = {
+    "ble" :{
+      "get_services" :{
+        "device_address" : this.device_address
+      }
+    }
+  };
+  this.Obniz.send(obj);
 };
 
-BleRemotePeripheral.prototype.discoverSomeServicesAndCharacteristics = function(){
-  throw new Error("todo");
+//callbacks
+BleRemotePeripheral.prototype.onconnect = function(){};
+BleRemotePeripheral.prototype.ondisconnect = function(){};
+BleRemotePeripheral.prototype.ondiscoverservice = function (service){};
+BleRemotePeripheral.prototype.ondiscovercharacteristic = function( service, characteristic){};
+BleRemotePeripheral.prototype.onwritecharacteristic = function(service, characteristic, status){};
+BleRemotePeripheral.prototype.onreadcharacteristic = function(service, characteristic, value){};
+
+
+BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characteristicUuid, param){
+  if(typeof (this[funcName])  === "function"){
+    if(!serviceUuid){
+      this[funcName]();
+    }else{
+      var service = this.getService(serviceUuid);
+      if(!characteristicUuid){
+        this[funcName](service);
+      }else{
+        var characteristic = service.getCharacteristic(characteristicUuid);
+        if(!param){
+          this[funcName](service,characteristic);
+        }else{
+            this[funcName](service,characteristic,param);
+        }
+      }
+      
+    }
+  }
 };
+
+/**
+ * 
+ * @param {type} Obniz
+ * @param {type} peripheral
+ * @param {type} uuid
+ * @return {BleRemoteService}
+ */
+BleRemoteService = function(Obniz, peripheral, uuid){
+  this.Obniz = Obniz;
+  this.uuid = uuid;
+  this.peripheral = peripheral;
+  
+  this.characteristics = [];
+  
+};
+
+
+BleRemoteService.prototype.toString = function(){
+  return JSON.stringify({
+        "device_address" : this.peripheral.device_address,
+        "service_uuid" : this.uuid
+  });
+};
+
+BleRemoteService.prototype.discoverAllCharacteristics = function(){
+  var obj = {
+    "ble" :{
+      "get_characteristics" :{
+        "device_address" : this.peripheral.device_address,
+        "service_uuid" : this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+BleRemoteService.prototype.getCharacteristic = function(uuid){
+  
+  for(var key in this.characteristics){
+    if(this.characteristics[key].uuid === uuid){
+      return this.characteristics[key];
+    }
+  }
+  var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
+  this.characteristics.push(newCharacteristic);
+  return newCharacteristic;
+};
+
+
+/**
+ * 
+ * @param {type} Obniz
+ * @param {type} service
+ * @param {type} uuid
+ * @return {BleRemoteCharacteristic}
+ */
+BleRemoteCharacteristic = function(Obniz, service, uuid){
+  this.Obniz = Obniz;
+  this.service = service;
+  this.uuid = uuid;
+};
+
+BleRemoteCharacteristic.prototype.toString = function(){
+  return JSON.stringify({
+        "device_address" : this.service.peripheral.device_address,
+        "service_uuid" : this.service.uuid,
+        "characteristic_uuid" : this.uuid
+      });
+};
+
+BleRemoteCharacteristic.prototype.read = function(){
+  var obj = {
+    "ble" :{
+      "read_characteristic" :{
+        "device_address" : this.service.peripheral.device_address,
+        "service_uuid" : this.service.uuid,
+        "characteristic_uuid" : this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+
+BleRemoteCharacteristic.prototype.readWait = async function(){
+
+ throw new Error("TODO");
+};
+
+BleRemoteCharacteristic.prototype.write = function(val){
+  var obj = {
+    "ble" :{
+      "write_characteristic" :{
+        "device_address" : this.service.peripheral.device_address,
+        "service_uuid" : this.service.uuid,
+        "characteristic_uuid" : this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+
+
+
+
 
 
 
