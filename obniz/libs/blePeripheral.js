@@ -300,13 +300,41 @@ BleRemoteCharacteristic.prototype.readWait = async function(){
  throw new Error("TODO");
 };
 
-BleRemoteCharacteristic.prototype.write = function(val){
+BleRemoteCharacteristic.prototype.write = function(array){
   var obj = {
     "ble" :{
       "write_characteristic" :{
         "device_address" : this.service.peripheral.device_address,
         "service_uuid" : this.service.uuid,
-        "characteristic_uuid" : this.uuid
+        "characteristic_uuid" : this.uuid,
+        "data" : array,
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+BleRemoteCharacteristic.prototype.writeNumber = function(val){
+  var obj = {
+    "ble" :{
+      "write_characteristic" :{
+        "device_address" : this.service.peripheral.device_address,
+        "service_uuid" : this.service.uuid,
+        "characteristic_uuid" : this.uuid,
+        "value" : val
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+BleRemoteCharacteristic.prototype.writeText = function(str){
+  var obj = {
+    "ble" :{
+      "write_characteristic" :{
+        "device_address" : this.service.peripheral.device_address,
+        "service_uuid" : this.service.uuid,
+        "characteristic_uuid" : this.uuid,
+        "text" : str
       }
     }
   };

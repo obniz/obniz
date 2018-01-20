@@ -347,6 +347,17 @@ Ble.prototype.notified = function (obj) {
     }), this);
   }
   
+  if (obj.read_characteristic_results) {
+    obj.read_characteristic_results.map((function (params) {
+      if (!params.device_address)
+        return;
+      var p = this.findPeripheral(params.device_address);
+      if (p) {
+        p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid, params.data);
+      } 
+    }), this);
+  }
+  
   
 };
 
