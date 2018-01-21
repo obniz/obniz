@@ -324,12 +324,6 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 
-
-
-```
-
-
-
 ## peripheral.onwritecharacteristic
 characteristicに書き込みが完了したときに呼ばれます
 

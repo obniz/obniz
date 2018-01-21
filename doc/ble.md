@@ -316,12 +316,6 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 
-
-
-```
-
-
-
 ## peripheral.onwritecharacteristic
 Call this func when write to the characteristic success.
 
