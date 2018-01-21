@@ -142,7 +142,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
   };
 
   if (isNode) {
-    WebSocket = require('ws');
+    var WebSocket = require('ws');
     this.socket = new WebSocket(url);
     this.socket.on('open',    wsOnOpen);
     this.socket.on('message', wsOnMessage);
