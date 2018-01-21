@@ -1,11 +1,11 @@
 # BLE
-You can use Bluetooth Low Energy with obniz as peripheral/central
+Bluetooth Low Energyでperipheral/centralとして通信ができます
 
-# Use obniz as ble peripheral
+# obnizをperipheralとして使う
 
 ## startAdvertisement()
-Start advertisement .
-Before call this function, you shoud call setAdvDataRaw for set data.
+
+BLEのAdvertisementを開始します
 
 ```Javascript
 obniz.ble.startAdvertisement();
@@ -16,7 +16,7 @@ obniz.ble.stopAdvertisement();
 
 ## stopAdvertisement()
 
-Stop advertisement .
+BLEのAdvertisementを終了します
 
 ```Javascript
 obniz.ble.startAdvertisement();
@@ -26,7 +26,12 @@ obniz.ble.stopAdvertisement();
 
 ## setAdvDataRaw(bytes[])
 
-Set advertise data from data array.
+BLEのAdvertisementで出力するデータバイト列を設定します
+BLEの規格に従い，bytesの長さは31以下にする必要があります．
+
+Advertisementで出力するデータバイト列を生成するadvDataBuilderも参照ください
+
+
 
 ```Javascript
 obniz.ble.setAdvData([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
@@ -38,7 +43,7 @@ obniz.ble.startAdvertisement();
 
 ## setAdvData(setting)
 
-Set advertise data from json.
+settingに渡した引数に従って，BLEのAdvertisementで出力するデータを設定します
 
 
 
@@ -54,7 +59,7 @@ obniz.ble.setAdvData({
 obniz.ble.startAdvertisement();
 ```
 
-Json parameters are here.．
+設定できるパラメータフォーマットは下記のとおりです．
 
 
 ```Javascript
@@ -72,8 +77,11 @@ Json parameters are here.．
 ```
 
 ## setScanRespDataRaw(data[])
-Set scan response data from data array.
 
+BLEのScanResponseで出力するデータバイト列を設定します
+BLEの規格に従い，bytesの長さは31以下にする必要があります．
+
+ScanResponseで出力するデータバイト列を生成するscanRespDataBuilderも参照ください
 
 ```Javascript
 obniz.ble.setScanRespData([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
@@ -86,7 +94,7 @@ obniz.ble.startAdvertisement();
 
 ## setScanRespData(setting)
 
-Set scan response data from data json.
+settingに渡した引数に従って，BLEのScan Responseで出力するデータを設定します
 
 ```Javascript
 obniz.ble.setAdvData({
@@ -96,8 +104,7 @@ obniz.ble.setAdvData({
 obniz.ble.startAdvertisement();
 ```
 
-Json parameters are here.．
-
+設定できるパラメータフォーマットは下記のとおりです．
 
 
 ```Javascript
@@ -112,27 +119,30 @@ Json parameters are here.．
 ```
 
 
-# Use obniz as central
+# obnizをcentralとして使う
 
 ## startScan([setting])
-Start scan.
+
+settingに渡した引数に従って，BLEのscanを開始します
+
+設定できるパラメータフォーマットは下記のとおりです．
 
 ```Javascript
 {
-     duration: 30,   //scan duration in seconds
+     duration: 30,   //scanをする期間を秒で指定．デフォルト30秒
 }
 ```
 
 ```Javascript
 obniz.ble.startScan({duration : 10});
 
-obniz.ble.startScan();   //setting arg is optinal
+obniz.ble.startScan();   //引数なしも可能
 
 ```
 
 
 ## stopScan()
-stop scan.
+BLEのscanを停止します
 
 ```Javascript
 obniz.ble.startScan({duration : 10});
@@ -142,7 +152,8 @@ obniz.ble.stopScan();
 
 ## onScan
 
-Call this func when obniz find new peripheral.
+scanでperipheralを発見すると呼ばれます
+引数にperipheral objectが渡されます
 
 
 ```Javascript
@@ -155,7 +166,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.adv_data
-Return raw advertise data.
+advertise dataの生データを返します
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -166,7 +177,7 @@ obniz.ble.startScan({duration : 10});
 ```
 
 ## peripheral.localName()
-Return local name if peripheral has it.
+advertise dataの中にlocal Name情報があればそれを返します
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -177,11 +188,9 @@ obniz.ble.startScan({duration : 10});
 ```
 
 
-
 ## peripheral.iBeacon()
-
-Return iBeacon data if peripheral has it.
-Return values are here.
+advertise dataの中にiBeacon情報があればそれを返します．なければnullを返します
+返り値は下記のとおりです．
 
 ```
 {
@@ -202,7 +211,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.connect()
-Connet to peripheral
+peripheralに接続します
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -215,7 +224,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.onconnect
-Call  this func when obniz connect success
+接続が成功したときに呼ばれます
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -231,7 +240,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.disconnect()
-Close connection.
+peripheralから切断します
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -247,7 +256,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.onconnect
-Call this func when obniz close connection. 
+切断されたときに呼ばれます 
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -264,9 +273,8 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 
-
 ## peripheral.getService(uuid).getCharacteristic(uuid).write(dataArray)
-write data to the characteristic from data array.
+characteristicにdataArrayを書き込みます
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -282,7 +290,7 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).writeNumber(value)
-write data to the characteristic from value as 4byte bigadian int.
+characteristicに数字を4byteのbigadianとしてを書き込みます
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -300,7 +308,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).writeText(str)
-write data to the characteristic from string.
+characteristicにdataArrayを書き込みます
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -323,7 +331,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.onwritecharacteristic
-Call this func when write to the characteristic success.
+characteristicに書き込みが完了したときに呼ばれます
 
 
 ```Javascript
@@ -347,8 +355,8 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).read()
-Read from characteristic.
-Return value appear in callback function (onreadcharacteristic) .
+characteristicからデータを読み込みます
+結果は，onreadcharacteristicコールバックで呼ばれます
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
@@ -369,7 +377,7 @@ obniz.ble.startScan({duration : 10});
 ```
 
 ## peripheral.onreadcharacteristic
-Call this func when read from the characteristic success.
+characteristicからデータを読み込出したときに呼ばれます
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
