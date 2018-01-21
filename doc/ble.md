@@ -386,10 +386,8 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.onerror
-何かしらエラーが発生したときに呼ばれます.
-引数にエラー内容がわたされます
+Call this func when someting error occurred with erorr messages.
 
-引数に渡されるのは次の内容です
 ```Javascript
 {
    error_code : 1,
