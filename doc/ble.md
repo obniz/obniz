@@ -280,6 +280,7 @@ obniz.ble.onscan = function(peripheral){
     }
 }
 obniz.ble.startScan({duration : 10});
+```
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).writeNumber(value)
 write data to the characteristic from value as 4byte bigadian int.

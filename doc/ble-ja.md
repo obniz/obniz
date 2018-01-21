@@ -289,6 +289,9 @@ obniz.ble.onscan = function(peripheral){
 }
 obniz.ble.startScan({duration : 10});
 
+```
+
+
 ## peripheral.getService(uuid).getCharacteristic(uuid).writeNumber(value)
 characteristicに数字を4byteのbigadianとしてを書き込みます
 
