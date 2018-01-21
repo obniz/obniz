@@ -357,6 +357,20 @@ Ble.prototype.notified = function (obj) {
       } 
     }), this);
   }
+  if (obj.errors) {
+    obj.errors.map((function (params) {
+      if (!params.device_address){
+         if(typeof(this.onerror) === "function"){
+           this.onerror(params);
+         }
+      }
+       
+      var p = this.findPeripheral(params.device_address);
+      if (p) {
+        p.notify("onerror",null, null, params);
+      } 
+    }), this);
+  }
   
   
 };

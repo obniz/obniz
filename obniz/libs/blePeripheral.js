@@ -188,23 +188,22 @@ BleRemotePeripheral.prototype.ondiscoverservice = function (service){};
 BleRemotePeripheral.prototype.ondiscovercharacteristic = function( service, characteristic){};
 BleRemotePeripheral.prototype.onwritecharacteristic = function(service, characteristic, status){};
 BleRemotePeripheral.prototype.onreadcharacteristic = function(service, characteristic, value){};
+BleRemotePeripheral.prototype.onerror = function(err){};
+
 
 
 BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characteristicUuid, param){
   if(typeof (this[funcName])  === "function"){
     if(!serviceUuid){
-      this[funcName]();
+      this[funcName](param);
     }else{
       var service = this.getService(serviceUuid);
       if(!characteristicUuid){
-        this[funcName](service);
+        this[funcName](service,param);
       }else{
         var characteristic = service.getCharacteristic(characteristicUuid);
-        if(!param){
-          this[funcName](service,characteristic);
-        }else{
-            this[funcName](service,characteristic,param);
-        }
+        this[funcName](service,characteristic,param);
+        
       }
       
     }
