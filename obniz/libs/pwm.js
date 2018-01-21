@@ -1,5 +1,5 @@
 
-PeripheralPWM = function(Obniz, id) {
+var PeripheralPWM = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.state = {};

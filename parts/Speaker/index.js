@@ -1,4 +1,4 @@
-Speaker = function() {
+var Speaker = function() {
   
 };
 

@@ -1,5 +1,5 @@
 
-Ble = function(Obniz) {
+var Ble = function(Obniz) {
   this.Obniz = Obniz;
   this.peripherals =  [];
 };

@@ -1,5 +1,5 @@
 
-PeripheralI2C = function(Obniz, id) {
+var PeripheralI2C = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.observers = [];

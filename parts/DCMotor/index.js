@@ -1,4 +1,4 @@
-DCMotor = function() {
+var DCMotor = function() {
 
 };
 

@@ -1,4 +1,4 @@
-ServoMotor = function() {
+var ServoMotor = function() {
 
 };
 

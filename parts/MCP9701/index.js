@@ -1,4 +1,4 @@
-MCP9701 = function() {
+var MCP9701 = function() {
 
 };
 

@@ -1,4 +1,4 @@
-USB = function() {
+var USB = function() {
   
 };
 

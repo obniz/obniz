@@ -1,5 +1,5 @@
 
-Display = function(Obniz) {
+var Display = function(Obniz) {
   this.Obniz = Obniz;
 };
 

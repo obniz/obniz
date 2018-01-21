@@ -9,7 +9,7 @@
  * @param {type} rawData
  * @return {BleRemotePeripheral}
  */
-BleRemotePeripheral = function(Obniz, deviceAddress){
+var BleRemotePeripheral = function(Obniz, deviceAddress){
   this.Obniz = Obniz;
   this.device_address = deviceAddress;
   
@@ -217,7 +217,7 @@ BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characte
  * @param {type} uuid
  * @return {BleRemoteService}
  */
-BleRemoteService = function(Obniz, peripheral, uuid){
+var BleRemoteService = function(Obniz, peripheral, uuid){
   this.Obniz = Obniz;
   this.uuid = uuid;
   this.peripheral = peripheral;
@@ -266,7 +266,7 @@ BleRemoteService.prototype.getCharacteristic = function(uuid){
  * @param {type} uuid
  * @return {BleRemoteCharacteristic}
  */
-BleRemoteCharacteristic = function(Obniz, service, uuid){
+var BleRemoteCharacteristic = function(Obniz, service, uuid){
   this.Obniz = Obniz;
   this.service = service;
   this.uuid = uuid;

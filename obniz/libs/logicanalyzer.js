@@ -1,5 +1,5 @@
 
-LogicAnalyzer = function(Obniz) {
+var LogicAnalyzer = function(Obniz) {
   this.Obniz = Obniz;
 };
 

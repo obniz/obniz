@@ -1,5 +1,5 @@
 
-ObnizMeasure = function(Obniz) {
+var ObnizMeasure = function(Obniz) {
   this.Obniz = Obniz;
   this.observers = [];
 };

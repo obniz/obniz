@@ -1,4 +1,4 @@
-JoyStick = function() {
+var JoyStick = function() {
   
 };
 

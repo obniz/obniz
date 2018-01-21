@@ -1,5 +1,5 @@
 
-ObnizSwitch = function(Obniz) {
+var ObnizSwitch = function(Obniz) {
   this.Obniz = Obniz;
   this.observers = [];
 };

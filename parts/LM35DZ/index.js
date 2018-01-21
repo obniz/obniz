@@ -1,4 +1,4 @@
-LM35DZ = function() {
+var LM35DZ = function() {
 
 };
 

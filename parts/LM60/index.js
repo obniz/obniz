@@ -1,4 +1,4 @@
-LM60 = function() {
+var LM60 = function() {
 
 };
 

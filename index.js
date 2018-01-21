@@ -2,7 +2,7 @@
 
 var isNode = (typeof window === 'undefined') ? true : false; 
 
-Obniz = function(id, options) {
+var Obniz = function(id, options) {
   if (isNode === false && typeof(showOffLine) === "function") {
     showOffLine();
   }
@@ -359,11 +359,11 @@ Obniz.prototype.error = function (msg) {
 /*===================*/
 var _parts = {};
 
-PartsRegistrate = function(name, obj) {
+var PartsRegistrate = function(name, obj) {
   _parts[name] = obj;
 };
 
-Parts = function(name) {
+var Parts = function(name) {
   return new _parts[name]();
 };
 
@@ -377,7 +377,7 @@ if (isNode) {
 
 
 
-PeripheralAD = function(Obniz, id) {
+var PeripheralAD = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.value = 0.0;
@@ -433,7 +433,7 @@ PeripheralAD.prototype.notified = function(obj) {
   }
 };
 
-Ble = function(Obniz) {
+var Ble = function(Obniz) {
   this.Obniz = Obniz;
   this.peripherals =  [];
 };
@@ -822,7 +822,7 @@ Ble.prototype.notified = function (obj) {
  * @param {type} rawData
  * @return {BleRemotePeripheral}
  */
-BleRemotePeripheral = function(Obniz, deviceAddress){
+var BleRemotePeripheral = function(Obniz, deviceAddress){
   this.Obniz = Obniz;
   this.device_address = deviceAddress;
   
@@ -1030,7 +1030,7 @@ BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characte
  * @param {type} uuid
  * @return {BleRemoteService}
  */
-BleRemoteService = function(Obniz, peripheral, uuid){
+var BleRemoteService = function(Obniz, peripheral, uuid){
   this.Obniz = Obniz;
   this.uuid = uuid;
   this.peripheral = peripheral;
@@ -1079,7 +1079,7 @@ BleRemoteService.prototype.getCharacteristic = function(uuid){
  * @param {type} uuid
  * @return {BleRemoteCharacteristic}
  */
-BleRemoteCharacteristic = function(Obniz, service, uuid){
+var BleRemoteCharacteristic = function(Obniz, service, uuid){
   this.Obniz = Obniz;
   this.service = service;
   this.uuid = uuid;
@@ -1164,7 +1164,7 @@ BleRemoteCharacteristic.prototype.writeText = function(str){
 
 
 
-Display = function(Obniz) {
+var Display = function(Obniz) {
   this.Obniz = Obniz;
 };
 
@@ -1197,7 +1197,7 @@ Display.prototype.qr = function(data, correction) {
   this.Obniz.send(obj);
 };
 
-PeripheralI2C = function(Obniz, id) {
+var PeripheralI2C = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.observers = [];
@@ -1270,7 +1270,7 @@ PeripheralI2C.prototype.end = function() {
   self.Obniz.send(obj);
 };
 
-PeripheralIO = function(Obniz, id) {
+var PeripheralIO = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.value = 0;
@@ -1357,7 +1357,7 @@ PeripheralIO.prototype.notified = function(obj) {
   }
 };
 
-LogicAnalyzer = function(Obniz) {
+var LogicAnalyzer = function(Obniz) {
   this.Obniz = Obniz;
 };
 
@@ -1391,7 +1391,7 @@ LogicAnalyzer.prototype.notified = function(obj) {
   return;
 };
 
-ObnizMeasure = function(Obniz) {
+var ObnizMeasure = function(Obniz) {
   this.Obniz = Obniz;
   this.observers = [];
 };
@@ -1423,7 +1423,7 @@ ObnizMeasure.prototype.notified = function(obj) {
   }
 };
 
-PeripheralPWM = function(Obniz, id) {
+var PeripheralPWM = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.state = {};
@@ -1493,7 +1493,7 @@ PeripheralPWM.prototype.modulate = function(type, symbol_sec, data) {
 };
 
 
-PeripheralSPI = function(Obniz, id) {
+var PeripheralSPI = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.observers = [];
@@ -1537,7 +1537,7 @@ PeripheralSPI.prototype.notified = function(obj) {
   }
 };
 
-ObnizSwitch = function(Obniz) {
+var ObnizSwitch = function(Obniz) {
   this.Obniz = Obniz;
   this.observers = [];
 };
@@ -1569,7 +1569,7 @@ ObnizSwitch.prototype.notified = function(obj) {
   }
 };
 
-PeripheralUART = function(Obniz, id) {
+var PeripheralUART = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.received = new Uint8Array([]);
@@ -1672,7 +1672,7 @@ PeripheralUART.prototype.end = function() {
   obj["uart"+this.id] = null;
   this.Obniz.send(obj);
 };
-_24LC256 = function() {
+var _24LC256 = function() {
 
 };
 
@@ -1719,7 +1719,7 @@ _24LC256.prototype.get = async function(address, length) {
 if (PartsRegistrate) {
   PartsRegistrate("24LC256", _24LC256);
 }
-Button = function() {
+var Button = function() {
 
 };
 
@@ -1758,7 +1758,7 @@ Button.prototype.isPressedWait = async function() {
 if (PartsRegistrate) {
   PartsRegistrate("Button", Button);
 }
-DCMotor = function() {
+var DCMotor = function() {
 
 };
 
@@ -1841,7 +1841,7 @@ DCMotor.prototype.power = function(power) {
 if (PartsRegistrate) {
   PartsRegistrate("DCMotor", DCMotor);
 }
-PIR_ekmc= function() {
+var PIR_ekmc= function() {
   
 };
 
@@ -1882,7 +1882,7 @@ PIR_ekmc.prototype.isPressedWait = async function() {
 if (PartsRegistrate) {
   PartsRegistrate("PIR_ekmc", PIR_ekmc);
 }
-HCSR04 = function() {
+var HCSR04 = function() {
 
 };
 
@@ -1938,7 +1938,7 @@ HCSR04.prototype.unit = function(unit) {
 if (PartsRegistrate) {
   PartsRegistrate("HC-SR04", HCSR04);
 }
-JoyStick = function() {
+var JoyStick = function() {
   
 };
 
@@ -2003,7 +2003,7 @@ JoyStick.prototype.isPressedWait = async function() {
   if (PartsRegistrate) {
   PartsRegistrate("JoyStick", JoyStick);
   }
-KXSC7_2050 = function() {
+var KXSC7_2050 = function() {
   
 };
 
@@ -2075,7 +2075,7 @@ KXSC7_2050.prototype.onChangeZ = function(callback) {
 if (PartsRegistrate) {
   PartsRegistrate("KXSC7_2050", KXSC7_2050);
 }
-LED = function() {
+var LED = function() {
 
 };
 
@@ -2124,7 +2124,7 @@ if (PartsRegistrate) {
   PartsRegistrate("LED", LED);
 }
 
-LM35DZ = function() {
+var LM35DZ = function() {
 
 };
 
@@ -2158,7 +2158,7 @@ if (PartsRegistrate) {
   PartsRegistrate("LM35DZ", LM35DZ);
 }
 
-LM60 = function() {
+var LM60 = function() {
 
 };
 
@@ -2193,7 +2193,7 @@ if (PartsRegistrate) {
   PartsRegistrate("LM60", LM60);
 }
 
-LM61 = function() {
+var LM61 = function() {
 
 };
 
@@ -2227,7 +2227,7 @@ if (PartsRegistrate) {
   PartsRegistrate("LM61", LM61);
 }
 
-MCP9700 = function() {
+var MCP9700 = function() {
 
 };
 
@@ -2261,7 +2261,7 @@ if (PartsRegistrate) {
   PartsRegistrate("MCP9700", MCP9700);
 }
 
-MCP9701 = function() {
+var MCP9701 = function() {
 
 };
 
@@ -2295,7 +2295,7 @@ if (PartsRegistrate) {
   PartsRegistrate("MCP9701", MCP9701);
 }
 
-PotentionMeter = function() {
+var PotentionMeter = function() {
   
 };
 
@@ -2326,7 +2326,7 @@ PotentionMeter.prototype.onChange = function(callback) {
 if (PartsRegistrate) {
   PartsRegistrate("PotentionMeter", PotentionMeter);
 }
-RN42 = function() {
+var RN42 = function() {
 
 };
 
@@ -2512,7 +2512,7 @@ if (PartsRegistrate) {
   PartsRegistrate("RN42", RN42);
 }
 //センサから出力が無い(出力インピーダンス高すぎ？)
-S8100B = function() {
+var S8100B = function() {
 
 };
 
@@ -2546,7 +2546,7 @@ if (PartsRegistrate) {
   PartsRegistrate("S8100B", S8100B);
 }
 
-SHT31 = function() {
+var SHT31 = function() {
 
 };
 
@@ -2597,7 +2597,7 @@ if (PartsRegistrate) {
   PartsRegistrate("SHT31", SHT31);
 }
 
-ServoMotor = function() {
+var ServoMotor = function() {
 
 };
 
@@ -2644,7 +2644,7 @@ ServoMotor.prototype.off = function() {
 if (PartsRegistrate) {
   PartsRegistrate("ServoMotor", ServoMotor);
 }
-Speaker = function() {
+var Speaker = function() {
   
 };
 
@@ -2667,7 +2667,7 @@ Speaker.prototype.freq = function(freq) {
 if (PartsRegistrate) {
   PartsRegistrate("Speaker", Speaker);
 }
-USB = function() {
+var USB = function() {
   
 };
 

@@ -1,4 +1,4 @@
-SHT31 = function() {
+var SHT31 = function() {
 
 };
 

@@ -1,5 +1,5 @@
 
-PeripheralSPI = function(Obniz, id) {
+var PeripheralSPI = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.observers = [];

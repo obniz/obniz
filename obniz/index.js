@@ -2,7 +2,7 @@
 
 var isNode = (typeof window === 'undefined') ? true : false; 
 
-Obniz = function(id, options) {
+var Obniz = function(id, options) {
   if (isNode === false && typeof(showOffLine) === "function") {
     showOffLine();
   }
@@ -359,11 +359,11 @@ Obniz.prototype.error = function (msg) {
 /*===================*/
 var _parts = {};
 
-PartsRegistrate = function(name, obj) {
+var PartsRegistrate = function(name, obj) {
   _parts[name] = obj;
 };
 
-Parts = function(name) {
+var Parts = function(name) {
   return new _parts[name]();
 };
 

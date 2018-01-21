@@ -1,4 +1,4 @@
-Button = function() {
+var Button = function() {
 
 };
 

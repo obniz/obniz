@@ -1,5 +1,5 @@
 
-PeripheralUART = function(Obniz, id) {
+var PeripheralUART = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.received = new Uint8Array([]);

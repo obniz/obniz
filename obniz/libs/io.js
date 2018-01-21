@@ -1,5 +1,5 @@
 
-PeripheralIO = function(Obniz, id) {
+var PeripheralIO = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.value = 0;

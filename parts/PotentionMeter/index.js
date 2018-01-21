@@ -1,4 +1,4 @@
-PotentionMeter = function() {
+var PotentionMeter = function() {
   
 };
 

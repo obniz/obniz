@@ -1,5 +1,5 @@
 
-PeripheralAD = function(Obniz, id) {
+var PeripheralAD = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.value = 0.0;

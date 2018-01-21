@@ -1,4 +1,4 @@
-HCSR04 = function() {
+var HCSR04 = function() {
 
 };
 

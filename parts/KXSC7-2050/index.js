@@ -1,4 +1,4 @@
-KXSC7_2050 = function() {
+var KXSC7_2050 = function() {
   
 };
 

@@ -1,4 +1,4 @@
-_24LC256 = function() {
+var _24LC256 = function() {
 
 };
 

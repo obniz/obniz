@@ -1,4 +1,4 @@
-LED = function() {
+var LED = function() {
 
 };
 

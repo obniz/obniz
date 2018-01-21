@@ -1,4 +1,4 @@
-RN42 = function() {
+var RN42 = function() {
 
 };
 
