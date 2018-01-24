@@ -2,6 +2,9 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs')
 const chokidar = require("chokidar");
+var exec = require('child_process').exec;
+var babel = require("babel-core");
+
 const app = express()
 const port = 3100
 
@@ -86,4 +89,14 @@ function build() {
     combined += "\n" + string;
   }
   fs.writeFileSync(path.join(__dirname, '../index.js'), combined);
+  
+  
+   var babelOptions = {
+      "presets": [
+        ["env", { "targets": {"node": "6.10" }}]
+      ]
+    };
+    var results = babel.transform(combined, babelOptions);
+    fs.writeFileSync(path.join(__dirname, '../index-for-node6.10.js'), results.code);
+   
 }
