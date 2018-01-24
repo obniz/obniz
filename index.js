@@ -142,7 +142,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
   };
 
   if (isNode) {
-    WebSocket = require('ws');
+    var WebSocket = require('ws');
     this.socket = new WebSocket(url);
     this.socket.on('open',    wsOnOpen);
     this.socket.on('message', wsOnMessage);
@@ -436,7 +436,7 @@ PeripheralAD.prototype.notified = function(obj) {
 var Ble = function(Obniz) {
   this.Obniz = Obniz;
   this.peripherals =  [];
-};
+}; 
 
 Ble.prototype.startAdvertisement = function() {
   var obj = {};

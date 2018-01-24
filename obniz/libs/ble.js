@@ -2,7 +2,7 @@
 var Ble = function(Obniz) {
   this.Obniz = Obniz;
   this.peripherals =  [];
-};
+}; 
 
 Ble.prototype.startAdvertisement = function() {
   var obj = {};
