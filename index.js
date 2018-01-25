@@ -1610,6 +1610,9 @@ PeripheralUART.prototype.start = function(tx, rx, baud, stop, bits, parity, flow
 PeripheralUART.prototype.send = function(data) {
   var send_data = null;
   var key = "data";
+  if (data === undefined) {
+    return;
+  }
   if (typeof(data) === "number") {
     data = [data];
   }
