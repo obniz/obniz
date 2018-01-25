@@ -10,15 +10,25 @@ ioでのロジックアナライザーをスタートさせます。
 ピンに状態の変化がない場合。もしくは、変化があっても検出できないぐらい短かった場合は何もデータを受け取ることが出来ません。
 変化が見つかってから決められた間隔・決められた時間分のデータを受け取れます。
 データの受け取り方はonmeasured callbackを設定するか、もしくはmeasured変数から読み出す方法があります。
-例えば変化があってから1msごとに1秒分のピンの1,0を取得したい場合は以下のように設定します。
+例えば変化があってから2msごとに1秒分のピンの1,0を取得したい場合は以下のように設定します。
 
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 0.001, 1);  // start on io0. 1msec interval and 1sec long.
+obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
 obniz.logicanalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
+## logicanalyzer.start(io, interval, data_long, trigerValue, trigerValueSamples);
+trigerを指定することができます。 これなしでは、全てのioの状態変化をトリガーとして動き始めます。 トリガーにより測定を開始したい値とその数を指定できます。 例えば、下の例であればfalseが3回続いたデータのみ計測します。
+```Javascript
+// Example
+obniz.logicanalyzer.start(0, 2, 1000, false, 3);  // start on io0. 1msec interval and 1sec long.
+obniz.logicanalyzer.onmeasured = function(array) {
+  console.log(array);
+}
+```
+
 ## logicanalyzer.onmeasured
 
 実際にデータを受け取るためのcallbackです。
@@ -28,11 +38,11 @@ obniz.logicanalyzer.onmeasured = function(array) {
 [0x01, 0x00]
 といったデータを受け取った場合、
 最初の瞬間だけioが1でそれ以降の15bit分は0だったことがわかります。
-つまり、1msecだけioは1で、それ以降の15msecはioは0だったと推定されます。
+つまり、2msecだけioは1で、それ以降の30msecはioは0だったと推定されます。
 
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 0.001, 1);  // start on io0. 1msec interval and 1sec long.
+obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
 
 obniz.logicanalyzer.onmeasured = function(array) {
   console.log(array);
@@ -44,6 +54,6 @@ obniz.logicanalyzer.onmeasured = function(array) {
 
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 0.001, 1);  // start on io0. 1msec interval and 1sec long.
+obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
 obniz.logicanalyzer.end();
 ```

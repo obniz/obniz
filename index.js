@@ -1361,13 +1361,20 @@ var LogicAnalyzer = function(Obniz) {
   this.Obniz = Obniz;
 };
 
-LogicAnalyzer.prototype.start = function(io, interval, length) {
+LogicAnalyzer.prototype.start = function(io, interval, length, trigerValue, trigerValueSamples) {
   var obj = {};
-  obj["logicanalyzer"] = {
+  obj.logicanalyzer = {
     io: [io],
     interval: interval,
     length: length
   };
+  if (trigerValueSamples > 0) {
+    obj.logicanalyzer.triger = {
+      value: trigerValue,
+      samples: trigerValueSamples
+    }
+  }
+
   this.Obniz.send(obj);
   return;
 };
