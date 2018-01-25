@@ -34,7 +34,7 @@ DCMotor.prototype.reverse = function() {
 };
 
 DCMotor.prototype.stop = function() {
-  if (this.status.direction === null) {
+  if (this.status.direction == null) {
     return;
   }
   this.status.direction = null;
@@ -64,7 +64,7 @@ DCMotor.prototype.power = function(power) {
     return this.status.power;
   }
   this.status.power = power;
-  if (this.status.direction === null) {
+  if (this.status.direction == null) {
     this.pwm1.duty(0);
     this.pwm2.duty(0);
     return;

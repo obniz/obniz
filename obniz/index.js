@@ -31,7 +31,7 @@ var Obniz = function(id, options) {
 
 Obniz.prototype.prompt = function(callback) {
   var obnizid = prompt("Please enter obniz id", "");
-  if (obnizid === null || obnizid === "") {
+  if (obnizid == null || obnizid === "") {
   } else {
     callback(obnizid);
   }

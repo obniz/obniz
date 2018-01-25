@@ -35,7 +35,7 @@ var Obniz = function (id, options) {
 
 Obniz.prototype.prompt = function (callback) {
   var obnizid = prompt("Please enter obniz id", "");
-  if (obnizid === null || obnizid === "") {} else {
+  if (obnizid == null || obnizid === "") {} else {
     callback(obnizid);
   }
 };
@@ -1350,7 +1350,7 @@ LogicAnalyzer.prototype.notified = function (obj) {
   if (this.onmeasured) {
     this.onmeasured(obj.measured);
   } else {
-    if (this.measured === null) {
+    if (this.measured == null) {
       this.measured = [];
     }
     this.measured.push(obj.measured);
@@ -1759,7 +1759,7 @@ DCMotor.prototype.reverse = function () {
 };
 
 DCMotor.prototype.stop = function () {
-  if (this.status.direction === null) {
+  if (this.status.direction == null) {
     return;
   }
   this.status.direction = null;
@@ -1789,7 +1789,7 @@ DCMotor.prototype.power = function (power) {
     return this.status.power;
   }
   this.status.power = power;
-  if (this.status.direction === null) {
+  if (this.status.direction == null) {
     this.pwm1.duty(0);
     this.pwm2.duty(0);
     return;

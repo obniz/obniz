@@ -25,7 +25,7 @@ LogicAnalyzer.prototype.notified = function(obj) {
   if (this.onmeasured) {
     this.onmeasured(obj.measured);
   } else {
-    if (this.measured === null) {
+    if (this.measured == null) {
       this.measured = [];
     }
     this.measured.push(obj.measured);
