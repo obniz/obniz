@@ -35,7 +35,7 @@ var Obniz = function (id, options) {
 
 Obniz.prototype.prompt = function (callback) {
   var obnizid = prompt("Please enter obniz id", "");
-  if (obnizid === null || obnizid === "") {} else {
+  if (obnizid == null || obnizid === "") {} else {
     callback(obnizid);
   }
 };
@@ -1328,13 +1328,20 @@ var LogicAnalyzer = function (Obniz) {
   this.Obniz = Obniz;
 };
 
-LogicAnalyzer.prototype.start = function (io, interval, length) {
+LogicAnalyzer.prototype.start = function (io, interval, length, trigerValue, trigerValueSamples) {
   var obj = {};
-  obj["logicanalyzer"] = {
+  obj.logicanalyzer = {
     io: [io],
     interval: interval,
     length: length
   };
+  if (trigerValueSamples > 0) {
+    obj.logicanalyzer.triger = {
+      value: trigerValue,
+      samples: trigerValueSamples
+    };
+  }
+
   this.Obniz.send(obj);
   return;
 };
@@ -1350,7 +1357,7 @@ LogicAnalyzer.prototype.notified = function (obj) {
   if (this.onmeasured) {
     this.onmeasured(obj.measured);
   } else {
-    if (this.measured === null) {
+    if (this.measured == null) {
       this.measured = [];
     }
     this.measured.push(obj.measured);
@@ -1576,6 +1583,9 @@ PeripheralUART.prototype.start = function (tx, rx, baud, stop, bits, parity, flo
 PeripheralUART.prototype.send = function (data) {
   var send_data = null;
   var key = "data";
+  if (data === undefined) {
+    return;
+  }
   if (typeof data === "number") {
     data = [data];
   }
@@ -1756,7 +1766,7 @@ DCMotor.prototype.reverse = function () {
 };
 
 DCMotor.prototype.stop = function () {
-  if (this.status.direction === null) {
+  if (this.status.direction == null) {
     return;
   }
   this.status.direction = null;
@@ -1786,7 +1796,7 @@ DCMotor.prototype.power = function (power) {
     return this.status.power;
   }
   this.status.power = power;
-  if (this.status.direction === null) {
+  if (this.status.direction == null) {
     this.pwm1.duty(0);
     this.pwm2.duty(0);
     return;

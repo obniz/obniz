@@ -7,7 +7,7 @@ Control obniz from javascript. browser/nodejs.
 
 Include index.js
 ```html
-  <script src="//parts.obniz.io/obniz.js"></script>
+  <script src="https://parts.obniz.io/obniz.js"></script>
 ```
 ### nodejs
 Install obniz
@@ -103,7 +103,7 @@ Easy to integrate UI on html and hardware
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
-<script src="//parts.obniz.io/obniz.js"></script>
+<script src="https://parts.obniz.io/obniz.js"></script>
 <script>
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {
