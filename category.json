@@ -40,6 +40,9 @@
       "parts": [
         {
           "name": "RN42"
+        },
+        {
+          "name": "XBee"
         }
       ]
     },
