@@ -19,9 +19,7 @@ obniz.wired("XBee",9,10);
 
 ## await configWait(json)
 
- This function need some seconds (about 3sec).
-So use with "await". 
-If you have enough time until send something, it's not necessary.
+XBeeを設定します．設定に３秒程度かかるため，"await" をつけて使用して下さい．
 ```
 await xbee.configWait({
    	"destination_address" : "52",
@@ -29,40 +27,40 @@ await xbee.configWait({
 });
 ```
 
-Json scheme is here.
+設定Jsonの書き方は下のようになります
 
 ``
 {
-  "destination_address" : "5A",     // hex string address send to  ( 0 ~ FFFFFFFFFFFFFFFF)
-                                    // 0x000000000000FFFF is bloadcasting
-  "source_address" : "E2",          // hex string address for mine ( 0 ~ FFFFFFFF)
+  "destination_address" : "5A",     // 送信先アドレスの16進数の文字列   ( 0 ~ FFFFFFFFFFFFFFFF)
+                                    // 0x000000000000FFFF を設定するとブロードキャストになります
+  "source_address" : "E2",          // 自分のアドレスの16進数の文字列  ( 0 ~ FFFFFFFF)
 
   // or 
 
-  "destination_address_high" : "0",  // higher 16 bit ( 0 ~ FFFFFFFF)
-  "destination_address_low" : "5A",  // lower 16 bit ( 0 ~ FFFFFFFF)
+  "destination_address_high" : "0",  // 上位 16 ビットの設定 ( 0 ~ FFFFFFFF)
+  "destination_address_low" : "5A",  // 下位 16 ビットの設定 ( 0 ~ FFFFFFFF)
 
   // or 
 
-  "DH" : "0",                //AT command directly are supported.
-  "DL" : "5A",               //see maker datasheets. 
+  "DH" : "0",                //AT コマンドを直接書くこともできます.
+  "DL" : "5A",               //ATコマンドについてはメーカーのドキュメントを参照してください
   "MY" : "E2",
   
 }
 ```
 
 ## send(data)
-send a data.
-available formats are
+データを送信します。
+dataで送れるものは
 
-- string
-- number => will be one byte data
-- array of number => array of bytes
-- object => converted to json string
-- Buffer => array of bytes
+- 文字
+- 数字 => 1byteのデータになります
+- 数字の配列 => １つ１つ1byteのデータとして送信されます
+- オブジェクト => 文字になります
+- Buffer => そのまま送信されます
 
+もし設定が完了していない段階で呼ばれた場合，エラーになります.
 
-If seting config are not finished, throw error. 
 ```
 // Example
 xbee.send("Hi");
@@ -73,9 +71,9 @@ xbee.send({success: true});
 
 ## onreceive(data, text)
 
-callback function when data recieved.
-data is array of bytes.
-text is same data. but it was text representation.
+データを受信した時に呼び出されます。
+第一引数のdataは受信したデータをarrayとして受け取れます。
+第二引数のtextは受信したarrayをtextとして変換したものです。
 
 ```
 xbee.onreceive = function(data, text) {

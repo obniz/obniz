@@ -4,9 +4,11 @@ P2P or broadcasting communicaion with some Xbee modules are you can use.
 
 ## wired(obniz, tx_to_XBee, rx_from_XBee)
 
-Wiring obniz and XBee. XBee also need VCC and GND.
+Wiring obniz and XBee. XBee also need VCC(3.3V) and GND.
+3.3V power supply is not supported by obniz, so need to get another way.
 
 If you wired like this photo,code is here.
+Obniz output 5V vcc to regulator and convert to 3.3V. 
 ![photo of wired XBee](./xbee.png)
 ```
 obniz.io11.output(true);
@@ -20,7 +22,6 @@ obniz.wired("XBee",9,10);
 
 Set config of xbee. This function need some seconds (about 3sec).
 So use with "await". 
-If you have enough time until send something, it's not necessary.
 ```
 await xbee.configWait({
    	"destination_address" : "52",

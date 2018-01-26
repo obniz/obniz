@@ -2472,7 +2472,7 @@ RN42.prototype.wired = function(obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gnd
     } else if(text.indexOf("DISCONNECT") >= 0) {
       console.log("disconnected");
     }
-    if (typeof(self.onreceizve) == "function") {
+    if (typeof(self.onreceive) == "function") {
       self.onreceive(data, text);
     }
   }
