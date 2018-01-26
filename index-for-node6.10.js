@@ -22,9 +22,6 @@ var Obniz = function (id, options) {
     this.error("invalid obniz id");
     return;
   }
-  alert("HERE");
-
-  t;
   // if (isNode == false && (!id || id === "OBNIZ ID HERE")) {
   //   var self = this;
   //   this.prompt(function(obnizid){

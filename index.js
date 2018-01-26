@@ -1,15 +1,6 @@
 /* global showObnizDebugError */
 
 var isNode = (typeof window === 'undefined') ? true : false; 
-try {
-    async function  testFunc(){
-        return new Promise(resolve => setTimeout(resolve, 1));
-    };
-    testFunc();
-}catch (err) {
-    this.error("Obniz use async/await. It's not supported in this enviroment.");
-    return;
-}
 
 var Obniz = function(id, options) {
   if (isNode === false && typeof(showOffLine) === "function") {
@@ -20,16 +11,13 @@ var Obniz = function(id, options) {
   this.debugprint = false;
   this.debugs = [];
 
-  this.init();
+  this.init(); 
 
   if (!options) options = {};
   if ((""+id).indexOf("OBNIZ") >= 0) {
     this.error("invalid obniz id");
     return;
   }
-  alert("HERE");
-  
-  t
   // if (isNode == false && (!id || id === "OBNIZ ID HERE")) {
   //   var self = this;
   //   this.prompt(function(obnizid){

@@ -11,7 +11,7 @@ var Obniz = function(id, options) {
   this.debugprint = false;
   this.debugs = [];
 
-  this.init();
+  this.init(); 
 
   if (!options) options = {};
   if ((""+id).indexOf("OBNIZ") >= 0) {
