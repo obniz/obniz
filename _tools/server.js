@@ -4,6 +4,8 @@ const fs = require('fs')
 const chokidar = require("chokidar");
 var exec = require('child_process').exec;
 var babel = require("babel-core");
+const notifier = require('node-notifier');
+
 
 const app = express()
 const port = 3100
@@ -96,7 +98,23 @@ function build() {
         ["env", { "targets": {"node": "6.10" }}]
       ]
     };
-    var results = babel.transform(combined, babelOptions);
-    fs.writeFileSync(path.join(__dirname, '../index-for-node6.10.js'), results.code);
+    var write = true;
+    try{
+      var results = babel.transform(combined, babelOptions);
+    }catch(err){
+      write = false;
+      console.log("\007");
+      console.error(err.stack);
+      
+      // Object
+      notifier.notify({
+        'title': 'ERROR',
+        'message': 'obniz.js compile ERROR. See console.'
+      });
+    }
+    if(write){
+      console.log("obniz.js compile success");
+    }
+    fs.writeFileSync(path.join(__dirname, '../index-for-node6.10.js'), write ? results.code : "");
    
 }
