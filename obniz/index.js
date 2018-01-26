@@ -15,7 +15,7 @@ var Obniz = function(id, options) {
 
   if (!options) options = {};
   if ((""+id).indexOf("OBNIZ") >= 0) {
-    console.error("invalid obniz id");
+    this.error("invalid obniz id");
     return;
   }
   // if (isNode == false && (!id || id === "OBNIZ ID HERE")) {
@@ -76,15 +76,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
     if (typeof(obj.debug) == "object") {
       if (obj.debug.warning) {
         var msg = "Warning: "+obj.debug.warning;
-        if (isNode){
-          console.error(msg);
-        } else {
-          if (typeof(showObnizDebugError)=="function") {
-            showObnizDebugError(new Error(msg));
-          } else {
-            throw new Error(msg);
-          }
-        }
+        self.error(msg);
       }
       if (self.ondebug) {
         self.ondebug(obj.debug);
@@ -348,10 +340,14 @@ Obniz.prototype.resetOnDisconnect = function(mustReset) {
 };
 
 Obniz.prototype.error = function (msg) {
-  if (typeof (showObnizDebugError) === "function") {
-    showObnizDebugError(new Error(msg));
-  } else {
-    throw new Error(msg);
+  if(isNode){
+    console.error();
+  }else{
+    if (typeof (showObnizDebugError) === "function") {
+      showObnizDebugError(new Error(msg));
+    } else {
+      throw new Error(msg);
+    }
   }
 };
 /*===================*/

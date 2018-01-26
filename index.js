@@ -1,6 +1,15 @@
 /* global showObnizDebugError */
 
 var isNode = (typeof window === 'undefined') ? true : false; 
+try {
+    async function  testFunc(){
+        return new Promise(resolve => setTimeout(resolve, 1));
+    };
+    testFunc();
+}catch (err) {
+    this.error("Obniz use async/await. It's not supported in this enviroment.");
+    return;
+}
 
 var Obniz = function(id, options) {
   if (isNode === false && typeof(showOffLine) === "function") {
@@ -15,9 +24,12 @@ var Obniz = function(id, options) {
 
   if (!options) options = {};
   if ((""+id).indexOf("OBNIZ") >= 0) {
-    console.error("invalid obniz id");
+    this.error("invalid obniz id");
     return;
   }
+  alert("HERE");
+  
+  t
   // if (isNode == false && (!id || id === "OBNIZ ID HERE")) {
   //   var self = this;
   //   this.prompt(function(obnizid){
@@ -76,15 +88,7 @@ Obniz.prototype.wsconnect = function(desired_server) {
     if (typeof(obj.debug) == "object") {
       if (obj.debug.warning) {
         var msg = "Warning: "+obj.debug.warning;
-        if (isNode){
-          console.error(msg);
-        } else {
-          if (typeof(showObnizDebugError)=="function") {
-            showObnizDebugError(new Error(msg));
-          } else {
-            throw new Error(msg);
-          }
-        }
+        self.error(msg);
       }
       if (self.ondebug) {
         self.ondebug(obj.debug);
@@ -348,10 +352,14 @@ Obniz.prototype.resetOnDisconnect = function(mustReset) {
 };
 
 Obniz.prototype.error = function (msg) {
-  if (typeof (showObnizDebugError) === "function") {
-    showObnizDebugError(new Error(msg));
-  } else {
-    throw new Error(msg);
+  if(isNode){
+    console.error();
+  }else{
+    if (typeof (showObnizDebugError) === "function") {
+      showObnizDebugError(new Error(msg));
+    } else {
+      throw new Error(msg);
+    }
   }
 };
 /*===================*/
@@ -1729,6 +1737,89 @@ _24LC256.prototype.get = async function(address, length) {
 if (PartsRegistrate) {
   PartsRegistrate("24LC256", _24LC256);
 }
+var ADT7310 = function() {
+
+};
+
+ADT7310.prototype.wired = async function(obniz, pwr, gnd, clk, mosi, miso) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.io_clk = obniz.getIO(clk);
+  this.io_mosi = obniz.getIO(mosi);
+  this.io_mosi = obniz.getIO(miso);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  obniz.spi0.start("master", clk, mosi, miso, 500000);
+}
+
+  ADT7310.prototype.getTempWait = async function() {
+    await obniz.spi0.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+    await obniz.wait(200); //適度な値でないと安定しない
+    var ret = await obniz.spi0.writeWait([0x00, 0x00]);
+    var tempBin = ret[0] << 8;
+    tempBin |= ret[1];
+    tempBin = tempBin >> 3;
+
+    if(tempBin & (0x1000)) { //0度以下の時の処理
+      tempBin = tempBin  - 8192;
+    }
+
+    return (tempBin/16);
+  }
+
+if (PartsRegistrate) {
+  PartsRegistrate("ADT7310", ADT7310);
+}
+
+var ADT7410 = function() {
+
+};
+
+ADT7410.prototype.wired = function(obniz, pwr, gnd, sda, scl, adr_select) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.io_sda = obniz.getIO(sda);
+  this.io_scl = obniz.getIO(scl);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+  if (adr_select == 8){
+    address = 0x48;
+  }else if(adr_select == 9){
+    address = 0x49;
+  }
+
+  obniz.i2c0.start("master", sda, scl, 400000, "pullup5v");
+
+}
+
+  ADT7410.prototype.getTempWait = async function() {
+    var ret = await obniz.i2c0.readWait(address, 2);
+    var tempBin = ret[0] << 8;
+    tempBin |= ret[1];
+    tempBin = tempBin >> 3;
+
+    if(tempBin & (0x1000)) { //0度以下の時の処理
+      tempBin = tempBin  - 8192;
+    }
+
+    return (tempBin/16);
+  }
+
+if (PartsRegistrate) {
+  PartsRegistrate("ADT7410", ADT7410);
+}
+
 var Button = function() {
 
 };
@@ -1892,6 +1983,40 @@ PIR_ekmc.prototype.isPressedWait = async function() {
 if (PartsRegistrate) {
   PartsRegistrate("PIR_ekmc", PIR_ekmc);
 }
+//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+var FSR40X = function() {
+
+};
+
+FSR40X.prototype.wired = function(obniz, pin0, pin1) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pin0);
+  this.ad = obniz.getAD(pin1);
+
+  this.io_pwr.output(true);
+
+  var self = this;
+  this.ad.start(function(value){
+    pressure = value * 100;
+    if (pressure >= 49){
+      pressure = 49;
+    }
+    self.press = pressure;
+    if (self.onchange) {
+      self.onchange(self.press);
+    }
+  });
+
+};
+
+FSR40X.prototype.onChange = function(callback) {
+  this.onchange = callback;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("FSR40X", FSR40X);
+}
+
 var HCSR04 = function() {
 
 };
@@ -2521,6 +2646,103 @@ RN42.prototype.config_get_extendSetting = function() {
 if (PartsRegistrate) {
   PartsRegistrate("RN42", RN42);
 }
+//センサからの反応なし
+var S5851A = function() {
+
+};
+
+S5851A.prototype.wired = function(obniz, pwr, gnd, sda, scl, adr0, adr1, adr_select) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.io_sda = obniz.getIO(sda);
+  this.io_scl = obniz.getIO(scl);
+  this.io_adr0 = obniz.getIO(adr0);
+  this.io_adr1 = obniz.getIO(adr1);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  switch (adr_select){
+    case 8:
+      this.io_adr0.output(false);
+      this.io_adr1.output(false);
+      address = 0x48;
+      break;
+    case 9:
+      this.io_adr0.float();
+      this.io_adr1.output(false);
+      address = 0x49;
+      break;
+    case 'A':
+      this.io_adr0.output(true);
+      this.io_adr1.output(false);
+      address = 0x4A;
+      break;
+    case 'B':
+      this.io_adr0.output(false);
+      this.io_adr1.output(true);
+      address = 0x4B;
+      break;
+    case 'C':
+      this.io_adr0.float();
+      this.io_adr1.output(true);
+      address = 0x4C;
+      break;
+    case 'D':
+      this.io_adr0.output(true);
+      this.io_adr1.output(true);
+      address = 0x4D;
+      break;
+    case 'E':
+      this.io_adr0.output(false);
+      this.io_adr1.float();
+      address = 0x4E;
+      break;
+    case 'F':
+      this.io_adr0.output(true);
+      this.io_adr1.float();
+      address = 0x4F;
+      break;
+    default:
+      this.io_adr0.output(false);
+      this.io_adr1.output(false);
+      address = 0x48;
+      break;
+  }
+  console.log('i2c address='+address);
+
+  obniz.i2c0.start("master", sda, scl, 400000, "pullup5v");
+  //obniz.i2c0.write(address, [0x20, 0x24]);
+}
+
+  S5851A.prototype.getTempWait = async function() {
+    console.log("gettempwait");
+    //obniz.i2c0.write(address, [0x20, 0x24]);
+    //obniz.i2c0.write(address, [0xE0, 0x00]);
+    var ret = await obniz.i2c0.readWait(address, 2);
+    console.log('ret:' + ret);
+    var tempBin = (ret[0]).toString(2) + ( '00000000' + (ret[1]).toString(2) ).slice( -8 );
+    var temperature = (-45)+(175*(parseInt(tempBin,2)/(65536-1)));
+    return temperature;
+  }
+
+  S5851A.prototype.getHumdWait = async function() {
+    obniz.i2c0.write(address, [0x20, 0x24]);
+    obniz.i2c0.write(address, [0xE0, 0x00]);
+    var ret = await obniz.i2c0.readWait(address, 4);
+    var humdBin = (ret[2]).toString(2) + ( '00000000' + (ret[3]).toString(2) ).slice( -8 );
+    var humidity = 100 * (parseInt(humdBin,2)/(65536-1));
+    return humidity;
+  }
+
+if (PartsRegistrate) {
+  PartsRegistrate("S5851A", S5851A);
+}
+
 //センサから出力が無い(出力インピーダンス高すぎ？)
 var S8100B = function() {
 
@@ -2554,6 +2776,44 @@ S8100B.prototype.onChange = function(callback) {
 
 if (PartsRegistrate) {
   PartsRegistrate("S8100B", S8100B);
+}
+
+//不調, 正しく測れるときもある...
+//原因1:obnizの入力インピーダンスが低すぎる?
+//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
+var S8120C = function() {
+
+};
+
+S8120C.prototype.wired = function(obniz, pwr, gnd, signal) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(signal);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = (value - 1.474)/(-0.0082) + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
+    console.log('value:' + value)
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+S8120C.prototype.onChange = function(callback) {
+  this.onchange = callback;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("S8120C", S8120C);
 }
 
 var SHT31 = function() {
