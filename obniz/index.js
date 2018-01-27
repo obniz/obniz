@@ -189,6 +189,10 @@ Obniz.prototype.print_debug = function(str) {
 };
 
 Obniz.prototype.send = function(value) {
+  if (this.sendPool) {
+    this.sendPool.push(value);
+    return;
+  }
   if (typeof(value) === "object") {
     value = JSON.stringify(value);
   }
@@ -198,6 +202,7 @@ Obniz.prototype.send = function(value) {
 
 Obniz.prototype.init = function() {
 
+  this.io = new PeripheralIO_(this);
   for (var i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
   for (var i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
   for (var i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }

@@ -200,6 +200,10 @@ Obniz.prototype.print_debug = function (str) {
 };
 
 Obniz.prototype.send = function (value) {
+  if (this.sendPool) {
+    this.sendPool.push(value);
+    return;
+  }
   if (typeof value === "object") {
     value = JSON.stringify(value);
   }
@@ -209,6 +213,7 @@ Obniz.prototype.send = function (value) {
 
 Obniz.prototype.init = function () {
 
+  this.io = new PeripheralIO_(this);
   for (var i = 0; i < 12; i++) {
     this["io" + i] = new PeripheralIO(this, i);
   }
@@ -1318,6 +1323,48 @@ PeripheralIO.prototype.notified = function (obj) {
   if (typeof this.onchange === "function") {
     this.onchange(obj);
   }
+};
+var PeripheralIO_ = function (Obniz, id) {
+  this.Obniz = Obniz;
+};
+
+PeripheralIO_.prototype.animation = function (name, status, array) {
+  var obj = {};
+  obj.io = {
+    animation: {
+      name: name,
+      status: status
+    }
+  };
+  if (!array) array = [];
+
+  let states = [];
+  for (var i = 0; i < array.length; i++) {
+    let state = array[i];
+    let duration = state.duration;
+    let func = state.state;
+
+    // dry run. and get json commands
+    this.Obniz.sendPool = [];
+    func();
+    let pooledJsonArray = this.Obniz.sendPool;
+    this.Obniz.sendPool = null;
+
+    // simply merge objects
+    let merged = {};
+    for (var index = 0; index < pooledJsonArray.length; index++) {
+      for (let key in pooledJsonArray[index]) {
+        merged[key] = pooledJsonArray[index][key];
+      }
+    }
+    states.push({
+      duration: duration,
+      state: merged
+    });
+  }
+  obj.io.animation.states = states;
+  console.log(obj.io.animation);
+  this.Obniz.send(obj);
 };
 
 var LogicAnalyzer = function (Obniz) {
