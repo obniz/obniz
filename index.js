@@ -346,7 +346,7 @@ Obniz.prototype.resetOnDisconnect = function(mustReset) {
 
 Obniz.prototype.error = function (msg) {
   if(isNode){
-    console.error();
+    console.error(msg);
   }else{
     if (typeof (showObnizDebugError) === "function") {
       showObnizDebugError(new Error(msg));
