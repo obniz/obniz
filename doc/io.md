@@ -109,3 +109,40 @@ It will pause process.
 var value = await obniz.io0.inputWait();
 console.log(value);
 ```
+
+## io.animation(name, status, array of animations)
+io animation is hardware acceleration for serial sequence change of io.
+now "loop" animation is avaiable.
+it loop io changes regarding json array.
+io and pwm json commands only.
+duration is how long does it state consist. It msec. 1 to 429426 msec (around 1 hour).
+```Javascript
+// Example
+obniz.io.animation("animation-1", "loop", [
+  {
+    duration: 10,
+    state: function(){
+      obniz.io0.output(false)
+      obniz.io1.output(true)
+    }
+  },{
+    duration: 10,
+    state: function(){
+      obniz.io0.output(true)
+      obniz.io1.output(false)
+    }
+  }
+])
+```
+
+Pause animation
+```Javascript
+// Example
+obniz.io.animation("animation-1", "pause")
+```
+
+Resume animation
+```Javascript
+// Example
+obniz.io.animation("animation-1", "resume")
+```
