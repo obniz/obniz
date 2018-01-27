@@ -1,12 +1,16 @@
 var chai = require('chai');
 var assert = chai.assert;
-require('mocha-sinon');
-var Obniz = require("../../index.js");
+var sinon = require('sinon');
+
+var projectBaseUrl = "../../";
+//require(projectBaseUrl + "/obniz/libs/io_.js");
+//var Obniz = require(projectBaseUrl + "/obniz/index.js");
+var Obniz = require(projectBaseUrl + "index.js");
 
 
 describe("obniz.index", function() {
   beforeEach(function() {
-    this.sinon.stub(console, 'error');
+    sinon.stub(console, 'error');
   });
   
     it("instance", function() {
