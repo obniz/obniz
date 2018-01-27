@@ -116,18 +116,20 @@ now "loop" animation is avaiable.
 it loop io changes regarding json array.
 io and pwm json commands only.
 duration is how long does it state consist. It msec. 1 to 429426 msec (around 1 hour).
+state is function which has io directives.
+
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "loop", [
   {
     duration: 10,
-    state: function(){
+    state: function(index){ // index = 0
       obniz.io0.output(false)
       obniz.io1.output(true)
     }
   },{
     duration: 10,
-    state: function(){
+    state: function(index){ // index = 1
       obniz.io0.output(true)
       obniz.io1.output(false)
     }

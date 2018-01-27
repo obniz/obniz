@@ -108,3 +108,42 @@ obniz.io0.input(function(value){
 var value = await obniz.io0.inputWait();
 console.log(value);
 ```
+
+## io.animation(name, status, array of animations)
+io animationは高速にioを変化させたいたい時に使います。
+"loop"アニメーションが利用できます。
+jsonのarrayに従い順番にioを繰り返し変更します。
+ioとpwmコマンドのみ利用できます。
+durationはその状態がどれだけ続くかで、1~429426ミリ秒(約1時間)が指定できます。
+stateにセットする関数の中でioの状態を指定してください。
+
+```Javascript
+// Example
+obniz.io.animation("animation-1", "loop", [
+  {
+    duration: 10,
+    state: function(index){ // index = 0
+      obniz.io0.output(false)
+      obniz.io1.output(true)
+    }
+  },{
+    duration: 10,
+    state: function(index){ // index = 1
+      obniz.io0.output(true)
+      obniz.io1.output(false)
+    }
+  }
+])
+```
+
+Pause animation
+```Javascript
+// Example
+obniz.io.animation("animation-1", "pause")
+```
+
+Resume animation
+```Javascript
+// Example
+obniz.io.animation("animation-1", "resume")
+```

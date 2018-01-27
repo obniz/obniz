@@ -22,7 +22,7 @@ PeripheralIO_.prototype.animation = function(name, status, array) {
 
     // dry run. and get json commands
     this.Obniz.sendPool = [];
-    func();
+    func(i);
     let pooledJsonArray = this.Obniz.sendPool;
     this.Obniz.sendPool = null;
 

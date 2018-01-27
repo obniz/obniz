@@ -7,6 +7,16 @@
           "name": "LED"
         }
       ]
+    },{
+      "name": "Display",
+      "parts": [
+        {
+          "name": "7SegmentLED"
+        },
+        {
+          "name": "7SegmentLEDArray"
+        }
+      ]
     },
     {
       "name": "Moving",

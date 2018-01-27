@@ -1346,7 +1346,7 @@ PeripheralIO_.prototype.animation = function (name, status, array) {
 
     // dry run. and get json commands
     this.Obniz.sendPool = [];
-    func();
+    func(i);
     let pooledJsonArray = this.Obniz.sendPool;
     this.Obniz.sendPool = null;
 
@@ -1738,6 +1738,147 @@ _24LC256.prototype.get = (() => {
 if (PartsRegistrate) {
   PartsRegistrate("24LC256", _24LC256);
 }
+var _7SegmentLED = function () {
+
+  this.digits = [0x3F, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
+};
+
+_7SegmentLED.prototype.wired = function (obniz, a, b, c, d, e, f, g, dp, common, commonType) {
+  this.obniz = obniz;
+  this.ios = [];
+  this.ios.push(obniz.getIO(a));
+  this.ios.push(obniz.getIO(b));
+  this.ios.push(obniz.getIO(c));
+  this.ios.push(obniz.getIO(d));
+  this.ios.push(obniz.getIO(e));
+  this.ios.push(obniz.getIO(f));
+  this.ios.push(obniz.getIO(g));
+
+  this.dp = obniz.getIO(dp);
+  this.common = obniz.getIO(common);
+  this.isCathodeCommon = commonType === "anode" ? false : true;
+};
+
+_7SegmentLED.prototype.print = function (data) {
+  if (typeof data == "number") {
+    data = parseInt(data);
+    data = data % 10;
+
+    for (let i = 0; i < 7; i++) {
+      if (this.ios[i]) {
+        var val = this.digits[data] & 1 << i ? true : false;
+        if (!this.isCathodeCommon) {
+          val = ~val;
+        }
+        this.ios[i].output(val);
+      }
+    }
+    this.on();
+  }
+};
+
+_7SegmentLED.prototype.print_raw = function (data) {
+  if (typeof data == "number") {
+    for (let i = 0; i < 7; i++) {
+      if (this.ios[i]) {
+        var val = data & 1 << i ? true : false;
+        if (!this.isCathodeCommon) {
+          val = !val;
+        }
+        this.ios[i].output(val);
+      }
+    }
+    this.on();
+  }
+};
+
+_7SegmentLED.prototype.dp_show = function (show) {
+  if (this.dp) {
+    this.dp.output(this.isCathodeCommon ? show : !show);
+  }
+};
+
+_7SegmentLED.prototype.on = function () {
+  this.common.output(this.isCathodeCommon ? false : true);
+};
+
+_7SegmentLED.prototype.off = function () {
+  this.common.output(this.isCathodeCommon ? true : false);
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("7SegmentLED", _7SegmentLED);
+}
+
+var _7SegmentLEDArray = function () {
+  this.identifier = "" + new Date().getTime();
+};
+
+_7SegmentLEDArray.prototype.wired = function (obniz, seg0, seg1, seg2, seg3) {
+  this.obniz = obniz;
+
+  this.segments = [];
+  if (seg0) {
+    this.segments.unshift(seg0);
+  }
+  if (seg1) {
+    this.segments.unshift(seg1);
+  }
+  if (seg2) {
+    this.segments.unshift(seg2);
+  }
+  if (seg3) {
+    this.segments.unshift(seg3);
+  }
+};
+
+_7SegmentLEDArray.prototype.print = function (data) {
+  if (typeof data == "number") {
+    data = parseInt(data);
+
+    var segments = this.segments;
+    var print = function (index) {
+      let val = data;
+
+      for (let i = 0; i < segments.length; i++) {
+        console.log(val);
+        if (index == i) {
+          segments[i].print(val % 10);
+        } else {
+          segments[i].off();
+        }
+        val = val / 10;
+      }
+    };
+
+    var animations = [];
+    for (let i = 0; i < segments.length; i++) {
+      animations.push({
+        duration: 3,
+        state: print
+      });
+    }
+
+    var segments = this.segments;
+    obniz.io.animation(this.identifier, "loop", animations);
+  }
+};
+
+_7SegmentLEDArray.prototype.on = function () {
+  obniz.io.animation(this.identifier, "resume");
+};
+
+_7SegmentLEDArray.prototype.off = function () {
+  obniz.io.animation(this.identifier, "pause");
+  for (let i = 0; i < this.segments.length; i++) {
+    this.segments[i].off();
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
+}
+
 var ADT7310 = function () {};
 
 ADT7310.prototype.wired = (() => {
