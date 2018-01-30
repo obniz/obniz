@@ -160,10 +160,10 @@ Obniz.prototype.wsconnect = function (desired_server) {
 
 Obniz.prototype.clearSocket = function (socket) {
   if (isNode) {
-    var shouldRemoveObservers = ['open', 'message', 'close', 'error'];
-    for (var i = 0; i < shouldRemoveObservers.length; i++) {
-      socket.removeAllListeners(shouldRemoveObservers[i]);
-    }
+    socket.removeEventListener('open', this.wsOnOpen);
+    socket.removeEventListener('message', this.wsOnMessage);
+    socket.removeEventListener('close', this.wsOnClose);
+    socket.removeEventListener('error', this.wsOnError);
   } else {
     socket.onopen = null;
     socket.onmessage = null;
