@@ -281,6 +281,7 @@ Obniz.prototype.getFreeI2C = function () {
 Obniz.prototype.handleWSCommand = function (wsObj) {
   // ready
   if (wsObj.ready) {
+    this.resetOnDisconnect(true);
     if (isNode === false && typeof showOnLine === "function") {
       showOnLine();
     }
@@ -380,10 +381,18 @@ Obniz.prototype.freeze = (() => {
   };
 })();
 
-Obniz.prototype.resetOnDisconnect = function (mustReset) {
+Obniz.prototype.keepWorkingAtOffline = function (working) {
   this.send({
     system: {
-      reset_on_disconnect: mustReset
+      keep_working_at_offline: working
+    }
+  });
+};
+
+Obniz.prototype.resetOnDisconnect = function (reset) {
+  this.send({
+    ws: {
+      reset_obniz_on_ws_disconnection: reset
     }
   });
 };
