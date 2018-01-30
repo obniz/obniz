@@ -8,16 +8,19 @@ var projectBaseUrl = "../../";
 var Obniz = require(projectBaseUrl + "index.js");
 
 
-describe("obniz.index", function() {
-  beforeEach(function() {
+describe("obniz.index", function () {
+  beforeEach(function () {
     sinon.stub(console, 'error');
   });
-  
-    it("instance", function() {
-        var obniz = new Obniz("OBNIZ_ID_HERE");
-        assert(obniz instanceof Obniz , "create instance");
-        assert( console.error.calledOnce , "call once") ;
-        assert( console.error.calledWith("invalid obniz id"), "display error") ;
-    });
+  afterEach(function () {
+    console.error.restore(); // Unwraps the spy
+  });
 
+  it("instance", function () {
+    var obniz = new Obniz("OBNIZ_ID_HERE");
+    assert(obniz instanceof Obniz, "create instance");
+    assert(console.error.calledOnce, "call once");
+    assert(console.error.calledWith("invalid obniz id"), "display error");
+  });   
+    
 });
