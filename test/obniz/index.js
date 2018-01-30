@@ -4,15 +4,12 @@ var expect = chai.expect;
 var sinon = require('sinon');
 
 var Obniz = require(global.appRoot + "index.js");
-var WSServer = require('ws').Server;
 
 var debugLog = console.log.bind(console);
 describe("obniz.index", function () {
   beforeEach(function () {
-
     sinon.stub(console, 'error');
     sinon.stub(console, 'log');
-
   });
 
   afterEach(function () {
@@ -29,7 +26,7 @@ describe("obniz.index", function () {
 
   it("connect", async function () {
     var port = 3200;
-    var server = createServer(port);
+    var server =  global.testUtil.createServer(port);
     var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + port});
     
     await obniz.wait(100);    
@@ -40,17 +37,17 @@ describe("obniz.index", function () {
   });
   
   it("soft_redirect", async function () {
-    var server = createServer(3200);
-    var server2 = createServer(3201);
+    var server = global.testUtil.createServer(3200);
+    var server2 =  global.testUtil.createServer(3201);
     var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + 3200});
     expect(obniz).to.be.instanceof(Obniz);
     
-    await obniz.wait(100);    
+    await obniz.wait(300);    
     expect(server.clients.size).to.equal(1);
     var val = { ws: {redirect:"ws://localhost:3201"}};
     server.clients.values().next().value.send(JSON.stringify(val));
     
-    await obniz.wait(100);    
+    await obniz.wait(300);    
     expect(server.clients.size).to.equal(0);
     expect(server2.clients.size).to.equal(1);
     obniz.close();
@@ -59,44 +56,3 @@ describe("obniz.index", function () {
   });
 
 });
-
-function createServer(port, velify) {
-
-  var wss = new WSServer({host: "localhost", port: port, clientTracking: true});
-
-  if (velify === null || velify === undefined || velify === true) {
-    wss.verifyClient = function (info, accept) {
-      accept(true);
-    };
-  } else {
-    wss.verifyClient = function (info, accept) {
-      accept(false, velify.statusCode, velify.message);
-    };
-  }
-//  wss.on('connection', function () {
-//    debugLog("connect");
-//  });
-  return wss;
-}
-
-
-
-//
-//var server = new WSServer({port:4000});
-//server.verifyClient = function(info, accept){
-//  accept(false, 500, "DataBase Error");
-//};
-//
-//server.verifyClient = function(info, accept){
-//  var obniz_id = parseObnizId(info.req);
-//  accept(false, 404, "obniz "+obniz_id+" is not exist");
-//};
-//
-//server.verifyClient = function(info, accept){
-//  accept(false, 302, "host="+obniz.wsredirect);
-//};
-//
-//server.verifyClient = function(info, accept){
-//  var obniz_id = parseObnizId(info.req);
-//  accept(false, 404, "obniz "+obniz_id+" is not online");
-//};
