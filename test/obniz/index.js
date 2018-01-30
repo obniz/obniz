@@ -28,7 +28,7 @@ describe("obniz.index", function () {
   });
 
   it("connect", async function () {
-    var port = 3001;
+    var port = 3200;
     var server = createServer(port);
     var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + port});
     
@@ -37,6 +37,25 @@ describe("obniz.index", function () {
     expect(server.clients.size).to.equal(1);
     obniz.close();
     server.close();
+  });
+  
+  it("soft_redirect", async function () {
+    var server = createServer(3200);
+    var server2 = createServer(3201);
+    var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + 3200});
+    expect(obniz).to.be.instanceof(Obniz);
+    
+    await obniz.wait(100);    
+    expect(server.clients.size).to.equal(1);
+    var val = { ws: {redirect:"ws://localhost:3201"}};
+    server.clients.values().next().value.send(JSON.stringify(val));
+    
+    await obniz.wait(100);    
+    expect(server.clients.size).to.equal(0);
+    expect(server2.clients.size).to.equal(1);
+    obniz.close();
+    server.close();
+    server2.close();
   });
 
 });
@@ -54,9 +73,9 @@ function createServer(port, velify) {
       accept(false, velify.statusCode, velify.message);
     };
   }
-  wss.on('connection', function () {
-    debugLog("connect");
-  });
+//  wss.on('connection', function () {
+//    debugLog("connect");
+//  });
   return wss;
 }
 
