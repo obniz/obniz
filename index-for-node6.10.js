@@ -40,9 +40,95 @@ Obniz.prototype.prompt = function (callback) {
   }
 };
 
+Obniz.prototype.wsOnOpen = function () {
+  this.print_debug("ws connected");
+  // wait for {ws:{ready:true}} object
+};
+
+Obniz.prototype.wsOnMessage = function (data) {
+  this.print_debug(data);
+  var obj = {};
+  if (typeof data === "string") {
+    obj = JSON.parse(data);
+  } else {
+    return;
+  }
+  // User's defined callback
+  if (typeof this.onwsmessage === "function") {
+    this.onwsmessage(obj);
+  }
+  // notify messaging
+  if (typeof obj.message === "object" && self.onmessage) {
+    this.onmessage(obj.message.data, obj.message.from);
+  }
+  // debug
+  if (typeof obj.debug == "object") {
+    if (obj.debug.warning) {
+      var msg = "Warning: " + obj.debug.warning;
+      this.error(msg);
+    }
+    if (this.ondebug) {
+      this.ondebug(obj.debug);
+    }
+  }
+  // ws command
+  if (obj["ws"]) {
+    this.handleWSCommand(obj["ws"]);
+    return;
+  }
+
+  // notify
+  var notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
+  for (var handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
+    var i = -1;
+    var peripheral = notifyHandlers[handerIndex];
+    while (true) {
+      i++;
+      if (this[peripheral + "" + i] === undefined) {
+        break;
+      }
+      var module_value = obj[peripheral + "" + i];
+      if (module_value === undefined) continue;
+      this[peripheral + "" + i].notified(module_value);
+    }
+  }
+  var names = ["switch", "ble", "logicanalyzer", "measure"];
+  for (var i = 0; i < names.length; i++) {
+    if (obj[names[i]]) {
+      this[names[i]].notified(obj[names[i]]);
+    }
+  }
+};
+
+Obniz.prototype.wsOnClose = function (event) {
+  this.print_debug("closed");
+  if (isNode === false && typeof showOffLine === "function") {
+    showOffLine();
+  }
+  if (this.looper) {
+    this.looper = null;
+  }
+  // user defined onclose function
+  if (this.onclose) {
+    this.onclose(this);
+  }
+  this.clearSocket(this.socket);
+  setTimeout(function () {
+    // redirect先でつながらないなら切り替える
+    if (desired_server !== this.server_obnizio) {
+      desired_server = this.server_obnizio;
+    }
+    this.wsconnect(desired_server);
+  }, 1000);
+};
+
+Obniz.prototype.wsOnError = function (err) {
+  console.log(err);
+};
+
 Obniz.prototype.wsconnect = function (desired_server) {
-  var server_obnizio = "wss://obniz.io";
-  var server = server_obnizio;
+  this.server_obnizio = "wss://obniz.io";
+  var server = this.server_obnizio;
   if (desired_server) {
     server = "" + desired_server;
   }
@@ -52,118 +138,31 @@ Obniz.prototype.wsconnect = function (desired_server) {
   }
   var url = server + "/obniz/" + this.id + "/ws";
   this.print_debug("connecting to " + url);
-  var self = this;
-
-  var wsOnOpen = function () {
-    self.print_debug("ws connected");
-    // wait for {ws:{ready:true}} object
-  };
-
-  var wsOnMessage = function (data) {
-    self.print_debug(data);
-    var obj = {};
-    if (typeof data === "string") {
-      obj = JSON.parse(data);
-    } else {
-      return;
-    }
-    // User's defined callback
-    if (typeof self.onwsmessage === "function") {
-      self.onwsmessage(obj);
-    }
-    // notify messaging
-    if (typeof obj.message === "object" && self.onmessage) {
-      self.onmessage(obj.message.data, obj.message.from);
-    }
-    // debug
-    if (typeof obj.debug == "object") {
-      if (obj.debug.warning) {
-        var msg = "Warning: " + obj.debug.warning;
-        self.error(msg);
-      }
-      if (self.ondebug) {
-        self.ondebug(obj.debug);
-      }
-    }
-    // ws command
-    if (obj["ws"]) {
-      self.handleWSCommand(obj["ws"]);
-      return;
-    }
-
-    // notify
-    var notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
-    for (var handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
-      var i = -1;
-      var peripheral = notifyHandlers[handerIndex];
-      while (true) {
-        i++;
-        if (self[peripheral + "" + i] === undefined) {
-          break;
-        }
-        var module_value = obj[peripheral + "" + i];
-        if (module_value === undefined) continue;
-        self[peripheral + "" + i].notified(module_value);
-      }
-    }
-    var names = ["switch", "ble", "logicanalyzer", "measure"];
-    for (var i = 0; i < names.length; i++) {
-      if (obj[names[i]]) {
-        self[names[i]].notified(obj[names[i]]);
-      }
-    }
-  };
-
-  var wsOnClose = function (event) {
-    self.print_debug("closed");
-    if (isNode === false && typeof showOffLine === "function") {
-      showOffLine();
-    }
-    if (self.looper) {
-      self.looper = null;
-    }
-    // user defined onclose function
-    if (self.onclose) {
-      self.onclose(self);
-    }
-    self.clearSocket(self.socket);
-    setTimeout(function () {
-      // redirect先でつながらないなら切り替える
-      if (desired_server !== server_obnizio) {
-        desired_server = server_obnizio;
-      }
-      self.wsconnect(desired_server);
-    }, 1000);
-  };
-
-  var wsOnError = function (err) {
-    console.log(err);
-  };
 
   if (isNode) {
     var wsClient = require('ws');
     this.socket = new wsClient(url);
-    this.socket.on('open', wsOnOpen);
-    this.socket.on('message', wsOnMessage);
-    this.socket.on('close', wsOnClose);
-    this.socket.on('error', wsOnError);
+    this.socket.on('open', this.wsOnOpen.bind(this));
+    this.socket.on('message', this.wsOnMessage.bind(this));
+    this.socket.on('close', this.wsOnClose.bind(this));
+    this.socket.on('error', this.wsOnError.bind(this));
   } else {
     this.socket = new WebSocket(url);
-    this.socket.onopen = wsOnOpen;
+    this.socket.onopen = this.wsOnOpen;
     this.socket.onmessage = function (event) {
-      wsOnMessage(event.data);
-    };
-    this.socket.onclose = wsOnClose;
-    this.socket.onerror = wsOnError;
+      this.wsOnMessage(event.data);
+    }.bind(this);
+    this.socket.onclose = this.wsOnClose;
+    this.socket.onerror = this.wsOnError;
   }
 };
 
 Obniz.prototype.clearSocket = function (socket) {
   if (isNode) {
-    socket.removeEventListener('open', this.wsOnOpen);
-    socket.removeEventListener('message', this.wsOnMessage);
-    socket.removeEventListener('close', this.wsOnClose);
-    socket.removeEventListener('error', this.wsOnError);
+    var shouldRemoveObservers = ['open', 'message', 'close', 'error'];
+    for (var i = 0; i < shouldRemoveObservers.length; i++) {
+      socket.removeAllListeners(shouldRemoveObservers[i]);
+    }
   } else {
     socket.onopen = null;
     socket.onmessage = null;

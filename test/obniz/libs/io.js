@@ -1,4 +1,5 @@
 var chai = require('chai');
+chai.use(require('chai-json'));
 var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
@@ -20,12 +21,11 @@ describe("obniz.libs.io", function () {
   
   
   it("instance", async function () {
-    expect(this.server.clients.size).to.equal(1);
-    
     this.obniz.io0.output(true);
-    await this.obniz.wait(1000);
-    sinon.assert.calledOnce(this.onServerMessage);
-    assert(1==1);
+    sinon.assert.calledOnce(this.obniz.socket.send);
+    console.log(expect(this.obniz.socket.send.getCall(0).args).to.be.a)
+    expect(this.obniz.socket.send.getCall(0).args).to.be.a.jsonFile().and.to.be.jsonObj({io1:true});
+    
   });
 
 });
