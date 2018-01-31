@@ -1413,7 +1413,7 @@ PeripheralIO_.prototype.animation = function(name, status, array) {
     })
   }
   obj.io.animation.states = states;
-  console.log(obj.io.animation);
+//  console.log(obj.io.animation);
   this.Obniz.send(obj);
 };
 
