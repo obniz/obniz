@@ -63,7 +63,6 @@ function build() {
       libnames.push(lib);
     }
   }
-  console.log(libnames);
 
   //parts
   var partsPath = path.join(__dirname, '../parts')
