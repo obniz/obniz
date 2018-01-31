@@ -53,10 +53,7 @@ Obniz.prototype.wsOnMessage = function (data) {
   } else {
     return;
   }
-  // User's defined callback
-  if (typeof this.onwsmessage === "function") {
-    this.onwsmessage(obj);
-  }
+
   // notify messaging
   if (typeof obj.message === "object" && self.onmessage) {
     this.onmessage(obj.message.data, obj.message.from);
@@ -108,10 +105,7 @@ Obniz.prototype.wsOnClose = function (event) {
   if (this.looper) {
     this.looper = null;
   }
-  // user defined onclose function
-  if (this.onclose) {
-    this.onclose(this);
-  }
+
   this.clearSocket(this.socket);
   setTimeout(function () {
     // redirect先でつながらないなら切り替える
