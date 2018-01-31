@@ -77,7 +77,9 @@ var testUtil = {
     });
     
   },
-  
+  receiveJson: function(obniz, jsonVal){
+    obniz.wsOnMessage(JSON.stringify(jsonVal));
+  },
   
   obnizAssert : function(_chai, utils){
      _chai.Assertion.addProperty('obniz', function() {
@@ -92,7 +94,7 @@ var testUtil = {
        var obniz = utils.flag(this, 'object');
        var stub = obniz.socket.send;
        
-       var message  = "[obniz.send] no more send data. (called " + stub.callCount  + " times, but you expect "+count+"times) ";
+       var message  = "[obniz.send] no more send data. (called " + stub.callCount  + " times, but you expect "+(count+1)+" times) ";
        new _chai.Assertion(stub.callCount > count,message ).to.be.true;
        
        new _chai.Assertion(stub.args[count][0],"[obniz.send]invalid json").is.json;
@@ -115,10 +117,7 @@ var testUtil = {
      
   }
   
-  
-  
-  
-  
+ 
 
 };
 
