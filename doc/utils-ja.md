@@ -53,11 +53,21 @@ console.log("after 0 second");
 "After 0 second"はbeforeが表示されてからすぐに表示されます。1秒後ではありません。
 しかし、obnizは止まるのでio0を1秒だけonにすることになります。
 
-## resetOnDisconnect(mustReset)
+## keepWorkingAtOffline(working)
 obnizがWifiから切断した時に、ioの状態などをリセットするかどうかを設定できます。
 通常はリセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
 この関数でそれを無効にし、リセットしないようにできます。
 この設定はobnizの電源が切れない限りはずっと保持されます。
+```Javascript
+// Example
+obniz.keepWorkingAtOffline(false);
+```
+
+## resetOnDisconnect(reset)
+obnizはユーザーがobniz cloudへのwebsocketを切断するとリセットするようになっています。
+通常はリセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
+この関数でそれを無効にし、リセットしないようにできます。
+この設定はユーザーのwebsocketが切断されるまで保持されます。
 ```Javascript
 // Example
 obniz.resetOnDisconnect(false);

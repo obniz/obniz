@@ -50,11 +50,22 @@ console.log("after 0 second");
 "After 0 second" will be shown soon. Not 1000 msec after.
 But obniz will output io0 1sec. Because it freeze 1000msec.
 
-## resetOnDisconnect(mustReset)
+## keepWorkingAtOffline(working)
 By default. obniz will reset after disconnect from cloud.
 It measn output value and pwms are all stop at that time.
 this function can set "do not reset when offline".
 This configration will consist until obniz power down.
+```Javascript
+// Example
+obniz.keepWorkingAtOffline(false);
+```
+
+## resetOnDisconnect(reset)
+By default. obniz will reset when user disconnect websocket from obniz cloud.
+It measn output value and pwms are all stop at that time.
+this function can set "do not reset when no one connected to obniz".
+This configration will consist until user websocket disconnected.
+Set false to this function to keepworking without user websocket.
 ```Javascript
 // Example
 obniz.resetOnDisconnect(false);

@@ -257,7 +257,7 @@ Obniz.prototype.getFreeI2C = function () {
     if (!i2c) {
       break;
     }
-    if (typeof (i2c.state.scl) != "number") {
+    if (typeof (i2c.state.scl) !== "number") {
       return i2c;
     }
     i++;
@@ -268,7 +268,9 @@ Obniz.prototype.getFreeI2C = function () {
 Obniz.prototype.handleWSCommand = function (wsObj) {
   // ready
   if (wsObj.ready) {
-    if (isNode === false && typeof (showOnLine) === "function") {
+
+    this.resetOnDisconnect(true);
+    if (isNode === false && typeof(showOnLine) === "function") {
       showOnLine();
     }
     if (this.onconnect) {
@@ -347,10 +349,18 @@ Obniz.prototype.freeze = async function (msec) {
   });
 };
 
-Obniz.prototype.resetOnDisconnect = function (mustReset) {
+Obniz.prototype.keepWorkingAtOffline = function(working) {
   this.send({
     system: {
-      reset_on_disconnect: mustReset
+      keep_working_at_offline: working
+    }
+  });
+};
+
+Obniz.prototype.resetOnDisconnect = function(reset) {
+  this.send({
+    ws: {
+      reset_obniz_on_ws_disconnection: reset
     }
   });
 };
