@@ -1,0 +1,11 @@
+
+language: node_js
+node_js:
+  - "iojs"
+  - "lts/*"
+  - "8"
+  - "7"
+  
+cache:
+  directories:
+    - "node_modules"
