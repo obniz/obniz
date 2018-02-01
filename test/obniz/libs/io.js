@@ -40,7 +40,7 @@ describe("obniz.libs.io", function () {
     expect(this.obniz).send({io1:{"pull_type":"pullup"}});
     expect(this.obniz).to.be.finished;
   });
-
+  
   it("outputType2", async function () {
     this.obniz.io2.outputType("open-drain");
     expect(this.obniz).to.be.obniz;

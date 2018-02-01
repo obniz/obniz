@@ -6,6 +6,8 @@ var sinon = require('sinon');
 var Obniz = require(global.appRoot + "index.js");
 var util = require(global.appRoot + "/test/testUtil.js");
 
+const getPort = require('get-port');
+
 var debugLog = console.log.bind(console);
 describe("obniz.index", function () {
   beforeEach(function () {
@@ -27,32 +29,34 @@ describe("obniz.index", function () {
 
 
   it("connect", async function () {
-    var port = 3200;
+    var port = await getPort();
     var server =  util.createServer(port);
     var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + port});
     
     await obniz.wait(100);    
     expect(obniz).to.be.instanceof(Obniz);
-    expect(server.clients.size).to.equal(1);
+    expect(server.clients.size,"before server remain connection").to.equal(1);
     obniz.close();
     server.close();
   });
   
   
   it("soft_redirect", async function () {
-    var server = util.createServer(3200);
-    var server2 =  util.createServer(3201);
-    var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + 3200});
+    var port = await getPort();
+    var server = util.createServer(port);
+    var port2 = await getPort();
+    var server2 =  util.createServer(port2);
+    var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + port});
     expect(obniz).to.be.instanceof(Obniz);
     
     await obniz.wait(500);    
-    expect(server.clients.size).to.equal(1);
-    var val = { ws: {redirect:"ws://localhost:3201"}};
+    expect(server.clients.size,"before server not connected").to.equal(1);
+    var val = { ws: {redirect:"ws://localhost:" + port2}};
     server.clients.values().next().value.send(JSON.stringify(val));
     
     await obniz.wait(500);    
-    expect(server.clients.size).to.equal(0);
-    expect(server2.clients.size).to.equal(1);
+    expect(server.clients.size,"before server remain connection").to.equal(0);
+    expect(server2.clients.size,"after server not connected").to.equal(1);
     obniz.close();
     server.close();
     server2.close();

@@ -358,7 +358,7 @@ Obniz.prototype.resetOnDisconnect = function(reset) {
     }
   });
 };
-
+ 
 Obniz.prototype.error = function (msg) {
   if (isNode) {
     console.error(msg);
@@ -389,8 +389,6 @@ var Parts = function (name) {
 if (isNode) {
   module.exports = Obniz;
 }
-
-
 
 
 var PeripheralAD = function(Obniz, id) {
