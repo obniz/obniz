@@ -17,6 +17,7 @@ chai.use(require('chai-like'));
 var port = 3205;
 
 var   serverDataCount = 0;
+var   errorDataCount = 0;
 var testUtil = {
   log: console.log,
   createServer: function (port, velify) {
@@ -47,6 +48,7 @@ var testUtil = {
     stub.prototype.removeAllListeners = sinon.stub();
     obj.obniz = this.createObniz(100, "12345678");
     obj.obniz.wsOnOpen();
+    obj.obniz.error = sinon.stub();
     serverDataCount = 0;
     done();
   },
@@ -103,12 +105,34 @@ var testUtil = {
      });
      
      
+     
      _chai.Assertion.addProperty('finished', function(expected) {
-       var count = serverDataCount;
        var obniz = utils.flag(this, 'object');
         var stub = obniz.socket.send;
-       var message  = "[obniz.send] not finished. (called " + stub.callCount  + " times, but you expect "+(count)+" times) ";
-       new _chai.Assertion(stub.callCount, message ).to.be.equal(count);
+       var message  = "[obniz.send] not finished. (send: called " + stub.callCount  + " times, but you expect "+(serverDataCount)+" times) ";
+       new _chai.Assertion(stub.callCount, message ).to.be.equal(serverDataCount);
+       
+        
+       var errorStub = obniz.error;
+       var message  = "[obniz.send] not finished. (error: called " + errorStub.callCount  + " times, but you expect "+(errorDataCount)+" times) ";
+       new _chai.Assertion(errorStub.callCount, message ).to.be.equal(errorDataCount);
+       
+     });
+     
+     
+     _chai.Assertion.addMethod('error', function(expected) {
+       var count = errorDataCount;
+       errorDataCount++;
+       
+       var obniz = utils.flag(this, 'object');
+       var stub = obniz.error;
+       
+       var message  = "[obniz.error] no more error data. (called " + stub.callCount  + " times, but you expect "+(count+1)+" times) ";
+       new _chai.Assertion(stub.callCount,message ).to.be.above(count);
+       
+       if(expected){
+         new _chai.Assertion(stub.args[count][0]).to.have.string(expected);
+        }
      });
      
      _chai.Assertion.addProperty('json', function(expected) {
