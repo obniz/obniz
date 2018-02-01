@@ -24,18 +24,21 @@ describe("obniz.libs.io", function () {
     this.obniz.io0.output(true);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io0:true});
+    expect(this.obniz).to.be.finished;
   });
 
   it("outputType", async function () {
     this.obniz.io1.pullup();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io1:{"pull_type":"pullup"}});
+    expect(this.obniz).to.be.finished;
   });
 
   it("outputType2", async function () {
     this.obniz.io2.outputType("open-drain");
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io2:{"output_type": "open-drain"}});
+    expect(this.obniz).to.be.finished;
   });
 
 
@@ -43,24 +46,28 @@ describe("obniz.libs.io", function () {
     this.obniz.io3.pullup5v();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io3:{"pull_type": "pullup5v"}});
+    expect(this.obniz).to.be.finished;
   });
 
   it("pullup", async function () {
     this.obniz.io4.pullup();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io4:{"pull_type": "pullup"}});
+    expect(this.obniz).to.be.finished;
   });
 
   it("pulldown", async function () {
     this.obniz.io5.pulldown();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io5:{"pull_type": "pulldown"}});
+    expect(this.obniz).to.be.finished;
   });
 
   it("float", async function () {
     this.obniz.io6.float();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io6:{"pull_type": "float"}});
+    expect(this.obniz).to.be.finished;
   });
 
   it("input", async function () {
@@ -77,6 +84,8 @@ describe("obniz.libs.io", function () {
     sinon.assert.callCount(stub, 2);
     expect(stub.getCall(1).args[0]).to.be.false;
     
+    expect(this.obniz).to.be.finished;
+    
   });
   
   it("inputWaitTrue", function () {
@@ -89,6 +98,7 @@ describe("obniz.libs.io", function () {
 
       expect(this.obniz).to.be.obniz;
       expect(this.obniz).send({io8:{"direction": "input", "stream": false}});
+      expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
         util.receiveJson(this.obniz,  {"io8":true});
@@ -96,6 +106,7 @@ describe("obniz.libs.io", function () {
     }.bind(this));
     
   });
+  
   it("inputWaitfalse", function () {
     
     return new Promise(function(resolve, reject){
@@ -106,6 +117,7 @@ describe("obniz.libs.io", function () {
       });
       expect(this.obniz).to.be.obniz;
       expect(this.obniz).send({io9:{"direction": "input", "stream": false}});
+      expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
         util.receiveJson(this.obniz,  {"io10":true});
@@ -120,4 +132,67 @@ describe("obniz.libs.io", function () {
   });
 
 
+
+  it("ioAnimation", function () {
+    var obniz = this.obniz;
+    this.obniz.io.animation("animation-1", "loop", [
+      {
+        duration: 10,
+        state: function(index){ // index = 0
+          obniz.io0.output(false);
+          obniz.io1.output(true);
+        }
+      },{
+        duration: 10,
+        state: function(index){ // index = 1
+          obniz.io0.output(true);
+          obniz.io1.output(false);
+        }
+      }
+    ]);
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({
+        "io": {
+          "animation": {
+            "name": "animation-1",
+            "states": [
+              {
+                "duration": 10,
+                "state": {
+                  "io0": false,
+                  "io1": true
+                }
+              },
+               {
+                 "duration": 10,
+                 "state": {
+                   "io0": true,
+                   "io1": false
+                 }
+               }
+             ],
+             "status": "loop"
+           }
+         }
+      });
+    expect(this.obniz).to.be.finished;
+      
+    
+  });
+  
+   it("ioAnimation-pause", function () {
+    
+    this.obniz.io.animation("animation-1", "pause");
+    
+    expect(this.obniz).send( 
+        {
+          "io": 
+          {
+            "animation" : {
+            "name" : "animation-1",
+            "status" : "pause"
+          }
+        }
+    });
+   });
 });

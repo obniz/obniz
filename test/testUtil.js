@@ -99,7 +99,16 @@ var testUtil = {
        
        new _chai.Assertion(stub.args[count][0],"[obniz.send]invalid json").is.json;
        var val = JSON.parse(stub.args[count][0]);
-       new _chai.Assertion(val).like(expected);
+       new _chai.Assertion(val).to.deep.equal(expected);
+     });
+     
+     
+     _chai.Assertion.addProperty('finished', function(expected) {
+       var count = serverDataCount;
+       var obniz = utils.flag(this, 'object');
+        var stub = obniz.socket.send;
+       var message  = "[obniz.send] not finished. (called " + stub.callCount  + " times, but you expect "+(count)+" times) ";
+       new _chai.Assertion(stub.callCount, message ).to.be.equal(count);
      });
      
      _chai.Assertion.addProperty('json', function(expected) {
@@ -114,6 +123,7 @@ var testUtil = {
        }
        new _chai.Assertion(resolve).to.be.true;
      });
+     
      
   }
   
@@ -142,7 +152,7 @@ require.extensions['.js'] = function (obj, path) {
     obj.exports = moduleSpies[path];
   else
     return originalJsLoader(obj, path);
-}
+};
 
 afterEach(function() {
   for (var path in moduleSpies) {
