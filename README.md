@@ -1,5 +1,7 @@
 # obniz.js: sdk for javascript
 
+[![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
+
 This is [obniz](https://obniz.io/) sdk for javascript.
 
 This document available on our site [https://obniz.io/doc/obnizjs/doc/README](https://obniz.io/doc/obnizjs/doc/README)
