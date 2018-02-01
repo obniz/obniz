@@ -10,7 +10,7 @@ PeripheralIO_.prototype.animation = function(name, status, array) {
       name: name,
       status: status
     }
-  }
+  };
   if (!array)
     array = [];
 
@@ -36,9 +36,11 @@ PeripheralIO_.prototype.animation = function(name, status, array) {
     states.push({
       duration: duration,
       state: merged
-    })
+    });
   }
-  obj.io.animation.states = states;
+  if(states.length > 0){
+    obj.io.animation.states = states;
+  }
 //  console.log(obj.io.animation);
   this.Obniz.send(obj);
 };
