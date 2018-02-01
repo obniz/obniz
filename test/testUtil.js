@@ -95,7 +95,7 @@ var testUtil = {
        var stub = obniz.socket.send;
        
        var message  = "[obniz.send] no more send data. (called " + stub.callCount  + " times, but you expect "+(count+1)+" times) ";
-       new _chai.Assertion(stub.callCount > count,message ).to.be.true;
+       new _chai.Assertion(stub.callCount,message ).to.be.above(count);
        
        new _chai.Assertion(stub.args[count][0],"[obniz.send]invalid json").is.json;
        var val = JSON.parse(stub.args[count][0]);

@@ -26,6 +26,13 @@ describe("obniz.libs.io", function () {
     expect(this.obniz).send({io0:true});
     expect(this.obniz).to.be.finished;
   });
+  
+  it("output-over-pin", async function () {
+    expect(function(){
+      this.obniz.io20.output(true);
+    }).to.throw("Cannot read property");
+    expect(this.obniz).to.be.finished;
+  });
 
   it("outputType", async function () {
     this.obniz.io1.pullup();
@@ -180,7 +187,7 @@ describe("obniz.libs.io", function () {
     
   });
   
-   it("ioAnimation-pause", function () {
+  it("ioAnimation-pause", function () {
     
     this.obniz.io.animation("animation-1", "pause");
     
@@ -191,6 +198,40 @@ describe("obniz.libs.io", function () {
             "animation" : {
             "name" : "animation-1",
             "status" : "pause"
+          }
+        }
+    });
+   });
+   
+   
+   
+  it("ioAnimation-pause", function () {
+    
+    this.obniz.io.animation("anim", "pause");
+    
+    expect(this.obniz).send( 
+        {
+          "io": 
+          {
+            "animation" : {
+            "name" : "anim",
+            "status" : "pause"
+          }
+        }
+    });
+   });
+   
+  it("ioAnimation-resume", function () {
+    
+    this.obniz.io.animation("a", "resume");
+    
+    expect(this.obniz).send( 
+        {
+          "io": 
+          {
+            "animation" : {
+            "name" : "a",
+            "status" : "resume"
           }
         }
     });
