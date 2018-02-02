@@ -108,12 +108,9 @@ Obniz.prototype.wsOnClose = function (event) {
 
   this.clearSocket(this.socket);
   setTimeout(function () {
-    // redirect先でつながらないなら切り替える
-    if (desired_server !== this.server_obnizio) {
-      desired_server = this.server_obnizio;
-    }
-    this.wsconnect(desired_server);
-  }, 1000);
+    // always connect to mainserver if ws lost
+    this.wsconnect();
+  }.bind(this), 1000);
 };
 
 Obniz.prototype.wsOnError = function (err) {
