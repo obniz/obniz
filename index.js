@@ -134,7 +134,7 @@ Obniz.prototype.wsconnect = function (desired_server) {
   this.print_debug("connecting to " + url);
 
   if (isNode) {
-    var wsClient = require('ws');
+    const wsClient = require('ws');
     this.socket = new wsClient(url);
     this.socket.on('open', this.wsOnOpen.bind(this));
     this.socket.on('message', this.wsOnMessage.bind(this));
@@ -142,12 +142,12 @@ Obniz.prototype.wsconnect = function (desired_server) {
     this.socket.on('error', this.wsOnError.bind(this));
   } else {
     this.socket = new WebSocket(url);
-    this.socket.onopen = this.wsOnOpen;
+    this.socket.onopen = this.wsOnOpen.bind(this);
     this.socket.onmessage = function (event) {
       this.wsOnMessage(event.data);
     }.bind(this);
-    this.socket.onclose = this.wsOnClose;
-    this.socket.onerror = this.wsOnError;
+    this.socket.onclose = this.wsOnClose.bind(this);
+    this.socket.onerror = this.wsOnError.bind(this);
   }
 };
 
