@@ -36,4 +36,42 @@ describe("obniz.libs.io", function () {
     expect(this.obniz).send({display:{text:"true"}});
     expect(this.obniz).to.be.finished;
   });
+  it("qr", async function () {
+    this.obniz.display.qr("https://obniz.io");
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({
+      "display": {
+        "qr": {
+          "data": "https://obniz.io"
+        }
+      }
+    });
+    expect(this.obniz).to.be.finished;
+  });
+  it("qr-low", async function () {
+    this.obniz.display.qr("HELLO!", "L");
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({
+      "display": {
+        "qr": {
+          "correction": "L",
+          "data": "HELLO!"
+        }
+      }
+    });
+    expect(this.obniz).to.be.finished;
+  });
+  it("qr-high", async function () {
+    this.obniz.display.qr("p8baerv9uber:q", "H");
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({
+      "display": {
+        "qr": {
+          "correction": "H",
+          "data": "p8baerv9uber:q"
+        }
+      }
+    });
+    expect(this.obniz).to.be.finished;
+  });
 });
