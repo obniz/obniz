@@ -21,6 +21,7 @@
     "mocha-directory": "^2.3.0",
     "mocha-sinon": "^2.0.0",
     "nyc": "^11.4.1",
+    "semver": "^5.5.0",
     "sinon": "^4.2.2",
     "ws": "^3.1.0"
   },

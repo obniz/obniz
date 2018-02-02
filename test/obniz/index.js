@@ -3,12 +3,10 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var Obniz = require(global.appRoot + "index.js");
 var util = require(global.appRoot + "/test/testUtil.js");
 
 const getPort = require('get-port');
 
-var debugLog = console.log.bind(console);
 describe("obniz.index", function () {
   beforeEach(function () {
     sinon.stub(console, 'error');
@@ -21,45 +19,60 @@ describe("obniz.index", function () {
   });
 
   it("instance", function () {
-    var obniz = new Obniz("OBNIZ_ID_HERE");
-    expect(obniz).to.be.instanceof(Obniz);
+    var obniz = util.createObniz(3000,"OBNIZ_ID_HERE");
+    expect(obniz).to.be.obniz;
     sinon.assert.calledOnce(console.error);
     sinon.assert.calledWith(console.error, "invalid obniz id");
   });
 
 
-  it("connect", async function () {
-    var port = await getPort();
-    var server =  util.createServer(port);
-    var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + port});
-    
-    await obniz.wait(100);    
-    expect(obniz).to.be.instanceof(Obniz);
-    expect(server.clients.size,"before server remain connection").to.equal(1);
-    obniz.close();
-    server.close();
+  it("connect", function () {
+    var port = undefined;
+    var server   = undefined;
+    var obniz = undefined;
+    return getPort().then(function(p){
+      port =  p;
+      server =  util.createServer(port);
+      obniz = util.createObniz(port,"11111111");
+      return obniz.wait(100);
+    }).then(function(){
+
+      expect(obniz).to.be.obniz;
+      expect(server.clients.size,"before server remain connection").to.equal(1);
+      obniz.close();
+      server.close();
+    });
   });
   
   
-  it("soft_redirect", async function () {
-    var port = await getPort();
-    var server = util.createServer(port);
-    var port2 = await getPort();
-    var server2 =  util.createServer(port2);
-    var obniz = new Obniz("11111111", {obniz_server: "ws://localhost:" + port});
-    expect(obniz).to.be.instanceof(Obniz);
+  it("soft_redirect", function () {
     
-    await obniz.wait(500);    
-    expect(server.clients.size,"before server not connected").to.equal(1);
-    var val = { ws: {redirect:"ws://localhost:" + port2}};
-    server.clients.values().next().value.send(JSON.stringify(val));
+    var port,server,port2,server2,obniz;
+            
+    return getPort().then(function (p) {
+      port = p;
+      server = util.createServer(port);
+      return getPort();
+    }).then(function (p2) {
+      port2 = p2;
+      server2 = util.createServer(port2);
+
+      obniz = util.createObniz(port, "11111111");
+      expect(obniz).to.be.obniz;
+      return obniz.wait(500);
+    }).then(function () {
+      expect(server.clients.size, "before server not connected").to.equal(1);
+      var val = {ws: {redirect: "ws://localhost:" + port2}};
+      server.clients.values().next().value.send(JSON.stringify(val));
+      return obniz.wait(500);
+    }).then(function () {
+      expect(server.clients.size, "before server remain connection").to.equal(0);
+      expect(server2.clients.size, "after server not connected").to.equal(1);
+      obniz.close();
+      server.close();
+      server2.close();
+    });   
     
-    await obniz.wait(500);    
-    expect(server.clients.size,"before server remain connection").to.equal(0);
-    expect(server2.clients.size,"after server not connected").to.equal(1);
-    obniz.close();
-    server.close();
-    server2.close();
   });
 
 });

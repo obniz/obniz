@@ -10,7 +10,17 @@ var chai = require('chai');
 var expect = chai.expect;
 var ws = require('ws');
 var WSServer = ws.Server;
-var Obniz = require(global.appRoot + "index.js");
+
+var semver = require('semver');
+var Obniz;
+if ( process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
+  console.log("Loading obniz.js for node 6.10");
+  Obniz = require(global.appRoot + "index-for-node6.10.js");
+}else{
+  console.log("Loading normal obniz.js");
+  Obniz = require(global.appRoot + "index.js");
+}
+
 
 chai.use(require('chai-like'));
 

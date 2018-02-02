@@ -2,9 +2,6 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
-
-var Obniz = require(global.appRoot + "index.js");
-var debugLog = console.log.bind(console);
 var util = require(global.appRoot + "/test/testUtil.js");
 chai.use(require('chai-like'));
 chai.use(util.obnizAssert);
@@ -20,28 +17,28 @@ describe("obniz.libs.io", function () {
   });
   
   
-  it("output", async function () {
+  it("output", function () {
     this.obniz.io0.output(true);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io0:true});
     expect(this.obniz).to.be.finished;
   });
   
-  it("output-over-pin", async function () {
+  it("output-over-pin", function () {
     expect(function(){
       this.obniz.io20.output(true);
     }).to.throw("Cannot read property");
     expect(this.obniz).to.be.finished;
   });
 
-  it("outputType", async function () {
+  it("outputType", function () {
     this.obniz.io1.pullup();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io1:{"pull_type":"pullup"}});
     expect(this.obniz).to.be.finished;
   });
   
-  it("outputType2", async function () {
+  it("outputType2", function () {
     this.obniz.io2.outputType("open-drain");
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io2:{"output_type": "open-drain"}});
@@ -49,35 +46,35 @@ describe("obniz.libs.io", function () {
   });
 
 
-  it("pullup5v", async function () {
+  it("pullup5v", function () {
     this.obniz.io3.pullup5v();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io3:{"pull_type": "pullup5v"}});
     expect(this.obniz).to.be.finished;
   });
 
-  it("pullup", async function () {
+  it("pullup", function () {
     this.obniz.io4.pullup();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io4:{"pull_type": "pullup"}});
     expect(this.obniz).to.be.finished;
   });
 
-  it("pulldown", async function () {
+  it("pulldown", function () {
     this.obniz.io5.pulldown();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io5:{"pull_type": "pulldown"}});
     expect(this.obniz).to.be.finished;
   });
 
-  it("float", async function () {
+  it("float", function () {
     this.obniz.io6.float();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io6:{"pull_type": "float"}});
     expect(this.obniz).to.be.finished;
   });
 
-  it("input", async function () {
+  it("input", function () {
     var stub = sinon.stub();
     this.obniz.io7.input(stub);
     expect(this.obniz).to.be.obniz;

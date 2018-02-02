@@ -3,7 +3,6 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var Obniz = require(global.appRoot + "index.js");
 var util = require(global.appRoot + "/test/testUtil.js");
 chai.use(require('chai-like'));
 chai.use(util.obnizAssert);
@@ -18,25 +17,25 @@ describe("obniz.libs.io", function () {
   });
   
   
-  it("clear", async function () {
+  it("clear",  function () {
     this.obniz.display.clear();
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({display:{clear:true}});
     expect(this.obniz).to.be.finished;
   });
-  it("print", async function () {
+  it("print",  function () {
     this.obniz.display.print("Hello!");
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({display:{text:"Hello!"}});
     expect(this.obniz).to.be.finished;
   });
-  it("print_bool", async function () {
+  it("print_bool",  function () {
     this.obniz.display.print(true);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({display:{text:"true"}});
     expect(this.obniz).to.be.finished;
   });
-  it("qr", async function () {
+  it("qr",  function () {
     this.obniz.display.qr("https://obniz.io");
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({
@@ -48,7 +47,7 @@ describe("obniz.libs.io", function () {
     });
     expect(this.obniz).to.be.finished;
   });
-  it("qr-low", async function () {
+  it("qr-low",  function () {
     this.obniz.display.qr("HELLO!", "L");
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({
@@ -61,7 +60,7 @@ describe("obniz.libs.io", function () {
     });
     expect(this.obniz).to.be.finished;
   });
-  it("qr-high", async function () {
+  it("qr-high",  function () {
     this.obniz.display.qr("p8baerv9uber:q", "H");
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({

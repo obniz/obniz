@@ -3,6 +3,7 @@ node_js:
 - lts/*
 - '8'
 - '7'
+- '6'
 
 cache:
   directories:
