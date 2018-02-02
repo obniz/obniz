@@ -7,18 +7,17 @@
 
 var sinon = require('sinon');
 var chai = require('chai');
-var expect = chai.expect;
 var ws = require('ws');
 var WSServer = ws.Server;
 
 var semver = require('semver');
 var Obniz;
-if ( process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
+if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
   console.log("Loading obniz.js for node 6.10");
-  Obniz = require(global.appRoot + "index-for-node6.10.js");
+  Obniz = require("../index-for-node6.10.js");
 }else{
   console.log("Loading normal obniz.js");
-  Obniz = require(global.appRoot + "index.js");
+  Obniz = require("../index.js");
 }
 
 
@@ -51,14 +50,19 @@ var testUtil = {
   },
 
   setupObnizPromise: function (obj, done ) {
-    var stub = spyOnModule('ws');
-    stub.prototype.on = sinon.stub();
-    stub.prototype.send = sinon.stub();
-    stub.prototype.close = sinon.stub();
-    stub.prototype.removeAllListeners = sinon.stub();
+    var client = require('ws');
+    var stub = sinon.stub();
+    stub.on = sinon.stub();
+    stub.send = sinon.stub();
+    stub.close = sinon.stub();
+    stub.removeAllListeners = sinon.stub();
+    
+    console.log(Obniz)
+//    sinon.stub(Obniz.prototype , 'wsconnect');
     obj.obniz = this.createObniz(100, "12345678");
-    obj.obniz.wsOnOpen();
+    obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
+    obj.obniz.wsOnOpen();
     serverDataCount = 0;
     done();
   },
@@ -66,6 +70,7 @@ var testUtil = {
   releaseObnizePromise: function (obj,done) {
     obj.obniz.close();
     obj.obniz = null;
+//    Obniz.prototype.wsconnect.restore();
     
     done();
   },
@@ -164,34 +169,5 @@ var testUtil = {
  
 
 };
-
-
-
-
-
-
-var moduleSpies = {};
-var originalJsLoader = require.extensions['.js'];
-
-spyOnModule = function spyOnModule(module) {
-  var path          = require.resolve(module);
-  var spy           = sinon.stub();
-  moduleSpies[path] = spy;
-  delete require.cache[path];
-  return spy;
-};
-
-require.extensions['.js'] = function (obj, path) {
-  if (moduleSpies[path])
-    obj.exports = moduleSpies[path];
-  else
-    return originalJsLoader(obj, path);
-};
-
-afterEach(function() {
-  for (var path in moduleSpies) {
-    delete moduleSpies[path];
-  }
-});
 
 module.exports = testUtil;

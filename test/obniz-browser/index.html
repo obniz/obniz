@@ -1,0 +1,70 @@
+<!doctype>
+<html>
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+    <script src="../../node_modules/mocha/mocha.js"></script> 
+    <script src="../../node_modules/chai/chai.js"></script> 
+    <script src="../../index.js"></script> 
+  </head>
+  <body>
+    <script>
+     var stub_ = function(){
+         this.count = 0;
+         this.values = [];
+     };
+     stub_.prototype.func = function(mes){
+         this.values.push(mes);
+         this.count++;
+     }.bind(this);
+        
+        
+      var sinon = {
+          assert : {
+              calledOnce : function(stub){
+                  return assert(stub.count).to.be.equal(0);
+              },
+              calledWith : function(stub, val){
+                  return assert(stub.values[0]).to.be.equal(val);
+              }
+          },
+          stub : function(obj, param){
+              var stub = new stub_();
+              stub.before =  obj[param];
+              obj[param] = stub.func;
+              
+          }
+      };  
+    </script>
+    <div id="mocha"></div>
+    <script>
+      expect = chai.expect;
+      mocha.setup('bdd');
+      var dummyLog = function(){
+              
+      }
+
+      before(function () {
+          
+        sinon.stub(console, 'error');
+        sinon.stub(console, 'log');
+      });
+
+
+      after(function () {
+//        console.error.restore(); // Unwraps the spy
+//        console.log.restore(); // Unwraps the spy
+      });
+
+      it("instance", function () {
+        var obniz = Obniz("OBNIZ_ID_HERE");
+        expect(obniz).to.be.obniz;
+        sinon.assert.calledOnce(console.error);
+        sinon.assert.calledWith(console.error, "invalid obniz id");
+            });
+ 
+      mocha.run();
+    </script> 
+  </body>
+</html>
