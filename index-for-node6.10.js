@@ -2200,9 +2200,10 @@ PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
 if (PartsRegistrate) {
   PartsRegistrate("PIR_ekmc", PIR_ekmc);
 }
-var ENC03R_Module = function () {};
+var ENC03R_Module = function () {
 
-Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+  this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+};
 
 ENC03R_Module.prototype.wired = function (obniz, pwr, signal_1, signal_2, gnd) {
   this.obniz = obniz;
@@ -2219,7 +2220,7 @@ ENC03R_Module.prototype.wired = function (obniz, pwr, signal_1, signal_2, gnd) {
 
   var self = this;
   this.ad0.start(function (value) {
-    self.sens1 = (value - 1.45) / Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    self.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
     //console.log('raw='+value);
     if (self.onchange1) {
       self.onchange1(self.sens1);
@@ -2227,7 +2228,7 @@ ENC03R_Module.prototype.wired = function (obniz, pwr, signal_1, signal_2, gnd) {
   });
 
   this.ad1.start(function (value) {
-    self.sens2 = (value - 1.35) / Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    self.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
     if (self.onchange2) {
       self.onchange2(self.sens2);
     }
