@@ -12,6 +12,7 @@ require('mocha-directory')();
 var util = require("./testUtil.js");
 var  _ = require( 'underscore' );
 var  fs = require( 'fs' );
+var semver = require('semver');
 
 
 
