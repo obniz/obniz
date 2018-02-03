@@ -7,7 +7,7 @@ var util = require(global.appRoot + "/test/testUtil.js");
 chai.use(require('chai-like'));
 chai.use(util.obnizAssert);
 
-describe("obniz.libs.io", function () {
+describe("obniz.libs.display", function () {
   beforeEach(function (done) {
     return util.setupObnizPromise(this,done);   
   });
