@@ -33,6 +33,9 @@ var recursiveTestImport = function (root_directory) {
       .filter(function (file) {
         return file.match(/.*\.html$/);
       })
+      .filter(function (file) {
+        return !file.match(/.*_ejs\.html$/);
+      })
       .map(function (file) {
         return path.resolve(root_directory, file);
       })
@@ -72,8 +75,7 @@ var recursiveTestImport = function (root_directory) {
 };
 
 
-//ブラウザテストはv7,v8でやる
-if (typeof window === 'undefined' && semver.satisfies(process.versions.node, '>=7.6.0')) {
+if (util.needBrowserTest()) {
 
   describe('browser', ()=>{
 //    var wait = function(){

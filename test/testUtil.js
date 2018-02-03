@@ -11,6 +11,10 @@ var path = require('path');
 var ws = require('ws');
 var WSServer = ws.Server;
 var semver = require('semver');
+
+var fs = require('fs');
+var ejs = require('ejs');
+
 var Obniz;
 if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
   console.log("Loading obniz.js for node 6.10");
@@ -21,6 +25,7 @@ if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versi
   var MochaChrome = require('mocha-chrome');
 }
 
+sinon.stub(Obniz.prototype , 'wsOnClose');
 
 chai.use(require('chai-like'));
 
@@ -166,12 +171,10 @@ var testUtil = {
   },
   
   browser : function (url) {
-//  const url = 'file://' + path.join(dirname, '/', filename);
-
+    var url = "file://" + url;
     options = {
-      url
+      url,
     };
-
     const runner = new MochaChrome(options);
     const result = new Promise((resolve, reject) => {
       runner.on('ended', stats => {
@@ -188,10 +191,32 @@ var testUtil = {
     }).then(function(){
       return result;
     });
+  },
+  
+  ejs : function(url, param){
+    var data = fs.readFileSync(url,'utf8');
+    html = ejs.render(data, param);
+    var newFilename = url.replace(".","_") + ".html";
     
-  }
-
+    return new Promise(function(resolve, reject){
+      fs.writeFile(newFilename, html, function(err){
+        if(err){
+          reject(err);
+        }else{
+          resolve();
+        }
+      });
+    }).then(function(){
+      return testUtil.browser(newFilename);
+    });
+  },
  
+  needBrowserTest : function(){
+    if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
+      return false;
+    }
+    return true;
+  }
 
 };
 
