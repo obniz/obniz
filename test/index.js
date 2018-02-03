@@ -93,7 +93,7 @@ var recursiveTestImport = function (root_directory) {
           this.timeout(60000); //browserは多めに取る
           it('runs ' + relativePath, () => {
             return testUtil.browser(file).then((results) => {
-              expect(results.passes).to.be.above(1);
+              expect(results.passes).to.be.at.least(1);
               expect(results.failures).to.equal(0);
             });
           });

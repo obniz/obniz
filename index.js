@@ -1721,9 +1721,16 @@ PeripheralUART.prototype.notified = function(obj) {
   if (this.onreceive) {
     var string = null;
     try {
-      string = new TextDecoder("utf-8").decode(new Uint8Array(obj.data));
+      if(isNode){
+        const StringDecoder = require('string_decoder').StringDecoder;
+        if(StringDecoder){
+           string = new StringDecoder('utf8').write(Buffer.from(obj.data));
+        }
+      }else if(TextDecoder){
+        string = new TextDecoder("utf-8").decode(new Uint8Array(obj.data));
+      }
     }catch(e) {
-      
+      this.obniz.error(e);
     }
     this.onreceive(obj.data, string);
   } else {
