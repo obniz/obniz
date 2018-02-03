@@ -7,9 +7,10 @@
 
 var sinon = require('sinon');
 var chai = require('chai');
+var path = require('path');
 var ws = require('ws');
 var WSServer = ws.Server;
-
+var MochaChrome = require('mocha-chrome');
 var semver = require('semver');
 var Obniz;
 if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
@@ -50,15 +51,13 @@ var testUtil = {
   },
 
   setupObnizPromise: function (obj, done ) {
-    var client = require('ws');
     var stub = sinon.stub();
     stub.on = sinon.stub();
     stub.send = sinon.stub();
     stub.close = sinon.stub();
     stub.removeAllListeners = sinon.stub();
     
-    console.log(Obniz)
-//    sinon.stub(Obniz.prototype , 'wsconnect');
+    sinon.stub(Obniz.prototype , 'wsconnect');
     obj.obniz = this.createObniz(100, "12345678");
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
@@ -70,7 +69,7 @@ var testUtil = {
   releaseObnizePromise: function (obj,done) {
     obj.obniz.close();
     obj.obniz = null;
-//    Obniz.prototype.wsconnect.restore();
+    Obniz.prototype.wsconnect.restore();
     
     done();
   },
@@ -164,8 +163,34 @@ var testUtil = {
      });
      
      
-  }
+  },
   
+  browser : function (url) {
+//  const url = 'file://' + path.join(dirname, '/', filename);
+
+    options = {
+      url
+    };
+
+    const runner = new MochaChrome(options);
+    const result = new Promise((resolve, reject) => {
+      runner.on('ended', stats => {
+        resolve(stats);
+      });
+
+      runner.on('failure', message => {
+        reject(message);
+      });
+    });
+
+    (async function () {
+      await runner.connect();
+      await runner.run();
+    })();
+
+    return result;
+  }
+
  
 
 };

@@ -4,7 +4,7 @@
   "description": "Obniz Basic Library",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/mocha --recursive  "
+    "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/mocha  "
   },
   "keywords": [
     "obniz"
@@ -18,6 +18,7 @@
     "chai-like": "^1.1.1",
     "get-port": "^3.2.0",
     "mocha": "^5.0.0",
+    "mocha-chrome": "^1.0.3",
     "mocha-directory": "^2.3.0",
     "mocha-sinon": "^2.0.0",
     "nyc": "^11.4.1",
