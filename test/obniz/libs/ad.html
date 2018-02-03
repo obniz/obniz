@@ -1,0 +1,123 @@
+<!doctype>
+<html>
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.css" />
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/chai/chai.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/sinon/pkg/sinon.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//index.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//test/testUtil-browser.ejs"></script> 
+  </head>
+  <body>
+    <script>
+      expect = chai.expect;
+      assert = chai.assert;
+      mocha.setup('bdd');
+      
+      chai.use(testUtil.obnizAssert);
+    </script>
+    <div id="mocha"></div>
+    <script>
+        
+      describe("obniz.libs.ad", function () {
+  beforeEach(function (done) {
+    return testUtil.setupObnizPromise(this,done);   
+  });
+ 
+  afterEach(function (done) {
+    return testUtil.releaseObnizePromise(this,done);
+  });
+  
+  
+  it("start",  function () {
+    var stub = sinon.stub();
+    this.obniz.ad0.start(stub);
+    
+    expect(this.obniz).send({ad0:{"on": true, "stream":true}});
+    expect(this.obniz).to.be.finished;
+  });
+  
+  it("value",  function () {
+    var stub = sinon.stub();
+    this.obniz.ad0.start(stub);
+    expect(this.obniz).send({ad0:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad0":0});
+    sinon.assert.callCount(stub, 1);
+    expect(stub.getCall(0).args[0]).to.be.equal(0);
+    
+    testUtil.receiveJson(this.obniz,  {"ad0":4.90});
+    sinon.assert.callCount(stub, 2);
+    expect(stub.getCall(1).args[0]).to.be.equal(4.90);
+    
+    expect(this.obniz).to.be.finished;
+  });
+  
+  
+  it("onchange",  function () {
+    var stub = sinon.stub();
+    this.obniz.ad1.start();
+    this.obniz.ad1.onchange = stub;
+    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad1":0});
+    sinon.assert.callCount(stub, 1);
+    expect(stub.getCall(0).args[0]).to.be.equal(0);
+    
+    testUtil.receiveJson(this.obniz,  {"ad0":4.90});
+    sinon.assert.callCount(stub, 1);
+    
+    expect(this.obniz).to.be.finished;
+  });
+  
+  it("in var",  function () {
+    this.obniz.ad1.start();
+    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad1":1});
+    expect(this.obniz.ad1.value).to.be.equal(1);
+    
+    expect(this.obniz).to.be.finished;
+  });
+  
+  it("inputWaitTrue",  function () {
+    return new Promise(function(resolve, reject){
+      this.obniz.ad4.getWait().then(function(result){
+        expect(result).to.be.equal(2.6);    
+        resolve();
+      });
+
+      expect(this.obniz).to.be.obniz;
+      expect(this.obniz).send({ad4:{"on": true, "stream":false}});
+      expect(this.obniz).to.be.finished;
+
+      setTimeout(function(){    
+        testUtil.receiveJson(this.obniz,  {"ad4":2.6});
+      }.bind(this),10);
+    }.bind(this));
+    
+   
+  });
+  
+  it("end",  function () {
+    this.obniz.ad1.start();
+    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad1":1});
+    expect(this.obniz.ad1.value).to.be.equal(1);
+    
+    this.obniz.ad1.end();
+    expect(this.obniz).send({ad1:{"on": null}});
+    
+    expect(this.obniz).to.be.finished;
+   
+  });
+  
+});
+
+      mocha.run();
+    </script> 
+  </body>
+</html>
