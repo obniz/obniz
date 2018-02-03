@@ -5,6 +5,10 @@ node_js:
 - '7'
 - '6'
 
+sudo: required
+addons:
+  chrome: stable
+
 cache:
   directories:
   - node_modules
