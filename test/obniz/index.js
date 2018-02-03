@@ -7,6 +7,8 @@ var util = require(global.appRoot + "/test/testUtil.js");
 
 const getPort = require('get-port');
 
+var waitMs = 500;
+
 describe("obniz.index", function () {
   beforeEach(function () {
     sinon.stub(console, 'error');
@@ -33,8 +35,15 @@ describe("obniz.index", function () {
     return getPort().then(function(p){
       port =  p;
       server =  util.createServer(port);
+      
+      var result = new Promise(function(resolve,reject){
+        server.on('connection',function(){resolve();});
+      });
+      
       obniz = util.createObniz(port,"11111111");
-      return obniz.wait(100);
+      return result;
+    }).then(function(){
+      return obniz.wait(10);
     }).then(function(){
 
       expect(obniz).to.be.obniz;
@@ -57,14 +66,27 @@ describe("obniz.index", function () {
       port2 = p2;
       server2 = util.createServer(port2);
 
+      var result = new Promise(function(resolve,reject){
+        server.on('connection',function(){resolve();});
+      });
+      
       obniz = util.createObniz(port, "11111111");
       expect(obniz).to.be.obniz;
-      return obniz.wait(500);
+      return result;
+    }).then(function(){
+      return obniz.wait(10);
     }).then(function () {
       expect(server.clients.size, "before server not connected").to.equal(1);
+      var result = new Promise(function(resolve,reject){
+        server2.on('connection',function(){resolve();});
+      });
+     
       var val = {ws: {redirect: "ws://localhost:" + port2}};
       server.clients.values().next().value.send(JSON.stringify(val));
-      return obniz.wait(500);
+      
+      return result;
+    }).then(function(){
+      return obniz.wait(10);
     }).then(function () {
       expect(server.clients.size, "before server remain connection").to.equal(0);
       expect(server2.clients.size, "after server not connected").to.equal(1);
