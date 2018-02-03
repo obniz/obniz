@@ -1967,6 +1967,74 @@ if (PartsRegistrate) {
   PartsRegistrate("ADT7410", ADT7410);
 }
 
+var AE_MICAMP = function () {};
+
+AE_MICAMP.prototype.wired = (() => {
+  var _ref9 = _asyncToGenerator(function* (obniz, pwr, gnd, signal) {
+    this.obniz = obniz;
+    this.io_pwr = obniz.getIO(pwr);
+    this.io_gnd = obniz.getIO(gnd);
+    this.ad = obniz.getAD(signal);
+
+    this.io_pwr.output(true);
+    if (gnd) {
+      this.io_gnd = obniz.getIO(gnd);
+      this.io_gnd.output(false);
+    }
+
+    var self = this;
+    this.ad.start(function (value) {
+      self.voltage = value;
+      if (self.onchange) {
+        self.onchange(self.voltage);
+      }
+    });
+
+    /*
+      var self = this;
+      var analogin = [];
+      var cnt = 0;
+      while(true){
+        var sum = 0;
+        if (cnt == 10) {
+          cnt = 0;
+        }
+        analogin[cnt] = this.ad.value;
+        cnt++;
+        for (var i = 0; i < 10; i++) {
+          if (typeof(analogin[i])=="number") {sum += analogin[i];}
+        }
+        var average = sum / 10;
+        //console.log('average='+average);
+        await obniz.wait(1);
+      }
+      self.voltage_ave = average;
+      if (self.average) {
+        self.average(self.voltage_ave);
+      }
+      */
+  });
+
+  return function (_x11, _x12, _x13, _x14) {
+    return _ref9.apply(this, arguments);
+  };
+})();
+
+AE_MICAMP.prototype.onChange = function (callback) {
+  this.onchange = callback;
+};
+
+/*
+//移動平均を返す
+AE_MICAMP.prototype.Average = function(callback) {
+  this.average = callback;
+};
+*/
+
+if (PartsRegistrate) {
+  PartsRegistrate("AE_MICAMP", AE_MICAMP);
+}
+
 var Button = function () {};
 
 Button.prototype.wired = function (obniz, signal, supply) {
@@ -2123,6 +2191,59 @@ PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
 if (PartsRegistrate) {
   PartsRegistrate("PIR_ekmc", PIR_ekmc);
 }
+var ENC03R_Module = function () {};
+
+Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+
+ENC03R_Module.prototype.wired = function (obniz, pwr, signal_1, signal_2, gnd) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad0 = obniz.getAD(signal_1);
+  this.ad1 = obniz.getAD(signal_2);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad0.start(function (value) {
+    self.sens1 = (value - 1.45) / Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    //console.log('raw='+value);
+    if (self.onchange1) {
+      self.onchange1(self.sens1);
+    }
+  });
+
+  this.ad1.start(function (value) {
+    self.sens2 = (value - 1.35) / Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    if (self.onchange2) {
+      self.onchange2(self.sens2);
+    }
+  });
+};
+
+ENC03R_Module.prototype.onChangeSens1 = function (callback) {
+  this.onchange1 = callback;
+};
+ENC03R_Module.prototype.onChangeSens2 = function (callback) {
+  this.onchange2 = callback;
+};
+
+ENC03R_Module.prototype.getValueSens1 = _asyncToGenerator(function* () {
+  return (this.ad0.value - 1.47) / Sens;
+});
+
+ENC03R_Module.prototype.getValueSens2 = _asyncToGenerator(function* () {
+  return (this.ad1.value - 1.35) / Sens;
+});
+
+if (PartsRegistrate) {
+  PartsRegistrate("ENC03R_Module", ENC03R_Module);
+}
+
 //Todo:抵抗を追加して圧力(kg)を求められるように改造する
 var FSR40X = function () {};
 
@@ -2170,7 +2291,7 @@ HCSR04.prototype.wired = function (obniz, vcc, triger, echo, gnd) {
 };
 
 HCSR04.prototype.measure = (() => {
-  var _ref11 = _asyncToGenerator(function* (callback) {
+  var _ref14 = _asyncToGenerator(function* (callback) {
 
     this.vccIO.output(true);
     yield this.obniz.wait(10);
@@ -2194,8 +2315,8 @@ HCSR04.prototype.measure = (() => {
     });
   });
 
-  return function (_x11) {
-    return _ref11.apply(this, arguments);
+  return function (_x15) {
+    return _ref14.apply(this, arguments);
   };
 })();
 
@@ -2276,7 +2397,7 @@ if (PartsRegistrate) {
 var KXSC7_2050 = function () {};
 
 KXSC7_2050.prototype.wired = (() => {
-  var _ref13 = _asyncToGenerator(function* (obniz, pwr, sig_x, sig_y, sig_z, gnd) {
+  var _ref16 = _asyncToGenerator(function* (obniz, pwr, sig_x, sig_y, sig_z, gnd) {
     this.obniz = obniz;
     this.io_pwr = obniz.getIO(pwr);
     this.io_gnd = obniz.getIO(gnd);
@@ -2324,8 +2445,8 @@ KXSC7_2050.prototype.wired = (() => {
     });
   });
 
-  return function (_x12, _x13, _x14, _x15, _x16, _x17) {
-    return _ref13.apply(this, arguments);
+  return function (_x16, _x17, _x18, _x19, _x20, _x21) {
+    return _ref16.apply(this, arguments);
   };
 })();
 
@@ -2922,6 +3043,86 @@ if (PartsRegistrate) {
   PartsRegistrate("S8120C", S8120C);
 }
 
+var SEN0114 = function () {};
+
+SEN0114.prototype.wired = function (obniz, signal, pwr, gnd) {
+  this.obniz = obniz;
+  this.io_pwr = obniz.getIO(pwr);
+  this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(signal);
+
+  this.io_pwr.output(true);
+  if (gnd) {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_gnd.output(false);
+  }
+
+  var self = this;
+  this.ad.start(function (value) {
+    self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+};
+
+SEN0114.prototype.onChange = function (callback) {
+  this.onchange = callback;
+};
+
+SEN0114.prototype.getHumidityWait = _asyncToGenerator(function* () {
+  return this.ad.value;
+});
+
+if (PartsRegistrate) {
+  PartsRegistrate("SEN0114", SEN0114);
+}
+
+var ServoMotor = function () {};
+
+ServoMotor.prototype.wired = function (obniz, gnd, power, signal) {
+  this.obniz = obniz;
+  if (power == null || signal == null) {
+    this.pwm_io_num = gnd;
+    this.pwm = obniz.getpwm();
+  } else {
+    this.io_gnd = obniz.getIO(gnd);
+    this.io_power = obniz.getIO(power);
+
+    this.io_gnd.output(false);
+    this.io_power.output(true);
+
+    this.pwm = obniz.getpwm();
+    this.pwm_io_num = signal;
+  }
+  this.pwm.start(this.pwm_io_num);
+  this.pwm.freq(50);
+};
+
+// Module functions
+
+ServoMotor.prototype.angle = function (ratio) {
+  var max = 2.4;
+  var min = 0.5;
+  var val = (max - min) * ratio / 180.0 + min;
+  this.pwm.pulse(val);
+};
+
+ServoMotor.prototype.on = function () {
+  if (this.io_power) {
+    this.io_power.output(true);
+  }
+};
+
+ServoMotor.prototype.off = function () {
+  if (this.io_power) {
+    this.io_power.output(false);
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("ServoMotor", ServoMotor);
+}
 var SHT31 = function () {};
 
 SHT31.prototype.wired = function (obniz, pwr, sda, scl, gnd, adr, adr_select) {
@@ -2971,51 +3172,6 @@ if (PartsRegistrate) {
   PartsRegistrate("SHT31", SHT31);
 }
 
-var ServoMotor = function () {};
-
-ServoMotor.prototype.wired = function (obniz, gnd, power, signal) {
-  this.obniz = obniz;
-  if (power == null || signal == null) {
-    this.pwm_io_num = gnd;
-    this.pwm = obniz.getpwm();
-  } else {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_power = obniz.getIO(power);
-
-    this.io_gnd.output(false);
-    this.io_power.output(true);
-
-    this.pwm = obniz.getpwm();
-    this.pwm_io_num = signal;
-  }
-  this.pwm.start(this.pwm_io_num);
-  this.pwm.freq(50);
-};
-
-// Module functions
-
-ServoMotor.prototype.angle = function (ratio) {
-  var max = 2.4;
-  var min = 0.5;
-  var val = (max - min) * ratio / 180.0 + min;
-  this.pwm.pulse(val);
-};
-
-ServoMotor.prototype.on = function () {
-  if (this.io_power) {
-    this.io_power.output(true);
-  }
-};
-
-ServoMotor.prototype.off = function () {
-  if (this.io_power) {
-    this.io_power.output(false);
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("ServoMotor", ServoMotor);
-}
 var Speaker = function () {};
 
 Speaker.prototype.wired = function (obniz, io0, io1) {
@@ -3154,7 +3310,7 @@ XBee.prototype.exitAtMode = function () {
 };
 
 XBee.prototype.configWait = (() => {
-  var _ref18 = _asyncToGenerator(function* (config) {
+  var _ref22 = _asyncToGenerator(function* (config) {
     if (this.isAtMode) {
       throw new Error("Xbee : duplicate config setting");
     };
@@ -3189,8 +3345,8 @@ XBee.prototype.configWait = (() => {
     }.bind(this));
   });
 
-  return function (_x18) {
-    return _ref18.apply(this, arguments);
+  return function (_x22) {
+    return _ref22.apply(this, arguments);
   };
 })();
 
