@@ -10,7 +10,6 @@ var chai = require('chai');
 var path = require('path');
 var ws = require('ws');
 var WSServer = ws.Server;
-var MochaChrome = require('mocha-chrome');
 var semver = require('semver');
 var Obniz;
 if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
@@ -19,6 +18,7 @@ if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versi
 }else{
   console.log("Loading normal obniz.js");
   Obniz = require("../index.js");
+  var MochaChrome = require('mocha-chrome');
 }
 
 
@@ -183,12 +183,12 @@ var testUtil = {
       });
     });
 
-    (async function () {
-      await runner.connect();
-      await runner.run();
-    })();
-
-    return result;
+    return runner.connect().then(function(){
+      return runner.run();
+    }).then(function(){
+      return result;
+    });
+    
   }
 
  

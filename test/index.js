@@ -73,18 +73,18 @@ var recursiveTestImport = function (root_directory) {
 
 
 //ブラウザテストはv7,v8でやる
-if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
+if (typeof window === 'undefined' && semver.satisfies(process.versions.node, '>=7.6.0')) {
 
   describe('browser', ()=>{
-    var wait = function(){
-      return new Promise(function(resolve,reject){
-          setTimeout(resolve,500);
-      });
-    };
-
-    (async function () {
-      await wait();
-    })();
+//    var wait = function(){
+//      return new Promise(function(resolve,reject){
+//          setTimeout(resolve,500);
+//      });
+//    };
+//
+//    (async function () {
+//      await wait();
+//    })();
     recursiveTestImport(__dirname);
   });
 }
