@@ -1,10 +1,12 @@
+'no_html_test_build'
+
 var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 var path = require('path');
 
-var util = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require(global.appRoot + "/test/testUtil.js");
 
 const getPort = require('get-port');
 
@@ -20,7 +22,7 @@ describe("obniz.index", function () {
   it("instance", function () {
     sinon.stub(console, 'error');
     sinon.stub(console, 'log');
-    var obniz = util.createObniz(3000,"OBNIZ_ID_HERE");
+    var obniz = testUtil.createObniz(3000,"OBNIZ_ID_HERE");
     expect(obniz).to.be.obniz;
     sinon.assert.calledOnce(console.error);
     sinon.assert.calledWith(console.error, "invalid obniz id");
@@ -35,13 +37,13 @@ describe("obniz.index", function () {
     var obniz = undefined;
     return getPort().then(function(p){
       port =  p;
-      server =  util.createServer(port);
+      server =  testUtil.createServer(port);
       
       var result = new Promise(function(resolve,reject){
         server.on('connection',function(){resolve();});
       });
       
-      obniz = util.createObniz(port,"11111111");
+      obniz = testUtil.createObniz(port,"11111111");
       return result;
     }).then(function(){
       return obniz.wait(waitMs);
@@ -61,17 +63,17 @@ describe("obniz.index", function () {
             
     return getPort().then(function (p) {
       port = p;
-      server = util.createServer(port);
+      server = testUtil.createServer(port);
       return getPort();
     }).then(function (p2) {
       port2 = p2;
-      server2 = util.createServer(port2);
+      server2 = testUtil.createServer(port2);
 
       var result = new Promise(function(resolve,reject){
         server.on('connection',function(){resolve();});
       });
       
-      obniz = util.createObniz(port, "11111111");
+      obniz = testUtil.createObniz(port, "11111111");
       expect(obniz).to.be.obniz;
       return result;
     }).then(function(){
@@ -98,7 +100,7 @@ describe("obniz.index", function () {
     
   });
   
-  if(util.needBrowserTest()){
+  if(testUtil.needBrowserTest()){
   
     it("browser", function () {
       this.timeout(5000);
@@ -106,15 +108,15 @@ describe("obniz.index", function () {
       
       return getPort().then(function (p) {
         port1 = p;
-        server1 = util.createServer(port1);
+        server1 = testUtil.createServer(port1);
         return getPort();
       }).then(function (p) {
         port2 = p;
-        server2 = util.createServer(port2);
+        server2 = testUtil.createServer(port2);
         return getPort();
       }).then(function (p) {
         port3 = p;
-        server3 = util.createServer(port3);
+        server3 = testUtil.createServer(port3);
         
         server2.on('connection',function(client){
           setTimeout(function(){
@@ -126,7 +128,7 @@ describe("obniz.index", function () {
       
         return getPort();
       }).then(function(){
-        return util.ejs(path.resolve(__dirname,"index.ejs"), {port1, port2, port3});
+        return testUtil.ejs(path.resolve(__dirname,"index.ejs"), {port1, port2, port3});
       }).then(function(val){
         expect(val.failures).to.equal(0);
         return new Promise(function(resolve){setTimeout(resolve,waitMs);});

@@ -1,32 +1,5 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
-var sinon = require('sinon');
-var chai = require('chai');
-var path = require('path');
-var ws = require('ws');
-var WSServer = ws.Server;
-var semver = require('semver');
-
-var fs = require('fs');
-var ejs = require('ejs');
-
-var Obniz;
-if (typeof window === 'undefined' &&  process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
-  console.log("Loading obniz.js for node 6.10");
-  Obniz = require("../index-for-node6.10.js");
-}else{
-  console.log("Loading normal obniz.js");
-  Obniz = require("../index.js");
-  var MochaChrome = require('mocha-chrome');
-}
 
 sinon.stub(Obniz.prototype , 'wsOnClose');
-
 
 var   serverDataCount = 0;
 var   errorDataCount = 0;
@@ -216,5 +189,3 @@ var testUtil = {
   }
 
 };
-
-module.exports = testUtil;

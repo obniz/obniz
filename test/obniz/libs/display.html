@@ -1,13 +1,27 @@
-var chai = require('chai');
-var assert = chai.assert;
-var expect = chai.expect;
-var sinon = require('sinon');
-
-var testUtil = require(global.appRoot + "/test/testUtil.js");
-chai.use(require('chai-like'));
-chai.use(testUtil.obnizAssert);
-
-describe("obniz.libs.display", function () {
+<!doctype>
+<html>
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.css" />
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/chai/chai.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/sinon/pkg/sinon.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//index.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//test/testUtil-browser.ejs"></script> 
+  </head>
+  <body>
+    <script>
+      expect = chai.expect;
+      assert = chai.assert;
+      mocha.setup('bdd');
+      
+      chai.use(testUtil.obnizAssert);
+    </script>
+    <div id="mocha"></div>
+    <script>
+        
+      describe("obniz.libs.display", function () {
   beforeEach(function (done) {
     return testUtil.setupObnizPromise(this,done);   
   });
@@ -74,3 +88,8 @@ describe("obniz.libs.display", function () {
     expect(this.obniz).to.be.finished;
   });
 });
+
+      mocha.run();
+    </script> 
+  </body>
+</html>

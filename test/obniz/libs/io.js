@@ -2,18 +2,18 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
-var util = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require(global.appRoot + "/test/testUtil.js");
 chai.use(require('chai-like'));
-chai.use(util.obnizAssert);
+chai.use(testUtil.obnizAssert);
 
 describe("obniz.libs.io", function () {
   beforeEach(function (done) {
-    return util.setupObnizPromise(this,done);
+    return testUtil.setupObnizPromise(this,done);
     
   });
   
   afterEach(function (done) {
-    return util.releaseObnizePromise(this,done);
+    return testUtil.releaseObnizePromise(this,done);
   });
   
   
@@ -27,7 +27,7 @@ describe("obniz.libs.io", function () {
   it("output-over-pin", function () {
     expect(function(){
       this.obniz.io20.output(true);
-    }).to.throw("Cannot read property");
+    }).to.throw();
     expect(this.obniz).to.be.finished;
   });
 
@@ -80,11 +80,11 @@ describe("obniz.libs.io", function () {
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io7:{"direction": "input", "stream": true}});
     
-    util.receiveJson(this.obniz,  {"io7":true});
+    testUtil.receiveJson(this.obniz,  {"io7":true});
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args[0]).to.be.true;
     
-    util.receiveJson(this.obniz,  {"io7":false});
+    testUtil.receiveJson(this.obniz,  {"io7":false});
     sinon.assert.callCount(stub, 2);
     expect(stub.getCall(1).args[0]).to.be.false;
     
@@ -105,7 +105,7 @@ describe("obniz.libs.io", function () {
       expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
-        util.receiveJson(this.obniz,  {"io8":true});
+        testUtil.receiveJson(this.obniz,  {"io8":true});
       }.bind(this),10);
     }.bind(this));
     
@@ -124,7 +124,7 @@ describe("obniz.libs.io", function () {
       expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
-        util.receiveJson(this.obniz,  {"io10":true});
+        testUtil.receiveJson(this.obniz,  {"io10":true});
       }.bind(this),5);
       setTimeout(function(){    
         if(success){
