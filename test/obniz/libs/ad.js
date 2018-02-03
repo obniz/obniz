@@ -7,7 +7,7 @@ var testUtil = require(global.appRoot + "/test/testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe("obniz.libs.display", function () {
+describe("obniz.libs.ad", function () {
   beforeEach(function (done) {
     return testUtil.setupObnizPromise(this,done);   
   });
@@ -17,60 +17,88 @@ describe("obniz.libs.display", function () {
   });
   
   
-  it("clear",  function () {
-    this.obniz.display.clear();
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({display:{clear:true}});
+  it("start",  function () {
+    var stub = sinon.stub();
+    this.obniz.ad0.start(stub);
+    
+    expect(this.obniz).send({ad0:{"on": true, "stream":true}});
     expect(this.obniz).to.be.finished;
   });
-  it("print",  function () {
-    this.obniz.display.print("Hello!");
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({display:{text:"Hello!"}});
+  
+  it("value",  function () {
+    var stub = sinon.stub();
+    this.obniz.ad0.start(stub);
+    expect(this.obniz).send({ad0:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad0":0});
+    sinon.assert.callCount(stub, 1);
+    expect(stub.getCall(0).args[0]).to.be.equal(0);
+    
+    testUtil.receiveJson(this.obniz,  {"ad0":4.90});
+    sinon.assert.callCount(stub, 2);
+    expect(stub.getCall(1).args[0]).to.be.equal(4.90);
+    
     expect(this.obniz).to.be.finished;
   });
-  it("print_bool",  function () {
-    this.obniz.display.print(true);
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({display:{text:"true"}});
+  
+  
+  it("onchange",  function () {
+    var stub = sinon.stub();
+    this.obniz.ad1.start();
+    this.obniz.ad1.onchange = stub;
+    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad1":0});
+    sinon.assert.callCount(stub, 1);
+    expect(stub.getCall(0).args[0]).to.be.equal(0);
+    
+    testUtil.receiveJson(this.obniz,  {"ad0":4.90});
+    sinon.assert.callCount(stub, 1);
+    
     expect(this.obniz).to.be.finished;
   });
-  it("qr",  function () {
-    this.obniz.display.qr("https://obniz.io");
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
-      "display": {
-        "qr": {
-          "data": "https://obniz.io"
-        }
-      }
-    });
+  
+  it("in var",  function () {
+    this.obniz.ad1.start();
+    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad1":1});
+    expect(this.obniz.ad1.value).to.be.equal(1);
+    
     expect(this.obniz).to.be.finished;
   });
-  it("qr-low",  function () {
-    this.obniz.display.qr("HELLO!", "L");
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
-      "display": {
-        "qr": {
-          "correction": "L",
-          "data": "HELLO!"
-        }
-      }
-    });
-    expect(this.obniz).to.be.finished;
+  
+  it("inputWaitTrue",  function () {
+    return new Promise(function(resolve, reject){
+      this.obniz.ad4.getWait().then(function(result){
+        expect(result).to.be.equal(2.6);    
+        resolve();
+      });
+
+      expect(this.obniz).to.be.obniz;
+      expect(this.obniz).send({ad4:{"on": true, "stream":false}});
+      expect(this.obniz).to.be.finished;
+
+      setTimeout(function(){    
+        testUtil.receiveJson(this.obniz,  {"ad4":2.6});
+      }.bind(this),10);
+    }.bind(this));
+    
+   
   });
-  it("qr-high",  function () {
-    this.obniz.display.qr("p8baerv9uber:q", "H");
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
-      "display": {
-        "qr": {
-          "correction": "H",
-          "data": "p8baerv9uber:q"
-        }
-      }
-    });
+  
+  it("end",  function () {
+    this.obniz.ad1.start();
+    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    
+    testUtil.receiveJson(this.obniz,  {"ad1":1});
+    expect(this.obniz.ad1.value).to.be.equal(1);
+    
+    this.obniz.ad1.end();
+    expect(this.obniz).send({ad1:null});
+    
     expect(this.obniz).to.be.finished;
+   
   });
+  
 });

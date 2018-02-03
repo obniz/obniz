@@ -109,7 +109,7 @@
     expect(this.obniz.ad1.value).to.be.equal(1);
     
     this.obniz.ad1.end();
-    expect(this.obniz).send({ad1:{"on": null}});
+    expect(this.obniz).send({ad1:null});
     
     expect(this.obniz).to.be.finished;
    

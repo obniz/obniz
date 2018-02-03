@@ -61,7 +61,8 @@ var recursiveTestImport = function (root_directory) {
         fs.writeFileSync(newFilename, html);
        });
   
-
+//refresh
+  file_list = fs.readdirSync(root_directory);
 
   // Run files
   _
@@ -88,11 +89,12 @@ var recursiveTestImport = function (root_directory) {
         var basename = path.basename(file, '.html');
         var relativePath = path.relative(__dirname, file);
         
-        describe(basename, () => {
+        describe(basename, function() {
+          this.timeout(60000); //browserは多めに取る
           it('runs ' + relativePath, () => {
-            return testUtil.browser(file).then(({passes, failures}) => {
-              expect(passes).to.be.above(1);
-              expect(failures).to.equal(0);
+            return testUtil.browser(file).then((results) => {
+              expect(results.passes).to.be.above(1);
+              expect(results.failures).to.equal(0);
             });
           });
         });
