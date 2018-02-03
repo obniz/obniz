@@ -29,7 +29,7 @@ Defaults
 
 ```Javascript
 // Example
-obniz.uart0.start(1, 2, 9200, null, 7);  // speed changed to 9200. bits = 7bit
+obniz.uart0.start(1, 2, 9600, null, 7);  // speed changed to 9600. bits = 7bit
 obniz.uart0.send("Hi");
 ```
 ## send(data)
