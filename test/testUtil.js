@@ -171,6 +171,7 @@ var testUtil = {
     var url = "file://" + url;
     options = {
       url,
+      ignoreConsole  : true,
     };
     const runner = new MochaChrome(options);
     const result = new Promise((resolve, reject) => {
