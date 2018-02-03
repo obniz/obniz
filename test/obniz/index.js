@@ -2,29 +2,30 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
+var path = require('path');
 
 var util = require(global.appRoot + "/test/testUtil.js");
 
 const getPort = require('get-port');
 
-var waitMs = 500;
+var waitMs = 50;
 
 describe("obniz.index", function () {
   beforeEach(function () {
-    sinon.stub(console, 'error');
-    sinon.stub(console, 'log');
   });
 
   afterEach(function () {
-    console.error.restore(); // Unwraps the spy
-    console.log.restore(); // Unwraps the spy
   });
 
   it("instance", function () {
+    sinon.stub(console, 'error');
+    sinon.stub(console, 'log');
     var obniz = util.createObniz(3000,"OBNIZ_ID_HERE");
     expect(obniz).to.be.obniz;
     sinon.assert.calledOnce(console.error);
     sinon.assert.calledWith(console.error, "invalid obniz id");
+    console.error.restore(); // Unwraps the spy
+    console.log.restore(); // Unwraps the spy
   });
 
 
@@ -43,11 +44,11 @@ describe("obniz.index", function () {
       obniz = util.createObniz(port,"11111111");
       return result;
     }).then(function(){
-      return obniz.wait(10);
+      return obniz.wait(waitMs);
     }).then(function(){
 
       expect(obniz).to.be.obniz;
-      expect(server.clients.size,"before server remain connection").to.equal(1);
+      expect(server.clients.size,"server connection").to.equal(1);
       obniz.close();
       server.close();
     });
@@ -74,7 +75,7 @@ describe("obniz.index", function () {
       expect(obniz).to.be.obniz;
       return result;
     }).then(function(){
-      return obniz.wait(10);
+      return obniz.wait(waitMs);
     }).then(function () {
       expect(server.clients.size, "before server not connected").to.equal(1);
       var result = new Promise(function(resolve,reject){
@@ -86,7 +87,7 @@ describe("obniz.index", function () {
       
       return result;
     }).then(function(){
-      return obniz.wait(10);
+      return obniz.wait(waitMs);
     }).then(function () {
       expect(server.clients.size, "before server remain connection").to.equal(0);
       expect(server2.clients.size, "after server not connected").to.equal(1);
@@ -96,5 +97,46 @@ describe("obniz.index", function () {
     });   
     
   });
+  
+  if(util.needBrowserTest()){
+  
+    it("browser", function () {
+      this.timeout(5000);
+      var port1, port2, port3, server1, server2, server3;
+      
+      return getPort().then(function (p) {
+        port1 = p;
+        server1 = util.createServer(port1);
+        return getPort();
+      }).then(function (p) {
+        port2 = p;
+        server2 = util.createServer(port2);
+        return getPort();
+      }).then(function (p) {
+        port3 = p;
+        server3 = util.createServer(port3);
+        
+        server2.on('connection',function(client){
+          setTimeout(function(){
+            var val = {ws: {redirect: "ws://localhost:" + port3}};
+             server2.clients.values().next().value.send(JSON.stringify(val));
+          },10);
+        });
+     
+      
+        return getPort();
+      }).then(function(){
+        return util.ejs(path.resolve(__dirname,"index.ejs"), {port1, port2, port3});
+      }).then(function(val){
+        expect(val.failures).to.equal(0);
+        return new Promise(function(resolve){setTimeout(resolve,waitMs);});
+      }).then(function(){    
+        server1.close();
+        server2.close();  
+        server3.close();
+      });
+    
+    });
+  }
 
 });
