@@ -1220,7 +1220,7 @@ PeripheralI2C.prototype.readWait = function (address, length) {
 };
 
 PeripheralI2C.prototype.read10bitWait = function (address, length) {
-  return this.read(address | 0x8000, length);
+  return this.readWait(address | 0x8000, length);
 };
 
 PeripheralI2C.prototype.notified = function (obj) {
