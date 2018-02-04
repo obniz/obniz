@@ -30,6 +30,6 @@ Put this on the html
   }
 </script>
 ```
-It will OVERWRITE //parts.obniz.io/obniz.js
+It will OVERWRITE https://obniz.io/sdk/obniz.js
 
 When you make something changed, server.js will generate index.js automatically.

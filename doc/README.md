@@ -7,7 +7,7 @@ Control obniz from javascript. browser/nodejs.
 
 Include index.js
 ```html
-  <script src="https://parts.obniz.io/obniz.js"></script>
+  <script src="https://obniz.io/sdk/obniz.js"></script>
 ```
 ### nodejs
 Install obniz
@@ -73,11 +73,11 @@ and it's io peripherals too
 parts library is embed in obniz.js.
 All parts and it's details can be seen at
 
-[obniz Parts Library](https://parts.obniz.io/)
+[obniz Parts Library](https://obniz.io/sdk/parts/)
 
-To use connected parts, instantiate parts in onconnect callback function. And use it. Function list is on also [obniz Parts Library](https://parts.obniz.io/).
+To use connected parts, instantiate parts in onconnect callback function. And use it. Function list is on also [obniz Parts Library](https://obniz.io/sdk/parts/).
 
-For example, LED [https://parts.obniz.io/LED](https://parts.obniz.io/LED)
+For example, LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -86,7 +86,7 @@ For example, LED [https://parts.obniz.io/LED](https://parts.obniz.io/LED)
   }
 ```
 
-HC-SR40(distance measure) [https://parts.obniz.io/HC-SR04](https://parts.obniz.io/HC-SR04)
+HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/sdk/parts/HC-SR04)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -103,7 +103,7 @@ Easy to integrate UI on html and hardware
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
-<script src="https://parts.obniz.io/obniz.js"></script>
+<script src="https://obniz.io/sdk/obniz.js"></script>
 <script>
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {

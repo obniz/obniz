@@ -12,7 +12,7 @@ This document available on our site [https://obniz.io/doc/obnizjs/doc/README](ht
 
 Include index.js
 ```html
-  <script src="https://parts.obniz.io/obniz.js"></script>
+  <script src="https://obniz.io/sdk/obniz.js"></script>
 ```
 ### on nodejs
 Install obniz

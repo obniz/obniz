@@ -7,7 +7,7 @@ obnizをbrowser/nodejsのjavascriptから。
 
 index.jsを読み込みます。
 ```html
-  <script src="https://parts.obniz.io/obniz.js"></script>
+  <script src="https://obniz.io/sdk/obniz.js"></script>
 ```
 ### nodejs
 Install obniz
@@ -72,11 +72,11 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
 ## Parts library
 パーツライブラリはobniz.jsに含まれています。ドキュメントはこちらで
 
-[obniz Parts Library](https://parts.obniz.io/)
+[obniz Parts Library](https://obniz.io/sdk/parts)
 
-obnizにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://parts.obniz.io/) で確認できます。
+obnizにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.io/sdk/parts/) で確認できます。
 
-例えば LED [https://parts.obniz.io/LED](https://parts.obniz.io/LED)
+例えば LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -85,7 +85,7 @@ obnizにつながれた部品をつかうにはpartsをonconnect関数の中で�
   }
 ```
 
-HC-SR40(distance measure) [https://parts.obniz.io/HC-SR04](https://parts.obniz.io/HC-SR04)
+HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/sdk/parts/HC-SR04)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -102,7 +102,7 @@ HTML上のUIとハードウェアの連携も簡単です。
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
-<script src="https://parts.obniz.io/obniz.js"></script>
+<script src="https://obniz.io/sdk/obniz.js"></script>
 <script>
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {
