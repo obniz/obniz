@@ -33,10 +33,10 @@
   
   it("start",  function () {
     this.obniz.logicanalyzer.start(1, 0.1, 100); 
-    
+  
     expect(this.obniz).send({logicanalyzer: { interval: 0.1, io:[1] , length:100}});
     expect(this.obniz).to.be.finished;
-  });
+});
   
   it("startWithTriger",  function () {
     this.obniz.logicanalyzer.start(1, 0.1, 100, false, 3); 
