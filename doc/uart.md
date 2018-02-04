@@ -7,7 +7,7 @@ tx is used for send data from obniz to parts.
 rx is used for receive data from parts to obniz.
 you can start uart without many configration. Just use like
 ```javascript
-obniz.uart0.start(1, 2)
+obniz.uart0.start(0, 1)
 ```
 default configrations are
 
@@ -47,7 +47,7 @@ available formats are
 
 ```Javascript
 // Example
-obniz.uart0.start(1, 2); // 1 is output, 2 is input
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
@@ -58,7 +58,7 @@ stop uart. it will release io.
 
 ```Javascript
 // Example
-obniz.uart0.start(1, 2);
+obniz.uart0.start(0, 1);
 obniz.uart0.send("Hi");
 obniz.uart0.end();
 ```
@@ -79,4 +79,54 @@ obniz.uart0.onreceive = function(data, text) {
   console.log(text);
 }
 obniz.uart0.send("Hello");
+```
+
+##isdataexists
+check data  which recieved and you don't get yet.
+If it available, return true. 
+
+if you are using onreceive callback, it always false because you get data from callback function.
+
+
+```Javascript
+// Example
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
+
+while(1){
+    if(obniz.uart0.isdataexists){
+        console.log(obniz.uart0.readtext());
+    }
+    obniz.wait(10);  //wait for 10ms
+}
+```
+
+##readbytes
+return received data array which recieved and you don't get yet.
+
+```Javascript
+// Example
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
+
+while(1){
+    if(obniz.uart0.isdataexists){
+        console.log(obniz.uart0.readdata());
+    }
+    obniz.wait(10);  //wait for 10ms
+}
+```
+
+##readtext
+return received data as string which recieved and you don't get yet.
+
+
+```Javascript
+// Example
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
+
+while(1){
+    if(obniz.uart0.isdataexists){
+        console.log(obniz.uart0.readtext());
+    }
+    obniz.wait(10);  //wait for 10ms
+}
 ```

@@ -29,7 +29,7 @@ Defaults
 
 ```Javascript
 // Example
-obniz.uart0.start(1, 2, 9600, null, 7);  // speed changed to 9600. bits = 7bit
+obniz.uart0.start(0, 1, 9600, null, 7);  // speed changed to 9600. bits = 7bit
 obniz.uart0.send("Hi");
 ```
 ## send(data)
@@ -45,7 +45,7 @@ dataで送れるものは
 
 ```Javascript
 // Example
-obniz.uart0.start(1, 2); // 1 is output, 2 is input
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
@@ -57,7 +57,7 @@ uartを停止します。uartで使われていたピンは入力となります
 
 ```Javascript
 // Example
-obniz.uart0.start(1, 2);
+obniz.uart0.start(0, 1);
 obniz.uart0.send("Hi");
 obniz.uart0.end();
 ```
@@ -76,3 +76,53 @@ obniz.uart0.onreceive = function(data, text) {
 }
 obniz.uart0.send("Hello");
 ```
+
+##isdataexists
+受信済みで，まだ使用していないデータが無いかチェックします．
+データがあればtrueを返します
+
+もし`onreceive`を設定していれば，データが来ると同時に`onreceive`関数によって値を受け取るので，
+この値は常にfalseになります．
+
+
+```Javascript
+// Example
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
+
+while(1){
+    if(obniz.uart0.isdataexists){
+        console.log(obniz.uart0.readtext());
+    }
+    obniz.wait(10);  //wait for 10ms
+}
+```
+
+##readbytes
+受信済みで，まだ使用していないデータをarrayで返します
+
+```Javascript
+// Example
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
+
+while(1){
+    if(obniz.uart0.isdataexists){
+        console.log(obniz.uart0.readdata());
+    }
+    obniz.wait(10);  //wait for 10ms
+}
+```
+
+##readtext
+受信済みで，まだ使用していないデータを文字列で返します
+
+
+```Javascript
+// Example
+obniz.uart0.start(0, 1); // 0 is output, 1 is input
+
+while(1){
+    if(obniz.uart0.isdataexists){
+        console.log(obniz.uart0.readtext());
+    }
+    obniz.wait(10);  //wait for 10ms
+}

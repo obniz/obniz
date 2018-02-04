@@ -1621,7 +1621,7 @@ PeripheralUART.prototype.start = function (tx, rx, baud, stop, bits, parity, flo
     obj["uart" + this.id].cts = cts;
   }
   this.Obniz.send(obj);
-  this.received = new Uint8Array([]);
+  this.received = [];
 };
 
 // node only
@@ -1655,40 +1655,57 @@ PeripheralUART.prototype.send = function (data) {
   this.Obniz.send(obj);
 };
 
+PeripheralUART.prototype.isdataexists = function () {
+  return this.received && this.received.length > 0;
+};
+
+PeripheralUART.prototype.readbytes = function () {
+  var results = [];
+  if (this.isdataexists()) {
+    for (var i = 0; i < this.received.length; i++) {
+      results.push(this.received[i]);
+    }
+  }
+  this.received = [];
+  return results;
+};
+
 PeripheralUART.prototype.readtext = function () {
   var string = null;
-  try {
-    if (this.received && this.received.length > 0) {
-      string = "";
-      for (var i = 0; i < this.received.length; i++) {
-        string += new TextDecoder("utf-8").decode(new Uint8Array(this.received[i]));
-      }
-    }
-  } catch (e) {}
+  if (this.isdataexists()) {
+    var data = this.readbytes();
+    string = this.tryConvertString(data);
+  }
   this.received = [];
+  return string;
+};
+
+PeripheralUART.prototype.tryConvertString = function (data) {
+  var string = null;
+  try {
+    if (isNode) {
+      const StringDecoder = require('string_decoder').StringDecoder;
+      if (StringDecoder) {
+        string = new StringDecoder('utf8').write(Buffer.from(data));
+      }
+    } else if (TextDecoder) {
+      string = new TextDecoder("utf-8").decode(new Uint8Array(data));
+    }
+  } catch (e) {
+    //this.obniz.error(e);
+  }
   return string;
 };
 
 PeripheralUART.prototype.notified = function (obj) {
   if (this.onreceive) {
-    var string = null;
-    try {
-      if (isNode) {
-        const StringDecoder = require('string_decoder').StringDecoder;
-        if (StringDecoder) {
-          string = new StringDecoder('utf8').write(Buffer.from(obj.data));
-        }
-      } else if (TextDecoder) {
-        string = new TextDecoder("utf-8").decode(new Uint8Array(obj.data));
-      }
-    } catch (e) {
-      this.obniz.error(e);
-    }
+    var string = this.tryConvertString(obj.data);
     this.onreceive(obj.data, string);
   } else {
     if (!this.received) {
       this.received = [];
     }
+
     this.received.push.apply(this.received, obj.data);
   }
 };

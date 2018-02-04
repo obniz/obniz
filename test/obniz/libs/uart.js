@@ -7,7 +7,7 @@ var testUtil = require(global.appRoot + "/test/testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe("obniz.libs.ad", function () {
+describe("obniz.libs.uart", function () {
   beforeEach(function (done) {
     return testUtil.setupObnizPromise(this,done);   
   });
@@ -72,6 +72,33 @@ describe("obniz.libs.ad", function () {
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args[0]).to.be.deep.equal([78,105,99,101]);
     expect(stub.getCall(0).args[1]).to.be.equal("Nice");
+    expect(this.obniz).to.be.finished;
+    
+  });
+  
+  
+  it("readbytes",  function () {
+  
+    this.obniz.uart0.start(0, 1); // 0 is output, 1 is input
+    expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
+    
+    testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
+    
+    expect(this.obniz.uart0.isdataexists()).to.be.true;
+    expect(this.obniz.uart0.readbytes()).to.be.deep.equal([78,105,99,101]);
+    expect(this.obniz).to.be.finished;
+    
+  });
+  
+  it("readtext",  function () {
+  
+    this.obniz.uart0.start(0, 1); // 0 is output, 1 is input
+    expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
+    
+    testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
+    
+    expect(this.obniz.uart0.isdataexists()).to.be.true;
+    expect(this.obniz.uart0.readtext()).to.be.equal("Nice");
     expect(this.obniz).to.be.finished;
     
   });
