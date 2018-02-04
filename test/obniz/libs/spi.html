@@ -1,0 +1,79 @@
+<!doctype>
+<html>
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.css" />
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/chai/chai.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/sinon/pkg/sinon.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//index.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//test/testUtil-browser.ejs"></script> 
+  </head>
+  <body>
+    <script>
+      expect = chai.expect;
+      assert = chai.assert;
+      mocha.setup('bdd');
+      
+      chai.use(testUtil.obnizAssert);
+    </script>
+    <div id="mocha"></div>
+    <script>
+        
+      describe("obniz.libs.spi", function () {
+  beforeEach(function (done) {
+    return testUtil.setupObnizPromise(this,done);   
+  });
+ 
+  afterEach(function (done) {
+    return testUtil.releaseObnizePromise(this,done);
+  });
+  
+  
+  it("start",  function () {
+    this.obniz.spi0.start("master", 0, 1, 2, 1000000); 
+    
+    expect(this.obniz).send({spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }});
+    expect(this.obniz).to.be.finished;
+  });
+  
+  
+  it("write",  function () {
+    this.obniz.spi0.start("master", 0, 1, 2, 1000000); 
+    expect(this.obniz).send({spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }});
+    
+    var r = this.obniz.spi0.writeWait([0x12, 0x98]).then(function(value){
+      expect(value).to.be.deep.equal([0x61, 0xF2]);
+      expect(this.obniz).to.be.finished;
+    }.bind(this));
+    
+    expect(this.obniz).send({spi0:{writeread : [0x12, 0x98]}});
+    setTimeout(function(){
+      testUtil.receiveJson(this.obniz,  {"spi0":{"readed":[0x61, 0xF2]}});
+    }.bind(this),10);
+    return r;
+  });
+  it.skip("SPIで2byte送って3byte帰ってきたときの対応？",  function () {
+    this.obniz.spi0.start("master", 0, 1, 2, 1000000); 
+    expect(this.obniz).send({spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }});
+    
+    var r = this.obniz.spi0.writeWait([0x12, 0x98]).then(function(value){
+      expect(value).to.be.deep.equal([0x61, 0xF2]);
+      expect(this.obniz).to.be.finished;
+    }.bind(this));
+    
+    expect(this.obniz).send({spi0:{writeread : [0x12, 0x98]}});
+    setTimeout(function(){
+      testUtil.receiveJson(this.obniz,  {"spi0":{"readed":[0x61, 0xF2,0x34]}});
+    }.bind(this),10);
+    return r;
+  });
+  
+  
+});
+
+      mocha.run();
+    </script> 
+  </body>
+</html>
