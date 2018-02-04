@@ -165,12 +165,12 @@ obniz.ble.startScan({duration : 10});
 ```
 
 
-## peripheral.adv_data
+## peripheral.advertise_data
 advertise dataの生データを返します
 
 ```Javascript
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral.adv_data)
+   alert(peripheral.advertise_data)
 }
 
 obniz.ble.startScan({duration : 10});
@@ -255,7 +255,7 @@ obniz.ble.startScan({duration : 10});
 
 
 
-## peripheral.onconnect
+## peripheral.ondisconnect
 切断されたときに呼ばれます 
 
 ```Javascript
@@ -338,9 +338,9 @@ obniz.ble.onscan = function(peripheral){
         peripheral.onconnect = function(){
             peripheral.getService("FF00").getCharacteristic("FF01").writeText("My Name");
         }
-        peripheral.onwritecharacteristic = function(service, characteristic){
+        peripheral.onwritecharacteristic = function(service, characteristic, results){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert("success");
+                alert(results); //"success" or "failed"
             }
         }
         peripheral.connect();

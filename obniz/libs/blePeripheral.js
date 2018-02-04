@@ -88,7 +88,7 @@ BleRemotePeripheral.prototype.localName = function(){
   if(!data){
      data = this.serarchTypeVal(0x08);
   }
-  if(!data)return undefined;
+  if(!data)return null;
   return String.fromCharCode.apply(null, data);
 };
 
@@ -103,7 +103,7 @@ BleRemotePeripheral.prototype.iBeacon = function(){
       || data[1] !== 0x00
       || data[2] !== 0x02
       || data[3] !== 0x15 
-      || data.length !== 25)return undefined;
+      || data.length !== 25)return null;
   
   var uuidData = data.slice(4, 20);
   var uuid = "";

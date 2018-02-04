@@ -1,0 +1,254 @@
+<!doctype>
+<html>
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.css" />
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/mocha/mocha.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/chai/chai.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//node_modules/sinon/pkg/sinon.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//index.js"></script> 
+    <script src="/Users/kido/Documents/extra/obniz/obnizjs//test/testUtil-browser.ejs"></script> 
+  </head>
+  <body>
+    <script>
+      expect = chai.expect;
+      assert = chai.assert;
+      mocha.setup('bdd');
+      
+      chai.use(testUtil.obnizAssert);
+    </script>
+    <div id="mocha"></div>
+    <script>
+        
+      describe("ble", function () {
+  beforeEach(function (done) {
+    return testUtil.setupObnizPromise(this,done);   
+  });
+ 
+  afterEach(function (done) {
+    return testUtil.releaseObnizePromise(this,done);
+  });
+
+
+  it("scan", function () {
+    this.obniz.ble.startScan({duration: 10});
+
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 10, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).to.be.finished;
+  });
+  it("scan default", function () {
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).to.be.finished;
+  });
+  it("scan stop", function () {
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    this.obniz.ble.stopScan();
+    expect(this.obniz).send({ble: {scan: {status: "stop"}}});
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("on scan", function () {
+    var stub = sinon.stub();
+
+    this.obniz.ble.onscan = stub;
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+
+
+    var results = {"ble":
+          {"scan_results":
+                [{"event_type": "inquiry_result",
+                    "device_address": "e5f678800700",
+                    "device_type": "dumo",
+                    "address_type": "public",
+                    "ble_event_type": 254,
+                    "rssi": -82,
+                    "advertise_data": [2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200, 22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53],
+                    "flag": 26,
+                    "num_response": 1,
+                    "advertise_length": 30,
+                    "scan_response_length": 23}]
+          }
+    };
+
+    testUtil.receiveJson(this.obniz, results);
+
+    sinon.assert.callCount(stub, 1);
+    var peripheral = stub.getCall(0).args[0];
+    expect(typeof peripheral === "object").to.be.true;
+
+
+    expect(peripheral.advertise_data).to.be.deep.equal([2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200, 22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]);
+    expect(peripheral.localName()).to.be.equal("SSSSSSService78:F6:E5");
+    expect(peripheral.iBeacon()).to.be.deep.equal({major: 15747, minor: 26634, power: 200, rssi: -82, uuid: "c961aca7-94a6-4078-b1ff-962cb255ccdb"});
+
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("on scan2", function () {
+    var stub = sinon.stub();
+
+    this.obniz.ble.onscan = stub;
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+
+
+    var results = {"ble":
+          {"scan_results":
+                [{"event_type": "inquiry_result",
+                    "device_address": "e5f678800700",
+                    "device_type": "dumo",
+                    "address_type": "public",
+                    "ble_event_type": 254,
+                    "rssi": -82,
+                    "advertise_data": [2, 1, 26],
+                    "flag": 26,
+                    "num_response": 1,
+                    "advertise_length": 3,
+                    "scan_response_length": 0}]
+          }
+    };
+
+    testUtil.receiveJson(this.obniz, results);
+
+    sinon.assert.callCount(stub, 1);
+    var peripheral = stub.getCall(0).args[0];
+    expect(typeof peripheral === "object").to.be.true;
+
+
+    expect(peripheral.advertise_data).to.be.deep.equal([2, 1, 26]);
+    expect(peripheral.localName()).to.be.null;
+    expect(peripheral.iBeacon()).to.be.null;
+
+    expect(this.obniz).to.be.finished;
+  });
+
+
+  it("connect", function () {
+    var stub = sinon.stub();
+
+    this.obniz.ble.onscan = stub;
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+
+
+    var results = {"ble":
+          {"scan_results":
+                [{"event_type": "inquiry_result",
+                    "device_address": "e5f678800700",
+                    "device_type": "dumo",
+                    "address_type": "public",
+                    "ble_event_type": 254,
+                    "rssi": -82,
+                    "advertise_data": [2, 1, 26],
+                    "flag": 26,
+                    "num_response": 1,
+                    "advertise_length": 3,
+                    "scan_response_length": 0}]
+          }
+    };
+
+    testUtil.receiveJson(this.obniz, results);
+
+    sinon.assert.callCount(stub, 1);
+    var peripheral = stub.getCall(0).args[0];
+    expect(typeof peripheral === "object").to.be.true;
+
+    var connectStub = sinon.stub();
+    peripheral.onconnect = connectStub;
+    peripheral.connect();
+
+    expect(this.obniz).send({ble: {connect: {device_address: "e5f678800700"}}});
+
+    sinon.assert.callCount(connectStub, 0);
+
+    testUtil.receiveJson(this.obniz, {
+      ble: {
+        connect_results: [{
+            device_address: "e5f678800700",
+            status: "connected"
+          }]
+      }
+    });
+
+    sinon.assert.callCount(connectStub, 1);
+
+    expect(this.obniz).to.be.finished;
+  });
+
+
+
+  it("disconnect", function () {
+    var stub = sinon.stub();
+
+    this.obniz.ble.onscan = stub;
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+
+
+    var results = {"ble":
+          {"scan_results":
+                [{"event_type": "inquiry_result",
+                    "device_address": "e5f678800700",
+                    "device_type": "dumo",
+                    "address_type": "public",
+                    "ble_event_type": 254,
+                    "rssi": -82,
+                    "advertise_data": [2, 1, 26],
+                    "flag": 26,
+                    "num_response": 1,
+                    "advertise_length": 3,
+                    "scan_response_length": 0}]
+          }
+    };
+
+    testUtil.receiveJson(this.obniz, results);
+
+    sinon.assert.callCount(stub, 1);
+    var peripheral = stub.getCall(0).args[0];
+    expect(typeof peripheral === "object").to.be.true;
+
+    var connectStub = sinon.stub();
+    var disconnectStub = sinon.stub();
+    peripheral.onconnect = connectStub;
+    peripheral.ondisconnect = disconnectStub;
+    peripheral.connect();
+
+    expect(this.obniz).send({ble: {connect: {device_address: "e5f678800700"}}});
+
+    sinon.assert.callCount(connectStub, 0);
+
+    testUtil.receiveJson(this.obniz, {
+      ble: {
+        connect_results: [{
+            device_address: "e5f678800700",
+            status: "disconnected"
+          }]
+      }
+    });
+
+    sinon.assert.callCount(connectStub, 0);
+    sinon.assert.callCount(disconnectStub, 1);
+
+    expect(this.obniz).to.be.finished;
+  });
+
+
+
+  
+  
+});
+
+      mocha.run();
+    </script> 
+  </body>
+</html>

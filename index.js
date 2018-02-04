@@ -469,7 +469,6 @@ Ble.prototype.stopAdvertisement = function() {
 };
 
 Ble.prototype.setAdvDataRaw = function(adv_data) {
-  console.log(adv_data);
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
@@ -668,7 +667,7 @@ Ble.prototype.scanRespDataBuilder = function(json){
 
 
 
-Ble.prototype.setScanRespRawData = function(scan_resp) {
+Ble.prototype.setScanRespDataRaw = function(scan_resp) {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
@@ -679,7 +678,7 @@ Ble.prototype.setScanRespRawData = function(scan_resp) {
 };
 
 Ble.prototype.setScanRespData = function(json) {
-  this.setScanRespRawData(this.scanRespDataBuilder(json).build());
+  this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   return;
 };
 
@@ -787,7 +786,7 @@ Ble.prototype.notified = function (obj) {
         return;
       var p = this.findPeripheral(params.device_address);
       if (p) {
-        p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,params);
+        p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,params.result);
       }
     }), this);
   }
@@ -912,7 +911,7 @@ BleRemotePeripheral.prototype.localName = function(){
   if(!data){
      data = this.serarchTypeVal(0x08);
   }
-  if(!data)return undefined;
+  if(!data)return null;
   return String.fromCharCode.apply(null, data);
 };
 
@@ -927,7 +926,7 @@ BleRemotePeripheral.prototype.iBeacon = function(){
       || data[1] !== 0x00
       || data[2] !== 0x02
       || data[3] !== 0x15 
-      || data.length !== 25)return undefined;
+      || data.length !== 25)return null;
   
   var uuidData = data.slice(4, 20);
   var uuid = "";

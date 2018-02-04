@@ -38,7 +38,7 @@
       });
       
        it("connect", function () {
-          var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:51130"});
+          var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:64117"});
           expect(obniz).to.be.instanceOf(Obniz);
           var count = 100;
           return new Promise(function(resolve,reject){
@@ -57,13 +57,13 @@
           });
       });
       it("soft_redirect", function () {
-          var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:51131"});
+          var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:64118"});
           expect(obniz).to.be.instanceOf(Obniz);
           var count = 1000;
           return new Promise(function(resolve,reject){
               function loop(){
                 if(obniz.socket && obniz.socket.readyState === 1
-                    && obniz.socket.url.startsWith("ws://localhost:51132")){ // redirected
+                    && obniz.socket.url.startsWith("ws://localhost:64119")){ // redirected
                     return resolve();
                 };
                 count--;
