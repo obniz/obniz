@@ -32,6 +32,20 @@ describe("obniz.libs.pwm", function () {
     expect(pwm1).to.be.equal(this.obniz.pwm0);
     expect(pwm2).to.be.equal(this.obniz.pwm1);
   });
+  it("getpwm released",  function () {
+    var pwm1 = this.obniz.getpwm();
+    expect(pwm1).to.be.equal(this.obniz.pwm0);
+    pwm1.start(11);
+    expect(this.obniz).send({pwm0:{"io": 11}});
+    
+    pwm1.end();   
+    expect(this.obniz).send({pwm0: null});
+    
+    
+    var pwm2 = this.obniz.getpwm();
+    expect(pwm2).to.be.equal(this.obniz.pwm0);
+    expect(this.obniz).to.be.finished;
+  });
   
   it("start io",  function () {
     var pwm = this.obniz.getpwm();
