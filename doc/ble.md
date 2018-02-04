@@ -89,7 +89,7 @@ obniz.ble.startAdvertisement();
 Set scan response data from data json.
 
 ```Javascript
-obniz.ble.setAdvData({
+obniz.ble.setScanRespData({
   localName : "obniz BLE",
 });
 

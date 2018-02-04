@@ -97,7 +97,7 @@ obniz.ble.startAdvertisement();
 settingに渡した引数に従って，BLEのScan Responseで出力するデータを設定します
 
 ```Javascript
-obniz.ble.setAdvData({
+obniz.ble.setScanRespData({
   localName : "obniz BLE",
 });
 
