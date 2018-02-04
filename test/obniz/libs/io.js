@@ -135,8 +135,6 @@ describe("obniz.libs.io", function () {
     
   });
 
-
-
   it("ioAnimation", function () {
     var obniz = this.obniz;
     this.obniz.io.animation("animation-1", "loop", [
