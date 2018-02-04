@@ -4,7 +4,7 @@ This is useful when digital bus signal check.
 This monitors will start when io changed.
 
 
-## logicanalyzer.start(io, interval, data_long);
+## logicanalyzer.start(io, interval, duration);
 start logic analyzer on given io.
 interval measn period(second) reading io value.
 data_long measn how long does logcanalyzer collect the data.
@@ -12,12 +12,12 @@ data_long measn how long does logcanalyzer collect the data.
 For example, collect the data from io0 changed, 2msec period and 1sec long
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
+obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 2msec interval and 1sec long.
 obniz.logicanalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
-## logicanalyzer.start(io, interval, data_long, trigerValue, trigerValueSamples);
+## logicanalyzer.start(io, interval, duration, trigerValue, trigerValueSamples);
 start logic analyzer on given io with triger.
 
 triger is optioanl triger configration.
@@ -26,7 +26,7 @@ value measn start value. true/false. samples measn how that values consists.
 So, With below sample code, you will receive only datas which start with "false, false, false" 3bit.
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 2, 1000, false, 3);  // start on io0. 1msec interval and 1sec long.
+obniz.logicanalyzer.start(0, 2, 1000, false, 3);  // start on io0. 2msec interval and 1sec long.
 obniz.logicanalyzer.onmeasured = function(array) {
   console.log(array);
 }
