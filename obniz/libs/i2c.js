@@ -68,6 +68,6 @@ PeripheralI2C.prototype.notified = function(obj) {
 PeripheralI2C.prototype.end = function() {
   this.state = {};
   var obj = {};
-  obj["i2c"+self.id] = null;
-  self.Obniz.send(obj);
+  obj["i2c"+this.id] = null;
+  this.Obniz.send(obj);
 };
