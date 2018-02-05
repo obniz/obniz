@@ -80,7 +80,7 @@ var recursiveTestImport = function (root_directory) {
         return path.resolve(root_directory, file);
       })
       .filter(function (file) {
-        return fs.lstatSync(file).isFile()
+        return fs.lstatSync(file).isFile();
       })
       .filter(function (file) {
         return !exclude.includes(file);
