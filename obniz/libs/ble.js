@@ -163,7 +163,7 @@ Ble.prototype.dataBuliderPrototype = function(){
 
       
   return builder;
-} 
+}; 
 
 
 Ble.prototype.advDataBulider = function(jsonVal){
@@ -189,7 +189,7 @@ Ble.prototype.advDataBulider = function(jsonVal){
           this.setLeBrEdrHostFlag();
       }
     }
-  }
+  };
   
   builder.prototype.setFlags = function(flag){
     var data = this.getRow(0x01);
