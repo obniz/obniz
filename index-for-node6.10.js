@@ -1546,6 +1546,15 @@ PeripheralSPI.prototype.writeWait = function (data) {
   });
 };
 
+PeripheralSPI.prototype.write = function (data) {
+  var self = this;
+  var obj = {};
+  obj["spi" + self.id] = {
+    write: data
+  };
+  self.Obniz.send(obj);
+};
+
 PeripheralSPI.prototype.notified = function (obj) {
   // TODO: we should compare byte length from sent
   var callback = this.observers.shift();
