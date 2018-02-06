@@ -77,7 +77,7 @@ obniz.uart0.onreceive = function(data, text) {
 obniz.uart0.send("Hello");
 ```
 
-##isdataexists
+## isdataexists
 受信済みで，まだ使用していないデータが無いかチェックします．
 データがあればtrueを返します
 
@@ -97,7 +97,7 @@ while(1){
 }
 ```
 
-##readbytes
+## readbytes
 受信済みで，まだ使用していないデータをarrayで返します
 
 ```Javascript
@@ -106,13 +106,13 @@ obniz.uart0.start(0, 1); // 0 is output, 1 is input
 
 while(1){
     if(obniz.uart0.isdataexists){
-        console.log(obniz.uart0.readdata());
+        console.log(obniz.uart0.readbytes());
     }
     obniz.wait(10);  //wait for 10ms
 }
 ```
 
-##readtext
+## readtext
 受信済みで，まだ使用していないデータを文字列で返します
 
 

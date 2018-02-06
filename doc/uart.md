@@ -81,7 +81,7 @@ obniz.uart0.onreceive = function(data, text) {
 obniz.uart0.send("Hello");
 ```
 
-##isdataexists
+## isdataexists
 check data  which recieved and you don't get yet.
 If it available, return true. 
 
@@ -100,7 +100,7 @@ while(1){
 }
 ```
 
-##readbytes
+## readbytes
 return received data array which recieved and you don't get yet.
 
 ```Javascript
@@ -109,13 +109,13 @@ obniz.uart0.start(0, 1); // 0 is output, 1 is input
 
 while(1){
     if(obniz.uart0.isdataexists){
-        console.log(obniz.uart0.readdata());
+        console.log(obniz.uart0.readbytes());
     }
     obniz.wait(10);  //wait for 10ms
 }
 ```
 
-##readtext
+## readtext
 return received data as string which recieved and you don't get yet.
 
 
