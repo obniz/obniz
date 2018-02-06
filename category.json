@@ -17,6 +17,13 @@
           "name": "7SegmentLEDArray"
         }
       ]
+    },{
+      "name": "Camera",
+      "parts": [
+        {
+          "name": "JpegSerialCam"
+        }
+      ]
     },
     {
       "name": "Moving",
