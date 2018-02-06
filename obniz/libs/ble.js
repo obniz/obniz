@@ -52,7 +52,7 @@ Ble.prototype.dataBuliderPrototype = function(){
         this.setCompleteLocalName(json.localName);
       }
       if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
-        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data)
+        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
       }
       if (json.serviceUuids) {
         for (var key in json.serviceUuids) {
@@ -126,7 +126,7 @@ Ble.prototype.dataBuliderPrototype = function(){
     var uuidData = this.convertUuid(uuid);
     var type = { 16:0x06, 4:0x04, 2:0x02 }[uuidData.length]; 
     this.setRow(type,uuidData);
-  }
+  };
   
   builder.prototype.convertUuid = function(uuid){
     var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
@@ -163,7 +163,7 @@ Ble.prototype.dataBuliderPrototype = function(){
 
       
   return builder;
-} 
+}; 
 
 
 Ble.prototype.advDataBulider = function(jsonVal){
@@ -189,7 +189,7 @@ Ble.prototype.advDataBulider = function(jsonVal){
           this.setLeBrEdrHostFlag();
       }
     }
-  }
+  };
   
   builder.prototype.setFlags = function(flag){
     var data = this.getRow(0x01);

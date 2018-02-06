@@ -29,6 +29,18 @@ var led = obniz.wired("WS2811", 2, 3, 4);
 led.rgb(0xFF, 255, 0); // Yellow
 ```
 
+## hsv(hue, saturation, value)
+change color from hsv values.
+When you chaining LED, this will change only top of leds.
+
+hue : 0 ~ 360
+saturation : 0 ~ 1
+value : 0 ~ 1
+```Javascript
+var led = obniz.wired("WS2811", 0); // DIN is connected to obniz io 0
+led.hsv(180, 0.5, 1);
+```
+
 ## rgbs([[r,g,b],,,,])
 change colors.
 You can specify colors of chained leds.
@@ -36,5 +48,14 @@ You can specify colors of chained leds.
 led.rgbs([
   [0xFF, 0x00, 0x00], // red
   [0x00, 0x00, 0xFF]  // blue
+])
+```
+## hsvs([[r,g,b],,,,])
+change colors.
+You can specify colors of chained leds.
+```Javascript
+led.hsvs([
+  [180, 0.5, 1],
+  [0, 1, 1]
 ])
 ```

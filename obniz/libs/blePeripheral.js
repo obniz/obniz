@@ -306,7 +306,7 @@ BleRemoteCharacteristic.prototype.write = function(array){
         "device_address" : this.service.peripheral.device_address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid,
-        "data" : array,
+        "data" : array
       }
     }
   };

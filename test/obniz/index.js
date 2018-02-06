@@ -1,4 +1,4 @@
-'no_html_test_build'
+'no_html_test_build';
 
 var chai = require('chai');
 var assert = chai.assert;

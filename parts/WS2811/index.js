@@ -42,10 +42,39 @@ class WS2811 {
     array = array.concat(WS2811._generateFromByte(b));
     return array;
   }
+  
+  static _generateHsvColor(h, s, v) {
+    var C = v * s ;
+    var Hp = h / 60;
+    var X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    var R, G, B;
+    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
+    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
+    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
+    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
+    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
+    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
+
+    var m = v - C;
+    [R, G, B] = [R+m, G+m, B+m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+    
+    let array = WS2811._generateFromByte(R);
+    array = array.concat(WS2811._generateFromByte(G));
+    array = array.concat(WS2811._generateFromByte(B));
+    return array;
+  }
 
   rgb(r, g, b){
-
-    this.spi.write(_generateColor(r, g, b));
+    this.spi.write(WS2811._generateColor(r, g, b));
+  }
+  
+  hsv(h,s,v){
+     this.spi.write(WS2811._generateHsvColor(h, s, v));
   }
 
   rgbs(array) {
@@ -53,6 +82,15 @@ class WS2811 {
     for (var i=0; i<array.length; i++) {
       const oneArray = array[i];
       bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (var i=0; i<array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }
