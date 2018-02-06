@@ -18,18 +18,7 @@ After cloning. You are able to launch local server
  node _tools/server.js
 ```
 Then, http://localhost:3100/obniz.js is accessible.
-Put this on the html
-```html
-<div id="online-status"></div>
-<h1>obniz instant html</h1>
-
-<script src="http://localhost:3100/obniz.js" crossorigin="anonymous"></script>
-<script>
-  var obniz = new Obniz("00000000");
-  obniz.onconnect = async function () {
-  }
-</script>
-```
-It will OVERWRITE https://obniz.io/sdk/obniz.js
+In obniz.io program page. add ```&obnizjs=local``` to queries.
+It will load obniz js from http://localhost:3100/obniz.js
 
 When you make something changed, server.js will generate index.js automatically.

@@ -1,18 +1,19 @@
-var WS2811 = function() {
+class WS2811 {
 
-};
+  constructor() {
 
-WS2811.prototype.wired = function(obniz, din ,nc0, nc1){
-  this.obniz = obniz;
+  }
 
-  obniz.getIO(din).outputType("push-pull3v");
-  this.spi = obniz.spi0;// TODO:
-  this.spi.start("master", nc0, din, nc1, 2*1000*1000); 
-};
+  wired(obniz, din ,nc0, nc1){
 
-WS2811.prototype.rgb = function(r, g, b){
+    this.obniz = obniz;
+    obniz.getIO(din).outputType("push-pull3v");
+    this.spi = obniz.spi0;// TODO:
+    this.spi.start("master", nc0, din, nc1, 2*1000*1000); 
+  };
 
-  var generateFromByte = function(val) {
+  static _generateFromByte(val) {
+
     val = parseInt(val);
     const zero = 0x8;
     const one  = 0xE;
@@ -34,12 +35,29 @@ WS2811.prototype.rgb = function(r, g, b){
     return ret;
   }
 
-  let array = generateFromByte(r);
-  array = array.concat(generateFromByte(g));
-  array = array.concat(generateFromByte(b));
-  console.log(array);
-  this.spi.write(array);
-};
+  static _generateColor(r, g, b) {
+  
+    let array = WS2811._generateFromByte(r);
+    array = array.concat(WS2811._generateFromByte(g));
+    array = array.concat(WS2811._generateFromByte(b));
+    return array;
+  }
+
+  rgb(r, g, b){
+
+    this.spi.write(_generateColor(r, g, b));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (var i=0; i<array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+}
 
 if (PartsRegistrate) {
   PartsRegistrate("WS2811", WS2811);
