@@ -6,8 +6,6 @@
 
 
 var sinon = require('sinon');
-var chai = require('chai');
-var path = require('path');
 var ws = require('ws');
 var WSServer = ws.Server;
 var semver = require('semver');
@@ -219,3 +217,4 @@ var testUtil = {
 };
 
 module.exports = testUtil;
+
