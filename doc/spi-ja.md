@@ -26,3 +26,13 @@ obniz.spi0.start("master", 0, 1, 2, 1000000);
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
 ```
+
+## write(data);
+SPIにデータを送信します。受信は行いません。
+
+```Javascript
+// Example
+// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
+obniz.spi0.start("master", 0, 1, 2, 1000000); 
+obniz.spi0.write([0x12, 0x98]);
+```
