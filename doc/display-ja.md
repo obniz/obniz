@@ -33,3 +33,15 @@ correctionはエラー訂正レベルで
 // Example
 obniz.display.qr("https://obniz.io")
 ```
+
+## display.raw([0,1,2,,,,]);
+
+1ビットが1ドットです。 1=white, 0=black.
+1バイトはある行の一部分を示します。
+順番はこのようになります。  
+{0byte} {1byte} {2byte}  
+{3byte} {4byte} {5byte}...  
+
+```javascript
+obniz.display.raw([255, 255,,,,,])// msut be 128*64 bytes
+```

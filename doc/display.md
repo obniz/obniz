@@ -30,3 +30,16 @@ H is the strongest error correction.
 // Example
 obniz.display.qr("https://obniz.io")
 ```
+
+
+## display.raw([0,1,2,,,,]);
+
+1 bit represents 1 dot. 1=white, 0=black.
+1 byte is part of one line.
+Order is same like.  
+{0byte} {1byte} {2byte}  
+{3byte} {4byte} {5byte}...  
+
+```javascript
+obniz.display.raw([255, 255,,,,,])// msut be 128*64 bytes
+```

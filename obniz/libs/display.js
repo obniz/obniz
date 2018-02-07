@@ -31,3 +31,11 @@ Display.prototype.qr = function(data, correction) {
   }
   this.Obniz.send(obj);
 };
+
+Display.prototype.raw = function(data) {
+  var obj = {};
+  obj["display"] = {
+    raw: data
+  };
+  this.Obniz.send(obj);
+};
