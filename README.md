@@ -4,7 +4,7 @@
 
 This is [obniz](https://obniz.io/) sdk for javascript.
 
-This document available on our site [https://obniz.io/doc/obnizjs/doc/README](https://obniz.io/doc/obnizjs/doc/README)
+This document available on our site [https://obniz.io/doc/sdk/doc/README](https://obniz.io/doc/sdk/doc/README)
 
 ## install
 
@@ -42,7 +42,7 @@ To use obniz, instantiate obniz with obniz id. and set onconnect callback functi
   }
 ```
 
-See more details on [https://obniz.io/doc/obnizjs/doc/README](https://obniz.io/doc/obnizjs/doc/README)
+See more details on [https://obniz.io/doc/sdk/doc/README](https://obniz.io/doc/sdk/doc/README)
 
 ## Lisence
 
