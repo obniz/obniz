@@ -73,6 +73,17 @@ obnizはユーザーがobniz cloudへのwebsocketを切断するとリセット�
 obniz.resetOnDisconnect(false);
 ```
 
+## util.createCanvasContext(width, height);
+CanvasContextを作成します。
+Canvas DOMをbodyに追加してcontextを返却します(htmlにおいて)
+
+```Javascript
+// Example
+const ctx = obniz.util.createCanvasContext(128, 64);
+ctx.font = "9px sans-serif";
+ctx.fillText('Hello', 0, 7);
+```
+
 ## debugprint
 obniz.jsの内部のログを出力するかどうかを設定できます。デフォルトでfalseです。
 

@@ -2,6 +2,8 @@
 Dot matrix LED. driver: MAX7219.
 [http://akizukidenshi.com/catalog/g/gM-09984/](http://akizukidenshi.com/catalog/g/gM-09984/)
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/5teMmFK1_FY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ```Javascript
 
 // initialize
@@ -21,6 +23,9 @@ ctx.fillText('Helloこんにちは', 0, 7);
 matrix.drawCanvasContext(ctx);
 ```
 
+<p data-height="300" data-theme-id="32184" data-slug-hash="bLBJxe" data-default-tab="js,result" data-user="obniz" data-embed-version="2" data-pen-title="Parts: DotMatrixText" class="codepen">See the Pen <a href="https://codepen.io/obniz/pen/bLBJxe/">Parts: DotMatrixText</a> by obniz (<a href="https://codepen.io/obniz">@obniz</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
 ## wired(obniz, vcc, gnd, din, cs, clk, nc)
 
 1. vcc: power supply
@@ -28,7 +33,7 @@ matrix.drawCanvasContext(ctx);
 3. din: spi MOSI pin.
 4. cs: chip select
 5. nc: pin for MISO.(not necessary to connect. but spi use this).
-
+ 
 ```Javascript
 const matrix = obniz.wired("MatrixLED_MAX7219", 0, 1, 2, 3, 4, 5);
 ```

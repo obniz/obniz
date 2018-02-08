@@ -71,6 +71,17 @@ Set false to this function to keepworking without user websocket.
 obniz.resetOnDisconnect(false);
 ```
 
+## util.createCanvasContext(width, height);
+create a Canvas context.
+It will add a canvas dom to body(in html).
+
+```Javascript
+// Example
+const ctx = obniz.util.createCanvasContext(128, 64);
+ctx.font = "9px sans-serif";
+ctx.fillText('Hello', 0, 7);
+```
+
 ## debugprint
 show logs or not inside of obniz.js. default is false.
 
