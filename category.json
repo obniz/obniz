@@ -15,6 +15,9 @@
         },
         {
           "name": "7SegmentLEDArray"
+        },
+        {
+          "name": "MatrixLED_MAX7219"
         }
       ]
     },{

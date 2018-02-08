@@ -3,7 +3,8 @@
 var isNode = (typeof window === 'undefined') ? true : false;
 
 var Obniz = function (id, options) {
-  if (isNode === false && typeof (showOffLine) === "function") {
+  this.isNode = isNode;
+  if (this.isNode === false && typeof (showOffLine) === "function") {
     showOffLine();
   }
   this.id = id;
@@ -99,7 +100,7 @@ Obniz.prototype.wsOnMessage = function (data) {
 
 Obniz.prototype.wsOnClose = function (event) {
   this.print_debug("closed");
-  if (isNode === false && typeof (showOffLine) === "function") {
+  if (this.isNode === false && typeof (showOffLine) === "function") {
     showOffLine();
   }
   if (this.looper) {
@@ -130,7 +131,7 @@ Obniz.prototype.wsconnect = function (desired_server) {
   var url = server + "/obniz/" + this.id + "/ws";
   this.print_debug("connecting to " + url);
 
-  if (isNode) {
+  if (this.isNode) {
     const wsClient = require('ws');
     this.socket = new wsClient(url);
     this.socket.on('open', this.wsOnOpen.bind(this));
@@ -149,7 +150,7 @@ Obniz.prototype.wsconnect = function (desired_server) {
 };
 
 Obniz.prototype.clearSocket = function (socket) {
-  if (isNode) {
+  if (this.isNode) {
     var shouldRemoveObservers = ['open', 'message', 'close', 'error'];
     for (var i = 0; i < shouldRemoveObservers.length; i++) {
       socket.removeAllListeners(shouldRemoveObservers[i]);
@@ -216,6 +217,8 @@ Obniz.prototype.init = function () {
   this.logicanalyzer = new LogicAnalyzer(this);
   this.ble = new Ble(this);
   this.measure = new ObnizMeasure(this);
+
+  this.util = new ObnizUtil(this);
 };
 
 Obniz.prototype.getIO = function (id) {
@@ -261,7 +264,7 @@ Obniz.prototype.handleWSCommand = function (wsObj) {
   if (wsObj.ready) {
 
     this.resetOnDisconnect(true);
-    if (isNode === false && typeof(showOnLine) === "function") {
+    if (this.isNode === false && typeof(showOnLine) === "function") {
       showOnLine();
     }
     if (this.onconnect) {
@@ -357,7 +360,7 @@ Obniz.prototype.resetOnDisconnect = function(reset) {
 };
  
 Obniz.prototype.error = function (msg) {
-  if (isNode) {
+  if (this.isNode) {
     console.error(msg);
   } else {
     if (typeof (showObnizDebugError) === "function") {
