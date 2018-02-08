@@ -31,7 +31,6 @@ H is the strongest error correction.
 obniz.display.qr("https://obniz.io")
 ```
 
-
 ## display.raw([0,1,2,,,,]);
 
 1 bit represents 1 dot. 1=white, 0=black.
@@ -43,3 +42,21 @@ Order is same like.
 ```javascript
 obniz.display.raw([255, 255,,,,,])// msut be 128*64 bytes
 ```
+
+## drawCanvasContext(context)
+draw OLED from HTML5 Canvas context.
+
+```javascript
+
+// load existing
+const ctx = $("#canvas")[0].getContext('2d');
+// create new canvas dom and load it.
+// const ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+
+ctx.fillStyle = "white";
+ctx.font = "30px Avenir";
+ctx.fillText('Avenir', 0, 40);
+
+obniz.display.drawCanvasContext(ctx);
+```
+

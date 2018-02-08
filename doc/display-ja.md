@@ -45,3 +45,21 @@ obniz.display.qr("https://obniz.io")
 ```javascript
 obniz.display.raw([255, 255,,,,,])// msut be 128*64 bytes
 ```
+
+## drawCanvasContext(context)
+HTML5のCanvas contextをもとに描画します。
+
+```javascript
+
+// load existing
+const ctx = $("#canvas")[0].getContext('2d');
+// create new canvas dom and load it.
+// const ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+
+ctx.fillStyle = "white";
+ctx.font = "30px Avenir";
+ctx.fillText('Avenir', 0, 40);
+
+obniz.display.drawCanvasContext(ctx);
+```
+
