@@ -55,7 +55,7 @@ Stop measuring voltage on ioX.
 ```Javascript
 // Example
 obniz.ad0.start();
-obniz.ad0.stop();
+obniz.ad0.end();
 ```
 ## onchange
 This is callback function when voltage of ioX changed.

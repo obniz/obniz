@@ -56,7 +56,7 @@ Xピンでの電圧計測を停止します。
 ```Javascript
 // Example
 obniz.ad0.start();
-obniz.ad0.stop();
+obniz.ad0.end();
 ```
 ## onchange
 startした後に電圧が変化したら呼び出されるコールバック関数です。
