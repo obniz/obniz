@@ -34,3 +34,14 @@ just send a data to spi. no receive data arrived after sent.
 obniz.spi0.start("master", 0, 1, 2, 1000000); 
 obniz.spi0.write([0x12, 0x98]);
 ```
+
+## end();
+end spi
+
+```Javascript
+// Example
+// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
+obniz.spi0.start("master", 0, 1, 2, 1000000); 
+obniz.spi0.write([0x12, 0x98]);
+obniz.spi0.end();
+```
