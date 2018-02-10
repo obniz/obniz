@@ -1870,6 +1870,7 @@ _24LC256.prototype.set = function(start_address, data) {
   array.push(start_address & 0xFF);
   array.push.apply(array, data);
   obniz.i2c0.write(0x50, array);
+  obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
 }
 
 _24LC256.prototype.get = async function(address, length) {
