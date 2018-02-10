@@ -39,10 +39,10 @@ obniz.display.qr("https://obniz.io")
 1ビットが1ドットです。 1=white, 0=black.
 1バイトはある行の一部分を示します。
 順番はこのようになります。  
-{1byte} {2byte} {3byte}...{16byte}
+{1byte} {2byte} {3byte}...{16byte}  
 {17byte} {18byte} {19byte}...  
-.....
-.....................{1024byte}
+.....  
+.....................{1024byte}  
 
 ```javascript
 obniz.display.raw([255, 255,,,,,])// msut be 128*64 bits(=1024byte)
