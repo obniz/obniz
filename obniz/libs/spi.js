@@ -51,3 +51,9 @@ PeripheralSPI.prototype.notified = function(obj) {
     callback(obj.readed);
   }
 };
+PeripheralSPI.prototype.end = function(data) {
+  var self = this;
+  var obj = {};
+  obj["spi"+self.id] = null;
+  self.Obniz.send(obj);
+};
