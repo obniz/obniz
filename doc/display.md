@@ -40,7 +40,7 @@ Order is same like.
 {3byte} {4byte} {5byte}...  
 
 ```javascript
-obniz.display.raw([255, 255,,,,,])// msut be 128*64 bytes
+obniz.display.raw([255, 255,,,,,])// msut be 128*64 bits(=1024byte)
 ```
 
 ## drawCanvasContext(context)
