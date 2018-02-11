@@ -29,7 +29,7 @@
     var stub = sinon.stub();
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
     var results = {"ble":
           {"scan_results":
                 [{"event_type": "inquiry_result",

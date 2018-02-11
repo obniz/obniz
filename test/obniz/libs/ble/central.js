@@ -20,19 +20,19 @@ describe("ble", function () {
   it("scan", function () {
     this.obniz.ble.startScan({duration: 10});
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 10, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 10}}});
     expect(this.obniz).to.be.finished;
   });
   it("scan default", function () {
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
     expect(this.obniz).to.be.finished;
   });
   it("scan stop", function () {
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
     this.obniz.ble.stopScan();
     expect(this.obniz).send({ble: {scan: {status: "stop"}}});
     expect(this.obniz).to.be.finished;
@@ -44,7 +44,7 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
 
 
     var results = {"ble":
@@ -83,7 +83,7 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
 
 
     var results = {"ble":
@@ -123,7 +123,7 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
 
 
     var results = {"ble":
@@ -178,7 +178,7 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30, "interval": 30, "targetUuid": null}}});
+    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
 
 
     var results = {"ble":
