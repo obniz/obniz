@@ -33,7 +33,7 @@ var Obniz = function (id, options) {
 
 Obniz.prototype.prompt = function (callback) {
   var obnizid = prompt("Please enter obniz id", "");
-  if (obnizid == null || obnizid === "") {
+  if (!obnizid) {
   } else {
     callback(obnizid);
   }
@@ -55,11 +55,11 @@ Obniz.prototype.wsOnMessage = function (data) {
   }
 
   // notify messaging
-  if (typeof (obj.message) === "object" && self.onmessage) {
+  if (typeof (obj.message) === "object" && this.onmessage) {
     this.onmessage(obj.message.data, obj.message.from);
   }
   // debug
-  if (typeof (obj.debug) == "object") {
+  if (typeof (obj.debug) === "object") {
     if (obj.debug.warning) {
       var msg = "Warning: " + obj.debug.warning;
       this.error(msg);
@@ -93,7 +93,7 @@ Obniz.prototype.wsOnMessage = function (data) {
   var names = ["switch", "ble", "logicanalyzer", "measure"];
   for (var i = 0; i < names.length; i++) {
     if (obj[names[i]]) {
-      this[names[i]].notified(obj[names[i]])
+      this[names[i]].notified(obj[names[i]]);
     }
   }
 };
