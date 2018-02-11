@@ -21,8 +21,8 @@ _24LC256.prototype.wired = function(obniz, pin0, pin1, pin2, pin3, pin4, pin5, p
   this.io_vcc.output(true);
 
   this.i2c = obniz.getFreeI2C();
-  this.i2c.start("master", pin4, pin5, 100000, "pullup"); 
-}
+  this.i2c.start("master", pin4, pin5, 100000,"float"); 
+};
 
 // Module functions
 
@@ -31,17 +31,17 @@ _24LC256.prototype.set = function(start_address, data) {
   array.push((start_address >> 8) & 0xFF);
   array.push(start_address & 0xFF);
   array.push.apply(array, data);
-  obniz.i2c0.write(0x50, array);
-}
+  this.i2c.write(0x50, array);
+};
 
 _24LC256.prototype.get = async function(address, length) {
   var array = [];
-  array.push((start_address >> 8) & 0xFF);
-  array.push(start_address & 0xFF);
-  obniz.i2c0.write(0x50, array);
-  return await obniz.i2c0.readWait(0x50, length);
-}
+  array.push((address >> 8) & 0xFF);
+  array.push(address & 0xFF);
+  this.i2c.write(0x50, array);
+  return await this.i2c.readWait(0x50, length);
+};
 
 if (PartsRegistrate) {
   PartsRegistrate("24LC256", _24LC256);
-}
+};
