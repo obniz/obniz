@@ -244,8 +244,8 @@ Ble.prototype.startScan = function(settings) {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["scan"] = {
-    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-    "interval" : settings && settings.interval ? settings.interval : 30,
+//    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+//    "interval" : settings && settings.interval ? settings.interval : 30,
     "duration" : settings && settings.duration ? settings.duration : 30,
     
     "status":"start"
