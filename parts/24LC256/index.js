@@ -26,13 +26,14 @@ _24LC256.prototype.wired = function(obniz, pin0, pin1, pin2, pin3, pin4, pin5, p
 
 // Module functions
 
-_24LC256.prototype.set = function(start_address, data) {
+_24LC256.prototype.set = function(address, data) {
   var array = [];
-  array.push((start_address >> 8) & 0xFF);
-  array.push(start_address & 0xFF);
+  array.push((address >> 8) & 0xFF);
+  array.push(address & 0xFF);
   array.push.apply(array, data);
   this.i2c.write(0x50, array);
-};
+  this.obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+}
 
 _24LC256.prototype.get = async function(address, length) {
   var array = [];

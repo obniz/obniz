@@ -36,11 +36,13 @@ obniz.display.qr("https://obniz.io")
 1 bit represents 1 dot. 1=white, 0=black.
 1 byte is part of one line.
 Order is same like.  
-{0byte} {1byte} {2byte}  
-{3byte} {4byte} {5byte}...  
+{1byte} {2byte} {3byte}...{16byte}  
+{17byte} {18byte} {19byte}...  
+.....  
+.....................{1024byte}  
 
 ```javascript
-obniz.display.raw([255, 255,,,,,])// msut be 128*64 bytes
+obniz.display.raw([255, 255,,,,,])// msut be 128*64 bits(=1024byte)
 ```
 
 ## drawCanvasContext(context)
