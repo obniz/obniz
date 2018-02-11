@@ -33,7 +33,7 @@ var Obniz = function (id, options) {
 
 Obniz.prototype.prompt = function (callback) {
   var obnizid = prompt("Please enter obniz id", "");
-  if (obnizid == null || obnizid === "") {
+  if (!obnizid) {
   } else {
     callback(obnizid);
   }
@@ -55,11 +55,11 @@ Obniz.prototype.wsOnMessage = function (data) {
   }
 
   // notify messaging
-  if (typeof (obj.message) === "object" && self.onmessage) {
+  if (typeof (obj.message) === "object" && this.onmessage) {
     this.onmessage(obj.message.data, obj.message.from);
   }
   // debug
-  if (typeof (obj.debug) == "object") {
+  if (typeof (obj.debug) === "object") {
     if (obj.debug.warning) {
       var msg = "Warning: " + obj.debug.warning;
       this.error(msg);
@@ -93,7 +93,7 @@ Obniz.prototype.wsOnMessage = function (data) {
   var names = ["switch", "ble", "logicanalyzer", "measure"];
   for (var i = 0; i < names.length; i++) {
     if (obj[names[i]]) {
-      this[names[i]].notified(obj[names[i]])
+      this[names[i]].notified(obj[names[i]]);
     }
   }
 };
@@ -692,8 +692,8 @@ Ble.prototype.startScan = function(settings) {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["scan"] = {
-    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-    "interval" : settings && settings.interval ? settings.interval : 30,
+//    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+//    "interval" : settings && settings.interval ? settings.interval : 30,
     "duration" : settings && settings.duration ? settings.duration : 30,
     
     "status":"start"
@@ -1865,31 +1865,31 @@ _24LC256.prototype.wired = function(obniz, pin0, pin1, pin2, pin3, pin4, pin5, p
   this.io_vcc.output(true);
 
   this.i2c = obniz.getFreeI2C();
-  this.i2c.start("master", pin4, pin5, 100000, "pullup"); 
-}
+  this.i2c.start("master", pin4, pin5, 100000,"float"); 
+};
 
 // Module functions
 
-_24LC256.prototype.set = function(start_address, data) {
+_24LC256.prototype.set = function(address, data) {
   var array = [];
-  array.push((start_address >> 8) & 0xFF);
-  array.push(start_address & 0xFF);
+  array.push((address >> 8) & 0xFF);
+  array.push(address & 0xFF);
   array.push.apply(array, data);
-  obniz.i2c0.write(0x50, array);
-  obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+  this.i2c.write(0x50, array);
+  this.obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
 }
 
 _24LC256.prototype.get = async function(address, length) {
   var array = [];
-  array.push((start_address >> 8) & 0xFF);
-  array.push(start_address & 0xFF);
-  obniz.i2c0.write(0x50, array);
-  return await obniz.i2c0.readWait(0x50, length);
-}
+  array.push((address >> 8) & 0xFF);
+  array.push(address & 0xFF);
+  this.i2c.write(0x50, array);
+  return await this.i2c.readWait(0x50, length);
+};
 
 if (PartsRegistrate) {
   PartsRegistrate("24LC256", _24LC256);
-}
+};
 var _7SegmentLED = function() {
   
   this.digits = [
