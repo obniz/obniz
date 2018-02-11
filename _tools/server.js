@@ -27,8 +27,9 @@ app.listen(port, (err) => {
 
   console.log(`server is listening on ${port}`)
 })
-
-var watcher = chokidar.watch(['../obniz/', '../parts/'],{
+var obnizPath = path.join(__dirname, '../obniz/');
+var partsPath = path.join(__dirname, '../parts/');
+var watcher = chokidar.watch([obnizPath, partsPath],{
   ignored:/[\/\\]\./,
   persistent:true
 });
