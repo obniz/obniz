@@ -41,7 +41,7 @@ describe("obniz.libs.display", function () {
     expect(this.obniz).send({
       "display": {
         "qr": {
-          "data": "https://obniz.io"
+          "text": "https://obniz.io"
         }
       }
     });
@@ -54,7 +54,7 @@ describe("obniz.libs.display", function () {
       "display": {
         "qr": {
           "correction": "L",
-          "data": "HELLO!"
+          "text": "HELLO!"
         }
       }
     });
@@ -67,7 +67,7 @@ describe("obniz.libs.display", function () {
       "display": {
         "qr": {
           "correction": "H",
-          "data": "p8baerv9uber:q"
+          "text": "p8baerv9uber:q"
         }
       }
     });

@@ -14,10 +14,10 @@ properties:
 
     qr : 
         type: object
-        required: [data]
+        required: [text]
         additionalProperties: false
         properties:
-            data :
+            text :
                 type : string
             correction :
                 type : string

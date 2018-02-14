@@ -21,11 +21,11 @@ Display.prototype.print = function(text) {
   this.Obniz.send(obj);
 };
 
-Display.prototype.qr = function(data, correction) {
+Display.prototype.qr = function(text, correction) {
   var obj = {};
   obj["display"] = {
     qr: {
-      data: data
+      text
     }
   };
   if (correction) {
