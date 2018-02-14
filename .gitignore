@@ -4,3 +4,5 @@ node_modules
 .nyc_output
 /nbproject/private/
 coverage
+test/**/*.html
+
