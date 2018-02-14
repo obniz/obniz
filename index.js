@@ -1474,7 +1474,7 @@ LogicAnalyzer.prototype.start = function(io, interval, length, trigerValue, trig
   };
   if (trigerValueSamples > 0) {
     obj.logicanalyzer.triger = {
-      value: trigerValue,
+      value: !!trigerValue,
       samples: trigerValueSamples
     }
   }
@@ -1494,7 +1494,7 @@ LogicAnalyzer.prototype.notified = function(obj) {
   if (this.onmeasured) {
     this.onmeasured(obj.measured);
   } else {
-    if (this.measured == null) {
+    if (!this.measured) {
       this.measured = [];
     }
     this.measured.push(obj.measured);
