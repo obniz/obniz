@@ -29,6 +29,9 @@ id: "/request/logicAnalyzer"
             properties:
                 value : 
                     type : boolean
+                    minimum : 0
+                    maximum : 1
+                    
                 samples :
                     type : integer
             

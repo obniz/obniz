@@ -33,7 +33,7 @@ describe("obniz.libs.logicanalyser", function () {
   it("startWithTriger2",  function () {
     this.obniz.logicanalyzer.start(1, 0.1, 100, 1, 3); 
     
-    expect(this.obniz).send({logicanalyzer: { interval: 0.1, io:[1] , length:100, triger : {samples:3, value:1}}});
+    expect(this.obniz).send({logicanalyzer: { interval: 0.1, io:[1] , length:100, triger : {samples:3, value:true}}});
     expect(this.obniz).to.be.finished;
   });
   
