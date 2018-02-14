@@ -12,7 +12,7 @@ Button.prototype.wired = function(obniz, signal, supply) {
   }
 
   // start input
-  this.io_signal.pullup();
+  this.io_signal.pull("5v");
 }
 
 // Module functions

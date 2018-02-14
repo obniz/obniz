@@ -44,12 +44,12 @@ and it's io peripherals too
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    obniz.io.outputType("push-pull")
+    obniz.io0.drive("5v");
     obniz.io0.output(true)
-    obniz.io1.pullup();
-    obniz.io1.outputType("open-drain");
+    obniz.io1.pull("3v");
+    obniz.io1.drive("open-drain");
     obniz.io1.output(false);
-    obniz.io2.outputType("push-pull3v");
+    obniz.io2.drive("3v");
     obniz.io2.output(true);
 
     obniz.ad3.start(function(voltage){

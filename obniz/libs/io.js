@@ -19,36 +19,65 @@ PeripheralIO.prototype.output = function(value) {
   this.Obniz.send(obj);
 };
 
-PeripheralIO.prototype.outputType = function(type) {
+PeripheralIO.prototype.drive = function(drive) {
+
+  if (typeof drive !== "string") {
+    throw new Error("please specify drive methods in string")
+    return;
+  }
+  let output_type = ""
+  switch(drive) {
+    case "5v":
+      output_type = "push-pull5v";
+      break;
+    case "3v":
+      output_type = "push-pull3v";
+      break;
+    case "open-drain":
+      output_type = "open-drain";
+      break;
+    default:
+      throw new Error("unknown drive method")
+      break;
+  }
+
   var obj = {};
   obj["io"+this.id] = {
-    output_type: type
+    output_type: output_type
   };
   this.Obniz.send(obj);
 };
 
-PeripheralIO.prototype.pullType = function(type) {
+PeripheralIO.prototype.pull = function(updown) {
+
+  if (typeof updown !== "string" && updown !== null) {
+    throw new Error("please specify pull methods in string")
+    return;
+  }
+  let pull_type = ""
+  switch(updown) {
+    case "5v":
+      pull_type = "pull-up5v";
+      break;
+    case "3v":
+      pull_type = "pull-up3v";
+      break;
+    case "down":
+      pull_type = "pull-down";
+      break;
+    case null:
+      pull_type = "float";
+      break;
+    default:
+      throw new Error("unknown pull_type method")
+      break;
+  }
+
   var obj = {};
   obj["io"+this.id] = {
-    pull_type: type
+    pull_type: pull_type
   };
   this.Obniz.send(obj);
-};
-
-PeripheralIO.prototype.pullup5v = function(type) {
-  this.pullType("pullup5v");
-};
-
-PeripheralIO.prototype.pullup = function(type) {
-  this.pullType("pullup");
-};
-
-PeripheralIO.prototype.pulldown = function(type) {
-  this.pullType("pulldown");
-};
-
-PeripheralIO.prototype.float = function(type) {
-  this.pullType("float");
 };
 
 PeripheralIO.prototype.input = function(callback) {

@@ -13,7 +13,7 @@ JoyStick.prototype.wired = function(obniz, sig_sw, sig_y, sig_x, pwr, gnd) {
   
   this.io_pwr.output(true);
   this.io_gnd.output(false);
-  this.io_sig_sw.pullup();
+  this.io_sig_sw.pull("5v");
   
       
   var self = this;

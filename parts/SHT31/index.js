@@ -19,7 +19,7 @@ SHT31.prototype.wired = function(obniz, pwr, sda, scl, gnd, adr, adr_select) {
     this.io_adr.output(false);
     address = 0x44;
   }else if(adr_select == 5){
-    this.io_adr.float();
+    this.io_adr.pull(null);
     address = 0x45;
   }
 

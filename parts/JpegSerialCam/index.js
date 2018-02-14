@@ -11,7 +11,7 @@ class JpegSerialCam {
     this.my_tx = rx;
     this.my_rx = tx;
 
-    obniz.getIO(this.my_tx).outputType("push-pull3v");
+    obniz.getIO(this.my_tx).drive("3v");
     
     this.uart = obniz.uart0; // TODO;
   };

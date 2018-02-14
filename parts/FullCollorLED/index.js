@@ -30,14 +30,14 @@ class FullColorLed{
     }
     
     this.common = this.obniz.getIO(common);
-    this.common.outputType("push-pull3v");
+    this.common.drive("3v");
     this.common.output(this.commontype);
     
-    this.obniz.getIO(r).outputType("push-pull3v");
+    this.obniz.getIO(r).drive("3v");
     this.obniz.getIO(r).output(this.commontype);
-    this.obniz.getIO(g).outputType("push-pull3v");
+    this.obniz.getIO(g).drive("3v");
     this.obniz.getIO(g).output(this.commontype);
-    this.obniz.getIO(b).outputType("push-pull3v");
+    this.obniz.getIO(b).drive("3v");
     this.obniz.getIO(b).output(this.commontype);
     this.pwmR = this.obniz.getpwm();this.pwmR.start(r);this.pwmR.freq(1000);
     this.pwmG = this.obniz.getpwm();this.pwmG.start(g);this.pwmG.freq(1000);

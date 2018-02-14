@@ -31,46 +31,73 @@ describe("obniz.libs.io", function () {
     expect(this.obniz).to.be.finished;
   });
 
-  it("outputType", function () {
-    this.obniz.io1.pullup();
+  it("drive 5v", function () {
+    this.obniz.io1.drive("5v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io1:{"pull_type":"pullup"}});
-    expect(this.obniz).to.be.finished;
-  });
-  
-  it("outputType2", function () {
-    this.obniz.io2.outputType("open-drain");
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io2:{"output_type": "open-drain"}});
+    expect(this.obniz).send({io1:{"output_type":"push-pull5v"}});
     expect(this.obniz).to.be.finished;
   });
 
-
-  it("pullup5v", function () {
-    this.obniz.io3.pullup5v();
+  it("drive 3v", function () {
+    this.obniz.io1.drive("3v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io3:{"pull_type": "pullup5v"}});
+    expect(this.obniz).send({io1:{"output_type":"push-pull3v"}});
     expect(this.obniz).to.be.finished;
   });
 
-  it("pullup", function () {
-    this.obniz.io4.pullup();
+  it("drive open-drain", function () {
+    this.obniz.io1.drive("open-drain");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io4:{"pull_type": "pullup"}});
+    expect(this.obniz).send({io1:{"output_type":"open-drain"}});
     expect(this.obniz).to.be.finished;
   });
 
-  it("pulldown", function () {
-    this.obniz.io5.pulldown();
+  it("drive error at non string", function () {
+    expect(function(){
+      this.obniz.io1.drive(null);
+    }).to.throw();
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("drive error at unknown string", function () {
+    expect(function(){
+      this.obniz.io1.drive("3.3v");
+    }).to.throw();
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("pull 5v", function () {
+    this.obniz.io3.pull("5v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io5:{"pull_type": "pulldown"}});
+    expect(this.obniz).send({io3:{"pull_type": "pull-up5v"}});
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("pull 3v", function () {
+    this.obniz.io3.pull("3v");
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({io3:{"pull_type": "pull-up3v"}});
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("pull down", function () {
+    this.obniz.io3.pull("down");
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({io3:{"pull_type": "pull-down"}});
     expect(this.obniz).to.be.finished;
   });
 
   it("float", function () {
-    this.obniz.io6.float();
+    this.obniz.io3.pull(null);
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io6:{"pull_type": "float"}});
+    expect(this.obniz).send({io3:{"pull_type": "float"}});
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("pull error when undefined", function () {
+    expect(function(){
+      this.obniz.io1.pull();
+    }).to.throw();
     expect(this.obniz).to.be.finished;
   });
 

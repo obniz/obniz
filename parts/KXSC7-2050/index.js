@@ -12,7 +12,7 @@ KXSC7_2050.prototype.wired = async function(obniz, pwr, sig_x, sig_y, sig_z, gnd
   this.ad_z = obniz.getAD(sig_z);
   
   this.io_pwr.input();
-  this.io_pwr.outputType("push-pull3v");
+  this.io_pwr.drive("3v");
   this.io_pwr.output(true);
   if (gnd) {
     this.io_gnd = obniz.getIO(gnd);

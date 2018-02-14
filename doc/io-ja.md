@@ -9,86 +9,40 @@ ObnizのX番ピンを出力ピンにして１または０を出力します。
 // Example
 obniz.io1.output(true); // io1 is 5V
 ```
-## outputType(type)
+## drive(type)
 出力するときのドライブ方法を変更します。
-デフォルトではpush-pullとなっています。
+デフォルトでは"5v"となっていて、モータードライバを使った5vのプッシュプルで、最大電流が1Aのモードとなっています。
 
-1. push-pull
-2. push-pull3v
-3. open-drain
+1. "5v"
+  - push-pull 5v モード. 最大1A
+2. "3v"
+  - push-pull 3v モード. 最大約 1mA. 電圧は電流を流すほど低下していきます。
+3. "open-drain"
+  - open-drain モード. 電圧と電流についてはpush-pull3vと同じです。
 
 が利用可能です。
-既にoff()やon()などで出力しているときはpush-pull3vとopen-drainタイプの切り替えは即座に行われますが。push-pullへの切り替えやpush-pullから他のものへの切り替えは出力中は切り替えられません。
+既にIOが出力しているときは"3v"と"open-drain"タイプの切り替えは即座に行われますが。"5v"への切り替えや"5v"から他のものへの切り替えは出力中は切り替えられません。
 inputにしてから次にoutputとして利用する時に適用されます。
 ```Javascript
 // Example
-obniz.io1.output(true); // output push-pull
-obniz.io1.pullup();
-obniz.io1.outputType("open-drain"); // changed immediately 
+obniz.io1.output(true); // output push-pull 5v
+obniz.io1.pull("5v");
+obniz.io1.drive("open-drain"); // changed immediately 
 ```
 
-## pullup5v()
-IOピンを5vで内部プルアップします。
-入力、もしくはオープンドレイン出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の状態のうちどれかとなります。
+## pull(pulltype)
+IOの内部プルアップ・プルダウンを変更します。
 
-1. float
-2. pullup
-3. pullup5v
-4. pulldown
+1. null (default) 
+2. "5v"  5vに内部プルアップします。
+3. "3v"  3vに内部プルアップします。
+4. "down" gndにプルダウンします。
 
 ```Javascript
 // Example
-obniz.io1.pullup5v();
-obniz.io1.outputType("open-drain"); // output open-drain
-```
-
-## pullup()
-IOピンを内部プルアップします。
-入力、もしくは3.3V出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の4状態のうちどれかとなります。
-
-1. float
-2. pullup
-3. pullup5v
-4. pulldown
-
-オープンドレインの時にはpullupをすることが多いかと思います。
-```Javascript
-// Example
-obniz.io1.pullup();
-obniz.io1.outputType("open-drain"); // output open-drain
-```
-## pulldown()
-IOピンを内部プルダウンします。
-入力、もしくは3.3V出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の4状態のうちどれかとなります。
-
-1. float
-2. pullup
-3. pullup5v
-4. pulldown
-
-```Javascript
-// Example
-obniz.io1.pulldown();
-obniz.io1.get();
-```
-
-## float()
-IOピンの内部プルアップを解除します。これがデフォルトです。
-入力、もしくは3.3V出力の時に利用されます。
-デフォルトではfloat(pull-up pull-downなし)となっていて、下の4状態のうちどれかとなります。
-
-1. float
-2. pullup
-3. pullup5v
-4. pulldown
-
-```Javascript
-// Example
-obniz.io1.float();
-var val = await obniz.io1.inputWait();
+obniz.io0.pull(null);
+obniz.io1.pull("up");
+obniz.io1.drive("open-drain"); // output open-drain
 ```
 
 ## input(callback)
