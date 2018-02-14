@@ -7,6 +7,7 @@ var Obniz = function (id, options) {
   if (this.isNode === false && typeof (showOffLine) === "function") {
     showOffLine();
   }
+  this.apiversion = 1;
   this.id = id;
   this.socket = null;
   this.debugprint = false;
@@ -128,7 +129,7 @@ Obniz.prototype.wsconnect = function (desired_server) {
     this.socket.close();
     this.clearSocket(this.socket);
   }
-  var url = server + "/obniz/" + this.id + "/ws";
+  var url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
   this.print_debug("connecting to " + url);
 
   if (this.isNode) {
