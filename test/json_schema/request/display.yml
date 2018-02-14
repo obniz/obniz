@@ -19,7 +19,7 @@ properties:
         properties:
             data :
                 type : string
-            collection :
+            correction :
                 type : string
                 enum : [L, M, Q, H]
                 default : M

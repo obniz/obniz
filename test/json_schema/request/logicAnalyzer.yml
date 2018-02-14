@@ -17,8 +17,8 @@ id: "/request/logicAnalyzer"
             items : {$ref :#pinSetting}
             
         interval : 
-            type : integer
-            minimum : 1
+            type : number
+            minimum : 0
         length :
             type : integer
             
