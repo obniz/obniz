@@ -11,6 +11,11 @@ id: "/request/io"
     type : "null"
 
   -
+    type : string
+    enum:
+        - get
+
+  -
     type: object
     additionalProperties: false
     properties:
@@ -18,6 +23,10 @@ id: "/request/io"
                 type: string
                 enum:
                     - input
+                    - output
+        
+            value : 
+                type: boolean
         
             stream : 
                 type: boolean
@@ -25,14 +34,14 @@ id: "/request/io"
             pull_type: 
                 type: string
                 enum: 
-                    - pull-up3v
                     - pull-up5v
+                    - pull-up3v
                     - pull-down
                     - float
                     
             output_type: 
                 type: string
                 enum: 
-                    - push-pull3v
                     - push-pull5v
+                    - push-pull3v
                     - open-drain

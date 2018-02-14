@@ -43,11 +43,5 @@ id: "/request/uart"
         rts: {$ref:#pinSetting}
 
         cts: {$ref:#pinSetting}
-        
-        text : 
-            type: string
-            
-        base64 : 
-            type: string
             
         data : {$refs :#dataArray}
