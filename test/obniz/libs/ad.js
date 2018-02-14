@@ -21,14 +21,14 @@ describe("obniz.libs.ad", function () {
     var stub = sinon.stub();
     this.obniz.ad0.start(stub);
     
-    expect(this.obniz).send({ad0:{"on": true, "stream":true}});
+    expect(this.obniz).send({ad0:{"stream":true}});
     expect(this.obniz).to.be.finished;
   });
   
   it("value",  function () {
     var stub = sinon.stub();
     this.obniz.ad0.start(stub);
-    expect(this.obniz).send({ad0:{"on": true, "stream":true}});
+    expect(this.obniz).send({ad0:{"stream":true}});
     
     testUtil.receiveJson(this.obniz,  {"ad0":0});
     sinon.assert.callCount(stub, 1);
@@ -46,7 +46,7 @@ describe("obniz.libs.ad", function () {
     var stub = sinon.stub();
     this.obniz.ad1.start();
     this.obniz.ad1.onchange = stub;
-    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    expect(this.obniz).send({ad1:{"stream":true}});
     
     testUtil.receiveJson(this.obniz,  {"ad1":0});
     sinon.assert.callCount(stub, 1);
@@ -60,7 +60,7 @@ describe("obniz.libs.ad", function () {
   
   it("in var",  function () {
     this.obniz.ad1.start();
-    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    expect(this.obniz).send({ad1:{"stream":true}});
     
     testUtil.receiveJson(this.obniz,  {"ad1":1});
     expect(this.obniz.ad1.value).to.be.equal(1);
@@ -76,7 +76,7 @@ describe("obniz.libs.ad", function () {
       });
 
       expect(this.obniz).to.be.obniz;
-      expect(this.obniz).send({ad4:{"on": true, "stream":false}});
+      expect(this.obniz).send({ad4:{"stream":false}});
       expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
@@ -89,7 +89,7 @@ describe("obniz.libs.ad", function () {
   
   it("end",  function () {
     this.obniz.ad1.start();
-    expect(this.obniz).send({ad1:{"on": true, "stream":true}});
+    expect(this.obniz).send({ad1:{"stream":true}});
     
     testUtil.receiveJson(this.obniz,  {"ad1":1});
     expect(this.obniz.ad1.value).to.be.equal(1);

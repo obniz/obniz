@@ -11,8 +11,6 @@ id: "/request/ad"
     type: object
     additionalProperties: false
     properties:
-        on : 
-            type : boolean
             
         stream : 
             type : boolean

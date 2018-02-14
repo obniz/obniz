@@ -440,7 +440,6 @@ PeripheralAD.prototype.start = function (callback) {
   this.onchange = callback;
   var obj = {};
   obj["ad" + this.id] = {
-    on: true,
     stream: true
   };
   this.Obniz.send(obj);
@@ -452,7 +451,6 @@ PeripheralAD.prototype.getWait = function () {
   return new Promise(function (resolve, reject) {
     var obj = {};
     obj["ad" + self.id] = {
-      on: true,
       stream: false
     };
     self.Obniz.send(obj);
