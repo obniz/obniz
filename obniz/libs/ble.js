@@ -2,34 +2,36 @@
 var Ble = function(Obniz) {
   this.Obniz = Obniz;
   this.peripherals =  [];
+  this.adv_data = [];
+  this.scan_resp = [];
 }; 
 
 Ble.prototype.startAdvertisement = function() {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
-      "status":"start"
-  }; 
+    adv_data : this.adv_data
+  };
+  
+  if(this.scan_resp.length > 0){
+     obj["ble"]["advertisement"]["scan_resp"]= this.scan_resp;
+  }
+  
+  
   this.Obniz.send(obj);
   return;
 };
 Ble.prototype.stopAdvertisement = function() {
   var obj = {};
   obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "status":"stop"
-  };
+  obj["ble"]["advertisement"] = null;
   this.Obniz.send(obj);
   return;
 };
 
 Ble.prototype.setAdvDataRaw = function(adv_data) {
   var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "adv_data":adv_data
-  };
-  this.Obniz.send(obj);
+  this.adv_data = adv_data;
   return;
 };
 
@@ -223,12 +225,8 @@ Ble.prototype.scanRespDataBuilder = function(json){
 
 
 Ble.prototype.setScanRespDataRaw = function(scan_resp) {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "scan_resp":scan_resp
-  };
-  this.Obniz.send(obj);
+  
+  this.scan_resp = scan_resp; 
   return;
 };
 
@@ -246,9 +244,8 @@ Ble.prototype.startScan = function(settings) {
   obj["ble"]["scan"] = {
 //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
 //    "interval" : settings && settings.interval ? settings.interval : 30,
-    "duration" : settings && settings.duration ? settings.duration : 30,
+    "duration" : settings && settings.duration ? settings.duration : 30
     
-    "status":"start"
   };
   
   this.peripherals =  [];
@@ -260,16 +257,14 @@ Ble.prototype.startScan = function(settings) {
 Ble.prototype.stopScan = function() {
   var obj = {};
   obj["ble"] = {};
-   obj["ble"]["scan"] = {
-    "status":"stop"
-  };
+   obj["ble"]["scan"] = null;
   this.Obniz.send(obj);
   return;
 };
 
-Ble.prototype.findPeripheral = function (device_address) {
+Ble.prototype.findPeripheral = function (address) {
   for( var key in this.peripherals){
-    if(this.peripherals[key].device_address === device_address){
+    if(this.peripherals[key].address === address){
       return this.peripherals[key];
     }
   }
@@ -286,7 +281,7 @@ Ble.prototype.notified = function (obj) {
       if (obj.scan_results[id].event_type === "inquiry_complete") {
         isFinished = true;
       } else if (obj.scan_results[id].event_type === "inquiry_result") {
-        var val = new BleRemotePeripheral(this.Obniz,obj.scan_results[id].device_address);
+        var val = new BleRemotePeripheral(this.Obniz,obj.scan_results[id].address);
         val.setParams(obj.scan_results[id]);
         this.peripherals.push(val);
         if (this.onscan) {
@@ -299,11 +294,11 @@ Ble.prototype.notified = function (obj) {
     }
   }
   
-  if (obj.connect_results) {
-    obj.connect_results.map((function (params) {
-      if (!params.device_address)
+  if (obj.status_updates) {
+    obj.status_updates.map((function (params) {
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         if (params.status === "connected") {
           p.notify("onconnect");
@@ -317,9 +312,9 @@ Ble.prototype.notified = function (obj) {
   
   if (obj.get_service_results) {
     obj.get_service_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("ondiscoverservice",params.service_uuid);
       }
@@ -327,9 +322,9 @@ Ble.prototype.notified = function (obj) {
   }
   if (obj.get_characteristic_results) {
     obj.get_characteristic_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("ondiscovercharacteristic",params.service_uuid,params.characteristic_uuid);
       }
@@ -337,9 +332,9 @@ Ble.prototype.notified = function (obj) {
   }
   if (obj.write_characteristic_results) {
     obj.write_characteristic_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,params.result);
       }
@@ -348,9 +343,9 @@ Ble.prototype.notified = function (obj) {
   
   if (obj.read_characteristic_results) {
     obj.read_characteristic_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid, params.data);
       } 
@@ -358,13 +353,13 @@ Ble.prototype.notified = function (obj) {
   }
   if (obj.errors) {
     obj.errors.map((function (params) {
-      if (!params.device_address){
+      if (!params.address){
          if(typeof(this.onerror) === "function"){
            this.onerror(params);
          }
       }
        
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("onerror",null, null, params);
       } 

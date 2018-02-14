@@ -9,32 +9,32 @@ chai.use(testUtil.obnizAssert);
 
 describe("ble", function () {
   beforeEach(function (done) {
-    return testUtil.setupObnizPromise(this,done);   
+    return testUtil.setupObnizPromise(this, done);
   });
- 
+
   afterEach(function (done) {
-    return testUtil.releaseObnizePromise(this,done);
+    return testUtil.releaseObnizePromise(this, done);
   });
 
 
   it("scan", function () {
     this.obniz.ble.startScan({duration: 10});
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 10}}});
+    expect(this.obniz).send({ble: {scan: {duration: 10}}});
     expect(this.obniz).to.be.finished;
   });
   it("scan default", function () {
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
+    expect(this.obniz).send({ble: {scan: {duration: 30}}});
     expect(this.obniz).to.be.finished;
   });
   it("scan stop", function () {
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
+    expect(this.obniz).send({ble: {scan: {duration: 30}}});
     this.obniz.ble.stopScan();
-    expect(this.obniz).send({ble: {scan: {status: "stop"}}});
+    expect(this.obniz).send({ble: {scan: null}});
     expect(this.obniz).to.be.finished;
   });
 
@@ -44,22 +44,20 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
+    expect(this.obniz).send({ble: {scan: {duration: 30}}});
 
 
     var results = {"ble":
           {"scan_results":
                 [{"event_type": "inquiry_result",
-                    "device_address": "e5f678800700",
+                    "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
-                    "ble_event_type": 254,
+                    "ble_event_type": "connectable_advertisemnt",
                     "rssi": -82,
-                    "advertise_data": [2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200, 22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53],
+                    "adv_data": [2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200],
                     "flag": 26,
-                    "num_response": 1,
-                    "advertise_length": 30,
-                    "scan_response_length": 23}]
+                    "scan_resp": [22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]}]
           }
     };
 
@@ -70,7 +68,8 @@ describe("ble", function () {
     expect(typeof peripheral === "object").to.be.true;
 
 
-    expect(peripheral.advertise_data).to.be.deep.equal([2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200, 22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]);
+    expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200]);
+    expect(peripheral.scan_resp).to.be.deep.equal([22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]);
     expect(peripheral.localName()).to.be.equal("SSSSSSService78:F6:E5");
     expect(peripheral.iBeacon()).to.be.deep.equal({major: 15747, minor: 26634, power: 200, rssi: -82, uuid: "c961aca7-94a6-4078-b1ff-962cb255ccdb"});
 
@@ -83,22 +82,20 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
+    expect(this.obniz).send({ble: {scan: {duration: 30}}});
 
 
     var results = {"ble":
           {"scan_results":
                 [{"event_type": "inquiry_result",
-                    "device_address": "e5f678800700",
+                    "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
-                    "ble_event_type": 254,
+                    "ble_event_type": "connectable_advertisemnt",
                     "rssi": -82,
-                    "advertise_data": [2, 1, 26],
+                    "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "num_response": 1,
-                    "advertise_length": 3,
-                    "scan_response_length": 0}]
+                    "scan_resp": []}]
           }
     };
 
@@ -109,7 +106,7 @@ describe("ble", function () {
     expect(typeof peripheral === "object").to.be.true;
 
 
-    expect(peripheral.advertise_data).to.be.deep.equal([2, 1, 26]);
+    expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26]);
     expect(peripheral.localName()).to.be.null;
     expect(peripheral.iBeacon()).to.be.null;
 
@@ -123,22 +120,20 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
+    expect(this.obniz).send({ble: {scan: {duration: 30}}});
 
 
     var results = {"ble":
           {"scan_results":
                 [{"event_type": "inquiry_result",
-                    "device_address": "e5f678800700",
+                    "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
-                    "ble_event_type": 254,
+                    "ble_event_type": "connectable_advertisemnt",
                     "rssi": -82,
-                    "advertise_data": [2, 1, 26],
+                    "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "num_response": 1,
-                    "advertise_length": 3,
-                    "scan_response_length": 0}]
+                    "scan_resp": []}]
           }
     };
 
@@ -152,14 +147,14 @@ describe("ble", function () {
     peripheral.onconnect = connectStub;
     peripheral.connect();
 
-    expect(this.obniz).send({ble: {connect: {device_address: "e5f678800700"}}});
+    expect(this.obniz).send({ble: {connect: {address: "e5f678800700"}}});
 
     sinon.assert.callCount(connectStub, 0);
 
     testUtil.receiveJson(this.obniz, {
       ble: {
-        connect_results: [{
-            device_address: "e5f678800700",
+        status_updates: [{
+            address: "e5f678800700",
             status: "connected"
           }]
       }
@@ -178,22 +173,20 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
+    expect(this.obniz).send({ble: {scan: {duration: 30}}});
 
 
     var results = {"ble":
           {"scan_results":
                 [{"event_type": "inquiry_result",
-                    "device_address": "e5f678800700",
+                    "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
-                    "ble_event_type": 254,
+                    "ble_event_type": "connectable_advertisemnt",
                     "rssi": -82,
-                    "advertise_data": [2, 1, 26],
+                    "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "num_response": 1,
-                    "advertise_length": 3,
-                    "scan_response_length": 0}]
+                    "scan_resp": []}]
           }
     };
 
@@ -209,14 +202,14 @@ describe("ble", function () {
     peripheral.ondisconnect = disconnectStub;
     peripheral.connect();
 
-    expect(this.obniz).send({ble: {connect: {device_address: "e5f678800700"}}});
+    expect(this.obniz).send({ble: {connect: {address: "e5f678800700"}}});
 
     sinon.assert.callCount(connectStub, 0);
 
     testUtil.receiveJson(this.obniz, {
       ble: {
-        connect_results: [{
-            device_address: "e5f678800700",
+        status_updates: [{
+            address: "e5f678800700",
             status: "disconnected"
           }]
       }
@@ -230,6 +223,6 @@ describe("ble", function () {
 
 
 
-  
-  
+
+
 });

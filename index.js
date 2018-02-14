@@ -451,34 +451,36 @@ PeripheralAD.prototype.notified = function(obj) {
 var Ble = function(Obniz) {
   this.Obniz = Obniz;
   this.peripherals =  [];
+  this.adv_data = [];
+  this.scan_resp = [];
 }; 
 
 Ble.prototype.startAdvertisement = function() {
   var obj = {};
   obj["ble"] = {};
   obj["ble"]["advertisement"] = {
-      "status":"start"
-  }; 
+    adv_data : this.adv_data
+  };
+  
+  if(this.scan_resp.length > 0){
+     obj["ble"]["advertisement"]["scan_resp"]= this.scan_resp;
+  }
+  
+  
   this.Obniz.send(obj);
   return;
 };
 Ble.prototype.stopAdvertisement = function() {
   var obj = {};
   obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "status":"stop"
-  };
+  obj["ble"]["advertisement"] = null;
   this.Obniz.send(obj);
   return;
 };
 
 Ble.prototype.setAdvDataRaw = function(adv_data) {
   var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "adv_data":adv_data
-  };
-  this.Obniz.send(obj);
+  this.adv_data = adv_data;
   return;
 };
 
@@ -672,12 +674,8 @@ Ble.prototype.scanRespDataBuilder = function(json){
 
 
 Ble.prototype.setScanRespDataRaw = function(scan_resp) {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-      "scan_resp":scan_resp
-  };
-  this.Obniz.send(obj);
+  
+  this.scan_resp = scan_resp; 
   return;
 };
 
@@ -695,9 +693,8 @@ Ble.prototype.startScan = function(settings) {
   obj["ble"]["scan"] = {
 //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
 //    "interval" : settings && settings.interval ? settings.interval : 30,
-    "duration" : settings && settings.duration ? settings.duration : 30,
+    "duration" : settings && settings.duration ? settings.duration : 30
     
-    "status":"start"
   };
   
   this.peripherals =  [];
@@ -709,16 +706,14 @@ Ble.prototype.startScan = function(settings) {
 Ble.prototype.stopScan = function() {
   var obj = {};
   obj["ble"] = {};
-   obj["ble"]["scan"] = {
-    "status":"stop"
-  };
+   obj["ble"]["scan"] = null;
   this.Obniz.send(obj);
   return;
 };
 
-Ble.prototype.findPeripheral = function (device_address) {
+Ble.prototype.findPeripheral = function (address) {
   for( var key in this.peripherals){
-    if(this.peripherals[key].device_address === device_address){
+    if(this.peripherals[key].address === address){
       return this.peripherals[key];
     }
   }
@@ -735,7 +730,7 @@ Ble.prototype.notified = function (obj) {
       if (obj.scan_results[id].event_type === "inquiry_complete") {
         isFinished = true;
       } else if (obj.scan_results[id].event_type === "inquiry_result") {
-        var val = new BleRemotePeripheral(this.Obniz,obj.scan_results[id].device_address);
+        var val = new BleRemotePeripheral(this.Obniz,obj.scan_results[id].address);
         val.setParams(obj.scan_results[id]);
         this.peripherals.push(val);
         if (this.onscan) {
@@ -748,11 +743,11 @@ Ble.prototype.notified = function (obj) {
     }
   }
   
-  if (obj.connect_results) {
-    obj.connect_results.map((function (params) {
-      if (!params.device_address)
+  if (obj.status_updates) {
+    obj.status_updates.map((function (params) {
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         if (params.status === "connected") {
           p.notify("onconnect");
@@ -766,9 +761,9 @@ Ble.prototype.notified = function (obj) {
   
   if (obj.get_service_results) {
     obj.get_service_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("ondiscoverservice",params.service_uuid);
       }
@@ -776,9 +771,9 @@ Ble.prototype.notified = function (obj) {
   }
   if (obj.get_characteristic_results) {
     obj.get_characteristic_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("ondiscovercharacteristic",params.service_uuid,params.characteristic_uuid);
       }
@@ -786,9 +781,9 @@ Ble.prototype.notified = function (obj) {
   }
   if (obj.write_characteristic_results) {
     obj.write_characteristic_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,params.result);
       }
@@ -797,9 +792,9 @@ Ble.prototype.notified = function (obj) {
   
   if (obj.read_characteristic_results) {
     obj.read_characteristic_results.map((function (params) {
-      if (!params.device_address)
+      if (!params.address)
         return;
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid, params.data);
       } 
@@ -807,13 +802,13 @@ Ble.prototype.notified = function (obj) {
   }
   if (obj.errors) {
     obj.errors.map((function (params) {
-      if (!params.device_address){
+      if (!params.address){
          if(typeof(this.onerror) === "function"){
            this.onerror(params);
          }
       }
        
-      var p = this.findPeripheral(params.device_address);
+      var p = this.findPeripheral(params.address);
       if (p) {
         p.notify("onerror",null, null, params);
       } 
@@ -836,18 +831,17 @@ Ble.prototype.notified = function (obj) {
  * @param {type} rawData
  * @return {BleRemotePeripheral}
  */
-var BleRemotePeripheral = function(Obniz, deviceAddress){
+var BleRemotePeripheral = function(Obniz, address){
   this.Obniz = Obniz;
-  this.device_address = deviceAddress;
+  this.address = address;
   
   this.keys = [
     "device_type",
     "address_type",
     "ble_event_type",
     "rssi",
-    "advertise_data",
-    "advertise_length",
-    "scan_response_length"
+    "adv_data",
+    "scan_resp",
   ];
   
   
@@ -883,16 +877,30 @@ BleRemotePeripheral.prototype.setParams = function(dic) {
 
 BleRemotePeripheral.prototype.analyseAdvertisement = function() {
   
-  if(this.advertise_data && !this.advertise_data_rows  ){
+  if (!this.advertise_data_rows) {
     this.advertise_data_rows = [];
-    for(var i = 0; i < this.advertise_data.length;i++){
-      var length = this.advertise_data[i];
-      var arr = new Array(length);
-      for(var j=0;j<length;j++){
-        arr[j] = this.advertise_data[i+j+1];
+    if (this.adv_data) {
+      for (var i = 0; i < this.adv_data.length; i++) {
+        var length = this.adv_data[i];
+        var arr = new Array(length);
+        for (var j = 0; j < length; j++) {
+          arr[j] = this.adv_data[i + j + 1];
+        }
+        this.advertise_data_rows.push(arr);
+        i = i + length;
       }
-      this.advertise_data_rows.push(arr);
-      i=i+length;
+    }
+    if (this.scan_resp) {
+
+      for (var i = 0; i < this.scan_resp.length; i++) {
+        var length = this.scan_resp[i];
+        var arr = new Array(length);
+        for (var j = 0; j < length; j++) {
+          arr[j] = this.scan_resp[i + j + 1];
+        }
+        this.advertise_data_rows.push(arr);
+        i = i + length;
+      }
     }
   } 
 };
@@ -963,7 +971,7 @@ BleRemotePeripheral.prototype.connect = function(callbacks){
   var obj = {
     "ble" :{
       "connect" :{
-        "device_address" : this.device_address
+        "address" : this.address
       }
     }
   };
@@ -974,7 +982,7 @@ BleRemotePeripheral.prototype.disconnect = function(){
   var obj = {
     "ble" :{
       "disconnect" :{
-        "device_address" : this.device_address
+        "address" : this.address
       }
     }
   };
@@ -1001,7 +1009,7 @@ BleRemotePeripheral.prototype.discoverAllServices = function(){
   var obj = {
     "ble" :{
       "get_services" :{
-        "device_address" : this.device_address
+        "address" : this.address
       }
     }
   };
@@ -1056,7 +1064,7 @@ var BleRemoteService = function(Obniz, peripheral, uuid){
 
 BleRemoteService.prototype.toString = function(){
   return JSON.stringify({
-        "device_address" : this.peripheral.device_address,
+        "address" : this.peripheral.address,
         "service_uuid" : this.uuid
   });
 };
@@ -1065,7 +1073,7 @@ BleRemoteService.prototype.discoverAllCharacteristics = function(){
   var obj = {
     "ble" :{
       "get_characteristics" :{
-        "device_address" : this.peripheral.device_address,
+        "address" : this.peripheral.address,
         "service_uuid" : this.uuid
       }
     }
@@ -1101,7 +1109,7 @@ var BleRemoteCharacteristic = function(Obniz, service, uuid){
 
 BleRemoteCharacteristic.prototype.toString = function(){
   return JSON.stringify({
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid
       });
@@ -1111,7 +1119,7 @@ BleRemoteCharacteristic.prototype.read = function(){
   var obj = {
     "ble" :{
       "read_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid
       }
@@ -1130,7 +1138,7 @@ BleRemoteCharacteristic.prototype.write = function(array){
   var obj = {
     "ble" :{
       "write_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid,
         "data" : array
@@ -1143,7 +1151,7 @@ BleRemoteCharacteristic.prototype.writeNumber = function(val){
   var obj = {
     "ble" :{
       "write_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid,
         "value" : val
@@ -1157,7 +1165,7 @@ BleRemoteCharacteristic.prototype.writeText = function(str){
   var obj = {
     "ble" :{
       "write_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid,
         "text" : str

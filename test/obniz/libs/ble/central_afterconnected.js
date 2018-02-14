@@ -14,20 +14,18 @@ describe("ble", function () {
     var stub = sinon.stub();
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
-    expect(this.obniz).send({ble: {scan: {status: "start", duration: 30}}});
+    expect(this.obniz).send({ble: {scan: {duration: 30}}});
     var results = {"ble":
           {"scan_results":
                 [{"event_type": "inquiry_result",
-                    "device_address": "e5f678800700",
+                    "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
-                    "ble_event_type": 254,
+                    "ble_event_type": "connectable_advertisemnt",
                     "rssi": -82,
-                    "advertise_data": [2, 1, 26],
+                    "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "num_response": 1,
-                    "advertise_length": 3,
-                    "scan_response_length": 0}]
+                    "scan_resp": []}]
           }
     };
     testUtil.receiveJson(this.obniz, results);
@@ -36,12 +34,12 @@ describe("ble", function () {
     var connectStub = sinon.stub();
     peripheral.onconnect = connectStub;
     peripheral.connect();
-    expect(this.obniz).send({ble: {connect: {device_address: "e5f678800700"}}});
+    expect(this.obniz).send({ble: {connect: {address: "e5f678800700"}}});
     sinon.assert.callCount(connectStub, 0);
     testUtil.receiveJson(this.obniz, {
       ble: {
-        connect_results: [{
-            device_address: "e5f678800700",
+        status_updates: [{
+            address: "e5f678800700",
             status: "connected"
           }]
       }
@@ -61,7 +59,7 @@ describe("ble", function () {
     peripheral.getService("FF00").getCharacteristic("FF01").write([0x01, 0xe8]);
     expect(this.obniz).send(
         {ble: {write_characteristic: {
-          device_address: "e5f678800700",
+          address: "e5f678800700",
           service_uuid: "FF00",
           characteristic_uuid: "FF01",
           data: [0x01, 0xe8]
@@ -69,35 +67,6 @@ describe("ble", function () {
     expect(this.obniz).to.be.finished;
   });
   
-  
-  
-  it("write number ", function () {
-    var peripheral = this.peripheral;
-    peripheral.getService("FF00").getCharacteristic("FF03").writeNumber(1000);
-    expect(this.obniz).send(
-        {ble: {write_characteristic: {
-          device_address: "e5f678800700",
-          service_uuid: "FF00",
-          characteristic_uuid: "FF03",
-          value: 1000
-        }}});
-    expect(this.obniz).to.be.finished;
-  });
-  
-  
-  
-  it("write text", function () {
-    var peripheral = this.peripheral;
-    peripheral.getService("FF01").getCharacteristic("FF01").writeText("My Name");
-    expect(this.obniz).send(
-        {ble: {write_characteristic: {
-          device_address: "e5f678800700",
-          service_uuid: "FF01",
-          characteristic_uuid: "FF01",
-          text: "My Name"
-        }}});
-    expect(this.obniz).to.be.finished;
-  });
   
   it("onwrite", function () {
    
@@ -108,7 +77,7 @@ describe("ble", function () {
     peripheral.getService("FF00").getCharacteristic("FF01").write([0x01, 0xe8]);
     expect(this.obniz).send(
         {ble: {write_characteristic: {
-          device_address: "e5f678800700",
+          address: "e5f678800700",
           service_uuid: "FF00",
           characteristic_uuid: "FF01",
           data: [0x01, 0xe8]
@@ -120,7 +89,7 @@ describe("ble", function () {
       ble: {
         write_characteristic_results: [
           {
-            device_address: "e5f678800700",
+            address: "e5f678800700",
             service_uuid: "FF00", //hex string
             characteristic_uuid: "FF01", //hex string
             result: "success"   //success or failed
@@ -147,7 +116,7 @@ describe("ble", function () {
     peripheral.getService("FF00").getCharacteristic("FF01").write([0x01, 0xe8]);
     expect(this.obniz).send(
         {ble: {write_characteristic: {
-          device_address: "e5f678800700",
+          address: "e5f678800700",
           service_uuid: "FF00",
           characteristic_uuid: "FF01",
           data: [0x01, 0xe8]
@@ -159,7 +128,7 @@ describe("ble", function () {
       ble: {
         write_characteristic_results: [
           {
-            device_address: "e5f678800700",
+            address: "e5f678800700",
             service_uuid: "FF00", //hex string
             characteristic_uuid: "FF01", //hex string
             result: "failed"   //success or failed
@@ -186,7 +155,7 @@ describe("ble", function () {
     peripheral.getService("FF00").getCharacteristic("FF01").read();
     expect(this.obniz).send(
         {ble: {read_characteristic: {
-          device_address: "e5f678800700",
+          address: "e5f678800700",
           service_uuid: "FF00",
           characteristic_uuid: "FF01",
         }}});
@@ -197,7 +166,7 @@ describe("ble", function () {
       ble: {
         read_characteristic_results: [
           {
-            device_address: "e5f678800700",
+            address: "e5f678800700",
             service_uuid: "FF00", //hex string
             characteristic_uuid: "FF01", //hex string
             data: [0x2e, 0x22, 0x97]   //success or failed
@@ -230,7 +199,7 @@ describe("ble", function () {
          {
             error_code : 1,
             message : "ERROR MESSAGE",
-            device_address : "e5f678800700", //hex string or null
+            address : "e5f678800700", //hex string or null
             service_uuid : "FF00",           //hex string or null
             characteristic_uuid : "FF01", //hex string or null
          }

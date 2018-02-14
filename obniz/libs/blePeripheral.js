@@ -9,18 +9,17 @@
  * @param {type} rawData
  * @return {BleRemotePeripheral}
  */
-var BleRemotePeripheral = function(Obniz, deviceAddress){
+var BleRemotePeripheral = function(Obniz, address){
   this.Obniz = Obniz;
-  this.device_address = deviceAddress;
+  this.address = address;
   
   this.keys = [
     "device_type",
     "address_type",
     "ble_event_type",
     "rssi",
-    "advertise_data",
-    "advertise_length",
-    "scan_response_length"
+    "adv_data",
+    "scan_resp",
   ];
   
   
@@ -56,16 +55,30 @@ BleRemotePeripheral.prototype.setParams = function(dic) {
 
 BleRemotePeripheral.prototype.analyseAdvertisement = function() {
   
-  if(this.advertise_data && !this.advertise_data_rows  ){
+  if (!this.advertise_data_rows) {
     this.advertise_data_rows = [];
-    for(var i = 0; i < this.advertise_data.length;i++){
-      var length = this.advertise_data[i];
-      var arr = new Array(length);
-      for(var j=0;j<length;j++){
-        arr[j] = this.advertise_data[i+j+1];
+    if (this.adv_data) {
+      for (var i = 0; i < this.adv_data.length; i++) {
+        var length = this.adv_data[i];
+        var arr = new Array(length);
+        for (var j = 0; j < length; j++) {
+          arr[j] = this.adv_data[i + j + 1];
+        }
+        this.advertise_data_rows.push(arr);
+        i = i + length;
       }
-      this.advertise_data_rows.push(arr);
-      i=i+length;
+    }
+    if (this.scan_resp) {
+
+      for (var i = 0; i < this.scan_resp.length; i++) {
+        var length = this.scan_resp[i];
+        var arr = new Array(length);
+        for (var j = 0; j < length; j++) {
+          arr[j] = this.scan_resp[i + j + 1];
+        }
+        this.advertise_data_rows.push(arr);
+        i = i + length;
+      }
     }
   } 
 };
@@ -136,7 +149,7 @@ BleRemotePeripheral.prototype.connect = function(callbacks){
   var obj = {
     "ble" :{
       "connect" :{
-        "device_address" : this.device_address
+        "address" : this.address
       }
     }
   };
@@ -147,7 +160,7 @@ BleRemotePeripheral.prototype.disconnect = function(){
   var obj = {
     "ble" :{
       "disconnect" :{
-        "device_address" : this.device_address
+        "address" : this.address
       }
     }
   };
@@ -174,7 +187,7 @@ BleRemotePeripheral.prototype.discoverAllServices = function(){
   var obj = {
     "ble" :{
       "get_services" :{
-        "device_address" : this.device_address
+        "address" : this.address
       }
     }
   };
@@ -229,7 +242,7 @@ var BleRemoteService = function(Obniz, peripheral, uuid){
 
 BleRemoteService.prototype.toString = function(){
   return JSON.stringify({
-        "device_address" : this.peripheral.device_address,
+        "address" : this.peripheral.address,
         "service_uuid" : this.uuid
   });
 };
@@ -238,7 +251,7 @@ BleRemoteService.prototype.discoverAllCharacteristics = function(){
   var obj = {
     "ble" :{
       "get_characteristics" :{
-        "device_address" : this.peripheral.device_address,
+        "address" : this.peripheral.address,
         "service_uuid" : this.uuid
       }
     }
@@ -274,7 +287,7 @@ var BleRemoteCharacteristic = function(Obniz, service, uuid){
 
 BleRemoteCharacteristic.prototype.toString = function(){
   return JSON.stringify({
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid
       });
@@ -284,7 +297,7 @@ BleRemoteCharacteristic.prototype.read = function(){
   var obj = {
     "ble" :{
       "read_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid
       }
@@ -303,7 +316,7 @@ BleRemoteCharacteristic.prototype.write = function(array){
   var obj = {
     "ble" :{
       "write_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid,
         "data" : array
@@ -316,7 +329,7 @@ BleRemoteCharacteristic.prototype.writeNumber = function(val){
   var obj = {
     "ble" :{
       "write_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid,
         "value" : val
@@ -330,7 +343,7 @@ BleRemoteCharacteristic.prototype.writeText = function(str){
   var obj = {
     "ble" :{
       "write_characteristic" :{
-        "device_address" : this.service.peripheral.device_address,
+        "address" : this.service.peripheral.address,
         "service_uuid" : this.service.uuid,
         "characteristic_uuid" : this.uuid,
         "text" : str
