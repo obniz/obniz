@@ -91,11 +91,14 @@ Obniz.prototype.wsOnMessage = function (data) {
       this[peripheral + "" + i].notified(module_value);
     }
   }
-  var names = ["switch", "ble", "logicanalyzer", "measure"];
+  var names = ["switch", "ble", "measure"];
   for (var i = 0; i < names.length; i++) {
     if (obj[names[i]]) {
       this[names[i]].notified(obj[names[i]]);
     }
+  }
+  if (obj.logic_analyzer) {
+    this.logicAnalyzer.notified(obj.logic_analyzer)
   }
 };
 
@@ -215,7 +218,7 @@ Obniz.prototype.init = function () {
 
   this.display = new Display(this);
   this.switch = new ObnizSwitch(this);
-  this.logicanalyzer = new LogicAnalyzer(this);
+  this.logicAnalyzer = new LogicAnalyzer(this);
   this.ble = new Ble(this);
   this.measure = new ObnizMeasure(this);
 

@@ -18,33 +18,33 @@ describe("obniz.libs.logicanalyser", function () {
   
   
   it("start",  function () {
-    this.obniz.logicanalyzer.start(1, 0.1, 100); 
+    this.obniz.logicAnalyzer.start(1, 0.1, 100); 
   
-    expect(this.obniz).send({logicanalyzer: { interval: 0.1, io:[1] , length:100}});
+    expect(this.obniz).send({logic_analyzer: { interval: 0.1, io:[1] , duration:100}});
     expect(this.obniz).to.be.finished;
 });
   
   it("startWithTriger",  function () {
-    this.obniz.logicanalyzer.start(1, 0.1, 100, false, 3); 
+    this.obniz.logicAnalyzer.start(1, 0.1, 100, false, 3); 
     
-    expect(this.obniz).send({logicanalyzer: { interval: 0.1, io:[1] , length:100, triger : {samples:3, value:false}}});
+    expect(this.obniz).send({logic_analyzer: { interval: 0.1, io:[1] , duration:100, triger : {samples:3, value:false}}});
     expect(this.obniz).to.be.finished;
   });
   it("startWithTriger2",  function () {
-    this.obniz.logicanalyzer.start(1, 0.1, 100, 1, 3); 
+    this.obniz.logicAnalyzer.start(1, 0.1, 100, 1, 3); 
     
-    expect(this.obniz).send({logicanalyzer: { interval: 0.1, io:[1] , length:100, triger : {samples:3, value:true}}});
+    expect(this.obniz).send({logic_analyzer: { interval: 0.1, io:[1] , duration:100, triger : {samples:3, value:true}}});
     expect(this.obniz).to.be.finished;
   });
   
   it("onmeasured",  function () {
     var stub = sinon.stub();
-    this.obniz.logicanalyzer.start(1, 0.1, 100, false, 3); 
+    this.obniz.logicAnalyzer.start(1, 0.1, 100, false, 3); 
     
-    expect(this.obniz).send({logicanalyzer: { interval: 0.1, io:[1] , length:100, triger : {samples:3, value:false}}});
-    this.obniz.logicanalyzer.onmeasured = stub;
+    expect(this.obniz).send({logic_analyzer: { interval: 0.1, io:[1] , duration:100, triger : {samples:3, value:false}}});
+    this.obniz.logicAnalyzer.onmeasured = stub;
     var data = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];
-    testUtil.receiveJson(this.obniz, {"logicanalyzer":{"measured":data}});
+    testUtil.receiveJson(this.obniz, {"logic_analyzer":{"data":data}});
     
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args[0]).to.be.deep.equal(data);

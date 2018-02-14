@@ -39,6 +39,6 @@
     ble : {$ref : "/response/ble"}
     mesure :  {$ref : "/response/mesure"}
     message :  {$ref : "/response/message"}
-    logicanalyzer :  {$ref : "/response/logicAnalyzer"}
+    logic_analyzer :  {$ref : "/response/logicAnalyzer"}
     ws : {$ref : "/response/ws"}
         

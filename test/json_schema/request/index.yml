@@ -40,7 +40,7 @@
     display: {$ref : "/request/display"}
     mesure :  {$ref : "/request/mesure"}
     message :  {$ref : "/request/message"}
-    logicanalyzer :  {$ref : "/request/logicAnalyzer"}
+    logic_analyzer :  {$ref : "/request/logicAnalyzer"}
     system :  {$ref : "/request/system"}
         
         

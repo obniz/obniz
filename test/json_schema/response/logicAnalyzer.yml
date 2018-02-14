@@ -5,6 +5,6 @@ id: "/response/logicAnalyzer"
 
 type: object
 additionalProperties: false
-required : [measured]
+required : [data]
 properties:
-    measured : {$ref :#dataArray}
+    data : {$ref :#dataArray}

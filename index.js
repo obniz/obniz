@@ -91,11 +91,14 @@ Obniz.prototype.wsOnMessage = function (data) {
       this[peripheral + "" + i].notified(module_value);
     }
   }
-  var names = ["switch", "ble", "logicanalyzer", "measure"];
+  var names = ["switch", "ble", "measure"];
   for (var i = 0; i < names.length; i++) {
     if (obj[names[i]]) {
       this[names[i]].notified(obj[names[i]]);
     }
+  }
+  if (obj.logic_analyzer) {
+    this.logicAnalyzer.notified(obj.logic_analyzer)
   }
 };
 
@@ -215,7 +218,7 @@ Obniz.prototype.init = function () {
 
   this.display = new Display(this);
   this.switch = new ObnizSwitch(this);
-  this.logicanalyzer = new LogicAnalyzer(this);
+  this.logicAnalyzer = new LogicAnalyzer(this);
   this.ble = new Ble(this);
   this.measure = new ObnizMeasure(this);
 
@@ -1488,46 +1491,51 @@ PeripheralIO_.prototype.animation = function(name, status, array) {
   this.Obniz.send(obj);
 };
 
-var LogicAnalyzer = function(Obniz) {
-  this.Obniz = Obniz;
-};
 
-LogicAnalyzer.prototype.start = function(io, interval, length, trigerValue, trigerValueSamples) {
-  var obj = {};
-  obj.logicanalyzer = {
-    io: [io],
-    interval: interval,
-    length: length
+class LogicAnalyzer {
+
+  constructor(obniz) {
+    this.obniz = obniz;
+  }
+
+  start(io, interval, duration, trigerValue, trigerValueSamples) {
+    var obj = {};
+    obj.logic_analyzer = {
+      io: [io],
+      interval: interval,
+      duration: duration
+    };
+    if (trigerValueSamples > 0) {
+      obj.logic_analyzer.triger = {
+        value: !!trigerValue,
+        samples: trigerValueSamples
+      }
+    }
+  
+    this.obniz.send(obj);
+    return;
+  }
+
+  end() {
+    var obj = {};
+    obj.logic_analyzer = null;
+    this.obniz.send(obj);
+    return;
+  }
+
+  notified(obj) {
+    if (this.onmeasured) {
+      this.onmeasured(obj.data);
+    } else {
+      if (!this.measured) {
+        this.measured = [];
+      }
+      this.measured.push(obj.data);
+    }
+    return;
   };
-  if (trigerValueSamples > 0) {
-    obj.logicanalyzer.triger = {
-      value: !!trigerValue,
-      samples: trigerValueSamples
-    }
-  }
+}
 
-  this.Obniz.send(obj);
-  return;
-};
-
-LogicAnalyzer.prototype.end = function() {
-  var obj = {};
-  obj["logicanalyzer"] = null;
-  this.Obniz.send(obj);
-  return;
-};
-
-LogicAnalyzer.prototype.notified = function(obj) {
-  if (this.onmeasured) {
-    this.onmeasured(obj.measured);
-  } else {
-    if (!this.measured) {
-      this.measured = [];
-    }
-    this.measured.push(obj.measured);
-  }
-  return;
-};
 
 var ObnizMeasure = function(Obniz) {
   this.Obniz = Obniz;

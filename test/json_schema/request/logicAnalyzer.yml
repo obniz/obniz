@@ -10,7 +10,7 @@ id: "/request/logicAnalyzer"
   -
     type: object
     additionalProperties: false
-    required : [io, interval, length]
+    required : [io, interval, duration]
     properties:
         io : 
             type : array
@@ -19,7 +19,7 @@ id: "/request/logicAnalyzer"
         interval : 
             type : number
             minimum : 0
-        length :
+        duration :
             type : integer
             
         triger :
