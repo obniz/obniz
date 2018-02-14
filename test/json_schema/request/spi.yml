@@ -1,0 +1,30 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/spi"
+
+"anyOf":
+  -
+    type: "null"
+
+  -
+    type: object
+    additionalProperties: false
+    properties:
+        mode  :  
+            type : string
+            enum : [master]
+        clk :  {$ref:#pinSetting}
+        mosi :  {$ref:#pinSetting}
+        miso :  {$ref:#pinSetting}
+        clock : 
+            type: number
+            default : 115200
+         #   minimum : 1   # TODO
+         #   maximum : 11  # TODO
+
+            
+        write : {$ref :#dataArray}
+        writeread : {$ref :#dataArray}
+            
+            

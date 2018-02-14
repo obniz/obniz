@@ -1,0 +1,34 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/logicAnalyzer"
+
+"anyOf":
+  -
+    type: "null"
+
+  -
+    type: object
+    additionalProperties: false
+    required : [io, interval, length]
+    properties:
+        io : 
+            type : array
+            items : {$ref :#pinSetting}
+            
+        interval : 
+            type : integer
+            minimum : 1
+        length :
+            type : integer
+            
+        triger :
+            type : object
+            additionalProperties: false
+            required : [value, samples]
+            properties:
+                value : 
+                    type : boolean
+                samples :
+                    type : integer
+            

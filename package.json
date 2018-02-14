@@ -19,6 +19,8 @@
     "chai-like": "^1.1.1",
     "ejs": "^2.5.7",
     "get-port": "^3.2.0",
+    "js-yaml": "^3.10.0",
+    "jsonschema": "^1.2.2",
     "mocha": "^5.0.0",
     "mocha-chrome": "^1.0.3",
     "mocha-directory": "^2.3.0",

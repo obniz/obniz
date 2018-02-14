@@ -1,0 +1,19 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ad"
+ 
+"anyOf":
+  -
+    type: "null"
+
+  -
+    type: object
+    additionalProperties: false
+    properties:
+        on : 
+            type : boolean
+            
+        stream : 
+            type : boolean
+            default : false

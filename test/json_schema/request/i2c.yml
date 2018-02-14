@@ -1,0 +1,44 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/i2c"
+
+"anyOf":
+  -
+    type: "null"
+
+  -
+    type: object
+    additionalProperties: false
+    properties:
+        mode : 
+            type : string
+            enum : [master] 
+        sda :  {$ref:#pinSetting}
+        scl :  {$ref:#pinSetting}
+        pull_type : 
+            type: string
+            enum : [float, pullup, pullup5v]
+            default : pullup
+        slave_address_length : 
+            type : integer
+            enum : [7,10]
+            default : 7
+            
+        slave_address: 
+            type : integer
+            minimum : 0
+            
+        clock: 
+            type: integer
+            minimum : 0
+                
+        address : 
+            type: integer
+            minimum : 0
+            
+        write : {$ref:#dataArray}
+        read : 
+            type: integer
+            minimum : 0
+            

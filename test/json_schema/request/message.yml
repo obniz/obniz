@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/message"
+
+type: object
+additionalProperties: false
+required : [data, to]
+properties:
+    data : 
+        type : any
+    to : 
+        type : array
+        minItems : 1
+        items : 
+            type : [string, integer]

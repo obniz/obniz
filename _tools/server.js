@@ -5,7 +5,7 @@ const chokidar = require("chokidar");
 var exec = require('child_process').exec;
 var babel = require("babel-core");
 const notifier = require('node-notifier');
-
+var ncp = require('ncp').ncp;
 
 const app = express()
 const port = 3100
@@ -48,9 +48,40 @@ watcher.on('ready',function(){
       build();
     }
   });
+  
+  
 });
 
+
+var jsonSchemaPath = path.join(__dirname, '../../wsroom/json_schema/');
+if(fs.existsSync(jsonSchemaPath)){
+
+  var jsonSchemaWatcher = chokidar.watch([jsonSchemaPath],{
+    ignored:/[\/\\]\./,
+    persistent:true
+  });
+  
+  jsonSchemaWatcher.on('ready',function(){
+    jsonSchemaWatcher.on('change',function(path){
+      if (path.indexOf('.yml') >= 0) {
+        console.log(path + " changed");
+        schemaCopy();
+      }
+    });
+    jsonSchemaWatcher.on('add',function(path){
+      if (path.indexOf('.yml') >= 0) {
+        console.log(path + " added");
+        schemaCopy();
+      }
+    });
+
+  });
+}
+
+
+
 build();
+schemaCopy();
 
 function build() {
 
@@ -117,4 +148,15 @@ function build() {
     }
     fs.writeFileSync(path.join(__dirname, '../index-for-node6.10.js'), write ? results.code : "");
    
+}
+
+function schemaCopy(){
+  var dest = path.join(__dirname, '../test/json_schema/')
+  ncp(jsonSchemaPath, dest, function (err) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log('copy done!');
+   });
+
 }

@@ -1,0 +1,38 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/io"
+
+"anyOf":
+  -
+    type: boolean
+
+  -
+    type : "null"
+
+  -
+    type: object
+    additionalProperties: false
+    properties:
+            direction : 
+                type: string
+                enum:
+                    - input
+        
+            stream : 
+                type: boolean
+      
+            pull_type: 
+                type: string
+                enum: 
+                    - pullup
+                    - pulldown
+                    - pullup5v
+                    - float
+                    
+            output_type: 
+                type: string
+                enum: 
+                    - push-pull
+                    - push-pull3v
+                    - open-drain

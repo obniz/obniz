@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/i2c"
+
+
+type: object
+additionalProperties: false
+properties:
+    address : 
+        type: integer
+        minimum : 0
+
+    readed : {$refs : "#dataArray"}

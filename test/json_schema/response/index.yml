@@ -1,0 +1,44 @@
+## YAML Template.
+---
+  $schema: http://json-schema.org/draft-04/schema#
+  id: response
+  type: object
+  definitions : 
+              
+              
+      pinSetting :
+          id : "pinSetting"
+          type : integer
+          minimum : 0
+          maximum : 11
+          
+      data :
+          id : "#data"
+          type : integer
+          minimum : 0
+          maximum : 255
+              
+      dataArray :
+          id : "#dataArray"
+          type : array
+          items : {$ref :#data}
+          
+              
+  additionalProperties: false
+  patternProperties:
+    "^io[0-9]$" : {$ref : "/response/io"}
+    "^io1[0-1]$" : {$ref : "/response/io"}
+    "^ad[0-9]$" : {$ref : "/response/ad"}
+    "^ad1[0-1]$" : {$ref : "/response/ad"}
+    "^uart[0-1]$" : {$ref : "/response/uart"}
+    "^spi[0-1]$" : {$ref : "/response/spi"}
+    "^i2c0$" : {$ref : "/response/i2c"}
+  
+  properties:
+    switch : {$ref : "/response/switch"}
+    ble : {$ref : "/response/ble"}
+    mesure :  {$ref : "/response/mesure"}
+    message :  {$ref : "/response/message"}
+    logicanalyzer :  {$ref : "/response/logicAnalyzer"}
+    ws : {$ref : "/response/ws"}
+        
