@@ -24,7 +24,7 @@ describe("obniz.libs.uart", function () {
     
     this.obniz.uart0.send("Hi");
     
-    expect(this.obniz).send({uart0:{"text":'Hi'}});
+    expect(this.obniz).send({uart0:{"data":[72, 105]}});
     expect(this.obniz).to.be.finished;
   });
   
@@ -35,13 +35,11 @@ describe("obniz.libs.uart", function () {
     expect(this.obniz).send({uart0:{"tx": 1, "rx": 2}});
     
     this.obniz.uart0.send("Hi");
-    expect(this.obniz).send({uart0:{"text":'Hi'}});
+    expect(this.obniz).send({uart0:{"data":[72, 105]}});
     this.obniz.uart0.send(0x11);
     expect(this.obniz).send({uart0:{"data":[0x11]}});
     this.obniz.uart0.send([0x11, 0x45, 0x44]);
     expect(this.obniz).send({uart0:{"data":[0x11, 0x45, 0x44]}});
-    this.obniz.uart0.send({success: true});
-    expect(this.obniz).send({uart0:{"text":"{\"success\":true}"}});
     expect(this.obniz).to.be.finished;
   });
   
@@ -52,7 +50,7 @@ describe("obniz.libs.uart", function () {
     expect(this.obniz).send({uart0:{"tx": 1, "rx": 2}});
     
     this.obniz.uart0.send("Hi");
-    expect(this.obniz).send({uart0:{"text":'Hi'}});
+    expect(this.obniz).send({uart0:{"data":[72, 105]}});
     
     this.obniz.uart0.end();
     expect(this.obniz).send({uart0:null});
