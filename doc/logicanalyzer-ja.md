@@ -3,7 +3,7 @@
 信号が送られているかの確認などに利用できます。
 データ量の制限から、ピンの状態が変化してからある時間だけのデータを取得します。
 
-## logicanalyzer.start(io, interval, duration);
+## logicAnalyzer.start(io, interval, duration);
 
 ioでのロジックアナライザーをスタートさせます。
 モニター間隔と全体の時間を指定できます。
@@ -14,22 +14,22 @@ ioでのロジックアナライザーをスタートさせます。
 
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 2msec interval and 1sec long.
-obniz.logicanalyzer.onmeasured = function(array) {
+obniz.logicAnalyzer.start(0, 2, 1000);  // start on io0. 2msec interval and 1sec long.
+obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
-## logicanalyzer.start(io, interval, duration, trigerValue, trigerValueSamples);
+## logicAnalyzer.start(io, interval, duration, trigerValue, trigerValueSamples);
 trigerを指定することができます。 これなしでは、全てのioの状態変化をトリガーとして動き始めます。 トリガーにより測定を開始したい値とその数を指定できます。 例えば、下の例であればfalseが3回続いたデータのみ計測します。
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 2, 1000, false, 3);  // start on io0. 2msec interval and 1sec long.
-obniz.logicanalyzer.onmeasured = function(array) {
+obniz.logicAnalyzer.start(0, 2, 1000, false, 3);  // start on io0. 2msec interval and 1sec long.
+obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
 
-## logicanalyzer.onmeasured
+## logicAnalyzer.onmeasured
 
 実際にデータを受け取るためのcallbackです。
 データはioのピン状態の配列になっています。
@@ -42,18 +42,18 @@ obniz.logicanalyzer.onmeasured = function(array) {
 
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
+obniz.logicAnalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
 
-obniz.logicanalyzer.onmeasured = function(array) {
+obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
-## logicanalyzer.end()
+## logicAnalyzer.end()
 
 ロジックアナライザーを停止します。
 
 ```Javascript
 // Example
-obniz.logicanalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
-obniz.logicanalyzer.end();
+obniz.logicAnalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
+obniz.logicAnalyzer.end();
 ```
