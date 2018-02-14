@@ -7,7 +7,7 @@ class WS2811 {
   wired(obniz, din ,nc0, nc1){
 
     this.obniz = obniz;
-    obniz.getIO(din).outputType("push-pull3v");
+    obniz.getIO(din).drive("3v");
     this.spi = obniz.spi0;// TODO:
     this.spi.start("master", nc0, din, nc1, 2*1000*1000); 
   };

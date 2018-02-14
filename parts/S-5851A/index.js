@@ -25,7 +25,7 @@ S5851A.prototype.wired = function(obniz, pwr, gnd, sda, scl, adr0, adr1, adr_sel
       address = 0x48;
       break;
     case 9:
-      this.io_adr0.float();
+      this.io_adr0.pull(null);
       this.io_adr1.output(false);
       address = 0x49;
       break;
@@ -40,7 +40,7 @@ S5851A.prototype.wired = function(obniz, pwr, gnd, sda, scl, adr0, adr1, adr_sel
       address = 0x4B;
       break;
     case 'C':
-      this.io_adr0.float();
+      this.io_adr0.pull(null);
       this.io_adr1.output(true);
       address = 0x4C;
       break;
@@ -51,12 +51,12 @@ S5851A.prototype.wired = function(obniz, pwr, gnd, sda, scl, adr0, adr1, adr_sel
       break;
     case 'E':
       this.io_adr0.output(false);
-      this.io_adr1.float();
+      this.io_adr1.pull(null);
       address = 0x4E;
       break;
     case 'F':
       this.io_adr0.output(true);
-      this.io_adr1.float();
+      this.io_adr1.pull(null);
       address = 0x4F;
       break;
     default:

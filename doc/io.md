@@ -10,85 +10,40 @@ Make ioX to output mode and output ture or false.
 obniz.io1.output(true); // io1 is 5V
 ```
 
-## outputType(type)
+## drive(type)
 Change output drive method.
-By default, it is "push-pull".
+By default, it is push-pull 5v with motor driver(up to 1A).
 
-1. push-pull
+1. "5v"
   - push-pull 5v mode. up to 1A available
-2. push-pull3v
+2. "3v"
   - push-pull 3v mode. up to around 1mA. It's voltage will reduce by current.
-3. open-drain
+3. "open-drain"
   - open-drain mode. It sink up to around 1mA.
 
-You can change "push-pull3v" and "open-drain" while output.
-But "push-pull" is not granted while output. You should change it to input onece.
+You can change "5v" "3v" and "open-drain" while output.
+But "3v" is not granted while output. You should change it to input onece.
 
 ```Javascript
 // Example
-obniz.io1.output(true); // output push-pull
-obniz.io1.pullup();
-obniz.io1.outputType("open-drain"); // changed immediately 
+obniz.io1.output(true); // output push-pull 5v
+obniz.io1.pull("5v");
+obniz.io1.drive("open-drain"); // changed immediately 
 ```
 
-## pullup5v()
-intenal pullup to 5v with weak resistor.
-The state is one of them.
+## pull(pulltype)
+enable/disable internal pull up/down resistors.
 
-1. float (default) 
-2. pullup
-3. pullup5v
-4. pulldown
-
-```Javascript
-// Example
-obniz.io1.pullup5v();
-obniz.io1.outputType("open-drain"); // output open-drain
-```
-
-## pullup()
-intenal pullup to 3v with weak resistor.
-The state is one of them.
-
-1. float (default) 
-2. pullup
-3. pullup5v
-4. pulldown
+1. null (default) 
+2. "5v"  pull up to 5v
+3. "3v"  pull up to 3v
+4. "down" pull down to gnd
 
 ```Javascript
 // Example
-obniz.io1.pullup();
-obniz.io1.outputType("open-drain"); // output open-drain
-```
-## pulldown()
-intenal pulldown to GND with weak resistor.
-The state is one of them.
-
-1. float (default) 
-2. pullup
-3. pullup5v
-4. pulldown
-
-```Javascript
-// Example
-obniz.io1.pulldown();
-obniz.io1.get();
-```
-
-## float()
-no pull-up pull-down.
-This is default state.
-The state is one of them.
-
-1. float (default) 
-2. pullup
-3. pullup5v
-4. pulldown
-
-```Javascript
-// Example
-obniz.io1.float();
-var val = await obniz.io1.inputWait();
+obniz.io0.pull(null);
+obniz.io1.pull("up");
+obniz.io1.drive("open-drain"); // output open-drain
 ```
 
 ## input(callback)

@@ -31,10 +31,10 @@ To use obniz, instantiate obniz with obniz id. and set onconnect callback functi
   obniz.onconnect = async function () {
     obniz.display.print("hello!");
     
-    obniz.io.outputType("push-pull")
+    obniz.io0.drive("5v")
     obniz.io0.output(true)
-    obniz.io1.pullup();
-    obniz.io1.outputType("open-drain");
+    obniz.io1.pull("3v");
+    obniz.io1.drive("open-drain");
     obniz.io1.output(false);
 
     var servo = obniz.wired("ServoMotor", 2, 3, 4);

@@ -15,7 +15,7 @@ class XBee {
     this.isAtMode = false;
     this.onFinishAtModeCallback = null;
     
-    obniz.getIO(tx_obniz_to_xbee).outputType("push-pull3v");
+    obniz.getIO(tx_obniz_to_xbee).drive("3v");
     this.uart.start(tx_obniz_to_xbee, rx_xbee_to_obniz, 9600, null, 8);
     
     this.uart.onreceive = (function(data, text) {

@@ -11,7 +11,7 @@ RN42.prototype.wired = function(obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gnd
 
   this.uart = obniz.uart0;
 
-  obniz.getIO(tx_obniz_to_rn42).outputType("push-pull3v");
+  obniz.getIO(tx_obniz_to_rn42).drive("3v");
   this.uart.start(tx_obniz_to_rn42, rx_obniz_from_rn42, 115200);
   var self = this;
   this.uart.onreceive = function(data, text) {

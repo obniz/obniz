@@ -1302,36 +1302,65 @@ PeripheralIO.prototype.output = function (value) {
   this.Obniz.send(obj);
 };
 
-PeripheralIO.prototype.outputType = function (type) {
+PeripheralIO.prototype.drive = function (drive) {
+
+  if (typeof drive !== "string") {
+    throw new Error("please specify drive methods in string");
+    return;
+  }
+  let output_type = "";
+  switch (drive) {
+    case "5v":
+      output_type = "push-pull5v";
+      break;
+    case "3v":
+      output_type = "push-pull3v";
+      break;
+    case "open-drain":
+      output_type = "open-drain";
+      break;
+    default:
+      throw new Error("unknown drive method");
+      break;
+  }
+
   var obj = {};
   obj["io" + this.id] = {
-    output_type: type
+    output_type: output_type
   };
   this.Obniz.send(obj);
 };
 
-PeripheralIO.prototype.pullType = function (type) {
+PeripheralIO.prototype.pull = function (updown) {
+
+  if (typeof updown !== "string" && updown !== null) {
+    throw new Error("please specify pull methods in string");
+    return;
+  }
+  let pull_type = "";
+  switch (updown) {
+    case "5v":
+      pull_type = "pull-up5v";
+      break;
+    case "3v":
+      pull_type = "pull-up3v";
+      break;
+    case "down":
+      pull_type = "pull-down";
+      break;
+    case null:
+      pull_type = "float";
+      break;
+    default:
+      throw new Error("unknown pull_type method");
+      break;
+  }
+
   var obj = {};
   obj["io" + this.id] = {
-    pull_type: type
+    pull_type: pull_type
   };
   this.Obniz.send(obj);
-};
-
-PeripheralIO.prototype.pullup5v = function (type) {
-  this.pullType("pullup5v");
-};
-
-PeripheralIO.prototype.pullup = function (type) {
-  this.pullType("pullup");
-};
-
-PeripheralIO.prototype.pulldown = function (type) {
-  this.pullType("pulldown");
-};
-
-PeripheralIO.prototype.float = function (type) {
-  this.pullType("float");
 };
 
 PeripheralIO.prototype.input = function (callback) {
@@ -1686,7 +1715,6 @@ PeripheralUART.prototype.start = function (tx, rx, baud, stop, bits, parity, flo
 // node only
 PeripheralUART.prototype.send = function (data) {
   var send_data = null;
-  var key = "data";
   if (data === undefined) {
     return;
   }
@@ -1702,15 +1730,25 @@ PeripheralUART.prototype.send = function (data) {
   } else if (data.constructor === Array) {
     send_data = data;
   } else if (typeof data === "string") {
-    key = "text";
-    send_data = data;
-  } else if (typeof data === "object" && data !== null) {
-    key = "text";
-    send_data = JSON.stringify(data);
+    if (isNode) {
+      const buf = Buffer(data);
+      var arr = new Array(buf.byteLength);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = buf[i];
+      }
+      send_data = arr;
+    } else if (TextEncoder) {
+      const typedArray = new TextEncoder("utf-8").encode(data);
+      send_data = new Array(typedArray.length);
+      for (var i = 0; i < typedArray.length; i++) {
+        send_data[i] = typedArray[i];
+      }
+    }
   }
   var obj = {};
   obj["uart" + this.id] = {};
-  obj["uart" + this.id][key] = send_data;
+  obj["uart" + this.id].data = send_data;
+  console.log(obj);
   this.Obniz.send(obj);
 };
 
@@ -2157,7 +2195,7 @@ Button.prototype.wired = function (obniz, signal, supply) {
   }
 
   // start input
-  this.io_signal.pullup();
+  this.io_signal.pull("5v");
 };
 
 // Module functions
@@ -2272,7 +2310,7 @@ PIR_ekmc.prototype.wired = function (obniz, pwr, signal, gnd) {
   this.io_signal = obniz.getIO(signal);
 
   this.io_pwr.output(true);
-  this.io_signal.pulldown();
+  this.io_signal.pull("down");
   if (gnd) {
     this.io_gnd = obniz.getIO(gnd);
     this.io_gnd.output(false);
@@ -2408,14 +2446,14 @@ class FullColorLed {
     }
 
     this.common = this.obniz.getIO(common);
-    this.common.outputType("push-pull3v");
+    this.common.drive("3v");
     this.common.output(this.commontype);
 
-    this.obniz.getIO(r).outputType("push-pull3v");
+    this.obniz.getIO(r).drive("3v");
     this.obniz.getIO(r).output(this.commontype);
-    this.obniz.getIO(g).outputType("push-pull3v");
+    this.obniz.getIO(g).drive("3v");
     this.obniz.getIO(g).output(this.commontype);
-    this.obniz.getIO(b).outputType("push-pull3v");
+    this.obniz.getIO(b).drive("3v");
     this.obniz.getIO(b).output(this.commontype);
     this.pwmR = this.obniz.getpwm();this.pwmR.start(r);this.pwmR.freq(1000);
     this.pwmG = this.obniz.getpwm();this.pwmG.start(g);this.pwmG.freq(1000);
@@ -2570,7 +2608,7 @@ JoyStick.prototype.wired = function (obniz, sig_sw, sig_y, sig_x, pwr, gnd) {
 
   this.io_pwr.output(true);
   this.io_gnd.output(false);
-  this.io_sig_sw.pullup();
+  this.io_sig_sw.pull("5v");
 
   var self = this;
   this.ad_x.start(function (value) {
@@ -2628,7 +2666,7 @@ class JpegSerialCam {
     this.my_tx = rx;
     this.my_rx = tx;
 
-    obniz.getIO(this.my_tx).outputType("push-pull3v");
+    obniz.getIO(this.my_tx).drive("3v");
 
     this.uart = obniz.uart0; // TODO;
   }
@@ -2826,7 +2864,7 @@ KXSC7_2050.prototype.wired = (() => {
     this.ad_z = obniz.getAD(sig_z);
 
     this.io_pwr.input();
-    this.io_pwr.outputType("push-pull3v");
+    this.io_pwr.drive("3v");
     this.io_pwr.output(true);
     if (gnd) {
       this.io_gnd = obniz.getIO(gnd);
@@ -3109,8 +3147,8 @@ class MatrixLED_MAX7219 {
     this.cs.output(true);
 
     // max 10Mhz but motor driver can't
-    obniz.getIO(clk).outputType("push-pull3v");
-    obniz.getIO(din).outputType("push-pull3v");
+    obniz.getIO(clk).drive("3v");
+    obniz.getIO(din).drive("3v");
     this.spi = obniz.spi0; // TODO
     this.spi.start("master", clk, din, nc, 10 * 1000 * 1000);
   }
@@ -3255,7 +3293,7 @@ RN42.prototype.wired = function (obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gn
 
   this.uart = obniz.uart0;
 
-  obniz.getIO(tx_obniz_to_rn42).outputType("push-pull3v");
+  obniz.getIO(tx_obniz_to_rn42).drive("3v");
   this.uart.start(tx_obniz_to_rn42, rx_obniz_from_rn42, 115200);
   var self = this;
   this.uart.onreceive = function (data, text) {
@@ -3452,7 +3490,7 @@ S5851A.prototype.wired = function (obniz, pwr, gnd, sda, scl, adr0, adr1, adr_se
       address = 0x48;
       break;
     case 9:
-      this.io_adr0.float();
+      this.io_adr0.pull(null);
       this.io_adr1.output(false);
       address = 0x49;
       break;
@@ -3467,7 +3505,7 @@ S5851A.prototype.wired = function (obniz, pwr, gnd, sda, scl, adr0, adr1, adr_se
       address = 0x4B;
       break;
     case 'C':
-      this.io_adr0.float();
+      this.io_adr0.pull(null);
       this.io_adr1.output(true);
       address = 0x4C;
       break;
@@ -3478,12 +3516,12 @@ S5851A.prototype.wired = function (obniz, pwr, gnd, sda, scl, adr0, adr1, adr_se
       break;
     case 'E':
       this.io_adr0.output(false);
-      this.io_adr1.float();
+      this.io_adr1.pull(null);
       address = 0x4E;
       break;
     case 'F':
       this.io_adr0.output(true);
-      this.io_adr1.float();
+      this.io_adr1.pull(null);
       address = 0x4F;
       break;
     default:
@@ -3643,7 +3681,7 @@ SHT31.prototype.wired = function (obniz, pwr, sda, scl, gnd, adr, adr_select) {
     this.io_adr.output(false);
     address = 0x44;
   } else if (adr_select == 5) {
-    this.io_adr.float();
+    this.io_adr.pull(null);
     address = 0x45;
   }
 
@@ -3767,7 +3805,7 @@ class WS2811 {
   wired(obniz, din, nc0, nc1) {
 
     this.obniz = obniz;
-    obniz.getIO(din).outputType("push-pull3v");
+    obniz.getIO(din).drive("3v");
     this.spi = obniz.spi0; // TODO:
     this.spi.start("master", nc0, din, nc1, 2 * 1000 * 1000);
   }
@@ -3887,7 +3925,7 @@ class XBee {
     this.isAtMode = false;
     this.onFinishAtModeCallback = null;
 
-    obniz.getIO(tx_obniz_to_xbee).outputType("push-pull3v");
+    obniz.getIO(tx_obniz_to_xbee).drive("3v");
     this.uart.start(tx_obniz_to_xbee, rx_xbee_to_obniz, 9600, null, 8);
 
     this.uart.onreceive = function (data, text) {

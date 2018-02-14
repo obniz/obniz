@@ -39,7 +39,6 @@ PeripheralUART.prototype.start = function(tx, rx, baud, stop, bits, parity, flow
 // node only
 PeripheralUART.prototype.send = function(data) {
   var send_data = null;
-  var key = "data";
   if (data === undefined) {
     return;
   }
@@ -55,15 +54,25 @@ PeripheralUART.prototype.send = function(data) {
   } else if (data.constructor === Array) {
     send_data = data;
   } else if (typeof(data) === "string") {
-    key = "text";
-    send_data = data;
-  } else if (typeof(data) === "object" && data !== null) {
-    key = "text";
-    send_data = JSON.stringify(data);
+    if (isNode) {
+      const buf = Buffer(data);
+      var arr = new Array(buf.byteLength);
+      for (var i=0; i<arr.length;i++) {
+        arr[i] = buf[i];
+      }
+      send_data = arr;
+    } else if(TextEncoder){
+      const typedArray = new TextEncoder("utf-8").encode(data);
+      send_data = new Array(typedArray.length);
+      for (var i=0; i<typedArray.length;i++) {
+        send_data[i] = typedArray[i];
+      }
+    }
   }
   var obj = {};
   obj["uart"+this.id] = {};
-  obj["uart"+this.id][key] = send_data;
+  obj["uart"+this.id].data = send_data;
+  console.log(obj);
   this.Obniz.send(obj);
 };
 

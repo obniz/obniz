@@ -37,11 +37,10 @@ obniz.uart0.send("Hi");
 データを送信します。
 dataで送れるものは
 
-- 文字
+- 文字 => utf8エンコードされたバイト列となります（ヌル文字は含まれません）
 - 数字 => 1byteのデータになります
 - 数字の配列 => １つ１つ1byteのデータとして送信されます
-- オブジェクト => 文字になります
-- Buffer => そのまま送信されます
+- Buffer/Array => そのまま送信されます
 
 ```Javascript
 // Example
@@ -49,7 +48,6 @@ obniz.uart0.start(0, 1); // 0 is output, 1 is input
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
-obniz.uart0.send({success: true});
 ```
 ## end()
 

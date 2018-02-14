@@ -39,11 +39,10 @@ obniz.uart0.send("Hi");
 send a data.
 available formats are
 
-- string
+- string => utf8 encoded byte array. not include null terminate
 - number => will be one byte data
 - array of number => array of bytes
-- object => converted to json string
-- Buffer => array of bytes
+- Buffer/Array => array of bytes
 
 ```Javascript
 // Example
@@ -51,7 +50,6 @@ obniz.uart0.start(0, 1); // 0 is output, 1 is input
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
-obniz.uart0.send({success: true});
 ```
 ## end()
 stop uart. it will release io.
