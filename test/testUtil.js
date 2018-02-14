@@ -30,6 +30,9 @@ var   serverDataCount = 0;
 var   errorDataCount = 0;
 var testUtil = {
   log: console.log,
+  isNode : function(){
+    return (typeof window === 'undefined') ? true : false;
+  },
   createServer: function (port, velify) {
     var wss = new WSServer({host: "localhost", port: port, clientTracking: true});
 
@@ -94,6 +97,13 @@ var testUtil = {
     
   },
   receiveJson: function(obniz, jsonVal){
+    if(testUtil.isNode()){
+         var validator = require("./obnizJsonValidator");   
+         var validateErrors = validator.responseValidate(jsonVal).errors;      
+         require("chai").expect(validateErrors,validateErrors.toString()).to.be.lengthOf(0);
+      
+    }
+       
     obniz.wsOnMessage(JSON.stringify(jsonVal));
   },
   
@@ -116,6 +126,12 @@ var testUtil = {
        new _chai.Assertion(stub.args[count][0],"[obniz.send]invalid json").is.json;
        var val = JSON.parse(stub.args[count][0]);
        new _chai.Assertion(val).to.deep.equal(expected);
+       
+       if(testUtil.isNode()){
+         var validator = require("./obnizJsonValidator");   
+         var validateErrors = validator.requestValidate(val).errors;      
+         new _chai.Assertion(validateErrors,validateErrors.toString()).to.be.lengthOf(0);
+       }
      });
      
      
