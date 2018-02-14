@@ -34,9 +34,9 @@ describe("obniz.libs.spi", function () {
       expect(this.obniz).to.be.finished;
     }.bind(this));
     
-    expect(this.obniz).send({spi0:{writeread : [0x12, 0x98]}});
+    expect(this.obniz).send({spi0:{data : [0x12, 0x98], read: true}});
     setTimeout(function(){
-      testUtil.receiveJson(this.obniz,  {"spi0":{"readed":[0x61, 0xF2]}});
+      testUtil.receiveJson(this.obniz,  {"spi0":{"data":[0x61, 0xF2]}});
     }.bind(this),10);
     return r;
   });
@@ -49,9 +49,9 @@ describe("obniz.libs.spi", function () {
       expect(this.obniz).to.be.finished;
     }.bind(this));
     
-    expect(this.obniz).send({spi0:{writeread : [0x12, 0x98]}});
+    expect(this.obniz).send({spi0:{data : [0x12, 0x98], read: true}});
     setTimeout(function(){
-      testUtil.receiveJson(this.obniz,  {"spi0":{"readed":[0x61, 0xF2,0x34]}});
+      testUtil.receiveJson(this.obniz,  {"spi0":{"data":[0x61, 0xF2,0x34]}});
     }.bind(this),10);
     return r;
   });

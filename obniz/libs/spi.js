@@ -28,7 +28,8 @@ PeripheralSPI.prototype.writeWait = function(data) {
   return new Promise(function(resolve, reject){
     var obj = {};
     obj["spi"+self.id] = {
-      writeread: data
+      data: data,
+      read: true
     };
     self.Obniz.send(obj);
     self.addObserver(resolve);
@@ -39,7 +40,7 @@ PeripheralSPI.prototype.write = function(data) {
   var self = this;
   var obj = {};
   obj["spi"+self.id] = {
-    write: data
+    data: data
   };
   self.Obniz.send(obj);
 };
@@ -48,7 +49,7 @@ PeripheralSPI.prototype.notified = function(obj) {
   // TODO: we should compare byte length from sent
   var callback = this.observers.shift();
   if (callback) {
-    callback(obj.readed);
+    callback(obj.data);
   }
 };
 PeripheralSPI.prototype.end = function(data) {

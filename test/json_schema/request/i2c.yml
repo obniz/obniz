@@ -37,7 +37,7 @@ id: "/request/i2c"
             type: integer
             minimum : 0
             
-        write : {$ref:#dataArray}
+        data : {$ref:#dataArray}
         read : 
             type: integer
             minimum : 0

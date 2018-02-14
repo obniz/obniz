@@ -24,7 +24,7 @@ id: "/request/spi"
          #   maximum : 11  # TODO
 
             
-        write : {$ref :#dataArray}
-        writeread : {$ref :#dataArray}
-            
+        data : {$ref :#dataArray}
+        read : 
+           type: boolean
             

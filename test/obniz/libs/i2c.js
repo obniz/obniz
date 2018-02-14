@@ -37,7 +37,7 @@ describe("obniz.libs.i2c", function () {
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"pull_type":"pullup","mode":"master" }});
     
     this.obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
-    expect(this.obniz).send({i2c0:{address : 0x50, write:[0x00, 0x00, 0x12]}});
+    expect(this.obniz).send({i2c0:{address : 0x50, data:[0x00, 0x00, 0x12]}});
     
   });
   
@@ -46,7 +46,7 @@ describe("obniz.libs.i2c", function () {
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"pull_type":"pullup","mode":"master" }});
     
     this.obniz.i2c0.write10bit(0x50, [0x00, 0x00, 0x12]);
-    expect(this.obniz).send({i2c0:{address : 0x50,address_type : "10bit" , write:[0x00, 0x00, 0x12]}});
+    expect(this.obniz).send({i2c0:{address : 0x50,address_type : "10bit" , data:[0x00, 0x00, 0x12]}});
     
   });
   
@@ -62,7 +62,7 @@ describe("obniz.libs.i2c", function () {
     
     expect(this.obniz).send({i2c0:{address : 0x50, read:3}});
     setTimeout(function(){
-      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"readed":[0x61, 0xF2, 0x1f]}});
+      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"data":[0x61, 0xF2, 0x1f]}});
     }.bind(this),10);
     return r;
   });
@@ -78,7 +78,7 @@ describe("obniz.libs.i2c", function () {
     
     expect(this.obniz).send({i2c0:{address : 0x50, read:3}});
     setTimeout(function(){
-      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"readed":[0x61, 0xF2]}});
+      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"data":[0x61, 0xF2]}});
     }.bind(this),10);
     return r;
   });
@@ -93,8 +93,8 @@ describe("obniz.libs.i2c", function () {
     
     expect(this.obniz).send({i2c0:{address : 0x50, read:3}});
     setTimeout(function(){
-      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x51,"readed":[0xaa, 0xbb, 0xcc]}});
-      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"readed":[0x61, 0xF2, 0x1f]}});
+      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x51,"data":[0xaa, 0xbb, 0xcc]}});
+      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"data":[0x61, 0xF2, 0x1f]}});
     }.bind(this),10);
     return r;
   });
@@ -111,7 +111,7 @@ describe("obniz.libs.i2c", function () {
     
     expect(this.obniz).send({i2c0:{address : 0x50, address_type : "10bit", read:3}});
     setTimeout(function(){
-      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"readed":[0x61, 0xF2, 0x1f]}});
+      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"data":[0x61, 0xF2, 0x1f]}});
     }.bind(this),10);
     return r;
   });

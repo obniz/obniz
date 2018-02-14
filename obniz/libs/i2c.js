@@ -15,10 +15,10 @@ PeripheralI2C.prototype.addObserver = function(callback) {
 PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
   var obj = {};
   this.state = {
-    mode: mode,
-    sda: sda,
-    scl: scl,
-    clock: clock
+    mode,
+    sda,
+    scl,
+    clock
   };
   if (pullType) {
     this.state.pull_type = pullType;
@@ -30,8 +30,8 @@ PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
 PeripheralI2C.prototype.write = function(address, data) {
   var obj = {};
   obj["i2c"+this.id] = {
-    address: address,
-    write: data
+    address,
+    data
   };
   this.Obniz.send(obj);
 };
@@ -45,7 +45,7 @@ PeripheralI2C.prototype.readWait = function(address, length) {
   return new Promise(function(resolve, reject){
     var obj = {};
     obj["i2c"+self.id] = {
-      address: address,
+      address,
       read: length
     };
     self.Obniz.send(obj);
@@ -61,7 +61,7 @@ PeripheralI2C.prototype.notified = function(obj) {
   // TODO: we should compare byte length from sent
   var callback = this.observers.shift();
   if (callback) {
-    callback(obj.readed);
+    callback(obj.data);
   }
 };
 

@@ -11,4 +11,4 @@ properties:
         type: integer
         minimum : 0
 
-    readed : {$refs : "#dataArray"}
+    data : {$refs : "#dataArray"}
