@@ -59,25 +59,7 @@ pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm frequency to 1khz
 pwm.duty(50) // set pwm pulse witdh 50%
 ```
-## forceWorking(true/false)
 
-5Vで小さなDCモーターなどをPWMから使う時に、抵抗が小さいためにちょっとしたノイズなどで過電流検知してしまいなかなか動かない場合があります。
-forceWorkingを指定することで過電流検知しても可能な限りリトライしPWMを継続します。
-これにより小さなDCモーターでも思った通りに動かすことが出来ます。
-ただ、PWMの波形が乱れるので、きれいな矩形波が出したい場合などには向かないです。
-DCモーターやコイルなどの多少乱れてでも継続して動いてほしい場合に利用して下さい。
-
-forceWorkingを指定しても過電流検知がOFFになるわけではありません。
-定期的にリセットを行うので、安全性に変わりはありません。
-
-```Javascript
-// Example
-var pwm = obniz.getpwm();
-pwm.start(11); // start pwm. output at io11
-pwm.freq(1000); // set pwm frequency to 1khz
-pwm.duty(50) // set pwm pulse witdh 50%
-pwm.forceWorking(true)
-```
 ## modulate(modulation type, interval sec, data)
 
 PWMの出力をarrayのデータにより変調します。

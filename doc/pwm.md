@@ -51,24 +51,7 @@ pwm.start(11); // start pwm. output at io11
 pwm.freq(2000); // set pwm frequency to 2khz
 pwm.duty(50) // set pwm pulse witdh 50%
 ```
-## forceWorking(true/false)
-obniz has overcurrent protection when outputType is "push-pull" 1A mode. Possibly, obniz will stop pwm when small DC motor or small coil is connected.
-In that case, set forceWorking(true).
-It let obniz to retry output pwm.
-This will work but it makes pulse shape dirty.
-So this setting will be used when pulse shape is not import such as dc motor and coils.
 
-Important. forceWorking never cancel overcurrent protection on "push-pull" mode.
-It just resetting it periodically. It still safe.
-
-```Javascript
-// Example
-var pwm = obniz.getpwm();
-pwm.start(11); // start pwm. output at io11
-pwm.freq(1000); // set pwm frequency to 1khz
-pwm.duty(50) // set pwm pulse witdh 50%
-pwm.forceWorking(true)
-```
 ## modulate(modulation type, interval sec, data)
 modulate pwm with datas
 modulation can be choosed from below.
