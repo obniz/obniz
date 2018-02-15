@@ -18,7 +18,7 @@ describe("obniz.libs.spi", function () {
   
   
   it("start",  function () {
-    this.obniz.spi0.start("master", 0, 1, 2, 1000000); 
+    this.obniz.spi0.start({"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }); 
     
     expect(this.obniz).send({spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }});
     expect(this.obniz).to.be.finished;
@@ -26,7 +26,7 @@ describe("obniz.libs.spi", function () {
   
   
   it("write",  function () {
-    this.obniz.spi0.start("master", 0, 1, 2, 1000000); 
+    this.obniz.spi0.start({"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }); 
     expect(this.obniz).send({spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }});
     
     var r = this.obniz.spi0.writeWait([0x12, 0x98]).then(function(value){
@@ -41,7 +41,7 @@ describe("obniz.libs.spi", function () {
     return r;
   });
   it.skip("SPIで2byte送って3byte帰ってきたときの対応？",  function () {
-    this.obniz.spi0.start("master", 0, 1, 2, 1000000); 
+    this.obniz.spi0.start({"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }); 
     expect(this.obniz).send({spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }});
     
     var r = this.obniz.spi0.writeWait([0x12, 0x98]).then(function(value){

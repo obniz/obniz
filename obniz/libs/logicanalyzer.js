@@ -6,7 +6,7 @@ class LogicAnalyzer {
     this.obniz = obniz;
   }
 
-  start(io, interval, duration, trigerValue, trigerValueSamples) {
+  start( io, interval, duration, trigerValue, trigerValueSamples) {
     var obj = {};
     obj.logic_analyzer = {
       io: [io],

@@ -11,15 +11,14 @@ PeripheralSPI.prototype.addObserver = function(callback) {
   }
 };
 
-PeripheralSPI.prototype.start = function(mode, clk, mosi, miso, clock_speed) {
+PeripheralSPI.prototype.start = function(params) {
+  
+  var err = ObnizUtil._requiredKeys(params,["mode", "clk", "mosi", "miso", "clock"]);
+  if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
+  this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "clock"]);
   var obj = {};
-  obj["spi"+this.id] = {
-    mode: mode,
-    clock: clock_speed,
-    clk: clk,
-    mosi: mosi,
-    miso: miso
-  };
+  obj["spi" + this.id] = this.params;
+  
   this.Obniz.send(obj);
 };
 
@@ -52,9 +51,14 @@ PeripheralSPI.prototype.notified = function(obj) {
     callback(obj.data);
   }
 };
+
+PeripheralSPI.prototype.isUsed = function() {
+  return !!this.params;
+};
 PeripheralSPI.prototype.end = function(data) {
   var self = this;
   var obj = {};
   obj["spi"+self.id] = null;
+  this.params = null;
   self.Obniz.send(obj);
 };

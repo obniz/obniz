@@ -292,6 +292,34 @@ Obniz.prototype.getI2CWithConfig = function (config) {
   return i2c;
 };
 
+Obniz.prototype.getFreeSpi= function () {
+  var i = 0;
+  while (true) {
+    var spi = this["spi" + i];
+    if (!spi) {
+      break;
+    }
+    if (spi.isUsed()) {
+      return spi;
+    }
+    i++;
+  }
+  throw new Error("No More SPI Available. max = " + i);
+};
+
+
+Obniz.prototype.getSpiWithConfig = function (config) {
+  if(typeof config !== "object" ){
+    throw new Error("getSpiWithConfig need config arg");
+  }
+  if(config.spi){
+    return config.spi;
+  }
+  var spi = this.getFreeSpi();
+  spi.start(config);
+  return spi;
+};
+
 Obniz.prototype.getFreeUart = function () {
   var i = 0;
   while (true) {

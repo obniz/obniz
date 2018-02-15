@@ -292,6 +292,34 @@ Obniz.prototype.getI2CWithConfig = function (config) {
   return i2c;
 };
 
+Obniz.prototype.getFreeSpi= function () {
+  var i = 0;
+  while (true) {
+    var spi = this["spi" + i];
+    if (!spi) {
+      break;
+    }
+    if (spi.isUsed()) {
+      return spi;
+    }
+    i++;
+  }
+  throw new Error("No More SPI Available. max = " + i);
+};
+
+
+Obniz.prototype.getSpiWithConfig = function (config) {
+  if(typeof config !== "object" ){
+    throw new Error("getSpiWithConfig need config arg");
+  }
+  if(config.spi){
+    return config.spi;
+  }
+  var spi = this.getFreeSpi();
+  spi.start(config);
+  return spi;
+};
+
 Obniz.prototype.getFreeUart = function () {
   var i = 0;
   while (true) {
@@ -1550,7 +1578,7 @@ class LogicAnalyzer {
     this.obniz = obniz;
   }
 
-  start(io, interval, duration, trigerValue, trigerValueSamples) {
+  start( io, interval, duration, trigerValue, trigerValueSamples) {
     var obj = {};
     obj.logic_analyzer = {
       io: [io],
@@ -1709,15 +1737,14 @@ PeripheralSPI.prototype.addObserver = function(callback) {
   }
 };
 
-PeripheralSPI.prototype.start = function(mode, clk, mosi, miso, clock_speed) {
+PeripheralSPI.prototype.start = function(params) {
+  
+  var err = ObnizUtil._requiredKeys(params,["mode", "clk", "mosi", "miso", "clock"]);
+  if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
+  this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "clock"]);
   var obj = {};
-  obj["spi"+this.id] = {
-    mode: mode,
-    clock: clock_speed,
-    clk: clk,
-    mosi: mosi,
-    miso: miso
-  };
+  obj["spi" + this.id] = this.params;
+  
   this.Obniz.send(obj);
 };
 
@@ -1750,10 +1777,15 @@ PeripheralSPI.prototype.notified = function(obj) {
     callback(obj.data);
   }
 };
+
+PeripheralSPI.prototype.isUsed = function() {
+  return !!this.params;
+};
 PeripheralSPI.prototype.end = function(data) {
   var self = this;
   var obj = {};
   obj["spi"+self.id] = null;
+  this.params = null;
   self.Obniz.send(obj);
 };
 
