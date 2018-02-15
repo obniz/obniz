@@ -1,8 +1,8 @@
 class WS2811 {
 
   constructor() {
-    this.key = ["din","nc0","nc1"];
-    this.requiredKey = ["din","nc0","nc1"];
+    this.key = ["din", "vcc", "gnd"];
+    this.requiredKey = ["din"];
   }
 
   wired(obniz){
@@ -11,8 +11,6 @@ class WS2811 {
     
     this.params.mode  =  "master";
     this.params.frequency = 2*1000*1000;
-    this.params.clk = this.params.nc0;
-    this.params.miso = this.params.nc1;
     this.params.mosi = this.params.din;
     this.params.drive = "3v";
     this.spi = this.obniz.getSpiWithConfig(this.params);

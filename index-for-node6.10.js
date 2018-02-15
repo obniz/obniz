@@ -254,6 +254,10 @@ Obniz.prototype.init = function () {
   this.util = new ObnizUtil(this);
 };
 
+Obniz.prototype.isValidIO = function (io) {
+  return typeof io == "number" && io >= 0 && io < 12;
+};
+
 Obniz.prototype.getIO = function (id) {
   return this["io" + id];
 };
@@ -290,7 +294,7 @@ Obniz.prototype.getFreeI2C = function () {
     if (!i2c) {
       break;
     }
-    if (i2c.isUsed()) {
+    if (!i2c.isUsed()) {
       return i2c;
     }
     i++;
@@ -317,7 +321,7 @@ Obniz.prototype.getFreeSpi = function () {
     if (!spi) {
       break;
     }
-    if (spi.isUsed()) {
+    if (!spi.isUsed()) {
       return spi;
     }
     i++;
@@ -3291,17 +3295,17 @@ var isNode = typeof window === 'undefined' ? true : false;
 class MatrixLED_MAX7219 {
 
   constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk", "nc"];
-    this.requiredKeys = ["din", "cs", "clk", "nc"];
+    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
+    this.requiredKeys = ["din", "cs", "clk"];
   }
 
   wired(obniz) {
     this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
-    if (this.params.vcc) {
+    if (obniz.isValidIO(this.params.vcc)) {
       obniz.getIO(this.params.vcc).output(true);
     }
-    if (this.params.gnd) {
+    if (obniz.isValidIO(this.params.gnd)) {
       obniz.getIO(this.params.gnd).output(false);
     }
 
@@ -3313,11 +3317,10 @@ class MatrixLED_MAX7219 {
 
     // max 10Mhz but motor driver can't
     obniz.getIO(this.params.clk).drive("3v");
-    obniz.getIO(this.params.mosi).drive("3v");
+    obniz.getIO(this.params.din).drive("3v");
     this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
     this.params.mode = "master";
     this.params.mosi = this.params.din;
-    this.params.miso = this.params.nc;
     this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
@@ -3976,8 +3979,8 @@ if (PartsRegistrate) {
 class WS2811 {
 
   constructor() {
-    this.key = ["din", "nc0", "nc1"];
-    this.requiredKey = ["din", "nc0", "nc1"];
+    this.key = ["din", "vcc", "gnd"];
+    this.requiredKey = ["din"];
   }
 
   wired(obniz) {
@@ -3986,8 +3989,6 @@ class WS2811 {
 
     this.params.mode = "master";
     this.params.frequency = 2 * 1000 * 1000;
-    this.params.clk = this.params.nc0;
-    this.params.miso = this.params.nc1;
     this.params.mosi = this.params.din;
     this.params.drive = "3v";
     this.spi = this.obniz.getSpiWithConfig(this.params);
