@@ -36,12 +36,12 @@ IOの内部プルアップ・プルダウンを変更します。
 1. null (default) 
 2. "5v"  5vに内部プルアップします。
 3. "3v"  3vに内部プルアップします。
-4. "down" gndにプルダウンします。
+4. "0v"  gndにプルダウンします。
 
 ```Javascript
 // Example
 obniz.io0.pull(null);
-obniz.io1.pull("up");
+obniz.io1.pull("3v");
 obniz.io1.drive("open-drain"); // output open-drain
 ```
 

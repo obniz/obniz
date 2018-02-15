@@ -1488,7 +1488,7 @@ PeripheralIO.prototype.pull = function(updown) {
     case "pull-up3v":
       pull_type = "pull-up3v";
       break;
-    case "down":
+    case "0v":
     case "pull-down":
       pull_type = "pull-down";
       break;
@@ -2552,7 +2552,7 @@ PIR_ekmc.prototype.wired = function(obniz, pwr, signal, gnd) {
   this.io_signal = obniz.getIO(signal);
   
   this.io_pwr.output(true);
-  this.io_signal.pull("down");
+  this.io_signal.pull("0v");
   if (gnd) {
     this.io_gnd = obniz.getIO(gnd);
     this.io_gnd.output(false);

@@ -37,12 +37,12 @@ enable/disable internal pull up/down resistors.
 1. null (default) 
 2. "5v"  pull up to 5v
 3. "3v"  pull up to 3v
-4. "down" pull down to gnd
+4. "0v"  pull down to gnd
 
 ```Javascript
 // Example
 obniz.io0.pull(null);
-obniz.io1.pull("up");
+obniz.io1.pull("3v");
 obniz.io1.drive("open-drain"); // output open-drain
 ```
 
