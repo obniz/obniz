@@ -3,7 +3,7 @@
 信号が送られているかの確認などに利用できます。
 データ量の制限から、ピンの状態が変化してからある時間だけのデータを取得します。
 
-## logicAnalyzer.start(io, interval, duration);
+## logicAnalyzer.start({io, interval, duration});
 
 ioでのロジックアナライザーをスタートさせます。
 モニター間隔と全体の時間を指定できます。
@@ -14,16 +14,16 @@ ioでのロジックアナライザーをスタートさせます。
 
 ```Javascript
 // Example
-obniz.logicAnalyzer.start(0, 2, 1000);  // start on io0. 2msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 2msec interval and 1sec long.
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
-## logicAnalyzer.start(io, interval, duration, trigerValue, trigerValueSamples);
+## logicAnalyzer.start({io, interval, duration, trigerValue, trigerValueSamples});
 trigerを指定することができます。 これなしでは、全てのioの状態変化をトリガーとして動き始めます。 トリガーにより測定を開始したい値とその数を指定できます。 例えば、下の例であればfalseが3回続いたデータのみ計測します。
 ```Javascript
 // Example
-obniz.logicAnalyzer.start(0, 2, 1000, false, 3);  // start on io0. 2msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000, trigerValue:false, trigerValueSamples:3});  // start on io0. 2msec interval and 1sec long.
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
 }
@@ -42,7 +42,7 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 
 ```Javascript
 // Example
-obniz.logicAnalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1msec interval and 1sec long.
 
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
@@ -54,6 +54,6 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 
 ```Javascript
 // Example
-obniz.logicAnalyzer.start(0, 2, 1000);  // start on io0. 1msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1msec interval and 1sec long.
 obniz.logicAnalyzer.end();
 ```

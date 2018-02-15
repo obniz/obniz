@@ -1534,17 +1534,24 @@ class LogicAnalyzer {
     this.obniz = obniz;
   }
 
-  start(io, interval, duration, trigerValue, trigerValueSamples) {
+  start(params) {
+
+    var err = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
+    if (err) {
+      throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["io", "interval", "duration", "trigerValue", "trigerValueSamples"]);
+
     var obj = {};
     obj.logic_analyzer = {
-      io: [io],
-      interval: interval,
-      duration: duration
+      io: [this.params.io],
+      interval: this.params.interval,
+      duration: this.params.duration
     };
-    if (trigerValueSamples > 0) {
+    if (this.params.trigerValueSamples > 0) {
       obj.logic_analyzer.triger = {
-        value: !!trigerValue,
-        samples: trigerValueSamples
+        value: !!this.params.trigerValue,
+        samples: this.params.trigerValueSamples
       };
     }
 
