@@ -15,7 +15,7 @@ PeripheralSPI.prototype.start = function(params) {
   
   var err = ObnizUtil._requiredKeys(params,["mode", "frequency"]);
   if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pullType"]);
+  this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pull"]);
   var obj = {};
   
   obj["spi" + this.id]  = {
@@ -36,10 +36,10 @@ PeripheralSPI.prototype.start = function(params) {
       if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
   }
   
-  if(this.params.pullType){
-      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pullType);
-      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pullType);
-      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pullType);
+  if(this.params.pull){
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
   }else{
       if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
       if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);

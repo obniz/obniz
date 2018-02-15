@@ -9,7 +9,7 @@ PeripheralUART.prototype.start = function(params) {
   
   var err = ObnizUtil._requiredKeys(params,["tx", "rx"]);
   if(err){ throw new Error("uart start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts","drive","pul"]);
+  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts","drive","pull"]);
 
 
   if( this.params.hasOwnProperty("drive")){

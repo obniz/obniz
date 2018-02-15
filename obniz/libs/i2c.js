@@ -15,7 +15,7 @@ PeripheralI2C.prototype.addObserver = function(callback) {
 PeripheralI2C.prototype.start = function(arg) {
   var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl", "clock"]);
   if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
-  this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "clock", "pullType", "drive"]);
+  this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "clock", "pull", "drive"]);
 
   if(this.state.drive){
      this.Obniz.getIO(this.state.sda).drive(this.state.drive);
@@ -25,9 +25,9 @@ PeripheralI2C.prototype.start = function(arg) {
       this.Obniz.getIO(this.state.scl).drive("open-drain");
   }
   
-  if(this.state.pullType){
-     this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
-     this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
+  if(this.state.pull){
+     this.Obniz.getIO(this.state.sda).pull(this.state.pull);
+     this.Obniz.getIO(this.state.scl).pull(this.state.pull);
   }else{
       this.Obniz.getIO(this.state.sda).pull(null);
       this.Obniz.getIO(this.state.scl).pull(null);
