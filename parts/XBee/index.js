@@ -3,20 +3,25 @@
 class XBee {
 
   constructor() {
-
+    this.keys = ["tx","rx","gnd"];
+    this.requiredKeys = ["tx","rx"];
   }
 
-  wired(obniz, tx_obniz_to_xbee, rx_xbee_to_obniz) {
+  wired(obniz) {
   
-    this.obniz = obniz;
-    this.uart = obniz.uart0;
+    this.uart = obniz.getFreeUart();
     this.currentCommand = null;
     this.commands = [];
     this.isAtMode = false;
     this.onFinishAtModeCallback = null;
     
-    obniz.getIO(tx_obniz_to_xbee).drive("3v");
-    this.uart.start(tx_obniz_to_xbee, rx_xbee_to_obniz, 9600, null, 8);
+    
+  if(typeof(this.params.gnd) === "number") {
+    obniz.getIO(this.params.gnd).output(false);
+  }
+  
+    obniz.getIO(this.params.tx).drive("3v");
+    this.uart.start(this.params.tx, this.params.rx, 9600, null, 8);
     
     this.uart.onreceive = (function(data, text) {
       console.log("XBEE RECIEVE : " + text);
@@ -35,7 +40,7 @@ class XBee {
       this.uart.send(text);
       
     }else{
-      obniz.error("XBee is AT Command mode now. Wait for finish config.");
+      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
     }
   }
 
@@ -105,10 +110,10 @@ class XBee {
       var standaloneKeys = {
         "destination_address_high" : "DH",
         "destination_address_low" : "DL",
-        "source_address" : "MY",
+        "source_address" : "MY"
       };
       var highLowKeys = [
-        "destination_address",
+        "destination_address"
       ];
       this.enterAtMode();
       for(var key in config){

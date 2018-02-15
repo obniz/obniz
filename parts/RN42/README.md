@@ -5,12 +5,12 @@ SPP and HID profile can be used.
 <p data-height="367" data-theme-id="32184" data-slug-hash="JMmEJW" data-default-tab="js,result" data-user="obniz" data-embed-version="2" data-pen-title="Parts: RN42-HID" class="codepen">See the Pen <a href="https://codepen.io/obniz/pen/JMmEJW/">Parts: RN42-HID</a> by obniz (<a href="https://codepen.io/obniz">@obniz</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
-## wired(obniz, tx_to_RN42, rx_from_RN42)
+## wired(obniz, {tx, rx})
 RN42 require 3.3v supply. You should supply stable 3.3v to RN42.
 
 ```javascript
   // Example
-  var rn42 = obniz.wired("RN42", 1, 2); // io1 is tx to RN42, io2 is rx from RN42
+  var rn42 = obniz.wired("RN42", {tx: 1, rx:2}); // io1 is tx to RN42, io2 is rx from RN42
 
   rn42.config({
     display_name: "obniz",
@@ -31,14 +31,14 @@ RN42 require 3.3v supply. You should supply stable 3.3v to RN42.
 ## send(data)
 send data via UART to RN42.
 ```javascript
-  var rn42 = obniz.wired("RN42", 1, 2);
+  var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
   rn42.send("Hello")
 ```
 
 ## onreceive(data, text)
 received data from RN42 via UART. This callback has same arguments with uart.onreceive()
 ```javascript
-  var rn42 = obniz.wired("RN42", 1, 2);
+  var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
   rn42.onreceive = function(data, text) {
     console.log(text);
   }

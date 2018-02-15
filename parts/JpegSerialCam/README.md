@@ -11,11 +11,13 @@ var imagedata = await cam.takewait();
 <p data-height="494" data-theme-id="32184" data-slug-hash="jZMNBQ" data-default-tab="js,result" data-user="obniz" data-embed-version="2" data-pen-title="Parts: JpegSerialCam" class="codepen">See the Pen <a href="https://codepen.io/obniz/pen/jZMNBQ/">Parts: JpegSerialCam</a> by obniz (<a href="https://codepen.io/obniz">@obniz</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
-## wire(obniz, vcc, tx_from_cam, rx_to_cam, gnd)
+## wire(obniz, {vcc, tx, rx, gnd})
 connect PowerSupply and UART.
+tx is obniz -> cam data line.
+rx is obniz <- cam data line.
 
 ```Javascript
-const cam = obniz.wired("JpegSerialCam", 0, 1, 2, 3);
+const cam = obniz.wired("JpegSerialCam", {vcc:0, tx:1, rx:2, gnd:3});
 ```
 
 ## startwait({baud:baudrate})

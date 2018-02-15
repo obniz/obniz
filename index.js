@@ -248,7 +248,7 @@ Obniz.prototype.getAD = function (id) {
  */
 Obniz.prototype.getpwm = function () {
   return this.getFreePwm();
-}
+};
 
 Obniz.prototype.getFreePwm = function () {
   var i = 0;
@@ -257,7 +257,7 @@ Obniz.prototype.getFreePwm = function () {
     if (!pwm) {
       break;
     }
-    if (typeof (pwm.state.io) != "number") {
+    if (!pwm.isUsed()) {
       return pwm;
     }
     i++;
@@ -272,7 +272,7 @@ Obniz.prototype.getFreeI2C = function () {
     if (!i2c) {
       break;
     }
-    if (typeof (i2c.state.scl) !== "number") {
+    if (i2c.isUsed()) {
       return i2c;
     }
     i++;
@@ -291,6 +291,22 @@ Obniz.prototype.getI2CWithConfig = function (config) {
   i2c.start(config);
   return i2c;
 };
+
+Obniz.prototype.getFreeUart = function () {
+  var i = 0;
+  while (true) {
+    var uart = this["uart" + i];
+    if (!uart) {
+      break;
+    }
+    if (!uart.isUsed()) {
+      return uart;
+    }
+    i++;
+  }
+  throw new Error("No More uart Available. max = " + i);
+};
+
 
 Obniz.prototype.handleWSCommand = function (wsObj) {
   // ready
@@ -1350,6 +1366,9 @@ PeripheralI2C.prototype.notified = function(obj) {
     callback(obj.data);
   }
 };
+PeripheralI2C.prototype.isUserd = function() {
+  return (typeof (this.state.scl) === "number");
+};
 
 PeripheralI2C.prototype.end = function() {
   this.state = {};
@@ -1654,11 +1673,17 @@ PeripheralPWM.prototype.forceWorking = function(working) {
   });
 };
 
+
+PeripheralPWM.prototype.isUsed = function() {
+  return (typeof (this.state.io) === "number");
+};
+
 PeripheralPWM.prototype.end = function() {
   var obj = {};
   this.state = {};
   this.sendWS(null);
 };
+
 
 PeripheralPWM.prototype.modulate = function(type, symbol_sec, data) {
   var obj = {};
@@ -1770,33 +1795,14 @@ var PeripheralUART = function(Obniz, id) {
   this.received = new Uint8Array([]);
 };
 
-PeripheralUART.prototype.start = function(tx, rx, baud, stop, bits, parity, flowcontrol, rts, cts) {
+PeripheralUART.prototype.start = function(params) {
+  
+  var err = ObnizUtil._requiredKeys(params,["tx", "rx"]);
+  if(err){ throw new Error("uart start param '" + err +"' required, but not found ");return;}
+  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts"]);
+
   var obj = {};
-  obj["uart"+this.id] = {
-    tx: tx,
-    rx: rx
-  };
-  if (baud) {
-    obj["uart"+this.id].baud = baud;
-  }
-  if (stop) {
-    obj["uart"+this.id].stop = stop;
-  }
-  if (bits) {
-    obj["uart"+this.id].bits = bits;
-  }
-  if (parity) {
-    obj["uart"+this.id].parity = parity;
-  }
-  if (flowcontrol) {
-    obj["uart"+this.id].flowcontrol = flowcontrol;
-  }
-  if (rts) {
-    obj["uart"+this.id].rts = rts;
-  }
-  if (flowcontrol) {
-    obj["uart"+this.id].cts = cts;
-  }
+  obj["uart"+this.id] = this.params;
   this.Obniz.send(obj);
   this.received = [];
 };
@@ -1837,18 +1843,18 @@ PeripheralUART.prototype.send = function(data) {
   var obj = {};
   obj["uart"+this.id] = {};
   obj["uart"+this.id].data = send_data;
-  console.log(obj);
+//  console.log(obj);
   this.Obniz.send(obj);
 };
 
 
-PeripheralUART.prototype.isdataexists = function() {
+PeripheralUART.prototype.isDataExists = function() {
   return (this.received && this.received.length > 0);
 };
 
-PeripheralUART.prototype.readbytes = function() {
+PeripheralUART.prototype.readBytes = function() {
   var results = [];
-  if (this.isdataexists()) {
+  if (this.isDataExists()) {
       for (var i=0;i<this.received.length; i++) {
         results.push(this.received[i]);
       }
@@ -1859,10 +1865,10 @@ PeripheralUART.prototype.readbytes = function() {
 
 
 
-PeripheralUART.prototype.readtext = function() {
+PeripheralUART.prototype.readText = function() {
   var string = null;
-  if (this.isdataexists()) {
-      var data = this.readbytes();
+  if (this.isDataExists()) {
+      var data = this.readBytes();
       string = this.tryConvertString(data);
   }
   this.received = [];
@@ -1900,9 +1906,14 @@ PeripheralUART.prototype.notified = function(obj) {
   }
 };
 
+PeripheralUART.prototype.isUsed = function() {
+  return !!this.params;
+};
+
 PeripheralUART.prototype.end = function() {
   var obj = {};
   obj["uart"+this.id] = null;
+  this.params = null;
   this.Obniz.send(obj);
 };
 class ObnizUtil {
@@ -2791,41 +2802,41 @@ JoyStick.prototype.isPressedWait = async function() {
 class JpegSerialCam {
 
   constructor() {
-
+    this.keys = [ "vcc", "tx", "rx", "gnd"];
+    this.requiredKeys = [ "vcc", "tx", "rx", "gnd"];
   }
 
-  wired(obniz, vcc, tx, rx, gnd){
-    this.obniz = obniz;
-    obniz.getIO(vcc).output(true);
-    obniz.getIO(gnd).output(false);
-    this.my_tx = rx;
-    this.my_rx = tx;
+  wired(){
+    this.obniz.getIO(this.params.vcc).output(true);
+    this.obniz.getIO(this.params.gnd).output(false);
+    this.my_tx = this.params.rx;
+    this.my_rx = this.params.tx;
 
-    obniz.getIO(this.my_tx).drive("3v");
+    this.obniz.getIO(this.my_tx).drive("3v");
     
-    this.uart = obniz.uart0; // TODO;
+    this.uart = this.obniz.getFreeUart(); 
   };
 
   async _drainUntil(uart, search, recv) {
     if (!recv) recv = [];
     while(true) {
-      var readed = uart.readbytes();
+      var readed = uart.readBytes();
       for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
       var tail = this._seekTail(search, recv);
       if (tail >= 0) {
         recv.splice(0, tail);
         return recv;
       }
-      await obniz.wait(10);
+      await this.obniz.wait(10);
     }
   }
 
   _seekTail(search, src) {
     var f=0;
     for (var i=0;i<src.length; i++) {
-      if (src[i] == search[f]) {
+      if (src[i] === search[f]) {
         f++;
-        if (f == search.length) {
+        if (f === search.length) {
           return i+1;
         }
       } else {
@@ -2836,7 +2847,7 @@ class JpegSerialCam {
   }
   
   arrayToBase64(buf) {
-    if (typeof btoa == "function") {
+    if (typeof btoa === "function") {
       var binstr = Array.prototype.map.call(buf, function (ch) {
         return String.fromCharCode(ch);
       }).join('');
@@ -2847,12 +2858,12 @@ class JpegSerialCam {
 
   async startwait(obj) {
     if (!obj) obj = {};
-    this.uart.start(this.my_tx, this.my_rx, obj.baud || 38400);
-    await obniz.wait(2500);
+    this.uart.start({tx:this.my_tx, rx:this.my_rx, baud:obj.baud || 38400});
+    await this.obniz.wait(2500);
   }
 
   async resetwait() {
-    this.uart.send([0x56, 0x00, 0x26, 0x00])
+    this.uart.send([0x56, 0x00, 0x26, 0x00]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
     await this.obniz.wait(2500);
   }
@@ -2877,19 +2888,19 @@ class JpegSerialCam {
     let val;
     switch(baud) {
       case 9600:
-        val = [0xAE, 0xC8]
+        val = [0xAE, 0xC8];
         break;
       case 19200:
-        val = [0x56, 0xE4]
+        val = [0x56, 0xE4];
         break;
       case 38400:
-        val = [0x2A, 0xF2]
+        val = [0x2A, 0xF2];
         break;
       case 57600:
-        val = [0x1C, 0x4C]
+        val = [0x1C, 0x4C];
         break;
       case 115200:
-        val = [0x0D, 0xA6]
+        val = [0x0D, 0xA6];
         break;
       default:
         throw new Error("invalid baud rate");
@@ -2899,26 +2910,26 @@ class JpegSerialCam {
     //await this.obniz.wait(1000);
     await this.startwait({
       baud
-    })
+    });
   }
 
   async takewait() {
     const uart = this.uart;
     //console.log("stop a photo")
-    uart.send([0x56, 0x00, 0x36, 0x01, 0x02])
+    uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
     await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]); 
     
     //console.log("take a photo")
-    uart.send([0x56, 0x00, 0x36, 0x01, 0x00])
+    uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
     await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
     
     //console.log("read length")
-    uart.send([0x56, 0x00, 0x34, 0x01, 0x00]) // read length of image data
+    uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
     var recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
     var XX;
     var YY;
     while(true) {
-      var readed = uart.readbytes();
+      var readed = uart.readBytes();
       //console.log(recv);
       for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
       if (recv.length >= 2) {
@@ -2926,7 +2937,7 @@ class JpegSerialCam {
         YY = recv[1];
         break;
       }
-      await obniz.wait(1000);
+      await this.obniz.wait(1000);
     }
     let databytes = XX * 256 + YY;
     //console.log("image: " + databytes + " Bytes");
@@ -2938,13 +2949,13 @@ class JpegSerialCam {
     var recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
     //console.log("reading...");
     while(true) {
-      var readed = uart.readbytes();
+      var readed = uart.readBytes();
       for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
       //console.log(readed.length);
       if (recv.length >= databytes) {
         break;
       }
-      await obniz.wait(10);
+      await this.obniz.wait(10);
     }
     //console.log("done");
     recv = recv.splice(0, databytes); // remove tail
@@ -3410,20 +3421,19 @@ if (PartsRegistrate) {
   PartsRegistrate("PotentionMeter", PotentionMeter);
 }
 var RN42 = function() {
-
+  this.keys = ["tx", "rx", "gnd"];
+  this.requiredKeys = ["tx", "rx"];
 };
 
-RN42.prototype.wired = function(obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gnd) {
-  this.obniz = obniz;
-
-  if(typeof(gnd) == "number") {
-    obniz.getIO(gnd).output(false);
+RN42.prototype.wired = function(obniz) {
+  if(typeof(this.params.gnd) === "number") {
+    obniz.getIO(this.params.gnd).output(false);
   }
 
-  this.uart = obniz.uart0;
+  this.uart = obniz.getFreeUart();
 
-  obniz.getIO(tx_obniz_to_rn42).drive("3v");
-  this.uart.start(tx_obniz_to_rn42, rx_obniz_from_rn42, 115200);
+  obniz.getIO(this.params.tx).drive("3v");
+  this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:115200});
   var self = this;
   this.uart.onreceive = function(data, text) {
     // this is not perfect. separation is possible.
@@ -3432,25 +3442,25 @@ RN42.prototype.wired = function(obniz, tx_obniz_to_rn42, rx_obniz_from_rn42, gnd
     } else if(text.indexOf("DISCONNECT") >= 0) {
       console.log("disconnected");
     }
-    if (typeof(self.onreceive) == "function") {
+    if (typeof(self.onreceive) === "function") {
       self.onreceive(data, text);
     }
-  }
-}
+  };
+};
 
 RN42.prototype.send = function(data) {
   this.uart.send(data);
-}
+};
 
 RN42.prototype.sendCommand = function(data) {
   this.uart.send(data+'\n');
   this.obniz.freeze(100);
-}
+};
 
 RN42.prototype.enterCommandMode = function() {
   this.send('$$$');
   this.obniz.freeze(100);
-}
+};
 
 RN42.prototype.config = function(json) {
   this.enterCommandMode();
@@ -3480,18 +3490,18 @@ RN42.prototype.config = function(json) {
     this.config_displayName(json.display_name);
   }
   this.config_reboot();
-}
+};
 
 RN42.prototype.config_reboot = function() {
   this.sendCommand('R,1');
-}
+};
 
 RN42.prototype.config_masterslave = function(mode) {
   var val = -1;
-  if (typeof(mode) == "number") {
+  if (typeof(mode) === "number") {
     val = mode;
   } else if (typeof(mode) === "string") {
-    var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"]
+    var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"];
     for (var i=0; i<modes.length; i++) {
       if (modes[i] === mode) {
         val = i;
@@ -3504,23 +3514,23 @@ RN42.prototype.config_masterslave = function(mode) {
     return;
   }
   this.sendCommand('SM,'+val);
-}
+};
 
 RN42.prototype.config_displayName = function(name) {
   this.sendCommand('SN,'+name);
-}
+};
 
     // // SH,0200 HID Flag register. Descriptor=keyboard
 RN42.prototype.config_HIDflag = function(flag) {
   this.sendCommand('SH,'+flag);
-}
+};
 
 RN42.prototype.config_profile = function(mode) {
   var val = -1;
-  if (typeof(id) == "number") {
+  if (typeof(mode) === "number") {
     val = mode;
   } else if (typeof(mode) === "string") {
-    var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"]
+    var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
     for (var i=0; i<modes.length; i++) {
       if (modes[i] === mode) {
         val = i;
@@ -3533,18 +3543,18 @@ RN42.prototype.config_profile = function(mode) {
     return;
   }
   this.sendCommand('S~,'+val);
-}
+};
 
 RN42.prototype.config_revert_localecho = function() {
   this.sendCommand('+');
-}
+};
 
 RN42.prototype.config_auth = function(mode) {
   var val = -1;
-  if (typeof(mode) == "number") {
+  if (typeof(mode) === "number") {
     val = mode;
   } else if (typeof(mode) === "string") {
-    var modes = ["open", "ssp-keyboard", "just-work", "pincode"]
+    var modes = ["open", "ssp-keyboard", "just-work", "pincode"];
     for (var i=0; i<modes.length; i++) {
       if (modes[i] === mode) {
         val = i;
@@ -3557,37 +3567,37 @@ RN42.prototype.config_auth = function(mode) {
     return;
   }
   this.sendCommand('SA,'+val);
-}
+};
 
 RN42.prototype.config_power = function(dbm) {
   
   var val = "0010";
   if (16 > dbm && dbm >= 12) {
-    val = "000C"
+    val = "000C";
   } else if (12 > dbm && dbm >= 8) {
-    val = "0008"
+    val = "0008";
   } else if (8 > dbm && dbm >= 4) {
-    val = "0004"
+    val = "0004";
   } else if (4 > dbm && dbm >= 0) {
-    val = "0000"
+    val = "0000";
   } else if (0 > dbm && dbm >= -4) {
-    val = "FFFC"
+    val = "FFFC";
   } else if (-4 > dbm && dbm >= -8) {
-    val = "FFF8"
+    val = "FFF8";
   } else if (-8 > dbm) {
-    val = "FFF4"
+    val = "FFF4";
   }
 
   this.sendCommand('SY,'+val);
-}
+};
 
 RN42.prototype.config_get_setting = function() {
   this.sendCommand('D');
-}
+};
 
 RN42.prototype.config_get_extendSetting = function() {
   this.sendCommand('E');
-}
+};
 
 // Module functions
 
@@ -4057,20 +4067,25 @@ if (PartsRegistrate) {
 class XBee {
 
   constructor() {
-
+    this.keys = ["tx","rx","gnd"];
+    this.requiredKeys = ["tx","rx"];
   }
 
-  wired(obniz, tx_obniz_to_xbee, rx_xbee_to_obniz) {
+  wired(obniz) {
   
-    this.obniz = obniz;
-    this.uart = obniz.uart0;
+    this.uart = obniz.getFreeUart();
     this.currentCommand = null;
     this.commands = [];
     this.isAtMode = false;
     this.onFinishAtModeCallback = null;
     
-    obniz.getIO(tx_obniz_to_xbee).drive("3v");
-    this.uart.start(tx_obniz_to_xbee, rx_xbee_to_obniz, 9600, null, 8);
+    
+  if(typeof(this.params.gnd) === "number") {
+    obniz.getIO(this.params.gnd).output(false);
+  }
+  
+    obniz.getIO(this.params.tx).drive("3v");
+    this.uart.start(this.params.tx, this.params.rx, 9600, null, 8);
     
     this.uart.onreceive = (function(data, text) {
       console.log("XBEE RECIEVE : " + text);
@@ -4089,7 +4104,7 @@ class XBee {
       this.uart.send(text);
       
     }else{
-      obniz.error("XBee is AT Command mode now. Wait for finish config.");
+      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
     }
   }
 
@@ -4159,10 +4174,10 @@ class XBee {
       var standaloneKeys = {
         "destination_address_high" : "DH",
         "destination_address_low" : "DL",
-        "source_address" : "MY",
+        "source_address" : "MY"
       };
       var highLowKeys = [
-        "destination_address",
+        "destination_address"
       ];
       this.enterAtMode();
       for(var key in config){

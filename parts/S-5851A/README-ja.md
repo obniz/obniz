@@ -18,7 +18,7 @@ F:0x4F
 
 
 ```javascript
-var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5,addressmode:"A"});
+var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5, addressmode:"A"});
 ```
 ## [await] getTempWait()
 現在の温度を計測して返します。単位は摂氏(℃)です。
