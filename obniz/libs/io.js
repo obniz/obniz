@@ -64,7 +64,7 @@ PeripheralIO.prototype.pull = function(updown) {
     case "pull-up3v":
       pull_type = "pull-up3v";
       break;
-    case "down":
+    case "0v":
     case "pull-down":
       pull_type = "pull-down";
       break;
