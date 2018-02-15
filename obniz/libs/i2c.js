@@ -12,19 +12,19 @@ PeripheralI2C.prototype.addObserver = function(callback) {
   }
 };
 
-PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
-  var obj = {};
-  this.state = {
-    mode,
-    sda,
-    scl,
-    clock
-  };
-  if (pullType) {
-    this.state.pull_type = pullType;
-  }
-  obj["i2c"+this.id] = this.state;
+PeripheralI2C.prototype.start = function(arg) {
+  var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl", "clock"]);
+  if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
+  this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "clock", "pullType"]);
+
+  var obj = {}; 
+  obj["i2c"+this.id] = ObnizUtil._keyFilter(this.state,["mode", "sda", "scl", "clock"]);
   this.Obniz.send(obj);
+  if(this.state.pullType){
+      console.log(this.state.pullType)
+     this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
+     this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
+  }
 };
 
 PeripheralI2C.prototype.write = function(address, data) {

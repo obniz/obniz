@@ -20,5 +20,37 @@ class ObnizUtil {
       return ctx;
     } 
   }
+  
+  static _keyFilter(params,keys){
+    var filterdParams = {};
+    if(typeof params !== "object" ){
+      return filterdParams;
+    }
+    filterdParams =  Object.keys(params)
+    .filter(key => keys.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = params[key];
+      return obj;
+    }, {});
+    
+    return filterdParams;
+  }
+  
+  /**
+   *
+   * @return {String} key name of not found. 
+   */
+  static _requiredKeys(params, keys){
+    if(typeof params !== "object" ){
+      return keys[0];
+    }
+    
+    for( var index in keys){
+        if(!(keys[index] in params )){
+            return keys[index];
+        }
+    }
+    return null;
+  }
 
 }

@@ -57,15 +57,19 @@ PeripheralIO.prototype.pull = function(updown) {
   let pull_type = ""
   switch(updown) {
     case "5v":
+    case "pull-up5v":
       pull_type = "pull-up5v";
       break;
     case "3v":
+    case "pull-up3v":
       pull_type = "pull-up3v";
       break;
     case "down":
+    case "pull-down":
       pull_type = "pull-down";
       break;
     case null:
+    case "float":
       pull_type = "float";
       break;
     default:
