@@ -17,6 +17,8 @@ var Obniz = function (id, options) {
   this.debugprint = false;
   this.debugs = [];
 
+  this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
+
   this.init();
 
   if (!options) options = {};
@@ -204,6 +206,10 @@ Obniz.prototype.send = function (value) {
   }
   this.print_debug("send: " + value);
   this.socket.send(value);
+
+  if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+    this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+  }
 };
 
 Obniz.prototype.init = function () {
