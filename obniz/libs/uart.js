@@ -135,8 +135,13 @@ PeripheralUART.prototype.notified = function(obj) {
   }
 };
 
+PeripheralUART.prototype.isUsed = function() {
+  return !!this.params;
+};
+
 PeripheralUART.prototype.end = function() {
   var obj = {};
   obj["uart"+this.id] = null;
+  this.params = null;
   this.Obniz.send(obj);
 };

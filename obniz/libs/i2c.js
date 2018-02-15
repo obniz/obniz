@@ -64,6 +64,9 @@ PeripheralI2C.prototype.notified = function(obj) {
     callback(obj.data);
   }
 };
+PeripheralI2C.prototype.isUserd = function() {
+  return (typeof (this.state.scl) === "number");
+};
 
 PeripheralI2C.prototype.end = function() {
   this.state = {};

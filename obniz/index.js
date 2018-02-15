@@ -248,7 +248,7 @@ Obniz.prototype.getAD = function (id) {
  */
 Obniz.prototype.getpwm = function () {
   return this.getFreePwm();
-}
+};
 
 Obniz.prototype.getFreePwm = function () {
   var i = 0;
@@ -257,7 +257,7 @@ Obniz.prototype.getFreePwm = function () {
     if (!pwm) {
       break;
     }
-    if (typeof (pwm.state.io) != "number") {
+    if (!pwm.isUsed()) {
       return pwm;
     }
     i++;
@@ -272,7 +272,7 @@ Obniz.prototype.getFreeI2C = function () {
     if (!i2c) {
       break;
     }
-    if (typeof (i2c.state.scl) !== "number") {
+    if (i2c.isUsed()) {
       return i2c;
     }
     i++;
@@ -291,6 +291,22 @@ Obniz.prototype.getI2CWithConfig = function (config) {
   i2c.start(config);
   return i2c;
 };
+
+Obniz.prototype.getFreeUart = function () {
+  var i = 0;
+  while (true) {
+    var uart = this["uart" + i];
+    if (!uart) {
+      break;
+    }
+    if (!uart.isUsed()) {
+      return uart;
+    }
+    i++;
+  }
+  throw new Error("No More uart Available. max = " + i);
+};
+
 
 Obniz.prototype.handleWSCommand = function (wsObj) {
   // ready

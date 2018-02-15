@@ -51,11 +51,17 @@ PeripheralPWM.prototype.forceWorking = function(working) {
   });
 };
 
+
+PeripheralPWM.prototype.isUsed = function() {
+  return (typeof (this.state.io) === "number");
+};
+
 PeripheralPWM.prototype.end = function() {
   var obj = {};
   this.state = {};
   this.sendWS(null);
 };
+
 
 PeripheralPWM.prototype.modulate = function(type, symbol_sec, data) {
   var obj = {};
