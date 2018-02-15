@@ -1710,7 +1710,7 @@ PeripheralSPI.prototype.addObserver = function (callback) {
 
 PeripheralSPI.prototype.start = function (params) {
 
-  var err = ObnizUtil._requiredKeys(params, ["mode", "clk", "mosi", "miso", "frequency"]);
+  var err = ObnizUtil._requiredKeys(params, ["mode", "frequency"]);
   if (err) {
     throw new Error("spi start param '" + err + "' required, but not found ");return;
   }
