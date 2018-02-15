@@ -6,10 +6,10 @@ var ADT7310 = function() {
 ADT7310.prototype.wired = async function(obniz) {
   this.obniz = obniz;
 
-  if (this.params.vcc) {
+  if (obniz.isValidIO(this.params.vcc)) {
     obniz.getIO(this.params.vcc).output(true);
   }
-  if (this.params.gnd) {
+  if (obniz.isValidIO(this.params.gnd)) {
     this.io_gnd = obniz.getIO(this.params.gnd);
     this.io_gnd.output(false);
   }

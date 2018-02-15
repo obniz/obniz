@@ -9,7 +9,7 @@ SHT31.prototype.wired = function(obniz,) {
   this.io_adr = obniz.getIO(this.params.adr);
 
   this.io_pwr.output(true);
-  if (this.params.gnd) {
+  if (obniz.isValidIO(this.params.gnd)) {
     this.io_gnd = obniz.getIO(this.params.gnd);
     this.io_gnd.output(false);
   }

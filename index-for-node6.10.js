@@ -255,7 +255,7 @@ Obniz.prototype.init = function () {
 };
 
 Obniz.prototype.isValidIO = function (io) {
-  return typeof io == "number" && io >= 0 && io < 12;
+  return typeof io === "number" && io >= 0 && io < 12;
 };
 
 Obniz.prototype.getIO = function (id) {
@@ -2223,10 +2223,10 @@ ADT7310.prototype.wired = (() => {
   var _ref6 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
-    if (this.params.vcc) {
+    if (obniz.isValidIO(this.params.vcc)) {
       obniz.getIO(this.params.vcc).output(true);
     }
-    if (this.params.gnd) {
+    if (obniz.isValidIO(this.params.gnd)) {
       this.io_gnd = obniz.getIO(this.params.gnd);
       this.io_gnd.output(false);
     }
@@ -3488,7 +3488,7 @@ var RN42 = function () {
 };
 
 RN42.prototype.wired = function (obniz) {
-  if (typeof this.params.gnd === "number") {
+  if (obniz.isValidIO(this.params.gnd)) {
     obniz.getIO(this.params.gnd).output(false);
   }
 
@@ -3679,7 +3679,7 @@ S5851A.prototype.wired = function (obniz) {
   this.io_adr1 = obniz.getIO(this.params.adr1);
 
   this.io_pwr.output(true);
-  if (this.params.gnd) {
+  if (obniz.isValidIO(this.params.gnd)) {
     this.io_gnd = obniz.getIO(this.params.gnd);
     this.io_gnd.output(false);
   }
@@ -3877,7 +3877,7 @@ SHT31.prototype.wired = function (obniz) {
   this.io_adr = obniz.getIO(this.params.adr);
 
   this.io_pwr.output(true);
-  if (this.params.gnd) {
+  if (obniz.isValidIO(this.params.gnd)) {
     this.io_gnd = obniz.getIO(this.params.gnd);
     this.io_gnd.output(false);
   }

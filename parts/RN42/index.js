@@ -4,7 +4,7 @@ var RN42 = function() {
 };
 
 RN42.prototype.wired = function(obniz) {
-  if(typeof(this.params.gnd) === "number") {
+  if(obniz.isValidIO(this.params.gnd)) {
     obniz.getIO(this.params.gnd).output(false);
   }
 
