@@ -1,15 +1,21 @@
 class WS2811 {
 
   constructor() {
-
+    this.key = ["din","nc0","nc1"];
+    this.requiredKey = ["din","nc0","nc1"];
   }
 
-  wired(obniz, din ,nc0, nc1){
+  wired(obniz){
 
     this.obniz = obniz;
-    obniz.getIO(din).drive("3v");
-    this.spi = obniz.spi0;// TODO:
-    this.spi.start("master", nc0, din, nc1, 2*1000*1000); 
+    
+    this.params.mode  =  "master";
+    this.params.frequency = 2*1000*1000;
+    this.params.clk = this.params.nc0;
+    this.params.miso = this.params.nc1;
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
   };
 
   static _generateFromByte(val) {

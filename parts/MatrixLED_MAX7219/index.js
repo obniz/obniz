@@ -3,15 +3,19 @@ var isNode = (typeof window === 'undefined') ? true : false;
 class MatrixLED_MAX7219 {
 
   constructor() {
-
+    this.keys = ["vcc", "gnd", "din", "cs", "clk", "nc"];
+    this.requiredKeys = ["din", "cs", "clk", "nc"];
   }
 
-  wired(obniz, vcc, gnd, din, cs, clk, nc) {
-    this.obniz = obniz;
-    this.cs = obniz.getIO(cs);
+  wired(obniz) {
+    this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
-    obniz.getIO(vcc).output(true);
-    obniz.getIO(gnd).output(false);
+    if(this.params.vcc){
+      obniz.getIO(this.params.vcc).output(true);
+    }
+    if(this.params.gnd){
+      obniz.getIO(this.params.gnd).output(false);
+    }
 
     // reset a onece
     this.cs.output(true);
@@ -20,10 +24,13 @@ class MatrixLED_MAX7219 {
     this.cs.output(true);
     
     // max 10Mhz but motor driver can't
-    obniz.getIO(clk).drive("3v");
-    obniz.getIO(din).drive("3v");
-    this.spi = obniz.spi0; // TODO
-    this.spi.start("master", clk, din, nc, 10 * 1000*1000);
+    obniz.getIO(this.params.clk).drive("3v");
+    obniz.getIO(this.params.mosi).drive("3v");
+    this.params.frequency = this.params.frequency  || 10 * 1000*1000;
+    this.params.mode =  "master";
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.nc;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
   init(width, height) {

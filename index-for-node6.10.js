@@ -1299,16 +1299,21 @@ PeripheralI2C.prototype.start = function (arg) {
   if (err) {
     throw new Error("I2C start param '" + err + "' required, but not found ");return;
   }
-  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "clock", "pullType"]);
+  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "clock", "pullType", "drive"]);
+
+  if (this.state.drive) {
+    this.Obniz.getIO(this.state.sda).drive(this.state.drive);
+    this.Obniz.getIO(this.state.scl).drive(this.state.drive);
+  }
+
+  if (this.state.pullType) {
+    this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
+    this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
+  }
 
   var obj = {};
   obj["i2c" + this.id] = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl", "clock"]);
   this.Obniz.send(obj);
-  if (this.state.pullType) {
-    console.log(this.state.pullType);
-    this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
-    this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
-  }
 };
 
 PeripheralI2C.prototype.write = function (address, data) {
@@ -1686,13 +1691,31 @@ PeripheralSPI.prototype.addObserver = function (callback) {
 
 PeripheralSPI.prototype.start = function (params) {
 
-  var err = ObnizUtil._requiredKeys(params, ["mode", "clk", "mosi", "miso", "clock"]);
+  var err = ObnizUtil._requiredKeys(params, ["mode", "clk", "mosi", "miso", "frequency"]);
   if (err) {
     throw new Error("spi start param '" + err + "' required, but not found ");return;
   }
-  this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "clock"]);
+  this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "frequency", "drive", "pullType"]);
   var obj = {};
-  obj["spi" + this.id] = this.params;
+  obj["spi" + this.id] = {
+    mode: this.params.mode,
+    clk: this.params.clk,
+    mosi: this.params.mosi,
+    miso: this.params.miso,
+    clock: this.params.frequency //name different
+  };
+
+  if (this.params.drive) {
+    this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+    this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+    this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+  }
+
+  if (this.params.pullType) {
+    this.Obniz.getIO(this.params.clk).pull(this.params.pullType);
+    this.Obniz.getIO(this.params.mosi).pull(this.params.pullType);
+    this.Obniz.getIO(this.params.miso).pull(this.params.pullType);
+  }
 
   this.Obniz.send(obj);
 };
@@ -1782,7 +1805,17 @@ PeripheralUART.prototype.start = function (params) {
   if (err) {
     throw new Error("uart start param '" + err + "' required, but not found ");return;
   }
-  this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts"]);
+  this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pullType"]);
+
+  if (this.params.drive) {
+    this.Obniz.getIO(this.params.rx).drive(this.params.drive);
+    this.Obniz.getIO(this.params.tx).drive(this.params.drive);
+  }
+
+  if (this.params.pullType) {
+    this.Obniz.getIO(this.params.rx).pull(this.params.pullType);
+    this.Obniz.getIO(this.params.tx).pull(this.params.pullType);
+  }
 
   var obj = {};
   obj["uart" + this.id] = this.params;
@@ -2129,35 +2162,40 @@ if (PartsRegistrate) {
   PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
 }
 
-var ADT7310 = function () {};
+var ADT7310 = function () {
+  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+  this.requiredKeys = [];
+};
 
 ADT7310.prototype.wired = (() => {
-  var _ref6 = _asyncToGenerator(function* (obniz, pwr, gnd, clk, mosi, miso) {
+  var _ref6 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
-    this.io_pwr = obniz.getIO(pwr);
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_clk = obniz.getIO(clk);
-    this.io_mosi = obniz.getIO(mosi);
-    this.io_mosi = obniz.getIO(miso);
 
-    this.io_pwr.output(true);
-    if (gnd) {
-      this.io_gnd = obniz.getIO(gnd);
+    if (this.params.vcc) {
+      obniz.getIO(this.params.vcc).output(true);
+    }
+    if (this.params.gnd) {
+      this.io_gnd = obniz.getIO(this.params.gnd);
       this.io_gnd.output(false);
     }
 
-    obniz.spi0.start("master", clk, mosi, miso, 500000);
+    this.params.mode = this.params.mode || "master";
+    this.params.frequency = this.params.frequency || 500000;
+    this.params.frequency = this.params.frequency || 500000;
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.dout;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
   });
 
-  return function (_x5, _x6, _x7, _x8, _x9, _x10) {
+  return function (_x5) {
     return _ref6.apply(this, arguments);
   };
 })();
 
 ADT7310.prototype.getTempWait = _asyncToGenerator(function* () {
-  yield obniz.spi0.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-  yield obniz.wait(200); //適度な値でないと安定しない
-  var ret = yield obniz.spi0.writeWait([0x00, 0x00]);
+  yield this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+  yield this.obniz.wait(200); //適度な値でないと安定しない
+  var ret = yield this.spi.writeWait([0x00, 0x00]);
   var tempBin = ret[0] << 8;
   tempBin |= ret[1];
   tempBin = tempBin >> 3;
@@ -2263,7 +2301,7 @@ AE_MICAMP.prototype.wired = (() => {
       */
   });
 
-  return function (_x11, _x12, _x13, _x14) {
+  return function (_x6, _x7, _x8, _x9) {
     return _ref9.apply(this, arguments);
   };
 })();
@@ -2676,7 +2714,7 @@ HCSR04.prototype.measure = (() => {
     });
   });
 
-  return function (_x15) {
+  return function (_x10) {
     return _ref14.apply(this, arguments);
   };
 })();
@@ -3005,7 +3043,7 @@ KXSC7_2050.prototype.wired = (() => {
     });
   });
 
-  return function (_x16, _x17, _x18, _x19, _x20, _x21) {
+  return function (_x11, _x12, _x13, _x14, _x15, _x16) {
     return _ref16.apply(this, arguments);
   };
 })();
@@ -3233,14 +3271,20 @@ var isNode = typeof window === 'undefined' ? true : false;
 
 class MatrixLED_MAX7219 {
 
-  constructor() {}
+  constructor() {
+    this.keys = ["vcc", "gnd", "din", "cs", "clk", "nc"];
+    this.requiredKeys = ["din", "cs", "clk", "nc"];
+  }
 
-  wired(obniz, vcc, gnd, din, cs, clk, nc) {
-    this.obniz = obniz;
-    this.cs = obniz.getIO(cs);
+  wired(obniz) {
+    this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
-    obniz.getIO(vcc).output(true);
-    obniz.getIO(gnd).output(false);
+    if (this.params.vcc) {
+      obniz.getIO(this.params.vcc).output(true);
+    }
+    if (this.params.gnd) {
+      obniz.getIO(this.params.gnd).output(false);
+    }
 
     // reset a onece
     this.cs.output(true);
@@ -3249,10 +3293,13 @@ class MatrixLED_MAX7219 {
     this.cs.output(true);
 
     // max 10Mhz but motor driver can't
-    obniz.getIO(clk).drive("3v");
-    obniz.getIO(din).drive("3v");
-    this.spi = obniz.spi0; // TODO
-    this.spi.start("master", clk, din, nc, 10 * 1000 * 1000);
+    obniz.getIO(this.params.clk).drive("3v");
+    obniz.getIO(this.params.mosi).drive("3v");
+    this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+    this.params.mode = "master";
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.nc;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
   init(width, height) {
@@ -3909,14 +3956,22 @@ if (PartsRegistrate) {
 }
 class WS2811 {
 
-  constructor() {}
+  constructor() {
+    this.key = ["din", "nc0", "nc1"];
+    this.requiredKey = ["din", "nc0", "nc1"];
+  }
 
-  wired(obniz, din, nc0, nc1) {
+  wired(obniz) {
 
     this.obniz = obniz;
-    obniz.getIO(din).drive("3v");
-    this.spi = obniz.spi0; // TODO:
-    this.spi.start("master", nc0, din, nc1, 2 * 1000 * 1000);
+
+    this.params.mode = "master";
+    this.params.frequency = 2 * 1000 * 1000;
+    this.params.clk = this.params.nc0;
+    this.params.miso = this.params.nc1;
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
   static _generateFromByte(val) {
