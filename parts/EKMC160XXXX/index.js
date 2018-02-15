@@ -9,7 +9,7 @@ PIR_ekmc.prototype.wired = function(obniz, pwr, signal, gnd) {
   this.io_signal = obniz.getIO(signal);
   
   this.io_pwr.output(true);
-  this.io_signal.pull("down");
+  this.io_signal.pull("0v");
   if (gnd) {
     this.io_gnd = obniz.getIO(gnd);
     this.io_gnd.output(false);

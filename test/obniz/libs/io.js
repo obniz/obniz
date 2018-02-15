@@ -81,7 +81,7 @@ describe("obniz.libs.io", function () {
   });
 
   it("pull down", function () {
-    this.obniz.io3.pull("down");
+    this.obniz.io3.pull("0v");
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send({io3:{"pull_type": "pull-down"}});
     expect(this.obniz).to.be.finished;
