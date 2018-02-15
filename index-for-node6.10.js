@@ -2848,15 +2848,15 @@ if (PartsRegistrate) {
 class JpegSerialCam {
 
   constructor() {
-    this.keys = ["vcc", "tx", "rx", "gnd"];
-    this.requiredKeys = ["vcc", "tx", "rx", "gnd"];
+    this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
+    this.requiredKeys = ["vcc", "cam_tx", "cam_rx", "gnd"];
   }
 
   wired() {
     this.obniz.getIO(this.params.vcc).output(true);
     this.obniz.getIO(this.params.gnd).output(false);
-    this.my_tx = this.params.rx;
-    this.my_rx = this.params.tx;
+    this.my_tx = this.params.cam_rx;
+    this.my_rx = this.params.cam_tx;
 
     this.obniz.getIO(this.my_tx).drive("3v");
 
