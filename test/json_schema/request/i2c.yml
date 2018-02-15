@@ -16,10 +16,6 @@ id: "/request/i2c"
             enum : [master] 
         sda :  {$ref:#pinSetting}
         scl :  {$ref:#pinSetting}
-        pull_type : 
-            type: string
-            enum : [float, pullup, pullup5v]
-            default : pullup
         slave_address_length : 
             type : integer
             enum : [7,10]
