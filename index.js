@@ -1880,7 +1880,7 @@ ObnizSwitch.prototype.notified = function(obj) {
 var PeripheralUART = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
-  this.received = new Uint8Array([]);
+  this.received = new Uint8Array([]); 
 };
 
 PeripheralUART.prototype.start = function(params) {
@@ -1890,7 +1890,7 @@ PeripheralUART.prototype.start = function(params) {
   this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts","drive","pul"]);
 
 
-  if(this.params.drive){
+  if( this.params.hasOwnProperty("drive")){
       this.Obniz.getIO(this.params.rx).drive(this.params.drive);
       this.Obniz.getIO(this.params.tx).drive(this.params.drive);
   }else{
@@ -1899,7 +1899,7 @@ PeripheralUART.prototype.start = function(params) {
       
   }
   
-  if(this.params.pull){
+  if(this.params.hasOwnProperty("pull") ){
       this.Obniz.getIO(this.params.rx).pull(this.params.pull);
       this.Obniz.getIO(this.params.tx).pull(this.params.pull);
   }else{
