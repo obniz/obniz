@@ -3,7 +3,7 @@ Full color LED driver.
 Capable of chaining leds.
 
 ```Javascript
-var leds = obniz.wired("WS2811", 2, 3, 4); // DIN is connected to obniz io 2. you can't use 3 and 4.
+var leds = obniz.wired("WS2811", {vcc: 0, gnd:1, din: 2});
 leds.rgbs([
   [0xFF, 0x00, 0x00], // red
   [0x00, 0x00, 0xFF]  // blue
@@ -14,18 +14,20 @@ leds.rgbs([
 connect VDD and GND to obniz and drive it.
 And, wire DIN(Data in) to obniz. and write a code below
 
-you should specify other 2 more io for this library.
-Library consume these pins. But can't be used.
+```Javascript
+var led = obniz.wired("WS2811", {vcc: 0, gnd:1, din: 2});
+```
+vcc and gnd is optional
 
 ```Javascript
-var led = obniz.wired("WS2811", 2, 3, 4); // DIN is connected to obniz io 2. you can't use 3 and 4.
+var led = obniz.wired("WS2811", {din: 2});
 ```
 
 ## rgb(red, green, blue)
 change color.
 When you chaining LED, this will change only top of leds.
 ```Javascript
-var led = obniz.wired("WS2811", 2, 3, 4);
+var led = obniz.wired("WS2811", {vcc: 0, gnd:1, din: 2});
 led.rgb(0xFF, 255, 0); // Yellow
 ```
 
@@ -37,7 +39,7 @@ hue : 0 ~ 360
 saturation : 0 ~ 1
 value : 0 ~ 1
 ```Javascript
-var led = obniz.wired("WS2811", 0); // DIN is connected to obniz io 0
+var led = obniz.wired("WS2811", {vcc: 0, gnd:1, din: 2}); // DIN is connected to obniz io 0
 led.hsv(180, 0.5, 1);
 ```
 

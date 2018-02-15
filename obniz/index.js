@@ -242,6 +242,10 @@ Obniz.prototype.init = function () {
   this.util = new ObnizUtil(this);
 };
 
+Obniz.prototype.isValidIO = function (io) {
+  return (typeof io == "number" && io >= 0 && io < 12)
+};
+
 Obniz.prototype.getIO = function (id) {
   return this["io" + id];
 };
@@ -278,7 +282,7 @@ Obniz.prototype.getFreeI2C = function () {
     if (!i2c) {
       break;
     }
-    if (i2c.isUsed()) {
+    if (!i2c.isUsed()) {
       return i2c;
     }
     i++;
@@ -305,7 +309,7 @@ Obniz.prototype.getFreeSpi= function () {
     if (!spi) {
       break;
     }
-    if (spi.isUsed()) {
+    if (!spi.isUsed()) {
       return spi;
     }
     i++;
