@@ -183,7 +183,18 @@ Obniz.prototype.wired = function (partsname) {
   }
   var args = Array.from(arguments);
   args.shift();
-  args.unshift(this);
+  args.unshift(this); 
+  if(parts.keys){
+    if(parts.requiredKeys){
+      var err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
+      if (err) {
+        throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+        return;
+      }
+    }
+    parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
+  }
+  parts.obniz = this;
   parts.wired.apply(parts, args);
   return parts;
 };
@@ -233,7 +244,13 @@ Obniz.prototype.getAD = function (id) {
   return this["ad" + id];
 };
 
+/** dupricate
+ */
 Obniz.prototype.getpwm = function () {
+  return this.getFreePwm();
+}
+
+Obniz.prototype.getFreePwm = function () {
   var i = 0;
   while (true) {
     var pwm = this["pwm" + i];
@@ -261,6 +278,18 @@ Obniz.prototype.getFreeI2C = function () {
     i++;
   }
   throw new Error("No More I2C Available. max = " + i);
+};
+
+Obniz.prototype.getI2CWithConfig = function (config) {
+  if(typeof config !== "object" ){
+    throw new Error("getI2CWithConfig need config arg");
+  }
+  if(config.i2c){
+    return config.i2c;
+  }
+  var i2c = this.getFreeI2C();
+  i2c.start(config);
+  return i2c;
 };
 
 Obniz.prototype.handleWSCommand = function (wsObj) {
@@ -1269,19 +1298,19 @@ PeripheralI2C.prototype.addObserver = function(callback) {
   }
 };
 
-PeripheralI2C.prototype.start = function(mode, sda, scl, clock, pullType) {
-  var obj = {};
-  this.state = {
-    mode,
-    sda,
-    scl,
-    clock
-  };
-  if (pullType) {
-    this.state.pull_type = pullType;
-  }
-  obj["i2c"+this.id] = this.state;
+PeripheralI2C.prototype.start = function(arg) {
+  var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl", "clock"]);
+  if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
+  this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "clock", "pullType"]);
+
+  var obj = {}; 
+  obj["i2c"+this.id] = ObnizUtil._keyFilter(this.state,["mode", "sda", "scl", "clock"]);
   this.Obniz.send(obj);
+  if(this.state.pullType){
+      console.log(this.state.pullType)
+     this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
+     this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
+  }
 };
 
 PeripheralI2C.prototype.write = function(address, data) {
@@ -1387,15 +1416,19 @@ PeripheralIO.prototype.pull = function(updown) {
   let pull_type = ""
   switch(updown) {
     case "5v":
+    case "pull-up5v":
       pull_type = "pull-up5v";
       break;
     case "3v":
+    case "pull-up3v":
       pull_type = "pull-up3v";
       break;
     case "down":
+    case "pull-down":
       pull_type = "pull-down";
       break;
     case null:
+    case "float":
       pull_type = "float";
       break;
     default:
@@ -1894,33 +1927,52 @@ class ObnizUtil {
       return ctx;
     } 
   }
+  
+  static _keyFilter(params,keys){
+    var filterdParams = {};
+    if(typeof params !== "object" ){
+      return filterdParams;
+    }
+    filterdParams =  Object.keys(params)
+    .filter(key => keys.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = params[key];
+      return obj;
+    }, {});
+    
+    return filterdParams;
+  }
+  
+  /**
+   *
+   * @return {String} key name of not found. 
+   */
+  static _requiredKeys(params, keys){
+    if(typeof params !== "object" ){
+      return keys[0];
+    }
+    
+    for( var index in keys){
+        if(!(keys[index] in params )){
+            return keys[index];
+        }
+    }
+    return null;
+  }
 
 }
 var _24LC256 = function() {
-
+  this.requiredKeys = ["address"];
+  this.keys = ["sda","scl","clock","pullType","i2c","address"];
 };
 
-_24LC256.prototype.wired = function(obniz, pin0, pin1, pin2, pin3, pin4, pin5, pin6, pin7) {
-  this.obniz  = obniz;
-  this.io_a0  = obniz.getIO(pin0);
-  this.io_a1  = obniz.getIO(pin1);
-  this.io_a2  = obniz.getIO(pin2);
-  this.io_vss = obniz.getIO(pin3);
-  this.io_sda = obniz.getIO(pin4);
-  this.io_scl = obniz.getIO(pin5);
-  this.io_wp  = obniz.getIO(pin6);
-  this.io_vcc = obniz.getIO(pin7);
-
-  this.io_a0.output(false);
-  this.io_a1.output(false);
-  this.io_a2.output(false);
-  this.io_vss.output(false);
-  this.io_wp.output(false);
-  this.io_vcc.output(true);
-
-  this.i2c = obniz.getFreeI2C();
-  this.i2c.start("master", pin4, pin5, 100000,"float"); 
+_24LC256.prototype.wired = function(obniz) {
+  this.params.mode =  this.params.mode || "master"; //for i2c
+  this.params.clock =  this.params.clock || 40 * 1000; //for i2c
+  this.i2c = obniz.getI2CWithConfig(this.params);
 };
+
+
 
 // Module functions
 
@@ -1931,9 +1983,9 @@ _24LC256.prototype.set = function(address, data) {
   array.push.apply(array, data);
   this.i2c.write(0x50, array);
   this.obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
-}
+};
 
-_24LC256.prototype.get = async function(address, length) {
+_24LC256.prototype.getWait = async function(address, length) {
   var array = [];
   array.push((address >> 8) & 0xFF);
   array.push(address & 0xFF);

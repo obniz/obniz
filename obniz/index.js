@@ -183,7 +183,18 @@ Obniz.prototype.wired = function (partsname) {
   }
   var args = Array.from(arguments);
   args.shift();
-  args.unshift(this);
+  args.unshift(this); 
+  if(parts.keys){
+    if(parts.requiredKeys){
+      var err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
+      if (err) {
+        throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+        return;
+      }
+    }
+    parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
+  }
+  parts.obniz = this;
   parts.wired.apply(parts, args);
   return parts;
 };
@@ -233,7 +244,13 @@ Obniz.prototype.getAD = function (id) {
   return this["ad" + id];
 };
 
+/** dupricate
+ */
 Obniz.prototype.getpwm = function () {
+  return this.getFreePwm();
+}
+
+Obniz.prototype.getFreePwm = function () {
   var i = 0;
   while (true) {
     var pwm = this["pwm" + i];
@@ -261,6 +278,18 @@ Obniz.prototype.getFreeI2C = function () {
     i++;
   }
   throw new Error("No More I2C Available. max = " + i);
+};
+
+Obniz.prototype.getI2CWithConfig = function (config) {
+  if(typeof config !== "object" ){
+    throw new Error("getI2CWithConfig need config arg");
+  }
+  if(config.i2c){
+    return config.i2c;
+  }
+  var i2c = this.getFreeI2C();
+  i2c.start(config);
+  return i2c;
 };
 
 Obniz.prototype.handleWSCommand = function (wsObj) {
