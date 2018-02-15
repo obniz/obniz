@@ -11,7 +11,7 @@ S5851A.prototype.wired = function(obniz) {
   this.io_adr1 = obniz.getIO(this.params.adr1);
 
   this.io_pwr.output(true);
-  if (this.params.gnd) {
+  if (obniz.isValidIO(this.params.gnd)) {
     this.io_gnd = obniz.getIO(this.params.gnd);
     this.io_gnd.output(false);
   }

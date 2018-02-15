@@ -243,7 +243,7 @@ Obniz.prototype.init = function () {
 };
 
 Obniz.prototype.isValidIO = function (io) {
-  return (typeof io == "number" && io >= 0 && io < 12)
+  return (typeof io === "number" && io >= 0 && io < 12)
 };
 
 Obniz.prototype.getIO = function (id) {
