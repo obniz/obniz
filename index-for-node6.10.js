@@ -2072,30 +2072,30 @@ if (PartsRegistrate) {
   PartsRegistrate("24LC256", _24LC256);
 };
 var _7SegmentLED = function () {
-  this.requiredKeys = ["address"];
-  this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
+  this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+  this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
 
   this.digits = [0x3F, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
 };
 
-_7SegmentLED.prototype.wired = function (obniz, a, b, c, d, e, f, g, dp, common, commonType) {
+_7SegmentLED.prototype.wired = function (obniz) {
   this.obniz = obniz;
   this.ios = [];
-  this.ios.push(obniz.getIO(a));
-  this.ios.push(obniz.getIO(b));
-  this.ios.push(obniz.getIO(c));
-  this.ios.push(obniz.getIO(d));
-  this.ios.push(obniz.getIO(e));
-  this.ios.push(obniz.getIO(f));
-  this.ios.push(obniz.getIO(g));
+  this.ios.push(obniz.getIO(this.params.a));
+  this.ios.push(obniz.getIO(this.params.b));
+  this.ios.push(obniz.getIO(this.params.c));
+  this.ios.push(obniz.getIO(this.params.d));
+  this.ios.push(obniz.getIO(this.params.e));
+  this.ios.push(obniz.getIO(this.params.f));
+  this.ios.push(obniz.getIO(this.params.g));
 
-  this.dp = obniz.getIO(dp);
-  this.common = obniz.getIO(common);
-  this.isCathodeCommon = commonType === "anode" ? false : true;
+  this.dp = obniz.getIO(this.params.dp);
+  this.common = obniz.getIO(this.params.common);
+  this.isCathodeCommon = this.params.commonType === "anode" ? false : true;
 };
 
 _7SegmentLED.prototype.print = function (data) {
-  if (typeof data == "number") {
+  if (typeof data === "number") {
     data = parseInt(data);
     data = data % 10;
 
@@ -2112,8 +2112,8 @@ _7SegmentLED.prototype.print = function (data) {
   }
 };
 
-_7SegmentLED.prototype.print_raw = function (data) {
-  if (typeof data == "number") {
+_7SegmentLED.prototype.printRaw = function (data) {
+  if (typeof data === "number") {
     for (let i = 0; i < 7; i++) {
       if (this.ios[i]) {
         var val = data & 1 << i ? true : false;
@@ -2127,7 +2127,7 @@ _7SegmentLED.prototype.print_raw = function (data) {
   }
 };
 
-_7SegmentLED.prototype.dp_show = function (show) {
+_7SegmentLED.prototype.dpShow = function (show) {
   if (this.dp) {
     this.dp.output(this.isCathodeCommon ? show : !show);
   }

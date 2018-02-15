@@ -2,7 +2,7 @@
 7 Segment LED. Cathode/Anode Common.
 
 
-## wired(obniz, a, b, c, d, e, f, g, dp, common, commonType)
+## wired(obniz,{ a, b, c, d, e, f, g, dp, common, commonType})
 a to g is 7 segment's io.
 dp is deciminal point.
 commonType must be "anode"/"cathode". default is "cathode".
@@ -10,7 +10,7 @@ commonType must be "anode"/"cathode". default is "cathode".
 io can be null If you don't need to use. like dp.
 
 ```javascript
-var seg = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
+var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 seg.print(7);
 ```
 ## print(number)
@@ -20,7 +20,7 @@ print a number.
 .print(89) => 9
 
 ```javascript
-var seg = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
+var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
   seg.print(i)
@@ -28,17 +28,17 @@ for(var i=0; i<10; i++){
 }
 ```
 
-## print_raw(number)
+## printRaw(number)
 control each led directly.
 ```javascript
-var seg = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
+var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 seg.print_raw(0x77)
 ```
 
 ## off()
 turn display off
 ```javascript
-var seg = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
+var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
   seg.print(i)
@@ -50,7 +50,7 @@ seg.off();
 ## on()
 turn display on
 ```javascript
-var seg = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
+var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 
 seg.print(7);
 while(true){
@@ -61,10 +61,10 @@ while(true){
 }
 ```
 
-## dp_show(show)
+## dpShow(show)
 turn on/off dp
 ```javascript
-var seg = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, 7, 8, "cathode");
+var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 
 seg.print(7);
 while(true){
