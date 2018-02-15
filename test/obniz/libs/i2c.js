@@ -19,6 +19,8 @@ describe("obniz.libs.i2c", function () {
   
   it("start",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"float"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"float"}});
     expect(this.obniz).send({io3:{"pull_type":"float"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
@@ -27,6 +29,8 @@ describe("obniz.libs.i2c", function () {
   
   it("end",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"pull-up5v"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"pull-up5v"}});
     expect(this.obniz).send({io3:{"pull_type":"pull-up5v"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
@@ -38,6 +42,8 @@ describe("obniz.libs.i2c", function () {
   
   it("write",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"pull-up5v"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"pull-up5v"}});
     expect(this.obniz).send({io3:{"pull_type":"pull-up5v"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
@@ -49,6 +55,8 @@ describe("obniz.libs.i2c", function () {
   
   it.skip("write10bit フォーマット変更すべき",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"pull-up"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"pull-up5v"}});
     expect(this.obniz).send({io3:{"pull_type":"pull-up5v"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
@@ -61,6 +69,8 @@ describe("obniz.libs.i2c", function () {
   
   it("readWait",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"pull-up3v"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({io3:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
@@ -79,6 +89,8 @@ describe("obniz.libs.i2c", function () {
   
   it.skip("readWait invalid length",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"pull-up3v"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({io3:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
@@ -96,6 +108,8 @@ describe("obniz.libs.i2c", function () {
   });
   it.skip("readWait withothers",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"pull-up3v"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({io3:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
@@ -116,6 +130,8 @@ describe("obniz.libs.i2c", function () {
   
   it.skip("readWait10bit",  function () {
     this.obniz.i2c0.start({mode:"master" , sda:2,scl: 3, clock:400000, pullType:"pull-up3v"}); 
+    expect(this.obniz).send({ io2: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io3: { output_type: 'open-drain' } });
     expect(this.obniz).send({io2:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({io3:{"pull_type":"pull-up3v"}});
     expect(this.obniz).send({i2c0:{"clock": 400000, "sda": 2, "scl":3,"mode":"master" }});
