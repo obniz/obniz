@@ -5,7 +5,7 @@ var _24LC256 = function() {
 
 _24LC256.prototype.wired = function(obniz) {
   this.params.mode =  this.params.mode || "master"; //for i2c
-  this.params.clock =  this.params.clock || 40 * 1000; //for i2c
+  this.params.clock =  this.params.clock || 400 * 1000; //for i2c
   this.i2c = obniz.getI2CWithConfig(this.params);
 };
 

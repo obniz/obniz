@@ -1,12 +1,12 @@
 # Temperature Sensor - SHT31
 Temperature and Humidity sensor SHT31
 
-## wired(obniz, io_vcc, io_sda, io_scl, io_gnd, io_addr, addressmode)
+## wired(obniz, {vcc, sda, scl, gnd, addr0, addr1, addressmode})
 the address of SHT31 can be choosed from 0x44,0x45.
 Please provide 4 for 0x44. 5 for 0x45 to addressmode.
 (SHT31 read ADDR value to define it's address. 0 is 0x45.)
 ```javascript
-var sensor = obniz.wired("SHT31", 0, 2, 3, 1, 4, 5);
+var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5, addressmode:"A"});
 ```
 ## [await] getTempWait()
 Get a temperature. Unit is Celsius.
@@ -14,7 +14,7 @@ Get a temperature. Unit is Celsius.
 ## [await] getHumdWait()
 Get a Humidity. Unit is Ratio(%).
 ```javascript
-var sensor obniz.wired("SHT31", 0, 1, 2, 3, 4, 5);
+var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5, addressmode:"A"});
 var temp = await sensor.getTemp();
 var humd = await sensor.getHumd();
 console.log('temperature:' + temp);
