@@ -18,7 +18,7 @@ describe("obniz.libs.uart", function () {
   
   
   it("start",  function () {
-    this.obniz.uart0.start(1, 2, 9600, null, 7);  
+    this.obniz.uart0.start({"tx": 1, "rx": 2, "baud":9600, "bits":7 });  
     
     expect(this.obniz).send({uart0:{"tx": 1, "rx": 2, "baud":9600, "bits":7 }});
     
@@ -30,7 +30,7 @@ describe("obniz.libs.uart", function () {
   
   
   it("send",  function () {
-    this.obniz.uart0.start(1, 2); // 1 is output, 2 is input
+    this.obniz.uart0.start({"tx": 1, "rx": 2}); // 1 is output, 2 is input
     
     expect(this.obniz).send({uart0:{"tx": 1, "rx": 2}});
     
@@ -46,7 +46,7 @@ describe("obniz.libs.uart", function () {
   
   it("end",  function () {
   
-    this.obniz.uart0.start(1, 2); // 1 is output, 2 is input
+    this.obniz.uart0.start({"tx": 1, "rx": 2}); // 1 is output, 2 is input
     expect(this.obniz).send({uart0:{"tx": 1, "rx": 2}});
     
     this.obniz.uart0.send("Hi");
@@ -61,7 +61,7 @@ describe("obniz.libs.uart", function () {
   
   it("onreceive",  function () {
   
-    this.obniz.uart0.start(0, 1); // 0 is output, 1 is input
+    this.obniz.uart0.start({"tx": 0, "rx": 1}); // 0 is output, 1 is input
     expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
     var stub = sinon.stub();
     this.obniz.uart0.onreceive = stub;
@@ -75,28 +75,28 @@ describe("obniz.libs.uart", function () {
   });
   
   
-  it("readbytes",  function () {
+  it("readBytes",  function () {
   
-    this.obniz.uart0.start(0, 1); // 0 is output, 1 is input
+    this.obniz.uart0.start({"tx": 0, "rx": 1}); // 0 is output, 1 is input
     expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
     
     testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
     
-    expect(this.obniz.uart0.isdataexists()).to.be.true;
-    expect(this.obniz.uart0.readbytes()).to.be.deep.equal([78,105,99,101]);
+    expect(this.obniz.uart0.isDataExists()).to.be.true;
+    expect(this.obniz.uart0.readBytes()).to.be.deep.equal([78,105,99,101]);
     expect(this.obniz).to.be.finished;
     
   });
   
-  it("readtext",  function () {
+  it("readText",  function () {
   
-    this.obniz.uart0.start(0, 1); // 0 is output, 1 is input
+    this.obniz.uart0.start({"tx": 0, "rx": 1}); // 0 is output, 1 is input
     expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
     
     testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
     
-    expect(this.obniz.uart0.isdataexists()).to.be.true;
-    expect(this.obniz.uart0.readtext()).to.be.equal("Nice");
+    expect(this.obniz.uart0.isDataExists()).to.be.true;
+    expect(this.obniz.uart0.readText()).to.be.equal("Nice");
     expect(this.obniz).to.be.finished;
     
   });

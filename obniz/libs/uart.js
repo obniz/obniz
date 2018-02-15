@@ -5,33 +5,14 @@ var PeripheralUART = function(Obniz, id) {
   this.received = new Uint8Array([]);
 };
 
-PeripheralUART.prototype.start = function(tx, rx, baud, stop, bits, parity, flowcontrol, rts, cts) {
+PeripheralUART.prototype.start = function(params) {
+  
+  var err = ObnizUtil._requiredKeys(params,["tx", "rx"]);
+  if(err){ throw new Error("uart start param '" + err +"' required, but not found ");return;}
+  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts"]);
+
   var obj = {};
-  obj["uart"+this.id] = {
-    tx: tx,
-    rx: rx
-  };
-  if (baud) {
-    obj["uart"+this.id].baud = baud;
-  }
-  if (stop) {
-    obj["uart"+this.id].stop = stop;
-  }
-  if (bits) {
-    obj["uart"+this.id].bits = bits;
-  }
-  if (parity) {
-    obj["uart"+this.id].parity = parity;
-  }
-  if (flowcontrol) {
-    obj["uart"+this.id].flowcontrol = flowcontrol;
-  }
-  if (rts) {
-    obj["uart"+this.id].rts = rts;
-  }
-  if (flowcontrol) {
-    obj["uart"+this.id].cts = cts;
-  }
+  obj["uart"+this.id] = this.params;
   this.Obniz.send(obj);
   this.received = [];
 };
@@ -72,18 +53,18 @@ PeripheralUART.prototype.send = function(data) {
   var obj = {};
   obj["uart"+this.id] = {};
   obj["uart"+this.id].data = send_data;
-  console.log(obj);
+//  console.log(obj);
   this.Obniz.send(obj);
 };
 
 
-PeripheralUART.prototype.isdataexists = function() {
+PeripheralUART.prototype.isDataExists = function() {
   return (this.received && this.received.length > 0);
 };
 
-PeripheralUART.prototype.readbytes = function() {
+PeripheralUART.prototype.readBytes = function() {
   var results = [];
-  if (this.isdataexists()) {
+  if (this.isDataExists()) {
       for (var i=0;i<this.received.length; i++) {
         results.push(this.received[i]);
       }
@@ -94,10 +75,10 @@ PeripheralUART.prototype.readbytes = function() {
 
 
 
-PeripheralUART.prototype.readtext = function() {
+PeripheralUART.prototype.readText = function() {
   var string = null;
-  if (this.isdataexists()) {
-      var data = this.readbytes();
+  if (this.isDataExists()) {
+      var data = this.readBytes();
       string = this.tryConvertString(data);
   }
   this.received = [];

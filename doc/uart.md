@@ -79,7 +79,7 @@ obniz.uart0.onreceive = function(data, text) {
 obniz.uart0.send("Hello");
 ```
 
-## isdataexists
+## isDataExists
 check data  which recieved and you don't get yet.
 If it available, return true. 
 
@@ -91,14 +91,14 @@ if you are using onreceive callback, it always false because you get data from c
 obniz.uart0.start(0, 1); // 0 is output, 1 is input
 
 while(1){
-    if(obniz.uart0.isdataexists){
-        console.log(obniz.uart0.readtext());
+    if(obniz.uart0.isDataExists){
+        console.log(obniz.uart0.readText());
     }
     obniz.wait(10);  //wait for 10ms
 }
 ```
 
-## readbytes
+## readBytes
 return received data array which recieved and you don't get yet.
 
 ```Javascript
@@ -106,14 +106,14 @@ return received data array which recieved and you don't get yet.
 obniz.uart0.start(0, 1); // 0 is output, 1 is input
 
 while(1){
-    if(obniz.uart0.isdataexists){
-        console.log(obniz.uart0.readbytes());
+    if(obniz.uart0.isDataExists){
+        console.log(obniz.uart0.readBytes());
     }
     obniz.wait(10);  //wait for 10ms
 }
 ```
 
-## readtext
+## readText
 return received data as string which recieved and you don't get yet.
 
 
@@ -122,8 +122,8 @@ return received data as string which recieved and you don't get yet.
 obniz.uart0.start(0, 1); // 0 is output, 1 is input
 
 while(1){
-    if(obniz.uart0.isdataexists){
-        console.log(obniz.uart0.readtext());
+    if(obniz.uart0.isDataExists){
+        console.log(obniz.uart0.readText());
     }
     obniz.wait(10);  //wait for 10ms
 }
