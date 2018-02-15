@@ -4,14 +4,19 @@ var ObnizMeasure = function(Obniz) {
   this.observers = [];
 };
 
-ObnizMeasure.prototype.echo = function(io_pulse, pulse, pulse_widthUs, io_echo, measure_edges, timeoutUs, callback) {
+ObnizMeasure.prototype.echo = function(params) {
+  var err = ObnizUtil._requiredKeys(params,["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs"]);
+  if(err){ throw new Error("LogicAnalyzer start param '" + err +"' required, but not found ");return;}
+  this.params = ObnizUtil._keyFilter(params,["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs", "callback"]);
+
+  
   var echo = {};
-  echo.io_pulse = io_pulse;
-  echo.pulse = pulse;
-  echo.pulse_width = pulse_widthUs;
-  echo.io_echo = io_echo;
-  echo.measure_edges = measure_edges;
-  echo.timeout = timeoutUs;
+  echo.io_pulse = this.params.ioPulse;
+  echo.pulse = this.params.pulse;
+  echo.pulse_width = this.params.pulseWidthUs;
+  echo.io_echo = this.params.ioEcho;
+  echo.measure_edges = this.params.measureEdges;
+  echo.timeout = this.params.timeoutUs;
 
   this.Obniz.send({
     measure: {
@@ -19,8 +24,8 @@ ObnizMeasure.prototype.echo = function(io_pulse, pulse, pulse_widthUs, io_echo, 
     }
   });
 
-  if(callback) {
-    this.observers.push(callback);
+  if(this.params.callback) {
+    this.observers.push(this.params.callback);
   }
 };
 
