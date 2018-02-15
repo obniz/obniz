@@ -1,7 +1,7 @@
 # Peripherals UART
 uart0 and uart1 is available
 
-## start(tx, rx, baud, stop, bits, parity, flow control, rts, cts)
+## start({tx, rx[, baud, stop, bits, parity, flow control, rts, cts, drive, pull ]})
 start uart on io tx, rx.
 tx is used for send data from obniz to parts.
 rx is used for receive data from parts to obniz.
@@ -18,6 +18,8 @@ Defaults
 - 8bit
 - No Parity
 - 1 Stopbit
+- 5v drive
+- no pull
 
 available configrations are
 
@@ -28,6 +30,8 @@ available configrations are
 5. flowcontrol: flow control "off"(default)/"rts"/"cts"/"rts-cts"
 6. rts: io for rts
 7. cts: io for cts
+8. drive:  "3v","5v","open-drain"(See more detail at obniz.io.drive)
+9. pull: null, "0v", "3v", "5v"(See more detail at obniz.io.pull)
 
 
 ```Javascript

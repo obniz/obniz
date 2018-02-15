@@ -3,8 +3,11 @@ General Purpose SPI
 spi0 and spi1 are available.
 Max speed is 80Mhz.
 
-## start({mode, clk, mosi, miso, frequency});
+## start({mode, clk, mosi, miso, frequency, [drain, pull ] } );
 start spi. now mode is only "master"
+Drain and pull is optional for io output setting. 
+Default it drain:5v, pull:null.
+See more for obniz.io.drain() or pull(). 
 
 ```Javascript
 // Example
@@ -12,6 +15,9 @@ start spi. now mode is only "master"
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
+
+// drain and pull is optional
+obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, drain: "5v", pull:null}); 
 ```
 ## [await] writeWait(data);
 send a data to spi and wait until receive the data.

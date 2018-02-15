@@ -9,18 +9,24 @@ PeripheralUART.prototype.start = function(params) {
   
   var err = ObnizUtil._requiredKeys(params,["tx", "rx"]);
   if(err){ throw new Error("uart start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts","drive","pullType"]);
+  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts","drive","pul"]);
 
 
   if(this.params.drive){
       this.Obniz.getIO(this.params.rx).drive(this.params.drive);
       this.Obniz.getIO(this.params.tx).drive(this.params.drive);
+  }else{
+      this.Obniz.getIO(this.params.rx).drive("5v");
+      this.Obniz.getIO(this.params.tx).drive("5v");
+      
   }
   
-  if(this.params.pullType){
-      this.Obniz.getIO(this.params.rx).pull(this.params.pullType);
-      this.Obniz.getIO(this.params.tx).pull(this.params.pullType);
-    
+  if(this.params.pull){
+      this.Obniz.getIO(this.params.rx).pull(this.params.pull);
+      this.Obniz.getIO(this.params.tx).pull(this.params.pull);
+  }else{
+      this.Obniz.getIO(this.params.rx).pull(null);
+      this.Obniz.getIO(this.params.tx).pull(null);
   }
   
   var obj = {};

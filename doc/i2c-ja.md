@@ -3,21 +3,26 @@ i2cを利用できます。
 i2cは１つのみ利用可能でi2c0のみ存在します。
 通信速度は最大1Mhzです。
 
-## start(mode, io_sda, io_scl, frequency, pull-up)
+## start({mode, sda, scl, frequency[, drain, pull]})
 
 i2cを有効化します。
 SDA, SCLとして利用するioの番号が必要です。
 また、通信速度はhzで指定します。
-ioは自動的にオープンドレインに切り替わります。
+
+drainとpullは出力設定オプションです.
+何も指定しなければ，drain:open-drain, pull:nullが設定されます．
+出力設定についてはobniz.io.drain() と pull() 関数に詳細があります.
+
 i2cではプルアップ抵抗が必要ですが、ioの内部pull-upも行うことが出来ます。
 文字列で指定できて、選べるのは３通りです。
 
-1. "float"
-2. "pullup"
-3. "pullup5v"
+1. null
+2. "0v"
+3. "3v"
+4. "5v"
 
-3.3vの相手と通信を行う場合はpullupを選びます。これにより3.3vでpullupされます。回路的な制約により2.9v程度になります。
-5vの相手と通信を行う場合で速度が遅くても良い場合は pullup5v を選びます。5vの内部プルアップが有効になります。
+3.3vの相手と通信を行う場合は3vを選びます。これにより3.3vでpullupされます。回路的な制約により2.9v程度になります。
+5vの相手と通信を行う場合で速度が遅くても良い場合は 5v を選びます。5vの内部プルアップが有効になります。
 
 通信速度は"pullup"の場合は最大100khz、それ以外の場合は最大1Mhzまで指定できます。
 
@@ -27,8 +32,11 @@ i2cではプルアップ抵抗が必要ですが、ioの内部pull-upも行う�
 ```Javascript
 // Example
 // master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start("master", 2, 3, 400000, "float"); 
+obniz.i2c0.start({mode:"master", sda:2, scl:3, frequency:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
+
+//drive and pull is optinal
+obniz.i2c0.start({mode:"master", sda:2, scl:3, frequency:400000, drive:"3v", pull:"3v"}); 
 ```
 ## end()
 
@@ -37,7 +45,7 @@ i2cを終了しIOを開放します。
 ```Javascript
 // Example
 // master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start("master", 2, 3, 400000, "float"); 
+obniz.i2c0.start({mode:"master", sda:2, scl:3, frequency:400000}); 
 obniz.i2c0.end();
 ```
 ## write(address, data);
@@ -51,7 +59,7 @@ Example
 ```Javascript
 // Example
 // master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start("master", 2, 3, 400000, "float"); 
+obniz.i2c0.start({mode:"master", sda:2, scl:3, frequency:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
 ## write10bit(address, data);
@@ -62,7 +70,7 @@ addressの値が何であれ必ず10bitアドレスモードで送信します�
 ```Javascript
 // Example
 // master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start("master", 2, 3, 400000, "float"); 
+obniz.i2c0.start({mode:"master", sda:2, scl:3, frequency:400000}); 
 obniz.i2c0.write10bit(0x50, [0x00, 0x00, 0x12]);
 ```
 ## [await] readWait(address, length);
@@ -73,7 +81,7 @@ addressの扱いに関してはwriteのものと同じです。
 ```Javascript
 // Example
 // master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start("master", 2, 3, 400000, "float"); 
+obniz.i2c0.start({mode:"master", sda:2, scl:3, frequency:400000}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
 console.log("readed"+ret);
 ```
@@ -85,7 +93,7 @@ addressの値が何であれ必ず10bitアドレスモードで送信します�
 ```Javascript
 // Example
 // master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start("master", 2, 3, 400000, "float"); 
+obniz.i2c0.start({mode:"master", sda:2, scl:3, frequency:400000}); 
 var ret = await obniz.i2c0.read10bitWait(0x50, 1);
 console.log("readed"+ret);
 ```

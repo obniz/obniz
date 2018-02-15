@@ -17,25 +17,33 @@ PeripheralSPI.prototype.start = function(params) {
   if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
   this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pullType"]);
   var obj = {};
+  
   obj["spi" + this.id]  = {
       mode : this.params.mode,
-      clk : this.params.clk,
-      mosi : this.params.mosi,
-      miso : this.params.miso,
       clock : this.params.frequency   //name different
   };
+  if(this.params.clk  !==  undefined){obj["spi" + this.id].clk = this.params.clk;}
+  if(this.params.mosi !==  undefined){obj["spi" + this.id].mosi = this.params.mosi;}
+  if(this.params.miso !==  undefined){obj["spi" + this.id].miso = this.params.miso;}
   
   if(this.params.drive){
-      this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-      this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-      this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+  }else{
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive("5v");
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
   }
   
   if(this.params.pullType){
-      this.Obniz.getIO(this.params.clk).pull(this.params.pullType);
-      this.Obniz.getIO(this.params.mosi).pull(this.params.pullType);
-      this.Obniz.getIO(this.params.miso).pull(this.params.pullType);
-    
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pullType);
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pullType);
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pullType);
+  }else{
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
   }
  
   this.Obniz.send(obj);

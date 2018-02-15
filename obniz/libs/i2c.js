@@ -20,11 +20,18 @@ PeripheralI2C.prototype.start = function(arg) {
   if(this.state.drive){
      this.Obniz.getIO(this.state.sda).drive(this.state.drive);
      this.Obniz.getIO(this.state.scl).drive(this.state.drive);
+  }else{
+      this.Obniz.getIO(this.state.sda).drive("open-drain");
+      this.Obniz.getIO(this.state.scl).drive("open-drain");
   }
   
   if(this.state.pullType){
      this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
      this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
+  }else{
+      this.Obniz.getIO(this.state.sda).pull(null);
+      this.Obniz.getIO(this.state.scl).pull(null);
+      
   }
   
   var obj = {}; 

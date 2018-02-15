@@ -1,4 +1,6 @@
 var _7SegmentLED = function() {
+  this.requiredKeys = ["address"];
+  this.keys = ["sda","scl","clock","pullType","i2c","address"];
   
   this.digits = [
     0x3F,

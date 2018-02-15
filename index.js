@@ -1360,11 +1360,18 @@ PeripheralI2C.prototype.start = function(arg) {
   if(this.state.drive){
      this.Obniz.getIO(this.state.sda).drive(this.state.drive);
      this.Obniz.getIO(this.state.scl).drive(this.state.drive);
+  }else{
+      this.Obniz.getIO(this.state.sda).drive("open-drain");
+      this.Obniz.getIO(this.state.scl).drive("open-drain");
   }
   
   if(this.state.pullType){
      this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
      this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
+  }else{
+      this.Obniz.getIO(this.state.sda).pull(null);
+      this.Obniz.getIO(this.state.scl).pull(null);
+      
   }
   
   var obj = {}; 
@@ -1769,25 +1776,33 @@ PeripheralSPI.prototype.start = function(params) {
   if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
   this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pullType"]);
   var obj = {};
+  
   obj["spi" + this.id]  = {
       mode : this.params.mode,
-      clk : this.params.clk,
-      mosi : this.params.mosi,
-      miso : this.params.miso,
       clock : this.params.frequency   //name different
   };
+  if(this.params.clk  !==  undefined){obj["spi" + this.id].clk = this.params.clk;}
+  if(this.params.mosi !==  undefined){obj["spi" + this.id].mosi = this.params.mosi;}
+  if(this.params.miso !==  undefined){obj["spi" + this.id].miso = this.params.miso;}
   
   if(this.params.drive){
-      this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-      this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-      this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+  }else{
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive("5v");
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
   }
   
   if(this.params.pullType){
-      this.Obniz.getIO(this.params.clk).pull(this.params.pullType);
-      this.Obniz.getIO(this.params.mosi).pull(this.params.pullType);
-      this.Obniz.getIO(this.params.miso).pull(this.params.pullType);
-    
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pullType);
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pullType);
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pullType);
+  }else{
+      if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
+      if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);
+      if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
   }
  
   this.Obniz.send(obj);
@@ -1876,18 +1891,24 @@ PeripheralUART.prototype.start = function(params) {
   
   var err = ObnizUtil._requiredKeys(params,["tx", "rx"]);
   if(err){ throw new Error("uart start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts","drive","pullType"]);
+  this.params = ObnizUtil._keyFilter(params,["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts","drive","pul"]);
 
 
   if(this.params.drive){
       this.Obniz.getIO(this.params.rx).drive(this.params.drive);
       this.Obniz.getIO(this.params.tx).drive(this.params.drive);
+  }else{
+      this.Obniz.getIO(this.params.rx).drive("5v");
+      this.Obniz.getIO(this.params.tx).drive("5v");
+      
   }
   
-  if(this.params.pullType){
-      this.Obniz.getIO(this.params.rx).pull(this.params.pullType);
-      this.Obniz.getIO(this.params.tx).pull(this.params.pullType);
-    
+  if(this.params.pull){
+      this.Obniz.getIO(this.params.rx).pull(this.params.pull);
+      this.Obniz.getIO(this.params.tx).pull(this.params.pull);
+  }else{
+      this.Obniz.getIO(this.params.rx).pull(null);
+      this.Obniz.getIO(this.params.tx).pull(null);
   }
   
   var obj = {};
@@ -2097,6 +2118,8 @@ if (PartsRegistrate) {
   PartsRegistrate("24LC256", _24LC256);
 };
 var _7SegmentLED = function() {
+  this.requiredKeys = ["address"];
+  this.keys = ["sda","scl","clock","pullType","i2c","address"];
   
   this.digits = [
     0x3F,
