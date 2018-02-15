@@ -1,31 +1,33 @@
 var ADT7410 = function() {
+  this.keys = [ "vcc", "gnd", "sda", "scl", "addressMode"];
+  this.requiredKey = ["addressMode"];
+};
+
+ADT7410.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  if (obniz.isValidIO(this.params.vcc)) {
+    obniz.getIO(this.params.vcc).output(true);
+  }
+  if (obniz.isValidIO(this.params.gnd)) {
+    obniz.getIO(this.params.gnd).output(true);
+  }
+  
+  if (this.params.addressMode === 8){
+    this.address = 0x48;
+  }else if(this.params.addressMode === 9){
+    this.address = 0x49;
+  }
+
+  this.params.clock = 400000;
+  this.params.pull = "5v";
+  this.params.mode = "master";
+ 
+  this.i2c = obniz.getI2CWithConfig(this.params);
 
 };
 
-ADT7410.prototype.wired = function(obniz, pwr, gnd, sda, scl, adr_select) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.io_sda = obniz.getIO(sda);
-  this.io_scl = obniz.getIO(scl);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
-  if (adr_select == 8){
-    address = 0x48;
-  }else if(adr_select == 9){
-    address = 0x49;
-  }
-
-  obniz.i2c0.start("master", sda, scl, 400000, "pullup5v");
-
-}
-
   ADT7410.prototype.getTempWait = async function() {
-    var ret = await obniz.i2c0.readWait(address, 2);
+    var ret = await this.i2c.readWait(this.address, 2);
     var tempBin = ret[0] << 8;
     tempBin |= ret[1];
     tempBin = tempBin >> 3;
@@ -35,7 +37,7 @@ ADT7410.prototype.wired = function(obniz, pwr, gnd, sda, scl, adr_select) {
     }
 
     return (tempBin/16);
-  }
+  };
 
 if (PartsRegistrate) {
   PartsRegistrate("ADT7410", ADT7410);

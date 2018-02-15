@@ -8,13 +8,13 @@ addressmodeはI2Cアドレスを指定します。アドレスを0x48にする�
 秋月電子のモジュールキット(M-06708)を使用している場合のデフォルト（J3,J4をショートしないとき）は0x48です。
 Obniz内でプルアップされますので、J1,J2のシャンパははんだ付け不要です。
 ```javascript
-var sensor = obniz.wired("ADT7410", 0, 1, 2, 3, 8);
+var sensor = obniz.wired("ADT7410", {vcc:0, gnd:2, sda:3, scl:8, addressMode:8});
 ```
 ## [await] getTempWait()
 現在の温度を計測して返します。単位は摂氏(℃)です。
 
 ```javascript
-var sensor = obniz.wired("ADT7410", 0, 1, 2, 3, 8);
+var sensor = obniz.wired("ADT7410", {vcc:0, gnd:2, sda:3, scl:8, addressMode:8});
 var temp = await sensor.getTempWait();
 console.log('temperature:' + temp);
 ```

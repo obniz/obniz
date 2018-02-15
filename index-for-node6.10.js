@@ -1309,7 +1309,7 @@ PeripheralI2C.prototype.start = function (arg) {
   if (err) {
     throw new Error("I2C start param '" + err + "' required, but not found ");return;
   }
-  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "clock", "pullType", "drive"]);
+  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "clock", "pull", "drive"]);
 
   if (this.state.drive) {
     this.Obniz.getIO(this.state.sda).drive(this.state.drive);
@@ -1319,9 +1319,9 @@ PeripheralI2C.prototype.start = function (arg) {
     this.Obniz.getIO(this.state.scl).drive("open-drain");
   }
 
-  if (this.state.pullType) {
-    this.Obniz.getIO(this.state.sda).pull(this.state.pullType);
-    this.Obniz.getIO(this.state.scl).pull(this.state.pullType);
+  if (this.state.pull) {
+    this.Obniz.getIO(this.state.sda).pull(this.state.pull);
+    this.Obniz.getIO(this.state.scl).pull(this.state.pull);
   } else {
     this.Obniz.getIO(this.state.sda).pull(null);
     this.Obniz.getIO(this.state.scl).pull(null);
@@ -1724,7 +1724,7 @@ PeripheralSPI.prototype.start = function (params) {
   if (err) {
     throw new Error("spi start param '" + err + "' required, but not found ");return;
   }
-  this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "frequency", "drive", "pullType"]);
+  this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "frequency", "drive", "pull"]);
   var obj = {};
 
   obj["spi" + this.id] = {
@@ -1751,10 +1751,10 @@ PeripheralSPI.prototype.start = function (params) {
     if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).drive("5v");
   }
 
-  if (this.params.pullType) {
-    if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pullType);
-    if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pullType);
-    if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pullType);
+  if (this.params.pull) {
+    if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
+    if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
+    if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
   } else {
     if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(null);
     if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(null);
@@ -1849,7 +1849,7 @@ PeripheralUART.prototype.start = function (params) {
   if (err) {
     throw new Error("uart start param '" + err + "' required, but not found ");return;
   }
-  this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pul"]);
+  this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pull"]);
 
   if (this.params.hasOwnProperty("drive")) {
     this.Obniz.getIO(this.params.rx).drive(this.params.drive);
@@ -2264,31 +2264,35 @@ if (PartsRegistrate) {
   PartsRegistrate("ADT7310", ADT7310);
 }
 
-var ADT7410 = function () {};
+var ADT7410 = function () {
+  this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
+  this.requiredKey = ["addressMode"];
+};
 
-ADT7410.prototype.wired = function (obniz, pwr, gnd, sda, scl, adr_select) {
+ADT7410.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.io_sda = obniz.getIO(sda);
-  this.io_scl = obniz.getIO(scl);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
+  if (obniz.isValidIO(this.params.vcc)) {
+    obniz.getIO(this.params.vcc).output(true);
   }
-  if (adr_select == 8) {
-    address = 0x48;
-  } else if (adr_select == 9) {
-    address = 0x49;
+  if (obniz.isValidIO(this.params.gnd)) {
+    obniz.getIO(this.params.gnd).output(true);
   }
 
-  obniz.i2c0.start("master", sda, scl, 400000, "pullup5v");
+  if (this.params.addressMode === 8) {
+    this.address = 0x48;
+  } else if (this.params.addressMode === 9) {
+    this.address = 0x49;
+  }
+
+  this.params.clock = 400000;
+  this.params.pull = "5v";
+  this.params.mode = "master";
+
+  this.i2c = obniz.getI2CWithConfig(this.params);
 };
 
 ADT7410.prototype.getTempWait = _asyncToGenerator(function* () {
-  var ret = yield obniz.i2c0.readWait(address, 2);
+  var ret = yield this.i2c.readWait(this.address, 2);
   var tempBin = ret[0] << 8;
   tempBin |= ret[1];
   tempBin = tempBin >> 3;
