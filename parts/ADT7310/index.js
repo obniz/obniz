@@ -6,13 +6,8 @@ var ADT7310 = function() {
 ADT7310.prototype.wired = async function(obniz) {
   this.obniz = obniz;
 
-  if (obniz.isValidIO(this.params.vcc)) {
-    obniz.getIO(this.params.vcc).output(true);
-  }
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_gnd = obniz.getIO(this.params.gnd);
-    this.io_gnd.output(false);
-  }
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  
 
   this.params.mode = this.params.mode || "master";
   this.params.frequency = this.params.frequency || 500000;

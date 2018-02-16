@@ -1,18 +1,12 @@
 var MCP9700 = function() {
 
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = [ "output" ];
 };
 
-MCP9700.prototype.wired = function(obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+MCP9700.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function(value){
@@ -22,10 +16,6 @@ MCP9700.prototype.wired = function(obniz, pwr, signal, gnd) {
     }
   });
 
-};
-
-MCP9700.prototype.onChange = function(callback) {
-  this.onchange = callback;
 };
 
 if (PartsRegistrate) {

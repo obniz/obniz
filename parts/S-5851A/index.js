@@ -1,20 +1,16 @@
 //センサからの反応なし
 var S5851A = function() {
-  this.requiredKeys = ["pwr","adr0","adr1","adr_select"];
-  this.keys = ["pwr","gnd","sda","scl","adr0","adr1","adr_select","i2c"];
+  this.requiredKeys = ["vcc","gnd","adr0","adr1","adr_select"];
+  this.keys = ["sda","scl","adr0","adr1","adr_select","i2c"];
 };
 
 S5851A.prototype.wired = function(obniz) {
   //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
-  this.io_pwr = obniz.getIO(this.params.pwr);
   this.io_adr0 = obniz.getIO(this.params.adr0);
   this.io_adr1 = obniz.getIO(this.params.adr1);
 
-  this.io_pwr.output(true);
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_gnd = obniz.getIO(this.params.gnd);
-    this.io_gnd.output(false);
-  }
+
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
   switch (this.params.adr_select){
     case 8:
@@ -67,7 +63,7 @@ S5851A.prototype.wired = function(obniz) {
 
   this.params.clock = this.params.clock || 400*1000; //for i2c
   this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.pullType = this.params.pullType || "pullup5v"; //for i2c
+  this.params.pull = this.params.pull || "5v"; //for i2c
   this.i2c = obniz.getI2CWithConfig(this.params);
   //obniz.i2c0.write(address, [0x20, 0x24]);
 };
@@ -81,7 +77,7 @@ S5851A.prototype.wired = function(obniz) {
     var tempBin = (ret[0]).toString(2) + ( '00000000' + (ret[1]).toString(2) ).slice( -8 );
     var temperature = (-45)+(175*(parseInt(tempBin,2)/(65536-1)));
     return temperature;
-  }
+  };
 
   S5851A.prototype.getHumdWait = async function() {
     this.i2c.write(address, [0x20, 0x24]);
@@ -90,7 +86,7 @@ S5851A.prototype.wired = function(obniz) {
     var humdBin = (ret[2]).toString(2) + ( '00000000' + (ret[3]).toString(2) ).slice( -8 );
     var humidity = 100 * (parseInt(humdBin,2)/(65536-1));
     return humidity;
-  }
+  };
 
 if (PartsRegistrate) {
   PartsRegistrate("S5851A", S5851A);

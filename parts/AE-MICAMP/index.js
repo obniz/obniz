@@ -1,18 +1,15 @@
 var AE_MICAMP = function() {
-
+  this.keys = ["vcc", "gnd", "out"];
+  this.requiredKeys = ["out"];
 };
 
-AE_MICAMP.prototype.wired = async function(obniz, pwr, gnd, signal) {
+AE_MICAMP.prototype.wired = async function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+  this.ad = obniz.getAD(this.params.out);
+  
+  
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
 
   var self = this;
   this.ad.start(function(value){
