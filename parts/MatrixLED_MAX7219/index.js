@@ -24,11 +24,10 @@ class MatrixLED_MAX7219 {
     this.cs.output(true);
     
     // max 10Mhz but motor driver can't
-    obniz.getIO(this.params.clk).drive("3v");
-    obniz.getIO(this.params.din).drive("3v");
     this.params.frequency = this.params.frequency  || 10 * 1000*1000;
     this.params.mode =  "master";
     this.params.mosi = this.params.din;
+    this.params.drive = "3v";
     this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
