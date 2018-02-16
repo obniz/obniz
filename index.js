@@ -2640,14 +2640,17 @@ if (PartsRegistrate) {
 
 //Todo:抵抗を追加して圧力(kg)を求められるように改造する
 var FSR40X = function() {
-
+  this.keys = ["pin0", "pin1"];
+  this.requiredKeys = ["pin0", "pin1"];
 };
 
-FSR40X.prototype.wired = function(obniz, pin0, pin1) {
+FSR40X.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pin0);
-  this.ad = obniz.getAD(pin1);
+  
+  this.io_pwr = obniz.getIO(this.params.pin0);
+  this.ad = obniz.getAD(this.params.pin1);
 
+  this.io_pwr.drive("5v");
   this.io_pwr.output(true);
 
   var self = this;
@@ -2691,9 +2694,18 @@ class FullColorLed{
       'gnd'
     ];
     this.animationName = "FullColorLed-" + Math.round(Math.random() *1000);
+    
+    this.keys = ["r", "g", "b", "common", "commonType"];
+    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
   }
   
-  wired (obniz, r, g, b, common, commontype){
+  wired (obniz){
+    var r = this.params.r;
+    var g = this.params.g;
+    var b = this.params.b;
+    var common = this.params.common;
+    var commontype = this.params.commonType;
+    
     this.obniz = obniz;
     if(this.anode_keys.includes(commontype)){
       this.commontype = this.COMMON_TYPE_ANODE;
@@ -2790,24 +2802,25 @@ if (PartsRegistrate) {
   PartsRegistrate("FullColorLed", FullColorLed);
 }
 var HCSR04 = function() {
-
+  this.keys  = [ "vcc", "triger", "echo", "gnd"];
+  this.requiredKeys  = [ "vcc", "triger", "echo"];
 };
 
-HCSR04.prototype.wired = function(obniz, vcc, triger, echo, gnd) {
+HCSR04.prototype.wired = function(obniz) {
   this.obniz = obniz;
 
-  this.gndIO = obniz.getIO(gnd);
-  this.vccIO = obniz.getIO(vcc);
-  this.triger = triger;
-  this.echo = echo;
+  obniz.setVccGnd(null, this.params.gnd, "5v");
 
-  this.gndIO.output(false);
+  this.vccIO = obniz.getIO(this.params.vcc);
+  this.triger = this.params.triger;
+  this.echo = this.params.echo;
 
   this.unit = "mm";
-}
+};
 
 HCSR04.prototype.measure = async function(callback) {
 
+  this.vccIO.drive("5v");
   this.vccIO.output(true);
   await this.obniz.wait(10);
   var self = this;
@@ -2816,7 +2829,7 @@ HCSR04.prototype.measure = async function(callback) {
     self.obniz.getIO(self.triger).output(false);
     self.obniz.getIO(self.echo).output(false);
     var distance = null;
-    if (edges.length == 2) {
+    if (edges.length === 2) {
       distance = (edges[1].timing-edges[0].timing) * 1000;
       if (self.unit === "mm") {
         distance = distance / 5.8;
@@ -2827,18 +2840,18 @@ HCSR04.prototype.measure = async function(callback) {
     if (typeof(callback) === "function") {
       callback(distance);
     }
-  })
-}
+  });
+};
 
 HCSR04.prototype.unit = function(unit) {
   if (unit === "mm") {
     this.unit = "mm";
   } else if (unit === "inch") {
-    this.unit = "inch"
+    this.unit = "inch";
   } else {
     throw new Error("HCSR04: unknown unit "+unit);
   }
-}
+};
 
 // Module functions
 
@@ -2846,65 +2859,49 @@ if (PartsRegistrate) {
   PartsRegistrate("HC-SR04", HCSR04);
 }
 var JoyStick = function() {
-  
+    this.keys = ["sw", "y", "x", "vcc", "gnd"];
+    this.requiredKeys = ["sw", "y", "x"];
 };
 
-JoyStick.prototype.wired = function(obniz, sig_sw, sig_y, sig_x, pwr, gnd) {
+JoyStick.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.io_sig_sw = obniz.getIO(sig_sw);
-  this.ad_x = obniz.getAD(sig_y);
-  this.ad_y = obniz.getAD(sig_x);
   
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
   
-  this.io_pwr.output(true);
-  this.io_gnd.output(false);
+  this.io_sig_sw = obniz.getIO(this.params.sw);
+  this.ad_x = obniz.getAD(this.params.x);
+  this.ad_y = obniz.getAD(this.params.y);
+  
   this.io_sig_sw.pull("5v");
   
       
   var self = this;
   this.ad_x.start(function(value){
     self.positionX = value/ 5.0;
-    if (self.onchangeX) {
-      self.onchangeX(self.positionX);
+    if (self.onchangex) {
+      self.onchangex(self.positionX * 2 - 1);
     }
   });
   
   this.ad_y.start(function(value){
     self.positionY = value/ 5.0;
-    if (self.onchangeY) {
-      self.onchangeY(self.positionY);
+    if (self.onchangey) {
+      self.onchangey(self.positionY * 2 - 1);
     }
   });
   
-};
-  
-  // Module functions
-JoyStick.prototype.onChangeX = function(callback) {
-  this.onchangeX = callback;
-};
-
-JoyStick.prototype.onChangeY = function(callback) {
-  this.onchangeY = callback;
-};
-
-JoyStick.prototype.onChangeSW = function(callback) {
-  this.onchangeSW = callback;
-  var self = this;
   this.io_sig_sw.input(function(value) {
-    self.isPressed = (value == false);
-    if (self.onchangeSW) {
-      self.onchangeSW(value == false);
+    self.isPressed = (value === false);
+    if (self.onchangesw) {
+      self.onchangesw(value === false);
     }
   });
 };
 
 JoyStick.prototype.isPressedWait = async function() {
-  var self = this;
   var ret = await this.io_sig_sw.inputWait();
-  return ret == false;
-}
+  return ret === false;
+};
 
   
   if (PartsRegistrate) {

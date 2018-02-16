@@ -6,11 +6,11 @@ Sample Program on CodePen
 <p data-height="300" data-theme-id="32184" data-slug-hash="MrXrgV" data-default-tab="js,result" data-user="obniz" data-embed-version="2" data-pen-title="Parts: HC-SR04" class="codepen">See the Pen <a href="https://codepen.io/obniz/pen/MrXrgV/">Parts: HC-SR04</a> by obniz (<a href="https://codepen.io/obniz">@obniz</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
-## wired(obniz, vcc_io, triger_io, echo_io, gnd_io)
+## wired(obniz, {vcc, triger, echo, gnd})
 
 ```javascript
   // Example
-  var hcsr04 = obniz.wired("HC-SR04", 3,2,1,0);
+  var hcsr04 = obniz.wired("HC-SR04", {vcc:3, triger:2, echo:1, gnd:0});
   hcsr04.measure(function( distance ){
     $("#print").text("distance " + distance + " mm")
   })
@@ -20,7 +20,7 @@ Sample Program on CodePen
 measure distance.
 default return unit is "mm". change by calling .unit()
 ```javascript
-  var hcsr04 = obniz.wired("HC-SR04", 3,2,1,0);
+  var hcsr04 = obniz.wired("HC-SR04",  {vcc:3, triger:2, echo:1, gnd:0});
   $("#do").click(function(){
     hcsr04.measure(function( distance ){
       $("#print").text("distance " + distance + " mm")
@@ -37,7 +37,7 @@ change unit
 are available
 
 ```javascript
-  var hcsr04 = obniz.wired("HC-SR04", 3,2,1,0);
+  var hcsr04 = obniz.wired("HC-SR04",  {vcc:3, triger:2, echo:1, gnd:0});
   hcsr04.unit("inch")
   $("#do").click(function(){
     hcsr04.measure(function( distance ){

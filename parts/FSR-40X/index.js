@@ -1,13 +1,16 @@
 //Todo:抵抗を追加して圧力(kg)を求められるように改造する
 var FSR40X = function() {
-
+  this.keys = ["pin0", "pin1"];
+  this.requiredKeys = ["pin0", "pin1"];
 };
 
-FSR40X.prototype.wired = function(obniz, pin0, pin1) {
+FSR40X.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pin0);
-  this.ad = obniz.getAD(pin1);
+  
+  this.io_pwr = obniz.getIO(this.params.pin0);
+  this.ad = obniz.getAD(this.params.pin1);
 
+  this.io_pwr.drive("5v");
   this.io_pwr.output(true);
 
   var self = this;

@@ -1,63 +1,47 @@
 var JoyStick = function() {
-  
+    this.keys = ["sw", "y", "x", "vcc", "gnd"];
+    this.requiredKeys = ["sw", "y", "x"];
 };
 
-JoyStick.prototype.wired = function(obniz, sig_sw, sig_y, sig_x, pwr, gnd) {
+JoyStick.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.io_sig_sw = obniz.getIO(sig_sw);
-  this.ad_x = obniz.getAD(sig_y);
-  this.ad_y = obniz.getAD(sig_x);
   
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
   
-  this.io_pwr.output(true);
-  this.io_gnd.output(false);
+  this.io_sig_sw = obniz.getIO(this.params.sw);
+  this.ad_x = obniz.getAD(this.params.x);
+  this.ad_y = obniz.getAD(this.params.y);
+  
   this.io_sig_sw.pull("5v");
   
       
   var self = this;
   this.ad_x.start(function(value){
     self.positionX = value/ 5.0;
-    if (self.onchangeX) {
-      self.onchangeX(self.positionX);
+    if (self.onchangex) {
+      self.onchangex(self.positionX * 2 - 1);
     }
   });
   
   this.ad_y.start(function(value){
     self.positionY = value/ 5.0;
-    if (self.onchangeY) {
-      self.onchangeY(self.positionY);
+    if (self.onchangey) {
+      self.onchangey(self.positionY * 2 - 1);
     }
   });
   
-};
-  
-  // Module functions
-JoyStick.prototype.onChangeX = function(callback) {
-  this.onchangeX = callback;
-};
-
-JoyStick.prototype.onChangeY = function(callback) {
-  this.onchangeY = callback;
-};
-
-JoyStick.prototype.onChangeSW = function(callback) {
-  this.onchangeSW = callback;
-  var self = this;
   this.io_sig_sw.input(function(value) {
-    self.isPressed = (value == false);
-    if (self.onchangeSW) {
-      self.onchangeSW(value == false);
+    self.isPressed = (value === false);
+    if (self.onchangesw) {
+      self.onchangesw(value === false);
     }
   });
 };
 
 JoyStick.prototype.isPressedWait = async function() {
-  var self = this;
   var ret = await this.io_sig_sw.inputWait();
-  return ret == false;
-}
+  return ret === false;
+};
 
   
   if (PartsRegistrate) {

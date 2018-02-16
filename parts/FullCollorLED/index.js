@@ -17,9 +17,18 @@ class FullColorLed{
       'gnd'
     ];
     this.animationName = "FullColorLed-" + Math.round(Math.random() *1000);
+    
+    this.keys = ["r", "g", "b", "common", "commonType"];
+    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
   }
   
-  wired (obniz, r, g, b, common, commontype){
+  wired (obniz){
+    var r = this.params.r;
+    var g = this.params.g;
+    var b = this.params.b;
+    var common = this.params.common;
+    var commontype = this.params.commonType;
+    
     this.obniz = obniz;
     if(this.anode_keys.includes(commontype)){
       this.commontype = this.COMMON_TYPE_ANODE;
