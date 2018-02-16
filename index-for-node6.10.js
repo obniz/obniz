@@ -2309,18 +2309,24 @@ if (PartsRegistrate) {
   PartsRegistrate("ADT7410", ADT7410);
 }
 
-var AE_MICAMP = function () {};
+var AE_MICAMP = function () {
+  this.keys = ["vcc", "gnd", "out"];
+  this.requiredKeys = ["out"];
+};
 
 AE_MICAMP.prototype.wired = (() => {
-  var _ref9 = _asyncToGenerator(function* (obniz, pwr, gnd, signal) {
+  var _ref9 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
-    this.io_pwr = obniz.getIO(pwr);
-    this.io_gnd = obniz.getIO(gnd);
-    this.ad = obniz.getAD(signal);
 
-    this.io_pwr.output(true);
-    if (gnd) {
-      this.io_gnd = obniz.getIO(gnd);
+    this.ad = obniz.getAD(this.params.out);
+
+    if (obniz.isValidIO(this.params.vcc)) {
+      this.io_vcc = obniz.getIO(this.params.vcc);
+      this.io_vcc.output(true);
+    }
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_gnd = obniz.getIO(this.params.gnd);
       this.io_gnd.output(false);
     }
 
@@ -2357,7 +2363,7 @@ AE_MICAMP.prototype.wired = (() => {
       */
   });
 
-  return function (_x6, _x7, _x8, _x9) {
+  return function (_x6) {
     return _ref9.apply(this, arguments);
   };
 })();
@@ -2377,38 +2383,34 @@ if (PartsRegistrate) {
   PartsRegistrate("AE_MICAMP", AE_MICAMP);
 }
 
-var Button = function () {};
+var Button = function () {
+  this.keys = ["signal", "gnd"];
+  this.required = ["signal"];
+};
 
-Button.prototype.wired = function (obniz, signal, supply) {
-  this.obniz = obniz;
-  this.io_signal = obniz.getIO(signal);
+Button.prototype.wired = function (obniz) {
+  this.io_signal = obniz.getIO(this.params.signal);
 
-  if (supply) {
-    this.io_supply = obniz.getIO(supply);
+  if (obniz.isValidIO(this.params.gnd)) {
+    this.io_supply = obniz.getIO(this.params.gnd);
     this.io_supply.output(false);
   }
 
   // start input
   this.io_signal.pull("5v");
-};
 
-// Module functions
-
-Button.prototype.onChange = function (callback) {
-  this.onchange = callback;
   var self = this;
   this.io_signal.input(function (value) {
-    self.isPressed = value == false;
+    self.isPressed = value === false;
     if (self.onchange) {
-      self.onchange(value == false);
+      self.onchange(value === false);
     }
   });
 };
 
 Button.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var self = this;
   var ret = yield this.io_signal.inputWait();
-  return ret == false;
+  return ret === false;
 });
 
 if (PartsRegistrate) {
@@ -2770,7 +2772,7 @@ HCSR04.prototype.measure = (() => {
     });
   });
 
-  return function (_x10) {
+  return function (_x7) {
     return _ref14.apply(this, arguments);
   };
 })();
@@ -3099,7 +3101,7 @@ KXSC7_2050.prototype.wired = (() => {
     });
   });
 
-  return function (_x11, _x12, _x13, _x14, _x15, _x16) {
+  return function (_x8, _x9, _x10, _x11, _x12, _x13) {
     return _ref16.apply(this, arguments);
   };
 })();

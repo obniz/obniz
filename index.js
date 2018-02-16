@@ -2362,18 +2362,22 @@ if (PartsRegistrate) {
 }
 
 var AE_MICAMP = function() {
-
+  this.keys = ["vcc", "gnd", "out"];
+  this.requiredKeys = ["out"];
 };
 
-AE_MICAMP.prototype.wired = async function(obniz, pwr, gnd, signal) {
+AE_MICAMP.prototype.wired = async function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
+  this.ad = obniz.getAD(this.params.out);
+  
+  if ( obniz.isValidIO(this.params.vcc)) {
+    this.io_vcc = obniz.getIO(this.params.vcc);
+    this.io_vcc.output(true);
+  }
+  
+  if ( obniz.isValidIO(this.params.gnd)) {
+    this.io_gnd = obniz.getIO(this.params.gnd);
     this.io_gnd.output(false);
   }
 
@@ -2426,40 +2430,35 @@ if (PartsRegistrate) {
 }
 
 var Button = function() {
-
+  this.keys = ["signal","gnd"];
+  this.required = ["signal"];
 };
 
-Button.prototype.wired = function(obniz, signal, supply) {
-  this.obniz = obniz;
-  this.io_signal = obniz.getIO(signal);
+Button.prototype.wired = function(obniz) {
+  this.io_signal = obniz.getIO(this.params.signal);
 
-  if (supply) {
-    this.io_supply = obniz.getIO(supply);
+  if (obniz.isValidIO(this.params.gnd)) {
+    this.io_supply = obniz.getIO(this.params.gnd);
     this.io_supply.output(false);
   }
 
   // start input
   this.io_signal.pull("5v");
-}
-
-// Module functions
-
-Button.prototype.onChange = function(callback) {
-  this.onchange = callback;
+  
   var self = this;
   this.io_signal.input(function(value) {
-    self.isPressed = (value == false);
+    self.isPressed = (value === false);
     if (self.onchange) {
-      self.onchange(value == false);
+      self.onchange(value === false);
     }
-  })
-}
+  });
+};
+
 
 Button.prototype.isPressedWait = async function() {
-  var self = this;
   var ret = await this.io_signal.inputWait();
-  return ret == false;
-}
+  return ret === false;
+};
 
 if (PartsRegistrate) {
   PartsRegistrate("Button", Button);
