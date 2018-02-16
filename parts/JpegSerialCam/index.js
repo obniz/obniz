@@ -2,12 +2,11 @@ class JpegSerialCam {
 
   constructor() {
     this.keys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
-    this.requiredKeys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
+    this.requiredKeys = [ "cam_tx", "cam_rx"];
   }
 
   wired(){
-    this.obniz.getIO(this.params.vcc).output(true);
-    this.obniz.getIO(this.params.gnd).output(false);
+    this.obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
     this.my_tx = this.params.cam_rx;
     this.my_rx = this.params.cam_tx;
 

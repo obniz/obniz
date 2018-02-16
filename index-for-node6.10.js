@@ -2851,12 +2851,11 @@ class JpegSerialCam {
 
   constructor() {
     this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
-    this.requiredKeys = ["vcc", "cam_tx", "cam_rx", "gnd"];
+    this.requiredKeys = ["cam_tx", "cam_rx"];
   }
 
   wired() {
-    this.obniz.getIO(this.params.vcc).output(true);
-    this.obniz.getIO(this.params.gnd).output(false);
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.my_tx = this.params.cam_rx;
     this.my_rx = this.params.cam_tx;
 
@@ -3046,85 +3045,70 @@ class JpegSerialCam {
 if (PartsRegistrate) {
   PartsRegistrate("JpegSerialCam", JpegSerialCam);
 }
-var KXSC7_2050 = function () {};
+var KXSC7_2050 = function () {
+  this.keys = ["x", "y", "z", "vcc", "gnd"];
+  this.requiredKeys = ["x", "y", "z"];
+};
 
 KXSC7_2050.prototype.wired = (() => {
-  var _ref16 = _asyncToGenerator(function* (obniz, pwr, sig_x, sig_y, sig_z, gnd) {
+  var _ref16 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
-    this.io_pwr = obniz.getIO(pwr);
-    this.io_gnd = obniz.getIO(gnd);
-    this.ad_x = obniz.getAD(sig_x);
-    this.ad_y = obniz.getAD(sig_y);
-    this.ad_z = obniz.getAD(sig_z);
 
-    this.io_pwr.input();
-    this.io_pwr.drive("3v");
-    this.io_pwr.output(true);
-    if (gnd) {
-      this.io_gnd = obniz.getIO(gnd);
-      this.io_gnd.output(false);
-    }
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
+    this.ad_z = obniz.getAD(this.params.z);
 
     yield obniz.wait(500);
-    var ad = obniz.getAD(pwr);
+    var ad = obniz.getAD(this.params.vcc);
     var pwrVoltage = yield ad.getWait();
-    console.log(pwrVoltage);
     var horizontalZ = yield this.ad_z.getWait();
-    console.log(horizontalZ);
     var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
     var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
 
     var self = this;
     this.ad_x.start(function (value) {
       self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangeX) {
-        self.onchangeX(self.gravity);
+      if (self.onchangex) {
+        self.onchangex(self.gravity);
       }
     });
 
     this.ad_y.start(function (value) {
       self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangeY) {
-        self.onchangeY(self.gravity);
+      if (self.onchangey) {
+        self.onchangey(self.gravity);
       }
     });
 
     this.ad_z.start(function (value) {
       self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangeZ) {
-        self.onchangeZ(self.gravity);
+      if (self.onchangez) {
+        self.onchangez(self.gravity);
       }
     });
   });
 
-  return function (_x8, _x9, _x10, _x11, _x12, _x13) {
+  return function (_x8) {
     return _ref16.apply(this, arguments);
   };
 })();
 
-// Module functions
-KXSC7_2050.prototype.onChangeX = function (callback) {
-  this.onchangeX = callback;
-};
-
-KXSC7_2050.prototype.onChangeY = function (callback) {
-  this.onchangeY = callback;
-};
-
-KXSC7_2050.prototype.onChangeZ = function (callback) {
-  this.onchangeZ = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("KXSC7_2050", KXSC7_2050);
 }
-var LED = function () {};
+var LED = function () {
+  this.keys = ["anode", "cathode"];
+  this.requiredKeys = ["anode", "cathode"];
 
-LED.prototype.wired = function (obniz, anode, cathode) {
+  this.animationName = "Led-" + Math.round(Math.random() * 1000);
+};
+
+LED.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  this.io_anode = obniz.getIO(anode);
-  if (cathode) {
-    this.io_cathode = obniz.getIO(cathode);
+  this.io_anode = obniz.getIO(this.params.anode);
+  if (this.params.cathode) {
+    this.io_cathode = obniz.getIO(this.params.cathode);
     this.io_cathode.output(false);
   }
 };
@@ -3142,42 +3126,43 @@ LED.prototype.off = function () {
 };
 
 LED.prototype.endBlink = function () {
-  if (this.blink_timer) {
-    clearInterval(this.blink_timer);
-    this.blink_timer = null;
-  }
+  this.obniz.io.animation(this.animationName, "pause");
 };
 
 LED.prototype.blink = function (interval) {
-  this.endBlink();
   if (!interval) {
     interval = 100;
   }
-  var val = false;
-  var self = this;
-  this.blink_timer = setInterval(function () {
-    self.io_anode.output(val);
-    val = !val;
-  }, interval);
+  var frames = [{
+    duration: interval,
+    state: function (index) {
+      // index = 0
+      this.io_anode.output(true); // on
+    }.bind(this)
+  }, {
+    duration: interval,
+    state: function (index) {
+      // index = 0
+      this.io_anode.output(false); //off
+    }.bind(this)
+  }];
+
+  this.obniz.io.animation(this.animationName, "loop", frames);
 };
 
 if (PartsRegistrate) {
   PartsRegistrate("LED", LED);
 }
 
-var LM35DZ = function () {};
+var LM35DZ = function () {
+  this.keys = ["vcc", "gnd", "output"];
+  this.requiredKeys = ["output"];
+};
 
-LM35DZ.prototype.wired = function (obniz, pwr, signal, gnd) {
+LM35DZ.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3188,31 +3173,22 @@ LM35DZ.prototype.wired = function (obniz, pwr, signal, gnd) {
   });
 };
 
-LM35DZ.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("LM35DZ", LM35DZ);
 }
 
-var LM60 = function () {};
+var LM60 = function () {
+  this.keys = ["vcc", "gnd", "output"];
+  this.requiredKeys = ["output"];
+};
 
-LM60.prototype.wired = function (obniz, pwr, signal, gnd) {
+LM60.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
+  this.ad = obniz.getAD(this.params.output);
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
-
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
   var self = this;
   this.ad.start(function (value) {
-    console.log(value);
     self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
     if (self.onchange) {
       self.onchange(self.temp);
@@ -3220,27 +3196,19 @@ LM60.prototype.wired = function (obniz, pwr, signal, gnd) {
   });
 };
 
-LM60.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("LM60", LM60);
 }
 
-var LM61 = function () {};
+var LM61 = function () {
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = ["output"];
+};
 
-LM61.prototype.wired = function (obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
+LM61.prototype.wired = function (obniz) {
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3251,27 +3219,19 @@ LM61.prototype.wired = function (obniz, pwr, signal, gnd) {
   });
 };
 
-LM61.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("LM61", LM61);
 }
 
-var MCP9700 = function () {};
+var MCP9700 = function () {
 
-MCP9700.prototype.wired = function (obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = ["output"];
+};
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+MCP9700.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3282,27 +3242,19 @@ MCP9700.prototype.wired = function (obniz, pwr, signal, gnd) {
   });
 };
 
-MCP9700.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("MCP9700", MCP9700);
 }
 
-var MCP9701 = function () {};
+var MCP9701 = function () {
 
-MCP9701.prototype.wired = function (obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = ["output"];
+};
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+MCP9701.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3311,10 +3263,6 @@ MCP9701.prototype.wired = function (obniz, pwr, signal, gnd) {
       self.onchange(self.temp);
     }
   });
-};
-
-MCP9701.prototype.onChange = function (callback) {
-  this.onchange = callback;
 };
 
 if (PartsRegistrate) {
@@ -3455,16 +3403,14 @@ if (PartsRegistrate) {
   PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
 }
 
-var PotentionMeter = function () {};
+var PotentionMeter = function () {
+  this.keys = ["pin0", "pin1", "pin2"];
+  this.reuiredKeys = ["pin0", "pin1", "pin2"];
+};
 
-PotentionMeter.prototype.wired = function (obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.ad = obniz.getAD(signal);
-  this.io_gnd = obniz.getIO(gnd);
-
-  this.io_pwr.output(true);
-  this.io_gnd.output(false);
+PotentionMeter.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+  this.ad = obniz.getAD(this.params.pin1);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3473,12 +3419,6 @@ PotentionMeter.prototype.wired = function (obniz, pwr, signal, gnd) {
       self.onchange(self.position);
     }
   });
-};
-
-// Module functions
-
-PotentionMeter.prototype.onChange = function (callback) {
-  this.onchange = callback;
 };
 
 if (PartsRegistrate) {
@@ -3496,8 +3436,7 @@ RN42.prototype.wired = function (obniz) {
 
   this.uart = obniz.getFreeUart();
 
-  obniz.getIO(this.params.tx).drive("3v");
-  this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 115200 });
+  this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 115200, drive: "3v" });
   var self = this;
   this.uart.onreceive = function (data, text) {
     // this is not perfect. separation is possible.
@@ -3670,21 +3609,16 @@ if (PartsRegistrate) {
 }
 //センサからの反応なし
 var S5851A = function () {
-  this.requiredKeys = ["pwr", "adr0", "adr1", "adr_select"];
-  this.keys = ["pwr", "gnd", "sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
+  this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
+  this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
 };
 
 S5851A.prototype.wired = function (obniz) {
   //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
-  this.io_pwr = obniz.getIO(this.params.pwr);
   this.io_adr0 = obniz.getIO(this.params.adr0);
   this.io_adr1 = obniz.getIO(this.params.adr1);
 
-  this.io_pwr.output(true);
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_gnd = obniz.getIO(this.params.gnd);
-    this.io_gnd.output(false);
-  }
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
   switch (this.params.adr_select) {
     case 8:
@@ -3737,7 +3671,7 @@ S5851A.prototype.wired = function (obniz) {
 
   this.params.clock = this.params.clock || 400 * 1000; //for i2c
   this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.pullType = this.params.pullType || "pullup5v"; //for i2c
+  this.params.pull = this.params.pull || "5v"; //for i2c
   this.i2c = obniz.getI2CWithConfig(this.params);
   //obniz.i2c0.write(address, [0x20, 0x24]);
 };
@@ -3767,19 +3701,14 @@ if (PartsRegistrate) {
 }
 
 //センサから出力が無い(出力インピーダンス高すぎ？)
-var S8100B = function () {};
+var S8100B = function () {
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = ["output"];
+};
 
-S8100B.prototype.wired = function (obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+S8100B.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3790,10 +3719,6 @@ S8100B.prototype.wired = function (obniz, pwr, signal, gnd) {
   });
 };
 
-S8100B.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("S8100B", S8100B);
 }
@@ -3801,19 +3726,14 @@ if (PartsRegistrate) {
 //不調, 正しく測れるときもある...
 //原因1:obnizの入力インピーダンスが低すぎる?
 //原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
-var S8120C = function () {};
+var S8120C = function () {
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = ["output"];
+};
 
-S8120C.prototype.wired = function (obniz, pwr, gnd, signal) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+S8120C.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3825,27 +3745,18 @@ S8120C.prototype.wired = function (obniz, pwr, gnd, signal) {
   });
 };
 
-S8120C.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("S8120C", S8120C);
 }
 
-var SEN0114 = function () {};
+var SEN0114 = function () {
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = ["output"];
+};
 
-SEN0114.prototype.wired = function (obniz, signal, pwr, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+SEN0114.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function (value) {
@@ -3856,12 +3767,8 @@ SEN0114.prototype.wired = function (obniz, signal, pwr, gnd) {
   });
 };
 
-SEN0114.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 SEN0114.prototype.getHumidityWait = _asyncToGenerator(function* () {
-  return this.ad.value;
+  return yield this.ad.getWait;
 });
 
 if (PartsRegistrate) {

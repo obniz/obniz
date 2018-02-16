@@ -1,18 +1,13 @@
 var LM61 = function() {
-
+  this.keys = ["vcc", "output","gnd"];
+  this.requiredKeys = [ "output" ];
 };
 
-LM61.prototype.wired = function(obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
+LM61.prototype.wired = function(obniz) {
+  
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
 
   var self = this;
   this.ad.start(function(value){
@@ -22,10 +17,6 @@ LM61.prototype.wired = function(obniz, pwr, signal, gnd) {
     }
   });
 
-};
-
-LM61.prototype.onChange = function(callback) {
-  this.onchange = callback;
 };
 
 if (PartsRegistrate) {

@@ -10,8 +10,7 @@ RN42.prototype.wired = function(obniz) {
 
   this.uart = obniz.getFreeUart();
 
-  obniz.getIO(this.params.tx).drive("3v");
-  this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:115200});
+  this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:115200, drive:"3v"});
   var self = this;
   this.uart.onreceive = function(data, text) {
     // this is not perfect. separation is possible.

@@ -1,18 +1,12 @@
 var SEN0114 = function() {
+  this.keys = ["vcc", "output","gnd"];
+  this.requiredKeys = [ "output" ];
 
 };
 
-SEN0114.prototype.wired = function(obniz, signal, pwr, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
-
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+SEN0114.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
   var self = this;
   this.ad.start(function(value){
@@ -24,12 +18,9 @@ SEN0114.prototype.wired = function(obniz, signal, pwr, gnd) {
 
 };
 
-SEN0114.prototype.onChange = function(callback) {
-  this.onchange = callback;
-};
 
 SEN0114.prototype.getHumidityWait = async function() {
-  return this.ad.value;
+  return await this.ad.getWait;
 };
 
 if (PartsRegistrate) {

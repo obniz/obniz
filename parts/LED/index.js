@@ -1,12 +1,16 @@
 var LED = function() {
-
+  this.keys = ["anode","cathode"];
+  this.requiredKeys = ["anode","cathode"];
+  
+  
+  this.animationName = "Led-" + Math.round(Math.random() *1000);
 };
 
-LED.prototype.wired = function(obniz, anode, cathode) {
+LED.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  this.io_anode = obniz.getIO(anode);
-  if (cathode) {
-    this.io_cathode = obniz.getIO(cathode);
+  this.io_anode = obniz.getIO(this.params.anode);
+  if (this.params.cathode) {
+    this.io_cathode = obniz.getIO(this.params.cathode);
     this.io_cathode.output(false);
   }
 };
@@ -24,25 +28,32 @@ LED.prototype.off = function() {
 };
 
 LED.prototype.endBlink = function() {
-  if (this.blink_timer) {
-    clearInterval(this.blink_timer);
-    this.blink_timer = null;
-  }
+  this.obniz.io.animation(this.animationName, "pause");
+  
 };
 
 LED.prototype.blink = function(interval) {
-  this.endBlink();
-  if (!interval) {
+  if(!interval) {
     interval = 100;
   }
-  var val = false;
-  var self = this;
-  this.blink_timer = setInterval(function(){
-    self.io_anode.output(val);
-    val = !val;
-  }, interval);
+  var frames = [{
+      duration: interval,
+      state: function (index) { // index = 0
+        this.io_anode.output(true);  // on
+      }.bind(this)
+    }, {
+      duration: interval,
+      state: function (index) { // index = 0
+        this.io_anode.output(false);   //off
+      }.bind(this)
+    }];
+
+  this.obniz.io.animation(this.animationName, "loop", frames);
+
 };
 
+  
+  
 if (PartsRegistrate) {
   PartsRegistrate("LED", LED);
 }

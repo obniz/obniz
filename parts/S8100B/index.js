@@ -1,19 +1,14 @@
 //センサから出力が無い(出力インピーダンス高すぎ？)
 var S8100B = function() {
+  this.keys = ["vcc", "output","gnd"];
+  this.requiredKeys = [ "output" ];
 
 };
 
-S8100B.prototype.wired = function(obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad = obniz.getAD(signal);
+S8100B.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
 
-  this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
 
   var self = this;
   this.ad.start(function(value){
@@ -25,9 +20,6 @@ S8100B.prototype.wired = function(obniz, pwr, signal, gnd) {
 
 };
 
-S8100B.prototype.onChange = function(callback) {
-  this.onchange = callback;
-};
 
 if (PartsRegistrate) {
   PartsRegistrate("S8100B", S8100B);

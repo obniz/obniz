@@ -1,15 +1,11 @@
 var PotentionMeter = function() {
-  
+    this.keys = ["pin0","pin1","pin2"];
+    this.reuiredKeys = ["pin0","pin1","pin2"];
 };
 
-PotentionMeter.prototype.wired = function(obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.ad = obniz.getAD(signal);
-  this.io_gnd = obniz.getIO(gnd);
-
-  this.io_pwr.output(true);
-  this.io_gnd.output(false);
+PotentionMeter.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+  this.ad = obniz.getAD(this.params.pin1);
 
   var self = this;
   this.ad.start(function(value){
@@ -18,13 +14,8 @@ PotentionMeter.prototype.wired = function(obniz, pwr, signal, gnd) {
       self.onchange(self.position);
     }
   });
-}
+};
 
-// Module functions
-
-PotentionMeter.prototype.onChange = function(callback) {
-  this.onchange = callback;
-}
 
 if (PartsRegistrate) {
   PartsRegistrate("PotentionMeter", PotentionMeter);

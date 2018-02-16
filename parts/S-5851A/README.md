@@ -1,7 +1,7 @@
 # Temperature Sensor - SHT31
 Temperature and Humidity sensor SHT31
 
-## wired(obniz, {vcc, sda, scl, gnd, addr0, addr1, addressmode})
+## wired(obniz, {vcc, gnd, sda, scl, gnd, addr0, addr1, addressmode})
 the address of SHT31 can be choosed from 0x44,0x45.
 Please provide 4 for 0x44. 5 for 0x45 to addressmode.
 (SHT31 read ADDR value to define it's address. 0 is 0x45.)
