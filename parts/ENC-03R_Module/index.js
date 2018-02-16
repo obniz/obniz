@@ -1,21 +1,19 @@
 var ENC03R_Module = function() {
 
+  this.keys = ["vcc", "out1", "out2", "gnd"];
+  this.required = ["out1", "out2"];
   this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
 };
 
 
-ENC03R_Module.prototype.wired = function(obniz, pwr, signal_1, signal_2, gnd) {
+ENC03R_Module.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad0 = obniz.getAD(signal_1);
-  this.ad1 = obniz.getAD(signal_2);
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  this.ad0 = obniz.getAD(this.params.out1);
+  this.ad1 = obniz.getAD(this.params.out2);
 
   this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+
 
   var self = this;
   this.ad0.start(function(value){

@@ -5,12 +5,7 @@ var ADT7410 = function() {
 
 ADT7410.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  if (obniz.isValidIO(this.params.vcc)) {
-    obniz.getIO(this.params.vcc).output(true);
-  }
-  if (obniz.isValidIO(this.params.gnd)) {
-    obniz.getIO(this.params.gnd).output(true);
-  }
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
   
   if (this.params.addressMode === 8){
     this.address = 0x48;

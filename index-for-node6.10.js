@@ -258,6 +258,22 @@ Obniz.prototype.isValidIO = function (io) {
   return typeof io === "number" && io >= 0 && io < 12;
 };
 
+Obniz.prototype.setVccGnd = function (vcc, gnd, drive) {
+  if (this.isValidIO(vcc)) {
+    if (drive) {
+      this.getIO(vcc).drive(drive);
+    }
+    this.getIO(vcc).output(true);
+  };
+
+  if (this.isValidIO(gnd)) {
+    if (drive) {
+      this.getIO(gnd).drive(drive);
+    }
+    this.getIO(gnd).output(false);
+  };
+};
+
 Obniz.prototype.getIO = function (id) {
   return this["io" + id];
 };
@@ -2147,28 +2163,31 @@ if (PartsRegistrate) {
 
 var _7SegmentLEDArray = function () {
   this.identifier = "" + new Date().getTime();
+
+  this.keys = ["seg0", "seg1", "seg2", "seg3"];
+  this.requiredKeys = ["seg0"];
 };
 
-_7SegmentLEDArray.prototype.wired = function (obniz, seg0, seg1, seg2, seg3) {
+_7SegmentLEDArray.prototype.wired = function (obniz) {
   this.obniz = obniz;
 
   this.segments = [];
-  if (seg0) {
-    this.segments.unshift(seg0);
+  if (this.params.seg0) {
+    this.segments.unshift(this.params.seg0);
   }
-  if (seg1) {
-    this.segments.unshift(seg1);
+  if (this.params.seg1) {
+    this.segments.unshift(this.params.seg1);
   }
-  if (seg2) {
-    this.segments.unshift(seg2);
+  if (this.params.seg2) {
+    this.segments.unshift(this.params.seg2);
   }
-  if (seg3) {
-    this.segments.unshift(seg3);
+  if (this.params.seg3) {
+    this.segments.unshift(this.params.seg3);
   }
 };
 
 _7SegmentLEDArray.prototype.print = function (data) {
-  if (typeof data == "number") {
+  if (typeof data === "number") {
     data = parseInt(data);
 
     var segments = this.segments;
@@ -2177,7 +2196,7 @@ _7SegmentLEDArray.prototype.print = function (data) {
 
       for (let i = 0; i < segments.length; i++) {
         console.log(val);
-        if (index == i) {
+        if (index === i) {
           segments[i].print(val % 10);
         } else {
           segments[i].off();
@@ -2195,16 +2214,16 @@ _7SegmentLEDArray.prototype.print = function (data) {
     }
 
     var segments = this.segments;
-    obniz.io.animation(this.identifier, "loop", animations);
-  }
+    this.obniz.io.animation(this.identifier, "loop", animations);
+  };
 };
 
 _7SegmentLEDArray.prototype.on = function () {
-  obniz.io.animation(this.identifier, "resume");
+  this.obniz.io.animation(this.identifier, "resume");
 };
 
 _7SegmentLEDArray.prototype.off = function () {
-  obniz.io.animation(this.identifier, "pause");
+  this.obniz.io.animation(this.identifier, "pause");
   for (let i = 0; i < this.segments.length; i++) {
     this.segments[i].off();
   }
@@ -2223,13 +2242,7 @@ ADT7310.prototype.wired = (() => {
   var _ref6 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
-    if (obniz.isValidIO(this.params.vcc)) {
-      obniz.getIO(this.params.vcc).output(true);
-    }
-    if (obniz.isValidIO(this.params.gnd)) {
-      this.io_gnd = obniz.getIO(this.params.gnd);
-      this.io_gnd.output(false);
-    }
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
     this.params.mode = this.params.mode || "master";
     this.params.frequency = this.params.frequency || 500000;
@@ -2271,12 +2284,7 @@ var ADT7410 = function () {
 
 ADT7410.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  if (obniz.isValidIO(this.params.vcc)) {
-    obniz.getIO(this.params.vcc).output(true);
-  }
-  if (obniz.isValidIO(this.params.gnd)) {
-    obniz.getIO(this.params.gnd).output(true);
-  }
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
   if (this.params.addressMode === 8) {
     this.address = 0x48;
@@ -2320,15 +2328,7 @@ AE_MICAMP.prototype.wired = (() => {
 
     this.ad = obniz.getAD(this.params.out);
 
-    if (obniz.isValidIO(this.params.vcc)) {
-      this.io_vcc = obniz.getIO(this.params.vcc);
-      this.io_vcc.output(true);
-    }
-
-    if (obniz.isValidIO(this.params.gnd)) {
-      this.io_gnd = obniz.getIO(this.params.gnd);
-      this.io_gnd.output(false);
-    }
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
     var self = this;
     this.ad.start(function (value) {
@@ -2416,17 +2416,19 @@ Button.prototype.isPressedWait = _asyncToGenerator(function* () {
 if (PartsRegistrate) {
   PartsRegistrate("Button", Button);
 }
-var DCMotor = function () {};
+var DCMotor = function () {
+  this.keys = ["forward", "back"];
+  this.requiredKeys = ["forward", "back"];
+};
 
-DCMotor.prototype.wired = function (obniz, io_a, io_b) {
-  this.obniz = obniz;
+DCMotor.prototype.wired = function (obniz) {
   this.status = {
     direction: null,
     power: null
   };
 
-  this.pwm1_io_num = io_a;
-  this.pwm2_io_num = io_b;
+  this.pwm1_io_num = this.params.forward;
+  this.pwm2_io_num = this.params.back;
 
   this.pwm1 = obniz.getpwm();
   this.pwm1.start(this.pwm1_io_num);
@@ -2450,7 +2452,7 @@ DCMotor.prototype.reverse = function () {
 };
 
 DCMotor.prototype.stop = function () {
-  if (this.status.direction == null) {
+  if (this.status.direction === null) {
     return;
   }
   this.status.direction = null;
@@ -2480,7 +2482,7 @@ DCMotor.prototype.power = function (power) {
     return this.status.power;
   }
   this.status.power = power;
-  if (this.status.direction == null) {
+  if (this.status.direction === null) {
     this.pwm1.duty(0);
     this.pwm2.duty(0);
     return;
@@ -2497,31 +2499,23 @@ DCMotor.prototype.power = function (power) {
 if (PartsRegistrate) {
   PartsRegistrate("DCMotor", DCMotor);
 }
-var PIR_ekmc = function () {};
-
-PIR_ekmc.prototype.wired = function (obniz, pwr, signal, gnd) {
-  this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.io_signal = obniz.getIO(signal);
-
-  this.io_pwr.output(true);
-  this.io_signal.pull("0v");
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
+var PIR_ekmc = function () {
+  this.keys = ["vcc", "gnd", "signal"];
+  this.requiredKeys = ["signal"];
 };
 
-// Module functions
+PIR_ekmc.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.io_signal = obniz.getIO(this.params.signal);
+  this.io_signal.pull("0v");
 
-PIR_ekmc.prototype.onChange = function (callback) {
-  this.onchange = callback;
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
   var self = this;
   this.io_signal.input(function (value) {
-    self.isPressed = value == false;
+    self.isPressed = value === false;
     if (self.onchange) {
-      self.onchange(value == false);
+      self.onchange(value === false);
     }
   });
 };
@@ -2537,21 +2531,18 @@ if (PartsRegistrate) {
 }
 var ENC03R_Module = function () {
 
+  this.keys = ["vcc", "out1", "out2", "gnd"];
+  this.required = ["out1", "out2"];
   this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
 };
 
-ENC03R_Module.prototype.wired = function (obniz, pwr, signal_1, signal_2, gnd) {
+ENC03R_Module.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.ad0 = obniz.getAD(signal_1);
-  this.ad1 = obniz.getAD(signal_2);
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad0 = obniz.getAD(this.params.out1);
+  this.ad1 = obniz.getAD(this.params.out2);
 
   this.io_pwr.output(true);
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
 
   var self = this;
   this.ad0.start(function (value) {

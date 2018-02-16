@@ -243,8 +243,25 @@ Obniz.prototype.init = function () {
 };
 
 Obniz.prototype.isValidIO = function (io) {
-  return (typeof io === "number" && io >= 0 && io < 12)
+  return (typeof io === "number" && io >= 0 && io < 12);
 };
+
+Obniz.prototype.setVccGnd = function (vcc, gnd, drive) {
+  if(this.isValidIO(vcc)){
+    if(drive){
+      this.getIO(vcc).drive(drive);
+    }
+    this.getIO(vcc).output(true);
+  };
+  
+  if(this.isValidIO(gnd)){
+    if(drive){
+      this.getIO(gnd).drive(drive);
+    }
+    this.getIO(gnd).output(false);
+  };
+};
+
 
 Obniz.prototype.getIO = function (id) {
   return this["io" + id];

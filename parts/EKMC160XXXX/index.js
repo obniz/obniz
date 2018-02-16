@@ -1,34 +1,27 @@
 var PIR_ekmc= function() {
-  
+    this.keys = ["vcc","gnd","signal"];
+    this.requiredKeys = ["signal"];
+    
 };
 
-PIR_ekmc.prototype.wired = function(obniz, pwr, signal, gnd) {
+PIR_ekmc.prototype.wired = function(obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(pwr);
-  this.io_gnd = obniz.getIO(gnd);
-  this.io_signal = obniz.getIO(signal);
-  
-  this.io_pwr.output(true);
+  this.io_signal = obniz.getIO(this.params.signal);
   this.io_signal.pull("0v");
-  if (gnd) {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_gnd.output(false);
-  }
-};
-
-
-// Module functions
-
-PIR_ekmc.prototype.onChange = function(callback) {
-  this.onchange = callback;
+  
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  
   var self = this;
   this.io_signal.input(function(value) {
-    self.isPressed = (value == false);
+    self.isPressed = (value === false);
     if (self.onchange) {
-      self.onchange(value == false);
+      self.onchange(value === false);
     }
   });
+  
 };
+
+
 
 PIR_ekmc.prototype.isPressedWait = async function() {
   var self = this;

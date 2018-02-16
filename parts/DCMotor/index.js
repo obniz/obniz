@@ -1,16 +1,16 @@
 var DCMotor = function() {
-
+  this.keys = ["forward", "back"];
+  this.requiredKeys = ["forward", "back"];
 };
 
-DCMotor.prototype.wired = function(obniz, io_a, io_b) {
-  this.obniz = obniz;
+DCMotor.prototype.wired = function(obniz) {
   this.status = {
     direction: null,
     power: null
   };
 
-  this.pwm1_io_num = io_a;
-  this.pwm2_io_num = io_b;
+  this.pwm1_io_num = this.params.forward;
+  this.pwm2_io_num = this.params.back;
 
   this.pwm1 = obniz.getpwm();
   this.pwm1.start(this.pwm1_io_num);
@@ -34,7 +34,7 @@ DCMotor.prototype.reverse = function() {
 };
 
 DCMotor.prototype.stop = function() {
-  if (this.status.direction == null) {
+  if (this.status.direction === null) {
     return;
   }
   this.status.direction = null;
@@ -64,7 +64,7 @@ DCMotor.prototype.power = function(power) {
     return this.status.power;
   }
   this.status.power = power;
-  if (this.status.direction == null) {
+  if (this.status.direction === null) {
     this.pwm1.duty(0);
     this.pwm2.duty(0);
     return;

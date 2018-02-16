@@ -8,15 +8,8 @@ AE_MICAMP.prototype.wired = async function(obniz) {
 
   this.ad = obniz.getAD(this.params.out);
   
-  if ( obniz.isValidIO(this.params.vcc)) {
-    this.io_vcc = obniz.getIO(this.params.vcc);
-    this.io_vcc.output(true);
-  }
   
-  if ( obniz.isValidIO(this.params.gnd)) {
-    this.io_gnd = obniz.getIO(this.params.gnd);
-    this.io_gnd.output(false);
-  }
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
 
   var self = this;
   this.ad.start(function(value){
