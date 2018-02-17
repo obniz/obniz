@@ -462,11 +462,16 @@ Obniz.prototype.resetOnDisconnect = function(reset) {
     }
   });
 };
- 
-Obniz.prototype.error = function (msg) {
+
+Obniz.prototype.warning = function (msg) {
   if (this.isNode) {
     console.error(msg);
   } else {
+    if (msg && typeof msg === "object" && msg.alert) {
+      this.showAlertUI(msg);
+      console.log(msg.message);
+      return;
+    }
     if (typeof (showObnizDebugError) === "function") {
       showObnizDebugError(new Error(msg));
     } else {
@@ -474,6 +479,45 @@ Obniz.prototype.error = function (msg) {
     }
   }
 };
+ 
+Obniz.prototype.error = function (msg) {
+  if (this.isNode) {
+    console.error(msg);
+  } else {
+    if (msg && typeof msg === "object" && msg.alert) {
+      this.showAlertUI(msg);
+      msg = msg.message;
+    }
+    if (typeof (showObnizDebugError) === "function") {
+      showObnizDebugError(new Error(msg));
+    } else {
+      throw new Error(msg);
+    }
+  }
+};
+
+Obniz.prototype.showAlertUI = function(obj) {
+  if (this.isNode) {
+    return;
+  }
+  const alerts = {
+    warning: 'alert-warning alert-dismissible',
+    error: 'alert-danger'
+  }
+  const timeLabel = Math.random().toString(36).slice(-8);
+  let dismissButton = `
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>`
+  let dom = `
+  <div class="alert ${alerts[obj.alert]} fade show" role="alert">
+    ${obj.message}
+    ${ obj.alert == "warning" ? dismissButton : ""}
+  </div>`;
+
+  $('#obniz-debug').append(dom);
+}
+
 /*===================*/
 /* Parts */
 /*===================*/
