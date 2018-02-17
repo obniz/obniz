@@ -497,7 +497,7 @@ Obniz.prototype.error = function (msg) {
 };
 
 Obniz.prototype.showAlertUI = function(obj) {
-  if (this.isNode) {
+  if (this.isNode || !document.getElementById('obniz-debug')) {
     return;
   }
   const alerts = {
@@ -508,14 +508,13 @@ Obniz.prototype.showAlertUI = function(obj) {
   let dismissButton = `
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
-  </button>`
+  </button>`;
   let dom = `
   <div class="alert ${alerts[obj.alert]} fade show" role="alert">
     ${obj.message}
     ${ obj.alert == "warning" ? dismissButton : ""}
   </div>`;
-
-  $('#obniz-debug').append(dom);
+  document.getElementById('obniz-debug').insertAdjacentHTML('beforeend', dom);
 }
 
 /*===================*/
