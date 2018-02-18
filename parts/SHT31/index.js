@@ -1,18 +1,13 @@
 var SHT31 = function() {
-  this.requiredKeys = [ "pwr", "adr", "addressmode","i2c"];
-  this.keys = [ "pwr", "sda", "scl", "gnd", "adr", "addressmode","i2c"];
+  this.requiredKeys = [ "adr", "addressmode","i2c"];
+  this.keys = [ "vcc", "sda", "scl", "gnd", "adr", "addressmode","i2c"];
 };
 
 SHT31.prototype.wired = function(obniz,) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(this.params.pwr);
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
   this.io_adr = obniz.getIO(this.params.adr);
 
-  this.io_pwr.output(true);
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_gnd = obniz.getIO(this.params.gnd);
-    this.io_gnd.output(false);
-  }
   if (this.params.addressmode === 4){
     this.io_adr.output(false);
     this.address = 0x44;

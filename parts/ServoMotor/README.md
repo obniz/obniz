@@ -1,34 +1,45 @@
 # ServoMotor
-ラジコン用に使われている角度を指定して動かすモーターです。グルグル回るわけでなく、指定した角度をキープするように動きます。
+
+How to use Servo Motor.
 
 ## 接続方法
-３本の足をObnizにつなぎます。それぞれプラス、信号、マイナスとなっていて、モーターの種類により配置が違います。マイナス、プラス、信号、をそれぞれ Obnizの1, 2, 3につないだ場合は以下のようにします。
+
+Connect three feet to Obniz. They are gnd, vcc and signal, respectively, and the placement is different depending on the type of motor. 
+If you connectgnd, vcc and signal to Obniz 0, 1, 2 respectively, do as follows.
+
 ```Javascript
-var servo = obniz.wired("ServoMotor", 1, 2, 3);
+var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
 ```
 ## angle(float)
-角度を0~180により指定します。
+Change the motor angle.
+angle : 0 - 180 degree
 ### Example
 ```Javascript
-var servo = obniz.wired("ServoMotor", 1, 2, 3);
+var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
 
 servo.angle(90.0); // half position
 ```
+
 ## on();
-サーボモーターの電源を入れます。wiredを呼んだ段階で電源は入っています。offにした後に再度onにしたい時に呼んでください
+Turn on the power.
+When you call wired function, it automatically turn on.
+
 ### Example
 ```Javascript
-var servo = obniz.wired("ServoMotor", 1, 2, 3);
+var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
 
 servo.position(50.0); // half position
 servo.off();
 servo.on();
 ```
+
 ## off();
-サーボモーターの電源を切ります。信号の供給も停止します。保持力がなくなりますから、モーターに負荷がかかっている場合はoffにすることで勝手に回転します。
+Turn off the power.
+When you call wired function, it automatically turn on.
+
 ### Example
 ```Javascript
-var servo = obniz.wired("ServoMotor", 1, 2, 3);
+var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
 
 servo.position(50.0); // half position
 servo.off();

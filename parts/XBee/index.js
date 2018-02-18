@@ -20,11 +20,9 @@ class XBee {
     obniz.getIO(this.params.gnd).output(false);
   }
   
-    obniz.getIO(this.params.tx).drive("3v");
-    this.uart.start(this.params.tx, this.params.rx, 9600, null, 8);
+    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:9600, drive:"3v"});
     
     this.uart.onreceive = (function(data, text) {
-      console.log("XBEE RECIEVE : " + text);
       if(this.isAtMode){
         this.onAtResultsRecieve(data, text);
       }else{
