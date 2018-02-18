@@ -109,12 +109,26 @@ PeripheralIO.prototype.inputWait = function() {
 };
 
 PeripheralIO.prototype.notified = function(obj) {
-  this.value = obj;
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj);
+  if (typeof obj === "boolean") {
+    this.value = obj;
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj);
+    }
+    if (typeof(this.onchange) === "function") {
+      this.onchange(obj);
+    }
+  } else if (obj && typeof obj === "object") {
+    if (obj.warnings) {
+      for (let i=0; i<obj.warnings.length; i++) {
+        this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warnings[i].message}` })
+      }
+    }
+    if (obj.errors) {
+      for (let i=0; i<obj.errors.length; i++) {
+        this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.errors[i].message}` })
+      }
+    }
   }
-  if (typeof(this.onchange) === "function") {
-    this.onchange(obj);
-  }
+
 };

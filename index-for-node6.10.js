@@ -492,10 +492,15 @@ Obniz.prototype.resetOnDisconnect = function (reset) {
   });
 };
 
-Obniz.prototype.error = function (msg) {
+Obniz.prototype.warning = function (msg) {
   if (this.isNode) {
     console.error(msg);
   } else {
+    if (msg && typeof msg === "object" && msg.alert) {
+      this.showAlertUI(msg);
+      console.log(msg.message);
+      return;
+    }
     if (typeof showObnizDebugError === "function") {
       showObnizDebugError(new Error(msg));
     } else {
@@ -503,6 +508,44 @@ Obniz.prototype.error = function (msg) {
     }
   }
 };
+
+Obniz.prototype.error = function (msg) {
+  if (this.isNode) {
+    console.error(msg);
+  } else {
+    if (msg && typeof msg === "object" && msg.alert) {
+      this.showAlertUI(msg);
+      msg = msg.message;
+    }
+    if (typeof showObnizDebugError === "function") {
+      showObnizDebugError(new Error(msg));
+    } else {
+      throw new Error(msg);
+    }
+  }
+};
+
+Obniz.prototype.showAlertUI = function (obj) {
+  if (this.isNode || !document.getElementById('obniz-debug')) {
+    return;
+  }
+  const alerts = {
+    warning: 'alert-warning alert-dismissible',
+    error: 'alert-danger'
+  };
+  const timeLabel = Math.random().toString(36).slice(-8);
+  let dismissButton = `
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>`;
+  let dom = `
+  <div class="alert ${alerts[obj.alert]} fade show" role="alert">
+    ${obj.message}
+    ${obj.alert == "warning" ? dismissButton : ""}
+  </div>`;
+  document.getElementById('obniz-debug').insertAdjacentHTML('beforeend', dom);
+};
+
 /*===================*/
 /* Parts */
 /*===================*/
@@ -1506,13 +1549,26 @@ PeripheralIO.prototype.inputWait = function () {
 };
 
 PeripheralIO.prototype.notified = function (obj) {
-  this.value = obj;
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj);
-  }
-  if (typeof this.onchange === "function") {
-    this.onchange(obj);
+  if (typeof obj === "boolean") {
+    this.value = obj;
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj);
+    }
+    if (typeof this.onchange === "function") {
+      this.onchange(obj);
+    }
+  } else if (obj && typeof obj === "object") {
+    if (obj.warnings) {
+      for (let i = 0; i < obj.warnings.length; i++) {
+        this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warnings[i].message}` });
+      }
+    }
+    if (obj.errors) {
+      for (let i = 0; i < obj.errors.length; i++) {
+        this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.errors[i].message}` });
+      }
+    }
   }
 };
 var PeripheralIO_ = function (Obniz, id) {
