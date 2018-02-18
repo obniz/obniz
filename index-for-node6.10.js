@@ -3831,20 +3831,15 @@ if (PartsRegistrate) {
 }
 
 var SHT31 = function () {
-  this.requiredKeys = ["pwr", "adr", "addressmode", "i2c"];
-  this.keys = ["pwr", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
+  this.requiredKeys = ["adr", "addressmode", "i2c"];
+  this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
 };
 
 SHT31.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  this.io_pwr = obniz.getIO(this.params.pwr);
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
   this.io_adr = obniz.getIO(this.params.adr);
 
-  this.io_pwr.output(true);
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_gnd = obniz.getIO(this.params.gnd);
-    this.io_gnd.output(false);
-  }
   if (this.params.addressmode === 4) {
     this.io_adr.output(false);
     this.address = 0x44;
@@ -3882,23 +3877,19 @@ if (PartsRegistrate) {
   PartsRegistrate("SHT31", SHT31);
 }
 
-var ServoMotor = function () {};
+var ServoMotor = function () {
+  this.keys = ["gnd", "vcc", "signal"];
+  this.requiredKeys = ["signal"];
+};
 
-ServoMotor.prototype.wired = function (obniz, gnd, power, signal) {
+ServoMotor.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  if (power == null || signal == null) {
-    this.pwm_io_num = gnd;
-    this.pwm = obniz.getpwm();
-  } else {
-    this.io_gnd = obniz.getIO(gnd);
-    this.io_power = obniz.getIO(power);
 
-    this.io_gnd.output(false);
-    this.io_power.output(true);
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
-    this.pwm = obniz.getpwm();
-    this.pwm_io_num = signal;
-  }
+  this.pwm = obniz.getpwm();
+  this.pwm_io_num = this.params.signal;
+
   this.pwm.start(this.pwm_io_num);
   this.pwm.freq(50);
 };
@@ -3927,15 +3918,15 @@ ServoMotor.prototype.off = function () {
 if (PartsRegistrate) {
   PartsRegistrate("ServoMotor", ServoMotor);
 }
-var Speaker = function () {};
+var Speaker = function () {
+  this.keys = ["signal", "gnd"];
+  this.requiredKeys = ["gnd"];
+};
 
-Speaker.prototype.wired = function (obniz, io0, io1) {
-  this.obniz = obniz;
-  this.io0 = obniz.getIO(io0);
+Speaker.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(null, this.params.gnd, "5v");
   this.pwm = obniz.getpwm();
-
-  this.io0.output(false);
-  this.pwm.start(io1);
+  this.pwm.start(this.params.signal);
 };
 
 // Module functions
@@ -3948,12 +3939,15 @@ Speaker.prototype.freq = function (freq) {
 if (PartsRegistrate) {
   PartsRegistrate("Speaker", Speaker);
 }
-var USB = function () {};
+var USB = function () {
+  this.keys = ["vcc", "gnd"];
+  this.requiredKeys = ["vcc", "gnd"];
+};
 
-USB.prototype.wired = function (obniz, vdd, gnd) {
+USB.prototype.wired = function (obniz) {
   this.obniz = obniz;
-  this.io_vdd = obniz.getIO(vdd);
-  this.io_gnd = obniz.getIO(gnd);
+  this.io_vdd = obniz.getIO(this.params.vcc);
+  this.io_gnd = obniz.getIO(this.params.gnd);
 
   this.io_gnd.output(false);
 };
@@ -4108,11 +4102,9 @@ class XBee {
       obniz.getIO(this.params.gnd).output(false);
     }
 
-    obniz.getIO(this.params.tx).drive("3v");
-    this.uart.start(this.params.tx, this.params.rx, 9600, null, 8);
+    this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 9600, drive: "3v" });
 
     this.uart.onreceive = function (data, text) {
-      console.log("XBEE RECIEVE : " + text);
       if (this.isAtMode) {
         this.onAtResultsRecieve(data, text);
       } else {

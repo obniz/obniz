@@ -1,14 +1,16 @@
 # Speaker
-ピエゾなどのスピーカーです。２本の線で接続し、電流によって音を出します。
 
-## wired(obniz, con0, con1)
-スピーカーに接続します。プラスとマイナスがある場合はマイナスをcon0の方に指定して下さい。
+It is a speaker such as piezo. Connect with two wires, and generate sound by current.
+
+## wired(obniz , {signal. gnd} )
+Connect to the speaker. If there are plus and minus, please specify minus to gnd.
 ```Javascript
-var speaker = obniz.wired("Speaker", 0, 1);
+var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
 ```
 ## freq(frequency)
-スピーカーから鳴る音の周波数を指定します。
+Specify the frequency of the sound from the speaker.
+
 ```Javascript
-var speaker = obniz.wired("Speaker", 0, 1);
+var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
 speaker.freq(1000); //1khz
 ```

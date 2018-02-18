@@ -5,7 +5,7 @@ var SHT31 = function() {
 
 SHT31.prototype.wired = function(obniz,) {
   this.obniz = obniz;
-  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
   this.io_adr = obniz.getIO(this.params.adr);
 
   if (this.params.addressmode === 4){
