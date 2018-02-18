@@ -34,7 +34,8 @@ var Obniz = function (id, options) {
   //   })
   //   return;
   // }
-  this.wsconnect(options.obniz_server);
+  this.server_obnizio = options.obniz_server || "wss://obniz.io";
+  this.wsconnect();
 };
 
 Obniz.prototype.prompt = function (callback) {
@@ -125,7 +126,7 @@ Obniz.prototype.wsOnError = function (err) {
 };
 
 Obniz.prototype.wsconnect = function (desired_server) {
-  this.server_obnizio = "wss://obniz.io";
+
   var server = this.server_obnizio;
   if (desired_server) {
     server = "" + desired_server;
