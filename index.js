@@ -31,7 +31,8 @@ var Obniz = function (id, options) {
   //   })
   //   return;
   // }
-  this.wsconnect(options.obniz_server);
+  this.server_obnizio = options.obniz_server || "wss://obniz.io";
+  this.wsconnect();
 };
 
 Obniz.prototype.prompt = function (callback) {
@@ -124,8 +125,25 @@ Obniz.prototype.wsOnError = function (err) {
   console.log(err);
 };
 
+Obniz.prototype.wsOnUnexpectedResponse = function(req, res) {
+  let reconnectTime = 1000;
+  if (res && res.statusCode == 404) {
+    // obniz not online
+    this.print_debug("obniz not online");
+  } else {
+    // servder error or someting
+    reconnectTime = 5000;
+    this.print_debug("invalid server response " + (res) ? res.statusCode :  '');
+  }
+  this.clearSocket(this.socket);
+  setTimeout(function () {
+    // always connect to mainserver if ws lost
+    this.wsconnect();
+  }.bind(this), reconnectTime);
+}
+
 Obniz.prototype.wsconnect = function (desired_server) {
-  this.server_obnizio = "wss://obniz.io";
+  
   var server = this.server_obnizio;
   if (desired_server) {
     server = "" + desired_server;
@@ -144,6 +162,7 @@ Obniz.prototype.wsconnect = function (desired_server) {
     this.socket.on('message', this.wsOnMessage.bind(this));
     this.socket.on('close', this.wsOnClose.bind(this));
     this.socket.on('error', this.wsOnError.bind(this));
+    this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
   } else {
     this.socket = new WebSocket(url);
     this.socket.onopen = this.wsOnOpen.bind(this);
