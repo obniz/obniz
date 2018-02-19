@@ -1,6 +1,9 @@
 var JoyStick = function() {
-    this.keys = ["sw", "y", "x", "vcc", "gnd"];
+    this.keys = ["sw", "y", "x", "vcc", "gnd","i2c"];
     this.requiredKeys = ["sw", "y", "x"];
+    this.pins  =  this.keys || ["sw", "y", "x", "vcc", "gnd"];
+    this.pinname = { "sw": "sw12" };
+    this.shortName = "joyS";
 };
 
 JoyStick.prototype.wired = function(obniz) {

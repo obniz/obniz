@@ -42,6 +42,15 @@ Display.prototype.raw = function(data) {
   this.Obniz.send(obj);
 };
 
+Display.prototype.setPinName = function(io, moduleName, funcName) {
+  var obj = {};
+  obj["display"] = {};
+  obj["display"]["pin_assign"] = {};
+  obj["display"]["pin_assign"][io] = {module_name : moduleName, pin_name:funcName};
+  
+  this.Obniz.send(obj);
+};
+
 Display.prototype.drawCanvasContext = function(ctx) {
   if (isNode) {
     // TODO:

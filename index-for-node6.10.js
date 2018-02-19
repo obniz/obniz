@@ -198,6 +198,15 @@ Obniz.prototype.wired = function (partsname) {
   }
   parts.obniz = this;
   parts.wired.apply(parts, args);
+  if (parts.keys) {
+    for (var index in parts.keys) {
+      var pinName = parts.keys[index];
+      var io = args[1][pinName];
+      if (this.isValidIO(io)) {
+        this.display.setPinName(io, partsname, pinName);
+      }
+    }
+  }
   return parts;
 };
 
@@ -1324,6 +1333,15 @@ Display.prototype.raw = function (data) {
   obj["display"] = {
     raw: data
   };
+  this.Obniz.send(obj);
+};
+
+Display.prototype.setPinName = function (io, moduleName, funcName) {
+  var obj = {};
+  obj["display"] = {};
+  obj["display"]["pin_assign"] = {};
+  obj["display"]["pin_assign"][io] = { module_name: moduleName, pin_name: funcName };
+
   this.Obniz.send(obj);
 };
 
@@ -2857,8 +2875,11 @@ if (PartsRegistrate) {
   PartsRegistrate("HC-SR04", HCSR04);
 }
 var JoyStick = function () {
-  this.keys = ["sw", "y", "x", "vcc", "gnd"];
+  this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
   this.requiredKeys = ["sw", "y", "x"];
+  this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
+  this.pinname = { "sw": "sw12" };
+  this.shortName = "joyS";
 };
 
 JoyStick.prototype.wired = function (obniz) {

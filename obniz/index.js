@@ -198,6 +198,15 @@ Obniz.prototype.wired = function (partsname) {
   }
   parts.obniz = this;
   parts.wired.apply(parts, args);
+  if(parts.keys){
+    for( var index in parts.keys){
+      var pinName = parts.keys[index];
+      var io = args[1][pinName];
+      if(this.isValidIO(io)){
+        this.display.setPinName(io, partsname,pinName);
+      }
+    }
+  }
   return parts;
 };
 
