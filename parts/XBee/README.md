@@ -2,7 +2,7 @@
 Zigbee network Module.
 P2P or broadcasting communicaion with some Xbee modules are you can use.
 
-## wired(obniz, {tx, rx})
+## obniz.wired(obniz, {tx, rx})
 
 Wiring obniz and XBee. XBee also need VCC(3.3V) and GND.
 3.3V power supply is not supported by obniz, so need to get another way.
@@ -14,7 +14,7 @@ Obniz output 5V vcc to regulator and convert to 3.3V.
 obniz.io11.output(true);
 obniz.io8.output(false);
    
-obniz.wired("XBee",{tx:9,rx:10});
+obniz.wired("XBee", {tx:9,rx:10});
 ```
 
 

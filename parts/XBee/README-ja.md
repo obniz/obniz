@@ -2,7 +2,7 @@
 Zigbeeネットワークで通信します．
 復数のXBeeを使ってブロードキャストや１対１の通信ができます
 
-## wired(obniz, {tx, rx})
+## obniz.wired
 
 XBeeをtx,rxのピンを指定して接続します．
 XBeeはVCCとGNDが必要なので，それは別で用意する必要があります．
@@ -13,7 +13,7 @@ XBeeはVCCとGNDが必要なので，それは別で用意する必要があり�
 obniz.io11.output(true);
 obniz.io8.output(false);
    
-obniz.wired("XBee".{tx:9,rx:10});
+obniz.wired("XBee", {tx:9,rx:10});
 ```
 
 

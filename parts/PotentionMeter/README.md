@@ -3,7 +3,7 @@
 
 このパーツで扱えるポテンションメーターの抵抗値は10Ω〜100kΩの間です。
 
-## wired(obniz, {pin0, pin1, pin2})
+## obniz.wired(obniz, {pin0, pin1, pin2})
 ポテンションメーターの３本のピンをそれぞれpin0, 1, 2として接続します。pin0とpin2は逆でも構いません。（回転が逆になりますが）
 ```Javascript
 var meter = obniz.wired("PotentionMeter", {pin0:0, pin1:1, pin2:2});
