@@ -48,7 +48,7 @@ available configrations are
 
 ```Javascript
 // Example
-obniz.uart0.start({"tx": 1, "rx": 2, "baud":9600, "bits":7 });  
+obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });  
 obniz.uart0.send("Hi");
 ```
 ## send(data)
