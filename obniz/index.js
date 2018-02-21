@@ -299,12 +299,6 @@ Obniz.prototype.getAD = function (id) {
   return this["ad" + id];
 };
 
-/** dupricate
- */
-Obniz.prototype.getpwm = function () {
-  return this.getFreePwm();
-};
-
 Obniz.prototype.getFreePwm = function () {
   var i = 0;
   while (true) {

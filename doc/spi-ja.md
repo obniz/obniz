@@ -2,6 +2,18 @@
 General Purpose SPIです。spi0, spi1の２つが利用できます。
 最大通信速度は80Mhzです。
 
+## obniz.getFreeSpi()
+未使用のSPIを返します。
+```javascript
+var spi = obniz.getFreeSpi();
+```
+もし利用可能なものがなければErrorとなります。
+```javascript
+var spi0 = obniz.getFreeSpi();
+var spi1 = obniz.getFreeSpi();
+var spi2 = obniz.getFreeSpi(); // Error
+```
+
 ## start({mode, clk, mosi, miso, frequency [, drain, pull]});
 
 spiをスタートさせます。

@@ -2,6 +2,21 @@
 I2C.
 i2c0 is only available. max speed 1Mhz.
 
+# obniz.getFreeI2C()
+It returns not used i2c.
+```javascript
+var i2c = obniz.getFreeI2C();
+```
+It equals to i2c0 because i2c0 is only available. ( no i2c1 ).
+```javascript
+(obniz.getFreeI2C() === obniz.i2c0) => true
+```
+It throws errow if no more i2c available
+```javascript
+var i2c0 = obniz.getFreeI2C();
+var i2c1 = obniz.getFreeI2C(); // Error
+```
+
 ## start({mode, sda, scl, frequency, pullType})
 start i2c on given io sda, scl.
 Drain and pull is optional for io output setting. 

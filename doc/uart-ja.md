@@ -3,6 +3,18 @@ UARTモジュールです。
 UARTは２つ利用可能で、
 uart0からuart1までです。
 
+## obniz.getFreeUart()
+未使用のuartを返します。
+```javascript
+var uart = obniz.getFreeUart();
+```
+もし未使用のuartがなければエラーとなります。
+```javascript
+var uart0 = obniz.getFreeUart();
+var uart1 = obniz.getFreeUart();
+var uart2 = obniz.getFreeUart(); // Error
+```
+
 ## start(tx, rx, baud, stop, bits, parity, flow control, rts, cts)
 uartを開始します。
 txで指定したピンが送信でそこからデータがobnizから送信され、rxで指定したピンで受信します。

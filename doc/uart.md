@@ -1,6 +1,18 @@
 # Peripherals UART
 uart0 and uart1 is available
 
+## obniz.getFreeUart()
+It returns not used uart.
+```javascript
+var uart = obniz.getFreeUart();
+```
+It throw error when no more uart available.
+```javascript
+var uart0 = obniz.getFreeUart();
+var uart1 = obniz.getFreeUart();
+var uart2 = obniz.getFreeUart(); // Error
+```
+
 ## start({tx, rx[, baud, stop, bits, parity, flow control, rts, cts, drive, pull ]})
 start uart on io tx, rx.
 tx is used for send data from obniz to parts.

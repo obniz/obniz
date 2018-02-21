@@ -56,7 +56,7 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
       console.log("changed to "+voltage+" v")
     });
 
-    var pwm = obniz.getpwm();
+    var pwm = obniz.getFreePwm();
     pwm.start(4);
     pwm.freq(1000);
     pwm.duty(50);

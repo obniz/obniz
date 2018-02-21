@@ -18,22 +18,22 @@ describe("obniz.libs.pwm", function () {
   
   
   it("getpwm",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
   
   it.skip("getpwm double",  function () {
-    var pwm1 = this.obniz.getpwm();
-    var pwm2 = this.obniz.getpwm();
+    var pwm1 = this.obniz.getFreePwm();
+    var pwm2 = this.obniz.getFreePwm();
     
     expect(this.obniz).to.be.finished;
     expect(pwm1).to.be.equal(this.obniz.pwm0);
     expect(pwm2).to.be.equal(this.obniz.pwm1);
   });
   it("getpwm released",  function () {
-    var pwm1 = this.obniz.getpwm();
+    var pwm1 = this.obniz.getFreePwm();
     expect(pwm1).to.be.equal(this.obniz.pwm0);
     pwm1.start(11);
     expect(this.obniz).send({pwm0:{"io": 11}});
@@ -42,13 +42,13 @@ describe("obniz.libs.pwm", function () {
     expect(this.obniz).send({pwm0: null});
     
     
-    var pwm2 = this.obniz.getpwm();
+    var pwm2 = this.obniz.getFreePwm();
     expect(pwm2).to.be.equal(this.obniz.pwm0);
     expect(this.obniz).to.be.finished;
   });
   
   it("start io",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(11);
     
     expect(this.obniz).send({pwm0:{"io": 11}});
@@ -57,7 +57,7 @@ describe("obniz.libs.pwm", function () {
   });
   
   it.skip("start io invalid",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(15);
     
     expect(this.obniz).send({pwm0:{"io": 15}});
@@ -66,7 +66,7 @@ describe("obniz.libs.pwm", function () {
   });
   
   it("freq",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(10); 
     expect(this.obniz).send({pwm0:{"io": 10}});
     pwm.freq(1000);
@@ -77,7 +77,7 @@ describe("obniz.libs.pwm", function () {
   });
   
   it("pulse",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(9); 
     expect(this.obniz).send({pwm0:{"io": 9}});
     pwm.freq(500); 
@@ -90,7 +90,7 @@ describe("obniz.libs.pwm", function () {
   });
   
   it("duty",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(9); 
     expect(this.obniz).send({pwm0:{"io": 9}});
     pwm.freq(500); 
@@ -104,7 +104,7 @@ describe("obniz.libs.pwm", function () {
   
   
   it("force working",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(9); 
     expect(this.obniz).send({pwm0:{"io": 9}});
     pwm.freq(500); 
@@ -119,7 +119,7 @@ describe("obniz.libs.pwm", function () {
   });
   
   it("modulate",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(11);   // start pwm. output at io11
     expect(this.obniz).send({pwm0:{"io": 11}});
     pwm.freq(38000); // set pwm frequency to 38khz
@@ -137,7 +137,7 @@ describe("obniz.libs.pwm", function () {
   it("modulateのドキュメントに詳細or具体例が必要");
   
   it("end",  function () {
-    var pwm = this.obniz.getpwm();
+    var pwm = this.obniz.getFreePwm();
     pwm.start(11); 
     expect(this.obniz).send({pwm0:{"io": 11}});
     pwm.end();   
