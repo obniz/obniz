@@ -2024,7 +2024,7 @@ PeripheralUART.prototype.readBytes = function () {
   var results = [];
   if (this.isDataExists()) {
     for (var i = 0; i < this.received.length; i++) {
-      results = results.concat(this.received[i]);
+      results.push(this.received[i]);
     }
   }
   this.received = [];
