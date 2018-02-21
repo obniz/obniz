@@ -9,10 +9,10 @@ This 7SegmentLEDArray will drive all 7 segments automatically.
 Dynamic Lightning.
 
 ```javascript
-var seg0 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
-var seg1 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 9, "cathode");
-var seg2 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 10, "cathode");
-var seg3 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 11, "cathode");
+var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
+var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
+var seg3 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:11, commonType:"cathode"});
 
 var segArray = obniz.wired("7SegmentLEDArray", seg0, seg1, seg2, seg3);
 segArray.print(1234);
@@ -21,10 +21,10 @@ segArray.print(1234);
 ## print(number)
 
 ```javascript
-var seg0 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
-var seg1 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 9, "cathode");
-var seg2 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 10, "cathode");
-var seg3 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 11, "cathode");
+var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
+var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
+var seg3 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:11, commonType:"cathode"});
 
 var segArray = obniz.wired("7SegmentLEDArray", seg0, seg1, seg2, seg3);
 segArray.print(1234);
@@ -33,10 +33,10 @@ segArray.print(1234);
 ## off()
 turn display off
 ```javascript
-var seg0 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
-var seg1 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 9, "cathode");
-var seg2 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 10, "cathode");
-var seg3 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 11, "cathode");
+var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
+var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
+var seg3 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:11, commonType:"cathode"});
 
 var segArray = obniz.wired("7SegmentLEDArray", seg0, seg1, seg2, seg3);
 
@@ -50,10 +50,10 @@ segArray.on();
 ## on()
 turn display off
 ```javascript
-var seg0 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 8, "cathode");
-var seg1 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 9, "cathode");
-var seg2 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 10, "cathode");
-var seg3 = obniz.wired("7SegmentLED", 2, 0, 3, 5, 6, 4, 1, null, 11, "cathode");
+var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
+var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
+var seg3 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:11, commonType:"cathode"});
 
 var segArray = obniz.wired("7SegmentLEDArray", seg0, seg1, seg2, seg3);
 

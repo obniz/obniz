@@ -81,7 +81,7 @@ For example, LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    var led = obniz.wired("LED", 0, 1);
+    var led = obniz.wired("LED", {anode:0, cathode:1});
     led.blink();
   }
 ```
@@ -90,7 +90,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    var hcsr04 = obniz.wired("HC-SR04", 3,2,1,0);
+    var hcsr04 = obniz.wired("HC-SR04", {vcc:3, triger:2, echo:1, gnd:0});
     hcsr04.unit("inch");
     hcsr04.measure(function( distance ){
       console.log("distance " + distance + " inch")
@@ -107,7 +107,7 @@ Easy to integrate UI on html and hardware
 <script>
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {
-  var servo = obniz.wired("ServoMotor", 0, 1, 2);
+  var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
   $("#slider").on('input', function() {
     servo.angle($("#slider").val())
   });
@@ -122,7 +122,7 @@ Easy to integrate web servies like Dropbox, Twitter.
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {
   var dbx = new Dropbox({ accessToken: '<YOUR ACCESS TOKEN HERE>' });
-  var button = obniz.wired("Button", 0, 1);
+  var button = obniz.wired("Button",  {signal:0, gnd:1});
   button.onChange(function(pressed){
     if (pressed) {
   　　dbx.filesUpload({path: '/obniz.txt', contents: "[Button Pressed]\n" + new Date(), mode: 'overwrite' });

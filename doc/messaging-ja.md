@@ -22,7 +22,7 @@ GET https://obniz.io/obniz/0000-0000/message?data=move
 ```Javascript
 // Example
 obniz.onconnect = function() {
-  var motor = obniz.wired("ServoMotor", 0 , 1, 2);
+  var motor = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
 
   motor.angle(0);
   obniz.onmessage = function(message, from) {
@@ -50,7 +50,7 @@ obniz間のメッセージングです。実際に見てみましょう。
 ```Javascript
 // Example
 obniz.onconnect = function(){
-    var button = obniz.wired("Button", 0, 1);
+    var button = obniz.wired("Button",  {signal:0, gnd:1});
 
     button.onChange(function(){
       var targets = [
@@ -75,7 +75,7 @@ targetsで書かれているのは送りたい相手のobnizのidです。
 ```Javascript
 // Example
 obniz.onconnect = function() {
-    var motor = obniz.wired("ServoMotor", 0 , 1, 2);
+    var motor = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
 
     motor.angle(0);
     obniz.onmessage = function(message, from) {

@@ -13,7 +13,7 @@ var microphone = obniz.wired("AE_MICAMP", {vcc:0, out:1, gnd:2});
 音のレベルを電圧で返します。
 
 ```javascript
-var microphone = obniz.wired("AE_MICAMP", 0, 1, 2);
+var microphone = obniz.wired("AE_MICAMP", {vcc:0, out:1, gnd:2});
 microphone.onChange(function(voltage){
   console.log(voltage)
 })
