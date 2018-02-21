@@ -19,7 +19,7 @@ tx is used for send data from obniz to parts.
 rx is used for receive data from parts to obniz.
 you can start uart without many configration. Just use like
 ```javascript
-obniz.uart0.start(0, 1)
+obniz.uart0.start({tx:0, rx:1})
 ```
 default configrations are
 
@@ -48,7 +48,7 @@ available configrations are
 
 ```Javascript
 // Example
-obniz.uart0.start(1, 2, 9600, null, 7);  // speed changed to 9600. bits = 7bit
+obniz.uart0.start({"tx": 1, "rx": 2, "baud":9600, "bits":7 });  
 obniz.uart0.send("Hi");
 ```
 ## send(data)
@@ -62,7 +62,7 @@ available formats are
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
@@ -72,7 +72,7 @@ stop uart. it will release io.
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1);
+obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.end();
 ```
@@ -87,7 +87,7 @@ text is "A"
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.onreceive = function(data, text) {
   console.log(data);
   console.log(text);
@@ -104,7 +104,7 @@ if you are using onreceive callback, it always false because you get data from c
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
@@ -119,7 +119,7 @@ return received data array which recieved and you don't get yet.
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
@@ -135,7 +135,7 @@ return received data as string which recieved and you don't get yet.
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
