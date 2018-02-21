@@ -101,9 +101,10 @@ describe("obniz.libs.uart", function () {
     expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
     
     testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
+    testUtil.receiveJson(this.obniz,  {"uart0":{"data":[1, 2, 3]}});
     
     expect(this.obniz.uart0.isDataExists()).to.be.true;
-    expect(this.obniz.uart0.readBytes()).to.be.deep.equal([78,105,99,101]);
+    expect(this.obniz.uart0.readBytes()).to.be.deep.equal([78,105,99,101,1,2,3]);
     expect(this.obniz).to.be.finished;
     
   });
@@ -118,9 +119,10 @@ describe("obniz.libs.uart", function () {
     expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
     
     testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
+    testUtil.receiveJson(this.obniz,  {"uart0":{"data":[101]}});
     
     expect(this.obniz.uart0.isDataExists()).to.be.true;
-    expect(this.obniz.uart0.readText()).to.be.equal("Nice");
+    expect(this.obniz.uart0.readText()).to.be.equal("Nicee");
     expect(this.obniz).to.be.finished;
     
   });

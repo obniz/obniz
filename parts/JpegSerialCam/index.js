@@ -19,7 +19,7 @@ class JpegSerialCam {
     if (!recv) recv = [];
     while(true) {
       var readed = uart.readBytes();
-      for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
+      recv = recv.concat(readed);
       var tail = this._seekTail(search, recv);
       if (tail >= 0) {
         recv.splice(0, tail);
@@ -129,7 +129,7 @@ class JpegSerialCam {
     while(true) {
       var readed = uart.readBytes();
       //console.log(recv);
-      for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
+      recv = recv.concat(readed);
       if (recv.length >= 2) {
         XX = recv[0];
         YY = recv[1];
@@ -148,7 +148,7 @@ class JpegSerialCam {
     //console.log("reading...");
     while(true) {
       var readed = uart.readBytes();
-      for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
+      recv = recv.concat(readed);
       //console.log(readed.length);
       if (recv.length >= databytes) {
         break;
