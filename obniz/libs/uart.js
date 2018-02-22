@@ -3,6 +3,7 @@ var PeripheralUART = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.received = new Uint8Array([]); 
+  this.used = false;
 };
 
 PeripheralUART.prototype.start = function(params) {
@@ -33,6 +34,7 @@ PeripheralUART.prototype.start = function(params) {
   obj["uart"+this.id] = this.params;
   this.Obniz.send(obj);
   this.received = [];
+  this.used = true;
 };
 
 // node only
@@ -135,7 +137,7 @@ PeripheralUART.prototype.notified = function(obj) {
 };
 
 PeripheralUART.prototype.isUsed = function() {
-  return !!this.params;
+  return this.used;
 };
 
 PeripheralUART.prototype.end = function() {
@@ -143,4 +145,5 @@ PeripheralUART.prototype.end = function() {
   obj["uart"+this.id] = null;
   this.params = null;
   this.Obniz.send(obj);
+  this.used = false;
 };

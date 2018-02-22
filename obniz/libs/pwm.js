@@ -3,6 +3,7 @@ var PeripheralPWM = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.state = {};
+  this.used = false;
 };
 
 PeripheralPWM.prototype.sendWS = function(obj) {
@@ -17,6 +18,7 @@ PeripheralPWM.prototype.start = function(io) {
   this.sendWS({
     io: io
   });
+  this.used = true;
 };
 
 PeripheralPWM.prototype.freq = function(freq) {
@@ -53,13 +55,14 @@ PeripheralPWM.prototype.forceWorking = function(working) {
 
 
 PeripheralPWM.prototype.isUsed = function() {
-  return (typeof (this.state.io) === "number");
+  return this.used;
 };
 
 PeripheralPWM.prototype.end = function() {
   var obj = {};
   this.state = {};
   this.sendWS(null);
+  this.used = false;
 };
 
 

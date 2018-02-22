@@ -3,6 +3,7 @@ var PeripheralSPI = function(Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.observers = [];
+  this.used = false;
 };
 
 PeripheralSPI.prototype.addObserver = function(callback) {
@@ -46,6 +47,7 @@ PeripheralSPI.prototype.start = function(params) {
       if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
   }
  
+ this.used = true;
   this.Obniz.send(obj);
 };
 
@@ -80,7 +82,7 @@ PeripheralSPI.prototype.notified = function(obj) {
 };
 
 PeripheralSPI.prototype.isUsed = function() {
-  return !!this.params;
+  return this.used;
 };
 PeripheralSPI.prototype.end = function(data) {
   var self = this;
@@ -88,4 +90,5 @@ PeripheralSPI.prototype.end = function(data) {
   obj["spi"+self.id] = null;
   this.params = null;
   self.Obniz.send(obj);
+ this.used = false;
 };

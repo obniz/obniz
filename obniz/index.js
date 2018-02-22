@@ -312,6 +312,7 @@ Obniz.prototype.getFreePwm = function () {
       break;
     }
     if (!pwm.isUsed()) {
+      pwm.used = true;
       return pwm;
     }
     i++;
@@ -327,6 +328,7 @@ Obniz.prototype.getFreeI2C = function () {
       break;
     }
     if (!i2c.isUsed()) {
+      i2c.used = true;
       return i2c;
     }
     i++;
@@ -354,6 +356,7 @@ Obniz.prototype.getFreeSpi= function () {
       break;
     }
     if (!spi.isUsed()) {
+      spi.used = true;
       return spi;
     }
     i++;
@@ -382,6 +385,7 @@ Obniz.prototype.getFreeUart = function () {
       break;
     }
     if (!uart.isUsed()) {
+      uart.used = true;
       return uart;
     }
     i++;

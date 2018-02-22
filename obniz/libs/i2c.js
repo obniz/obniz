@@ -36,6 +36,7 @@ PeripheralI2C.prototype.start = function(arg) {
   
   var obj = {}; 
   obj["i2c"+this.id] = ObnizUtil._keyFilter(this.state,["mode", "sda", "scl", "clock"]);
+  this.used = true;
   this.Obniz.send(obj);
 };
 
@@ -76,8 +77,8 @@ PeripheralI2C.prototype.notified = function(obj) {
     callback(obj.data);
   }
 };
-PeripheralI2C.prototype.isUserd = function() {
-  return (typeof (this.state.scl) === "number");
+PeripheralI2C.prototype.isUsed = function() {
+   return this.used;
 };
 
 PeripheralI2C.prototype.end = function() {
@@ -85,4 +86,5 @@ PeripheralI2C.prototype.end = function() {
   var obj = {};
   obj["i2c"+this.id] = null;
   this.Obniz.send(obj);
+  this.used = false;
 };

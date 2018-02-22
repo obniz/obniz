@@ -217,14 +217,19 @@ Obniz.prototype.wired = function (partsname) {
   }
   parts.obniz = this;
   parts.wired.apply(parts, args);
-  if (parts.keys) {
-    for (var index in parts.keys) {
-      var pinName = parts.keys[index];
+  if (parts.keys || parts.ioKeys) {
+    var keys = parts.ioKeys || parts.keys;
+    var displayPartsName = parts.displayName || partsname;
+    var ioNames = {};
+    for (var index in keys) {
+      var pinName = keys[index];
       var io = args[1][pinName];
-      if (this.isValidIO(io)) {
-        this.display.setPinName(io, partsname, pinName);
+      if (parts.displayIoNames && parts.displayIoNames[pinName]) {
+        pinName = parts.displayIoNames[pinName];
       }
+      ioNames[io] = pinName;
     }
+    this.display.setPinNames(displayPartsName, ioNames);
   }
   return parts;
 };
@@ -318,6 +323,7 @@ Obniz.prototype.getFreePwm = function () {
       break;
     }
     if (!pwm.isUsed()) {
+      pwm.used = true;
       return pwm;
     }
     i++;
@@ -333,6 +339,7 @@ Obniz.prototype.getFreeI2C = function () {
       break;
     }
     if (!i2c.isUsed()) {
+      i2c.used = true;
       return i2c;
     }
     i++;
@@ -360,6 +367,7 @@ Obniz.prototype.getFreeSpi = function () {
       break;
     }
     if (!spi.isUsed()) {
+      spi.used = true;
       return spi;
     }
     i++;
@@ -387,6 +395,7 @@ Obniz.prototype.getFreeUart = function () {
       break;
     }
     if (!uart.isUsed()) {
+      uart.used = true;
       return uart;
     }
     i++;
@@ -1358,6 +1367,17 @@ Display.prototype.setPinName = function (io, moduleName, funcName) {
   this.Obniz.send(obj);
 };
 
+Display.prototype.setPinNames = function (moduleName, data) {
+  var obj = {};
+  obj["display"] = {};
+  obj["display"]["pin_assign"] = {};
+  for (var key in data) {
+    obj["display"]["pin_assign"][key] = { module_name: moduleName, pin_name: data[key] };
+  }
+
+  this.Obniz.send(obj);
+};
+
 Display.prototype.drawCanvasContext = function (ctx) {
   if (isNode) {
     // TODO:
@@ -1419,6 +1439,7 @@ PeripheralI2C.prototype.start = function (arg) {
 
   var obj = {};
   obj["i2c" + this.id] = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl", "clock"]);
+  this.used = true;
   this.Obniz.send(obj);
 };
 
@@ -1459,8 +1480,8 @@ PeripheralI2C.prototype.notified = function (obj) {
     callback(obj.data);
   }
 };
-PeripheralI2C.prototype.isUserd = function () {
-  return typeof this.state.scl === "number";
+PeripheralI2C.prototype.isUsed = function () {
+  return this.used;
 };
 
 PeripheralI2C.prototype.end = function () {
@@ -1468,6 +1489,7 @@ PeripheralI2C.prototype.end = function () {
   var obj = {};
   obj["i2c" + this.id] = null;
   this.Obniz.send(obj);
+  this.used = false;
 };
 
 var PeripheralIO = function (Obniz, id) {
@@ -1740,6 +1762,7 @@ var PeripheralPWM = function (Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.state = {};
+  this.used = false;
 };
 
 PeripheralPWM.prototype.sendWS = function (obj) {
@@ -1754,6 +1777,7 @@ PeripheralPWM.prototype.start = function (io) {
   this.sendWS({
     io: io
   });
+  this.used = true;
 };
 
 PeripheralPWM.prototype.freq = function (freq) {
@@ -1789,13 +1813,14 @@ PeripheralPWM.prototype.forceWorking = function (working) {
 };
 
 PeripheralPWM.prototype.isUsed = function () {
-  return typeof this.state.io === "number";
+  return this.used;
 };
 
 PeripheralPWM.prototype.end = function () {
   var obj = {};
   this.state = {};
   this.sendWS(null);
+  this.used = false;
 };
 
 PeripheralPWM.prototype.modulate = function (type, symbol_sec, data) {
@@ -1813,6 +1838,7 @@ var PeripheralSPI = function (Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.observers = [];
+  this.used = false;
 };
 
 PeripheralSPI.prototype.addObserver = function (callback) {
@@ -1864,6 +1890,7 @@ PeripheralSPI.prototype.start = function (params) {
     if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(null);
   }
 
+  this.used = true;
   this.Obniz.send(obj);
 };
 
@@ -1898,7 +1925,7 @@ PeripheralSPI.prototype.notified = function (obj) {
 };
 
 PeripheralSPI.prototype.isUsed = function () {
-  return !!this.params;
+  return this.used;
 };
 PeripheralSPI.prototype.end = function (data) {
   var self = this;
@@ -1906,6 +1933,7 @@ PeripheralSPI.prototype.end = function (data) {
   obj["spi" + self.id] = null;
   this.params = null;
   self.Obniz.send(obj);
+  this.used = false;
 };
 
 var ObnizSwitch = function (Obniz) {
@@ -1944,6 +1972,7 @@ var PeripheralUART = function (Obniz, id) {
   this.Obniz = Obniz;
   this.id = id;
   this.received = new Uint8Array([]);
+  this.used = false;
 };
 
 PeripheralUART.prototype.start = function (params) {
@@ -1974,6 +2003,7 @@ PeripheralUART.prototype.start = function (params) {
   obj["uart" + this.id] = this.params;
   this.Obniz.send(obj);
   this.received = [];
+  this.used = true;
 };
 
 // node only
@@ -2072,7 +2102,7 @@ PeripheralUART.prototype.notified = function (obj) {
 };
 
 PeripheralUART.prototype.isUsed = function () {
-  return !!this.params;
+  return this.used;
 };
 
 PeripheralUART.prototype.end = function () {
@@ -2080,6 +2110,7 @@ PeripheralUART.prototype.end = function () {
   obj["uart" + this.id] = null;
   this.params = null;
   this.Obniz.send(obj);
+  this.used = false;
 };
 class ObnizUtil {
 
@@ -2942,6 +2973,10 @@ class JpegSerialCam {
   constructor() {
     this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
     this.requiredKeys = ["cam_tx", "cam_rx"];
+
+    this.ioKeys = this.keys;
+    this.displayName = "Jcam";
+    this.displayIoNames = { "cam_tx": "camTx", "cam_rx": "camRx" };
   }
 
   wired() {
@@ -3003,6 +3038,8 @@ class JpegSerialCam {
     return _asyncToGenerator(function* () {
       if (!obj) obj = {};
       _this2.uart.start({ tx: _this2.my_tx, rx: _this2.my_rx, baud: obj.baud || 38400 });
+      _this2.obniz.display.setPinName(_this2.my_tx, "JpegSerialCam", "camRx");
+      _this2.obniz.display.setPinName(_this2.my_rx, "JpegSerialCam", "camTx");
       yield _this2.obniz.wait(2500);
     })();
   }
@@ -4116,6 +4153,8 @@ class XBee {
   constructor() {
     this.keys = ["tx", "rx", "gnd"];
     this.requiredKeys = ["tx", "rx"];
+
+    this.displayIoNames = { "tx": "<tx", "rx": ">rx" };
   }
 
   wired(obniz) {
