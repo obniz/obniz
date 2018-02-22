@@ -3,6 +3,21 @@ i2cを利用できます。
 i2cは１つのみ利用可能でi2c0のみ存在します。
 通信速度は最大1Mhzです。
 
+# obniz.getFreeI2C()
+未使用のI2Cを返します。
+```javascript
+var i2c = obniz.getFreeI2C();
+```
+i2cはi2c0しかないので、返ってくるものはi2c0と同じです。i2c1はありません。
+```javascript
+(obniz.getFreeI2C() === obniz.i2c0) => true
+```
+もし、未使用のものがなければerrorが返ります。
+```javascript
+var i2c0 = obniz.getFreeI2C();
+var i2c1 = obniz.getFreeI2C(); // Error
+```
+
 ## start({mode, sda, scl, frequency[, drain, pull]})
 
 i2cを有効化します。

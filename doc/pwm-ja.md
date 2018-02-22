@@ -4,16 +4,27 @@ PWMを出力します。
 PWMは6チャンネル利用可能です。
 pwm0からpwm5までが利用できます。
 
-## obniz.getpwm()
+## obniz.getFreePwm()
 obnizが利用していないpwmモジュールを取得します。
 pwmはpwm０〜pwm５の６つが利用できますが、
 この関数を呼ぶことで利用中でないpwmを取得することが出来ます。
 
 ```Javascript
 // Example
-var pwm = obniz.getpwm();
+var pwm = obniz.getFreePwm();
 ```
 もし利用できるpwmがない場合は例外が発生しプログラムは停止します。
+```Javascript
+// Example
+var pwm0 = obniz.getFreePwm();
+var pwm1 = obniz.getFreePwm();
+var pwm2 = obniz.getFreePwm();
+var pwm3 = obniz.getFreePwm();
+var pwm4 = obniz.getFreePwm();
+var pwm5 = obniz.getFreePwm();
+var pwm6 = obniz.getFreePwm(); // Error
+```
+
 
 ## start(io)
 
@@ -22,7 +33,7 @@ pwmをnumberで指定したピンで開始します。
 
 ```Javascript
 // Example
-var pwm = obniz.getpwm();
+var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 ```
 ## freq(frequency)
@@ -33,7 +44,7 @@ DCモーターなどでは1khzなどが一般的です。
 
 ```Javascript
 // Example
-var pwm = obniz.getpwm();
+var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm. frequency to 1khz
 ```
@@ -43,7 +54,7 @@ PWMのパルス幅をミリ秒で指定します。
 
 ```Javascript
 // Example
-var pwm = obniz.getpwm();
+var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm frequency to 1khz
 pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  50% ratio.
@@ -54,7 +65,7 @@ PWMのパルス幅をデューティー比で指定します。
 
 ```Javascript
 // Example
-var pwm = obniz.getpwm();
+var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm frequency to 1khz
 pwm.duty(50) // set pwm pulse witdh 50%
@@ -72,7 +83,7 @@ am変調は1であれば現在の周波数によりpwmの出力をONにして、
 
 ```Javascript
 // Example
-var pwm = obniz.getpwm();
+var pwm = obniz.getFreePwm();
 pwm.start(11);   // start pwm. output at io11
 pwm.freq(38000); // set pwm frequency to 38khz
 

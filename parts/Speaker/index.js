@@ -5,7 +5,7 @@ var Speaker = function() {
 
 Speaker.prototype.wired = function(obniz) {
   this.obniz.setVccGnd(null, this.params.gnd, "5v");
-  this.pwm = obniz.getpwm();
+  this.pwm = obniz.getFreePwm();
   this.pwm.start(this.params.signal);
 };
 

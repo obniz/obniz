@@ -56,7 +56,7 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
       console.log("changed to "+voltage+" v")
     });
 
-    var pwm = obniz.getpwm();
+    var pwm = obniz.getFreePwm();
     pwm.start(4);
     pwm.freq(1000);
     pwm.duty(50);
@@ -80,7 +80,7 @@ obnizにつながれた部品をつかうにはpartsをonconnect関数の中で�
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    var led = obniz.wired("LED", 0, 1);
+    var led = obniz.wired("LED", {anode:0, cathode:1});
     led.blink();
   }
 ```
@@ -89,7 +89,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    var hcsr04 = obniz.wired("HC-SR04", 3,2,1,0);
+    var hcsr04 = obniz.wired("HC-SR04", {vcc:3, triger:2, echo:1, gnd:0});
     hcsr04.unit("inch");
     hcsr04.measure(function( distance ){
       console.log("distance " + distance + " inch")
@@ -106,7 +106,7 @@ HTML上のUIとハードウェアの連携も簡単です。
 <script>
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {
-  var servo = obniz.wired("ServoMotor", 0, 1, 2);
+  var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
   $("#slider").on('input', function() {
     servo.angle($("#slider").val())
   });
@@ -121,7 +121,7 @@ DropboxやTwitterなどのwebサービスとの連携もとても簡単に行な
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {
   var dbx = new Dropbox({ accessToken: '<YOUR ACCESS TOKEN HERE>' });
-  var button = obniz.wired("Button", 0, 1);
+  var button = obniz.wired("Button",  {signal:0, gnd:1});
   button.onChange(function(pressed){
     if (pressed) {
   　　dbx.filesUpload({path: '/obniz.txt', contents: "[Button Pressed]\n" + new Date(), mode: 'overwrite' });

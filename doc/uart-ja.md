@@ -3,6 +3,18 @@ UARTモジュールです。
 UARTは２つ利用可能で、
 uart0からuart1までです。
 
+## obniz.getFreeUart()
+未使用のuartを返します。
+```javascript
+var uart = obniz.getFreeUart();
+```
+もし未使用のuartがなければエラーとなります。
+```javascript
+var uart0 = obniz.getFreeUart();
+var uart1 = obniz.getFreeUart();
+var uart2 = obniz.getFreeUart(); // Error
+```
+
 ## start(tx, rx, baud, stop, bits, parity, flow control, rts, cts)
 uartを開始します。
 txで指定したピンが送信でそこからデータがobnizから送信され、rxで指定したピンで受信します。
@@ -29,7 +41,7 @@ Defaults
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1, 9600, null, 7);  // speed changed to 9600. bits = 7bit
+obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });
 obniz.uart0.send("Hi");
 ```
 ## send(data)
@@ -44,7 +56,7 @@ dataで送れるものは
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
@@ -55,7 +67,7 @@ uartを停止します。uartで使われていたピンは入力となります
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1);
+obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.end();
 ```
@@ -67,7 +79,7 @@ obniz.uart0.end();
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.onreceive = function(data, text) {
   console.log(data);
   console.log(text);
@@ -85,7 +97,7 @@ obniz.uart0.send("Hello");
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
@@ -100,7 +112,7 @@ while(1){
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
@@ -116,7 +128,7 @@ while(1){
 
 ```Javascript
 // Example
-obniz.uart0.start(0, 1); // 0 is output, 1 is input
+obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){

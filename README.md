@@ -37,7 +37,7 @@ To use obniz, instantiate obniz with obniz id. and set onconnect callback functi
     obniz.io1.drive("open-drain");
     obniz.io1.output(false);
 
-    var servo = obniz.wired("ServoMotor", 2, 3, 4);
+    var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
     servo.angle(90);
   }
 ```

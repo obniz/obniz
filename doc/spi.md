@@ -3,6 +3,18 @@ General Purpose SPI
 spi0 and spi1 are available.
 Max speed is 80Mhz.
 
+## obniz.getFreeSpi()
+It returns not used spi.
+```javascript
+var spi = obniz.getFreeSpi();
+```
+It throw error when no more spi available.
+```javascript
+var spi0 = obniz.getFreeSpi();
+var spi1 = obniz.getFreeSpi();
+var spi2 = obniz.getFreeSpi(); // Error
+```
+
 ## start({mode, clk, mosi, miso, frequency, [drain, pull ] } );
 start spi. now mode is only "master"
 Drain and pull is optional for io output setting. 

@@ -8,7 +8,7 @@ ServoMotor.prototype.wired = function(obniz) {
   
   this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     
-  this.pwm = obniz.getpwm();
+  this.pwm = obniz.getFreePwm();
   this.pwm_io_num = this.params.signal;
 
   this.pwm.start(this.pwm_io_num);

@@ -299,12 +299,6 @@ Obniz.prototype.getAD = function (id) {
   return this["ad" + id];
 };
 
-/** dupricate
- */
-Obniz.prototype.getpwm = function () {
-  return this.getFreePwm();
-};
-
 Obniz.prototype.getFreePwm = function () {
   var i = 0;
   while (true) {
@@ -2575,10 +2569,10 @@ DCMotor.prototype.wired = function(obniz) {
   this.pwm1_io_num = this.params.forward;
   this.pwm2_io_num = this.params.back;
 
-  this.pwm1 = obniz.getpwm();
+  this.pwm1 = obniz.getFreePwm();
   this.pwm1.start(this.pwm1_io_num);
   this.pwm1.freq(100000);
-  this.pwm2 = obniz.getpwm();
+  this.pwm2 = obniz.getFreePwm();
   this.pwm2.start(this.pwm2_io_num);
   this.pwm2.freq(100000);
   this.power(30);
@@ -2819,9 +2813,9 @@ class FullColorLed{
     this.obniz.getIO(g).output(this.commontype);
     this.obniz.getIO(b).drive("3v");
     this.obniz.getIO(b).output(this.commontype);
-    this.pwmR = this.obniz.getpwm();this.pwmR.start(r);this.pwmR.freq(1000);
-    this.pwmG = this.obniz.getpwm();this.pwmG.start(g);this.pwmG.freq(1000);
-    this.pwmB = this.obniz.getpwm();this.pwmB.start(b);this.pwmB.freq(1000);
+    this.pwmR = this.obniz.getFreePwm();this.pwmR.start(r);this.pwmR.freq(1000);
+    this.pwmG = this.obniz.getFreePwm();this.pwmG.start(g);this.pwmG.freq(1000);
+    this.pwmB = this.obniz.getFreePwm();this.pwmB.start(b);this.pwmB.freq(1000);
     this.rgb(0,0,0);
     
   }
@@ -3025,7 +3019,7 @@ class JpegSerialCam {
     if (!recv) recv = [];
     while(true) {
       var readed = uart.readBytes();
-      for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
+      recv = recv.concat(readed);
       var tail = this._seekTail(search, recv);
       if (tail >= 0) {
         recv.splice(0, tail);
@@ -3135,7 +3129,7 @@ class JpegSerialCam {
     while(true) {
       var readed = uart.readBytes();
       //console.log(recv);
-      for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
+      recv = recv.concat(readed);
       if (recv.length >= 2) {
         XX = recv[0];
         YY = recv[1];
@@ -3154,7 +3148,7 @@ class JpegSerialCam {
     //console.log("reading...");
     while(true) {
       var readed = uart.readBytes();
-      for (var i=0; i<readed.length; i++) { recv = recv.concat(readed[i]); }
+      recv = recv.concat(readed);
       //console.log(readed.length);
       if (recv.length >= databytes) {
         break;
@@ -3982,7 +3976,7 @@ ServoMotor.prototype.wired = function(obniz) {
   
   this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     
-  this.pwm = obniz.getpwm();
+  this.pwm = obniz.getFreePwm();
   this.pwm_io_num = this.params.signal;
 
   this.pwm.start(this.pwm_io_num);
@@ -4020,7 +4014,7 @@ var Speaker = function() {
 
 Speaker.prototype.wired = function(obniz) {
   this.obniz.setVccGnd(null, this.params.gnd, "5v");
-  this.pwm = obniz.getpwm();
+  this.pwm = obniz.getFreePwm();
   this.pwm.start(this.params.signal);
 };
 

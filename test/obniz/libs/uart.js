@@ -18,13 +18,13 @@ describe("obniz.libs.uart", function () {
   
   
   it("start",  function () {
-    this.obniz.uart0.start({"tx": 1, "rx": 2, "baud":9600, "bits":7 });  
+    this.obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });  
     expect(this.obniz).send({ io2: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io1: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io2: { pull_type: 'float' } });
     expect(this.obniz).send({ io1: { pull_type: 'float' } });
     
-    expect(this.obniz).send({uart0:{"tx": 1, "rx": 2, "baud":9600, "bits":7 }});
+    expect(this.obniz).send({uart0:{tx: 1, rx: 2, baud:9600, bits:7 }});
     
     this.obniz.uart0.send("Hi");
     
@@ -34,13 +34,13 @@ describe("obniz.libs.uart", function () {
   
   
   it("send",  function () {
-    this.obniz.uart0.start({"tx": 1, "rx": 2}); // 1 is output, 2 is input
+    this.obniz.uart0.start({tx:1, rx:2}); // 1 is output, 2 is input
     expect(this.obniz).send({ io2: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io1: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io2: { pull_type: 'float' } });
     expect(this.obniz).send({ io1: { pull_type: 'float' } });
     
-    expect(this.obniz).send({uart0:{"tx": 1, "rx": 2}});
+    expect(this.obniz).send({uart0:{tx:1, rx:2}});
     
     this.obniz.uart0.send("Hi");
     expect(this.obniz).send({uart0:{"data":[72, 105]}});
@@ -54,7 +54,7 @@ describe("obniz.libs.uart", function () {
   
   it("end",  function () {
   
-    this.obniz.uart0.start({"tx": 1, "rx": 2}); // 1 is output, 2 is input
+    this.obniz.uart0.start({tx:1, rx:2}); // 1 is output, 2 is input
     expect(this.obniz).send({ io2: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io1: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io2: { pull_type: 'float' } });
@@ -73,7 +73,7 @@ describe("obniz.libs.uart", function () {
   
   it("onreceive",  function () {
   
-    this.obniz.uart0.start({"tx": 0, "rx": 1}); // 0 is output, 1 is input
+    this.obniz.uart0.start({tx:0, rx:1}); // 0 is output, 1 is input
     expect(this.obniz).send({ io1: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io0: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io1: { pull_type: 'float' } });
@@ -93,7 +93,7 @@ describe("obniz.libs.uart", function () {
   
   it("readBytes",  function () {
   
-    this.obniz.uart0.start({"tx": 0, "rx": 1}); // 0 is output, 1 is input
+    this.obniz.uart0.start({tx:0, rx:1}); // 0 is output, 1 is input
     expect(this.obniz).send({ io1: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io0: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io1: { pull_type: 'float' } });
@@ -101,16 +101,17 @@ describe("obniz.libs.uart", function () {
     expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
     
     testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
+    testUtil.receiveJson(this.obniz,  {"uart0":{"data":[1, 2, 3]}});
     
     expect(this.obniz.uart0.isDataExists()).to.be.true;
-    expect(this.obniz.uart0.readBytes()).to.be.deep.equal([78,105,99,101]);
+    expect(this.obniz.uart0.readBytes()).to.be.deep.equal([78,105,99,101,1,2,3]);
     expect(this.obniz).to.be.finished;
     
   });
   
   it("readText",  function () {
   
-    this.obniz.uart0.start({"tx": 0, "rx": 1}); // 0 is output, 1 is input
+    this.obniz.uart0.start({tx:0, rx:1}); // 0 is output, 1 is input
     expect(this.obniz).send({ io1: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io0: { output_type: 'push-pull5v' } });
     expect(this.obniz).send({ io1: { pull_type: 'float' } });
@@ -118,9 +119,10 @@ describe("obniz.libs.uart", function () {
     expect(this.obniz).send({uart0:{"tx": 0, "rx": 1}});
     
     testUtil.receiveJson(this.obniz,  {"uart0":{"data":[78,105,99,101]}});
+    testUtil.receiveJson(this.obniz,  {"uart0":{"data":[101]}});
     
     expect(this.obniz.uart0.isDataExists()).to.be.true;
-    expect(this.obniz.uart0.readText()).to.be.equal("Nice");
+    expect(this.obniz.uart0.readText()).to.be.equal("Nicee");
     expect(this.obniz).to.be.finished;
     
   });

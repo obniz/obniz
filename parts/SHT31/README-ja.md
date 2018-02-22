@@ -16,7 +16,7 @@ var sensor = obniz.wired("SHT31", {vcc : 0, sda:2, scl:3, gnd:1, addr:4, address
 ## [await] getHumdWait()
 現在の湿度を計測して返します。単位は%です。
 ```javascript
-var sensor = obniz.wired("SHT31", 0, 1, 2, 3, 4, 5);
+var sensor = obniz.wired("SHT31", {vcc : 0, sda:2, scl:3, gnd:1, addr:4, addressmode:5);
 var temp = await sensor.getTempWait();
 var humd = await sensor.getHumdWait();
 console.log('temperature:' + temp);
