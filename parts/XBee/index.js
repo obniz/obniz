@@ -5,6 +5,8 @@ class XBee {
   constructor() {
     this.keys = ["tx","rx","gnd"];
     this.requiredKeys = ["tx","rx"];
+    
+    this.displayIoNames = { "tx" : "<tx", "rx":">rx"};
   }
 
   wired(obniz) {

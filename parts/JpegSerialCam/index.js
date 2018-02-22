@@ -3,6 +3,10 @@ class JpegSerialCam {
   constructor() {
     this.keys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
     this.requiredKeys = [ "cam_tx", "cam_rx"];
+    
+    this.ioKeys = this.keys;
+    this.displayName = "Jcam"
+    this.displayIoNames = { "cam_tx" : "camTx", "cam_rx":"camRx"};
   }
 
   wired(){
@@ -57,6 +61,8 @@ class JpegSerialCam {
   async startwait(obj) {
     if (!obj) obj = {};
     this.uart.start({tx:this.my_tx, rx:this.my_rx, baud:obj.baud || 38400});
+    this.obniz.display.setPinName(this.my_tx,"JpegSerialCam","camRx");
+    this.obniz.display.setPinName(this.my_rx,"JpegSerialCam","camTx");
     await this.obniz.wait(2500);
   }
 

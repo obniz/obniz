@@ -217,14 +217,19 @@ Obniz.prototype.wired = function (partsname) {
   }
   parts.obniz = this;
   parts.wired.apply(parts, args);
-  if(parts.keys){
-    for( var index in parts.keys){
-      var pinName = parts.keys[index];
+  if(parts.keys || parts.ioKeys){
+    var keys = parts.ioKeys || parts.keys;
+    var displayPartsName = parts.displayName || partsname;
+    var ioNames = {};
+    for( var index in keys){
+      var pinName = keys[index];
       var io = args[1][pinName];
-      if(this.isValidIO(io)){
-        this.display.setPinName(io, partsname,pinName);
+      if(parts.displayIoNames && parts.displayIoNames[pinName]){
+        pinName = parts.displayIoNames[pinName];
       }
+      ioNames[io]=pinName;
     }
+    this.display.setPinNames(displayPartsName,ioNames);
   }
   return parts;
 };
