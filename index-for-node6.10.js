@@ -1406,6 +1406,7 @@ var PeripheralI2C = function (Obniz, id) {
   this.id = id;
   this.observers = [];
   this.state = {};
+  this.used = false;
 };
 
 PeripheralI2C.prototype.addObserver = function (callback) {
