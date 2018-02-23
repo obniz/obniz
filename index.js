@@ -68,6 +68,10 @@ Obniz.prototype.wsOnMessage = function (data) {
       var msg = "Warning: " + obj.debug.warning;
       this.error(msg);
     }
+    if (obj.debug.error) {
+      var msg = "Error: " + obj.debug.error;
+      this.error(msg);
+    }
     if (this.ondebug) {
       this.ondebug(obj.debug);
     }
