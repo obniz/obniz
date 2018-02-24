@@ -2982,6 +2982,7 @@ HCSR04.prototype.measure = (() => {
         self.vccIO.output(false);
         var distance = null;
         for (var i = 0; i < edges.length - 1; i++) {
+          // HCSR04's output of io_echo is initially high when triger is finshed
           if (edges[i].edge === true) {
             distance = (edges[i + 1].timing - edges[i].timing) * 1000;
             if (self._unit === "mm") {
