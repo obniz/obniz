@@ -3340,7 +3340,7 @@ if (PartsRegistrate) {
 }
 var LED = function() {
   this.keys = ["anode","cathode"];
-  this.requiredKeys = ["anode","cathode"];
+  this.requiredKeys = ["anode"];
   
   
   this.animationName = "Led-" + Math.round(Math.random() *1000);
@@ -3392,8 +3392,6 @@ LED.prototype.blink = function(interval) {
 
 };
 
-  
-  
 if (PartsRegistrate) {
   PartsRegistrate("LED", LED);
 }
