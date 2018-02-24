@@ -137,9 +137,10 @@ Slaveモードのみ。
 また、1024バイトを超えるデータはデータをロストする可能性があります。
 ```Javascript
 // Example
-obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
-var ret = await obniz.i2c0.read10bitWait(0x50, 1);
-console.log("written"+ret);
+obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
+obniz.i2c0.onwritten = function(data){
+  console.log(data);
+}
 ```
 
 ## end()
@@ -148,7 +149,6 @@ i2cを終了しIOを開放します。
 
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no pullup
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.end();
 ```

@@ -114,9 +114,10 @@ when written data is 100byte, you possibly get 56 byte and 44 byte separated.
 over 1024 bytes data can be drop few bytes.
 ```Javascript
 // Example
-obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
-var ret = await obniz.i2c0.read10bitWait(0x50, 1);
-console.log("written"+ret);
+obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
+obniz.i2c0.onwritten = function(data){
+  console.log(data);
+}
 ```
 
 ## end()
@@ -124,8 +125,6 @@ end i2c .
 
 ```Javascript
 // Example
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
-obniz.i2c0.onwritten = function(data){
-  console.log(data);
-}
+obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
+obniz.i2c0.end();
 ```
