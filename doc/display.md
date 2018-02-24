@@ -63,7 +63,7 @@ obniz.display.drawCanvasContext(ctx);
 ```
 
 ### canvas rendering samples
-![](./image/obniz_display_sphere.gif)
+![](./images/obniz_display_sphere.gif)
 
 Full code below
 
@@ -74,15 +74,15 @@ Full code below
 
 UTF8 Text
 
-![](./image/obniz_display_samples0.jpg)
+![](./images/obniz_display_samples0.jpg)
 
 Tilt Text
 
-![](./image/obniz_display_samples1.jpg)
+![](./images/obniz_display_samples1.jpg)
 
 Changing Font
 
-![](./image/obniz_display_samples2.jpg)
-![](./image/obniz_display_samples3.jpg)
-![](./image/obniz_display_samples4.jpg)
+![](./images/obniz_display_samples2.jpg)
+![](./images/obniz_display_samples3.jpg)
+![](./images/obniz_display_samples4.jpg)
 
