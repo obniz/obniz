@@ -4,7 +4,7 @@ RC Servo Motor is computer embeded geard motor.
 It keep "Angle".
 You just need to send a angle data to servomotor. 
 
-![](./servomotor.jpg)
+![](./servomotor.gif)
 
 ## obniz.wire("ServoMotor", {signal, [, vcc, gnd]})
 
