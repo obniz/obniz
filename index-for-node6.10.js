@@ -1424,15 +1424,10 @@ PeripheralI2C.prototype.start = function (arg) {
   if (err) {
     throw new Error("I2C start param '" + err + "' required, but not found ");return;
   }
-  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "clock", "pull", "drive"]);
+  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "clock", "pull"]);
 
-  if (this.state.drive) {
-    this.Obniz.getIO(this.state.sda).drive(this.state.drive);
-    this.Obniz.getIO(this.state.scl).drive(this.state.drive);
-  } else {
-    this.Obniz.getIO(this.state.sda).drive("open-drain");
-    this.Obniz.getIO(this.state.scl).drive("open-drain");
-  }
+  this.Obniz.getIO(this.state.sda).drive("open-drain");
+  this.Obniz.getIO(this.state.scl).drive("open-drain");
 
   if (this.state.pull) {
     this.Obniz.getIO(this.state.sda).pull(this.state.pull);
