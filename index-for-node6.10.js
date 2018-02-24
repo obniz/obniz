@@ -1806,43 +1806,48 @@ class LogicAnalyzer {
   }
 }
 
-var ObnizMeasure = function (Obniz) {
-  this.Obniz = Obniz;
-  this.observers = [];
-};
+class ObnizMeasure {
 
-ObnizMeasure.prototype.echo = function (params) {
-  var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout"]);
-  if (err) {
-    throw new Error("Measure start param '" + err + "' required, but not found ");return;
+  constructor(obniz) {
+    this.obniz = obniz;
+    this.observers = [];
   }
-  this.params = ObnizUtil._keyFilter(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
 
-  var echo = {};
-  echo.io_pulse = this.params.io_pulse;
-  echo.pulse = this.params.pulse;
-  echo.pulse_width = this.params.pulse_width;
-  echo.io_echo = this.params.io_echo;
-  echo.measure_edges = this.params.measure_edges;
-  echo.timeout = this.params.timeout;
-
-  this.Obniz.send({
-    measure: {
-      echo: echo
+  echo(params) {
+    var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
+    if (err) {
+      throw new Error("Measure start param '" + err + "' required, but not found ");return;
     }
-  });
+    this.params = ObnizUtil._keyFilter(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
 
-  if (this.params.callback) {
-    this.observers.push(this.params.callback);
-  }
-};
+    var echo = {};
+    echo.io_pulse = this.params.io_pulse;
+    echo.pulse = this.params.pulse;
+    echo.pulse_width = this.params.pulse_width;
+    echo.io_echo = this.params.io_echo;
+    echo.measure_edges = this.params.measure_edges;
+    if (typeof this.params.timeout === "number") {
+      echo.timeout = this.params.timeout;
+    }
 
-ObnizMeasure.prototype.notified = function (obj) {
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj.echo);
+    this.obniz.send({
+      measure: {
+        echo: echo
+      }
+    });
+
+    if (this.params.callback) {
+      this.observers.push(this.params.callback);
+    }
   }
-};
+
+  notified(obj) {
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj.echo);
+    }
+  }
+}
 
 var PeripheralPWM = function (Obniz, id) {
   this.Obniz = Obniz;
@@ -2970,20 +2975,20 @@ HCSR04.prototype.measure = (() => {
       io_pulse: this.triger,
       io_echo: this.echo,
       pulse: "positive",
-      pulse_width: 0.02,
-      measure_edges: 2,
+      pulse_width: 0.011,
+      measure_edges: 3,
       timeout: 10 / 340 * 1000,
       callback: function (edges) {
         self.vccIO.output(false);
-        self.obniz.getIO(self.triger).output(false);
-        self.obniz.getIO(self.echo).output(false);
         var distance = null;
-        if (edges.length === 2) {
-          distance = (edges[1].timing - edges[0].timing) * 1000;
-          if (self._unit === "mm") {
-            distance = distance / 5.8;
-          } else if (self._unit === "inch") {
-            distance = distance / 148.0;
+        for (var i = 0; i < edges.length - 1; i++) {
+          if (edges[i].edge === true) {
+            distance = (edges[i + 1].timing - edges[i].timing) * 1000;
+            if (self._unit === "mm") {
+              distance = distance / 5.8;
+            } else if (self._unit === "inch") {
+              distance = distance / 148.0;
+            }
           }
         }
         if (typeof callback === "function") {

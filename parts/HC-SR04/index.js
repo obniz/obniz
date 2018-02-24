@@ -26,20 +26,20 @@ HCSR04.prototype.measure = async function(callback) {
     io_pulse: this.triger,
     io_echo: this.echo,
     pulse: "positive",
-    pulse_width: 0.02,
-    measure_edges: 2,
+    pulse_width: 0.011,
+    measure_edges: 3,
     timeout: 10/340*1000,
     callback: function(edges){
       self.vccIO.output(false);
-      self.obniz.getIO(self.triger).output(false);
-      self.obniz.getIO(self.echo).output(false);
       var distance = null;
-      if (edges.length === 2) {
-        distance = (edges[1].timing-edges[0].timing) * 1000;
-        if (self._unit === "mm") {
-          distance = distance / 5.8;
-        } else if (self._unit === "inch") {
-          distance = distance / 148.0;
+      for (var i=0; i<edges.length-1; i++){
+        if (edges[i].edge === true) {
+          distance = (edges[i+1].timing - edges[i].timing) * 1000;
+          if (self._unit === "mm") {
+            distance = distance / 5.8;
+          } else if (self._unit === "inch") {
+            distance = distance / 148.0;
+          }
         }
       }
       if (typeof(callback) === "function") {
