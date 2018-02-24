@@ -1,23 +1,27 @@
 # PotentionMeter
-ボリュームのように回すことで抵抗値を変えることが出来る可変抵抗です。
-抵抗値を読み取ることにより今どの位置に回されているのかがわかります。３本の端子があり、端の２つの間はどう回していても一定の抵抗値です。この２つの端子に電圧をかけます。
-回されることで間の１本の電圧が２つの電圧の間を移動します。
+
+Potention Meter change it's resistor value regarding angle or position.
+obniz can read resistor value by using AD.
+It has three pins. between sides resistor values is constant. voltage of center pin moves within left and right side's voltage.
 
 ![](./pm.jpg)
 
+This parts can treat only 10 ohm to 100 k ohm.
 
-このパーツで扱えるポテンションメーターの抵抗値は10Ω〜100kΩの間です。
 
 ## obniz.wired(obniz, {pin0, pin1, pin2})
-ポテンションメーターの３本のピンをそれぞれpin0, 1, 2として接続します。pin0とpin2は逆でも構いません。（回転が逆になりますが）
+
+pin0 and pin2 is side pins. It can be swapped. But position will be reversed.
+
 
 ![](./c_pm.jpg)
 
 ```Javascript
 var meter = obniz.wired("PotentionMeter", {pin0:0, pin1:1, pin2:2});
 ```
-## onchange 
-回転を監視し、回転された時にcallback関数を呼び出します。回転に合わせて0.0~1.0の値が返ります。例えばちょうど真ん中であれば0.5です。
+## onchange = function(position){}
+called when rotated.
+position value is within 0.0 to 1.0. so, center is 0.5.
 ```Javascript
 var meter = obniz.wired("PotentionMeter", {pin0:0, pin1:1, pin2:2});
 meter.onchange = function(position) {
