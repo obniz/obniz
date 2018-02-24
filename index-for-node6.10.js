@@ -3612,6 +3612,8 @@ if (PartsRegistrate) {
 var PotentionMeter = function () {
   this.keys = ["pin0", "pin1", "pin2"];
   this.reuiredKeys = ["pin0", "pin1", "pin2"];
+
+  this.vcc_voltage = 5.0;
 };
 
 PotentionMeter.prototype.wired = function (obniz) {
@@ -3619,8 +3621,13 @@ PotentionMeter.prototype.wired = function (obniz) {
   this.ad = obniz.getAD(this.params.pin1);
 
   var self = this;
+
+  obniz.getAD(this.params.pin0).start(function (value) {
+    self.vcc_voltage = value;
+  });
+
   this.ad.start(function (value) {
-    self.position = value / 5.0;
+    self.position = value / self.vcc_voltage;
     if (self.onchange) {
       self.onchange(self.position);
     }
