@@ -72,7 +72,9 @@ PeripheralI2C.prototype.start = function(arg) {
     startObj.clock = clock;
   } else {
     startObj.slave_address = slave_address;
-    startObj.slave_address_length = slave_address_length;
+    if (slave_address_length) {
+      startObj.slave_address_length = slave_address_length;
+    }
   }
 
   var obj = {}; 
