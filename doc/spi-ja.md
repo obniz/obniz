@@ -14,14 +14,14 @@ var spi1 = obniz.getFreeSpi();
 var spi2 = obniz.getFreeSpi(); // Error
 ```
 
-## start({mode, clk, mosi, miso, frequency [, drain, pull]});
+## start({mode, clk, mosi, miso, frequency [, drive, pull]});
 
 spiをスタートさせます。
 modeは"master"のみに対応しています。
 
-drainとpullは出力設定オプションです.
-何も指定しなければ，drain:5v, pull:nullが設定されます．
-出力設定についてはobniz.io.drain() と pull() 関数に詳細があります.
+driveとpullは出力設定オプションです.
+何も指定しなければ，drive:5v, pull:nullが設定されます．
+出力設定についてはobniz.io.drive() と pull() 関数に詳細があります.
 
 
 ```Javascript
@@ -32,8 +32,8 @@ var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
 
 
-// drain and pull is optional
-obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, drain: "5v", pull:null}); 
+// drive and pull is optional
+obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, drive: "5v", pull:null}); 
 ```
 ## [await] writeWait(data);
 

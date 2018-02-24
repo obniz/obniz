@@ -17,29 +17,19 @@ var i2c0 = obniz.getFreeI2C();
 var i2c1 = obniz.getFreeI2C(); // Error
 ```
 
-## start({mode, sda, scl, frequency, pullType})
+## start({mode, sda, scl, clock[, pull]})
 start i2c on given io sda, scl.
-Drain and pull is optional for io output setting. 
-Default it drain:open-drain, pull:null.
-See more for obniz.io.drain() or pull(). 
-
-And you need to specify pull-up mode.
-Three options.
-
-1. null
-2. "0v"
-3. "3v"
-4. "5v"
-
-You should choose "3v" to connect 3.3v parts. "5v" when 5v parts.
-
-When you choose "3v" or "5v", speed limited up to 100khz. Because internal-pullup is not so tough.
-Please add external pull-up resistor on scl/sda and choose "float" when you need more speed.
+internal pull up is optional for io output setting. 
+Default it pull:null.
+See more for obniz.ioX.pull(). 
+For using internal-pull-up, you should specify "3v" to connect 3.3v targets. "5v" when 5v targets.
+When you choose internal-pullup, speed is limited up to 100khz. Because internal-pullup is not so tough.
+Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.
 
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start( {mode: "master", sda:2, scl:3, frequency:400000, pullType:"float"}); 
+// master mode sda=2 scl=3 400khz with  5v internal pullup
+obniz.i2c0.start( {mode: "master", sda:2, scl:3, clock:400000, pull:"5v"}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
 ## write(address, data);
@@ -50,8 +40,8 @@ If you want to send data as 10bit adress mode even address <= 0x7F, then use wri
 
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start({mode: "master",sda:2, scl:3, frequency:400000, pullType:"float"}); 
+// master mode sda=2 scl=3 400khz internal pullup
+obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
 ## write10bit(address, data);
@@ -59,8 +49,8 @@ This is same as write() function. But this function will communicate to device 1
 
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start({mode: "master",sda:2, scl:3, frequency:400000, pullType:"float"}); 
+// master mode sda=2 scl=3 400khz internal pullup
+obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 obniz.i2c0.write10bit(0x50, [0x00, 0x00, 0x12]);
 ```
 ## [await] readWait(address, length);
@@ -69,8 +59,8 @@ This function will wait until data received.
 
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start({mode: "master",sda:2, scl:3, frequency:400000, pullType:"float"}); 
+// master mode sda=2 scl=3 400khz internal pullup
+obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
 console.log("readed"+ret);
 ```
@@ -79,8 +69,8 @@ This function will read the data with 10bit address mode.
 
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start({mode: "master",sda:2, scl:3, frequency:400000, pullType:"float"}); 
+// master mode sda=2 scl=3 400khz internal pullup
+obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 var ret = await obniz.i2c0.read10bitWait(0x50, 1);
 console.log("readed"+ret);
 ```
@@ -90,7 +80,7 @@ end i2c .
 
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start({mode: "master",sda:2, scl:3, frequency:400000, pullType:"float"}); 
+// master mode sda=2 scl=3 400khz internal pullup
+obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 obniz.i2c0.end();
 ```
