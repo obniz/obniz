@@ -1812,19 +1812,19 @@ var ObnizMeasure = function (Obniz) {
 };
 
 ObnizMeasure.prototype.echo = function (params) {
-  var err = ObnizUtil._requiredKeys(params, ["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs"]);
+  var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout"]);
   if (err) {
-    throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");return;
+    throw new Error("Measure start param '" + err + "' required, but not found ");return;
   }
-  this.params = ObnizUtil._keyFilter(params, ["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs", "callback"]);
+  this.params = ObnizUtil._keyFilter(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
 
   var echo = {};
-  echo.io_pulse = this.params.ioPulse;
+  echo.io_pulse = this.params.io_pulse;
   echo.pulse = this.params.pulse;
-  echo.pulse_width = this.params.pulseWidthUs;
-  echo.io_echo = this.params.ioEcho;
-  echo.measure_edges = this.params.measureEdges;
-  echo.timeout = this.params.timeoutUs;
+  echo.pulse_width = this.params.pulse_width;
+  echo.io_echo = this.params.io_echo;
+  echo.measure_edges = this.params.measure_edges;
+  echo.timeout = this.params.timeout;
 
   this.Obniz.send({
     measure: {
@@ -2944,6 +2944,8 @@ if (PartsRegistrate) {
 var HCSR04 = function () {
   this.keys = ["vcc", "triger", "echo", "gnd"];
   this.requiredKeys = ["vcc", "triger", "echo"];
+
+  this._unit = "mm";
 };
 
 HCSR04.prototype.wired = function (obniz) {
@@ -2954,8 +2956,6 @@ HCSR04.prototype.wired = function (obniz) {
   this.vccIO = obniz.getIO(this.params.vcc);
   this.triger = this.params.triger;
   this.echo = this.params.echo;
-
-  this.unit = "mm";
 };
 
 HCSR04.prototype.measure = (() => {
@@ -2964,22 +2964,31 @@ HCSR04.prototype.measure = (() => {
     this.vccIO.drive("5v");
     this.vccIO.output(true);
     yield this.obniz.wait(10);
+
     var self = this;
-    this.obniz.measure.echo(this.triger, "positive", 0.02, this.echo, 2, 10 / 340 * 1000, function (edges) {
-      self.vccIO.output(false);
-      self.obniz.getIO(self.triger).output(false);
-      self.obniz.getIO(self.echo).output(false);
-      var distance = null;
-      if (edges.length === 2) {
-        distance = (edges[1].timing - edges[0].timing) * 1000;
-        if (self.unit === "mm") {
-          distance = distance / 5.8;
-        } else if (self.unit === "inch") {
-          distance = distance / 148.0;
+    this.obniz.measure.echo({
+      io_pulse: this.triger,
+      io_echo: this.echo,
+      pulse: "positive",
+      pulse_width: 0.02,
+      measure_edges: 2,
+      timeout: 10 / 340 * 1000,
+      callback: function (edges) {
+        self.vccIO.output(false);
+        self.obniz.getIO(self.triger).output(false);
+        self.obniz.getIO(self.echo).output(false);
+        var distance = null;
+        if (edges.length === 2) {
+          distance = (edges[1].timing - edges[0].timing) * 1000;
+          if (self._unit === "mm") {
+            distance = distance / 5.8;
+          } else if (self._unit === "inch") {
+            distance = distance / 148.0;
+          }
         }
-      }
-      if (typeof callback === "function") {
-        callback(distance);
+        if (typeof callback === "function") {
+          callback(distance);
+        }
       }
     });
   });
@@ -2991,9 +3000,9 @@ HCSR04.prototype.measure = (() => {
 
 HCSR04.prototype.unit = function (unit) {
   if (unit === "mm") {
-    this.unit = "mm";
+    this._unit = "mm";
   } else if (unit === "inch") {
-    this.unit = "inch";
+    this._unit = "inch";
   } else {
     throw new Error("HCSR04: unknown unit " + unit);
   }

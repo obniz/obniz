@@ -5,18 +5,18 @@ var ObnizMeasure = function(Obniz) {
 };
 
 ObnizMeasure.prototype.echo = function(params) {
-  var err = ObnizUtil._requiredKeys(params,["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs"]);
-  if(err){ throw new Error("LogicAnalyzer start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs", "callback"]);
+  var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout"]);
+  if(err){ throw new Error("Measure start param '" + err +"' required, but not found ");return;}
+  this.params = ObnizUtil._keyFilter(params,["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
 
   
   var echo = {};
-  echo.io_pulse = this.params.ioPulse;
+  echo.io_pulse = this.params.io_pulse;
   echo.pulse = this.params.pulse;
-  echo.pulse_width = this.params.pulseWidthUs;
-  echo.io_echo = this.params.ioEcho;
-  echo.measure_edges = this.params.measureEdges;
-  echo.timeout = this.params.timeoutUs;
+  echo.pulse_width = this.params.pulse_width;
+  echo.io_echo = this.params.io_echo;
+  echo.measure_edges = this.params.measure_edges;
+  echo.timeout = this.params.timeout;
 
   this.Obniz.send({
     measure: {
