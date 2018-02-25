@@ -44,11 +44,15 @@
       "filename": "i2c"
     },
     {
-      "section": "Pin Advanced Functions"
+      "section": "Advanced Functions"
     },
     {
       "title": "LogicAnalyzer",
       "filename": "logicanalyzer"
+    },
+    {
+      "title": "Measurement",
+      "filename": "measure"
     },
     {
       "section": "Embed Components"
