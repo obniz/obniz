@@ -27,10 +27,6 @@ FSR40X.prototype.wired = function(obniz) {
 
 };
 
-FSR40X.prototype.onChange = function(callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("FSR40X", FSR40X);
 }

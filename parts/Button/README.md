@@ -1,18 +1,21 @@
 # Button
-押すことで電流を流したり止めたり出来る部品です。これをつなぎ電流が流れているかを見ることでボタンが押されているかをチェックできます。このモジュールではボタンの形によらず、とにかく押せば電流が流れるボタンを扱うことができます。
+Button turn on/off electricity. Just monitor voltage to check button pressed or not.
+
+# obniz.wired("Button", {signal:0, gnd:1})
+
+Connect two pins to obniz. Many buttons has no pin direction. you can connect each one to signal,gnd.
 
 ```Javascript
-wired(obniz, {signal:0, gnd:1})
+var button = obniz.wired("Button", {signal:0, gnd:1})
 ```
-ボタンにある２つのピンをObnizにつなぎます。プラスとマイナスはありません。例えば片方をObnizの0番に。もう片方を1番につないだ場合は以下のようにプログラム上でwireします
 
 
 ```Javascript
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 ```
 
-## onchange
- ボタンの状態を監視し、ボタンが押された時、離された時に<br>callback関数を呼び出します。
+## onchange = function(pressed){}
+called when button pressed/released.
 
 ```Javascript
 var button = obniz.wired("Button",  {signal:0, gnd:1});
@@ -22,7 +25,7 @@ button.onchange = function(pressed){
 ```
 
 ## [async] isPressedWait
-ボタンが押されているかを確認します。
+Check current button with waiting result.
 ```Javascript
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 var pressed = await button.isPressedWait();

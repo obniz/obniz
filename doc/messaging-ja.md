@@ -52,7 +52,7 @@ obniz間のメッセージングです。実際に見てみましょう。
 obniz.onconnect = function(){
     var button = obniz.wired("Button",  {signal:0, gnd:1});
 
-    button.onChange(function(){
+    button.onchange = function(){
       var targets = [
         "1234-1234-1231",
         "1234-1234-1232",
@@ -66,7 +66,7 @@ obniz.onconnect = function(){
         "1234-1234-1230"];
 
       obniz.message(targets, "pressed");
-    });
+    };
  }
 ```
 targetsで書かれているのは送りたい相手のobnizのidです。

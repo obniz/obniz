@@ -50,7 +50,7 @@ First prepare obniz with one button connected. and send a message to 10 obniz wh
 obniz.onconnect = function(){
     var button = obniz.wired("Button",  {signal:0, gnd:1});
 
-    button.onChange(function(){
+    button.onchange = function(){
       var targets = [
         "1234-1234-1231",
         "1234-1234-1232",
@@ -64,7 +64,7 @@ obniz.onconnect = function(){
         "1234-1234-1230"];
 
       obniz.message(targets, "pressed");
-    });
+    };
  }
 ```
 targets is destination. and "pressed" is message.

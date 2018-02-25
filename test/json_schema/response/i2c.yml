@@ -7,6 +7,13 @@ id: "/response/i2c"
 type: object
 additionalProperties: false
 properties:
+    mode : 
+        type : string
+        enum : [master, slave] 
+
+    is_fragmented:
+        type: boolean
+    
     address : 
         type: integer
         minimum : 0

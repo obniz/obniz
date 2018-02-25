@@ -30,8 +30,8 @@ Defaults
 - 8bit
 - No Parity
 - 1 Stopbit
-- 5v drive
-- no pull
+- 5v push-pull drive
+- no internal pull-up
 
 available configrations are
 

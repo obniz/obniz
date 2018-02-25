@@ -69,6 +69,10 @@ Obniz.prototype.wsOnMessage = function (data) {
       var msg = "Warning: " + obj.debug.warning;
       this.error(msg);
     }
+    if (obj.debug.error) {
+      var msg = "Error: " + obj.debug.error;
+      this.error(msg);
+    }
     if (this.ondebug) {
       this.ondebug(obj.debug);
     }
@@ -1407,6 +1411,8 @@ var PeripheralI2C = function (Obniz, id) {
   this.observers = [];
   this.state = {};
   this.used = false;
+
+  this.onwritten = undefined;
 };
 
 PeripheralI2C.prototype.addObserver = function (callback) {
@@ -1416,19 +1422,50 @@ PeripheralI2C.prototype.addObserver = function (callback) {
 };
 
 PeripheralI2C.prototype.start = function (arg) {
-  var err = ObnizUtil._requiredKeys(arg, ["mode", "sda", "scl", "clock"]);
+  var err = ObnizUtil._requiredKeys(arg, ["mode", "sda", "scl"]);
   if (err) {
     throw new Error("I2C start param '" + err + "' required, but not found ");return;
   }
-  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "clock", "pull", "drive"]);
+  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "pull"]);
 
-  if (this.state.drive) {
-    this.Obniz.getIO(this.state.sda).drive(this.state.drive);
-    this.Obniz.getIO(this.state.scl).drive(this.state.drive);
-  } else {
-    this.Obniz.getIO(this.state.sda).drive("open-drain");
-    this.Obniz.getIO(this.state.scl).drive("open-drain");
+  var mode = this.state.mode;
+  var clock = typeof arg.clock === "number" ? parseInt(arg.clock) : null;
+  var slave_address = typeof arg.slave_address === "number" ? parseInt(arg.slave_address) : null;
+  var slave_address_length = typeof arg.slave_address_length === "number" ? parseInt(arg.slave_address_length) : null;
+
+  if (mode !== "master" && mode !== "slave") {
+    throw new Error("i2c: invalid mode " + mode);
   }
+  if (mode === "master") {
+    if (clock === null) {
+      throw new Error("i2c: please specify clock when master mode");
+    }
+    if (clock <= 0 || clock > 1 * 1000 * 1000) {
+      throw new Error("i2c: invalid clock " + clock);
+    }
+    if (typeof arg.pull === "5v" && clock > 400 * 1000) {
+      throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
+    }
+    if (typeof arg.pull === "3v" && clock > 100 * 1000) {
+      throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
+    }
+  } else {
+    if (slave_address === null) {
+      throw new Error("i2c: please specify slave_address");
+    }
+    if (slave_address < 0 || slave_address > 0x3FFF) {
+      throw new Error("i2c: invalid slave_address");
+    }
+    if (slave_address < 0 || slave_address > 0x3FFF) {
+      throw new Error("i2c: invalid slave_address");
+    }
+    if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
+      throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
+    }
+  }
+
+  this.Obniz.getIO(this.state.sda).drive("open-drain");
+  this.Obniz.getIO(this.state.scl).drive("open-drain");
 
   if (this.state.pull) {
     this.Obniz.getIO(this.state.sda).pull(this.state.pull);
@@ -1438,13 +1475,39 @@ PeripheralI2C.prototype.start = function (arg) {
     this.Obniz.getIO(this.state.scl).pull(null);
   }
 
+  var startObj = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl"]);
+  if (mode === "master") {
+    startObj.clock = clock;
+  } else {
+    startObj.slave_address = slave_address;
+    if (slave_address_length) {
+      startObj.slave_address_length = slave_address_length;
+    }
+  }
+
   var obj = {};
-  obj["i2c" + this.id] = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl", "clock"]);
+  obj["i2c" + this.id] = startObj;
   this.used = true;
   this.Obniz.send(obj);
 };
 
 PeripheralI2C.prototype.write = function (address, data) {
+  address = parseInt(address);
+  if (isNaN(address)) {
+    throw new Error("i2c: please specify address");
+  }
+  if (address < 0 || address > 0x3FFF) {
+    throw new Error("i2c: invalid address");
+  }
+  if (address > 0x7F) {
+    address = address | 0x8000; // mark 10bit mode
+  }
+  if (!data) {
+    throw new Error("i2c: please provide data");
+  }
+  if (data.length > 1024) {
+    throw new Error("i2c: data should be under 1024 bytes");
+  }
   var obj = {};
   obj["i2c" + this.id] = {
     address,
@@ -1458,6 +1521,23 @@ PeripheralI2C.prototype.write10bit = function (address, data) {
 };
 
 PeripheralI2C.prototype.readWait = function (address, length) {
+  address = parseInt(address);
+  if (isNaN(address)) {
+    throw new Error("i2c: please specify address");
+  }
+  if (address < 0 || address > 0x3FFF) {
+    throw new Error("i2c: invalid address");
+  }
+  if (address > 0x7F) {
+    address = address | 0x8000; // mark 10bit mode
+  }
+  length = parseInt(length);
+  if (isNaN(length) || length < 0) {
+    throw new Error("i2c: invalid length to read");
+  }
+  if (length > 1024) {
+    throw new Error("i2c: data length should be under 1024 bytes");
+  }
   var self = this;
   return new Promise(function (resolve, reject) {
     var obj = {};
@@ -1475,10 +1555,15 @@ PeripheralI2C.prototype.read10bitWait = function (address, length) {
 };
 
 PeripheralI2C.prototype.notified = function (obj) {
-  // TODO: we should compare byte length from sent
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj.data);
+
+  if (obj.mode === "slave" && typeof this.onwritten === "function") {
+    this.onwritten(obj.data);
+  } else {
+    // TODO: we should compare byte length from sent
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj.data);
+    }
   }
 };
 PeripheralI2C.prototype.isUsed = function () {
@@ -1721,43 +1806,48 @@ class LogicAnalyzer {
   }
 }
 
-var ObnizMeasure = function (Obniz) {
-  this.Obniz = Obniz;
-  this.observers = [];
-};
+class ObnizMeasure {
 
-ObnizMeasure.prototype.echo = function (params) {
-  var err = ObnizUtil._requiredKeys(params, ["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs"]);
-  if (err) {
-    throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");return;
+  constructor(obniz) {
+    this.obniz = obniz;
+    this.observers = [];
   }
-  this.params = ObnizUtil._keyFilter(params, ["ioPulse", "pulse", "pulseWidthUs", "ioEcho", "measureEdges", "timeoutUs", "callback"]);
 
-  var echo = {};
-  echo.io_pulse = this.params.ioPulse;
-  echo.pulse = this.params.pulse;
-  echo.pulse_width = this.params.pulseWidthUs;
-  echo.io_echo = this.params.ioEcho;
-  echo.measure_edges = this.params.measureEdges;
-  echo.timeout = this.params.timeoutUs;
-
-  this.Obniz.send({
-    measure: {
-      echo: echo
+  echo(params) {
+    var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
+    if (err) {
+      throw new Error("Measure start param '" + err + "' required, but not found ");return;
     }
-  });
+    this.params = ObnizUtil._keyFilter(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
 
-  if (this.params.callback) {
-    this.observers.push(this.params.callback);
-  }
-};
+    var echo = {};
+    echo.io_pulse = this.params.io_pulse;
+    echo.pulse = this.params.pulse;
+    echo.pulse_width = this.params.pulse_width;
+    echo.io_echo = this.params.io_echo;
+    echo.measure_edges = this.params.measure_edges;
+    if (typeof this.params.timeout === "number") {
+      echo.timeout = this.params.timeout;
+    }
 
-ObnizMeasure.prototype.notified = function (obj) {
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj.echo);
+    this.obniz.send({
+      measure: {
+        echo: echo
+      }
+    });
+
+    if (this.params.callback) {
+      this.observers.push(this.params.callback);
+    }
   }
-};
+
+  notified(obj) {
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj.echo);
+    }
+  }
+}
 
 var PeripheralPWM = function (Obniz, id) {
   this.Obniz = Obniz;
@@ -2487,10 +2577,6 @@ AE_MICAMP.prototype.wired = (() => {
   };
 })();
 
-AE_MICAMP.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 /*
 //移動平均を返す
 AE_MICAMP.prototype.Average = function(callback) {
@@ -2727,10 +2813,6 @@ FSR40X.prototype.wired = function (obniz) {
   });
 };
 
-FSR40X.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 if (PartsRegistrate) {
   PartsRegistrate("FSR40X", FSR40X);
 }
@@ -2859,6 +2941,8 @@ if (PartsRegistrate) {
 var HCSR04 = function () {
   this.keys = ["vcc", "triger", "echo", "gnd"];
   this.requiredKeys = ["vcc", "triger", "echo"];
+
+  this._unit = "mm";
 };
 
 HCSR04.prototype.wired = function (obniz) {
@@ -2869,8 +2953,6 @@ HCSR04.prototype.wired = function (obniz) {
   this.vccIO = obniz.getIO(this.params.vcc);
   this.triger = this.params.triger;
   this.echo = this.params.echo;
-
-  this.unit = "mm";
 };
 
 HCSR04.prototype.measure = (() => {
@@ -2879,22 +2961,32 @@ HCSR04.prototype.measure = (() => {
     this.vccIO.drive("5v");
     this.vccIO.output(true);
     yield this.obniz.wait(10);
+
     var self = this;
-    this.obniz.measure.echo(this.triger, "positive", 0.02, this.echo, 2, 10 / 340 * 1000, function (edges) {
-      self.vccIO.output(false);
-      self.obniz.getIO(self.triger).output(false);
-      self.obniz.getIO(self.echo).output(false);
-      var distance = null;
-      if (edges.length === 2) {
-        distance = (edges[1].timing - edges[0].timing) * 1000;
-        if (self.unit === "mm") {
-          distance = distance / 5.8;
-        } else if (self.unit === "inch") {
-          distance = distance / 148.0;
+    this.obniz.measure.echo({
+      io_pulse: this.triger,
+      io_echo: this.echo,
+      pulse: "positive",
+      pulse_width: 0.011,
+      measure_edges: 3,
+      timeout: 10 / 340 * 1000,
+      callback: function (edges) {
+        self.vccIO.output(false);
+        var distance = null;
+        for (var i = 0; i < edges.length - 1; i++) {
+          // HCSR04's output of io_echo is initially high when triger is finshed
+          if (edges[i].edge === true) {
+            distance = (edges[i + 1].timing - edges[i].timing) * 1000;
+            if (self._unit === "mm") {
+              distance = distance / 5.8;
+            } else if (self._unit === "inch") {
+              distance = distance / 148.0;
+            }
+          }
         }
-      }
-      if (typeof callback === "function") {
-        callback(distance);
+        if (typeof callback === "function") {
+          callback(distance);
+        }
       }
     });
   });
@@ -2906,9 +2998,9 @@ HCSR04.prototype.measure = (() => {
 
 HCSR04.prototype.unit = function (unit) {
   if (unit === "mm") {
-    this.unit = "mm";
+    this._unit = "mm";
   } else if (unit === "inch") {
-    this.unit = "inch";
+    this._unit = "inch";
   } else {
     throw new Error("HCSR04: unknown unit " + unit);
   }
@@ -3221,7 +3313,7 @@ if (PartsRegistrate) {
 }
 var LED = function () {
   this.keys = ["anode", "cathode"];
-  this.requiredKeys = ["anode", "cathode"];
+  this.requiredKeys = ["anode"];
 
   this.animationName = "Led-" + Math.round(Math.random() * 1000);
 };
@@ -3527,6 +3619,8 @@ if (PartsRegistrate) {
 var PotentionMeter = function () {
   this.keys = ["pin0", "pin1", "pin2"];
   this.reuiredKeys = ["pin0", "pin1", "pin2"];
+
+  this.vcc_voltage = 5.0;
 };
 
 PotentionMeter.prototype.wired = function (obniz) {
@@ -3534,8 +3628,13 @@ PotentionMeter.prototype.wired = function (obniz) {
   this.ad = obniz.getAD(this.params.pin1);
 
   var self = this;
+
+  obniz.getAD(this.params.pin0).start(function (value) {
+    self.vcc_voltage = value;
+  });
+
   this.ad.start(function (value) {
-    self.position = value / 5.0;
+    self.position = value / self.vcc_voltage;
     if (self.onchange) {
       self.onchange(self.position);
     }

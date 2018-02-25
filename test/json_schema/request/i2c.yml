@@ -13,7 +13,7 @@ id: "/request/i2c"
     properties:
         mode : 
             type : string
-            enum : [master] 
+            enum : [master, slave] 
         sda :  {$ref:#pinSetting}
         scl :  {$ref:#pinSetting}
         slave_address_length : 
