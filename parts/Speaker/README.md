@@ -7,10 +7,19 @@ Connect to the speaker. If there are plus and minus, please specify minus to gnd
 ```Javascript
 var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
 ```
-## freq(frequency)
+## play(frequency)
 Specify the frequency of the sound from the speaker.
 
 ```Javascript
 var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
-speaker.freq(1000); //1khz
+speaker.play(1000); //1000hz
+```
+
+## stop()
+stop playing.
+```Javascript
+var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
+speaker.play(1000); //1000hz
+obniz.freeze(1000);
+speaker.stop();
 ```

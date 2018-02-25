@@ -4094,23 +4094,33 @@ ServoMotor.prototype.off = function () {
 if (PartsRegistrate) {
   PartsRegistrate("ServoMotor", ServoMotor);
 }
-var Speaker = function () {
-  this.keys = ["signal", "gnd"];
-  this.requiredKeys = ["gnd"];
-};
+class Speaker {
 
-Speaker.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(null, this.params.gnd, "5v");
-  this.pwm = obniz.getFreePwm();
-  this.pwm.start(this.params.signal);
-};
+  constructor(obniz) {
+    this.keys = ["signal", "gnd"];
+    this.requiredKeys = ["gnd"];
+  }
 
-// Module functions
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(null, this.params.gnd, "5v");
+    this.pwm = obniz.getFreePwm();
+    this.pwm.start(this.params.signal);
+  }
 
-Speaker.prototype.freq = function (freq) {
-  this.pwm.freq(freq);
-  this.pwm.pulse(1 / freq / 2 * 1000);
-};
+  play(freq) {
+    if (freq > 0) {
+      this.pwm.freq(freq);
+      this.pwm.pulse(1 / freq / 2 * 1000);
+    } else {
+      this.pwm.pulse(0);
+    }
+  }
+
+  stop() {
+    this.play(0);
+  }
+}
 
 if (PartsRegistrate) {
   PartsRegistrate("Speaker", Speaker);
