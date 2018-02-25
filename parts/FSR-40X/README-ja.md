@@ -8,13 +8,13 @@ pin0,pin1を圧力センサへ接続してください。
 var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
 ```
 
-## onChange(callback(temp))
+## onchange = function(temp){}
 圧力センサの値に変化があった場合にcallback関数を呼び出します。
 圧力は0~49の50段階で取得できます。
 
 ```javascript
 var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
-pressure.onChange(function(press){
+pressure.onchange =function(press){
   console.log(press)
-})
+}
 ```

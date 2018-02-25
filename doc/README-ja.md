@@ -61,11 +61,12 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
     pwm.freq(1000);
     pwm.duty(50);
 
-    obniz.uart0.start(5, 6, 119200);
-    obniz.uart0.onreceive = function(data, text) {
+    var uart = obniz.getFreeUart();
+    uart.start({tx: 5, rx: 6, baud:9600});  
+    uart.onreceive = function(data, text) {
       console.log(data);
     }
-    obniz.uart0.send("Hello");
+    uart.send("Hello");
   }
 ```
 
@@ -89,7 +90,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    var hcsr04 = obniz.wired("HC-SR04", {vcc:3, triger:2, echo:1, gnd:0});
+    var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, triger:2, vcc:3});
     hcsr04.unit("inch");
     hcsr04.measure(function( distance ){
       console.log("distance " + distance + " inch")
@@ -122,11 +123,11 @@ var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {
   var dbx = new Dropbox({ accessToken: '<YOUR ACCESS TOKEN HERE>' });
   var button = obniz.wired("Button",  {signal:0, gnd:1});
-  button.onChange(function(pressed){
+  button.onchange = function(pressed){
     if (pressed) {
   　　dbx.filesUpload({path: '/obniz.txt', contents: "[Button Pressed]\n" + new Date(), mode: 'overwrite' });
     }
-  });
+  };
 }
 ```
 
@@ -139,11 +140,11 @@ var obnizA = new Obniz("0000-0000");
 obnizA.onconnect = async function () {
   var obnizB = new Obniz("0000-0001");
   obnizB.onconnect = async function(){
-    var meter = obnizA.wired("PotentionMeter", 0, 1, 2);
-    var servo = obnizB.wired("ServoMotor", 0, 1, 2);
-    meter.onChange(function(position) {
+    var meter = obnizA.wired("PotentionMeter", {pin0:0, pin1:1, pin2:2});
+    var servo = obnizB.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
+    meter.onchange =function(position) {
       servo.angle(position * 180);
-    }); 
+    }; 
   }
 }
 ```

@@ -8,13 +8,13 @@ Obnizにマイクセンサをつなぎます。
 var microphone = obniz.wired("AE_MICAMP", {vcc:0, out:1, gnd:2});
 ```
 
-## onChange(callback(temp))
+## onchange = callback(temp)
 マイクセンサの値に変化があった場合にcallback関数を呼び出します。
 音のレベルを電圧で返します。
 
 ```javascript
 var microphone = obniz.wired("AE_MICAMP", {vcc:0, out:1, gnd:2});
-microphone.onChange(function(voltage){
+microphone.onchange = function(voltage){
   console.log(voltage)
-})
+}
 ```

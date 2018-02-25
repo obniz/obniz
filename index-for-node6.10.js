@@ -2577,10 +2577,6 @@ AE_MICAMP.prototype.wired = (() => {
   };
 })();
 
-AE_MICAMP.prototype.onChange = function (callback) {
-  this.onchange = callback;
-};
-
 /*
 //移動平均を返す
 AE_MICAMP.prototype.Average = function(callback) {
@@ -2815,10 +2811,6 @@ FSR40X.prototype.wired = function (obniz) {
       self.onchange(self.press);
     }
   });
-};
-
-FSR40X.prototype.onChange = function (callback) {
-  this.onchange = callback;
 };
 
 if (PartsRegistrate) {
