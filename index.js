@@ -964,7 +964,7 @@ Ble.prototype.notified = function (obj) {
         return;
       var p = this.findPeripheral(params.address);
       if (p) {
-        p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,params.result);
+        p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,null, params.result);
       }
     }), this);
   }
@@ -975,7 +975,37 @@ Ble.prototype.notified = function (obj) {
         return;
       var p = this.findPeripheral(params.address);
       if (p) {
-        p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid, params.data);
+        p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid,null, params.data);
+      } 
+    }), this);
+  }
+  if (obj.get_descriptors_results) {
+    obj.get_descriptors_results.map((function (params) {
+      if (!params.address)
+        return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("ondiscoverdescriptor",params.service_uuid, params.characteristic_uuid,  params.descriptor_uuid);
+      } 
+    }), this);
+  }
+  if (obj.read_descriptor_results) {
+    obj.read_descriptor_results.map((function (params) {
+      if (!params.address)
+        return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("onreaddescriptor",params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
+      } 
+    }), this);
+  }
+  if (obj.write_descriptor_results) {
+    obj.write_descriptor_results.map((function (params) {
+      if (!params.address)
+        return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("onwritedescriptor",params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
       } 
     }), this);
   }
@@ -1202,11 +1232,14 @@ BleRemotePeripheral.prototype.ondiscoverservice = function (service){};
 BleRemotePeripheral.prototype.ondiscovercharacteristic = function( service, characteristic){};
 BleRemotePeripheral.prototype.onwritecharacteristic = function(service, characteristic, status){};
 BleRemotePeripheral.prototype.onreadcharacteristic = function(service, characteristic, value){};
+BleRemotePeripheral.prototype.ondiscoverdescriptor = function(service, characteristic,descriptor){};
+BleRemotePeripheral.prototype.onreaddescriptor = function(service, characteristic,descriptor, value){};
+BleRemotePeripheral.prototype.onwritedescriptor = function(service, characteristic,descriptor, value){};
 BleRemotePeripheral.prototype.onerror = function(err){};
 
 
 
-BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characteristicUuid, param){
+BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characteristicUuid, descriptorUuid, param){
   if(typeof (this[funcName])  === "function"){
     if(!serviceUuid){
       this[funcName](param);
@@ -1216,7 +1249,14 @@ BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characte
         this[funcName](service,param);
       }else{
         var characteristic = service.getCharacteristic(characteristicUuid);
-        this[funcName](service,characteristic,param);
+        if(!descriptorUuid){
+          this[funcName](service,characteristic,param);
+        }else{
+           var descriptor = characteristic.getDescriptor(descriptorUuid);
+           this[funcName](service,characteristic,descriptor, param);
+           
+        }
+        
         
       }
       
@@ -1284,6 +1324,7 @@ var BleRemoteCharacteristic = function(Obniz, service, uuid){
   this.Obniz = Obniz;
   this.service = service;
   this.uuid = uuid;
+  this.descriptors = [];
 };
 
 BleRemoteCharacteristic.prototype.toString = function(){
@@ -1357,10 +1398,90 @@ BleRemoteCharacteristic.prototype.writeText = function(str){
 
 
 
+BleRemoteCharacteristic.prototype.discoverAllDescriptors = function(str){
+  var obj = {
+    "ble" :{
+      "get_descriptors" :{
+        "address" : this.service.peripheral.address,
+        "service_uuid" : this.service.uuid,
+        "characteristic_uuid" : this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+BleRemoteCharacteristic.prototype.getDescriptor = function(uuid){
+  
+  for(var key in this.descriptors){
+    if(this.descriptors[key].uuid === uuid){
+      return this.descriptors[key];
+    }
+  }
+  var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
+  this.descriptors.push(newDescriptors);
+  return newDescriptors;
+};
 
 
 
 
+/**
+ * 
+ * @param {type} Obniz
+ * @param {type} characteristic
+ * @param {type} uuid
+ * @return {BleRemoteCharacteristic}
+ */
+var BleRemoteDescriptor = function(Obniz, characteristic, uuid){
+  this.Obniz = Obniz;
+  this.characteristic = characteristic;
+  this.uuid = uuid;
+};
+
+BleRemoteDescriptor.prototype.toString = function(){
+  return JSON.stringify({
+        "address" : this.characteristic.service.peripheral.address,
+        "service_uuid" : this.characteristic.service.uuid,
+        "characteristic_uuid" : this.characteristic.uuid,
+        "descriptor_uuid" : this.uuid
+      });
+};
+
+BleRemoteDescriptor.prototype.read = function(){
+  var obj = {
+    "ble" :{
+      "read_descriptor" :{
+        "address" : this.characteristic.service.peripheral.address,
+        "service_uuid" : this.characteristic.service.uuid,
+        "characteristic_uuid" : this.characteristic.uuid,
+        "descriptor_uuid" : this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+
+BleRemoteDescriptor.prototype.readWait = async function(){
+
+ throw new Error("TODO");
+};
+
+BleRemoteDescriptor.prototype.write = function(array){
+  var obj = {
+    "ble" :{
+      "write_descriptor" :{
+        "address" : this.characteristic.service.peripheral.address,
+        "service_uuid" : this.characteristic.service.uuid,
+        "characteristic_uuid" : this.characteristic.uuid,
+        "descriptor_uuid" : this.uuid,
+        "data" : array
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
 
 
 
@@ -3209,6 +3330,15 @@ class JpegSerialCam {
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     await this.resetwait();
   }
+
+
+  async setCompressibilityWait(compress) {
+    let val = Math.floor(compress / 100 * 0xFF);
+    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this.resetwait();
+  }
+
 
   async setBaudWait(baud) {
     let val;

@@ -336,7 +336,7 @@ Ble.prototype.notified = function (obj) {
         return;
       var p = this.findPeripheral(params.address);
       if (p) {
-        p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,params.result);
+        p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,null, params.result);
       }
     }), this);
   }
@@ -347,7 +347,37 @@ Ble.prototype.notified = function (obj) {
         return;
       var p = this.findPeripheral(params.address);
       if (p) {
-        p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid, params.data);
+        p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid,null, params.data);
+      } 
+    }), this);
+  }
+  if (obj.get_descriptors_results) {
+    obj.get_descriptors_results.map((function (params) {
+      if (!params.address)
+        return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("ondiscoverdescriptor",params.service_uuid, params.characteristic_uuid,  params.descriptor_uuid);
+      } 
+    }), this);
+  }
+  if (obj.read_descriptor_results) {
+    obj.read_descriptor_results.map((function (params) {
+      if (!params.address)
+        return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("onreaddescriptor",params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
+      } 
+    }), this);
+  }
+  if (obj.write_descriptor_results) {
+    obj.write_descriptor_results.map((function (params) {
+      if (!params.address)
+        return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("onwritedescriptor",params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
       } 
     }), this);
   }

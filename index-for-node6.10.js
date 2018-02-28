@@ -965,7 +965,7 @@ Ble.prototype.notified = function (obj) {
       if (!params.address) return;
       var p = this.findPeripheral(params.address);
       if (p) {
-        p.notify("onwritecharacteristic", params.service_uuid, params.characteristic_uuid, params.result);
+        p.notify("onwritecharacteristic", params.service_uuid, params.characteristic_uuid, null, params.result);
       }
     }, this);
   }
@@ -975,7 +975,34 @@ Ble.prototype.notified = function (obj) {
       if (!params.address) return;
       var p = this.findPeripheral(params.address);
       if (p) {
-        p.notify("onreadcharacteristic", params.service_uuid, params.characteristic_uuid, params.data);
+        p.notify("onreadcharacteristic", params.service_uuid, params.characteristic_uuid, null, params.data);
+      }
+    }, this);
+  }
+  if (obj.get_descriptors_results) {
+    obj.get_descriptors_results.map(function (params) {
+      if (!params.address) return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("ondiscoverdescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid);
+      }
+    }, this);
+  }
+  if (obj.read_descriptor_results) {
+    obj.read_descriptor_results.map(function (params) {
+      if (!params.address) return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("onreaddescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
+      }
+    }, this);
+  }
+  if (obj.write_descriptor_results) {
+    obj.write_descriptor_results.map(function (params) {
+      if (!params.address) return;
+      var p = this.findPeripheral(params.address);
+      if (p) {
+        p.notify("onwritedescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
       }
     }, this);
   }
@@ -1175,9 +1202,12 @@ BleRemotePeripheral.prototype.ondiscoverservice = function (service) {};
 BleRemotePeripheral.prototype.ondiscovercharacteristic = function (service, characteristic) {};
 BleRemotePeripheral.prototype.onwritecharacteristic = function (service, characteristic, status) {};
 BleRemotePeripheral.prototype.onreadcharacteristic = function (service, characteristic, value) {};
+BleRemotePeripheral.prototype.ondiscoverdescriptor = function (service, characteristic, descriptor) {};
+BleRemotePeripheral.prototype.onreaddescriptor = function (service, characteristic, descriptor, value) {};
+BleRemotePeripheral.prototype.onwritedescriptor = function (service, characteristic, descriptor, value) {};
 BleRemotePeripheral.prototype.onerror = function (err) {};
 
-BleRemotePeripheral.prototype.notify = function (funcName, serviceUuid, characteristicUuid, param) {
+BleRemotePeripheral.prototype.notify = function (funcName, serviceUuid, characteristicUuid, descriptorUuid, param) {
   if (typeof this[funcName] === "function") {
     if (!serviceUuid) {
       this[funcName](param);
@@ -1187,7 +1217,12 @@ BleRemotePeripheral.prototype.notify = function (funcName, serviceUuid, characte
         this[funcName](service, param);
       } else {
         var characteristic = service.getCharacteristic(characteristicUuid);
-        this[funcName](service, characteristic, param);
+        if (!descriptorUuid) {
+          this[funcName](service, characteristic, param);
+        } else {
+          var descriptor = characteristic.getDescriptor(descriptorUuid);
+          this[funcName](service, characteristic, descriptor, param);
+        }
       }
     }
   }
@@ -1250,6 +1285,7 @@ var BleRemoteCharacteristic = function (Obniz, service, uuid) {
   this.Obniz = Obniz;
   this.service = service;
   this.uuid = uuid;
+  this.descriptors = [];
 };
 
 BleRemoteCharacteristic.prototype.toString = function () {
@@ -1313,6 +1349,87 @@ BleRemoteCharacteristic.prototype.writeText = function (str) {
         "service_uuid": this.service.uuid,
         "characteristic_uuid": this.uuid,
         "text": str
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+BleRemoteCharacteristic.prototype.discoverAllDescriptors = function (str) {
+  var obj = {
+    "ble": {
+      "get_descriptors": {
+        "address": this.service.peripheral.address,
+        "service_uuid": this.service.uuid,
+        "characteristic_uuid": this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+BleRemoteCharacteristic.prototype.getDescriptor = function (uuid) {
+
+  for (var key in this.descriptors) {
+    if (this.descriptors[key].uuid === uuid) {
+      return this.descriptors[key];
+    }
+  }
+  var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
+  this.descriptors.push(newDescriptors);
+  return newDescriptors;
+};
+
+/**
+ * 
+ * @param {type} Obniz
+ * @param {type} characteristic
+ * @param {type} uuid
+ * @return {BleRemoteCharacteristic}
+ */
+var BleRemoteDescriptor = function (Obniz, characteristic, uuid) {
+  this.Obniz = Obniz;
+  this.characteristic = characteristic;
+  this.uuid = uuid;
+};
+
+BleRemoteDescriptor.prototype.toString = function () {
+  return JSON.stringify({
+    "address": this.characteristic.service.peripheral.address,
+    "service_uuid": this.characteristic.service.uuid,
+    "characteristic_uuid": this.characteristic.uuid,
+    "descriptor_uuid": this.uuid
+  });
+};
+
+BleRemoteDescriptor.prototype.read = function () {
+  var obj = {
+    "ble": {
+      "read_descriptor": {
+        "address": this.characteristic.service.peripheral.address,
+        "service_uuid": this.characteristic.service.uuid,
+        "characteristic_uuid": this.characteristic.uuid,
+        "descriptor_uuid": this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+BleRemoteDescriptor.prototype.readWait = _asyncToGenerator(function* () {
+
+  throw new Error("TODO");
+});
+
+BleRemoteDescriptor.prototype.write = function (array) {
+  var obj = {
+    "ble": {
+      "write_descriptor": {
+        "address": this.characteristic.service.peripheral.address,
+        "service_uuid": this.characteristic.service.uuid,
+        "characteristic_uuid": this.characteristic.uuid,
+        "descriptor_uuid": this.uuid,
+        "data": array
       }
     }
   };
@@ -2280,7 +2397,7 @@ _24LC256.prototype.set = function (address, data) {
 };
 
 _24LC256.prototype.getWait = (() => {
-  var _ref5 = _asyncToGenerator(function* (address, length) {
+  var _ref6 = _asyncToGenerator(function* (address, length) {
     var array = [];
     array.push(address >> 8 & 0xFF);
     array.push(address & 0xFF);
@@ -2289,7 +2406,7 @@ _24LC256.prototype.getWait = (() => {
   });
 
   return function (_x3, _x4) {
-    return _ref5.apply(this, arguments);
+    return _ref6.apply(this, arguments);
   };
 })();
 
@@ -2448,7 +2565,7 @@ var ADT7310 = function () {
 };
 
 ADT7310.prototype.wired = (() => {
-  var _ref6 = _asyncToGenerator(function* (obniz) {
+  var _ref7 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -2462,7 +2579,7 @@ ADT7310.prototype.wired = (() => {
   });
 
   return function (_x5) {
-    return _ref6.apply(this, arguments);
+    return _ref7.apply(this, arguments);
   };
 })();
 
@@ -2532,7 +2649,7 @@ var AE_MICAMP = function () {
 };
 
 AE_MICAMP.prototype.wired = (() => {
-  var _ref9 = _asyncToGenerator(function* (obniz) {
+  var _ref10 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     this.ad = obniz.getAD(this.params.out);
@@ -2573,7 +2690,7 @@ AE_MICAMP.prototype.wired = (() => {
   });
 
   return function (_x6) {
-    return _ref9.apply(this, arguments);
+    return _ref10.apply(this, arguments);
   };
 })();
 
@@ -2956,7 +3073,7 @@ HCSR04.prototype.wired = function (obniz) {
 };
 
 HCSR04.prototype.measure = (() => {
-  var _ref14 = _asyncToGenerator(function* (callback) {
+  var _ref15 = _asyncToGenerator(function* (callback) {
 
     this.vccIO.drive("5v");
     this.vccIO.output(true);
@@ -2992,7 +3109,7 @@ HCSR04.prototype.measure = (() => {
   });
 
   return function (_x7) {
-    return _ref14.apply(this, arguments);
+    return _ref15.apply(this, arguments);
   };
 })();
 
@@ -3167,8 +3284,19 @@ class JpegSerialCam {
     })();
   }
 
-  setBaudWait(baud) {
+  setCompressibilityWait(compress) {
     var _this5 = this;
+
+    return _asyncToGenerator(function* () {
+      let val = Math.floor(compress / 100 * 0xFF);
+      _this5.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+      yield _this5._drainUntil(_this5.uart, [0x76, 0x00, 0x31, 0x00]);
+      yield _this5.resetwait();
+    })();
+  }
+
+  setBaudWait(baud) {
+    var _this6 = this;
 
     return _asyncToGenerator(function* () {
       let val;
@@ -3191,31 +3319,31 @@ class JpegSerialCam {
         default:
           throw new Error("invalid baud rate");
       }
-      _this5.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
-      yield _this5._drainUntil(_this5.uart, [0x76, 0x00, 0x31, 0x00]);
+      _this6.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
+      yield _this6._drainUntil(_this6.uart, [0x76, 0x00, 0x31, 0x00]);
       //await this.obniz.wait(1000);
-      yield _this5.startwait({
+      yield _this6.startwait({
         baud
       });
     })();
   }
 
   takewait() {
-    var _this6 = this;
+    var _this7 = this;
 
     return _asyncToGenerator(function* () {
-      const uart = _this6.uart;
+      const uart = _this7.uart;
       //console.log("stop a photo")
       uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-      yield _this6._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+      yield _this7._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
 
       //console.log("take a photo")
       uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-      yield _this6._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+      yield _this7._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
 
       //console.log("read length")
       uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-      var recv = yield _this6._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
+      var recv = yield _this7._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
       var XX;
       var YY;
       while (true) {
@@ -3227,7 +3355,7 @@ class JpegSerialCam {
           YY = recv[1];
           break;
         }
-        yield _this6.obniz.wait(1000);
+        yield _this7.obniz.wait(1000);
       }
       let databytes = XX * 256 + YY;
       //console.log("image: " + databytes + " Bytes");
@@ -3236,7 +3364,7 @@ class JpegSerialCam {
 
       //console.log("start reading image")
       uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
-      var recv = yield _this6._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+      var recv = yield _this7._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
       //console.log("reading...");
       while (true) {
         var readed = uart.readBytes();
@@ -3245,7 +3373,7 @@ class JpegSerialCam {
         if (recv.length >= databytes) {
           break;
         }
-        yield _this6.obniz.wait(10);
+        yield _this7.obniz.wait(10);
       }
       //console.log("done");
       recv = recv.splice(0, databytes); // remove tail
@@ -3265,7 +3393,7 @@ var KXSC7_2050 = function () {
 };
 
 KXSC7_2050.prototype.wired = (() => {
-  var _ref16 = _asyncToGenerator(function* (obniz) {
+  var _ref17 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
@@ -3304,7 +3432,7 @@ KXSC7_2050.prototype.wired = (() => {
   });
 
   return function (_x8) {
-    return _ref16.apply(this, arguments);
+    return _ref17.apply(this, arguments);
   };
 })();
 
@@ -4350,10 +4478,10 @@ class XBee {
   }
 
   configWait(config) {
-    var _this7 = this;
+    var _this8 = this;
 
     return _asyncToGenerator(function* () {
-      if (_this7.isAtMode) {
+      if (_this8.isAtMode) {
         throw new Error("Xbee : duplicate config setting");
       };
       return new Promise(function (resolve, reject) {
@@ -4384,7 +4512,7 @@ class XBee {
         this.onFinishAtModeCallback = function () {
           resolve();
         };
-      }.bind(_this7));
+      }.bind(_this8));
     })();
   }
 }

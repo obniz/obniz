@@ -201,11 +201,14 @@ BleRemotePeripheral.prototype.ondiscoverservice = function (service){};
 BleRemotePeripheral.prototype.ondiscovercharacteristic = function( service, characteristic){};
 BleRemotePeripheral.prototype.onwritecharacteristic = function(service, characteristic, status){};
 BleRemotePeripheral.prototype.onreadcharacteristic = function(service, characteristic, value){};
+BleRemotePeripheral.prototype.ondiscoverdescriptor = function(service, characteristic,descriptor){};
+BleRemotePeripheral.prototype.onreaddescriptor = function(service, characteristic,descriptor, value){};
+BleRemotePeripheral.prototype.onwritedescriptor = function(service, characteristic,descriptor, value){};
 BleRemotePeripheral.prototype.onerror = function(err){};
 
 
 
-BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characteristicUuid, param){
+BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characteristicUuid, descriptorUuid, param){
   if(typeof (this[funcName])  === "function"){
     if(!serviceUuid){
       this[funcName](param);
@@ -215,7 +218,14 @@ BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characte
         this[funcName](service,param);
       }else{
         var characteristic = service.getCharacteristic(characteristicUuid);
-        this[funcName](service,characteristic,param);
+        if(!descriptorUuid){
+          this[funcName](service,characteristic,param);
+        }else{
+           var descriptor = characteristic.getDescriptor(descriptorUuid);
+           this[funcName](service,characteristic,descriptor, param);
+           
+        }
+        
         
       }
       
@@ -283,6 +293,7 @@ var BleRemoteCharacteristic = function(Obniz, service, uuid){
   this.Obniz = Obniz;
   this.service = service;
   this.uuid = uuid;
+  this.descriptors = [];
 };
 
 BleRemoteCharacteristic.prototype.toString = function(){
@@ -356,9 +367,89 @@ BleRemoteCharacteristic.prototype.writeText = function(str){
 
 
 
+BleRemoteCharacteristic.prototype.discoverAllDescriptors = function(str){
+  var obj = {
+    "ble" :{
+      "get_descriptors" :{
+        "address" : this.service.peripheral.address,
+        "service_uuid" : this.service.uuid,
+        "characteristic_uuid" : this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+BleRemoteCharacteristic.prototype.getDescriptor = function(uuid){
+  
+  for(var key in this.descriptors){
+    if(this.descriptors[key].uuid === uuid){
+      return this.descriptors[key];
+    }
+  }
+  var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
+  this.descriptors.push(newDescriptors);
+  return newDescriptors;
+};
 
 
 
 
+/**
+ * 
+ * @param {type} Obniz
+ * @param {type} characteristic
+ * @param {type} uuid
+ * @return {BleRemoteCharacteristic}
+ */
+var BleRemoteDescriptor = function(Obniz, characteristic, uuid){
+  this.Obniz = Obniz;
+  this.characteristic = characteristic;
+  this.uuid = uuid;
+};
+
+BleRemoteDescriptor.prototype.toString = function(){
+  return JSON.stringify({
+        "address" : this.characteristic.service.peripheral.address,
+        "service_uuid" : this.characteristic.service.uuid,
+        "characteristic_uuid" : this.characteristic.uuid,
+        "descriptor_uuid" : this.uuid
+      });
+};
+
+BleRemoteDescriptor.prototype.read = function(){
+  var obj = {
+    "ble" :{
+      "read_descriptor" :{
+        "address" : this.characteristic.service.peripheral.address,
+        "service_uuid" : this.characteristic.service.uuid,
+        "characteristic_uuid" : this.characteristic.uuid,
+        "descriptor_uuid" : this.uuid
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
+
+
+BleRemoteDescriptor.prototype.readWait = async function(){
+
+ throw new Error("TODO");
+};
+
+BleRemoteDescriptor.prototype.write = function(array){
+  var obj = {
+    "ble" :{
+      "write_descriptor" :{
+        "address" : this.characteristic.service.peripheral.address,
+        "service_uuid" : this.characteristic.service.uuid,
+        "characteristic_uuid" : this.characteristic.uuid,
+        "descriptor_uuid" : this.uuid,
+        "data" : array
+      }
+    }
+  };
+  this.Obniz.send(obj);
+};
 
 
