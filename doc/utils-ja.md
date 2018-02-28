@@ -1,6 +1,17 @@
 # Utils
 obnizをプログラムから使う上で便利な関数を用意しています。
 
+## connection with access_key
+アクセス制限付きのobnizに接続するための方法です。
+
+```Javascript
+// Example
+obniz = new Obniz("1234-5678", {access_token:"T7tnyWRIx_rxJv6xOsA2hBY3_zrr1AsRqfsy...."});
+obniz.onconnect = function() {
+
+}
+```
+
 ## reset()
 強制的にobnizを電源を入れた時と同じ状態に出来ます。
 

@@ -1,6 +1,17 @@
 # Utils
 Useful functions on obniz
 
+## connection with access_key
+Connect access controlled obniz
+
+```Javascript
+// Example
+obniz = new Obniz("1234-5678", {access_token:"T7tnyWRIx_rxJv6xOsA2hBY3_zrr1AsRqfsy...."});
+obniz.onconnect = function() {
+
+}
+```
+
 ## reset()
 force set obniz the state same as power on.
 
