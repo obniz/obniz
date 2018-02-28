@@ -32,6 +32,7 @@ var Obniz = function (id, options) {
   //   return;
   // }
   this.server_obnizio = options.obniz_server || "wss://obniz.io";
+  this._access_token = options.access_token;
   this.wsconnect();
 };
 
@@ -157,6 +158,9 @@ Obniz.prototype.wsconnect = function (desired_server) {
     this.clearSocket(this.socket);
   }
   var url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
+  if (this._access_token) {
+    url += "?access_token="+this._access_token
+  }
   this.print_debug("connecting to " + url);
 
   if (this.isNode) {
