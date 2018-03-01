@@ -7,449 +7,277 @@
 /**
  * 
  * @param {type} rawData
- * @return {BleRemotePeripheral}
+ * @return {BlePeripheral}
  */
-var BleRemotePeripheral = function(Obniz, address){
+var BlePeripheral = function(Obniz){
   this.Obniz = Obniz;
-  this.address = address;
-  
-  this.keys = [
-    "device_type",
-    "address_type",
-    "ble_event_type",
-    "rssi",
-    "adv_data",
-    "scan_resp",
-  ];
-  
-  
   this.services = [];
 };
 
-/**
- * 
- * @return {String} json value
- */
-BleRemotePeripheral.prototype.toString = function() {
-  return JSON.stringify({
-    id: this.id,
-    address: this.address,
-    addressType: this.addressType,
-    connectable: this.connectable,
-    advertisement: this.advertisement,
-    rssi: this.rssi,
-    state: this.state
-  });
+
+BlePeripheral.prototype.addService = function(obj) {
+  if(! (obj instanceof BleService ) ){
+    obj = new BleService(obj);
+  }
+  this.services.push(obj);
+  obj.peripheral = this;
+  this.Obniz.send({ble:{peripheral:{services:[obj]}}});
 };
 
 
-BleRemotePeripheral.prototype.setParams = function(dic) {
-  
-  for(var key in dic){
-    if(this.keys.includes(key)){
-      this[key] = dic[key] ;
+BlePeripheral.prototype.setJson = function(json) {
+  if(json["services"]){
+    for(var key in json["services"]){
+      this.addService(json["services"][key]);
     }
   }
 };
 
-
-BleRemotePeripheral.prototype.analyseAdvertisement = function() {
-  
-  if (!this.advertise_data_rows) {
-    this.advertise_data_rows = [];
-    if (this.adv_data) {
-      for (var i = 0; i < this.adv_data.length; i++) {
-        var length = this.adv_data[i];
-        var arr = new Array(length);
-        for (var j = 0; j < length; j++) {
-          arr[j] = this.adv_data[i + j + 1];
-        }
-        this.advertise_data_rows.push(arr);
-        i = i + length;
-      }
-    }
-    if (this.scan_resp) {
-
-      for (var i = 0; i < this.scan_resp.length; i++) {
-        var length = this.scan_resp[i];
-        var arr = new Array(length);
-        for (var j = 0; j < length; j++) {
-          arr[j] = this.scan_resp[i + j + 1];
-        }
-        this.advertise_data_rows.push(arr);
-        i = i + length;
-      }
-    }
-  } 
+BlePeripheral.prototype.getService = function(uuid) {
+  return this.services.filter(function(element){
+    return element.uuid === uuid;
+  }).shift();
 };
 
 
-BleRemotePeripheral.prototype.serarchTypeVal = function(type){
-  this.analyseAdvertisement();
-  for(var i = 0;i<this.advertise_data_rows.length;i++){
-    if(this.advertise_data_rows[i][0] === type){
-      var results = [].concat(this.advertise_data_rows[i]);
-      results.shift();
-      return results;
-    }
-  }
-  return undefined;
-};
-
-BleRemotePeripheral.prototype.localName = function(){
-  var data = this.serarchTypeVal(0x09);
-  if(!data){
-     data = this.serarchTypeVal(0x08);
-  }
-  if(!data)return null;
-  return String.fromCharCode.apply(null, data);
-};
-
-
-
-
-
-BleRemotePeripheral.prototype.iBeacon = function(){
-  var data = this.serarchTypeVal(0xFF);
-  if(!data 
-      || data[0] !== 0x4c
-      || data[1] !== 0x00
-      || data[2] !== 0x02
-      || data[3] !== 0x15 
-      || data.length !== 25)return null;
-  
-  var uuidData = data.slice(4, 20);
-  var uuid = "";
-  for(var i = 0; i< uuidData.length;i++){
-    uuid = uuid + (( '00' + uuidData[i].toString(16) ).slice( -2 ));
-    if(i === (4-1) ||i === (4+2-1) ||i === (4+2*2-1) ||i === (4+2*3-1) ){
-      uuid += "-";
-    }
-  }
-  
-  var major = (data[20]<<8) + data[21];
-  var minor = (data[22]<<8) + data[23];
-  var power = data[24];
-  
-  
+BlePeripheral.prototype.toJSON = function(){
   return {
-    uuid : uuid,
-    major: major,
-    minor :minor,
-    power :power,
-    rssi :this.rssi
+    services : this.services
   };
 };
 
-
-BleRemotePeripheral.prototype.connect = function(callbacks){
-  var keys = ["onconnect","ondisconnect"];
-  this.setParams(keys, callbacks);
-  
-  var obj = {
-    "ble" :{
-      "connect" :{
-        "address" : this.address
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemotePeripheral.prototype.disconnect = function(){
-  var obj = {
-    "ble" :{
-      "disconnect" :{
-        "address" : this.address
-      }
-    }
-  };
-  this.Obniz.send(obj);
-  
-};
-
-BleRemotePeripheral.prototype.updateRssi = function(){
-  throw new Error("todo");
-};
-
-BleRemotePeripheral.prototype.getService = function(uuid){
-  for(var key in this.services){
-    if(this.services[key].uuid === uuid){
-      return this.services[key];
-    }
+BlePeripheral.prototype.onconnectionupdates = function(){};
+BlePeripheral.prototype.findCharacteristic = function(param){
+  var serviceUuid = param.service_uuid.toLowerCase() ;
+  var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
+  var s = this.getService(serviceUuid);
+  if(s){
+    var c = s.getCharacteristic(characteristicUuid);
+    return c;
   }
-  var newService = new BleRemoteService(this.Obniz,this, uuid);
-  this.services.push(newService);
-  return newService;
+  return null;
 };
-
-BleRemotePeripheral.prototype.discoverAllServices = function(){
-  var obj = {
-    "ble" :{
-      "get_services" :{
-        "address" : this.address
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-//callbacks
-BleRemotePeripheral.prototype.onconnect = function(){};
-BleRemotePeripheral.prototype.ondisconnect = function(){};
-BleRemotePeripheral.prototype.ondiscoverservice = function (service){};
-BleRemotePeripheral.prototype.ondiscovercharacteristic = function( service, characteristic){};
-BleRemotePeripheral.prototype.onwritecharacteristic = function(service, characteristic, status){};
-BleRemotePeripheral.prototype.onreadcharacteristic = function(service, characteristic, value){};
-BleRemotePeripheral.prototype.ondiscoverdescriptor = function(service, characteristic,descriptor){};
-BleRemotePeripheral.prototype.onreaddescriptor = function(service, characteristic,descriptor, value){};
-BleRemotePeripheral.prototype.onwritedescriptor = function(service, characteristic,descriptor, value){};
-BleRemotePeripheral.prototype.onerror = function(err){};
-
-
-
-BleRemotePeripheral.prototype.notify = function( funcName, serviceUuid, characteristicUuid, descriptorUuid, param){
-  if(typeof (this[funcName])  === "function"){
-    if(!serviceUuid){
-      this[funcName](param);
-    }else{
-      var service = this.getService(serviceUuid);
-      if(!characteristicUuid){
-        this[funcName](service,param);
-      }else{
-        var characteristic = service.getCharacteristic(characteristicUuid);
-        if(!descriptorUuid){
-          this[funcName](service,characteristic,param);
-        }else{
-           var descriptor = characteristic.getDescriptor(descriptorUuid);
-           this[funcName](service,characteristic,descriptor, param);
-           
-        }
-        
-        
-      }
-      
-    }
+BlePeripheral.prototype.findDescriptor = function(param){
+  var descriptorUuid = param.descriptor_uuid.toLowerCase() ;
+  var c = this.findCharacteristic(param);
+  if(c){
+    var d = c.getDescriptor(descriptorUuid);
+    return d;
   }
+  return null;
+  
 };
 
 /**
  * 
- * @param {type} Obniz
- * @param {type} peripheral
- * @param {type} uuid
- * @return {BleRemoteService}
+ * @param {type} rawData
+ * @return {BleServiuce}
  */
-var BleRemoteService = function(Obniz, peripheral, uuid){
-  this.Obniz = Obniz;
-  this.uuid = uuid;
-  this.peripheral = peripheral;
-  
+var BleService = function(obj){
   this.characteristics = [];
+  this.uuid = obj.uuid.toLowerCase() ;
   
-};
-
-
-BleRemoteService.prototype.toString = function(){
-  return JSON.stringify({
-        "address" : this.peripheral.address,
-        "service_uuid" : this.uuid
-  });
-};
-
-BleRemoteService.prototype.discoverAllCharacteristics = function(){
-  var obj = {
-    "ble" :{
-      "get_characteristics" :{
-        "address" : this.peripheral.address,
-        "service_uuid" : this.uuid
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteService.prototype.getCharacteristic = function(uuid){
-  
-  for(var key in this.characteristics){
-    if(this.characteristics[key].uuid === uuid){
-      return this.characteristics[key];
+  if(obj["characteristics"]){
+     for(var key in obj["characteristics"]){
+      this.addCharacteristic(obj["characteristics"][key]);
     }
   }
-  var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
-  this.characteristics.push(newCharacteristic);
-  return newCharacteristic;
+};
+
+BleService.prototype.addCharacteristic = function(obj) {
+  if(! (obj instanceof BleCharacteristic ) ){
+    obj = new BleCharacteristic(obj);
+  }
+  this.characteristics.push(obj);
+  obj.service = this;
+};
+
+BleService.prototype.getCharacteristic = function(uuid) {
+  return this.characteristics.filter(function(element){
+    return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
+  }).shift();
+};
+
+
+
+BleService.prototype.toJSON = function(){
+  return {
+    uuid : this.uuid.toLowerCase()  ,
+    characteristics : this.characteristics
+  };
 };
 
 
 /**
  * 
- * @param {type} Obniz
- * @param {type} service
- * @param {type} uuid
- * @return {BleRemoteCharacteristic}
+ * @param {type} rawData
+ * @return {BleServiuce}
  */
-var BleRemoteCharacteristic = function(Obniz, service, uuid){
-  this.Obniz = Obniz;
-  this.service = service;
-  this.uuid = uuid;
+var BleCharacteristic = function(obj){
   this.descriptors = [];
-};
-
-BleRemoteCharacteristic.prototype.toString = function(){
-  return JSON.stringify({
-        "address" : this.service.peripheral.address,
-        "service_uuid" : this.service.uuid,
-        "characteristic_uuid" : this.uuid
-      });
-};
-
-BleRemoteCharacteristic.prototype.read = function(){
-  var obj = {
-    "ble" :{
-      "read_characteristic" :{
-        "address" : this.service.peripheral.address,
-        "service_uuid" : this.service.uuid,
-        "characteristic_uuid" : this.uuid
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-
-BleRemoteCharacteristic.prototype.readWait = async function(){
-
- throw new Error("TODO");
-};
-
-BleRemoteCharacteristic.prototype.write = function(array){
-  var obj = {
-    "ble" :{
-      "write_characteristic" :{
-        "address" : this.service.peripheral.address,
-        "service_uuid" : this.service.uuid,
-        "characteristic_uuid" : this.uuid,
-        "data" : array
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-BleRemoteCharacteristic.prototype.writeNumber = function(val){
-  var obj = {
-    "ble" :{
-      "write_characteristic" :{
-        "address" : this.service.peripheral.address,
-        "service_uuid" : this.service.uuid,
-        "characteristic_uuid" : this.uuid,
-        "value" : val
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteCharacteristic.prototype.writeText = function(str){
-  var obj = {
-    "ble" :{
-      "write_characteristic" :{
-        "address" : this.service.peripheral.address,
-        "service_uuid" : this.service.uuid,
-        "characteristic_uuid" : this.uuid,
-        "text" : str
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-
-
-
-BleRemoteCharacteristic.prototype.discoverAllDescriptors = function(str){
-  var obj = {
-    "ble" :{
-      "get_descriptors" :{
-        "address" : this.service.peripheral.address,
-        "service_uuid" : this.service.uuid,
-        "characteristic_uuid" : this.uuid
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteCharacteristic.prototype.getDescriptor = function(uuid){
+  this.uuid = obj.uuid.toLowerCase() ;
+  this.data = obj.data || null;
+  if(! this.data && obj.text){
+    this.data = ObnizUtil.string2dataArray(obj.text);
+  }
+  if(! this.data && obj.value){
+    this.data = obj.value;
+  }
   
-  for(var key in this.descriptors){
-    if(this.descriptors[key].uuid === uuid){
-      return this.descriptors[key];
+  this.property = obj.property || [];
+  if(!Array.isArray(this.property)){
+    this.property = [this.property];
+  }
+  
+  if(obj["descriptors"]){
+     for(var key in obj["descriptors"]){
+      this.addDescriptor(obj["descriptors"][key]);
     }
   }
-  var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
-  this.descriptors.push(newDescriptors);
-  return newDescriptors;
+};
+
+BleCharacteristic.prototype.addDescriptor = function(obj) {
+  if(! (obj instanceof BleDescriptor ) ){
+    obj = new BleDescriptor(obj);
+  }
+  this.descriptors.push(obj);
+  obj.characteristic = this;
 };
 
 
+BleCharacteristic.prototype.getDescriptor = function(uuid) {
+  return this.descriptors.filter(function(element){
+    return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
+  }).shift();
+};
 
+BleCharacteristic.prototype.write = function(data){
+  if(!Array.isArray(data)){
+    data = [data];
+  }
+  this.characteristic.server.peripheral.Obniz.send(
+      {
+        ble : {
+        peripheral: {
+          write_characteristic: {
+            service_uuid: this.server.uuid.toLowerCase() ,
+            characteristic_uuid: this.uuid.toLowerCase() ,
+            data: data
+          }
+        }
+      }
+    }
+  );
+};
+
+BleCharacteristic.prototype.read = function(){
+  
+  this.characteristic.server.peripheral.Obniz.send(
+      {
+        ble : {
+        peripheral: {
+          read_characteristic: {
+            service_uuid: this.server.uuid.toLowerCase() ,
+            characteristic_uuid: this.uuid.toLowerCase() ,
+          }
+        }
+      }
+    }
+  );
+};
+
+BleCharacteristic.prototype.onwrite = function(){};
+BleCharacteristic.prototype.onread = function(){};
+BleCharacteristic.prototype.onwritefromremote = function(){};
+BleCharacteristic.prototype.onreadfromremote = function(){};
+
+BleCharacteristic.prototype.toJSON = function(){
+  var obj = {
+    uuid : this.uuid.toLowerCase()  ,
+    data : this.data ,
+    descriptors : this.descriptors
+  };
+  if (this.property.length > 0 ) {
+    obj.property =  this.property;
+    
+  }
+  return obj;
+}
 
 /**
  * 
- * @param {type} Obniz
- * @param {type} characteristic
- * @param {type} uuid
- * @return {BleRemoteCharacteristic}
+ * @param {type} rawData
+ * @return {BleServiuce}
  */
-var BleRemoteDescriptor = function(Obniz, characteristic, uuid){
-  this.Obniz = Obniz;
-  this.characteristic = characteristic;
-  this.uuid = uuid;
+var BleDescriptor = function(obj){
+  this.descriptors = [];
+  this.uuid = obj.uuid.toLowerCase() ;
+  
+  this.data = obj.data || null;
+  if(! this.data && obj.text){
+    this.data = ObnizUtil.string2dataArray(obj.text);
+  }
+  if(! this.data && obj.value){
+    this.data = obj.value;
+  }
+  
+  this.property = obj.property || [];
+  if(!Array.isArray(this.property)){
+    this.property = [this.property];
+  }
 };
 
-BleRemoteDescriptor.prototype.toString = function(){
-  return JSON.stringify({
-        "address" : this.characteristic.service.peripheral.address,
-        "service_uuid" : this.characteristic.service.uuid,
-        "characteristic_uuid" : this.characteristic.uuid,
-        "descriptor_uuid" : this.uuid
-      });
-};
 
-BleRemoteDescriptor.prototype.read = function(){
-  var obj = {
-    "ble" :{
-      "read_descriptor" :{
-        "address" : this.characteristic.service.peripheral.address,
-        "service_uuid" : this.characteristic.service.uuid,
-        "characteristic_uuid" : this.characteristic.uuid,
-        "descriptor_uuid" : this.uuid
+BleDescriptor.prototype.toJSON = function(){
+  var obj =  {
+    uuid : this.uuid.toLowerCase()  ,
+    data : this.data ,
+  };
+  if (this.property.length > 0 ) {
+    obj.property =  this.property;
+    
+  }
+  return obj;
+}
+
+BleDescriptor.prototype.write = function(data){
+  if(!Array.isArray(data)){
+    data = [data];
+  }
+  this.characteristic.server.peripheral.Obniz.send(
+      {
+        ble : {
+        peripheral: {
+          write_descriptor: {
+            service_uuid: this.characteristic.server.uuid.toLowerCase() ,
+            characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
+            descriptor_uuid: this.uuid,
+            data: data
+          }
+        }
       }
     }
-  };
-  this.Obniz.send(obj);
+  );
 };
 
-
-BleRemoteDescriptor.prototype.readWait = async function(){
-
- throw new Error("TODO");
-};
-
-BleRemoteDescriptor.prototype.write = function(array){
-  var obj = {
-    "ble" :{
-      "write_descriptor" :{
-        "address" : this.characteristic.service.peripheral.address,
-        "service_uuid" : this.characteristic.service.uuid,
-        "characteristic_uuid" : this.characteristic.uuid,
-        "descriptor_uuid" : this.uuid,
-        "data" : array
+BleDescriptor.prototype.read = function(){
+  
+  this.characteristic.server.peripheral.Obniz.send(
+      {
+        ble : {
+        peripheral: {
+          read_descriptor: {
+            service_uuid: this.characteristic.server.uuid.toLowerCase() ,
+            characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
+            descriptor_uuid: this.uuid
+          }
+        }
       }
     }
-  };
-  this.Obniz.send(obj);
+  );
 };
 
-
+BleDescriptor.prototype.onwrite = function(){};
+BleDescriptor.prototype.onread = function(){};
+BleDescriptor.prototype.onwritefromremote = function(){};
+BleDescriptor.prototype.onreadfromremote = function(){};

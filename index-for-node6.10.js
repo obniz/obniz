@@ -657,9 +657,14 @@ PeripheralAD.prototype.notified = function (obj) {
 
 var Ble = function (Obniz) {
   this.Obniz = Obniz;
-  this.peripherals = [];
+  this.remotePeripherals = [];
   this.adv_data = [];
   this.scan_resp = [];
+
+  this.service = BleService;
+  this.characteristic = BleCharacteristic;
+  this.descriptor = BleDescriptor;
+  this.peripheral = new BlePeripheral(Obniz);
 };
 
 Ble.prototype.startAdvertisement = function () {
@@ -883,7 +888,7 @@ Ble.prototype.startScan = function (settings) {
 
   };
 
-  this.peripherals = [];
+  this.remotePeripherals = [];
 
   this.Obniz.send(obj);
   return;
@@ -898,9 +903,9 @@ Ble.prototype.stopScan = function () {
 };
 
 Ble.prototype.findPeripheral = function (address) {
-  for (var key in this.peripherals) {
-    if (this.peripherals[key].address === address) {
-      return this.peripherals[key];
+  for (var key in this.remotePeripherals) {
+    if (this.remotePeripherals[key].address === address) {
+      return this.remotePeripherals[key];
     }
   }
   return null;
@@ -916,14 +921,14 @@ Ble.prototype.notified = function (obj) {
       } else if (obj.scan_results[id].event_type === "inquiry_result") {
         var val = new BleRemotePeripheral(this.Obniz, obj.scan_results[id].address);
         val.setParams(obj.scan_results[id]);
-        this.peripherals.push(val);
+        this.remotePeripherals.push(val);
         if (this.onscan) {
           this.onscan(val);
         }
       }
     }
     if (isFinished && this.onscanfinish) {
-      this.onscanfinish(this.peripherals);
+      this.onscanfinish(this.remotePeripherals);
     }
   }
 
@@ -1006,6 +1011,48 @@ Ble.prototype.notified = function (obj) {
       }
     }, this);
   }
+
+  var callbackFunc = function (valueArray, func, type) {
+    var obj = null;
+    if (!valueArray) {
+      return;
+    }
+
+    valueArray.map(function (val) {
+      if (type === "service") {
+        obj = this.peripheral.getService(val);
+      } else if (type === "characteristic") {
+        obj = this.peripheral.findCharacteristic(val);
+      } else if (type === "descriptor") {
+        obj = this.peripheral.findDescriptor(val);
+      }
+      func(val, obj);
+    }, this);
+  }.bind(this);
+
+  if (obj.peripheral) {
+    callbackFunc(obj.peripheral.connection_status, function (val) {
+      this.peripheral.onconnectionupdates(val);
+    }.bind(this));
+
+    var paramList = {
+      read_characteristic_results: { method: "onread", obj: "characteristic" },
+      write_characteristic_results: { method: "onwrite", obj: "characteristic" },
+      notify_read_characteristics: { method: "onreadfromremote", obj: "characteristic" },
+      notify_write_characteristics: { method: "onwritefromremote", obj: "characteristic" },
+      read_descriptor_results: { method: "onread", obj: "descriptor" },
+      write_descriptor_results: { method: "onwrite", obj: "descriptor" },
+      notify_read_descriptors: { method: "onreadfromremote", obj: "descriptor" },
+      notify_write_descriptors: { method: "onwritefromremote", obj: "descriptor" }
+    };
+
+    for (var key in paramList) {
+      callbackFunc(obj.peripheral[key], function (val, bleobj) {
+        bleobj[paramList[key].method](val);
+      }.bind(this), paramList[key].obj);
+    }
+  }
+
   if (obj.errors) {
     obj.errors.map(function (params) {
       if (!params.address) {
@@ -1022,6 +1069,270 @@ Ble.prototype.notified = function (obj) {
   }
 };
 
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * 
+ * @param {type} rawData
+ * @return {BlePeripheral}
+ */
+var BlePeripheral = function (Obniz) {
+  this.Obniz = Obniz;
+  this.services = [];
+};
+
+BlePeripheral.prototype.addService = function (obj) {
+  if (!(obj instanceof BleService)) {
+    obj = new BleService(obj);
+  }
+  this.services.push(obj);
+  obj.peripheral = this;
+  this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
+};
+
+BlePeripheral.prototype.setJson = function (json) {
+  if (json["services"]) {
+    for (var key in json["services"]) {
+      this.addService(json["services"][key]);
+    }
+  }
+};
+
+BlePeripheral.prototype.getService = function (uuid) {
+  return this.services.filter(function (element) {
+    return element.uuid === uuid;
+  }).shift();
+};
+
+BlePeripheral.prototype.toJSON = function () {
+  return {
+    services: this.services
+  };
+};
+
+BlePeripheral.prototype.onconnectionupdates = function () {};
+BlePeripheral.prototype.findCharacteristic = function (param) {
+  var serviceUuid = param.service_uuid.toLowerCase();
+  var characteristicUuid = param.characteristic_uuid.toLowerCase();
+  var s = this.getService(serviceUuid);
+  if (s) {
+    var c = s.getCharacteristic(characteristicUuid);
+    return c;
+  }
+  return null;
+};
+BlePeripheral.prototype.findDescriptor = function (param) {
+  var descriptorUuid = param.descriptor_uuid.toLowerCase();
+  var c = this.findCharacteristic(param);
+  if (c) {
+    var d = c.getDescriptor(descriptorUuid);
+    return d;
+  }
+  return null;
+};
+
+/**
+ * 
+ * @param {type} rawData
+ * @return {BleServiuce}
+ */
+var BleService = function (obj) {
+  this.characteristics = [];
+  this.uuid = obj.uuid.toLowerCase();
+
+  if (obj["characteristics"]) {
+    for (var key in obj["characteristics"]) {
+      this.addCharacteristic(obj["characteristics"][key]);
+    }
+  }
+};
+
+BleService.prototype.addCharacteristic = function (obj) {
+  if (!(obj instanceof BleCharacteristic)) {
+    obj = new BleCharacteristic(obj);
+  }
+  this.characteristics.push(obj);
+  obj.service = this;
+};
+
+BleService.prototype.getCharacteristic = function (uuid) {
+  return this.characteristics.filter(function (element) {
+    return element.uuid.toLowerCase() === uuid.toLowerCase();
+  }).shift();
+};
+
+BleService.prototype.toJSON = function () {
+  return {
+    uuid: this.uuid.toLowerCase(),
+    characteristics: this.characteristics
+  };
+};
+
+/**
+ * 
+ * @param {type} rawData
+ * @return {BleServiuce}
+ */
+var BleCharacteristic = function (obj) {
+  this.descriptors = [];
+  this.uuid = obj.uuid.toLowerCase();
+  this.data = obj.data || null;
+  if (!this.data && obj.text) {
+    this.data = ObnizUtil.string2dataArray(obj.text);
+  }
+  if (!this.data && obj.value) {
+    this.data = obj.value;
+  }
+
+  this.property = obj.property || [];
+  if (!Array.isArray(this.property)) {
+    this.property = [this.property];
+  }
+
+  if (obj["descriptors"]) {
+    for (var key in obj["descriptors"]) {
+      this.addDescriptor(obj["descriptors"][key]);
+    }
+  }
+};
+
+BleCharacteristic.prototype.addDescriptor = function (obj) {
+  if (!(obj instanceof BleDescriptor)) {
+    obj = new BleDescriptor(obj);
+  }
+  this.descriptors.push(obj);
+  obj.characteristic = this;
+};
+
+BleCharacteristic.prototype.getDescriptor = function (uuid) {
+  return this.descriptors.filter(function (element) {
+    return element.uuid.toLowerCase() === uuid.toLowerCase();
+  }).shift();
+};
+
+BleCharacteristic.prototype.write = function (data) {
+  if (!Array.isArray(data)) {
+    data = [data];
+  }
+  this.characteristic.server.peripheral.Obniz.send({
+    ble: {
+      peripheral: {
+        write_characteristic: {
+          service_uuid: this.server.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase(),
+          data: data
+        }
+      }
+    }
+  });
+};
+
+BleCharacteristic.prototype.read = function () {
+
+  this.characteristic.server.peripheral.Obniz.send({
+    ble: {
+      peripheral: {
+        read_characteristic: {
+          service_uuid: this.server.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase()
+        }
+      }
+    }
+  });
+};
+
+BleCharacteristic.prototype.onwrite = function () {};
+BleCharacteristic.prototype.onread = function () {};
+BleCharacteristic.prototype.onwritefromremote = function () {};
+BleCharacteristic.prototype.onreadfromremote = function () {};
+
+BleCharacteristic.prototype.toJSON = function () {
+  var obj = {
+    uuid: this.uuid.toLowerCase(),
+    data: this.data,
+    descriptors: this.descriptors
+  };
+  if (this.property.length > 0) {
+    obj.property = this.property;
+  }
+  return obj;
+};
+
+/**
+ * 
+ * @param {type} rawData
+ * @return {BleServiuce}
+ */
+var BleDescriptor = function (obj) {
+  this.descriptors = [];
+  this.uuid = obj.uuid.toLowerCase();
+
+  this.data = obj.data || null;
+  if (!this.data && obj.text) {
+    this.data = ObnizUtil.string2dataArray(obj.text);
+  }
+  if (!this.data && obj.value) {
+    this.data = obj.value;
+  }
+
+  this.property = obj.property || [];
+  if (!Array.isArray(this.property)) {
+    this.property = [this.property];
+  }
+};
+
+BleDescriptor.prototype.toJSON = function () {
+  var obj = {
+    uuid: this.uuid.toLowerCase(),
+    data: this.data
+  };
+  if (this.property.length > 0) {
+    obj.property = this.property;
+  }
+  return obj;
+};
+
+BleDescriptor.prototype.write = function (data) {
+  if (!Array.isArray(data)) {
+    data = [data];
+  }
+  this.characteristic.server.peripheral.Obniz.send({
+    ble: {
+      peripheral: {
+        write_descriptor: {
+          service_uuid: this.characteristic.server.uuid.toLowerCase(),
+          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+          descriptor_uuid: this.uuid,
+          data: data
+        }
+      }
+    }
+  });
+};
+
+BleDescriptor.prototype.read = function () {
+
+  this.characteristic.server.peripheral.Obniz.send({
+    ble: {
+      peripheral: {
+        read_descriptor: {
+          service_uuid: this.characteristic.server.uuid.toLowerCase(),
+          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+          descriptor_uuid: this.uuid
+        }
+      }
+    }
+  });
+};
+
+BleDescriptor.prototype.onwrite = function () {};
+BleDescriptor.prototype.onread = function () {};
+BleDescriptor.prototype.onwritefromremote = function () {};
+BleDescriptor.prototype.onreadfromremote = function () {};
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -2280,20 +2591,7 @@ PeripheralUART.prototype.readText = function () {
 };
 
 PeripheralUART.prototype.tryConvertString = function (data) {
-  var string = null;
-  try {
-    if (isNode) {
-      const StringDecoder = require('string_decoder').StringDecoder;
-      if (StringDecoder) {
-        string = new StringDecoder('utf8').write(Buffer.from(data));
-      }
-    } else if (TextDecoder) {
-      string = new TextDecoder("utf-8").decode(new Uint8Array(data));
-    }
-  } catch (e) {
-    //this.obniz.error(e);
-  }
-  return string;
+  return ObnizUtil.dataArray2string(data);
 };
 
 PeripheralUART.prototype.notified = function (obj) {
@@ -2373,6 +2671,41 @@ class ObnizUtil {
     return null;
   }
 
+  static dataArray2string(data) {
+    var string = null;
+    try {
+      if (isNode) {
+        const StringDecoder = require('string_decoder').StringDecoder;
+        if (StringDecoder) {
+          string = new StringDecoder('utf8').write(Buffer.from(data));
+        }
+      } else if (TextDecoder) {
+        string = new TextDecoder("utf-8").decode(new Uint8Array(data));
+      }
+    } catch (e) {
+      //this.obniz.error(e);
+    }
+    return string;
+  }
+
+  static string2dataArray(str) {
+    if (isNode) {
+      const buf = Buffer(str);
+      var arr = new Array(buf.byteLength);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = buf[i];
+      }
+      return arr;
+    } else if (TextEncoder) {
+      const typedArray = new TextEncoder("utf-8").encode(str);
+      var arr = new Array(typedArray.length);
+      for (var i = 0; i < typedArray.length; i++) {
+        arr[i] = typedArray[i];
+      }
+      return arr;
+    }
+    return null;
+  }
 }
 var _24LC256 = function () {
   this.requiredKeys = ["address"];
