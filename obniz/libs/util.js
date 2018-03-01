@@ -52,5 +52,41 @@ class ObnizUtil {
     }
     return null;
   }
+  
+  static dataArray2string(data) {
+    var string = null;
+    try {
+        if(isNode){
+          const StringDecoder = require('string_decoder').StringDecoder;
+          if(StringDecoder){
+             string = new StringDecoder('utf8').write(Buffer.from(data));
+          }
+        }else if(TextDecoder){
+          string = new TextDecoder("utf-8").decode(new Uint8Array(data));
+        }
+      }catch(e) {
+        //this.obniz.error(e);
+      }
+      return string;
+  };
 
+  static string2dataArray(str){
+    if (isNode) {
+      const buf = Buffer(str);
+      var arr = new Array(buf.byteLength);
+      for (var i=0; i<arr.length;i++) {
+        arr[i] = buf[i];
+      }
+      return arr;
+    } else if(TextEncoder){
+      const typedArray = new TextEncoder("utf-8").encode(str);
+      var arr = new Array(typedArray.length);
+      for (var i=0; i<typedArray.length;i++) {
+        arr[i] = typedArray[i];
+      }
+      return arr;
+      
+    }
+    return null;
+  }
 }

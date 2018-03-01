@@ -107,20 +107,7 @@ PeripheralUART.prototype.readText = function() {
 
 
 PeripheralUART.prototype.tryConvertString = function(data) {
-  var string = null;
-  try {
-      if(isNode){
-        const StringDecoder = require('string_decoder').StringDecoder;
-        if(StringDecoder){
-           string = new StringDecoder('utf8').write(Buffer.from(data));
-        }
-      }else if(TextDecoder){
-        string = new TextDecoder("utf-8").decode(new Uint8Array(data));
-      }
-    }catch(e) {
-      //this.obniz.error(e);
-    }
-    return string;
+  return ObnizUtil.dataArray2string(data);
 };
 
 PeripheralUART.prototype.notified = function(obj) {
