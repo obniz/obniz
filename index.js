@@ -574,25 +574,26 @@ if (!isNode) {
   if(window && window.parent && window.parent.userAppLoaded){
     window.parent.userAppLoaded(window);
   }
-  
-  function showdialog() {
-    $('#myModal').modal('show');
-  }
+
   function showOnLine() {
-    $('#loader').hide();
-    if ($('#obniz-debug #online-status').length == 0) {
-      $('#obniz-debug').prepend('<div id="online-status"></div>')
+    if (typeof jQuery !== 'undefined') {
+      $('#loader').hide();
+      if ($('#obniz-debug #online-status').length == 0) {
+        $('#obniz-debug').prepend('<div id="online-status"></div>')
+      }
+      $('#online-status').text('online');
+      $('#online-status').css({ "background-color" : "#449d44","color":"#FFF", "padding":"5px","text-align": "center" });
     }
-    $('#online-status').text('online');
-    $('#online-status').css({ "background-color" : "#449d44","color":"#FFF", "padding":"5px","text-align": "center" });
   }
   function showOffLine() {
-    $('#loader').show();
-    if ($('#obniz-debug #online-status').length == 0) {
-      $('#obniz-debug').prepend('<div id="online-status"></div>')
+    if (typeof jQuery !== 'undefined') {
+      $('#loader').show();
+      if ($('#obniz-debug #online-status').length == 0) {
+        $('#obniz-debug').prepend('<div id="online-status"></div>')
+      }
+      $('#online-status').text('offline');
+      $('#online-status').css({ "background-color" : "#d9534f","color":"#FFF", "padding":"5px","text-align": "center" });
     }
-    $('#online-status').text('offline');
-    $('#online-status').css({ "background-color" : "#d9534f","color":"#FFF", "padding":"5px","text-align": "center" });
   }
   function showObnizDebugError(err) {
     if(window.parent && window.parent.logger){
