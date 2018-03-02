@@ -159,8 +159,11 @@ Obniz.prototype.wsconnect = function (desired_server) {
     this.clearSocket(this.socket);
   }
   var url = server + "/obniz/" + this.id + "/ws/" + this.apiversion;
+  if (_obniz_js_version) {
+    url += "?obnizjs=" + _obniz_js_version;
+  }
   if (this._access_token) {
-    url += "?access_token=" + this._access_token;
+    url += "&access_token=" + this._access_token;
   }
   this.print_debug("connecting to " + url);
 

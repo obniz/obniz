@@ -16,7 +16,7 @@ app.get('/', (request, response) => {
 
 app.get('/obniz.js', (request, response) => {
   response.header('Access-Control-Allow-Origin', '*');
-  response.sendFile(path.join(__dirname, '../index.js'));
+  response.sendFile(path.join(__dirname, '../obniz.js'));
 })
 
 app.listen(port, (err) => {
