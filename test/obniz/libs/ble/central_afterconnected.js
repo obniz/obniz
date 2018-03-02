@@ -202,6 +202,7 @@ describe("ble", function () {
             address : "e5f678800700", //hex string or null
             service_uuid : "FF00",           //hex string or null
             characteristic_uuid : "FF01", //hex string or null
+            descriptor_uuid : "FF01" //hex string or null
          }
         ]
       }
@@ -209,7 +210,6 @@ describe("ble", function () {
     
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args).to.be.lengthOf(1);
-    
     expect(stub.getCall(0).args[0].message).to.be.equal("ERROR MESSAGE");
     
     expect(this.obniz).to.be.finished;

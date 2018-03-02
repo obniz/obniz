@@ -1106,7 +1106,7 @@ Ble.prototype.notified = function (obj) {
 
       var p = this.findPeripheral(params.address);
       if (p) {
-        p.notify("onerror", null, null, params);
+        p.notify("onerror", null, null, null, params);
       }
     }, this);
   }
