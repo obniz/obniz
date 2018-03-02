@@ -101,4 +101,71 @@ properties:
         type : boolean
         default : false
         
-        
+    peripheral : 
+        anyOf :
+            - 
+                type : "null"
+            -
+                type : object
+                additionalProperties: false
+                properties:
+                    services :
+                        type : array
+                        items : 
+                            type : object
+                            required: [uuid]
+                            additionalProperties: false
+                            properties:
+                                uuid : {$ref :uuid}
+                                characteristics :
+                                    type : array
+                                    items : 
+                                        type : object
+                                        required: [uuid]
+                                        additionalProperties: false
+                                        properties:
+                                            uuid : {$ref :uuid}
+                                            data : {$ref :#dataArray}
+                                            descriptors :
+                                                type : array
+                                                items : 
+                                                    type : object
+                                                    required: [uuid]
+                                                    additionalProperties: false
+                                                    properties:
+                                                        uuid : {$ref :uuid}
+                                                        data : {$ref :#dataArray}
+                    write_characteristic :
+                        type : object
+                        required: [service_uuid,characteristic_uuid,data]
+                        additionalProperties: false
+                        properties:
+                            service_uuid : {$ref :uuid}
+                            characteristic_uuid : {$ref :uuid}
+                            data : {$ref :#dataArray}
+                    read_characteristic :
+                        type : object
+                        required: [service_uuid,characteristic_uuid]
+                        additionalProperties: false
+                        properties:
+                            service_uuid : {$ref :uuid}
+                            characteristic_uuid : {$ref :uuid}
+                    write_descriptor :
+                        type : object
+                        required: [service_uuid,characteristic_uuid,data]
+                        additionalProperties: false
+                        properties:
+                            service_uuid : {$ref :uuid}
+                            characteristic_uuid : {$ref :uuid}
+                            descriptor_uuid : {$ref :uuid}
+                            data : {$ref :#dataArray}
+                    read_descriptor :
+                        type : object
+                        required: [service_uuid,characteristic_uuid]
+                        additionalProperties: false
+                        properties:
+                            service_uuid : {$ref :uuid}
+                            characteristic_uuid : {$ref :uuid}
+                            descriptor_uuid : {$ref :uuid}
+                        
+                        

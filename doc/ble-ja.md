@@ -118,6 +118,257 @@ obniz.ble.startAdvertisement();
 }
 ```
 
+## peripheral.addService(setting_json or service_obj)
+
+peripheralとしてサービスを開始します
+引数にjsonデータもしくはサービスオブジェクトを渡します．
+
+jsonを渡す場合
+```Javascript
+var setting = {
+    "uuid" : "FFF0",
+    "characteristics" : [{
+      "uuid" : "FFF1",
+      "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
+      "descriptors" : [{
+        "uuid" : "2901",   //Characteristic User Description
+        "text" : "hello wrold characteristic", //data for dataArray or  text for string
+      }]
+    }]
+};
+obniz.ble.peripheral.addService(setting);
+
+
+```
+
+サービスオブジェクトを渡す場合
+```Javascript
+    var service = new obniz.ble.service({"uuid" : "FFF0"});
+    var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+    var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
+
+    service.addCharacteristic(characteristic);
+    characteristic.addDescriptor(descriptor);
+
+    obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
+
+
+```
+
+## peripheral.onconnectionupdates
+
+
+外部デバイスが接続／切断されたときに呼ばれるコールバックです
+    
+```Javascript
+obniz.ble.peripheral.onconnectionupdates = function(data){
+  console.log("remote device ", data.address, data.status)
+};
+
+```
+
+## peripheral.end()
+
+speripheralのサービスを終了します
+```Javascript
+
+obniz.ble.peripheral.addService(setting);
+
+
+obniz.ble.peripheral.end();
+
+```
+
+
+## new service(json)
+
+サービスオブジェクトを作成します
+jsonにはuuid（必須）およびcharacteristics（オプション）を設定できます
+
+```Javascript
+    var service = new obniz.ble.service({
+                  "uuid" : "FFF0",
+                  "characteristics" : [{
+                    "uuid" : "FFF1",
+                    "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
+                    "descriptors" : [{
+                      "uuid" : "2901",   //Characteristic User Description
+                      "text" : "hello wrold characteristic", //data for dataArray or  text for string
+                    }]
+                  }]
+              });
+    obniz.ble.peripheral.addService(service); 
+```
+
+
+
+
+## new characteristic(json)
+
+```Javascript
+    var characteristic = new obniz.ble.characteristic({
+                    "uuid" : "FFF1",
+                    "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+                    "descriptors" : [{
+                      "uuid" : "2901",   //Characteristic User Description
+                      "text" : "hello wrold characteristic",    //data for dataArray or  text for string
+                    }]
+                  });
+
+var service = new obniz.ble.service({
+                  "uuid" : "FFF0",
+                  "characteristics" : [ characteristic ]
+});
+obniz.ble.peripheral.addService(service); 
+   
+```
+
+## characteristic.write(data)
+characteristicに値を書き込みます
+
+
+## characteristic.onwrite(data)
+characteristic.witeのコールバックです
+
+
+```Javascript 
+
+characteristic.write([0xf0,0x27]);
+characteristic.onwrite = function(val){
+    console.log("write :",val.result);
+}
+
+
+```
+
+## characteristic.read(data)
+characteristicの値を読み込みます
+
+## characteristic.onread(data)
+characteristic.readのコールバックです
+
+```Javascript 
+
+characteristic.read();
+characteristic.onread = function(val){
+    console.log("read data :",val.data);
+}
+
+
+```
+
+## characteristic.onwritefromremote(data)
+characteristicが外部から変更されたときのコールバックです
+
+```Javascript 
+
+characteristic.onwritefromremote = function(val){
+    console.log("remote address :",val.address);
+    console.log("remote data :",val.data);
+}
+
+```
+
+## characteristic.onreadfromremote(data)
+characteristicが外部からよまれたときのコールバックです
+
+```Javascript 
+
+characteristic.onreadfromremote = function(val){
+    console.log("remote address :",val.address);	
+}
+
+```
+
+
+
+
+## new descriptor(json)
+
+ディスクリプタを作成します
+
+
+```Javascript
+var descriptor = new obniz.ble.characteristic({
+                      "uuid" : "2901",   //Characteristic User Description
+                      "text" : "hello wrold characteristic",
+                  });
+
+var characteristic = new obniz.ble.characteristic({
+                    "uuid" : "FFF1",
+                    "text" : "Hi",
+                    "descriptors" : [ descriptor ]
+                  });
+
+var service = new obniz.ble.service({
+                  "uuid" : "FFF0",
+                  "characteristics" : [ characteristic ]
+});
+obniz.ble.peripheral.addService(service); 
+   
+```
+
+
+## descriptor.write(data)
+descriptorに値を書き込みます
+
+## descriptor.onwrite(data)
+descriptor.witeのコールバックです
+
+
+
+```Javascript 
+
+descriptor.write([0xf0,0x27]);
+descriptor.onwrite = function(val){
+    console.log("write :",val.result);
+}
+
+
+```
+
+
+## descriptor.read(data)
+descriptorの値を読み込みます
+
+## descriptor.onread(data)
+descriptor.readのコールバックです
+
+
+```Javascript 
+
+descriptor.read();
+descriptor.onread = function(val){
+    console.log("read data :",val.data);
+}
+
+
+```
+
+## descriptor.onwritefromremote(data)
+descriptorが外部から変更されたときのコールバックです
+
+
+```Javascript 
+
+descriptor.onwritefromremote = function(val){
+    console.log("remote address :",val.address);
+    console.log("remote data :",val.data);
+}
+
+```
+
+## descriptor.onreadfromremote(data)
+descriptorが外部からよまれたときのコールバックです
+
+```Javascript 
+
+descriptor.onreadfromremote = function(val){
+    console.log("remote address :",val.address);	
+}
+
+```
+
 
 # obnizをcentralとして使う
 

@@ -68,6 +68,13 @@ BlePeripheral.prototype.findDescriptor = function(param){
   
 };
 
+
+BlePeripheral.prototype.end = function(){
+  
+  this.Obniz.send({ble:{peripheral:null}});
+  
+};
+
 /**
  * 
  * @param {type} rawData
@@ -155,12 +162,12 @@ BleCharacteristic.prototype.write = function(data){
   if(!Array.isArray(data)){
     data = [data];
   }
-  this.characteristic.server.peripheral.Obniz.send(
+  this.service.peripheral.Obniz.send(
       {
         ble : {
         peripheral: {
           write_characteristic: {
-            service_uuid: this.server.uuid.toLowerCase() ,
+            service_uuid: this.service.uuid.toLowerCase() ,
             characteristic_uuid: this.uuid.toLowerCase() ,
             data: data
           }
@@ -172,12 +179,12 @@ BleCharacteristic.prototype.write = function(data){
 
 BleCharacteristic.prototype.read = function(){
   
-  this.characteristic.server.peripheral.Obniz.send(
+  this.service.peripheral.Obniz.send(
       {
         ble : {
         peripheral: {
           read_characteristic: {
-            service_uuid: this.server.uuid.toLowerCase() ,
+            service_uuid: this.service.uuid.toLowerCase() ,
             characteristic_uuid: this.uuid.toLowerCase() ,
           }
         }
@@ -244,12 +251,12 @@ BleDescriptor.prototype.write = function(data){
   if(!Array.isArray(data)){
     data = [data];
   }
-  this.characteristic.server.peripheral.Obniz.send(
+  this.characteristic.service.peripheral.Obniz.send(
       {
         ble : {
         peripheral: {
           write_descriptor: {
-            service_uuid: this.characteristic.server.uuid.toLowerCase() ,
+            service_uuid: this.characteristic.service.uuid.toLowerCase() ,
             characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
             descriptor_uuid: this.uuid,
             data: data
@@ -262,12 +269,12 @@ BleDescriptor.prototype.write = function(data){
 
 BleDescriptor.prototype.read = function(){
   
-  this.characteristic.server.peripheral.Obniz.send(
+  this.characteristic.service.peripheral.Obniz.send(
       {
         ble : {
         peripheral: {
           read_descriptor: {
-            service_uuid: this.characteristic.server.uuid.toLowerCase() ,
+            service_uuid: this.characteristic.service.uuid.toLowerCase() ,
             characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
             descriptor_uuid: this.uuid
           }

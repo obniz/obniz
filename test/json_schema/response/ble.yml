@@ -122,6 +122,124 @@ properties:
                 result : 
                     type : string
                     enum : [success , failed]
+                    
+    peripheral:
+        type : object 
+        additionalProperties: false
+        properties:
+            connection_status : 
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [address, status]
+                    additionalProperties: false
+                    properties:
+                        address : {$ref :deviceAddress}
+                        status : 
+                            type : string
+                            enum : [connected , disconnected]
+            write_characteristic_results :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [service_uuid, characteristic_uuid, result]
+                    additionalProperties: false
+                    properties:
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+                        result : 
+                            type : string
+                            enum : [success , failed]
+                            
+            read_characteristic_results :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [service_uuid, characteristic_uuid, data]
+                    additionalProperties: false
+                    properties:
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+                        data : {$ref :#detaArray}
+            notify_write_characteristics :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [address,service_uuid, characteristic_uuid, data]
+                    additionalProperties: false
+                    properties:
+                        address : {$ref :deviceAddress}
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+                        data : {$ref :#detaArray}
+            notify_read_characteristics :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [address,service_uuid, characteristic_uuid]
+                    additionalProperties: false
+                    properties:
+                        address : {$ref :deviceAddress}
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+
+            write_descriptor_results :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [service_uuid, characteristic_uuid,descriptor_uuid,  result]
+                    additionalProperties: false
+                    properties:
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+                        descriptor_uuid : {$ref :uuid}
+                        result : 
+                            type : string
+                            enum : [success , failed]
+                            
+            read_descriptor_results :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [service_uuid, characteristic_uuid,descriptor_uuid,  data]
+                    additionalProperties: false
+                    properties:
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+                        descriptor_uuid : {$ref :uuid}
+                        data : {$ref :#detaArray}
+            notify_write_descriptors :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [address,service_uuid, characteristic_uuid,descriptor_uuid,  data]
+                    additionalProperties: false
+                    properties:
+                        address : {$ref :deviceAddress}
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+                        descriptor_uuid : {$ref :uuid}
+                        data : {$ref :#detaArray}
+            notify_read_descriptors :
+                type : array
+                minItems : 1
+                items :
+                    type : object 
+                    required: [address,service_uuid, characteristic_uuid,descriptor_uuid]
+                    additionalProperties: false
+                    properties:
+                        address : {$ref :deviceAddress}
+                        service_uuid : {$ref :uuid}
+                        characteristic_uuid : {$ref :uuid}
+                        descriptor_uuid : {$ref :uuid}
 
     errors : 
         type : array
@@ -140,4 +258,6 @@ properties:
                 service_uuid : 
                     type : [{$ref :uuid} , "null"]
                 characteristic_uuid : 
+                    type : [{$ref :uuid} , "null"]
+                descriptor_uuid : 
                     type : [{$ref :uuid} , "null"]

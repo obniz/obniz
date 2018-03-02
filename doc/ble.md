@@ -112,6 +112,257 @@ Json parameters are here.．
 ```
 
 
+## peripheral.addService(setting_json or service_obj)
+
+start as peripheral with setting_json or service_obj.
+
+setting_json
+```Javascript
+var setting = {
+    "uuid" : "FFF0",
+    "characteristics" : [{
+      "uuid" : "FFF1",
+      "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
+      "descriptors" : [{
+        "uuid" : "2901",   //Characteristic User Description
+        "text" : "hello wrold characteristic", //data for dataArray or  text for string
+      }]
+    }]
+};
+obniz.ble.peripheral.addService(setting);
+
+
+```
+
+service_obj
+```Javascript
+    var service = new obniz.ble.service({"uuid" : "FFF0"});
+    var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+    var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
+
+    service.addCharacteristic(characteristic);
+    characteristic.addDescriptor(descriptor);
+
+    obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
+
+
+```
+
+
+## peripheral.onconnectionupdates
+
+callback of external device connect / disconnect
+    
+```Javascript
+obniz.ble.peripheral.onconnectionupdates = function(data){
+  console.log("remote device ", data.address, data.status)
+};
+
+```
+
+## peripheral.end()
+
+end peripheral
+```Javascript
+
+obniz.ble.peripheral.addService(setting);
+
+
+obniz.ble.peripheral.end();
+
+```
+
+
+## new service(json)
+
+create service object
+uuid is required and characteristics is optional.
+
+```Javascript
+    var service = new obniz.ble.service({
+                  "uuid" : "FFF0",
+                  "characteristics" : [{
+                    "uuid" : "FFF1",
+                    "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
+                    "descriptors" : [{
+                      "uuid" : "2901",   //Characteristic User Description
+                      "text" : "hello wrold characteristic", //data for dataArray or  text for string
+                    }]
+                  }]
+              });
+    obniz.ble.peripheral.addService(service); 
+```
+
+
+
+
+## new characteristic(json)
+
+```Javascript
+    var characteristic = new obniz.ble.characteristic({
+                    "uuid" : "FFF1",
+                    "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+                    "descriptors" : [{
+                      "uuid" : "2901",   //Characteristic User Description
+                      "text" : "hello wrold characteristic",    //data for dataArray or  text for string
+                    }]
+                  });
+
+var service = new obniz.ble.service({
+                  "uuid" : "FFF0",
+                  "characteristics" : [ characteristic ]
+});
+obniz.ble.peripheral.addService(service); 
+   
+```
+
+## characteristic.write(data)
+write data on characteristic
+
+## characteristic.onwrite(data)
+callback of characteristic.wite
+
+
+```Javascript 
+
+characteristic.write([0xf0,0x27]);
+characteristic.onwrite = function(val){
+    console.log("write :",val.result);
+}
+
+
+```
+
+## characteristic.read(data)
+read data on characteristic
+
+## characteristic.onread(data)
+callback of characteristic.read
+
+```Javascript 
+
+characteristic.read();
+characteristic.onread = function(val){
+    console.log("read data :",val.data);
+}
+
+
+```
+
+## characteristic.onwritefromremote(data)
+callback of characteristic written by external device
+
+
+```Javascript 
+
+characteristic.onwritefromremote = function(val){
+    console.log("remote address :",val.address);
+    console.log("remote data :",val.data);
+}
+
+```
+
+## characteristic.onreadfromremote(data)
+callback of characteristic read by external device
+
+```Javascript 
+
+characteristic.onreadfromremote = function(val){
+    console.log("remote address :",val.address);	
+}
+
+```
+
+
+
+
+## new descriptor(json)
+
+```Javascript
+var descriptor = new obniz.ble.characteristic({
+                      "uuid" : "2901",   //Characteristic User Description
+                      "text" : "hello wrold characteristic",
+                  });
+
+var characteristic = new obniz.ble.characteristic({
+                    "uuid" : "FFF1",
+                    "text" : "Hi",
+                    "descriptors" : [ descriptor ]
+                  });
+
+var service = new obniz.ble.service({
+                  "uuid" : "FFF0",
+                  "characteristics" : [ characteristic ]
+});
+obniz.ble.peripheral.addService(service); 
+   
+```
+
+
+## descriptor.write(data)
+write on descriptor
+
+## descriptor.onwrite(data)
+callback of descriptor.wite
+
+
+
+```Javascript 
+
+descriptor.write([0xf0,0x27]);
+descriptor.onwrite = function(val){
+    console.log("write :",val.result);
+}
+
+
+```
+
+
+## descriptor.read(data)
+read data on descriptor
+
+## descriptor.onread(data)
+callback of descriptor.read
+
+
+```Javascript 
+
+descriptor.read();
+descriptor.onread = function(val){
+    console.log("read data :",val.data);
+}
+
+
+```
+
+## descriptor.onwritefromremote(data)
+
+callback of descriptor written by external device
+
+
+```Javascript 
+
+descriptor.onwritefromremote = function(val){
+    console.log("remote address :",val.address);
+    console.log("remote data :",val.data);
+}
+
+```
+
+## descriptor.onreadfromremote(data)
+callback of descriptor read by external device
+
+```Javascript 
+
+descriptor.onreadfromremote = function(val){
+    console.log("remote address :",val.address);	
+}
+
+```
+
+
+
+
 # Use obniz as central
 
 ## startScan([setting])

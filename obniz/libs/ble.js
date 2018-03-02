@@ -145,8 +145,8 @@ Ble.prototype.dataBuliderPrototype = function(){
     }
     
     var data = [];
-    for (var i = 0; i < uuidNumeric.length; i += 2) {
-      data.push(parseInt(uuidNumeric[i] + uuidNumeric[i + 1], 16));
+    for (var i = uuidNumeric.length; i > 1 ; i -= 2) {
+      data.push(parseInt(uuidNumeric[i-2] + uuidNumeric[i - 1], 16));
     }
     return data;
   };
