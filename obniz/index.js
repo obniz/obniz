@@ -32,6 +32,7 @@ var Obniz = function (id, options) {
   //   return;
   // }
   this.server_obnizio = options.obniz_server || "wss://obniz.io";
+  this._access_token = options.access_token;
   this.wsconnect();
 };
 
@@ -157,6 +158,12 @@ Obniz.prototype.wsconnect = function (desired_server) {
     this.clearSocket(this.socket);
   }
   var url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
+  if (_obniz_js_version) {
+    url+="?obnizjs="+_obniz_js_version;
+  }
+  if (this._access_token) {
+    url += "&access_token="+this._access_token;
+  }
   this.print_debug("connecting to " + url);
 
   if (this.isNode) {
@@ -564,6 +571,39 @@ var PartsRegistrate = function (name, obj) {
 var Parts = function (name) {
   return new _parts[name]();
 };
+
+if (!isNode) {
+
+  if(window && window.parent && window.parent.userAppLoaded){
+    window.parent.userAppLoaded(window);
+  }
+
+  function showOnLine() {
+    if (typeof jQuery !== 'undefined') {
+      $('#loader').hide();
+      if ($('#obniz-debug #online-status').length == 0) {
+        $('#obniz-debug').prepend('<div id="online-status"></div>')
+      }
+      $('#online-status').text('online');
+      $('#online-status').css({ "background-color" : "#449d44","color":"#FFF", "padding":"5px","text-align": "center" });
+    }
+  }
+  function showOffLine() {
+    if (typeof jQuery !== 'undefined') {
+      $('#loader').show();
+      if ($('#obniz-debug #online-status').length == 0) {
+        $('#obniz-debug').prepend('<div id="online-status"></div>')
+      }
+      $('#online-status').text('offline');
+      $('#online-status').css({ "background-color" : "#d9534f","color":"#FFF", "padding":"5px","text-align": "center" });
+    }
+  }
+  function showObnizDebugError(err) {
+    if(window.parent && window.parent.logger){
+      window.parent.logger.addErrorObject(err);
+    }else{ throw err; };
+  }
+}
 
 /*===================*/
 /* Export */

@@ -2,6 +2,7 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
+var _obniz_js_version = "0.1.23";
 /* global showObnizDebugError */
 
 var isNode = typeof window === 'undefined' ? true : false;
@@ -35,6 +36,7 @@ var Obniz = function (id, options) {
   //   return;
   // }
   this.server_obnizio = options.obniz_server || "wss://obniz.io";
+  this._access_token = options.access_token;
   this.wsconnect();
 };
 
@@ -157,6 +159,12 @@ Obniz.prototype.wsconnect = function (desired_server) {
     this.clearSocket(this.socket);
   }
   var url = server + "/obniz/" + this.id + "/ws/" + this.apiversion;
+  if (_obniz_js_version) {
+    url += "?obnizjs=" + _obniz_js_version;
+  }
+  if (this._access_token) {
+    url += "&access_token=" + this._access_token;
+  }
   this.print_debug("connecting to " + url);
 
   if (this.isNode) {
@@ -593,6 +601,41 @@ var PartsRegistrate = function (name, obj) {
 var Parts = function (name) {
   return new _parts[name]();
 };
+
+if (!isNode) {
+
+  if (window && window.parent && window.parent.userAppLoaded) {
+    window.parent.userAppLoaded(window);
+  }
+
+  function showOnLine() {
+    if (typeof jQuery !== 'undefined') {
+      $('#loader').hide();
+      if ($('#obniz-debug #online-status').length == 0) {
+        $('#obniz-debug').prepend('<div id="online-status"></div>');
+      }
+      $('#online-status').text('online');
+      $('#online-status').css({ "background-color": "#449d44", "color": "#FFF", "padding": "5px", "text-align": "center" });
+    }
+  }
+  function showOffLine() {
+    if (typeof jQuery !== 'undefined') {
+      $('#loader').show();
+      if ($('#obniz-debug #online-status').length == 0) {
+        $('#obniz-debug').prepend('<div id="online-status"></div>');
+      }
+      $('#online-status').text('offline');
+      $('#online-status').css({ "background-color": "#d9534f", "color": "#FFF", "padding": "5px", "text-align": "center" });
+    }
+  }
+  function showObnizDebugError(err) {
+    if (window.parent && window.parent.logger) {
+      window.parent.logger.addErrorObject(err);
+    } else {
+      throw err;
+    };
+  }
+}
 
 /*===================*/
 /* Export */
@@ -4549,23 +4592,33 @@ ServoMotor.prototype.off = function () {
 if (PartsRegistrate) {
   PartsRegistrate("ServoMotor", ServoMotor);
 }
-var Speaker = function () {
-  this.keys = ["signal", "gnd"];
-  this.requiredKeys = ["gnd"];
-};
+class Speaker {
 
-Speaker.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(null, this.params.gnd, "5v");
-  this.pwm = obniz.getFreePwm();
-  this.pwm.start(this.params.signal);
-};
+  constructor(obniz) {
+    this.keys = ["signal", "gnd"];
+    this.requiredKeys = ["gnd"];
+  }
 
-// Module functions
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(null, this.params.gnd, "5v");
+    this.pwm = obniz.getFreePwm();
+    this.pwm.start(this.params.signal);
+  }
 
-Speaker.prototype.freq = function (freq) {
-  this.pwm.freq(freq);
-  this.pwm.pulse(1 / freq / 2 * 1000);
-};
+  play(freq) {
+    if (freq > 0) {
+      this.pwm.freq(freq);
+      this.pwm.pulse(1 / freq / 2 * 1000);
+    } else {
+      this.pwm.pulse(0);
+    }
+  }
+
+  stop() {
+    this.play(0);
+  }
+}
 
 if (PartsRegistrate) {
   PartsRegistrate("Speaker", Speaker);
