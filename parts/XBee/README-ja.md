@@ -9,7 +9,7 @@ XBeeはVCCとGNDが必要なので，それは別で用意する必要があり�
 
 この画像のように配線したのであれば，下のように書きます．
 ![photo of wired XBee](./xbee.png)
-```
+```javascript
 obniz.io11.output(true);
 obniz.io8.output(false);
    
@@ -20,7 +20,7 @@ obniz.wired("XBee", {tx:9,rx:10});
 ## await configWait(json)
 
 XBeeを設定します．設定に３秒程度かかるため，"await" をつけて使用して下さい．
-```
+```javascript
 await xbee.configWait({
    	"destination_address" : "52",
    	"source_address" : "51",
@@ -29,7 +29,7 @@ await xbee.configWait({
 
 設定Jsonの書き方は下のようになります
 
-``
+```javascript
 {
   "destination_address" : "5A",     // 送信先アドレスの16進数の文字列   ( 0 ~ FFFFFFFFFFFFFFFF)
                                     // 0x000000000000FFFF を設定するとブロードキャストになります
@@ -61,7 +61,7 @@ dataで送れるものは
 
 もし設定が完了していない段階で呼ばれた場合，エラーになります.
 
-```
+```javascript
 // Example
 xbee.send("Hi");
 xbee.send(0x11);
@@ -75,7 +75,7 @@ xbee.send({success: true});
 第一引数のdataは受信したデータをarrayとして受け取れます。
 第二引数のtextは受信したarrayをtextとして変換したものです。
 
-```
+```javascript
 xbee.onreceive = function(data, text) {
     console.log("recieved : " + text);
 }
