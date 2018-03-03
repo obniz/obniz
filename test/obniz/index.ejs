@@ -27,22 +27,20 @@
       });
 
     describe('browser', () => {
-      it("instance", function () {
-          
-         sinon.stub(Obniz.prototype, 'error');
-         var obniz = new Obniz('OBNIZ_ID')
-         expect(obniz).to.be.instanceOf(Obniz);
-         sinon.assert.calledOnce(Obniz.prototype.error);
-         sinon.assert.calledWith(Obniz.prototype.error, "invalid obniz id");
-         Obniz.prototype.error.restore(); // Unwraps the spy
-      });
+        it("instance", function () {
+            sinon.stub(Obniz.prototype, 'prompt');
+            var obniz = new Obniz('OBNIZ_ID')
+            expect(obniz).to.be.instanceOf(Obniz);
+            sinon.assert.calledOnce(Obniz.prototype.prompt);
+            Obniz.prototype.prompt.restore(); // Unwraps the spy
+        });
       
-       it("connect", function () {
-          var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:<%= port1 %>"});
-          expect(obniz).to.be.instanceOf(Obniz);
-          var count = 100;
-          return new Promise(function(resolve,reject){
-              function loop(){
+        it("connect", function () {
+            var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:<%= port1 %>"});
+            expect(obniz).to.be.instanceOf(Obniz);
+            var count = 100;
+            return new Promise(function(resolve,reject){
+                function loop(){
                 if(obniz.socket && obniz.socket.readyState === 1){ // OPEN
                     return resolve();
                 };
@@ -52,9 +50,9 @@
                 }else{
                     return reject("connection timeout error");
                 }
-              };
-              loop();
-          });
+                };
+                loop();
+            });
       });
       it("soft_redirect", function () {
           var obniz = new Obniz('11111111',{obniz_server: "ws://localhost:<%= port2 %>"});

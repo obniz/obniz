@@ -30,7 +30,7 @@ var Obniz = function (id, options) {
 
   if (!this.isValidObnizId(this.id)) {
     if (isNode) {
-      this.error("Invalid Obniz ID " + this.id);
+      this.error("invalid obniz id");
     } else {
       var filled = _ReadCookie("obniz-last-used") || "";
       this.prompt(filled, function (obnizid) {
