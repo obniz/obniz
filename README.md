@@ -6,42 +6,73 @@
 
 This is [obniz](https://obniz.io/) sdk for javascript.
 
-This document available on our site [https://obniz.io/doc/sdk/doc/README](https://obniz.io/doc/sdk/doc/README)
+
+## Documentation
+You can find the React documentation on [the website](https://obniz.io/doc/sdk/doc/README).
 
 ## install
 
-### on browser
-
-Include index.js
+### Browser
+include from unpkg.com
 ```html
-  <script src="https://obniz.io/sdk/obniz.js"></script>
+  <script src="https://unpkg.com/obniz/obniz.js"></script>
 ```
-### on nodejs
-Install obniz
+### Nodejs
+with npm do:
 ```shell
   npm install obniz
 ```
-and import it on js file.
+import it on your js like:
 ```javascript
   const Obniz = require('obniz');
 ```
 
-## connect and use hardwares
-To use obniz, instantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
-```javascript
+## Example
+We have several examples on [the website](https://obniz.io/doc/sdk/doc/README). Here is the first one to get you started:
+```html
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+  <script src="https://unpkg.com/obniz/obniz.js"></script>
+</head>
+<body>
+
+<input id="text">
+<button id="send">send</button>
+
+<script>
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
+    // embed parts
     obniz.display.print("hello!");
-    
-    obniz.io0.drive("5v")
-    obniz.io0.output(true)
-    obniz.io1.pull("3v");
-    obniz.io1.drive("open-drain");
-    obniz.io1.output(false);
+    obniz.switch.onchange = function(state) {
+      $('body').css({
+        "background-color" : (state == "push") ? "#F00" : "#FFF"
+        });
+    }
 
+    // parts library
     var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
     servo.angle(90);
+    
+    // peripherals
+    var uart = obniz.getFreeUart();
+    uart.start({tx: 5, rx: 6, baud:9600});  
+    
+    $('#send').click(function () {
+      uart.send($("#text").val());
+    });
+
+    obniz.io7.drive("5v")
+    obniz.io7.output(true)
+    obniz.io8.pull("3v");
+    obniz.io8.drive("open-drain");
+    obniz.io8.output(false);
   }
+</script>
+</body>
+</html>
 ```
 
 See more details on [https://obniz.io/doc/sdk/doc/README](https://obniz.io/doc/sdk/doc/README)

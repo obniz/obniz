@@ -18,27 +18,40 @@ var Obniz = function (id, options) {
 
   this.init();
 
-  if (!options)
+  if (!options) {
     options = {};
-  if (("" + id).indexOf("OBNIZ") >= 0) {
-    this.error("invalid obniz id");
-    return;
   }
-  // if (isNode == false && (!id || id === "OBNIZ ID HERE")) {
-  //   var self = this;
-  //   this.prompt(function(obnizid){
-  //     self.id = obnizid;
-  //     self.wsconnect(options.obniz_server);
-  //   })
-  //   return;
-  // }
   this.server_obnizio = options.obniz_server || "wss://obniz.io";
   this._access_token = options.access_token;
+
+  if (!this.isValidObnizId(this.id)) {
+    if (isNode)  {
+      this.error("Invalid Obniz ID " + this.id)
+    } else {
+      var filled = _ReadCookie("obniz-last-used") || "";
+      this.prompt(filled , function(obnizid){
+        this.id = obnizid;
+        this.wsconnect();
+      }.bind(this))
+    }
+    return;
+  }
   this.wsconnect();
 };
 
-Obniz.prototype.prompt = function (callback) {
-  var obnizid = prompt("Please enter obniz id", "");
+Obniz.prototype.isValidObnizId = function(str) {
+  if (typeof str != "string" || str.length < 8) {
+    return null;
+  }
+  str = str.replace("-", "");
+  var id = parseInt(str);
+  if (isNaN(id))
+    id = null;
+  return id != null;
+}
+
+Obniz.prototype.prompt = function (filled, callback) {
+  var obnizid = prompt("Please enter obniz id", filled);
   if (!obnizid) {
   } else {
     callback(obnizid);
@@ -160,7 +173,7 @@ Obniz.prototype.wsconnect = function (desired_server) {
   }
   var url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
   if (_obniz_js_version) {
-    url+="?obnizjs="+_obniz_js_version;
+    url += "?obnizjs="+_obniz_js_version;
   }
   if (this._access_token) {
     url += "&access_token="+this._access_token;
@@ -558,6 +571,21 @@ Obniz.prototype.showAlertUI = function(obj) {
     ${ obj.alert == "warning" ? dismissButton : ""}
   </div>`;
   document.getElementById('obniz-debug').insertAdjacentHTML('beforeend', dom);
+}
+
+function _ReadCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+      var c = ca[i];
+      while (c.charAt(0) === ' ') {
+          c = c.substring(1,c.length);
+      }
+      if (c.indexOf(nameEQ) === 0) {
+          return c.substring(nameEQ.length,c.length);
+      }
+  }
+  return null;
 }
 
 /*===================*/

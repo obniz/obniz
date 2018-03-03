@@ -7,7 +7,7 @@ obnizをbrowser/nodejsのjavascriptから。
 
 index.jsを読み込みます。
 ```html
-  <script src="https://obniz.io/sdk/obniz.js"></script>
+  <script src="https://unpkg.com/obniz/obniz.js"></script>
 ```
 ### nodejs
 Install obniz
@@ -103,7 +103,7 @@ HTML上のUIとハードウェアの連携も簡単です。
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
-<script src="https://obniz.io/sdk/obniz.js"></script>
+<script src="https://unpkg.com/obniz/obniz.js"></script>
 <script>
 var obniz = new Obniz("0000-0000");
 obniz.onconnect = async function () {

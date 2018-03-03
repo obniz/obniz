@@ -4,6 +4,7 @@ It is build result.
 index.js is made from two js files
 ```
   obniz/index.js  
+  obniz/libs/*.js  
   parts/*/index.js  
 ```
 To update, you should edit these js files. Not index.js on root directory.
@@ -18,7 +19,11 @@ After cloning. You are able to launch local server
  node _tools/server.js
 ```
 Then, http://localhost:3100/obniz.js is accessible.
-In obniz.io program page. add ```&obnizjs=local``` to queries.
-It will load obniz js from http://localhost:3100/obniz.js
+In obniz.io program page.
+
+Include it like:
+```html
+<script src="http://localhost:3100/obniz.js"></script>
+```
 
 When you make something changed, server.js will generate index.js automatically.
