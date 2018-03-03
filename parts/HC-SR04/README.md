@@ -1,7 +1,6 @@
 # HC-SR04
 Ultrasonic Distance Measurement Unit.
 
-Sample Program on CodePen
 
 ## wired(obniz, {vcc, triger, echo, gnd})
 

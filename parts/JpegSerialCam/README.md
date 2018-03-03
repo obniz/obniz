@@ -8,9 +8,6 @@ await cam.startwait();
 var imagedata = await cam.takewait();
 ```
 
-<p data-height="494" data-theme-id="32184" data-slug-hash="jZMNBQ" data-default-tab="js,result" data-user="obniz" data-embed-version="2" data-pen-title="Parts: JpegSerialCam" class="codepen">See the Pen <a href="https://codepen.io/obniz/pen/jZMNBQ/">Parts: JpegSerialCam</a> by obniz (<a href="https://codepen.io/obniz">@obniz</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
-
 ## wire(obniz, {vcc, cam_tx, cam_rx, gnd})
 connect PowerSupply and UART.
 cam_tx measn transmit from camera.
