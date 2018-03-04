@@ -169,7 +169,7 @@ obniz.ble.peripheral.onconnectionupdates = function(data){
 
 ## peripheral.end()
 
-speripheralのサービスを終了します
+peripheralのサービスを終了します
 ```Javascript
 
 obniz.ble.peripheral.addService(setting);
