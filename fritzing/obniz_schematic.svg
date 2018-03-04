@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 51 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+    <g id="schematic">
+        <g transform="matrix(1,0,0,0.520065,0,0.136941)">
+            <rect x="14.4" y="0.45" width="21.15" height="92.7" style="fill:none;stroke:black;stroke-width:0.9px;"/>
+        </g>
+        <g id="label" transform="matrix(1,0,0,1,25.2,25.9366)">
+            <text x="-5.251px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;">obniz</text>
+        </g>
+        <g transform="matrix(1,0,0,1,0,-0.0790299)">
+            <path d="M0.35,7.2L14.4,7.2" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector0pin" transform="matrix(1,0,0,1,0,-0.0790299)">
+            <rect x="0" y="6.85" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label0" transform="matrix(1,0,0,1,15.8,7.82095)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">0</text>
+        </g>
+        <g transform="matrix(1,0,0,1,7.2,6.07097)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">0</text>
+        </g>
+        <g transform="matrix(1,0,0,1,0,-0.0790299)">
+            <path d="M0.35,14.4L14.4,14.4" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector1pin" transform="matrix(1,0,0,1,0,-0.0790299)">
+            <rect x="0" y="14.05" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label1" transform="matrix(1,0,0,1,15.8,15.021)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">1</text>
+        </g>
+        <g transform="matrix(1,0,0,1,7.2,13.271)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">1</text>
+        </g>
+        <g transform="matrix(1,0,0,1,0,-0.0790299)">
+            <path d="M0.35,21.6L14.4,21.6" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector2pin" transform="matrix(1,0,0,1,0,-0.0790299)">
+            <rect x="0" y="21.25" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label2" transform="matrix(1,0,0,1,15.8,22.221)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">2</text>
+        </g>
+        <g transform="matrix(1,0,0,1,7.2,20.471)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">2</text>
+        </g>
+        <g transform="matrix(1,0,0,1,0,-0.0790299)">
+            <path d="M0.35,28.8L14.4,28.8" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector3pin" transform="matrix(1,0,0,1,0,-0.0790299)">
+            <rect x="0" y="28.45" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label3" transform="matrix(1,0,0,1,15.8,29.421)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">3</text>
+        </g>
+        <g transform="matrix(1,0,0,1,7.2,27.671)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">3</text>
+        </g>
+        <g transform="matrix(1,0,0,1,0,-0.0790299)">
+            <path d="M0.35,36L14.4,36" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector4pin" transform="matrix(1,0,0,1,0,-0.0790299)">
+            <rect x="0" y="35.65" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label4" transform="matrix(1,0,0,1,15.8,36.621)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">4</text>
+        </g>
+        <g transform="matrix(1,0,0,1,7.2,34.871)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">4</text>
+        </g>
+        <g transform="matrix(1,0,0,1,0,-0.0790299)">
+            <path d="M0.35,43.2L14.4,43.2" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector5pin" transform="matrix(1,0,0,1,0,-0.0790299)">
+            <rect x="0" y="42.85" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label5" transform="matrix(1,0,0,1,15.8,43.821)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">5</text>
+        </g>
+        <g transform="matrix(1,0,0,1,7.2,42.071)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">5</text>
+        </g>
+        <g transform="matrix(-1,0,0,1,50.2114,-6.9634)">
+            <path d="M0.35,50.4L14.4,50.4" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector6pin" transform="matrix(-1,0,0,1,50.2114,-6.9634)">
+            <rect x="0" y="50.05" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label6" transform="matrix(1,0,0,1,31.9389,44.0709)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">6</text>
+        </g>
+        <g transform="matrix(1,0,0,1,42.7928,42.3866)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">6</text>
+        </g>
+        <g transform="matrix(-1,0,0,1,50.2114,-21.317)">
+            <path d="M0.35,57.6L14.4,57.6" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector7pin" transform="matrix(-1,0,0,1,50.2114,-21.317)">
+            <rect x="0" y="57.25" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label7" transform="matrix(1,0,0,1,31.9389,36.8726)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">7</text>
+        </g>
+        <g transform="matrix(1,0,0,1,42.7928,35.233)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">7</text>
+        </g>
+        <g transform="matrix(-1,0,0,1,50.2114,-35.7182)">
+            <path d="M0.35,64.8L14.4,64.8" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector8pin" transform="matrix(-1,0,0,1,50.2114,-35.7182)">
+            <rect x="0" y="64.45" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label8" transform="matrix(1,0,0,1,31.9389,29.6709)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">8</text>
+        </g>
+        <g transform="matrix(1,0,0,1,42.7928,28.0318)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">8</text>
+        </g>
+        <g transform="matrix(-1,0,0,1,50.2114,-50.1182)">
+            <path d="M0.35,72L14.4,72" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector9pin" transform="matrix(-1,0,0,1,50.2114,-50.1182)">
+            <rect x="0" y="71.65" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label9" transform="matrix(1,0,0,1,31.9409,22.4711)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">9</text>
+        </g>
+        <g transform="matrix(1,0,0,1,42.7928,20.8318)">
+            <text x="-0.75px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">9</text>
+        </g>
+        <g transform="matrix(-1,0,0,1,50.2114,-64.5185)">
+            <path d="M0.35,79.2L14.4,79.2" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector10pin" transform="matrix(-1,0,0,1,50.2114,-64.5185)">
+            <rect x="0" y="78.85" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label10" transform="matrix(1,0,0,1,29.9389,15.3343)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">10</text>
+        </g>
+        <g transform="matrix(1,0,0,1,42.7928,13.6317)">
+            <text x="-1.5px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">10</text>
+        </g>
+        <g transform="matrix(-1,0,0,1,50.2114,-78.9185)">
+            <path d="M0.35,86.4L14.4,86.4" style="fill:none;stroke:rgb(120,120,120);stroke-width:0.7px;"/>
+        </g>
+        <g id="connector11pin" transform="matrix(-1,0,0,1,50.2114,-78.9185)">
+            <rect x="0" y="86.05" width="14.4" height="0.7" style="fill:none;"/>
+        </g>
+        <g id="label11" transform="matrix(1,0,0,1,29.9389,8.13433)">
+            <text x="0px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:3.5px;fill:rgb(140,140,140);">11</text>
+        </g>
+        <g transform="matrix(1,0,0,1,42.7928,6.43167)">
+            <text x="-1.5px" y="0px" style="font-family:'DroidSansMono', 'Droid Sans Mono', monospace;font-size:2.5px;fill:rgb(140,140,140);">11</text>
+        </g>
+    </g>
+</svg>

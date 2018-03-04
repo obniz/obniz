@@ -140,7 +140,7 @@ var obnizA = new Obniz("0000-0000");
 obnizA.onconnect = async function () {
   var obnizB = new Obniz("0000-0001");
   obnizB.onconnect = async function(){
-    var meter = obnizA.wired("PotentionMeter", 0, 1, 2);
+    var meter = obnizA.wired("Potentiometer", 0, 1, 2);
     var servo = obnizB.wired("ServoMotor", 0, 1, 2);
     meter.onchange = function(position) {
       servo.angle(position * 180);

@@ -13,7 +13,7 @@ You can build index.js by using _tools/server.js.
 ## Development
 Clone this and use this from your HTML.
 After cloning. You are able to launch local server
-
+  
 ```shell
  cd ./
  node _tools/server.js

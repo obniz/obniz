@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg  x='0in' y='0in' width='0.42in' height='0.62in' viewBox="0 0 31 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g id="copper0">
+        <circle id="connector0pin" cx="4.32" cy="4.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector11pin" cx="25.92" cy="4.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector1pin" cx="4.32" cy="11.52" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector10pin" cx="25.92" cy="11.52" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector2pin" cx="4.32" cy="18.72" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector9pin" cx="25.92" cy="18.72" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector3pin" cx="4.32" cy="25.92" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector8pin" cx="25.92" cy="25.92" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector4pin" cx="4.32" cy="33.12" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector7pin" cx="25.92" cy="33.12" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector5pin" cx="4.32" cy="40.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector6pin" cx="25.92" cy="40.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+    </g>
+    <g id="copper01" serif:id="copper0">
+        <circle id="connector0pin1" serif:id="connector0pin" cx="4.32" cy="4.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector11pin1" serif:id="connector11pin" cx="25.92" cy="4.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector1pin1" serif:id="connector1pin" cx="4.32" cy="11.52" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector10pin1" serif:id="connector10pin" cx="25.92" cy="11.52" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector2pin1" serif:id="connector2pin" cx="4.32" cy="18.72" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector9pin1" serif:id="connector9pin" cx="25.92" cy="18.72" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector3pin1" serif:id="connector3pin" cx="4.32" cy="25.92" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector8pin1" serif:id="connector8pin" cx="25.92" cy="25.92" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector4pin1" serif:id="connector4pin" cx="4.32" cy="33.12" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector7pin1" serif:id="connector7pin" cx="25.92" cy="33.12" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector5pin1" serif:id="connector5pin" cx="4.32" cy="40.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+        <circle id="connector6pin1" serif:id="connector6pin" cx="25.92" cy="40.32" r="1.98" style="fill:none;stroke:rgb(255,191,0);stroke-width:1.44px;"/>
+    </g>
+    <g id="silkscreen">
+        <path d="M0.72,0.72L0.72,43.92" style="fill-rule:nonzero;stroke:white;stroke-width:0.72px;"/>
+        <path d="M0.72,43.92L29.52,43.92" style="fill-rule:nonzero;stroke:white;stroke-width:0.72px;"/>
+        <path d="M29.52,43.92L29.52,0.72" style="fill-rule:nonzero;stroke:white;stroke-width:0.72px;"/>
+        <path d="M0.72,0.72L11.52,0.72" style="fill-rule:nonzero;stroke:white;stroke-width:0.72px;"/>
+        <path d="M18.72,0.72L29.52,0.72" style="fill-rule:nonzero;stroke:white;stroke-width:0.72px;"/>
+    </g>
+</svg>

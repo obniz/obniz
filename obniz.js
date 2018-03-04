@@ -2789,280 +2789,72 @@ class ObnizUtil {
     return null;
   }
 }
+class WSCommand {
 
-var _24LC256 = function() {
-  this.requiredKeys = ["address"];
-  this.keys = ["sda","scl","clock","pullType","i2c","address"];
-};
+  constructor() {
 
-_24LC256.prototype.wired = function(obniz) {
-  this.params.mode =  this.params.mode || "master"; //for i2c
-  this.params.clock =  this.params.clock || 400 * 1000; //for i2c
-  this.i2c = obniz.getI2CWithConfig(this.params);
-};
-
-
-
-// Module functions
-
-_24LC256.prototype.set = function(address, data) {
-  var array = [];
-  array.push((address >> 8) & 0xFF);
-  array.push(address & 0xFF);
-  array.push.apply(array, data);
-  this.i2c.write(0x50, array);
-  this.obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
-};
-
-_24LC256.prototype.getWait = async function(address, length) {
-  var array = [];
-  array.push((address >> 8) & 0xFF);
-  array.push(address & 0xFF);
-  this.i2c.write(0x50, array);
-  return await this.i2c.readWait(0x50, length);
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("24LC256", _24LC256);
-};
-var _7SegmentLED = function() {
-  this.requiredKeys = [ "a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
-  this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+  }
   
-  this.digits = [
-    0x3F,
-    0x06,
-    0x5b,
-    0x4f,
-    0x66,
-    0x6d,
-    0x7d,
-    0x07,
-    0x7f,
-    0x6f,
-    0x6f
-  ];
-
-};
-
-_7SegmentLED.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.ios = [];
-  this.ios.push(obniz.getIO(this.params.a));
-  this.ios.push(obniz.getIO(this.params.b));
-  this.ios.push(obniz.getIO(this.params.c));
-  this.ios.push(obniz.getIO(this.params.d));
-  this.ios.push(obniz.getIO(this.params.e));
-  this.ios.push(obniz.getIO(this.params.f));
-  this.ios.push(obniz.getIO(this.params.g));
-
-  this.dp = obniz.getIO(this.params.dp);
-  this.common = obniz.getIO(this.params.common);
-  this.isCathodeCommon = (this.params.commonType === "anode") ? false : true;
-};
-
-_7SegmentLED.prototype.print = function(data) {
-  if (typeof data === "number") {
-    data = parseInt(data);
-    data = data % 10;
-
-    for (let i=0; i<7; i++) {
-      if (this.ios[i]) {
-        var val = (this.digits[data] & (1 << i)) ? true : false;
-        if (!this.isCathodeCommon) {
-          val = ~val;
-        }
-        this.ios[i].output( val );
-      }
+  static framed(module, func, payload) {
+    var payload_length = 0;
+    if (payload) {
+      payload_length = payload.length;
     }
-    this.on();
-  }
-};
-
-_7SegmentLED.prototype.printRaw = function(data) {
-  if (typeof data === "number") {
-    for (let i=0; i<7; i++) {
-      if (this.ios[i]) {
-        var val = (data & (1 << i)) ? true : false;
-        if (!this.isCathodeCommon) {
-          val = !val;
-        }
-        this.ios[i].output( val );
-      }
+    var length_type;
+    if (payload_length <= 0x3F) {
+      length_type = 0;
+    } else if (payload_length <= 0x3FFF) {
+      length_type = 1;
+    } else if (payload_length <= 0x3FFFFFFF) {
+      length_type = 2;
+    } else {
+      logger.error("cant convert to binary. too big payload");
+      return null;
     }
-    this.on();
-  }
-};
-
-_7SegmentLED.prototype.dpShow = function(show) {
-  if (this.dp) {
-    this.dp.output( this.isCathodeCommon ? show : !show);
-  }
-};
-
-_7SegmentLED.prototype.on = function() {
-  this.common.output( this.isCathodeCommon ? false : true);
-};
-
-_7SegmentLED.prototype.off = function() {
-  this.common.output( this.isCathodeCommon ? true : false);
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("7SegmentLED", _7SegmentLED);
-}
-
-var _7SegmentLEDArray = function() {
-  this.identifier = ""+(new Date()).getTime();
-  
-  this.keys = ["seg0", "seg1", "seg2", "seg3"];
-  this.requiredKeys = ["seg0"];
-  
-};
-
-_7SegmentLEDArray.prototype.wired = function(obniz, ) {
-  this.obniz = obniz;
-  
-  this.segments = [];
-  if (this.params.seg0) {
-    this.segments.unshift(this.params.seg0);
-  }
-  if (this.params.seg1) {
-    this.segments.unshift(this.params.seg1);
-  }
-  if (this.params.seg2) {
-    this.segments.unshift(this.params.seg2);
-  }
-  if (this.params.seg3) {
-    this.segments.unshift(this.params.seg3);
-  }
-};
-
-_7SegmentLEDArray.prototype.print = function(data) {
-  if (typeof data === "number") {
-    data = parseInt(data);
-
-    var segments = this.segments;
-    var print = function(index) {
-      let val = data;
-
-      for (let i=0; i<segments.length; i++) {
-        console.log(val);
-        if(index === i) {
-          segments[i].print(val%10);
-        } else {
-          segments[i].off();
-        }
-        val = val/10;
-      }
-    };
-
-    var animations = [];
-    for (let i=0; i<segments.length; i++) {
-      animations.push({
-        duration: 3,
-        state: print
-      });
-    } 
-
-    var segments = this.segments;
-    this.obniz.io.animation(this.identifier, "loop", animations);
-  };
-};
-
-_7SegmentLEDArray.prototype.on = function() {
-  this.obniz.io.animation(this.identifier, "resume");
-};
-
-_7SegmentLEDArray.prototype.off = function() {
-  this.obniz.io.animation(this.identifier, "pause");
-  for (let i=0; i<this.segments.length; i++) {
-    this.segments[i].off();
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
-}
-
-var ADT7310 = function() {
-  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
-  this.requiredKeys = [];
-};
-
-ADT7310.prototype.wired = async function(obniz) {
-  this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  
-
-  this.params.mode = this.params.mode || "master";
-  this.params.frequency = this.params.frequency || 500000;
-  this.params.frequency = this.params.frequency || 500000;
-  this.params.mosi = this.params.din;
-  this.params.miso = this.params.dout;
-  this.spi = this.obniz.getSpiWithConfig(this.params);
-};
-
-  ADT7310.prototype.getTempWait = async function() {
-    await this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-    await this.obniz.wait(200); //適度な値でないと安定しない
-    var ret = await this.spi.writeWait([0x00, 0x00]);
-    var tempBin = ret[0] << 8;
-    tempBin |= ret[1];
-    tempBin = tempBin >> 3;
-
-    if(tempBin & (0x1000)) { //0度以下の時の処理
-      tempBin = tempBin  - 8192;
+    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
+    var header_length = 3 + length_extra_bytse;
+    var result = new Uint8Array(header_length + payload_length);
+    var index = 0;
+    result[index++] = module & 0x7F;
+    result[index++] = func;
+    result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse*8));
+    while(length_extra_bytse > 0) {
+      length_extra_bytse--;
+      result[index++] = payload_length >> (length_extra_bytse*8);
     }
-
-    return (tempBin/16);
-  }
-
-if (PartsRegistrate) {
-  PartsRegistrate("ADT7310", ADT7310);
-}
-
-var ADT7410 = function() {
-  this.keys = [ "vcc", "gnd", "sda", "scl", "addressMode"];
-  this.requiredKey = ["addressMode"];
-};
-
-ADT7410.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  
-  if (this.params.addressMode === 8){
-    this.address = 0x48;
-  }else if(this.params.addressMode === 9){
-    this.address = 0x49;
-  }
-
-  this.params.clock = 400000;
-  this.params.pull = "5v";
-  this.params.mode = "master";
- 
-  this.i2c = obniz.getI2CWithConfig(this.params);
-
-};
-
-  ADT7410.prototype.getTempWait = async function() {
-    var ret = await this.i2c.readWait(this.address, 2);
-    var tempBin = ret[0] << 8;
-    tempBin |= ret[1];
-    tempBin = tempBin >> 3;
-
-    if(tempBin & (0x1000)) { //0度以下の時の処理
-      tempBin = tempBin  - 8192;
+    if (payload_length == 0) {
+      return result;
+    } else {
+      result.set(payload, header_length);
+      return result;
     }
+  }
+}
+var USB = function() {
+    this.keys = ["vcc","gnd"];
+    this.requiredKeys = ["vcc","gnd"];
+};
 
-    return (tempBin/16);
-  };
+USB.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  this.io_vdd = obniz.getIO(this.params.vcc);
+  this.io_gnd = obniz.getIO(this.params.gnd);
+  
+  this.io_gnd.output(false);
+  
+};
+
+USB.prototype.on = function() {
+  this.io_vdd.output(true);
+};
+
+USB.prototype.off = function() {
+  this.io_vdd.output(false);
+};
 
 if (PartsRegistrate) {
-  PartsRegistrate("ADT7410", ADT7410);
+  PartsRegistrate("USB", USB);
 }
-
 var AE_MICAMP = function() {
   this.keys = ["vcc", "gnd", "out"];
   this.requiredKeys = ["out"];
@@ -3120,1065 +2912,6 @@ if (PartsRegistrate) {
   PartsRegistrate("AE_MICAMP", AE_MICAMP);
 }
 
-var Button = function() {
-  this.keys = ["signal","gnd"];
-  this.required = ["signal"];
-};
-
-Button.prototype.wired = function(obniz) {
-  this.io_signal = obniz.getIO(this.params.signal);
-
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_supply = obniz.getIO(this.params.gnd);
-    this.io_supply.output(false);
-  }
-
-  // start input
-  this.io_signal.pull("5v");
-  
-  var self = this;
-  this.io_signal.input(function(value) {
-    self.isPressed = (value === false);
-    if (self.onchange) {
-      self.onchange(value === false);
-    }
-  });
-};
-
-
-Button.prototype.isPressedWait = async function() {
-  var ret = await this.io_signal.inputWait();
-  return ret === false;
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("Button", Button);
-}
-var DCMotor = function() {
-  this.keys = ["forward", "back"];
-  this.requiredKeys = ["forward", "back"];
-};
-
-DCMotor.prototype.wired = function(obniz) {
-  this.status = {
-    direction: null,
-    power: null
-  };
-
-  this.pwm1_io_num = this.params.forward;
-  this.pwm2_io_num = this.params.back;
-
-  this.pwm1 = obniz.getFreePwm();
-  this.pwm1.start(this.pwm1_io_num);
-  this.pwm1.freq(100000);
-  this.pwm2 = obniz.getFreePwm();
-  this.pwm2.start(this.pwm2_io_num);
-  this.pwm2.freq(100000);
-  this.power(30);
-  this.pwm1.forceWorking(true);
-  this.pwm2.forceWorking(true);
-};
-
-// Module functions
-
-DCMotor.prototype.forward = function() {
-  this.move(true);
-};
-
-DCMotor.prototype.reverse = function() {
-  this.move(false);
-};
-
-DCMotor.prototype.stop = function() {
-  if (this.status.direction === null) {
-    return;
-  }
-  this.status.direction = null;
-  this.pwm1.duty(0);
-  this.pwm2.duty(0);
-};
-
-DCMotor.prototype.move = function(forward) {
-  if (forward) {
-    if (this.status.direction === true) {
-      return;
-    }
-    this.status.direction = true;
-  } else {
-    if (this.status.direction === false) {
-      return;
-    }
-    this.status.direction = false;
-  }
-  var power = this.power();
-  this.power(0);
-  this.power(power);
-};
-
-DCMotor.prototype.power = function(power) {
-  if (power === undefined) {
-    return this.status.power;
-  }
-  this.status.power = power;
-  if (this.status.direction === null) {
-    this.pwm1.duty(0);
-    this.pwm2.duty(0);
-    return;
-  }
-  if (this.status.direction) {
-    this.pwm1.duty(power);
-    this.pwm2.duty(0);
-  } else {
-    this.pwm1.duty(0);
-    this.pwm2.duty(power);
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("DCMotor", DCMotor);
-}
-var PIR_ekmc= function() {
-    this.keys = ["vcc","gnd","signal"];
-    this.requiredKeys = ["signal"];
-    
-};
-
-PIR_ekmc.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.io_signal = obniz.getIO(this.params.signal);
-  this.io_signal.pull("0v");
-  
-  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  
-  var self = this;
-  this.io_signal.input(function(value) {
-    self.isPressed = (value === false);
-    if (self.onchange) {
-      self.onchange(value === false);
-    }
-  });
-  
-};
-
-
-
-PIR_ekmc.prototype.isPressedWait = async function() {
-  var self = this;
-  var ret = await this.io_signal.inputWait();
-  return ret == false;
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("PIR_ekmc", PIR_ekmc);
-}
-var ENC03R_Module = function() {
-
-  this.keys = ["vcc", "out1", "out2", "gnd"];
-  this.required = ["out1", "out2"];
-  this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
-};
-
-
-ENC03R_Module.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  this.ad0 = obniz.getAD(this.params.out1);
-  this.ad1 = obniz.getAD(this.params.out2);
-
-  this.io_pwr.output(true);
-
-
-  var self = this;
-  this.ad0.start(function(value){
-    self.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-    //console.log('raw='+value);
-    if (self.onchange1) {
-      self.onchange1(self.sens1);
-    }
-  });
-
-  this.ad1.start(function(value){
-    self.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-    if (self.onchange2) {
-      self.onchange2(self.sens2);
-    }
-  });
-
-};
-
-ENC03R_Module.prototype.onChangeSens1 = function(callback) {
-  this.onchange1 = callback;
-};
-ENC03R_Module.prototype.onChangeSens2 = function(callback) {
-  this.onchange2 = callback;
-};
-
-ENC03R_Module.prototype.getValueSens1 = async function() {
-  return (this.ad0.value - 1.47) / Sens;
-};
-
-ENC03R_Module.prototype.getValueSens2 = async function() {
-  return (this.ad1.value - 1.35) / Sens;
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("ENC03R_Module", ENC03R_Module);
-}
-
-//Todo:抵抗を追加して圧力(kg)を求められるように改造する
-var FSR40X = function() {
-  this.keys = ["pin0", "pin1"];
-  this.requiredKeys = ["pin0", "pin1"];
-};
-
-FSR40X.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  
-  this.io_pwr = obniz.getIO(this.params.pin0);
-  this.ad = obniz.getAD(this.params.pin1);
-
-  this.io_pwr.drive("5v");
-  this.io_pwr.output(true);
-
-  var self = this;
-  this.ad.start(function(value){
-    pressure = value * 100;
-    if (pressure >= 49){
-      pressure = 49;
-    }
-    self.press = pressure;
-    if (self.onchange) {
-      self.onchange(self.press);
-    }
-  });
-
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("FSR40X", FSR40X);
-}
-
-class FullColorLed{
-  constructor(){
-    
-    this.COMMON_TYPE_ANODE = 1;
-    this.COMMON_TYPE_CATHODE = 0;
-
-    this.anode_keys = [
-      'anode',
-      'anode_common',
-      'anodeCommon',
-      'vcc'
-    ];
-    this.cathode_keys = [
-      'cathode',
-      'cathode_common',
-      'cathodeCommon',
-      'gnd'
-    ];
-    this.animationName = "FullColorLed-" + Math.round(Math.random() *1000);
-    
-    this.keys = ["r", "g", "b", "common", "commonType"];
-    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
-  }
-  
-  wired (obniz){
-    var r = this.params.r;
-    var g = this.params.g;
-    var b = this.params.b;
-    var common = this.params.common;
-    var commontype = this.params.commonType;
-    
-    this.obniz = obniz;
-    if(this.anode_keys.includes(commontype)){
-      this.commontype = this.COMMON_TYPE_ANODE;
-    }else if(this.cathode_keys.includes(commontype)){
-       this.commontype = this.COMMON_TYPE_CATHODE;
-    }else{
-      this.obniz.error("FullColorLed param need common type [  anode_common or cathode_common ] ");
-    }
-    
-    this.common = this.obniz.getIO(common);
-    this.common.drive("3v");
-    this.common.output(this.commontype);
-    
-    this.obniz.getIO(r).drive("3v");
-    this.obniz.getIO(r).output(this.commontype);
-    this.obniz.getIO(g).drive("3v");
-    this.obniz.getIO(g).output(this.commontype);
-    this.obniz.getIO(b).drive("3v");
-    this.obniz.getIO(b).output(this.commontype);
-    this.pwmR = this.obniz.getFreePwm();this.pwmR.start(r);this.pwmR.freq(1000);
-    this.pwmG = this.obniz.getFreePwm();this.pwmG.start(g);this.pwmG.freq(1000);
-    this.pwmB = this.obniz.getFreePwm();this.pwmB.start(b);this.pwmB.freq(1000);
-    this.rgb(0,0,0);
-    
-  }
-  
-  rgb(r,g,b){
-    r = Math.min(Math.max(parseInt(r),0),255);
-    g = Math.min(Math.max(parseInt(g),0),255);
-    b = Math.min(Math.max(parseInt(b),0),255);
-    
-    if(this.commontype === this.COMMON_TYPE_ANODE){
-      r = (255 - r);
-      g = (255 - g);
-      b = (255 - b);
-    }
-    this.pwmR.duty(r/255*100 );
-    this.pwmG.duty(g/255*100 );
-    this.pwmB.duty(b/255*100 );
-
-  }
-  
-  
-  hsv(h,s,v){
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
-
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-
-    this.rgb(R,G,B);
-
-  }
-  
-  gradation(cycletime_ms){
-
-    var frames = [];
-    var max = 36/2;
-    var duration = Math.round(cycletime_ms / max);
-    for (var i = 0; i < max; i++){
-     var oneFrame = {
-       duration: duration,
-       state : function(index){ // index = 0
-          this.hsv(index*10*2,1,1);
-       }.bind(this)
-     };
-     frames.push(oneFrame);
-
-    }
-    this.obniz.io.animation(this.animationName, "loop", frames);
-  };
-  stopgradation(){
-    this.obniz.io.animation(this.animationName, "pause");
-  };
-  
-  
-
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("FullColorLed", FullColorLed);
-}
-var HCSR04 = function() {
-  this.keys  = [ "vcc", "triger", "echo", "gnd"];
-  this.requiredKeys  = [ "vcc", "triger", "echo"];
-
-  this._unit = "mm";
-};
-
-HCSR04.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-
-  obniz.setVccGnd(null, this.params.gnd, "5v");
-
-  this.vccIO = obniz.getIO(this.params.vcc);
-  this.triger = this.params.triger;
-  this.echo = this.params.echo;
-};
-
-HCSR04.prototype.measure = async function(callback) {
-
-  this.vccIO.drive("5v");
-  this.vccIO.output(true);
-  await this.obniz.wait(10);
-
-  var self = this;
-  this.obniz.measure.echo({
-    io_pulse: this.triger,
-    io_echo: this.echo,
-    pulse: "positive",
-    pulse_width: 0.011,
-    measure_edges: 3,
-    timeout: 10/340*1000,
-    callback: function(edges){
-      self.vccIO.output(false);
-      var distance = null;
-      for (var i=0; i<edges.length-1; i++){ // HCSR04's output of io_echo is initially high when triger is finshed
-        if (edges[i].edge === true) {
-          distance = (edges[i+1].timing - edges[i].timing) * 1000;
-          if (self._unit === "mm") {
-            distance = distance / 5.8;
-          } else if (self._unit === "inch") {
-            distance = distance / 148.0;
-          }
-        }
-      }
-      if (typeof(callback) === "function") {
-        callback(distance);
-      }
-    }
-  })
-};
-
-HCSR04.prototype.unit = function(unit) {
-  if (unit === "mm") {
-    this._unit = "mm";
-  } else if (unit === "inch") {
-    this._unit = "inch";
-  } else {
-    throw new Error("HCSR04: unknown unit "+unit);
-  }
-};
-
-// Module functions
-
-if (PartsRegistrate) {
-  PartsRegistrate("HC-SR04", HCSR04);
-}
-var JoyStick = function() {
-    this.keys = ["sw", "y", "x", "vcc", "gnd","i2c"];
-    this.requiredKeys = ["sw", "y", "x"];
-    this.pins  =  this.keys || ["sw", "y", "x", "vcc", "gnd"];
-    this.pinname = { "sw": "sw12" };
-    this.shortName = "joyS";
-};
-
-JoyStick.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  
-  this.io_sig_sw = obniz.getIO(this.params.sw);
-  this.ad_x = obniz.getAD(this.params.x);
-  this.ad_y = obniz.getAD(this.params.y);
-  
-  this.io_sig_sw.pull("5v");
-  
-      
-  var self = this;
-  this.ad_x.start(function(value){
-    self.positionX = value/ 5.0;
-    if (self.onchangex) {
-      self.onchangex(self.positionX * 2 - 1);
-    }
-  });
-  
-  this.ad_y.start(function(value){
-    self.positionY = value/ 5.0;
-    if (self.onchangey) {
-      self.onchangey(self.positionY * 2 - 1);
-    }
-  });
-  
-  this.io_sig_sw.input(function(value) {
-    self.isPressed = (value === false);
-    if (self.onchangesw) {
-      self.onchangesw(value === false);
-    }
-  });
-};
-
-JoyStick.prototype.isPressedWait = async function() {
-  var ret = await this.io_sig_sw.inputWait();
-  return ret === false;
-};
-
-  
-  if (PartsRegistrate) {
-  PartsRegistrate("JoyStick", JoyStick);
-  }
-class JpegSerialCam {
-
-  constructor() {
-    this.keys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
-    this.requiredKeys = [ "cam_tx", "cam_rx"];
-    
-    this.ioKeys = this.keys;
-    this.displayName = "Jcam"
-    this.displayIoNames = { "cam_tx" : "camTx", "cam_rx":"camRx"};
-  }
-
-  wired(){
-    this.obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-    this.my_tx = this.params.cam_rx;
-    this.my_rx = this.params.cam_tx;
-
-    this.obniz.getIO(this.my_tx).drive("3v");
-    
-    this.uart = this.obniz.getFreeUart(); 
-  };
-
-  async _drainUntil(uart, search, recv) {
-    if (!recv) recv = [];
-    while(true) {
-      var readed = uart.readBytes();
-      recv = recv.concat(readed);
-      var tail = this._seekTail(search, recv);
-      if (tail >= 0) {
-        recv.splice(0, tail);
-        return recv;
-      }
-      await this.obniz.wait(10);
-    }
-  }
-
-  _seekTail(search, src) {
-    var f=0;
-    for (var i=0;i<src.length; i++) {
-      if (src[i] === search[f]) {
-        f++;
-        if (f === search.length) {
-          return i+1;
-        }
-      } else {
-        f = 0;
-      }
-    }
-    return -1;
-  }
-  
-  arrayToBase64(buf) {
-    if (typeof btoa === "function") {
-      var binstr = Array.prototype.map.call(buf, function (ch) {
-        return String.fromCharCode(ch);
-      }).join('');
-      return btoa(binstr);
-    }
-    // TODO: 
-  }
-
-  async startwait(obj) {
-    if (!obj) obj = {};
-    this.uart.start({tx:this.my_tx, rx:this.my_rx, baud:obj.baud || 38400});
-    this.obniz.display.setPinName(this.my_tx,"JpegSerialCam","camRx");
-    this.obniz.display.setPinName(this.my_rx,"JpegSerialCam","camTx");
-    await this.obniz.wait(2500);
-  }
-
-  async resetwait() {
-    this.uart.send([0x56, 0x00, 0x26, 0x00]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
-    await this.obniz.wait(2500);
-  }
-
-  async setResolusionWait(resolution) {
-    let val;
-    if (resolution === "640*480") {
-      val = 0x00;
-    } else if (resolution === "320*240") {
-      val = 0x11;
-    } else if (resolution === "160*120") {
-      val = 0x22;
-    } else {
-      throw new Error("invalid resolution");
-    }
-    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    await this.resetwait();
-  }
-
-
-  async setCompressibilityWait(compress) {
-    let val = Math.floor(compress / 100 * 0xFF);
-    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    await this.resetwait();
-  }
-
-
-  async setBaudWait(baud) {
-    let val;
-    switch(baud) {
-      case 9600:
-        val = [0xAE, 0xC8];
-        break;
-      case 19200:
-        val = [0x56, 0xE4];
-        break;
-      case 38400:
-        val = [0x2A, 0xF2];
-        break;
-      case 57600:
-        val = [0x1C, 0x4C];
-        break;
-      case 115200:
-        val = [0x0D, 0xA6];
-        break;
-      default:
-        throw new Error("invalid baud rate");
-    }
-    this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    //await this.obniz.wait(1000);
-    await this.startwait({
-      baud
-    });
-  }
-
-  async takewait() {
-    const uart = this.uart;
-    //console.log("stop a photo")
-    uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]); 
-    
-    //console.log("take a photo")
-    uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-    
-    //console.log("read length")
-    uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
-    var XX;
-    var YY;
-    while(true) {
-      var readed = uart.readBytes();
-      //console.log(recv);
-      recv = recv.concat(readed);
-      if (recv.length >= 2) {
-        XX = recv[0];
-        YY = recv[1];
-        break;
-      }
-      await this.obniz.wait(1000);
-    }
-    let databytes = XX * 256 + YY;
-    //console.log("image: " + databytes + " Bytes");
-    const high = (databytes >> 8) & 0xFF;
-    const low = databytes & 0xFF;
-    
-    //console.log("start reading image")
-    uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
-    //console.log("reading...");
-    while(true) {
-      var readed = uart.readBytes();
-      recv = recv.concat(readed);
-      //console.log(readed.length);
-      if (recv.length >= databytes) {
-        break;
-      }
-      await this.obniz.wait(10);
-    }
-    //console.log("done");
-    recv = recv.splice(0, databytes); // remove tail
-    recv = recv.concat([0xFF, 0xD9]);
-    return recv;
-  }
-
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("JpegSerialCam", JpegSerialCam);
-}
-var KXSC7_2050 = function() {
-  this.keys = [ "x", "y", "z", "vcc", "gnd"];
-  this.requiredKeys = [ "x", "y", "z"];
-};
-
-
-KXSC7_2050.prototype.wired = async function(obniz) {
-  this.obniz = obniz;
-  
-  obniz.setVccGnd(this.params.vcc,this.params.gnd, "3v");
-  this.ad_x = obniz.getAD(this.params.x);
-  this.ad_y = obniz.getAD(this.params.y);
-  this.ad_z = obniz.getAD(this.params.z);
-  
-  await obniz.wait(500);
-  var ad = obniz.getAD(this.params.vcc);
-  var pwrVoltage = await ad.getWait();
-  var horizontalZ = await this.ad_z.getWait();
-  var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-  var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
-      
-  var self = this;
-  this.ad_x.start(function(value){
-    self.gravity = (value - offsetVoltage) / sensitivity ;
-    if (self.onchangex) {
-      self.onchangex(self.gravity);
-    }
-  });
-  
-  this.ad_y.start(function(value){
-    self.gravity = (value - offsetVoltage) / sensitivity ;
-    if (self.onchangey) {
-      self.onchangey(self.gravity);
-    }
-  });
-  
-  this.ad_z.start(function(value){
-    self.gravity = (value - offsetVoltage) / sensitivity ;
-    if (self.onchangez) {
-      self.onchangez(self.gravity);
-    }
-  });
-  
-};
-
-
-if (PartsRegistrate) {
-  PartsRegistrate("KXSC7_2050", KXSC7_2050);
-}
-var LED = function() {
-  this.keys = ["anode","cathode"];
-  this.requiredKeys = ["anode"];
-  
-  
-  this.animationName = "Led-" + Math.round(Math.random() *1000);
-};
-
-LED.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.io_anode = obniz.getIO(this.params.anode);
-  if (this.params.cathode) {
-    this.io_cathode = obniz.getIO(this.params.cathode);
-    this.io_cathode.output(false);
-  }
-};
-
-// Module functions
-
-LED.prototype.on = function() {
-  this.endBlink();
-  this.io_anode.output(true);
-};
-
-LED.prototype.off = function() {
-  this.endBlink();
-  this.io_anode.output(false);
-};
-
-LED.prototype.endBlink = function() {
-  this.obniz.io.animation(this.animationName, "pause");
-  
-};
-
-LED.prototype.blink = function(interval) {
-  if(!interval) {
-    interval = 100;
-  }
-  var frames = [{
-      duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(true);  // on
-      }.bind(this)
-    }, {
-      duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(false);   //off
-      }.bind(this)
-    }];
-
-  this.obniz.io.animation(this.animationName, "loop", frames);
-
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LED", LED);
-}
-
-var LM35DZ = function() {
-  this.keys = ["vcc","gnd","output"];
-  this.requiredKeys = ["output"];
-};
-
-LM35DZ.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function(value){
-    self.temp = value * 100; //Temp(Celsius) = [AD Voltage] * 100
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM35DZ", LM35DZ);
-}
-
-var LM60 = function() {
-  this.keys = ["vcc","gnd","output"];
-  this.requiredKeys = ["output"];
-};
-
-LM60.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.ad = obniz.getAD(this.params.output);
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  var self = this;
-  this.ad.start(function(value){
-    self.temp = Math.round(((value-0.424)/0.00625)*10)/10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-
-};
-
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM60", LM60);
-}
-
-var LM61 = function() {
-  this.keys = ["vcc", "output","gnd"];
-  this.requiredKeys = [ "output" ];
-};
-
-LM61.prototype.wired = function(obniz) {
-  
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-
-  var self = this;
-  this.ad.start(function(value){
-    self.temp = Math.round((value-0.6)/0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM61", LM61);
-}
-
-var MCP9700 = function() {
-
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = [ "output" ];
-};
-
-MCP9700.prototype.wired = function(obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function(value){
-    self.temp = (value-0.5)/0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("MCP9700", MCP9700);
-}
-
-var MCP9701 = function() {
-
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = [ "output" ];
-};
-
-MCP9701.prototype.wired = function(obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-
-  var self = this;
-  this.ad.start(function(value){
-    self.temp = (value-0.4)/0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-
-};
-
-
-if (PartsRegistrate) {
-  PartsRegistrate("MCP9701", MCP9701);
-}
-
-var isNode = (typeof window === 'undefined') ? true : false;
-
-class MatrixLED_MAX7219 {
-
-  constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-    this.requiredKeys = ["din", "cs", "clk"];
-  }
-
-  wired(obniz) {
-    this.cs = obniz.getIO(this.params.cs);
-    // logich high must 3.5v <=
-    if(obniz.isValidIO(this.params.vcc)){
-      obniz.getIO(this.params.vcc).output(true);
-    }
-    if(obniz.isValidIO(this.params.gnd)){
-      obniz.getIO(this.params.gnd).output(false);
-    }
-
-    // reset a onece
-    this.cs.output(true);
-    obniz.freeze(10);
-    this.cs.output(false);
-    this.cs.output(true);
-    
-    // max 10Mhz but motor driver can't
-    this.params.frequency = this.params.frequency  || 10 * 1000*1000;
-    this.params.mode =  "master";
-    this.params.mosi = this.params.din;
-    this.params.drive = "3v";
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  }
-
-  init(width, height) {
-    this.width = width;
-    this.height = height;
-    this.preparevram(width, height);
-    this.initModule();
-  }
-
-  initModule() {
-    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
-    this.write([0x0a, 0x05]); // brightness 9/32 0 to f
-    this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
-    this.write([0x0c, 0x01]); // Shutdown to normal operation
-    this.passingCommands();
-  }
-
-  test() {
-    this.write([0x0f, 0x00]); // test command
-    this.passingCommands();
-  }
-
-  passingCommands() {
-    for (var i=0; i<this.width; i+=8) {  // this needed for number of unit
-      this.write([0x00, 0x00]);
-      this.write([0x00, 0x00]);
-      this.write([0x00, 0x00]);
-    }
-  }
-
-  brightness(val) {
-    this.write([0x0a, val]); // 0 to 15;
-    this.passingCommands();
-  }
-
-  preparevram(width, height) {
-    this.vram = [];
-    for (var i=0; i<height; i++) {
-      var dots = new Array(width/8);
-      for (var ii=0;ii<dots.length; ii++) {
-        dots[ii] = 0x00;
-      }
-      this.vram.push(dots);
-    }
-  }
-
-  write(data) {
-    this.cs.output(false);
-    this.spi.write(data);
-    this.cs.output(true);
-  }
-
-  writeVram() {
-    for (var line_num=0; line_num<this.height; line_num++) {
-      let addr = line_num + 1;
-      let line = this.vram[line_num];
-      let data = [];
-      for (let col=0; col<line.length; col++) {
-        data.push(addr)
-        data.push(line[col]);
-      }
-      this.write(data);
-    }
-  }
-
-  clear() {
-    for (var line_num=0; line_num<this.height; line_num++) {
-      let line = this.vram[line_num];
-      for (let col=0; col<line.length; col++) {
-        this.vram[line_num][col] = 0x00;
-      }
-      this.writeVram();
-    }
-  }
-
-  drawCanvasContext(ctx) {
-    if (isNode) {
-      // TODO:
-      throw new Error("node js mode is under working.");
-    } else {
-      const imageData = ctx.getImageData(0, 0, this.width, this.height);
-      const data = imageData.data;
-      
-      for(let i = 0; i < data.length; i += 4) {
-        var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        var index = parseInt(i/4);
-        var line = parseInt(index/this.width);
-        var col = parseInt((index-line*this.width)/8);
-        var bits = parseInt((index-line*this.width))%8;
-        if (bits == 0)
-          this.vram[line][col] = 0x00;
-        if (brightness > 0x7F)
-          this.vram[line][col] |= 0x80 >> bits;
-      }
-    }
-    this.writeVram();
-  }
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
-}
-
-var PotentionMeter = function() {
-    this.keys = ["pin0","pin1","pin2"];
-    this.reuiredKeys = ["pin0","pin1","pin2"];
-
-    this.vcc_voltage = 5.0;
-};
-
-PotentionMeter.prototype.wired = function(obniz) {
-  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
-  this.ad = obniz.getAD(this.params.pin1);
-
-  var self = this;
-
-  obniz.getAD(this.params.pin0).start(function(value){
-    self.vcc_voltage = value;
-  });
-
-  this.ad.start(function(value){
-    self.position = value/ self.vcc_voltage;
-    if (self.onchange) {
-      self.onchange(self.position);
-    }
-  });
-};
-
-
-if (PartsRegistrate) {
-  PartsRegistrate("PotentionMeter", PotentionMeter);
-}
 var RN42 = function() {
   this.keys = ["tx", "rx", "gnd"];
   this.requiredKeys = ["tx", "rx"];
@@ -4362,6 +3095,1689 @@ RN42.prototype.config_get_extendSetting = function() {
 if (PartsRegistrate) {
   PartsRegistrate("RN42", RN42);
 }
+/* global PartsRegistrate */
+
+class XBee {
+
+  constructor() {
+    this.keys = ["tx","rx","gnd"];
+    this.requiredKeys = ["tx","rx"];
+    
+    this.displayIoNames = { "tx" : "<tx", "rx":">rx"};
+  }
+
+  wired(obniz) {
+  
+    this.uart = obniz.getFreeUart();
+    this.currentCommand = null;
+    this.commands = [];
+    this.isAtMode = false;
+    this.onFinishAtModeCallback = null;
+    
+    
+  if(typeof(this.params.gnd) === "number") {
+    obniz.getIO(this.params.gnd).output(false);
+  }
+  
+    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:9600, drive:"3v"});
+    
+    this.uart.onreceive = (function(data, text) {
+      if(this.isAtMode){
+        this.onAtResultsRecieve(data, text);
+      }else{
+        if (typeof(this.onreceive) === "function") {
+          this.onreceive(data, text);
+        }
+      }
+    }).bind(this);
+  }
+
+  send( text) {
+    if(this.isAtMode === false){
+      this.uart.send(text);
+      
+    }else{
+      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
+    }
+  }
+
+  onAtResultsRecieve(data, text){
+    if(!this.isAtMode){ return; }
+    
+    var next = function(){
+      this.currentCommand  = null;
+      this.sendCommand();
+    }.bind(this);
+    
+    if(text === "OK\r"){
+      if(this.currentCommand === "ATCN"){
+        this.isAtMode = false;
+        this.currentCommand  = null;
+        if(typeof(this.onFinishAtModeCallback) === "function"){
+          this.onFinishAtModeCallback();
+          this.onFinishAtModeCallback = null;
+        }
+        return;
+      }
+      next();
+    }else if(text === "ERROR\r"){
+      this.obniz.error("XBee config error : " + this.currentCommand);
+    }else{
+      //response of at command.
+      console.log("XBEE : no catch message", data);
+      next();
+    }
+  }
+
+  addCommand(command, value) {
+    var str = command + (value ? " " + value : "");
+    this.commands.push(str);
+    if(this.isAtMode === true 
+        && this.currentCommand === null){
+      this.sendCommand();
+    }
+  }
+
+  sendCommand() {
+    if(this.isAtMode === true 
+        && this.currentCommand === null
+        && this.commands.length > 0){
+      this.currentCommand = "AT" + this.commands.shift();
+      this.uart.send(this.currentCommand + "\r");
+    }
+  }
+
+  enterAtMode() {
+    if(this.currentCommand !== null) return;
+    this.isAtMode = true;
+    this.obniz.freeze(1000);
+    var command = "+++";
+    this.currentCommand = command;
+    this.uart.send(this.currentCommand);
+    this.obniz.freeze(1000);
+  }
+
+  exitAtMode() {
+    this.addCommand("CN");
+  }
+
+  async configWait(config) {
+    if(this.isAtMode){ throw new Error("Xbee : duplicate config setting"); };
+    return new Promise(function(resolve, reject){
+      var standaloneKeys = {
+        "destination_address_high" : "DH",
+        "destination_address_low" : "DL",
+        "source_address" : "MY"
+      };
+      var highLowKeys = [
+        "destination_address"
+      ];
+      this.enterAtMode();
+      for(var key in config){
+          if(key.length === 2){
+            this.addCommand(key,config[key]);
+          }else if(standaloneKeys[key]){
+            this.addCommand(standaloneKeys[key],config[key]);
+          }else if(highLowKeys.includes(key)){
+            var high = config[key].slice(0,-8); 
+            if(!high){high="0";}
+            var low = config[key].slice(-8);
+  
+            this.addCommand(standaloneKeys[key + "_high"], high);
+            this.addCommand(standaloneKeys[key + "_low"],  low);
+          }
+      }
+      this.exitAtMode();
+      this.onFinishAtModeCallback = function(){
+        resolve();
+      };
+    }.bind(this));
+    
+  }
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("XBee", XBee);
+}  
+class JpegSerialCam {
+
+  constructor() {
+    this.keys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
+    this.requiredKeys = [ "cam_tx", "cam_rx"];
+    
+    this.ioKeys = this.keys;
+    this.displayName = "Jcam"
+    this.displayIoNames = { "cam_tx" : "camTx", "cam_rx":"camRx"};
+  }
+
+  wired(){
+    this.obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    this.my_tx = this.params.cam_rx;
+    this.my_rx = this.params.cam_tx;
+
+    this.obniz.getIO(this.my_tx).drive("3v");
+    
+    this.uart = this.obniz.getFreeUart(); 
+  };
+
+  async _drainUntil(uart, search, recv) {
+    if (!recv) recv = [];
+    while(true) {
+      var readed = uart.readBytes();
+      recv = recv.concat(readed);
+      var tail = this._seekTail(search, recv);
+      if (tail >= 0) {
+        recv.splice(0, tail);
+        return recv;
+      }
+      await this.obniz.wait(10);
+    }
+  }
+
+  _seekTail(search, src) {
+    var f=0;
+    for (var i=0;i<src.length; i++) {
+      if (src[i] === search[f]) {
+        f++;
+        if (f === search.length) {
+          return i+1;
+        }
+      } else {
+        f = 0;
+      }
+    }
+    return -1;
+  }
+  
+  arrayToBase64(buf) {
+    if (typeof btoa === "function") {
+      var binstr = Array.prototype.map.call(buf, function (ch) {
+        return String.fromCharCode(ch);
+      }).join('');
+      return btoa(binstr);
+    }
+    // TODO: 
+  }
+
+  async startwait(obj) {
+    if (!obj) obj = {};
+    this.uart.start({tx:this.my_tx, rx:this.my_rx, baud:obj.baud || 38400});
+    this.obniz.display.setPinName(this.my_tx,"JpegSerialCam","camRx");
+    this.obniz.display.setPinName(this.my_rx,"JpegSerialCam","camTx");
+    await this.obniz.wait(2500);
+  }
+
+  async resetwait() {
+    this.uart.send([0x56, 0x00, 0x26, 0x00]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
+    await this.obniz.wait(2500);
+  }
+
+  async setResolusionWait(resolution) {
+    let val;
+    if (resolution === "640*480") {
+      val = 0x00;
+    } else if (resolution === "320*240") {
+      val = 0x11;
+    } else if (resolution === "160*120") {
+      val = 0x22;
+    } else {
+      throw new Error("invalid resolution");
+    }
+    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this.resetwait();
+  }
+
+
+  async setCompressibilityWait(compress) {
+    let val = Math.floor(compress / 100 * 0xFF);
+    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this.resetwait();
+  }
+
+
+  async setBaudWait(baud) {
+    let val;
+    switch(baud) {
+      case 9600:
+        val = [0xAE, 0xC8];
+        break;
+      case 19200:
+        val = [0x56, 0xE4];
+        break;
+      case 38400:
+        val = [0x2A, 0xF2];
+        break;
+      case 57600:
+        val = [0x1C, 0x4C];
+        break;
+      case 115200:
+        val = [0x0D, 0xA6];
+        break;
+      default:
+        throw new Error("invalid baud rate");
+    }
+    this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    //await this.obniz.wait(1000);
+    await this.startwait({
+      baud
+    });
+  }
+
+  async takewait() {
+    const uart = this.uart;
+    //console.log("stop a photo")
+    uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
+    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]); 
+    
+    //console.log("take a photo")
+    uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
+    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+    
+    //console.log("read length")
+    uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
+    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
+    var XX;
+    var YY;
+    while(true) {
+      var readed = uart.readBytes();
+      //console.log(recv);
+      recv = recv.concat(readed);
+      if (recv.length >= 2) {
+        XX = recv[0];
+        YY = recv[1];
+        break;
+      }
+      await this.obniz.wait(1000);
+    }
+    let databytes = XX * 256 + YY;
+    //console.log("image: " + databytes + " Bytes");
+    const high = (databytes >> 8) & 0xFF;
+    const low = databytes & 0xFF;
+    
+    //console.log("start reading image")
+    uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
+    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+    //console.log("reading...");
+    while(true) {
+      var readed = uart.readBytes();
+      recv = recv.concat(readed);
+      //console.log(readed.length);
+      if (recv.length >= databytes) {
+        break;
+      }
+      await this.obniz.wait(10);
+    }
+    //console.log("done");
+    recv = recv.splice(0, databytes); // remove tail
+    recv = recv.concat([0xFF, 0xD9]);
+    return recv;
+  }
+
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("JpegSerialCam", JpegSerialCam);
+}
+var _7SegmentLED = function() {
+  this.requiredKeys = [ "a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+  this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+  
+  this.digits = [
+    0x3F,
+    0x06,
+    0x5b,
+    0x4f,
+    0x66,
+    0x6d,
+    0x7d,
+    0x07,
+    0x7f,
+    0x6f,
+    0x6f
+  ];
+
+};
+
+_7SegmentLED.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  this.ios = [];
+  this.ios.push(obniz.getIO(this.params.a));
+  this.ios.push(obniz.getIO(this.params.b));
+  this.ios.push(obniz.getIO(this.params.c));
+  this.ios.push(obniz.getIO(this.params.d));
+  this.ios.push(obniz.getIO(this.params.e));
+  this.ios.push(obniz.getIO(this.params.f));
+  this.ios.push(obniz.getIO(this.params.g));
+
+  this.dp = obniz.getIO(this.params.dp);
+  this.common = obniz.getIO(this.params.common);
+  this.isCathodeCommon = (this.params.commonType === "anode") ? false : true;
+};
+
+_7SegmentLED.prototype.print = function(data) {
+  if (typeof data === "number") {
+    data = parseInt(data);
+    data = data % 10;
+
+    for (let i=0; i<7; i++) {
+      if (this.ios[i]) {
+        var val = (this.digits[data] & (1 << i)) ? true : false;
+        if (!this.isCathodeCommon) {
+          val = ~val;
+        }
+        this.ios[i].output( val );
+      }
+    }
+    this.on();
+  }
+};
+
+_7SegmentLED.prototype.printRaw = function(data) {
+  if (typeof data === "number") {
+    for (let i=0; i<7; i++) {
+      if (this.ios[i]) {
+        var val = (data & (1 << i)) ? true : false;
+        if (!this.isCathodeCommon) {
+          val = !val;
+        }
+        this.ios[i].output( val );
+      }
+    }
+    this.on();
+  }
+};
+
+_7SegmentLED.prototype.dpShow = function(show) {
+  if (this.dp) {
+    this.dp.output( this.isCathodeCommon ? show : !show);
+  }
+};
+
+_7SegmentLED.prototype.on = function() {
+  this.common.output( this.isCathodeCommon ? false : true);
+};
+
+_7SegmentLED.prototype.off = function() {
+  this.common.output( this.isCathodeCommon ? true : false);
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("7SegmentLED", _7SegmentLED);
+}
+
+var _7SegmentLEDArray = function() {
+  this.identifier = ""+(new Date()).getTime();
+  
+  this.keys = ["seg0", "seg1", "seg2", "seg3"];
+  this.requiredKeys = ["seg0"];
+  
+};
+
+_7SegmentLEDArray.prototype.wired = function(obniz, ) {
+  this.obniz = obniz;
+  
+  this.segments = [];
+  if (this.params.seg0) {
+    this.segments.unshift(this.params.seg0);
+  }
+  if (this.params.seg1) {
+    this.segments.unshift(this.params.seg1);
+  }
+  if (this.params.seg2) {
+    this.segments.unshift(this.params.seg2);
+  }
+  if (this.params.seg3) {
+    this.segments.unshift(this.params.seg3);
+  }
+};
+
+_7SegmentLEDArray.prototype.print = function(data) {
+  if (typeof data === "number") {
+    data = parseInt(data);
+
+    var segments = this.segments;
+    var print = function(index) {
+      let val = data;
+
+      for (let i=0; i<segments.length; i++) {
+        console.log(val);
+        if(index === i) {
+          segments[i].print(val%10);
+        } else {
+          segments[i].off();
+        }
+        val = val/10;
+      }
+    };
+
+    var animations = [];
+    for (let i=0; i<segments.length; i++) {
+      animations.push({
+        duration: 3,
+        state: print
+      });
+    } 
+
+    var segments = this.segments;
+    this.obniz.io.animation(this.identifier, "loop", animations);
+  };
+};
+
+_7SegmentLEDArray.prototype.on = function() {
+  this.obniz.io.animation(this.identifier, "resume");
+};
+
+_7SegmentLEDArray.prototype.off = function() {
+  this.obniz.io.animation(this.identifier, "pause");
+  for (let i=0; i<this.segments.length; i++) {
+    this.segments[i].off();
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
+}
+
+var isNode = (typeof window === 'undefined') ? true : false;
+
+class MatrixLED_MAX7219 {
+
+  constructor() {
+    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
+    this.requiredKeys = ["din", "cs", "clk"];
+  }
+
+  wired(obniz) {
+    this.cs = obniz.getIO(this.params.cs);
+    // logich high must 3.5v <=
+    if(obniz.isValidIO(this.params.vcc)){
+      obniz.getIO(this.params.vcc).output(true);
+    }
+    if(obniz.isValidIO(this.params.gnd)){
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    // reset a onece
+    this.cs.output(true);
+    obniz.freeze(10);
+    this.cs.output(false);
+    this.cs.output(true);
+    
+    // max 10Mhz but motor driver can't
+    this.params.frequency = this.params.frequency  || 10 * 1000*1000;
+    this.params.mode =  "master";
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  init(width, height) {
+    this.width = width;
+    this.height = height;
+    this.preparevram(width, height);
+    this.initModule();
+  }
+
+  initModule() {
+    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
+    this.write([0x0a, 0x05]); // brightness 9/32 0 to f
+    this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
+    this.write([0x0c, 0x01]); // Shutdown to normal operation
+    this.passingCommands();
+  }
+
+  test() {
+    this.write([0x0f, 0x00]); // test command
+    this.passingCommands();
+  }
+
+  passingCommands() {
+    for (var i=0; i<this.width; i+=8) {  // this needed for number of unit
+      this.write([0x00, 0x00]);
+      this.write([0x00, 0x00]);
+      this.write([0x00, 0x00]);
+    }
+  }
+
+  brightness(val) {
+    this.write([0x0a, val]); // 0 to 15;
+    this.passingCommands();
+  }
+
+  preparevram(width, height) {
+    this.vram = [];
+    for (var i=0; i<height; i++) {
+      var dots = new Array(width/8);
+      for (var ii=0;ii<dots.length; ii++) {
+        dots[ii] = 0x00;
+      }
+      this.vram.push(dots);
+    }
+  }
+
+  write(data) {
+    this.cs.output(false);
+    this.spi.write(data);
+    this.cs.output(true);
+  }
+
+  writeVram() {
+    for (var line_num=0; line_num<this.height; line_num++) {
+      let addr = line_num + 1;
+      let line = this.vram[line_num];
+      let data = [];
+      for (let col=0; col<line.length; col++) {
+        data.push(addr)
+        data.push(line[col]);
+      }
+      this.write(data);
+    }
+  }
+
+  clear() {
+    for (var line_num=0; line_num<this.height; line_num++) {
+      let line = this.vram[line_num];
+      for (let col=0; col<line.length; col++) {
+        this.vram[line_num][col] = 0x00;
+      }
+      this.writeVram();
+    }
+  }
+
+  drawCanvasContext(ctx) {
+    if (isNode) {
+      // TODO:
+      throw new Error("node js mode is under working.");
+    } else {
+      const imageData = ctx.getImageData(0, 0, this.width, this.height);
+      const data = imageData.data;
+      
+      for(let i = 0; i < data.length; i += 4) {
+        var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        var index = parseInt(i/4);
+        var line = parseInt(index/this.width);
+        var col = parseInt((index-line*this.width)/8);
+        var bits = parseInt((index-line*this.width))%8;
+        if (bits == 0)
+          this.vram[line][col] = 0x00;
+        if (brightness > 0x7F)
+          this.vram[line][col] |= 0x80 >> bits;
+      }
+    }
+    this.writeVram();
+  }
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
+}
+
+var HCSR04 = function() {
+  this.keys  = [ "vcc", "triger", "echo", "gnd"];
+  this.requiredKeys  = [ "vcc", "triger", "echo"];
+
+  this._unit = "mm";
+};
+
+HCSR04.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+
+  obniz.setVccGnd(null, this.params.gnd, "5v");
+
+  this.vccIO = obniz.getIO(this.params.vcc);
+  this.triger = this.params.triger;
+  this.echo = this.params.echo;
+};
+
+HCSR04.prototype.measure = async function(callback) {
+
+  this.vccIO.drive("5v");
+  this.vccIO.output(true);
+  await this.obniz.wait(10);
+
+  var self = this;
+  this.obniz.measure.echo({
+    io_pulse: this.triger,
+    io_echo: this.echo,
+    pulse: "positive",
+    pulse_width: 0.011,
+    measure_edges: 3,
+    timeout: 10/340*1000,
+    callback: function(edges){
+      self.vccIO.output(false);
+      var distance = null;
+      for (var i=0; i<edges.length-1; i++){ // HCSR04's output of io_echo is initially high when triger is finshed
+        if (edges[i].edge === true) {
+          distance = (edges[i+1].timing - edges[i].timing) * 1000;
+          if (self._unit === "mm") {
+            distance = distance / 5.8;
+          } else if (self._unit === "inch") {
+            distance = distance / 148.0;
+          }
+        }
+      }
+      if (typeof(callback) === "function") {
+        callback(distance);
+      }
+    }
+  })
+};
+
+HCSR04.prototype.unit = function(unit) {
+  if (unit === "mm") {
+    this._unit = "mm";
+  } else if (unit === "inch") {
+    this._unit = "inch";
+  } else {
+    throw new Error("HCSR04: unknown unit "+unit);
+  }
+};
+
+// Module functions
+
+if (PartsRegistrate) {
+  PartsRegistrate("HC-SR04", HCSR04);
+}
+var ENC03R_Module = function() {
+
+  this.keys = ["vcc", "out1", "out2", "gnd"];
+  this.required = ["out1", "out2"];
+  this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+};
+
+
+ENC03R_Module.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  this.ad0 = obniz.getAD(this.params.out1);
+  this.ad1 = obniz.getAD(this.params.out2);
+
+  this.io_pwr.output(true);
+
+
+  var self = this;
+  this.ad0.start(function(value){
+    self.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    //console.log('raw='+value);
+    if (self.onchange1) {
+      self.onchange1(self.sens1);
+    }
+  });
+
+  this.ad1.start(function(value){
+    self.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    if (self.onchange2) {
+      self.onchange2(self.sens2);
+    }
+  });
+
+};
+
+ENC03R_Module.prototype.onChangeSens1 = function(callback) {
+  this.onchange1 = callback;
+};
+ENC03R_Module.prototype.onChangeSens2 = function(callback) {
+  this.onchange2 = callback;
+};
+
+ENC03R_Module.prototype.getValueSens1 = async function() {
+  return (this.ad0.value - 1.47) / Sens;
+};
+
+ENC03R_Module.prototype.getValueSens2 = async function() {
+  return (this.ad1.value - 1.35) / Sens;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("ENC03R_Module", ENC03R_Module);
+}
+
+class FullColorLed{
+  constructor(){
+    
+    this.COMMON_TYPE_ANODE = 1;
+    this.COMMON_TYPE_CATHODE = 0;
+
+    this.anode_keys = [
+      'anode',
+      'anode_common',
+      'anodeCommon',
+      'vcc'
+    ];
+    this.cathode_keys = [
+      'cathode',
+      'cathode_common',
+      'cathodeCommon',
+      'gnd'
+    ];
+    this.animationName = "FullColorLed-" + Math.round(Math.random() *1000);
+    
+    this.keys = ["r", "g", "b", "common", "commonType"];
+    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+  }
+  
+  wired (obniz){
+    var r = this.params.r;
+    var g = this.params.g;
+    var b = this.params.b;
+    var common = this.params.common;
+    var commontype = this.params.commonType;
+    
+    this.obniz = obniz;
+    if(this.anode_keys.includes(commontype)){
+      this.commontype = this.COMMON_TYPE_ANODE;
+    }else if(this.cathode_keys.includes(commontype)){
+       this.commontype = this.COMMON_TYPE_CATHODE;
+    }else{
+      this.obniz.error("FullColorLed param need common type [  anode_common or cathode_common ] ");
+    }
+    
+    this.common = this.obniz.getIO(common);
+    this.common.drive("3v");
+    this.common.output(this.commontype);
+    
+    this.obniz.getIO(r).drive("3v");
+    this.obniz.getIO(r).output(this.commontype);
+    this.obniz.getIO(g).drive("3v");
+    this.obniz.getIO(g).output(this.commontype);
+    this.obniz.getIO(b).drive("3v");
+    this.obniz.getIO(b).output(this.commontype);
+    this.pwmR = this.obniz.getFreePwm();this.pwmR.start(r);this.pwmR.freq(1000);
+    this.pwmG = this.obniz.getFreePwm();this.pwmG.start(g);this.pwmG.freq(1000);
+    this.pwmB = this.obniz.getFreePwm();this.pwmB.start(b);this.pwmB.freq(1000);
+    this.rgb(0,0,0);
+    
+  }
+  
+  rgb(r,g,b){
+    r = Math.min(Math.max(parseInt(r),0),255);
+    g = Math.min(Math.max(parseInt(g),0),255);
+    b = Math.min(Math.max(parseInt(b),0),255);
+    
+    if(this.commontype === this.COMMON_TYPE_ANODE){
+      r = (255 - r);
+      g = (255 - g);
+      b = (255 - b);
+    }
+    this.pwmR.duty(r/255*100 );
+    this.pwmG.duty(g/255*100 );
+    this.pwmB.duty(b/255*100 );
+
+  }
+  
+  
+  hsv(h,s,v){
+    var C = v * s ;
+    var Hp = h / 60;
+    var X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    var R, G, B;
+    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
+    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
+    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
+    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
+    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
+    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
+
+    var m = v - C;
+    [R, G, B] = [R+m, G+m, B+m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    this.rgb(R,G,B);
+
+  }
+  
+  gradation(cycletime_ms){
+
+    var frames = [];
+    var max = 36/2;
+    var duration = Math.round(cycletime_ms / max);
+    for (var i = 0; i < max; i++){
+     var oneFrame = {
+       duration: duration,
+       state : function(index){ // index = 0
+          this.hsv(index*10*2,1,1);
+       }.bind(this)
+     };
+     frames.push(oneFrame);
+
+    }
+    this.obniz.io.animation(this.animationName, "loop", frames);
+  };
+  stopgradation(){
+    this.obniz.io.animation(this.animationName, "pause");
+  };
+  
+  
+
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("FullColorLed", FullColorLed);
+}
+var LED = function() {
+  this.keys = ["anode","cathode"];
+  this.requiredKeys = ["anode"];
+  
+  
+  this.animationName = "Led-" + Math.round(Math.random() *1000);
+};
+
+LED.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  this.io_anode = obniz.getIO(this.params.anode);
+  if (this.params.cathode) {
+    this.io_cathode = obniz.getIO(this.params.cathode);
+    this.io_cathode.output(false);
+  }
+};
+
+// Module functions
+
+LED.prototype.on = function() {
+  this.endBlink();
+  this.io_anode.output(true);
+};
+
+LED.prototype.off = function() {
+  this.endBlink();
+  this.io_anode.output(false);
+};
+
+LED.prototype.endBlink = function() {
+  this.obniz.io.animation(this.animationName, "pause");
+  
+};
+
+LED.prototype.blink = function(interval) {
+  if(!interval) {
+    interval = 100;
+  }
+  var frames = [{
+      duration: interval,
+      state: function (index) { // index = 0
+        this.io_anode.output(true);  // on
+      }.bind(this)
+    }, {
+      duration: interval,
+      state: function (index) { // index = 0
+        this.io_anode.output(false);   //off
+      }.bind(this)
+    }];
+
+  this.obniz.io.animation(this.animationName, "loop", frames);
+
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LED", LED);
+}
+
+class WS2811 {
+
+  constructor() {
+    this.key = ["din", "vcc", "gnd"];
+    this.requiredKey = ["din"];
+  }
+
+  wired(obniz){
+
+    this.obniz = obniz;
+    
+    this.params.mode  =  "master";
+    this.params.frequency = 2*1000*1000;
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  };
+
+  static _generateFromByte(val) {
+
+    val = parseInt(val);
+    const zero = 0x8;
+    const one  = 0xE;
+    let ret = [];
+    for (var i=0; i<8;i+=2) {
+      let byte = 0;
+      if (val & (0x80 >> i)) {
+        byte = one << 4;
+      } else {
+        byte = zero << 4;
+      }
+      if (val & (0x80 >> (i+1))) {
+        byte |= one
+      } else {
+        byte |= zero
+      }
+      ret.push(byte);
+    }
+    return ret;
+  }
+
+  static _generateColor(r, g, b) {
+  
+    let array = WS2811._generateFromByte(r);
+    array = array.concat(WS2811._generateFromByte(g));
+    array = array.concat(WS2811._generateFromByte(b));
+    return array;
+  }
+  
+  static _generateHsvColor(h, s, v) {
+    var C = v * s ;
+    var Hp = h / 60;
+    var X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    var R, G, B;
+    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
+    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
+    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
+    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
+    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
+    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
+
+    var m = v - C;
+    [R, G, B] = [R+m, G+m, B+m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+    
+    let array = WS2811._generateFromByte(R);
+    array = array.concat(WS2811._generateFromByte(G));
+    array = array.concat(WS2811._generateFromByte(B));
+    return array;
+  }
+
+  rgb(r, g, b){
+    this.spi.write(WS2811._generateColor(r, g, b));
+  }
+  
+  hsv(h,s,v){
+     this.spi.write(WS2811._generateHsvColor(h, s, v));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (var i=0; i<array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (var i=0; i<array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("WS2811", WS2811);
+}
+var _24LC256 = function() {
+  this.requiredKeys = ["address"];
+  this.keys = ["sda","scl","clock","pullType","i2c","address"];
+};
+
+_24LC256.prototype.wired = function(obniz) {
+  this.params.mode =  this.params.mode || "master"; //for i2c
+  this.params.clock =  this.params.clock || 400 * 1000; //for i2c
+  this.i2c = obniz.getI2CWithConfig(this.params);
+};
+
+
+
+// Module functions
+
+_24LC256.prototype.set = function(address, data) {
+  var array = [];
+  array.push((address >> 8) & 0xFF);
+  array.push(address & 0xFF);
+  array.push.apply(array, data);
+  this.i2c.write(0x50, array);
+  this.obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+};
+
+_24LC256.prototype.getWait = async function(address, length) {
+  var array = [];
+  array.push((address >> 8) & 0xFF);
+  array.push(address & 0xFF);
+  this.i2c.write(0x50, array);
+  return await this.i2c.readWait(0x50, length);
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("24LC256", _24LC256);
+};
+var Button = function() {
+  this.keys = ["signal","gnd"];
+  this.required = ["signal"];
+};
+
+Button.prototype.wired = function(obniz) {
+  this.io_signal = obniz.getIO(this.params.signal);
+
+  if (obniz.isValidIO(this.params.gnd)) {
+    this.io_supply = obniz.getIO(this.params.gnd);
+    this.io_supply.output(false);
+  }
+
+  // start input
+  this.io_signal.pull("5v");
+  
+  var self = this;
+  this.io_signal.input(function(value) {
+    self.isPressed = (value === false);
+    if (self.onchange) {
+      self.onchange(value === false);
+    }
+  });
+};
+
+
+Button.prototype.isPressedWait = async function() {
+  var ret = await this.io_signal.inputWait();
+  return ret === false;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("Button", Button);
+}
+var JoyStick = function() {
+    this.keys = ["sw", "y", "x", "vcc", "gnd","i2c"];
+    this.requiredKeys = ["sw", "y", "x"];
+    this.pins  =  this.keys || ["sw", "y", "x", "vcc", "gnd"];
+    this.pinname = { "sw": "sw12" };
+    this.shortName = "joyS";
+};
+
+JoyStick.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  
+  this.io_sig_sw = obniz.getIO(this.params.sw);
+  this.ad_x = obniz.getAD(this.params.x);
+  this.ad_y = obniz.getAD(this.params.y);
+  
+  this.io_sig_sw.pull("5v");
+  
+      
+  var self = this;
+  this.ad_x.start(function(value){
+    self.positionX = value/ 5.0;
+    if (self.onchangex) {
+      self.onchangex(self.positionX * 2 - 1);
+    }
+  });
+  
+  this.ad_y.start(function(value){
+    self.positionY = value/ 5.0;
+    if (self.onchangey) {
+      self.onchangey(self.positionY * 2 - 1);
+    }
+  });
+  
+  this.io_sig_sw.input(function(value) {
+    self.isPressed = (value === false);
+    if (self.onchangesw) {
+      self.onchangesw(value === false);
+    }
+  });
+};
+
+JoyStick.prototype.isPressedWait = async function() {
+  var ret = await this.io_sig_sw.inputWait();
+  return ret === false;
+};
+
+  
+  if (PartsRegistrate) {
+  PartsRegistrate("JoyStick", JoyStick);
+  }
+var KXSC7_2050 = function() {
+  this.keys = [ "x", "y", "z", "vcc", "gnd"];
+  this.requiredKeys = [ "x", "y", "z"];
+};
+
+
+KXSC7_2050.prototype.wired = async function(obniz) {
+  this.obniz = obniz;
+  
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "3v");
+  this.ad_x = obniz.getAD(this.params.x);
+  this.ad_y = obniz.getAD(this.params.y);
+  this.ad_z = obniz.getAD(this.params.z);
+  
+  await obniz.wait(500);
+  var ad = obniz.getAD(this.params.vcc);
+  var pwrVoltage = await ad.getWait();
+  var horizontalZ = await this.ad_z.getWait();
+  var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+  var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+      
+  var self = this;
+  this.ad_x.start(function(value){
+    self.gravity = (value - offsetVoltage) / sensitivity ;
+    if (self.onchangex) {
+      self.onchangex(self.gravity);
+    }
+  });
+  
+  this.ad_y.start(function(value){
+    self.gravity = (value - offsetVoltage) / sensitivity ;
+    if (self.onchangey) {
+      self.onchangey(self.gravity);
+    }
+  });
+  
+  this.ad_z.start(function(value){
+    self.gravity = (value - offsetVoltage) / sensitivity ;
+    if (self.onchangez) {
+      self.onchangez(self.gravity);
+    }
+  });
+  
+};
+
+
+if (PartsRegistrate) {
+  PartsRegistrate("KXSC7_2050", KXSC7_2050);
+}
+var Potentiometer = function() {
+    this.keys = ["pin0","pin1","pin2"];
+    this.reuiredKeys = ["pin0","pin1","pin2"];
+
+    this.vcc_voltage = 5.0;
+};
+
+Potentiometer.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+  this.ad = obniz.getAD(this.params.pin1);
+
+  var self = this;
+
+  obniz.getAD(this.params.pin0).start(function(value){
+    self.vcc_voltage = value;
+  });
+
+  this.ad.start(function(value){
+    self.position = value/ self.vcc_voltage;
+    if (self.onchange) {
+      self.onchange(self.position);
+    }
+  });
+};
+
+
+if (PartsRegistrate) {
+  PartsRegistrate("Potentiometer", Potentiometer);
+}
+var DCMotor = function() {
+  this.keys = ["forward", "back"];
+  this.requiredKeys = ["forward", "back"];
+};
+
+DCMotor.prototype.wired = function(obniz) {
+  this.status = {
+    direction: null,
+    power: null
+  };
+
+  this.pwm1_io_num = this.params.forward;
+  this.pwm2_io_num = this.params.back;
+
+  this.pwm1 = obniz.getFreePwm();
+  this.pwm1.start(this.pwm1_io_num);
+  this.pwm1.freq(100000);
+  this.pwm2 = obniz.getFreePwm();
+  this.pwm2.start(this.pwm2_io_num);
+  this.pwm2.freq(100000);
+  this.power(30);
+  this.pwm1.forceWorking(true);
+  this.pwm2.forceWorking(true);
+};
+
+// Module functions
+
+DCMotor.prototype.forward = function() {
+  this.move(true);
+};
+
+DCMotor.prototype.reverse = function() {
+  this.move(false);
+};
+
+DCMotor.prototype.stop = function() {
+  if (this.status.direction === null) {
+    return;
+  }
+  this.status.direction = null;
+  this.pwm1.duty(0);
+  this.pwm2.duty(0);
+};
+
+DCMotor.prototype.move = function(forward) {
+  if (forward) {
+    if (this.status.direction === true) {
+      return;
+    }
+    this.status.direction = true;
+  } else {
+    if (this.status.direction === false) {
+      return;
+    }
+    this.status.direction = false;
+  }
+  var power = this.power();
+  this.power(0);
+  this.power(power);
+};
+
+DCMotor.prototype.power = function(power) {
+  if (power === undefined) {
+    return this.status.power;
+  }
+  this.status.power = power;
+  if (this.status.direction === null) {
+    this.pwm1.duty(0);
+    this.pwm2.duty(0);
+    return;
+  }
+  if (this.status.direction) {
+    this.pwm1.duty(power);
+    this.pwm2.duty(0);
+  } else {
+    this.pwm1.duty(0);
+    this.pwm2.duty(power);
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("DCMotor", DCMotor);
+}
+var ServoMotor = function() {
+  this.keys = [ "gnd", "vcc", "signal"];
+  this.requiredKeys = ["signal"];
+};
+
+ServoMotor.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    
+  this.pwm = obniz.getFreePwm();
+  this.pwm_io_num = this.params.signal;
+
+  this.pwm.start(this.pwm_io_num);
+  this.pwm.freq(50);
+};
+
+// Module functions
+
+ServoMotor.prototype.angle = function(ratio) {
+  var max = 2.4;
+  var min = 0.5;
+  var val = (max-min) * ratio / 180.0 + min;
+  this.pwm.pulse(val);
+};
+
+ServoMotor.prototype.on = function() {
+  if (this.io_power) {
+    this.io_power.output(true);
+  }
+};
+
+ServoMotor.prototype.off = function() {
+  if (this.io_power) {
+    this.io_power.output(false);
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("ServoMotor", ServoMotor);
+}
+var PIR_ekmc= function() {
+    this.keys = ["vcc","gnd","signal"];
+    this.requiredKeys = ["signal"];
+    
+};
+
+PIR_ekmc.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  this.io_signal = obniz.getIO(this.params.signal);
+  this.io_signal.pull("0v");
+  
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  
+  var self = this;
+  this.io_signal.input(function(value) {
+    self.isPressed = (value === false);
+    if (self.onchange) {
+      self.onchange(value === false);
+    }
+  });
+  
+};
+
+
+
+PIR_ekmc.prototype.isPressedWait = async function() {
+  var self = this;
+  var ret = await this.io_signal.inputWait();
+  return ret == false;
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("PIR_ekmc", PIR_ekmc);
+}
+//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+var FSR40X = function() {
+  this.keys = ["pin0", "pin1"];
+  this.requiredKeys = ["pin0", "pin1"];
+};
+
+FSR40X.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  
+  this.io_pwr = obniz.getIO(this.params.pin0);
+  this.ad = obniz.getAD(this.params.pin1);
+
+  this.io_pwr.drive("5v");
+  this.io_pwr.output(true);
+
+  var self = this;
+  this.ad.start(function(value){
+    pressure = value * 100;
+    if (pressure >= 49){
+      pressure = 49;
+    }
+    self.press = pressure;
+    if (self.onchange) {
+      self.onchange(self.press);
+    }
+  });
+
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("FSR40X", FSR40X);
+}
+
+var SEN0114 = function() {
+  this.keys = ["vcc", "output","gnd"];
+  this.requiredKeys = [ "output" ];
+
+};
+
+SEN0114.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+
+SEN0114.prototype.getHumidityWait = async function() {
+  return await this.ad.getWait;
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("SEN0114", SEN0114);
+}
+
+class Speaker {
+
+  constructor(obniz) {
+    this.keys = ["signal","gnd"];
+    this.requiredKeys = ["gnd"];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(null, this.params.gnd, "5v");
+    this.pwm = obniz.getFreePwm();
+    this.pwm.start(this.params.signal);
+  }
+
+  play(freq) {
+    if (freq > 0) {
+      this.pwm.freq(freq);
+      this.pwm.pulse(1/freq/2*1000);
+    } else {
+      this.pwm.pulse(0);
+    }
+  }
+  
+  stop() {
+    this.play(0);
+  }
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("Speaker", Speaker);
+}
+var ADT7310 = function() {
+  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+  this.requiredKeys = [];
+};
+
+ADT7310.prototype.wired = async function(obniz) {
+  this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  
+
+  this.params.mode = this.params.mode || "master";
+  this.params.frequency = this.params.frequency || 500000;
+  this.params.frequency = this.params.frequency || 500000;
+  this.params.mosi = this.params.din;
+  this.params.miso = this.params.dout;
+  this.spi = this.obniz.getSpiWithConfig(this.params);
+};
+
+  ADT7310.prototype.getTempWait = async function() {
+    await this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+    await this.obniz.wait(200); //適度な値でないと安定しない
+    var ret = await this.spi.writeWait([0x00, 0x00]);
+    var tempBin = ret[0] << 8;
+    tempBin |= ret[1];
+    tempBin = tempBin >> 3;
+
+    if(tempBin & (0x1000)) { //0度以下の時の処理
+      tempBin = tempBin  - 8192;
+    }
+
+    return (tempBin/16);
+  }
+
+if (PartsRegistrate) {
+  PartsRegistrate("ADT7310", ADT7310);
+}
+
+var ADT7410 = function() {
+  this.keys = [ "vcc", "gnd", "sda", "scl", "addressMode"];
+  this.requiredKey = ["addressMode"];
+};
+
+ADT7410.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  
+  if (this.params.addressMode === 8){
+    this.address = 0x48;
+  }else if(this.params.addressMode === 9){
+    this.address = 0x49;
+  }
+
+  this.params.clock = 400000;
+  this.params.pull = "5v";
+  this.params.mode = "master";
+ 
+  this.i2c = obniz.getI2CWithConfig(this.params);
+
+};
+
+  ADT7410.prototype.getTempWait = async function() {
+    var ret = await this.i2c.readWait(this.address, 2);
+    var tempBin = ret[0] << 8;
+    tempBin |= ret[1];
+    tempBin = tempBin >> 3;
+
+    if(tempBin & (0x1000)) { //0度以下の時の処理
+      tempBin = tempBin  - 8192;
+    }
+
+    return (tempBin/16);
+  };
+
+if (PartsRegistrate) {
+  PartsRegistrate("ADT7410", ADT7410);
+}
+
+var LM35DZ = function() {
+  this.keys = ["vcc","gnd","output"];
+  this.requiredKeys = ["output"];
+};
+
+LM35DZ.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = value * 100; //Temp(Celsius) = [AD Voltage] * 100
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM35DZ", LM35DZ);
+}
+
+var LM60 = function() {
+  this.keys = ["vcc","gnd","output"];
+  this.requiredKeys = ["output"];
+};
+
+LM60.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  this.ad = obniz.getAD(this.params.output);
+
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = Math.round(((value-0.424)/0.00625)*10)/10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM60", LM60);
+}
+
+var LM61 = function() {
+  this.keys = ["vcc", "output","gnd"];
+  this.requiredKeys = [ "output" ];
+};
+
+LM61.prototype.wired = function(obniz) {
+  
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
+
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = Math.round((value-0.6)/0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM61", LM61);
+}
+
+var MCP9700 = function() {
+
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = [ "output" ];
+};
+
+MCP9700.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = (value-0.5)/0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("MCP9700", MCP9700);
+}
+
+var MCP9701 = function() {
+
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = [ "output" ];
+};
+
+MCP9701.prototype.wired = function(obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
+
+
+  var self = this;
+  this.ad.start(function(value){
+    self.temp = (value-0.4)/0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+
+};
+
+
+if (PartsRegistrate) {
+  PartsRegistrate("MCP9701", MCP9701);
+}
+
 //センサからの反応なし
 var S5851A = function() {
   this.requiredKeys = ["vcc","gnd","adr0","adr1","adr_select"];
@@ -4513,35 +4929,6 @@ if (PartsRegistrate) {
   PartsRegistrate("S8120C", S8120C);
 }
 
-var SEN0114 = function() {
-  this.keys = ["vcc", "output","gnd"];
-  this.requiredKeys = [ "output" ];
-
-};
-
-SEN0114.prototype.wired = function(obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function(value){
-    self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-
-};
-
-
-SEN0114.prototype.getHumidityWait = async function() {
-  return await this.ad.getWait;
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("SEN0114", SEN0114);
-}
-
 var SHT31 = function() {
   this.requiredKeys = [ "adr", "addressmode","i2c"];
   this.keys = [ "vcc", "sda", "scl", "gnd", "adr", "addressmode","i2c"];
@@ -4589,351 +4976,3 @@ SHT31.prototype.wired = function(obniz,) {
 if (PartsRegistrate) {
   PartsRegistrate("SHT31", SHT31);
 }
-
-var ServoMotor = function() {
-  this.keys = [ "gnd", "vcc", "signal"];
-  this.requiredKeys = ["signal"];
-};
-
-ServoMotor.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    
-  this.pwm = obniz.getFreePwm();
-  this.pwm_io_num = this.params.signal;
-
-  this.pwm.start(this.pwm_io_num);
-  this.pwm.freq(50);
-};
-
-// Module functions
-
-ServoMotor.prototype.angle = function(ratio) {
-  var max = 2.4;
-  var min = 0.5;
-  var val = (max-min) * ratio / 180.0 + min;
-  this.pwm.pulse(val);
-};
-
-ServoMotor.prototype.on = function() {
-  if (this.io_power) {
-    this.io_power.output(true);
-  }
-};
-
-ServoMotor.prototype.off = function() {
-  if (this.io_power) {
-    this.io_power.output(false);
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("ServoMotor", ServoMotor);
-}
-class Speaker {
-
-  constructor(obniz) {
-    this.keys = ["signal","gnd"];
-    this.requiredKeys = ["gnd"];
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.obniz.setVccGnd(null, this.params.gnd, "5v");
-    this.pwm = obniz.getFreePwm();
-    this.pwm.start(this.params.signal);
-  }
-
-  play(freq) {
-    if (freq > 0) {
-      this.pwm.freq(freq);
-      this.pwm.pulse(1/freq/2*1000);
-    } else {
-      this.pwm.pulse(0);
-    }
-  }
-  
-  stop() {
-    this.play(0);
-  }
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("Speaker", Speaker);
-}
-var USB = function() {
-    this.keys = ["vcc","gnd"];
-    this.requiredKeys = ["vcc","gnd"];
-};
-
-USB.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.io_vdd = obniz.getIO(this.params.vcc);
-  this.io_gnd = obniz.getIO(this.params.gnd);
-  
-  this.io_gnd.output(false);
-  
-};
-
-USB.prototype.on = function() {
-  this.io_vdd.output(true);
-};
-
-USB.prototype.off = function() {
-  this.io_vdd.output(false);
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("USB", USB);
-}
-class WS2811 {
-
-  constructor() {
-    this.key = ["din", "vcc", "gnd"];
-    this.requiredKey = ["din"];
-  }
-
-  wired(obniz){
-
-    this.obniz = obniz;
-    
-    this.params.mode  =  "master";
-    this.params.frequency = 2*1000*1000;
-    this.params.mosi = this.params.din;
-    this.params.drive = "3v";
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
-
-  static _generateFromByte(val) {
-
-    val = parseInt(val);
-    const zero = 0x8;
-    const one  = 0xE;
-    let ret = [];
-    for (var i=0; i<8;i+=2) {
-      let byte = 0;
-      if (val & (0x80 >> i)) {
-        byte = one << 4;
-      } else {
-        byte = zero << 4;
-      }
-      if (val & (0x80 >> (i+1))) {
-        byte |= one
-      } else {
-        byte |= zero
-      }
-      ret.push(byte);
-    }
-    return ret;
-  }
-
-  static _generateColor(r, g, b) {
-  
-    let array = WS2811._generateFromByte(r);
-    array = array.concat(WS2811._generateFromByte(g));
-    array = array.concat(WS2811._generateFromByte(b));
-    return array;
-  }
-  
-  static _generateHsvColor(h, s, v) {
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
-
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-    
-    let array = WS2811._generateFromByte(R);
-    array = array.concat(WS2811._generateFromByte(G));
-    array = array.concat(WS2811._generateFromByte(B));
-    return array;
-  }
-
-  rgb(r, g, b){
-    this.spi.write(WS2811._generateColor(r, g, b));
-  }
-  
-  hsv(h,s,v){
-     this.spi.write(WS2811._generateHsvColor(h, s, v));
-  }
-
-  rgbs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-  hsvs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("WS2811", WS2811);
-}
-/* global PartsRegistrate */
-
-class XBee {
-
-  constructor() {
-    this.keys = ["tx","rx","gnd"];
-    this.requiredKeys = ["tx","rx"];
-    
-    this.displayIoNames = { "tx" : "<tx", "rx":">rx"};
-  }
-
-  wired(obniz) {
-  
-    this.uart = obniz.getFreeUart();
-    this.currentCommand = null;
-    this.commands = [];
-    this.isAtMode = false;
-    this.onFinishAtModeCallback = null;
-    
-    
-  if(typeof(this.params.gnd) === "number") {
-    obniz.getIO(this.params.gnd).output(false);
-  }
-  
-    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:9600, drive:"3v"});
-    
-    this.uart.onreceive = (function(data, text) {
-      if(this.isAtMode){
-        this.onAtResultsRecieve(data, text);
-      }else{
-        if (typeof(this.onreceive) === "function") {
-          this.onreceive(data, text);
-        }
-      }
-    }).bind(this);
-  }
-
-  send( text) {
-    if(this.isAtMode === false){
-      this.uart.send(text);
-      
-    }else{
-      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
-    }
-  }
-
-  onAtResultsRecieve(data, text){
-    if(!this.isAtMode){ return; }
-    
-    var next = function(){
-      this.currentCommand  = null;
-      this.sendCommand();
-    }.bind(this);
-    
-    if(text === "OK\r"){
-      if(this.currentCommand === "ATCN"){
-        this.isAtMode = false;
-        this.currentCommand  = null;
-        if(typeof(this.onFinishAtModeCallback) === "function"){
-          this.onFinishAtModeCallback();
-          this.onFinishAtModeCallback = null;
-        }
-        return;
-      }
-      next();
-    }else if(text === "ERROR\r"){
-      this.obniz.error("XBee config error : " + this.currentCommand);
-    }else{
-      //response of at command.
-      console.log("XBEE : no catch message", data);
-      next();
-    }
-  }
-
-  addCommand(command, value) {
-    var str = command + (value ? " " + value : "");
-    this.commands.push(str);
-    if(this.isAtMode === true 
-        && this.currentCommand === null){
-      this.sendCommand();
-    }
-  }
-
-  sendCommand() {
-    if(this.isAtMode === true 
-        && this.currentCommand === null
-        && this.commands.length > 0){
-      this.currentCommand = "AT" + this.commands.shift();
-      this.uart.send(this.currentCommand + "\r");
-    }
-  }
-
-  enterAtMode() {
-    if(this.currentCommand !== null) return;
-    this.isAtMode = true;
-    this.obniz.freeze(1000);
-    var command = "+++";
-    this.currentCommand = command;
-    this.uart.send(this.currentCommand);
-    this.obniz.freeze(1000);
-  }
-
-  exitAtMode() {
-    this.addCommand("CN");
-  }
-
-  async configWait(config) {
-    if(this.isAtMode){ throw new Error("Xbee : duplicate config setting"); };
-    return new Promise(function(resolve, reject){
-      var standaloneKeys = {
-        "destination_address_high" : "DH",
-        "destination_address_low" : "DL",
-        "source_address" : "MY"
-      };
-      var highLowKeys = [
-        "destination_address"
-      ];
-      this.enterAtMode();
-      for(var key in config){
-          if(key.length === 2){
-            this.addCommand(key,config[key]);
-          }else if(standaloneKeys[key]){
-            this.addCommand(standaloneKeys[key],config[key]);
-          }else if(highLowKeys.includes(key)){
-            var high = config[key].slice(0,-8); 
-            if(!high){high="0";}
-            var low = config[key].slice(-8);
-  
-            this.addCommand(standaloneKeys[key + "_high"], high);
-            this.addCommand(standaloneKeys[key + "_low"],  low);
-          }
-      }
-      this.exitAtMode();
-      this.onFinishAtModeCallback = function(){
-        resolve();
-      };
-    }.bind(this));
-    
-  }
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("XBee", XBee);
-}  

@@ -1,11 +1,11 @@
-var PotentionMeter = function() {
+var Potentiometer = function() {
     this.keys = ["pin0","pin1","pin2"];
     this.reuiredKeys = ["pin0","pin1","pin2"];
 
     this.vcc_voltage = 5.0;
 };
 
-PotentionMeter.prototype.wired = function(obniz) {
+Potentiometer.prototype.wired = function(obniz) {
   this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
   this.ad = obniz.getAD(this.params.pin1);
 
@@ -25,5 +25,5 @@ PotentionMeter.prototype.wired = function(obniz) {
 
 
 if (PartsRegistrate) {
-  PartsRegistrate("PotentionMeter", PotentionMeter);
+  PartsRegistrate("Potentiometer", Potentiometer);
 }

@@ -7,6 +7,8 @@ const babel = require("babel-core");
 const notifier = require('node-notifier');
 const ncp = require('ncp').ncp;
 
+var ejs = require('ejs');
+
 const app = express()
 const port = 3100
 
@@ -50,6 +52,27 @@ watcher.on('ready',function(){
   });
 });
 
+const readmeWatcher = chokidar.watch([partsPath],{
+  ignored:/[\/\\]\./,
+  persistent:true
+});
+readmeWatcher.on('ready',function(){
+  console.log("ready watching README.ejs");
+  watcher.on('add',function(path){
+      if (path.indexOf('.ejs') >= 0) {
+        console.log(path + " added");
+        readmeBuild();
+      }
+  });
+  readmeWatcher.on('change',function(path){
+    if (path.indexOf('.ejs') >= 0 ) {
+      console.log(path + " changed");
+        readmeBuild();
+    }
+  });
+});
+
+
 var jsonSchemaPath = path.join(__dirname, '../../wsroom/json_schema/');
 if(fs.existsSync(jsonSchemaPath)){
 
@@ -76,6 +99,7 @@ if(fs.existsSync(jsonSchemaPath)){
 }
 
 build();
+readmeBuild();
 schemaCopy();
 
 function build() {
@@ -98,29 +122,23 @@ function build() {
 
   //parts
   var partsPath = path.join(__dirname, '../parts')
-  var parts = fs.readdirSync(partsPath);
-  var names = [];
-  for (var i=0; i<parts.length; i++) {
-    const partsName = parts[i];
-    if (fs.existsSync(path.join(partsPath, partsName, 'index.js'))) {
-      names.push(partsName);
-    }
-  }
+
 
   // obniz
   combined += fs.readFileSync(path.join(__dirname, '../obniz/index.js'), 'utf8');
 
-  // parts
+  // obniz libs
   for (var i=0; i<libnames.length; i++) {
     var string = fs.readFileSync(path.join(obnizlibPath, libnames[i]), 'utf8');
     combined += "\n" + string;
   }
 
   // parts
-  for (var i=0; i<names.length; i++) {
-    var string = fs.readFileSync(path.join(partsPath, names[i], '/index.js'), 'utf8');
+  folderExploer(partsPath, "index.js", function(filePath){
+    var string = fs.readFileSync(filePath, 'utf8');
     combined += "\n" + string;
-  }
+    
+  });
 
   // flush
   fs.writeFileSync(path.join(__dirname, '../obniz.js'), combined);
@@ -148,6 +166,77 @@ function build() {
       console.log("obniz.js compile success");
     }
     fs.writeFileSync(path.join(__dirname, '../obniz.node6_10.js'), write ? results.code : "");
+}
+
+function readmeBuild(){
+  var partsPath = path.join(__dirname, '../parts');
+  
+  folderExploer(partsPath, "README.ejs", function(filePath){
+    ejs.renderFile(filePath, null, null, function(err, str){
+      if(err){
+        
+        // Object
+        notifier.notify({
+          'title': 'ERROR',
+          'message': filePath + ' compile ERROR. See console.'
+        });
+        console.log( filePath + ' compile ERROR.', err);
+      }else{
+        fs.writeFileSync(path.join(filePath, '../README.md'), str);
+      }
+    });
+  });
+  
+  
+  folderExploer(partsPath, "README-ja.ejs", function(filePath){
+    ejs.renderFile(filePath, null, null, function(err, str){
+      if(err){
+        
+        // Object
+        notifier.notify({
+          'title': 'ERROR',
+          'message': filePath + ' compile ERROR. See console.'
+        });
+        console.log( filePath + ' compile ERROR.', err);
+      }else{
+        fs.writeFileSync(path.join(filePath, '../README-ja.md'), str);
+      }
+    });
+  });
+  
+}
+
+
+
+function folderExploer(dirPath, targetFilename, callback) {
+
+  var file_list = fs.readdirSync(dirPath);
+
+  file_list
+      .filter(function (file) {
+        return !file.match(/^\..*/);
+      })
+      .filter(function (file) {
+        return file === targetFilename;
+      })
+      .map(function (file) {
+        return path.resolve(dirPath, file);
+      })
+      .forEach(function (filepath) {
+        callback(filepath);
+      });
+      
+  file_list
+      .map(function (file) {
+        return path.resolve(dirPath, file);
+      })
+      .filter(function (filepath) {
+        return fs.lstatSync(filepath).isDirectory();
+      })
+      .forEach(function (filepath) {
+        folderExploer(filepath, targetFilename, callback);
+      });
+          
 }
 
 function schemaCopy(){
