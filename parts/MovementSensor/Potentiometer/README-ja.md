@@ -1,4 +1,4 @@
-# PotentioMeter
+# Potentiometer
 ボリュームのように回すことで抵抗値を変えることが出来る可変抵抗です。
 抵抗値を読み取ることにより今どの位置に回されているのかがわかります。３本の端子があり、端の２つの間はどう回していても一定の抵抗値です。この２つの端子に電圧をかけます。
 回されることで間の１本の電圧が２つの電圧の間を移動します。
@@ -14,12 +14,12 @@
 ![](./c_pm.jpg)
 
 ```Javascript
-var meter = obniz.wired("PotentionMeter", {pin0:0, pin1:1, pin2:2});
+var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
 ```
 ## onchange 
 回転を監視し、回転された時にcallback関数を呼び出します。回転に合わせて0.0~1.0の値が返ります。例えばちょうど真ん中であれば0.5です。
 ```Javascript
-var meter = obniz.wired("PotentioMeter", {pin0:0, pin1:1, pin2:2});
+var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
 meter.onchange = function(position) {
   console.log("position: "+position);
 };

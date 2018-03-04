@@ -1,4 +1,4 @@
-# PotentioMeter
+# Potentiometer
 
 Potention Meter change it's resistor value regarding angle or position.
 obniz can read resistor value by using AD.
@@ -17,13 +17,13 @@ pin0 and pin2 is side pins. It can be swapped. But position will be reversed.
 ![](./c_pm.jpg)
 
 ```Javascript
-var meter = obniz.wired("PotentioMeter", {pin0:0, pin1:1, pin2:2});
+var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
 ```
 ## onchange = function(position){}
 called when rotated.
 position value is within 0.0 to 1.0. so, center is 0.5.
 ```Javascript
-var meter = obniz.wired("PotentioMeter", {pin0:0, pin1:1, pin2:2});
+var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
 meter.onchange = function(position) {
   console.log("position: "+position);
 };

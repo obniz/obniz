@@ -4331,14 +4331,14 @@ KXSC7_2050.prototype.wired = async function(obniz) {
 if (PartsRegistrate) {
   PartsRegistrate("KXSC7_2050", KXSC7_2050);
 }
-var PotentioMeter = function() {
+var Potentiometer = function() {
     this.keys = ["pin0","pin1","pin2"];
     this.reuiredKeys = ["pin0","pin1","pin2"];
 
     this.vcc_voltage = 5.0;
 };
 
-PotentioMeter.prototype.wired = function(obniz) {
+Potentiometer.prototype.wired = function(obniz) {
   this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
   this.ad = obniz.getAD(this.params.pin1);
 
@@ -4358,7 +4358,7 @@ PotentioMeter.prototype.wired = function(obniz) {
 
 
 if (PartsRegistrate) {
-  PartsRegistrate("PotentioMeter", PotentioMeter);
+  PartsRegistrate("Potentiometer", Potentiometer);
 }
 var DCMotor = function() {
   this.keys = ["forward", "back"];
