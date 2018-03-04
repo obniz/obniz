@@ -5,6 +5,9 @@
       "parts": [
         {
           "name": "LED"
+        },
+        {
+          "name": "FullcolorLED"
         }
       ]
     },{
@@ -67,7 +70,7 @@
       ]
     },
     {
-      "name": "Sensor: Movement",
+      "name": "Movement Sensor",
       "parts": [
         {
           "name": "Button"
@@ -87,7 +90,7 @@
       ]
     },
     {
-      "name": "Sensor: Distance",
+      "name": "Distance Sensor",
       "parts": [
         {
           "name": "HC-SR04"
@@ -95,7 +98,7 @@
       ]
     },
     {
-      "name": "Sensor: Temperature",
+      "name": "Temperature Sensor",
       "parts": [
         {
           "name": "LM35DZ"
