@@ -7,614 +7,563 @@ var _obniz_js_version = "0.1.25";
 
 var isNode = typeof window === 'undefined' ? true : false;
 
-var Obniz = function (id, options) {
-  this.isNode = isNode;
-  if (this.isNode === false && typeof showOffLine === "function") {
-    showOffLine();
-  }
-  this.apiversion = 1;
-  this.id = id;
-  this.socket = null;
-  this.debugprint = false;
-  this.debugs = [];
+class Obniz {
 
-  this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
-
-  this.init();
-
-  if (!options) {
-    options = {};
-  }
-  this.server_obnizio = options.obniz_server || "wss://obniz.io";
-  this._access_token = options.access_token;
-
-  if (!this.isValidObnizId(this.id)) {
-    if (isNode) {
-      this.error("invalid obniz id");
-    } else {
-      var filled = _ReadCookie("obniz-last-used") || "";
-      this.prompt(filled, function (obnizid) {
-        this.id = obnizid;
-        this.wsconnect();
-      }.bind(this));
+  constructor(id, options) {
+    this.isNode = isNode;
+    if (this.isNode === false) {
+      showOffLine();
     }
-    return;
-  }
-  this.wsconnect();
-};
+    this.apiversion = 1;
+    this.id = id;
+    this.socket = null;
+    this.debugprint = false;
+    this.debugs = [];
 
-Obniz.prototype.isValidObnizId = function (str) {
-  if (typeof str != "string" || str.length < 8) {
-    return null;
-  }
-  str = str.replace("-", "");
-  var id = parseInt(str);
-  if (isNaN(id)) id = null;
-  return id != null;
-};
+    this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
 
-Obniz.prototype.prompt = function (filled, callback) {
-  var obnizid = prompt("Please enter obniz id", filled);
-  if (!obnizid) {} else {
-    callback(obnizid);
-  }
-};
+    this.init();
 
-Obniz.prototype.wsOnOpen = function () {
-  this.print_debug("ws connected");
-  // wait for {ws:{ready:true}} object
-};
-
-Obniz.prototype.wsOnMessage = function (data) {
-  this.print_debug(data);
-  var obj = {};
-  if (typeof data === "string") {
-    obj = JSON.parse(data);
-  } else {
-    return;
-  }
-
-  // notify messaging
-  if (typeof obj.message === "object" && this.onmessage) {
-    this.onmessage(obj.message.data, obj.message.from);
-  }
-  // debug
-  if (typeof obj.debug === "object") {
-    if (obj.debug.warning) {
-      var msg = "Warning: " + obj.debug.warning;
-      this.error(msg);
+    if (!options) {
+      options = {};
     }
-    if (obj.debug.error) {
-      var msg = "Error: " + obj.debug.error;
-      this.error(msg);
-    }
-    if (this.ondebug) {
-      this.ondebug(obj.debug);
-    }
-  }
-  // ws command
-  if (obj["ws"]) {
-    this.handleWSCommand(obj["ws"]);
-    return;
-  }
+    this.server_obnizio = options.obniz_server || "wss://obniz.io";
+    this._access_token = options.access_token;
 
-  // notify
-  var notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
-  for (var handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
-    var i = -1;
-    var peripheral = notifyHandlers[handerIndex];
-    while (true) {
-      i++;
-      if (this[peripheral + "" + i] === undefined) {
-        break;
+    if (!this.isValidObnizId(this.id)) {
+      if (isNode) {
+        this.error("invalid obniz id");
+      } else {
+        var filled = _ReadCookie("obniz-last-used") || "";
+        this.prompt(filled, function (obnizid) {
+          this.id = obnizid;
+          this.wsconnect();
+        }.bind(this));
       }
-      var module_value = obj[peripheral + "" + i];
-      if (module_value === undefined) continue;
-      this[peripheral + "" + i].notified(module_value);
-    }
-  }
-  var names = ["switch", "ble", "measure"];
-  for (var i = 0; i < names.length; i++) {
-    if (obj[names[i]]) {
-      this[names[i]].notified(obj[names[i]]);
-    }
-  }
-  if (obj.logic_analyzer) {
-    this.logicAnalyzer.notified(obj.logic_analyzer);
-  }
-};
-
-Obniz.prototype.wsOnClose = function (event) {
-  this.print_debug("closed");
-  if (this.isNode === false && typeof showOffLine === "function") {
-    showOffLine();
-  }
-  if (this.looper) {
-    this.looper = null;
-  }
-
-  this.clearSocket(this.socket);
-  setTimeout(function () {
-    // always connect to mainserver if ws lost
-    this.wsconnect();
-  }.bind(this), 1000);
-};
-
-Obniz.prototype.wsOnError = function (err) {
-  console.log(err);
-};
-
-Obniz.prototype.wsOnUnexpectedResponse = function (req, res) {
-  let reconnectTime = 1000;
-  if (res && res.statusCode == 404) {
-    // obniz not online
-    this.print_debug("obniz not online");
-  } else {
-    // servder error or someting
-    reconnectTime = 5000;
-    this.print_debug("invalid server response " + res ? res.statusCode : '');
-  }
-  this.clearSocket(this.socket);
-  setTimeout(function () {
-    // always connect to mainserver if ws lost
-    this.wsconnect();
-  }.bind(this), reconnectTime);
-};
-
-Obniz.prototype.wsconnect = function (desired_server) {
-
-  var server = this.server_obnizio;
-  if (desired_server) {
-    server = "" + desired_server;
-  }
-  if (this.socket) {
-    this.socket.close();
-    this.clearSocket(this.socket);
-  }
-  var url = server + "/obniz/" + this.id + "/ws/" + this.apiversion;
-  if (_obniz_js_version) {
-    url += "?obnizjs=" + _obniz_js_version;
-  }
-  if (this._access_token) {
-    url += "&access_token=" + this._access_token;
-  }
-  this.print_debug("connecting to " + url);
-
-  if (this.isNode) {
-    const wsClient = require('ws');
-    this.socket = new wsClient(url);
-    this.socket.on('open', this.wsOnOpen.bind(this));
-    this.socket.on('message', this.wsOnMessage.bind(this));
-    this.socket.on('close', this.wsOnClose.bind(this));
-    this.socket.on('error', this.wsOnError.bind(this));
-    this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
-  } else {
-    this.socket = new WebSocket(url);
-    this.socket.onopen = this.wsOnOpen.bind(this);
-    this.socket.onmessage = function (event) {
-      this.wsOnMessage(event.data);
-    }.bind(this);
-    this.socket.onclose = this.wsOnClose.bind(this);
-    this.socket.onerror = this.wsOnError.bind(this);
-  }
-};
-
-Obniz.prototype.clearSocket = function (socket) {
-  if (this.isNode) {
-    var shouldRemoveObservers = ['open', 'message', 'close', 'error'];
-    for (var i = 0; i < shouldRemoveObservers.length; i++) {
-      socket.removeAllListeners(shouldRemoveObservers[i]);
-    }
-  } else {
-    socket.onopen = null;
-    socket.onmessage = null;
-    socket.onclose = null;
-    socket.onerror = null;
-  }
-  this.socket = null;
-};
-
-Obniz.prototype.close = function () {
-  if (this.socket) {
-    this.socket.close(1000, 'close');
-    this.clearSocket(this.socket);
-  }
-};
-
-Obniz.prototype.wired = function (partsname) {
-  var parts = new _parts[partsname]();
-  if (!parts) {
-    throw new Error("No such a parts [" + partsname + "] found");
-    return;
-  }
-  var args = Array.from(arguments);
-  args.shift();
-  args.unshift(this);
-  if (parts.keys) {
-    if (parts.requiredKeys) {
-      var err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
-      if (err) {
-        throw new Error(partsname + " wired param '" + err + "' required, but not found ");
-        return;
-      }
-    }
-    parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
-  }
-  parts.obniz = this;
-  parts.wired.apply(parts, args);
-  if (parts.keys || parts.ioKeys) {
-    var keys = parts.ioKeys || parts.keys;
-    var displayPartsName = parts.displayName || partsname;
-    var ioNames = {};
-    for (var index in keys) {
-      var pinName = keys[index];
-      var io = args[1][pinName];
-      if (parts.displayIoNames && parts.displayIoNames[pinName]) {
-        pinName = parts.displayIoNames[pinName];
-      }
-      ioNames[io] = pinName;
-    }
-    this.display.setPinNames(displayPartsName, ioNames);
-  }
-  return parts;
-};
-
-Obniz.prototype.print_debug = function (str) {
-  if (this.debugprint) {
-    console.log("Obniz: " + str);
-  }
-};
-
-Obniz.prototype.send = function (value) {
-  if (this.sendPool) {
-    this.sendPool.push(value);
-    return;
-  }
-  if (typeof value === "object") {
-    value = JSON.stringify(value);
-  }
-  this.print_debug("send: " + value);
-  this.socket.send(value);
-
-  if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-    this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
-  }
-};
-
-Obniz.prototype.init = function () {
-
-  this.io = new PeripheralIO_(this);
-  for (var i = 0; i < 12; i++) {
-    this["io" + i] = new PeripheralIO(this, i);
-  }
-  for (var i = 0; i < 12; i++) {
-    this["ad" + i] = new PeripheralAD(this, i);
-  }
-  for (var i = 0; i < 2; i++) {
-    this["uart" + i] = new PeripheralUART(this, i);
-  }
-  for (var i = 0; i < 1; i++) {
-    this["spi" + i] = new PeripheralSPI(this, i);
-  }
-  for (var i = 0; i < 1; i++) {
-    this["i2c" + i] = new PeripheralI2C(this, i);
-  }
-  for (var i = 0; i < 6; i++) {
-    this["pwm" + i] = new PeripheralPWM(this, i);
-  }
-
-  this.display = new Display(this);
-  this.switch = new ObnizSwitch(this);
-  this.logicAnalyzer = new LogicAnalyzer(this);
-  this.ble = new Ble(this);
-  this.measure = new ObnizMeasure(this);
-
-  this.util = new ObnizUtil(this);
-};
-
-Obniz.prototype.isValidIO = function (io) {
-  return typeof io === "number" && io >= 0 && io < 12;
-};
-
-Obniz.prototype.setVccGnd = function (vcc, gnd, drive) {
-  if (this.isValidIO(vcc)) {
-    if (drive) {
-      this.getIO(vcc).drive(drive);
-    }
-    this.getIO(vcc).output(true);
-  };
-
-  if (this.isValidIO(gnd)) {
-    if (drive) {
-      this.getIO(gnd).drive(drive);
-    }
-    this.getIO(gnd).output(false);
-  };
-};
-
-Obniz.prototype.getIO = function (id) {
-  return this["io" + id];
-};
-
-Obniz.prototype.getAD = function (id) {
-  return this["ad" + id];
-};
-
-Obniz.prototype.getFreePwm = function () {
-  var i = 0;
-  while (true) {
-    var pwm = this["pwm" + i];
-    if (!pwm) {
-      break;
-    }
-    if (!pwm.isUsed()) {
-      pwm.used = true;
-      return pwm;
-    }
-    i++;
-  }
-  throw new Error("No More PWM Available. max = " + i);
-};
-
-Obniz.prototype.getFreeI2C = function () {
-  var i = 0;
-  while (true) {
-    var i2c = this["i2c" + i];
-    if (!i2c) {
-      break;
-    }
-    if (!i2c.isUsed()) {
-      i2c.used = true;
-      return i2c;
-    }
-    i++;
-  }
-  throw new Error("No More I2C Available. max = " + i);
-};
-
-Obniz.prototype.getI2CWithConfig = function (config) {
-  if (typeof config !== "object") {
-    throw new Error("getI2CWithConfig need config arg");
-  }
-  if (config.i2c) {
-    return config.i2c;
-  }
-  var i2c = this.getFreeI2C();
-  i2c.start(config);
-  return i2c;
-};
-
-Obniz.prototype.getFreeSpi = function () {
-  var i = 0;
-  while (true) {
-    var spi = this["spi" + i];
-    if (!spi) {
-      break;
-    }
-    if (!spi.isUsed()) {
-      spi.used = true;
-      return spi;
-    }
-    i++;
-  }
-  throw new Error("No More SPI Available. max = " + i);
-};
-
-Obniz.prototype.getSpiWithConfig = function (config) {
-  if (typeof config !== "object") {
-    throw new Error("getSpiWithConfig need config arg");
-  }
-  if (config.spi) {
-    return config.spi;
-  }
-  var spi = this.getFreeSpi();
-  spi.start(config);
-  return spi;
-};
-
-Obniz.prototype.getFreeUart = function () {
-  var i = 0;
-  while (true) {
-    var uart = this["uart" + i];
-    if (!uart) {
-      break;
-    }
-    if (!uart.isUsed()) {
-      uart.used = true;
-      return uart;
-    }
-    i++;
-  }
-  throw new Error("No More uart Available. max = " + i);
-};
-
-Obniz.prototype.handleWSCommand = function (wsObj) {
-  // ready
-  if (wsObj.ready) {
-
-    this.resetOnDisconnect(true);
-    if (this.isNode === false && typeof showOnLine === "function") {
-      showOnLine();
-    }
-    if (this.onconnect) {
-      this.onconnect(this);
-    }
-  }
-  if (wsObj.redirect) {
-    var server = wsObj.redirect;
-    this.print_debug("WS connection changed to " + server);
-    this.close();
-    this.wsconnect(server);
-  }
-};
-
-Obniz.prototype.message = function (target, message) {
-  var targets = [];
-  if (typeof target === "string") {
-    targets.push(target);
-  } else {
-    targets = target;
-  }
-  this.send({
-    message: {
-      to: targets,
-      data: message
-    }
-  });
-};
-
-// --- System ---
-Obniz.prototype.reset = function () {
-  this.send({
-    system: {
-      reset: true
-    }
-  });
-  this.init();
-};
-
-Obniz.prototype.selfCheck = function () {
-  this.send({
-    system: {
-      self_check: true
-    }
-  });
-};
-
-Obniz.prototype.repeat = function (callback, interval) {
-  let loop = (() => {
-    var _ref = _asyncToGenerator(function* () {
-      if (typeof self.looper === "function") {
-        yield self.looper();
-        setTimeout(loop, interval);
-      }
-    });
-
-    return function loop() {
-      return _ref.apply(this, arguments);
-    };
-  })();
-
-  if (this.looper) {
-    this.looper = callback;
-    return;
-  }
-  this.looper = callback;
-  var self = this;
-  if (!interval) interval = 100;
-
-  loop();
-};
-
-Obniz.prototype.wait = (() => {
-  var _ref2 = _asyncToGenerator(function* (msec) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, msec);
-    });
-  });
-
-  return function (_x) {
-    return _ref2.apply(this, arguments);
-  };
-})();
-
-Obniz.prototype.freeze = (() => {
-  var _ref3 = _asyncToGenerator(function* (msec) {
-    this.send({
-      system: {
-        wait: msec
-      }
-    });
-  });
-
-  return function (_x2) {
-    return _ref3.apply(this, arguments);
-  };
-})();
-
-Obniz.prototype.keepWorkingAtOffline = function (working) {
-  this.send({
-    system: {
-      keep_working_at_offline: working
-    }
-  });
-};
-
-Obniz.prototype.resetOnDisconnect = function (reset) {
-  this.send({
-    ws: {
-      reset_obniz_on_ws_disconnection: reset
-    }
-  });
-};
-
-Obniz.prototype.warning = function (msg) {
-  if (this.isNode) {
-    console.error(msg);
-  } else {
-    if (msg && typeof msg === "object" && msg.alert) {
-      this.showAlertUI(msg);
-      console.log(msg.message);
       return;
     }
-    if (typeof showObnizDebugError === "function") {
-      showObnizDebugError(new Error(msg));
+    this.wsconnect();
+  }
+
+  isValidObnizId(str) {
+    if (typeof str != "string" || str.length < 8) {
+      return null;
+    }
+    str = str.replace("-", "");
+    var id = parseInt(str);
+    if (isNaN(id)) id = null;
+    return id != null;
+  }
+
+  prompt(filled, callback) {
+    var obnizid = prompt("Please enter obniz id", filled);
+    if (!obnizid) {} else {
+      callback(obnizid);
+    }
+  }
+
+  wsOnOpen() {
+    this.print_debug("ws connected");
+    // wait for {ws:{ready:true}} object
+  }
+
+  wsOnMessage(data) {
+    this.print_debug(data);
+    var obj = {};
+    if (typeof data === "string") {
+      obj = JSON.parse(data);
     } else {
-      throw new Error(msg);
+      return;
+    }
+
+    // notify messaging
+    if (typeof obj.message === "object" && this.onmessage) {
+      this.onmessage(obj.message.data, obj.message.from);
+    }
+    // debug
+    if (typeof obj.debug === "object") {
+      if (obj.debug.warning) {
+        var msg = "Warning: " + obj.debug.warning;
+        this.error(msg);
+      }
+      if (obj.debug.error) {
+        var msg = "Error: " + obj.debug.error;
+        this.error(msg);
+      }
+      if (this.ondebug) {
+        this.ondebug(obj.debug);
+      }
+    }
+    // ws command
+    if (obj["ws"]) {
+      this.handleWSCommand(obj["ws"]);
+      return;
+    }
+
+    // notify
+    var notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
+    for (var handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
+      var i = -1;
+      var peripheral = notifyHandlers[handerIndex];
+      while (true) {
+        i++;
+        if (this[peripheral + "" + i] === undefined) {
+          break;
+        }
+        var module_value = obj[peripheral + "" + i];
+        if (module_value === undefined) continue;
+        this[peripheral + "" + i].notified(module_value);
+      }
+    }
+    var names = ["switch", "ble", "measure"];
+    for (var i = 0; i < names.length; i++) {
+      if (obj[names[i]]) {
+        this[names[i]].notified(obj[names[i]]);
+      }
+    }
+    if (obj.logic_analyzer) {
+      this.logicAnalyzer.notified(obj.logic_analyzer);
     }
   }
-};
 
-Obniz.prototype.error = function (msg) {
-  if (this.isNode) {
-    console.error(msg);
-  } else {
-    if (msg && typeof msg === "object" && msg.alert) {
-      this.showAlertUI(msg);
-      msg = msg.message;
+  wsOnClose(event) {
+    this.print_debug("closed");
+    if (this.isNode === false) {
+      showOffLine();
     }
-    if (typeof showObnizDebugError === "function") {
-      showObnizDebugError(new Error(msg));
+    if (this.looper) {
+      this.looper = null;
+    }
+
+    this.clearSocket(this.socket);
+    setTimeout(function () {
+      // always connect to mainserver if ws lost
+      this.wsconnect();
+    }.bind(this), 1000);
+  }
+
+  wsOnError(err) {
+    console.log(err);
+  }
+
+  wsOnUnexpectedResponse(req, res) {
+    let reconnectTime = 1000;
+    if (res && res.statusCode == 404) {
+      // obniz not online
+      this.print_debug("obniz not online");
     } else {
-      throw new Error(msg);
+      // servder error or someting
+      reconnectTime = 5000;
+      this.print_debug("invalid server response " + res ? res.statusCode : '');
     }
+    this.clearSocket(this.socket);
+    setTimeout(function () {
+      // always connect to mainserver if ws lost
+      this.wsconnect();
+    }.bind(this), reconnectTime);
   }
-};
 
-Obniz.prototype.showAlertUI = function (obj) {
-  if (this.isNode || !document.getElementById('obniz-debug')) {
-    return;
-  }
-  const alerts = {
-    warning: 'alert-warning alert-dismissible',
-    error: 'alert-danger'
-  };
-  const timeLabel = Math.random().toString(36).slice(-8);
-  let dismissButton = `
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>`;
-  let dom = `
-  <div class="alert ${alerts[obj.alert]} fade show" role="alert">
-    ${obj.message}
-    ${obj.alert == "warning" ? dismissButton : ""}
-  </div>`;
-  document.getElementById('obniz-debug').insertAdjacentHTML('beforeend', dom);
-};
+  wsconnect(desired_server) {
+    var server = this.server_obnizio;
+    if (desired_server) {
+      server = "" + desired_server;
+    }
+    if (this.socket) {
+      this.socket.close();
+      this.clearSocket(this.socket);
+    }
+    var url = server + "/obniz/" + this.id + "/ws/" + this.apiversion;
+    if (_obniz_js_version) {
+      url += "?obnizjs=" + _obniz_js_version;
+    }
+    if (this._access_token) {
+      url += "&access_token=" + this._access_token;
+    }
+    this.print_debug("connecting to " + url);
 
-function _ReadCookie(name) {
-  var nameEQ = name + "=";
-  var ca = document.cookie.split(';');
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) === ' ') {
-      c = c.substring(1, c.length);
-    }
-    if (c.indexOf(nameEQ) === 0) {
-      return c.substring(nameEQ.length, c.length);
+    if (this.isNode) {
+      const wsClient = require('ws');
+      this.socket = new wsClient(url);
+      this.socket.on('open', this.wsOnOpen.bind(this));
+      this.socket.on('message', this.wsOnMessage.bind(this));
+      this.socket.on('close', this.wsOnClose.bind(this));
+      this.socket.on('error', this.wsOnError.bind(this));
+      this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
+    } else {
+      this.socket = new WebSocket(url);
+      this.socket.onopen = this.wsOnOpen.bind(this);
+      this.socket.onmessage = function (event) {
+        this.wsOnMessage(event.data);
+      }.bind(this);
+      this.socket.onclose = this.wsOnClose.bind(this);
+      this.socket.onerror = this.wsOnError.bind(this);
     }
   }
-  return null;
+
+  clearSocket(socket) {
+    if (this.isNode) {
+      var shouldRemoveObservers = ['open', 'message', 'close', 'error'];
+      for (var i = 0; i < shouldRemoveObservers.length; i++) {
+        socket.removeAllListeners(shouldRemoveObservers[i]);
+      }
+    } else {
+      socket.onopen = null;
+      socket.onmessage = null;
+      socket.onclose = null;
+      socket.onerror = null;
+    }
+    this.socket = null;
+  }
+
+  close() {
+    if (this.socket) {
+      this.socket.close(1000, 'close');
+      this.clearSocket(this.socket);
+    }
+  }
+
+  wired(partsname) {
+    var parts = new _parts[partsname]();
+    if (!parts) {
+      throw new Error("No such a parts [" + partsname + "] found");
+      return;
+    }
+    var args = Array.from(arguments);
+    args.shift();
+    args.unshift(this);
+    if (parts.keys) {
+      if (parts.requiredKeys) {
+        var err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
+        if (err) {
+          throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+          return;
+        }
+      }
+      parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
+    }
+    parts.obniz = this;
+    parts.wired.apply(parts, args);
+    if (parts.keys || parts.ioKeys) {
+      var keys = parts.ioKeys || parts.keys;
+      var displayPartsName = parts.displayName || partsname;
+      var ioNames = {};
+      for (var index in keys) {
+        var pinName = keys[index];
+        var io = args[1][pinName];
+        if (parts.displayIoNames && parts.displayIoNames[pinName]) {
+          pinName = parts.displayIoNames[pinName];
+        }
+        ioNames[io] = pinName;
+      }
+      this.display.setPinNames(displayPartsName, ioNames);
+    }
+    return parts;
+  }
+
+  print_debug(str) {
+    if (this.debugprint) {
+      console.log("Obniz: " + str);
+    }
+  }
+
+  send(value) {
+    if (this.sendPool) {
+      this.sendPool.push(value);
+      return;
+    }
+    if (typeof value === "object") {
+      value = JSON.stringify(value);
+    }
+    this.print_debug("send: " + value);
+    this.socket.send(value);
+
+    if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+      this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+    }
+  }
+
+  init() {
+    this.io = new PeripheralIO_(this);
+    for (var i = 0; i < 12; i++) {
+      this["io" + i] = new PeripheralIO(this, i);
+    }
+    for (var i = 0; i < 12; i++) {
+      this["ad" + i] = new PeripheralAD(this, i);
+    }
+    for (var i = 0; i < 2; i++) {
+      this["uart" + i] = new PeripheralUART(this, i);
+    }
+    for (var i = 0; i < 1; i++) {
+      this["spi" + i] = new PeripheralSPI(this, i);
+    }
+    for (var i = 0; i < 1; i++) {
+      this["i2c" + i] = new PeripheralI2C(this, i);
+    }
+    for (var i = 0; i < 6; i++) {
+      this["pwm" + i] = new PeripheralPWM(this, i);
+    }
+
+    this.display = new Display(this);
+    this.switch = new ObnizSwitch(this);
+    this.logicAnalyzer = new LogicAnalyzer(this);
+    this.ble = new ObnizBLE(this);
+    this.measure = new ObnizMeasure(this);
+
+    this.util = new ObnizUtil(this);
+  }
+
+  isValidIO(io) {
+    return typeof io === "number" && io >= 0 && io < 12;
+  }
+
+  setVccGnd(vcc, gnd, drive) {
+    if (this.isValidIO(vcc)) {
+      if (drive) {
+        this.getIO(vcc).drive(drive);
+      }
+      this.getIO(vcc).output(true);
+    };
+
+    if (this.isValidIO(gnd)) {
+      if (drive) {
+        this.getIO(gnd).drive(drive);
+      }
+      this.getIO(gnd).output(false);
+    };
+  }
+
+  getIO(id) {
+    return this["io" + id];
+  }
+
+  getAD(id) {
+    return this["ad" + id];
+  }
+
+  getFreePwm() {
+    var i = 0;
+    while (true) {
+      var pwm = this["pwm" + i];
+      if (!pwm) {
+        break;
+      }
+      if (!pwm.isUsed()) {
+        pwm.used = true;
+        return pwm;
+      }
+      i++;
+    }
+    throw new Error("No More PWM Available. max = " + i);
+  }
+
+  getFreeI2C() {
+    var i = 0;
+    while (true) {
+      var i2c = this["i2c" + i];
+      if (!i2c) {
+        break;
+      }
+      if (!i2c.isUsed()) {
+        i2c.used = true;
+        return i2c;
+      }
+      i++;
+    }
+    throw new Error("No More I2C Available. max = " + i);
+  }
+
+  getI2CWithConfig(config) {
+    if (typeof config !== "object") {
+      throw new Error("getI2CWithConfig need config arg");
+    }
+    if (config.i2c) {
+      return config.i2c;
+    }
+    var i2c = this.getFreeI2C();
+    i2c.start(config);
+    return i2c;
+  }
+
+  getFreeSpi() {
+    var i = 0;
+    while (true) {
+      var spi = this["spi" + i];
+      if (!spi) {
+        break;
+      }
+      if (!spi.isUsed()) {
+        spi.used = true;
+        return spi;
+      }
+      i++;
+    }
+    throw new Error("No More SPI Available. max = " + i);
+  }
+
+  getSpiWithConfig(config) {
+    if (typeof config !== "object") {
+      throw new Error("getSpiWithConfig need config arg");
+    }
+    if (config.spi) {
+      return config.spi;
+    }
+    var spi = this.getFreeSpi();
+    spi.start(config);
+    return spi;
+  }
+
+  getFreeUart() {
+    var i = 0;
+    while (true) {
+      var uart = this["uart" + i];
+      if (!uart) {
+        break;
+      }
+      if (!uart.isUsed()) {
+        uart.used = true;
+        return uart;
+      }
+      i++;
+    }
+    throw new Error("No More uart Available. max = " + i);
+  }
+
+  handleWSCommand(wsObj) {
+    // ready
+    if (wsObj.ready) {
+
+      this.resetOnDisconnect(true);
+      if (this.isNode === false) {
+        showOnLine();
+      }
+      if (this.onconnect) {
+        this.onconnect(this);
+      }
+    }
+    if (wsObj.redirect) {
+      var server = wsObj.redirect;
+      this.print_debug("WS connection changed to " + server);
+      this.close();
+      this.wsconnect(server);
+    }
+  }
+
+  message(target, message) {
+    var targets = [];
+    if (typeof target === "string") {
+      targets.push(target);
+    } else {
+      targets = target;
+    }
+    this.send({
+      message: {
+        to: targets,
+        data: message
+      }
+    });
+  }
+
+  // --- System ---
+
+
+  repeat(callback, interval) {
+    let loop = (() => {
+      var _ref = _asyncToGenerator(function* () {
+        if (typeof self.looper === "function") {
+          yield self.looper();
+          setTimeout(loop, interval);
+        }
+      });
+
+      return function loop() {
+        return _ref.apply(this, arguments);
+      };
+    })();
+
+    if (this.looper) {
+      this.looper = callback;
+      return;
+    }
+    this.looper = callback;
+    var self = this;
+    if (!interval) interval = 100;
+
+    loop();
+  }
+
+  wait(msec) {
+    return new Promise(resolve => setTimeout(resolve, msec));
+  }
+
+  reset() {
+    this.send({ system: { reset: true } });this.init();
+  }
+  selfCheck() {
+    this.send({ system: { self_check: true } });
+  }
+  freeze(msec) {
+    this.send({ system: { wait: msec } });
+  }
+  keepWorkingAtOffline(working) {
+    this.send({ system: { keep_working_at_offline: working } });
+  }
+  resetOnDisconnect(reset) {
+    this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
+  }
+
+  warning(msg) {
+    if (this.isNode) {
+      console.error(msg);
+    } else {
+      if (msg && typeof msg === "object" && msg.alert) {
+        this.showAlertUI(msg);
+        console.log(msg.message);
+        return;
+      }
+      if (typeof showObnizDebugError === "function") {
+        showObnizDebugError(new Error(msg));
+      } else {
+        throw new Error(msg);
+      }
+    }
+  }
+
+  error(msg) {
+    if (this.isNode) {
+      console.error(msg);
+    } else {
+      if (msg && typeof msg === "object" && msg.alert) {
+        this.showAlertUI(msg);
+        msg = msg.message;
+      }
+      if (typeof showObnizDebugError === "function") {
+        showObnizDebugError(new Error(msg));
+      } else {
+        throw new Error(msg);
+      }
+    }
+  }
+
+  showAlertUI(obj) {
+    if (this.isNode || !document.getElementById('obniz-debug')) {
+      return;
+    }
+    const alerts = {
+      warning: 'alert-warning alert-dismissible',
+      error: 'alert-danger'
+    };
+    const timeLabel = Math.random().toString(36).slice(-8);
+    let dismissButton = `
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>`;
+    let dom = `
+    <div class="alert ${alerts[obj.alert]} fade show" role="alert">
+      ${obj.message}
+      ${obj.alert == "warning" ? dismissButton : ""}
+    </div>`;
+    document.getElementById('obniz-debug').insertAdjacentHTML('beforeend', dom);
+  }
 }
 
 /*===================*/
@@ -629,6 +578,24 @@ var PartsRegistrate = function (name, obj) {
 var Parts = function (name) {
   return new _parts[name]();
 };
+
+/*===================*/
+/* Utils */
+/*===================*/
+function _ReadCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1, c.length);
+    }
+    if (c.indexOf(nameEQ) === 0) {
+      return c.substring(nameEQ.length, c.length);
+    }
+  }
+  return null;
+}
 
 if (!isNode) {
 
@@ -672,473 +639,474 @@ if (isNode) {
   module.exports = Obniz;
 }
 
-var PeripheralAD = function (Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.value = 0.0;
-  this.observers = [];
-};
-
-PeripheralAD.prototype.addObserver = function (callback) {
-  if (callback) {
-    this.observers.push(callback);
-  }
-};
-
-PeripheralAD.prototype.start = function (callback) {
-  this.onchange = callback;
-  var obj = {};
-  obj["ad" + this.id] = {
-    stream: true
-  };
-  this.Obniz.send(obj);
-  return this.value;
-};
-
-PeripheralAD.prototype.getWait = function () {
-  var self = this;
-  return new Promise(function (resolve, reject) {
-    var obj = {};
-    obj["ad" + self.id] = {
-      stream: false
-    };
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-PeripheralAD.prototype.end = function () {
-  this.onchange = null;
-  var obj = {};
-  obj["ad" + this.id] = null;
-  this.Obniz.send(obj);
-  return;
-};
-
-PeripheralAD.prototype.notified = function (obj) {
-  this.value = obj;
-  if (this.onchange) {
-    this.onchange(obj);
-  }
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj);
-  }
-};
-
-var Ble = function (Obniz) {
-  this.Obniz = Obniz;
-  this.remotePeripherals = [];
-  this.adv_data = [];
-  this.scan_resp = [];
-
-  this.service = BleService;
-  this.characteristic = BleCharacteristic;
-  this.descriptor = BleDescriptor;
-  this.peripheral = new BlePeripheral(Obniz);
-};
-
-Ble.prototype.startAdvertisement = function () {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = {
-    adv_data: this.adv_data
-  };
-
-  if (this.scan_resp.length > 0) {
-    obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
-  }
-
-  this.Obniz.send(obj);
-  return;
-};
-Ble.prototype.stopAdvertisement = function () {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["advertisement"] = null;
-  this.Obniz.send(obj);
-  return;
-};
-
-Ble.prototype.setAdvDataRaw = function (adv_data) {
-  var obj = {};
-  this.adv_data = adv_data;
-  return;
-};
-
-Ble.prototype.setAdvData = function (json) {
-  var builder = this.advDataBulider(json);
-
-  this.setAdvDataRaw(builder.build());
-
-  return;
-};
-
-Ble.prototype.dataBuliderPrototype = function () {
-  var builder = function (Obniz, json) {
+class PeripheralAD {
+  constructor(Obniz, id) {
     this.Obniz = Obniz;
-    this.rows = {};
+    this.id = id;
+    this.value = 0.0;
+    this.observers = [];
+  }
 
-    if (json) {
-      if (json.localName) {
-        this.setCompleteLocalName(json.localName);
-      }
-      if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
-        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
-      }
-      if (json.serviceUuids) {
-        for (var key in json.serviceUuids) {
-          this.setUuid(json.serviceUuids[key]);
-        }
-      }
+  addObserver(callback) {
+    if (callback) {
+      this.observers.push(callback);
     }
-    if (typeof this.extendEvalJson === "function") {
-      this.extendEvalJson(json);
-    }
-  };
-  builder.prototype.setRow = function (type, data) {
-    this.rows[type] = data;
-  };
-  builder.prototype.getRow = function (type) {
-    return this.rows[type] || [];
-  };
+  }
 
-  builder.prototype.check = function () {
-    return true;
-  };
+  start(callback) {
+    this.onchange = callback;
+    var obj = {};
+    obj["ad" + this.id] = {
+      stream: true
+    };
+    this.Obniz.send(obj);
+    return this.value;
+  }
 
-  builder.prototype.build = function () {
-    if (!this.check) {
-      return;
-    }
-    var data = [];
-    for (var key in this.rows) {
-      if (this.rows[key].length === 0) continue;
+  getWait() {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      var obj = {};
+      obj["ad" + self.id] = {
+        stream: false
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
 
-      data.push(this.rows[key].length + 1);
-      data.push(parseInt(key));
-      Array.prototype.push.apply(data, this.rows[key]);
-    }
-    if (data.length > 31) {
-      this.Obniz.error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
-    }
-
-    return data;
-  };
-
-  builder.prototype.setStringData = function (type, string) {
-    var data = [];
-
-    for (var i = 0; i < string.length; i++) {
-      data.push(string.charCodeAt(i));
-    }
-
-    this.setRow(type, data);
-  };
-
-  builder.prototype.setShortenedLocalName = function (name) {
-    this.setStringData(0x08, name);
-  };
-  builder.prototype.setCompleteLocalName = function (name) {
-    this.setStringData(0x09, name);
-  };
-
-  builder.prototype.setManufacturerSpecificData = function (campanyCode, data) {
-    var row = [];
-    row.push(campanyCode & 0xFF);
-    row.push(campanyCode >> 8 & 0xFF);
-    Array.prototype.push.apply(row, data);
-    this.setRow(0xFF, row);
-  };
-
-  builder.prototype.setUuid = function (uuid) {
-    var uuidData = this.convertUuid(uuid);
-    var type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
-    this.setRow(type, uuidData);
-  };
-
-  builder.prototype.convertUuid = function (uuid) {
-    var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
-      this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
-    }
-
-    var data = [];
-    for (var i = uuidNumeric.length; i > 1; i -= 2) {
-      data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
-    }
-    return data;
-  };
-
-  builder.prototype.setIbeaconData = function (uuid, major, minor, txPower) {
-    var data = [];
-    data.push(0x02, 0x15); // fixed data
-
-    var uuidData = this.convertUuid(uuid);
-    Array.prototype.push.apply(data, uuidData);
-
-    data.push(major >> 8 & 0xFF);
-    data.push(major >> 0 & 0xFF);
-    data.push(minor >> 8 & 0xFF);
-    data.push(minor >> 0 & 0xFF);
-    data.push(txPower >> 0 & 0xFF);
-
-    this.setManufacturerSpecificData(0x004c, data);
+  end() {
+    this.onchange = null;
+    var obj = {};
+    obj["ad" + this.id] = null;
+    this.Obniz.send(obj);
     return;
-  };
+  }
 
-  return builder;
-};
-
-Ble.prototype.advDataBulider = function (jsonVal) {
-  var builder = this.dataBuliderPrototype();
-
-  builder.prototype.check = function () {
-
-    return true;
-  };
-
-  builder.prototype.extendEvalJson = function (json) {
-    if (json) {
-      if (json.flags) {
-        if (json.flags.includes("limited_discoverable_mode")) this.setLeLimitedDiscoverableModeFlag();
-        if (json.flags.includes("general_discoverable_mode")) this.setLeGeneralDiscoverableModeFlag();
-        if (json.flags.includes("br_edr_not_supported")) this.setBrEdrNotSupportedFlag();
-        if (json.flags.includes("le_br_edr_controller")) this.setLeBrEdrControllerFlag();
-        if (json.flags.includes("le_br_edr_host")) this.setLeBrEdrHostFlag();
-      }
+  notified(obj) {
+    this.value = obj;
+    if (this.onchange) {
+      this.onchange(obj);
     }
-  };
-
-  builder.prototype.setFlags = function (flag) {
-    var data = this.getRow(0x01);
-    data[0] = (data[0] || 0) | flag;
-    this.setRow(0x01, data);
-  };
-  builder.prototype.setLeLimitedDiscoverableModeFlag = function () {
-    this.setFlags(0x01);
-  };
-  builder.prototype.setLeGeneralDiscoverableModeFlag = function () {
-    this.setFlags(0x02);
-  };
-  builder.prototype.setBrEdrNotSupportedFlag = function () {
-    this.setFlags(0x04);
-  };
-  builder.prototype.setLeBrEdrControllerFlag = function () {
-    this.setFlags(0x08);
-  };
-  builder.prototype.setLeBrEdrHostFlag = function () {
-    this.setFlags(0x10);
-  };
-
-  return new builder(this.Obniz, jsonVal);
-};
-Ble.prototype.scanRespDataBuilder = function (json) {
-  var builder = this.dataBuliderPrototype();
-  return new builder(this.Obniz, json);
-};
-
-Ble.prototype.setScanRespDataRaw = function (scan_resp) {
-
-  this.scan_resp = scan_resp;
-  return;
-};
-
-Ble.prototype.setScanRespData = function (json) {
-  this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
-  return;
-};
-
-Ble.prototype.startScan = function (settings) {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["scan"] = {
-    //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-    //    "interval" : settings && settings.interval ? settings.interval : 30,
-    "duration": settings && settings.duration ? settings.duration : 30
-
-  };
-
-  this.remotePeripherals = [];
-
-  this.Obniz.send(obj);
-  return;
-};
-
-Ble.prototype.stopScan = function () {
-  var obj = {};
-  obj["ble"] = {};
-  obj["ble"]["scan"] = null;
-  this.Obniz.send(obj);
-  return;
-};
-
-Ble.prototype.findPeripheral = function (address) {
-  for (var key in this.remotePeripherals) {
-    if (this.remotePeripherals[key].address === address) {
-      return this.remotePeripherals[key];
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj);
     }
   }
-  return null;
-};
+}
 
-Ble.prototype.notified = function (obj) {
-  if (obj.scan_results) {
-    var isFinished = false;
-    for (var id in obj.scan_results) {
+class ObnizBLE {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.remotePeripherals = [];
+    this.adv_data = [];
+    this.scan_resp = [];
 
-      if (obj.scan_results[id].event_type === "inquiry_complete") {
-        isFinished = true;
-      } else if (obj.scan_results[id].event_type === "inquiry_result") {
-        var val = new BleRemotePeripheral(this.Obniz, obj.scan_results[id].address);
-        val.setParams(obj.scan_results[id]);
-        this.remotePeripherals.push(val);
-        if (this.onscan) {
-          this.onscan(val);
-        }
-      }
-    }
-    if (isFinished && this.onscanfinish) {
-      this.onscanfinish(this.remotePeripherals);
-    }
+    this.service = BleService;
+    this.characteristic = BleCharacteristic;
+    this.descriptor = BleDescriptor;
+    this.peripheral = new BlePeripheral(Obniz);
   }
 
-  if (obj.status_updates) {
-    obj.status_updates.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        if (params.status === "connected") {
-          p.notify("onconnect");
-        }
-        if (params.status === "disconnected") {
-          p.notify("ondisconnect");
-        }
-      }
-    }, this);
-  }
-
-  if (obj.get_service_results) {
-    obj.get_service_results.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("ondiscoverservice", params.service_uuid);
-      }
-    }, this);
-  }
-  if (obj.get_characteristic_results) {
-    obj.get_characteristic_results.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("ondiscovercharacteristic", params.service_uuid, params.characteristic_uuid);
-      }
-    }, this);
-  }
-  if (obj.write_characteristic_results) {
-    obj.write_characteristic_results.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("onwritecharacteristic", params.service_uuid, params.characteristic_uuid, null, params.result);
-      }
-    }, this);
-  }
-
-  if (obj.read_characteristic_results) {
-    obj.read_characteristic_results.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("onreadcharacteristic", params.service_uuid, params.characteristic_uuid, null, params.data);
-      }
-    }, this);
-  }
-  if (obj.get_descriptors_results) {
-    obj.get_descriptors_results.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("ondiscoverdescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid);
-      }
-    }, this);
-  }
-  if (obj.read_descriptor_results) {
-    obj.read_descriptor_results.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("onreaddescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
-      }
-    }, this);
-  }
-  if (obj.write_descriptor_results) {
-    obj.write_descriptor_results.map(function (params) {
-      if (!params.address) return;
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("onwritedescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
-      }
-    }, this);
-  }
-
-  var callbackFunc = function (valueArray, func, type) {
-    var obj = null;
-    if (!valueArray) {
-      return;
-    }
-
-    valueArray.map(function (val) {
-      if (type === "service") {
-        obj = this.peripheral.getService(val);
-      } else if (type === "characteristic") {
-        obj = this.peripheral.findCharacteristic(val);
-      } else if (type === "descriptor") {
-        obj = this.peripheral.findDescriptor(val);
-      }
-      func(val, obj);
-    }, this);
-  }.bind(this);
-
-  if (obj.peripheral) {
-    callbackFunc(obj.peripheral.connection_status, function (val) {
-      this.peripheral.onconnectionupdates(val);
-    }.bind(this));
-
-    var paramList = {
-      read_characteristic_results: { method: "onread", obj: "characteristic" },
-      write_characteristic_results: { method: "onwrite", obj: "characteristic" },
-      notify_read_characteristics: { method: "onreadfromremote", obj: "characteristic" },
-      notify_write_characteristics: { method: "onwritefromremote", obj: "characteristic" },
-      read_descriptor_results: { method: "onread", obj: "descriptor" },
-      write_descriptor_results: { method: "onwrite", obj: "descriptor" },
-      notify_read_descriptors: { method: "onreadfromremote", obj: "descriptor" },
-      notify_write_descriptors: { method: "onwritefromremote", obj: "descriptor" }
+  startAdvertisement() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["advertisement"] = {
+      adv_data: this.adv_data
     };
 
-    for (var key in paramList) {
-      callbackFunc(obj.peripheral[key], function (val, bleobj) {
-        bleobj[paramList[key].method](val);
-      }.bind(this), paramList[key].obj);
+    if (this.scan_resp.length > 0) {
+      obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
     }
+
+    this.Obniz.send(obj);
+    return;
   }
 
-  if (obj.errors) {
-    obj.errors.map(function (params) {
-      if (!params.address) {
-        if (typeof this.onerror === "function") {
-          this.onerror(params);
+  stopAdvertisement() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["advertisement"] = null;
+    this.Obniz.send(obj);
+    return;
+  }
+
+  setAdvDataRaw(adv_data) {
+    var obj = {};
+    this.adv_data = adv_data;
+    return;
+  }
+
+  setAdvData(json) {
+    var builder = this.advDataBulider(json);
+    this.setAdvDataRaw(builder.build());
+    return;
+  }
+
+  dataBuliderPrototype() {
+
+    var builder = function (Obniz, json) {
+      this.Obniz = Obniz;
+      this.rows = {};
+
+      if (json) {
+        if (json.localName) {
+          this.setCompleteLocalName(json.localName);
+        }
+        if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
+          this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
+        }
+        if (json.serviceUuids) {
+          for (var key in json.serviceUuids) {
+            this.setUuid(json.serviceUuids[key]);
+          }
         }
       }
-
-      var p = this.findPeripheral(params.address);
-      if (p) {
-        p.notify("onerror", null, null, null, params);
+      if (typeof this.extendEvalJson === "function") {
+        this.extendEvalJson(json);
       }
-    }, this);
+    };
+    builder.prototype.setRow = function (type, data) {
+      this.rows[type] = data;
+    };
+    builder.prototype.getRow = function (type) {
+      return this.rows[type] || [];
+    };
+
+    builder.prototype.check = function () {
+      return true;
+    };
+
+    builder.prototype.build = function () {
+      if (!this.check) {
+        return;
+      }
+      var data = [];
+      for (var key in this.rows) {
+        if (this.rows[key].length === 0) continue;
+
+        data.push(this.rows[key].length + 1);
+        data.push(parseInt(key));
+        Array.prototype.push.apply(data, this.rows[key]);
+      }
+      if (data.length > 31) {
+        this.Obniz.error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
+      }
+
+      return data;
+    };
+
+    builder.prototype.setStringData = function (type, string) {
+      var data = [];
+
+      for (var i = 0; i < string.length; i++) {
+        data.push(string.charCodeAt(i));
+      }
+
+      this.setRow(type, data);
+    };
+
+    builder.prototype.setShortenedLocalName = function (name) {
+      this.setStringData(0x08, name);
+    };
+    builder.prototype.setCompleteLocalName = function (name) {
+      this.setStringData(0x09, name);
+    };
+
+    builder.prototype.setManufacturerSpecificData = function (campanyCode, data) {
+      var row = [];
+      row.push(campanyCode & 0xFF);
+      row.push(campanyCode >> 8 & 0xFF);
+      Array.prototype.push.apply(row, data);
+      this.setRow(0xFF, row);
+    };
+
+    builder.prototype.setUuid = function (uuid) {
+      var uuidData = this.convertUuid(uuid);
+      var type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
+      this.setRow(type, uuidData);
+    };
+
+    builder.prototype.convertUuid = function (uuid) {
+      var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+      if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
+        this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+      }
+
+      var data = [];
+      for (var i = uuidNumeric.length; i > 1; i -= 2) {
+        data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
+      }
+      return data;
+    };
+
+    builder.prototype.setIbeaconData = function (uuid, major, minor, txPower) {
+      var data = [];
+      data.push(0x02, 0x15); // fixed data
+
+      var uuidData = this.convertUuid(uuid);
+      Array.prototype.push.apply(data, uuidData);
+
+      data.push(major >> 8 & 0xFF);
+      data.push(major >> 0 & 0xFF);
+      data.push(minor >> 8 & 0xFF);
+      data.push(minor >> 0 & 0xFF);
+      data.push(txPower >> 0 & 0xFF);
+
+      this.setManufacturerSpecificData(0x004c, data);
+      return;
+    };
+
+    return builder;
   }
-};
+
+  advDataBulider(jsonVal) {
+    var builder = this.dataBuliderPrototype();
+
+    builder.prototype.check = function () {
+
+      return true;
+    };
+
+    builder.prototype.extendEvalJson = function (json) {
+      if (json) {
+        if (json.flags) {
+          if (json.flags.includes("limited_discoverable_mode")) this.setLeLimitedDiscoverableModeFlag();
+          if (json.flags.includes("general_discoverable_mode")) this.setLeGeneralDiscoverableModeFlag();
+          if (json.flags.includes("br_edr_not_supported")) this.setBrEdrNotSupportedFlag();
+          if (json.flags.includes("le_br_edr_controller")) this.setLeBrEdrControllerFlag();
+          if (json.flags.includes("le_br_edr_host")) this.setLeBrEdrHostFlag();
+        }
+      }
+    };
+
+    builder.prototype.setFlags = function (flag) {
+      var data = this.getRow(0x01);
+      data[0] = (data[0] || 0) | flag;
+      this.setRow(0x01, data);
+    };
+    builder.prototype.setLeLimitedDiscoverableModeFlag = function () {
+      this.setFlags(0x01);
+    };
+    builder.prototype.setLeGeneralDiscoverableModeFlag = function () {
+      this.setFlags(0x02);
+    };
+    builder.prototype.setBrEdrNotSupportedFlag = function () {
+      this.setFlags(0x04);
+    };
+    builder.prototype.setLeBrEdrControllerFlag = function () {
+      this.setFlags(0x08);
+    };
+    builder.prototype.setLeBrEdrHostFlag = function () {
+      this.setFlags(0x10);
+    };
+
+    return new builder(this.Obniz, jsonVal);
+  }
+
+  scanRespDataBuilder(json) {
+    var builder = this.dataBuliderPrototype();
+    return new builder(this.Obniz, json);
+  }
+
+  setScanRespDataRaw(scan_resp) {
+    this.scan_resp = scan_resp;
+  }
+
+  setScanRespData(json) {
+    this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+  }
+
+  startScan(settings) {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["scan"] = {
+      //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+      //    "interval" : settings && settings.interval ? settings.interval : 30,
+      "duration": settings && settings.duration ? settings.duration : 30
+
+    };
+
+    this.remotePeripherals = [];
+
+    this.Obniz.send(obj);
+    return;
+  }
+
+  stopScan() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["scan"] = null;
+    this.Obniz.send(obj);
+  }
+
+  findPeripheral(address) {
+    for (var key in this.remotePeripherals) {
+      if (this.remotePeripherals[key].address === address) {
+        return this.remotePeripherals[key];
+      }
+    }
+    return null;
+  }
+
+  notified(obj) {
+    if (obj.scan_results) {
+      var isFinished = false;
+      for (var id in obj.scan_results) {
+
+        if (obj.scan_results[id].event_type === "inquiry_complete") {
+          isFinished = true;
+        } else if (obj.scan_results[id].event_type === "inquiry_result") {
+          var val = new BleRemotePeripheral(this.Obniz, obj.scan_results[id].address);
+          val.setParams(obj.scan_results[id]);
+          this.remotePeripherals.push(val);
+          if (this.onscan) {
+            this.onscan(val);
+          }
+        }
+      }
+      if (isFinished && this.onscanfinish) {
+        this.onscanfinish(this.remotePeripherals);
+      }
+    }
+
+    if (obj.status_updates) {
+      obj.status_updates.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          if (params.status === "connected") {
+            p.notify("onconnect");
+          }
+          if (params.status === "disconnected") {
+            p.notify("ondisconnect");
+          }
+        }
+      }, this);
+    }
+
+    if (obj.get_service_results) {
+      obj.get_service_results.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("ondiscoverservice", params.service_uuid);
+        }
+      }, this);
+    }
+    if (obj.get_characteristic_results) {
+      obj.get_characteristic_results.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("ondiscovercharacteristic", params.service_uuid, params.characteristic_uuid);
+        }
+      }, this);
+    }
+    if (obj.write_characteristic_results) {
+      obj.write_characteristic_results.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("onwritecharacteristic", params.service_uuid, params.characteristic_uuid, null, params.result);
+        }
+      }, this);
+    }
+
+    if (obj.read_characteristic_results) {
+      obj.read_characteristic_results.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("onreadcharacteristic", params.service_uuid, params.characteristic_uuid, null, params.data);
+        }
+      }, this);
+    }
+    if (obj.get_descriptors_results) {
+      obj.get_descriptors_results.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("ondiscoverdescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid);
+        }
+      }, this);
+    }
+    if (obj.read_descriptor_results) {
+      obj.read_descriptor_results.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("onreaddescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
+        }
+      }, this);
+    }
+    if (obj.write_descriptor_results) {
+      obj.write_descriptor_results.map(function (params) {
+        if (!params.address) return;
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("onwritedescriptor", params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
+        }
+      }, this);
+    }
+
+    var callbackFunc = function (valueArray, func, type) {
+      var obj = null;
+      if (!valueArray) {
+        return;
+      }
+
+      valueArray.map(function (val) {
+        if (type === "service") {
+          obj = this.peripheral.getService(val);
+        } else if (type === "characteristic") {
+          obj = this.peripheral.findCharacteristic(val);
+        } else if (type === "descriptor") {
+          obj = this.peripheral.findDescriptor(val);
+        }
+        func(val, obj);
+      }, this);
+    }.bind(this);
+
+    if (obj.peripheral) {
+      callbackFunc(obj.peripheral.connection_status, function (val) {
+        this.peripheral.onconnectionupdates(val);
+      }.bind(this));
+
+      var paramList = {
+        read_characteristic_results: { method: "onread", obj: "characteristic" },
+        write_characteristic_results: { method: "onwrite", obj: "characteristic" },
+        notify_read_characteristics: { method: "onreadfromremote", obj: "characteristic" },
+        notify_write_characteristics: { method: "onwritefromremote", obj: "characteristic" },
+        read_descriptor_results: { method: "onread", obj: "descriptor" },
+        write_descriptor_results: { method: "onwrite", obj: "descriptor" },
+        notify_read_descriptors: { method: "onreadfromremote", obj: "descriptor" },
+        notify_write_descriptors: { method: "onwritefromremote", obj: "descriptor" }
+      };
+
+      for (var key in paramList) {
+        callbackFunc(obj.peripheral[key], function (val, bleobj) {
+          bleobj[paramList[key].method](val);
+        }.bind(this), paramList[key].obj);
+      }
+    }
+
+    if (obj.errors) {
+      obj.errors.map(function (params) {
+        if (!params.address) {
+          if (typeof this.onerror === "function") {
+            this.onerror(params);
+          }
+        }
+
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          p.notify("onerror", null, null, null, params);
+        }
+      }, this);
+    }
+  }
+}
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -1151,264 +1119,277 @@ Ble.prototype.notified = function (obj) {
  * @param {type} rawData
  * @return {BlePeripheral}
  */
-var BlePeripheral = function (Obniz) {
-  this.Obniz = Obniz;
-  this.services = [];
-};
 
-BlePeripheral.prototype.addService = function (obj) {
-  if (!(obj instanceof BleService)) {
-    obj = new BleService(obj);
+class BlePeripheral {
+
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.services = [];
   }
-  this.services.push(obj);
-  obj.peripheral = this;
-  this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
-};
 
-BlePeripheral.prototype.setJson = function (json) {
-  if (json["services"]) {
-    for (var key in json["services"]) {
-      this.addService(json["services"][key]);
+  addService(obj) {
+    if (!(obj instanceof BleService)) {
+      obj = new BleService(obj);
+    }
+    this.services.push(obj);
+    obj.peripheral = this;
+    this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
+  }
+
+  setJson(json) {
+    if (json["services"]) {
+      for (var key in json["services"]) {
+        this.addService(json["services"][key]);
+      }
     }
   }
-};
 
-BlePeripheral.prototype.getService = function (uuid) {
-  return this.services.filter(function (element) {
-    return element.uuid === uuid;
-  }).shift();
-};
-
-BlePeripheral.prototype.toJSON = function () {
-  return {
-    services: this.services
-  };
-};
-
-BlePeripheral.prototype.onconnectionupdates = function () {};
-BlePeripheral.prototype.findCharacteristic = function (param) {
-  var serviceUuid = param.service_uuid.toLowerCase();
-  var characteristicUuid = param.characteristic_uuid.toLowerCase();
-  var s = this.getService(serviceUuid);
-  if (s) {
-    var c = s.getCharacteristic(characteristicUuid);
-    return c;
+  getService(uuid) {
+    return this.services.filter(function (element) {
+      return element.uuid === uuid;
+    }).shift();
   }
-  return null;
-};
-BlePeripheral.prototype.findDescriptor = function (param) {
-  var descriptorUuid = param.descriptor_uuid.toLowerCase();
-  var c = this.findCharacteristic(param);
-  if (c) {
-    var d = c.getDescriptor(descriptorUuid);
-    return d;
+
+  toJSON() {
+    return {
+      services: this.services
+    };
   }
-  return null;
-};
 
-BlePeripheral.prototype.end = function () {
+  onconnectionupdates() {}
 
-  this.Obniz.send({ ble: { peripheral: null } });
-};
+  findCharacteristic(param) {
+    var serviceUuid = param.service_uuid.toLowerCase();
+    var characteristicUuid = param.characteristic_uuid.toLowerCase();
+    var s = this.getService(serviceUuid);
+    if (s) {
+      var c = s.getCharacteristic(characteristicUuid);
+      return c;
+    }
+    return null;
+  }
+
+  findDescriptor(param) {
+    var descriptorUuid = param.descriptor_uuid.toLowerCase();
+    var c = this.findCharacteristic(param);
+    if (c) {
+      var d = c.getDescriptor(descriptorUuid);
+      return d;
+    }
+    return null;
+  }
+
+  end() {
+    this.Obniz.send({ ble: { peripheral: null } });
+  }
+}
 
 /**
  * 
  * @param {type} rawData
  * @return {BleServiuce}
  */
-var BleService = function (obj) {
-  this.characteristics = [];
-  this.uuid = obj.uuid.toLowerCase();
+class BleService {
 
-  if (obj["characteristics"]) {
-    for (var key in obj["characteristics"]) {
-      this.addCharacteristic(obj["characteristics"][key]);
+  constructor(obj) {
+    this.characteristics = [];
+    this.uuid = obj.uuid.toLowerCase();
+
+    if (obj["characteristics"]) {
+      for (var key in obj["characteristics"]) {
+        this.addCharacteristic(obj["characteristics"][key]);
+      }
     }
   }
-};
 
-BleService.prototype.addCharacteristic = function (obj) {
-  if (!(obj instanceof BleCharacteristic)) {
-    obj = new BleCharacteristic(obj);
+  addCharacteristic(obj) {
+    if (!(obj instanceof BleCharacteristic)) {
+      obj = new BleCharacteristic(obj);
+    }
+    this.characteristics.push(obj);
+    obj.service = this;
   }
-  this.characteristics.push(obj);
-  obj.service = this;
-};
 
-BleService.prototype.getCharacteristic = function (uuid) {
-  return this.characteristics.filter(function (element) {
-    return element.uuid.toLowerCase() === uuid.toLowerCase();
-  }).shift();
-};
+  getCharacteristic(uuid) {
+    return this.characteristics.filter(function (element) {
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
+    }).shift();
+  }
 
-BleService.prototype.toJSON = function () {
-  return {
-    uuid: this.uuid.toLowerCase(),
-    characteristics: this.characteristics
-  };
-};
+  toJSON() {
+    return {
+      uuid: this.uuid.toLowerCase(),
+      characteristics: this.characteristics
+    };
+  }
+}
 
 /**
  * 
  * @param {type} rawData
  * @return {BleServiuce}
  */
-var BleCharacteristic = function (obj) {
-  this.descriptors = [];
-  this.uuid = obj.uuid.toLowerCase();
-  this.data = obj.data || null;
-  if (!this.data && obj.text) {
-    this.data = ObnizUtil.string2dataArray(obj.text);
-  }
-  if (!this.data && obj.value) {
-    this.data = obj.value;
-  }
 
-  this.property = obj.property || [];
-  if (!Array.isArray(this.property)) {
-    this.property = [this.property];
-  }
+class BleCharacteristic {
 
-  if (obj["descriptors"]) {
-    for (var key in obj["descriptors"]) {
-      this.addDescriptor(obj["descriptors"][key]);
+  constructor(obj) {
+    this.descriptors = [];
+    this.uuid = obj.uuid.toLowerCase();
+    this.data = obj.data || null;
+    if (!this.data && obj.text) {
+      this.data = ObnizUtil.string2dataArray(obj.text);
     }
-  }
-};
+    if (!this.data && obj.value) {
+      this.data = obj.value;
+    }
 
-BleCharacteristic.prototype.addDescriptor = function (obj) {
-  if (!(obj instanceof BleDescriptor)) {
-    obj = new BleDescriptor(obj);
-  }
-  this.descriptors.push(obj);
-  obj.characteristic = this;
-};
+    this.property = obj.property || [];
+    if (!Array.isArray(this.property)) {
+      this.property = [this.property];
+    }
 
-BleCharacteristic.prototype.getDescriptor = function (uuid) {
-  return this.descriptors.filter(function (element) {
-    return element.uuid.toLowerCase() === uuid.toLowerCase();
-  }).shift();
-};
-
-BleCharacteristic.prototype.write = function (data) {
-  if (!Array.isArray(data)) {
-    data = [data];
-  }
-  this.service.peripheral.Obniz.send({
-    ble: {
-      peripheral: {
-        write_characteristic: {
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
-          data: data
-        }
+    if (obj["descriptors"]) {
+      for (var key in obj["descriptors"]) {
+        this.addDescriptor(obj["descriptors"][key]);
       }
     }
-  });
-};
+  }
 
-BleCharacteristic.prototype.read = function () {
+  addDescriptor(obj) {
+    if (!(obj instanceof BleDescriptor)) {
+      obj = new BleDescriptor(obj);
+    }
+    this.descriptors.push(obj);
+    obj.characteristic = this;
+  }
 
-  this.service.peripheral.Obniz.send({
-    ble: {
-      peripheral: {
-        read_characteristic: {
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+  getDescriptor(uuid) {
+    return this.descriptors.filter(function (element) {
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
+    }).shift();
+  }
+
+  write(data) {
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          write_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+            data: data
+          }
         }
       }
-    }
-  });
-};
-
-BleCharacteristic.prototype.onwrite = function () {};
-BleCharacteristic.prototype.onread = function () {};
-BleCharacteristic.prototype.onwritefromremote = function () {};
-BleCharacteristic.prototype.onreadfromremote = function () {};
-
-BleCharacteristic.prototype.toJSON = function () {
-  var obj = {
-    uuid: this.uuid.toLowerCase(),
-    data: this.data,
-    descriptors: this.descriptors
-  };
-  if (this.property.length > 0) {
-    obj.property = this.property;
+    });
   }
-  return obj;
-};
+
+  read() {
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          read_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase()
+          }
+        }
+      }
+    });
+  }
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
+
+  toJSON() {
+    var obj = {
+      uuid: this.uuid.toLowerCase(),
+      data: this.data,
+      descriptors: this.descriptors
+    };
+    if (this.property.length > 0) {
+      obj.property = this.property;
+    }
+    return obj;
+  }
+}
 
 /**
  * 
  * @param {type} rawData
  * @return {BleServiuce}
  */
-var BleDescriptor = function (obj) {
-  this.descriptors = [];
-  this.uuid = obj.uuid.toLowerCase();
+class BleDescriptor {
 
-  this.data = obj.data || null;
-  if (!this.data && obj.text) {
-    this.data = ObnizUtil.string2dataArray(obj.text);
-  }
-  if (!this.data && obj.value) {
-    this.data = obj.value;
+  constructor(obj) {
+    this.descriptors = [];
+    this.uuid = obj.uuid.toLowerCase();
+
+    this.data = obj.data || null;
+    if (!this.data && obj.text) {
+      this.data = ObnizUtil.string2dataArray(obj.text);
+    }
+    if (!this.data && obj.value) {
+      this.data = obj.value;
+    }
+
+    this.property = obj.property || [];
+    if (!Array.isArray(this.property)) {
+      this.property = [this.property];
+    }
   }
 
-  this.property = obj.property || [];
-  if (!Array.isArray(this.property)) {
-    this.property = [this.property];
+  toJSON() {
+    var obj = {
+      uuid: this.uuid.toLowerCase(),
+      data: this.data
+    };
+    if (this.property.length > 0) {
+      obj.property = this.property;
+    }
+    return obj;
   }
-};
 
-BleDescriptor.prototype.toJSON = function () {
-  var obj = {
-    uuid: this.uuid.toLowerCase(),
-    data: this.data
-  };
-  if (this.property.length > 0) {
-    obj.property = this.property;
-  }
-  return obj;
-};
-
-BleDescriptor.prototype.write = function (data) {
-  if (!Array.isArray(data)) {
-    data = [data];
-  }
-  this.characteristic.service.peripheral.Obniz.send({
-    ble: {
-      peripheral: {
-        write_descriptor: {
-          service_uuid: this.characteristic.service.uuid.toLowerCase(),
-          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-          descriptor_uuid: this.uuid,
-          data: data
+  write(data) {
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+    this.characteristic.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          write_descriptor: {
+            service_uuid: this.characteristic.service.uuid.toLowerCase(),
+            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            descriptor_uuid: this.uuid,
+            data: data
+          }
         }
       }
-    }
-  });
-};
+    });
+  }
 
-BleDescriptor.prototype.read = function () {
+  read() {
 
-  this.characteristic.service.peripheral.Obniz.send({
-    ble: {
-      peripheral: {
-        read_descriptor: {
-          service_uuid: this.characteristic.service.uuid.toLowerCase(),
-          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-          descriptor_uuid: this.uuid
+    this.characteristic.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          read_descriptor: {
+            service_uuid: this.characteristic.service.uuid.toLowerCase(),
+            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            descriptor_uuid: this.uuid
+          }
         }
       }
-    }
-  });
-};
+    });
+  }
 
-BleDescriptor.prototype.onwrite = function () {};
-BleDescriptor.prototype.onread = function () {};
-BleDescriptor.prototype.onwritefromremote = function () {};
-BleDescriptor.prototype.onreadfromremote = function () {};
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
+}
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -1420,200 +1401,200 @@ BleDescriptor.prototype.onreadfromremote = function () {};
  * @param {type} rawData
  * @return {BleRemotePeripheral}
  */
-var BleRemotePeripheral = function (Obniz, address) {
-  this.Obniz = Obniz;
-  this.address = address;
+class BleRemotePeripheral {
 
-  this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
+  constructor(Obniz, address) {
+    this.Obniz = Obniz;
+    this.address = address;
 
-  this.services = [];
-};
+    this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
 
-/**
- * 
- * @return {String} json value
- */
-BleRemotePeripheral.prototype.toString = function () {
-  return JSON.stringify({
-    id: this.id,
-    address: this.address,
-    addressType: this.addressType,
-    connectable: this.connectable,
-    advertisement: this.advertisement,
-    rssi: this.rssi,
-    state: this.state
-  });
-};
+    this.services = [];
+  }
 
-BleRemotePeripheral.prototype.setParams = function (dic) {
+  /**
+   * 
+   * @return {String} json value
+   */
+  toString() {
+    return JSON.stringify({
+      id: this.id,
+      address: this.address,
+      addressType: this.addressType,
+      connectable: this.connectable,
+      advertisement: this.advertisement,
+      rssi: this.rssi,
+      state: this.state
+    });
+  }
 
-  for (var key in dic) {
-    if (this.keys.includes(key)) {
-      this[key] = dic[key];
+  setParams(dic) {
+    for (var key in dic) {
+      if (this.keys.includes(key)) {
+        this[key] = dic[key];
+      }
     }
   }
-};
 
-BleRemotePeripheral.prototype.analyseAdvertisement = function () {
-
-  if (!this.advertise_data_rows) {
-    this.advertise_data_rows = [];
-    if (this.adv_data) {
-      for (var i = 0; i < this.adv_data.length; i++) {
-        var length = this.adv_data[i];
-        var arr = new Array(length);
-        for (var j = 0; j < length; j++) {
-          arr[j] = this.adv_data[i + j + 1];
+  analyseAdvertisement() {
+    if (!this.advertise_data_rows) {
+      this.advertise_data_rows = [];
+      if (this.adv_data) {
+        for (var i = 0; i < this.adv_data.length; i++) {
+          var length = this.adv_data[i];
+          var arr = new Array(length);
+          for (var j = 0; j < length; j++) {
+            arr[j] = this.adv_data[i + j + 1];
+          }
+          this.advertise_data_rows.push(arr);
+          i = i + length;
         }
-        this.advertise_data_rows.push(arr);
-        i = i + length;
       }
-    }
-    if (this.scan_resp) {
+      if (this.scan_resp) {
 
-      for (var i = 0; i < this.scan_resp.length; i++) {
-        var length = this.scan_resp[i];
-        var arr = new Array(length);
-        for (var j = 0; j < length; j++) {
-          arr[j] = this.scan_resp[i + j + 1];
+        for (var i = 0; i < this.scan_resp.length; i++) {
+          var length = this.scan_resp[i];
+          var arr = new Array(length);
+          for (var j = 0; j < length; j++) {
+            arr[j] = this.scan_resp[i + j + 1];
+          }
+          this.advertise_data_rows.push(arr);
+          i = i + length;
         }
-        this.advertise_data_rows.push(arr);
-        i = i + length;
       }
     }
   }
-};
 
-BleRemotePeripheral.prototype.serarchTypeVal = function (type) {
-  this.analyseAdvertisement();
-  for (var i = 0; i < this.advertise_data_rows.length; i++) {
-    if (this.advertise_data_rows[i][0] === type) {
-      var results = [].concat(this.advertise_data_rows[i]);
-      results.shift();
-      return results;
-    }
-  }
-  return undefined;
-};
-
-BleRemotePeripheral.prototype.localName = function () {
-  var data = this.serarchTypeVal(0x09);
-  if (!data) {
-    data = this.serarchTypeVal(0x08);
-  }
-  if (!data) return null;
-  return String.fromCharCode.apply(null, data);
-};
-
-BleRemotePeripheral.prototype.iBeacon = function () {
-  var data = this.serarchTypeVal(0xFF);
-  if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) return null;
-
-  var uuidData = data.slice(4, 20);
-  var uuid = "";
-  for (var i = 0; i < uuidData.length; i++) {
-    uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
-    if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
-      uuid += "-";
-    }
-  }
-
-  var major = (data[20] << 8) + data[21];
-  var minor = (data[22] << 8) + data[23];
-  var power = data[24];
-
-  return {
-    uuid: uuid,
-    major: major,
-    minor: minor,
-    power: power,
-    rssi: this.rssi
-  };
-};
-
-BleRemotePeripheral.prototype.connect = function (callbacks) {
-  var keys = ["onconnect", "ondisconnect"];
-  this.setParams(keys, callbacks);
-
-  var obj = {
-    "ble": {
-      "connect": {
-        "address": this.address
+  serarchTypeVal(type) {
+    this.analyseAdvertisement();
+    for (var i = 0; i < this.advertise_data_rows.length; i++) {
+      if (this.advertise_data_rows[i][0] === type) {
+        var results = [].concat(this.advertise_data_rows[i]);
+        results.shift();
+        return results;
       }
     }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemotePeripheral.prototype.disconnect = function () {
-  var obj = {
-    "ble": {
-      "disconnect": {
-        "address": this.address
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemotePeripheral.prototype.updateRssi = function () {
-  throw new Error("todo");
-};
-
-BleRemotePeripheral.prototype.getService = function (uuid) {
-  for (var key in this.services) {
-    if (this.services[key].uuid === uuid) {
-      return this.services[key];
-    }
+    return undefined;
   }
-  var newService = new BleRemoteService(this.Obniz, this, uuid);
-  this.services.push(newService);
-  return newService;
-};
 
-BleRemotePeripheral.prototype.discoverAllServices = function () {
-  var obj = {
-    "ble": {
-      "get_services": {
-        "address": this.address
+  localName() {
+    var data = this.serarchTypeVal(0x09);
+    if (!data) {
+      data = this.serarchTypeVal(0x08);
+    }
+    if (!data) return null;
+    return String.fromCharCode.apply(null, data);
+  }
+
+  iBeacon() {
+    var data = this.serarchTypeVal(0xFF);
+    if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) return null;
+
+    var uuidData = data.slice(4, 20);
+    var uuid = "";
+    for (var i = 0; i < uuidData.length; i++) {
+      uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+      if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
+        uuid += "-";
       }
     }
-  };
-  this.Obniz.send(obj);
-};
 
-//callbacks
-BleRemotePeripheral.prototype.onconnect = function () {};
-BleRemotePeripheral.prototype.ondisconnect = function () {};
-BleRemotePeripheral.prototype.ondiscoverservice = function (service) {};
-BleRemotePeripheral.prototype.ondiscovercharacteristic = function (service, characteristic) {};
-BleRemotePeripheral.prototype.onwritecharacteristic = function (service, characteristic, status) {};
-BleRemotePeripheral.prototype.onreadcharacteristic = function (service, characteristic, value) {};
-BleRemotePeripheral.prototype.ondiscoverdescriptor = function (service, characteristic, descriptor) {};
-BleRemotePeripheral.prototype.onreaddescriptor = function (service, characteristic, descriptor, value) {};
-BleRemotePeripheral.prototype.onwritedescriptor = function (service, characteristic, descriptor, value) {};
-BleRemotePeripheral.prototype.onerror = function (err) {};
+    var major = (data[20] << 8) + data[21];
+    var minor = (data[22] << 8) + data[23];
+    var power = data[24];
 
-BleRemotePeripheral.prototype.notify = function (funcName, serviceUuid, characteristicUuid, descriptorUuid, param) {
-  if (typeof this[funcName] === "function") {
-    if (!serviceUuid) {
-      this[funcName](param);
-    } else {
-      var service = this.getService(serviceUuid);
-      if (!characteristicUuid) {
-        this[funcName](service, param);
+    return {
+      uuid: uuid,
+      major: major,
+      minor: minor,
+      power: power,
+      rssi: this.rssi
+    };
+  }
+
+  connect(callbacks) {
+    var keys = ["onconnect", "ondisconnect"];
+    this.setParams(keys, callbacks);
+
+    var obj = {
+      "ble": {
+        "connect": {
+          "address": this.address
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  disconnect() {
+    var obj = {
+      "ble": {
+        "disconnect": {
+          "address": this.address
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  updateRssi() {
+    throw new Error("todo");
+  }
+
+  getService(uuid) {
+    for (var key in this.services) {
+      if (this.services[key].uuid === uuid) {
+        return this.services[key];
+      }
+    }
+    var newService = new BleRemoteService(this.Obniz, this, uuid);
+    this.services.push(newService);
+    return newService;
+  }
+
+  discoverAllServices() {
+    var obj = {
+      "ble": {
+        "get_services": {
+          "address": this.address
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  onconnect() {}
+  ondisconnect() {}
+  ondiscoverservice(service) {}
+  ondiscovercharacteristic(service, characteristic) {}
+  onwritecharacteristic(service, characteristic, status) {}
+  onreadcharacteristic(service, characteristic, value) {}
+  ondiscoverdescriptor(service, characteristic, descriptor) {}
+  onreaddescriptor(service, characteristic, descriptor, value) {}
+  onwritedescriptor(service, characteristic, descriptor, value) {}
+  onerror(err) {}
+
+  notify(funcName, serviceUuid, characteristicUuid, descriptorUuid, param) {
+    if (typeof this[funcName] === "function") {
+      if (!serviceUuid) {
+        this[funcName](param);
       } else {
-        var characteristic = service.getCharacteristic(characteristicUuid);
-        if (!descriptorUuid) {
-          this[funcName](service, characteristic, param);
+        var service = this.getService(serviceUuid);
+        if (!characteristicUuid) {
+          this[funcName](service, param);
         } else {
-          var descriptor = characteristic.getDescriptor(descriptorUuid);
-          this[funcName](service, characteristic, descriptor, param);
+          var characteristic = service.getCharacteristic(characteristicUuid);
+          if (!descriptorUuid) {
+            this[funcName](service, characteristic, param);
+          } else {
+            var descriptor = characteristic.getDescriptor(descriptorUuid);
+            this[funcName](service, characteristic, descriptor, param);
+          }
         }
       }
     }
   }
-};
+}
 
 /**
  * 
@@ -1622,44 +1603,48 @@ BleRemotePeripheral.prototype.notify = function (funcName, serviceUuid, characte
  * @param {type} uuid
  * @return {BleRemoteService}
  */
-var BleRemoteService = function (Obniz, peripheral, uuid) {
-  this.Obniz = Obniz;
-  this.uuid = uuid;
-  this.peripheral = peripheral;
 
-  this.characteristics = [];
-};
+class BleRemoteService {
 
-BleRemoteService.prototype.toString = function () {
-  return JSON.stringify({
-    "address": this.peripheral.address,
-    "service_uuid": this.uuid
-  });
-};
+  constructor(Obniz, peripheral, uuid) {
+    this.Obniz = Obniz;
+    this.uuid = uuid;
+    this.peripheral = peripheral;
 
-BleRemoteService.prototype.discoverAllCharacteristics = function () {
-  var obj = {
-    "ble": {
-      "get_characteristics": {
-        "address": this.peripheral.address,
-        "service_uuid": this.uuid
+    this.characteristics = [];
+  }
+
+  toString() {
+    return JSON.stringify({
+      "address": this.peripheral.address,
+      "service_uuid": this.uuid
+    });
+  }
+
+  discoverAllCharacteristics() {
+    var obj = {
+      "ble": {
+        "get_characteristics": {
+          "address": this.peripheral.address,
+          "service_uuid": this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  getCharacteristic(uuid) {
+
+    for (var key in this.characteristics) {
+      if (this.characteristics[key].uuid === uuid) {
+        return this.characteristics[key];
       }
     }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteService.prototype.getCharacteristic = function (uuid) {
-
-  for (var key in this.characteristics) {
-    if (this.characteristics[key].uuid === uuid) {
-      return this.characteristics[key];
-    }
+    var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
+    this.characteristics.push(newCharacteristic);
+    return newCharacteristic;
   }
-  var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
-  this.characteristics.push(newCharacteristic);
-  return newCharacteristic;
-};
+}
 
 /**
  * 
@@ -1668,104 +1653,109 @@ BleRemoteService.prototype.getCharacteristic = function (uuid) {
  * @param {type} uuid
  * @return {BleRemoteCharacteristic}
  */
-var BleRemoteCharacteristic = function (Obniz, service, uuid) {
-  this.Obniz = Obniz;
-  this.service = service;
-  this.uuid = uuid;
-  this.descriptors = [];
-};
 
-BleRemoteCharacteristic.prototype.toString = function () {
-  return JSON.stringify({
-    "address": this.service.peripheral.address,
-    "service_uuid": this.service.uuid,
-    "characteristic_uuid": this.uuid
-  });
-};
+class BleRemoteCharacteristic {
 
-BleRemoteCharacteristic.prototype.read = function () {
-  var obj = {
-    "ble": {
-      "read_characteristic": {
-        "address": this.service.peripheral.address,
-        "service_uuid": this.service.uuid,
-        "characteristic_uuid": this.uuid
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteCharacteristic.prototype.readWait = _asyncToGenerator(function* () {
-
-  throw new Error("TODO");
-});
-
-BleRemoteCharacteristic.prototype.write = function (array) {
-  var obj = {
-    "ble": {
-      "write_characteristic": {
-        "address": this.service.peripheral.address,
-        "service_uuid": this.service.uuid,
-        "characteristic_uuid": this.uuid,
-        "data": array
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-BleRemoteCharacteristic.prototype.writeNumber = function (val) {
-  var obj = {
-    "ble": {
-      "write_characteristic": {
-        "address": this.service.peripheral.address,
-        "service_uuid": this.service.uuid,
-        "characteristic_uuid": this.uuid,
-        "value": val
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteCharacteristic.prototype.writeText = function (str) {
-  var obj = {
-    "ble": {
-      "write_characteristic": {
-        "address": this.service.peripheral.address,
-        "service_uuid": this.service.uuid,
-        "characteristic_uuid": this.uuid,
-        "text": str
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteCharacteristic.prototype.discoverAllDescriptors = function (str) {
-  var obj = {
-    "ble": {
-      "get_descriptors": {
-        "address": this.service.peripheral.address,
-        "service_uuid": this.service.uuid,
-        "characteristic_uuid": this.uuid
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteCharacteristic.prototype.getDescriptor = function (uuid) {
-
-  for (var key in this.descriptors) {
-    if (this.descriptors[key].uuid === uuid) {
-      return this.descriptors[key];
-    }
+  constructor(Obniz, service, uuid) {
+    this.Obniz = Obniz;
+    this.service = service;
+    this.uuid = uuid;
+    this.descriptors = [];
   }
-  var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
-  this.descriptors.push(newDescriptors);
-  return newDescriptors;
-};
+
+  toString() {
+    return JSON.stringify({
+      "address": this.service.peripheral.address,
+      "service_uuid": this.service.uuid,
+      "characteristic_uuid": this.uuid
+    });
+  }
+
+  read() {
+    var obj = {
+      "ble": {
+        "read_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  readWait() {
+    return _asyncToGenerator(function* () {
+      throw new Error("TODO");
+    })();
+  }
+
+  write(array) {
+    var obj = {
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "data": array
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  writeNumber(val) {
+    var obj = {
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "value": val
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  writeText(str) {
+    var obj = {
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "text": str
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  discoverAllDescriptors(str) {
+    var obj = {
+      "ble": {
+        "get_descriptors": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  getDescriptor(uuid) {
+    for (var key in this.descriptors) {
+      if (this.descriptors[key].uuid === uuid) {
+        return this.descriptors[key];
+      }
+    }
+    var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    this.descriptors.push(newDescriptors);
+    return newDescriptors;
+  }
+}
 
 /**
  * 
@@ -1774,490 +1764,504 @@ BleRemoteCharacteristic.prototype.getDescriptor = function (uuid) {
  * @param {type} uuid
  * @return {BleRemoteCharacteristic}
  */
-var BleRemoteDescriptor = function (Obniz, characteristic, uuid) {
-  this.Obniz = Obniz;
-  this.characteristic = characteristic;
-  this.uuid = uuid;
-};
 
-BleRemoteDescriptor.prototype.toString = function () {
-  return JSON.stringify({
-    "address": this.characteristic.service.peripheral.address,
-    "service_uuid": this.characteristic.service.uuid,
-    "characteristic_uuid": this.characteristic.uuid,
-    "descriptor_uuid": this.uuid
-  });
-};
-
-BleRemoteDescriptor.prototype.read = function () {
-  var obj = {
-    "ble": {
-      "read_descriptor": {
-        "address": this.characteristic.service.peripheral.address,
-        "service_uuid": this.characteristic.service.uuid,
-        "characteristic_uuid": this.characteristic.uuid,
-        "descriptor_uuid": this.uuid
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-BleRemoteDescriptor.prototype.readWait = _asyncToGenerator(function* () {
-
-  throw new Error("TODO");
-});
-
-BleRemoteDescriptor.prototype.write = function (array) {
-  var obj = {
-    "ble": {
-      "write_descriptor": {
-        "address": this.characteristic.service.peripheral.address,
-        "service_uuid": this.characteristic.service.uuid,
-        "characteristic_uuid": this.characteristic.uuid,
-        "descriptor_uuid": this.uuid,
-        "data": array
-      }
-    }
-  };
-  this.Obniz.send(obj);
-};
-
-var Display = function (Obniz) {
-  this.Obniz = Obniz;
-  this.width = 128;
-  this.height = 64;
-};
-
-Display.prototype.clear = function () {
-  var obj = {};
-  obj["display"] = {
-    clear: true
-  };
-  this.Obniz.send(obj);
-};
-
-Display.prototype.print = function (text) {
-  var obj = {};
-  obj["display"] = {
-    text: "" + text
-  };
-  this.Obniz.send(obj);
-};
-
-Display.prototype.qr = function (text, correction) {
-  var obj = {};
-  obj["display"] = {
-    qr: {
-      text
-    }
-  };
-  if (correction) {
-    obj["display"].qr.correction = correction;
-  }
-  this.Obniz.send(obj);
-};
-
-Display.prototype.raw = function (data) {
-  var obj = {};
-  obj["display"] = {
-    raw: data
-  };
-  this.Obniz.send(obj);
-};
-
-Display.prototype.setPinName = function (io, moduleName, funcName) {
-  var obj = {};
-  obj["display"] = {};
-  obj["display"]["pin_assign"] = {};
-  obj["display"]["pin_assign"][io] = { module_name: moduleName, pin_name: funcName };
-
-  this.Obniz.send(obj);
-};
-
-Display.prototype.setPinNames = function (moduleName, data) {
-  var obj = {};
-  obj["display"] = {};
-  obj["display"]["pin_assign"] = {};
-  for (var key in data) {
-    obj["display"]["pin_assign"][key] = { module_name: moduleName, pin_name: data[key] };
+class BleRemoteDescriptor {
+  constructor(Obniz, characteristic, uuid) {
+    this.Obniz = Obniz;
+    this.characteristic = characteristic;
+    this.uuid = uuid;
   }
 
-  this.Obniz.send(obj);
-};
-
-Display.prototype.drawCanvasContext = function (ctx) {
-  if (isNode) {
-    // TODO:
-    throw new Error("node js mode is under working.");
-  } else {
-    const stride = this.width / 8;
-    let vram = new Array(stride * 64);
-    const imageData = ctx.getImageData(0, 0, this.width, this.height);
-    const data = imageData.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-      var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      var index = parseInt(i / 4);
-      var line = parseInt(index / this.width);
-      var col = parseInt((index - line * this.width) / 8);
-      var bits = parseInt(index - line * this.width) % 8;
-      if (bits == 0) vram[line * stride + col] = 0x00;
-      if (brightness > 0x7F) vram[line * stride + col] |= 0x80 >> bits;
-    }
-    this.raw(vram);
-  }
-};
-
-var PeripheralI2C = function (Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.observers = [];
-  this.state = {};
-  this.used = false;
-
-  this.onwritten = undefined;
-};
-
-PeripheralI2C.prototype.addObserver = function (callback) {
-  if (callback) {
-    this.observers.push(callback);
-  }
-};
-
-PeripheralI2C.prototype.start = function (arg) {
-  var err = ObnizUtil._requiredKeys(arg, ["mode", "sda", "scl"]);
-  if (err) {
-    throw new Error("I2C start param '" + err + "' required, but not found ");return;
-  }
-  this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "pull"]);
-
-  var mode = this.state.mode;
-  var clock = typeof arg.clock === "number" ? parseInt(arg.clock) : null;
-  var slave_address = typeof arg.slave_address === "number" ? parseInt(arg.slave_address) : null;
-  var slave_address_length = typeof arg.slave_address_length === "number" ? parseInt(arg.slave_address_length) : null;
-
-  if (mode !== "master" && mode !== "slave") {
-    throw new Error("i2c: invalid mode " + mode);
-  }
-  if (mode === "master") {
-    if (clock === null) {
-      throw new Error("i2c: please specify clock when master mode");
-    }
-    if (clock <= 0 || clock > 1 * 1000 * 1000) {
-      throw new Error("i2c: invalid clock " + clock);
-    }
-    if (typeof arg.pull === "5v" && clock > 400 * 1000) {
-      throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
-    }
-    if (typeof arg.pull === "3v" && clock > 100 * 1000) {
-      throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
-    }
-  } else {
-    if (slave_address === null) {
-      throw new Error("i2c: please specify slave_address");
-    }
-    if (slave_address < 0 || slave_address > 0x3FFF) {
-      throw new Error("i2c: invalid slave_address");
-    }
-    if (slave_address < 0 || slave_address > 0x3FFF) {
-      throw new Error("i2c: invalid slave_address");
-    }
-    if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
-      throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
-    }
-  }
-
-  this.Obniz.getIO(this.state.sda).drive("open-drain");
-  this.Obniz.getIO(this.state.scl).drive("open-drain");
-
-  if (this.state.pull) {
-    this.Obniz.getIO(this.state.sda).pull(this.state.pull);
-    this.Obniz.getIO(this.state.scl).pull(this.state.pull);
-  } else {
-    this.Obniz.getIO(this.state.sda).pull(null);
-    this.Obniz.getIO(this.state.scl).pull(null);
-  }
-
-  var startObj = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl"]);
-  if (mode === "master") {
-    startObj.clock = clock;
-  } else {
-    startObj.slave_address = slave_address;
-    if (slave_address_length) {
-      startObj.slave_address_length = slave_address_length;
-    }
-  }
-
-  var obj = {};
-  obj["i2c" + this.id] = startObj;
-  this.used = true;
-  this.Obniz.send(obj);
-};
-
-PeripheralI2C.prototype.write = function (address, data) {
-  address = parseInt(address);
-  if (isNaN(address)) {
-    throw new Error("i2c: please specify address");
-  }
-  if (address < 0 || address > 0x3FFF) {
-    throw new Error("i2c: invalid address");
-  }
-  if (address > 0x7F) {
-    address = address | 0x8000; // mark 10bit mode
-  }
-  if (!data) {
-    throw new Error("i2c: please provide data");
-  }
-  if (data.length > 1024) {
-    throw new Error("i2c: data should be under 1024 bytes");
-  }
-  var obj = {};
-  obj["i2c" + this.id] = {
-    address,
-    data
-  };
-  this.Obniz.send(obj);
-};
-
-PeripheralI2C.prototype.write10bit = function (address, data) {
-  return this.write(address | 0x8000, data);
-};
-
-PeripheralI2C.prototype.readWait = function (address, length) {
-  address = parseInt(address);
-  if (isNaN(address)) {
-    throw new Error("i2c: please specify address");
-  }
-  if (address < 0 || address > 0x3FFF) {
-    throw new Error("i2c: invalid address");
-  }
-  if (address > 0x7F) {
-    address = address | 0x8000; // mark 10bit mode
-  }
-  length = parseInt(length);
-  if (isNaN(length) || length < 0) {
-    throw new Error("i2c: invalid length to read");
-  }
-  if (length > 1024) {
-    throw new Error("i2c: data length should be under 1024 bytes");
-  }
-  var self = this;
-  return new Promise(function (resolve, reject) {
-    var obj = {};
-    obj["i2c" + self.id] = {
-      address,
-      read: length
-    };
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-PeripheralI2C.prototype.read10bitWait = function (address, length) {
-  return this.readWait(address | 0x8000, length);
-};
-
-PeripheralI2C.prototype.notified = function (obj) {
-
-  if (obj.mode === "slave" && typeof this.onwritten === "function") {
-    this.onwritten(obj.data);
-  } else {
-    // TODO: we should compare byte length from sent
-    var callback = this.observers.shift();
-    if (callback) {
-      callback(obj.data);
-    }
-  }
-};
-PeripheralI2C.prototype.isUsed = function () {
-  return this.used;
-};
-
-PeripheralI2C.prototype.end = function () {
-  this.state = {};
-  var obj = {};
-  obj["i2c" + this.id] = null;
-  this.Obniz.send(obj);
-  this.used = false;
-};
-
-var PeripheralIO = function (Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.value = 0;
-  this.observers = [];
-};
-
-PeripheralIO.prototype.addObserver = function (callback) {
-  if (callback) {
-    this.observers.push(callback);
-  }
-};
-
-PeripheralIO.prototype.output = function (value) {
-  var obj = {};
-  obj["io" + this.id] = value;
-  this.value = value;
-  this.Obniz.send(obj);
-};
-
-PeripheralIO.prototype.drive = function (drive) {
-
-  if (typeof drive !== "string") {
-    throw new Error("please specify drive methods in string");
-    return;
-  }
-  let output_type = "";
-  switch (drive) {
-    case "5v":
-      output_type = "push-pull5v";
-      break;
-    case "3v":
-      output_type = "push-pull3v";
-      break;
-    case "open-drain":
-      output_type = "open-drain";
-      break;
-    default:
-      throw new Error("unknown drive method");
-      break;
-  }
-
-  var obj = {};
-  obj["io" + this.id] = {
-    output_type: output_type
-  };
-  this.Obniz.send(obj);
-};
-
-PeripheralIO.prototype.pull = function (updown) {
-
-  if (typeof updown !== "string" && updown !== null) {
-    throw new Error("please specify pull methods in string");
-    return;
-  }
-  let pull_type = "";
-  switch (updown) {
-    case "5v":
-    case "pull-up5v":
-      pull_type = "pull-up5v";
-      break;
-    case "3v":
-    case "pull-up3v":
-      pull_type = "pull-up3v";
-      break;
-    case "0v":
-    case "pull-down":
-      pull_type = "pull-down";
-      break;
-    case null:
-    case "float":
-      pull_type = "float";
-      break;
-    default:
-      throw new Error("unknown pull_type method");
-      break;
-  }
-
-  var obj = {};
-  obj["io" + this.id] = {
-    pull_type: pull_type
-  };
-  this.Obniz.send(obj);
-};
-
-PeripheralIO.prototype.input = function (callback) {
-  this.onchange = callback;
-  var obj = {};
-  obj["io" + this.id] = {
-    direction: "input",
-    stream: true
-  };
-  this.Obniz.send(obj);
-  return this.value;
-};
-
-PeripheralIO.prototype.inputWait = function () {
-  var self = this;
-  return new Promise(function (resolve, reject) {
-    var obj = {};
-    obj["io" + self.id] = {
-      direction: "input",
-      stream: false
-    };
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-PeripheralIO.prototype.notified = function (obj) {
-  if (typeof obj === "boolean") {
-    this.value = obj;
-    var callback = this.observers.shift();
-    if (callback) {
-      callback(obj);
-    }
-    if (typeof this.onchange === "function") {
-      this.onchange(obj);
-    }
-  } else if (obj && typeof obj === "object") {
-    if (obj.warnings) {
-      for (let i = 0; i < obj.warnings.length; i++) {
-        this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warnings[i].message}` });
-      }
-    }
-    if (obj.errors) {
-      for (let i = 0; i < obj.errors.length; i++) {
-        this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.errors[i].message}` });
-      }
-    }
-  }
-};
-var PeripheralIO_ = function (Obniz, id) {
-  this.Obniz = Obniz;
-};
-
-PeripheralIO_.prototype.animation = function (name, status, array) {
-  var obj = {};
-  obj.io = {
-    animation: {
-      name: name,
-      status: status
-    }
-  };
-  if (!array) array = [];
-
-  let states = [];
-  for (var i = 0; i < array.length; i++) {
-    let state = array[i];
-    let duration = state.duration;
-    let func = state.state;
-
-    // dry run. and get json commands
-    this.Obniz.sendPool = [];
-    func(i);
-    let pooledJsonArray = this.Obniz.sendPool;
-    this.Obniz.sendPool = null;
-
-    // simply merge objects
-    let merged = {};
-    for (var index = 0; index < pooledJsonArray.length; index++) {
-      for (let key in pooledJsonArray[index]) {
-        merged[key] = pooledJsonArray[index][key];
-      }
-    }
-    states.push({
-      duration: duration,
-      state: merged
+  toString() {
+    return JSON.stringify({
+      "address": this.characteristic.service.peripheral.address,
+      "service_uuid": this.characteristic.service.uuid,
+      "characteristic_uuid": this.characteristic.uuid,
+      "descriptor_uuid": this.uuid
     });
   }
-  if (states.length > 0) {
-    obj.io.animation.states = states;
+
+  read() {
+    var obj = {
+      "ble": {
+        "read_descriptor": {
+          "address": this.characteristic.service.peripheral.address,
+          "service_uuid": this.characteristic.service.uuid,
+          "characteristic_uuid": this.characteristic.uuid,
+          "descriptor_uuid": this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
   }
-  //  console.log(obj.io.animation);
-  this.Obniz.send(obj);
-};
+
+  readWait() {
+    return _asyncToGenerator(function* () {
+      throw new Error("TODO");
+    })();
+  }
+
+  write(array) {
+    var obj = {
+      "ble": {
+        "write_descriptor": {
+          "address": this.characteristic.service.peripheral.address,
+          "service_uuid": this.characteristic.service.uuid,
+          "characteristic_uuid": this.characteristic.uuid,
+          "descriptor_uuid": this.uuid,
+          "data": array
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+}
+
+class Display {
+
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.width = 128;
+    this.height = 64;
+  }
+
+  clear() {
+    var obj = {};
+    obj["display"] = {
+      clear: true
+    };
+    this.Obniz.send(obj);
+  }
+
+  print(text) {
+    var obj = {};
+    obj["display"] = {
+      text: "" + text
+    };
+    this.Obniz.send(obj);
+  }
+
+  qr(text, correction) {
+    var obj = {};
+    obj["display"] = {
+      qr: {
+        text
+      }
+    };
+    if (correction) {
+      obj["display"].qr.correction = correction;
+    }
+    this.Obniz.send(obj);
+  }
+
+  raw(data) {
+    var obj = {};
+    obj["display"] = {
+      raw: data
+    };
+    this.Obniz.send(obj);
+  }
+
+  setPinName(io, moduleName, funcName) {
+    var obj = {};
+    obj["display"] = {};
+    obj["display"]["pin_assign"] = {};
+    obj["display"]["pin_assign"][io] = { module_name: moduleName, pin_name: funcName };
+
+    this.Obniz.send(obj);
+  }
+
+  setPinNames(moduleName, data) {
+    var obj = {};
+    obj["display"] = {};
+    obj["display"]["pin_assign"] = {};
+    for (var key in data) {
+      obj["display"]["pin_assign"][key] = { module_name: moduleName, pin_name: data[key] };
+    }
+
+    this.Obniz.send(obj);
+  }
+
+  drawCanvasContext(ctx) {
+    if (isNode) {
+      // TODO:
+      throw new Error("node js mode is under working.");
+    } else {
+      const stride = this.width / 8;
+      let vram = new Array(stride * 64);
+      const imageData = ctx.getImageData(0, 0, this.width, this.height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        var index = parseInt(i / 4);
+        var line = parseInt(index / this.width);
+        var col = parseInt((index - line * this.width) / 8);
+        var bits = parseInt(index - line * this.width) % 8;
+        if (bits == 0) vram[line * stride + col] = 0x00;
+        if (brightness > 0x7F) vram[line * stride + col] |= 0x80 >> bits;
+      }
+      this.raw(vram);
+    }
+  }
+}
+
+class PeripheralI2C {
+
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.observers = [];
+    this.state = {};
+    this.used = false;
+
+    this.onwritten = undefined;
+  }
+
+  addObserver(callback) {
+    if (callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  start(arg) {
+    var err = ObnizUtil._requiredKeys(arg, ["mode", "sda", "scl"]);
+    if (err) {
+      throw new Error("I2C start param '" + err + "' required, but not found ");return;
+    }
+    this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "pull"]);
+
+    var mode = this.state.mode;
+    var clock = typeof arg.clock === "number" ? parseInt(arg.clock) : null;
+    var slave_address = typeof arg.slave_address === "number" ? parseInt(arg.slave_address) : null;
+    var slave_address_length = typeof arg.slave_address_length === "number" ? parseInt(arg.slave_address_length) : null;
+
+    if (mode !== "master" && mode !== "slave") {
+      throw new Error("i2c: invalid mode " + mode);
+    }
+    if (mode === "master") {
+      if (clock === null) {
+        throw new Error("i2c: please specify clock when master mode");
+      }
+      if (clock <= 0 || clock > 1 * 1000 * 1000) {
+        throw new Error("i2c: invalid clock " + clock);
+      }
+      if (typeof arg.pull === "5v" && clock > 400 * 1000) {
+        throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
+      }
+      if (typeof arg.pull === "3v" && clock > 100 * 1000) {
+        throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
+      }
+    } else {
+      if (slave_address === null) {
+        throw new Error("i2c: please specify slave_address");
+      }
+      if (slave_address < 0 || slave_address > 0x3FFF) {
+        throw new Error("i2c: invalid slave_address");
+      }
+      if (slave_address < 0 || slave_address > 0x3FFF) {
+        throw new Error("i2c: invalid slave_address");
+      }
+      if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
+        throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
+      }
+    }
+
+    this.Obniz.getIO(this.state.sda).drive("open-drain");
+    this.Obniz.getIO(this.state.scl).drive("open-drain");
+
+    if (this.state.pull) {
+      this.Obniz.getIO(this.state.sda).pull(this.state.pull);
+      this.Obniz.getIO(this.state.scl).pull(this.state.pull);
+    } else {
+      this.Obniz.getIO(this.state.sda).pull(null);
+      this.Obniz.getIO(this.state.scl).pull(null);
+    }
+
+    var startObj = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl"]);
+    if (mode === "master") {
+      startObj.clock = clock;
+    } else {
+      startObj.slave_address = slave_address;
+      if (slave_address_length) {
+        startObj.slave_address_length = slave_address_length;
+      }
+    }
+
+    var obj = {};
+    obj["i2c" + this.id] = startObj;
+    this.used = true;
+    this.Obniz.send(obj);
+  }
+
+  write(address, data) {
+    address = parseInt(address);
+    if (isNaN(address)) {
+      throw new Error("i2c: please specify address");
+    }
+    if (address < 0 || address > 0x3FFF) {
+      throw new Error("i2c: invalid address");
+    }
+    if (address > 0x7F) {
+      address = address | 0x8000; // mark 10bit mode
+    }
+    if (!data) {
+      throw new Error("i2c: please provide data");
+    }
+    if (data.length > 1024) {
+      throw new Error("i2c: data should be under 1024 bytes");
+    }
+    var obj = {};
+    obj["i2c" + this.id] = {
+      address,
+      data
+    };
+    this.Obniz.send(obj);
+  }
+
+  write10bit(address, data) {
+    return this.write(address | 0x8000, data);
+  }
+
+  readWait(address, length) {
+    address = parseInt(address);
+    if (isNaN(address)) {
+      throw new Error("i2c: please specify address");
+    }
+    if (address < 0 || address > 0x3FFF) {
+      throw new Error("i2c: invalid address");
+    }
+    if (address > 0x7F) {
+      address = address | 0x8000; // mark 10bit mode
+    }
+    length = parseInt(length);
+    if (isNaN(length) || length < 0) {
+      throw new Error("i2c: invalid length to read");
+    }
+    if (length > 1024) {
+      throw new Error("i2c: data length should be under 1024 bytes");
+    }
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      var obj = {};
+      obj["i2c" + self.id] = {
+        address,
+        read: length
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  read10bitWait(address, length) {
+    return this.readWait(address | 0x8000, length);
+  }
+
+  notified(obj) {
+    if (obj.mode === "slave" && typeof this.onwritten === "function") {
+      this.onwritten(obj.data);
+    } else {
+      // TODO: we should compare byte length from sent
+      var callback = this.observers.shift();
+      if (callback) {
+        callback(obj.data);
+      }
+    }
+  }
+
+  isUsed() {
+    return this.used;
+  }
+
+  end() {
+    this.state = {};
+    var obj = {};
+    obj["i2c" + this.id] = null;
+    this.Obniz.send(obj);
+    this.used = false;
+  }
+}
+
+class PeripheralIO {
+
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.value = 0;
+    this.observers = [];
+  }
+
+  addObserver(callback) {
+    if (callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  output(value) {
+    var obj = {};
+    obj["io" + this.id] = value;
+    this.value = value;
+    this.Obniz.send(obj);
+  }
+
+  drive(drive) {
+    if (typeof drive !== "string") {
+      throw new Error("please specify drive methods in string");
+      return;
+    }
+    let output_type = "";
+    switch (drive) {
+      case "5v":
+        output_type = "push-pull5v";
+        break;
+      case "3v":
+        output_type = "push-pull3v";
+        break;
+      case "open-drain":
+        output_type = "open-drain";
+        break;
+      default:
+        throw new Error("unknown drive method");
+        break;
+    }
+
+    var obj = {};
+    obj["io" + this.id] = {
+      output_type: output_type
+    };
+    this.Obniz.send(obj);
+  }
+
+  pull(updown) {
+
+    if (typeof updown !== "string" && updown !== null) {
+      throw new Error("please specify pull methods in string");
+      return;
+    }
+    let pull_type = "";
+    switch (updown) {
+      case "5v":
+      case "pull-up5v":
+        pull_type = "pull-up5v";
+        break;
+      case "3v":
+      case "pull-up3v":
+        pull_type = "pull-up3v";
+        break;
+      case "0v":
+      case "pull-down":
+        pull_type = "pull-down";
+        break;
+      case null:
+      case "float":
+        pull_type = "float";
+        break;
+      default:
+        throw new Error("unknown pull_type method");
+        break;
+    }
+
+    var obj = {};
+    obj["io" + this.id] = {
+      pull_type: pull_type
+    };
+    this.Obniz.send(obj);
+  }
+
+  input(callback) {
+    this.onchange = callback;
+    var obj = {};
+    obj["io" + this.id] = {
+      direction: "input",
+      stream: true
+    };
+    this.Obniz.send(obj);
+    return this.value;
+  }
+
+  inputWait() {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      var obj = {};
+      obj["io" + self.id] = {
+        direction: "input",
+        stream: false
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  notified(obj) {
+    if (typeof obj === "boolean") {
+      this.value = obj;
+      var callback = this.observers.shift();
+      if (callback) {
+        callback(obj);
+      }
+      if (typeof this.onchange === "function") {
+        this.onchange(obj);
+      }
+    } else if (obj && typeof obj === "object") {
+      if (obj.warnings) {
+        for (let i = 0; i < obj.warnings.length; i++) {
+          this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warnings[i].message}` });
+        }
+      }
+      if (obj.errors) {
+        for (let i = 0; i < obj.errors.length; i++) {
+          this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.errors[i].message}` });
+        }
+      }
+    }
+  }
+}
+class PeripheralIO_ {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+  }
+
+  animation(name, status, array) {
+    var obj = {};
+    obj.io = {
+      animation: {
+        name: name,
+        status: status
+      }
+    };
+    if (!array) array = [];
+
+    let states = [];
+    for (var i = 0; i < array.length; i++) {
+      let state = array[i];
+      let duration = state.duration;
+      let func = state.state;
+
+      // dry run. and get json commands
+      this.Obniz.sendPool = [];
+      func(i);
+      let pooledJsonArray = this.Obniz.sendPool;
+      this.Obniz.sendPool = null;
+
+      // simply merge objects
+      let merged = {};
+      for (var index = 0; index < pooledJsonArray.length; index++) {
+        for (let key in pooledJsonArray[index]) {
+          merged[key] = pooledJsonArray[index][key];
+        }
+      }
+      states.push({
+        duration: duration,
+        state: merged
+      });
+    }
+    if (states.length > 0) {
+      obj.io.animation.states = states;
+    }
+    //  console.log(obj.io.animation);
+    this.Obniz.send(obj);
+  }
+}
 
 class LogicAnalyzer {
 
@@ -2353,347 +2357,356 @@ class ObnizMeasure {
   }
 }
 
-var PeripheralPWM = function (Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.state = {};
-  this.used = false;
-};
+class PeripheralPWM {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.state = {};
+    this.used = false;
+  }
 
-PeripheralPWM.prototype.sendWS = function (obj) {
-  var wsObj = {};
-  wsObj["pwm" + this.id] = obj;
-  this.Obniz.send(wsObj);
-};
+  sendWS(obj) {
+    var wsObj = {};
+    wsObj["pwm" + this.id] = obj;
+    this.Obniz.send(wsObj);
+  }
 
-PeripheralPWM.prototype.start = function (io) {
-  var obj = {};
-  this.state.io = io;
-  this.sendWS({
-    io: io
-  });
-  this.used = true;
-};
+  start(io) {
+    var obj = {};
+    this.state.io = io;
+    this.sendWS({
+      io: io
+    });
+    this.used = true;
+  }
 
-PeripheralPWM.prototype.freq = function (freq) {
-  var obj = {};
-  this.state.freq = freq;
-  this.sendWS({
-    freq: freq
-  });
-};
+  freq(freq) {
+    var obj = {};
+    this.state.freq = freq;
+    this.sendWS({
+      freq: freq
+    });
+  }
 
-PeripheralPWM.prototype.pulse = function (pulse_width) {
-  var obj = {};
-  this.state.pulse = pulse_width;
-  this.sendWS({
-    pulse: pulse_width
-  });
-};
+  pulse(pulse_width) {
+    var obj = {};
+    this.state.pulse = pulse_width;
+    this.sendWS({
+      pulse: pulse_width
+    });
+  }
 
-PeripheralPWM.prototype.duty = function (duty) {
-  var obj = {};
-  this.state.duty = duty;
-  this.sendWS({
-    duty: duty
-  });
-};
+  duty(duty) {
+    var obj = {};
+    this.state.duty = duty;
+    this.sendWS({
+      duty: duty
+    });
+  }
 
-PeripheralPWM.prototype.forceWorking = function (working) {
-  var obj = {};
-  this.state.forceWorking = working;
-  this.sendWS({
-    force_working: working
-  });
-};
+  forceWorking(working) {
+    var obj = {};
+    this.state.forceWorking = working;
+    this.sendWS({
+      force_working: working
+    });
+  }
 
-PeripheralPWM.prototype.isUsed = function () {
-  return this.used;
-};
+  isUsed() {
+    return this.used;
+  }
 
-PeripheralPWM.prototype.end = function () {
-  var obj = {};
-  this.state = {};
-  this.sendWS(null);
-  this.used = false;
-};
+  end() {
+    var obj = {};
+    this.state = {};
+    this.sendWS(null);
+    this.used = false;
+  }
 
-PeripheralPWM.prototype.modulate = function (type, symbol_sec, data) {
-  var obj = {};
-  this.sendWS({
-    modulate: {
-      type: type,
-      symbol_sec: symbol_sec,
-      data: data
+  modulate(type, symbol_sec, data) {
+    var obj = {};
+    this.sendWS({
+      modulate: {
+        type: type,
+        symbol_sec: symbol_sec,
+        data: data
+      }
+    });
+  }
+}
+
+class PeripheralSPI {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.observers = [];
+    this.used = false;
+  }
+
+  addObserver(callback) {
+    if (callback) {
+      this.observers.push(callback);
     }
-  });
-};
-
-var PeripheralSPI = function (Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.observers = [];
-  this.used = false;
-};
-
-PeripheralSPI.prototype.addObserver = function (callback) {
-  if (callback) {
-    this.observers.push(callback);
-  }
-};
-
-PeripheralSPI.prototype.start = function (params) {
-
-  var err = ObnizUtil._requiredKeys(params, ["mode", "frequency"]);
-  if (err) {
-    throw new Error("spi start param '" + err + "' required, but not found ");return;
-  }
-  this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "frequency", "drive", "pull"]);
-  var obj = {};
-
-  obj["spi" + this.id] = {
-    mode: this.params.mode,
-    clock: this.params.frequency //name different
-  };
-  if (this.params.clk !== undefined) {
-    obj["spi" + this.id].clk = this.params.clk;
-  }
-  if (this.params.mosi !== undefined) {
-    obj["spi" + this.id].mosi = this.params.mosi;
-  }
-  if (this.params.miso !== undefined) {
-    obj["spi" + this.id].miso = this.params.miso;
   }
 
-  if (this.params.drive) {
-    if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-    if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-    if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
-  } else {
-    if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).drive("5v");
-    if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
-    if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).drive("5v");
+  start(params) {
+
+    var err = ObnizUtil._requiredKeys(params, ["mode", "frequency"]);
+    if (err) {
+      throw new Error("spi start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "frequency", "drive", "pull"]);
+    var obj = {};
+
+    obj["spi" + this.id] = {
+      mode: this.params.mode,
+      clock: this.params.frequency //name different
+    };
+    if (this.params.clk !== undefined) {
+      obj["spi" + this.id].clk = this.params.clk;
+    }
+    if (this.params.mosi !== undefined) {
+      obj["spi" + this.id].mosi = this.params.mosi;
+    }
+    if (this.params.miso !== undefined) {
+      obj["spi" + this.id].miso = this.params.miso;
+    }
+
+    if (this.params.drive) {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+    } else {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).drive("5v");
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).drive("5v");
+    }
+
+    if (this.params.pull) {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
+    } else {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(null);
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(null);
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(null);
+    }
+
+    this.used = true;
+    this.Obniz.send(obj);
   }
 
-  if (this.params.pull) {
-    if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
-    if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
-    if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
-  } else {
-    if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(null);
-    if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(null);
-    if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(null);
+  writeWait(data) {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      var obj = {};
+      obj["spi" + self.id] = {
+        data: data,
+        read: true
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
   }
 
-  this.used = true;
-  this.Obniz.send(obj);
-};
-
-PeripheralSPI.prototype.writeWait = function (data) {
-  var self = this;
-  return new Promise(function (resolve, reject) {
+  write(data) {
+    var self = this;
     var obj = {};
     obj["spi" + self.id] = {
-      data: data,
-      read: true
+      data: data
     };
     self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-PeripheralSPI.prototype.write = function (data) {
-  var self = this;
-  var obj = {};
-  obj["spi" + self.id] = {
-    data: data
-  };
-  self.Obniz.send(obj);
-};
-
-PeripheralSPI.prototype.notified = function (obj) {
-  // TODO: we should compare byte length from sent
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(obj.data);
-  }
-};
-
-PeripheralSPI.prototype.isUsed = function () {
-  return this.used;
-};
-PeripheralSPI.prototype.end = function (data) {
-  var self = this;
-  var obj = {};
-  obj["spi" + self.id] = null;
-  this.params = null;
-  self.Obniz.send(obj);
-  this.used = false;
-};
-
-var ObnizSwitch = function (Obniz) {
-  this.Obniz = Obniz;
-  this.observers = [];
-};
-
-ObnizSwitch.prototype.addObserver = function (callback) {
-  if (callback) {
-    this.observers.push(callback);
-  }
-};
-
-ObnizSwitch.prototype.getWait = function () {
-  var self = this;
-  return new Promise(function (resolve, reject) {
-    var obj = {};
-    obj["switch"] = "get";
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
-
-ObnizSwitch.prototype.notified = function (obj) {
-  this.state = obj.state;
-  if (this.onchange) {
-    this.onchange(this.state);
-  }
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(this.state);
-  }
-};
-
-var PeripheralUART = function (Obniz, id) {
-  this.Obniz = Obniz;
-  this.id = id;
-  this.received = new Uint8Array([]);
-  this.used = false;
-};
-
-PeripheralUART.prototype.start = function (params) {
-
-  var err = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
-  if (err) {
-    throw new Error("uart start param '" + err + "' required, but not found ");return;
-  }
-  this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pull"]);
-
-  if (this.params.hasOwnProperty("drive")) {
-    this.Obniz.getIO(this.params.rx).drive(this.params.drive);
-    this.Obniz.getIO(this.params.tx).drive(this.params.drive);
-  } else {
-    this.Obniz.getIO(this.params.rx).drive("5v");
-    this.Obniz.getIO(this.params.tx).drive("5v");
   }
 
-  if (this.params.hasOwnProperty("pull")) {
-    this.Obniz.getIO(this.params.rx).pull(this.params.pull);
-    this.Obniz.getIO(this.params.tx).pull(this.params.pull);
-  } else {
-    this.Obniz.getIO(this.params.rx).pull(null);
-    this.Obniz.getIO(this.params.tx).pull(null);
-  }
-
-  var obj = {};
-  obj["uart" + this.id] = this.params;
-  this.Obniz.send(obj);
-  this.received = [];
-  this.used = true;
-};
-
-// node only
-PeripheralUART.prototype.send = function (data) {
-  var send_data = null;
-  if (data === undefined) {
-    return;
-  }
-  if (typeof data === "number") {
-    data = [data];
-  }
-  if (isNode && data instanceof Buffer) {
-    var arr = new Array(data.byteLength);
-    for (var i = 0; i < arr.length; i++) {
-      arr[i] = data[i];
+  notified(obj) {
+    // TODO: we should compare byte length from sent
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj.data);
     }
-    send_data = arr;
-  } else if (data.constructor === Array) {
-    send_data = data;
-  } else if (typeof data === "string") {
-    if (isNode) {
-      const buf = Buffer(data);
-      var arr = new Array(buf.byteLength);
+  }
+
+  isUsed() {
+    return this.used;
+  }
+
+  end(data) {
+    var self = this;
+    var obj = {};
+    obj["spi" + self.id] = null;
+    this.params = null;
+    self.Obniz.send(obj);
+    this.used = false;
+  }
+}
+
+class ObnizSwitch {
+
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.observers = [];
+  }
+
+  addObserver(callback) {
+    if (callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  getWait() {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      var obj = {};
+      obj["switch"] = "get";
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  notified(obj) {
+    this.state = obj.state;
+    if (this.onchange) {
+      this.onchange(this.state);
+    }
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(this.state);
+    }
+  }
+}
+
+class PeripheralUART {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.received = new Uint8Array([]);
+    this.used = false;
+  }
+
+  start(params) {
+
+    var err = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
+    if (err) {
+      throw new Error("uart start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pull"]);
+
+    if (this.params.hasOwnProperty("drive")) {
+      this.Obniz.getIO(this.params.rx).drive(this.params.drive);
+      this.Obniz.getIO(this.params.tx).drive(this.params.drive);
+    } else {
+      this.Obniz.getIO(this.params.rx).drive("5v");
+      this.Obniz.getIO(this.params.tx).drive("5v");
+    }
+
+    if (this.params.hasOwnProperty("pull")) {
+      this.Obniz.getIO(this.params.rx).pull(this.params.pull);
+      this.Obniz.getIO(this.params.tx).pull(this.params.pull);
+    } else {
+      this.Obniz.getIO(this.params.rx).pull(null);
+      this.Obniz.getIO(this.params.tx).pull(null);
+    }
+
+    var obj = {};
+    obj["uart" + this.id] = this.params;
+    this.Obniz.send(obj);
+    this.received = [];
+    this.used = true;
+  }
+
+  send(data) {
+    var send_data = null;
+    if (data === undefined) {
+      return;
+    }
+    if (typeof data === "number") {
+      data = [data];
+    }
+    if (isNode && data instanceof Buffer) {
+      var arr = new Array(data.byteLength);
       for (var i = 0; i < arr.length; i++) {
-        arr[i] = buf[i];
+        arr[i] = data[i];
       }
       send_data = arr;
-    } else if (TextEncoder) {
-      const typedArray = new TextEncoder("utf-8").encode(data);
-      send_data = new Array(typedArray.length);
-      for (var i = 0; i < typedArray.length; i++) {
-        send_data[i] = typedArray[i];
+    } else if (data.constructor === Array) {
+      send_data = data;
+    } else if (typeof data === "string") {
+      if (isNode) {
+        const buf = Buffer(data);
+        var arr = new Array(buf.byteLength);
+        for (var i = 0; i < arr.length; i++) {
+          arr[i] = buf[i];
+        }
+        send_data = arr;
+      } else if (TextEncoder) {
+        const typedArray = new TextEncoder("utf-8").encode(data);
+        send_data = new Array(typedArray.length);
+        for (var i = 0; i < typedArray.length; i++) {
+          send_data[i] = typedArray[i];
+        }
       }
     }
+    var obj = {};
+    obj["uart" + this.id] = {};
+    obj["uart" + this.id].data = send_data;
+    //  console.log(obj);
+    this.Obniz.send(obj);
   }
-  var obj = {};
-  obj["uart" + this.id] = {};
-  obj["uart" + this.id].data = send_data;
-  //  console.log(obj);
-  this.Obniz.send(obj);
-};
 
-PeripheralUART.prototype.isDataExists = function () {
-  return this.received && this.received.length > 0;
-};
+  isDataExists() {
+    return this.received && this.received.length > 0;
+  }
 
-PeripheralUART.prototype.readBytes = function () {
-  var results = [];
-  if (this.isDataExists()) {
-    for (var i = 0; i < this.received.length; i++) {
-      results.push(this.received[i]);
+  readBytes() {
+    var results = [];
+    if (this.isDataExists()) {
+      for (var i = 0; i < this.received.length; i++) {
+        results.push(this.received[i]);
+      }
+    }
+    this.received = [];
+    return results;
+  }
+
+  readText() {
+    var string = null;
+    if (this.isDataExists()) {
+      var data = this.readBytes();
+      string = this.tryConvertString(data);
+    }
+    this.received = [];
+    return string;
+  }
+
+  tryConvertString(data) {
+    return ObnizUtil.dataArray2string(data);
+  }
+
+  notified(obj) {
+    if (this.onreceive) {
+      var string = this.tryConvertString(obj.data);
+      this.onreceive(obj.data, string);
+    } else {
+      if (!this.received) {
+        this.received = [];
+      }
+
+      this.received.push.apply(this.received, obj.data);
     }
   }
-  this.received = [];
-  return results;
-};
 
-PeripheralUART.prototype.readText = function () {
-  var string = null;
-  if (this.isDataExists()) {
-    var data = this.readBytes();
-    string = this.tryConvertString(data);
+  isUsed() {
+    return this.used;
   }
-  this.received = [];
-  return string;
-};
 
-PeripheralUART.prototype.tryConvertString = function (data) {
-  return ObnizUtil.dataArray2string(data);
-};
-
-PeripheralUART.prototype.notified = function (obj) {
-  if (this.onreceive) {
-    var string = this.tryConvertString(obj.data);
-    this.onreceive(obj.data, string);
-  } else {
-    if (!this.received) {
-      this.received = [];
-    }
-
-    this.received.push.apply(this.received, obj.data);
+  end() {
+    var obj = {};
+    obj["uart" + this.id] = null;
+    this.params = null;
+    this.Obniz.send(obj);
+    this.used = false;
   }
-};
-
-PeripheralUART.prototype.isUsed = function () {
-  return this.used;
-};
-
-PeripheralUART.prototype.end = function () {
-  var obj = {};
-  obj["uart" + this.id] = null;
-  this.params = null;
-  this.Obniz.send(obj);
-  this.used = false;
-};
+}
 class ObnizUtil {
 
   constructor(obniz) {
@@ -2783,6 +2796,7 @@ class ObnizUtil {
     return null;
   }
 }
+
 var _24LC256 = function () {
   this.requiredKeys = ["address"];
   this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
@@ -2806,7 +2820,7 @@ _24LC256.prototype.set = function (address, data) {
 };
 
 _24LC256.prototype.getWait = (() => {
-  var _ref6 = _asyncToGenerator(function* (address, length) {
+  var _ref2 = _asyncToGenerator(function* (address, length) {
     var array = [];
     array.push(address >> 8 & 0xFF);
     array.push(address & 0xFF);
@@ -2814,8 +2828,8 @@ _24LC256.prototype.getWait = (() => {
     return yield this.i2c.readWait(0x50, length);
   });
 
-  return function (_x3, _x4) {
-    return _ref6.apply(this, arguments);
+  return function (_x, _x2) {
+    return _ref2.apply(this, arguments);
   };
 })();
 
@@ -2974,7 +2988,7 @@ var ADT7310 = function () {
 };
 
 ADT7310.prototype.wired = (() => {
-  var _ref7 = _asyncToGenerator(function* (obniz) {
+  var _ref3 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -2987,8 +3001,8 @@ ADT7310.prototype.wired = (() => {
     this.spi = this.obniz.getSpiWithConfig(this.params);
   });
 
-  return function (_x5) {
-    return _ref7.apply(this, arguments);
+  return function (_x3) {
+    return _ref3.apply(this, arguments);
   };
 })();
 
@@ -3058,7 +3072,7 @@ var AE_MICAMP = function () {
 };
 
 AE_MICAMP.prototype.wired = (() => {
-  var _ref10 = _asyncToGenerator(function* (obniz) {
+  var _ref6 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     this.ad = obniz.getAD(this.params.out);
@@ -3098,8 +3112,8 @@ AE_MICAMP.prototype.wired = (() => {
       */
   });
 
-  return function (_x6) {
-    return _ref10.apply(this, arguments);
+  return function (_x4) {
+    return _ref6.apply(this, arguments);
   };
 })();
 
@@ -3482,7 +3496,7 @@ HCSR04.prototype.wired = function (obniz) {
 };
 
 HCSR04.prototype.measure = (() => {
-  var _ref15 = _asyncToGenerator(function* (callback) {
+  var _ref11 = _asyncToGenerator(function* (callback) {
 
     this.vccIO.drive("5v");
     this.vccIO.output(true);
@@ -3517,8 +3531,8 @@ HCSR04.prototype.measure = (() => {
     });
   });
 
-  return function (_x7) {
-    return _ref15.apply(this, arguments);
+  return function (_x5) {
+    return _ref11.apply(this, arguments);
   };
 })();
 
@@ -3802,7 +3816,7 @@ var KXSC7_2050 = function () {
 };
 
 KXSC7_2050.prototype.wired = (() => {
-  var _ref17 = _asyncToGenerator(function* (obniz) {
+  var _ref13 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
@@ -3840,8 +3854,8 @@ KXSC7_2050.prototype.wired = (() => {
     });
   });
 
-  return function (_x8) {
-    return _ref17.apply(this, arguments);
+  return function (_x6) {
+    return _ref13.apply(this, arguments);
   };
 })();
 

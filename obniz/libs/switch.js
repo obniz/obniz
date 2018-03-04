@@ -1,32 +1,35 @@
 
-var ObnizSwitch = function(Obniz) {
-  this.Obniz = Obniz;
-  this.observers = [];
-};
-
-ObnizSwitch.prototype.addObserver = function(callback) {
-  if(callback) {
-    this.observers.push(callback);
+class ObnizSwitch {
+  
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.observers = [];
   }
-};
 
-ObnizSwitch.prototype.getWait = function() {
-  var self = this;
-  return new Promise(function(resolve, reject){
-    var obj = {};
-    obj["switch"] = "get";
-    self.Obniz.send(obj);
-    self.addObserver(resolve);
-  });
-};
+  addObserver(callback) {
+    if(callback) {
+      this.observers.push(callback);
+    }
+  }
 
-ObnizSwitch.prototype.notified = function(obj) {
-  this.state = obj.state;
-  if (this.onchange) {
-    this.onchange(this.state);
+  getWait() {
+    var self = this;
+    return new Promise(function(resolve, reject){
+      var obj = {};
+      obj["switch"] = "get";
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
   }
-  var callback = this.observers.shift();
-  if (callback) {
-    callback(this.state);
+
+  notified(obj) {
+    this.state = obj.state;
+    if (this.onchange) {
+      this.onchange(this.state);
+    }
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(this.state);
+    }
   }
-};
+}
