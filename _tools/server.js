@@ -187,6 +187,23 @@ function readmeBuild(){
     });
   });
   
+  
+  folderExploer(partsPath, "README-ja.ejs", function(filePath){
+    ejs.renderFile(filePath, null, null, function(err, str){
+      if(err){
+        
+        // Object
+        notifier.notify({
+          'title': 'ERROR',
+          'message': filePath + ' compile ERROR. See console.'
+        });
+        console.log( filePath + ' compile ERROR.', err);
+      }else{
+        fs.writeFileSync(path.join(filePath, '../README-ja.md'), str);
+      }
+    });
+  });
+  
 }
 
 
