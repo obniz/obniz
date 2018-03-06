@@ -1,7 +1,7 @@
 class WSCommand_UART extends WSCommand {
 
-  constructor() {
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 4;
 
     this._CommandInit     = 0;
@@ -95,12 +95,12 @@ class WSCommand_UART extends WSCommand {
         this.init(i, module);
       }
       if (module.data) {
-        this.send(i, data);
+        this.send(i, module.data);
       }
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv && payload.byteLength > 1) {
       var module_index = payload[0];
       var arr = new Array(payload.byteLength - 1);

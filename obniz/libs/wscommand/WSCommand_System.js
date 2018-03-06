@@ -1,11 +1,10 @@
 class WSCommand_System extends WSCommand {
 
-  constructor() {
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 0;
 
     this._CommandReboot         = 0
-    this._CommandUpdateFirmware = 1
     this._CommandReset          = 2
     this._CommandSelfCheck      = 3
     this._CommandWait           = 4
@@ -16,10 +15,6 @@ class WSCommand_System extends WSCommand {
 
   reboot() {
     this.sendCommand(this._CommandReboot, null);
-  }
-
-  update_firmware(firmware) {
-    this.sendCommand(this._CommandUpdateFirmware, firmware);
   }
 
   reset() {
@@ -35,15 +30,12 @@ class WSCommand_System extends WSCommand {
     if(isNaN(msec)) {
       return;
     }
-    var buf = new Uint8Array(2);
-    buf[0] = msec >> 8;
-    buf[1] = msec
+    var buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
 
   resetOnDisconnect(mustReset) {
-    var buf = new Uint8Array(1);
-    buf[0] = mustReset ? 1 : 0;
+    var buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
   }
 
@@ -68,7 +60,7 @@ class WSCommand_System extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
 
   }
 }

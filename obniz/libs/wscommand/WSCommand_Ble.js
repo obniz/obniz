@@ -1,8 +1,7 @@
 class WSCommand_Ble extends WSCommand {
 
-  constructor() {
-
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 11;
     
     this.uuidLength = 16+2;
@@ -20,8 +19,8 @@ class WSCommand_Ble extends WSCommand {
     this._CommandCharacteristics = 9;
     this._CommandWriteCharacteristics = 10;
     this._CommandReadCharacteristics = 11;
-    this._CommandNotifyCharacteristics = 12;
-    this._CommandNotifyCharacteristicsResults = 13;
+    // this._CommandNotifyCharacteristics = 12; // currently not used
+    // this._CommandNotifyCharacteristicsResults = 13; // currently not used
     this._CommandDescriptors = 14;
     this._CommandWriteDescriptor = 15;
     this._CommandReadDescriptor = 16;
@@ -299,13 +298,13 @@ class WSCommand_Ble extends WSCommand {
    };
    var schema = {
      service : {
-       command : CommandServerAddService,
+       command : this._CommandServerAddService,
        schema: [
         { path : "uuid" , length: 18, type: "uuid", required:true }
         ]
       },
       characteristic : {
-       command : CommandServerAddCharacteristic,
+       command : this._CommandServerAddCharacteristic,
        schema: [
         { path : "service_uuid" , length: 18, type: "uuid", required:true },
         { path : "uuid" , length: 18, type: "uuid", required:true },
@@ -314,7 +313,7 @@ class WSCommand_Ble extends WSCommand {
         ]
       },
       descriptor : {
-       command : CommandServerAddDescriptor,
+       command : this._CommandServerAddDescriptor,
        schema: [
         { path : "service_uuid" , length: 18, type: "uuid", required:true },
         { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
@@ -351,7 +350,7 @@ class WSCommand_Ble extends WSCommand {
       }
     }
     if(sendBufs.length > 0){
-      sendBufs.push({command:CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
+      sendBufs.push({command:this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
     }
    for(var index in sendBufs){
      this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
@@ -453,7 +452,7 @@ class WSCommand_Ble extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     let funcList = {}
     funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
     funcList[this._CommandConnect]=this.notifyFromBinaryConnect.bind(this);
@@ -778,19 +777,6 @@ class WSCommand_Ble extends WSCommand {
       31: "on writing descriptor from remote",
       32: "on reading descriptor from remote",
     };
-    const CommandServerStartPeripheral = 20;
-    const CommandServerNotifyConnect = 21;
-    const CommandServerAddService = 22;
-    const CommandServerAddCharacteristic = 23;
-    const CommandServerAddDescriptor = 24;
-    const CommandServerWriteCharavteristicValue = 25;
-    const CommandServerReadCharavteristicValue = 26;
-    const CommandServerNotifyWriteCharavteristicValue = 27;
-    const CommandServerNotifyReadCharavteristicValue = 28;
-    const CommandServerWriteDescriptorValue = 29;
-    const CommandServerReadDescriptorValue = 30;
-    const CommandServerNotifyWriteDescriptorValue = 31;
-    const CommandServerNotifyReadDescriptorValue = 32;
     
     results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
     

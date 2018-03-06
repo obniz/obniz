@@ -1,10 +1,11 @@
 class WSCommand_PWM extends WSCommand {
-  constructor() {
-    super();
+
+  constructor(delegate) {
+    super(delegate);
     this.module = 3;
+    this.ModuleNum = 6;
     this.resetInternalStatus();
 
-    this.ModuleNum = 6;
 
     this._CommandInit     = 0
     this._CommandDeinit   = 1
@@ -24,13 +25,16 @@ class WSCommand_PWM extends WSCommand {
   // Commands
 
   init(module, io) {
-    var buf = new Uint8Array([module, io]);
+    var buf = new Uint8Array(2);
+    buf[0] = module;
+    buf[1] = io;
     this.pwms[module].io = io;
     this.sendCommand(this._CommandInit, buf);
   }
 
   deinit(module) {
-    var buf = new Uint8Array([module]);
+    var buf = new Uint8Array(1);
+    buf[0] = module;
     this.pwms[module] = {};
     this.sendCommand(this._CommandDeinit, buf);
   }
@@ -110,7 +114,7 @@ class WSCommand_PWM extends WSCommand {
       }
       var duty = module.duty;
       if (typeof duty === "number") {
-        if (this.pwms[i].freq > 0) { // freqで割るので0は困る
+        if (this.pwms[i].freq > 0) { // 0 division not acceptable
           if (duty > 100) duty = 100;
           else if (duty < 0) duty = 0;
           var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;

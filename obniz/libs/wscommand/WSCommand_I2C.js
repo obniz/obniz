@@ -1,6 +1,7 @@
 class WSCommand_I2C extends WSCommand {
-  constructor() {
-    super();
+  
+  constructor(delegate) {
+    super(delegate);
     this.module = 6;
 
     this._CommandInit     = 0
@@ -154,7 +155,7 @@ class WSCommand_I2C extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRead && payload.byteLength > 3) {
       var module_index = payload[0];
       var address = (payload[1] << 8) + payload[2];

@@ -1,6 +1,7 @@
 class WSCommand_LogicAnalyzer extends WSCommand {
-  constructor() {
-    super();
+  
+  constructor(delegate) {
+    super(delegate);
     this.module = 10;
 
     this._CommandInit     = 0
@@ -64,7 +65,7 @@ class WSCommand_LogicAnalyzer extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv) {
       var arr = new Array(payload.byteLength);
       for (var i=0; i<payload.byteLength;i++) {

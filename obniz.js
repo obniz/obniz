@@ -27,8 +27,8 @@ class Obniz {
       this.wscommand = this.constructor.WSCommand
       var classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
-      for (var i=0; i<classes.length; i++) {
-       this.wscommands.push(new classes[i]());
+      for (var class_name in classes) {
+       this.wscommands.push(new classes[class_name]());
       }
     }
 
@@ -281,22 +281,21 @@ class Obniz {
 
   send(obj) {
     if (this.sendPool) { this.sendPool.push(obj); return; }
-    var isObject = (obj && (typeof obj === "object"));
-    if (isObject) {
-      obj = JSON.stringify(obj);
-    } else if (typeof obj !== "string"){
-      console.log("obnizjs. didnt sent ", obj);
+    if (!obj || (typeof obj !== "object")) {
+      console.log("obnizjs. didnt send ", obj);
       return;
     }
-    this.print_debug("send: " + obj);
-    if (this.wscommand && isObject) {
-      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(obj));
+    let sendData = JSON.stringify(obj);
+    this.print_debug("send: " + sendData);
+    /* compress */
+    if (this.wscommand) {
+      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
       if (compressed) {
-        obj = compressed;
-        this.print_debug("compressed: " + obj);
+        sendData = compressed;
+        this.print_debug("compressed: " + sendData);
       }
     }
-    this.socket.send(obj);
+    this.socket.send(sendData);
   
     if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
       this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
@@ -2805,7 +2804,8 @@ class ObnizUtil {
 }
 class WSCommand {
 
-  constructor(obj) {
+  constructor(delegate) {
+    this.delegate = delegate;
 
     //constants
     this.COMMAND_FUNC_ID_ERROR = 0xFF
@@ -2813,9 +2813,9 @@ class WSCommand {
   }
 
   static get CommandClasses() {
-    return [
+    return {
       WSCommand_System,
-      // WSCommand_Directive,
+      WSCommand_Directive,
       WSCommand_IO,
       WSCommand_PWM,
       WSCommand_UART,
@@ -2827,7 +2827,7 @@ class WSCommand {
       WSCommand_Switch,
       WSCommand_Ble,
       WSCommand_Measurement
-    ];
+    };
   }
   
   static framed(module, func, payload) {
@@ -2865,6 +2865,41 @@ class WSCommand {
     }
   }
 
+  static dequeueOne(buf) {
+    if (!buf || buf.byteLength == 0) return null;
+    if (buf.byteLength < 3) {
+      throw new Eror("something wrong. buf less than 3");
+      return null;
+    }
+    if (buf[0] & 0x80) {
+      throw new Eror("reserved bit 1");
+      return null;
+    }
+    var module = 0x7F & buf[0];
+    var func = buf[1];
+    var length_type = (buf[2] >> 6) & 0x3;
+    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
+    if (length_type == 4) {
+      throw new Eror("invalid length");
+      return null;
+    }
+    var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
+    var index = 3;
+    var shift = length_extra_bytse;
+    while(shift > 0) {
+      shift--;
+      length += buf[index] << (shift*8);
+      index++;
+    }
+
+    return {
+      module: module,
+      func: func,
+      payload: buf.slice(3+length_extra_bytse, 3+length_extra_bytse+length),
+      next: buf.slice(3+length_extra_bytse+length)
+    };
+  }
+
   static compress(wscommands, json) {
     var ret;
     function append(module, func, payload) {
@@ -2887,14 +2922,19 @@ class WSCommand {
   }
 
   sendCommand(func, payload) {
-    this.parsed(this.module, func, payload);
+    if (this.delegate && this.delegate.onParsed) {
+      this.delegate.onParsed(this.module, func, payload);
+    }
+    if (this.parsed) {
+      this.parsed(this.module, func, payload);
+    }
   }
 
   parseFromJson(json) {
 
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     
   }
 
@@ -2915,8 +2955,9 @@ class WSCommand {
   }
 }
 class WSCommand_AD extends WSCommand {
-  constructor() {
-    super();
+  
+  constructor(delegate) {
+    super(delegate);
     this.module = 7;
 
     this._CommandInitNormalInterval     = 0
@@ -2967,7 +3008,7 @@ class WSCommand_AD extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotifyValue) {
       for (var i=0; i<payload.byteLength; i+=3) {
         var value = (payload[i+1] << 8) + payload[i+2];
@@ -2980,9 +3021,8 @@ class WSCommand_AD extends WSCommand {
 
 class WSCommand_Ble extends WSCommand {
 
-  constructor() {
-
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 11;
     
     this.uuidLength = 16+2;
@@ -3000,8 +3040,8 @@ class WSCommand_Ble extends WSCommand {
     this._CommandCharacteristics = 9;
     this._CommandWriteCharacteristics = 10;
     this._CommandReadCharacteristics = 11;
-    this._CommandNotifyCharacteristics = 12;
-    this._CommandNotifyCharacteristicsResults = 13;
+    // this._CommandNotifyCharacteristics = 12; // currently not used
+    // this._CommandNotifyCharacteristicsResults = 13; // currently not used
     this._CommandDescriptors = 14;
     this._CommandWriteDescriptor = 15;
     this._CommandReadDescriptor = 16;
@@ -3279,13 +3319,13 @@ class WSCommand_Ble extends WSCommand {
    };
    var schema = {
      service : {
-       command : CommandServerAddService,
+       command : this._CommandServerAddService,
        schema: [
         { path : "uuid" , length: 18, type: "uuid", required:true }
         ]
       },
       characteristic : {
-       command : CommandServerAddCharacteristic,
+       command : this._CommandServerAddCharacteristic,
        schema: [
         { path : "service_uuid" , length: 18, type: "uuid", required:true },
         { path : "uuid" , length: 18, type: "uuid", required:true },
@@ -3294,7 +3334,7 @@ class WSCommand_Ble extends WSCommand {
         ]
       },
       descriptor : {
-       command : CommandServerAddDescriptor,
+       command : this._CommandServerAddDescriptor,
        schema: [
         { path : "service_uuid" , length: 18, type: "uuid", required:true },
         { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
@@ -3331,7 +3371,7 @@ class WSCommand_Ble extends WSCommand {
       }
     }
     if(sendBufs.length > 0){
-      sendBufs.push({command:CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
+      sendBufs.push({command:this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
     }
    for(var index in sendBufs){
      this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
@@ -3433,7 +3473,7 @@ class WSCommand_Ble extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     let funcList = {}
     funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
     funcList[this._CommandConnect]=this.notifyFromBinaryConnect.bind(this);
@@ -3758,19 +3798,6 @@ class WSCommand_Ble extends WSCommand {
       31: "on writing descriptor from remote",
       32: "on reading descriptor from remote",
     };
-    const CommandServerStartPeripheral = 20;
-    const CommandServerNotifyConnect = 21;
-    const CommandServerAddService = 22;
-    const CommandServerAddCharacteristic = 23;
-    const CommandServerAddDescriptor = 24;
-    const CommandServerWriteCharavteristicValue = 25;
-    const CommandServerReadCharavteristicValue = 26;
-    const CommandServerNotifyWriteCharavteristicValue = 27;
-    const CommandServerNotifyReadCharavteristicValue = 28;
-    const CommandServerWriteDescriptorValue = 29;
-    const CommandServerReadDescriptorValue = 30;
-    const CommandServerNotifyWriteDescriptorValue = 31;
-    const CommandServerNotifyReadDescriptorValue = 32;
     
     results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
     
@@ -3793,11 +3820,19 @@ class WSCommand_Ble extends WSCommand {
   }
 }
 
+class WSCommand_Directive extends WSCommand {
+  
+  constructor(delegate) {
+    super(delegate);
+    this.module = 1;
+  }
+
+}
 
 class WSCommand_Display extends WSCommand {
 
-  constructor() {
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 8;
 
     this._CommandClear                    = 0;
@@ -3899,8 +3934,9 @@ class WSCommand_Display extends WSCommand {
   }
 }
 class WSCommand_I2C extends WSCommand {
-  constructor() {
-    super();
+  
+  constructor(delegate) {
+    super(delegate);
     this.module = 6;
 
     this._CommandInit     = 0
@@ -4054,7 +4090,7 @@ class WSCommand_I2C extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRead && payload.byteLength > 3) {
       var module_index = payload[0];
       var address = (payload[1] << 8) + payload[2];
@@ -4102,8 +4138,9 @@ const COMMAND_IO_ERROR_MESSAGES = {
 }
 
 class WSCommand_IO extends WSCommand {
-  constructor() {
-    super();
+
+  constructor(delegate) {
+    super(delegate);
     this.module = 2;
 
     this._CommandOutput           = 0;
@@ -4208,7 +4245,7 @@ class WSCommand_IO extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
 
     let esperr;
     let module_index;
@@ -4256,6 +4293,685 @@ class WSCommand_IO extends WSCommand {
     }
   }
 };
+class WSCommand_LogicAnalyzer extends WSCommand {
+  
+  constructor(delegate) {
+    super(delegate);
+    this.module = 10;
+
+    this._CommandInit     = 0
+    this._CommandDeinit   = 1
+    this._CommandRecv     = 2
+  }
+
+  // Commands
+
+  init(io, intervalUsec, durationUsec, matchValue, matchCount) {
+    var buf = new Uint8Array(12);
+    buf[0] = 1;
+    buf[1] = io;
+    buf[2] = intervalUsec >> (8*3);
+    buf[3] = intervalUsec >> (8*2);
+    buf[4] = intervalUsec >> (8*1);
+    buf[5] = intervalUsec;
+    buf[6] = durationUsec >> (8*3);
+    buf[7] = durationUsec >> (8*2);
+    buf[8] = durationUsec >> (8*1);
+    buf[9] = durationUsec;
+    buf[10] = matchValue;
+    buf[11] = matchCount;
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit() {
+    var buf = new Uint8Array(0);
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["logic_analyzer"];
+    if (module === null) {
+      this.deinit();
+      return;
+    }
+    if (typeof(module) == "object") {
+      if (typeof(module.io) == "object" && typeof(module.io[0]) == "number" && typeof(module.interval) == "number" && typeof(module.duration == "number")) {
+        var intervalUSec = parseInt(module.interval * 1000);
+        if(isNaN(intervalUSec)) {
+          return;
+        }
+        var duration = parseInt(module.duration * 1000);
+        if(isNaN(duration)) {
+          return;
+        }
+        var trigerLevel = 0;
+        var trigerSamples = 0;
+
+        if (module.triger && typeof module.triger == "object") {
+          let triger = module.triger;
+          trigerLevel = (triger.value) ? 1 : 0;
+          if (typeof(triger.samples) == "number" && triger.samples > 0 && triger.samples <= 0xFF) {
+            trigerSamples = parseInt(triger.samples);
+          }
+        }
+        
+        this.init(module.io[0], intervalUSec, duration, trigerLevel, trigerSamples);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandRecv) {
+      var arr = new Array(payload.byteLength);
+      for (var i=0; i<payload.byteLength;i++) {
+        arr[i] = payload[i];
+      }
+      objToSend["logic_analyzer"] = {
+        data: arr
+      };
+    }
+  }
+}
+
+class WSCommand_Measurement extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 12;
+
+    this._CommandMeasurementEcho  = 0
+  }
+
+  // Commands
+
+  measureEcho(type, trigerIO, trigerPosNeg, trigerWidthUs, echoIO, responseCount, timeoutUs) {
+    timeoutUs = parseInt(timeoutUs);
+    var buf = new Uint8Array(13);
+    buf[0]  = 0;
+    buf[1]  = trigerIO;
+    buf[2]  = trigerPosNeg ? 1 : 0;
+    buf[3]  = trigerWidthUs >> 8*3;
+    buf[4]  = trigerWidthUs >> 8*2;
+    buf[5]  = trigerWidthUs >> 8;
+    buf[6]  = trigerWidthUs;
+    buf[7]  = echoIO;
+    buf[8]  = responseCount;
+    buf[9]  = timeoutUs >> 8*3;
+    buf[10] = timeoutUs >> 8*2;
+    buf[11] = timeoutUs >> 8;
+    buf[12] = timeoutUs;
+    this.sendCommand(this._CommandMeasurementEcho, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["measure"];
+    if (!module || typeof(module) !== "object") {
+      return;
+    }
+    if (module && typeof(module.echo) === "object") {
+      var obj = module.echo;
+      var io_pulse = parseInt(obj.io_pulse)
+      if (this.isValidIO(io_pulse) == false) {
+        throw new Error("invalid io_pulse "+io_pulse)
+        return;
+      }
+      var io_echo = parseInt(obj.io_echo);
+      if (this.isValidIO(io_echo) == false) {
+        throw new Error("invalid io_echo "+io_echo)
+        return;
+      }
+      var pulse_width = parseInt(obj.pulse_width * 1000);
+      if (typeof(pulse_width) !== "number" || pulse_width < 1 || pulse_width > 1000000)  {
+        throw new Error("invalid pulse_width must be 1usec~1sec")
+        return;
+      }
+      var measure_edges = parseInt(obj.measure_edges);
+      if (typeof(measure_edges) !== "number" || measure_edges <= 0 || measure_edges > 4)  {
+        throw new Error("invalid measure_edges must be 1~4")
+        return;
+      }
+      var timeout = parseInt(obj.timeout * 1000);
+      if (!timeout) {
+        timeout = parseInt(1000000);
+      }else if (typeof(timeout) !== "number" || timeout < 1 || timeout > 1000000)  {
+        throw new Error("invalid measure_edges must be 1usec~1sec");
+        return;
+      }
+      this.measureEcho( 0, io_pulse, obj.pulse === "negative" ? false : true, pulse_width , io_echo, measure_edges, timeout );
+    }
+  }
+  
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandMeasurementEcho) {
+      var index = 0;
+      var count = parseInt(payload[index++]);
+      var array = [];
+      for (var i=0; i<count; i++) {
+        var timing;
+        var edge = (payload[index++] > 0) ? true : false;
+        timing  = payload[index++] << (8*3);
+        timing += payload[index++] << (8*2);
+        timing += payload[index++] << 8;
+        timing += payload[index++];
+        timing = timing / 1000;
+        array.push({
+          edge,
+          timing
+        })
+      }
+      objToSend["measure"] = {
+        echo: array
+      };
+    }
+  }
+}
+class WSCommand_PWM extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 3;
+    this.ModuleNum = 6;
+    this.resetInternalStatus();
+
+
+    this._CommandInit     = 0
+    this._CommandDeinit   = 1
+    this._CommandSetFreq  = 2
+    this._CommandSetDuty  = 3
+    this._CommandAMModulate = 4
+    this._CommandForceWorking = 5
+  }
+
+  resetInternalStatus() {
+    this.pwms = [];
+    for (var i=0; i<this.ModuleNum; i++) {
+      this.pwms.push({});
+    }
+  }
+
+  // Commands
+
+  init(module, io) {
+    var buf = new Uint8Array(2);
+    buf[0] = module;
+    buf[1] = io;
+    this.pwms[module].io = io;
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array(1);
+    buf[0] = module;
+    this.pwms[module] = {};
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  setFreq(module, freq) {
+    var buf = new Uint8Array(5);
+    buf[0] = module;
+    buf[1] = freq >> (8*3);
+    buf[2] = freq >> (8*2);
+    buf[3] = freq >> (8*1);
+    buf[4] = freq;
+    this.pwms[module].freq = freq;
+    this.sendCommand(this._CommandSetFreq, buf);
+  }
+
+  setDuty(module, pulseUSec) {
+    var buf = new Uint8Array(5);
+    buf[0] = module;
+    buf[1] = pulseUSec >> (8*3);
+    buf[2] = pulseUSec >> (8*2);
+    buf[3] = pulseUSec >> (8*1);
+    buf[4] = pulseUSec;
+    this.pwms[module].pulseUSec = pulseUSec;
+    this.sendCommand(this._CommandSetDuty, buf);
+  }
+
+  setForceWorking(module, forceWorking) {
+    var buf = new Uint8Array(2);
+    buf[0] = module;
+    buf[1] = forceWorking ? 1 : 0;
+    this.pwms[module].forceWorking = forceWorking;
+    this.sendCommand(this._CommandForceWorking, buf);
+  }
+
+  amModulate(module, symbol_us, data) {
+    var buf = new Uint8Array(5 + data.length);
+    buf[0] = module;
+    buf[1] = symbol_us >> (8*3);
+    buf[2] = symbol_us >> (8*2);
+    buf[3] = symbol_us >> (8*1);
+    buf[4] = symbol_us;
+    for (var i=0; i<data.length; i++) {
+      buf[5 + i] = data[i];
+    }
+    this.sendCommand(this._CommandAMModulate, buf);
+  }
+
+  parseFromJson(json) {
+    for (var i=0; i<this.ModuleNum;i++) {
+      var module = json["pwm"+i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      if (typeof(module) != "object") {
+        continue;
+      }
+      if (typeof(module.io) == "number") {
+        if (this.isValidIO(module.io)) {
+          this.init(i, module.io);
+        } else {
+          throw new Error("pwm: invalid io number.");
+        }
+      }
+      if (typeof(module.freq) == "number") {
+        var freq = parseInt(module.freq);
+        if(isNaN(freq)) {
+          throw new Error("pwm: invalid freq value.");
+        }
+        if (freq < 1)  {
+          throw new Error("pwm: freq must be 1<=freq. your freq is "+module.freq);
+        }
+        this.setFreq(i, freq);
+      }
+      if (typeof(module.pulse) === "number") {
+        this.setDuty(i, module.pulse * 1000);
+      }
+      var duty = module.duty;
+      if (typeof duty === "number") {
+        if (this.pwms[i].freq > 0) { // 0 division not acceptable
+          if (duty > 100) duty = 100;
+          else if (duty < 0) duty = 0;
+          var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;
+          this.setDuty(i, pulseUSec);
+        }
+      }
+      if (typeof module.modulate == "object" && module.modulate.type === "am") {
+        var symbol_us = parseInt(module.modulate.symbol_sec * 1000000);
+        if(isNaN(symbol_us)) {
+          continue;
+        }
+        this.amModulate(i, symbol_us, module.modulate.data);
+      }
+      if (typeof module.force_working == "boolean") {
+        this.setForceWorking(i, module.force_working);
+      }
+    }
+  }
+}
+
+class WSCommand_SPI extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 5;
+
+    this._CommandInit      = 0
+    this._CommandDeinit    = 1
+    this._CommandWriteRead = 2
+    this._CommandWrite     = 3
+  }
+
+  // Commands
+
+  init(module, obj) {
+
+    var mode;
+    switch(obj.mode) {
+      case "master":
+        mode = 0;
+        break;
+      default:
+        throw new Error("spi: unknown mode");
+        return;
+    }
+
+    let clk  = (typeof obj.clk  == "number") ? parseInt(obj.clk)  : null;
+    let mosi = (typeof obj.mosi == "number") ? parseInt(obj.mosi) : null;
+    let miso = (typeof obj.miso == "number") ? parseInt(obj.miso) : null;
+    let cs   = (typeof obj.cs   == "number") ? parseInt(obj.cs)   : null;
+
+    var clock = (typeof obj.clock == "number") ? parseInt(obj.clock): null;
+
+    if (mode === 0) {
+      if (clk === null && mosi === null && miso === null) {
+        throw new Error("spi: master mode require one of clk/mosi/miso");
+        return;
+      }
+      if (!clock) {
+        throw new Error("spi: please provide clock");
+      }
+      if (clock <= 0 || clock > 80*1000*1000)  { // 0~80Mhz
+        throw new Error("spi: clock must be 1 Hz to 80 Mhz");
+        return;
+      }
+    } else {
+      if (clk === null) {
+        throw new Error("spi: slave require clk io");
+        return;
+      }
+      if (cs === null) {
+        throw new Error("spi: slave require cs. please specify io for cs use");
+        return;
+      }
+    }
+
+    if (clk  === null) clk  = this.ioNotUsed;
+    if (mosi === null) mosi = this.ioNotUsed;
+    if (miso === null) miso = this.ioNotUsed;
+    if (cs === null)   cs   = this.ioNotUsed;
+
+    var buf = new Uint8Array( mode == 0 ? 11 : 12 );
+    buf[0]  = module;
+    buf[1]  = mode;
+    buf[2]  = clk;
+    buf[3]  = mosi;
+    buf[4]  = miso;
+    buf[5]  = this.ioNotUsed; //wp
+    buf[6]  = this.ioNotUsed; // hd
+    buf[7]  = clock >> (3*8);
+    buf[8]  = clock >> (2*8);
+    buf[9]  = clock >> (1*8);
+    buf[10] = clock;
+    if (mode === 1) {
+      buf[11] = cs;
+    }
+
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array([module]);
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  writeread(module, data) {
+    var buf = new Uint8Array(1 + data.length);
+    buf[0] = module;
+    buf.set(data, 1);
+    this.sendCommand(this._CommandWriteRead, buf);
+  }
+
+  write(module, data) {
+    var buf = new Uint8Array(1 + data.length);
+    buf[0] = module;
+    buf.set(data, 1);
+    this.sendCommand(this._CommandWrite, buf);
+  }
+
+  parseFromJson(json) {
+    for (var i=0; i<2;i++) {
+      var module = json["spi"+i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      if (typeof(module) != "object") {
+        continue;
+      }
+      if (typeof module.mode === "string") {
+        this.init(i, module);
+      }
+      if (module.data) {
+        if (module.data.length > 32) {
+          throw new Error("spi: data must be <= 32 byte");
+          return;
+        }
+        if (module.read) {
+          this.writeread(i, module.data);
+        } else {
+          this.write(i, module.data);
+        } 
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandWriteRead && payload.byteLength > 1) {
+      var module_index = payload[0];
+      var received = payload.slice(1);
+
+      var arr = new Array(payload.byteLength - 1);
+      for (var i=0; i<arr.length;i++) {
+        arr[i] = payload[i + 1];
+      }
+      objToSend["spi"+module_index] = {
+        data: arr
+      };
+    }
+  }
+}
+
+class WSCommand_Switch extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 9;
+
+    this._CommandNotifyValue  = 0
+    this._CommandOnece        = 1
+  }
+
+  // Commands
+
+  onece() {
+    var buf = new Uint8Array(0);
+    this.sendCommand(this._CommandOnece, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["switch"];
+    if (typeof(module) === "string") {
+      if (module === "get") {
+        this.onece();
+      } else {
+        throw new Error("switch: unknown command:"+module)
+      }
+    }
+  }
+  
+  notifyFromBinary(objToSend, func, payload) {
+    var state = parseInt(payload[0]);
+    var states = [
+      "none",
+      "push",
+      "left",
+      "right"
+    ]
+    objToSend["switch"] = {
+      state: states[state]
+    };
+    if (func === this._CommandOnece) {
+      objToSend["switch"].action = "get"
+    }
+  }
+}
+class WSCommand_System extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 0;
+
+    this._CommandReboot         = 0
+    this._CommandReset          = 2
+    this._CommandSelfCheck      = 3
+    this._CommandWait           = 4
+    this._CommandResetOnDisconnect = 5
+  }
+
+  // Commands
+
+  reboot() {
+    this.sendCommand(this._CommandReboot, null);
+  }
+
+  reset() {
+    this.sendCommand(this._CommandReset, null);
+  }
+
+  selfCheck() {
+    this.sendCommand(this._CommandSelfCheck, null);
+  }
+
+  wait(msec) {
+    msec = parseInt(msec);
+    if(isNaN(msec)) {
+      return;
+    }
+    var buf = new Uint8Array([msec >> 8, msec]);
+    this.sendCommand(this._CommandWait, buf);
+  }
+
+  resetOnDisconnect(mustReset) {
+    var buf = new Uint8Array([mustReset ? 1 : 0]);
+    this.sendCommand(this._CommandResetOnDisconnect, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["system"];
+    if (typeof(module) == "object") {
+      if (module.reboot) {
+        this.reboot();
+      }
+      if (module.reset) {
+        this.reset();
+      }
+      if (module.self_check) {
+        this.selfCheck();
+      }
+      if (typeof module.wait === "number") {
+        this.wait(module.wait);
+      }
+      if (typeof(module.keep_working_at_offline) === "boolean") {
+        this.resetOnDisconnect(!module.keep_working_at_offline);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+
+  }
+}
+
+class WSCommand_UART extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 4;
+
+    this._CommandInit     = 0;
+    this._CommandDeinit   = 1;
+    this._CommandSend     = 2;
+    this._CommandRecv     = 3;
+  }
+
+  // Commands
+
+  init(module, obj) {
+    var buf = new Uint8Array(13);
+    buf[0] = module;
+    buf[1] = parseInt(obj.tx);
+    buf[2] = parseInt(obj.rx);
+    if (typeof(obj.baud) === "number") {
+      var baud = parseInt(obj.baud);
+      if (!isNaN(baud)) {
+        buf[3] = baud >> (3*8);
+        buf[4] = baud >> (2*8);
+        buf[5] = baud >> (1*8);
+        buf[6] = baud;
+      }
+    }
+    if (typeof(obj.stop) === "number") {
+      if (obj.stop === 1) {
+        buf[7] = 1;
+      } else if (obj.stop === 1.5) {
+        buf[7] = 2;
+      } else if (obj.stop === 2) {
+        buf[7] = 3;
+      } else {
+        // ???
+      }
+    }
+    if (typeof(obj.bits) === "number") {
+      var bits = parseInt(obj.bits);
+      if (5 <= bits && bits <= 8) {
+        buf[8] = bits;
+      } else {
+        // ???
+      }
+    }
+    if (obj.parity === "even") {
+      buf[9] = 2;
+    } else if (obj.parity === "odd") {
+      buf[9] = 3;
+    }
+    if (obj.flowcontrol === "rts") {
+      buf[10] = 2;
+    } else if (obj.flowcontrol === "cts") {
+      buf[10] = 3;
+    } else if (obj.flowcontrol === "rts-cts") {
+      buf[10] = 4;
+    }
+    if (typeof(obj.rts) === "number") {
+      buf[11] = parseInt(obj.rts);
+    }
+    if (typeof(obj.cts) === "number") {
+      buf[12] = parseInt(obj.cts);
+    }
+    
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array(1);
+    buf[0] = module;
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  send(module, data) {
+    var buf = new Uint8Array(1 + data.length);
+    buf[0] = module;
+    buf.set(data, 1);
+    this.sendCommand(this._CommandSend, buf);
+  }
+
+  parseFromJson(json) {
+    // 0~2
+    for (var i=0; i<3;i++) {
+      var module = json["uart"+i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      if (typeof(module) !== "object") {
+        continue;
+      }
+      if (typeof(module.tx) === "number" && typeof(module.rx) === "number") {
+        this.init(i, module);
+      }
+      if (module.data) {
+        this.send(i, module.data);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandRecv && payload.byteLength > 1) {
+      var module_index = payload[0];
+      var arr = new Array(payload.byteLength - 1);
+      for (var i=0; i<arr.length;i++) {
+        arr[i] = payload[i + 1];
+      }
+
+      objToSend["uart"+module_index] = {
+        data: arr
+      };
+    }
+  }
+};
+
 class JsonBinaryConverter {
   
   static convertFromBinaryToJson(schema, binary){
@@ -4521,687 +5237,6 @@ class JsonBinaryConverter {
     }
   }
 }
-class WSCommand_LogicAnalyzer extends WSCommand {
-  constructor() {
-    super();
-    this.module = 10;
-
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandRecv     = 2
-  }
-
-  // Commands
-
-  init(io, intervalUsec, durationUsec, matchValue, matchCount) {
-    var buf = new Uint8Array(12);
-    buf[0] = 1;
-    buf[1] = io;
-    buf[2] = intervalUsec >> (8*3);
-    buf[3] = intervalUsec >> (8*2);
-    buf[4] = intervalUsec >> (8*1);
-    buf[5] = intervalUsec;
-    buf[6] = durationUsec >> (8*3);
-    buf[7] = durationUsec >> (8*2);
-    buf[8] = durationUsec >> (8*1);
-    buf[9] = durationUsec;
-    buf[10] = matchValue;
-    buf[11] = matchCount;
-    this.sendCommand(this._CommandInit, buf);
-  }
-
-  deinit() {
-    var buf = new Uint8Array(0);
-    this.sendCommand(this._CommandDeinit, buf);
-  }
-
-  parseFromJson(json) {
-    var module = json["logic_analyzer"];
-    if (module === null) {
-      this.deinit();
-      return;
-    }
-    if (typeof(module) == "object") {
-      if (typeof(module.io) == "object" && typeof(module.io[0]) == "number" && typeof(module.interval) == "number" && typeof(module.duration == "number")) {
-        var intervalUSec = parseInt(module.interval * 1000);
-        if(isNaN(intervalUSec)) {
-          return;
-        }
-        var duration = parseInt(module.duration * 1000);
-        if(isNaN(duration)) {
-          return;
-        }
-        var trigerLevel = 0;
-        var trigerSamples = 0;
-
-        if (module.triger && typeof module.triger == "object") {
-          let triger = module.triger;
-          trigerLevel = (triger.value) ? 1 : 0;
-          if (typeof(triger.samples) == "number" && triger.samples > 0 && triger.samples <= 0xFF) {
-            trigerSamples = parseInt(triger.samples);
-          }
-        }
-        
-        this.init(module.io[0], intervalUSec, duration, trigerLevel, trigerSamples);
-      }
-    }
-  }
-
-  notifyFromBinary(objToSend, module, func, payload) {
-    if (func === this._CommandRecv) {
-      var arr = new Array(payload.byteLength);
-      for (var i=0; i<payload.byteLength;i++) {
-        arr[i] = payload[i];
-      }
-      objToSend["logic_analyzer"] = {
-        data: arr
-      };
-    }
-  }
-}
-
-class WSCommand_Measurement extends WSCommand {
-  constructor() {
-    super();
-    this.module = 12;
-
-    this._CommandMeasurementEcho  = 0
-  }
-
-  // Commands
-
-  measureEcho(type, trigerIO, trigerPosNeg, trigerWidthUs, echoIO, responseCount, timeoutUs) {
-    timeoutUs = parseInt(timeoutUs);
-    var buf = new Uint8Array(13);
-    buf[0]  = 0;
-    buf[1]  = trigerIO;
-    buf[2]  = trigerPosNeg ? 1 : 0;
-    buf[3]  = trigerWidthUs >> 8*3;
-    buf[4]  = trigerWidthUs >> 8*2;
-    buf[5]  = trigerWidthUs >> 8;
-    buf[6]  = trigerWidthUs;
-    buf[7]  = echoIO;
-    buf[8]  = responseCount;
-    buf[9]  = timeoutUs >> 8*3;
-    buf[10] = timeoutUs >> 8*2;
-    buf[11] = timeoutUs >> 8;
-    buf[12] = timeoutUs;
-    this.sendCommand(this._CommandMeasurementEcho, buf);
-  }
-
-  parseFromJson(json) {
-    var module = json["measure"];
-    if (!module || typeof(module) !== "object") {
-      return;
-    }
-    if (module && typeof(module.echo) === "object") {
-      var obj = module.echo;
-      var io_pulse = parseInt(obj.io_pulse)
-      if (this.isValidIO(io_pulse) == false) {
-        throw new Error("invalid io_pulse "+io_pulse)
-        return;
-      }
-      var io_echo = parseInt(obj.io_echo);
-      if (this.isValidIO(io_echo) == false) {
-        throw new Error("invalid io_echo "+io_echo)
-        return;
-      }
-      var pulse_width = parseInt(obj.pulse_width * 1000);
-      if (typeof(pulse_width) !== "number" || pulse_width < 1 || pulse_width > 1000000)  {
-        throw new Error("invalid pulse_width must be 1usec~1sec")
-        return;
-      }
-      var measure_edges = parseInt(obj.measure_edges);
-      if (typeof(measure_edges) !== "number" || measure_edges <= 0 || measure_edges > 4)  {
-        throw new Error("invalid measure_edges must be 1~4")
-        return;
-      }
-      var timeout = parseInt(obj.timeout * 1000);
-      if (!timeout) {
-        timeout = parseInt(1000000);
-      }else if (typeof(timeout) !== "number" || timeout < 1 || timeout > 1000000)  {
-        throw new Error("invalid measure_edges must be 1usec~1sec");
-        return;
-      }
-      this.measureEcho( 0, io_pulse, obj.pulse === "negative" ? false : true, pulse_width , io_echo, measure_edges, timeout );
-    }
-  }
-  
-  notifyFromBinary(objToSend, module, func, payload) {
-    if (func === this._CommandMeasurementEcho) {
-      var index = 0;
-      var count = parseInt(payload[index++]);
-      var array = [];
-      for (var i=0; i<count; i++) {
-        var timing;
-        var edge = (payload[index++] > 0) ? true : false;
-        timing  = payload[index++] << (8*3);
-        timing += payload[index++] << (8*2);
-        timing += payload[index++] << 8;
-        timing += payload[index++];
-        timing = timing / 1000;
-        array.push({
-          edge,
-          timing
-        })
-      }
-      objToSend["measure"] = {
-        echo: array
-      };
-    }
-  }
-}
-class WSCommand_PWM extends WSCommand {
-  constructor() {
-    super();
-    this.module = 3;
-    this.resetInternalStatus();
-
-    this.ModuleNum = 6;
-
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandSetFreq  = 2
-    this._CommandSetDuty  = 3
-    this._CommandAMModulate = 4
-    this._CommandForceWorking = 5
-  }
-
-  resetInternalStatus() {
-    this.pwms = [];
-    for (var i=0; i<this.ModuleNum; i++) {
-      this.pwms.push({});
-    }
-  }
-
-  // Commands
-
-  init(module, io) {
-    var buf = new Uint8Array([module, io]);
-    this.pwms[module].io = io;
-    this.sendCommand(this._CommandInit, buf);
-  }
-
-  deinit(module) {
-    var buf = new Uint8Array([module]);
-    this.pwms[module] = {};
-    this.sendCommand(this._CommandDeinit, buf);
-  }
-
-  setFreq(module, freq) {
-    var buf = new Uint8Array(5);
-    buf[0] = module;
-    buf[1] = freq >> (8*3);
-    buf[2] = freq >> (8*2);
-    buf[3] = freq >> (8*1);
-    buf[4] = freq;
-    this.pwms[module].freq = freq;
-    this.sendCommand(this._CommandSetFreq, buf);
-  }
-
-  setDuty(module, pulseUSec) {
-    var buf = new Uint8Array(5);
-    buf[0] = module;
-    buf[1] = pulseUSec >> (8*3);
-    buf[2] = pulseUSec >> (8*2);
-    buf[3] = pulseUSec >> (8*1);
-    buf[4] = pulseUSec;
-    this.pwms[module].pulseUSec = pulseUSec;
-    this.sendCommand(this._CommandSetDuty, buf);
-  }
-
-  setForceWorking(module, forceWorking) {
-    var buf = new Uint8Array(2);
-    buf[0] = module;
-    buf[1] = forceWorking ? 1 : 0;
-    this.pwms[module].forceWorking = forceWorking;
-    this.sendCommand(this._CommandForceWorking, buf);
-  }
-
-  amModulate(module, symbol_us, data) {
-    var buf = new Uint8Array(5 + data.length);
-    buf[0] = module;
-    buf[1] = symbol_us >> (8*3);
-    buf[2] = symbol_us >> (8*2);
-    buf[3] = symbol_us >> (8*1);
-    buf[4] = symbol_us;
-    for (var i=0; i<data.length; i++) {
-      buf[5 + i] = data[i];
-    }
-    this.sendCommand(this._CommandAMModulate, buf);
-  }
-
-  parseFromJson(json) {
-    for (var i=0; i<this.ModuleNum;i++) {
-      var module = json["pwm"+i];
-      if (module === null) {
-        this.deinit(i);
-        continue;
-      }
-      if (typeof(module) != "object") {
-        continue;
-      }
-      if (typeof(module.io) == "number") {
-        if (this.isValidIO(module.io)) {
-          this.init(i, module.io);
-        } else {
-          throw new Error("pwm: invalid io number.");
-        }
-      }
-      if (typeof(module.freq) == "number") {
-        var freq = parseInt(module.freq);
-        if(isNaN(freq)) {
-          throw new Error("pwm: invalid freq value.");
-        }
-        if (freq < 1)  {
-          throw new Error("pwm: freq must be 1<=freq. your freq is "+module.freq);
-        }
-        this.setFreq(i, freq);
-      }
-      if (typeof(module.pulse) === "number") {
-        this.setDuty(i, module.pulse * 1000);
-      }
-      var duty = module.duty;
-      if (typeof duty === "number") {
-        if (this.pwms[i].freq > 0) { // freqで割るので0は困る
-          if (duty > 100) duty = 100;
-          else if (duty < 0) duty = 0;
-          var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;
-          this.setDuty(i, pulseUSec);
-        }
-      }
-      if (typeof module.modulate == "object" && module.modulate.type === "am") {
-        var symbol_us = parseInt(module.modulate.symbol_sec * 1000000);
-        if(isNaN(symbol_us)) {
-          continue;
-        }
-        this.amModulate(i, symbol_us, module.modulate.data);
-      }
-      if (typeof module.force_working == "boolean") {
-        this.setForceWorking(i, module.force_working);
-      }
-    }
-  }
-}
-
-class WSCommand_SPI extends WSCommand {
-
-  constructor() {
-    super();
-    this.module = 5;
-
-    this._CommandInit      = 0
-    this._CommandDeinit    = 1
-    this._CommandWriteRead = 2
-    this._CommandWrite     = 3
-  }
-
-  // Commands
-
-  init(module, obj) {
-
-    var mode;
-    switch(obj.mode) {
-      case "master":
-        mode = 0;
-        break;
-      default:
-        throw new Error("spi: unknown mode");
-        return;
-    }
-
-    let clk  = (typeof obj.clk  == "number") ? parseInt(obj.clk)  : null;
-    let mosi = (typeof obj.mosi == "number") ? parseInt(obj.mosi) : null;
-    let miso = (typeof obj.miso == "number") ? parseInt(obj.miso) : null;
-    let cs   = (typeof obj.cs   == "number") ? parseInt(obj.cs)   : null;
-
-    var clock = (typeof obj.clock == "number") ? parseInt(obj.clock): null;
-
-    if (mode === 0) {
-      if (clk === null && mosi === null && miso === null) {
-        throw new Error("spi: master mode require one of clk/mosi/miso");
-        return;
-      }
-      if (!clock) {
-        throw new Error("spi: please provide clock");
-      }
-      if (clock <= 0 || clock > 80*1000*1000)  { // 0~80Mhz
-        throw new Error("spi: clock must be 1 Hz to 80 Mhz");
-        return;
-      }
-    } else {
-      if (clk === null) {
-        throw new Error("spi: slave require clk io");
-        return;
-      }
-      if (cs === null) {
-        throw new Error("spi: slave require cs. please specify io for cs use");
-        return;
-      }
-    }
-
-    if (clk  === null) clk  = this.ioNotUsed;
-    if (mosi === null) mosi = this.ioNotUsed;
-    if (miso === null) miso = this.ioNotUsed;
-    if (cs === null)   cs   = this.ioNotUsed;
-
-    var buf = new Uint8Array( mode == 0 ? 11 :12 );
-    buf[0]  = module;
-    buf[1]  = mode;
-    buf[2]  = clk;
-    buf[3]  = mosi;
-    buf[4]  = miso;
-    buf[5]  = this.ioNotUsed; //wp
-    buf[6]  = this.ioNotUsed; // hd
-    buf[7]  = clock >> (3*8);
-    buf[8]  = clock >> (2*8);
-    buf[9]  = clock >> (1*8);
-    buf[10] = clock;
-    if (mode === 1) {
-      buf[11] = cs;
-    }
-
-    this.sendCommand(this._CommandInit, buf);
-  }
-
-  deinit(module) {
-    var buf = new Uint8Array([module]);
-    this.sendCommand(this._CommandDeinit, buf);
-  }
-
-  writeread(module, data) {
-    var buf = new Uint8Array(1 + data.length);
-    buf[0] = module;
-    buf.set(data, 1);
-    this.sendCommand(this._CommandWriteRead, buf);
-  }
-
-  write(module, data) {
-    var buf = new Uint8Array(1);
-    buf[0] = module;
-    buf.set(data, 1);
-    this.sendCommand(this._CommandWrite, buf);
-  }
-
-  parseFromJson(json) {
-    for (var i=0; i<2;i++) {
-      var module = json["spi"+i];
-      if (module === null) {
-        this.deinit(i);
-        continue;
-      }
-      if (typeof(module) != "object") {
-        continue;
-      }
-      if (typeof module.mode === "string") {
-        this.init(i, module);
-      }
-      if (module.data) {
-        if (module.data.length > 32) {
-          throw new Error("spi: data must be <= 32 byte");
-          return;
-        }
-        if (module.read) {
-          this.writeread(i, module.data);
-        } else {
-          this.write(i, module.data);
-        } 
-      }
-    }
-  }
-
-  notifyFromBinary(objToSend, module, func, payload) {
-    if (func === this._CommandWriteRead && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var received = payload.slice(1);
-
-      var arr = new Array(payload.byteLength - 1);
-      for (var i=0; i<arr.length;i++) {
-        arr[i] = payload[i + 1];
-      }
-      objToSend["spi"+module_index] = {
-        data: arr
-      };
-    }
-  }
-}
-
-class WSCommand_Switch extends WSCommand {
-
-  constructor() {
-    super();
-    this.module = 9;
-
-    this._CommandNotifyValue  = 0
-    this._CommandOnece        = 1
-  }
-
-  // Commands
-
-  onece() {
-    var buf = new Uint8Array(0);
-    this.sendCommand(this._CommandOnece, buf);
-  }
-
-  parseFromJson(json) {
-    var module = json["switch"];
-    if (typeof(module) === "string") {
-      if (module === "get") {
-        this.onece();
-      } else {
-        throw new Error("switch: unknown command:"+module)
-      }
-    }
-  }
-  
-  notifyFromBinary(objToSend, module, func, payload) {
-    var state = parseInt(payload[0]);
-    var states = [
-      "none",
-      "push",
-      "left",
-      "right"
-    ]
-    objToSend["switch"] = {
-      state: states[state]
-    };
-    if (func === this._CommandOnece) {
-      objToSend["switch"].action = "get"
-    }
-  }
-}
-class WSCommand_System extends WSCommand {
-
-  constructor() {
-    super();
-    this.module = 0;
-
-    this._CommandReboot         = 0
-    this._CommandUpdateFirmware = 1
-    this._CommandReset          = 2
-    this._CommandSelfCheck      = 3
-    this._CommandWait           = 4
-    this._CommandResetOnDisconnect = 5
-  }
-
-  // Commands
-
-  reboot() {
-    this.sendCommand(this._CommandReboot, null);
-  }
-
-  update_firmware(firmware) {
-    this.sendCommand(this._CommandUpdateFirmware, firmware);
-  }
-
-  reset() {
-    this.sendCommand(this._CommandReset, null);
-  }
-
-  selfCheck() {
-    this.sendCommand(this._CommandSelfCheck, null);
-  }
-
-  wait(msec) {
-    msec = parseInt(msec);
-    if(isNaN(msec)) {
-      return;
-    }
-    var buf = new Uint8Array(2);
-    buf[0] = msec >> 8;
-    buf[1] = msec
-    this.sendCommand(this._CommandWait, buf);
-  }
-
-  resetOnDisconnect(mustReset) {
-    var buf = new Uint8Array(1);
-    buf[0] = mustReset ? 1 : 0;
-    this.sendCommand(this._CommandResetOnDisconnect, buf);
-  }
-
-  parseFromJson(json) {
-    var module = json["system"];
-    if (typeof(module) == "object") {
-      if (module.reboot) {
-        this.reboot();
-      }
-      if (module.reset) {
-        this.reset();
-      }
-      if (module.self_check) {
-        this.selfCheck();
-      }
-      if (typeof module.wait === "number") {
-        this.wait(module.wait);
-      }
-      if (typeof(module.keep_working_at_offline) === "boolean") {
-        this.resetOnDisconnect(!module.keep_working_at_offline);
-      }
-    }
-  }
-
-  notifyFromBinary(objToSend, module, func, payload) {
-
-  }
-}
-
-class WSCommand_UART extends WSCommand {
-
-  constructor() {
-    super();
-    this.module = 4;
-
-    this._CommandInit     = 0;
-    this._CommandDeinit   = 1;
-    this._CommandSend     = 2;
-    this._CommandRecv     = 3;
-  }
-
-  // Commands
-
-  init(module, obj) {
-    var buf = new Uint8Array(13);
-    buf[0] = module;
-    buf[1] = parseInt(obj.tx);
-    buf[2] = parseInt(obj.rx);
-    if (typeof(obj.baud) === "number") {
-      var baud = parseInt(obj.baud);
-      if (!isNaN(baud)) {
-        buf[3] = baud >> (3*8);
-        buf[4] = baud >> (2*8);
-        buf[5] = baud >> (1*8);
-        buf[6] = baud;
-      }
-    }
-    if (typeof(obj.stop) === "number") {
-      if (obj.stop === 1) {
-        buf[7] = 1;
-      } else if (obj.stop === 1.5) {
-        buf[7] = 2;
-      } else if (obj.stop === 2) {
-        buf[7] = 3;
-      } else {
-        // ???
-      }
-    }
-    if (typeof(obj.bits) === "number") {
-      var bits = parseInt(obj.bits);
-      if (5 <= bits && bits <= 8) {
-        buf[8] = bits;
-      } else {
-        // ???
-      }
-    }
-    if (obj.parity === "even") {
-      buf[9] = 2;
-    } else if (obj.parity === "odd") {
-      buf[9] = 3;
-    }
-    if (obj.flowcontrol === "rts") {
-      buf[10] = 2;
-    } else if (obj.flowcontrol === "cts") {
-      buf[10] = 3;
-    } else if (obj.flowcontrol === "rts-cts") {
-      buf[10] = 4;
-    }
-    if (typeof(obj.rts) === "number") {
-      buf[11] = parseInt(obj.rts);
-    }
-    if (typeof(obj.cts) === "number") {
-      buf[12] = parseInt(obj.cts);
-    }
-    
-    this.sendCommand(this._CommandInit, buf);
-  }
-
-  deinit(module) {
-    var buf = new Uint8Array(1);
-    buf[0] = module;
-    this.sendCommand(this._CommandDeinit, buf);
-  }
-
-  send(module, data) {
-    var buf = new Uint8Array(1 + data.length);
-    buf[0] = module;
-    buf.set(data, 1);
-    this.sendCommand(this._CommandSend, buf);
-  }
-
-  parseFromJson(json) {
-    // 0~2
-    for (var i=0; i<3;i++) {
-      var module = json["uart"+i];
-      if (module === null) {
-        this.deinit(i);
-        continue;
-      }
-      if (typeof(module) !== "object") {
-        continue;
-      }
-      if (typeof(module.tx) === "number" && typeof(module.rx) === "number") {
-        this.init(i, module);
-      }
-      if (module.data) {
-        this.send(i, data);
-      }
-    }
-  }
-
-  notifyFromBinary(objToSend, module, func, payload) {
-    if (func === this._CommandRecv && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var arr = new Array(payload.byteLength - 1);
-      for (var i=0; i<arr.length;i++) {
-        arr[i] = payload[i + 1];
-      }
-
-      objToSend["uart"+module_index] = {
-        data: arr
-      };
-    }
-  }
-};
-
 var USB = function() {
     this.keys = ["vcc","gnd"];
     this.requiredKeys = ["vcc","gnd"];

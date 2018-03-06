@@ -1,6 +1,7 @@
 class WSCommand_AD extends WSCommand {
-  constructor() {
-    super();
+  
+  constructor(delegate) {
+    super(delegate);
     this.module = 7;
 
     this._CommandInitNormalInterval     = 0
@@ -51,7 +52,7 @@ class WSCommand_AD extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotifyValue) {
       for (var i=0; i<payload.byteLength; i+=3) {
         var value = (payload[i+1] << 8) + payload[i+2];

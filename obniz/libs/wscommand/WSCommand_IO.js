@@ -12,8 +12,9 @@ const COMMAND_IO_ERROR_MESSAGES = {
 }
 
 class WSCommand_IO extends WSCommand {
-  constructor() {
-    super();
+
+  constructor(delegate) {
+    super(delegate);
     this.module = 2;
 
     this._CommandOutput           = 0;
@@ -118,7 +119,7 @@ class WSCommand_IO extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
 
     let esperr;
     let module_index;

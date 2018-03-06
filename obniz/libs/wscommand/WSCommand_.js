@@ -1,6 +1,7 @@
 class WSCommand {
 
-  constructor(obj) {
+  constructor(delegate) {
+    this.delegate = delegate;
 
     //constants
     this.COMMAND_FUNC_ID_ERROR = 0xFF
@@ -8,9 +9,9 @@ class WSCommand {
   }
 
   static get CommandClasses() {
-    return [
+    return {
       WSCommand_System,
-      // WSCommand_Directive,
+      WSCommand_Directive,
       WSCommand_IO,
       WSCommand_PWM,
       WSCommand_UART,
@@ -22,7 +23,7 @@ class WSCommand {
       WSCommand_Switch,
       WSCommand_Ble,
       WSCommand_Measurement
-    ];
+    };
   }
   
   static framed(module, func, payload) {
@@ -60,6 +61,41 @@ class WSCommand {
     }
   }
 
+  static dequeueOne(buf) {
+    if (!buf || buf.byteLength == 0) return null;
+    if (buf.byteLength < 3) {
+      throw new Eror("something wrong. buf less than 3");
+      return null;
+    }
+    if (buf[0] & 0x80) {
+      throw new Eror("reserved bit 1");
+      return null;
+    }
+    var module = 0x7F & buf[0];
+    var func = buf[1];
+    var length_type = (buf[2] >> 6) & 0x3;
+    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
+    if (length_type == 4) {
+      throw new Eror("invalid length");
+      return null;
+    }
+    var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
+    var index = 3;
+    var shift = length_extra_bytse;
+    while(shift > 0) {
+      shift--;
+      length += buf[index] << (shift*8);
+      index++;
+    }
+
+    return {
+      module: module,
+      func: func,
+      payload: buf.slice(3+length_extra_bytse, 3+length_extra_bytse+length),
+      next: buf.slice(3+length_extra_bytse+length)
+    };
+  }
+
   static compress(wscommands, json) {
     var ret;
     function append(module, func, payload) {
@@ -82,14 +118,19 @@ class WSCommand {
   }
 
   sendCommand(func, payload) {
-    this.parsed(this.module, func, payload);
+    if (this.delegate && this.delegate.onParsed) {
+      this.delegate.onParsed(this.module, func, payload);
+    }
+    if (this.parsed) {
+      this.parsed(this.module, func, payload);
+    }
   }
 
   parseFromJson(json) {
 
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     
   }
 

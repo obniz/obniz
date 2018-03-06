@@ -1,7 +1,7 @@
 class WSCommand_Display extends WSCommand {
 
-  constructor() {
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 8;
 
     this._CommandClear                    = 0;

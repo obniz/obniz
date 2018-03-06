@@ -1,6 +1,7 @@
 class WSCommand_Measurement extends WSCommand {
-  constructor() {
-    super();
+
+  constructor(delegate) {
+    super(delegate);
     this.module = 12;
 
     this._CommandMeasurementEcho  = 0
@@ -65,7 +66,7 @@ class WSCommand_Measurement extends WSCommand {
     }
   }
   
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandMeasurementEcho) {
       var index = 0;
       var count = parseInt(payload[index++]);

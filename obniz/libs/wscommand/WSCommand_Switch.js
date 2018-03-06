@@ -1,7 +1,7 @@
 class WSCommand_Switch extends WSCommand {
 
-  constructor() {
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 9;
 
     this._CommandNotifyValue  = 0
@@ -26,7 +26,7 @@ class WSCommand_Switch extends WSCommand {
     }
   }
   
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     var state = parseInt(payload[0]);
     var states = [
       "none",

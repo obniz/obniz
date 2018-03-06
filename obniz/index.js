@@ -26,8 +26,8 @@ class Obniz {
       this.wscommand = this.constructor.WSCommand
       var classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
-      for (var i=0; i<classes.length; i++) {
-       this.wscommands.push(new classes[i]());
+      for (var class_name in classes) {
+       this.wscommands.push(new classes[class_name]());
       }
     }
 
@@ -280,22 +280,21 @@ class Obniz {
 
   send(obj) {
     if (this.sendPool) { this.sendPool.push(obj); return; }
-    var isObject = (obj && (typeof obj === "object"));
-    if (isObject) {
-      obj = JSON.stringify(obj);
-    } else if (typeof obj !== "string"){
-      console.log("obnizjs. didnt sent ", obj);
+    if (!obj || (typeof obj !== "object")) {
+      console.log("obnizjs. didnt send ", obj);
       return;
     }
-    this.print_debug("send: " + obj);
-    if (this.wscommand && isObject) {
-      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(obj));
+    let sendData = JSON.stringify(obj);
+    this.print_debug("send: " + sendData);
+    /* compress */
+    if (this.wscommand) {
+      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
       if (compressed) {
-        obj = compressed;
-        this.print_debug("compressed: " + obj);
+        sendData = compressed;
+        this.print_debug("compressed: " + sendData);
       }
     }
-    this.socket.send(obj);
+    this.socket.send(sendData);
   
     if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
       this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');

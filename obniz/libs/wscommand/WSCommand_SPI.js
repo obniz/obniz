@@ -1,7 +1,7 @@
 class WSCommand_SPI extends WSCommand {
 
-  constructor() {
-    super();
+  constructor(delegate) {
+    super(delegate);
     this.module = 5;
 
     this._CommandInit      = 0
@@ -59,7 +59,7 @@ class WSCommand_SPI extends WSCommand {
     if (miso === null) miso = this.ioNotUsed;
     if (cs === null)   cs   = this.ioNotUsed;
 
-    var buf = new Uint8Array( mode == 0 ? 11 :12 );
+    var buf = new Uint8Array( mode == 0 ? 11 : 12 );
     buf[0]  = module;
     buf[1]  = mode;
     buf[2]  = clk;
@@ -91,7 +91,7 @@ class WSCommand_SPI extends WSCommand {
   }
 
   write(module, data) {
-    var buf = new Uint8Array(1);
+    var buf = new Uint8Array(1 + data.length);
     buf[0] = module;
     buf.set(data, 1);
     this.sendCommand(this._CommandWrite, buf);
@@ -124,7 +124,7 @@ class WSCommand_SPI extends WSCommand {
     }
   }
 
-  notifyFromBinary(objToSend, module, func, payload) {
+  notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandWriteRead && payload.byteLength > 1) {
       var module_index = payload[0];
       var received = payload.slice(1);
