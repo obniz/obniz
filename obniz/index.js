@@ -5,13 +5,12 @@ var isNode = (typeof window === 'undefined') ? true : false;
 class Obniz {
 
   constructor(id, options) {
-    this.isNode = isNode;
-    if (this.isNode === false) { showOffLine(); }
+    this.isNode     = isNode;
     this.apiversion = 1;
-    this.id = id;
-    this.socket = null;
+    this.id         = id;
+    this.socket     = null;
     this.debugprint = false;
-    this.debugs = [];
+    this.debugs     = [];
   
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
   
@@ -22,6 +21,17 @@ class Obniz {
     }
     this.server_obnizio = options.obniz_server || "wss://obniz.io";
     this._access_token = options.access_token;
+
+    if (options.binary !== false) {
+      this.wscommand = this.constructor.WSCommand
+      var classes = this.constructor.WSCommand.CommandClasses;
+      this.wscommands = [];
+      for (var i=0; i<classes.length; i++) {
+       this.wscommands.push(new classes[i]());
+      }
+    }
+
+    if (this.isNode === false) { showOffLine(); }
   
     if (!this.isValidObnizId(this.id)) {
       if (isNode)  {
@@ -36,6 +46,10 @@ class Obniz {
       return;
     }
     this.wsconnect();
+  }
+
+  static get WSCommand() {
+    return WSCommand;
   }
 
   isValidObnizId(str) {
@@ -173,6 +187,9 @@ class Obniz {
     if (this._access_token) {
       url += "&access_token="+this._access_token;
     }
+    if (this.wscommand) {
+      url += "&accept_binary=true";
+    }
     this.print_debug("connecting to " + url);
   
     if (this.isNode) {
@@ -185,6 +202,7 @@ class Obniz {
       this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
     } else {
       this.socket = new WebSocket(url);
+      this.socket.binaryType = 'arraybuffer';
       this.socket.onopen = this.wsOnOpen.bind(this);
       this.socket.onmessage = function (event) {
         this.wsOnMessage(event.data);
@@ -260,16 +278,24 @@ class Obniz {
     }
   }
 
-  send(value) {
-    if (this.sendPool) {
-      this.sendPool.push(value);
+  send(obj) {
+    if (this.sendPool) { this.sendPool.push(obj); return; }
+    var isObject = (obj && (typeof obj === "object"));
+    if (isObject) {
+      obj = JSON.stringify(obj);
+    } else if (typeof obj !== "string"){
+      console.log("obnizjs. didnt sent ", obj);
       return;
     }
-    if (typeof (value) === "object") {
-      value = JSON.stringify(value);
+    this.print_debug("send: " + obj);
+    if (this.wscommand && isObject) {
+      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(obj));
+      if (compressed) {
+        obj = compressed;
+        this.print_debug("compressed: " + obj);
+      }
     }
-    this.print_debug("send: " + value);
-    this.socket.send(value);
+    this.socket.send(obj);
   
     if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
       this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');

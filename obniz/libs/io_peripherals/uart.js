@@ -47,21 +47,13 @@ class PeripheralUART {
       data = [data];
     }
     if (isNode && data instanceof Buffer) {
-      var arr = new Array(data.byteLength);
-      for (var i=0; i<arr.length;i++) {
-        arr[i] = data[i];
-      }
-      send_data = arr;
+      var arr = [... data];
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof(data) === "string") {
       if (isNode) {
         const buf = Buffer(data);
-        var arr = new Array(buf.byteLength);
-        for (var i=0; i<arr.length;i++) {
-          arr[i] = buf[i];
-        }
-        send_data = arr;
+        send_data = [... buf];
       } else if(TextEncoder){
         const typedArray = new TextEncoder("utf-8").encode(data);
         send_data = new Array(typedArray.length);
