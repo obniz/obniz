@@ -295,8 +295,45 @@ class Obniz {
         this.print_debug("compressed: " + sendData);
       }
     }
+    if (true) {
+      // queue sending
+      if(typeof sendData === "string") {
+        this._drainQueued();
+        this.socket.send(sendData);
+      } else {
+        if (this._sendQueue) {
+          this._sendQueue.push(sendData);
+        } else {
+          this._sendQueue = [sendData];
+          this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
+        }
+      }
+    } else {
+      // sendImmidiately
+      this.socket.send(sendData);
+      if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+        this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+      }
+    }
+  }
+
+  _drainQueued() {
+    if (!this._sendQueue) return;
+    var expectSize = 0;
+    for (var i=0; i<this._sendQueue.length; i++) {
+      expectSize += this._sendQueue[i].length;
+    }
+    var filled = 0;
+    var sendData = new Uint8Array(expectSize);
+    for (var i=0; i<this._sendQueue.length; i++) {
+      sendData.set(this._sendQueue[i], filled);
+      filled += this._sendQueue[i].length;
+    }
     this.socket.send(sendData);
-  
+    delete this._sendQueue;
+    clearTimeout(this._sendQueueTimer);
+    this._sendQueueTimer = null;
+    
     if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
       this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
     }
