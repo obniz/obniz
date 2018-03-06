@@ -639,62 +639,6 @@ if (isNode) {
   module.exports = Obniz;
 }
 
-class PeripheralAD {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-    this.id = id;
-    this.value = 0.0;
-    this.observers = [];
-  }
-
-  addObserver(callback) {
-    if (callback) {
-      this.observers.push(callback);
-    }
-  }
-
-  start(callback) {
-    this.onchange = callback;
-    var obj = {};
-    obj["ad" + this.id] = {
-      stream: true
-    };
-    this.Obniz.send(obj);
-    return this.value;
-  }
-
-  getWait() {
-    var self = this;
-    return new Promise(function (resolve, reject) {
-      var obj = {};
-      obj["ad" + self.id] = {
-        stream: false
-      };
-      self.Obniz.send(obj);
-      self.addObserver(resolve);
-    });
-  }
-
-  end() {
-    this.onchange = null;
-    var obj = {};
-    obj["ad" + this.id] = null;
-    this.Obniz.send(obj);
-    return;
-  }
-
-  notified(obj) {
-    this.value = obj;
-    if (this.onchange) {
-      this.onchange(obj);
-    }
-    var callback = this.observers.shift();
-    if (callback) {
-      callback(obj);
-    }
-  }
-}
-
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
@@ -1906,6 +1850,97 @@ class Display {
   }
 }
 
+class ObnizSwitch {
+
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.observers = [];
+  }
+
+  addObserver(callback) {
+    if (callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  getWait() {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      var obj = {};
+      obj["switch"] = "get";
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  notified(obj) {
+    this.state = obj.state;
+    if (this.onchange) {
+      this.onchange(this.state);
+    }
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(this.state);
+    }
+  }
+}
+
+class PeripheralAD {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.value = 0.0;
+    this.observers = [];
+  }
+
+  addObserver(callback) {
+    if (callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  start(callback) {
+    this.onchange = callback;
+    var obj = {};
+    obj["ad" + this.id] = {
+      stream: true
+    };
+    this.Obniz.send(obj);
+    return this.value;
+  }
+
+  getWait() {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      var obj = {};
+      obj["ad" + self.id] = {
+        stream: false
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  end() {
+    this.onchange = null;
+    var obj = {};
+    obj["ad" + this.id] = null;
+    this.Obniz.send(obj);
+    return;
+  }
+
+  notified(obj) {
+    this.value = obj;
+    if (this.onchange) {
+      this.onchange(obj);
+    }
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj);
+    }
+  }
+}
+
 class PeripheralI2C {
 
   constructor(Obniz, id) {
@@ -2263,100 +2298,6 @@ class PeripheralIO_ {
   }
 }
 
-class LogicAnalyzer {
-
-  constructor(obniz) {
-    this.obniz = obniz;
-  }
-
-  start(params) {
-
-    var err = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
-    if (err) {
-      throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");return;
-    }
-    this.params = ObnizUtil._keyFilter(params, ["io", "interval", "duration", "trigerValue", "trigerValueSamples"]);
-
-    var obj = {};
-    obj.logic_analyzer = {
-      io: [this.params.io],
-      interval: this.params.interval,
-      duration: this.params.duration
-    };
-    if (this.params.trigerValueSamples > 0) {
-      obj.logic_analyzer.triger = {
-        value: !!this.params.trigerValue,
-        samples: this.params.trigerValueSamples
-      };
-    }
-
-    this.obniz.send(obj);
-    return;
-  }
-
-  end() {
-    var obj = {};
-    obj.logic_analyzer = null;
-    this.obniz.send(obj);
-    return;
-  }
-
-  notified(obj) {
-    if (this.onmeasured) {
-      this.onmeasured(obj.data);
-    } else {
-      if (!this.measured) {
-        this.measured = [];
-      }
-      this.measured.push(obj.data);
-    }
-    return;
-  }
-}
-
-class ObnizMeasure {
-
-  constructor(obniz) {
-    this.obniz = obniz;
-    this.observers = [];
-  }
-
-  echo(params) {
-    var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
-    if (err) {
-      throw new Error("Measure start param '" + err + "' required, but not found ");return;
-    }
-    this.params = ObnizUtil._keyFilter(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
-
-    var echo = {};
-    echo.io_pulse = this.params.io_pulse;
-    echo.pulse = this.params.pulse;
-    echo.pulse_width = this.params.pulse_width;
-    echo.io_echo = this.params.io_echo;
-    echo.measure_edges = this.params.measure_edges;
-    if (typeof this.params.timeout === "number") {
-      echo.timeout = this.params.timeout;
-    }
-
-    this.obniz.send({
-      measure: {
-        echo: echo
-      }
-    });
-
-    if (this.params.callback) {
-      this.observers.push(this.params.callback);
-    }
-  }
-
-  notified(obj) {
-    var callback = this.observers.shift();
-    if (callback) {
-      callback(obj.echo);
-    }
-  }
-}
-
 class PeripheralPWM {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
@@ -2540,41 +2481,6 @@ class PeripheralSPI {
   }
 }
 
-class ObnizSwitch {
-
-  constructor(Obniz) {
-    this.Obniz = Obniz;
-    this.observers = [];
-  }
-
-  addObserver(callback) {
-    if (callback) {
-      this.observers.push(callback);
-    }
-  }
-
-  getWait() {
-    var self = this;
-    return new Promise(function (resolve, reject) {
-      var obj = {};
-      obj["switch"] = "get";
-      self.Obniz.send(obj);
-      self.addObserver(resolve);
-    });
-  }
-
-  notified(obj) {
-    this.state = obj.state;
-    if (this.onchange) {
-      this.onchange(this.state);
-    }
-    var callback = this.observers.shift();
-    if (callback) {
-      callback(this.state);
-    }
-  }
-}
-
 class PeripheralUART {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
@@ -2705,6 +2611,100 @@ class PeripheralUART {
     this.params = null;
     this.Obniz.send(obj);
     this.used = false;
+  }
+}
+
+class LogicAnalyzer {
+
+  constructor(obniz) {
+    this.obniz = obniz;
+  }
+
+  start(params) {
+
+    var err = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
+    if (err) {
+      throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["io", "interval", "duration", "trigerValue", "trigerValueSamples"]);
+
+    var obj = {};
+    obj.logic_analyzer = {
+      io: [this.params.io],
+      interval: this.params.interval,
+      duration: this.params.duration
+    };
+    if (this.params.trigerValueSamples > 0) {
+      obj.logic_analyzer.triger = {
+        value: !!this.params.trigerValue,
+        samples: this.params.trigerValueSamples
+      };
+    }
+
+    this.obniz.send(obj);
+    return;
+  }
+
+  end() {
+    var obj = {};
+    obj.logic_analyzer = null;
+    this.obniz.send(obj);
+    return;
+  }
+
+  notified(obj) {
+    if (this.onmeasured) {
+      this.onmeasured(obj.data);
+    } else {
+      if (!this.measured) {
+        this.measured = [];
+      }
+      this.measured.push(obj.data);
+    }
+    return;
+  }
+}
+
+class ObnizMeasure {
+
+  constructor(obniz) {
+    this.obniz = obniz;
+    this.observers = [];
+  }
+
+  echo(params) {
+    var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
+    if (err) {
+      throw new Error("Measure start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
+
+    var echo = {};
+    echo.io_pulse = this.params.io_pulse;
+    echo.pulse = this.params.pulse;
+    echo.pulse_width = this.params.pulse_width;
+    echo.io_echo = this.params.io_echo;
+    echo.measure_edges = this.params.measure_edges;
+    if (typeof this.params.timeout === "number") {
+      echo.timeout = this.params.timeout;
+    }
+
+    this.obniz.send({
+      measure: {
+        echo: echo
+      }
+    });
+
+    if (this.params.callback) {
+      this.observers.push(this.params.callback);
+    }
+  }
+
+  notified(obj) {
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj.echo);
+    }
   }
 }
 class ObnizUtil {

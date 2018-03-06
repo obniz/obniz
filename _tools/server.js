@@ -6,8 +6,7 @@ const exec = require('child_process').exec;
 const babel = require("babel-core");
 const notifier = require('node-notifier');
 const ncp = require('ncp').ncp;
-
-var ejs = require('ejs');
+const ejs = require('ejs');
 
 const app = express()
 const port = 3100
@@ -111,14 +110,22 @@ function build() {
 
   // obniz libs
   var obnizlibPath = path.join(__dirname, '../obniz/libs')
-  var obnizlibs = fs.readdirSync(obnizlibPath);
-  var libnames = [];
-  for (var i=0; i<obnizlibs.length; i++) {
-    const lib = obnizlibs[i];
-    if (lib.indexOf('.js')>0) {
-      libnames.push(lib);
+  var libpaths = [];
+  function lsJs(dir) {
+    var files = fs.readdirSync(dir);
+    
+    for (var i=0; i<files.length; i++) {
+      const file = files[i];
+      const p = path.join(dir, file);
+      if (file.indexOf('.js')>0) {
+        libpaths.push(p);
+      } else if (fs.lstatSync(p).isDirectory()) {
+        lsJs(p);
+      }
     }
   }
+  lsJs(obnizlibPath);
+  console.log(libpaths);
 
   //parts
   var partsPath = path.join(__dirname, '../parts')
@@ -128,8 +135,8 @@ function build() {
   combined += fs.readFileSync(path.join(__dirname, '../obniz/index.js'), 'utf8');
 
   // obniz libs
-  for (var i=0; i<libnames.length; i++) {
-    var string = fs.readFileSync(path.join(obnizlibPath, libnames[i]), 'utf8');
+  for (var i=0; i<libpaths.length; i++) {
+    var string = fs.readFileSync(libpaths[i], 'utf8');
     combined += "\n" + string;
   }
 
