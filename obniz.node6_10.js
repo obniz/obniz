@@ -2,7 +2,7 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _obniz_js_version = "0.1.26";
+var _obniz_js_version = "0.1.27";
 /* global showObnizDebugError */
 
 var isNode = typeof window === 'undefined' ? true : false;
@@ -3768,10 +3768,10 @@ class WSCommand_Display extends WSCommand {
 
     var stringarray;
     if (isNode) {
-      const buf = Buffer(text, 'utf8');
+      const buf = Buffer(str, 'utf8');
       stringarray = new Uint8Array(buf);
     } else if (TextEncoder) {
-      stringarray = new Uint8Array(new TextEncoder("utf-8").encode(data));
+      stringarray = new Uint8Array(new TextEncoder("utf-8").encode(str));
     }
     var combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
