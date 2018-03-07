@@ -4882,6 +4882,7 @@ class WSCommand_System extends WSCommand {
     this.module = 0;
 
     this._CommandReboot         = 0
+    
     this._CommandReset          = 2
     this._CommandSelfCheck      = 3
     this._CommandWait           = 4
