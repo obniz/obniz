@@ -87,11 +87,6 @@ class WSCommand_Display extends WSCommand {
         throw new Error("raw should 1024 byte");
       }
     }
-    if (typeof module.qr == "object") {
-      this.qr(module.qr.text, module.qr.correction);
-    } else if(module.qr) {
-      throw new Error("display: qr must be object");
-    }
     
     if (typeof module.pin_assign === "object") {
       for(var i=0;i<12;i++){

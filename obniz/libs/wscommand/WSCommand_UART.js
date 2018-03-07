@@ -111,6 +111,8 @@ class WSCommand_UART extends WSCommand {
       objToSend["uart"+module_index] = {
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 };

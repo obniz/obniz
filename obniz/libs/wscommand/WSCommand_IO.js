@@ -136,29 +136,34 @@ class WSCommand_IO extends WSCommand {
         break;
 
       case this.COMMAND_FUNC_ID_ERROR:
-        esperr = payload[0];
-        err = payload[1];
-        ref_func_id = payload[2];
-        module_index = payload[3];
-
-        switch(err) {
-          case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH:
-            envelopFunc = this.envelopWarning;
-            break;
-          case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW:
-            envelopFunc = this.envelopWarning;
-            break;
-          case COMMAND_IO_ERRORS_IO_TOO_LOW:
-            envelopFunc = this.envelopError;
-            break;
-          case COMMAND_IO_ERRORS_IO_TOO_HIGH:
-            envelopFunc = this.envelopError;
-            break;
-          default:
-            break;
+        if (payload.byteLength == 4) {
+          esperr = payload[0];
+          err = payload[1];
+          ref_func_id = payload[2];
+          module_index = payload[3];
+  
+          switch(err) {
+            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH:
+              envelopFunc = this.envelopWarning;
+              break;
+            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW:
+              envelopFunc = this.envelopWarning;
+              break;
+            case COMMAND_IO_ERRORS_IO_TOO_LOW:
+              envelopFunc = this.envelopError;
+              break;
+            case COMMAND_IO_ERRORS_IO_TOO_HIGH:
+              envelopFunc = this.envelopError;
+              break;
+            default:
+              super.notifyFromBinary(objToSend, func, payload);
+              break;
+          }
+          if (envelopFunc)
+            envelopFunc(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
+        } else {
+          super.notifyFromBinary(objToSend, func, payload);
         }
-        if (envelopFunc)
-          envelopFunc(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
         break;
 
       default:

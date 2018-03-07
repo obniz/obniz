@@ -5,6 +5,7 @@ class WSCommand_System extends WSCommand {
     this.module = 0;
 
     this._CommandReboot         = 0
+    
     this._CommandReset          = 2
     this._CommandSelfCheck      = 3
     this._CommandWait           = 4
@@ -28,7 +29,7 @@ class WSCommand_System extends WSCommand {
   wait(msec) {
     msec = parseInt(msec);
     if(isNaN(msec)) {
-      return;
+      throw new Error("invalid wait time");
     }
     var buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
@@ -58,9 +59,5 @@ class WSCommand_System extends WSCommand {
         this.resetOnDisconnect(!module.keep_working_at_offline);
       }
     }
-  }
-
-  notifyFromBinary(objToSend, func, payload) {
-
   }
 }

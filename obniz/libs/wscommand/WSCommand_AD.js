@@ -59,6 +59,8 @@ class WSCommand_AD extends WSCommand {
         value = value / 100.0;
         objToSend["ad"+payload[i]] = value;
       }
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
