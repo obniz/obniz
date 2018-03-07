@@ -3,6 +3,7 @@ Button turn on/off electricity. Just monitor voltage to check button pressed or 
 
 # obniz.wired("Button", {signal:0, gnd:1})
 
+![photo of wired](./wired.png)
 Connect two pins to obniz. Many buttons has no pin direction. you can connect each one to signal,gnd.
 
 ```Javascript

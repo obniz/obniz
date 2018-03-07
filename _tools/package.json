@@ -21,7 +21,8 @@
     "express": "^4.16.2",
     "ncp": "^2.0.0",
     "node-notifier": "^5.2.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "svg-to-png": "^3.1.2"
   },
   "private": false,
   "devDependencies": {

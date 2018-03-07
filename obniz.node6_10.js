@@ -6919,48 +6919,118 @@ class Speaker {
 if (PartsRegistrate) {
   PartsRegistrate("Speaker", Speaker);
 }
-var ADT7310 = function () {
-  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
-  this.requiredKeys = [];
-};
-
-ADT7310.prototype.wired = (() => {
-  var _ref12 = _asyncToGenerator(function* (obniz) {
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-    this.params.mode = this.params.mode || "master";
-    this.params.frequency = this.params.frequency || 500000;
-    this.params.frequency = this.params.frequency || 500000;
-    this.params.mosi = this.params.din;
-    this.params.miso = this.params.dout;
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  });
-
-  return function (_x6) {
-    return _ref12.apply(this, arguments);
-  };
-})();
-
-ADT7310.prototype.getTempWait = _asyncToGenerator(function* () {
-  yield this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-  yield this.obniz.wait(200); //適度な値でないと安定しない
-  var ret = yield this.spi.writeWait([0x00, 0x00]);
-  var tempBin = ret[0] << 8;
-  tempBin |= ret[1];
-  tempBin = tempBin >> 3;
-
-  if (tempBin & 0x1000) {
-    //0度以下の時の処理
-    tempBin = tempBin - 8192;
+class AnalogTemplatureSensor {
+  constructor() {
+    this.keys = ["vcc", "gnd", "signal"];
+    this.requiredKeys = ["signal"];
+    this.drive = "5v";
   }
 
-  return tempBin / 16;
-});
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+    this.ad = obniz.getAD(this.params.signal);
+
+    this.ad.start(function (voltage) {
+      this.temp = this.calc(voltage);
+      this.onchange(this.temp);
+    }.bind(this));
+  }
+
+  onchange(temp) {}
+
+  calc(voltage) {
+    return 0;
+  }
+
+}
+class LM35DZ extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
+  }
+};
 
 if (PartsRegistrate) {
-  PartsRegistrate("ADT7310", ADT7310);
+  PartsRegistrate("LM35DZ", LM35DZ);
+}
+
+var LM60 = function () {
+  this.keys = ["vcc", "gnd", "output"];
+  this.requiredKeys = ["output"];
+};
+
+LM60.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.ad = obniz.getAD(this.params.output);
+
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  var self = this;
+  this.ad.start(function (value) {
+    self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM60", LM60);
+}
+
+class LM61 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]  
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("LM61", LM61);
+}
+
+class MCP9700 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("MCP9700", MCP9700);
+}
+
+class MCP9701 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("MCP9701", MCP9701);
+}
+
+//センサから出力が無い(出力インピーダンス高すぎ？)
+
+class S8100B extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("S8100B", S8100B);
+}
+
+//不調, 正しく測れるときもある...
+//原因1:obnizの入力インピーダンスが低すぎる?
+//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
+
+class S8120C extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
+  }
+};
+
+if (PartsRegistrate) {
+  PartsRegistrate("S8120C", S8120C);
 }
 
 var ADT7410 = function () {
@@ -7001,121 +7071,6 @@ ADT7410.prototype.getTempWait = _asyncToGenerator(function* () {
 
 if (PartsRegistrate) {
   PartsRegistrate("ADT7410", ADT7410);
-}
-
-var LM35DZ = function () {
-  this.keys = ["vcc", "gnd", "output"];
-  this.requiredKeys = ["output"];
-};
-
-LM35DZ.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = value * 100; //Temp(Celsius) = [AD Voltage] * 100
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM35DZ", LM35DZ);
-}
-
-var LM60 = function () {
-  this.keys = ["vcc", "gnd", "output"];
-  this.requiredKeys = ["output"];
-};
-
-LM60.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.ad = obniz.getAD(this.params.output);
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM60", LM60);
-}
-
-var LM61 = function () {
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = ["output"];
-};
-
-LM61.prototype.wired = function (obniz) {
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = Math.round((value - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM61", LM61);
-}
-
-var MCP9700 = function () {
-
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = ["output"];
-};
-
-MCP9700.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = (value - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("MCP9700", MCP9700);
-}
-
-var MCP9701 = function () {
-
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = ["output"];
-};
-
-MCP9701.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = (value - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("MCP9701", MCP9701);
 }
 
 //センサからの反応なし
@@ -7211,55 +7166,6 @@ if (PartsRegistrate) {
   PartsRegistrate("S5851A", S5851A);
 }
 
-//センサから出力が無い(出力インピーダンス高すぎ？)
-var S8100B = function () {
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = ["output"];
-};
-
-S8100B.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = 30 + (1.508 - value) / -0.08; //Temp(Celsius) =
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("S8100B", S8100B);
-}
-
-//不調, 正しく測れるときもある...
-//原因1:obnizの入力インピーダンスが低すぎる?
-//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
-var S8120C = function () {
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = ["output"];
-};
-
-S8120C.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = (value - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
-    console.log('value:' + value);
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("S8120C", S8120C);
-}
-
 var SHT31 = function () {
   this.requiredKeys = ["adr", "addressmode", "i2c"];
   this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
@@ -7305,4 +7211,47 @@ SHT31.prototype.getHumdWait = _asyncToGenerator(function* () {
 
 if (PartsRegistrate) {
   PartsRegistrate("SHT31", SHT31);
+}
+
+var ADT7310 = function () {
+  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+  this.requiredKeys = [];
+};
+
+ADT7310.prototype.wired = (() => {
+  var _ref17 = _asyncToGenerator(function* (obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    this.params.mode = this.params.mode || "master";
+    this.params.frequency = this.params.frequency || 500000;
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.dout;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  });
+
+  return function (_x6) {
+    return _ref17.apply(this, arguments);
+  };
+})();
+
+ADT7310.prototype.getTempWait = _asyncToGenerator(function* () {
+  yield this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+  yield this.obniz.wait(200); //適度な値でないと安定しない
+  var ret = yield this.spi.writeWait([0x00, 0x00]);
+  var tempBin = ret[0] << 8;
+  tempBin |= ret[1];
+  tempBin = tempBin >> 3;
+
+  if (tempBin & 0x1000) {
+    //0度以下の時の処理
+    tempBin = tempBin - 8192;
+  }
+
+  return tempBin / 16;
+});
+
+if (PartsRegistrate) {
+  PartsRegistrate("ADT7310", ADT7310);
 }

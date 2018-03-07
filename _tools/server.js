@@ -7,9 +7,10 @@ const babel = require("babel-core");
 const notifier = require('node-notifier');
 const ncp = require('ncp').ncp;
 const ejs = require('ejs');
+var svg_to_png = require('svg-to-png');
 
 const app = express()
-const port = 3100
+const port = 3100;
 
 app.get('/', (request, response) => {
   response.send('Hello from Express!')
@@ -30,20 +31,20 @@ app.listen(port, (err) => {
 const obnizPath = path.join(__dirname, '../obniz/');
 const partsPath = path.join(__dirname, '../parts/');
 const packageJsonPath = path.join(__dirname, '../package.json');
-const watcher = chokidar.watch([obnizPath, partsPath, packageJsonPath],{
-  ignored:/[\/\\]\./,
-  persistent:true
+const watcher = chokidar.watch([obnizPath, partsPath, packageJsonPath], {
+  ignored: /[\/\\]\./,
+  persistent: true
 });
 
-watcher.on('ready',function(){
+watcher.on('ready', function () {
   console.log("ready watching file change");
-  watcher.on('add',function(path){
-      if (path.indexOf('.js') >= 0) {
-        console.log(path + " added");
-        build();
-      }
+  watcher.on('add', function (path) {
+    if (path.indexOf('.js') >= 0) {
+      console.log(path + " added");
+      build();
+    }
   });
-  watcher.on('change',function(path){
+  watcher.on('change', function (path) {
     if (path.indexOf('.js') >= 0 || path.indexOf('.json') >= 0) {
       console.log(path + " changed");
       build();
@@ -51,43 +52,43 @@ watcher.on('ready',function(){
   });
 });
 
-const readmeWatcher = chokidar.watch([partsPath],{
-  ignored:/[\/\\]\./,
-  persistent:true
+const readmeWatcher = chokidar.watch([partsPath], {
+  ignored: /[\/\\]\./,
+  persistent: true
 });
-readmeWatcher.on('ready',function(){
+readmeWatcher.on('ready', function () {
   console.log("ready watching README.ejs");
-  watcher.on('add',function(path){
-      if (path.indexOf('.ejs') >= 0) {
-        console.log(path + " added");
-        readmeBuild();
-      }
+  watcher.on('add', function (path) {
+    if (path.indexOf('.ejs') >= 0) {
+      console.log(path + " added");
+      readmeBuild();
+    }
   });
-  readmeWatcher.on('change',function(path){
-    if (path.indexOf('.ejs') >= 0 ) {
+  readmeWatcher.on('change', function (path) {
+    if (path.indexOf('.ejs') >= 0) {
       console.log(path + " changed");
-        readmeBuild();
+      readmeBuild();
     }
   });
 });
 
 
 var jsonSchemaPath = path.join(__dirname, '../../wsroom/json_schema/');
-if(fs.existsSync(jsonSchemaPath)){
+if (fs.existsSync(jsonSchemaPath)) {
 
-  var jsonSchemaWatcher = chokidar.watch([jsonSchemaPath],{
-    ignored:/[\/\\]\./,
-    persistent:true
+  var jsonSchemaWatcher = chokidar.watch([jsonSchemaPath], {
+    ignored: /[\/\\]\./,
+    persistent: true
   });
-  
-  jsonSchemaWatcher.on('ready',function(){
-    jsonSchemaWatcher.on('change',function(path){
+
+  jsonSchemaWatcher.on('ready', function () {
+    jsonSchemaWatcher.on('change', function (path) {
       if (path.indexOf('.yml') >= 0) {
         console.log(path + " changed");
         schemaCopy();
       }
     });
-    jsonSchemaWatcher.on('add',function(path){
+    jsonSchemaWatcher.on('add', function (path) {
       if (path.indexOf('.yml') >= 0) {
         console.log(path + " added");
         schemaCopy();
@@ -96,6 +97,36 @@ if(fs.existsSync(jsonSchemaPath)){
 
   });
 }
+
+
+
+var fritzingPath = "/Applications/Fritzing.app/Contents/MacOS/Fritzing";
+//if (fs.existsSync(fritzingPath)) {
+//
+//  var fritzingWatcher = chokidar.watch([partsPath], {
+//    ignored: /[\/\\]\./,
+//    persistent: true
+//  });
+//
+//  fritzingWatcher.on('ready', function () {
+//    fritzingWatcher.on('change', function (path) {
+//      if (path.indexOf('.fzz') >= 0) {
+//        console.log(path + " changed");
+//        convertImage(path);
+//      }
+//    });
+//    fritzingWatcher.on('add', function (path) {
+//      if (path.indexOf('.fzz') >= 0) {
+//        console.log(path + " added");
+//        convertImage(path);
+//      }
+//    });
+//   
+//  });
+//  console.log("fritzingWatcher started.")
+//
+//}
+
 
 build();
 readmeBuild();
@@ -113,11 +144,11 @@ function build() {
   var libpaths = [];
   function lsJs(dir) {
     var files = fs.readdirSync(dir);
-    
-    for (var i=0; i<files.length; i++) {
+
+    for (var i = 0; i < files.length; i++) {
       const file = files[i];
       const p = path.join(dir, file);
-      if (file.indexOf('.js')>0) {
+      if (file.indexOf('.js') > 0) {
         libpaths.push(p);
       } else if (fs.lstatSync(p).isDirectory()) {
         lsJs(p);
@@ -134,82 +165,82 @@ function build() {
   combined += fs.readFileSync(path.join(__dirname, '../obniz/index.js'), 'utf8');
 
   // obniz libs
-  for (var i=0; i<libpaths.length; i++) {
+  for (var i = 0; i < libpaths.length; i++) {
     var string = fs.readFileSync(libpaths[i], 'utf8');
     combined += "\n" + string;
   }
 
   // parts
-  folderExploer(partsPath, "index.js", function(filePath){
+  folderExploer(partsPath, ".js", function (filePath) {
     var string = fs.readFileSync(filePath, 'utf8');
     combined += "\n" + string;
-    
+
   });
 
   // flush
   fs.writeFileSync(path.join(__dirname, '../obniz.js'), combined);
 
-   var babelOptions = {
-      "presets": [
-        ["env", { "targets": {"node": "6.10" }}]
-      ]
-    };
-    var write = true;
-    try{
-      var results = babel.transform(combined, babelOptions);
-    }catch(err){
-      write = false;
-      console.log("\007");
-      console.error(err.stack);
-      
-      // Object
-      notifier.notify({
-        'title': 'ERROR',
-        'message': 'obniz.js compile ERROR. See console.'
-      });
-    }
-    if(write){
-      console.log("obniz.js compile success");
-    }
-    fs.writeFileSync(path.join(__dirname, '../obniz.node6_10.js'), write ? results.code : "");
+  var babelOptions = {
+    "presets": [
+      ["env", {"targets": {"node": "6.10"}}]
+    ]
+  };
+  var write = true;
+  try {
+    var results = babel.transform(combined, babelOptions);
+  } catch (err) {
+    write = false;
+    console.log("\007");
+    console.error(err.stack);
+
+    // Object
+    notifier.notify({
+      'title': 'ERROR',
+      'message': 'obniz.js compile ERROR. See console.'
+    });
+  }
+  if (write) {
+    console.log("obniz.js compile success");
+  }
+  fs.writeFileSync(path.join(__dirname, '../obniz.node6_10.js'), write ? results.code : "");
 }
 
-function readmeBuild(){
+function readmeBuild() {
   var partsPath = path.join(__dirname, '../parts');
-  
-  folderExploer(partsPath, "README.ejs", function(filePath){
-    ejs.renderFile(filePath, null, null, function(err, str){
-      if(err){
-        
+
+  folderExploer(partsPath, "README.ejs", function (filePath) {
+    ejs.renderFile(filePath, null, null, function (err, str) {
+      if (err) {
+
         // Object
         notifier.notify({
           'title': 'ERROR',
           'message': filePath + ' compile ERROR. See console.'
         });
-        console.log( filePath + ' compile ERROR.', err);
-      }else{
+        console.log(filePath + ' compile ERROR.', err);
+      } else {
         fs.writeFileSync(path.join(filePath, '../README.md'), str);
       }
     });
   });
-  
-  
-  folderExploer(partsPath, "README-ja.ejs", function(filePath){
-    ejs.renderFile(filePath, null, null, function(err, str){
-      if(err){
-        
+
+
+  folderExploer(partsPath, "README-ja.ejs", function (filePath) {
+    ejs.renderFile(filePath, null, null, function (err, str) {
+      if (err) {
+
         // Object
         notifier.notify({
           'title': 'ERROR',
           'message': filePath + ' compile ERROR. See console.'
         });
-        console.log( filePath + ' compile ERROR.', err);
-      }else{
+        console.log(filePath + ' compile ERROR.', err);
+      } else {
         fs.writeFileSync(path.join(filePath, '../README-ja.md'), str);
       }
     });
   });
-  
+
 }
 
 
@@ -223,7 +254,7 @@ function folderExploer(dirPath, targetFilename, callback) {
         return !file.match(/^\..*/);
       })
       .filter(function (file) {
-        return file === targetFilename;
+        return file.indexOf(targetFilename) >= 0;
       })
       .map(function (file) {
         return path.resolve(dirPath, file);
@@ -231,7 +262,7 @@ function folderExploer(dirPath, targetFilename, callback) {
       .forEach(function (filepath) {
         callback(filepath);
       });
-      
+
   file_list
       .map(function (file) {
         return path.resolve(dirPath, file);
@@ -242,15 +273,51 @@ function folderExploer(dirPath, targetFilename, callback) {
       .forEach(function (filepath) {
         folderExploer(filepath, targetFilename, callback);
       });
-          
+
 }
 
-function schemaCopy(){
+function schemaCopy() {
   var dest = path.join(__dirname, '../test/json_schema/')
   ncp(jsonSchemaPath, dest, function (err) {
     if (err) {
       return console.error(err);
     }
     console.log('copy done!');
-   });
+  });
 }
+
+
+function convertImage(targetPath) {
+  var folder = path.dirname(targetPath);
+
+  var command = fritzingPath + " -svg " + folder;
+  exec(command, function (err, stdout, stderr) {
+    var file_list = fs.readdirSync(folder);
+    file_list.filter(function (file) {
+      return file.indexOf("_breadboard.svg") >= 0;
+    }).forEach(function (file) {
+      var before = path.join(folder + "/", file);
+      var after =  path.join(folder + "/", file.replace("_breadboard.svg", ".svg"));
+      fs.rename(before, after, function(err){
+        
+        console.log("convert ",before,after);
+        if(!err){
+          svg_to_png.convert(after,folder) // async, returns promise 
+              .then(function () {
+                console.log("svg -> png ", file);
+              });
+          }
+        
+      });
+      
+    });
+    
+    file_list.filter(function (file) {
+      return file.indexOf("_pcb.svg") >= 0 || file.indexOf("_schematic.svg") >= 0;
+    }).forEach(function (file) {
+      var target = path.join(folder + "/", file);
+      fs.unlink(target);
+    });
+  });
+}
+

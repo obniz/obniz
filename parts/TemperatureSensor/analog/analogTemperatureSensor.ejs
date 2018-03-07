@@ -1,0 +1,33 @@
+![photo of AnalogTempratureSensor](./wired.png)
+
+<%
+if (typeof pins === "undefined") {
+    pins = {};
+}
+if (pins.gnd === undefined) {
+    pins.gnd = 0;
+}
+if (pins.output === undefined) {
+    pins.output = 1;
+}
+if (pins.vcc === undefined) {
+    pins.vcc = 2;
+}
+%>
+
+
+## wired(obniz, {vcc, gnd, output})
+```javascript
+var tempsens = obniz.wired("<%= partname %>", { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
+```
+
+## onchange
+callback function for temperature change.
+Unit of temp is Celsius
+
+```javascript
+var tempsens = obniz.wired("<%= partname %>",   { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
+tempsens.onchange = function(temp){
+console.log(temp)
+};
+```

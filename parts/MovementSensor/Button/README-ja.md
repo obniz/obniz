@@ -1,6 +1,9 @@
 # Button
 押すことで電流を流したり止めたり出来る部品です。これをつなぎ電流が流れているかを見ることでボタンが押されているかをチェックできます。このモジュールではボタンの形によらず、とにかく押せば電流が流れるボタンを扱うことができます。
 
+## obniz.wired("Button", {signal:0, gnd:1})
+
+![photo of wired](./wired.png)
 ```Javascript
 wired(obniz, {signal:0, gnd:1})
 ```
