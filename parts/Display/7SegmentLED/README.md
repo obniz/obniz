@@ -7,12 +7,21 @@ a to g is 7 segment's io.
 dp is deciminal point.
 commonType must be "anode"/"cathode". default is "cathode".
 
+![photo of wired XBee](./wired.png)
+
+```javascript
+var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
+seg.print(7);
+```
+
+
 io can be null If you don't need to use. like dp.
 
 ```javascript
-var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:null, common:6, commonType:"cathode"});
 seg.print(7);
 ```
+
 ## print(number)
 print a number.
 
@@ -20,7 +29,7 @@ print a number.
 .print(89) => 9
 
 ```javascript
-var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
   seg.print(i)
@@ -31,14 +40,14 @@ for(var i=0; i<10; i++){
 ## printRaw(number)
 control each led directly.
 ```javascript
-var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 seg.print_raw(0x77)
 ```
 
 ## off()
 turn display off
 ```javascript
-var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
   seg.print(i)
@@ -50,7 +59,7 @@ seg.off();
 ## on()
 turn display on
 ```javascript
-var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 seg.print(7);
 while(true){
@@ -64,7 +73,7 @@ while(true){
 ## dpShow(show)
 turn on/off dp
 ```javascript
-var seg = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 seg.print(7);
 while(true){
