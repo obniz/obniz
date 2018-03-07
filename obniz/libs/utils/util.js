@@ -73,11 +73,7 @@ class ObnizUtil {
   static string2dataArray(str){
     if (isNode) {
       const buf = Buffer(str);
-      var arr = new Array(buf.byteLength);
-      for (var i=0; i<arr.length;i++) {
-        arr[i] = buf[i];
-      }
-      return arr;
+      return [... buf];
     } else if(TextEncoder){
       const typedArray = new TextEncoder("utf-8").encode(str);
       var arr = new Array(typedArray.length);

@@ -5,13 +5,12 @@ var isNode = (typeof window === 'undefined') ? true : false;
 class Obniz {
 
   constructor(id, options) {
-    this.isNode = isNode;
-    if (this.isNode === false) { showOffLine(); }
+    this.isNode     = isNode;
     this.apiversion = 1;
-    this.id = id;
-    this.socket = null;
+    this.id         = id;
+    this.socket     = null;
     this.debugprint = false;
-    this.debugs = [];
+    this.debugs     = [];
   
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
   
@@ -22,6 +21,17 @@ class Obniz {
     }
     this.server_obnizio = options.obniz_server || "wss://obniz.io";
     this._access_token = options.access_token;
+
+    if (options.binary !== false) {
+      this.wscommand = this.constructor.WSCommand
+      var classes = this.constructor.WSCommand.CommandClasses;
+      this.wscommands = [];
+      for (var class_name in classes) {
+       this.wscommands.push(new classes[class_name]());
+      }
+    }
+
+    if (this.isNode === false) { showOffLine(); }
   
     if (!this.isValidObnizId(this.id)) {
       if (isNode)  {
@@ -36,6 +46,10 @@ class Obniz {
       return;
     }
     this.wsconnect();
+  }
+
+  static get WSCommand() {
+    return WSCommand;
   }
 
   isValidObnizId(str) {
@@ -173,6 +187,9 @@ class Obniz {
     if (this._access_token) {
       url += "&access_token="+this._access_token;
     }
+    if (this.wscommand) {
+      url += "&accept_binary=true";
+    }
     this.print_debug("connecting to " + url);
   
     if (this.isNode) {
@@ -185,6 +202,7 @@ class Obniz {
       this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
     } else {
       this.socket = new WebSocket(url);
+      this.socket.binaryType = 'arraybuffer';
       this.socket.onopen = this.wsOnOpen.bind(this);
       this.socket.onmessage = function (event) {
         this.wsOnMessage(event.data);
@@ -260,17 +278,61 @@ class Obniz {
     }
   }
 
-  send(value) {
-    if (this.sendPool) {
-      this.sendPool.push(value);
+  send(obj) {
+    if (this.sendPool) { this.sendPool.push(obj); return; }
+    if (!obj || (typeof obj !== "object")) {
+      console.log("obnizjs. didnt send ", obj);
       return;
     }
-    if (typeof (value) === "object") {
-      value = JSON.stringify(value);
+    let sendData = JSON.stringify(obj);
+    this.print_debug("send: " + sendData);
+    /* compress */
+    if (this.wscommand) {
+      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
+      if (compressed) {
+        sendData = compressed;
+        this.print_debug("compressed: " + sendData);
+      }
     }
-    this.print_debug("send: " + value);
-    this.socket.send(value);
-  
+    if (true) {
+      // queue sending
+      if(typeof sendData === "string") {
+        this._drainQueued();
+        this.socket.send(sendData);
+      } else {
+        if (this._sendQueue) {
+          this._sendQueue.push(sendData);
+        } else {
+          this._sendQueue = [sendData];
+          this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
+        }
+      }
+    } else {
+      // sendImmidiately
+      this.socket.send(sendData);
+      if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+        this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+      }
+    }
+  }
+
+  _drainQueued() {
+    if (!this._sendQueue) return;
+    var expectSize = 0;
+    for (var i=0; i<this._sendQueue.length; i++) {
+      expectSize += this._sendQueue[i].length;
+    }
+    var filled = 0;
+    var sendData = new Uint8Array(expectSize);
+    for (var i=0; i<this._sendQueue.length; i++) {
+      sendData.set(this._sendQueue[i], filled);
+      filled += this._sendQueue[i].length;
+    }
+    this.socket.send(sendData);
+    delete this._sendQueue;
+    clearTimeout(this._sendQueueTimer);
+    this._sendQueueTimer = null;
+    
     if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
       this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
     }
@@ -586,8 +648,8 @@ if (!isNode) {
   }
   function showObnizDebugError(err) {
     if(window.parent && window.parent.logger){
-      window.parent.logger.addErrorObject(err);
-    }else{ throw err; };
+      window.parent.logger.onObnizError(err);
+    }else{ throw err; }; 
   }
 }
 

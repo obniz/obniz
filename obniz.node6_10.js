@@ -2,7 +2,7 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _obniz_js_version = "0.1.25";
+var _obniz_js_version = "0.1.26";
 /* global showObnizDebugError */
 
 var isNode = typeof window === 'undefined' ? true : false;
@@ -11,9 +11,6 @@ class Obniz {
 
   constructor(id, options) {
     this.isNode = isNode;
-    if (this.isNode === false) {
-      showOffLine();
-    }
     this.apiversion = 1;
     this.id = id;
     this.socket = null;
@@ -30,6 +27,19 @@ class Obniz {
     this.server_obnizio = options.obniz_server || "wss://obniz.io";
     this._access_token = options.access_token;
 
+    if (options.binary !== false) {
+      this.wscommand = this.constructor.WSCommand;
+      var classes = this.constructor.WSCommand.CommandClasses;
+      this.wscommands = [];
+      for (var class_name in classes) {
+        this.wscommands.push(new classes[class_name]());
+      }
+    }
+
+    if (this.isNode === false) {
+      showOffLine();
+    }
+
     if (!this.isValidObnizId(this.id)) {
       if (isNode) {
         this.error("invalid obniz id");
@@ -43,6 +53,10 @@ class Obniz {
       return;
     }
     this.wsconnect();
+  }
+
+  static get WSCommand() {
+    return WSCommand;
   }
 
   isValidObnizId(str) {
@@ -179,6 +193,9 @@ class Obniz {
     if (this._access_token) {
       url += "&access_token=" + this._access_token;
     }
+    if (this.wscommand) {
+      url += "&accept_binary=true";
+    }
     this.print_debug("connecting to " + url);
 
     if (this.isNode) {
@@ -191,6 +208,7 @@ class Obniz {
       this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
     } else {
       this.socket = new WebSocket(url);
+      this.socket.binaryType = 'arraybuffer';
       this.socket.onopen = this.wsOnOpen.bind(this);
       this.socket.onmessage = function (event) {
         this.wsOnMessage(event.data);
@@ -266,16 +284,62 @@ class Obniz {
     }
   }
 
-  send(value) {
+  send(obj) {
     if (this.sendPool) {
-      this.sendPool.push(value);
+      this.sendPool.push(obj);return;
+    }
+    if (!obj || typeof obj !== "object") {
+      console.log("obnizjs. didnt send ", obj);
       return;
     }
-    if (typeof value === "object") {
-      value = JSON.stringify(value);
+    let sendData = JSON.stringify(obj);
+    this.print_debug("send: " + sendData);
+    /* compress */
+    if (this.wscommand) {
+      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
+      if (compressed) {
+        sendData = compressed;
+        this.print_debug("compressed: " + sendData);
+      }
     }
-    this.print_debug("send: " + value);
-    this.socket.send(value);
+    if (true) {
+      // queue sending
+      if (typeof sendData === "string") {
+        this._drainQueued();
+        this.socket.send(sendData);
+      } else {
+        if (this._sendQueue) {
+          this._sendQueue.push(sendData);
+        } else {
+          this._sendQueue = [sendData];
+          this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
+        }
+      }
+    } else {
+      // sendImmidiately
+      this.socket.send(sendData);
+      if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+        this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+      }
+    }
+  }
+
+  _drainQueued() {
+    if (!this._sendQueue) return;
+    var expectSize = 0;
+    for (var i = 0; i < this._sendQueue.length; i++) {
+      expectSize += this._sendQueue[i].length;
+    }
+    var filled = 0;
+    var sendData = new Uint8Array(expectSize);
+    for (var i = 0; i < this._sendQueue.length; i++) {
+      sendData.set(this._sendQueue[i], filled);
+      filled += this._sendQueue[i].length;
+    }
+    this.socket.send(sendData);
+    delete this._sendQueue;
+    clearTimeout(this._sendQueueTimer);
+    this._sendQueueTimer = null;
 
     if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
       this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
@@ -625,7 +689,7 @@ if (!isNode) {
   }
   function showObnizDebugError(err) {
     if (window.parent && window.parent.logger) {
-      window.parent.logger.addErrorObject(err);
+      window.parent.logger.onObnizError(err);
     } else {
       throw err;
     };
@@ -2529,21 +2593,13 @@ class PeripheralUART {
       data = [data];
     }
     if (isNode && data instanceof Buffer) {
-      var arr = new Array(data.byteLength);
-      for (var i = 0; i < arr.length; i++) {
-        arr[i] = data[i];
-      }
-      send_data = arr;
+      var arr = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === "string") {
       if (isNode) {
         const buf = Buffer(data);
-        var arr = new Array(buf.byteLength);
-        for (var i = 0; i < arr.length; i++) {
-          arr[i] = buf[i];
-        }
-        send_data = arr;
+        send_data = [...buf];
       } else if (TextEncoder) {
         const typedArray = new TextEncoder("utf-8").encode(data);
         send_data = new Array(typedArray.length);
@@ -2780,11 +2836,7 @@ class ObnizUtil {
   static string2dataArray(str) {
     if (isNode) {
       const buf = Buffer(str);
-      var arr = new Array(buf.byteLength);
-      for (var i = 0; i < arr.length; i++) {
-        arr[i] = buf[i];
-      }
-      return arr;
+      return [...buf];
     } else if (TextEncoder) {
       const typedArray = new TextEncoder("utf-8").encode(str);
       var arr = new Array(typedArray.length);
@@ -2798,7 +2850,31 @@ class ObnizUtil {
 }
 class WSCommand {
 
-  constructor() {}
+  constructor(delegate) {
+    this.delegate = delegate;
+
+    //constants
+    this.COMMAND_FUNC_ID_ERROR = 0xFF;
+    this.ioNotUsed = 0xFF;
+  }
+
+  static get CommandClasses() {
+    return {
+      WSCommand_System,
+      WSCommand_Directive,
+      WSCommand_IO,
+      WSCommand_PWM,
+      WSCommand_UART,
+      WSCommand_AD,
+      WSCommand_SPI,
+      WSCommand_I2C,
+      WSCommand_LogicAnalyzer,
+      WSCommand_Display,
+      WSCommand_Switch,
+      WSCommand_Ble,
+      WSCommand_Measurement
+    };
+  }
 
   static framed(module, func, payload) {
     var payload_length = 0;
@@ -2813,7 +2889,7 @@ class WSCommand {
     } else if (payload_length <= 0x3FFFFFFF) {
       length_type = 2;
     } else {
-      logger.error("cant convert to binary. too big payload");
+      throw new Error("too big payload");
       return null;
     }
     var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
@@ -2832,6 +2908,2198 @@ class WSCommand {
     } else {
       result.set(payload, header_length);
       return result;
+    }
+  }
+
+  static dequeueOne(buf) {
+    if (!buf || buf.byteLength == 0) return null;
+    if (buf.byteLength < 3) {
+      throw new Eror("something wrong. buf less than 3");
+      return null;
+    }
+    if (buf[0] & 0x80) {
+      throw new Eror("reserved bit 1");
+      return null;
+    }
+    var module = 0x7F & buf[0];
+    var func = buf[1];
+    var length_type = buf[2] >> 6 & 0x3;
+    var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
+    if (length_type == 4) {
+      throw new Eror("invalid length");
+      return null;
+    }
+    var length = (buf[2] & 0x3F) << length_extra_bytse * 8;
+    var index = 3;
+    var shift = length_extra_bytse;
+    while (shift > 0) {
+      shift--;
+      length += buf[index] << shift * 8;
+      index++;
+    }
+
+    return {
+      module: module,
+      func: func,
+      payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
+      next: buf.slice(3 + length_extra_bytse + length)
+    };
+  }
+
+  static compress(wscommands, json) {
+    var ret;
+    function append(module, func, payload) {
+      var frame = WSCommand.framed(module, func, payload);
+      if (ret) {
+        var combined = new Uint8Array(ret.length + frame.length);
+        combined.set(ret, 0);
+        combined.set(frame, ret.length);
+        ret = combined;
+      } else {
+        ret = frame;
+      }
+    }
+    for (let i = 0; i < wscommands.length; i++) {
+      const wscommand = wscommands[i];
+      wscommand.parsed = append;
+      wscommand.parseFromJson(json);
+    }
+    return ret;
+  }
+
+  sendCommand(func, payload) {
+    if (this.delegate && this.delegate.onParsed) {
+      this.delegate.onParsed(this.module, func, payload);
+    }
+    if (this.parsed) {
+      this.parsed(this.module, func, payload);
+    }
+  }
+
+  parseFromJson(json) {}
+
+  notifyFromBinary(objToSend, func, payload) {}
+
+  envelopWarning(objToSend, module_key, obj) {
+    if (!objToSend[module_key]) objToSend[module_key] = {};
+    if (!objToSend[module_key].warnings) objToSend[module_key].warnings = [];
+    objToSend[module_key].warnings.push(obj);
+  }
+
+  envelopError(objToSend, module_key, obj) {
+    if (!objToSend[module_key]) objToSend[module_key] = {};
+    if (!objToSend[module_key].errors) objToSend[module_key].errors = [];
+    objToSend[module_key].errors.push(obj);
+  }
+
+  isValidIO(io) {
+    return typeof io === "number" && 0 <= io && io <= 11;
+  }
+}
+class WSCommand_AD extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 7;
+
+    this._CommandInitNormalInterval = 0;
+    this._CommandDeinit = 1;
+    this._CommandNotifyValue = 2;
+    this._CommandDoOnece = 3;
+  }
+
+  // Commands
+
+  init(module) {
+    var buf = new Uint8Array([module]);
+    this.sendCommand(this._CommandInitNormalInterval, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array([module]);
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  onece(module) {
+    var buf = new Uint8Array([module]);
+    this.sendCommand(this._CommandDoOnece, buf);
+  }
+
+  parseFromJson(json) {
+    for (var i = 0; i < 12; i++) {
+      var module = json["ad" + i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      // if (typeof module == "string") {
+      //   if (module === "get") {
+      //     this.onece(i);
+      //   } else if (module === "stream") {
+      //     this.init(i);
+      //   }
+      // }
+      if (typeof module != "object") {
+        continue;
+      }
+      if (module.stream === true) {
+        this.init(i);
+      } else {
+        this.onece(i);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandNotifyValue) {
+      for (var i = 0; i < payload.byteLength; i += 3) {
+        var value = (payload[i + 1] << 8) + payload[i + 2];
+        value = value / 100.0;
+        objToSend["ad" + payload[i]] = value;
+      }
+    }
+  }
+}
+
+class WSCommand_Ble extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 11;
+
+    this.uuidLength = 16 + 2;
+
+    this._CommandSetAdvData = 0;
+    this._CommandSetScanRespData = 1;
+    this._CommandStartAdv = 2;
+    this._CommandStopAdv = 3;
+    this._CommandScan = 4;
+    this._CommandStartScan = 4;
+    this._CommandStopScan = 5;
+    this._CommandScanResults = 6;
+    this._CommandConnect = 7;
+    this._CommandServices = 8;
+    this._CommandCharacteristics = 9;
+    this._CommandWriteCharacteristics = 10;
+    this._CommandReadCharacteristics = 11;
+    // this._CommandNotifyCharacteristics = 12; // currently not used
+    // this._CommandNotifyCharacteristicsResults = 13; // currently not used
+    this._CommandDescriptors = 14;
+    this._CommandWriteDescriptor = 15;
+    this._CommandReadDescriptor = 16;
+
+    this._CommandServerStartPeripheral = 20;
+    this._CommandServerNotifyConnect = 21;
+    this._CommandServerAddService = 22;
+    this._CommandServerAddCharacteristic = 23;
+    this._CommandServerAddDescriptor = 24;
+    this._CommandServerWriteCharavteristicValue = 25;
+    this._CommandServerReadCharavteristicValue = 26;
+    this._CommandServerNotifyWriteCharavteristicValue = 27;
+    this._CommandServerNotifyReadCharavteristicValue = 28;
+    this._CommandServerWriteDescriptorValue = 29;
+    this._CommandServerReadDescriptorValue = 30;
+    this._CommandServerNotifyWriteDescriptorValue = 31;
+    this._CommandServerNotifyReadDescriptorValue = 32;
+
+    this._CommandScanResultsDevice = {
+      breder: 0x01,
+      ble: 0x02,
+      dumo: 0x03
+    };
+
+    /// BLE device address type
+    this._CommandScanResultsDeviceAddress = {
+      public: 0x00,
+      random: 0x01,
+      rpa_public: 0x02,
+      rpa_random: 0x03
+    };
+
+    this._CommandScanResultsEvet = {
+      inquiry_result: 0, /*!< Inquiry result for a peer device. */
+      inquiry_complete: 1, /*!< Inquiry complete. */
+      discovery_result: 2, /*!< Discovery result for a peer device. */
+      discovery_ble_result: 3, /*!< Discovery result for BLE GATT based service on a peer device. */
+      discovery_cmoplete: 4, /*!< Discovery complete. */
+      discovery_di_cmoplete: 5, /*!< Discovery complete. */
+      cancelled: 6 /*!< Search cancelled */
+    };
+
+    this._CommandScanResultsBleEvent = {
+      connectable_advertisemnt: 0x00, /*!< Connectable undirected advertising (ADV_IND) */
+      connectable_directed_advertisemnt: 0x01, /*!< Connectable directed advertising (ADV_DIRECT_IND) */
+      scannable_advertising: 0x02, /*!< Scannable undirected advertising (ADV_SCAN_IND) */
+      non_connectable_advertising: 0x03, /*!< Non connectable undirected advertising (ADV_NONCONN_IND) */
+      scan_response: 0x04 /*!< Scan Response (SCAN_RSP) */
+    };
+  }
+
+  setAdvData(data) {
+    this.sendCommand(this._CommandSetAdvData, data);
+  }
+
+  setScanRespData(data) {
+    this.sendCommand(this._CommandSetScanRespData, data);
+  }
+
+  startAdv() {
+    this.sendCommand(this._CommandStartAdv, null);
+  }
+
+  stopAdv() {
+    this.sendCommand(this._CommandStopAdv, null);
+  }
+
+  startScan(_duration) {
+    var buf = new Uint8Array(4);
+    var duration = parseInt(_duration);
+    if (!isNaN(duration)) {
+      buf[0] = duration >> 3 * 8;
+      buf[1] = duration >> 2 * 8;
+      buf[2] = duration >> 1 * 8;
+      buf[3] = duration;
+    }
+    this.sendCommand(this._CommandStartScan, buf);
+  }
+
+  stopScan() {
+    this.sendCommand(this._CommandStopScan, null);
+  }
+  //
+  //  connect(addressBuf) {
+  //    addressBuf[6] = 0;
+  //    this.sendCommand(this._CommandConnect, addressBuf);
+  //  }
+  //
+  //  disconnect(addressBuf) {
+  //    addressBuf[6] = 1;
+  //    this.sendCommand(this._CommandConnect, addressBuf);
+  //  }
+  //  
+  //  getServices(addressBuf){
+  //    this.sendCommand(this._CommandServices, addressBuf);
+  //  }
+
+  parseAdvertisement(val) {
+    if (val === null) {
+      this.stopAdv();
+      return;
+    }
+    if (typeof val !== "object") {
+      return;
+    }
+
+    if (val.adv_data) {
+      this.setAdvData(new Uint8Array(val.adv_data));
+    }
+    if (val.scan_resp) {
+      this.setScanRespData(new Uint8Array(val.scan_resp));
+    }
+
+    this.startAdv();
+  }
+
+  parseScan(val) {
+    if (val === null) {
+      this.sendCommand(this._CommandStopScan, null);
+      return;
+    }
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "duration", length: 4, type: "int", default: 30 }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    this.sendCommand(this._CommandStartScan, buf);
+  }
+
+  parseConnect(val, connect) {
+    if (typeof val !== "object") {
+      return;
+    }
+
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }, { path: null, length: 1, type: "char", default: connect //const val
+    }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandConnect, buf);
+    }
+  }
+
+  parseServices(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandServices, buf);
+    }
+  }
+
+  parseCharacteristics(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "service_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandCharacteristics, buf);
+    }
+  }
+
+  parseWrite(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "needResponse", length: 1, type: "char", default: 1 }, { path: "data", length: null, type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandWriteCharacteristics, buf);
+    }
+  }
+
+  parseRead(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandReadCharacteristics, buf);
+    }
+  }
+
+  parseDescriptors(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandDescriptors, buf);
+    }
+  }
+
+  parseWriteDesc(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "descriptor_uuid", length: 18, type: "uuid", required: true }, { path: "needResponse", length: 1, type: "char", default: 1 }, { path: "data", length: null, type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandWriteDescriptor, buf);
+    }
+  }
+
+  parseReadDesc(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "descriptor_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandReadDescriptor, buf);
+    }
+  }
+
+  parsePeripheral(val) {
+    if (val === undefined) {
+      return;
+    }
+    if (val === null) {
+      this.sendCommand(this._CommandServerStartPeripheral, new Uint8Array([1])); //stop
+      return;
+    }
+    var propFlags = {
+      0x01: "broadcast",
+      0x02: "read",
+      0x04: "write_no_response",
+      0x08: "write",
+      0x10: "notify",
+      0x20: "indiate",
+      0x40: "auth",
+      0x80: "ext_prop"
+    };
+    var schema = {
+      service: {
+        command: this._CommandServerAddService,
+        schema: [{ path: "uuid", length: 18, type: "uuid", required: true }]
+      },
+      characteristic: {
+        command: this._CommandServerAddCharacteristic,
+        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "property", length: 1, type: "flag", default: ["write", "read"], flags: propFlags }, //read and write OK 
+        { path: "data", type: "dataArray" }]
+      },
+      descriptor: {
+        command: this._CommandServerAddDescriptor,
+        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "property", length: 1, type: "flag", default: ["read"], flags: propFlags }, //read OK  
+        { path: "data", type: "dataArray" }]
+      }
+    };
+
+    var sendBufs = [];
+    var buf;
+    for (var serviceIndex in val["services"]) {
+      var service = val["services"][serviceIndex];
+      buf = JsonBinaryConverter.createSendBuffer(schema["service"].schema, service);
+      if (buf.length === 0) {
+        return;
+      }
+      sendBufs.push({ command: schema["service"].command, buffer: buf });
+
+      for (var charaIndex in service["characteristics"]) {
+        var chara = service["characteristics"][charaIndex];
+        chara.service_uuid = service.uuid;
+        buf = JsonBinaryConverter.createSendBuffer(schema["characteristic"].schema, chara);
+        if (buf.length === 0) {
+          return;
+        }
+        sendBufs.push({ command: schema["characteristic"].command, buffer: buf });
+
+        for (var descIndex in chara["descriptors"]) {
+          var desc = chara["descriptors"][descIndex];
+          desc.service_uuid = service.uuid;
+          desc.characteristic_uuid = chara.uuid;
+          buf = JsonBinaryConverter.createSendBuffer(schema["descriptor"].schema, desc);
+          if (buf.length === 0) {
+            return;
+          }
+          sendBufs.push({ command: schema["descriptor"].command, buffer: buf });
+        }
+      }
+    }
+    if (sendBufs.length > 0) {
+      sendBufs.push({ command: this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
+    }
+    for (var index in sendBufs) {
+      this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
+    }
+  }
+
+  parseServerCharWrite(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "data", type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
+    }
+  }
+
+  parseServerCharRead(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
+    }
+  }
+
+  parseServerDescWrite(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "descriptor_uuid", length: 18, type: "uuid", required: true }, { path: "data", type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
+    }
+  }
+
+  parseServerDescRead(val) {
+    if (typeof val !== "object") {
+      return;
+    }
+    var schema = [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "descriptor_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, val);
+    if (buf) {
+      this.sendCommand(this._CommandServerReadDescriptorValue, buf);
+    }
+  }
+
+  parseFromJson(json) {
+
+    try {
+      var ble = json["ble"];
+      if (typeof ble !== "object") {
+        return;
+      }
+
+      this.parseScan(ble["scan"]);
+      this.parseConnect(ble["connect"], false);
+      this.parseConnect(ble["disconnect"], true);
+      this.parseServices(ble["get_services"]);
+      this.parseCharacteristics(ble["get_characteristics"]);
+      this.parseWrite(ble["write_characteristic"]);
+      this.parseRead(ble["read_characteristic"]);
+      this.parseDescriptors(ble["get_descriptors"]);
+      this.parseWriteDesc(ble["write_descriptor"]);
+      this.parseReadDesc(ble["read_descriptor"]);
+
+      this.parseAdvertisement(ble["advertisement"]);
+      this.parsePeripheral(ble["peripheral"]);
+      if (ble["peripheral"]) {
+        this.parseServerCharWrite(ble["peripheral"]["write_characteristic"]);
+        this.parseServerCharRead(ble["peripheral"]["read_characteristic"]);
+        this.parseServerDescWrite(ble["peripheral"]["write_descriptor"]);
+        this.parseServerDescRead(ble["peripheral"]["read_descriptor"]);
+      }
+    } catch (err) {
+      console.log("Error", err);
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    let funcList = {};
+    funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
+    funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
+    funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
+    funcList[this._CommandCharacteristics] = this.notifyFromBinaryChacateristics.bind(this);
+    funcList[this._CommandWriteCharacteristics] = this.notifyFromBinaryWriteChacateristics.bind(this);
+    funcList[this._CommandReadCharacteristics] = this.notifyFromBinaryReadChacateristics.bind(this);
+    funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(this);
+    funcList[this._CommandWriteDescriptor] = this.notifyFromBinaryWriteDescriptor.bind(this);
+    funcList[this._CommandReadDescriptor] = this.notifyFromBinaryReadDescriptor.bind(this);
+
+    funcList[this._CommandServerNotifyConnect] = this.notifyFromBinaryServerConnectionState.bind(this);
+    funcList[this._CommandServerReadCharavteristicValue] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
+    funcList[this._CommandServerWriteCharavteristicValue] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
+    funcList[this._CommandServerNotifyReadCharavteristicValue] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
+    funcList[this._CommandServerNotifyWriteCharavteristicValue] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
+    funcList[this._CommandServerReadDescriptorValue] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
+    funcList[this._CommandServerWriteDescriptorValue] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
+    funcList[this._CommandServerNotifyReadDescriptorValue] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
+    funcList[this._CommandServerNotifyWriteDescriptorValue] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
+
+    funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(this);
+
+    if (funcList[func]) {
+      funcList[func](objToSend, payload);
+    }
+  }
+
+  notifyFromBinaryScanResponse(objToSend, payload) {
+    if (payload.byteLength > 1) {
+
+      var schema = [{ name: "event_type", type: "enum", length: 1, enum: this._CommandScanResultsEvet }, { name: "address", type: "hex", length: 6, endianness: "little" }, { name: "device_type", type: "enum", length: 1, enum: this._CommandScanResultsDevice }, { name: "address_type", type: "enum", length: 1, enum: this._CommandScanResultsDeviceAddress }, { name: "ble_event_type", type: "enum", length: 1, enum: this._CommandScanResultsBleEvent }, { name: "rssi", type: "signed number", length: 4 }, { name: "adv_data", type: "dataArray", length: 31 * 2 }, { name: "flag", type: "number", length: 4 }, { name: "num_response", type: "number", length: 4 }, { name: "advertise_length", type: "number", length: 1 }, { name: "scan_response_length", type: "number", length: 1 }];
+
+      var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+
+      results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
+      results.adv_data = results.adv_data.slice(0, results.advertise_length);
+
+      //      if(results.scan_response_length === 0){
+      //          results.scan_resp = [];
+      //      }else{
+      //        results.scan_resp = results.adv_data.slice(results.advertise_length);
+      //        results.adv_data = results.adv_data.slice(0, results.advertise_length);;
+      //      }
+      delete results.num_response;
+      delete results.advertise_length;
+      delete results.scan_response_length;
+      delete results.advertise_data;
+
+      if (results.event_type === "inquiry_complete") {
+        results = { event_type: "inquiry_complete" };
+      }
+
+      this._addRowForPath(objToSend, "ble.scan_results", results);
+    }
+  }
+
+  notifyFromBinaryConnect(objToSend, payload) {
+    if (payload.length === 7) {
+      var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "status", type: "enum", length: 1, enum: { "connected": 0, "disconnected": 1 } }];
+
+      var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+      this._addRowForPath(objToSend, "ble.status_updates", results);
+    }
+  }
+
+  notifyFromBinaryServices(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.get_service_results", results);
+  }
+
+  notifyFromBinaryChacateristics(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.get_characteristic_results", results);
+  }
+
+  notifyFromBinaryReadChacateristics(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.read_characteristic_results", results);
+  }
+
+  notifyFromBinaryWriteChacateristics(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.write_characteristic_results", results);
+  }
+
+  notifyFromBinaryDescriptors(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: uuidLength }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
+  }
+
+  notifyFromBinaryReadDescriptor(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.read_descriptor_results", results);
+  }
+
+  notifyFromBinaryWriteDescriptor(objToSend, payload) {
+    var uuidLength = 16 + 2;
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: uuidLength }, { name: "characteristic_uuid", type: "uuid", length: uuidLength }, { name: "descriptor_uuid", type: "uuid", length: uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.write_descriptor_results", results);
+  }
+
+  notifyFromBinaryServerConnectionState(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "status", type: "enum", length: 1, enum: { "connected": 1, "disconnected": 0 } }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.connection_status", results);
+  }
+
+  notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_results", results);
+  }
+
+  notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.read_characteristic_results", results);
+  }
+
+  notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_read_characteristics", results);
+  }
+
+  notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_write_characteristics", results);
+  }
+
+  notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.read_descriptor_results", results);
+  }
+
+  notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_results", results);
+  }
+
+  notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_read_descriptors", results);
+  }
+
+  notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_write_descriptors", results);
+  }
+
+  notifyFromBinaryError(objToSend, payload) {
+    var schema = [{ name: "esp_error_code", type: "char", length: 1 }, { name: "error_code", type: "char", length: 1 }, { name: "function_code", type: "char", length: 1 }, { name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+
+    var errorMessage = {
+      0x00: "error",
+      0x01: "device not connected",
+      0x02: "service not found",
+      0x03: "charavteristic not found",
+      0x04: "descriptor not found",
+      0x05: "no permission",
+      0x06: "device not found",
+      0x07: "ble is busy",
+      0x08: "service already running"
+    };
+
+    var functionMessage = {
+      0: "on setting advertisement data",
+      1: "on setting scan response data",
+      2: "on starting advertisement",
+      3: "on stopping advertisement",
+      4: "on starting scan",
+      5: "on stoping scan",
+      6: "",
+      7: "on connecting device",
+      8: "on getting services",
+      9: "on getting characteristic",
+      10: "on writing characteristic",
+      11: "on reading characteristic",
+      14: "on getting descriptor",
+      15: "on writing descriptor",
+      16: "on reading descriptor",
+      20: "on start pheripheral",
+      21: "on notify connect",
+      22: "on adding service",
+      23: "on adding characteristic",
+      24: "on adding descriptor",
+      25: "on writing characteristic",
+      26: "on reading characteristic",
+      27: "on writing characteristic from remote",
+      28: "on reading characteristic from remote",
+      29: "on writing descriptor",
+      30: "on reading descriptor",
+      31: "on writing descriptor from remote",
+      32: "on reading descriptor from remote"
+    };
+
+    results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
+
+    delete results.esp_error_code;
+    delete results.function_code;
+
+    this.envelopError(objToSend, 'ble', results);
+  }
+
+  _addRowForPath(sendObj, path, row) {
+    var keys = path.split('.');
+    var target = sendObj;
+    for (var index = 0; index < keys.length - 1; index++) {
+      target[keys[index]] = target[keys[index]] || {};
+      target = target[keys[index]];
+    }
+    target[keys[keys.length - 1]] = target[keys[keys.length - 1]] || [];
+    target = target[keys[keys.length - 1]];
+    target.push(row);
+  }
+}
+
+class WSCommand_Directive extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 1;
+  }
+
+}
+
+class WSCommand_Display extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 8;
+
+    this._CommandClear = 0;
+    this._CommandPrint = 1;
+    this._CommandDrawCampusVerticalBytes = 2;
+    this._CommandDrawCampusHorizonalBytes = 3;
+    this._CommandDrawIOState = 4;
+    this._CommandSetPinName = 5;
+  }
+
+  // Commands
+
+  clear() {
+    this.sendCommand(this._CommandClear, null);
+  }
+
+  print(buf) {
+    this.sendCommand(this._CommandPrint, buf);
+  }
+
+  printText(text) {
+    var result;
+    if (isNode) {
+      const buf = Buffer(text, 'utf8');
+      result = new Uint8Array(buf);
+    } else if (TextEncoder) {
+      result = new Uint8Array(new TextEncoder("utf-8").encode(data));
+    }
+    this.print(result);
+  }
+
+  drawVertically(buf) {
+    this.sendCommand(this._CommandDrawCampusVerticalBytes, buf);
+  }
+
+  drawHorizonally(buf) {
+    this.sendCommand(this._CommandDrawCampusHorizonalBytes, buf);
+  }
+
+  drawIOState(val) {
+    var buf = new Uint8Array([!val]);
+    this.sendCommand(this._CommandDrawIOState, buf);
+  }
+
+  setPinName(no, moduleName, pinName) {
+    var str = moduleName.slice(0, 4) + " " + pinName;
+    str = str.slice(0, 9);
+
+    var buf = new Uint8Array(1);
+    buf[0] = no;
+
+    var stringarray;
+    if (isNode) {
+      const buf = Buffer(text, 'utf8');
+      stringarray = new Uint8Array(buf);
+    } else if (TextEncoder) {
+      stringarray = new Uint8Array(new TextEncoder("utf-8").encode(data));
+    }
+    var combined = new Uint8Array(buf.length + stringarray.length);
+    combined.set(buf, 0);
+    combined.set(stringarray, 1);
+
+    this.sendCommand(this._CommandSetPinName, combined);
+  }
+
+  parseFromJson(json) {
+    var module = json["display"];
+    if (typeof module != "object") {
+      return;
+    }
+    if (module.clear) {
+      this.clear();
+    }
+    if (typeof module.text == "string") {
+      this.printText(module.text);
+    } else if (module.text) {
+      throw new Error("display: text must be string");
+    }
+    if (module.raw) {
+      if (module.raw.length === 1024) {
+        this.drawHorizonally(new Uint8Array(module.raw));
+      } else {
+        throw new Error("raw should 1024 byte");
+      }
+    }
+    if (typeof module.qr == "object") {
+      this.qr(module.qr.text, module.qr.correction);
+    } else if (module.qr) {
+      throw new Error("display: qr must be object");
+    }
+
+    if (typeof module.pin_assign === "object") {
+      for (var i = 0; i < 12; i++) {
+        if (typeof module.pin_assign[i] === "object") {
+          this.setPinName(i, module.pin_assign[i].module_name || "?", module.pin_assign[i].pin_name || "?");
+        }
+      }
+    }
+  }
+}
+class WSCommand_I2C extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 6;
+
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandWrite = 2;
+    this._CommandRead = 3;
+    this._CommandSlvWritten = 4;
+  }
+
+  // Commands
+
+  init(module, obj) {
+
+    var mode;
+    if (obj.mode === "master") {
+      mode = 0;
+    } else if (obj.mode === "slave") {
+      mode = 1;
+    } else {
+      throw new Error("i2c0 unknown mode");
+      return;
+    }
+
+    var sda = parseInt(obj.sda);
+    var scl = parseInt(obj.scl);
+    if (isNaN(sda) || isNaN(scl)) {
+      throw new Error("i2c: invalid sda/scl. please specify io number.");
+      return;
+    }
+    var clock = 0;
+    if (mode === 0) {
+      clock = parseInt(obj.clock);
+      if (isNaN(clock)) {
+        throw new Error("i2c: invalid clock.");
+        return;
+      }
+      if (clock <= 0 || clock > 1 * 1000 * 1000) {
+        // 0~1Mhz
+        throw new Error("invalid clock frequency. specify 1hz to 1Mhz");
+        return;
+      }
+    }
+
+    var buf = new Uint8Array(mode == 0 ? 8 : 11);
+    buf[0] = module;
+    buf[1] = mode;
+    buf[2] = sda;
+    buf[3] = scl;
+    buf[4] = clock >> 3 * 8;
+    buf[5] = clock >> 2 * 8;
+    buf[6] = clock >> 1 * 8;
+    buf[7] = clock;
+
+    if (mode == 1) {
+      var addressLength = 7;
+      var address = parseInt(obj.slave_address);
+      if (isNaN(address)) {
+        throw new Error("i2c: please specify slave_address");
+        return;
+      }
+      if (address < 0 || address > 0x3FF) {
+        throw new Error("i2c: invalid slave_address");
+        return;
+      }
+      if (obj.slave_address_length === 10 || address > 0x7F) {
+        addressLength = 10;
+      }
+      buf[8] = addressLength;
+      buf[9] = address >> 8;
+      buf[10] = address;
+    }
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array([module]);
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  write(module, address, data) {
+    address = parseInt(address);
+    if (address > 0x7F) {
+      address = address | 0x8000; // mark 10bit mode
+    }
+    if (!data) {
+      throw new Error("please provide data");
+    }
+    if (data.length > 1024) {
+      throw new Error("data should be under 1024 bytes");
+    }
+    var buf = new Uint8Array(3 + data.length);
+    buf[0] = module;
+    buf[1] = address >> 8;
+    buf[2] = address;
+    buf.set(data, 3);
+    this.sendCommand(this._CommandWrite, buf);
+  }
+
+  read(module, address, read_length) {
+    read_length = parseInt(read_length);
+    if (isNaN(read_length) || read_length < 0) {
+      throw new Error("invalid length to read");
+    }
+    if (read_length > 1024) {
+      throw new Error("data length should be under 1024 bytes");
+    }
+    var buf = new Uint8Array(7);
+    buf[0] = module;
+    buf[1] = address >> 8;
+    buf[2] = address;
+    buf[3] = read_length >> 3 * 8;
+    buf[4] = read_length >> 2 * 8;
+    buf[5] = read_length >> 1 * 8;
+    buf[6] = read_length;
+    this.sendCommand(this._CommandRead, buf);
+  }
+
+  parseFromJson(json) {
+    // 0
+    for (var i = 0; i < 1; i++) {
+      var module = json["i2c" + i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      if (typeof module != "object") {
+        continue;
+      }
+      if (typeof module.mode === "string") {
+        if (module.mode === "master" || module.mode === "slave") {
+          this.init(i, module);
+        } else {
+          throw new Error(`i2c: invalid mode ${module.mode}. master/slave is available`);
+        }
+      }
+
+      if (typeof module.address === "number") {
+        var address = parseInt(module.address);
+        if (isNaN(address)) {
+          throw Error("i2c: invalid address " + module.address);
+        }
+        if (module.address_bits === 10) {
+          address = address | 0x8000;
+        }
+        if (module.data) {
+          this.write(i, address, module.data);
+        }
+        if (typeof module.read == "number") {
+          this.read(i, address, module.read);
+        }
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandRead && payload.byteLength > 3) {
+      var module_index = payload[0];
+      var address = (payload[1] << 8) + payload[2];
+
+      var arr = new Array(payload.byteLength - 3);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = payload[i + 3];
+      }
+
+      objToSend["i2c" + module_index] = {
+        mode: "master",
+        address: address,
+        data: arr
+      };
+    } else if (func === this._CommandSlvWritten && payload.byteLength > 4) {
+      var module_index = payload[0];
+      var address_bit_length = payload[1];
+      var address = (payload[2] << 8) + payload[3];
+
+      var arr = new Array(payload.byteLength - 4);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = payload[i + 4];
+      }
+
+      objToSend["i2c" + module_index] = {
+        mode: "slave",
+        is_fragmented: true,
+        address: address,
+        data: arr
+      };
+    }
+  }
+}
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
+const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
+const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4;
+
+const COMMAND_IO_ERROR_MESSAGES = {
+  0: 'unknown error',
+  1: 'heavy output. output voltage is too low when driving high',
+  2: 'heavy output. output voltage is too high when driving low',
+  3: 'output voltage is too low when driving high. io state has changed output to input',
+  4: 'output voltage is too high when driving low. io state has changed output to input'
+};
+
+class WSCommand_IO extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 2;
+
+    this._CommandOutput = 0;
+    this._CommandInputStream = 1;
+    this._CommandInputOnece = 2;
+    this._CommandOutputType = 3;
+    this._CommandPullResisterType = 4;
+  }
+
+  // Commands
+
+  output(id, value) {
+    var buf = new Uint8Array([id, value]);
+    this.sendCommand(this._CommandOutput, buf);
+  }
+
+  input(id, isStream) {
+    var buf = new Uint8Array([id]);
+    this.sendCommand(isStream ? this._CommandInputStream : this._CommandInputOnece, buf);
+  }
+
+  outputtype(id, type) {
+    var buf = new Uint8Array(2);
+    buf[0] = id;
+    if (type === "push-pull5v") {
+      buf[1] = 0;
+    } else if (type === "push-pull3v") {
+      buf[1] = 2;
+    } else if (type === "open-drain") {
+      buf[1] = 3;
+    } else {
+      return "io unknown outputtype: " + type;
+    }
+    this.sendCommand(this._CommandOutputType, buf);
+  }
+
+  pulltype(id, type) {
+    var buf = new Uint8Array(2);
+    buf[0] = id;
+    if (type === "float") {
+      buf[1] = 0;
+    } else if (type === "pull-up3v") {
+      buf[1] = 1;
+    } else if (type === "pull-down") {
+      buf[1] = 2;
+    } else if (type === "pull-up5v") {
+      buf[1] = 3;
+    } else {
+      return "io unknown pull_type: " + type;;
+    }
+    this.sendCommand(this._CommandPullResisterType, buf);
+  }
+
+  parseFromJson(json) {
+    for (var i = 0; i <= 11; i++) {
+      var module = json["io" + i];
+      if (module === null) {
+        // this.direction(i, );
+        continue;
+      }
+      if (typeof module == "object") {
+        if (typeof module.direction == "string") {
+          if (module.direction === "input") {
+            this.input(i, module.stream === true);
+          } else if (module.direction === "output") {
+            this.output(i, module.value ? 1 : 0);
+          } else {
+            // unknwon direction
+            throw new Error("io: unknown direction:" + module.direction);
+          }
+        } else if (module.direction) {
+          // invalid type
+          throw new Error("io: invalid type. io.direction must be string");
+        }
+
+        if (module.output_type) {
+          var err = this.outputtype(i, module.output_type);
+          if (err) {
+            throw new Error(err);
+          }
+        }
+        if (module.pull_type) {
+          var err = this.pulltype(i, module.pull_type);
+          if (err) {
+            throw new Error(err);
+          }
+        }
+        continue;
+      }
+      if (typeof module === "string") {
+        if (module === "get") {
+          this.input(i, false);
+        } else {
+          throw new Error("io: unknown command");
+        }
+      } else if (typeof module === "number") {
+        var value = parseInt(module);
+        this.output(i, value !== 0 ? 1 : 0);
+      } else if (typeof module === "boolean") {
+        this.output(i, module ? 1 : 0);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+
+    let esperr;
+    let module_index;
+    let err;
+    let ref_func_id;
+    let envelopFunc;
+
+    switch (func) {
+      case this._CommandInputStream:
+      case this._CommandInputOnece:
+        for (var i = 0; i < payload.byteLength; i += 2) {
+          objToSend["io" + payload[i]] = payload[i + 1] > 0;
+        }
+        break;
+
+      case this.COMMAND_FUNC_ID_ERROR:
+        esperr = payload[0];
+        err = payload[1];
+        ref_func_id = payload[2];
+        module_index = payload[3];
+
+        switch (err) {
+          case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH:
+            envelopFunc = this.envelopWarning;
+            break;
+          case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW:
+            envelopFunc = this.envelopWarning;
+            break;
+          case COMMAND_IO_ERRORS_IO_TOO_LOW:
+            envelopFunc = this.envelopError;
+            break;
+          case COMMAND_IO_ERRORS_IO_TOO_HIGH:
+            envelopFunc = this.envelopError;
+            break;
+          default:
+            break;
+        }
+        if (envelopFunc) envelopFunc(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
+        break;
+
+      default:
+        // unknown
+        break;
+    }
+  }
+};
+class WSCommand_LogicAnalyzer extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 10;
+
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandRecv = 2;
+  }
+
+  // Commands
+
+  init(io, intervalUsec, durationUsec, matchValue, matchCount) {
+    var buf = new Uint8Array(12);
+    buf[0] = 1;
+    buf[1] = io;
+    buf[2] = intervalUsec >> 8 * 3;
+    buf[3] = intervalUsec >> 8 * 2;
+    buf[4] = intervalUsec >> 8 * 1;
+    buf[5] = intervalUsec;
+    buf[6] = durationUsec >> 8 * 3;
+    buf[7] = durationUsec >> 8 * 2;
+    buf[8] = durationUsec >> 8 * 1;
+    buf[9] = durationUsec;
+    buf[10] = matchValue;
+    buf[11] = matchCount;
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit() {
+    var buf = new Uint8Array(0);
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["logic_analyzer"];
+    if (module === null) {
+      this.deinit();
+      return;
+    }
+    if (typeof module == "object") {
+      if (typeof module.io == "object" && typeof module.io[0] == "number" && typeof module.interval == "number" && typeof (module.duration == "number")) {
+        var intervalUSec = parseInt(module.interval * 1000);
+        if (isNaN(intervalUSec)) {
+          return;
+        }
+        var duration = parseInt(module.duration * 1000);
+        if (isNaN(duration)) {
+          return;
+        }
+        var trigerLevel = 0;
+        var trigerSamples = 0;
+
+        if (module.triger && typeof module.triger == "object") {
+          let triger = module.triger;
+          trigerLevel = triger.value ? 1 : 0;
+          if (typeof triger.samples == "number" && triger.samples > 0 && triger.samples <= 0xFF) {
+            trigerSamples = parseInt(triger.samples);
+          }
+        }
+
+        this.init(module.io[0], intervalUSec, duration, trigerLevel, trigerSamples);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandRecv) {
+      var arr = new Array(payload.byteLength);
+      for (var i = 0; i < payload.byteLength; i++) {
+        arr[i] = payload[i];
+      }
+      objToSend["logic_analyzer"] = {
+        data: arr
+      };
+    }
+  }
+}
+
+class WSCommand_Measurement extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 12;
+
+    this._CommandMeasurementEcho = 0;
+  }
+
+  // Commands
+
+  measureEcho(type, trigerIO, trigerPosNeg, trigerWidthUs, echoIO, responseCount, timeoutUs) {
+    timeoutUs = parseInt(timeoutUs);
+    var buf = new Uint8Array(13);
+    buf[0] = 0;
+    buf[1] = trigerIO;
+    buf[2] = trigerPosNeg ? 1 : 0;
+    buf[3] = trigerWidthUs >> 8 * 3;
+    buf[4] = trigerWidthUs >> 8 * 2;
+    buf[5] = trigerWidthUs >> 8;
+    buf[6] = trigerWidthUs;
+    buf[7] = echoIO;
+    buf[8] = responseCount;
+    buf[9] = timeoutUs >> 8 * 3;
+    buf[10] = timeoutUs >> 8 * 2;
+    buf[11] = timeoutUs >> 8;
+    buf[12] = timeoutUs;
+    this.sendCommand(this._CommandMeasurementEcho, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["measure"];
+    if (!module || typeof module !== "object") {
+      return;
+    }
+    if (module && typeof module.echo === "object") {
+      var obj = module.echo;
+      var io_pulse = parseInt(obj.io_pulse);
+      if (this.isValidIO(io_pulse) == false) {
+        throw new Error("invalid io_pulse " + io_pulse);
+        return;
+      }
+      var io_echo = parseInt(obj.io_echo);
+      if (this.isValidIO(io_echo) == false) {
+        throw new Error("invalid io_echo " + io_echo);
+        return;
+      }
+      var pulse_width = parseInt(obj.pulse_width * 1000);
+      if (typeof pulse_width !== "number" || pulse_width < 1 || pulse_width > 1000000) {
+        throw new Error("invalid pulse_width must be 1usec~1sec");
+        return;
+      }
+      var measure_edges = parseInt(obj.measure_edges);
+      if (typeof measure_edges !== "number" || measure_edges <= 0 || measure_edges > 4) {
+        throw new Error("invalid measure_edges must be 1~4");
+        return;
+      }
+      var timeout = parseInt(obj.timeout * 1000);
+      if (!timeout) {
+        timeout = parseInt(1000000);
+      } else if (typeof timeout !== "number" || timeout < 1 || timeout > 1000000) {
+        throw new Error("invalid measure_edges must be 1usec~1sec");
+        return;
+      }
+      this.measureEcho(0, io_pulse, obj.pulse === "negative" ? false : true, pulse_width, io_echo, measure_edges, timeout);
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandMeasurementEcho) {
+      var index = 0;
+      var count = parseInt(payload[index++]);
+      var array = [];
+      for (var i = 0; i < count; i++) {
+        var timing;
+        var edge = payload[index++] > 0 ? true : false;
+        timing = payload[index++] << 8 * 3;
+        timing += payload[index++] << 8 * 2;
+        timing += payload[index++] << 8;
+        timing += payload[index++];
+        timing = timing / 1000;
+        array.push({
+          edge,
+          timing
+        });
+      }
+      objToSend["measure"] = {
+        echo: array
+      };
+    }
+  }
+}
+class WSCommand_PWM extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 3;
+    this.ModuleNum = 6;
+    this.resetInternalStatus();
+
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandSetFreq = 2;
+    this._CommandSetDuty = 3;
+    this._CommandAMModulate = 4;
+    this._CommandForceWorking = 5;
+  }
+
+  resetInternalStatus() {
+    this.pwms = [];
+    for (var i = 0; i < this.ModuleNum; i++) {
+      this.pwms.push({});
+    }
+  }
+
+  // Commands
+
+  init(module, io) {
+    var buf = new Uint8Array(2);
+    buf[0] = module;
+    buf[1] = io;
+    this.pwms[module].io = io;
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array(1);
+    buf[0] = module;
+    this.pwms[module] = {};
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  setFreq(module, freq) {
+    var buf = new Uint8Array(5);
+    buf[0] = module;
+    buf[1] = freq >> 8 * 3;
+    buf[2] = freq >> 8 * 2;
+    buf[3] = freq >> 8 * 1;
+    buf[4] = freq;
+    this.pwms[module].freq = freq;
+    this.sendCommand(this._CommandSetFreq, buf);
+  }
+
+  setDuty(module, pulseUSec) {
+    var buf = new Uint8Array(5);
+    buf[0] = module;
+    buf[1] = pulseUSec >> 8 * 3;
+    buf[2] = pulseUSec >> 8 * 2;
+    buf[3] = pulseUSec >> 8 * 1;
+    buf[4] = pulseUSec;
+    this.pwms[module].pulseUSec = pulseUSec;
+    this.sendCommand(this._CommandSetDuty, buf);
+  }
+
+  setForceWorking(module, forceWorking) {
+    var buf = new Uint8Array(2);
+    buf[0] = module;
+    buf[1] = forceWorking ? 1 : 0;
+    this.pwms[module].forceWorking = forceWorking;
+    this.sendCommand(this._CommandForceWorking, buf);
+  }
+
+  amModulate(module, symbol_us, data) {
+    var buf = new Uint8Array(5 + data.length);
+    buf[0] = module;
+    buf[1] = symbol_us >> 8 * 3;
+    buf[2] = symbol_us >> 8 * 2;
+    buf[3] = symbol_us >> 8 * 1;
+    buf[4] = symbol_us;
+    for (var i = 0; i < data.length; i++) {
+      buf[5 + i] = data[i];
+    }
+    this.sendCommand(this._CommandAMModulate, buf);
+  }
+
+  parseFromJson(json) {
+    for (var i = 0; i < this.ModuleNum; i++) {
+      var module = json["pwm" + i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      if (typeof module != "object") {
+        continue;
+      }
+      if (typeof module.io == "number") {
+        if (this.isValidIO(module.io)) {
+          this.init(i, module.io);
+        } else {
+          throw new Error("pwm: invalid io number.");
+        }
+      }
+      if (typeof module.freq == "number") {
+        var freq = parseInt(module.freq);
+        if (isNaN(freq)) {
+          throw new Error("pwm: invalid freq value.");
+        }
+        if (freq < 1) {
+          throw new Error("pwm: freq must be 1<=freq. your freq is " + module.freq);
+        }
+        this.setFreq(i, freq);
+      }
+      if (typeof module.pulse === "number") {
+        this.setDuty(i, module.pulse * 1000);
+      }
+      var duty = module.duty;
+      if (typeof duty === "number") {
+        if (this.pwms[i].freq > 0) {
+          // 0 division not acceptable
+          if (duty > 100) duty = 100;else if (duty < 0) duty = 0;
+          var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;
+          this.setDuty(i, pulseUSec);
+        }
+      }
+      if (typeof module.modulate == "object" && module.modulate.type === "am") {
+        var symbol_us = parseInt(module.modulate.symbol_sec * 1000000);
+        if (isNaN(symbol_us)) {
+          continue;
+        }
+        this.amModulate(i, symbol_us, module.modulate.data);
+      }
+      if (typeof module.force_working == "boolean") {
+        this.setForceWorking(i, module.force_working);
+      }
+    }
+  }
+}
+
+class WSCommand_SPI extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 5;
+
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandWriteRead = 2;
+    this._CommandWrite = 3;
+  }
+
+  // Commands
+
+  init(module, obj) {
+
+    var mode;
+    switch (obj.mode) {
+      case "master":
+        mode = 0;
+        break;
+      default:
+        throw new Error("spi: unknown mode");
+        return;
+    }
+
+    let clk = typeof obj.clk == "number" ? parseInt(obj.clk) : null;
+    let mosi = typeof obj.mosi == "number" ? parseInt(obj.mosi) : null;
+    let miso = typeof obj.miso == "number" ? parseInt(obj.miso) : null;
+    let cs = typeof obj.cs == "number" ? parseInt(obj.cs) : null;
+
+    var clock = typeof obj.clock == "number" ? parseInt(obj.clock) : null;
+
+    if (mode === 0) {
+      if (clk === null && mosi === null && miso === null) {
+        throw new Error("spi: master mode require one of clk/mosi/miso");
+        return;
+      }
+      if (!clock) {
+        throw new Error("spi: please provide clock");
+      }
+      if (clock <= 0 || clock > 80 * 1000 * 1000) {
+        // 0~80Mhz
+        throw new Error("spi: clock must be 1 Hz to 80 Mhz");
+        return;
+      }
+    } else {
+      if (clk === null) {
+        throw new Error("spi: slave require clk io");
+        return;
+      }
+      if (cs === null) {
+        throw new Error("spi: slave require cs. please specify io for cs use");
+        return;
+      }
+    }
+
+    if (clk === null) clk = this.ioNotUsed;
+    if (mosi === null) mosi = this.ioNotUsed;
+    if (miso === null) miso = this.ioNotUsed;
+    if (cs === null) cs = this.ioNotUsed;
+
+    var buf = new Uint8Array(mode == 0 ? 11 : 12);
+    buf[0] = module;
+    buf[1] = mode;
+    buf[2] = clk;
+    buf[3] = mosi;
+    buf[4] = miso;
+    buf[5] = this.ioNotUsed; //wp
+    buf[6] = this.ioNotUsed; // hd
+    buf[7] = clock >> 3 * 8;
+    buf[8] = clock >> 2 * 8;
+    buf[9] = clock >> 1 * 8;
+    buf[10] = clock;
+    if (mode === 1) {
+      buf[11] = cs;
+    }
+
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array([module]);
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  writeread(module, data) {
+    var buf = new Uint8Array(1 + data.length);
+    buf[0] = module;
+    buf.set(data, 1);
+    this.sendCommand(this._CommandWriteRead, buf);
+  }
+
+  write(module, data) {
+    var buf = new Uint8Array(1 + data.length);
+    buf[0] = module;
+    buf.set(data, 1);
+    this.sendCommand(this._CommandWrite, buf);
+  }
+
+  parseFromJson(json) {
+    for (var i = 0; i < 2; i++) {
+      var module = json["spi" + i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      if (typeof module != "object") {
+        continue;
+      }
+      if (typeof module.mode === "string") {
+        this.init(i, module);
+      }
+      if (module.data) {
+        if (module.data.length > 32) {
+          throw new Error("spi: data must be <= 32 byte");
+          return;
+        }
+        if (module.read) {
+          this.writeread(i, module.data);
+        } else {
+          this.write(i, module.data);
+        }
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandWriteRead && payload.byteLength > 1) {
+      var module_index = payload[0];
+      var received = payload.slice(1);
+
+      var arr = new Array(payload.byteLength - 1);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = payload[i + 1];
+      }
+      objToSend["spi" + module_index] = {
+        data: arr
+      };
+    }
+  }
+}
+
+class WSCommand_Switch extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 9;
+
+    this._CommandNotifyValue = 0;
+    this._CommandOnece = 1;
+  }
+
+  // Commands
+
+  onece() {
+    var buf = new Uint8Array(0);
+    this.sendCommand(this._CommandOnece, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["switch"];
+    if (typeof module === "string") {
+      if (module === "get") {
+        this.onece();
+      } else {
+        throw new Error("switch: unknown command:" + module);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    var state = parseInt(payload[0]);
+    var states = ["none", "push", "left", "right"];
+    objToSend["switch"] = {
+      state: states[state]
+    };
+    if (func === this._CommandOnece) {
+      objToSend["switch"].action = "get";
+    }
+  }
+}
+class WSCommand_System extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 0;
+
+    this._CommandReboot = 0;
+    this._CommandReset = 2;
+    this._CommandSelfCheck = 3;
+    this._CommandWait = 4;
+    this._CommandResetOnDisconnect = 5;
+  }
+
+  // Commands
+
+  reboot() {
+    this.sendCommand(this._CommandReboot, null);
+  }
+
+  reset() {
+    this.sendCommand(this._CommandReset, null);
+  }
+
+  selfCheck() {
+    this.sendCommand(this._CommandSelfCheck, null);
+  }
+
+  wait(msec) {
+    msec = parseInt(msec);
+    if (isNaN(msec)) {
+      return;
+    }
+    var buf = new Uint8Array([msec >> 8, msec]);
+    this.sendCommand(this._CommandWait, buf);
+  }
+
+  resetOnDisconnect(mustReset) {
+    var buf = new Uint8Array([mustReset ? 1 : 0]);
+    this.sendCommand(this._CommandResetOnDisconnect, buf);
+  }
+
+  parseFromJson(json) {
+    var module = json["system"];
+    if (typeof module == "object") {
+      if (module.reboot) {
+        this.reboot();
+      }
+      if (module.reset) {
+        this.reset();
+      }
+      if (module.self_check) {
+        this.selfCheck();
+      }
+      if (typeof module.wait === "number") {
+        this.wait(module.wait);
+      }
+      if (typeof module.keep_working_at_offline === "boolean") {
+        this.resetOnDisconnect(!module.keep_working_at_offline);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {}
+}
+
+class WSCommand_UART extends WSCommand {
+
+  constructor(delegate) {
+    super(delegate);
+    this.module = 4;
+
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandSend = 2;
+    this._CommandRecv = 3;
+  }
+
+  // Commands
+
+  init(module, obj) {
+    var buf = new Uint8Array(13);
+    buf[0] = module;
+    buf[1] = parseInt(obj.tx);
+    buf[2] = parseInt(obj.rx);
+    if (typeof obj.baud === "number") {
+      var baud = parseInt(obj.baud);
+      if (!isNaN(baud)) {
+        buf[3] = baud >> 3 * 8;
+        buf[4] = baud >> 2 * 8;
+        buf[5] = baud >> 1 * 8;
+        buf[6] = baud;
+      }
+    }
+    if (typeof obj.stop === "number") {
+      if (obj.stop === 1) {
+        buf[7] = 1;
+      } else if (obj.stop === 1.5) {
+        buf[7] = 2;
+      } else if (obj.stop === 2) {
+        buf[7] = 3;
+      } else {
+        // ???
+      }
+    }
+    if (typeof obj.bits === "number") {
+      var bits = parseInt(obj.bits);
+      if (5 <= bits && bits <= 8) {
+        buf[8] = bits;
+      } else {
+        // ???
+      }
+    }
+    if (obj.parity === "even") {
+      buf[9] = 2;
+    } else if (obj.parity === "odd") {
+      buf[9] = 3;
+    }
+    if (obj.flowcontrol === "rts") {
+      buf[10] = 2;
+    } else if (obj.flowcontrol === "cts") {
+      buf[10] = 3;
+    } else if (obj.flowcontrol === "rts-cts") {
+      buf[10] = 4;
+    }
+    if (typeof obj.rts === "number") {
+      buf[11] = parseInt(obj.rts);
+    }
+    if (typeof obj.cts === "number") {
+      buf[12] = parseInt(obj.cts);
+    }
+
+    this.sendCommand(this._CommandInit, buf);
+  }
+
+  deinit(module) {
+    var buf = new Uint8Array(1);
+    buf[0] = module;
+    this.sendCommand(this._CommandDeinit, buf);
+  }
+
+  send(module, data) {
+    var buf = new Uint8Array(1 + data.length);
+    buf[0] = module;
+    buf.set(data, 1);
+    this.sendCommand(this._CommandSend, buf);
+  }
+
+  parseFromJson(json) {
+    // 0~2
+    for (var i = 0; i < 3; i++) {
+      var module = json["uart" + i];
+      if (module === null) {
+        this.deinit(i);
+        continue;
+      }
+      if (typeof module !== "object") {
+        continue;
+      }
+      if (typeof module.tx === "number" && typeof module.rx === "number") {
+        this.init(i, module);
+      }
+      if (module.data) {
+        this.send(i, module.data);
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandRecv && payload.byteLength > 1) {
+      var module_index = payload[0];
+      var arr = new Array(payload.byteLength - 1);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = payload[i + 1];
+      }
+
+      objToSend["uart" + module_index] = {
+        data: arr
+      };
+    }
+  }
+};
+
+class JsonBinaryConverter {
+
+  static convertFromBinaryToJson(schema, binary) {
+    var types = {
+      hex: this.hexFromBinary.bind(this),
+      uuid: this.uuidFromBinary.bind(this),
+      number: this.numberFromBinary.bind(this),
+      "signed number": this.signedNumberFromBinary.bind(this),
+      int: this.numberFromBinary.bind(this),
+      char: this.numberFromBinary.bind(this),
+      enum: this.enumFromBinary.bind(this),
+      dataArray: this.dataArrayFromBinary.bind(this)
+    };
+    var json = {};
+    var count = 0;
+    for (var i = 0; i < schema.length; i++) {
+      var data = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
+      json[schema[i].name] = types[schema[i].type](data, schema[i]);
+
+      if (schema[i].length) {
+        count += schema[i].length;
+      } else {
+        break;
+      }
+    }
+    return json;
+  }
+
+  static hexFromBinary(data, schema) {
+    var str = "";
+    for (var i = 0; i < data.length; i++) {
+      if (schema.endianness && schema.endianness === "little") {
+        str = ("00" + data[i].toString(16)).slice(-2) + str;
+      } else {
+        str = str + ("00" + data[i].toString(16)).slice(-2);
+      }
+    }
+    return str;
+  }
+
+  static uuidFromBinary(data) {
+    var len = data[0] * 16 + data[1];
+    if (len === 0) {
+      return null;
+    }
+    var uuidData = data.slice(2);
+    var str = "";
+    for (var i = 0; i < len; i++) {
+      str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
+    }
+    return str;
+  }
+
+  static signedNumberFromBinary(data, schema) {
+    //big adian
+    var val = data[0] & 0x7F;
+    for (var i = 1; i < data.length; i++) {
+      val = val * 256 + data[i];
+    }
+    if ((data[0] & 0x80) !== 0) {
+      val = val - Math.pow(2, data.length * 8 - 1);
+    }
+    return val;
+  }
+
+  static numberFromBinary(data) {
+    //big adian
+    var val = 0;
+    for (var i = 0; i < data.length; i++) {
+      val = val * 256 + data[i];
+    }
+    return val;
+  }
+
+  static keyForVal(enumvals, val) {
+    return Object.keys(enumvals).filter(function (k) {
+      return enumvals[k] === val;
+    })[0];
+    return undefined;
+  }
+
+  static enumFromBinary(data, schema) {
+    var enumVals = schema.enum;
+    var val = this.numberFromBinary(data);
+    var tmp = this.keyForVal(enumVals, val);
+    if (tmp) {
+      val = tmp;
+    }
+
+    return val;
+  }
+
+  static dataArrayFromBinary(data) {
+    var arr = new Array(data.length);
+    for (var i = 0; i < data.length; i++) {
+      arr[i] = data[i];
+    }
+    return arr;
+  }
+
+  static createSendBuffer(schema, data) {
+    var array = [];
+    for (var i = 0; i < schema.length; i++) {
+      var schemaRow = schema[i];
+
+      var row = undefined;
+      if (Array.isArray(schemaRow)) {
+        for (var key in schemaRow) {
+          var customSchemaRow = Object.assign({}, schemaRow[key], { required: true });
+          row = this.analyzeSchema(data, customSchemaRow);
+          if (row) {
+            break;
+          }
+        }
+      } else {
+        row = this.analyzeSchema(data, schemaRow);
+      }
+
+      Array.prototype.push.apply(array, row);
+    }
+    return new Uint8Array(array);
+  }
+
+  static analyzeSchema(allData, schemaRow) {
+    var types = {
+      hex: this.hexToBinary.bind(this),
+      uuid: this.uuidToBinary.bind(this),
+      int: this.intToBinary.bind(this),
+      char: this.charToBinary.bind(this),
+      dataArray: this.dataArrayToBinary.bind(this),
+      enum: this.enumToBinary.bind(this),
+      string: this.stringToBinary.bind(this),
+      text: this.stringToBinary.bind(this),
+      flag: this.flagToBinary.bind(this)
+    };
+
+    var val = undefined;
+    if (schemaRow.path) {
+      val = this.getProperty(allData, schemaRow.path);
+    }
+    if (val === undefined && schemaRow.required) {
+      return null;
+    }
+    if (val === undefined && schemaRow.default) {
+      val = schemaRow.default;
+    }
+
+    var row = types[schemaRow.type](val, schemaRow);
+
+    if (schemaRow.length && row.length !== schemaRow.length) {
+      console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
+    }
+
+    return row;
+  }
+
+  static getProperty(object, path) {
+    if (path === "" || path === undefined) {
+      return object;
+    }
+    if (typeof path === 'string') path = path.split('.');
+    if (!Array.isArray(path)) path = [path];
+
+    var index = 0,
+        length = path.length;
+
+    while (index < length) {
+      object = object[path[index++]];
+      if (object === undefined) {
+        return undefined;
+      }
+    }
+    return index && index === length ? object : undefined;
+  }
+
+  static hexToBinary(data, schema) {
+    var array = [];
+    var hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    for (var i = 0; i < hex.length / 2; i++) {
+      array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+    }
+    if (schema && schema.endianness && schema.endianness === "little") {
+      array.reverse();
+    }
+    return array;
+  }
+
+  static intToBinary(data) {
+    var array = [];
+    array[0] = data >> 8 * 3 & 0xFF;
+    array[1] = data >> 8 * 2 & 0xFF;
+    array[2] = data >> 8 * 1 & 0xFF;
+    array[3] = data >> 8 * 0 & 0xFF;
+    return array;
+  }
+
+  static charToBinary(data) {
+    var array = [];
+    array[0] = data & 0xFF;
+    return array;
+  }
+
+  static dataArrayToBinary(data) {
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+    return data;
+  }
+  static uuidToBinary(data) {
+
+    var uuid = this.hexToBinary(data);
+    uuid.reverse(); //big endianness -> little endianness;
+    var length = uuid.length;
+
+    var array = [];
+
+    array[0] = length >> 8 * 1 & 0xFF;
+    array[1] = length >> 8 * 0 & 0xFF;
+
+    Array.prototype.push.apply(array, uuid);
+    for (var i = array.length; i < 16 + 2; i++) {
+      array[i] = 0;
+    }
+
+    return array;
+  }
+
+  static enumToBinary(data, schema) {
+    var array = [];
+    array.push(schema.enum[data]);
+    return array;
+  }
+
+  static flagToBinary(data, schema) {
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+    var flags = schema.flags;
+    var value = 0;
+    for (var key in flags) {
+      if (data.includes(flags[key])) {
+        value += parseInt(key);
+      }
+    }
+    return [value];
+  }
+
+  static stringToBinary(data) {
+    var array = [];
+    if (isNode) {
+      return new Uint8Array(Buffer(data, 'utf8'));
+    } else if (TextEncoder) {
+      return new Uint8Array(new TextEncoder("utf-8").encode(data));
     }
   }
 }
