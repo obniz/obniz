@@ -27,18 +27,20 @@ class WSCommand_Switch extends WSCommand {
   }
   
   notifyFromBinary(objToSend, func, payload) {
-    var state = parseInt(payload[0]);
-    var states = [
-      "none",
-      "push",
-      "left",
-      "right"
-    ]
-    objToSend["switch"] = {
-      state: states[state]
-    };
     if (func === this._CommandOnece) {
+      var state = parseInt(payload[0]);
+      var states = [
+        "none",
+        "push",
+        "left",
+        "right"
+      ]
+      objToSend["switch"] = {
+        state: states[state]
+      };
       objToSend["switch"].action = "get"
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }

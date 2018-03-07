@@ -74,6 +74,8 @@ class WSCommand_LogicAnalyzer extends WSCommand {
       objToSend["logic_analyzer"] = {
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }

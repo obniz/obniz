@@ -24,10 +24,10 @@ class WSCommand_SPI extends WSCommand {
         return;
     }
 
-    let clk  = (typeof obj.clk  == "number") ? parseInt(obj.clk)  : null;
-    let mosi = (typeof obj.mosi == "number") ? parseInt(obj.mosi) : null;
-    let miso = (typeof obj.miso == "number") ? parseInt(obj.miso) : null;
-    let cs   = (typeof obj.cs   == "number") ? parseInt(obj.cs)   : null;
+    let clk  = this.isValidIO(obj.clk) ? parseInt(obj.clk)  : null;
+    let mosi = this.isValidIO(obj.mosi) ? parseInt(obj.mosi) : null;
+    let miso = this.isValidIO(obj.miso) ? parseInt(obj.miso) : null;
+    let cs   = this.isValidIO(obj.cs) ? parseInt(obj.cs)   : null;
 
     var clock = (typeof obj.clock == "number") ? parseInt(obj.clock): null;
 
@@ -136,6 +136,8 @@ class WSCommand_SPI extends WSCommand {
       objToSend["spi"+module_index] = {
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }

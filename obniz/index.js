@@ -99,6 +99,12 @@ class Obniz {
         var msg = "Error: " + obj.debug.error;
         this.error(msg);
       }
+      if (obj.debug.errors) {
+        for (var i=0; i<obj.debug.errors.length; i++) {
+          var msg = "Error: " + obj.debug.errors[i].message;
+          this.error(msg);
+        }
+      }
       if (this.ondebug) {
         this.ondebug(obj.debug);
       }
@@ -288,10 +294,15 @@ class Obniz {
     this.print_debug("send: " + sendData);
     /* compress */
     if (this.wscommand) {
-      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
-      if (compressed) {
-        sendData = compressed;
-        this.print_debug("compressed: " + sendData);
+      var compressed;
+      try {
+        this.wscommand.compress(this.wscommands, JSON.parse(sendData));
+        if (compressed) {
+          sendData = compressed;
+          this.print_debug("compressed: " + sendData);
+        }
+      } catch(e) {
+        this.error(e);
       }
     }
     if (true) {

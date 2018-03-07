@@ -100,6 +100,12 @@ class Obniz {
         var msg = "Error: " + obj.debug.error;
         this.error(msg);
       }
+      if (obj.debug.errors) {
+        for (var i=0; i<obj.debug.errors.length; i++) {
+          var msg = "Error: " + obj.debug.errors[i].message;
+          this.error(msg);
+        }
+      }
       if (this.ondebug) {
         this.ondebug(obj.debug);
       }
@@ -289,10 +295,15 @@ class Obniz {
     this.print_debug("send: " + sendData);
     /* compress */
     if (this.wscommand) {
-      var compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
-      if (compressed) {
-        sendData = compressed;
-        this.print_debug("compressed: " + sendData);
+      var compressed;
+      try {
+        this.wscommand.compress(this.wscommands, JSON.parse(sendData));
+        if (compressed) {
+          sendData = compressed;
+          this.print_debug("compressed: " + sendData);
+        }
+      } catch(e) {
+        this.error(e);
       }
     }
     if (true) {
@@ -2972,7 +2983,28 @@ class WSCommand {
   }
 
   notifyFromBinary(objToSend, func, payload) {
-    
+
+    switch(func) {
+      case this.COMMAND_FUNC_ID_ERROR:
+        if (!objToSend.debug) objToSend.debug = {};
+        if (!objToSend.debug.errors) objToSend.debug.errors = [];
+        var err = {
+          module: this.module,
+          _args: [... payload]
+        };
+        err.message = "Error at " + this.module + " with " + err._args;
+        if (payload.byteLength == 3) {
+          err.err0 = payload[0];
+          err.err1 = payload[1];
+          err.function = payload[2];
+        }
+        objToSend.debug.errors.push(err)
+        break;
+
+      default:
+        // unknown
+        break;
+    }
   }
 
   envelopWarning(objToSend, module_key, obj) {
@@ -3052,6 +3084,8 @@ class WSCommand_AD extends WSCommand {
         value = value / 100.0;
         objToSend["ad"+payload[i]] = value;
       }
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
@@ -3999,7 +4033,7 @@ class WSCommand_I2C extends WSCommand {
 
     var sda = parseInt(obj.sda);
     var scl = parseInt(obj.scl);
-    if (isNaN(sda) || isNaN(scl)) {
+    if (this.isValidIO(sda) == false || this.isValidIO(scl) == false) {
       throw new Error("i2c: invalid sda/scl. please specify io number.")
       return;
     }
@@ -4158,6 +4192,8 @@ class WSCommand_I2C extends WSCommand {
         address: address,
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
@@ -4299,29 +4335,34 @@ class WSCommand_IO extends WSCommand {
         break;
 
       case this.COMMAND_FUNC_ID_ERROR:
-        esperr = payload[0];
-        err = payload[1];
-        ref_func_id = payload[2];
-        module_index = payload[3];
-
-        switch(err) {
-          case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH:
-            envelopFunc = this.envelopWarning;
-            break;
-          case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW:
-            envelopFunc = this.envelopWarning;
-            break;
-          case COMMAND_IO_ERRORS_IO_TOO_LOW:
-            envelopFunc = this.envelopError;
-            break;
-          case COMMAND_IO_ERRORS_IO_TOO_HIGH:
-            envelopFunc = this.envelopError;
-            break;
-          default:
-            break;
+        if (payload.byteLength == 4) {
+          esperr = payload[0];
+          err = payload[1];
+          ref_func_id = payload[2];
+          module_index = payload[3];
+  
+          switch(err) {
+            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH:
+              envelopFunc = this.envelopWarning;
+              break;
+            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW:
+              envelopFunc = this.envelopWarning;
+              break;
+            case COMMAND_IO_ERRORS_IO_TOO_LOW:
+              envelopFunc = this.envelopError;
+              break;
+            case COMMAND_IO_ERRORS_IO_TOO_HIGH:
+              envelopFunc = this.envelopError;
+              break;
+            default:
+              super.notifyFromBinary(objToSend, func, payload);
+              break;
+          }
+          if (envelopFunc)
+            envelopFunc(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
+        } else {
+          super.notifyFromBinary(objToSend, func, payload);
         }
-        if (envelopFunc)
-          envelopFunc(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
         break;
 
       default:
@@ -4406,6 +4447,8 @@ class WSCommand_LogicAnalyzer extends WSCommand {
       objToSend["logic_analyzer"] = {
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
@@ -4499,6 +4542,8 @@ class WSCommand_Measurement extends WSCommand {
       objToSend["measure"] = {
         echo: array
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
@@ -4608,8 +4653,8 @@ class WSCommand_PWM extends WSCommand {
         if(isNaN(freq)) {
           throw new Error("pwm: invalid freq value.");
         }
-        if (freq < 1)  {
-          throw new Error("pwm: freq must be 1<=freq. your freq is "+module.freq);
+        if (freq < 1 || freq < 80 * 1000 * 1000)  {
+          throw new Error("pwm: freq must be 1<=freq<=80M. your freq is "+module.freq);
         }
         this.setFreq(i, freq);
       }
@@ -4622,6 +4667,7 @@ class WSCommand_PWM extends WSCommand {
           if (duty > 100) duty = 100;
           else if (duty < 0) duty = 0;
           var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;
+          pulseUSec = parseInt(pulseUSec);
           this.setDuty(i, pulseUSec);
         }
       }
@@ -4665,10 +4711,10 @@ class WSCommand_SPI extends WSCommand {
         return;
     }
 
-    let clk  = (typeof obj.clk  == "number") ? parseInt(obj.clk)  : null;
-    let mosi = (typeof obj.mosi == "number") ? parseInt(obj.mosi) : null;
-    let miso = (typeof obj.miso == "number") ? parseInt(obj.miso) : null;
-    let cs   = (typeof obj.cs   == "number") ? parseInt(obj.cs)   : null;
+    let clk  = this.isValidIO(obj.clk) ? parseInt(obj.clk)  : null;
+    let mosi = this.isValidIO(obj.mosi) ? parseInt(obj.mosi) : null;
+    let miso = this.isValidIO(obj.miso) ? parseInt(obj.miso) : null;
+    let cs   = this.isValidIO(obj.cs) ? parseInt(obj.cs)   : null;
 
     var clock = (typeof obj.clock == "number") ? parseInt(obj.clock): null;
 
@@ -4777,6 +4823,8 @@ class WSCommand_SPI extends WSCommand {
       objToSend["spi"+module_index] = {
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
@@ -4810,18 +4858,20 @@ class WSCommand_Switch extends WSCommand {
   }
   
   notifyFromBinary(objToSend, func, payload) {
-    var state = parseInt(payload[0]);
-    var states = [
-      "none",
-      "push",
-      "left",
-      "right"
-    ]
-    objToSend["switch"] = {
-      state: states[state]
-    };
     if (func === this._CommandOnece) {
+      var state = parseInt(payload[0]);
+      var states = [
+        "none",
+        "push",
+        "left",
+        "right"
+      ]
+      objToSend["switch"] = {
+        state: states[state]
+      };
       objToSend["switch"].action = "get"
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
@@ -4855,7 +4905,7 @@ class WSCommand_System extends WSCommand {
   wait(msec) {
     msec = parseInt(msec);
     if(isNaN(msec)) {
-      return;
+      throw new Error("invalid wait time");
     }
     var buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
@@ -4885,10 +4935,6 @@ class WSCommand_System extends WSCommand {
         this.resetOnDisconnect(!module.keep_working_at_offline);
       }
     }
-  }
-
-  notifyFromBinary(objToSend, func, payload) {
-
   }
 }
 
@@ -5005,6 +5051,8 @@ class WSCommand_UART extends WSCommand {
       objToSend["uart"+module_index] = {
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 };

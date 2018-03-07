@@ -87,6 +87,8 @@ class WSCommand_Measurement extends WSCommand {
       objToSend["measure"] = {
         echo: array
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
