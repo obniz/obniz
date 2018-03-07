@@ -649,8 +649,8 @@ if (!isNode) {
   }
   function showObnizDebugError(err) {
     if(window.parent && window.parent.logger){
-      window.parent.logger.addErrorObject(err);
-    }else{ throw err; };
+      window.parent.logger.onObnizError(err);
+    }else{ throw err; }; 
   }
 }
 
