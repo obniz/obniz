@@ -1,22 +1,26 @@
-# Temperature Sensor - S-8120C
-※正しく動作しません！考えられる原因はjsに書きました
-温度センサS-8120Cです。センサで取得した温度を知ることができます。
+# Temperature Sensor - S8120C
+
+
+
+
+
+![photo of AnalogTempratureSensor](./wired.png)
+
+
 
 ## wired(obniz, {vcc, output, gnd})
 Obnizに温度センサをつなぎます。
-0,1,2はそれぞれ温度センサの電源,GND,センサ出力へ接続してください。
 ```javascript
-var tempsens = obniz.wired("S8120C",  {vcc:0, gnd:1, output:2});
+var tempsens = obniz.wired("S8120C",  { gnd:0 , output:1, vcc:2});
 ```
 
 ## onchange
 温度センサの値に変化があった場合にcallback関数を呼び出します。
 温度は摂氏で返されます。
-
-
 ```javascript
-var tempsens = obniz.wired("S8120C", {vcc:0, gnd:1, output:2});
+var tempsens = obniz.wired("S8120C",  { gnd:0 , output:1, vcc:2});
 tempsens.onchange = function(temp){
-  console.log(temp)
+  console.log(temp);
 };
 ```
+ 

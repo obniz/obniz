@@ -1,19 +1,27 @@
 # Temperature Sensor - MCP9701
 
 
-## wired(obniz, {vcc, output, gnd})
 
+
+![photo of AnalogTempratureSensor](./wired.png)
+
+
+
+
+## wired(obniz, {vcc, gnd, output})
 ```javascript
-var tempsens = obniz.wired("MCP9701", {vcc:0, output:1, gnd:2});
+var tempsens = obniz.wired("MCP9701", { gnd:0 , output:1, vcc:2});
 ```
 
 ## onchange
-callback function for temperature change
-Unit is Celsius.
+callback function for temperature change.
+Unit of temp is Celsius
 
 ```javascript
-var tempsens = obniz.wired("MCP9701", {vcc:0, output:1, gnd:2});
+var tempsens = obniz.wired("MCP9701",   { gnd:0 , output:1, vcc:2});
 tempsens.onchange = function(temp){
-  console.log(temp);
+console.log(temp)
 };
 ```
+ 
+

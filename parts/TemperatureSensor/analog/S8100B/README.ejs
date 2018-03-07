@@ -1,0 +1,15 @@
+# Temperature Sensor - S8100B
+インピーダンスがない？
+
+<%
+param = {
+    partname: "S8100B",
+    pins : {
+        vcc : 0,
+        gnd : 1,
+        output : 2
+    }
+
+}; %>
+<%- include('../analogTemperatureSensor', param); %> 
+
