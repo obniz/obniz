@@ -7,7 +7,7 @@ a to g is 7 segment's io.
 dp is deciminal point.
 commonType must be "anode"/"cathode". default is "cathode".
 
-![photo of wired XBee](./wired.png)
+![photo of wired](./wired.png)
 
 ```javascript
 var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});

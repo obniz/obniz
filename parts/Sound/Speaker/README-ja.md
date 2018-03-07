@@ -4,6 +4,9 @@
 
 ## wired(obniz , {signal. gnd} )
 スピーカーに接続します。プラスとマイナスがある場合はマイナスをgndの方に指定して下さい。
+
+![](./wired.png)
+
 ```Javascript
 var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
 ```

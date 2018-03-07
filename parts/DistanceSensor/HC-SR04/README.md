@@ -4,6 +4,7 @@ Ultrasonic Distance Measurement Unit.
 
 ## wired(obniz, {vcc, triger, echo, gnd})
 
+![photo of wired](./wired.png)
 ```javascript
   // Example
   var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, triger:2, vcc:3});

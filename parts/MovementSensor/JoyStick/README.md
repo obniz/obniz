@@ -7,15 +7,16 @@ sw: スイッチ
 x: x軸のアナログ値出力  
 y: y軸のアナログ値出力  
 へ接続して下さい
+![photo of wired](./wired.png)
 ```Javascript
-var joystick = obniz.wired("JoyStick", {sw:0, x:1, y:2, vcc:3, gnd:4});
+var joystick = obniz.wired("JoyStick", {gnd:0, sw:1, y:2, x:3, vcc:4});
 
 ```
 ## onchangex(callback)
 ## onchangey(callback)
 それぞれX軸，Y軸方向へ動いた場合に呼ばれる関数を指定できます。
 ```Javascript
-var joystick = obniz.wired("JoyStick", {sw:0, x:1, y:2, vcc:3, gnd:4});
+var joystick = obniz.wired("JoyStick",  {gnd:0, sw:1, y:2, x:3, vcc:4});
 joystick.onchangex = function(val){
   console.log(val);
 };
@@ -28,7 +29,7 @@ joystick.onchangey = function(val){
 ## onchangesw(callback)
 ボタンが押されたり離された時に呼ばれます。
 ```Javascript
-var joystick = obniz.wired("JoyStick", {sw:0, x:1, y:2, vcc:3, gnd:4});
+var joystick = obniz.wired("JoyStick", {gnd:0, sw:1, y:2, x:3, vcc:4});
 joystick.onchangesw = function(pressed){
   console.log(pressed);
 };

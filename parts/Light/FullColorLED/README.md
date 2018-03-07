@@ -5,6 +5,8 @@
 r,g,b,common is pin no of obniz io.
 common_type is LED common type : anode_common or cathode_common
 
+![](./wired.png)
+
 ```Javascript
 var led = obniz.wired("FullColorLED", {r: 3, g:0, b:1, common:2, commonType:'anode_common'}); 
 ```

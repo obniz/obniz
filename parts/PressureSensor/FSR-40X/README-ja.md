@@ -4,6 +4,8 @@
 ## wired(obniz, {pin0, pin1})
 Obnizに圧力センサをつなぎます。
 pin0,pin1を圧力センサへ接続してください。
+
+![](./wired.png)
 ```javascript
 var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
 ```
