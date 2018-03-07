@@ -125,7 +125,6 @@ function build() {
     }
   }
   lsJs(obnizlibPath);
-  console.log(libpaths);
 
   //parts
   var partsPath = path.join(__dirname, '../parts')

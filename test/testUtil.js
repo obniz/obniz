@@ -50,7 +50,7 @@ var testUtil = {
   },
 
   createObniz: function (port, obnizId) {
-    return new Obniz(obnizId, {obniz_server: "ws://localhost:" + port});
+    return new Obniz(obnizId, {obniz_server: "ws://localhost:" + port, binary: false});
   },
 
   setupObnizPromise: function (obj, done ) {
