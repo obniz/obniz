@@ -104,8 +104,8 @@ class WSCommand_PWM extends WSCommand {
         if(isNaN(freq)) {
           throw new Error("pwm: invalid freq value.");
         }
-        if (freq < 1)  {
-          throw new Error("pwm: freq must be 1<=freq. your freq is "+module.freq);
+        if (freq < 1 || freq < 80 * 1000 * 1000)  {
+          throw new Error("pwm: freq must be 1<=freq<=80M. your freq is "+module.freq);
         }
         this.setFreq(i, freq);
       }
@@ -118,6 +118,7 @@ class WSCommand_PWM extends WSCommand {
           if (duty > 100) duty = 100;
           else if (duty < 0) duty = 0;
           var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;
+          pulseUSec = parseInt(pulseUSec);
           this.setDuty(i, pulseUSec);
         }
       }

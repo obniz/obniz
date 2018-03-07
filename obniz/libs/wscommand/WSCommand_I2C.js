@@ -27,7 +27,7 @@ class WSCommand_I2C extends WSCommand {
 
     var sda = parseInt(obj.sda);
     var scl = parseInt(obj.scl);
-    if (isNaN(sda) || isNaN(scl)) {
+    if (this.isValidIO(sda) == false || this.isValidIO(scl) == false) {
       throw new Error("i2c: invalid sda/scl. please specify io number.")
       return;
     }
@@ -186,6 +186,8 @@ class WSCommand_I2C extends WSCommand {
         address: address,
         data: arr
       };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload)
     }
   }
 }
