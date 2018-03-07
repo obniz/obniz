@@ -1,4 +1,4 @@
-var _obniz_js_version = "0.1.26";
+var _obniz_js_version = "0.1.27";
 /* global showObnizDebugError */
 
 var isNode = (typeof window === 'undefined') ? true : false;
@@ -3923,10 +3923,10 @@ class WSCommand_Display extends WSCommand {
 
     var stringarray;
     if (isNode) {
-      const buf = Buffer(text, 'utf8');
+      const buf = Buffer(str, 'utf8');
       stringarray = new Uint8Array(buf);
     } else if(TextEncoder){
-      stringarray = new Uint8Array(new TextEncoder("utf-8").encode(data));
+      stringarray = new Uint8Array(new TextEncoder("utf-8").encode(str));
     }
     var combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
