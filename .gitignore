@@ -6,3 +6,7 @@ node_modules
 coverage
 test/**/*.html
 
+.idea/modules.xml
+.idea/obnizjs.iml
+.idea/vcs.xml
+.idea/workspace.xml
