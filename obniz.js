@@ -236,6 +236,7 @@ class Obniz {
 
   close() {
     if (this.socket) {
+      this._drainQueued();
       this.socket.close(1000, 'close');
       this.clearSocket(this.socket);
     }
