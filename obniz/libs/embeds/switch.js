@@ -13,10 +13,10 @@ class ObnizSwitch {
   }
 
   getWait() {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject){
-      var obj = {};
-      obj["switch"] = "get";
+      let obj = {};
+      obj["switch"] = "get"
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });
@@ -27,7 +27,7 @@ class ObnizSwitch {
     if (this.onchange) {
       this.onchange(this.state);
     }
-    var callback = this.observers.shift();
+    const callback = this.observers.shift();
     if (callback) {
       callback(this.state);
     }

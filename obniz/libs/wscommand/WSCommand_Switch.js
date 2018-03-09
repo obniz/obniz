@@ -21,13 +21,13 @@ class WSCommand_Switch extends WSCommand {
       if (module === "get") {
         this.onece();
       } else {
-        throw new Error("switch: unknown command:"+module)
+        throw new Error("switch: unknown action:"+module)
       }
     }
   }
   
   notifyFromBinary(objToSend, func, payload) {
-    if (func === this._CommandNotifyValue && payload.byteLength == 1) {
+    if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength == 1) {
       var state = parseInt(payload[0]);
       var states = [
         "none",
@@ -38,7 +38,9 @@ class WSCommand_Switch extends WSCommand {
       objToSend["switch"] = {
         state: states[state]
       };
-      objToSend["switch"].action = "get"
+      if (func === this._CommandOnece) {
+        objToSend["switch"].action = "get"
+      }
     } else {
       super.notifyFromBinary(objToSend, func, payload)
     }

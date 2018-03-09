@@ -295,9 +295,9 @@ class Obniz {
     this.print_debug("send: " + sendData);
     /* compress */
     if (this.wscommand) {
-      var compressed;
+      let compressed;
       try {
-        this.wscommand.compress(this.wscommands, JSON.parse(sendData));
+        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
         if (compressed) {
           sendData = compressed;
           this.print_debug("compressed: " + sendData);
