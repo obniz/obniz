@@ -4495,7 +4495,7 @@ class WSCommand_PWM extends WSCommand {
         if (isNaN(freq)) {
           throw new Error("pwm: invalid freq value.");
         }
-        if (freq < 1 || freq < 80 * 1000 * 1000) {
+        if (freq < 1 || 80 * 1000 * 1000 < freq) {
           throw new Error("pwm: freq must be 1<=freq<=80M. your freq is " + module.freq);
         }
         this.setFreq(i, freq);
