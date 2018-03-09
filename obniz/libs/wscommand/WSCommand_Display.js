@@ -28,7 +28,7 @@ class WSCommand_Display extends WSCommand {
       const buf = Buffer(text, 'utf8');
       result = new Uint8Array(buf);
     } else if(TextEncoder){
-      result = new Uint8Array(new TextEncoder("utf-8").encode(data));
+      result = new Uint8Array(new TextEncoder("utf-8").encode(text));
     }
     this.print(result);
   }
