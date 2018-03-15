@@ -1879,8 +1879,15 @@ class Display {
       }
       this._canvas = canvas;
     }
-    this.clear();
-    this.font('Arial', 16);
+    const ctx = this._canvas.getContext("2d");;
+    ctx.fillStyle='#000'
+    ctx.fillRect(0, 0, this.width, this.height);
+    ctx.fillStyle='#FFF';
+    ctx.strokeStyle='#FFF';
+    this._pos.x = 0;
+    this._pos.y = 0;
+    this.fontSize = 16;
+    ctx.font = `${this.fontSize}px Arial`
     return this._canvas;
   }
 
