@@ -24,7 +24,7 @@ ctx.font = "9px sans-serif";
 ctx.fillText('Helloこんにちは', 0, 7);
 
 // draw canvas context to matrix
-matrix.drawCanvasContext(ctx);
+matrix.draw(ctx);
 ```
 
 ## wired(obniz,  { clk, cs, din, gnd, vcc});
@@ -58,7 +58,7 @@ matrix.init(8*2, 8);
 matrix.brightness(7);
 ```
 
-## drawCanvasContext(ctx)
+## draw(ctx)
 In html5, Canvas is avaiable to draw.
 pass canpas context to this function to show it on matrix
 
@@ -77,7 +77,7 @@ ctx.fillStyle = "white";
 ctx.font = "9px sans-serif";
 ctx.fillText('Helloこんにちは', 0, 7);
 
-matrix.drawCanvasContext(ctx);
+matrix.draw(ctx);
 ```
 
 ## clear()

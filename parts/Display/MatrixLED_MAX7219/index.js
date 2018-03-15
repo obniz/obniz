@@ -104,7 +104,7 @@ class MatrixLED_MAX7219 {
     }
   }
 
-  drawCanvasContext(ctx) {
+  draw(ctx) {
     if (isNode) {
       // TODO:
       throw new Error("node js mode is under working.");
