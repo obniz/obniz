@@ -19,8 +19,6 @@ DCMotor.prototype.wired = function(obniz) {
   this.pwm2.start(this.pwm2_io_num);
   this.pwm2.freq(100000);
   this.power(30);
-  this.pwm1.forceWorking(true);
-  this.pwm2.forceWorking(true);
 };
 
 // Module functions

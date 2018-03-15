@@ -2550,14 +2550,6 @@ class PeripheralPWM {
     });
   }
 
-  forceWorking(working) {
-    var obj = {};
-    this.state.forceWorking = working;
-    this.sendWS({
-      force_working: working
-    });
-  }
-
   isUsed() {
     return this.used;
   }
@@ -4687,13 +4679,11 @@ class WSCommand_PWM extends WSCommand {
     this.ModuleNum = 6;
     this.resetInternalStatus();
 
-
     this._CommandInit     = 0
     this._CommandDeinit   = 1
     this._CommandSetFreq  = 2
     this._CommandSetDuty  = 3
     this._CommandAMModulate = 4
-    this._CommandForceWorking = 5
   }
 
   resetInternalStatus() {
@@ -4740,14 +4730,6 @@ class WSCommand_PWM extends WSCommand {
     buf[4] = pulseUSec;
     this.pwms[module].pulseUSec = pulseUSec;
     this.sendCommand(this._CommandSetDuty, buf);
-  }
-
-  setForceWorking(module, forceWorking) {
-    var buf = new Uint8Array(2);
-    buf[0] = module;
-    buf[1] = forceWorking ? 1 : 0;
-    this.pwms[module].forceWorking = forceWorking;
-    this.sendCommand(this._CommandForceWorking, buf);
   }
 
   amModulate(module, symbol_us, data) {
@@ -4809,9 +4791,6 @@ class WSCommand_PWM extends WSCommand {
           continue;
         }
         this.amModulate(i, symbol_us, module.modulate.data);
-      }
-      if (typeof module.force_working == "boolean") {
-        this.setForceWorking(i, module.force_working);
       }
     }
   }
@@ -6973,8 +6952,6 @@ DCMotor.prototype.wired = function(obniz) {
   this.pwm2.start(this.pwm2_io_num);
   this.pwm2.freq(100000);
   this.power(30);
-  this.pwm1.forceWorking(true);
-  this.pwm2.forceWorking(true);
 };
 
 // Module functions

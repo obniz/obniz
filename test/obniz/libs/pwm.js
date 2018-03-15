@@ -102,22 +102,6 @@ describe("obniz.libs.pwm", function () {
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
   
-  
-  it("force working",  function () {
-    var pwm = this.obniz.getFreePwm();
-    pwm.start(9); 
-    expect(this.obniz).send({pwm0:{"io": 9}});
-    pwm.freq(500); 
-    expect(this.obniz).send({pwm0:{"freq": 500}});
-    pwm.duty(0.5); 
-    expect(this.obniz).send({pwm0:{"duty": 0.5}});
-    pwm.forceWorking(true);
-    expect(this.obniz).send({pwm0:{"force_working": true}});
-    
-    expect(this.obniz).to.be.finished;
-    expect(pwm).to.be.equal(this.obniz.pwm0);
-  });
-  
   it("modulate",  function () {
     var pwm = this.obniz.getFreePwm();
     pwm.start(11);   // start pwm. output at io11

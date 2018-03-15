@@ -46,14 +46,6 @@ class PeripheralPWM {
     });
   }
 
-  forceWorking(working) {
-    var obj = {};
-    this.state.forceWorking = working;
-    this.sendWS({
-      force_working: working
-    });
-  }
-
   isUsed() {
     return this.used;
   }
