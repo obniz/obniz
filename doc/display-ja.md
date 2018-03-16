@@ -1,5 +1,7 @@
 # Display
-ObnizにあるOLEDディスプレイに文字を出したり絵を出したり出来ます。
+ObnizにあるOLEDディスプレイに文字や絵を描画します。
+
+![](./images/obniz_display_sphere.gif)
 
 ## display.clear();
 
@@ -17,6 +19,72 @@ obniz.display.clear();
 // Example
 obniz.display.print("Hello!");
 ```
+
+ブラウザはUTF8 の文字も描画可能です. (node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
+```javascript
+obniz.display.font('Serif',18)
+obniz.display.print("Hello World🧡")
+```
+![](./images/obniz_display_print.jpg)
+
+## display.pos(x, y);
+(node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
+ 
+文字の描画位置を変更します。次にprint()でも字を出すときはこの位置を左上として文字を描画します。
+```javascript
+obniz.display.pos(0,30);
+obniz.display.print("YES. こんにちは");
+```
+![](./images/obniz_display_pos.jpg)
+
+## display.font(fontFamilyName, fontSize);
+(node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
+ 
+フォントを変更します。
+利用できるフォントはプログラムを動かしているブラウザに依存します。
+```javascript
+obniz.display.font('Avenir',30)
+obniz.display.print("Avenir")
+```
+![](./images/obniz_display_samples3.jpg)
+![](./images/obniz_display_samples2.jpg)
+![](./images/obniz_display_samples4.jpg)
+
+## display.line(start_x, start_y, end_x, end_y);
+(node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
+ 
+２点間の線を描画します。
+```javascript
+  obniz.display.line(30, 30, 100, 30);
+  obniz.display.rect(20, 20, 20, 20);
+  obniz.display.circle(100, 30, 20);
+  
+  obniz.display.line(60, 50, 100, 30);
+  obniz.display.rect(50, 40, 20, 20, true);
+  obniz.display.line(50, 10, 100, 30);
+  obniz.display.circle(50, 10, 10, true);
+```
+![](./images/obniz_display_draws.jpg)
+
+## display.rect(x, y, width, height, fill);
+(node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
+ 
+矩形を描画します。
+```javascript
+obniz.display.rect(20, 20, 20, 20);
+obniz.display.rect(20, 20, 20, 20, true); // filled rect
+```
+
+## display.circle(x, y, radius, fill);
+(node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
+ 
+円を描画します
+```javascript
+obniz.display.circle(100, 30, 20);
+obniz.display.circle(100, 30, 20, true); // filled circle
+```
+
+
 ## display.qr(data, correction)
 
 QRコードを表示します。dataは現在文字列にのみ対応しています。
@@ -48,8 +116,9 @@ obniz.display.qr("https://obniz.io")
 obniz.display.raw([255, 255,,,,,])// msut be 128*64 bits(=1024byte)
 ```
 
-## drawCanvasContext(context)
+## display.draw(context)
 HTML5のCanvas contextをもとに描画します。
+node-canvasを利用すればnode.jsでも利用可能です。
 
 ```javascript
 
@@ -62,13 +131,8 @@ ctx.fillStyle = "white";
 ctx.font = "30px Avenir";
 ctx.fillText('Avenir', 0, 40);
 
-obniz.display.drawCanvasContext(ctx);
+obniz.display.draw(ctx);
 ```
-
-### canvas rendering samples
-![](./images/obniz_display_sphere.gif)
-
-### canvas text rendering samples
 
 UTF8 Text
 
@@ -77,10 +141,3 @@ UTF8 Text
 Tilt Text
 
 ![](./images/obniz_display_samples1.jpg)
-
-Changing Font
-
-![](./images/obniz_display_samples2.jpg)
-![](./images/obniz_display_samples3.jpg)
-![](./images/obniz_display_samples4.jpg)
-

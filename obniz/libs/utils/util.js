@@ -6,8 +6,12 @@ class ObnizUtil {
 
   createCanvasContext(width, height) {
     if (this.obniz.isNode) {
-      // TODO:
-      throw new Error("node js mode is under working.");
+      try {
+        const { createCanvas } = require('canvas');
+        return createCanvas(this.width, this.height); 
+      } catch(e) {
+        throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
+      }
     } else {
       var canvas = document.createElement('canvas');
       canvas.width = width;
