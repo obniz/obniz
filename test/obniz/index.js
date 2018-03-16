@@ -12,6 +12,10 @@ const getPort = require('get-port');
 
 var waitMs = 50;
 
+function wait(msec) {
+  return new Promise(resolve => setTimeout(resolve, msec));
+}
+
 describe("obniz.index", function () {
   beforeEach(function () {
   });
@@ -46,7 +50,7 @@ describe("obniz.index", function () {
       obniz = testUtil.createObniz(port,"11111111");
       return result;
     }).then(function(){
-      return obniz.wait(waitMs);
+      return wait(waitMs);
     }).then(function(){
 
       expect(obniz).to.be.obniz;
@@ -77,7 +81,7 @@ describe("obniz.index", function () {
       expect(obniz).to.be.obniz;
       return result;
     }).then(function(){
-      return obniz.wait(waitMs);
+      return wait(waitMs);
     }).then(function () {
       expect(server.clients.size, "before server not connected").to.equal(1);
       var result = new Promise(function(resolve,reject){
@@ -89,7 +93,7 @@ describe("obniz.index", function () {
       
       return result;
     }).then(function(){
-      return obniz.wait(waitMs);
+      return wait(waitMs);
     }).then(function () {
       expect(server.clients.size, "before server remain connection").to.equal(0);
       expect(server2.clients.size, "after server not connected").to.equal(1);
@@ -131,7 +135,7 @@ describe("obniz.index", function () {
         return testUtil.ejs(path.resolve(__dirname,"index.ejs"), {port1, port2, port3});
       }).then(function(val){
         expect(val.failures).to.equal(0);
-        return new Promise(function(resolve){setTimeout(resolve,waitMs);});
+        return wait(waitMs);
       }).then(function(){    
         server1.close();
         server2.close();  

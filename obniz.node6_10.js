@@ -2,7 +2,7 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _obniz_js_version = "0.1.33";
+var _obniz_js_version = "0.1.34";
 /* global showObnizDebugError */
 
 var isNode = typeof window === 'undefined' ? true : false;
@@ -573,6 +573,12 @@ class Obniz {
   }
 
   wait(msec) {
+    if (msec < 0) {
+      msec = 0;
+    } else if (msec > 60 * 1000) {
+      msec = 60 * 1000;
+    }
+    this.send({ system: { wait: msec } });
     return new Promise(resolve => setTimeout(resolve, msec));
   }
 
@@ -581,9 +587,6 @@ class Obniz {
   }
   selfCheck() {
     this.send({ system: { self_check: true } });
-  }
-  freeze(msec) {
-    this.send({ system: { wait: msec } });
   }
   keepWorkingAtOffline(working) {
     this.send({ system: { keep_working_at_offline: working } });
@@ -1947,7 +1950,6 @@ class Display {
   print(text) {
     const ctx = this._ctx();
     if (ctx) {
-      console.log(this._pos.x, this._pos.y, +this.fontSize);
       ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
       this.draw(ctx);
       this._pos.y += this.fontSize;
@@ -5394,12 +5396,12 @@ RN42.prototype.send = function (data) {
 
 RN42.prototype.sendCommand = function (data) {
   this.uart.send(data + '\n');
-  this.obniz.freeze(100);
+  this.obniz.wait(100);
 };
 
 RN42.prototype.enterCommandMode = function () {
   this.send('$$$');
-  this.obniz.freeze(100);
+  this.obniz.wait(100);
 };
 
 RN42.prototype.config = function (json) {
@@ -5636,11 +5638,11 @@ class XBee {
   enterAtMode() {
     if (this.currentCommand !== null) return;
     this.isAtMode = true;
-    this.obniz.freeze(1000);
+    this.obniz.wait(1000);
     var command = "+++";
     this.currentCommand = command;
     this.uart.send(this.currentCommand);
-    this.obniz.freeze(1000);
+    this.obniz.wait(1000);
   }
 
   exitAtMode() {
@@ -6066,7 +6068,7 @@ class MatrixLED_MAX7219 {
 
     // reset a onece
     this.cs.output(true);
-    obniz.freeze(10);
+    obniz.wait(10);
     this.cs.output(false);
     this.cs.output(true);
 
@@ -6617,7 +6619,7 @@ _24LC256.prototype.set = function (address, data) {
   array.push(address & 0xFF);
   array.push.apply(array, data);
   this.i2c.write(0x50, array);
-  this.obniz.freeze(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+  this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
 };
 
 _24LC256.prototype.getWait = (() => {
@@ -7335,7 +7337,7 @@ SHT31.prototype.wired = function (obniz) {
 
 SHT31.prototype.getData = _asyncToGenerator(function* () {
   this.i2c.write(this.address, this.commands.highRepeat);
-  yield obniz.freeze(this.waitTime.highRepeat);
+  yield obniz.wait(this.waitTime.highRepeat);
   return yield this.i2c.readWait(this.address, 6);
 });
 

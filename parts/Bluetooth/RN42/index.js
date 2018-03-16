@@ -31,12 +31,12 @@ RN42.prototype.send = function(data) {
 
 RN42.prototype.sendCommand = function(data) {
   this.uart.send(data+'\n');
-  this.obniz.freeze(100);
+  this.obniz.wait(100);
 };
 
 RN42.prototype.enterCommandMode = function() {
   this.send('$$$');
-  this.obniz.freeze(100);
+  this.obniz.wait(100);
 };
 
 RN42.prototype.config = function(json) {

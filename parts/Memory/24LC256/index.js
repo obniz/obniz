@@ -19,7 +19,7 @@ _24LC256.prototype.set = function(address, data) {
   array.push(address & 0xFF);
   array.push.apply(array, data);
   this.i2c.write(0x50, array);
-  this.obniz.freeze(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+  this.obniz.wait(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
 };
 
 _24LC256.prototype.getWait = async function(address, length) {

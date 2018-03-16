@@ -22,6 +22,6 @@ speaker.play(1000); //1000hz
 ```Javascript
 var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
 speaker.play(1000); //1000hz
-obniz.freeze(1000);
+obniz.wait(1000);
 speaker.stop();
 ```

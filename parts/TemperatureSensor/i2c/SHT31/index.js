@@ -46,7 +46,7 @@ SHT31.prototype.wired = function (obniz) {
 
 SHT31.prototype.getData = async function () {
   this.i2c.write(this.address,  this.commands.highRepeat);
-  await obniz.freeze(this.waitTime.highRepeat);
+  await obniz.wait(this.waitTime.highRepeat);
   return await this.i2c.readWait(this.address, 6);
 };
 

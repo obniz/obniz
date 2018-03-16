@@ -104,7 +104,6 @@ class Display {
   print(text) {
     const ctx = this._ctx();
     if (ctx) {
-      console.log(this._pos.x, this._pos.y,  + this.fontSize);
       ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
       this.draw(ctx);
       this._pos.y += this.fontSize;

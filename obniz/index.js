@@ -543,11 +543,18 @@ class Obniz {
     loop();
   }
 
-  wait(msec) { return new Promise(resolve => setTimeout(resolve, msec)); }
+  wait(msec) {
+    if (msec < 0) {
+      msec = 0;
+    } else if (msec > 60 * 1000) {
+      msec = 60 * 1000;
+    }
+    this.send({ system: { wait: msec } });
+    return new Promise(resolve => setTimeout(resolve, msec));
+  }
 
   reset() { this.send({ system: { reset: true } }); this.init(); }
   selfCheck() { this.send({ system: { self_check: true } }); }
-  freeze(msec) { this.send({ system: { wait: msec } }); }
   keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
   resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }
 
