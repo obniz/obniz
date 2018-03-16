@@ -492,7 +492,12 @@ class Obniz {
       this.resetOnDisconnect(true);
       if (this.isNode === false) { showOnLine(); }
       if (this.onconnect) {
-        this.onconnect(this);
+        var promise = this.onconnect(this);
+        if(promise instanceof Promise){
+          promise.catch((err) => {
+            console.error(err);
+          });
+        }
       }
     }
     if (wsObj.redirect) {
