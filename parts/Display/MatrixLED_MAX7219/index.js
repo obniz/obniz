@@ -19,7 +19,7 @@ class MatrixLED_MAX7219 {
 
     // reset a onece
     this.cs.output(true);
-    obniz.freeze(10);
+    obniz.wait(10);
     this.cs.output(false);
     this.cs.output(true);
     

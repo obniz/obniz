@@ -93,11 +93,11 @@ class XBee {
   enterAtMode() {
     if(this.currentCommand !== null) return;
     this.isAtMode = true;
-    this.obniz.freeze(1000);
+    this.obniz.wait(1000);
     var command = "+++";
     this.currentCommand = command;
     this.uart.send(this.currentCommand);
-    this.obniz.freeze(1000);
+    this.obniz.wait(1000);
   }
 
   exitAtMode() {

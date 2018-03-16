@@ -38,28 +38,31 @@ obniz.repeat(function(){
 })
 ```
 ## [await] wait(ms)
-Pause javascript processing until givem ms.
+Pause obniz until givem msec passed.
 ```Javascript
 // Example
-console.log("before");
-await obniz.wait(1000);
-console.log("after 1 second");
+led.on();
+obniz.wait(1000); // led ON 1sec.
+led.off();
 ```
-## freeze(ms)
-obniz wait for ms.
-Difference between wait() and freeze() is wait will wait on user size javascript but freeze will freeze obniz itself.
-And freeze will return soon.
-
-For example
+This method pause only obniz, javascript nerver stopped
 ```Javascript
-console.log("before");
-obniz.io0.output(true);
-obniz.freeze(1000);
-obniz.io0.output(false);
-console.log("after 0 second");
+// Example
+var time = new Date();
+led.on();
+obniz.wait(1000); // led ON 1sec.
+led.off();
+console.log((new Date()).getTime() - time.getTime()) // 0 or very few msec. not 1000msec.
 ```
-"After 0 second" will be shown soon. Not 1000 msec after.
-But obniz will output io0 1sec. Because it freeze 1000msec.
+But, when you call this method with await, javascript wait processing until given msec passed
+```Javascript
+// Example
+var time = new Date();
+led.on();
+await obniz.wait(1000); // led ON 1sec.
+led.off();
+console.log((new Date()).getTime() - time.getTime()) // => about 1000
+```
 
 ## keepWorkingAtOffline(working)
 By default. obniz will reset after disconnect from cloud.

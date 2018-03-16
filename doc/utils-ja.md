@@ -40,29 +40,31 @@ obniz.repeat(function(){
 })
 ```
 ## [await] wait(ms)
-ms(ミリ秒)で指定された値だけ停止します。
+obnizの動作をms(ミリ秒)で指定された値だけ停止します。
+```Javascript
+// Example
+led.on();
+obniz.wait(1000); // led ON 1sec.
+led.off();
+```
+obnizは停止しますが、しかし、javascriptはこのコマンドだけでは停止しません。
+```Javascript
+// Example
+var time = new Date();
+led.on();
+obniz.wait(1000); // led ON 1sec.
+led.off();
+console.log((new Date()).getTime() - time.getTime()) // 0 or very few msec. not 1000msec.
+```
 await を利用することでその時間だけ実際にプログラムを停止させることが可能です。
 ```Javascript
 // Example
-console.log("before");
-await obniz.wait(1000);
-console.log("after 1 second");
+var time = new Date();
+led.on();
+await obniz.wait(1000); // led ON 1sec.
+led.off();
+console.log((new Date()).getTime() - time.getTime()) // => about 1000
 ```
-## freeze(ms)
-obnizをmsだけ停止させます。
-wait()との違いはwait()ではjavascriptの方がmsだけ停止しますが、freeze()ではobnizの方がmsだけ停止します。
-なのでfreeze(1000)を呼び出してもプログラムはその関数をすぐに抜けます。
-
-For example
-```Javascript
-console.log("before");
-obniz.io0.output(true);
-obniz.freeze(1000);
-obniz.io0.output(false);
-console.log("after 0 second");
-```
-"After 0 second"はbeforeが表示されてからすぐに表示されます。1秒後ではありません。
-しかし、obnizは止まるのでio0を1秒だけonにすることになります。
 
 ## keepWorkingAtOffline(working)
 obnizがWifiから切断した時に、ioの状態などをリセットするかどうかを設定できます。
