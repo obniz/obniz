@@ -1,7 +1,7 @@
 var _obniz_js_version = "0.1.34";
 /* global showObnizDebugError */
 
-var isNode = (typeof window === 'undefined') ? true : false;
+var isNode = (typeof window === 'undefined') ;
 
 class Obniz {
 
@@ -22,12 +22,13 @@ class Obniz {
     }
     this.server_obnizio = options.obniz_server || "wss://obniz.io";
     this._access_token = options.access_token;
+    this.auto_connect = typeof(options.auto_connect) === "boolean" ? options.auto_connect : true;
 
     if (options.binary !== false) {
-      this.wscommand = this.constructor.WSCommand
-      var classes = this.constructor.WSCommand.CommandClasses;
+      this.wscommand = this.constructor.WSCommand;
+      let classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
-      for (var class_name in classes) {
+      for (let class_name in classes) {
        this.wscommands.push(new classes[class_name]());
       }
     }
@@ -38,7 +39,7 @@ class Obniz {
       if (isNode)  {
         this.error("invalid obniz id")
       } else {
-        var filled = _ReadCookie("obniz-last-used") || "";
+        let filled = _ReadCookie("obniz-last-used") || "";
         this.prompt(filled , function(obnizid){
           this.id = obnizid;
           this.wsconnect();
@@ -46,7 +47,10 @@ class Obniz {
       }
       return;
     }
-    this.wsconnect();
+
+    if(this.auto_connect){
+      this.wsconnect();
+    }
   }
 
   static get WSCommand() {
@@ -75,11 +79,14 @@ class Obniz {
   wsOnOpen() {
     this.print_debug("ws connected");
     // wait for {ws:{ready:true}} object
+    if(typeof this.onopen === "function"){
+      this.onopen(this);
+    }
   }
 
   wsOnMessage(data) {
     this.print_debug(data);
-    var obj = {};
+    let obj = {};
     if (typeof (data) === "string") {
       obj = JSON.parse(data);
     } else {
@@ -93,16 +100,16 @@ class Obniz {
     // debug
     if (typeof (obj.debug) === "object") {
       if (obj.debug.warning) {
-        var msg = "Warning: " + obj.debug.warning;
+        let msg = "Warning: " + obj.debug.warning;
         this.error(msg);
       }
       if (obj.debug.error) {
-        var msg = "Error: " + obj.debug.error;
+        let msg = "Error: " + obj.debug.error;
         this.error(msg);
       }
       if (obj.debug.errors) {
-        for (var i=0; i<obj.debug.errors.length; i++) {
-          var msg = "Error: " + obj.debug.errors[i].message;
+        for (let i=0; i<obj.debug.errors.length; i++) {
+          let msg = "Error: " + obj.debug.errors[i].message;
           this.error(msg);
         }
       }
@@ -117,23 +124,23 @@ class Obniz {
     }
   
     // notify
-    var notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
-    for (var handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
-      var i = -1;
-      var peripheral = notifyHandlers[handerIndex];
+    let notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
+    for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
+      let i = -1;
+      let peripheral = notifyHandlers[handerIndex];
       while (true) {
         i++;
         if (this[peripheral + "" + i] === undefined) {
           break;
         }
-        var module_value = obj[peripheral + "" + i];
+        let module_value = obj[peripheral + "" + i];
         if (module_value === undefined)
           continue;
         this[peripheral + "" + i].notified(module_value);
       }
     }
-    var names = ["switch", "ble", "measure"];
-    for (var i = 0; i < names.length; i++) {
+    let names = ["switch", "ble", "measure"];
+    for (let i = 0; i < names.length; i++) {
       if (obj[names[i]]) {
         this[names[i]].notified(obj[names[i]]);
       }
@@ -151,15 +158,23 @@ class Obniz {
     }
   
     this.clearSocket(this.socket);
-    setTimeout(function () {
-      // always connect to mainserver if ws lost
-      this.wsconnect();
-    }.bind(this), 1000);
+
+    if(typeof this.onclose === "function"){
+      this.onclose(this);
+    }
+
+    if(this.auto_connect) {
+      setTimeout(function () {
+        // always connect to mainserver if ws lost
+        this.wsconnect();
+      }.bind(this), 1000);
+    }
   }
 
-  wsOnError(err) {
-    console.log(err);
+  wsOnError(event) {
+    console.error("websocket error.");
   }
+
 
   wsOnUnexpectedResponse(req, res) {
     let reconnectTime = 1000;
@@ -172,14 +187,16 @@ class Obniz {
       this.print_debug("invalid server response " + (res) ? res.statusCode :  '');
     }
     this.clearSocket(this.socket);
-    setTimeout(function () {
-      // always connect to mainserver if ws lost
-      this.wsconnect();
-    }.bind(this), reconnectTime);
+    if(this.auto_connect) {
+      setTimeout(function () {
+        // always connect to mainserver if ws lost
+        this.wsconnect();
+      }.bind(this), reconnectTime);
+    }
   }
 
   wsconnect(desired_server) {
-    var server = this.server_obnizio;
+    let server = this.server_obnizio;
     if (desired_server) {
       server = "" + desired_server;
     }
@@ -187,7 +204,7 @@ class Obniz {
       this.socket.close();
       this.clearSocket(this.socket);
     }
-    var url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
+    let url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
     if (_obniz_js_version) {
       url += "?obnizjs="+_obniz_js_version;
     }
@@ -221,8 +238,8 @@ class Obniz {
 
   clearSocket(socket) {
     if (this.isNode) {
-      var shouldRemoveObservers = ['open', 'message', 'close', 'error'];
-      for (var i = 0; i < shouldRemoveObservers.length; i++) {
+      let shouldRemoveObservers = ['open', 'message', 'close', 'error'];
+      for (let i = 0; i < shouldRemoveObservers.length; i++) {
         socket.removeAllListeners(shouldRemoveObservers[i]);
       }
     } else {
@@ -232,6 +249,11 @@ class Obniz {
       socket.onerror = null;
     }
     this.socket = null;
+  }
+
+
+  connect(){
+    this.wsconnect();
   }
 
   close() {
