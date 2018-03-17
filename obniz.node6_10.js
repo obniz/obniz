@@ -38,7 +38,7 @@ class Obniz {
     }
 
     if (this.isNode === false) {
-      showOffLine();
+      showOffLine(this);
     }
 
     if (!this.isValidObnizId(this.id)) {
@@ -48,6 +48,7 @@ class Obniz {
         let filled = _ReadCookie("obniz-last-used") || "";
         this.prompt(filled, function (obnizid) {
           this.id = obnizid;
+          showOffLine(this);
           this.wsconnect();
         }.bind(this));
       }
@@ -530,7 +531,7 @@ class Obniz {
 
       this.resetOnDisconnect(true);
       if (this.isNode === false) {
-        showOnLine();
+        showOnLine(this);
       }
       if (this.onconnect) {
         var promise = this.onconnect(this);
@@ -707,24 +708,42 @@ if (!isNode) {
     window.parent.userAppLoaded(window);
   }
 
-  function showOnLine() {
-    if (typeof jQuery !== 'undefined') {
-      $('#loader').hide();
-      if ($('#obniz-debug #online-status').length == 0) {
-        $('#obniz-debug').prepend('<div id="online-status"></div>');
-      }
-      $('#online-status').text('online');
-      $('#online-status').css({ "background-color": "#449d44", "color": "#FFF", "padding": "5px", "text-align": "center" });
+  function getDebugDoms() {
+    let loaderDom = document.querySelector("#loader");
+
+    let debugDom = document.querySelector("#obniz-debug");
+    let statusDom = document.querySelector("#obniz-debug #online-status");
+    if (debugDom && !statusDom) {
+      statusDom = document.createElement("div");
+      statusDom.id = 'online-status';
+      statusDom.style.color = "#FFF";
+      statusDom.style.padding = "5px";
+      statusDom.style.textAlign = "center";
+      debugDom.insertBefore(statusDom, debugDom.firstChild);
+    }
+    return { loaderDom: loaderDom, debugDom: debugDom, statusDom: statusDom };
+  }
+  function showOnLine(obniz) {
+    let doms = getDebugDoms();
+    if (doms.loaderDom) {
+      doms.loaderDom.style.display = "none";
+    }
+    if (doms.statusDom) {
+      doms.statusDom.style.backgroundColor = "#449d44";
+      doms.statusDom.style.color = "#FFF";
+      doms.statusDom.innerHTML = obniz && obniz.id ? "online : " + obniz.id : "online";
     }
   }
-  function showOffLine() {
-    if (typeof jQuery !== 'undefined') {
-      $('#loader').show();
-      if ($('#obniz-debug #online-status').length == 0) {
-        $('#obniz-debug').prepend('<div id="online-status"></div>');
-      }
-      $('#online-status').text('offline');
-      $('#online-status').css({ "background-color": "#d9534f", "color": "#FFF", "padding": "5px", "text-align": "center" });
+  function showOffLine(obniz) {
+
+    let doms = getDebugDoms();
+    if (doms.loaderDom) {
+      doms.loaderDom.style.display = "block";
+    }
+    if (doms.statusDom) {
+      doms.statusDom.style.backgroundColor = "#d9534f";
+      doms.statusDom.style.color = "#FFF";
+      doms.statusDom.innerHTML = obniz && obniz.id ? "offline : " + obniz.id : "offline";
     }
   }
   function showObnizDebugError(err) {
