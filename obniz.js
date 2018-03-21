@@ -1,7 +1,7 @@
 var _obniz_js_version = "0.1.34";
 /* global showObnizDebugError */
 
-var isNode = (typeof window === 'undefined') ;
+let isNode = (typeof window === 'undefined') ;
 
 class Obniz {
 
@@ -22,6 +22,7 @@ class Obniz {
     }
     this.server_obnizio = options.obniz_server || "wss://obniz.io";
     this._access_token = options.access_token;
+    this.debugDomId = options.debug_dom_id || "obniz-debug";
     this.auto_connect = typeof(options.auto_connect) === "boolean" ? options.auto_connect : true;
 
     if (options.binary !== false) {
@@ -33,7 +34,7 @@ class Obniz {
       }
     }
 
-    if (this.isNode === false) { showOffLine(this); }
+    if (this.isNode === false) { this.showOffLine(); }
   
     if (!this.isValidObnizId(this.id)) {
       if (isNode)  {
@@ -42,7 +43,7 @@ class Obniz {
         let filled = _ReadCookie("obniz-last-used") || "";
         this.prompt(filled , function(obnizid){
           this.id = obnizid;
-          showOffLine(this);
+          this.showOffLine();
           this.wsconnect();
         }.bind(this))
       }
@@ -64,7 +65,7 @@ class Obniz {
       return null;
     }
     str = str.replace("-", "");
-    var id = parseInt(str);
+    let id = parseInt(str);
     if (isNaN(id))
       id = null;
     return id != null;
@@ -154,7 +155,7 @@ class Obniz {
 
   wsOnClose(event) {
     this.print_debug("closed");
-    if (this.isNode === false) { showOffLine(); }
+    if (this.isNode === false) { this.showOffLine(); }
     if (this.looper) {
       this.looper = null;
     }
@@ -267,17 +268,17 @@ class Obniz {
   }
 
   wired(partsname) {
-    var parts = new _parts[partsname]();
+    let parts = new _parts[partsname]();
     if (!parts) {
       throw new Error("No such a parts [" + partsname + "] found");
       return;
     }
-    var args = Array.from(arguments);
+    let args = Array.from(arguments);
     args.shift();
     args.unshift(this); 
     if(parts.keys){
       if(parts.requiredKeys){
-        var err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
+        let err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
           throw new Error(partsname + " wired param '" + err + "' required, but not found ");
           return;
@@ -288,12 +289,12 @@ class Obniz {
     parts.obniz = this;
     parts.wired.apply(parts, args);
     if(parts.keys || parts.ioKeys){
-      var keys = parts.ioKeys || parts.keys;
-      var displayPartsName = parts.displayName || partsname;
-      var ioNames = {};
-      for( var index in keys){
-        var pinName = keys[index];
-        var io = args[1][pinName];
+      let keys = parts.ioKeys || parts.keys;
+      let displayPartsName = parts.displayName || partsname;
+      let ioNames = {};
+      for( let index in keys){
+        let pinName = keys[index];
+        let io = args[1][pinName];
         if(parts.displayIoNames && parts.displayIoNames[pinName]){
           pinName = parts.displayIoNames[pinName];
         }
@@ -355,13 +356,13 @@ class Obniz {
 
   _drainQueued() {
     if (!this._sendQueue) return;
-    var expectSize = 0;
-    for (var i=0; i<this._sendQueue.length; i++) {
+    let expectSize = 0;
+    for (let i=0; i<this._sendQueue.length; i++) {
       expectSize += this._sendQueue[i].length;
     }
-    var filled = 0;
-    var sendData = new Uint8Array(expectSize);
-    for (var i=0; i<this._sendQueue.length; i++) {
+    let filled = 0;
+    let sendData = new Uint8Array(expectSize);
+    for (let i=0; i<this._sendQueue.length; i++) {
       sendData.set(this._sendQueue[i], filled);
       filled += this._sendQueue[i].length;
     }
@@ -377,12 +378,12 @@ class Obniz {
 
   init() {
     this.io = new PeripheralIO_(this);
-    for (var i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
-    for (var i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
-    for (var i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
-    for (var i=0; i<1;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
-    for (var i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
-    for (var i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
+    for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
+    for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
+    for (let i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
+    for (let i=0; i<1;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
+    for (let i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
+    for (let i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
   
     this.display = new Display(this);
     this.switch = new ObnizSwitch(this);
@@ -403,14 +404,14 @@ class Obniz {
         this.getIO(vcc).drive(drive);
       }
       this.getIO(vcc).output(true);
-    };
+    }
     
     if(this.isValidIO(gnd)){
       if(drive){
         this.getIO(gnd).drive(drive);
       }
       this.getIO(gnd).output(false);
-    };
+    }
   }
 
   getIO(id) {
@@ -422,9 +423,9 @@ class Obniz {
   }
 
   getFreePwm() {
-    var i = 0;
+    let i = 0;
     while (true) {
-      var pwm = this["pwm" + i];
+      let pwm = this["pwm" + i];
       if (!pwm) {
         break;
       }
@@ -438,9 +439,9 @@ class Obniz {
   }
 
   getFreeI2C() {
-    var i = 0;
+    let i = 0;
     while (true) {
-      var i2c = this["i2c" + i];
+      let i2c = this["i2c" + i];
       if (!i2c) {
         break;
       }
@@ -460,15 +461,15 @@ class Obniz {
     if(config.i2c){
       return config.i2c;
     }
-    var i2c = this.getFreeI2C();
+    let i2c = this.getFreeI2C();
     i2c.start(config);
     return i2c;
   }
 
   getFreeSpi() {
-    var i = 0;
+    let i = 0;
     while (true) {
-      var spi = this["spi" + i];
+      let spi = this["spi" + i];
       if (!spi) {
         break;
       }
@@ -488,15 +489,15 @@ class Obniz {
     if(config.spi){
       return config.spi;
     }
-    var spi = this.getFreeSpi();
+    let spi = this.getFreeSpi();
     spi.start(config);
     return spi;
   }
 
   getFreeUart() {
-    var i = 0;
+    let i = 0;
     while (true) {
-      var uart = this["uart" + i];
+      let uart = this["uart" + i];
       if (!uart) {
         break;
       }
@@ -514,9 +515,9 @@ class Obniz {
     if (wsObj.ready) {
   
       this.resetOnDisconnect(true);
-      if (this.isNode === false) { showOnLine(this); }
+      if (this.isNode === false) { this.showOnLine(); }
       if (this.onconnect) {
-        var promise = this.onconnect(this);
+        let promise = this.onconnect(this);
         if(promise instanceof Promise){
           promise.catch((err) => {
             console.error(err);
@@ -525,7 +526,7 @@ class Obniz {
       }
     }
     if (wsObj.redirect) {
-      var server = wsObj.redirect;
+      let server = wsObj.redirect;
       this.print_debug("WS connection changed to " + server);
       this.close();
       this.wsconnect(server);
@@ -533,7 +534,7 @@ class Obniz {
   }
 
   message(target, message) {
-    var targets = [];
+    let targets = [];
     if (typeof (target) === "string") {
       targets.push(target);
     } else {
@@ -556,7 +557,7 @@ class Obniz {
       return;
     }
     this.looper = callback;
-    var self = this;
+    let self = this;
     if (!interval)
       interval = 100;
     async function loop() {
@@ -617,13 +618,13 @@ class Obniz {
   }
 
   showAlertUI(obj) {
-    if (this.isNode || !document.getElementById('obniz-debug')) {
+    if (this.isNode || !document.getElementById(this.debugDomId)) {
       return;
     }
     const alerts = {
       warning: 'alert-warning alert-dismissible',
       error: 'alert-danger'
-    }
+    };
     const timeLabel = Math.random().toString(36).slice(-8);
     let dismissButton = `
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -632,22 +633,67 @@ class Obniz {
     let dom = `
     <div class="alert ${alerts[obj.alert]} fade show" role="alert">
       ${obj.message}
-      ${ obj.alert == "warning" ? dismissButton : ""}
+      ${ obj.alert === "warning" ? dismissButton : ""}
     </div>`;
-    document.getElementById('obniz-debug').insertAdjacentHTML('beforeend', dom);
+    document.getElementById(this.debugDomId).insertAdjacentHTML('beforeend', dom);
   }
+
+  getDebugDoms(){
+    if (this.isNode){return;}
+    let loaderDom = document.querySelector("#loader");
+    let debugDom = document.querySelector("#" + this.debugDomId);
+    let statusDom = document.querySelector("#"+this.debugDomId +" #online-status");
+    if(debugDom && !statusDom){
+      statusDom = document.createElement("div");
+      statusDom.id = 'online-status';
+      statusDom.style.color =  "#FFF";
+      statusDom.style.padding =  "5px";
+      statusDom.style.textAlign =  "center";
+      debugDom.insertBefore(statusDom, debugDom.firstChild);
+    }
+    return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
+
+  }
+  showOnLine() {
+    if (this.isNode){return;}
+    let doms = this.getDebugDoms();
+    if(doms.loaderDom){
+      doms.loaderDom.style.display="none";
+    }
+    if(doms.statusDom){
+      doms.statusDom.style.backgroundColor =  "#449d44";
+      doms.statusDom.style.color =  "#FFF";
+      doms.statusDom.innerHTML = this.id ? "online : "+ this.id : "online";
+    }
+
+  }
+  showOffLine() {
+    if (this.isNode){return;}
+
+    let doms = this.getDebugDoms();
+    if(doms.loaderDom){
+      doms.loaderDom.style.display="block";
+    }
+    if(doms.statusDom){
+      doms.statusDom.style.backgroundColor =  "#d9534f";
+      doms.statusDom.style.color =  "#FFF";
+      doms.statusDom.innerHTML = this.id  ? "offline : "+ this.id : "offline";
+    }
+  }
+
+
 }
 
 /*===================*/
 /* Parts */
 /*===================*/
-var _parts = {};
+let _parts = {};
 
-var PartsRegistrate = function (name, obj) {
+let PartsRegistrate = function (name, obj) {
   _parts[name] = obj;
 };
 
-var Parts = function (name) {
+let Parts = function (name) {
   return new _parts[name]();
 };
 
@@ -655,10 +701,10 @@ var Parts = function (name) {
 /* Utils */
 /*===================*/
 function _ReadCookie(name) {
-  var nameEQ = name + "=";
-  var ca = document.cookie.split(';');
-  for(var i=0;i < ca.length;i++) {
-      var c = ca[i];
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for(let i=0;i < ca.length;i++) {
+    let c = ca[i];
       while (c.charAt(0) === ' ') {
           c = c.substring(1,c.length);
       }
@@ -675,51 +721,12 @@ if (!isNode) {
     window.parent.userAppLoaded(window);
   }
 
-  function getDebugDoms(){
-    let loaderDom = document.querySelector("#loader");
-
-    let debugDom = document.querySelector("#obniz-debug");
-    let statusDom = document.querySelector("#obniz-debug #online-status");
-    if(debugDom && !statusDom){
-      statusDom = document.createElement("div");
-      statusDom.id = 'online-status';
-      statusDom.style.color =  "#FFF";
-      statusDom.style.padding =  "5px";
-      statusDom.style.textAlign =  "center";
-      debugDom.insertBefore(statusDom, debugDom.firstChild);
-    }
-    return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
-
-  }
-  function showOnLine(obniz) {
-    let doms = getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="none";
-    }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#449d44";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = obniz && obniz.id ? "online : "+ obniz.id : "online";
-    }
-
-  }
-  function showOffLine(obniz) {
-
-    let doms = getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="block";
-    }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#d9534f";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = obniz && obniz.id  ? "offline : "+ obniz.id : "offline";
-    }
-  }
   function showObnizDebugError(err) {
     if(window.parent && window.parent.logger){
       window.parent.logger.onObnizError(err);
-    }else{ throw err; }; 
+    }else{ throw err; }
   }
+
 }
 
 /*===================*/
@@ -6243,7 +6250,7 @@ if (PartsRegistrate) {
   PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
 }
 
-var isNode = (typeof window === 'undefined') ? true : false;
+
 
 class MatrixLED_MAX7219 {
 
@@ -6297,7 +6304,7 @@ class MatrixLED_MAX7219 {
   }
 
   passingCommands() {
-    for (var i=0; i<this.width; i+=8) {  // this needed for number of unit
+    for (let i=0; i<this.width; i+=8) {  // this needed for number of unit
       this.write([0x00, 0x00]);
       this.write([0x00, 0x00]);
       this.write([0x00, 0x00]);
@@ -6311,9 +6318,9 @@ class MatrixLED_MAX7219 {
 
   preparevram(width, height) {
     this.vram = [];
-    for (var i=0; i<height; i++) {
-      var dots = new Array(width/8);
-      for (var ii=0;ii<dots.length; ii++) {
+    for (let i=0; i<height; i++) {
+      let dots = new Array(width/8);
+      for (let ii=0;ii<dots.length; ii++) {
         dots[ii] = 0x00;
       }
       this.vram.push(dots);
@@ -6327,12 +6334,12 @@ class MatrixLED_MAX7219 {
   }
 
   writeVram() {
-    for (var line_num=0; line_num<this.height; line_num++) {
+    for (let line_num=0; line_num<this.height; line_num++) {
       let addr = line_num + 1;
       let line = this.vram[line_num];
       let data = [];
       for (let col=0; col<line.length; col++) {
-        data.push(addr)
+        data.push(addr);
         data.push(line[col]);
       }
       this.write(data);
@@ -6340,7 +6347,7 @@ class MatrixLED_MAX7219 {
   }
 
   clear() {
-    for (var line_num=0; line_num<this.height; line_num++) {
+    for (let line_num=0; line_num<this.height; line_num++) {
       let line = this.vram[line_num];
       for (let col=0; col<line.length; col++) {
         this.vram[line_num][col] = 0x00;
@@ -6350,6 +6357,7 @@ class MatrixLED_MAX7219 {
   }
 
   draw(ctx) {
+    let isNode = (typeof window === 'undefined') ;
     if (isNode) {
       // TODO:
       throw new Error("node js mode is under working.");
@@ -6358,12 +6366,12 @@ class MatrixLED_MAX7219 {
       const data = imageData.data;
       
       for(let i = 0; i < data.length; i += 4) {
-        var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        var index = parseInt(i/4);
-        var line = parseInt(index/this.width);
-        var col = parseInt((index-line*this.width)/8);
-        var bits = parseInt((index-line*this.width))%8;
-        if (bits == 0)
+        let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        let index = parseInt(i/4);
+        let line = parseInt(index/this.width);
+        let col = parseInt((index-line*this.width)/8);
+        let bits = parseInt((index-line*this.width))%8;
+        if (bits === 0)
           this.vram[line][col] = 0x00;
         if (brightness > 0x7F)
           this.vram[line][col] |= 0x80 >> bits;

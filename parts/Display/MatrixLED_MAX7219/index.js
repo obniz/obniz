@@ -1,4 +1,4 @@
-var isNode = (typeof window === 'undefined') ? true : false;
+
 
 class MatrixLED_MAX7219 {
 
@@ -52,7 +52,7 @@ class MatrixLED_MAX7219 {
   }
 
   passingCommands() {
-    for (var i=0; i<this.width; i+=8) {  // this needed for number of unit
+    for (let i=0; i<this.width; i+=8) {  // this needed for number of unit
       this.write([0x00, 0x00]);
       this.write([0x00, 0x00]);
       this.write([0x00, 0x00]);
@@ -66,9 +66,9 @@ class MatrixLED_MAX7219 {
 
   preparevram(width, height) {
     this.vram = [];
-    for (var i=0; i<height; i++) {
-      var dots = new Array(width/8);
-      for (var ii=0;ii<dots.length; ii++) {
+    for (let i=0; i<height; i++) {
+      let dots = new Array(width/8);
+      for (let ii=0;ii<dots.length; ii++) {
         dots[ii] = 0x00;
       }
       this.vram.push(dots);
@@ -82,12 +82,12 @@ class MatrixLED_MAX7219 {
   }
 
   writeVram() {
-    for (var line_num=0; line_num<this.height; line_num++) {
+    for (let line_num=0; line_num<this.height; line_num++) {
       let addr = line_num + 1;
       let line = this.vram[line_num];
       let data = [];
       for (let col=0; col<line.length; col++) {
-        data.push(addr)
+        data.push(addr);
         data.push(line[col]);
       }
       this.write(data);
@@ -95,7 +95,7 @@ class MatrixLED_MAX7219 {
   }
 
   clear() {
-    for (var line_num=0; line_num<this.height; line_num++) {
+    for (let line_num=0; line_num<this.height; line_num++) {
       let line = this.vram[line_num];
       for (let col=0; col<line.length; col++) {
         this.vram[line_num][col] = 0x00;
@@ -105,6 +105,7 @@ class MatrixLED_MAX7219 {
   }
 
   draw(ctx) {
+    let isNode = (typeof window === 'undefined') ;
     if (isNode) {
       // TODO:
       throw new Error("node js mode is under working.");
@@ -113,12 +114,12 @@ class MatrixLED_MAX7219 {
       const data = imageData.data;
       
       for(let i = 0; i < data.length; i += 4) {
-        var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        var index = parseInt(i/4);
-        var line = parseInt(index/this.width);
-        var col = parseInt((index-line*this.width)/8);
-        var bits = parseInt((index-line*this.width))%8;
-        if (bits == 0)
+        let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        let index = parseInt(i/4);
+        let line = parseInt(index/this.width);
+        let col = parseInt((index-line*this.width)/8);
+        let bits = parseInt((index-line*this.width))%8;
+        if (bits === 0)
           this.vram[line][col] = 0x00;
         if (brightness > 0x7F)
           this.vram[line][col] |= 0x80 >> bits;
