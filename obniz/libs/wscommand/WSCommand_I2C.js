@@ -22,25 +22,21 @@ class WSCommand_I2C extends WSCommand {
       mode = 1;
     } else {
       throw new Error("i2c0 unknown mode")
-      return;
     }
 
     var sda = parseInt(obj.sda);
     var scl = parseInt(obj.scl);
     if (this.isValidIO(sda) == false || this.isValidIO(scl) == false) {
       throw new Error("i2c: invalid sda/scl. please specify io number.")
-      return;
     }
     var clock = 0;
     if (mode === 0) {
       clock = parseInt(obj.clock);
       if (isNaN(clock)) {
         throw new Error("i2c: invalid clock.")
-        return;
       }
       if (clock <= 0 || clock > 1*1000*1000)  { // 0~1Mhz
         throw new Error("invalid clock frequency. specify 1hz to 1Mhz" );
-        return;
       }
     }
 
@@ -59,11 +55,9 @@ class WSCommand_I2C extends WSCommand {
       var address = parseInt(obj.slave_address);
       if (isNaN(address)) {
         throw new Error("i2c: please specify slave_address");
-        return;
       }
       if (address < 0 || address > 0x3FF) {
         throw new Error("i2c: invalid slave_address");
-        return;
       }
       if (obj.slave_address_length === 10 || address > 0x7F) {
         addressLength = 10;
