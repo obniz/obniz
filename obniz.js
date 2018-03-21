@@ -4213,25 +4213,21 @@ class WSCommand_I2C extends WSCommand {
       mode = 1;
     } else {
       throw new Error("i2c0 unknown mode")
-      return;
     }
 
     var sda = parseInt(obj.sda);
     var scl = parseInt(obj.scl);
     if (this.isValidIO(sda) == false || this.isValidIO(scl) == false) {
       throw new Error("i2c: invalid sda/scl. please specify io number.")
-      return;
     }
     var clock = 0;
     if (mode === 0) {
       clock = parseInt(obj.clock);
       if (isNaN(clock)) {
         throw new Error("i2c: invalid clock.")
-        return;
       }
       if (clock <= 0 || clock > 1*1000*1000)  { // 0~1Mhz
         throw new Error("invalid clock frequency. specify 1hz to 1Mhz" );
-        return;
       }
     }
 
@@ -4250,11 +4246,9 @@ class WSCommand_I2C extends WSCommand {
       var address = parseInt(obj.slave_address);
       if (isNaN(address)) {
         throw new Error("i2c: please specify slave_address");
-        return;
       }
       if (address < 0 || address > 0x3FF) {
         throw new Error("i2c: invalid slave_address");
-        return;
       }
       if (obj.slave_address_length === 10 || address > 0x7F) {
         addressLength = 10;
@@ -5132,13 +5126,20 @@ class WSCommand_UART extends WSCommand {
     buf[0] = module;
     buf[1] = parseInt(obj.tx);
     buf[2] = parseInt(obj.rx);
-    if (typeof(obj.baud) === "number") {
-      var baud = parseInt(obj.baud);
-      if (!isNaN(baud)) {
-        buf[3] = baud >> (3*8);
-        buf[4] = baud >> (2*8);
-        buf[5] = baud >> (1*8);
-        buf[6] = baud;
+
+    if (obj.baud !== undefined) {
+      if (typeof(obj.baud) === "number") {
+        var baud = parseInt(obj.baud);
+        if (!isNaN(baud)) {
+          buf[3] = baud >> (3*8);
+          buf[4] = baud >> (2*8);
+          buf[5] = baud >> (1*8);
+          buf[6] = baud;
+        } else {
+          throw new Error("uart: invalid number on baud")
+        }
+      } else {
+        throw new Error("uart: baud should be number")
       }
     }
     if (typeof(obj.stop) === "number") {
@@ -5149,7 +5150,7 @@ class WSCommand_UART extends WSCommand {
       } else if (obj.stop === 2) {
         buf[7] = 3;
       } else {
-        // ???
+        throw new Error("uart: invalid stop bits")
       }
     }
     if (typeof(obj.bits) === "number") {
@@ -5157,7 +5158,7 @@ class WSCommand_UART extends WSCommand {
       if (5 <= bits && bits <= 8) {
         buf[8] = bits;
       } else {
-        // ???
+        throw new Error("uart: invalid bit length")
       }
     }
     if (obj.parity === "even") {
@@ -5206,8 +5207,12 @@ class WSCommand_UART extends WSCommand {
       if (typeof(module) !== "object") {
         continue;
       }
-      if (typeof(module.tx) === "number" && typeof(module.rx) === "number") {
-        this.init(i, module);
+      if (module.tx || module.rx) {
+        if (this.isValidIO(module.tx) && this.isValidIO(module.rx)) {
+          this.init(i, module);
+        } else {
+          throw new Error("uart: tx rx is not valid obniz io")
+        } 
       }
       if (module.data) {
         this.send(i, module.data);

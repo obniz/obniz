@@ -17,13 +17,20 @@ class WSCommand_UART extends WSCommand {
     buf[0] = module;
     buf[1] = parseInt(obj.tx);
     buf[2] = parseInt(obj.rx);
-    if (typeof(obj.baud) === "number") {
-      var baud = parseInt(obj.baud);
-      if (!isNaN(baud)) {
-        buf[3] = baud >> (3*8);
-        buf[4] = baud >> (2*8);
-        buf[5] = baud >> (1*8);
-        buf[6] = baud;
+
+    if (obj.baud !== undefined) {
+      if (typeof(obj.baud) === "number") {
+        var baud = parseInt(obj.baud);
+        if (!isNaN(baud)) {
+          buf[3] = baud >> (3*8);
+          buf[4] = baud >> (2*8);
+          buf[5] = baud >> (1*8);
+          buf[6] = baud;
+        } else {
+          throw new Error("uart: invalid number on baud")
+        }
+      } else {
+        throw new Error("uart: baud should be number")
       }
     }
     if (typeof(obj.stop) === "number") {
@@ -34,7 +41,7 @@ class WSCommand_UART extends WSCommand {
       } else if (obj.stop === 2) {
         buf[7] = 3;
       } else {
-        // ???
+        throw new Error("uart: invalid stop bits")
       }
     }
     if (typeof(obj.bits) === "number") {
@@ -42,7 +49,7 @@ class WSCommand_UART extends WSCommand {
       if (5 <= bits && bits <= 8) {
         buf[8] = bits;
       } else {
-        // ???
+        throw new Error("uart: invalid bit length")
       }
     }
     if (obj.parity === "even") {
@@ -91,8 +98,12 @@ class WSCommand_UART extends WSCommand {
       if (typeof(module) !== "object") {
         continue;
       }
-      if (typeof(module.tx) === "number" && typeof(module.rx) === "number") {
-        this.init(i, module);
+      if (module.tx || module.rx) {
+        if (this.isValidIO(module.tx) && this.isValidIO(module.rx)) {
+          this.init(i, module);
+        } else {
+          throw new Error("uart: tx rx is not valid obniz io")
+        } 
       }
       if (module.data) {
         this.send(i, module.data);
