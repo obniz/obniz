@@ -239,6 +239,13 @@ class Obniz {
   }
 
   clearSocket(socket) {
+    /* send queue */
+    if (this._sendQueueTimer) {
+      delete this._sendQueue;
+      clearTimeout(this._sendQueueTimer);
+      this._sendQueueTimer = null;
+    }
+    /* unbind */
     if (this.isNode) {
       let shouldRemoveObservers = ['open', 'message', 'close', 'error'];
       for (let i = 0; i < shouldRemoveObservers.length; i++) {
@@ -331,24 +338,16 @@ class Obniz {
         this.error(e);
       }
     }
-    if (true) {
-      // queue sending
-      if(typeof sendData === "string") {
-        this._drainQueued();
-        this.socket.send(sendData);
-      } else {
-        if (this._sendQueue) {
-          this._sendQueue.push(sendData);
-        } else {
-          this._sendQueue = [sendData];
-          this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
-        }
-      }
-    } else {
-      // sendImmidiately
+    /* queue sending */
+    if(typeof sendData === "string") {
+      this._drainQueued();
       this.socket.send(sendData);
-      if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+    } else {
+      if (this._sendQueue) {
+        this._sendQueue.push(sendData);
+      } else {
+        this._sendQueue = [sendData];
+        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
       }
     }
   }
