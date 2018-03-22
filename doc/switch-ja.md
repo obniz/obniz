@@ -13,7 +13,7 @@ obniz組み込みスイッチの使い方です
 4. right
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.display.clear();
 obniz.switch.onchange = function(state) {
   if (state === "push") {
@@ -28,7 +28,7 @@ obniz.switch.onchange = function(state) {
 現在のスイッチの状態を取得します
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.display.clear();
 var state = await obniz.switch.getWait();
 if (state === "push") {

@@ -8,7 +8,7 @@ ObnizにあるOLEDディスプレイに文字や絵を描画します。
 画面に表示されているものをすべてクリアします。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.display.clear();
 ```
 ## display.print(string);
@@ -16,12 +16,13 @@ obniz.display.clear();
 文字を表示します。半角英数字にのみ対応しています。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.display.print("Hello!");
 ```
 
 ブラウザはUTF8 の文字も描画可能です. (node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
 ```javascript
+// Javascript Example
 obniz.display.font('Serif',18)
 obniz.display.print("Hello World🧡")
 ```
@@ -32,6 +33,7 @@ obniz.display.print("Hello World🧡")
  
 文字の描画位置を変更します。次にprint()でも字を出すときはこの位置を左上として文字を描画します。
 ```javascript
+// Javascript Example
 obniz.display.pos(0,30);
 obniz.display.print("YES. こんにちは");
 ```
@@ -43,6 +45,7 @@ obniz.display.print("YES. こんにちは");
 フォントを変更します。
 利用できるフォントはプログラムを動かしているブラウザに依存します。
 ```javascript
+// Javascript Example
 obniz.display.font('Avenir',30)
 obniz.display.print("Avenir")
 ```
@@ -55,14 +58,15 @@ obniz.display.print("Avenir")
  
 ２点間の線を描画します。
 ```javascript
-  obniz.display.line(30, 30, 100, 30);
-  obniz.display.rect(20, 20, 20, 20);
-  obniz.display.circle(100, 30, 20);
-  
-  obniz.display.line(60, 50, 100, 30);
-  obniz.display.rect(50, 40, 20, 20, true);
-  obniz.display.line(50, 10, 100, 30);
-  obniz.display.circle(50, 10, 10, true);
+// Javascript Example
+obniz.display.line(30, 30, 100, 30);
+obniz.display.rect(20, 20, 20, 20);
+obniz.display.circle(100, 30, 20);
+
+obniz.display.line(60, 50, 100, 30);
+obniz.display.rect(50, 40, 20, 20, true);
+obniz.display.line(50, 10, 100, 30);
+obniz.display.circle(50, 10, 10, true);
 ```
 ![](./images/obniz_display_draws.jpg)
 
@@ -71,7 +75,8 @@ obniz.display.print("Avenir")
  
 矩形を描画します。
 ```javascript
-obniz.display.rect(20, 20, 20, 20);
+// Javascript Example
+obniz.display.rect(10, 10, 20, 20);
 obniz.display.rect(20, 20, 20, 20, true); // filled rect
 ```
 
@@ -80,8 +85,9 @@ obniz.display.rect(20, 20, 20, 20, true); // filled rect
  
 円を描画します
 ```javascript
-obniz.display.circle(100, 30, 20);
-obniz.display.circle(100, 30, 20, true); // filled circle
+// Javascript Example
+obniz.display.circle(40, 30, 20);
+obniz.display.circle(90, 30, 20, true); // filled circle
 ```
 
 
@@ -98,7 +104,7 @@ correctionはエラー訂正レベルで
 から選べます。Hにすると強いエラー訂正が入ります。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.display.qr("https://obniz.io")
 ```
 
@@ -122,10 +128,16 @@ node-canvasを利用すればnode.jsでも利用可能です。
 
 ```javascript
 
-// load existing
+// 1. load existing
 const ctx = $("#canvas")[0].getContext('2d');
-// create new canvas dom and load it.
-// const ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+// 2. create new canvas dom and load it.
+const ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+
+// 3. runnning with node.js
+//    npm install canvas. ( version 2.0.0 or later required )
+const { createCanvas } = require('canvas');
+const canvas = createCanvas(128, 64); 
+const ctx = canvas.getContext('2d');
 
 ctx.fillStyle = "white";
 ctx.font = "30px Avenir";

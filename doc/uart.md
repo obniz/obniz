@@ -47,7 +47,7 @@ available configrations are
 
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });  
 obniz.uart0.send("Hi");
 ```
@@ -61,7 +61,7 @@ available formats are
 - Buffer/Array => array of bytes
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
@@ -71,7 +71,7 @@ obniz.uart0.send([0x11, 0x45, 0x44]);
 stop uart. it will release io.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.end();
@@ -86,7 +86,7 @@ data is [0x41]
 text is "A"  
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.onreceive = function(data, text) {
   console.log(data);
@@ -103,14 +103,14 @@ if you are using onreceive callback, it always false because you get data from c
 
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
         console.log(obniz.uart0.readText());
     }
-    obniz.wait(10);  //wait for 10ms
+    await obniz.wait(10);  //wait for 10ms
 }
 ```
 
@@ -118,14 +118,14 @@ while(1){
 return received data array which recieved and you don't get yet.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
         console.log(obniz.uart0.readBytes());
     }
-    obniz.wait(10);  //wait for 10ms
+    await obniz.wait(10);  //wait for 10ms
 }
 ```
 
@@ -134,13 +134,13 @@ return received data as string which recieved and you don't get yet.
 
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
         console.log(obniz.uart0.readText());
     }
-    obniz.wait(10);  //wait for 10ms
+    await obniz.wait(10);  //wait for 10ms
 }
 ```

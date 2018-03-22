@@ -47,6 +47,7 @@ callback: function(edges) {
 Full Example
 
 ```javascript
+// Javascript Example
 obniz.measure.echo({
   io_pulse: this.triger, // io for generate pulse
   io_echo: this.echo, // io to be measured
@@ -56,6 +57,7 @@ obniz.measure.echo({
   timeout: 1000, // this is optional. 1000(1sec) is default
   callback: function(edges) {
     // callback function
+    console.log(edges);
   }
 });
 ```

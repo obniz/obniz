@@ -6,7 +6,7 @@ io0からio11まで利用できます。
 ObnizのX番ピンを出力ピンにして１または０を出力します。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.io1.output(true); // io1 is 5V
 ```
 ## drive(type)
@@ -24,7 +24,7 @@ obniz.io1.output(true); // io1 is 5V
 既にIOが出力しているときは"3v"と"open-drain"タイプの切り替えは即座に行われますが。"5v"への切り替えや"5v"から他のものへの切り替えは出力中は切り替えられません。
 inputにしてから次にoutputとして利用する時に適用されます。
 ```Javascript
-// Example
+// Javascript Example
 obniz.io1.output(true); // output push-pull 5v
 obniz.io1.pull("5v");
 obniz.io1.drive("open-drain"); // changed immediately 
@@ -39,7 +39,7 @@ IOの内部プルアップ・プルダウンを変更します。
 4. "0v"  gndにプルダウンします。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.io0.pull(null);
 obniz.io1.pull("3v");
 obniz.io1.drive("open-drain"); // output open-drain
@@ -49,7 +49,7 @@ obniz.io1.drive("open-drain"); // output open-drain
 ピンに加わっている電圧を読みtrue/falseを読み取ります。
 true/falseの値が変わるたびにcallbackを呼び出します。
 ```Javascript
-// Example
+// Javascript Example
 obniz.io0.input(function(value){
   console.log("changed to " + value);
 });
@@ -58,7 +58,7 @@ obniz.io0.input(function(value){
 ピンに加わっている電圧を読み結果をture/falseで返します。
 この関数を呼ぶことでピンをinputに設定し、値が返ってくるまで関数はwaitします。
 ```Javascript
-// Example
+// Javascript Example
 var value = await obniz.io0.inputWait();
 console.log(value);
 ```
@@ -72,7 +72,7 @@ durationはその状態がどれだけ続くかで、1~429426ミリ秒(約1時�
 stateにセットする関数の中でioの状態を指定してください。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.io.animation("animation-1", "loop", [
   {
     duration: 10,

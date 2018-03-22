@@ -6,7 +6,7 @@ available io0 to io11
 Make ioX to output mode and output ture or false.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.io1.output(true); // io1 is 5V
 ```
 
@@ -25,7 +25,7 @@ You can change "5v" "3v" and "open-drain" while output.
 But "3v" is not granted while output. You should change it to input onece.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.io1.output(true); // output push-pull 5v
 obniz.io1.pull("5v");
 obniz.io1.drive("open-drain"); // changed immediately 
@@ -40,7 +40,7 @@ enable/disable internal pull up/down resistors.
 4. "0v"  pull down to gnd
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.io0.pull(null);
 obniz.io1.pull("3v");
 obniz.io1.drive("open-drain"); // output open-drain
@@ -50,7 +50,7 @@ obniz.io1.drive("open-drain"); // output open-drain
 Make ioX to input mode.
 and callback function will be called when io changed it's input value.
 ```Javascript
-// Example
+// Javascript Example
 obniz.io0.input(function(value){
   console.log("changed to " + value);
 });
@@ -60,7 +60,7 @@ Make ioX to input mode.
 And This will return current input value.
 It will pause process.
 ```Javascript
-// Example
+// Javascript Example
 var value = await obniz.io0.inputWait();
 console.log(value);
 ```
@@ -74,7 +74,7 @@ duration is how long does it state consist. It msec. 1 to 429426 msec (around 1 
 state is function which has io directives.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.io.animation("animation-1", "loop", [
   {
     duration: 10,

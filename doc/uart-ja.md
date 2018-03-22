@@ -42,7 +42,7 @@ Defaults
 
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });
 obniz.uart0.send("Hi");
 ```
@@ -57,7 +57,7 @@ dataで送れるものは
 - Buffer/Array => そのまま送信されます
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
@@ -68,7 +68,7 @@ obniz.uart0.send([0x11, 0x45, 0x44]);
 uartを停止します。uartで使われていたピンは入力となります
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.send("Hi");
 obniz.uart0.end();
@@ -80,7 +80,7 @@ obniz.uart0.end();
 第二引数のtextは受信したarrayをtextとして変換したものです。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 obniz.uart0.onreceive = function(data, text) {
   console.log(data);
@@ -98,14 +98,14 @@ obniz.uart0.send("Hello");
 
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
         console.log(obniz.uart0.readText());
     }
-    obniz.wait(10);  //wait for 10ms
+    await obniz.wait(10);  //wait for 10ms
 }
 ```
 
@@ -113,14 +113,14 @@ while(1){
 受信済みで，まだ使用していないデータをarrayで返します
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
         console.log(obniz.uart0.readBytes());
     }
-    obniz.wait(10);  //wait for 10ms
+    await obniz.wait(10);  //wait for 10ms
 }
 ```
 
@@ -129,12 +129,12 @@ while(1){
 
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
     if(obniz.uart0.isDataExists){
         console.log(obniz.uart0.readText());
     }
-    obniz.wait(10);  //wait for 10ms
+    await obniz.wait(10);  //wait for 10ms
 }

@@ -10,8 +10,7 @@ start measuring voltage on ioX until end() called.
 call callback function when voltage was changed.
 
 ```Javascript
-// Example
-// start a/d on IO0
+// Javascript Example
 obniz.ad0.start(function(voltage){
   console.log("changed to "+voltage+" v")
 });
@@ -20,8 +19,7 @@ You can start without callback function.
 callback function can be set at anytime.
 
 ```Javascript
-// Example
-// start a/d on IO0
+// Javascript Example
 obniz.ad0.start();
 obniz.ad0.onchange = function(voltage){
   console.log("changed to "+voltage+" v")
@@ -32,8 +30,7 @@ You can get voltage without callback.
 The value will be stored ```value``` variable.
 
 ```Javascript
-// Example
-// start a/d on IO0
+// Javascript Example
 obniz.ad0.start();
 while(true) {
   console.log("changed to "+obniz.ad0.value+" v")
@@ -44,7 +41,7 @@ while(true) {
 measure voltage onece. and reutrn it's value.
 
 ```Javascript
-// Example
+// Javascript Example
 // get voltage applied to io1 every seconds
 var voltage = await obniz.ad0.getWait();
 console.log("voltage = "+voltage+" v");
@@ -53,7 +50,7 @@ console.log("voltage = "+voltage+" v");
 Stop measuring voltage on ioX.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.ad0.start();
 obniz.ad0.end();
 ```
@@ -61,7 +58,7 @@ obniz.ad0.end();
 This is callback function when voltage of ioX changed.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.ad0.start(); // start a/d at io0
 obniz.ad0.onchange = function(voltage) {
   console.log("voltage = "+voltage);

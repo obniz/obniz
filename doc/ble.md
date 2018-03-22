@@ -29,6 +29,7 @@ obniz.ble.stopAdvertisement();
 Set advertise data from data array.
 
 ```Javascript
+// Javascript Example
 obniz.ble.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x02, 0x01, 0x1A  => BLE type for 
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
@@ -43,6 +44,7 @@ Set advertise data from json.
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
   manufacturerData:{
@@ -375,6 +377,7 @@ Start scan.
 ```
 
 ```Javascript
+// Javascript Example
 obniz.ble.startScan({duration : 10});
 
 obniz.ble.startScan();   //setting arg is optinal
@@ -386,6 +389,7 @@ obniz.ble.startScan();   //setting arg is optinal
 stop scan.
 
 ```Javascript
+// Javascript Example
 obniz.ble.startScan({duration : 10});
 await obniz.wait(5000);
 obniz.ble.stopScan();
@@ -397,8 +401,9 @@ Call this func when obniz find new peripheral.
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral)
+   console.log(peripheral)
 }
 
 obniz.ble.startScan({duration : 10});
@@ -409,8 +414,9 @@ obniz.ble.startScan({duration : 10});
 Return raw advertise data.
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral.advertise_data)
+   console.log(peripheral.advertise_data)
 }
 
 obniz.ble.startScan({duration : 10});
@@ -420,8 +426,9 @@ obniz.ble.startScan({duration : 10});
 Return local name if peripheral has it.
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral.localName())
+   console.log(peripheral.localName())
 }
 
 obniz.ble.startScan({duration : 10});
@@ -445,8 +452,9 @@ Return values are here.
 ```
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral.iBeacon())
+   console.log(peripheral.iBeacon())
 }
 obniz.ble.startScan({duration : 10});
 ```
@@ -456,6 +464,7 @@ obniz.ble.startScan({duration : 10});
 Connet to peripheral
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.connect();
@@ -469,10 +478,11 @@ obniz.ble.startScan({duration : 10});
 Call  this func when obniz connect success
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.onconnect = function(){
-            alert("success");
+            console.log("success");
         }
         peripheral.connect();
     }
@@ -485,10 +495,11 @@ obniz.ble.startScan({duration : 10});
 Close connection.
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.connect();
-        wait obniz.wait(1000);
+        await obniz.wait(1000);
         peripheral.disconnect();
     }
 }
@@ -501,13 +512,14 @@ obniz.ble.startScan({duration : 10});
 Call this func when obniz close connection. 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.onconnect = function(){
-            alert("success");
+            console.log("success");
         }
         peripheral.ondisconnect = function(){
-            alert("closed");
+            console.log("closed");
         }
         peripheral.connect();
     }
@@ -520,6 +532,7 @@ obniz.ble.startScan({duration : 10});
 write data to the characteristic from data array.
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -537,6 +550,7 @@ obniz.ble.startScan({duration : 10});
 write data to the characteristic from value as 4byte bigadian int.
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -555,6 +569,7 @@ obniz.ble.startScan({duration : 10});
 write data to the characteristic from string.
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -573,6 +588,7 @@ Call this func when write to the characteristic success.
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -581,7 +597,7 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onwritecharacteristic = function(service, characteristic,results){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert(results); //"success" or "failed"
+                console.log(results); //"success" or "failed"
             }
         }
         peripheral.connect();
@@ -597,6 +613,7 @@ Read from characteristic.
 Return value appear in callback function (onreadcharacteristic) .
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -605,7 +622,7 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert("value : " + dataArray);
+                console.log("value : " + dataArray);
             }
         }
         peripheral.connect();
@@ -618,6 +635,7 @@ obniz.ble.startScan({duration : 10});
 Call this func when read from the characteristic success.
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -626,7 +644,7 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert("value : " + dataArray);
+                console.log("value : " + dataArray);
             }
         }
         peripheral.connect();
@@ -651,6 +669,7 @@ Call this func when someting error occurred with erorr messages.
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -659,11 +678,11 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert("value : " + dataArray);
+                console.log("value : " + dataArray);
             }
         }
         peripheral.onerror = function(err){
-            alert("error : " + err.message);
+            console.log("error : " + err.message);
         }
         peripheral.connect();
     }

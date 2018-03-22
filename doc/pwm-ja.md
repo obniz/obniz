@@ -32,7 +32,7 @@ pwmをnumberで指定したピンで開始します。
 開始直後はパルスは出力されません。
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 ```
@@ -43,7 +43,7 @@ PWMの発振周波数を指定します。
 DCモーターなどでは1khzなどが一般的です。
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm. frequency to 1khz
@@ -53,7 +53,7 @@ pwm.freq(1000); // set pwm. frequency to 1khz
 PWMのパルス幅をミリ秒で指定します。
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm frequency to 1khz
@@ -64,7 +64,7 @@ pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  50% ratio.
 PWMのパルス幅をデューティー比で指定します。
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm frequency to 1khz
@@ -82,7 +82,7 @@ am変調は1であれば現在の周波数によりpwmの出力をONにして、
 信号のシンボル長も指定できます。
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11);   // start pwm. output at io11
 pwm.freq(38000); // set pwm frequency to 38khz

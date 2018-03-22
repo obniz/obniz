@@ -13,7 +13,7 @@ The states is below.
 4. right
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.display.clear();
 obniz.switch.onchange = function(state) {
   if (state === "push") {
@@ -28,7 +28,7 @@ obniz.switch.onchange = function(state) {
 Determine current state with waiting response.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.display.clear();
 var state = await obniz.switch.getWait();
 if (state === "push") {

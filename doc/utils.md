@@ -27,7 +27,7 @@ obniz.onconnect = function() {
 repeat will call callback function periodically.
 It stop calling when disconnected from obniz.
 ```Javascript
-// Example
+// Javascript Example
 obniz.ad0.start();
 obniz.repeat(function(){
   if (obniz.ad0.value > 2.5) {
@@ -40,14 +40,14 @@ obniz.repeat(function(){
 ## [await] wait(ms)
 Pause obniz until givem msec passed.
 ```Javascript
-// Example
+// Javascript Example
 led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
 ```
 This method pause only obniz, javascript nerver stopped
 ```Javascript
-// Example
+// Javascript Example
 var time = new Date();
 led.on();
 obniz.wait(1000); // led ON 1sec.
@@ -56,7 +56,7 @@ console.log((new Date()).getTime() - time.getTime()) // 0 or very few msec. not 
 ```
 But, when you call this method with await, javascript wait processing until given msec passed
 ```Javascript
-// Example
+// Javascript Example
 var time = new Date();
 led.on();
 await obniz.wait(1000); // led ON 1sec.

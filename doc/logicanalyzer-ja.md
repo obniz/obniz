@@ -13,7 +13,7 @@ ioでのロジックアナライザーをスタートさせます。
 例えば変化があってから2msごとに1秒分のピンの1,0を取得したい場合は以下のように設定します。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 2msec interval and 1sec long.
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
@@ -22,7 +22,7 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 ## logicAnalyzer.start({io, interval, duration, trigerValue, trigerValueSamples});
 trigerを指定することができます。 これなしでは、全てのioの状態変化をトリガーとして動き始めます。 トリガーにより測定を開始したい値とその数を指定できます。 例えば、下の例であればfalseが3回続いたデータのみ計測します。
 ```Javascript
-// Example
+// Javascript Example
 obniz.logicAnalyzer.start({io:0, interval:2, duration:1000, trigerValue:false, trigerValueSamples:3});  // start on io0. 2msec interval and 1sec long.
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
@@ -41,7 +41,7 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 つまり、2msecだけioは1で、それ以降の30msecはioは0だったと推定されます。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1msec interval and 1sec long.
 
 obniz.logicAnalyzer.onmeasured = function(array) {
@@ -53,7 +53,7 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 ロジックアナライザーを停止します。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1msec interval and 1sec long.
 obniz.logicAnalyzer.end();
 ```

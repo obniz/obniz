@@ -29,7 +29,7 @@ obniz切断時には呼ばれなくなります。
 待つための関数を呼ばなくてもスレッドがフリーズすることはありません。
 javascript言語から考えると、無限にループするよりはcallback関数を利用することをおすすめします。
 ```Javascript
-// Example
+// Javascript Example
 obniz.ad0.start();
 obniz.repeat(function(){
   if (obniz.ad0.value > 2.5) {
@@ -42,14 +42,14 @@ obniz.repeat(function(){
 ## [await] wait(ms)
 obnizの動作をms(ミリ秒)で指定された値だけ停止します。
 ```Javascript
-// Example
+// Javascript Example
 led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
 ```
 obnizは停止しますが、しかし、javascriptはこのコマンドだけでは停止しません。
 ```Javascript
-// Example
+// Javascript Example
 var time = new Date();
 led.on();
 obniz.wait(1000); // led ON 1sec.
@@ -58,7 +58,7 @@ console.log((new Date()).getTime() - time.getTime()) // 0 or very few msec. not 
 ```
 await を利用することでその時間だけ実際にプログラムを停止させることが可能です。
 ```Javascript
-// Example
+// Javascript Example
 var time = new Date();
 led.on();
 await obniz.wait(1000); // led ON 1sec.

@@ -48,7 +48,7 @@ When you choose internal-pullup, speed is limited up to 100khz. Because internal
 Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 var ret = await obniz.i2c0.readWait(0x50, 1);
@@ -71,7 +71,7 @@ If you want to send data as 10bit adress mode even address <= 0x7F, then use wri
 max data length is 1024;
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
@@ -80,7 +80,7 @@ This is same as write() function. But this function will communicate to device 1
 max data length is 1024;
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 obniz.i2c0.write10bit(0x50, [0x00, 0x00, 0x12]);
 ```
@@ -90,7 +90,7 @@ This function will wait until data received.
 max length is 1024;
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
 console.log("readed"+ret);
@@ -100,7 +100,7 @@ This function will read the data with 10bit address mode.
 max length is 1024;
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 var ret = await obniz.i2c0.read10bitWait(0x50, 1);
 console.log("readed"+ret);
@@ -113,7 +113,7 @@ received data is fragmented.
 when written data is 100byte, you possibly get 56 byte and 44 byte separated.
 over 1024 bytes data can be drop few bytes.
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
 obniz.i2c0.onwritten = function(data){
   console.log(data);
@@ -124,7 +124,7 @@ obniz.i2c0.onwritten = function(data){
 end i2c .
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.end();
 ```

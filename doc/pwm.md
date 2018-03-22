@@ -27,7 +27,7 @@ start a pwm on given io.
 No pulse output on start.
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 ```
@@ -36,7 +36,7 @@ set frequency. Not pulse duration.
 For example, this value will be 1khz with DC motor.
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(1000); // set pwm. frequency to 1khz
@@ -45,7 +45,7 @@ pwm.freq(1000); // set pwm. frequency to 1khz
 set pulse duty with ms.
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(2000); // set pwm frequency to 2khz
@@ -55,7 +55,7 @@ pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  25% ratio.
 set duty with ratio.
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11); // start pwm. output at io11
 pwm.freq(2000); // set pwm frequency to 2khz
@@ -72,7 +72,7 @@ In am modulation, data "1" measn output the pwm with duty 50%. "0" means stop pw
 You can configure symbol length.
 
 ```Javascript
-// Example
+// Javascript Example
 var pwm = obniz.getFreePwm();
 pwm.start(11);   // start pwm. output at io11
 pwm.freq(38000); // set pwm frequency to 38khz

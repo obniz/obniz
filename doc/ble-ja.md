@@ -8,6 +8,7 @@ Bluetooth Low Energyでperipheral/centralとして通信ができます
 BLEのAdvertisementを開始します
 
 ```Javascript
+// Javascript Example
 obniz.ble.startAdvertisement();
 obniz.ble.stopAdvertisement();
 ```
@@ -19,6 +20,7 @@ obniz.ble.stopAdvertisement();
 BLEのAdvertisementを終了します
 
 ```Javascript
+// Javascript Example
 obniz.ble.startAdvertisement();
 obniz.ble.stopAdvertisement();
 ```
@@ -34,6 +36,7 @@ Advertisementで出力するデータバイト列を生成するadvDataBuilder�
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x02, 0x01, 0x1A  => BLE type for 
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
@@ -48,6 +51,7 @@ settingに渡した引数に従って，BLEのAdvertisementで出力するデー
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
   manufacturerData:{
@@ -84,6 +88,7 @@ BLEの規格に従い，bytesの長さは31以下にする必要があります�
 ScanResponseで出力するデータバイト列を生成するscanRespDataBuilderも参照ください
 
 ```Javascript
+// Javascript Example
 obniz.ble.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
 
@@ -97,6 +102,7 @@ obniz.ble.startAdvertisement();
 settingに渡した引数に従って，BLEのScan Responseで出力するデータを設定します
 
 ```Javascript
+// Javascript Example
 obniz.ble.setScanRespData({
   localName : "obniz BLE",
 });
@@ -151,8 +157,6 @@ obniz.ble.peripheral.addService(setting);
     characteristic.addDescriptor(descriptor);
 
     obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
-
-
 ```
 
 ## peripheral.onconnectionupdates
@@ -385,6 +389,7 @@ settingに渡した引数に従って，BLEのscanを開始します
 ```
 
 ```Javascript
+// Javascript Example
 obniz.ble.startScan({duration : 10});
 
 obniz.ble.startScan();   //引数なしも可能
@@ -396,6 +401,7 @@ obniz.ble.startScan();   //引数なしも可能
 BLEのscanを停止します
 
 ```Javascript
+// Javascript Example
 obniz.ble.startScan({duration : 10});
 await obniz.wait(5000);
 obniz.ble.stopScan();
@@ -408,8 +414,9 @@ scanでperipheralを発見すると呼ばれます
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral)
+   console.log(peripheral)
 }
 
 obniz.ble.startScan({duration : 10});
@@ -420,8 +427,9 @@ obniz.ble.startScan({duration : 10});
 advertise dataの生データを返します
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral.advertise_data)
+   console.log(peripheral.advertise_data)
 }
 
 obniz.ble.startScan({duration : 10});
@@ -431,8 +439,9 @@ obniz.ble.startScan({duration : 10});
 advertise dataの中にlocal Name情報があればそれを返します
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral.localName())
+   console.log(peripheral.localName())
 }
 
 obniz.ble.startScan({duration : 10});
@@ -454,8 +463,9 @@ advertise dataの中にiBeacon情報があればそれを返します．なけ�
 ```
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
-   alert(peripheral.iBeacon())
+   console.log(peripheral.iBeacon())
 }
 obniz.ble.startScan({duration : 10});
 ```
@@ -465,6 +475,7 @@ obniz.ble.startScan({duration : 10});
 peripheralに接続します
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.connect();
@@ -478,10 +489,11 @@ obniz.ble.startScan({duration : 10});
 接続が成功したときに呼ばれます
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.onconnect = function(){
-            alert("success");
+            console.log("success");
         }
         peripheral.connect();
     }
@@ -494,10 +506,11 @@ obniz.ble.startScan({duration : 10});
 peripheralから切断します
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.connect();
-        wait obniz.wait(1000);
+        await obniz.wait(1000);
         peripheral.disconnect();
     }
 }
@@ -510,13 +523,14 @@ obniz.ble.startScan({duration : 10});
 切断されたときに呼ばれます 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
         peripheral.onconnect = function(){
-            alert("success");
+            console.log("success");
         }
         peripheral.ondisconnect = function(){
-            alert("closed");
+            console.log("closed");
         }
         peripheral.connect();
     }
@@ -528,6 +542,7 @@ obniz.ble.startScan({duration : 10});
 characteristicにdataArrayを書き込みます
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -547,6 +562,7 @@ obniz.ble.startScan({duration : 10});
 characteristicに数字を4byteのbigadianとしてを書き込みます
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -565,6 +581,7 @@ obniz.ble.startScan({duration : 10});
 characteristicにdataArrayを書き込みます
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -583,6 +600,7 @@ characteristicに書き込みが完了したときに呼ばれます
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -591,7 +609,7 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onwritecharacteristic = function(service, characteristic, results){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert(results); //"success" or "failed"
+                console.log(results); //"success" or "failed"
             }
         }
         peripheral.connect();
@@ -607,6 +625,7 @@ characteristicからデータを読み込みます
 結果は，onreadcharacteristicコールバックで呼ばれます
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -615,7 +634,7 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert("value : " + dataArray);
+                console.log("value : " + dataArray);
             }
         }
         peripheral.connect();
@@ -628,6 +647,7 @@ obniz.ble.startScan({duration : 10});
 characteristicからデータを読み込出したときに呼ばれます
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -636,7 +656,7 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert("value : " + dataArray);
+                console.log("value : " + dataArray);
             }
         }
         peripheral.connect();
@@ -663,6 +683,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ```Javascript
+// Javascript Example
 obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
@@ -671,11 +692,11 @@ obniz.ble.onscan = function(peripheral){
         }
         peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
             if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                alert("value : " + dataArray);
+                console.log("value : " + dataArray);
             }
         }
         peripheral.onerror = function(err){
-            alert("error : " + err.message);
+            console.log("error : " + err.message);
         }
         peripheral.connect();
     }

@@ -57,7 +57,7 @@ SDA, SCLとして利用するioの番号が必要です。
 400khzでの通信であっても外部で2.2kOhm程度でのプルアップ抵抗をSDA,SCL端子に接続して下さい。
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode sda=2 scl=3 400khz no internal pullup
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
@@ -84,7 +84,7 @@ dataの最大は1024バイトです。
 Example
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode sda=2 scl=3 400khz no pullup
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
@@ -96,7 +96,7 @@ addressの値が何であれ必ず10bitアドレスモードで送信します�
 dataの最大は1024バイトです。
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode sda=2 scl=3 400khz no pullup
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write10bit(0x50, [0x00, 0x00, 0x12]);
@@ -108,7 +108,7 @@ addressの扱いに関してはwriteのものと同じです。
 lengthの最大は1024バイトです。
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode sda=2 scl=3 400khz no pullup
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
@@ -122,7 +122,7 @@ addressの値が何であれ必ず10bitアドレスモードで送信します�
 lengthの最大は1024バイトです。
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode sda=2 scl=3 400khz no pullup
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 var ret = await obniz.i2c0.read10bitWait(0x50, 1);
@@ -136,7 +136,7 @@ Slaveモードのみ。
 100byte書き込まれたとしても、56byteと44byteの２回に分けて届く可能性があります。
 また、1024バイトを超えるデータはデータをロストする可能性があります。
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
 obniz.i2c0.onwritten = function(data){
   console.log(data);
@@ -148,7 +148,7 @@ obniz.i2c0.onwritten = function(data){
 i2cを終了しIOを開放します。
 
 ```Javascript
-// Example
+// Javascript Example
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.end();
 ```

@@ -25,7 +25,7 @@ driveとpullは出力設定オプションです.
 
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
@@ -41,7 +41,7 @@ spiにデータを送信します。
 spiは送信したデータの分だけ受信します。受信したデータは返り値として返ってきます
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
@@ -52,7 +52,7 @@ console.log("received: "+ret);
 SPIにデータを送信します。受信は行いません。
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 obniz.spi0.write([0x12, 0x98]);
@@ -62,7 +62,7 @@ obniz.spi0.write([0x12, 0x98]);
 spiを終了します
 
 ```Javascript
-// Example
+// Javascript Example
 // master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 obniz.spi0.write([0x12, 0x98]);
