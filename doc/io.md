@@ -21,9 +21,6 @@ By default, it is push-pull 5v with motor driver(up to 1A).
 3. "open-drain"
   - open-drain mode. It sink up to around 1mA.
 
-You can change "5v" "3v" and "open-drain" while output.
-But "3v" is not granted while output. You should change it to input onece.
-
 ```Javascript
 // Javascript Example
 obniz.io1.output(true); // output push-pull 5v

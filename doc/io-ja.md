@@ -21,8 +21,7 @@ obniz.io1.output(true); // io1 is 5V
   - open-drain モード. 電圧と電流についてはpush-pull3vと同じです。
 
 が利用可能です。
-既にIOが出力しているときは"3v"と"open-drain"タイプの切り替えは即座に行われますが。"5v"への切り替えや"5v"から他のものへの切り替えは出力中は切り替えられません。
-inputにしてから次にoutputとして利用する時に適用されます。
+
 ```Javascript
 // Javascript Example
 obniz.io1.output(true); // output push-pull 5v
