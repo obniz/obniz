@@ -292,10 +292,10 @@ class ObnizBLE {
         var p = this.findPeripheral(params.address);
         if (p) {
           if (params.status === "connected") {
-            p.notify("onconnect");
+            p.onconnect();
           }
           if (params.status === "disconnected") {
-            p.notify("ondisconnect");
+            p.ondisconnect();
           }
         }
       }), this);
@@ -307,7 +307,8 @@ class ObnizBLE {
           return;
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("ondiscoverservice",params.service_uuid);
+          let service = p.getService(params.service_uuid);
+          p.ondiscoverservice(service);
         }
       }), this);
     }
@@ -317,7 +318,9 @@ class ObnizBLE {
           return;
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("ondiscovercharacteristic",params.service_uuid,params.characteristic_uuid);
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          service.ondiscovercharacteristic(chara);
         }
       }), this);
     }
@@ -327,7 +330,9 @@ class ObnizBLE {
           return;
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("onwritecharacteristic",params.service_uuid,params.characteristic_uuid,null, params.result);
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          chara.onwrite(params.result);
         }
       }), this);
     }
@@ -338,7 +343,9 @@ class ObnizBLE {
           return;
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("onreadcharacteristic",params.service_uuid, params.characteristic_uuid,null, params.data);
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          chara.onread(params.data);
         } 
       }), this);
     }
@@ -348,7 +355,10 @@ class ObnizBLE {
           return;
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("ondiscoverdescriptor",params.service_uuid, params.characteristic_uuid,  params.descriptor_uuid);
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descr = chara.getDescriptor(params.descriptor_uuid);
+          chara.ondiscoverdescriptor(descr);
         } 
       }), this);
     }
@@ -358,7 +368,10 @@ class ObnizBLE {
           return;
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("onreaddescriptor",params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descr = chara.getDescriptor(params.descriptor_uuid);
+          descr.onread(params.data);
         } 
       }), this);
     }
@@ -368,7 +381,10 @@ class ObnizBLE {
           return;
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("onwritedescriptor",params.service_uuid, params.characteristic_uuid, params.descriptor_uuid, params.data);
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descr = chara.getDescriptor(params.descriptor_uuid);
+          descr.onwrite(params.data);
         } 
       }), this);
     }
@@ -422,7 +438,7 @@ class ObnizBLE {
          
         var p = this.findPeripheral(params.address);
         if (p) {
-          p.notify("onerror",null, null, null, params);
+          p.onerror(params);
         } 
       }), this);
     }

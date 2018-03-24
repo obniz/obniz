@@ -37,7 +37,8 @@ class BleRemotePeripheral {
       address: this.address,
       addressType: this.addressType,
       connectable: this.connectable,
-      advertisement: this.advertisement,
+      advertisement: this.adv_data,
+      scanResponse: this.scan_resp,
       rssi: this.rssi,
       state: this.state
     });
@@ -77,8 +78,9 @@ class BleRemotePeripheral {
           i = i + length;
         }
       }
-    } 
+    }
   }
+
 
   serarchTypeVal(type){
     this.analyseAdvertisement();
@@ -186,34 +188,9 @@ class BleRemotePeripheral {
   onconnect(){};
   ondisconnect(){};
   ondiscoverservice(service){};
-  ondiscovercharacteristic(service, characteristic){};
-  onwritecharacteristic(service, characteristic, status){};
-  onreadcharacteristic(service, characteristic, value){};
-  ondiscoverdescriptor(service, characteristic,descriptor){};
-  onreaddescriptor(service, characteristic,descriptor, value){};
-  onwritedescriptor(service, characteristic,descriptor, value){};
+
   onerror(err){};
 
-  notify( funcName, serviceUuid, characteristicUuid, descriptorUuid, param){
-    if(typeof (this[funcName])  === "function"){
-      if(!serviceUuid){
-        this[funcName](param);
-      }else{
-        var service = this.getService(serviceUuid);
-        if(!characteristicUuid){
-          this[funcName](service,param);
-        }else{
-          var characteristic = service.getCharacteristic(characteristicUuid);
-          if(!descriptorUuid){
-            this[funcName](service,characteristic,param);
-          }else{
-             var descriptor = characteristic.getDescriptor(descriptorUuid);
-             this[funcName](service,characteristic,descriptor, param);
-          }
-        }
-      }
-    }
-  }
 }
 
 
@@ -265,6 +242,10 @@ class BleRemoteService {
     this.characteristics.push(newCharacteristic);
     return newCharacteristic;
   }
+
+
+  ondiscovercharacteristic( characteristic){};
+
 }
 
 
@@ -375,6 +356,12 @@ class BleRemoteCharacteristic {
     this.descriptors.push(newDescriptors);
     return newDescriptors;
   }
+
+  onwrite(status){};
+  onread(value){};
+  ondiscoverdescriptor(descriptor){};
+
+
 }
 
 /**
@@ -433,4 +420,7 @@ class BleRemoteDescriptor {
     };
     this.Obniz.send(obj);
   }
+
+  onread(value){};
+  onwrite(value){};
 }
