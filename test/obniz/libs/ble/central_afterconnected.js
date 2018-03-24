@@ -73,8 +73,9 @@ describe("ble", function () {
     var peripheral = this.peripheral;
     
     var stub = sinon.stub();
-    peripheral.onwritecharacteristic = stub;
-    peripheral.getService("FF00").getCharacteristic("FF01").write([0x01, 0xe8]);
+    let chara = peripheral.getService("FF00").getCharacteristic("FF01");
+    chara.write([0x01, 0xe8]);
+    chara.onwrite = stub;
     expect(this.obniz).send(
         {ble: {write_characteristic: {
           address: "e5f678800700",
@@ -98,11 +99,9 @@ describe("ble", function () {
       }
     });
     sinon.assert.callCount(stub, 1);
-    expect(stub.getCall(0).args).to.be.lengthOf(3);
+    expect(stub.getCall(0).args).to.be.lengthOf(1);
     
-    expect(stub.getCall(0).args[0]).to.be.equal(peripheral.getService("FF00"));
-    expect(stub.getCall(0).args[1]).to.be.equal(peripheral.getService("FF00").getCharacteristic("FF01"));
-    expect(stub.getCall(0).args[2]).to.be.equal("success");
+    expect(stub.getCall(0).args[0]).to.be.equal("success");
     expect(this.obniz).to.be.finished;
     
   });
@@ -112,8 +111,9 @@ describe("ble", function () {
     var peripheral = this.peripheral;
     
     var stub = sinon.stub();
-    peripheral.onwritecharacteristic = stub;
-    peripheral.getService("FF00").getCharacteristic("FF01").write([0x01, 0xe8]);
+    let chara = peripheral.getService("FF00").getCharacteristic("FF01");
+    chara.onwrite = stub;
+    chara.write([0x01, 0xe8]);
     expect(this.obniz).send(
         {ble: {write_characteristic: {
           address: "e5f678800700",
@@ -137,11 +137,9 @@ describe("ble", function () {
       }
     });
     sinon.assert.callCount(stub, 1);
-    expect(stub.getCall(0).args).to.be.lengthOf(3);
+    expect(stub.getCall(0).args).to.be.lengthOf(1);
     
-    expect(stub.getCall(0).args[0]).to.be.equal(peripheral.getService("FF00"));
-    expect(stub.getCall(0).args[1]).to.be.equal(peripheral.getService("FF00").getCharacteristic("FF01"));
-    expect(stub.getCall(0).args[2]).to.be.equal("failed");
+    expect(stub.getCall(0).args[0]).to.be.equal("failed");
     expect(this.obniz).to.be.finished;
     
   });
@@ -151,8 +149,9 @@ describe("ble", function () {
     var peripheral = this.peripheral;
     
     var stub = sinon.stub();
-    peripheral.onreadcharacteristic = stub;
-    peripheral.getService("FF00").getCharacteristic("FF01").read();
+    let chara = peripheral.getService("FF00").getCharacteristic("FF01");
+    chara.onread = stub;
+    chara.read();
     expect(this.obniz).send(
         {ble: {read_characteristic: {
           address: "e5f678800700",
@@ -176,11 +175,9 @@ describe("ble", function () {
     });
     
     sinon.assert.callCount(stub, 1);
-    expect(stub.getCall(0).args).to.be.lengthOf(3);
+    expect(stub.getCall(0).args).to.be.lengthOf(1);
     
-    expect(stub.getCall(0).args[0]).to.be.equal(peripheral.getService("FF00"));
-    expect(stub.getCall(0).args[1]).to.be.equal(peripheral.getService("FF00").getCharacteristic("FF01"));
-    expect(stub.getCall(0).args[2]).to.be.deep.equal([0x2e, 0x22, 0x97]);
+    expect(stub.getCall(0).args[0]).to.be.deep.equal([0x2e, 0x22, 0x97]);
     
     expect(this.obniz).to.be.finished;
   });
