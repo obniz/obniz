@@ -24,7 +24,7 @@ describe("obniz.libs.pwm", function () {
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
   
-  it.skip("getpwm double",  function () {
+  it("getpwm double",  function () {
     var pwm1 = this.obniz.getFreePwm();
     var pwm2 = this.obniz.getFreePwm();
     
@@ -56,11 +56,11 @@ describe("obniz.libs.pwm", function () {
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
   
-  it.skip("start io invalid",  function () {
+  it("start io invalid",  function () {
     var pwm = this.obniz.getFreePwm();
-    pwm.start(15);
-    
-    expect(this.obniz).send({pwm0:{"io": 15}});
+
+    expect(function(){pwm.start(15);}).throw(Error);
+
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
@@ -118,7 +118,6 @@ describe("obniz.libs.pwm", function () {
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
-  it("modulateのドキュメントに詳細or具体例が必要");
   
   it("end",  function () {
     var pwm = this.obniz.getFreePwm();

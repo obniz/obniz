@@ -21,7 +21,15 @@ class PeripheralI2C {
     var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl"]);
     if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
     this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "pull"]);
-    
+
+
+    let ioKeys = ["sda", "scl"];
+    for (let key of ioKeys) {
+      if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
+        throw new Error("i2c start param '"+key+"' are to be valid io no");
+      }
+    }
+
     var mode = this.state.mode;
     var clock = (typeof arg.clock === "number") ? parseInt(arg.clock) : null;
     var slave_address = (typeof arg.slave_address === "number") ? parseInt(arg.slave_address) : null;

@@ -2230,6 +2230,13 @@ class PeripheralI2C {
     }
     this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "pull"]);
 
+    let ioKeys = ["sda", "scl"];
+    for (let key of ioKeys) {
+      if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
+        throw new Error("i2c start param '" + key + "' are to be valid io no");
+      }
+    }
+
     var mode = this.state.mode;
     var clock = typeof arg.clock === "number" ? parseInt(arg.clock) : null;
     var slave_address = typeof arg.slave_address === "number" ? parseInt(arg.slave_address) : null;
@@ -2577,6 +2584,11 @@ class PeripheralPWM {
   }
 
   start(io) {
+
+    if (!this.Obniz.isValidIO(io)) {
+      throw new Error("pwm start param are to be valid io no");
+    }
+
     var obj = {};
     this.state.io = io;
     this.sendWS({
@@ -2654,6 +2666,13 @@ class PeripheralSPI {
     }
     this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "frequency", "drive", "pull"]);
     var obj = {};
+
+    let ioKeys = ["clk", "mosi", "miso"];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
+        throw new Error("spi start param '" + key + "' are to be valid io no");
+      }
+    }
 
     obj["spi" + this.id] = {
       mode: this.params.mode,
@@ -2749,9 +2768,17 @@ class PeripheralUART {
 
     var err = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
     if (err) {
-      throw new Error("uart start param '" + err + "' required, but not found ");return;
+      throw new Error("uart start param '" + err + "' required, but not found ");
+      return;
     }
     this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pull"]);
+
+    let ioKeys = ["rx", "tx", "rts", "cts"];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
+        throw new Error("uart start param '" + key + "' are to be valid io no");
+      }
+    }
 
     if (this.params.hasOwnProperty("drive")) {
       this.Obniz.getIO(this.params.rx).drive(this.params.drive);

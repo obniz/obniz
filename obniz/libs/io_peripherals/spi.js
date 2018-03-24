@@ -19,7 +19,15 @@ class PeripheralSPI {
     if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
     this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pull"]);
     var obj = {};
-    
+
+    let ioKeys = ["clk", "mosi", "miso"];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
+        throw new Error("spi start param '"+key+"' are to be valid io no");
+      }
+    }
+
+
     obj["spi" + this.id]  = {
         mode : this.params.mode,
         clock : this.params.frequency   //name different

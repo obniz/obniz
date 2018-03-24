@@ -14,6 +14,12 @@ class PeripheralPWM {
   }
 
   start(io) {
+
+    if (!this.Obniz.isValidIO(io)) {
+        throw new Error("pwm start param are to be valid io no");
+    }
+
+
     var obj = {};
     this.state.io = io;
     this.sendWS({
