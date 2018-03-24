@@ -33,7 +33,7 @@
     "ws": "^5.0.0"
   },
   "bugs": {
-    "url": "https://web.obniz.io/forums/forum/obniz-forum/"
+    "url": "https://github.com/obniz/obniz/issues"
   },
   "private": false
 }
