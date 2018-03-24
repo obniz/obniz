@@ -2364,13 +2364,27 @@ class PeripheralI2C {
   }
 
   notified(obj) {
-    if (obj.mode === "slave" && typeof this.onwritten === "function") {
-      this.onwritten(obj.data);
-    } else {
-      // TODO: we should compare byte length from sent
-      var callback = this.observers.shift();
-      if (callback) {
-        callback(obj.data);
+    if (obj && typeof obj === "object") {
+      if (obj.data) {
+        if (obj.mode === "slave" && typeof this.onwritten === "function") {
+          this.onwritten(obj.data);
+        } else {
+          // TODO: we should compare byte length from sent
+          var callback = this.observers.shift();
+          if (callback) {
+            callback(obj.data);
+          }
+        }
+      }
+      if (obj.warnings) {
+        for (let i = 0; i < obj.warnings.length; i++) {
+          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` });
+        }
+      }
+      if (obj.errors) {
+        for (let i = 0; i < obj.errors.length; i++) {
+          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` });
+        }
       }
     }
   }
@@ -4241,6 +4255,23 @@ class WSCommand_I2C extends WSCommand {
         address: address,
         data: arr
       };
+    } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength > 2) {
+      const esperr = payload[0];
+      const err = payload[1];
+      const ref_func_id = payload[2];
+
+      if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
+        let reason = '' + (ref_func_id === this._CommandWrite ? 'writing' : 'reading') + ' error. ';
+        if (err === 7) {
+          // in fact. it is 0x107. but truncated
+          reason += 'Communication Timeout. Maybe, target is not connected.';
+        } else if (err === 255) {
+          reason += 'Communication Failed. Maybe, target is not connected.';
+        }
+        this.envelopError(objToSend, `i2c0`, { message: reason });
+      } else {
+        super.notifyFromBinary(objToSend, func, payload);
+      }
     } else {
       super.notifyFromBinary(objToSend, func, payload);
     }
