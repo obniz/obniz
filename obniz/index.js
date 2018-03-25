@@ -412,11 +412,17 @@ class Obniz {
     }
   }
 
-  getIO(id) {
-    return this["io" + id];
+  getIO(io) {
+    if (!this.isValidIO(io)) {
+      throw new Error('io ' + io + ' is not valid io');
+    }
+    return this["io" + io];
   }
 
   getAD(id) {
+    if (!this.isValidIO(io)) {
+      throw new Error('ad ' + io + ' is not valid io');
+    }
     return this["ad" + id];
   }
 
@@ -609,6 +615,7 @@ class Obniz {
       }
       if (typeof (showObnizDebugError) === "function") {
         showObnizDebugError(new Error(msg));
+        console.error(new Error(msg));
       } else {
         throw new Error(msg);
       }

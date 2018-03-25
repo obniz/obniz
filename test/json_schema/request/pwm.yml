@@ -28,12 +28,9 @@ id: "/request/pwm"
             minimum : 0
             maximum : 100
 
-        force_working: 
-            type: boolean
-
         modulate: 
             type: object
-            required : [type, symbol_sec, data]
+            required : [type, symbol_length, data]
             additionalProperties: false
             properties:
                 type : 
@@ -41,7 +38,7 @@ id: "/request/pwm"
                      enum : 
                          - am
                   
-                symbol_sec :
+                symbol_length :
                     type : number
                     minimum : 0
                     

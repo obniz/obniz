@@ -19,7 +19,6 @@ class PeripheralPWM {
         throw new Error("pwm start param are to be valid io no");
     }
 
-
     var obj = {};
     this.state.io = io;
     this.sendWS({
@@ -63,12 +62,12 @@ class PeripheralPWM {
     this.used = false;
   }
 
-  modulate(type, symbol_sec, data) {
+  modulate(type, symbol_length, data) {
     var obj = {};
     this.sendWS({
       modulate: {
         type: type,
-        symbol_sec: symbol_sec,
+        symbol_length: symbol_length,
         data: data
       }
     });

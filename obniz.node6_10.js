@@ -429,11 +429,17 @@ class Obniz {
     }
   }
 
-  getIO(id) {
-    return this["io" + id];
+  getIO(io) {
+    if (!this.isValidIO(io)) {
+      throw new Error('io ' + io + ' is not valid io');
+    }
+    return this["io" + io];
   }
 
   getAD(id) {
+    if (!this.isValidIO(io)) {
+      throw new Error('ad ' + io + ' is not valid io');
+    }
     return this["ad" + id];
   }
 
@@ -643,6 +649,7 @@ class Obniz {
       }
       if (typeof showObnizDebugError === "function") {
         showObnizDebugError(new Error(msg));
+        console.error(new Error(msg));
       } else {
         throw new Error(msg);
       }
@@ -2646,12 +2653,12 @@ class PeripheralPWM {
     this.used = false;
   }
 
-  modulate(type, symbol_sec, data) {
+  modulate(type, symbol_length, data) {
     var obj = {};
     this.sendWS({
       modulate: {
         type: type,
-        symbol_sec: symbol_sec,
+        symbol_length: symbol_length,
         data: data
       }
     });
@@ -4687,13 +4694,13 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  amModulate(module, symbol_us, data) {
+  amModulate(module, symbol_length_usec, data) {
     var buf = new Uint8Array(5 + data.length);
     buf[0] = module;
-    buf[1] = symbol_us >> 8 * 3;
-    buf[2] = symbol_us >> 8 * 2;
-    buf[3] = symbol_us >> 8 * 1;
-    buf[4] = symbol_us;
+    buf[1] = symbol_length_usec >> 8 * 3;
+    buf[2] = symbol_length_usec >> 8 * 2;
+    buf[3] = symbol_length_usec >> 8 * 1;
+    buf[4] = symbol_length_usec;
     for (var i = 0; i < data.length; i++) {
       buf[5 + i] = data[i];
     }
@@ -4741,11 +4748,17 @@ class WSCommand_PWM extends WSCommand {
         }
       }
       if (typeof module.modulate == "object" && module.modulate.type === "am") {
-        var symbol_us = parseInt(module.modulate.symbol_sec * 1000000);
-        if (isNaN(symbol_us)) {
-          continue;
+        var symbol_length_usec = parseInt(module.modulate.symbol_length * 1000);
+        if (isNaN(symbol_length_usec)) {
+          throw new Error("pwm: baud is not number");
         }
-        this.amModulate(i, symbol_us, module.modulate.data);
+        if (symbol_length_usec < 50) {
+          throw new Error("pwm: baud should bigger than 50usec");
+        }
+        if (symbol_length_usec > 1000 * 1000) {
+          throw new Error("pwm: baud should smaller than 1sec");
+        }
+        this.amModulate(i, symbol_length_usec, module.modulate.data);
       }
     }
   }
@@ -6415,6 +6428,94 @@ if (PartsRegistrate) {
   PartsRegistrate("ENC03R_Module", ENC03R_Module);
 }
 
+var PIR_ekmc = function () {
+  this.keys = ["vcc", "gnd", "signal"];
+  this.requiredKeys = ["signal"];
+};
+
+PIR_ekmc.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.io_signal = obniz.getIO(this.params.signal);
+  this.io_signal.pull("0v");
+
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+  var self = this;
+  this.io_signal.input(function (value) {
+    self.isPressed = value === false;
+    if (self.onchange) {
+      self.onchange(value === false);
+    }
+  });
+};
+
+PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
+  var self = this;
+  var ret = yield this.io_signal.inputWait();
+  return ret == false;
+});
+
+if (PartsRegistrate) {
+  PartsRegistrate("PIR_ekmc", PIR_ekmc);
+}
+class IRSensor {
+
+  constructor() {
+    this.keys = ["output", "vcc", "gnd"];
+    this.requiredKeys = ["output"];
+
+    this.dataSymbolLength = 0.07;
+    this.duration = 200; // 200msec
+    this.dataInverted = true;
+    this.trigerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
+    this.cutTail = true;
+    this.output_pullup = true;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    if (!obniz.isValidIO(this.params.output)) {
+      throw new Errro('output is not valid io');
+    }
+  }
+
+  start(callback) {
+    this.ondetect = callback;
+    if (this.output_pullup) {
+      obniz.getIO(this.params.output).pull('5v');
+    }
+
+    obniz.logicAnalyzer.start({ io: 0, interval: this.dataSymbolLength, duration: this.duration, trigerValue: this.dataInverted ? false : true, trigerValueSamples: this.trigerSampleCount });
+    obniz.logicAnalyzer.onmeasured = levels => {
+      if (typeof this.ondetect === "function") {
+        if (this.dataInverted) {
+          let arr = new Uint8Array(levels);
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] = ~arr[i];
+          }
+          levels = Array.from(arr);
+        }
+
+        if (this.cutTail) {
+          for (let i = levels.length - 1; i > 1; i--) {
+            if (levels[i] === 0 && levels[i - 1] === 0) {
+              levels.splice(i, 1);
+            } else {
+              break;
+            }
+          }
+        }
+
+        this.ondetect(levels);
+      }
+    };
+  }
+}
+
+if (typeof PartsRegistrate === 'function') {
+  PartsRegistrate("IRSensor", IRSensor);
+}
 class FullColorLed {
   constructor() {
 
@@ -6535,6 +6636,40 @@ class FullColorLed {
 
 if (PartsRegistrate) {
   PartsRegistrate("FullColorLed", FullColorLed);
+}
+class InfraredLED {
+
+  constructor() {
+    this.keys = ["anode", "cathode"];
+    this.requiredKeys = ["anode"];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error("anode is not valid io");
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error("cathode is not valid io");
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start(this.params.anode);
+    this.pwm.freq(38000);
+  }
+
+  send(arr) {
+    this.pwm.modulate("am", this.dataSymbolLength, arr);
+  }
+}
+
+if (typeof PartsRegistrate === 'function') {
+  PartsRegistrate("InfraredLED", InfraredLED);
 }
 var LED = function () {
   this.keys = ["anode", "cathode"];
@@ -6734,7 +6869,7 @@ _24LC256.prototype.set = function (address, data) {
 };
 
 _24LC256.prototype.getWait = (() => {
-  var _ref6 = _asyncToGenerator(function* (address, length) {
+  var _ref7 = _asyncToGenerator(function* (address, length) {
     var array = [];
     array.push(address >> 8 & 0xFF);
     array.push(address & 0xFF);
@@ -6743,7 +6878,7 @@ _24LC256.prototype.getWait = (() => {
   });
 
   return function (_x3, _x4) {
-    return _ref6.apply(this, arguments);
+    return _ref7.apply(this, arguments);
   };
 })();
 
@@ -6839,7 +6974,7 @@ var KXSC7_2050 = function () {
 };
 
 KXSC7_2050.prototype.wired = (() => {
-  var _ref9 = _asyncToGenerator(function* (obniz) {
+  var _ref10 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
@@ -6878,7 +7013,7 @@ KXSC7_2050.prototype.wired = (() => {
   });
 
   return function (_x5) {
-    return _ref9.apply(this, arguments);
+    return _ref10.apply(this, arguments);
   };
 })();
 
@@ -7034,36 +7169,6 @@ ServoMotor.prototype.off = function () {
 
 if (PartsRegistrate) {
   PartsRegistrate("ServoMotor", ServoMotor);
-}
-var PIR_ekmc = function () {
-  this.keys = ["vcc", "gnd", "signal"];
-  this.requiredKeys = ["signal"];
-};
-
-PIR_ekmc.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.io_signal = obniz.getIO(this.params.signal);
-  this.io_signal.pull("0v");
-
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  var self = this;
-  this.io_signal.input(function (value) {
-    self.isPressed = value === false;
-    if (self.onchange) {
-      self.onchange(value === false);
-    }
-  });
-};
-
-PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var self = this;
-  var ret = yield this.io_signal.inputWait();
-  return ret == false;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("PIR_ekmc", PIR_ekmc);
 }
 //Todo:抵抗を追加して圧力(kg)を求められるように改造する
 var FSR40X = function () {
