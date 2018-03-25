@@ -643,6 +643,7 @@ class Obniz {
       }
       if (typeof showObnizDebugError === "function") {
         showObnizDebugError(new Error(msg));
+        console.error(new Error(msg));
       } else {
         throw new Error(msg);
       }
@@ -2646,12 +2647,12 @@ class PeripheralPWM {
     this.used = false;
   }
 
-  modulate(type, symbol_sec, data) {
+  modulate(type, baud, data) {
     var obj = {};
     this.sendWS({
       modulate: {
         type: type,
-        symbol_sec: symbol_sec,
+        baud: baud,
         data: data
       }
     });
@@ -4687,13 +4688,13 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  amModulate(module, symbol_us, data) {
+  amModulate(module, baud_us, data) {
     var buf = new Uint8Array(5 + data.length);
     buf[0] = module;
-    buf[1] = symbol_us >> 8 * 3;
-    buf[2] = symbol_us >> 8 * 2;
-    buf[3] = symbol_us >> 8 * 1;
-    buf[4] = symbol_us;
+    buf[1] = baud_us >> 8 * 3;
+    buf[2] = baud_us >> 8 * 2;
+    buf[3] = baud_us >> 8 * 1;
+    buf[4] = baud_us;
     for (var i = 0; i < data.length; i++) {
       buf[5 + i] = data[i];
     }
@@ -4741,11 +4742,17 @@ class WSCommand_PWM extends WSCommand {
         }
       }
       if (typeof module.modulate == "object" && module.modulate.type === "am") {
-        var symbol_us = parseInt(module.modulate.symbol_sec * 1000000);
-        if (isNaN(symbol_us)) {
-          continue;
+        var baud_usec = parseInt(module.modulate.baud * 1000);
+        if (isNaN(baud_usec)) {
+          throw new Error("pwm: baud is not number");
         }
-        this.amModulate(i, symbol_us, module.modulate.data);
+        if (baud_usec < 50) {
+          throw new Error("pwm: baud should bigger than 50usec");
+        }
+        if (baud_usec > 1000 * 1000) {
+          throw new Error("pwm: baud should smaller than 1sec");
+        }
+        this.amModulate(i, baud_usec, module.modulate.data);
       }
     }
   }
@@ -6535,6 +6542,40 @@ class FullColorLed {
 
 if (PartsRegistrate) {
   PartsRegistrate("FullColorLed", FullColorLed);
+}
+class InfraredLED {
+
+  constructor() {
+    this.keys = ["anode", "cathode"];
+    this.requiredKeys = ["anode"];
+
+    this.dataBaud = 0.07;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error("anode is not valid io");
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error("cathode is not valid io");
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start(this.params.anode);
+    this.pwm.freq(38000);
+  }
+
+  send(arr) {
+    this.pwm.modulate("am", this.dataBaud, arr);
+  }
+}
+
+if (typeof PartsRegistrate === 'function') {
+  PartsRegistrate("InfraredLED", InfraredLED);
 }
 var LED = function () {
   this.keys = ["anode", "cathode"];

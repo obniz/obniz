@@ -609,6 +609,7 @@ class Obniz {
       }
       if (typeof (showObnizDebugError) === "function") {
         showObnizDebugError(new Error(msg));
+        console.error(new Error(msg));
       } else {
         throw new Error(msg);
       }

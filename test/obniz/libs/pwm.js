@@ -112,9 +112,9 @@ describe("obniz.libs.pwm", function () {
     // signal for room heater's remote signal
     var arr = [255,0,0,0,0,0,0,255,255,254,1,192,62,3,255,254,3,192,63,255,192,60,3,224,62,3,255,254,3,255,254,3,224,62,3,224,63,255,192,63,255,224,62,3,224,62,3,224,62,3,224,62,3,240,31,3,240,31,1,240,31,1,255,255,1,240,31,1,240,31,1,248,31,129,240,31,255,248,31,129,248,15,128,248,15,255,248,15,128,248,15,128,248,15,128,252,15,255,255];
 
-    pwm.modulate("am", 0.00007, arr); // am modulate. symbol length = 70usec.
+    pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70usec.
 
-    expect(this.obniz).send({pwm0:{"modulate": {data : arr, "symbol_sec": 0.00007, "type": "am"}}});
+    expect(this.obniz).send({pwm0:{"modulate": {data : arr, "baud": 0.07, "type": "am"}}});
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });
