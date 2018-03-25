@@ -114,7 +114,7 @@ describe("obniz.libs.pwm", function () {
 
     pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70usec.
 
-    expect(this.obniz).send({pwm0:{"modulate": {data : arr, "baud": 0.07, "type": "am"}}});
+    expect(this.obniz).send({pwm0:{"modulate": {data : arr, "symbol_length": 0.07, "type": "am"}}});
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
   });

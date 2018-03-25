@@ -30,7 +30,7 @@ id: "/request/pwm"
 
         modulate: 
             type: object
-            required : [type, symbol_length_usec, data]
+            required : [type, symbol_length, data]
             additionalProperties: false
             properties:
                 type : 
