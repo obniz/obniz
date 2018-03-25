@@ -8,11 +8,13 @@ Connect vcc and gnd and output. vcc and gnd is optional.
 
 Various parts can be used. Belows are example.
 
-
-1. [TFMS5380](https://www.voti.nl/docs/tfms5360.pdf)
+1. [OSRB38C9AA](http://akizukidenshi.com/download/OSRB38C9AA.pdf)
+1. [TFMS5380](https://www.voti.nl/docs/tfms5360.pdf) etc,,,
 
 These parts has vcc/gnd/output
-For examle, TFMS5380 pin assign is
+For examle, 
+
+![](./OSRB38C9AA.jpg)
 
 ![](./tfms5380.jpg)
 
@@ -20,7 +22,7 @@ On program use it like
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired('IRSensor', {vcc:2, gnd:3, output: 0});
+var sensor = obniz.wired('IRSensor', {vcc:0, gnd:1, output: 2});
 ```
 
 ## start(callback(array))
@@ -28,7 +30,7 @@ start monitoring. and set detect callback.
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired('IRSensor', {vcc:2, gnd:3, output: 0});
+var sensor = obniz.wired('IRSensor', {vcc:0, gnd:1, output: 2});
 sensor.start(function (arr) {
   console.log('detected!!')
   console.log(JSON.stringify(arr));
@@ -49,7 +51,7 @@ You can chenge these before start.
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired('IRSensor', {vcc:2, gnd:3, output: 0});
+var sensor = obniz.wired('IRSensor', {vcc:0, gnd:1, output: 2});
 sensor.duration = 150;
 sensor.dataInverted = false;
 sensor.start(function (arr) {
@@ -63,7 +65,7 @@ set callback after started
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired('IRSensor', {vcc:2, gnd:3, output: 0});
+var sensor = obniz.wired('IRSensor', {vcc:0, gnd:1, output: 2});
 sensor.start()
 
 sensor.ondetect = function(arr) {
