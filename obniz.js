@@ -1,4 +1,4 @@
-var _obniz_js_version = "0.1.36";
+var _obniz_js_version = "0.1.37";
 /* global showObnizDebugError */
 
 let isNode = (typeof window === 'undefined') ;
