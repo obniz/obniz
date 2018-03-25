@@ -8,9 +8,16 @@
         },
         {
           "name": "FullcolorLED"
-        },
+        }
+      ]
+    },{
+      "name": "Infrared",
+      "parts": [
         {
           "name": "InfraredLED"
+        },
+        {
+          "name": "IRSensor"
         }
       ]
     },{
