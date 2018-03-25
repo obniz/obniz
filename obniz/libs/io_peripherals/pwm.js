@@ -62,12 +62,12 @@ class PeripheralPWM {
     this.used = false;
   }
 
-  modulate(type, baud, data) {
+  modulate(type, symbol_length, data) {
     var obj = {};
     this.sendWS({
       modulate: {
         type: type,
-        baud: baud,
+        symbol_length: symbol_length,
         data: data
       }
     });

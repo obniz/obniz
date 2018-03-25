@@ -4,7 +4,7 @@ class InfraredLED {
     this.keys = ["anode","cathode"];
     this.requiredKeys = ["anode"];
 
-    this.dataBaud = 0.07;
+    this.dataSymbolLength = 0.07;
   }
   
   wired (obniz) {
@@ -25,7 +25,7 @@ class InfraredLED {
   }
 
   send(arr) {
-    this.pwm.modulate("am", this.dataBaud, arr);
+    this.pwm.modulate("am", this.dataSymbolLength, arr);
   }
 }
 

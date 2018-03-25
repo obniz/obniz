@@ -30,7 +30,7 @@ id: "/request/pwm"
 
         modulate: 
             type: object
-            required : [type, baud, data]
+            required : [type, symbol_length_usec, data]
             additionalProperties: false
             properties:
                 type : 
@@ -38,7 +38,7 @@ id: "/request/pwm"
                      enum : 
                          - am
                   
-                baud :
+                symbol_length :
                     type : number
                     minimum : 0
                     

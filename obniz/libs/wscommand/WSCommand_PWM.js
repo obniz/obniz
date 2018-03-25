@@ -59,13 +59,13 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  amModulate(module, baud_us, data) {
+  amModulate(module, symbol_length_usec, data) {
     var buf = new Uint8Array(5 + data.length);
     buf[0] = module;
-    buf[1] = baud_us >> (8*3);
-    buf[2] = baud_us >> (8*2);
-    buf[3] = baud_us >> (8*1);
-    buf[4] = baud_us;
+    buf[1] = symbol_length_usec >> (8*3);
+    buf[2] = symbol_length_usec >> (8*2);
+    buf[3] = symbol_length_usec >> (8*1);
+    buf[4] = symbol_length_usec;
     for (var i=0; i<data.length; i++) {
       buf[5 + i] = data[i];
     }
@@ -113,17 +113,17 @@ class WSCommand_PWM extends WSCommand {
         }
       }
       if (typeof module.modulate == "object" && module.modulate.type === "am") {
-        var baud_usec = parseInt(module.modulate.baud * 1000);
-        if(isNaN(baud_usec)) {
+        var symbol_length_usec = parseInt(module.modulate.symbol_length * 1000);
+        if(isNaN(symbol_length_usec)) {
           throw new Error("pwm: baud is not number");
         }
-        if(baud_usec < 50) {
+        if(symbol_length_usec < 50) {
           throw new Error("pwm: baud should bigger than 50usec");
         }
-        if(baud_usec > 1000*1000) {
+        if(symbol_length_usec > 1000*1000) {
           throw new Error("pwm: baud should smaller than 1sec");
         }
-        this.amModulate(i, baud_usec, module.modulate.data);
+        this.amModulate(i, symbol_length_usec, module.modulate.data);
       }
     }
   }

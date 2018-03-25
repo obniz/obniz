@@ -49,13 +49,14 @@ var led = obniz.wired('InfraredLED', {anode: 0, cathode: 1});
 led.send([255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,248,0,0,0,0,0,0,0,63,224,63,192,127,192,63,192,127,192,127,128,127,128,255,128,0,0,127,128,127,128,0,0,127,224,0,0,127,192,0,0,63,192,63,192,0,0,127,224,0,0,63,224,63,224,0,0,63,224,63,224,63,224,63,192,127,192,127,192,127,192,127,192,127,128,0,0,127,192,0,0,127,192,0,0,63,192,0,0,63,224,0,0,31,224,0,0,31,240,0,0,31,248,0])
 ```
 
-## dataBaud
-baurate of signal array.
+## dataSymbolLength
+baudrate of signal array.
 default is 70usec(0.07)
+See more dtail on pwm modulate document.
 
 ```Javascript
 // Javascript Example
 var led = obniz.wired('InfraredLED', {anode: 0, cathode: 1});
-led.dataBaud = 0.1 // 100usec baud rate
+led.dataSymbolLength = 0.1 // 100usec baud rate
 led.send([224,63,192,127,192])
 ```
