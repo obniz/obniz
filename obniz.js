@@ -6651,7 +6651,7 @@ class IRSensor {
       obniz.getIO(this.params.output).pull('5v');
     }
 
-    obniz.logicAnalyzer.start({io:0, interval:this.dataSymbolLength, duration:this.duration, trigerValue:this.dataInverted ? false : true, trigerValueSamples:this.trigerSampleCount})
+    obniz.logicAnalyzer.start({io:this.params.output, interval:this.dataSymbolLength, duration:this.duration, trigerValue:this.dataInverted ? false : true, trigerValueSamples:this.trigerSampleCount})
     obniz.logicAnalyzer.onmeasured = (levels) => {
       if (typeof this.ondetect === "function") {
         if (this.dataInverted) {
