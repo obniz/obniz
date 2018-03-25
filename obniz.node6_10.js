@@ -430,10 +430,16 @@ class Obniz {
   }
 
   getIO(id) {
+    if (!this.isValidIO(io)) {
+      throw new Error('io ' + io + ' is not valid io');
+    }
     return this["io" + id];
   }
 
   getAD(id) {
+    if (!this.isValidIO(io)) {
+      throw new Error('ad ' + io + ' is not valid io');
+    }
     return this["ad" + id];
   }
 
