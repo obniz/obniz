@@ -40,7 +40,7 @@ data baud rate is defined in dataBaud(default 70usec)
 
 This function use pwm.modulate. see more dtail on pwm document.
 
-You can record your remote controller's signal by Infrared Recorder module. Please refer it.
+You can record your remote controller's signal by IRSensor module. Please refer it.
 
 ```Javascript
 // Javascript Example
