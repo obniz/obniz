@@ -1,7 +1,20 @@
 # Peripherals PWM
-Output PWM.
+PWM generation.
 Maximum current is depends on driving mode. see [io](./io).
-pwm0 to pwm5 are available.
+
+6 module (pwm0 to pwm5) are available.
+
+PWM generats repeated pulse.
+Two parameter define pulse.
+
+1. freq: pattern interval
+2. pulse_width or duty: positive pulse width
+
+![](./images/pwm_0.png)
+
+pwm is often used for controlling a DC motor by changing it's duty.
+
+![](./images/pwm_1.png)
 
 ## obniz.getFreePwm()
 it reutrn pwm module which currently not used.
@@ -68,8 +81,14 @@ modulation can be choosed from below.
 
 1. "am"
 
-In am modulation, data "1" measn output the pwm with duty 50%. "0" means stop pwm. io will be 0.
-You can configure symbol length.
+am modulation: data "1" measn output the pwm with duty 50%. "0" means stop pwm. io will be 0.
+interval defines symbol baud rate. 
+Duty is 50% fixed.
+
+![](./images/pwm_modulate.png)
+
+This is useful to generate IR signal (Remote control).
+38kHz freq with signals.
 
 ```Javascript
 // Javascript Example
