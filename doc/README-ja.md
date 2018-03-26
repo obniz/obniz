@@ -57,7 +57,7 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
     });
 
     var pwm = obniz.getFreePwm();
-    pwm.start(4);
+    pwm.start({io: 4});
     pwm.freq(1000);
     pwm.duty(50);
 

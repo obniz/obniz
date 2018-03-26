@@ -39,15 +39,22 @@ var pwm6 = obniz.getFreePwm(); // Error
 ```
 
 
-## start(io)
+## start({io, [,drive, pull]})
 
 pwmをnumberで指定したピンで開始します。
-開始直後はパルスは出力されません。
+開始直後はfreq=1khz, duty=0%となっています。
+
+ioのdriveとpullも設定可能です。詳しくは[io](./io)を御覧ください。
 
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0}); // start pwm. output at io0
+pwm.freq(1000);
+pwm.duty(50);
+
+var pwm2 = obniz.getFreePwm();
+pwm2.start({io:1, drive:"open-drain", pull:"5v"});
 ```
 ## freq(frequency)
 
@@ -58,7 +65,7 @@ DCモーターなどでは1khzなどが一般的です。
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(1000); // set pwm. frequency to 1khz
 ```
 ## pulse(width ms)
@@ -68,7 +75,7 @@ PWMのパルス幅をミリ秒で指定します。
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(1000); // set pwm frequency to 1khz
 pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  50% ratio.
 ```
@@ -79,7 +86,7 @@ PWMのパルス幅をデューティー比で指定します。
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(1000); // set pwm frequency to 1khz
 pwm.duty(50) // set pwm pulse witdh 50%
 ```
@@ -102,7 +109,7 @@ am変調は1であれば現在の周波数によりpwmの出力をONにして、
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11);   // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(38000); // set pwm frequency to 38khz
 
 // signal for room heater's remote signal
@@ -116,6 +123,8 @@ PWMの発振を停止します。
 出力で使われていたピンは開放されて入力になります。
 
 ```Javascript
-// Example
+// Javascript Example
+var pwm = obniz.getFreePwm();
+pwm.start({io:0});
 pwm.end();
 ```

@@ -13,11 +13,16 @@ class PeripheralPWM {
     this.Obniz.send(wsObj);
   }
 
-  start(io) {
+  start(params) {
+    const err = ObnizUtil._requiredKeys(params,["io"]);
+    if(err){ throw new Error("pwm start param '" + err +"' required, but not found ");}
+    this.params = ObnizUtil._keyFilter(params,["io", "drive", "pull"]);
 
-    if (!this.Obniz.isValidIO(io)) {
-        throw new Error("pwm start param are to be valid io no");
-    }
+    const io = this.params.io;
+    const ioObj = this.Obniz.getIO(io);
+
+    ioObj.drive(this.params.drive || '5v');
+    ioObj.pull(this.params.pull || null);
 
     var obj = {};
     this.state.io = io;

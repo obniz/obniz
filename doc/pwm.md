@@ -35,14 +35,21 @@ var pwm5 = obniz.getFreePwm();
 var pwm6 = obniz.getFreePwm(); // Error
 ```
 
-## start(io)
+## start({io [,drive, pull]})
 start a pwm on given io.
-No pulse output on start.
+freq=1khz, duty=0% on start.
+
+io drive and pull can be configred. see more dtail on [io](./io)
 
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0}); // start pwm. output at io0
+pwm.freq(1000);
+pwm.duty(50);
+
+var pwm2 = obniz.getFreePwm();
+pwm2.start({io:1, drive:"open-drain", pull:"5v"});
 ```
 ## freq(frequency)
 set frequency. Not pulse duration.
@@ -51,7 +58,7 @@ For example, this value will be 1khz with DC motor.
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(1000); // set pwm. frequency to 1khz
 ```
 ## pulse(width ms)
@@ -60,7 +67,7 @@ set pulse duty with ms.
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(2000); // set pwm frequency to 2khz
 pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  25% ratio.
 ```
@@ -70,7 +77,7 @@ set duty with ratio.
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11); // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(2000); // set pwm frequency to 2khz
 pwm.duty(50) // set pwm pulse witdh 50%
 ```
@@ -93,7 +100,7 @@ This is useful to generate IR signal (Remote control).
 ```Javascript
 // Javascript Example
 var pwm = obniz.getFreePwm();
-pwm.start(11);   // start pwm. output at io11
+pwm.start({io:0});
 pwm.freq(38000); // set pwm frequency to 38khz
 
 // signal for room heater's remote signal
@@ -105,6 +112,8 @@ pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70usec.
 stop pwm. It will release io.
 
 ```Javascript
-// Example
+// Javascript Example
+var pwm = obniz.getFreePwm();
+pwm.start({io:0});
 pwm.end();
 ```

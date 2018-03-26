@@ -20,7 +20,7 @@ class InfraredLED {
       this.io_cathode.output(false);
     }
     this.pwm = this.obniz.getFreePwm();
-    this.pwm.start(this.params.anode);
+    this.pwm.start({io: this.params.anode});
     this.pwm.freq(38000);
   }
 
