@@ -107,16 +107,22 @@ class Obniz {
     if (typeof obj.debug === "object") {
       if (obj.debug.warning) {
         let msg = "Warning: " + obj.debug.warning;
-        this.error(msg);
+        this.warning({ alert: 'warning', message: msg });
+      }
+      if (obj.debug.warnings) {
+        for (let i = 0; i < obj.debug.warnings.length; i++) {
+          let msg = "Warning: " + obj.debug.warnings[i].message;
+          this.warning({ alert: 'warning', message: msg });
+        }
       }
       if (obj.debug.error) {
         let msg = "Error: " + obj.debug.error;
-        this.error(msg);
+        this.error({ alert: 'error', message: msg });
       }
       if (obj.debug.errors) {
         for (let i = 0; i < obj.debug.errors.length; i++) {
           let msg = "Error: " + obj.debug.errors[i].message;
-          this.error(msg);
+          this.error({ alert: 'error', message: msg });
         }
       }
       if (this.ondebug) {
@@ -4295,6 +4301,7 @@ const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
 const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
 const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4;
+const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xF0;
 
 const COMMAND_IO_ERROR_MESSAGES = {
   0: 'unknown error',
@@ -4302,6 +4309,17 @@ const COMMAND_IO_ERROR_MESSAGES = {
   2: 'heavy output. output voltage is too high when driving low',
   3: 'output voltage is too low when driving high. io state has changed output to input',
   4: 'output voltage is too high when driving low. io state has changed output to input'
+};
+
+const COMMAND_IO_MUTEX_NAMES = {
+  1: 'io.input',
+  2: 'io.output',
+  3: 'pwm',
+  4: 'uart',
+  5: 'i2c',
+  6: 'spi',
+  7: 'LogicAnalyzer',
+  8: 'Measure'
 };
 
 class WSCommand_IO extends WSCommand {
@@ -4414,53 +4432,27 @@ class WSCommand_IO extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
 
-    let esperr;
-    let module_index;
-    let err;
-    let ref_func_id;
-    let envelopFunc;
+    if (func === this._CommandInputStream || func === this._CommandInputOnece) {
+      for (var i = 0; i < payload.byteLength; i += 2) {
+        objToSend["io" + payload[i]] = payload[i + 1] > 0;
+      }
+    } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
+      const esperr = payload[0];
+      const err = payload[1];
+      const ref_func_id = payload[2];
+      const module_index = payload[3];
 
-    switch (func) {
-      case this._CommandInputStream:
-      case this._CommandInputOnece:
-        for (var i = 0; i < payload.byteLength; i += 2) {
-          objToSend["io" + payload[i]] = payload[i + 1] > 0;
-        }
-        break;
-
-      case this.COMMAND_FUNC_ID_ERROR:
-        if (payload.byteLength == 4) {
-          esperr = payload[0];
-          err = payload[1];
-          ref_func_id = payload[2];
-          module_index = payload[3];
-
-          switch (err) {
-            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH:
-              envelopFunc = this.envelopWarning;
-              break;
-            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW:
-              envelopFunc = this.envelopWarning;
-              break;
-            case COMMAND_IO_ERRORS_IO_TOO_LOW:
-              envelopFunc = this.envelopError;
-              break;
-            case COMMAND_IO_ERRORS_IO_TOO_HIGH:
-              envelopFunc = this.envelopError;
-              break;
-            default:
-              super.notifyFromBinary(objToSend, func, payload);
-              break;
-          }
-          if (envelopFunc) envelopFunc(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
-        } else {
-          super.notifyFromBinary(objToSend, func, payload);
-        }
-        break;
-
-      default:
-        // unknown
-        break;
+      if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
+        this.envelopWarning(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
+      } else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
+        this.envelopError(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
+      } else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6) {
+        const oldMutexOwner = payload[4];
+        const newMutexOwner = payload[5];
+        this.envelopWarning(objToSend, 'debug', { message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.` });
+      }
+    } else {
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 };
