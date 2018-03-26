@@ -2,6 +2,33 @@
 General purpose IO
 io0からio11まで利用できます。
 
+#### 特徴
+##### input/output
+それぞれのioで入力/出力ができます。入力では値の変更時のみ通知が来ます。
+##### ３つの出力方法
+###### push-pull5v (デフォルト)
+1. 最大1A
+2. 過電流/ドライバーの高温 保護
+3. io.output()使用時の過電流警告
+4. 最大250kHz(推奨値)
+
+###### push-pull3v
+1. 最大1mA
+2. io.output()使用時の過電流自動停止と警告
+3. 最大80Mhz
+
+###### open-drain
+1. 最大1mA
+2. 最大80Mhz
+
+##### Four internal weak pull-updown option
+1. floating (デフォルト)
+1. pull-up 5v
+1. pull-up 3v
+1. pull-down to gnd
+
+driveとpull-updownはそれぞれのペリフェラル(PWMやUART)使用時にも利用できます。
+
 ## output(value)
 ObnizのX番ピンを出力ピンにして１または０を出力します。
 
@@ -88,6 +115,10 @@ obniz.io.animation("animation-1", "loop", [
   }
 ])
 ```
+
+実行するとこのような波形になります。
+
+![](./images/ioanimation.png)
 
 Pause animation
 ```Javascript

@@ -1,13 +1,44 @@
 # Peripherals IO
 General purpose IO
-available io0 to io11
+available on each io (io0 to io11)
+
+#### Features
+##### input/output
+each io can output/input. input will notify only when value was changed.
+##### Three output drive option
+###### push-pull5v (default)
+1. up to 1A 
+2. overcurrent/over-temprature protection
+3. overcurrent warning when io.output()
+4. up to 250kHz
+
+###### push-pull3v
+1. up to 1mA
+2. overcurrent error and auto-stop otput when io.output()
+3. up to 80Mhz
+
+###### open-drain
+1. up to 1mA
+2. up to 80Mhz
+
+##### Four internal weak pull-updown option
+1. floating (default)
+1. pull-up 5v
+1. pull-up 3v
+1. pull-down to gnd
+
+drive method and pull-updown can be selected on each peripheral(PWM/UART/etc).
+
 
 ## output(value)
-Make ioX to output mode and output ture or false.
+Make ioX to output mode and output.
 
 ```Javascript
 // Javascript Example
-obniz.io1.output(true); // io1 is 5V
+obniz.io1.output(true); // io1 is 5v
+obniz.io2.output(1); //  io2 is 5v
+obniz.io3.drive("3v");
+obniz.io3.output(1); // io3 is around 3v.
 ```
 
 ## drive(type)
@@ -29,7 +60,7 @@ obniz.io1.drive("open-drain"); // changed immediately
 ```
 
 ## pull(pulltype)
-enable/disable internal pull up/down resistors.
+enable/disable internal weak pull up/down resistors.
 
 1. null (default) 
 2. "5v"  pull up to 5v
@@ -88,6 +119,10 @@ obniz.io.animation("animation-1", "loop", [
   }
 ])
 ```
+
+It will generate signals like
+
+![](./images/ioanimation.png)
 
 Pause animation
 ```Javascript
