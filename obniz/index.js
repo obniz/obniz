@@ -103,16 +103,22 @@ class Obniz {
     if (typeof (obj.debug) === "object") {
       if (obj.debug.warning) {
         let msg = "Warning: " + obj.debug.warning;
-        this.error(msg);
+        this.warning({alert: 'warning', message: msg});
+      }
+      if (obj.debug.warnings) {
+        for (let i=0; i<obj.debug.warnings.length; i++) {
+          let msg = "Warning: " + obj.debug.warnings[i].message;
+          this.warning({alert: 'warning', message:msg});
+        }
       }
       if (obj.debug.error) {
         let msg = "Error: " + obj.debug.error;
-        this.error(msg);
+        this.error({alert: 'error', message: msg});
       }
       if (obj.debug.errors) {
         for (let i=0; i<obj.debug.errors.length; i++) {
           let msg = "Error: " + obj.debug.errors[i].message;
-          this.error(msg);
+          this.error({alert: 'error', message: msg});
         }
       }
       if (this.ondebug) {
