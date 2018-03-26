@@ -32,15 +32,17 @@ describe("obniz.libs.pwm", function () {
     expect(pwm1).to.be.equal(this.obniz.pwm0);
     expect(pwm2).to.be.equal(this.obniz.pwm1);
   });
+
   it("getpwm released",  function () {
     var pwm1 = this.obniz.getFreePwm();
     expect(pwm1).to.be.equal(this.obniz.pwm0);
-    pwm1.start(11);
+    pwm1.start({io: 11});
+    expect(this.obniz).send({ io11: { output_type: 'push-pull5v' } });
+    expect(this.obniz).send({ io11: { pull_type: 'float' } });
     expect(this.obniz).send({pwm0:{"io": 11}});
     
     pwm1.end();   
     expect(this.obniz).send({pwm0: null});
-    
     
     var pwm2 = this.obniz.getFreePwm();
     expect(pwm2).to.be.equal(this.obniz.pwm0);
@@ -49,8 +51,21 @@ describe("obniz.libs.pwm", function () {
   
   it("start io",  function () {
     var pwm = this.obniz.getFreePwm();
-    pwm.start(11);
-    
+    pwm.start({io: 11});
+
+    expect(this.obniz).send({ io11: { output_type: 'push-pull5v' } });
+    expect(this.obniz).send({ io11: { pull_type: 'float' } });
+    expect(this.obniz).send({pwm0:{"io": 11}});
+    expect(this.obniz).to.be.finished;
+    expect(pwm).to.be.equal(this.obniz.pwm0);
+  });
+
+  it("start io with drive-pull",  function () {
+    var pwm = this.obniz.getFreePwm();
+    pwm.start({io: 11, drive:"open-drain", pull:"5v"});
+
+    expect(this.obniz).send({ io11: { output_type: 'open-drain' } });
+    expect(this.obniz).send({ io11: { pull_type: 'pull-up5v' } });
     expect(this.obniz).send({pwm0:{"io": 11}});
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
@@ -59,7 +74,7 @@ describe("obniz.libs.pwm", function () {
   it("start io invalid",  function () {
     var pwm = this.obniz.getFreePwm();
 
-    expect(function(){pwm.start(15);}).throw(Error);
+    expect(function(){pwm.start({io: 15});}).throw(Error);
 
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);
@@ -67,7 +82,9 @@ describe("obniz.libs.pwm", function () {
   
   it("freq",  function () {
     var pwm = this.obniz.getFreePwm();
-    pwm.start(10); 
+    pwm.start({io: 10}); 
+    expect(this.obniz).send({ io10: { output_type: 'push-pull5v' } });
+    expect(this.obniz).send({ io10: { pull_type: 'float' } });
     expect(this.obniz).send({pwm0:{"io": 10}});
     pwm.freq(1000);
     expect(this.obniz).send({pwm0:{"freq": 1000}});
@@ -78,7 +95,9 @@ describe("obniz.libs.pwm", function () {
   
   it("pulse",  function () {
     var pwm = this.obniz.getFreePwm();
-    pwm.start(9); 
+    pwm.start({io: 9}); 
+    expect(this.obniz).send({ io9: { output_type: 'push-pull5v' } });
+    expect(this.obniz).send({ io9: { pull_type: 'float' } });
     expect(this.obniz).send({pwm0:{"io": 9}});
     pwm.freq(500); 
     expect(this.obniz).send({pwm0:{"freq": 500}});
@@ -91,7 +110,9 @@ describe("obniz.libs.pwm", function () {
   
   it("duty",  function () {
     var pwm = this.obniz.getFreePwm();
-    pwm.start(9); 
+    pwm.start({io: 9}); 
+    expect(this.obniz).send({ io9: { output_type: 'push-pull5v' } });
+    expect(this.obniz).send({ io9: { pull_type: 'float' } });
     expect(this.obniz).send({pwm0:{"io": 9}});
     pwm.freq(500); 
     expect(this.obniz).send({pwm0:{"freq": 500}});
@@ -104,7 +125,9 @@ describe("obniz.libs.pwm", function () {
   
   it("modulate",  function () {
     var pwm = this.obniz.getFreePwm();
-    pwm.start(11);   // start pwm. output at io11
+    pwm.start({io: 11});   // start pwm. output at io11
+    expect(this.obniz).send({ io11: { output_type: 'push-pull5v' } });
+    expect(this.obniz).send({ io11: { pull_type: 'float' } });
     expect(this.obniz).send({pwm0:{"io": 11}});
     pwm.freq(38000); // set pwm frequency to 38khz
     expect(this.obniz).send({pwm0:{"freq": 38000}});
@@ -121,7 +144,9 @@ describe("obniz.libs.pwm", function () {
   
   it("end",  function () {
     var pwm = this.obniz.getFreePwm();
-    pwm.start(11); 
+    pwm.start({io: 11}); 
+    expect(this.obniz).send({ io11: { output_type: 'push-pull5v' } });
+    expect(this.obniz).send({ io11: { pull_type: 'float' } });
     expect(this.obniz).send({pwm0:{"io": 11}});
     pwm.end();   
     expect(this.obniz).send({pwm0: null});

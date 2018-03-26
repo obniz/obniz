@@ -1,6 +1,5 @@
 # Peripherals SPI
 General Purpose SPIです。spi0, spi1の２つが利用できます。
-最大通信速度は80Mhzです。
 
 ## obniz.getFreeSpi()
 未使用のSPIを返します。
@@ -26,11 +25,9 @@ driveとpullは出力設定オプションです.
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
-
 
 // drive and pull is optional
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, drive: "5v", pull:null}); 
@@ -42,7 +39,6 @@ spiは送信したデータの分だけ受信します。受信したデータ�
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
@@ -53,7 +49,6 @@ SPIにデータを送信します。受信は行いません。
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 obniz.spi0.write([0x12, 0x98]);
 ```
@@ -63,7 +58,6 @@ spiを終了します
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 obniz.spi0.write([0x12, 0x98]);
 obniz.spi0.end();

@@ -9,7 +9,7 @@ class Speaker {
     this.obniz = obniz;
     this.obniz.setVccGnd(null, this.params.gnd, "5v");
     this.pwm = obniz.getFreePwm();
-    this.pwm.start(this.params.signal);
+    this.pwm.start({io: this.params.signal});
   }
 
   play(freq) {

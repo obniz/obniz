@@ -2613,11 +2613,16 @@ class PeripheralPWM {
     this.Obniz.send(wsObj);
   }
 
-  start(io) {
+  start(params) {
+    const err = ObnizUtil._requiredKeys(params,["io"]);
+    if(err){ throw new Error("pwm start param '" + err +"' required, but not found ");}
+    this.params = ObnizUtil._keyFilter(params,["io", "drive", "pull"]);
 
-    if (!this.Obniz.isValidIO(io)) {
-        throw new Error("pwm start param are to be valid io no");
-    }
+    const io = this.params.io;
+    const ioObj = this.Obniz.getIO(io);
+
+    ioObj.drive(this.params.drive || '5v');
+    ioObj.pull(this.params.pull || null);
 
     var obj = {};
     this.state.io = io;
@@ -6731,9 +6736,9 @@ class FullColorLed{
     this.obniz.getIO(g).output(this.commontype);
     this.obniz.getIO(b).drive("3v");
     this.obniz.getIO(b).output(this.commontype);
-    this.pwmR = this.obniz.getFreePwm();this.pwmR.start(r);this.pwmR.freq(1000);
-    this.pwmG = this.obniz.getFreePwm();this.pwmG.start(g);this.pwmG.freq(1000);
-    this.pwmB = this.obniz.getFreePwm();this.pwmB.start(b);this.pwmB.freq(1000);
+    this.pwmR = this.obniz.getFreePwm();this.pwmR.start({io: r});this.pwmR.freq(1000);
+    this.pwmG = this.obniz.getFreePwm();this.pwmG.start({io: g});this.pwmG.freq(1000);
+    this.pwmB = this.obniz.getFreePwm();this.pwmB.start({io: b});this.pwmB.freq(1000);
     this.rgb(0,0,0);
     
   }
@@ -6829,7 +6834,7 @@ class InfraredLED {
       this.io_cathode.output(false);
     }
     this.pwm = this.obniz.getFreePwm();
-    this.pwm.start(this.params.anode);
+    this.pwm.start({io: this.params.anode});
     this.pwm.freq(38000);
   }
 
@@ -7219,10 +7224,10 @@ DCMotor.prototype.wired = function(obniz) {
   this.pwm2_io_num = this.params.back;
 
   this.pwm1 = obniz.getFreePwm();
-  this.pwm1.start(this.pwm1_io_num);
+  this.pwm1.start({io: this.pwm1_io_num});
   this.pwm1.freq(100000);
   this.pwm2 = obniz.getFreePwm();
-  this.pwm2.start(this.pwm2_io_num);
+  this.pwm2.start({io: this.pwm2_io_num});
   this.pwm2.freq(100000);
   this.power(30);
 };
@@ -7298,7 +7303,7 @@ ServoMotor.prototype.wired = function(obniz) {
   this.pwm = obniz.getFreePwm();
   this.pwm_io_num = this.params.signal;
 
-  this.pwm.start(this.pwm_io_num);
+  this.pwm.start({io: this.pwm_io_num});
   this.pwm.freq(50);
 };
 
@@ -7399,7 +7404,7 @@ class Speaker {
     this.obniz = obniz;
     this.obniz.setVccGnd(null, this.params.gnd, "5v");
     this.pwm = obniz.getFreePwm();
-    this.pwm.start(this.params.signal);
+    this.pwm.start({io: this.params.signal});
   }
 
   play(freq) {

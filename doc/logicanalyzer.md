@@ -1,7 +1,32 @@
 # LogicAnalyzer
-LogicAnalyzer collect values readed from io periodically.
+LogicAnalyzer record samples readed from io periodically.
 This is useful when digital bus signal check.
-This monitors will start when io changed.
+
+### How work
+
+LogiAnalyzer start logging by trigger.  
+Default trigger is "value change".
+When It occures, then datas will be recoreded until desired duration.
+After done, LogicAnalyzer start monitoring io change(=continuers working).
+one sample becomes one bit. So 1 byte has 8 samples.
+
+![](./images/logicanalyzer_0.png)
+
+sampling interval and duration can be configured.
+For example interval is 1msec and duration is 800msec then your will get array of 100byte(it contians 800 samples)
+
+![](./images/logicanalyzer_1.png)
+
+### Triger Option
+
+Default trigger is "value change". But It is interrupted by some noises. Configure trigerValue/trigerValueSamples to filter it.
+
+1. trigerValue - desired start value. true/false
+2. trigerValueSamples - after this samples recorded then record will start.
+
+This triger settings is "trigger when true/(or false) keeps more than X after io change"
+
+![](./images/logicanalyzer_2.png)
 
 
 ## logicAnalyzer.start({io, interval, duration});
