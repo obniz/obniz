@@ -1,7 +1,6 @@
 # Peripherals SPI
 General Purpose SPI
 spi0 and spi1 are available.
-Max speed is 80Mhz.
 
 ## obniz.getFreeSpi()
 It returns not used spi.
@@ -23,7 +22,6 @@ See more for obniz.io.drive() or pull().
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
@@ -37,7 +35,6 @@ receive data length is same as sent data.
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 var ret = await obniz.spi0.writeWait([0x12, 0x98]);
 console.log("received: "+ret);
@@ -48,7 +45,6 @@ just send a data to spi. no receive data arrived after sent.
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000}); 
 obniz.spi0.write([0x12, 0x98]);
 ```
@@ -58,7 +54,6 @@ end spi
 
 ```Javascript
 // Javascript Example
-// master mode, 1Mhz, CLK = 0, MOSI = 1, MISO = 2
 obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, clock:1000000}); 
 obniz.spi0.write([0x12, 0x98]);
 obniz.spi0.end();

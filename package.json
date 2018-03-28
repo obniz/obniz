@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "0.1.35",
+  "version": "0.1.38",
   "description": "Obniz Basic Library",
   "main": "index.js",
   "scripts": {

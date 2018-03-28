@@ -13,10 +13,10 @@ DCMotor.prototype.wired = function(obniz) {
   this.pwm2_io_num = this.params.back;
 
   this.pwm1 = obniz.getFreePwm();
-  this.pwm1.start(this.pwm1_io_num);
+  this.pwm1.start({io: this.pwm1_io_num});
   this.pwm1.freq(100000);
   this.pwm2 = obniz.getFreePwm();
-  this.pwm2.start(this.pwm2_io_num);
+  this.pwm2.start({io: this.pwm2_io_num});
   this.pwm2.freq(100000);
   this.power(30);
 };

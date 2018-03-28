@@ -1,7 +1,33 @@
 # LogicAnalyzer
 ピンの状態を監視し、一定間隔で1,0の状態を取得します。
 信号が送られているかの確認などに利用できます。
-データ量の制限から、ピンの状態が変化してからある時間だけのデータを取得します。
+
+### How work
+
+ロジックアナライザーはトリガーをきっかけに開始します。
+デフォルトトリガーは「ioの変化」です。
+ioが変化した後のioの変化を指定された時間記録します。
+完了し、データを送信したら再度、ioの変化を待ちます(つまり継続動作します)
+
+1サンプルは1bitとなります。つまり結果の1バイトには8サンプル入っています。
+
+![](./images/logicanalyzer_0.png)
+
+サンプリングの間隔と欲しいサンプルの時間を指定できます。
+例えばinterval（間隔）が1msecでduration(長さ)を800msecにした場合は100byteのデータ(800サンプル)を受けることになります。
+
+![](./images/logicanalyzer_1.png)
+
+### Triger Option
+
+デフォルトトリガーは「ioの変化」ですが、これですとノイズも取得しがちです。決まっているパターンを取りたい場合はtrigerValue/trigerValueSamplesを設定します。
+
+1. trigerValue - 取得開始したい値
+2. trigerValueSamples - その値が何サンプル続けば記録することにするか
+
+このトリガーはつまり "true/(かfalse)がXだけ続いたら記録を開始する"という意味になります。
+
+![](./images/logicanalyzer_2.png)
 
 ## logicAnalyzer.start({io, interval, duration});
 

@@ -103,16 +103,22 @@ class Obniz {
     if (typeof (obj.debug) === "object") {
       if (obj.debug.warning) {
         let msg = "Warning: " + obj.debug.warning;
-        this.error(msg);
+        this.warning({alert: 'warning', message: msg});
+      }
+      if (obj.debug.warnings) {
+        for (let i=0; i<obj.debug.warnings.length; i++) {
+          let msg = "Warning: " + obj.debug.warnings[i].message;
+          this.warning({alert: 'warning', message:msg});
+        }
       }
       if (obj.debug.error) {
         let msg = "Error: " + obj.debug.error;
-        this.error(msg);
+        this.error({alert: 'error', message: msg});
       }
       if (obj.debug.errors) {
         for (let i=0; i<obj.debug.errors.length; i++) {
           let msg = "Error: " + obj.debug.errors[i].message;
-          this.error(msg);
+          this.error({alert: 'error', message: msg});
         }
       }
       if (this.ondebug) {
@@ -412,11 +418,17 @@ class Obniz {
     }
   }
 
-  getIO(id) {
-    return this["io" + id];
+  getIO(io) {
+    if (!this.isValidIO(io)) {
+      throw new Error('io ' + io + ' is not valid io');
+    }
+    return this["io" + io];
   }
 
   getAD(id) {
+    if (!this.isValidIO(io)) {
+      throw new Error('ad ' + io + ' is not valid io');
+    }
     return this["ad" + id];
   }
 
@@ -609,6 +621,7 @@ class Obniz {
       }
       if (typeof (showObnizDebugError) === "function") {
         showObnizDebugError(new Error(msg));
+        console.error(new Error(msg));
       } else {
         throw new Error(msg);
       }

@@ -2,7 +2,7 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _obniz_js_version = "0.1.35";
+var _obniz_js_version = "0.1.38";
 /* global showObnizDebugError */
 
 let isNode = typeof window === 'undefined';
@@ -107,16 +107,22 @@ class Obniz {
     if (typeof obj.debug === "object") {
       if (obj.debug.warning) {
         let msg = "Warning: " + obj.debug.warning;
-        this.error(msg);
+        this.warning({ alert: 'warning', message: msg });
+      }
+      if (obj.debug.warnings) {
+        for (let i = 0; i < obj.debug.warnings.length; i++) {
+          let msg = "Warning: " + obj.debug.warnings[i].message;
+          this.warning({ alert: 'warning', message: msg });
+        }
       }
       if (obj.debug.error) {
         let msg = "Error: " + obj.debug.error;
-        this.error(msg);
+        this.error({ alert: 'error', message: msg });
       }
       if (obj.debug.errors) {
         for (let i = 0; i < obj.debug.errors.length; i++) {
           let msg = "Error: " + obj.debug.errors[i].message;
-          this.error(msg);
+          this.error({ alert: 'error', message: msg });
         }
       }
       if (this.ondebug) {
@@ -429,11 +435,17 @@ class Obniz {
     }
   }
 
-  getIO(id) {
-    return this["io" + id];
+  getIO(io) {
+    if (!this.isValidIO(io)) {
+      throw new Error('io ' + io + ' is not valid io');
+    }
+    return this["io" + io];
   }
 
   getAD(id) {
+    if (!this.isValidIO(io)) {
+      throw new Error('ad ' + io + ' is not valid io');
+    }
     return this["ad" + id];
   }
 
@@ -643,6 +655,7 @@ class Obniz {
       }
       if (typeof showObnizDebugError === "function") {
         showObnizDebugError(new Error(msg));
+        console.error(new Error(msg));
       } else {
         throw new Error(msg);
       }
@@ -2364,13 +2377,27 @@ class PeripheralI2C {
   }
 
   notified(obj) {
-    if (obj.mode === "slave" && typeof this.onwritten === "function") {
-      this.onwritten(obj.data);
-    } else {
-      // TODO: we should compare byte length from sent
-      var callback = this.observers.shift();
-      if (callback) {
-        callback(obj.data);
+    if (obj && typeof obj === "object") {
+      if (obj.data) {
+        if (obj.mode === "slave" && typeof this.onwritten === "function") {
+          this.onwritten(obj.data);
+        } else {
+          // TODO: we should compare byte length from sent
+          var callback = this.observers.shift();
+          if (callback) {
+            callback(obj.data);
+          }
+        }
+      }
+      if (obj.warnings) {
+        for (let i = 0; i < obj.warnings.length; i++) {
+          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` });
+        }
+      }
+      if (obj.errors) {
+        for (let i = 0; i < obj.errors.length; i++) {
+          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` });
+        }
       }
     }
   }
@@ -2583,11 +2610,18 @@ class PeripheralPWM {
     this.Obniz.send(wsObj);
   }
 
-  start(io) {
-
-    if (!this.Obniz.isValidIO(io)) {
-      throw new Error("pwm start param are to be valid io no");
+  start(params) {
+    const err = ObnizUtil._requiredKeys(params, ["io"]);
+    if (err) {
+      throw new Error("pwm start param '" + err + "' required, but not found ");
     }
+    this.params = ObnizUtil._keyFilter(params, ["io", "drive", "pull"]);
+
+    const io = this.params.io;
+    const ioObj = this.Obniz.getIO(io);
+
+    ioObj.drive(this.params.drive || '5v');
+    ioObj.pull(this.params.pull || null);
 
     var obj = {};
     this.state.io = io;
@@ -2632,12 +2666,12 @@ class PeripheralPWM {
     this.used = false;
   }
 
-  modulate(type, symbol_sec, data) {
+  modulate(type, symbol_length, data) {
     var obj = {};
     this.sendWS({
       modulate: {
         type: type,
-        symbol_sec: symbol_sec,
+        symbol_length: symbol_length,
         data: data
       }
     });
@@ -4241,6 +4275,23 @@ class WSCommand_I2C extends WSCommand {
         address: address,
         data: arr
       };
+    } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength > 2) {
+      const esperr = payload[0];
+      const err = payload[1];
+      const ref_func_id = payload[2];
+
+      if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
+        let reason = '' + (ref_func_id === this._CommandWrite ? 'writing' : 'reading') + ' error. ';
+        if (err === 7) {
+          // in fact. it is 0x107. but truncated
+          reason += 'Communication Timeout. Maybe, target is not connected.';
+        } else if (err === 255) {
+          reason += 'Communication Failed. Maybe, target is not connected.';
+        }
+        this.envelopError(objToSend, `i2c0`, { message: reason });
+      } else {
+        super.notifyFromBinary(objToSend, func, payload);
+      }
     } else {
       super.notifyFromBinary(objToSend, func, payload);
     }
@@ -4250,6 +4301,7 @@ const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
 const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
 const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4;
+const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xF0;
 
 const COMMAND_IO_ERROR_MESSAGES = {
   0: 'unknown error',
@@ -4257,6 +4309,17 @@ const COMMAND_IO_ERROR_MESSAGES = {
   2: 'heavy output. output voltage is too high when driving low',
   3: 'output voltage is too low when driving high. io state has changed output to input',
   4: 'output voltage is too high when driving low. io state has changed output to input'
+};
+
+const COMMAND_IO_MUTEX_NAMES = {
+  1: 'io.input',
+  2: 'io.output',
+  3: 'pwm',
+  4: 'uart',
+  5: 'i2c',
+  6: 'spi',
+  7: 'LogicAnalyzer',
+  8: 'Measure'
 };
 
 class WSCommand_IO extends WSCommand {
@@ -4369,53 +4432,27 @@ class WSCommand_IO extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
 
-    let esperr;
-    let module_index;
-    let err;
-    let ref_func_id;
-    let envelopFunc;
+    if (func === this._CommandInputStream || func === this._CommandInputOnece) {
+      for (var i = 0; i < payload.byteLength; i += 2) {
+        objToSend["io" + payload[i]] = payload[i + 1] > 0;
+      }
+    } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
+      const esperr = payload[0];
+      const err = payload[1];
+      const ref_func_id = payload[2];
+      const module_index = payload[3];
 
-    switch (func) {
-      case this._CommandInputStream:
-      case this._CommandInputOnece:
-        for (var i = 0; i < payload.byteLength; i += 2) {
-          objToSend["io" + payload[i]] = payload[i + 1] > 0;
-        }
-        break;
-
-      case this.COMMAND_FUNC_ID_ERROR:
-        if (payload.byteLength == 4) {
-          esperr = payload[0];
-          err = payload[1];
-          ref_func_id = payload[2];
-          module_index = payload[3];
-
-          switch (err) {
-            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH:
-              envelopFunc = this.envelopWarning;
-              break;
-            case COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW:
-              envelopFunc = this.envelopWarning;
-              break;
-            case COMMAND_IO_ERRORS_IO_TOO_LOW:
-              envelopFunc = this.envelopError;
-              break;
-            case COMMAND_IO_ERRORS_IO_TOO_HIGH:
-              envelopFunc = this.envelopError;
-              break;
-            default:
-              super.notifyFromBinary(objToSend, func, payload);
-              break;
-          }
-          if (envelopFunc) envelopFunc(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
-        } else {
-          super.notifyFromBinary(objToSend, func, payload);
-        }
-        break;
-
-      default:
-        // unknown
-        break;
+      if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
+        this.envelopWarning(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
+      } else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
+        this.envelopError(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
+      } else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6) {
+        const oldMutexOwner = payload[4];
+        const newMutexOwner = payload[5];
+        this.envelopWarning(objToSend, 'debug', { message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.` });
+      }
+    } else {
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 };
@@ -4656,13 +4693,13 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  amModulate(module, symbol_us, data) {
+  amModulate(module, symbol_length_usec, data) {
     var buf = new Uint8Array(5 + data.length);
     buf[0] = module;
-    buf[1] = symbol_us >> 8 * 3;
-    buf[2] = symbol_us >> 8 * 2;
-    buf[3] = symbol_us >> 8 * 1;
-    buf[4] = symbol_us;
+    buf[1] = symbol_length_usec >> 8 * 3;
+    buf[2] = symbol_length_usec >> 8 * 2;
+    buf[3] = symbol_length_usec >> 8 * 1;
+    buf[4] = symbol_length_usec;
     for (var i = 0; i < data.length; i++) {
       buf[5 + i] = data[i];
     }
@@ -4710,11 +4747,17 @@ class WSCommand_PWM extends WSCommand {
         }
       }
       if (typeof module.modulate == "object" && module.modulate.type === "am") {
-        var symbol_us = parseInt(module.modulate.symbol_sec * 1000000);
-        if (isNaN(symbol_us)) {
-          continue;
+        var symbol_length_usec = parseInt(module.modulate.symbol_length * 1000);
+        if (isNaN(symbol_length_usec)) {
+          throw new Error("pwm: baud is not number");
         }
-        this.amModulate(i, symbol_us, module.modulate.data);
+        if (symbol_length_usec < 50) {
+          throw new Error("pwm: baud should bigger than 50usec");
+        }
+        if (symbol_length_usec > 1000 * 1000) {
+          throw new Error("pwm: baud should smaller than 1sec");
+        }
+        this.amModulate(i, symbol_length_usec, module.modulate.data);
       }
     }
   }
@@ -6384,6 +6427,94 @@ if (PartsRegistrate) {
   PartsRegistrate("ENC03R_Module", ENC03R_Module);
 }
 
+var PIR_ekmc = function () {
+  this.keys = ["vcc", "gnd", "signal"];
+  this.requiredKeys = ["signal"];
+};
+
+PIR_ekmc.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.io_signal = obniz.getIO(this.params.signal);
+  this.io_signal.pull("0v");
+
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+  var self = this;
+  this.io_signal.input(function (value) {
+    self.isPressed = value === false;
+    if (self.onchange) {
+      self.onchange(value === false);
+    }
+  });
+};
+
+PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
+  var self = this;
+  var ret = yield this.io_signal.inputWait();
+  return ret == false;
+});
+
+if (PartsRegistrate) {
+  PartsRegistrate("PIR_ekmc", PIR_ekmc);
+}
+class IRSensor {
+
+  constructor() {
+    this.keys = ["output", "vcc", "gnd"];
+    this.requiredKeys = ["output"];
+
+    this.dataSymbolLength = 0.07;
+    this.duration = 200; // 200msec
+    this.dataInverted = true;
+    this.trigerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
+    this.cutTail = true;
+    this.output_pullup = true;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    if (!obniz.isValidIO(this.params.output)) {
+      throw new Errro('output is not valid io');
+    }
+  }
+
+  start(callback) {
+    this.ondetect = callback;
+    if (this.output_pullup) {
+      obniz.getIO(this.params.output).pull('5v');
+    }
+
+    obniz.logicAnalyzer.start({ io: this.params.output, interval: this.dataSymbolLength, duration: this.duration, trigerValue: this.dataInverted ? false : true, trigerValueSamples: this.trigerSampleCount });
+    obniz.logicAnalyzer.onmeasured = levels => {
+      if (typeof this.ondetect === "function") {
+        if (this.dataInverted) {
+          let arr = new Uint8Array(levels);
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] = ~arr[i];
+          }
+          levels = Array.from(arr);
+        }
+
+        if (this.cutTail) {
+          for (let i = levels.length - 1; i > 1; i--) {
+            if (levels[i] === 0 && levels[i - 1] === 0) {
+              levels.splice(i, 1);
+            } else {
+              break;
+            }
+          }
+        }
+
+        this.ondetect(levels);
+      }
+    };
+  }
+}
+
+if (typeof PartsRegistrate === 'function') {
+  PartsRegistrate("IRSensor", IRSensor);
+}
 class FullColorLed {
   constructor() {
 
@@ -6424,9 +6555,9 @@ class FullColorLed {
     this.obniz.getIO(g).output(this.commontype);
     this.obniz.getIO(b).drive("3v");
     this.obniz.getIO(b).output(this.commontype);
-    this.pwmR = this.obniz.getFreePwm();this.pwmR.start(r);this.pwmR.freq(1000);
-    this.pwmG = this.obniz.getFreePwm();this.pwmG.start(g);this.pwmG.freq(1000);
-    this.pwmB = this.obniz.getFreePwm();this.pwmB.start(b);this.pwmB.freq(1000);
+    this.pwmR = this.obniz.getFreePwm();this.pwmR.start({ io: r });this.pwmR.freq(1000);
+    this.pwmG = this.obniz.getFreePwm();this.pwmG.start({ io: g });this.pwmG.freq(1000);
+    this.pwmB = this.obniz.getFreePwm();this.pwmB.start({ io: b });this.pwmB.freq(1000);
     this.rgb(0, 0, 0);
   }
 
@@ -6504,6 +6635,40 @@ class FullColorLed {
 
 if (PartsRegistrate) {
   PartsRegistrate("FullColorLed", FullColorLed);
+}
+class InfraredLED {
+
+  constructor() {
+    this.keys = ["anode", "cathode"];
+    this.requiredKeys = ["anode"];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error("anode is not valid io");
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error("cathode is not valid io");
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start({ io: this.params.anode });
+    this.pwm.freq(38000);
+  }
+
+  send(arr) {
+    this.pwm.modulate("am", this.dataSymbolLength, arr);
+  }
+}
+
+if (typeof PartsRegistrate === 'function') {
+  PartsRegistrate("InfraredLED", InfraredLED);
 }
 var LED = function () {
   this.keys = ["anode", "cathode"];
@@ -6703,7 +6868,7 @@ _24LC256.prototype.set = function (address, data) {
 };
 
 _24LC256.prototype.getWait = (() => {
-  var _ref6 = _asyncToGenerator(function* (address, length) {
+  var _ref7 = _asyncToGenerator(function* (address, length) {
     var array = [];
     array.push(address >> 8 & 0xFF);
     array.push(address & 0xFF);
@@ -6712,7 +6877,7 @@ _24LC256.prototype.getWait = (() => {
   });
 
   return function (_x3, _x4) {
-    return _ref6.apply(this, arguments);
+    return _ref7.apply(this, arguments);
   };
 })();
 
@@ -6808,7 +6973,7 @@ var KXSC7_2050 = function () {
 };
 
 KXSC7_2050.prototype.wired = (() => {
-  var _ref9 = _asyncToGenerator(function* (obniz) {
+  var _ref10 = _asyncToGenerator(function* (obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
@@ -6847,7 +7012,7 @@ KXSC7_2050.prototype.wired = (() => {
   });
 
   return function (_x5) {
-    return _ref9.apply(this, arguments);
+    return _ref10.apply(this, arguments);
   };
 })();
 
@@ -6897,10 +7062,10 @@ DCMotor.prototype.wired = function (obniz) {
   this.pwm2_io_num = this.params.back;
 
   this.pwm1 = obniz.getFreePwm();
-  this.pwm1.start(this.pwm1_io_num);
+  this.pwm1.start({ io: this.pwm1_io_num });
   this.pwm1.freq(100000);
   this.pwm2 = obniz.getFreePwm();
-  this.pwm2.start(this.pwm2_io_num);
+  this.pwm2.start({ io: this.pwm2_io_num });
   this.pwm2.freq(100000);
   this.power(30);
 };
@@ -6976,7 +7141,7 @@ ServoMotor.prototype.wired = function (obniz) {
   this.pwm = obniz.getFreePwm();
   this.pwm_io_num = this.params.signal;
 
-  this.pwm.start(this.pwm_io_num);
+  this.pwm.start({ io: this.pwm_io_num });
   this.pwm.freq(50);
 };
 
@@ -7003,36 +7168,6 @@ ServoMotor.prototype.off = function () {
 
 if (PartsRegistrate) {
   PartsRegistrate("ServoMotor", ServoMotor);
-}
-var PIR_ekmc = function () {
-  this.keys = ["vcc", "gnd", "signal"];
-  this.requiredKeys = ["signal"];
-};
-
-PIR_ekmc.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.io_signal = obniz.getIO(this.params.signal);
-  this.io_signal.pull("0v");
-
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  var self = this;
-  this.io_signal.input(function (value) {
-    self.isPressed = value === false;
-    if (self.onchange) {
-      self.onchange(value === false);
-    }
-  });
-};
-
-PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var self = this;
-  var ret = yield this.io_signal.inputWait();
-  return ret == false;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("PIR_ekmc", PIR_ekmc);
 }
 //Todo:抵抗を追加して圧力(kg)を求められるように改造する
 var FSR40X = function () {
@@ -7103,7 +7238,7 @@ class Speaker {
     this.obniz = obniz;
     this.obniz.setVccGnd(null, this.params.gnd, "5v");
     this.pwm = obniz.getFreePwm();
-    this.pwm.start(this.params.signal);
+    this.pwm.start({ io: this.params.signal });
   }
 
   play(freq) {

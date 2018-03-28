@@ -157,13 +157,27 @@ class PeripheralI2C {
   }
 
   notified(obj) {
-    if (obj.mode === "slave" && typeof this.onwritten === "function") {
-      this.onwritten(obj.data);
-    } else {
-      // TODO: we should compare byte length from sent
-      var callback = this.observers.shift();
-      if (callback) {
-        callback(obj.data);
+    if (obj && typeof obj === "object") {
+      if (obj.data) {
+        if (obj.mode === "slave" && typeof this.onwritten === "function") {
+          this.onwritten(obj.data);
+        } else {
+          // TODO: we should compare byte length from sent
+          var callback = this.observers.shift();
+          if (callback) {
+            callback(obj.data);
+          }
+        }
+      }
+      if (obj.warnings) {
+        for (let i=0; i<obj.warnings.length; i++) {
+          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` })
+        }
+      }
+      if (obj.errors) {
+        for (let i=0; i<obj.errors.length; i++) {
+          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` })
+        }
       }
     }
   }

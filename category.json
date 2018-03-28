@@ -11,6 +11,16 @@
         }
       ]
     },{
+      "name": "Infrared",
+      "parts": [
+        {
+          "name": "InfraredLED"
+        },
+        {
+          "name": "IRSensor"
+        }
+      ]
+    },{
       "name": "Display",
       "parts": [
         {

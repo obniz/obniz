@@ -11,7 +11,7 @@ ServoMotor.prototype.wired = function(obniz) {
   this.pwm = obniz.getFreePwm();
   this.pwm_io_num = this.params.signal;
 
-  this.pwm.start(this.pwm_io_num);
+  this.pwm.start({io: this.pwm_io_num});
   this.pwm.freq(50);
 };
 
