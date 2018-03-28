@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/io/input_detail"
+
+type: object
+additionalProperties: false
+required : [direction]
+properties:
+            direction :
+                type: string
+                enum:
+                    - input
+
+            stream :
+                type: boolean
+                default: false

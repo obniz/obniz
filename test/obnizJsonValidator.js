@@ -1,7 +1,8 @@
  var Validator = require('jsonschema').Validator;
  var fs = require('fs');
  var path = require('path'); 
- var yaml = require('js-yaml'); 
+ var yaml = require('js-yaml');
+ var glob = require("glob")
 
 
 class obnizJsonValidator {
@@ -46,25 +47,19 @@ class obnizJsonValidator {
 
     var file_list = fs.readdirSync(base_dir);
 
-    file_list.filter(function (file) {
-      return !file.match(/^\..*/);
-    }).filter(function (file) {
-      return file.match(/.*\.yml$/);
-    }).filter(function (file) {
-      return !file.match(/.*index\.yml$/);
-    }).map(function (file) {
-      return path.resolve(base_dir, file);
-    }).filter(function (file) {
-      return fs.lstatSync(file).isFile();
-    }).forEach(function (schemaFilePath) {
-      var schema = yaml.safeLoad(
-          fs.readFileSync(schemaFilePath, 'utf8'),
+    var pattern = path.join( base_dir , "**/*.yml");
+    let files = glob.sync(pattern,{nodir:true});
+
+
+    for( let file of files ){
+      let schema = yaml.safeLoad(
+          fs.readFileSync(file, 'utf8'),
           {schema: yaml.JSON_SCHEMA}
       );
       validator.addSchema(schema);
 
-    });
-  
+    }
+
     return validator;
   
   }

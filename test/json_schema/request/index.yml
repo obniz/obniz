@@ -1,7 +1,7 @@
 ## YAML Template.
 ---
   $schema: http://json-schema.org/draft-04/schema#
-  id: request
+  id: "request"
   type: object
   definitions : 
       pinSetting :
