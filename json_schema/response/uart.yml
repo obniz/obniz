@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/uart"
+
+
+type: object
+additionalProperties: false
+properties:
+    data : {$ref:#dataArray}
+            
+            

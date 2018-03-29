@@ -10,3 +10,4 @@ test/**/*.html
 .idea/obnizjs.iml
 .idea/vcs.xml
 .idea/workspace.xml
+temp

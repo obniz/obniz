@@ -1,0 +1,7 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/mesure"
+
+type: object
+additionalProperties: true  ## all ok

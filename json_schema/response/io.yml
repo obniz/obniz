@@ -1,0 +1,5 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/io"
+type: boolean

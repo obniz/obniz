@@ -1,0 +1,20 @@
+## YAML Template.
+---
+#    $schema: http://json-schema.org/draft-04/schema#
+id: "/request/system"
+type: object
+additionalProperties: false
+properties:
+    reset : 
+        type: boolean
+    self_check : 
+        type: boolean
+    firmware : 
+        type: string
+    reboot : 
+        type: boolean
+    wait : 
+        type: integer
+    keep_working_at_offline : 
+        type: boolean
+        
