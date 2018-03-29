@@ -14,9 +14,9 @@ id: "/request/spi"
         mode  :  
             type : string
             enum : [master]
-        clk :  {$ref:#pinSetting}
-        mosi :  {$ref:#pinSetting}
-        miso :  {$ref:#pinSetting}
+        clk :  {$ref: "/pinSetting"}
+        mosi :  {$ref: "/pinSetting"}
+        miso :  {$ref: "/pinSetting"}
         clock : 
             type: number
             default : 115200

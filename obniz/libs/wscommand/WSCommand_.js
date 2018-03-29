@@ -279,7 +279,8 @@ class WSCommand {
     }
 
     if(schema["$ref"]){
-      return this._filterSchema(Obniz.tv4.getSchema(schema["$ref"]), json  );
+      let refSchema = Obniz.tv4.getSchema(schema["$ref"]);
+      return this._filterSchema(refSchema, json  );
     }
     throw Error("unknown json schema type");
   }

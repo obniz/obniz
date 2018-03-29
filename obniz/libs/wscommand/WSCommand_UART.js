@@ -12,78 +12,62 @@ class WSCommand_UART extends WSCommand {
 
   // Commands
 
-  init(module, obj) {
+  init(params, module) {
     var buf = new Uint8Array(13);
     buf[0] = module;
-    buf[1] = parseInt(obj.tx);
-    buf[2] = parseInt(obj.rx);
+    buf[1] = parseInt(params.tx);
+    buf[2] = parseInt(params.rx);
 
-    if (obj.baud !== undefined) {
-      if (typeof(obj.baud) === "number") {
-        var baud = parseInt(obj.baud);
-        if (!isNaN(baud)) {
-          buf[3] = baud >> (3*8);
-          buf[4] = baud >> (2*8);
-          buf[5] = baud >> (1*8);
-          buf[6] = baud;
-        } else {
-          throw new Error("uart: invalid number on baud")
-        }
-      } else {
-        throw new Error("uart: baud should be number")
-      }
+    buf[3] = params.baud >> (3*8);
+    buf[4] = params.baud >> (2*8);
+    buf[5] = params.baud >> (1*8);
+    buf[6] = params.baud;
+
+    if (params.stop === 1) {
+      buf[7] = 1;
+    } else if (params.stop === 1.5) {
+      buf[7] = 2;
+    } else if (params.stop === 2) {
+      buf[7] = 3;
+    } else if (params.stop === 0) {
+      buf[7] = 0;
+    } else {
+      //ここには来ない
+      throw new Error("uart: invalid stop bits")
     }
-    if (typeof(obj.stop) === "number") {
-      if (obj.stop === 1) {
-        buf[7] = 1;
-      } else if (obj.stop === 1.5) {
-        buf[7] = 2;
-      } else if (obj.stop === 2) {
-        buf[7] = 3;
-      } else {
-        throw new Error("uart: invalid stop bits")
-      }
-    }
-    if (typeof(obj.bits) === "number") {
-      var bits = parseInt(obj.bits);
-      if (5 <= bits && bits <= 8) {
-        buf[8] = bits;
-      } else {
-        throw new Error("uart: invalid bit length")
-      }
-    }
-    if (obj.parity === "even") {
+
+    buf[8] = params.bits;
+
+    if (params.parity === "even") {
       buf[9] = 2;
-    } else if (obj.parity === "odd") {
+    } else if (params.parity === "odd") {
       buf[9] = 3;
     }
-    if (obj.flowcontrol === "rts") {
+
+    if (params.flowcontrol === "rts") {
       buf[10] = 2;
-    } else if (obj.flowcontrol === "cts") {
+    } else if (params.flowcontrol === "cts") {
       buf[10] = 3;
-    } else if (obj.flowcontrol === "rts-cts") {
+    } else if (params.flowcontrol === "rts-cts") {
       buf[10] = 4;
     }
-    if (typeof(obj.rts) === "number") {
-      buf[11] = parseInt(obj.rts);
-    }
-    if (typeof(obj.cts) === "number") {
-      buf[12] = parseInt(obj.cts);
-    }
+
+    if(params.rts !== null)buf[11] = params.rts;
+    if(params.cts !== null)buf[12] = params.cts;
     
     this.sendCommand(this._CommandInit, buf);
   }
 
-  deinit(module) {
+  deinit(params, module) {
     var buf = new Uint8Array(1);
     buf[0] = module;
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-  send(module, data) {
-    var buf = new Uint8Array(1 + data.length);
+  send(params, module) {
+    var buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
-    buf.set(data, 1);
+    buf.set(params.data, 1);
     this.sendCommand(this._CommandSend, buf);
   }
 
@@ -91,23 +75,38 @@ class WSCommand_UART extends WSCommand {
     // 0~2
     for (var i=0; i<3;i++) {
       var module = json["uart"+i];
-      if (module === null) {
-        this.deinit(i);
+      if (module === undefined) {
         continue;
       }
-      if (typeof(module) !== "object") {
-        continue;
+      let schemaData = [
+        {uri : "/request/uart/init",       onValid: this.init},
+        {uri : "/request/uart/send",       onValid: this.send},
+        {uri : "/request/uart/deinit",     onValid: this.deinit},
+      ];
+      let res = this.validateCommandSchema(schemaData, module, "uart"+i, i);
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new Error(`[uart${i}]unknown command`);
+        }
       }
-      if (module.tx || module.rx) {
-        if (this.isValidIO(module.tx) && this.isValidIO(module.rx)) {
-          this.init(i, module);
-        } else {
-          throw new Error("uart: tx rx is not valid obniz io")
-        } 
-      }
-      if (module.data) {
-        this.send(i, module.data);
-      }
+      //
+      //
+      // if (typeof(module) !== "object") {
+      //   continue;
+      // }
+      // if (module.tx || module.rx) {
+      //   if (this.isValidIO(module.tx) && this.isValidIO(module.rx)) {
+      //     this.init(i, module);
+      //   } else {
+      //     throw new Error("uart: tx rx is not valid obniz io")
+      //   }
+      // }
+      // if (module.data) {
+      //   this.send(i, module.data);
+      // }
     }
   }
 

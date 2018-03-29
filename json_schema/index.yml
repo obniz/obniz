@@ -8,10 +8,13 @@
           type : integer
           minimum : 0
           maximum : 11
+          default : null
+
 
       dataArray :
           id : "dataArray"
           type : array
+          default : null
           items :
               type : integer
               minimum : 0
@@ -19,4 +22,5 @@
       hexString :
           id : "hexString"
           type : string
+          default : null
           "pattern": "^([0-9a-fA-F]+)$"

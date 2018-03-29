@@ -22,7 +22,7 @@ class WSCommand_PWM extends WSCommand {
 
   // Commands
 
-  io(params, module) {
+  init(params, module) {
     var buf = new Uint8Array(2);
     buf[0] = module;
     buf[1] = params.io;
@@ -95,12 +95,12 @@ class WSCommand_PWM extends WSCommand {
       }
 
       let schemaData = [
-        {uri : "/request/pwm/io",           onValid: this.io},
+        {uri : "/request/pwm/init",           onValid: this.init},
         {uri : "/request/pwm/freq",         onValid: this.freq},
         {uri : "/request/pwm/pulse",        onValid: this.pulse},
         {uri : "/request/pwm/duty",         onValid: this.duty},
         {uri : "/request/pwm/modulate",     onValid: this.amModulate},
-        {uri : "/request/pwm/null",         onValid: this.deinit},
+        {uri : "/request/pwm/deinit",         onValid: this.deinit},
       ];
       let res = this.validateCommandSchema(schemaData, module, "pwm"+i, i);
 

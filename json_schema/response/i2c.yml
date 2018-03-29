@@ -18,4 +18,4 @@ properties:
         type: integer
         minimum : 0
 
-    data : {$refs : "#dataArray"}
+    data : {$ref : "#dataArray"}

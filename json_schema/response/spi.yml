@@ -6,4 +6,4 @@ id: "/response/spi"
 type: object
 additionalProperties: false
 properties:
-    data : {$refs : "#dataArray"}
+    data : {$ref : "#dataArray"}
