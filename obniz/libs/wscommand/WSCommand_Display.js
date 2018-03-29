@@ -14,7 +14,7 @@ class WSCommand_Display extends WSCommand {
 
   // Commands
 
-  clear() {
+  clear(params) {
     this.sendCommand(this._CommandClear, null);
   }
 
@@ -31,6 +31,13 @@ class WSCommand_Display extends WSCommand {
       result = new Uint8Array(new TextEncoder("utf-8").encode(text));
     }
     this.print(result);
+  }
+
+  text(params){
+    this.printText(params.text);
+  }
+  raw(params){
+    this.drawHorizonally(new Uint8Array(params.raw));
   }
   
   drawVertically(buf) {
@@ -69,31 +76,47 @@ class WSCommand_Display extends WSCommand {
   
   parseFromJson(json) {
     var module = json["display"];
-    if (typeof(module) != "object") {
+    if (module === undefined) {
       return;
     }
-    if (module.clear) {
-      this.clear();
-    }
-    if (typeof module.text == "string") {
-      this.printText(module.text);
-    } else if(module.text) {
-      throw new Error("display: text must be string");
-    }
-    if (module.raw) {
-      if (module.raw.length === 1024) {
-        this.drawHorizonally(new Uint8Array(module.raw));
-      } else {
-        throw new Error("raw should 1024 byte");
+
+    let schemaData = [
+      {uri : "/request/display/text",  onValid: this.text},
+      {uri : "/request/display/clear", onValid: this.clear},
+      {uri : "/request/display/raw", onValid: this.raw}
+    ];
+    let res = this.validateCommandSchema(schemaData, module, "display" );
+
+    if(res.valid === 0){
+      if(res.invalidButLike.length > 0) {
+        throw new Error(res.invalidButLike[0].message);
+      }else{
+        throw new WSCommandNotFoundError(`[display]unknown command`);
       }
     }
-    
-    if (typeof module.pin_assign === "object") {
-      for(var i=0;i<12;i++){
-        if(typeof (module.pin_assign[i]) === "object"){
-          this.setPinName(i, module.pin_assign[i].module_name ||"?",module.pin_assign[i].pin_name ||"?" );
-        }
-      }
-    }
+    //
+    // if (module.clear) {
+    //   this.clear();
+    // }
+    // if (typeof module.text == "string") {
+    //   this.printText(module.text);
+    // } else if(module.text) {
+    //   throw new Error("display: text must be string");
+    // }
+    // if (module.raw) {
+    //   if (module.raw.length === 1024) {
+    //     this.drawHorizonally(new Uint8Array(module.raw));
+    //   } else {
+    //     throw new Error("raw should 1024 byte");
+    //   }
+    // }
+    //
+    // if (typeof module.pin_assign === "object") {
+    //   for(var i=0;i<12;i++){
+    //     if(typeof (module.pin_assign[i]) === "object"){
+    //       this.setPinName(i, module.pin_assign[i].module_name ||"?",module.pin_assign[i].pin_name ||"?" );
+    //     }
+    //   }
+    // }
   }
 }

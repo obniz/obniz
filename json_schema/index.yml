@@ -12,7 +12,7 @@
 
 
       dataArray256 :
-          id : "dataArray"
+          id : "dataArray256"
           type : array
           default : null
           items :
@@ -21,7 +21,7 @@
               maximum : 255
 
       dataArray1024 :
-          id : "dataArray"
+          id : "dataArray1024"
           type : array
           default : null
           items :

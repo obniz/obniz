@@ -114,7 +114,7 @@ class WSCommand_IO extends WSCommand {
         if(res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         }else{
-          throw new Error(`[io${i}]unknown command`);
+          throw new WSCommandNotFoundError(`[io${i}]unknown command`);
         }
       }
     }

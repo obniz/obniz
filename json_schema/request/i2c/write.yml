@@ -16,4 +16,4 @@ properties:
         enum: [7, 10]
         default: 7
 
-    data : {$ref: "/dataArray"}
+    data : {$ref: "/dataArray1024"}

@@ -77,7 +77,7 @@ gulp.task("jsonSchemaJoin", beforeSchema, function jsonSchemaForVar(){
   return gulp.src(schemaSrcPath)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_yaml({ safe: true }))
-      .pipe(concatWith("schema.js",{header:"var __obniz_js_schema = [", separator:",", footer:"];" }))
+      .pipe(concatWith("schema.js",{header:"Obniz.wsSchema = [", separator:",", footer:"];" }))
       .pipe(gulp.dest(tempPath));
 
 });

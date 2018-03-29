@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/display/raw"
+
+
+type: object
+required : [raw]
+properties:
+    raw :
+        type : array
+        minItems: 1024   # 128*64 / 8
+        maxItems: 1024   # 128*64 / 8
+        items :
+            type : integer
+            minimum : 0
+            maximum : 255

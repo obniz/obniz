@@ -175,7 +175,7 @@ class WSCommand {
   getSchema(uri){
     //chack isFirst
     if(!Obniz.tv4.getSchema("/request")){
-      for(let schema of __obniz_js_schema){
+      for(let schema of Obniz.wsSchema){
         Obniz.tv4.addSchema(schema);
       }
     }
@@ -284,4 +284,12 @@ class WSCommand {
     }
     throw Error("unknown json schema type");
   }
+
+  get WSCommandNotFoundError(){
+    return WSCommandNotFoundError;
+  }
+}
+
+class WSCommandNotFoundError extends Error{
+
 }

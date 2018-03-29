@@ -115,36 +115,9 @@ class WSCommand_I2C extends WSCommand {
         if(res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         }else{
-          throw new Error(`[i2c${i}]unknown command`);
+          throw new WSCommandNotFoundError(`[i2c${i}]unknown command`);
         }
       }
-      //
-      // if (typeof(module) != "object") {
-      //   continue;
-      // }
-      // if (typeof module.mode === "string") {
-      //   if (module.mode === "master" || module.mode === "slave") {
-      //     this.init(i, module);
-      //   } else {
-      //     throw new Error(`i2c: invalid mode ${module.mode}. master/slave is available`);
-      //   }
-      // }
-      //
-      // if (typeof(module.address) === "number") {
-      //   var address = parseInt(module.address);
-      //   if (isNaN(address)) {
-      //     throw Error("i2c: invalid address " + module.address)
-      //   }
-      //   if (module.address_bits === 10) {
-      //     address = address | 0x8000;
-      //   }
-      //   if (module.data) {
-      //     this.write(i, address, module.data);
-      //   }
-      //   if (typeof(module.read) == "number") {
-      //     this.read(i, address, module.read);
-      //   }
-      // }
     }
   }
 
