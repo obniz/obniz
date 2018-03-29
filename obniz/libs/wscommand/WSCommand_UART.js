@@ -92,21 +92,6 @@ class WSCommand_UART extends WSCommand {
           throw new Error(`[uart${i}]unknown command`);
         }
       }
-      //
-      //
-      // if (typeof(module) !== "object") {
-      //   continue;
-      // }
-      // if (module.tx || module.rx) {
-      //   if (this.isValidIO(module.tx) && this.isValidIO(module.rx)) {
-      //     this.init(i, module);
-      //   } else {
-      //     throw new Error("uart: tx rx is not valid obniz io")
-      //   }
-      // }
-      // if (module.data) {
-      //   this.send(i, module.data);
-      // }
     }
   }
 

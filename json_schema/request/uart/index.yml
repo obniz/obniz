@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/uart"
+"anyOf":
+  -  {$ref : "/request/uart/init"}
+  -  {$ref : "/request/uart/send"}
+  -  {$ref : "/request/uart/deinit"}

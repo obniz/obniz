@@ -11,7 +11,7 @@
           default : null
 
 
-      dataArray :
+      dataArray256 :
           id : "dataArray"
           type : array
           default : null
@@ -19,6 +19,24 @@
               type : integer
               minimum : 0
               maximum : 255
+
+      dataArray1024 :
+          id : "dataArray"
+          type : array
+          default : null
+          items :
+              type : integer
+              minimum : 0
+              maximum : 1024
+
+      dataArray :
+          id : "dataArray"
+          type : array
+          default : null
+          items :
+              type : integer
+              minimum : 0
+
       hexString :
           id : "hexString"
           type : string

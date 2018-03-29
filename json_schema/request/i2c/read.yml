@@ -1,0 +1,21 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/i2c/read"
+
+type: object
+required : [address, read]
+properties:
+    address :
+        type: integer
+        minimum : 0
+        maximun : 1023
+
+    address_bits:
+        type: integer
+        enum: [7, 10]
+        default: 7
+
+    read :
+        type: integer
+        minimum : 0
