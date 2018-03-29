@@ -2925,6 +2925,98 @@ class PeripheralUART {
     this.used = false;
   }
 }
+class ObnizUtil {
+
+  constructor(obniz) {
+    this.obniz = obniz;
+  }
+
+  createCanvasContext(width, height) {
+    if (this.obniz.isNode) {
+      try {
+        const { createCanvas } = require('canvas');
+        return createCanvas(this.width, this.height); 
+      } catch(e) {
+        throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
+      }
+    } else {
+      var canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style["-webkit-font-smoothing"] = "none";
+      var body = document.getElementsByTagName("body")[0];
+      body.appendChild(canvas);
+      
+      var ctx = canvas.getContext("2d");
+      return ctx;
+    } 
+  }
+  
+  static _keyFilter(params,keys){
+    var filterdParams = {};
+    if(typeof params !== "object" ){
+      return filterdParams;
+    }
+    filterdParams =  Object.keys(params)
+    .filter(key => keys.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = params[key];
+      return obj;
+    }, {});
+    
+    return filterdParams;
+  }
+  
+  /**
+   *
+   * @return {String} key name of not found. 
+   */
+  static _requiredKeys(params, keys){
+    if(typeof params !== "object" ){
+      return keys[0];
+    }
+    
+    for( var index in keys){
+        if(!(keys[index] in params )){
+            return keys[index];
+        }
+    }
+    return null;
+  }
+  
+  static dataArray2string(data) {
+    var string = null;
+    try {
+        if(isNode){
+          const StringDecoder = require('string_decoder').StringDecoder;
+          if(StringDecoder){
+             string = new StringDecoder('utf8').write(Buffer.from(data));
+          }
+        }else if(TextDecoder){
+          string = new TextDecoder("utf-8").decode(new Uint8Array(data));
+        }
+      }catch(e) {
+        //this.obniz.error(e);
+      }
+      return string;
+  };
+
+  static string2dataArray(str){
+    if (isNode) {
+      const buf = Buffer(str);
+      return [... buf];
+    } else if(TextEncoder){
+      const typedArray = new TextEncoder("utf-8").encode(str);
+      var arr = new Array(typedArray.length);
+      for (var i=0; i<typedArray.length;i++) {
+        arr[i] = typedArray[i];
+      }
+      return arr;
+      
+    }
+    return null;
+  }
+}
 
 
 class LogicAnalyzer {
@@ -3017,98 +3109,6 @@ class ObnizMeasure {
       callback(obj.echo);
     }
   }; 
-}
-class ObnizUtil {
-
-  constructor(obniz) {
-    this.obniz = obniz;
-  }
-
-  createCanvasContext(width, height) {
-    if (this.obniz.isNode) {
-      try {
-        const { createCanvas } = require('canvas');
-        return createCanvas(this.width, this.height); 
-      } catch(e) {
-        throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
-      }
-    } else {
-      var canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      canvas.style["-webkit-font-smoothing"] = "none";
-      var body = document.getElementsByTagName("body")[0];
-      body.appendChild(canvas);
-      
-      var ctx = canvas.getContext("2d");
-      return ctx;
-    } 
-  }
-  
-  static _keyFilter(params,keys){
-    var filterdParams = {};
-    if(typeof params !== "object" ){
-      return filterdParams;
-    }
-    filterdParams =  Object.keys(params)
-    .filter(key => keys.includes(key))
-    .reduce((obj, key) => {
-      obj[key] = params[key];
-      return obj;
-    }, {});
-    
-    return filterdParams;
-  }
-  
-  /**
-   *
-   * @return {String} key name of not found. 
-   */
-  static _requiredKeys(params, keys){
-    if(typeof params !== "object" ){
-      return keys[0];
-    }
-    
-    for( var index in keys){
-        if(!(keys[index] in params )){
-            return keys[index];
-        }
-    }
-    return null;
-  }
-  
-  static dataArray2string(data) {
-    var string = null;
-    try {
-        if(isNode){
-          const StringDecoder = require('string_decoder').StringDecoder;
-          if(StringDecoder){
-             string = new StringDecoder('utf8').write(Buffer.from(data));
-          }
-        }else if(TextDecoder){
-          string = new TextDecoder("utf-8").decode(new Uint8Array(data));
-        }
-      }catch(e) {
-        //this.obniz.error(e);
-      }
-      return string;
-  };
-
-  static string2dataArray(str){
-    if (isNode) {
-      const buf = Buffer(str);
-      return [... buf];
-    } else if(TextEncoder){
-      const typedArray = new TextEncoder("utf-8").encode(str);
-      var arr = new Array(typedArray.length);
-      for (var i=0; i<typedArray.length;i++) {
-        arr[i] = typedArray[i];
-      }
-      return arr;
-      
-    }
-    return null;
-  }
 }
 class WSCommand {
 
@@ -3305,9 +3305,8 @@ class WSCommand {
         oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
       }else{
         res.invalid++;
-        let message =  this.onlyTypeErrorMessage(errors);
-        if(errors.isOnlyTypeError){
-          // let message = errors.errors.map((elm)=>{return elm.dataPath || "root" + }).join(";");
+        let message =  this.onlyTypeErrorMessage(errors,rootPath);
+        if(message){
           res.invalidButLike.push ({uri: oneRow.uri, message});
         }
       }
@@ -3326,24 +3325,36 @@ class WSCommand {
     if(validateError.valid){return true;}
     if(validateError.missing && validateError.missing.length > 0){return false;}
 
+    let badErrorCodes = [
+      Obniz.tv4.errorCodes.ANY_OF_MISSING,
+      Obniz.tv4.errorCodes.ONE_OF_MISSING,
+      Obniz.tv4.errorCodes.ONE_OF_MULTIPLE,
+      Obniz.tv4.errorCodes.NOT_PASSED,
+      Obniz.tv4.errorCodes.OBJECT_REQUIRED,
+      Obniz.tv4.errorCodes.OBJECT_ADDITIONAL_PROPERTIES,
+      Obniz.tv4.errorCodes.CIRCULAR_REFERENCE,
+      Obniz.tv4.errorCodes.FORMAT_CUSTOM,
+      Obniz.tv4.errorCodes.KEYWORD_CUSTOM,
+      Obniz.tv4.errorCodes.UNKNOWN_PROPERTY
+    ];
     let messages = [];
     for (let error of validateError.errors) {
       if (error.code === Obniz.tv4.errorCodes.INVALID_TYPE) {
-        if (error.params.type === "object") {
+        if (error.params.type === "object"
+         || error.params.expected === "object") {
           return false;
         }
-        let path  = rootPath + error.dataPath.replace(/\//g,".");
-        messages.push( `${path} is invalid type ${error.params.type} (expect ${error.params.type})` );
-      } else if (error.code !== Obniz.tv4.errorCodes.ENUM_MISMATCH) {
-        let path  = rootPath + error.dataPath.replace(/\//g,".");
-        messages.push( `${path} is invalid value ${error.params.value} (expect enum. See documents.)` );
-      } else {
+      }else if (badErrorCodes.includes(error.code)){
         return false;
       }
 
+      let path  = rootPath + error.dataPath.replace(/\//g,".");
+      messages.push( `[${path}]${error.message}`  );
+
     }
-    return true;
+    return messages.join(";");
   }
+
   filter(commandUri, json){
     let schema =  this.getSchema(commandUri);
     return this._filterSchema( schema, json)
@@ -3379,6 +3390,9 @@ class WSCommand {
       return results;
     }
 
+    if(schema["$ref"]){
+      return this._filterSchema(Obniz.tv4.getSchema(schema["$ref"]), json  );
+    }
     throw Error("unknown json schema type");
   }
 }
@@ -3396,42 +3410,39 @@ class WSCommand_AD extends WSCommand {
 
   // Commands
 
-  init(module) {
-    var buf = new Uint8Array([module]);
-    this.sendCommand(this._CommandInitNormalInterval, buf);
+
+  get(params, no){
+    var buf = new Uint8Array([no]);
+    this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
+
   }
 
-  deinit(module) {
-    var buf = new Uint8Array([module]);
+  deinit(params, no) {
+    var buf = new Uint8Array([no]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-  onece(module) {
-    var buf = new Uint8Array([module]);
-    this.sendCommand(this._CommandDoOnece, buf);
-  }
+
 
   parseFromJson(json) {
     for (var i=0; i<12;i++) {
       var module = json["ad"+i];
-      if (module === null) {
-        this.deinit(i);
+      if (module === undefined) {
         continue;
       }
-      // if (typeof module == "string") {
-      //   if (module === "get") {
-      //     this.onece(i);
-      //   } else if (module === "stream") {
-      //     this.init(i);
-      //   }
-      // }
-      if (typeof module != "object") {
-        continue;
-      }
-      if (module.stream === true) {
-        this.init(i);
-      } else {
-        this.onece(i);
+
+      let schemaData = [
+        {uri : "/request/ad/null",         onValid: this.deinit},
+        {uri : "/request/ad/get",          onValid: this.get},
+      ];
+      let res = this.validateCommandSchema(schemaData, module, "ad"+i, i);
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new Error(`[ad${i}]unknown command`);
+        }
       }
     }
   }
@@ -4659,8 +4670,7 @@ class WSCommand_IO extends WSCommand {
   parseFromJson(json) {
     for (var i=0; i<=11;i++) {
       var module = json["io"+i];
-      if (module === null || module === undefined) {
-        // this.direction(i, );
+      if (module === undefined) {
         continue;
       }
 
@@ -4673,12 +4683,14 @@ class WSCommand_IO extends WSCommand {
         {uri : "/request/io/pull_type",     onValid: this.pullType}
       ];
       let res = this.validateCommandSchema(schemaData, module, "io"+i, i);
-      // if(res.valid === 0 ){
-      //   throw new Error("unknown io command at io"+i);
-      // }
-      // for( let row of res.invalidButLike){
-      //   throw new Error(row.message);
-      // }
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new Error(`[io${i}]unknown command`);
+        }
+      }
     }
   }
 
@@ -4911,34 +4923,35 @@ class WSCommand_PWM extends WSCommand {
 
   // Commands
 
-  init(module, io) {
+  io(params, module) {
     var buf = new Uint8Array(2);
     buf[0] = module;
-    buf[1] = io;
-    this.pwms[module].io = io;
+    buf[1] = params.io;
+    this.pwms[module].io = params.io;
     this.sendCommand(this._CommandInit, buf);
   }
 
-  deinit(module) {
+  deinit(params, module) {
     var buf = new Uint8Array(1);
     buf[0] = module;
     this.pwms[module] = {};
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-  setFreq(module, freq) {
+  freq(params, module) {
     var buf = new Uint8Array(5);
     buf[0] = module;
-    buf[1] = freq >> (8*3);
-    buf[2] = freq >> (8*2);
-    buf[3] = freq >> (8*1);
-    buf[4] = freq;
-    this.pwms[module].freq = freq;
+    buf[1] = params.freq >> (8*3);
+    buf[2] = params.freq >> (8*2);
+    buf[3] = params.freq >> (8*1);
+    buf[4] = params.freq;
+    this.pwms[module].freq = params.freq;
     this.sendCommand(this._CommandSetFreq, buf);
   }
 
-  setDuty(module, pulseUSec) {
-    var buf = new Uint8Array(5);
+  pulse(params, module){
+    let buf = new Uint8Array(5);
+    let pulseUSec = params.pulse * 1000;
     buf[0] = module;
     buf[1] = pulseUSec >> (8*3);
     buf[2] = pulseUSec >> (8*2);
@@ -4948,15 +4961,29 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  amModulate(module, symbol_length_usec, data) {
-    var buf = new Uint8Array(5 + data.length);
+  duty(params, module) {
+    let buf = new Uint8Array(5);
+    let pulseUSec = 1.0 / this.pwms[module].freq * params.duty * 0.01 * 1000000;
+    pulseUSec = parseInt(pulseUSec);
+    buf[0] = module;
+    buf[1] = pulseUSec >> (8*3);
+    buf[2] = pulseUSec >> (8*2);
+    buf[3] = pulseUSec >> (8*1);
+    buf[4] = pulseUSec;
+    this.pwms[module].pulseUSec = pulseUSec;
+    this.sendCommand(this._CommandSetDuty, buf);
+  }
+
+  amModulate(params, module) {
+    var buf = new Uint8Array(5 + params.modulate.data.length);
+    let symbol_length_usec =  params.modulate.symbol_length * 1000;
     buf[0] = module;
     buf[1] = symbol_length_usec >> (8*3);
     buf[2] = symbol_length_usec >> (8*2);
     buf[3] = symbol_length_usec >> (8*1);
     buf[4] = symbol_length_usec;
-    for (var i=0; i<data.length; i++) {
-      buf[5 + i] = data[i];
+    for (var i=0; i<params.modulate.data.length; i++) {
+      buf[5 + i] = params.modulate.data[i];
     }
     this.sendCommand(this._CommandAMModulate, buf);
   }
@@ -4964,55 +4991,26 @@ class WSCommand_PWM extends WSCommand {
   parseFromJson(json) {
     for (var i=0; i<this.ModuleNum;i++) {
       var module = json["pwm"+i];
-      if (module === null) {
-        this.deinit(i);
+      if (module === undefined) {
         continue;
       }
-      if (typeof(module) != "object") {
-        continue;
-      }
-      if (typeof(module.io) == "number") {
-        if (this.isValidIO(module.io)) {
-          this.init(i, module.io);
-        } else {
-          throw new Error("pwm: invalid io number.");
+
+      let schemaData = [
+        {uri : "/request/pwm/io",           onValid: this.io},
+        {uri : "/request/pwm/freq",         onValid: this.freq},
+        {uri : "/request/pwm/pulse",        onValid: this.pulse},
+        {uri : "/request/pwm/duty",         onValid: this.duty},
+        {uri : "/request/pwm/modulate",     onValid: this.amModulate},
+        {uri : "/request/pwm/null",         onValid: this.deinit},
+      ];
+      let res = this.validateCommandSchema(schemaData, module, "pwm"+i, i);
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new Error(`[pwm${i}]unknown command`);
         }
-      }
-      if (typeof(module.freq) == "number") {
-        var freq = parseInt(module.freq);
-        if(isNaN(freq)) {
-          throw new Error("pwm: invalid freq value.");
-        }
-        if (freq < 1 || 80 * 1000 * 1000 < freq)  {
-          throw new Error("pwm: freq must be 1<=freq<=80M. your freq is "+module.freq);
-        }
-        this.setFreq(i, freq);
-      }
-      if (typeof(module.pulse) === "number") {
-        this.setDuty(i, module.pulse * 1000);
-      }
-      var duty = module.duty;
-      if (typeof duty === "number") {
-        if (this.pwms[i].freq > 0) { // 0 division not acceptable
-          if (duty > 100) duty = 100;
-          else if (duty < 0) duty = 0;
-          var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;
-          pulseUSec = parseInt(pulseUSec);
-          this.setDuty(i, pulseUSec);
-        }
-      }
-      if (typeof module.modulate == "object" && module.modulate.type === "am") {
-        var symbol_length_usec = parseInt(module.modulate.symbol_length * 1000);
-        if(isNaN(symbol_length_usec)) {
-          throw new Error("pwm: baud is not number");
-        }
-        if(symbol_length_usec < 50) {
-          throw new Error("pwm: baud should bigger than 50usec");
-        }
-        if(symbol_length_usec > 1000*1000) {
-          throw new Error("pwm: baud should smaller than 1sec");
-        }
-        this.amModulate(i, symbol_length_usec, module.modulate.data);
       }
     }
   }
@@ -7882,7 +7880,7 @@ if (PartsRegistrate) {
   PartsRegistrate("ADT7310", ADT7310);
 }
 
-var __obniz_js_schema = [{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"stream":{"type":"boolean","default":false}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","type":"object","definitions":{"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12}},"additionalProperties":false,"properties":{"advertisement":{"anyOf":[{"type":"null"},{"type":"object","required":["adv_data"],"additionalProperties":false,"properties":{"adv_data":{"$ref :#dataArray":null},"scan_resp":{"$ref :#dataArray":null}}}]},"scan":{"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"duration":{"type":"integer"}}}]},"connect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null}}},"disconnect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null}}},"get_services":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null}}},"get_characteristics":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null}}},"read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}},"write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}},"stream":{"type":"boolean","default":false},"peripheral":{"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"services":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref :uuid":null},"characteristics":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null},"descriptors":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}}}}}}}}},"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}},"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}},"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}},"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null}}}}}]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display","type":"object","additionalProperties":false,"properties":{"text":{"type":"string"},"clear":{"type":"boolean"},"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}},"raw":{"type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref:#pinSetting":null},"scl":{"$ref:#pinSetting":null},"slave_address_length":{"type":"integer","enum":[7,10],"default":7},"slave_address":{"type":"integer","minimum":0},"clock":{"type":"integer","minimum":0},"address":{"type":"integer","minimum":0},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref:#dataArray":null},"read":{"type":"integer","minimum":0}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"object","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11},"dataArray":{"id":"dataArray","type":"array","items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","pattern":"^([0-9a-fA-F]+)$"}},"additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"}},"properties":{"io":{"$ref":"/request/ioanimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"mesure":{"$ref":"/request/mesure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioanimation","type":"object","additionalProperties":false,"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["loop","pause","resume"]},"states":{"type":"array","itmes":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer"},"state":{"type":"object","patternProperties":{"^io[0-9]$":{"type":"boolean"},"^io1[0-1]$":{"type":"boolean"}}}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["io","interval","duration"],"properties":{"io":{"type":"array","items":{"$ref :#pinSetting":null}},"interval":{"type":"number","minimum":0},"duration":{"type":"integer"},"triger":{"type":"object","additionalProperties":false,"required":["value","samples"],"properties":{"value":{"type":"boolean","minimum":0,"maximum":1},"samples":{"type":"integer"}}}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"type":["string","integer"]}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/mesure","anyOf":[{"type":"null"},{"type":"object","additionalProperties":true}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"io":{"$ref:#pinSetting":null},"freq":{"type":"integer"},"pulse":{"type":"number"},"duty":{"type":"number","minimum":0,"maximum":100},"force_working":{"type":"boolean"},"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0},"data":{"type":"array","items":{"type":"number"}}}}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref:#pinSetting":null},"mosi":{"$ref:#pinSetting":null},"miso":{"$ref:#pinSetting":null},"clock":{"type":"number","default":115200},"data":{"$ref :#dataArray":null},"read":{"type":"boolean"}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","type":"string","enum":["get"]},{"id":"/request/system","type":"object","additionalProperties":false,"properties":{"reset":{"type":"boolean"},"self_check":{"type":"boolean"},"firmware":{"type":"string"},"reboot":{"type":"boolean"},"wait":{"type":"integer"},"keep_working_at_offline":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"rx":{"$ref:#pinSetting":null},"tx":{"$ref:#pinSetting":null},"baud":{"type":"number","default":115200},"stop":{"type":"number","enum":[1,1.5,2],"default":1},"bits":{"type":"number","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref:#pinSetting":null},"cts":{"$ref:#pinSetting":null},"data":{"$refs :#dataArray":null}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad","type":"number"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","type":"object","definitions":{"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12}},"additionalProperties":false,"properties":{"scan_results":{"type":"array","minItems":1,"items":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result","inquiry_complete"]},"address":{"$ref :deviceAddress":null},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","maximun":0},"rssi":{"type":"integer","maximun":0},"adv_data":{"$ref :#dataArray":null},"scan_resp":{"$ref :#dataArray":null}}}},"status_updates":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"status":{"type":"string","enum":["connected","disconnected"]}}}},"get_service_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null}}}},"get_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}}},"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}}},"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"peripheral":{"type":"object","additionalProperties":false,"properties":{"connection_status":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"status":{"type":"string","enum":["connected","disconnected"]}}}},"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_write_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_read_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}}},"write_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"read_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_write_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_read_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null}}}}}},"errors":{"type":"array","minItems":1,"items":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"message":{"typoe":"string"},"address":{"anyOf":[{"$ref :deviceAddress":null},{"type":"null"}]},"service_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]},"characteristic_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]},"descriptor_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","type":"object","additionalProperties":false,"properties":{"mode":{"type":"string","enum":["master","slave"]},"is_fragmented":{"type":"boolean"},"address":{"type":"integer","minimum":0},"data":{"$refs":"#dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"object","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11},"data":{"id":"#data","type":"integer","minimum":0,"maximum":255},"dataArray":{"id":"#dataArray","type":"array","items":{"$ref :#data":null}}},"additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"mesure":{"$ref":"/response/mesure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"ws":{"$ref":"/response/ws"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","type":"object","additionalProperties":false,"required":["data"],"properties":{"data":{"$ref :#dataArray":null}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message","type":"object","additionalProperties":false,"required":["data","from"],"properties":{"data":{},"from":{"type":["string","integer","null"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/mesure","type":"object","additionalProperties":true},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi","type":"object","additionalProperties":false,"properties":{"data":{"$refs":"#dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch","type":"object","additionalProperties":false,"properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart","type":"object","additionalProperties":false,"properties":{"data":{"$ref:#dataArray":null}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","type":"object","additionalProperties":false,"properties":{"ready":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input","type":"string","enum":["get"]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","type":"object","additionalProperties":false,"required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_detail","type":"object","additionalProperties":false,"required":["direction","value"],"properties":{"direction":{"type":"string","enum":["output"]},"value":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","additionalProperties":false,"required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/pull_type","type":"object","additionalProperties":false,"required":["pull_type"],"properties":{"pull_type":{"type":"string","enum":["pull-up5v","pull-up3v","pull-down","float"]}}}];
+var __obniz_js_schema = [{"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11},"dataArray":{"id":"dataArray","type":"array","items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","pattern":"^([0-9a-fA-F]+)$"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"stream":{"type":"boolean","default":false}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","type":"object","definitions":{"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12}},"additionalProperties":false,"properties":{"advertisement":{"anyOf":[{"type":"null"},{"type":"object","required":["adv_data"],"additionalProperties":false,"properties":{"adv_data":{"$ref :#dataArray":null},"scan_resp":{"$ref :#dataArray":null}}}]},"scan":{"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"duration":{"type":"integer"}}}]},"connect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null}}},"disconnect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null}}},"get_services":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null}}},"get_characteristics":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null}}},"read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}},"write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}},"stream":{"type":"boolean","default":false},"peripheral":{"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"services":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref :uuid":null},"characteristics":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null},"descriptors":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}}}}}}}}},"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}},"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}},"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}},"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null}}}}}]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display","type":"object","additionalProperties":false,"properties":{"text":{"type":"string"},"clear":{"type":"boolean"},"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}},"raw":{"type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref:#pinSetting":null},"scl":{"$ref:#pinSetting":null},"slave_address_length":{"type":"integer","enum":[7,10],"default":7},"slave_address":{"type":"integer","minimum":0},"clock":{"type":"integer","minimum":0},"address":{"type":"integer","minimum":0},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref:#dataArray":null},"read":{"type":"integer","minimum":0}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"}},"properties":{"io":{"$ref":"/request/ioanimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"mesure":{"$ref":"/request/mesure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioanimation","type":"object","additionalProperties":false,"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["loop","pause","resume"]},"states":{"type":"array","itmes":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer"},"state":{"type":"object","patternProperties":{"^io[0-9]$":{"type":"boolean"},"^io1[0-1]$":{"type":"boolean"}}}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["io","interval","duration"],"properties":{"io":{"type":"array","items":{"$ref :#pinSetting":null}},"interval":{"type":"number","minimum":0},"duration":{"type":"integer"},"triger":{"type":"object","additionalProperties":false,"required":["value","samples"],"properties":{"value":{"type":"boolean","minimum":0,"maximum":1},"samples":{"type":"integer"}}}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"type":["string","integer"]}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/mesure","anyOf":[{"type":"null"},{"type":"object","additionalProperties":true}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"io":{"$ref:#pinSetting":null},"freq":{"type":"integer"},"pulse":{"type":"number"},"duty":{"type":"number","minimum":0,"maximum":100},"force_working":{"type":"boolean"},"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0},"data":{"type":"array","items":{"type":"number"}}}}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref:#pinSetting":null},"mosi":{"$ref:#pinSetting":null},"miso":{"$ref:#pinSetting":null},"clock":{"type":"number","default":115200},"data":{"$ref :#dataArray":null},"read":{"type":"boolean"}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","type":"string","enum":["get"]},{"id":"/request/system","type":"object","additionalProperties":false,"properties":{"reset":{"type":"boolean"},"self_check":{"type":"boolean"},"firmware":{"type":"string"},"reboot":{"type":"boolean"},"wait":{"type":"integer"},"keep_working_at_offline":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart","anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"properties":{"rx":{"$ref:#pinSetting":null},"tx":{"$ref:#pinSetting":null},"baud":{"type":"number","default":115200},"stop":{"type":"number","enum":[1,1.5,2],"default":1},"bits":{"type":"number","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref:#pinSetting":null},"cts":{"$ref:#pinSetting":null},"data":{"$refs :#dataArray":null}}}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad","type":"number"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","type":"object","definitions":{"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12}},"additionalProperties":false,"properties":{"scan_results":{"type":"array","minItems":1,"items":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result","inquiry_complete"]},"address":{"$ref :deviceAddress":null},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","maximun":0},"rssi":{"type":"integer","maximun":0},"adv_data":{"$ref :#dataArray":null},"scan_resp":{"$ref :#dataArray":null}}}},"status_updates":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"status":{"type":"string","enum":["connected","disconnected"]}}}},"get_service_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null}}}},"get_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}}},"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}}},"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"peripheral":{"type":"object","additionalProperties":false,"properties":{"connection_status":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"status":{"type":"string","enum":["connected","disconnected"]}}}},"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_write_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_read_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}}},"write_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"read_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_write_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_read_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null}}}}}},"errors":{"type":"array","minItems":1,"items":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"message":{"typoe":"string"},"address":{"anyOf":[{"$ref :deviceAddress":null},{"type":"null"}]},"service_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]},"characteristic_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]},"descriptor_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","type":"object","additionalProperties":false,"properties":{"mode":{"type":"string","enum":["master","slave"]},"is_fragmented":{"type":"boolean"},"address":{"type":"integer","minimum":0},"data":{"$refs":"#dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"mesure":{"$ref":"/response/mesure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"ws":{"$ref":"/response/ws"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","type":"object","additionalProperties":false,"required":["data"],"properties":{"data":{"$ref :#dataArray":null}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message","type":"object","additionalProperties":false,"required":["data","from"],"properties":{"data":{},"from":{"type":["string","integer","null"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/mesure","type":"object","additionalProperties":true},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi","type":"object","additionalProperties":false,"properties":{"data":{"$refs":"#dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch","type":"object","additionalProperties":false,"properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart","type":"object","additionalProperties":false,"properties":{"data":{"$ref:#dataArray":null}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","type":"object","additionalProperties":false,"properties":{"ready":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","anyOf":[{"$ref":"/request/ad/null"},{"$ref":"/request/ad/get"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/null","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input","type":"string","enum":["get"]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","type":"object","required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_detail","type":"object","required":["direction","value"],"properties":{"direction":{"type":"string","enum":["output"]},"value":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/pull_type","type":"object","required":["pull_type"],"properties":{"pull_type":{"type":"string","enum":["pull-up5v","pull-up3v","pull-down","float"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioanimation","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["loop","pause","resume"]},"states":{"type":"array","default":[],"itmes":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer"},"state":{"type":"object","patternProperties":{"^io[0-9]$":{"type":"boolean"},"^io1[0-1]$":{"type":"boolean"}}}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioanimation","type":"object","additionalProperties":false,"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["loop","pause","resume"]},"states":{"type":"array","itmes":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer"},"state":{"type":"object","patternProperties":{"^io[0-9]$":{"type":"boolean"},"^io1[0-1]$":{"type":"boolean"}}}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/duty","type":"object","required":["duty"],"properties":{"duty":{"type":"number","minimum":0,"maximum":100}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/freq","type":"object","required":["freq"],"properties":{"freq":{"type":"integer","minimum":1,"maximum":80000000}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","anyOf":[{"$ref":"/request/pwm/io"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/duty"},{"$ref":"/request/pwm/modurate"},{"$ref":"/request/pwm/null"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/io","type":"object","required":["io"],"properties":{"io":{"$ref":"/pinSetting"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000},"data":{"type":"array","items":{"type":"number"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/null","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/pulse","type":"object","required":["pulse"],"properties":{"pulse":{"type":"number"}}}];
 (function(global){ let module = {exports:{}};/*
 Author: Geraint Luff and others
 Year: 2013

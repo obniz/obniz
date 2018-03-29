@@ -96,8 +96,7 @@ class WSCommand_IO extends WSCommand {
   parseFromJson(json) {
     for (var i=0; i<=11;i++) {
       var module = json["io"+i];
-      if (module === null || module === undefined) {
-        // this.direction(i, );
+      if (module === undefined) {
         continue;
       }
 
@@ -110,12 +109,14 @@ class WSCommand_IO extends WSCommand {
         {uri : "/request/io/pull_type",     onValid: this.pullType}
       ];
       let res = this.validateCommandSchema(schemaData, module, "io"+i, i);
-      // if(res.valid === 0 ){
-      //   throw new Error("unknown io command at io"+i);
-      // }
-      // for( let row of res.invalidButLike){
-      //   throw new Error(row.message);
-      // }
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new Error(`[io${i}]unknown command`);
+        }
+      }
     }
   }
 

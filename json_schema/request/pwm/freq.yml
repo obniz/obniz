@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/pwm/freq"
+
+type: object
+required : [freq]
+properties:
+      freq :
+          type: integer
+          minimum : 1
+          maximum : 80000000

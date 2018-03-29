@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/pwm/duty"
+
+type: object
+required : [duty]
+properties:
+        duty:
+            type: number
+            minimum : 0
+            maximum : 100

@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ad"
+
+"anyOf":
+  -  {$ref : "/request/ad/null"}
+  -  {$ref : "/request/ad/get"}

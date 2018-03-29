@@ -12,42 +12,39 @@ class WSCommand_AD extends WSCommand {
 
   // Commands
 
-  init(module) {
-    var buf = new Uint8Array([module]);
-    this.sendCommand(this._CommandInitNormalInterval, buf);
+
+  get(params, no){
+    var buf = new Uint8Array([no]);
+    this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
+
   }
 
-  deinit(module) {
-    var buf = new Uint8Array([module]);
+  deinit(params, no) {
+    var buf = new Uint8Array([no]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-  onece(module) {
-    var buf = new Uint8Array([module]);
-    this.sendCommand(this._CommandDoOnece, buf);
-  }
+
 
   parseFromJson(json) {
     for (var i=0; i<12;i++) {
       var module = json["ad"+i];
-      if (module === null) {
-        this.deinit(i);
+      if (module === undefined) {
         continue;
       }
-      // if (typeof module == "string") {
-      //   if (module === "get") {
-      //     this.onece(i);
-      //   } else if (module === "stream") {
-      //     this.init(i);
-      //   }
-      // }
-      if (typeof module != "object") {
-        continue;
-      }
-      if (module.stream === true) {
-        this.init(i);
-      } else {
-        this.onece(i);
+
+      let schemaData = [
+        {uri : "/request/ad/null",         onValid: this.deinit},
+        {uri : "/request/ad/get",          onValid: this.get},
+      ];
+      let res = this.validateCommandSchema(schemaData, module, "ad"+i, i);
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new Error(`[ad${i}]unknown command`);
+        }
       }
     }
   }

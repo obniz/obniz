@@ -22,34 +22,35 @@ class WSCommand_PWM extends WSCommand {
 
   // Commands
 
-  init(module, io) {
+  io(params, module) {
     var buf = new Uint8Array(2);
     buf[0] = module;
-    buf[1] = io;
-    this.pwms[module].io = io;
+    buf[1] = params.io;
+    this.pwms[module].io = params.io;
     this.sendCommand(this._CommandInit, buf);
   }
 
-  deinit(module) {
+  deinit(params, module) {
     var buf = new Uint8Array(1);
     buf[0] = module;
     this.pwms[module] = {};
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-  setFreq(module, freq) {
+  freq(params, module) {
     var buf = new Uint8Array(5);
     buf[0] = module;
-    buf[1] = freq >> (8*3);
-    buf[2] = freq >> (8*2);
-    buf[3] = freq >> (8*1);
-    buf[4] = freq;
-    this.pwms[module].freq = freq;
+    buf[1] = params.freq >> (8*3);
+    buf[2] = params.freq >> (8*2);
+    buf[3] = params.freq >> (8*1);
+    buf[4] = params.freq;
+    this.pwms[module].freq = params.freq;
     this.sendCommand(this._CommandSetFreq, buf);
   }
 
-  setDuty(module, pulseUSec) {
-    var buf = new Uint8Array(5);
+  pulse(params, module){
+    let buf = new Uint8Array(5);
+    let pulseUSec = params.pulse * 1000;
     buf[0] = module;
     buf[1] = pulseUSec >> (8*3);
     buf[2] = pulseUSec >> (8*2);
@@ -59,15 +60,29 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  amModulate(module, symbol_length_usec, data) {
-    var buf = new Uint8Array(5 + data.length);
+  duty(params, module) {
+    let buf = new Uint8Array(5);
+    let pulseUSec = 1.0 / this.pwms[module].freq * params.duty * 0.01 * 1000000;
+    pulseUSec = parseInt(pulseUSec);
+    buf[0] = module;
+    buf[1] = pulseUSec >> (8*3);
+    buf[2] = pulseUSec >> (8*2);
+    buf[3] = pulseUSec >> (8*1);
+    buf[4] = pulseUSec;
+    this.pwms[module].pulseUSec = pulseUSec;
+    this.sendCommand(this._CommandSetDuty, buf);
+  }
+
+  amModulate(params, module) {
+    var buf = new Uint8Array(5 + params.modulate.data.length);
+    let symbol_length_usec =  params.modulate.symbol_length * 1000;
     buf[0] = module;
     buf[1] = symbol_length_usec >> (8*3);
     buf[2] = symbol_length_usec >> (8*2);
     buf[3] = symbol_length_usec >> (8*1);
     buf[4] = symbol_length_usec;
-    for (var i=0; i<data.length; i++) {
-      buf[5 + i] = data[i];
+    for (var i=0; i<params.modulate.data.length; i++) {
+      buf[5 + i] = params.modulate.data[i];
     }
     this.sendCommand(this._CommandAMModulate, buf);
   }
@@ -75,55 +90,26 @@ class WSCommand_PWM extends WSCommand {
   parseFromJson(json) {
     for (var i=0; i<this.ModuleNum;i++) {
       var module = json["pwm"+i];
-      if (module === null) {
-        this.deinit(i);
+      if (module === undefined) {
         continue;
       }
-      if (typeof(module) != "object") {
-        continue;
-      }
-      if (typeof(module.io) == "number") {
-        if (this.isValidIO(module.io)) {
-          this.init(i, module.io);
-        } else {
-          throw new Error("pwm: invalid io number.");
+
+      let schemaData = [
+        {uri : "/request/pwm/io",           onValid: this.io},
+        {uri : "/request/pwm/freq",         onValid: this.freq},
+        {uri : "/request/pwm/pulse",        onValid: this.pulse},
+        {uri : "/request/pwm/duty",         onValid: this.duty},
+        {uri : "/request/pwm/modulate",     onValid: this.amModulate},
+        {uri : "/request/pwm/null",         onValid: this.deinit},
+      ];
+      let res = this.validateCommandSchema(schemaData, module, "pwm"+i, i);
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new Error(`[pwm${i}]unknown command`);
         }
-      }
-      if (typeof(module.freq) == "number") {
-        var freq = parseInt(module.freq);
-        if(isNaN(freq)) {
-          throw new Error("pwm: invalid freq value.");
-        }
-        if (freq < 1 || 80 * 1000 * 1000 < freq)  {
-          throw new Error("pwm: freq must be 1<=freq<=80M. your freq is "+module.freq);
-        }
-        this.setFreq(i, freq);
-      }
-      if (typeof(module.pulse) === "number") {
-        this.setDuty(i, module.pulse * 1000);
-      }
-      var duty = module.duty;
-      if (typeof duty === "number") {
-        if (this.pwms[i].freq > 0) { // 0 division not acceptable
-          if (duty > 100) duty = 100;
-          else if (duty < 0) duty = 0;
-          var pulseUSec = 1.0 / this.pwms[i].freq * duty * 0.01 * 1000000;
-          pulseUSec = parseInt(pulseUSec);
-          this.setDuty(i, pulseUSec);
-        }
-      }
-      if (typeof module.modulate == "object" && module.modulate.type === "am") {
-        var symbol_length_usec = parseInt(module.modulate.symbol_length * 1000);
-        if(isNaN(symbol_length_usec)) {
-          throw new Error("pwm: baud is not number");
-        }
-        if(symbol_length_usec < 50) {
-          throw new Error("pwm: baud should bigger than 50usec");
-        }
-        if(symbol_length_usec > 1000*1000) {
-          throw new Error("pwm: baud should smaller than 1sec");
-        }
-        this.amModulate(i, symbol_length_usec, module.modulate.data);
       }
     }
   }

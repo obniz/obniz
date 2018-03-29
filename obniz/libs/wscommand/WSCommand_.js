@@ -193,9 +193,8 @@ class WSCommand {
         oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
       }else{
         res.invalid++;
-        let message =  this.onlyTypeErrorMessage(errors);
-        if(errors.isOnlyTypeError){
-          // let message = errors.errors.map((elm)=>{return elm.dataPath || "root" + }).join(";");
+        let message =  this.onlyTypeErrorMessage(errors,rootPath);
+        if(message){
           res.invalidButLike.push ({uri: oneRow.uri, message});
         }
       }
@@ -214,24 +213,36 @@ class WSCommand {
     if(validateError.valid){return true;}
     if(validateError.missing && validateError.missing.length > 0){return false;}
 
+    let badErrorCodes = [
+      Obniz.tv4.errorCodes.ANY_OF_MISSING,
+      Obniz.tv4.errorCodes.ONE_OF_MISSING,
+      Obniz.tv4.errorCodes.ONE_OF_MULTIPLE,
+      Obniz.tv4.errorCodes.NOT_PASSED,
+      Obniz.tv4.errorCodes.OBJECT_REQUIRED,
+      Obniz.tv4.errorCodes.OBJECT_ADDITIONAL_PROPERTIES,
+      Obniz.tv4.errorCodes.CIRCULAR_REFERENCE,
+      Obniz.tv4.errorCodes.FORMAT_CUSTOM,
+      Obniz.tv4.errorCodes.KEYWORD_CUSTOM,
+      Obniz.tv4.errorCodes.UNKNOWN_PROPERTY
+    ];
     let messages = [];
     for (let error of validateError.errors) {
       if (error.code === Obniz.tv4.errorCodes.INVALID_TYPE) {
-        if (error.params.type === "object") {
+        if (error.params.type === "object"
+         || error.params.expected === "object") {
           return false;
         }
-        let path  = rootPath + error.dataPath.replace(/\//g,".");
-        messages.push( `${path} is invalid type ${error.params.type} (expect ${error.params.type})` );
-      } else if (error.code !== Obniz.tv4.errorCodes.ENUM_MISMATCH) {
-        let path  = rootPath + error.dataPath.replace(/\//g,".");
-        messages.push( `${path} is invalid value ${error.params.value} (expect enum. See documents.)` );
-      } else {
+      }else if (badErrorCodes.includes(error.code)){
         return false;
       }
 
+      let path  = rootPath + error.dataPath.replace(/\//g,".");
+      messages.push( `[${path}]${error.message}`  );
+
     }
-    return true;
+    return messages.join(";");
   }
+
   filter(commandUri, json){
     let schema =  this.getSchema(commandUri);
     return this._filterSchema( schema, json)
@@ -267,6 +278,9 @@ class WSCommand {
       return results;
     }
 
+    if(schema["$ref"]){
+      return this._filterSchema(Obniz.tv4.getSchema(schema["$ref"]), json  );
+    }
     throw Error("unknown json schema type");
   }
 }

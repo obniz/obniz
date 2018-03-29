@@ -4,7 +4,6 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/io/output_type"
 
 type: object
-additionalProperties: false
 required : [output_type]
 properties:
           output_type:

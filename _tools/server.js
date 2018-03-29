@@ -51,25 +51,30 @@ if(!tv4Path){
   throw new Error("tv4 not found.npm install please")
 }
 
+if(!fs.existsSync(tempPath)){
+  fs.mkdirSync(tempPath);
+}
+
 let beforeSchema = [];
 
-if (fs.existsSync(wsroomSchemaSrcPath)) {
+if (fs.existsSync(path.join(__dirname, '../../wsroom/json_schema'))) {
 
   gulp.task("wsroomSchemaCopy", function wsroomSchemaCopy() {
-    gulp.src(path.join(jsonSchemaPath, '/**/*.yml'))
+    return gulp.src(wsroomSchemaSrcPath)
         .pipe(plumber())
         .pipe(gulp.dest(path.join(__dirname, '../json_schema/')))
         .on('end', function(){ console.log('schema copied!'); });
   });
 
-  gulp.watch(path.join(jsonSchemaPath, '/**/*.yml'), ["wsroomSchemaCopy"]);
-  beforeSchema.push("wsroomSchemaCopy");
+  gulp.watch(wsroomSchemaSrcPath, ["wsroomSchemaCopy"]);
+  gulp.run("wsroomSchemaCopy");
+  // beforeSchema.push("wsroomSchemaCopy");
 
 }
 
 
 gulp.task("jsonSchemaJoin", beforeSchema, function jsonSchemaForVar(){
-  gulp.src(schemaSrcPath)
+  return gulp.src(schemaSrcPath)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_yaml({ safe: true }))
       .pipe(concatWith("schema.js",{header:"var __obniz_js_schema = [", separator:",", footer:"];" }))
@@ -79,7 +84,7 @@ gulp.task("jsonSchemaJoin", beforeSchema, function jsonSchemaForVar(){
 
 
 gulp.task("packageJsonConvert", function packageJsonConvert(){
-  gulp.src(packageJsonPath)
+  return gulp.src(packageJsonPath)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(obnizVersion())
       .pipe(rename("obnizVersion.js"))
@@ -89,7 +94,7 @@ gulp.task("packageJsonConvert", function packageJsonConvert(){
 
 //順番が関係あるので予めやる
 gulp.task("partsJoin", function partsJoin(){
-  gulp.src(partsPath)
+  return gulp.src(partsPath)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_sort())
       .pipe(gulp_concat("obnizParts.js"))
@@ -101,7 +106,7 @@ gulp.task("tv4Wrap", function tv4Wrap(){
   let header = "(function(global){ let module = {exports:{}};";
 
   let footer = "; \n Obniz.tv4 = module.exports;})(this);";
-  gulp.src(tv4Path)
+  return gulp.src(tv4Path)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(concatWith("tv4Wraped.js",{header, footer}))
       .pipe(gulp.dest(tempPath));
@@ -119,7 +124,7 @@ gulp.task("obniz.js", ["jsonSchemaJoin","packageJsonConvert","partsJoin", "tv4Wr
     path.join(tempPath,"schema.js"),
     path.join(tempPath,"tv4Wraped.js"),
   ];
-  gulp.src(obnizjsSrcPaths)
+  return  gulp.src(obnizjsSrcPaths)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_concat("obniz.js"))
       .pipe(gulp.dest(path.join(__dirname, '../')))
@@ -143,7 +148,7 @@ gulp.watch([obnizPath,partsPath,packageJsonPath,schemaSrcPath], ["obniz.js"]);
 
 
 function readMeBuild() {
-  gulp.src(path.join(partsPath, '/**/README.ejs'))
+  return gulp.src(path.join(partsPath, '/**/README.ejs'))
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_ejs())
       .pipe(rename({extname: '.md'}))

@@ -3,26 +3,6 @@
   $schema: http://json-schema.org/draft-04/schema#
   id: "/response"
   type: object
-  definitions : 
-              
-              
-      pinSetting :
-          id : "pinSetting"
-          type : integer
-          minimum : 0
-          maximum : 11
-          
-      data :
-          id : "#data"
-          type : integer
-          minimum : 0
-          maximum : 255
-              
-      dataArray :
-          id : "#dataArray"
-          type : array
-          items : {$ref :#data}
-          
               
   additionalProperties: false
   patternProperties:

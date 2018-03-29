@@ -1,0 +1,44 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ioanimation"
+type: object
+required : [animation]
+properties:
+    animation :
+        type: object
+        required : [name, status]
+        additionalProperties: false
+        properties:
+            name : 
+                type: string
+                minLength: 1
+                maxLength: 254
+
+            status : 
+                type: string
+                enum :
+                   - loop
+                   - pause
+                   - resume
+
+            states: 
+                type: array
+                default : []
+                itmes:
+                    type : object
+                    required : [duration, state]
+                    additionalProperties: false
+                    properties :
+                        duration :
+                            type: integer
+                        state : 
+                            type: object
+                            patternProperties :
+                                "^io[0-9]$" : 
+                                    type : boolean
+                                "^io1[0-1]$" : 
+                                    type : boolean
+
+
+

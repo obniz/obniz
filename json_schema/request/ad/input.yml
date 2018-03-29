@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ad/get"
+
+type: object
+required : [stream]
+properties:
+         stream :
+             type : boolean
+             default : false
