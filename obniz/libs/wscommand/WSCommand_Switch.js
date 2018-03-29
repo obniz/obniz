@@ -4,24 +4,32 @@ class WSCommand_Switch extends WSCommand {
     super(delegate);
     this.module = 9;
 
-    this._CommandNotifyValue  = 0
-    this._CommandOnece        = 1
+    this._CommandNotifyValue  = 0;
+    this._CommandOnece        = 1;
   }
 
   // Commands
 
-  onece() {
+  get(params) {
     var buf = new Uint8Array(0);
     this.sendCommand(this._CommandOnece, buf);
   }
 
   parseFromJson(json) {
     var module = json["switch"];
-    if (typeof(module) === "string") {
-      if (module === "get") {
-        this.onece();
-      } else {
-        throw new Error("switch: unknown action:"+module)
+    if (module === undefined) {
+      return;
+    }
+    let schemaData = [
+      {uri : "/request/switch/get",       onValid: this.get},
+    ];
+    let res = this.validateCommandSchema(schemaData, module, "switch");
+
+    if(res.valid === 0){
+      if(res.invalidButLike.length > 0) {
+        throw new Error(res.invalidButLike[0].message);
+      }else{
+        throw new WSCommandNotFoundError(`[switch]unknown command`);
       }
     }
   }
