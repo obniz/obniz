@@ -99,7 +99,8 @@ gulp.task("partsJoin", function partsJoin(){
 
 gulp.task("tv4Wrap", function tv4Wrap(){
   let header = "(function(global){ let module = {exports:{}};";
-  let footer = "; global.tv4 = module.exports;}(this);";
+
+  let footer = "; \n Obniz.tv4 = module.exports;})(this);";
   gulp.src(tv4Path)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(concatWith("tv4Wraped.js",{header, footer}))
@@ -107,17 +108,17 @@ gulp.task("tv4Wrap", function tv4Wrap(){
 });
 
 
-let obnizjsSrcPaths = [
-  path.join(tempPath,"obnizVersion.js"),
-  obnizPath,
-  path.join(tempPath,"obnizParts.js"),
-  path.join(tempPath,"schema.js"),
-  path.join(tempPath,"tv4Wrap.js"),
-];
-
 gulp.task("obniz.js", ["jsonSchemaJoin","packageJsonConvert","partsJoin", "tv4Wrap"] ,function obnizJsBuild(){
 
 
+
+  let obnizjsSrcPaths = [
+    path.join(tempPath,"obnizVersion.js"),
+    obnizPath,
+    path.join(tempPath,"obnizParts.js"),
+    path.join(tempPath,"schema.js"),
+    path.join(tempPath,"tv4Wraped.js"),
+  ];
   gulp.src(obnizjsSrcPaths)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_concat("obniz.js"))

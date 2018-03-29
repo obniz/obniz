@@ -99,8 +99,8 @@ var testUtil = {
   receiveJson: function(obniz, jsonVal){
     if(testUtil.isNode()){
          var validator = require("./obnizJsonValidator");   
-         var validateErrors = validator.responseValidate(jsonVal).errors;      
-         require("chai").expect(validateErrors,validateErrors.toString()).to.be.lengthOf(0);
+         var results = validator.responseValidate(jsonVal);
+         require("chai").expect(results.valid,results.errors).to.be.true;
       
     }
        

@@ -1,9 +1,0 @@
-## YAML Template.
-##---
-$schema: http://json-schema.org/draft-04/schema#
-id: "/response/ws"
-type: object
-additionalProperties: false
-properties:
-    ready:
-        type : boolean

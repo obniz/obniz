@@ -170,4 +170,103 @@ class WSCommand {
   isValidIO(io) {
     return (typeof(io) === "number" && 0 <= io && io <= 11) 
   }
+
+
+  getSchema(uri){
+    //chack isFirst
+    if(!Obniz.tv4.getSchema("/request")){
+      for(let schema of __obniz_js_schema){
+        Obniz.tv4.addSchema(schema);
+      }
+    }
+    return Obniz.tv4.getSchema(uri);
+  }
+
+
+  validateCommandSchema(uriList, json, rootPath, customArg){
+    let res = {valid : 0 , invalid: 0, results:[], invalidButLike:[]};
+    for(let oneRow of uriList){
+      let errors = this.validate(oneRow.uri, json);
+      res.results.push(errors);
+      if(errors.valid){
+        res.valid++;
+        oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
+      }else{
+        res.invalid++;
+        let message =  this.onlyTypeErrorMessage(errors);
+        if(errors.isOnlyTypeError){
+          // let message = errors.errors.map((elm)=>{return elm.dataPath || "root" + }).join(";");
+          res.invalidButLike.push ({uri: oneRow.uri, message});
+        }
+      }
+    }
+
+    return res;
+  }
+
+  validate(commandUri, json){
+    let schema =  this.getSchema(commandUri);
+    let results =  Obniz.tv4.validateMultiple(json, schema);
+    return results;
+  }
+
+  onlyTypeErrorMessage(validateError, rootPath){
+    if(validateError.valid){return true;}
+    if(validateError.missing && validateError.missing.length > 0){return false;}
+
+    let messages = [];
+    for (let error of validateError.errors) {
+      if (error.code === Obniz.tv4.errorCodes.INVALID_TYPE) {
+        if (error.params.type === "object") {
+          return false;
+        }
+        let path  = rootPath + error.dataPath.replace(/\//g,".");
+        messages.push( `${path} is invalid type ${error.params.type} (expect ${error.params.type})` );
+      } else if (error.code !== Obniz.tv4.errorCodes.ENUM_MISMATCH) {
+        let path  = rootPath + error.dataPath.replace(/\//g,".");
+        messages.push( `${path} is invalid value ${error.params.value} (expect enum. See documents.)` );
+      } else {
+        return false;
+      }
+
+    }
+    return true;
+  }
+  filter(commandUri, json){
+    let schema =  this.getSchema(commandUri);
+    return this._filterSchema( schema, json)
+  }
+
+  _filterSchema(schema,json){
+    if(!json ){
+      return schema.default;
+    }
+
+    if(schema.type === "string"
+        || schema.type === "integer"
+        || schema.type === "boolean"
+        || schema.type === "number"
+        || schema.type === "null"){
+      return json;
+
+    }
+
+    if(schema.type === "array"){
+      let results = [];
+      for( let key  in json){
+        results[key] = this._filterSchema( schema.items,json[key]);
+      }
+      return results;
+    }
+
+    if(schema.type === "object"){
+      let results = {};
+      for( let key in schema.properties){
+        results[key] = this._filterSchema(schema.properties[key], json[key]  );
+      }
+      return results;
+    }
+
+    throw Error("unknown json schema type");
+  }
 }

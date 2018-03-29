@@ -38,44 +38,57 @@ class WSCommand_IO extends WSCommand {
 
   // Commands
 
-  output(id, value) {
+
+
+  output(value, id) {
     var buf = new Uint8Array([id, value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
-  input(id, isStream) {
-    var buf = new Uint8Array([id]);
-    this.sendCommand( isStream ? this._CommandInputStream : this._CommandInputOnece, buf);
+  outputDetail(params, id) {
+    var buf = new Uint8Array([id, params.value]);
+    this.sendCommand(this._CommandOutput, buf);
   }
 
-  outputtype(id, type) {
+
+  input(params, id) {
+    var buf = new Uint8Array([id]);
+    this.sendCommand( this._CommandInputOnece, buf);
+  }
+
+  inputDetail(params, id) {
+    var buf = new Uint8Array([id]);
+    this.sendCommand( params.stream ? this._CommandInputStream : this._CommandInputOnece, buf);
+  }
+
+  outputType(params, id) {
     var buf = new Uint8Array(2);
     buf[0] = id;
-    if (type === "push-pull5v") {
+    if (params.output_type === "push-pull5v") {
       buf[1] = 0;
-    } else if (type === "push-pull3v") {
+    } else if (params.output_type === "push-pull3v") {
       buf[1] = 2;
-    } else if (type === "open-drain") {
+    } else if (params.output_type === "open-drain") {
       buf[1] = 3;
     } else {
-      return "io unknown outputtype: "+type;
+      return "io unknown outputtype: "+params.output_type;
     }
     this.sendCommand(this._CommandOutputType, buf);
   }
 
-  pulltype(id, type) {
+  pullType(params, id) {
     var buf = new Uint8Array(2);
     buf[0] = id;
-    if (type === "float") {
+    if (params.pull_type === "float") {
       buf[1] = 0;
-    } else if (type === "pull-up3v") {
+    } else if (params.pull_type === "pull-up3v") {
       buf[1] = 1;
-    } else if (type === "pull-down") {
+    } else if (params.pull_type === "pull-down") {
       buf[1] = 2;
-    } else if (type === "pull-up5v") {
+    } else if (params.pull_type === "pull-up5v") {
       buf[1] = 3;
     } else {
-      return "io unknown pull_type: "+type;;
+      return "io unknown pull_type: "+params.pull_type;
     }
     this.sendCommand(this._CommandPullResisterType, buf);
   }
@@ -83,56 +96,31 @@ class WSCommand_IO extends WSCommand {
   parseFromJson(json) {
     for (var i=0; i<=11;i++) {
       var module = json["io"+i];
-      if (module === null) {
+      if (module === null || module === undefined) {
         // this.direction(i, );
         continue;
       }
-      if (typeof(module) == "object") {
-        if (typeof(module.direction) == "string") {
-          if (module.direction === "input") {
-            this.input(i, (module.stream === true));
-          } else if (module.direction === "output") {
-            this.output(i, (module.value) ? 1 : 0);
-          } else {
-            // unknwon direction
-            throw new Error("io: unknown direction:"+module.direction)
-          }
-        } else if(module.direction) {
-          // invalid type
-            throw new Error("io: invalid type. io.direction must be string")
-        }
-        
-        if (module.output_type) {
-          var err = this.outputtype(i, module.output_type);
-          if (err) {
-            throw new Error(err);
-          }
-        }
-        if (module.pull_type) {
-          var err = this.pulltype(i, module.pull_type);
-          if (err) {
-            throw new Error(err);
-          }
-        }
-        continue;
-      }
-      if (typeof module === "string" ) {
-        if (module === "get") {
-          this.input(i, false);
-        } else {
-          throw new Error("io: unknown command")
-        }
-      } else if (typeof module === "number") {
-        var value = parseInt(module);
-        this.output(i, (value !== 0) ? 1 : 0);
-      }else if (typeof module === "boolean") {
-        this.output(i, module ? 1 : 0);
-      }
+
+      let schemaData = [
+        {uri : "/request/io/input",         onValid: this.input},
+        {uri : "/request/io/input_detail",  onValid: this.inputDetail},
+        {uri : "/request/io/output",        onValid: this.output},
+        {uri : "/request/io/output_detail", onValid: this.outputDetail},
+        {uri : "/request/io/output_type",   onValid: this.outputType},
+        {uri : "/request/io/pull_type",     onValid: this.pullType}
+      ];
+      let res = this.validateCommandSchema(schemaData, module, "io"+i, i);
+      // if(res.valid === 0 ){
+      //   throw new Error("unknown io command at io"+i);
+      // }
+      // for( let row of res.invalidButLike){
+      //   throw new Error(row.message);
+      // }
     }
   }
 
   notifyFromBinary(objToSend, func, payload) {
-    
+
     if (func === this._CommandInputStream || func === this._CommandInputOnece) {
       for (var i=0; i<payload.byteLength; i+=2) {
         objToSend["io"+payload[i]] = (payload[i+1] > 0);

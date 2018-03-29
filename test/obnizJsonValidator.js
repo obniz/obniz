@@ -1,31 +1,18 @@
- var Validator = require('jsonschema').Validator;
- var fs = require('fs');
- var path = require('path'); 
- var yaml = require('js-yaml');
- var glob = require("glob")
+const tv4 = require("tv4");
+
+
+var fs = require('fs');
+var path = require('path');
+var yaml = require('js-yaml');
+var glob = require("glob");
 
 
 class obnizJsonValidator {
-  
-    constructor(){
-    this._requestDirname = "./json_schema/request/";
-    this._responseDirname = "./json_schema/response/";
-    this._requestValidator = null;
-    this._responseValidator = null;
-    }
- 
- 
-  
-  get requestValidator(){
-    if(this._requestValidator) return this._requestValidator;
-   this._requestValidator =  this.readYamls(new Validator(), path.resolve(__dirname, this._requestDirname));
-    return this._requestValidator;
-  }
-  
-  get responseValidator(){
-    if(this._responseValidator) return this._responseValidator;
-    this._responseValidator =  this.readYamls(new Validator(),path.resolve(__dirname, this._responseDirname));
-    return this._responseValidator;
+
+  constructor() {
+    this.schemaBase = path.join(__dirname,"../json_schema/");
+    this.readYamls(this.schemaBase);
+
   }
 
   get requestBaseSchema(){
@@ -43,42 +30,38 @@ class obnizJsonValidator {
       );
   }
   
-  readYamls(validator, base_dir) {
-
-    var file_list = fs.readdirSync(base_dir);
-
-    var pattern = path.join( base_dir , "**/*.yml");
-    let files = glob.sync(pattern,{nodir:true});
+  readYamls(base_dir) {
 
 
-    for( let file of files ){
+    var pattern = path.join(base_dir, "**/*.yml");
+
+    let files = glob.sync(pattern, {nodir: true});
+
+
+    for (let file of files) {
       let schema = yaml.safeLoad(
           fs.readFileSync(file, 'utf8'),
           {schema: yaml.JSON_SCHEMA}
       );
-      validator.addSchema(schema);
+      tv4.addSchema(schema);
 
     }
 
-    return validator;
-  
   }
-  
-  
-    requestValidate(requestJson){
-      var validator = this.requestValidator;
-     
-      return validator.validate(requestJson,this.requestBaseSchema, {nestedErrors : true});
-    } 
-    
-    responseValidate(requestJson){
-      var validator = this.responseValidator;
-      return validator.validate(requestJson,this.responseBaseSchema, {nestedErrors : true});
-      
-    }
-    
-};
 
+
+  requestValidate(requestJson) {
+    var schema = tv4.getSchema("/request");
+    return tv4.validateMultiple(requestJson, schema);
+  }
+
+  responseValidate(requestJson) {
+    var schema = tv4.getSchema("/response");
+    return tv4.validateMultiple(requestJson, schema);
+
+  }
+
+};
 
 
 module.exports = (new obnizJsonValidator());

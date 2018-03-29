@@ -1,9 +1,0 @@
-## YAML Template.
-##---
-$schema: http://json-schema.org/draft-04/schema#
-id: "/response/spi"
-
-type: object
-additionalProperties: false
-properties:
-    data : {$refs : "#dataArray"}

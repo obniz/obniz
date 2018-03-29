@@ -1,4 +1,4 @@
-/* global showObnizDebugError */
+/* global showObnizDebugError  */
 
 let isNode = (typeof window === 'undefined') ;
 
