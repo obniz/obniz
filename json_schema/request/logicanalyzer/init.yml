@@ -14,11 +14,13 @@ properties:
 
     interval :
         type : number
-        minimum : 1
+        minimum : 0
+        exclusiveMinimum: true
 
     duration :
         type : integer
-        minimum : 1
+        minimum : 0
+        exclusiveMinimum: true
 
     triger :
         type : object

@@ -5,5 +5,5 @@ id: "/response/ws/ready"
 
 type: object
 properties:
-    ready:
-        type : boolean
+    redirect:
+        type : string

@@ -79,10 +79,10 @@ describe("obniz.libs.i2c", function () {
       expect(value).to.be.deep.equal([0x61, 0xF2, 0x1f]);
       expect(this.obniz).to.be.finished;
     }.bind(this));
-    
+
     expect(this.obniz).send({i2c0:{address : 0x50, read:3}});
     setTimeout(function(){
-      testUtil.receiveJson(this.obniz,  {"i2c0":{"address":0x50,"data":[0x61, 0xF2, 0x1f]}});
+      testUtil.receiveJson(this.obniz,  {"i2c0":{ "mode": "master", "address":0x50,"data":[0x61, 0xF2, 0x1f]}});
     }.bind(this),10);
     return r;
   });
