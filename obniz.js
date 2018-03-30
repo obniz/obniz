@@ -749,6 +749,760 @@ if (isNode) {
   module.exports = Obniz;
 }
 
+class PeripheralAD {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.value = 0.0;
+    this.observers = [];
+  }
+
+  addObserver(callback) {
+    if(callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  start(callback) {
+    this.onchange = callback;
+    var obj = {};
+    obj["ad"+this.id] = {
+      stream: true
+    };
+    this.Obniz.send(obj);
+    return this.value;
+  }
+
+  getWait() {
+    var self = this;
+    return new Promise(function(resolve, reject){
+      var obj = {};
+      obj["ad"+self.id] = {
+        stream: false
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  end() {
+    this.onchange = null;
+    var obj = {};
+    obj["ad"+this.id] = null;
+    this.Obniz.send(obj);
+    return;
+  }
+
+  notified(obj) {
+    this.value = obj;
+    if (this.onchange) {
+      this.onchange(obj);
+    }
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj);
+    }
+  }
+}
+
+class PeripheralI2C {
+
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.observers = [];
+    this.state = {};
+    this.used = false;
+  
+    this.onwritten = undefined;
+  }
+
+  addObserver(callback) {
+    if(callback) {
+      this.observers.push(callback);
+    }
+  }
+  
+  start(arg) {
+    var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl"]);
+    if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
+    this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "pull"]);
+
+
+    let ioKeys = ["sda", "scl"];
+    for (let key of ioKeys) {
+      if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
+        throw new Error("i2c start param '"+key+"' are to be valid io no");
+      }
+    }
+
+    var mode = this.state.mode;
+    var clock = (typeof arg.clock === "number") ? parseInt(arg.clock) : null;
+    var slave_address = (typeof arg.slave_address === "number") ? parseInt(arg.slave_address) : null;
+    var slave_address_length = (typeof arg.slave_address_length === "number") ? parseInt(arg.slave_address_length) : null;
+    
+    if (mode !== "master" && mode !== "slave") {
+      throw new Error("i2c: invalid mode "+mode)
+    }
+    if (mode === "master") {
+      if (clock === null) {
+        throw new Error("i2c: please specify clock when master mode");
+      }
+      if (clock <= 0 || clock > 1 * 1000 * 1000) {
+        throw new Error("i2c: invalid clock " + clock);
+      }
+      if (typeof arg.pull === "5v" && clock > 400 * 1000) {
+        throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
+      }
+      if (typeof arg.pull === "3v" && clock > 100 * 1000) {
+        throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
+      }
+    } else {
+      if (slave_address === null) {
+        throw new Error("i2c: please specify slave_address");
+      }
+      if (slave_address < 0 || slave_address > 0x3FFF) {
+        throw new Error("i2c: invalid slave_address");
+      }
+      if (slave_address < 0 || slave_address > 0x3FFF) {
+        throw new Error("i2c: invalid slave_address");
+      }
+      if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
+        throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
+      }
+    }
+  
+    this.Obniz.getIO(this.state.sda).drive("open-drain");
+    this.Obniz.getIO(this.state.scl).drive("open-drain");
+    
+    if(this.state.pull){
+       this.Obniz.getIO(this.state.sda).pull(this.state.pull);
+       this.Obniz.getIO(this.state.scl).pull(this.state.pull);
+    }else{
+      this.Obniz.getIO(this.state.sda).pull(null);
+      this.Obniz.getIO(this.state.scl).pull(null);
+    }
+    
+    var startObj = ObnizUtil._keyFilter(this.state,["mode", "sda", "scl"]);
+    if (mode === "master") {
+      startObj.clock = clock;
+    } else {
+      startObj.slave_address = slave_address;
+      if (slave_address_length) {
+        startObj.slave_address_length = slave_address_length;
+      }
+    }
+  
+    var obj = {}; 
+    obj["i2c"+this.id] = startObj;
+    this.used = true;
+    this.Obniz.send(obj);
+  }
+
+  write(address, data) {
+    address = parseInt(address)
+    if (isNaN(address)) {
+      throw new Error("i2c: please specify address")
+    }
+    if (address < 0 || address > 0x3FFF) {
+      throw new Error("i2c: invalid address")
+    }
+    if (address > 0x7F) {
+      address = address | 0x8000; // mark 10bit mode
+    }
+    if (!data) {
+      throw new Error("i2c: please provide data");
+    }
+    if (data.length > 1024) {
+      throw new Error("i2c: data should be under 1024 bytes");
+    }
+    var obj = {};
+    obj["i2c"+this.id] = {
+      address,
+      data
+    };
+    this.Obniz.send(obj);
+  }
+
+  write10bit(address, data) {
+    return this.write(address | 0x8000, data);
+  }
+
+  readWait(address, length) {
+    address = parseInt(address)
+    if (isNaN(address)) {
+      throw new Error("i2c: please specify address")
+    }
+    if (address < 0 || address > 0x3FFF) {
+      throw new Error("i2c: invalid address")
+    }
+    if (address > 0x7F) {
+      address = address | 0x8000; // mark 10bit mode
+    }
+    length = parseInt(length);
+    if (isNaN(length) || length < 0) {
+      throw new Error("i2c: invalid length to read");
+    }
+    if (length > 1024) {
+      throw new Error("i2c: data length should be under 1024 bytes");
+    }
+    var self = this;
+    return new Promise(function(resolve, reject){
+      var obj = {};
+      obj["i2c"+self.id] = {
+        address,
+        read: length
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  read10bitWait(address, length) {
+    return this.readWait(address | 0x8000, length);
+  }
+
+  notified(obj) {
+    if (obj && typeof obj === "object") {
+      if (obj.data) {
+        if (obj.mode === "slave" && typeof this.onwritten === "function") {
+          this.onwritten(obj.data);
+        } else {
+          // TODO: we should compare byte length from sent
+          var callback = this.observers.shift();
+          if (callback) {
+            callback(obj.data);
+          }
+        }
+      }
+      if (obj.warnings) {
+        for (let i=0; i<obj.warnings.length; i++) {
+          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` })
+        }
+      }
+      if (obj.errors) {
+        for (let i=0; i<obj.errors.length; i++) {
+          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` })
+        }
+      }
+    }
+  }
+
+  isUsed() {
+    return this.used;
+  }
+
+  end() {
+    this.state = {};
+    var obj = {};
+    obj["i2c"+this.id] = null;
+    this.Obniz.send(obj);
+    this.used = false;
+  }
+}
+
+class PeripheralIO {
+
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.value = 0;
+    this.observers = [];
+  }
+
+  addObserver(callback) {
+    if(callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  output(value) {
+    var obj = {};
+    obj["io"+this.id] = value;
+    this.value = value;
+    this.Obniz.send(obj);
+  }
+
+  drive(drive) {
+    if (typeof drive !== "string") {
+      throw new Error("please specify drive methods in string")
+      return;
+    }
+    let output_type = ""
+    switch(drive) {
+      case "5v":
+        output_type = "push-pull5v";
+        break;
+      case "3v":
+        output_type = "push-pull3v";
+        break;
+      case "open-drain":
+        output_type = "open-drain";
+        break;
+      default:
+        throw new Error("unknown drive method")
+        break;
+    }
+  
+    var obj = {};
+    obj["io"+this.id] = {
+      output_type: output_type
+    };
+    this.Obniz.send(obj);
+  }
+
+  pull(updown) {
+
+    if (typeof updown !== "string" && updown !== null) {
+      throw new Error("please specify pull methods in string")
+      return;
+    }
+    let pull_type = ""
+    switch(updown) {
+      case "5v":
+      case "pull-up5v":
+        pull_type = "pull-up5v";
+        break;
+      case "3v":
+      case "pull-up3v":
+        pull_type = "pull-up3v";
+        break;
+      case "0v":
+      case "pull-down":
+        pull_type = "pull-down";
+        break;
+      case null:
+      case "float":
+        pull_type = "float";
+        break;
+      default:
+        throw new Error("unknown pull_type method")
+        break;
+    }
+  
+    var obj = {};
+    obj["io"+this.id] = {
+      pull_type: pull_type
+    };
+    this.Obniz.send(obj);
+  }
+
+  input(callback) {
+    this.onchange = callback;
+    var obj = {};
+    obj["io"+this.id] = {
+      direction: "input",
+      stream: true
+    };
+    this.Obniz.send(obj);
+    return this.value;
+  }
+
+  inputWait() {
+    var self = this;
+    return new Promise(function(resolve, reject){
+      var obj = {};
+      obj["io"+self.id] = {
+        direction: "input",
+        stream: false
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  notified(obj) {
+    if (typeof obj === "boolean") {
+      this.value = obj;
+      var callback = this.observers.shift();
+      if (callback) {
+        callback(obj);
+      }
+      if (typeof(this.onchange) === "function") {
+        this.onchange(obj);
+      }
+    } else if (obj && typeof obj === "object") {
+      if (obj.warnings) {
+        for (let i=0; i<obj.warnings.length; i++) {
+          this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warnings[i].message}` })
+        }
+      }
+      if (obj.errors) {
+        for (let i=0; i<obj.errors.length; i++) {
+          this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.errors[i].message}` })
+        }
+      }
+    }
+  }
+}
+class PeripheralIO_ {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+  }
+
+  animation(name, status, array) {
+    var obj = {};
+    obj.io = {
+      animation: {
+        name: name,
+        status: status
+      }
+    };
+    if (!array)
+      array = [];
+  
+    let states = [];
+    for (var i=0; i<array.length; i++) {
+      let state = array[i];
+      let duration = state.duration;
+      let func = state.state;
+  
+      // dry run. and get json commands
+      this.Obniz.sendPool = [];
+      func(i);
+      let pooledJsonArray = this.Obniz.sendPool;
+      this.Obniz.sendPool = null;
+  
+      // simply merge objects
+      let merged = {};
+      for (var index = 0; index < pooledJsonArray.length; index++) {
+        for (let key in pooledJsonArray[index]) {
+          merged[key] = pooledJsonArray[index][key];
+        }
+      }
+      states.push({
+        duration: duration,
+        state: merged
+      });
+    }
+    if(states.length > 0){
+      obj.io.animation.states = states;
+    }
+  //  console.log(obj.io.animation);
+    this.Obniz.send(obj);
+  }
+}
+
+class PeripheralPWM {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.state = {};
+    this.used = false;
+  }
+
+  sendWS(obj) {
+    var wsObj = {};
+    wsObj["pwm"+this.id] = obj;
+    this.Obniz.send(wsObj);
+  }
+
+  start(params) {
+    const err = ObnizUtil._requiredKeys(params,["io"]);
+    if(err){ throw new Error("pwm start param '" + err +"' required, but not found ");}
+    this.params = ObnizUtil._keyFilter(params,["io", "drive", "pull"]);
+
+    const io = this.params.io;
+    const ioObj = this.Obniz.getIO(io);
+
+    ioObj.drive(this.params.drive || '5v');
+    ioObj.pull(this.params.pull || null);
+
+    var obj = {};
+    this.state.io = io;
+    this.sendWS({
+      io: io
+    });
+    this.used = true;
+  }
+
+  freq(freq) {
+    var obj = {};
+    this.state.freq = freq;
+    this.sendWS({
+      freq: freq
+    });
+  }
+
+  pulse(pulse_width) {
+    var obj = {};
+    this.state.pulse = pulse_width;
+    this.sendWS({
+      pulse: pulse_width
+    });
+  }
+
+  duty(duty) {
+    var obj = {};
+    this.state.duty = duty;
+    this.sendWS({
+      duty: duty
+    });
+  }
+
+  isUsed() {
+    return this.used;
+  }
+
+  end() {
+    var obj = {};
+    this.state = {};
+    this.sendWS(null);
+    this.used = false;
+  }
+
+  modulate(type, symbol_length, data) {
+    var obj = {};
+    this.sendWS({
+      modulate: {
+        type: type,
+        symbol_length: symbol_length,
+        data: data
+      }
+    });
+  }
+}
+
+class PeripheralSPI {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.observers = [];
+    this.used = false;
+  }
+
+  addObserver(callback) {
+    if(callback) {
+      this.observers.push(callback);
+    }
+  }
+
+  start(params) {
+  
+    var err = ObnizUtil._requiredKeys(params,["mode", "frequency"]);
+    if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
+    this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pull"]);
+    var obj = {};
+
+    let ioKeys = ["clk", "mosi", "miso"];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
+        throw new Error("spi start param '"+key+"' are to be valid io no");
+      }
+    }
+
+
+    obj["spi" + this.id]  = {
+        mode : this.params.mode,
+        clock : this.params.frequency   //name different
+    };
+    if(this.params.clk  !==  undefined){obj["spi" + this.id].clk = this.params.clk;}
+    if(this.params.mosi !==  undefined){obj["spi" + this.id].mosi = this.params.mosi;}
+    if(this.params.miso !==  undefined){obj["spi" + this.id].miso = this.params.miso;}
+    
+    if(this.params.drive){
+        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+    }else{
+        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive("5v");
+        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
+        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
+    }
+    
+    if(this.params.pull){
+        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
+        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
+        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
+    }else{
+        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
+        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);
+        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
+    }
+   
+   this.used = true;
+    this.Obniz.send(obj);
+  }
+
+  writeWait(data) {
+    var self = this;
+    return new Promise(function(resolve, reject){
+      var obj = {};
+      obj["spi"+self.id] = {
+        data: data,
+        read: true
+      };
+      self.Obniz.send(obj);
+      self.addObserver(resolve);
+    });
+  }
+
+  write(data) {
+    var self = this;
+    var obj = {};
+    obj["spi"+self.id] = {
+      data: data
+    };
+    self.Obniz.send(obj);
+  }
+
+  notified(obj) {
+    // TODO: we should compare byte length from sent
+    var callback = this.observers.shift();
+    if (callback) {
+      callback(obj.data);
+    }
+  }
+
+  isUsed() {
+    return this.used;
+  }
+
+  end(data) {
+    var self = this;
+    var obj = {};
+    obj["spi"+self.id] = null;
+    this.params = null;
+    self.Obniz.send(obj);
+   this.used = false;
+  }
+}
+
+class PeripheralUART {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this.received = new Uint8Array([]); 
+    this.used = false;
+  }
+
+  start(params) {
+
+    var err = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
+    if (err) {
+      throw new Error("uart start param '" + err + "' required, but not found ");
+      return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pull"]);
+
+    let ioKeys = ["rx", "tx", "rts", "cts"];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
+        throw new Error("uart start param '"+key+"' are to be valid io no");
+      }
+    }
+
+
+    if( this.params.hasOwnProperty("drive")){
+        this.Obniz.getIO(this.params.rx).drive(this.params.drive);
+        this.Obniz.getIO(this.params.tx).drive(this.params.drive);
+    }else{
+        this.Obniz.getIO(this.params.rx).drive("5v");
+        this.Obniz.getIO(this.params.tx).drive("5v");
+        
+    }
+    
+    if(this.params.hasOwnProperty("pull") ){
+        this.Obniz.getIO(this.params.rx).pull(this.params.pull);
+        this.Obniz.getIO(this.params.tx).pull(this.params.pull);
+    }else{
+        this.Obniz.getIO(this.params.rx).pull(null);
+        this.Obniz.getIO(this.params.tx).pull(null);
+    }
+    
+    var obj = {};
+    obj["uart"+this.id] = this.params;
+    this.Obniz.send(obj);
+    this.received = [];
+    this.used = true;
+  }
+
+  send(data) {
+    var send_data = null;
+    if (data === undefined) {
+      return;
+    }
+    if (typeof(data) === "number") {
+      data = [data];
+    }
+    if (isNode && data instanceof Buffer) {
+      var arr = [... data];
+    } else if (data.constructor === Array) {
+      send_data = data;
+    } else if (typeof(data) === "string") {
+      if (isNode) {
+        const buf = Buffer(data);
+        send_data = [... buf];
+      } else if(TextEncoder){
+        const typedArray = new TextEncoder("utf-8").encode(data);
+        send_data = new Array(typedArray.length);
+        for (var i=0; i<typedArray.length;i++) {
+          send_data[i] = typedArray[i];
+        }
+      }
+    }
+    var obj = {};
+    obj["uart"+this.id] = {};
+    obj["uart"+this.id].data = send_data;
+  //  console.log(obj);
+    this.Obniz.send(obj);
+  }
+
+  isDataExists() {
+    return (this.received && this.received.length > 0);
+  }
+
+  readBytes() {
+    var results = [];
+    if (this.isDataExists()) {
+        for (var i=0;i<this.received.length; i++) {
+          results.push(this.received[i]);
+        }
+    }
+    this.received = [];
+    return results;
+  }
+
+  readText() {
+    var string = null;
+    if (this.isDataExists()) {
+        var data = this.readBytes();
+        string = this.tryConvertString(data);
+    }
+    this.received = [];
+    return string;
+  }
+
+  tryConvertString(data) {
+    return ObnizUtil.dataArray2string(data);
+  }
+
+  notified(obj) {
+    if (this.onreceive) {
+      var string = this.tryConvertString(obj.data);
+      this.onreceive(obj.data, string);
+    } else {
+      if (!this.received) {
+        this.received = [];
+      }
+      
+      this.received.push.apply(this.received, obj.data);
+    }
+  }
+
+  isUsed() {
+    return this.used;
+  }
+
+  end() {
+    var obj = {};
+    obj["uart"+this.id] = null;
+    this.params = null;
+    this.Obniz.send(obj);
+    this.used = false;
+  }
+}
+
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
@@ -2169,760 +2923,6 @@ class ObnizSwitch {
     if (callback) {
       callback(this.state);
     }
-  }
-}
-
-class PeripheralAD {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-    this.id = id;
-    this.value = 0.0;
-    this.observers = [];
-  }
-
-  addObserver(callback) {
-    if(callback) {
-      this.observers.push(callback);
-    }
-  }
-
-  start(callback) {
-    this.onchange = callback;
-    var obj = {};
-    obj["ad"+this.id] = {
-      stream: true
-    };
-    this.Obniz.send(obj);
-    return this.value;
-  }
-
-  getWait() {
-    var self = this;
-    return new Promise(function(resolve, reject){
-      var obj = {};
-      obj["ad"+self.id] = {
-        stream: false
-      };
-      self.Obniz.send(obj);
-      self.addObserver(resolve);
-    });
-  }
-
-  end() {
-    this.onchange = null;
-    var obj = {};
-    obj["ad"+this.id] = null;
-    this.Obniz.send(obj);
-    return;
-  }
-
-  notified(obj) {
-    this.value = obj;
-    if (this.onchange) {
-      this.onchange(obj);
-    }
-    var callback = this.observers.shift();
-    if (callback) {
-      callback(obj);
-    }
-  }
-}
-
-class PeripheralI2C {
-
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-    this.id = id;
-    this.observers = [];
-    this.state = {};
-    this.used = false;
-  
-    this.onwritten = undefined;
-  }
-
-  addObserver(callback) {
-    if(callback) {
-      this.observers.push(callback);
-    }
-  }
-  
-  start(arg) {
-    var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl"]);
-    if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
-    this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "pull"]);
-
-
-    let ioKeys = ["sda", "scl"];
-    for (let key of ioKeys) {
-      if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
-        throw new Error("i2c start param '"+key+"' are to be valid io no");
-      }
-    }
-
-    var mode = this.state.mode;
-    var clock = (typeof arg.clock === "number") ? parseInt(arg.clock) : null;
-    var slave_address = (typeof arg.slave_address === "number") ? parseInt(arg.slave_address) : null;
-    var slave_address_length = (typeof arg.slave_address_length === "number") ? parseInt(arg.slave_address_length) : null;
-    
-    if (mode !== "master" && mode !== "slave") {
-      throw new Error("i2c: invalid mode "+mode)
-    }
-    if (mode === "master") {
-      if (clock === null) {
-        throw new Error("i2c: please specify clock when master mode");
-      }
-      if (clock <= 0 || clock > 1 * 1000 * 1000) {
-        throw new Error("i2c: invalid clock " + clock);
-      }
-      if (typeof arg.pull === "5v" && clock > 400 * 1000) {
-        throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
-      }
-      if (typeof arg.pull === "3v" && clock > 100 * 1000) {
-        throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
-      }
-    } else {
-      if (slave_address === null) {
-        throw new Error("i2c: please specify slave_address");
-      }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
-        throw new Error("i2c: invalid slave_address");
-      }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
-        throw new Error("i2c: invalid slave_address");
-      }
-      if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
-        throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
-      }
-    }
-  
-    this.Obniz.getIO(this.state.sda).drive("open-drain");
-    this.Obniz.getIO(this.state.scl).drive("open-drain");
-    
-    if(this.state.pull){
-       this.Obniz.getIO(this.state.sda).pull(this.state.pull);
-       this.Obniz.getIO(this.state.scl).pull(this.state.pull);
-    }else{
-      this.Obniz.getIO(this.state.sda).pull(null);
-      this.Obniz.getIO(this.state.scl).pull(null);
-    }
-    
-    var startObj = ObnizUtil._keyFilter(this.state,["mode", "sda", "scl"]);
-    if (mode === "master") {
-      startObj.clock = clock;
-    } else {
-      startObj.slave_address = slave_address;
-      if (slave_address_length) {
-        startObj.slave_address_length = slave_address_length;
-      }
-    }
-  
-    var obj = {}; 
-    obj["i2c"+this.id] = startObj;
-    this.used = true;
-    this.Obniz.send(obj);
-  }
-
-  write(address, data) {
-    address = parseInt(address)
-    if (isNaN(address)) {
-      throw new Error("i2c: please specify address")
-    }
-    if (address < 0 || address > 0x3FFF) {
-      throw new Error("i2c: invalid address")
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
-    }
-    if (!data) {
-      throw new Error("i2c: please provide data");
-    }
-    if (data.length > 1024) {
-      throw new Error("i2c: data should be under 1024 bytes");
-    }
-    var obj = {};
-    obj["i2c"+this.id] = {
-      address,
-      data
-    };
-    this.Obniz.send(obj);
-  }
-
-  write10bit(address, data) {
-    return this.write(address | 0x8000, data);
-  }
-
-  readWait(address, length) {
-    address = parseInt(address)
-    if (isNaN(address)) {
-      throw new Error("i2c: please specify address")
-    }
-    if (address < 0 || address > 0x3FFF) {
-      throw new Error("i2c: invalid address")
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
-    }
-    length = parseInt(length);
-    if (isNaN(length) || length < 0) {
-      throw new Error("i2c: invalid length to read");
-    }
-    if (length > 1024) {
-      throw new Error("i2c: data length should be under 1024 bytes");
-    }
-    var self = this;
-    return new Promise(function(resolve, reject){
-      var obj = {};
-      obj["i2c"+self.id] = {
-        address,
-        read: length
-      };
-      self.Obniz.send(obj);
-      self.addObserver(resolve);
-    });
-  }
-
-  read10bitWait(address, length) {
-    return this.readWait(address | 0x8000, length);
-  }
-
-  notified(obj) {
-    if (obj && typeof obj === "object") {
-      if (obj.data) {
-        if (obj.mode === "slave" && typeof this.onwritten === "function") {
-          this.onwritten(obj.data);
-        } else {
-          // TODO: we should compare byte length from sent
-          var callback = this.observers.shift();
-          if (callback) {
-            callback(obj.data);
-          }
-        }
-      }
-      if (obj.warnings) {
-        for (let i=0; i<obj.warnings.length; i++) {
-          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` })
-        }
-      }
-      if (obj.errors) {
-        for (let i=0; i<obj.errors.length; i++) {
-          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` })
-        }
-      }
-    }
-  }
-
-  isUsed() {
-    return this.used;
-  }
-
-  end() {
-    this.state = {};
-    var obj = {};
-    obj["i2c"+this.id] = null;
-    this.Obniz.send(obj);
-    this.used = false;
-  }
-}
-
-class PeripheralIO {
-
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-    this.id = id;
-    this.value = 0;
-    this.observers = [];
-  }
-
-  addObserver(callback) {
-    if(callback) {
-      this.observers.push(callback);
-    }
-  }
-
-  output(value) {
-    var obj = {};
-    obj["io"+this.id] = value;
-    this.value = value;
-    this.Obniz.send(obj);
-  }
-
-  drive(drive) {
-    if (typeof drive !== "string") {
-      throw new Error("please specify drive methods in string")
-      return;
-    }
-    let output_type = ""
-    switch(drive) {
-      case "5v":
-        output_type = "push-pull5v";
-        break;
-      case "3v":
-        output_type = "push-pull3v";
-        break;
-      case "open-drain":
-        output_type = "open-drain";
-        break;
-      default:
-        throw new Error("unknown drive method")
-        break;
-    }
-  
-    var obj = {};
-    obj["io"+this.id] = {
-      output_type: output_type
-    };
-    this.Obniz.send(obj);
-  }
-
-  pull(updown) {
-
-    if (typeof updown !== "string" && updown !== null) {
-      throw new Error("please specify pull methods in string")
-      return;
-    }
-    let pull_type = ""
-    switch(updown) {
-      case "5v":
-      case "pull-up5v":
-        pull_type = "pull-up5v";
-        break;
-      case "3v":
-      case "pull-up3v":
-        pull_type = "pull-up3v";
-        break;
-      case "0v":
-      case "pull-down":
-        pull_type = "pull-down";
-        break;
-      case null:
-      case "float":
-        pull_type = "float";
-        break;
-      default:
-        throw new Error("unknown pull_type method")
-        break;
-    }
-  
-    var obj = {};
-    obj["io"+this.id] = {
-      pull_type: pull_type
-    };
-    this.Obniz.send(obj);
-  }
-
-  input(callback) {
-    this.onchange = callback;
-    var obj = {};
-    obj["io"+this.id] = {
-      direction: "input",
-      stream: true
-    };
-    this.Obniz.send(obj);
-    return this.value;
-  }
-
-  inputWait() {
-    var self = this;
-    return new Promise(function(resolve, reject){
-      var obj = {};
-      obj["io"+self.id] = {
-        direction: "input",
-        stream: false
-      };
-      self.Obniz.send(obj);
-      self.addObserver(resolve);
-    });
-  }
-
-  notified(obj) {
-    if (typeof obj === "boolean") {
-      this.value = obj;
-      var callback = this.observers.shift();
-      if (callback) {
-        callback(obj);
-      }
-      if (typeof(this.onchange) === "function") {
-        this.onchange(obj);
-      }
-    } else if (obj && typeof obj === "object") {
-      if (obj.warnings) {
-        for (let i=0; i<obj.warnings.length; i++) {
-          this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warnings[i].message}` })
-        }
-      }
-      if (obj.errors) {
-        for (let i=0; i<obj.errors.length; i++) {
-          this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.errors[i].message}` })
-        }
-      }
-    }
-  }
-}
-class PeripheralIO_ {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-  }
-
-  animation(name, status, array) {
-    var obj = {};
-    obj.io = {
-      animation: {
-        name: name,
-        status: status
-      }
-    };
-    if (!array)
-      array = [];
-  
-    let states = [];
-    for (var i=0; i<array.length; i++) {
-      let state = array[i];
-      let duration = state.duration;
-      let func = state.state;
-  
-      // dry run. and get json commands
-      this.Obniz.sendPool = [];
-      func(i);
-      let pooledJsonArray = this.Obniz.sendPool;
-      this.Obniz.sendPool = null;
-  
-      // simply merge objects
-      let merged = {};
-      for (var index = 0; index < pooledJsonArray.length; index++) {
-        for (let key in pooledJsonArray[index]) {
-          merged[key] = pooledJsonArray[index][key];
-        }
-      }
-      states.push({
-        duration: duration,
-        state: merged
-      });
-    }
-    if(states.length > 0){
-      obj.io.animation.states = states;
-    }
-  //  console.log(obj.io.animation);
-    this.Obniz.send(obj);
-  }
-}
-
-class PeripheralPWM {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-    this.id = id;
-    this.state = {};
-    this.used = false;
-  }
-
-  sendWS(obj) {
-    var wsObj = {};
-    wsObj["pwm"+this.id] = obj;
-    this.Obniz.send(wsObj);
-  }
-
-  start(params) {
-    const err = ObnizUtil._requiredKeys(params,["io"]);
-    if(err){ throw new Error("pwm start param '" + err +"' required, but not found ");}
-    this.params = ObnizUtil._keyFilter(params,["io", "drive", "pull"]);
-
-    const io = this.params.io;
-    const ioObj = this.Obniz.getIO(io);
-
-    ioObj.drive(this.params.drive || '5v');
-    ioObj.pull(this.params.pull || null);
-
-    var obj = {};
-    this.state.io = io;
-    this.sendWS({
-      io: io
-    });
-    this.used = true;
-  }
-
-  freq(freq) {
-    var obj = {};
-    this.state.freq = freq;
-    this.sendWS({
-      freq: freq
-    });
-  }
-
-  pulse(pulse_width) {
-    var obj = {};
-    this.state.pulse = pulse_width;
-    this.sendWS({
-      pulse: pulse_width
-    });
-  }
-
-  duty(duty) {
-    var obj = {};
-    this.state.duty = duty;
-    this.sendWS({
-      duty: duty
-    });
-  }
-
-  isUsed() {
-    return this.used;
-  }
-
-  end() {
-    var obj = {};
-    this.state = {};
-    this.sendWS(null);
-    this.used = false;
-  }
-
-  modulate(type, symbol_length, data) {
-    var obj = {};
-    this.sendWS({
-      modulate: {
-        type: type,
-        symbol_length: symbol_length,
-        data: data
-      }
-    });
-  }
-}
-
-class PeripheralSPI {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-    this.id = id;
-    this.observers = [];
-    this.used = false;
-  }
-
-  addObserver(callback) {
-    if(callback) {
-      this.observers.push(callback);
-    }
-  }
-
-  start(params) {
-  
-    var err = ObnizUtil._requiredKeys(params,["mode", "frequency"]);
-    if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
-    this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pull"]);
-    var obj = {};
-
-    let ioKeys = ["clk", "mosi", "miso"];
-    for (let key of ioKeys) {
-      if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '"+key+"' are to be valid io no");
-      }
-    }
-
-
-    obj["spi" + this.id]  = {
-        mode : this.params.mode,
-        clock : this.params.frequency   //name different
-    };
-    if(this.params.clk  !==  undefined){obj["spi" + this.id].clk = this.params.clk;}
-    if(this.params.mosi !==  undefined){obj["spi" + this.id].mosi = this.params.mosi;}
-    if(this.params.miso !==  undefined){obj["spi" + this.id].miso = this.params.miso;}
-    
-    if(this.params.drive){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive("5v");
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
-    }
-    
-    if(this.params.pull){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
-    }
-   
-   this.used = true;
-    this.Obniz.send(obj);
-  }
-
-  writeWait(data) {
-    var self = this;
-    return new Promise(function(resolve, reject){
-      var obj = {};
-      obj["spi"+self.id] = {
-        data: data,
-        read: true
-      };
-      self.Obniz.send(obj);
-      self.addObserver(resolve);
-    });
-  }
-
-  write(data) {
-    var self = this;
-    var obj = {};
-    obj["spi"+self.id] = {
-      data: data
-    };
-    self.Obniz.send(obj);
-  }
-
-  notified(obj) {
-    // TODO: we should compare byte length from sent
-    var callback = this.observers.shift();
-    if (callback) {
-      callback(obj.data);
-    }
-  }
-
-  isUsed() {
-    return this.used;
-  }
-
-  end(data) {
-    var self = this;
-    var obj = {};
-    obj["spi"+self.id] = null;
-    this.params = null;
-    self.Obniz.send(obj);
-   this.used = false;
-  }
-}
-
-class PeripheralUART {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-    this.id = id;
-    this.received = new Uint8Array([]); 
-    this.used = false;
-  }
-
-  start(params) {
-
-    var err = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
-    if (err) {
-      throw new Error("uart start param '" + err + "' required, but not found ");
-      return;
-    }
-    this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pull"]);
-
-    let ioKeys = ["rx", "tx", "rts", "cts"];
-    for (let key of ioKeys) {
-      if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
-        throw new Error("uart start param '"+key+"' are to be valid io no");
-      }
-    }
-
-
-    if( this.params.hasOwnProperty("drive")){
-        this.Obniz.getIO(this.params.rx).drive(this.params.drive);
-        this.Obniz.getIO(this.params.tx).drive(this.params.drive);
-    }else{
-        this.Obniz.getIO(this.params.rx).drive("5v");
-        this.Obniz.getIO(this.params.tx).drive("5v");
-        
-    }
-    
-    if(this.params.hasOwnProperty("pull") ){
-        this.Obniz.getIO(this.params.rx).pull(this.params.pull);
-        this.Obniz.getIO(this.params.tx).pull(this.params.pull);
-    }else{
-        this.Obniz.getIO(this.params.rx).pull(null);
-        this.Obniz.getIO(this.params.tx).pull(null);
-    }
-    
-    var obj = {};
-    obj["uart"+this.id] = this.params;
-    this.Obniz.send(obj);
-    this.received = [];
-    this.used = true;
-  }
-
-  send(data) {
-    var send_data = null;
-    if (data === undefined) {
-      return;
-    }
-    if (typeof(data) === "number") {
-      data = [data];
-    }
-    if (isNode && data instanceof Buffer) {
-      var arr = [... data];
-    } else if (data.constructor === Array) {
-      send_data = data;
-    } else if (typeof(data) === "string") {
-      if (isNode) {
-        const buf = Buffer(data);
-        send_data = [... buf];
-      } else if(TextEncoder){
-        const typedArray = new TextEncoder("utf-8").encode(data);
-        send_data = new Array(typedArray.length);
-        for (var i=0; i<typedArray.length;i++) {
-          send_data[i] = typedArray[i];
-        }
-      }
-    }
-    var obj = {};
-    obj["uart"+this.id] = {};
-    obj["uart"+this.id].data = send_data;
-  //  console.log(obj);
-    this.Obniz.send(obj);
-  }
-
-  isDataExists() {
-    return (this.received && this.received.length > 0);
-  }
-
-  readBytes() {
-    var results = [];
-    if (this.isDataExists()) {
-        for (var i=0;i<this.received.length; i++) {
-          results.push(this.received[i]);
-        }
-    }
-    this.received = [];
-    return results;
-  }
-
-  readText() {
-    var string = null;
-    if (this.isDataExists()) {
-        var data = this.readBytes();
-        string = this.tryConvertString(data);
-    }
-    this.received = [];
-    return string;
-  }
-
-  tryConvertString(data) {
-    return ObnizUtil.dataArray2string(data);
-  }
-
-  notified(obj) {
-    if (this.onreceive) {
-      var string = this.tryConvertString(obj.data);
-      this.onreceive(obj.data, string);
-    } else {
-      if (!this.received) {
-        this.received = [];
-      }
-      
-      this.received.push.apply(this.received, obj.data);
-    }
-  }
-
-  isUsed() {
-    return this.used;
-  }
-
-  end() {
-    var obj = {};
-    obj["uart"+this.id] = null;
-    this.params = null;
-    this.Obniz.send(obj);
-    this.used = false;
   }
 }
 
@@ -7780,7 +7780,7 @@ if (PartsRegistrate) {
   PartsRegistrate("ADT7310", ADT7310);
 }
 
-Obniz.wsSchema = [{"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null},"dataArray31":{"id":"dataArray31","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad","type":"number"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","type":"object","definitions":{"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12}},"additionalProperties":false,"properties":{"scan_results":{"type":"array","minItems":1,"items":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result","inquiry_complete"]},"address":{"$ref :deviceAddress":null},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","maximun":0},"rssi":{"type":"integer","maximun":0},"adv_data":{"$ref :#dataArray":null},"scan_resp":{"$ref :#dataArray":null}}}},"status_updates":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"status":{"type":"string","enum":["connected","disconnected"]}}}},"get_service_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null}}}},"get_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}}},"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#dataArray":null}}}},"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"peripheral":{"type":"object","additionalProperties":false,"properties":{"connection_status":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"status":{"type":"string","enum":["connected","disconnected"]}}}},"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_write_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_read_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null}}}},"write_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"result":{"type":"string","enum":["success","failed"]}}}},"read_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_write_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}},"notify_read_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref :deviceAddress":null},"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null}}}}}},"errors":{"type":"array","minItems":1,"items":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"message":{"typoe":"string"},"address":{"anyOf":[{"$ref :deviceAddress":null},{"type":"null"}]},"service_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]},"characteristic_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]},"descriptor_uuid":{"anyOf":[{"$ref :uuid":null},{"type":"null"}]}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","type":"object","additionalProperties":false,"properties":{"mode":{"type":"string","enum":["master","slave"]},"is_fragmented":{"type":"boolean"},"address":{"type":"integer","minimum":0},"data":{"$ref":"#dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"mesure":{"$ref":"/response/mesure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"ws":{"$ref":"/response/ws"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","type":"object","additionalProperties":false,"required":["data"],"properties":{"data":{"$ref :#dataArray":null}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message","type":"object","additionalProperties":false,"required":["data","from"],"properties":{"data":{},"from":{"type":["string","integer","null"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/mesure","type":"object","additionalProperties":true},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi","type":"object","additionalProperties":false,"properties":{"data":{"$ref":"#dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch","type":"object","additionalProperties":false,"properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart","type":"object","additionalProperties":false,"properties":{"data":{"$ref":"/dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","type":"object","additionalProperties":false,"properties":{"ready":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","anyOf":[{"$ref":"/request/ad/null"},{"$ref":"/request/ad/get"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/null","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/clear","type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display","anyOf":[{"$ref":"/request/display/text"},{"$ref":"/request/display/clear"},{"$ref":"/request/display/qr"},{"$ref":"/request/display/raw"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/qr","type":"object","required":["qr"],"properties":{"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/text","type":"object","required":["text"],"properties":{"text":{"type":"string"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","anyOf":[{"$ref":"/request/i2c/init_master"},{"$ref":"/request/i2c/init_slave"},{"$ref":"/request/i2c/write"},{"$ref":"/request/i2c/read"},{"$ref":"/request/i2c/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_master","type":"object","required":["mode","sda","scl","clock"],"properties":{"mode":{"type":"string","enum":["master"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"clock":{"type":"integer","minimum":1,"maximum":1000000}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","type":"object","required":["mode","sda","scl","slave_address"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximun":1023},"slave_address_length":{"type":"integer","enum":[7,10],"default":7},"address":{"type":"integer","minimum":0,"maximun":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximun":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximun":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray1024"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input","type":"string","enum":["get"]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","type":"object","required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_detail","type":"object","required":["direction","value"],"properties":{"direction":{"type":"string","enum":["output"]},"value":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/pull_type","type":"object","required":["pull_type"],"properties":{"pull_type":{"type":"string","enum":["pull-up5v","pull-up3v","pull-down","float"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000,"multipleOf":0.001},"state":{"type":"object","filter":"pass_all"}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":1},"duration":{"type":"integer","minimum":1},"triger":{"type":"object","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"type":"boolean"},"samples":{"type":"integer","minimum":0}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"object","required":["io_pulse","io_echo","pulse_width"],"properties":{"io_pulse":{"$refs":"/pinSetting"},"io_echo":{"$refs":"/pinSetting"},"pulse":{"type":"string","default":"positive","enum":["positive","negative"]},"pulse_width":{"type":"number","minimum":0.001,"maximum":1000},"measure_edges":{"type":"integer","minimum":1,"maximum":4},"timeout":{"type":"integer","default":1000,"minimum":0.001,"maximum":1000}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure","anyOf":[{"$ref":"/request/measure/echo"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","anyOf":[{"$ref":"/request/message/send"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/duty","type":"object","required":["duty"],"properties":{"duty":{"type":"number","minimum":0,"maximum":100}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/freq","type":"object","required":["freq"],"properties":{"freq":{"type":"integer","minimum":1,"maximum":80000000}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/duty"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/init","type":"object","required":["io"],"properties":{"io":{"$ref":"/pinSetting"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000},"data":{"type":"array","items":{"type":"number"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/pulse","type":"object","required":["pulse"],"properties":{"pulse":{"type":"number"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","anyOf":[{"$ref":"/request/spi/init_master"},{"$ref":"/request/spi/deinit"},{"$ref":"/request/spi/write"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","type":"object","required":["mode","clock"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"number","default":115200,"minimum":1,"maximum":80000000}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray32"},"read":{"type":"boolean","default":true}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch/get","type":"string","enum":["get"]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","anyOf":[{"$ref":"/request/switch/get"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/keepWorkingAtOffline","type":"object","required":["keep_working_at_offline"],"properties":{"keep_working_at_offline":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reboot","type":"object","required":["reboot"],"properties":{"reboot":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reset","type":"object","required":["reset"],"properties":{"reset":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/wait","type":"object","required":["wait"],"properties":{"wait":{"type":"integer"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart","anyOf":[{"$ref":"/request/uart/init"},{"$ref":"/request/uart/send"},{"$ref":"/request/uart/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/init","type":"object","required":["rx","tx"],"properties":{"rx":{"$ref":"/pinSetting"},"tx":{"$ref":"/pinSetting"},"baud":{"type":"number","default":115200,"minimum":1,"maximum":5000000},"stop":{"type":"number","enum":[1,1.5,2],"default":1},"bits":{"type":"number","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref":"/pinSetting"},"cts":{"$ref":"/pinSetting"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/send","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_get","type":"object","required":["get_characteristics"],"properties":{"get_characteristics":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_read","type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_write","type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_get","type":"object","required":["get_descriptors"],"properties":{"get_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_read","type":"object","required":["read_descriptors"],"properties":{"read_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_write","type":"object","required":["write_descriptors"],"properties":{"write_descriptors":{"type":"object","required":["address","service_uuid","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_start","type":"object","required":["scan"],"properties":{"scan":{"type":"object","additionalProperties":false,"properties":{"duration":{"type":"integer","default":30}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_stop","type":"object","required":["scan"],"properties":{"scan":{"type":"null"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/service_get","type":"object","required":["get_services"],"properties":{"get_services":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_start","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"object","required":["adv_data"],"additionalProperties":false,"properties":{"adv_data":{"$ref":"/dataArray31"},"scan_resp":{"$ref":"/dataArray31"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_stop","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"null"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_descriptor"],"properties":{"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}];
+Obniz.wsSchema = [{"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null},"dataArray31":{"id":"dataArray31","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"mesure":{"$ref":"/response/mesure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"ws":{"$ref":"/response/ws"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","anyOf":[{"$ref":"/request/ad/null"},{"$ref":"/request/ad/get"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/null","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/clear","type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display","anyOf":[{"$ref":"/request/display/text"},{"$ref":"/request/display/clear"},{"$ref":"/request/display/qr"},{"$ref":"/request/display/raw"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/qr","type":"object","required":["qr"],"properties":{"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/text","type":"object","required":["text"],"properties":{"text":{"type":"string"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","anyOf":[{"$ref":"/request/i2c/init_master"},{"$ref":"/request/i2c/init_slave"},{"$ref":"/request/i2c/write"},{"$ref":"/request/i2c/read"},{"$ref":"/request/i2c/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_master","type":"object","required":["mode","sda","scl","clock"],"properties":{"mode":{"type":"string","enum":["master"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"clock":{"type":"integer","minimum":1,"maximum":1000000}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","type":"object","required":["mode","sda","scl","slave_address"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximun":1023},"slave_address_length":{"type":"integer","enum":[7,10],"default":7},"address":{"type":"integer","minimum":0,"maximun":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximun":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximun":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray1024"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input","type":"string","enum":["get"]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","type":"object","required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_detail","type":"object","required":["direction","value"],"properties":{"direction":{"type":"string","enum":["output"]},"value":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/pull_type","type":"object","required":["pull_type"],"properties":{"pull_type":{"type":"string","enum":["pull-up5v","pull-up3v","pull-down","float"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000,"multipleOf":0.001},"state":{"type":"object","filter":"pass_all"}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":1},"duration":{"type":"integer","minimum":1},"triger":{"type":"object","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"type":"boolean"},"samples":{"type":"integer","minimum":0}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"object","required":["io_pulse","io_echo","pulse_width"],"properties":{"io_pulse":{"$refs":"/pinSetting"},"io_echo":{"$refs":"/pinSetting"},"pulse":{"type":"string","default":"positive","enum":["positive","negative"]},"pulse_width":{"type":"number","minimum":0.001,"maximum":1000},"measure_edges":{"type":"integer","minimum":1,"maximum":4},"timeout":{"type":"integer","default":1000,"minimum":0.001,"maximum":1000}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure","anyOf":[{"$ref":"/request/measure/echo"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","anyOf":[{"$ref":"/request/message/send"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/duty","type":"object","required":["duty"],"properties":{"duty":{"type":"number","minimum":0,"maximum":100}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/freq","type":"object","required":["freq"],"properties":{"freq":{"type":"integer","minimum":1,"maximum":80000000}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/duty"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/init","type":"object","required":["io"],"properties":{"io":{"$ref":"/pinSetting"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000},"data":{"type":"array","items":{"type":"number"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/pulse","type":"object","required":["pulse"],"properties":{"pulse":{"type":"number"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","anyOf":[{"$ref":"/request/spi/init_master"},{"$ref":"/request/spi/deinit"},{"$ref":"/request/spi/write"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","type":"object","required":["mode","clock"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"number","default":115200,"minimum":1,"maximum":80000000}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray32"},"read":{"type":"boolean","default":true}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch/get","type":"string","enum":["get"]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","anyOf":[{"$ref":"/request/switch/get"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/keepWorkingAtOffline","type":"object","required":["keep_working_at_offline"],"properties":{"keep_working_at_offline":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reboot","type":"object","required":["reboot"],"properties":{"reboot":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reset","type":"object","required":["reset"],"properties":{"reset":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/wait","type":"object","required":["wait"],"properties":{"wait":{"type":"integer"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/deinit","type":"null"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart","anyOf":[{"$ref":"/request/uart/init"},{"$ref":"/request/uart/send"},{"$ref":"/request/uart/deinit"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/init","type":"object","required":["rx","tx"],"properties":{"rx":{"$ref":"/pinSetting"},"tx":{"$ref":"/pinSetting"},"baud":{"type":"number","default":115200,"minimum":1,"maximum":5000000},"stop":{"type":"number","enum":[1,1.5,2],"default":1},"bits":{"type":"number","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref":"/pinSetting"},"cts":{"$ref":"/pinSetting"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/send","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad/get","type":"number"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad","anyOf":[{"$ref":"/response/ad/get"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","anyOf":[{"$ref":"/response/ble/central"},{"$ref":"/response/ble/peripheral"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","anyOf":[{"$ref":"/response/i2c/master"},{"$ref":"/response/i2c/slave"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/master","type":"object","required":["mode","address","data"],"properties":{"mode":{"type":"string","enum":["master"]},"address":{"type":"integer","minimum":0},"data":{"$ref":"/dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/slave","type":"object","required":["mode","address","is_fragmented","data"],"properties":{"mode":{"type":"string","enum":["slave"]},"address":{"type":"integer","minimum":0},"is_fragmented":{"type":"boolean"},"data":{"$ref":"/dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io/get","type":"boolean"},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","anyOf":[{"$ref":"/response/io/get"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/get","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"array","minItesm":1,"items":{"type":"object","required":["edge","timing"],"properties":{"edge":{"type":"boolean"},"timing":{"type":"number"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure","anyOf":[{"$ref":"/response/measure/echo"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message","anyOf":[{"$ref":"/response/message/receive"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","type":"object","required":["data","from"],"properties":{"data":{},"example":"1234-5678","from":{"type":["string","null"]}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi","anyOf":[{"$ref":"/response/spi/read"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi/read","type":"object","required":["data"],"properties":{"data":{"$ref":"#dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch/change","type":"object","properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"],"optinal":true}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch","anyOf":[{"$ref":"/response/switch/change"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart","anyOf":[{"$ref":"/response/uart/receive"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart/receive","type":"object","properties":{"data":{"$ref":"/dataArray"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","anyOf":[{"$ref":"/response/ws/ready"},{"$ref":"/response/ws/redirect"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/ready","type":"object","properties":{"ready":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/ready","type":"object","properties":{"ready":{"type":"boolean"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_get","type":"object","required":["get_characteristics"],"properties":{"get_characteristics":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_read","type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_write","type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_get","type":"object","required":["get_descriptors"],"properties":{"get_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_read","type":"object","required":["read_descriptors"],"properties":{"read_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_write","type":"object","required":["write_descriptors"],"properties":{"write_descriptors":{"type":"object","required":["address","service_uuid","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_start","type":"object","required":["scan"],"properties":{"scan":{"type":"object","additionalProperties":false,"properties":{"duration":{"type":"integer","default":30}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_stop","type":"object","required":["scan"],"properties":{"scan":{"type":"null"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/service_get","type":"object","required":["get_services"],"properties":{"get_services":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_start","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"object","required":["adv_data"],"additionalProperties":false,"properties":{"adv_data":{"$ref":"/dataArray31"},"scan_resp":{"$ref":"/dataArray31"}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_stop","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"null"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_descriptor"],"properties":{"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_get","type":"object","required":["get_characteristic_results"],"properties":{"get_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scanResponse","type":"object","required":["read_characteristic_results"],"properties":{"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["write_characteristic_results"],"properties":{"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_results"],"properties":{"scan_results":{"type":"array","minItems":1,"items":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result","inquiry_complete"]},"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","maximun":0},"rssi":{"type":"integer","maximun":0},"adv_data":{"$ref":"/dataArray"},"scan_resp":{"$ref":"/dataArray"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/service_get","type":"object","required":["get_service_results"],"properties":{"get_service_results":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/status_update","type":"object","required":["status_updates"],"properties":{"status_updates":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"status":{"type":"string","enum":["connected","disconnected"]}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_notify_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_characteristics"],"properties":{"notify_read_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_notify_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_characteristics"],"properties":{"notify_write_characteristics":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/detaArray"}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_characteristic_results"],"properties":{"read_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/detaArray"}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_characteristic_results"],"properties":{"write_characteristic_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_notify_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_descriptors"],"properties":{"notify_read_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_notify_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_descriptors"],"properties":{"notify_write_descriptors":{"type":"array","minItems":1,"items":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/detaArray"}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_descriptor_results"],"properties":{"read_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref :uuid":null},"characteristic_uuid":{"$ref :uuid":null},"descriptor_uuid":{"$ref :uuid":null},"data":{"$ref :#detaArray":null}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_descriptor_results"],"properties":{"write_descriptor_results":{"type":"array","minItems":1,"items":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral","anyOf":[{"$ref":"/response/ble/peripheral/status"},{"$ref":"/response/ble/peripheral/characteristic_read"},{"$ref":"/response/ble/peripheral/characteristic_write"},{"$ref":"/response/ble/peripheral/characteristic_notify_read"},{"$ref":"/response/ble/peripheral/characteristic_notify_write"},{"$ref":"/response/ble/peripheral/descriptor_read"},{"$ref":"/response/ble/peripheral/descriptor_write"},{"$ref":"/response/ble/peripheral/descriptor_notify_read"},{"$ref":"/response/ble/peripheral/descriptor_notify_write"}]},{"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/status_update","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["connection_status"],"properties":{"connection_status":{"type":"array","minItems":1,"items":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"status":{"type":"string","enum":["connected","disconnected"]}}}}}}}}];
 (function(global){ let module = {exports:{}};/*
 Author: Geraint Luff and others
 Year: 2013

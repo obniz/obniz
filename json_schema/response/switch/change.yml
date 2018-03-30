@@ -1,14 +1,16 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/switch"
+id: "/response/switch/change"
+
 
 type: object
-additionalProperties: false
 properties:
-    state : 
+    state :
         type: string
         enum : [none, push, left, right]
+
     action :
         type : string
         enum : [get]
+        optinal : true

@@ -1,0 +1,28 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/descriptor_write"
+
+
+type: object
+required : [peripheral]
+properties:
+        peripheral:
+            type : object
+            additionalProperties: false
+            required : [write_descriptor_results]
+            properties:
+                write_descriptor_results :
+                    type : array
+                    minItems : 1
+                    items :
+                        type : object
+                        required: [service_uuid, characteristic_uuid,descriptor_uuid,  result]
+                        additionalProperties: false
+                        properties:
+                            service_uuid : {$ref : "/uuid"}
+                            characteristic_uuid : {$ref : "/uuid"}
+                            descriptor_uuid : {$ref : "/uuid"}
+                            result :
+                                type : string
+                                enum : [success , failed]

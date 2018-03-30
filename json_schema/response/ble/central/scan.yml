@@ -1,0 +1,43 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/scan"
+
+
+type: object
+required : [scan_results]
+properties:
+    scan_results :
+        type : array
+        minItems : 1
+        items :
+            type : object
+            required: [event_type]
+            additionalProperties: false
+            properties:
+                event_type :
+                    type : string
+                    enum : [inquiry_result, inquiry_complete]
+                address : {$ref : "/deviceAddress"}
+                ble_event_type :
+                    type : string
+                    enum :
+                        - connectable_advertisemnt
+                        - connectable_directed_advertisemnt
+                        - scannable_advertising
+                        - non_connectable_advertising
+                        - scan_response
+                device_type :
+                    type : string
+                    enum : [ble, dumo, breder]
+                address_type:
+                    type : string
+                    enum : [public, random, rpa_public, rpa_random]
+                flag :
+                    type : integer
+                    maximun : 0
+                rssi :
+                    type : integer
+                    maximun : 0
+                adv_data : {$ref : "/dataArray"}
+                scan_resp : {$ref : "/dataArray"}

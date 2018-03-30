@@ -1,6 +1,7 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/ad"
+id: "/response/message"
 
-type: number
+"anyOf":
+  -  {$ref : "/response/message/receive"}

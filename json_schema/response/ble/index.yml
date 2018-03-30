@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble"
+
+"anyOf":
+  -  {$ref : "/response/ble/central"}
+  -  {$ref : "/response/ble/peripheral"}

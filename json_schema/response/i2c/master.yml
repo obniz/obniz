@@ -1,0 +1,18 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/i2c/master"
+
+
+type: object
+required : [mode, address, data]
+properties:
+    mode :
+        type : string
+        enum : [master]
+
+    address :
+        type: integer
+        minimum : 0
+
+    data : {$ref : "/dataArray" }

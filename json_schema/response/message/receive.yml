@@ -1,0 +1,13 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/message/receive"
+
+
+type: object
+required : [data, from]
+properties:
+    data : {}  ## all ok
+    example : "1234-5678"
+    from :
+       type : [string, "null"]

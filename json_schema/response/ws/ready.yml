@@ -1,7 +1,9 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/mesure"
+id: "/response/ws/ready"
 
 type: object
-additionalProperties: true  ## all ok
+properties:
+    ready:
+        type : boolean

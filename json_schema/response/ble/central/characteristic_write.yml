@@ -1,0 +1,23 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/characteristic_read"
+
+
+type: object
+required : [write_characteristic_results]
+properties:
+    write_characteristic_results :
+        type : array
+        minItems : 1
+        items :
+            type : object
+            required: [address,service_uuid,characteristic_uuid, result]
+            additionalProperties: false
+            properties:
+                address : {$ref : "/deviceAddress" }
+                service_uuid : {$ref : "/uuid"}
+                characteristic_uuid : {$ref : "/uuid"}
+                result :
+                    type : string
+                    enum : [success , failed]

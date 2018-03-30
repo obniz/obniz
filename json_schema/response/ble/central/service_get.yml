@@ -1,0 +1,19 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/service_get"
+
+
+type: object
+required : [get_service_results]
+properties:
+    get_service_results :
+        type : array
+        minItems : 1
+        items :
+            type : object
+            required: [address,service_uuid]
+            additionalProperties: false
+            properties:
+                address : {$ref : "/deviceAddress"}
+                service_uuid : {$ref : "/uuid"}

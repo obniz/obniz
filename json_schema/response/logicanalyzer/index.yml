@@ -3,8 +3,5 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/logicAnalyzer"
 
-type: object
-additionalProperties: false
-required : [data]
-properties:
-    data : {$ref :#dataArray}
+"anyOf":
+  -  {$ref : "/response/logicAnalyzer/data"}

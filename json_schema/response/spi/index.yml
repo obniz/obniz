@@ -3,7 +3,5 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/spi"
 
-type: object
-additionalProperties: false
-properties:
-    data : {$ref : "#dataArray"}
+"anyOf":
+  -  {$ref : "/response/spi/read"}
