@@ -10,3 +10,6 @@ id: "/response/ble/central"
   -  {$ref : "/response/ble/central/characteristic_get"}
   -  {$ref : "/response/ble/central/characteristic_write"}
   -  {$ref : "/response/ble/central/characteristic_read"}
+  -  {$ref : "/response/ble/central/descriptor_get"}
+  -  {$ref : "/response/ble/central/descriptor_write"}
+  -  {$ref : "/response/ble/central/descriptor_read"}

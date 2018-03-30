@@ -1,0 +1,21 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/descriptor_get"
+
+
+type: object
+required : [get_descriptors_results]
+properties:
+    get_descriptors_results :
+        type : array
+        minItems : 1
+        items :
+            type : object
+            required: [address,service_uuid,characteristic_uuid, descriptor_uuid]
+            additionalProperties: false
+            properties:
+                address : {$ref : "/deviceAddress" }
+                service_uuid : {$ref : "/uuid"}
+                characteristic_uuid : {$ref : "/uuid"}
+                descriptor_uuid : {$ref : "/uuid"}
