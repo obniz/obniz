@@ -1,0 +1,16 @@
+## type defines
+
+<% for ( var key in defTypes ){ var schema=defTypes[key];
+if(!Array.isArray(schema.example)){schema.example = schema.example ? [schema.example]:[];} %>
+
+### <%=key%>
+| type | conditions | example | description
+|:----|:----|:----|:----|
+| <%=schema.type%>|   |  <% for(var val of  schema.example){%>`<%=val%>`<br/><%}%> | <%= schema.description%> |
+<% } %>
+
+
+
+
+
+
