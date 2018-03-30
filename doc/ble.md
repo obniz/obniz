@@ -583,7 +583,7 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 
-## peripheral.onwritecharacteristic
+## peripheral.onwrite
 Call this func when write to the characteristic success.
 
 
@@ -593,10 +593,98 @@ obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
         peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").writeText("My Name");
+              var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+              characteristic.writeText("My Name");
+              characteristic.onwrite = function(resutls){
+                       console.log(results); //"success" or "failed"
+                   }
+               }
+        peripheral.connect();
+    }
+}
+obniz.ble.startScan({duration : 10});
+```
+
+
+
+## peripheral.getService(uuid).getCharacteristic(uuid).read()
+Read from characteristic.
+Return value appear in callback function (onread) .
+
+```Javascript
+// Javascript Example
+obniz.ble.onscan = function(peripheral){
+    if(peripheral.localName() == "my peripheral"){
+
+
+        peripheral.onconnect = function(){
+            var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+            characteristic.read();
+            characteristic.onread = function(dataArray){
+                console.log("value : " + dataArray);
+            }
         }
-        peripheral.onwritecharacteristic = function(service, characteristic,results){
-            if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
+        peripheral.connect();
+    }
+}
+obniz.ble.startScan({duration : 10});
+```
+
+## peripheral.onread
+Call this func when read from the characteristic success.
+
+```Javascript
+// Javascript Example
+obniz.ble.onscan = function(peripheral){
+    if(peripheral.localName() == "my peripheral"){
+
+        peripheral.onconnect = function(){
+            var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+            characteristic.read();
+            characteristic.onread = function(dataArray){
+                console.log("value : " + dataArray);
+            }
+        }
+
+        peripheral.connect();
+    }
+}
+obniz.ble.startScan({duration : 10});
+```
+
+## peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).write(dataArray)
+write descriptor with dataArray
+
+```Javascript
+// Javascript Example
+obniz.ble.onscan = function(peripheral){
+    if(peripheral.localName() == "my peripheral"){
+
+        peripheral.onconnect = function(){
+            var dataArray = [0x00, 0x00, ...];
+            peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write([0x4f, 0x62, 0x6e, 0x69, 0x7a]);
+        }
+        peripheral.connect();
+    }
+}
+obniz.ble.startScan({duration : 10});
+
+```
+
+
+## descriptor.onwrite
+Callback function of write descriptor results.
+
+
+```Javascript
+// Javascript Example
+obniz.ble.onscan = function(peripheral){
+    if(peripheral.localName() == "my peripheral"){
+
+        peripheral.onconnect = function(){
+            var descriptor = peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901");
+            descriptor.write();
+            descriptor.onwrite = function(resutls){
                 console.log(results); //"success" or "failed"
             }
         }
@@ -608,9 +696,9 @@ obniz.ble.startScan({duration : 10});
 
 
 
-## peripheral.getService(uuid).getCharacteristic(uuid).read()
-Read from characteristic.
-Return value appear in callback function (onreadcharacteristic) .
+## peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor("2901").read()
+Read data from descriptor
+Return value appear in callback function (onread) .
 
 ```Javascript
 // Javascript Example
@@ -618,10 +706,9 @@ obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
         peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").read();
-        }
-        peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
-            if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
+            var descriptor = peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901");
+            descriptor.read();
+            descriptor.onread = function(dataArray){
                 console.log("value : " + dataArray);
             }
         }
@@ -631,27 +718,6 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 
-## peripheral.onreadcharacteristic
-Call this func when read from the characteristic success.
-
-```Javascript
-// Javascript Example
-obniz.ble.onscan = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
-
-        peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").read();
-        }
-        peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
-            if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                console.log("value : " + dataArray);
-            }
-        }
-        peripheral.connect();
-    }
-}
-obniz.ble.startScan({duration : 10});
-```
 
 
 ## peripheral.onerror
@@ -664,6 +730,7 @@ Call this func when someting error occurred with erorr messages.
    device_address : "abcdefghijkl", //hex string or null
    service_uuid : "FF00",           //hex string or null
    characteristic_uuid : "FF01", //hex string or null
+   descriptor_uuid : "FF01", //hex string or null
 }
 ```
 

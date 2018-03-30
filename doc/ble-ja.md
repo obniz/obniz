@@ -595,7 +595,7 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 
-## peripheral.onwritecharacteristic
+## characteristic.onwrite
 characteristicに書き込みが完了したときに呼ばれます
 
 
@@ -605,10 +605,9 @@ obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
         peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").writeText("My Name");
-        }
-        peripheral.onwritecharacteristic = function(service, characteristic, results){
-            if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
+            var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+            characteristic.writeText("My Name");
+            characteristic.onwrite = function(resutls){
                 console.log(results); //"success" or "failed"
             }
         }
@@ -622,7 +621,7 @@ obniz.ble.startScan({duration : 10});
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).read()
 characteristicからデータを読み込みます
-結果は，onreadcharacteristicコールバックで呼ばれます
+結果は，onreadコールバックで呼ばれます
 
 ```Javascript
 // Javascript Example
@@ -630,10 +629,9 @@ obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
         peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").read();
-        }
-        peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
-            if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
+            var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+            characteristic.read();
+            characteristic.onread = function(dataArray){
                 console.log("value : " + dataArray);
             }
         }
@@ -643,7 +641,7 @@ obniz.ble.onscan = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 
-## peripheral.onreadcharacteristic
+## characteristic.onread
 characteristicからデータを読み込出したときに呼ばれます
 
 ```Javascript
@@ -652,10 +650,77 @@ obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
         peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").read();
+            var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
+            characteristic.read();
+            characteristic.onread = function(dataArray){
+                console.log("value : " + dataArray);
+            }
         }
-        peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
-            if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
+
+        peripheral.connect();
+    }
+}
+obniz.ble.startScan({duration : 10});
+```
+
+## peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).write(dataArray)
+descriptorにdataArrayを書き込みます
+
+```Javascript
+// Javascript Example
+obniz.ble.onscan = function(peripheral){
+    if(peripheral.localName() == "my peripheral"){
+
+        peripheral.onconnect = function(){
+            var dataArray = [0x00, 0x00, ...];
+            peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").write([0x4f, 0x62, 0x6e, 0x69, 0x7a]);
+        }
+        peripheral.connect();
+    }
+}
+obniz.ble.startScan({duration : 10});
+
+```
+
+x
+
+## descriptor.onwrite
+descriptorに書き込みが完了したときに呼ばれます
+
+
+```Javascript
+// Javascript Example
+obniz.ble.onscan = function(peripheral){
+    if(peripheral.localName() == "my peripheral"){
+
+        peripheral.onconnect = function(){
+            var descriptor = peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901");
+            descriptor.write();
+            descriptor.onwrite = function(resutls){
+                console.log(results); //"success" or "failed"
+            }
+        }
+        peripheral.connect();
+    }
+}
+obniz.ble.startScan({duration : 10});
+```
+
+
+
+## peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor("2901").read()
+descriptorからデータを読み込みます
+結果は，onreadコールバックで呼ばれます
+
+```Javascript
+// Javascript Example
+obniz.ble.onscan = function(peripheral){
+    if(peripheral.localName() == "my peripheral"){
+
+        peripheral.onconnect = function(){
+            var descriptor = peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901");
+            descriptor.read();
+            descriptor.onread = function(dataArray){
                 console.log("value : " + dataArray);
             }
         }
@@ -664,6 +729,7 @@ obniz.ble.onscan = function(peripheral){
 }
 obniz.ble.startScan({duration : 10});
 ```
+
 
 
 ## peripheral.onerror
@@ -678,6 +744,7 @@ obniz.ble.startScan({duration : 10});
    device_address : "abcdefghijkl", //hex string or null
    service_uuid : "FF00",           //hex string or null
    characteristic_uuid : "FF01", //hex string or null
+   descriptor_uuid : "FF01", //hex string or null
 }
 ```
 
