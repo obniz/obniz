@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central"
+
+"anyOf":
+  -  {$ref : "/request/ble/central/scan_start"}
+  -  {$ref : "/request/ble/central/scan_stop"}
+  -  {$ref : "/request/ble/central/connect"}
+  -  {$ref : "/request/ble/central/disconnect"}
+  -  {$ref : "/request/ble/central/service_get"}
+  -  {$ref : "/request/ble/central/characteristic_get"}
+  -  {$ref : "/request/ble/central/characteristic_read"}
+  -  {$ref : "/request/ble/central/characteristic_write"}

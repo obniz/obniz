@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central/characteristic_get"
+
+
+type: object
+required : [get_characteristics]
+properties:
+    get_characteristics :
+        type : object
+        required: [address,service_uuid]
+        additionalProperties: false
+        properties:
+            address : {$ref : "/deviceAddress"}
+            service_uuid : {$ref : "/uuid"}

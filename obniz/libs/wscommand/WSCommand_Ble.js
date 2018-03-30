@@ -72,257 +72,175 @@ class WSCommand_Ble extends WSCommand {
     };
   }
 
-  setAdvData(data) {
-    this.sendCommand(this._CommandSetAdvData, data);
+
+
+  /* CENTRAL   */
+
+  centralScanStart(params) {
+    let schema = [
+      { path : "scan.duration" ,  length: 4, type: "int",   default:30 }
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandStartScan, buf);
   }
 
-  setScanRespData(data) {
-    this.sendCommand(this._CommandSetScanRespData, data);
+  centralScanStop(params) {
+    this.sendCommand(this._CommandStopScan, null);
   }
 
-  startAdv() {
+  centralConnect(params) {
+    let schema = [
+      { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
+      { path : null  ,            length: 1, type: "char",  default:false }   //const val
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandConnect, buf);
+  }
+
+  centralDisconnect(params) {
+    let schema = [
+    { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
+    { path : null  ,            length: 1, type: "char",  default:true }   //const val
+  ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandConnect, buf);
+  }
+
+  centralServiceGet(params) {
+    let schema = [
+      { path : "get_services.address" , length: 6, type: "hex", required:true , endianness:"little"},
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandServices, buf);
+  }
+
+  centralCharacteristicGet(params) {
+    var schema = [
+      { path : "get_characteristics.address" , length: 6, type: "hex", required:true , endianness:"little"},
+      { path : "get_characteristics.service_uuid" , length: 18, type: "uuid", required:true },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandCharacteristics, buf);
+  }
+
+
+  centralCharacteristicRead(params) {
+    var schema = [
+      { path : "read_characteristic.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "read_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "read_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+      this.sendCommand(this._CommandReadCharacteristics, buf);
+  }
+
+  centralCharacteristicWrite(params) {
+    var schema = [
+      { path : "write_characteristic.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_characteristic.needResponse" , length: 1, type: "char", default:1 },
+      { path : "write_characteristic.data" , length: null, type: "dataArray", }
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandWriteCharacteristics, buf);
+
+  }
+
+
+  centralDescriptorGet(params){
+    var schema = [
+      { path : "get_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "get_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandDescriptors, buf);
+  }
+
+  centralDescriptorRead(params){
+    var schema = [
+      { path : "read_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "read_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "read_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "read_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandReadDescriptor, buf);
+
+  }
+
+  centralDescriptorWrite(params){
+    var schema = [
+      { path : "write_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "write_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_descriptor.needResponse" , length: 1, type: "char", default:1 },
+      { path : "write_descriptor.data" , length: null, type: "dataArray" }
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandWriteDescriptor, buf);
+  }
+
+
+
+  /* PERIPHERAL   */
+
+  peripheralAdvertisementStart(params) {
+    this.sendCommand(this._CommandSetAdvData, new Uint8Array(params.advertisement.adv_data));
+
+    if (params.advertisement.scan_resp) {
+      this.sendCommand(this._CommandSetScanRespData, new Uint8Array(params.advertisement.scan_resp));
+    }
+
     this.sendCommand(this._CommandStartAdv, null);
   }
 
-  stopAdv() {
+  peripheralAdvertisementStop(params) {
     this.sendCommand(this._CommandStopAdv, null);
   }
 
-  startScan(_duration) {
-    var buf = new Uint8Array(4);
-    var duration = parseInt(_duration);
-    if (!isNaN(duration)) {
-      buf[0] = duration >> (3 * 8);
-      buf[1] = duration >> (2 * 8);
-      buf[2] = duration >> (1 * 8);
-      buf[3] = duration;
-    }
-    this.sendCommand(this._CommandStartScan, buf);
-  }
 
-  stopScan() {
-    this.sendCommand(this._CommandStopScan, null);
-  }
-//
-//  connect(addressBuf) {
-//    addressBuf[6] = 0;
-//    this.sendCommand(this._CommandConnect, addressBuf);
-//  }
-//
-//  disconnect(addressBuf) {
-//    addressBuf[6] = 1;
-//    this.sendCommand(this._CommandConnect, addressBuf);
-//  }
-//  
-//  getServices(addressBuf){
-//    this.sendCommand(this._CommandServices, addressBuf);
-//  }
-
-  parseAdvertisement(val) {
-    if(val === null){
-      this.stopAdv();
-      return;
-    }
-    if (typeof (val) !== "object") {
-      return;
-    }
-
-    if (val.adv_data) {
-      this.setAdvData(new Uint8Array(val.adv_data));
-    }
-    if (val.scan_resp) {
-      this.setScanRespData(new Uint8Array(val.scan_resp));
-    }
-
-    this.startAdv();
-  }
-
-  parseScan(val) {
-    if(val === null){
-      this.sendCommand(this._CommandStopScan,null);
-      return;
-    }
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "duration" ,  length: 4, type: "int",   default:30 }
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    this.sendCommand(this._CommandStartScan, buf);
-  }
-
-  parseConnect(val, connect) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    
-    var schema = [
-      { path : "address" , length: 6, type: "hex",   required:true , endianness:"little"},
-      { path : null  ,            length: 1, type: "char",  default:connect }   //const val
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandConnect, buf);
-    }
-  }
-  
-  parseServices(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "address" , length: 6, type: "hex", required:true , endianness:"little"},
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandServices, buf);
-    }
-  }
-  
-  parseCharacteristics(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "address" , length: 6, type: "hex", required:true , endianness:"little"},
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandCharacteristics, buf);
-    }
-  }
-  
-  parseWrite(val){
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "needResponse" , length: 1, type: "char", default:1 },
-      { path : "data" , length: null, type: "dataArray", }
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandWriteCharacteristics, buf);
-    }
-  }
-  
-  parseRead(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandReadCharacteristics, buf);
-    }
-  }
-
-  parseDescriptors(val){
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandDescriptors, buf);
-    }
-  }
-  
-  parseWriteDesc(val){
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "descriptor_uuid" , length: 18, type: "uuid", required:true },
-      { path : "needResponse" , length: 1, type: "char", default:1 },
-      { path : "data" , length: null, type: "dataArray" }
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandWriteDescriptor, buf);
-    }
-  }
-  
-  
-  parseReadDesc(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "descriptor_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandReadDescriptor, buf);
-    }
-  }
-  
-  
- parsePeripheral(val){
-   if(val === undefined ){
-     return;
-   }
-   if(val === null){
-      this.sendCommand(this._CommandServerStartPeripheral, new Uint8Array([1])); //stop
-     return;
-     
-   }
-   var propFlags = {
-     0x01 : "broadcast",
-     0x02 : "read",
-     0x04 : "write_no_response",
-     0x08 : "write",
-     0x10 : "notify",
-     0x20 : "indiate",
-     0x40 : "auth",
-     0x80 : "ext_prop"
-   };
-   var schema = {
-     service : {
-       command : this._CommandServerAddService,
-       schema: [
-        { path : "uuid" , length: 18, type: "uuid", required:true }
+  peripheralServiceStart(params){
+    let val = params["peripheral"];
+    var propFlags = {
+      0x01 : "broadcast",
+      0x02 : "read",
+      0x04 : "write_no_response",
+      0x08 : "write",
+      0x10 : "notify",
+      0x20 : "indiate",
+      0x40 : "auth",
+      0x80 : "ext_prop"
+    };
+    var schema = {
+      service : {
+        command : this._CommandServerAddService,
+        schema: [
+          { path : "uuid" , length: 18, type: "uuid", required:true }
         ]
       },
       characteristic : {
-       command : this._CommandServerAddCharacteristic,
-       schema: [
-        { path : "service_uuid" , length: 18, type: "uuid", required:true },
-        { path : "uuid" , length: 18, type: "uuid", required:true },
-        { path : "property" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK 
-        { path : "data" , type: "dataArray" }
+        command : this._CommandServerAddCharacteristic,
+        schema: [
+          { path : "service_uuid" , length: 18, type: "uuid", required:true },
+          { path : "uuid" , length: 18, type: "uuid", required:true },
+          { path : "property" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK
+          { path : "data" , type: "dataArray" }
         ]
       },
       descriptor : {
-       command : this._CommandServerAddDescriptor,
-       schema: [
-        { path : "service_uuid" , length: 18, type: "uuid", required:true },
-        { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-        { path : "uuid" , length: 18, type: "uuid", required:true },
-        { path : "property" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK  
-        { path : "data" , type: "dataArray" }
+        command : this._CommandServerAddDescriptor,
+        schema: [
+          { path : "service_uuid" , length: 18, type: "uuid", required:true },
+          { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
+          { path : "uuid" , length: 18, type: "uuid", required:true },
+          { path : "property" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK
+          { path : "data" , type: "dataArray" }
         ]
       }
-   };
+    };
 
     var sendBufs = [];
     var buf;
@@ -331,12 +249,12 @@ class WSCommand_Ble extends WSCommand {
       buf = JsonBinaryConverter.createSendBuffer(schema["service"].schema, service);
       if(buf.length === 0){return;}
       sendBufs.push({command: schema["service"].command, buffer: buf});
-      
+
       for (var charaIndex in service["characteristics"]) {
         var chara = service["characteristics"][charaIndex];
         chara.service_uuid = service.uuid;
         buf = JsonBinaryConverter.createSendBuffer(schema["characteristic"].schema, chara);
-      if(buf.length === 0){return;}
+        if(buf.length === 0){return;}
         sendBufs.push({command: schema["characteristic"].command, buffer: buf});
 
         for (var descIndex in chara["descriptors"]) {
@@ -352,108 +270,99 @@ class WSCommand_Ble extends WSCommand {
     if(sendBufs.length > 0){
       sendBufs.push({command:this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
     }
-   for(var index in sendBufs){
-     this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
-   }
- }
-  
-  
-  parseServerCharWrite(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "data" , type: "dataArray" },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
-    }
-  }
-  
-  parseServerCharRead(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
+    for(var index in sendBufs){
+      this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
     }
   }
 
-  parseServerDescWrite(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
-    var schema = [
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "descriptor_uuid" , length: 18, type: "uuid", required:true },
-      { path : "data" , type: "dataArray" },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
-    }
+  peripheralServiceStop(params) {
+    this.sendCommand(this._CommandServerStartPeripheral, new Uint8Array([1]));
   }
-  
-  parseServerDescRead(val) {
-    if (typeof (val) !== "object") {
-      return;
-    }
+
+  peripheralCharacteristicRead(params) {
     var schema = [
-      { path : "service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "descriptor_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.read_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.read_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,val);
-    if(buf){
-      this.sendCommand(this._CommandServerReadDescriptorValue, buf);
-    }
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
+
   }
+
+  peripheralCharacteristicWrite(params) {
+    var schema = [
+    { path : "peripheral.write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+    { path : "peripheral.write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+    { path : "peripheral.write_characteristic.data" , type: "dataArray" },
+  ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
+
+  }
+
+  peripheralDescriptorRead(params) {
+    var schema = [
+      { path : "peripheral.read_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.read_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.read_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandServerReadDescriptorValue, buf);
+  }
+
+  peripheralDescriptorWrite(params) {
+    var schema = [
+      { path : "peripheral.write_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_descriptor.data" , type: "dataArray" },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
+  }
+
+
+
+
 
   parseFromJson(json) {
-
-    try {
-      var ble = json["ble"];
-      if (typeof (ble) !== "object") {
-        return;
+    var module = json["ble"];
+    if (module === undefined) {
+      return;
+    }
+    let schemaData = [
+      {uri : "/request/ble/central/scan_start",             onValid: this.centralScanStart},
+      {uri : "/request/ble/central/scan_stop",              onValid: this.centralScanStop},
+      {uri : "/request/ble/central/connect",                onValid: this.centralConnect},
+      {uri : "/request/ble/central/disconnect",             onValid: this.centralDisconnect},
+      {uri : "/request/ble/central/service_get",            onValid: this.centralServiceGet},
+      {uri : "/request/ble/central/characteristic_get",     onValid: this.centralCharacteristicGet},
+      {uri : "/request/ble/central/characteristic_read",    onValid: this.centralCharacteristicRead},
+      {uri : "/request/ble/central/characteristic_write",   onValid: this.centralCharacteristicWrite},
+      {uri : "/request/ble/central/descriptor_get",         onValid: this.centralDescriptorGet},
+      {uri : "/request/ble/central/descriptor_read",        onValid: this.centralDescriptorRead},
+      {uri : "/request/ble/central/descriptor_write",       onValid: this.centralDescriptorWrite},
+      {uri : "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart},
+      {uri : "/request/ble/peripheral/advertisement_stop",  onValid: this.peripheralAdvertisementStop},
+      {uri : "/request/ble/peripheral/service_start",       onValid: this.peripheralServiceStart},
+      {uri : "/request/ble/peripheral/service_stop",        onValid: this.peripheralServiceStop},
+      {uri : "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
+      {uri : "/request/ble/peripheral/characteristic_write",onValid: this.peripheralCharacteristicWrite},
+      {uri : "/request/ble/peripheral/descriptor_read",     onValid: this.peripheralDescriptorRead},
+      {uri : "/request/ble/peripheral/descriptor_write",    onValid: this.peripheralDescriptorWrite},
+    ];
+    let res = this.validateCommandSchema(schemaData, module, "ble");
+    if(res.valid === 0){
+      if(res.invalidButLike.length > 0) {
+        throw new Error(res.invalidButLike[0].message);
+      }else{
+        throw new WSCommandNotFoundError(`[ble]unknown command`);
       }
-       
-        this.parseScan(ble["scan"]);
-        this.parseConnect(ble["connect"],false);
-        this.parseConnect(ble["disconnect"],true);
-        this.parseServices(ble["get_services"]);
-        this.parseCharacteristics(ble["get_characteristics"]);
-        this.parseWrite(ble["write_characteristic"]);
-        this.parseRead(ble["read_characteristic"]);
-        this.parseDescriptors(ble["get_descriptors"]);
-        this.parseWriteDesc(ble["write_descriptor"]);
-        this.parseReadDesc(ble["read_descriptor"]);
-       
-      
-        this.parseAdvertisement(ble["advertisement"]);
-        this.parsePeripheral(ble["peripheral"]);
-        if(ble["peripheral"]){
-          this.parseServerCharWrite(ble["peripheral"]["write_characteristic"]);
-          this.parseServerCharRead(ble["peripheral"]["read_characteristic"]);
-          this.parseServerDescWrite(ble["peripheral"]["write_descriptor"]);
-          this.parseServerDescRead(ble["peripheral"]["read_descriptor"]);
-        }
-
-    } catch (err) {
-      console.log("Error", err);
     }
   }
 
   notifyFromBinary(objToSend, func, payload) {
-    let funcList = {}
+    let funcList = {};
     funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
     funcList[this._CommandConnect]=this.notifyFromBinaryConnect.bind(this);
     funcList[this._CommandServices]   =this.notifyFromBinaryServices.bind(this);

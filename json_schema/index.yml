@@ -10,11 +10,11 @@
           maximum : 11
           default : null
 
-
-      dataArray256 :
-          id : "dataArray256"
+      dataArray31 :
+          id : "dataArray31"
           type : array
           default : null
+          maxItems : 31
           items :
               type : integer
               minimum : 0
@@ -24,10 +24,11 @@
           id : "dataArray1024"
           type : array
           default : null
+          maxItems : 1024
           items :
               type : integer
               minimum : 0
-              maximum : 1024
+              maximum : 255
 
       dataArray :
           id : "dataArray"
@@ -36,9 +37,24 @@
           items :
               type : integer
               minimum : 0
+              maximum : 255
 
       hexString :
           id : "hexString"
           type : string
           default : null
           "pattern": "^([0-9a-fA-F]+)$"
+
+      uuid :
+          id : "uuid"
+          type : string
+          pattern: "^([-0-9a-fA-F]+)$"   ## "-"は許容
+          minLength: 4
+          maxLength: 36
+
+      deviceAddress :
+          id : "deviceAddress"
+          type : string
+          pattern: "^([0-9a-fA-F]+)$"
+          minLength: 12
+          maxLength: 12

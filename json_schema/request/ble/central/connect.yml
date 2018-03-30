@@ -1,0 +1,15 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central/connect"
+
+
+type: object
+required : [connect]
+properties:
+    connect :
+        type : object
+        required: [address]
+        additionalProperties: false
+        properties:
+            address : {$ref : "/deviceAddress" }
