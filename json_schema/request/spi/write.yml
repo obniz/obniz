@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/spi/write"
+
+type: object
+required : [data, read]
+properties:
+    data : {$ref : "/dataArray32"}
+    read :
+       type: boolean
+       default : true

@@ -4,7 +4,7 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/i2c/init_master"
 
 type: object
-required : [mode, sda, scl, clock]
+required : [mode, sda, scl, clock]  #clk, mosi, mosi are optional
 properties:
     mode :
         type : string
@@ -16,4 +16,4 @@ properties:
     clock:
         type: integer
         minimum : 1
-        maximum : 1000000
+        maximum : 1000000 #1MHz

@@ -12,46 +12,20 @@ class WSCommand_SPI extends WSCommand {
 
   // Commands
 
-  init(module, obj) {
+  initMaster(params, module) {
 
-    var mode;
-    switch(obj.mode) {
-      case "master":
-        mode = 0;
-        break;
-      default:
-        throw new Error("spi: unknown mode");
-        return;
-    }
+    var mode = 0;//master mode
 
-    let clk  = this.isValidIO(obj.clk) ? parseInt(obj.clk)  : null;
-    let mosi = this.isValidIO(obj.mosi) ? parseInt(obj.mosi) : null;
-    let miso = this.isValidIO(obj.miso) ? parseInt(obj.miso) : null;
-    let cs   = this.isValidIO(obj.cs) ? parseInt(obj.cs)   : null;
+    let clk  = params.clk;
+    let mosi = params.mosi;
+    let miso = params.miso;
+    let cs   = params.cs;
 
-    var clock = (typeof obj.clock == "number") ? parseInt(obj.clock): null;
+    var clock = params.clock;
 
-    if (mode === 0) {
-      if (clk === null && mosi === null && miso === null) {
-        throw new Error("spi: master mode require one of clk/mosi/miso");
-        return;
-      }
-      if (!clock) {
-        throw new Error("spi: please provide clock");
-      }
-      if (clock <= 0 || clock > 80*1000*1000)  { // 0~80Mhz
-        throw new Error("spi: clock must be 1 Hz to 80 Mhz");
-        return;
-      }
-    } else {
-      if (clk === null) {
-        throw new Error("spi: slave require clk io");
-        return;
-      }
-      if (cs === null) {
-        throw new Error("spi: slave require cs. please specify io for cs use");
-        return;
-      }
+    if (clk === null && mosi === null && miso === null) {
+      throw new Error("spi: master mode require one of clk/mosi/miso");
+      return;
     }
 
     if (clk  === null) clk  = this.ioNotUsed;
@@ -59,7 +33,7 @@ class WSCommand_SPI extends WSCommand {
     if (miso === null) miso = this.ioNotUsed;
     if (cs === null)   cs   = this.ioNotUsed;
 
-    var buf = new Uint8Array( mode == 0 ? 11 : 12 );
+    var buf = new Uint8Array(11 );
     buf[0]  = module;
     buf[1]  = mode;
     buf[2]  = clk;
@@ -71,55 +45,55 @@ class WSCommand_SPI extends WSCommand {
     buf[8]  = clock >> (2*8);
     buf[9]  = clock >> (1*8);
     buf[10] = clock;
-    if (mode === 1) {
-      buf[11] = cs;
-    }
+    buf[11] = cs;
 
     this.sendCommand(this._CommandInit, buf);
   }
 
-  deinit(module) {
+  deinit(params, module) {
     var buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-  writeread(module, data) {
-    var buf = new Uint8Array(1 + data.length);
-    buf[0] = module;
-    buf.set(data, 1);
-    this.sendCommand(this._CommandWriteRead, buf);
-  }
 
-  write(module, data) {
-    var buf = new Uint8Array(1 + data.length);
+  // writeread(module, data) {
+  //   var buf = new Uint8Array(1 + data.length);
+  //   buf[0] = module;
+  //   buf.set(data, 1);
+  //   this.sendCommand(this._CommandWriteRead, buf);
+  // }
+
+  write(params, module) {
+    var buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
-    buf.set(data, 1);
-    this.sendCommand(this._CommandWrite, buf);
+    buf.set(params.data, 1);
+    if(params.read){
+      this.sendCommand(this._CommandWriteRead, buf);
+    }else{
+      this.sendCommand(this._CommandWrite, buf);
+    }
   }
 
   parseFromJson(json) {
     for (var i=0; i<2;i++) {
       var module = json["spi"+i];
-      if (module === null) {
-        this.deinit(i);
+      if (module === undefined) {
         continue;
       }
-      if (typeof(module) != "object") {
-        continue;
-      }
-      if (typeof module.mode === "string") {
-        this.init(i, module);
-      }
-      if (module.data) {
-        if (module.data.length > 32) {
-          throw new Error("spi: data must be <= 32 byte");
-          return;
+
+      let schemaData = [
+        {uri : "/request/spi/init_master",    onValid: this.initMaster},
+        {uri : "/request/spi/write",          onValid: this.write},
+        {uri : "/request/spi/deinit",         onValid: this.deinit},
+      ];
+      let res = this.validateCommandSchema(schemaData, module, "spi"+i, i);
+
+      if(res.valid === 0){
+        if(res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        }else{
+          throw new WSCommandNotFoundError(`[spi${i}]unknown command`);
         }
-        if (module.read) {
-          this.writeread(i, module.data);
-        } else {
-          this.write(i, module.data);
-        } 
       }
     }
   }

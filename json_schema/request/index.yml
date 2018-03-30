@@ -19,7 +19,7 @@
     ble: {$ref : "/request/ble" }
     switch: {$ref : "/request/switch" }
     display: {$ref : "/request/display" }
-    mesure :  {$ref : "/request/mesure" }
+    measure :  {$ref : "/request/measure" }
     message :  {$ref : "/request/message" }
     logic_analyzer :  {$ref : "/request/logicAnalyzer" }
     system :  {$ref : "/request/system" }

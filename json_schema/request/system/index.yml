@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system"
+
+"anyOf":
+  -  {$ref : "/request/system/wait"}
+  -  {$ref : "/request/system/reset"}
+  -  {$ref : "/request/system/reboot"}
+  -  {$ref : "/request/system/selfCheck"}
+  -  {$ref : "/request/system/keepWorkingAtOffline"}
