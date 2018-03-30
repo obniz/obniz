@@ -9,8 +9,16 @@ class WSCommand_Measurement extends WSCommand {
 
   // Commands
 
-  measureEcho(type, trigerIO, trigerPosNeg, trigerWidthUs, echoIO, responseCount, timeoutUs) {
+  echo(params) {
+    let type = 0;
+    let trigerIO = params.echo.io_pulse;
+    let  trigerPosNeg = params.echo.pulse === "negative" ? false : true;
+    let trigerWidthUs = parseInt(params.echo.pulse_width*1000);
+    let echoIO = params.echo.io_echo;
+    let responseCount = params.echo.measure_edges;
+    let timeoutUs = params.echo.timeout * 1000;
     timeoutUs = parseInt(timeoutUs);
+
     var buf = new Uint8Array(13);
     buf[0]  = 0;
     buf[1]  = trigerIO;
@@ -30,40 +38,22 @@ class WSCommand_Measurement extends WSCommand {
 
   parseFromJson(json) {
     var module = json["measure"];
-    if (!module || typeof(module) !== "object") {
+    if (module === undefined) {
       return;
     }
-    if (module && typeof(module.echo) === "object") {
-      var obj = module.echo;
-      var io_pulse = parseInt(obj.io_pulse)
-      if (this.isValidIO(io_pulse) == false) {
-        throw new Error("invalid io_pulse "+io_pulse)
-        return;
+    let schemaData = [
+      {uri : "/request/measure/echo",    onValid: this.echo},
+    ];
+    let res = this.validateCommandSchema(schemaData, module, "measure");
+
+    if(res.valid === 0){
+      if(res.invalidButLike.length > 0) {
+        throw new Error(res.invalidButLike[0].message);
+      }else{
+        throw new WSCommandNotFoundError(`[measure]unknown command`);
       }
-      var io_echo = parseInt(obj.io_echo);
-      if (this.isValidIO(io_echo) == false) {
-        throw new Error("invalid io_echo "+io_echo)
-        return;
-      }
-      var pulse_width = parseInt(obj.pulse_width * 1000);
-      if (typeof(pulse_width) !== "number" || pulse_width < 1 || pulse_width > 1000000)  {
-        throw new Error("invalid pulse_width must be 1usec~1sec")
-        return;
-      }
-      var measure_edges = parseInt(obj.measure_edges);
-      if (typeof(measure_edges) !== "number" || measure_edges <= 0 || measure_edges > 4)  {
-        throw new Error("invalid measure_edges must be 1~4")
-        return;
-      }
-      var timeout = parseInt(obj.timeout * 1000);
-      if (!timeout) {
-        timeout = parseInt(1000000);
-      }else if (typeof(timeout) !== "number" || timeout < 1 || timeout > 1000000)  {
-        throw new Error("invalid measure_edges must be 1usec~1sec");
-        return;
-      }
-      this.measureEcho( 0, io_pulse, obj.pulse === "negative" ? false : true, pulse_width , io_echo, measure_edges, timeout );
     }
+
   }
   
   notifyFromBinary(objToSend, func, payload) {

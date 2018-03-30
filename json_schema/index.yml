@@ -58,3 +58,11 @@
           pattern: "^([0-9a-fA-F]+)$"
           minLength: 12
           maxLength: 12
+
+      obnizId :
+          id : "obnizId"
+          type : [string, integer]
+          pattern: "^[0-9]{4}-?[0-9]{4}$"   ## "-"は許容
+          minimum: 0
+          maximum: 99999999
+

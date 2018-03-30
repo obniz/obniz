@@ -257,7 +257,8 @@ class WSCommand {
         || schema.type === "integer"
         || schema.type === "boolean"
         || schema.type === "number"
-        || schema.type === "null"){
+        || schema.type === "null"
+        || schema.filter === "pass_all"){
       return json;
 
     }
@@ -274,6 +275,16 @@ class WSCommand {
       let results = {};
       for( let key in schema.properties){
         results[key] = this._filterSchema(schema.properties[key], json[key]  );
+      }
+
+      for(let pattern in schema.patternProperties){
+        let reg = new RegExp(pattern);
+        for(let key in Object.keys(json)){
+          if( reg.test(key) ){
+            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]  );
+          }
+        }
+
       }
       return results;
     }

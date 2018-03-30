@@ -11,7 +11,13 @@ class WSCommand_LogicAnalyzer extends WSCommand {
 
   // Commands
 
-  init(io, intervalUsec, durationUsec, matchValue, matchCount) {
+  init(params) {
+    let io = params.io[0];
+    let intervalUsec = params.interval * 1000;
+    let durationUsec = params.duration * 1000;
+
+    let matchValue = parseInt(params.triger.value);
+    let matchCount = params.triger.samples;
     var buf = new Uint8Array(12);
     buf[0] = 1;
     buf[1] = io;
@@ -28,41 +34,30 @@ class WSCommand_LogicAnalyzer extends WSCommand {
     this.sendCommand(this._CommandInit, buf);
   }
 
-  deinit() {
+  deinit(params) {
     var buf = new Uint8Array(0);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   parseFromJson(json) {
     var module = json["logic_analyzer"];
-    if (module === null) {
-      this.deinit();
+    if (module === undefined) {
       return;
     }
-    if (typeof(module) == "object") {
-      if (typeof(module.io) == "object" && typeof(module.io[0]) == "number" && typeof(module.interval) == "number" && typeof(module.duration == "number")) {
-        var intervalUSec = parseInt(module.interval * 1000);
-        if(isNaN(intervalUSec)) {
-          return;
-        }
-        var duration = parseInt(module.duration * 1000);
-        if(isNaN(duration)) {
-          return;
-        }
-        var trigerLevel = 0;
-        var trigerSamples = 0;
+    let schemaData = [
+      {uri : "/request/logicAnalyzer/init",    onValid: this.init},
+      {uri : "/request/logicAnalyzer/deinit",  onValid: this.deinit},
+    ];
+    let res = this.validateCommandSchema(schemaData, module, "logic_analyzer");
 
-        if (module.triger && typeof module.triger == "object") {
-          let triger = module.triger;
-          trigerLevel = (triger.value) ? 1 : 0;
-          if (typeof(triger.samples) == "number" && triger.samples > 0 && triger.samples <= 0xFF) {
-            trigerSamples = parseInt(triger.samples);
-          }
-        }
-        
-        this.init(module.io[0], intervalUSec, duration, trigerLevel, trigerSamples);
+    if(res.valid === 0){
+      if(res.invalidButLike.length > 0) {
+        throw new Error(res.invalidButLike[0].message);
+      }else{
+        throw new WSCommandNotFoundError(`[logic_analyzer]unknown command`);
       }
     }
+
   }
 
   notifyFromBinary(objToSend, func, payload) {
