@@ -1,0 +1,33 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/display/pin_assign"
+
+type : object
+required : [pin_assign]
+properties : 
+    pin_assign :
+        type : object
+        minProperties : 1
+        patternProperties :
+            "^[0-9]$" : 
+                type : object
+                properties :
+                    module_name :
+                        type : string
+                        maxLength : 4
+                    pin_name :
+                        type : string
+                        maxLength : 9
+
+            "^1[0-1]$" : 
+                type : object
+                properties :
+                    module_name :
+                        type : string
+                        maxLength : 4
+                    pin_name :
+                        type : string
+                        maxLength : 9
+
+

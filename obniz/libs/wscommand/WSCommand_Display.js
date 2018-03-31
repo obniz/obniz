@@ -40,6 +40,16 @@ class WSCommand_Display extends WSCommand {
     this.drawHorizonally(new Uint8Array(params.raw));
   }
   
+  pinName(params) {
+    console.warn(params);
+    for (var i = 0; i < 12; i++) {
+      if (typeof (params.pin_assign[i]) === "object") {
+        this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
+      }
+    }
+
+  }
+  
   drawVertically(buf) {
     this.sendCommand(this._CommandDrawCampusVerticalBytes, buf);
   }
@@ -52,6 +62,7 @@ class WSCommand_Display extends WSCommand {
     var buf = new Uint8Array([!val])
     this.sendCommand(this._CommandDrawIOState, buf);
   }
+  
   
   setPinName(no, moduleName, pinName ) {
     var str = moduleName.slice(0,4) + " "+ pinName;
@@ -80,10 +91,13 @@ class WSCommand_Display extends WSCommand {
       return;
     }
 
+    console.warn(module);
     let schemaData = [
       {uri : "/request/display/text",  onValid: this.text},
       {uri : "/request/display/clear", onValid: this.clear},
-      {uri : "/request/display/raw", onValid: this.raw}
+      {uri : "/request/display/raw", onValid: this.raw},
+      {uri : "/request/display/pin_assign", onValid: this.pinName},
+      {uri : "/request/display/qr"} // nothing to do 
     ];
     let res = this.validateCommandSchema(schemaData, module, "display" );
 
@@ -94,29 +108,5 @@ class WSCommand_Display extends WSCommand {
         throw new WSCommandNotFoundError(`[display]unknown command`);
       }
     }
-    //
-    // if (module.clear) {
-    //   this.clear();
-    // }
-    // if (typeof module.text == "string") {
-    //   this.printText(module.text);
-    // } else if(module.text) {
-    //   throw new Error("display: text must be string");
-    // }
-    // if (module.raw) {
-    //   if (module.raw.length === 1024) {
-    //     this.drawHorizonally(new Uint8Array(module.raw));
-    //   } else {
-    //     throw new Error("raw should 1024 byte");
-    //   }
-    // }
-    //
-    // if (typeof module.pin_assign === "object") {
-    //   for(var i=0;i<12;i++){
-    //     if(typeof (module.pin_assign[i]) === "object"){
-    //       this.setPinName(i, module.pin_assign[i].module_name ||"?",module.pin_assign[i].pin_name ||"?" );
-    //     }
-    //   }
-    // }
   }
 }

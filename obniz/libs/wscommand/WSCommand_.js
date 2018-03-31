@@ -190,7 +190,9 @@ class WSCommand {
       res.results.push(errors);
       if(errors.valid){
         res.valid++;
-        oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
+        if(oneRow.onValid){
+          oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
+        }
       }else{
         res.invalid++;
         let message =  this.onlyTypeErrorMessage(errors,rootPath);
