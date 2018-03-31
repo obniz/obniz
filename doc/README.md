@@ -1,16 +1,17 @@
 # obniz.js: sdk for javascript
-Control obniz from javascript. browser/nodejs.
+Control obniz from javascript. obniz.js works with browser and nodejs.
 
-## install
+This is a sdk for [obniz api](https://obniz.io/doc/about_obniz_api).
 
-### browser
+## Installation
 
-Include index.js
+### Browser
+add this line to your html
 ```html
   <script src="https://unpkg.com/obniz/obniz.js"></script>
 ```
-### nodejs
-Install obniz
+### Nodejs
+Install obniz via npm
 ```shell
   npm install obniz
 ```
@@ -19,7 +20,7 @@ and import it on js file.
   const Obniz = require('obniz');
 ```
 
-## connect
+## Connect
 To use obniz, instantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
 ```javascript
   var obniz = new Obniz("0000-0000");
@@ -99,7 +100,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
   }
 ```
 
-## browser integrates hardware
+## Example: browser integrates hardware
 Easy to integrate UI on html and hardware
 ```html
 <input id="slider" type="range"  min="0" max="180" />
@@ -116,7 +117,7 @@ obniz.onconnect = async function () {
 </script>
 ```
 
-## integrate web services
+## Example: integrate web services
 Easy to integrate web servies like Dropbox, Twitter.
 ```javascript
 // save data from obniz to dropbox
@@ -132,7 +133,7 @@ obniz.onconnect = async function () {
 }
 ```
 
-## integrate two or more obniz
+## Example: integrate two or more obniz
 Not only web to obniz. obniz to obniz is easy too.
 ```javascript
 // control servomotor from potention meter which connected to another obniz.

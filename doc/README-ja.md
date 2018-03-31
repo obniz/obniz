@@ -1,25 +1,24 @@
 # obniz.js sdk for javascript
-obnizをbrowser/nodejsのjavascriptから。
+[obniz](https://obniz.io/) を[obniz api](https://obniz.io/doc/about_obniz_api)を使いjavascriptから操作するためのsdkです。
 
-## install
+## Installation
 
-### browser
-
-index.jsを読み込みます。
+### Browser
+次のscriptタグをhtmlに組み込むだけです
 ```html
   <script src="https://unpkg.com/obniz/obniz.js"></script>
 ```
-### nodejs
-Install obniz
+### Nodejs
+npmでインストールします。
 ```shell
   npm install obniz
 ```
-そしてjsの中でimportして下さい。
+そしてjsの中でrequireして下さい。
 ```javascript
   const Obniz = require('obniz');
 ```
 
-## connect
+## Connect
 obnizをobniz idを使ってインスタンス化します。
 そして接続が完了した時に呼ばれる関数をセットします。
 ```javascript
@@ -98,7 +97,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
   }
 ```
 
-## browser integrates hardware
+## Example: browser integrates hardware
 HTML上のUIとハードウェアの連携も簡単です。
 ```html
 <input id="slider" type="range"  min="0" max="180" />
@@ -115,7 +114,7 @@ obniz.onconnect = async function () {
 </script>
 ```
 
-## integrate web services
+## Example: integrate web services
 DropboxやTwitterなどのwebサービスとの連携もとても簡単に行なえます。
 ```javascript
 // save data from obniz to dropbox
@@ -131,7 +130,7 @@ obniz.onconnect = async function () {
 }
 ```
 
-## integrate two or more obniz
+## Example: integrate two or more obniz
 web-obnizだけでなくobniz-obnizの連携も簡単に行なえます。  
 obnizにつながれたサーボモーターを別のobnizにつながれたつまみから操作してみます。
 ```javascript
