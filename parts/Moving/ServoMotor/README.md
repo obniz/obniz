@@ -21,11 +21,13 @@ If you connect signal,vcc and gnd to Obniz 0, 1, 2 respectively, write a code as
 ![](./wired.png)
 
 ```Javascript
+// Javascript Example
 var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
 ```
 
 vcc and gnd is optional. When you connect vcc and gnd to other way, then just specify signal.
 ```Javascript
+// Javascript Example
 var servo = obniz.wired("ServoMotor", {signal:0});
 ```
 
@@ -34,6 +36,7 @@ Change the motor angle.
 angle : 0 - 180 degree
 ### Example
 ```Javascript
+// Javascript Example
 var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
 
 servo.angle(90.0); // half position
@@ -46,6 +49,7 @@ When you call wired function, it automatically turn on.
 
 ### Example
 ```Javascript
+// Javascript Example
 var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
 
 servo.position(90.0); // half position
@@ -59,6 +63,7 @@ When you call wired function, it automatically turn on.
 
 ### Example
 ```Javascript
+// Javascript Example
 var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
 
 servo.position(90.0); // half position

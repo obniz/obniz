@@ -8,6 +8,7 @@ Obnizに温度センサをつなぎます。
 ADDRピンをプルアップしている場合は0x45,プルダウンしている場合は0x44です。
 秋月電子のモジュールキット(K-12125)を使用している場合のデフォルトは0x45です。
 ```javascript
+// Javascript Example
 var sensor = obniz.wired("SHT31", {vcc : 0, sda:1, scl:2, adr:3, gnd:4, addressmode:5});
 ```
 ## [await] getTempWait()
@@ -16,6 +17,7 @@ var sensor = obniz.wired("SHT31", {vcc : 0, sda:1, scl:2, adr:3, gnd:4, addressm
 ## [await] getHumdWait()
 現在の湿度を計測して返します。単位は%です。
 ```javascript
+// Javascript Example
 var sensor = obniz.wired("SHT31", {vcc : 0, sda:1, scl:2, adr:3, gnd:4, addressmode:5});
 var temp = await sensor.getTempWait();
 var humd = await sensor.getHumdWait();

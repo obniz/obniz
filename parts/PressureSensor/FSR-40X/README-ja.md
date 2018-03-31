@@ -7,6 +7,7 @@ pin0,pin1を圧力センサへ接続してください。
 
 ![](./wired.png)
 ```javascript
+// Javascript Example
 var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
 ```
 
@@ -15,6 +16,7 @@ var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
 圧力は0~49の50段階で取得できます。
 
 ```javascript
+// Javascript Example
 var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
 pressure.onchange =function(press){
   console.log(press)

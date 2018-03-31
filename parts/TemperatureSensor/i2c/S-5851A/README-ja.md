@@ -18,6 +18,7 @@ F:0x4F
 
 
 ```javascript
+// Javascript Example
 var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5, addressmode:"A"});
 ```
 ## [await] getTempWait()
@@ -26,6 +27,7 @@ var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5
 ## [await] getHumdWait()
 現在の湿度を計測して返します。単位は%です。
 ```javascript
+// Javascript Example
 var sensor = obniz.wired("S5851A", {vcc:0, gnd:2, sda:3, scl:1, addr0:4, addr1:5, addressmode:"A"});
 var temp = await sensor.getTempWait();
 var humd = await sensor.getHumdWait();

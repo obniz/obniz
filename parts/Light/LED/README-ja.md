@@ -8,13 +8,19 @@ LEDは電流を流すことで光る半導体です。電球よりもずっと�
 
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1}); // io0 is connected to anode, io1 is cathode
+
+led.on();
 ```
 
 もしLEDのプラスだけをObnizにつなぎ、マイナスはどこかのマイナスにつながっている場合は１ピンだけの指定でOKです
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("LED", {anode:0}); // io0 is anode. cathode is connected obniz GND other way.
+
+led.on();
 ```
 ## on()
 LEDを点灯させます。
@@ -22,6 +28,7 @@ LEDを点灯させます。
 
 ### Example
 ```Javascript
+// Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1});
 
 led.on();
@@ -34,6 +41,7 @@ LEDを消灯させます
 
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1});
 
 led.off();
@@ -42,6 +50,7 @@ led.off();
 LEDを点滅させます。interval_msで指定した場合はその時間で点滅します。
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1});
 
 led.blink(); // 100msec
@@ -50,6 +59,7 @@ led.blink(); // 100msec
 LEDの点滅をやめます。LEDは最後の状態で止まります。
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1});
 
 led.blink();

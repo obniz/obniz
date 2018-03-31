@@ -5,12 +5,14 @@
 
 ![photo of wired](./wired.png)
 ```Javascript
+// Javascript Example
 wired(obniz, {signal:0, gnd:1})
 ```
 ボタンにある２つのピンをObnizにつなぎます。プラスとマイナスはありません。例えば片方をObnizの0番に。もう片方を1番につないだ場合は以下のようにプログラム上でwireします
 
 
 ```Javascript
+// Javascript Example
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 ```
 
@@ -18,6 +20,7 @@ var button = obniz.wired("Button",  {signal:0, gnd:1});
 ボタンが押された時、離された時にcallback関数を呼び出します。
 
 ```Javascript
+// Javascript Example
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 button.onchange = function(pressed){
   console.log("pressed:" + pressed)
@@ -27,6 +30,7 @@ button.onchange = function(pressed){
 ## [async] isPressedWait
 ボタンが押されているかを確認します。
 ```Javascript
+// Javascript Example
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 var pressed = await button.isPressedWait();
 console.log("Pressed = " + pressed);

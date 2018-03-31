@@ -12,6 +12,7 @@ Temperature sensor LM61BIZ/LM61CIZ
 
 ## wired(obniz, {vcc, gnd, output})
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("LM61", { gnd:0 , output:1, vcc:2});
 ```
 
@@ -20,6 +21,7 @@ callback function for temperature change.
 Unit of temp is Celsius
 
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("LM61",   { gnd:0 , output:1, vcc:2});
 tempsens.onchange = function(temp){
 console.log(temp)

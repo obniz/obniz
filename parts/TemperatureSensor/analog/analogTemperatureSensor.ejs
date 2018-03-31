@@ -18,6 +18,7 @@ if (pins.vcc === undefined) {
 
 ## wired(obniz, {vcc, gnd, output})
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("<%= partname %>", { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
 ```
 
@@ -26,6 +27,7 @@ callback function for temperature change.
 Unit of temp is Celsius
 
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("<%= partname %>",   { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
 tempsens.onchange = function(temp){
 console.log(temp)

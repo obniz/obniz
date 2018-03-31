@@ -20,6 +20,7 @@ if (pins.vcc === undefined) {
 ## wired(obniz, {vcc, output, gnd})
 Obnizに温度センサをつなぎます。
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("<%= partname %>",  { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
 ```
 
@@ -27,6 +28,7 @@ var tempsens = obniz.wired("<%= partname %>",  { gnd:<%= pins.gnd %> , output:<%
 温度センサの値に変化があった場合にcallback関数を呼び出します。
 温度は摂氏で返されます。
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("<%= partname %>",  { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
 tempsens.onchange = function(temp){
   console.log(temp);

@@ -8,6 +8,7 @@ common_type is LED common type : anode_common or cathode_common
 ![](./wired.png)
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("FullColorLED", {r: 3, g:0, b:1, common:2, commonType:'anode_common'}); 
 ```
 
@@ -15,6 +16,7 @@ var led = obniz.wired("FullColorLED", {r: 3, g:0, b:1, common:2, commonType:'ano
 change color.
 When you chaining LED, this will change only top of leds.
 ```Javascript
+// Javascript Example
 var led = obniz.wired("FullColorLED", {r: 3, g:0, b:1,  common:2, commonType:'anode_common'}); 
 led.rgb(0xFF, 255, 0); // Yellow
 ```
@@ -27,6 +29,7 @@ hue : 0 ~ 360
 saturation : 0 ~ 1
 value : 0 ~ 1
 ```Javascript
+// Javascript Example
 var led = obniz.wired("FullColorLED", {r: 3, g:0, b:1,  common:2, commonType:'anode_common'}); 
 led.hsv(180, 0.5, 1);
 ```
@@ -37,6 +40,7 @@ led.hsv(180, 0.5, 1);
 Auto gradate LED.
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("FullColorLED",{r: 3, g:0, b:1,  common:2, commonType:'anode_common'}); 
 led.gradation(1000); // 1000 msec loop
 ```
@@ -45,6 +49,7 @@ led.gradation(1000); // 1000 msec loop
 Stop gradate LED.
 
 ```Javascript
+// Javascript Example
 var led = obniz.wired("FullColorLED", {r: 3, g:0, b:1, common:2, commonType:'anode_common'}); 
 led.gradation(1000); // 1000 msec loop
 

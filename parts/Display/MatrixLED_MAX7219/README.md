@@ -9,7 +9,7 @@ Dot matrix LED. driver: MAX7219.
 
 
 ```Javascript
-
+// Javascript Example
 // initialize
 const matrix = obniz.wired("MatrixLED_MAX7219", {vcc:0, gnd:1, din:2, cs:3, clk:4});
 matrix.init(8*4, 8);
@@ -38,6 +38,7 @@ matrix.draw(ctx);
 ![](./wired.png)
 
 ```Javascript
+// Javascript Example
 const matrix = obniz.wired("MatrixLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
 ```
 
@@ -45,6 +46,7 @@ const matrix = obniz.wired("MatrixLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc
 initialize module.
 if one module has 8*8 led and two modules are connected then
 ```Javascript
+// Javascript Example
 const matrix = obniz.wired("MatrixLED_MAX7219",  { clk:0, cs:1, din:2, gnd:3, vcc:4});
 matrix.init(8*2, 8);
 ```
@@ -53,6 +55,7 @@ matrix.init(8*2, 8);
 value: 0 to 15;
 
 ```Javascript
+// Javascript Example
 const matrix = obniz.wired("MatrixLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
 matrix.init(8*2, 8);
 matrix.brightness(7);
@@ -66,6 +69,7 @@ obniz.util.createCanvasContext() will create Canvas DOM to body.
 See more detail on obniz util document's.
 
 ```Javascript
+// Javascript Example
 const matrix = obniz.wired("MatrixLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
 matrix.init(8*4, 8);
 matrix.brightness(7);
@@ -84,6 +88,7 @@ matrix.draw(ctx);
 clear all.
 
 ```Javascript
+// Javascript Example
 const matrix = obniz.wired("MatrixLED_MAX7219",  { clk:0, cs:1, din:2, gnd:3, vcc:4});
 matrix.init(8*4, 8);
 matrix.clear();
@@ -94,6 +99,7 @@ test all unit.
 It will show last image.
 
 ```Javascript
+// Javascript Example
 const matrix = obniz.wired("MatrixLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
 matrix.init(8*4, 8);
 matrix.test();

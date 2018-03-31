@@ -9,6 +9,7 @@ This 7SegmentLEDArray will drive all 7 segments automatically.
 Dynamic Lightning.
 
 ```javascript
+// Javascript Example
 var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
 var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
@@ -21,6 +22,7 @@ segArray.print(1234);
 ## print(number)
 
 ```javascript
+// Javascript Example
 var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
 var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
@@ -33,6 +35,7 @@ segArray.print(1234);
 ## off()
 turn display off
 ```javascript
+// Javascript Example
 var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
 var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
@@ -50,6 +53,7 @@ segArray.on();
 ## on()
 turn display off
 ```javascript
+// Javascript Example
 var seg0 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:8, commonType:"cathode"});
 var seg1 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:9, commonType:"cathode"});
 var seg2 = obniz.wired("7SegmentLED", {a:2, b: 0, c: 3, d:5, e:6, f:4, g:1, dp:null, common:10, commonType:"cathode"});
