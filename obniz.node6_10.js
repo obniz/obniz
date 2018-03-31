@@ -4025,7 +4025,6 @@ class WSCommand_Display extends WSCommand {
   }
 
   pinName(params) {
-    console.warn(params);
     for (var i = 0; i < 12; i++) {
       if (typeof params.pin_assign[i] === "object") {
         this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
