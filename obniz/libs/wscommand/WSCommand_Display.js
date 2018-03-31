@@ -90,7 +90,6 @@ class WSCommand_Display extends WSCommand {
       return;
     }
 
-    console.warn(module);
     let schemaData = [
       {uri : "/request/display/text",  onValid: this.text},
       {uri : "/request/display/clear", onValid: this.clear},
