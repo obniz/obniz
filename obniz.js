@@ -344,6 +344,7 @@ class Obniz {
         }
       } catch(e) {
         this.error(e);
+        return; /* never send when parsing failed */
       }
     }
     /* queue sending */
