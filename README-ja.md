@@ -1,35 +1,85 @@
 # obniz.js: sdk for javascript
-Control obniz from javascript. obniz.js works with browser and nodejs.
 
-This is a sdk for [obniz api](https://obniz.io/doc/about_obniz_api).
+[![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
+[![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
-## Installation
 
-### Browser
-add this line to your html
+[obniz](https://obniz.io/) を[obniz api](https://obniz.io/doc/about_obniz_api)を使いjavascriptから操作するためのsdkです。
+
+## 使い方
+
+```html
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://unpkg.com/obniz/obniz.js"></script>
+</head>
+<body>
+
+<input id="text">
+<button id="send">send</button>
+
+<script>
+  var obniz = new Obniz("0000-0000");
+  obniz.onconnect = async function () {
+    // embed parts
+    obniz.display.print("hello!");
+    obniz.switch.onchange = function(state) {
+      $('body').css({
+        "background-color" : (state == "push") ? "#F00" : "#FFF"
+        });
+    }
+
+    // parts library
+    var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
+    servo.angle(90);
+    
+    // peripherals
+    var uart = obniz.getFreeUart();
+    uart.start({tx: 5, rx: 6, baud:9600});  
+    
+    $('#send').click(function () {
+      uart.send($("#text").val());
+    });
+
+    obniz.io7.drive("5v")
+    obniz.io7.output(true)
+    obniz.io8.pull("3v");
+    obniz.io8.drive("open-drain");
+    obniz.io8.output(false);
+  }
+</script>
+</body>
+</html>
+```
+
+## インストール
+
+### ブラウザ
+次のscriptタグをhtmlに組み込むだけです
 ```html
   <script src="https://unpkg.com/obniz/obniz.js"></script>
 ```
 ### Nodejs
-Install obniz via npm
+npmでインストールします。
 ```shell
   npm install obniz
 ```
-and import it on js file.
+そしてjsの中でrequireして下さい。
 ```javascript
   const Obniz = require('obniz');
 ```
 
-## Connect
-To use obniz, instantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
+## 接続
+obnizをobniz idを使ってインスタンス化します。
+そして接続が完了した時に呼ばれる関数をセットします。
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
 
   }
 ```
-
-You are able to use everything on obniz after connect.
+接続完了後にobnizやobnizにつながれた部品を扱えます。
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -41,7 +91,7 @@ You are able to use everything on obniz after connect.
     }
   }
 ```
-and it's io peripherals too
+IOペリフェラルも利用可能です。詳しくはそれぞれのペリフェラルドキュメントを見てください。
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -49,7 +99,7 @@ and it's io peripherals too
     obniz.io0.output(true)
     obniz.io1.pull("3v");
     obniz.io1.drive("open-drain");
-    obniz.io1.output(false);
+    obniz.io1.output(true);
     obniz.io2.drive("3v");
     obniz.io2.output(true);
 
@@ -71,15 +121,14 @@ and it's io peripherals too
   }
 ```
 
-## Parts library
-parts library is embed in obniz.js.
-All parts and it's details can be seen at
+## パーツライブラリ
+パーツライブラリはobniz.jsに含まれています。ドキュメントはこちらで
 
-[obniz Parts Library](https://obniz.io/sdk/parts/)
+[obniz Parts Library](https://obniz.io/sdk/parts)
 
-To use connected parts, instantiate parts in onconnect callback function. And use it. Function list is on also [obniz Parts Library](https://obniz.io/sdk/parts/).
+obnizにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.io/sdk/parts/) で確認できます。
 
-For example, LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
+例えば LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -101,7 +150,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
 ```
 
 ## Example: browser integrates hardware
-Easy to integrate UI on html and hardware
+HTML上のUIとハードウェアの連携も簡単です。
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
@@ -118,7 +167,7 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate web services
-Easy to integrate web servies like Dropbox, Twitter.
+DropboxやTwitterなどのwebサービスとの連携もとても簡単に行なえます。
 ```javascript
 // save data from obniz to dropbox
 var obniz = new Obniz("0000-0000");
@@ -134,16 +183,17 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate two or more obniz
-Not only web to obniz. obniz to obniz is easy too.
+web-obnizだけでなくobniz-obnizの連携も簡単に行なえます。  
+obnizにつながれたサーボモーターを別のobnizにつながれたつまみから操作してみます。
 ```javascript
 // control servomotor from potention meter which connected to another obniz.
 var obnizA = new Obniz("0000-0000");
 obnizA.onconnect = async function () {
   var obnizB = new Obniz("0000-0001");
   obnizB.onconnect = async function(){
-    var meter = obnizA.wired("Potentiometer", 0, 1, 2);
-    var servo = obnizB.wired("ServoMotor", 0, 1, 2);
-    meter.onchange = function(position) {
+    var meter = obnizA.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
+    var servo = obnizB.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
+    meter.onchange =function(position) {
       servo.angle(position * 180);
     }; 
   }
