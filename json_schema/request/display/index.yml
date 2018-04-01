@@ -7,3 +7,4 @@ id: "/request/display"
   -  {$ref : "/request/display/clear"}
   -  {$ref : "/request/display/qr"}
   -  {$ref : "/request/display/raw"}
+  -  {$ref : "/request/display/pin_assign"}

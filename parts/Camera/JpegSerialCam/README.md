@@ -2,7 +2,7 @@
 JpegCamera PTC06
 
 ```Javascript
-// Example
+// Javascript Example
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startwait();
 var imagedata = await cam.takewait();
@@ -13,6 +13,7 @@ connect PowerSupply and UART.
 cam_tx measn transmit from camera.
 
 ```Javascript
+// Javascript Example
 const cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 ```
 
@@ -22,10 +23,14 @@ It takes around 2.5 second.
 
 Default Baudrate = 38400
 ```Javascript
+// Javascript Example
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startwait(); // baud = 38400
 ```
 You can specify baudrate
 ```Javascript
+// Javascript Example
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startwait({baud: 115200});
 ```
 
@@ -40,6 +45,8 @@ This configration consists even after power off.
 are available.
 data size depends on what you take.
 ```Javascript
+// Javascript Example
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startwait({baud: 115200});
 await cam.setResolusionWait("640*480");
 ```
@@ -58,6 +65,8 @@ are avaiable.
 High-speed is better. But, if the Wifi network speed is slow, then obniz will lost the data when high-speed.
 
 ```Javascript
+// Javascript Example
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startwait({baud: 38400});
 await cam.setBaudWait(115200);
 await cam.takewait(); // baud is already changed to 115200.
@@ -67,6 +76,8 @@ await cam.takewait(); // baud is already changed to 115200.
 take a photo and return a byte array.
 
 ```Javascript
+// Javascript Example
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startwait();
 var imagedata = await cam.takewait();
 ```
@@ -76,6 +87,8 @@ convert bytearray to base64 string.
 It is useful when you want to print image to image tag
 
 ```Javascript
+// Javascript Example
+var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startwait();
 const imagedata = await cam.takewait();
 document.getElementById("ItemPreview").src = "data:image/png;base64," + cam.arrayToBase64(imagedata);

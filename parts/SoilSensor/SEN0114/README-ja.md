@@ -10,6 +10,7 @@
 Obnizに土壌湿度センサをつなぎます。
 0,1,2はそれぞれ温度センサのセンサ出力,電源,GNDへ接続してください。
 ```javascript
+// Javascript Example
 var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
 ```
 
@@ -17,6 +18,7 @@ var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
 土壌湿度センサの値に変化があった場合にcallback関数を呼び出します。
 
 ```javascript
+// Javascript Example
 var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
 sensor.onchange = function(humidity){
   console.log(humidity)
@@ -25,6 +27,7 @@ sensor.onchange = function(humidity){
 ## [await] getHumidityWait()
 土壌湿度センサの値を計測して返します。
 ```javascript
+// Javascript Example
 var sensor = obniz.wired("SEN0114",  {vcc:0, output:1, gnd:2});
 var humid = await sensor.getHumidityWait();
 console.log('Humidity Level:' + humid);

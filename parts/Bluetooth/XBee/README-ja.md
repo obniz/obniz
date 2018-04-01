@@ -10,10 +10,10 @@ XBeeはVCCとGNDが必要なので，それは別で用意する必要があり�
 この画像のように配線したのであれば，下のように書きます．
 ![photo of wired XBee](./xbee.png)
 ```javascript
+// Javascript Example
 obniz.io11.output(true);
 obniz.io8.output(false);
-   
-obniz.wired("XBee", {tx:9,rx:10});
+var xbee = obniz.wired("XBee", {tx:9,rx:10});
 ```
 
 
@@ -21,6 +21,10 @@ obniz.wired("XBee", {tx:9,rx:10});
 
 XBeeを設定します．設定に３秒程度かかるため，"await" をつけて使用して下さい．
 ```javascript
+// Javascript Example
+obniz.io11.output(true);
+obniz.io8.output(false);
+var xbee = obniz.wired("XBee", {tx:9,rx:10});
 await xbee.configWait({
    	"destination_address" : "52",
    	"source_address" : "51",
@@ -62,7 +66,10 @@ dataで送れるものは
 もし設定が完了していない段階で呼ばれた場合，エラーになります.
 
 ```javascript
-// Example
+// Javascript Example
+obniz.io11.output(true);
+obniz.io8.output(false);
+var xbee = obniz.wired("XBee", {tx:9,rx:10});
 xbee.send("Hi");
 xbee.send(0x11);
 xbee.send([0x11, 0x45, 0x44]);
@@ -76,6 +83,10 @@ xbee.send({success: true});
 第二引数のtextは受信したarrayをtextとして変換したものです。
 
 ```javascript
+// Javascript Example
+obniz.io11.output(true);
+obniz.io8.output(false);
+var xbee = obniz.wired("XBee", {tx:9,rx:10});
 xbee.onreceive = function(data, text) {
     console.log("recieved : " + text);
 }

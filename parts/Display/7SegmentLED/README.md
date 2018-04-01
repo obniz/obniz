@@ -10,6 +10,7 @@ commonType must be "anode"/"cathode". default is "cathode".
 ![photo of wired](./wired.png)
 
 ```javascript
+// Javascript Example
 var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 seg.print(7);
 ```
@@ -18,6 +19,7 @@ seg.print(7);
 io can be null If you don't need to use. like dp.
 
 ```javascript
+// Javascript Example
 var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:null, common:6, commonType:"cathode"});
 seg.print(7);
 ```
@@ -29,6 +31,7 @@ print a number.
 .print(89) => 9
 
 ```javascript
+// Javascript Example
 var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
@@ -40,6 +43,7 @@ for(var i=0; i<10; i++){
 ## printRaw(number)
 control each led directly.
 ```javascript
+// Javascript Example
 var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 seg.print_raw(0x77)
 ```
@@ -47,6 +51,7 @@ seg.print_raw(0x77)
 ## off()
 turn display off
 ```javascript
+// Javascript Example
 var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
@@ -59,6 +64,7 @@ seg.off();
 ## on()
 turn display on
 ```javascript
+// Javascript Example
 var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 seg.print(7);
@@ -73,6 +79,7 @@ while(true){
 ## dpShow(show)
 turn on/off dp
 ```javascript
+// Javascript Example
 var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
 
 seg.print(7);

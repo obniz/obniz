@@ -1,25 +1,76 @@
-# obniz.js sdk for javascript
-obnizをbrowser/nodejsのjavascriptから。
+# obniz.js: sdk for javascript
 
-## install
+[![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
+[![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
-### browser
 
-index.jsを読み込みます。
+[obniz](https://obniz.io/) を[obniz api](https://obniz.io/doc/about_obniz_api)を使いjavascriptから操作するためのsdkです。
+
+## 使い方
+
+```html
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://unpkg.com/obniz/obniz.js"></script>
+</head>
+<body>
+
+<input id="text">
+<button id="send">send</button>
+
+<script>
+  var obniz = new Obniz("0000-0000");
+  obniz.onconnect = async function () {
+    // embed parts
+    obniz.display.print("hello!");
+    obniz.switch.onchange = function(state) {
+      $('body').css({
+        "background-color" : (state == "push") ? "#F00" : "#FFF"
+        });
+    }
+
+    // parts library
+    var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
+    servo.angle(90);
+    
+    // peripherals
+    var uart = obniz.getFreeUart();
+    uart.start({tx: 5, rx: 6, baud:9600});  
+    
+    $('#send').click(function () {
+      uart.send($("#text").val());
+    });
+
+    obniz.io7.drive("5v")
+    obniz.io7.output(true)
+    obniz.io8.pull("3v");
+    obniz.io8.drive("open-drain");
+    obniz.io8.output(false);
+  }
+</script>
+</body>
+</html>
+```
+
+## インストール
+
+### ブラウザ
+次のscriptタグをhtmlに組み込むだけです
 ```html
   <script src="https://unpkg.com/obniz/obniz.js"></script>
 ```
-### nodejs
-Install obniz
+### Nodejs
+npmでインストールします。
 ```shell
   npm install obniz
 ```
-そしてjsの中でimportして下さい。
+そしてjsの中でrequireして下さい。
 ```javascript
   const Obniz = require('obniz');
 ```
 
-## connect
+## 接続
 obnizをobniz idを使ってインスタンス化します。
 そして接続が完了した時に呼ばれる関数をセットします。
 ```javascript
@@ -70,7 +121,7 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
   }
 ```
 
-## Parts library
+## パーツライブラリ
 パーツライブラリはobniz.jsに含まれています。ドキュメントはこちらで
 
 [obniz Parts Library](https://obniz.io/sdk/parts)
@@ -98,7 +149,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
   }
 ```
 
-## browser integrates hardware
+## Example: browser integrates hardware
 HTML上のUIとハードウェアの連携も簡単です。
 ```html
 <input id="slider" type="range"  min="0" max="180" />
@@ -115,7 +166,7 @@ obniz.onconnect = async function () {
 </script>
 ```
 
-## integrate web services
+## Example: integrate web services
 DropboxやTwitterなどのwebサービスとの連携もとても簡単に行なえます。
 ```javascript
 // save data from obniz to dropbox
@@ -131,7 +182,7 @@ obniz.onconnect = async function () {
 }
 ```
 
-## integrate two or more obniz
+## Example: integrate two or more obniz
 web-obnizだけでなくobniz-obnizの連携も簡単に行なえます。  
 obnizにつながれたサーボモーターを別のobnizにつながれたつまみから操作してみます。
 ```javascript

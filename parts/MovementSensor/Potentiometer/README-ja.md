@@ -14,11 +14,13 @@
 ![](./c_pm.jpg)
 
 ```Javascript
+// Javascript Example
 var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
 ```
 ## onchange 
 回転を監視し、回転された時にcallback関数を呼び出します。回転に合わせて0.0~1.0の値が返ります。例えばちょうど真ん中であれば0.5です。
 ```Javascript
+// Javascript Example
 var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
 meter.onchange = function(position) {
   console.log("position: "+position);

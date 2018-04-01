@@ -6,44 +6,48 @@ SPP and HID profile can be used.
 RN42 require 3.3v supply. You should supply stable 3.3v to RN42.
 
 ```javascript
-  // Example
-  var rn42 = obniz.wired("RN42", {tx: 1, rx:2}); // io1 is tx to RN42, io2 is rx from RN42
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2}); // io1 is tx to RN42, io2 is rx from RN42
 
-  rn42.config({
-    display_name: "obniz",
-    master_slave: "slave",
-    profile: "HID",
-    auth: "just-work",
-    power: 16,
-  })
-  
-  rn42.onreceive = function(data, text) {
-    console.log(text);
-  }
-  $("#send").click(function(){
-    rn42.send("Hello")
-  })
+rn42.config({
+  display_name: "obniz",
+  master_slave: "slave",
+  profile: "HID",
+  auth: "just-work",
+  power: 16,
+})
+
+rn42.onreceive = function(data, text) {
+  console.log(text);
+}
+$("#send").click(function(){
+  rn42.send("Hello")
+})
 ```
 
 ## send(data)
 send data via UART to RN42.
 ```javascript
-  var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
-  rn42.send("Hello")
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
+rn42.send("Hello")
 ```
 
 ## onreceive(data, text)
 received data from RN42 via UART. This callback has same arguments with uart.onreceive()
 ```javascript
-  var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
-  rn42.onreceive = function(data, text) {
-    console.log(text);
-  }
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
+rn42.onreceive = function(data, text) {
+  console.log(text);
+}
 ```
 
 ## config(json)
 set configration to rn42 and reboot it.
 ```javascript
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
 rn42.config({
   display_name: "obniz",
   master_slave: "slave",
@@ -104,7 +108,8 @@ HID flag. switching keyboard/mouse etc.
 ## enterCommandMode()
 force rn42 to command mode.
 ```javascript
-//Example
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
 rn42.enterCommandMode();
 rn42.sendCommand("SM,0");
 ```
@@ -112,7 +117,8 @@ rn42.sendCommand("SM,0");
 ## sendCommand(data)
 send a text with "\n" tail and freezing 100msec after command sent.
 ```javascript
-//Example
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
 rn42.enterCommandMode();
 rn42.sendCommand("SM,0");
 ```
@@ -120,7 +126,8 @@ rn42.sendCommand("SM,0");
 ## config_get_setting()
 send get basic setting from rn42
 ```javascript
-//Example
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
 rn42.onreceive = function(data, text) {
   console.log(text);
 }
@@ -131,7 +138,8 @@ rn42.config_get_setting();
 ## config_get_extendSetting()
 send get basic setting from rn42
 ```javascript
-//Example
+// Javascript Example
+var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
 rn42.onreceive = function(data, text) {
   console.log(text);
 }

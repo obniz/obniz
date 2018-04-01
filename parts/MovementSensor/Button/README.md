@@ -7,11 +7,13 @@ Button turn on/off electricity. Just monitor voltage to check button pressed or 
 Connect two pins to obniz. Many buttons has no pin direction. you can connect each one to signal,gnd.
 
 ```Javascript
+// Javascript Example
 var button = obniz.wired("Button", {signal:0, gnd:1})
 ```
 
 
 ```Javascript
+// Javascript Example
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 ```
 
@@ -19,6 +21,7 @@ var button = obniz.wired("Button",  {signal:0, gnd:1});
 called when button pressed/released.
 
 ```Javascript
+// Javascript Example
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 button.onchange = function(pressed){
   console.log("pressed:" + pressed)
@@ -28,6 +31,7 @@ button.onchange = function(pressed){
 ## [async] isPressedWait
 Check current button with waiting result.
 ```Javascript
+// Javascript Example
 var button = obniz.wired("Button",  {signal:0, gnd:1});
 var pressed = await button.isPressedWait();
 console.log("Pressed = " + pressed);

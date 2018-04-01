@@ -9,6 +9,7 @@
 
 ## wired(obniz, {vcc, gnd, output})
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("S8100B", { gnd:1 , output:2, vcc:0});
 ```
 
@@ -17,6 +18,7 @@ callback function for temperature change.
 Unit of temp is Celsius
 
 ```javascript
+// Javascript Example
 var tempsens = obniz.wired("S8100B",   { gnd:1 , output:2, vcc:0});
 tempsens.onchange = function(temp){
 console.log(temp)

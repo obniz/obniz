@@ -5,6 +5,7 @@
 Obnizにマイクセンサをつなぎます。
 0,1,2はそれぞれマイクセンサの電源,GND,センサ出力へ接続してください。
 ```javascript
+// Javascript Example
 var microphone = obniz.wired("AE_MICAMP", {vcc:0, out:1, gnd:2});
 ```
 
@@ -13,6 +14,7 @@ var microphone = obniz.wired("AE_MICAMP", {vcc:0, out:1, gnd:2});
 音のレベルを電圧で返します。
 
 ```javascript
+// Javascript Example
 var microphone = obniz.wired("AE_MICAMP", {vcc:0, out:1, gnd:2});
 microphone.onchange = function(voltage){
   console.log(voltage)
