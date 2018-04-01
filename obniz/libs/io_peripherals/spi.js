@@ -77,7 +77,8 @@ class PeripheralSPI {
     var self = this;
     var obj = {};
     obj["spi"+self.id] = {
-      data: data
+      data: data,
+      read: false
     };
     self.Obniz.send(obj);
   }
