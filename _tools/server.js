@@ -60,6 +60,7 @@ if(!fs.existsSync(tempPath)){
 gulp.task("jsonSchemaJoin", function jsonSchemaForVar(){
   return gulp.src(schemaSrcPath)
       .pipe(plumber({errorHandler: reportError}))
+      .pipe(gulp_sort())
       .pipe(gulp_yaml({ safe: true }))
       .pipe(concatWith("schema.js",{header:"let wsSchema = [", separator:",", footer:"];" }))
       .pipe(gulp.dest(tempPath));
@@ -86,6 +87,16 @@ gulp.task("partsJoin", function partsJoin(){
 });
 
 
+//順番が関係あるので予めやる
+gulp.task("obnizMain", function partsJoin(){
+  return gulp.src(obnizPath)
+      .pipe(plumber({errorHandler: reportError}))
+      .pipe(gulp_sort())
+      .pipe(gulp_concat("obnizMain.js"))
+      .pipe(gulp.dest(tempPath));
+});
+
+
 gulp.task("tv4Wrap", ["jsonSchemaJoin"], function tv4Wrap(){
   let header = "(function(global){ let module = {exports:{}};";
   let separator = "\n";
@@ -98,13 +109,13 @@ gulp.task("tv4Wrap", ["jsonSchemaJoin"], function tv4Wrap(){
 });
 
 
-gulp.task("obniz.js", ["packageJsonConvert","partsJoin", "tv4Wrap"] ,function obnizJsBuild(){
+gulp.task("obniz.js", ["obnizMain","packageJsonConvert","partsJoin", "tv4Wrap"] ,function obnizJsBuild(){
 
 
 
   let obnizjsSrcPaths = [
     path.join(tempPath,"obnizVersion.js"),
-    obnizPath,
+    path.join(tempPath,"obnizMain.js"),
     path.join(tempPath,"obnizParts.js"),
     path.join(tempPath,"schema.js"),
     path.join(tempPath,"tv4Wraped.js"),
