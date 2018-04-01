@@ -77,4 +77,43 @@ describe("obniz.libs.display", function () {
     });
     expect(this.obniz).to.be.finished;
   });
+
+  it("setPinName",  function () {
+    this.obniz.display.setPinName(0, "io", "input");
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({
+      "display": {
+        "pin_assign": {
+          "0": {
+            "module_name" : "io",
+            "pin_name": "input"
+          }
+        }
+      }
+    });
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("setPinNames",  function () {
+    this.obniz.display.setPinNames("io", {
+      1: "input",
+      2: "output"
+    });
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send({
+      "display": {
+        "pin_assign": {
+          "1": {
+            "module_name" : "io",
+            "pin_name": "input"
+          },
+          "2": {
+            "module_name" : "io",
+            "pin_name": "output"
+          }
+        }
+      }
+    });
+    expect(this.obniz).to.be.finished;
+  });
 });

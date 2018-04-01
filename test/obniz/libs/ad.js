@@ -15,7 +15,24 @@ describe("obniz.libs.ad", function () {
   afterEach(function (done) {
     return testUtil.releaseObnizePromise(this,done);
   });
-  
+
+  it("getAD",  function () {
+    var ad0 = this.obniz.getAD(0);
+    expect(ad0.id).to.be.equal(0);
+
+    var ad11 = this.obniz.getAD(11);
+    expect(ad11.id).to.be.equal(11);
+
+    expect(function(){
+      this.obniz.getAD(12);
+    }).to.throw();
+
+    expect(function(){
+      this.obniz.getAD("0");
+    }).to.throw();
+    
+    expect(this.obniz).to.be.finished;
+  });
   
   it("start",  function () {
     var stub = sinon.stub();
