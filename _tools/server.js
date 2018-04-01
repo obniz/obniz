@@ -55,29 +55,13 @@ if(!fs.existsSync(tempPath)){
   fs.mkdirSync(tempPath);
 }
 
-let beforeSchema = [];
-
-if (fs.existsSync(path.join(__dirname, '../../wsroom/json_schema'))) {
-
-  gulp.task("wsroomSchemaCopy", function wsroomSchemaCopy() {
-    return gulp.src(wsroomSchemaSrcPath)
-        .pipe(plumber())
-        .pipe(gulp.dest(path.join(__dirname, '../json_schema/')))
-        .on('end', function(){ console.log('schema copied!'); });
-  });
-
-  gulp.watch(wsroomSchemaSrcPath, ["wsroomSchemaCopy"]);
-  gulp.run("wsroomSchemaCopy");
-  // beforeSchema.push("wsroomSchemaCopy");
-
-}
 
 
-gulp.task("jsonSchemaJoin", beforeSchema, function jsonSchemaForVar(){
+gulp.task("jsonSchemaJoin", function jsonSchemaForVar(){
   return gulp.src(schemaSrcPath)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_yaml({ safe: true }))
-      .pipe(concatWith("schema.js",{header:"Obniz.wsSchema = [", separator:",", footer:"];" }))
+      .pipe(concatWith("schema.js",{header:"let wsSchema = [", separator:",", footer:"];" }))
       .pipe(gulp.dest(tempPath));
 
 });
@@ -102,18 +86,19 @@ gulp.task("partsJoin", function partsJoin(){
 });
 
 
-gulp.task("tv4Wrap", function tv4Wrap(){
+gulp.task("tv4Wrap", ["jsonSchemaJoin"], function tv4Wrap(){
   let header = "(function(global){ let module = {exports:{}};";
+  let separator = "\n";
+  let footer = "; \n Obniz.tv4 = module.exports; wsSchema.map(Obniz.tv4.addSchema) })(this);";
 
-  let footer = "; \n Obniz.tv4 = module.exports;})(this);";
-  return gulp.src(tv4Path)
+  return gulp.src([tv4Path, path.join(tempPath,"schema.js")])
       .pipe(plumber({errorHandler: reportError}))
-      .pipe(concatWith("tv4Wraped.js",{header, footer}))
+      .pipe(concatWith("tv4Wraped.js",{header,separator, footer}))
       .pipe(gulp.dest(tempPath));
 });
 
 
-gulp.task("obniz.js", ["jsonSchemaJoin","packageJsonConvert","partsJoin", "tv4Wrap"] ,function obnizJsBuild(){
+gulp.task("obniz.js", ["packageJsonConvert","partsJoin", "tv4Wrap"] ,function obnizJsBuild(){
 
 
 

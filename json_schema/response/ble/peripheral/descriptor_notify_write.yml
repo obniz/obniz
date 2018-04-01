@@ -24,4 +24,4 @@ properties:
                             service_uuid : {$ref : "/uuid"}
                             characteristic_uuid : {$ref : "/uuid"}
                             descriptor_uuid : {$ref : "/uuid"}
-                            data : {$ref : "/detaArray"}
+                            data : {$ref : "/dataArray"}
