@@ -173,6 +173,12 @@ class WSCommand {
 
 
   getSchema(uri){
+    //chack isFirst
+    if(!Obniz.tv4.getSchema("/request")){
+      for(let schema of Obniz.wsSchema){
+        Obniz.tv4.addSchema(schema);
+      }
+    }
     return Obniz.tv4.getSchema(uri);
   }
 
