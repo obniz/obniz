@@ -426,11 +426,11 @@ class Obniz {
     return this["io" + io];
   }
 
-  getAD(id) {
+  getAD(io) {
     if (!this.isValidIO(io)) {
       throw new Error('ad ' + io + ' is not valid io');
     }
-    return this["ad" + id];
+    return this["ad" + io];
   }
 
   getFreePwm() {
