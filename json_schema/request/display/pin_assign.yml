@@ -15,19 +15,15 @@ properties :
                 properties :
                     module_name :
                         type : string
-                        maxLength : 4
                     pin_name :
                         type : string
-                        maxLength : 9
 
             "^1[0-1]$" : 
                 type : object
                 properties :
                     module_name :
                         type : string
-                        maxLength : 4
                     pin_name :
                         type : string
-                        maxLength : 9
 
 
