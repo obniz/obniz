@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/message"
+basePath : "message"
 
 "anyOf":
   -  {$ref : "/response/message/receive"}

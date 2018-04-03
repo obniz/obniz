@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ad/get"
+response : "/response/ad/get"
 
 type: object
 required : [stream]

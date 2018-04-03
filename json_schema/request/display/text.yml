@@ -9,3 +9,4 @@ required : [text]
 properties:
     text:
         type : string
+        example : "Hello, obniz!"

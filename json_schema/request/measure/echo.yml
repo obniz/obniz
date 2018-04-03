@@ -2,6 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/measure/echo"
+description : "It measures pulse response."
+response : "/response/measure/echo"
 
 type: object
 required : [echo]
@@ -10,8 +12,8 @@ properties:
       type: object
       required : [io_pulse, io_echo, pulse_width]
       properties:
-        io_pulse : {$refs : "/pinSetting"}
-        io_echo : {$refs : "/pinSetting"}
+        io_pulse : {$ref : "/pinSetting"}
+        io_echo : {$ref : "/pinSetting"}
         pulse :
           type : string
           default : positive

@@ -6,6 +6,7 @@ id: "/request/pwm/pulse"
 type: object
 required : [pulse]
 properties:
-
         pulse:
             type:  number
+            multipleOf: 0.001
+            description : "pulse width (ms)"

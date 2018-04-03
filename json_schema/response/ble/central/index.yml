@@ -2,9 +2,11 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/central"
+basePath : "ble"
 
 "anyOf":
   -  {$ref : "/response/ble/central/scan"}
+  -  {$ref : "/response/ble/central/scan_finish"}
   -  {$ref : "/response/ble/central/status_update"}
   -  {$ref : "/response/ble/central/service_get"}
   -  {$ref : "/response/ble/central/characteristic_get"}

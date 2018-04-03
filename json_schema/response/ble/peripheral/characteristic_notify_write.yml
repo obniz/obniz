@@ -1,7 +1,7 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/ble/central/characteristic_notify_write"
+id: "/response/ble/peripheral/characteristic_notify_write"
 
 
 type: object
@@ -23,4 +23,4 @@ properties:
                             address :  {$ref : "/deviceAddress"}
                             service_uuid : {$ref : "/uuid"}
                             characteristic_uuid : {$ref : "/uuid"}
-                            data : {$ref : "/detaArray"}
+                            data : {$ref : "/dataArray"}

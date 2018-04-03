@@ -2,6 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/uart"
+basePath : "uart0"
+
 "anyOf":
   -  {$ref : "/request/uart/init"}
   -  {$ref : "/request/uart/send"}

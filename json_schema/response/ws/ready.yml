@@ -7,3 +7,4 @@ type: object
 properties:
     ready:
         type : boolean
+        enum : [true]

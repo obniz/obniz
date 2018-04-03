@@ -14,5 +14,6 @@ properties:
     address :
         type: integer
         minimum : 0
+        maximum : 1023
 
     data : {$ref : "/dataArray" }

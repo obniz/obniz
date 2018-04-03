@@ -2,6 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble"
+basePath : "ble"
+
 
 "anyOf":
   -  {$ref : "/response/ble/central"}

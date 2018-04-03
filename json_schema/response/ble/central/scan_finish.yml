@@ -1,0 +1,20 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/scan_finish"
+
+
+type: object
+required : [scan_results]
+properties:
+    scan_results :
+        type : array
+        minItems : 1
+        items :
+            type : object
+            required: [event_type]
+            additionalProperties: false
+            properties:
+                event_type :
+                    type : string
+                    enum : [inquiry_complete]

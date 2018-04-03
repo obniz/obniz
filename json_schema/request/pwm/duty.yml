@@ -8,5 +8,6 @@ required : [duty]
 properties:
         duty:
             type: number
+            description : "% of duty cycle"
             minimum : 0
             maximum : 100

@@ -2,6 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/display"
+basePath : "display"
+
 "anyOf":
   -  {$ref : "/request/display/text"}
   -  {$ref : "/request/display/clear"}

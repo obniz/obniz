@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/system"
+basePath : "system"
 
 "anyOf":
   -  {$ref : "/request/system/wait"}

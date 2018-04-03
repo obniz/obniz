@@ -8,3 +8,4 @@ required : [wait]
 properties:
     wait :
         type: integer
+        description : "wait time (ms)"

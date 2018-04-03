@@ -8,3 +8,4 @@ required : [reset]
 properties:
     reset :
         type: boolean
+        enum : [true]

@@ -12,5 +12,5 @@ properties:
         required : [adv_data]
         additionalProperties: false
         properties:
-            adv_data : {$ref : "/dataArray31"}
-            scan_resp : {$ref : "/dataArray31"}
+            adv_data : {$ref : "/bleAdvertiseData"}
+            scan_resp : {$ref : "/bleAdvertiseData"}

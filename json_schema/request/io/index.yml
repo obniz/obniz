@@ -2,6 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/io"
+basePath : "io0"
+description : "General purpose IO available on each io (io0 to io11)."
 
 "anyOf":
   -  {$ref : "/request/io/input"}

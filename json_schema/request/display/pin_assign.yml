@@ -9,21 +9,26 @@ properties :
     pin_assign :
         type : object
         minProperties : 1
+        patternExample : [0,1,2,3]
         patternProperties :
             "^[0-9]$" : 
                 type : object
                 properties :
                     module_name :
                         type : string
+                        example : "io"
                     pin_name :
                         type : string
+                        example : "output"
 
             "^1[0-1]$" : 
                 type : object
                 properties :
                     module_name :
                         type : string
+                        example : "io"
                     pin_name :
                         type : string
+                        example : "output"
 
 

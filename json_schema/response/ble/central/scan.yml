@@ -17,7 +17,7 @@ properties:
             properties:
                 event_type :
                     type : string
-                    enum : [inquiry_result, inquiry_complete]
+                    enum : [inquiry_result]
                 address : {$ref : "/deviceAddress"}
                 ble_event_type :
                     type : string
@@ -35,9 +35,9 @@ properties:
                     enum : [public, random, rpa_public, rpa_random]
                 flag :
                     type : integer
-                    maximun : 0
+                    maximum : 0
                 rssi :
                     type : integer
-                    maximun : 0
-                adv_data : {$ref : "/dataArray"}
-                scan_resp : {$ref : "/dataArray"}
+                    maximum : 0
+                adv_data : {$ref : "/bleAdvertiseData"}
+                scan_resp : {$ref : "/bleAdvertiseData"}

@@ -1,7 +1,7 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/ble/central/status_update"
+id: "/response/ble/peripheral/status"
 
 
 type: object

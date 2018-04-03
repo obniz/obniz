@@ -7,11 +7,4 @@ id: "/request/display/raw"
 type: object
 required : [raw]
 properties:
-    raw :
-        type : array
-        minItems: 1024   # 128*64 / 8
-        maxItems: 1024   # 128*64 / 8
-        items :
-            type : integer
-            minimum : 0
-            maximum : 255
+    raw : {$ref : "/imageData128x64"}

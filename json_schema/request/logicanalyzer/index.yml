@@ -2,6 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/logicAnalyzer"
+basePath : "logic_analyzer"
+description : "Monitor io logic level changes by sampling io."
 
 "anyOf":
   -  {$ref : "/request/logicAnalyzer/init" }

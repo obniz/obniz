@@ -9,7 +9,7 @@ properties:
     address :
         type: integer
         minimum : 0
-        maximun : 1023
+        maximum : 1023
 
     address_bits:
         type: integer

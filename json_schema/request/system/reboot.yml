@@ -8,3 +8,4 @@ required : [reboot]
 properties:
     reboot :
         type: boolean
+        enum : [true]

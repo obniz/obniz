@@ -7,3 +7,5 @@ type: object
 properties:
     redirect:
         type : string
+        example : "wss://ws1.obniz.io"
+        description : "The url you should redirect to."

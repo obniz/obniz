@@ -13,6 +13,7 @@ properties:
         properties:
             name :
                 type: string
+                example : "anim-1"
                 minLength: 1
                 maxLength: 254
 

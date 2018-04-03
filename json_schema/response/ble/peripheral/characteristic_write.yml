@@ -1,7 +1,7 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/ble/central/characteristic_write"
+id: "/response/ble/peripheral/characteristic_write"
 
 
 type: object

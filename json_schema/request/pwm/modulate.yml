@@ -21,7 +21,4 @@ properties:
                minimum : 0.05
                maximum : 1000
 
-           data :
-               type : array
-               items :
-                   type : number
+           data : {$ref : "/dataArray"}

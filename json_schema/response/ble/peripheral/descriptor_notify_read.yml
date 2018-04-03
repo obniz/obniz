@@ -1,7 +1,7 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/ble/central/descriptor_notify_read"
+id: "/response/ble/peripheral/descriptor_notify_read"
 
 
 type: object
