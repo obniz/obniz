@@ -95,12 +95,14 @@ class PeripheralSPI {
     return this.used;
   }
 
-  end(data) {
+  end(reuse) {
     var self = this;
     var obj = {};
     obj["spi"+self.id] = null;
     this.params = null;
     self.Obniz.send(obj);
-   this.used = false;
+    if(!reuse){
+      this.used = false;
+    }
   }
 }
