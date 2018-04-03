@@ -5364,7 +5364,7 @@ class hx711 {
 
     return _asyncToGenerator(function* () {
       times = parseInt(times) || 1;
-      _this3.offset = yield readAverageWait(times);
+      _this3.offset = yield _this3.readAverageWait(times);
     })();
   }
 
@@ -5373,7 +5373,7 @@ class hx711 {
 
     return _asyncToGenerator(function* () {
       times = parseInt(times) || 1;
-      let val = yield readAverageWait(times);
+      let val = yield _this4.readAverageWait(times);
       return (val - _this4.offset) / _this4.scale;
     })();
   }

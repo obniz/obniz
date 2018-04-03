@@ -67,12 +67,12 @@ class hx711 {
 
   async zeroAdjust(times){
     times = parseInt(times) || 1;
-    this.offset = await readAverageWait(times);
+    this.offset = await this.readAverageWait(times);
   }
 
   async getValueWait(times){
     times = parseInt(times) || 1;
-    let val = await readAverageWait(times);
+    let val = await this.readAverageWait(times);
     return (val - this.offset) / this.scale;
   }
 
