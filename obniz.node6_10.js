@@ -2783,13 +2783,15 @@ class PeripheralSPI {
     return this.used;
   }
 
-  end(data) {
+  end(reuse) {
     var self = this;
     var obj = {};
     obj["spi" + self.id] = null;
     this.params = null;
     self.Obniz.send(obj);
-    this.used = false;
+    if (!reuse) {
+      this.used = false;
+    }
   }
 }
 
@@ -5289,6 +5291,99 @@ USB.prototype.off = function () {
 if (PartsRegistrate) {
   PartsRegistrate("USB", USB);
 }
+class hx711 {
+  constructor() {
+    this.keys = ["vcc", "gnd", "sck", "dout"];
+    this.requiredKeys = ["sck", "dout"];
+    this.offset = 0;
+    this.scale = 1;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.spi = obniz.getFreeSpi();
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    let ioKeys = ["clk", "dout"];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
+        throw new Error("spi start param '" + key + "' are to be valid io no");
+      }
+    }
+    this.sck = obniz.getIO(this.params.sck);
+    this.dout = obniz.getIO(this.params.dout);
+
+    this.sck.output(true);
+  }
+
+  readWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+
+      _this.sck.output(false);
+
+      // while(true) {
+      //   let val = await this.dout.inputWait();
+      //   if (val == false) break;
+      // }
+      _this.spi.start({ mode: "master", clk: _this.params.sck, miso: _this.params.dout, frequency: 66 * 1000 });
+
+      let ret = yield _this.spi.writeWait([0, 0, 0]);
+      _this.spi.end(true);
+      _this.sck.output(false);
+      let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
+      return flag * (((ret[0] & 0x7F) << 16) + (ret[0] << 8) + (ret[0] << 0));
+    })();
+  }
+
+  readAverageWait(times) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      let results = [];
+      for (let i = 0; i < times; i++) {
+        results.push((yield _this2.readWait()));
+      }
+      return results.reduce(function (prev, current, i) {
+        return prev + current;
+      }, 0) / results.length;
+    })();
+  }
+
+  powerDown() {
+    this.sck.output(true);
+  }
+
+  powerUp() {
+    this.sck.output(false);
+  }
+
+  zeroAdjust(times) {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      times = parseInt(times) || 1;
+      _this3.offset = yield readAverageWait(times);
+    })();
+  }
+
+  getValueWait(times) {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      times = parseInt(times) || 1;
+      let val = yield readAverageWait(times);
+      return (val - _this4.offset) / _this4.scale;
+    })();
+  }
+
+}
+
+if (PartsRegistrate) {
+  PartsRegistrate("hx711", hx711);
+}
+
 var AE_MICAMP = function () {
   this.keys = ["vcc", "gnd", "out"];
   this.requiredKeys = ["out"];
@@ -5638,10 +5733,10 @@ class XBee {
   }
 
   configWait(config) {
-    var _this = this;
+    var _this5 = this;
 
     return _asyncToGenerator(function* () {
-      if (_this.isAtMode) {
+      if (_this5.isAtMode) {
         throw new Error("Xbee : duplicate config setting");
       };
       return new Promise(function (resolve, reject) {
@@ -5672,7 +5767,7 @@ class XBee {
         this.onFinishAtModeCallback = function () {
           resolve();
         };
-      }.bind(_this));
+      }.bind(_this5));
     })();
   }
 }
@@ -5702,19 +5797,19 @@ class JpegSerialCam {
   }
 
   _drainUntil(uart, search, recv) {
-    var _this2 = this;
+    var _this6 = this;
 
     return _asyncToGenerator(function* () {
       if (!recv) recv = [];
       while (true) {
         var readed = uart.readBytes();
         recv = recv.concat(readed);
-        var tail = _this2._seekTail(search, recv);
+        var tail = _this6._seekTail(search, recv);
         if (tail >= 0) {
           recv.splice(0, tail);
           return recv;
         }
-        yield _this2.obniz.wait(10);
+        yield _this6.obniz.wait(10);
       }
     })();
   }
@@ -5745,29 +5840,29 @@ class JpegSerialCam {
   }
 
   startwait(obj) {
-    var _this3 = this;
+    var _this7 = this;
 
     return _asyncToGenerator(function* () {
       if (!obj) obj = {};
-      _this3.uart.start({ tx: _this3.my_tx, rx: _this3.my_rx, baud: obj.baud || 38400 });
-      _this3.obniz.display.setPinName(_this3.my_tx, "JpegSerialCam", "camRx");
-      _this3.obniz.display.setPinName(_this3.my_rx, "JpegSerialCam", "camTx");
-      yield _this3.obniz.wait(2500);
+      _this7.uart.start({ tx: _this7.my_tx, rx: _this7.my_rx, baud: obj.baud || 38400 });
+      _this7.obniz.display.setPinName(_this7.my_tx, "JpegSerialCam", "camRx");
+      _this7.obniz.display.setPinName(_this7.my_rx, "JpegSerialCam", "camTx");
+      yield _this7.obniz.wait(2500);
     })();
   }
 
   resetwait() {
-    var _this4 = this;
+    var _this8 = this;
 
     return _asyncToGenerator(function* () {
-      _this4.uart.send([0x56, 0x00, 0x26, 0x00]);
-      yield _this4._drainUntil(_this4.uart, [0x76, 0x00, 0x26, 0x00]);
-      yield _this4.obniz.wait(2500);
+      _this8.uart.send([0x56, 0x00, 0x26, 0x00]);
+      yield _this8._drainUntil(_this8.uart, [0x76, 0x00, 0x26, 0x00]);
+      yield _this8.obniz.wait(2500);
     })();
   }
 
   setResolusionWait(resolution) {
-    var _this5 = this;
+    var _this9 = this;
 
     return _asyncToGenerator(function* () {
       let val;
@@ -5780,25 +5875,25 @@ class JpegSerialCam {
       } else {
         throw new Error("invalid resolution");
       }
-      _this5.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-      yield _this5._drainUntil(_this5.uart, [0x76, 0x00, 0x31, 0x00]);
-      yield _this5.resetwait();
+      _this9.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
+      yield _this9._drainUntil(_this9.uart, [0x76, 0x00, 0x31, 0x00]);
+      yield _this9.resetwait();
     })();
   }
 
   setCompressibilityWait(compress) {
-    var _this6 = this;
+    var _this10 = this;
 
     return _asyncToGenerator(function* () {
       let val = Math.floor(compress / 100 * 0xFF);
-      _this6.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-      yield _this6._drainUntil(_this6.uart, [0x76, 0x00, 0x31, 0x00]);
-      yield _this6.resetwait();
+      _this10.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+      yield _this10._drainUntil(_this10.uart, [0x76, 0x00, 0x31, 0x00]);
+      yield _this10.resetwait();
     })();
   }
 
   setBaudWait(baud) {
-    var _this7 = this;
+    var _this11 = this;
 
     return _asyncToGenerator(function* () {
       let val;
@@ -5821,31 +5916,31 @@ class JpegSerialCam {
         default:
           throw new Error("invalid baud rate");
       }
-      _this7.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
-      yield _this7._drainUntil(_this7.uart, [0x76, 0x00, 0x31, 0x00]);
+      _this11.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
+      yield _this11._drainUntil(_this11.uart, [0x76, 0x00, 0x31, 0x00]);
       //await this.obniz.wait(1000);
-      yield _this7.startwait({
+      yield _this11.startwait({
         baud
       });
     })();
   }
 
   takewait() {
-    var _this8 = this;
+    var _this12 = this;
 
     return _asyncToGenerator(function* () {
-      const uart = _this8.uart;
+      const uart = _this12.uart;
       //console.log("stop a photo")
       uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-      yield _this8._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+      yield _this12._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
 
       //console.log("take a photo")
       uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-      yield _this8._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+      yield _this12._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
 
       //console.log("read length")
       uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-      var recv = yield _this8._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
+      var recv = yield _this12._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
       var XX;
       var YY;
       while (true) {
@@ -5857,7 +5952,7 @@ class JpegSerialCam {
           YY = recv[1];
           break;
         }
-        yield _this8.obniz.wait(1000);
+        yield _this12.obniz.wait(1000);
       }
       let databytes = XX * 256 + YY;
       //console.log("image: " + databytes + " Bytes");
@@ -5866,7 +5961,7 @@ class JpegSerialCam {
 
       //console.log("start reading image")
       uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
-      var recv = yield _this8._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+      var recv = yield _this12._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
       //console.log("reading...");
       while (true) {
         var readed = uart.readBytes();
@@ -5875,7 +5970,7 @@ class JpegSerialCam {
         if (recv.length >= databytes) {
           break;
         }
-        yield _this8.obniz.wait(10);
+        yield _this12.obniz.wait(10);
       }
       //console.log("done");
       recv = recv.splice(0, databytes); // remove tail
