@@ -108,6 +108,14 @@
       ]
     },
     {
+      "name": "ADConverter",
+      "parts": [
+        {
+          "name": "hx711"
+        }
+      ]
+    },
+    {
       "name": "Temperature Sensor",
       "parts": [
         {
