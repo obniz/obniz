@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/central/error"
+
+
+type: object
+required : [errors]
+properties:
+    errors :
+        type : array
+        minItems : 1
+        items :
+            type : object
+            required: [error_code, message]
+            additionalProperties: false
+            properties:
+                error_code : 
+                    type: integer 
+                message : 
+                    type: string 
+                address : {$ref : "/deviceAddress"}
+                service_uuid : {$ref : "/uuid"}
+                characteristic_uuid : {$ref : "/uuid"}
+                descriptor_uuid : {$ref : "/uuid"}

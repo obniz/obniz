@@ -15,3 +15,4 @@ basePath : "ble"
   -  {$ref : "/response/ble/central/descriptor_get"}
   -  {$ref : "/response/ble/central/descriptor_write"}
   -  {$ref : "/response/ble/central/descriptor_read"}
+  -  {$ref : "/response/ble/central/error"}

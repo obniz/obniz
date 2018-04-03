@@ -35,7 +35,7 @@ properties:
                     enum : [public, random, rpa_public, rpa_random]
                 flag :
                     type : integer
-                    maximum : 0
+                    minimum : 0
                 rssi :
                     type : integer
                     maximum : 0
