@@ -32,7 +32,7 @@ Related item
 |:---- |:---- |:---- |:---- |
 <% for ( var param of command.params){
 
-%>| `<%= param.path.replace(/\d\b/g,"X") %>` | <% if(param.ref){ %>[<%= param.type %>](#<%= param.ref.toLowerCase() %>) <% }else{ %> <%= param.type %> <% } %> | <%- conditions(param.schema,param) %> | <%= param.schema.description %> |
+%>| `<%= param.path.replace(/\d\b/g,"X") %>` | <% if(param.ref){ %>[<%= param.type %>](#<%= param.ref.toLowerCase() %>) <% }else{ %> <%= param.type %> <% } %> | <%- conditions(param.schema, param) %> | <%= param.schema.description %>&nbsp; |
 <% } %><%# for ( var param of command.params)%>
 
 <%=command.schema.exampleDescription %>

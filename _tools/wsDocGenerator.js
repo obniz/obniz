@@ -173,7 +173,7 @@ function conditions(schema){
   }
 
 
-  if(results.length == 0 )return "";
+  if(results.length == 0 )return "&nbsp;";
   return "<ul><li>" + results.join("</li><li>") + "</li></ul>";
 }
 
