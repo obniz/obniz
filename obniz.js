@@ -1,4 +1,4 @@
-var _obniz_js_version = "0.1.44";
+var _obniz_js_version = "0.1.45";
 
 /* global showObnizDebugError  */
 
