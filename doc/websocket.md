@@ -179,7 +179,7 @@ If the server required you to connect other endpoint to communicate with your ob
 ```
 
 
-###  request: <a name="-request-system-selfCheck">selfCheck</a>
+###  request: <a name="-request-system-selfcheck">selfCheck</a>
 circuit IO check
 
 
@@ -200,7 +200,7 @@ circuit IO check
 ```
 
 
-###  request: <a name="-request-system-keepWorkingAtOffline">keepWorkingAtOffline</a>
+###  request: <a name="-request-system-keepworkingatoffline">keepWorkingAtOffline</a>
 reset obniz when obniz gone to offline.
 
 
@@ -394,7 +394,7 @@ Related item
 
 io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is avaiable. it loop io changes regarding json array.
 
-###  request: <a name="-request-ioAnimation-init">init</a>
+###  request: <a name="-request-ioanimation-init">init</a>
 
 
 
@@ -437,7 +437,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 ```
 
 
-###  request: <a name="-request-ioAnimation-changeState">changeState</a>
+###  request: <a name="-request-ioanimation-changestate">changeState</a>
 
 
 
@@ -553,7 +553,7 @@ available 0 to 5
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `pwmX.io` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
+| `pwmX.io` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -639,7 +639,7 @@ available 0 to 5
 |:---- |:---- |:---- |:---- |
 | `pwmX.modulate.type` |  string  | <ul><li>required</li><li>const `"am"`</li></ul> |  |
 | `pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li><li> unit: 0.001</li></ul> | symbol width (ms) |
-| `pwmX.modulate.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `pwmX.modulate.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -690,15 +690,15 @@ available 0 to 1
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `uartX.rx` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
-| `uartX.tx` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
+| `uartX.rx` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
+| `uartX.tx` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
 | `uartX.baud` |  integer  | <ul><li>default `115200`</li><li>1 &le; value &le; 5000000</li></ul> | baud rate (bps) |
 | `uartX.stop` |  number  | <ul><li>default `1`</li><li>enum <ul><li>`1`</li><li>`1.5`</li><li>`2`</li></ul></li></ul> | stop bit width |
 | `uartX.bits` |  integer  | <ul><li>default `8`</li><li>enum <ul><li>`5`</li><li>`6`</li><li>`7`</li><li>`8`</li></ul></li></ul> |  |
 | `uartX.parity` |  string  | <ul><li>default `off`</li><li>enum <ul><li>`"off"`</li><li>`"odd"`</li><li>`"even"`</li></ul></li></ul> |  |
 | `uartX.flowcontrol` |  string  | <ul><li>default `off`</li><li>enum <ul><li>`"off"`</li><li>`"rts"`</li><li>`"cts"`</li><li>`"rts-cts"`</li></ul></li></ul> |  |
-| `uartX.rts` | [pinSetting](#pinSetting)  |  |  |
-| `uartX.cts` | [pinSetting](#pinSetting)  |  |  |
+| `uartX.rts` | [pinSetting](#pinsetting)  |  |  |
+| `uartX.cts` | [pinSetting](#pinsetting)  |  |  |
 
 
 
@@ -727,7 +727,7 @@ available 0 to 1
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `uartX.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `uartX.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -771,7 +771,7 @@ available 0 to 1
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `uartX.data` | [dataArray](#dataArray)  |  |  |
+| `uartX.data` | [dataArray](#dataarray)  |  |  |
 
 
 
@@ -800,9 +800,9 @@ clk, miso, mosi are optional, but at least one are required
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `spiX.mode` |  string  | <ul><li>required</li><li>const `"master"`</li></ul> |  |
-| `spiX.clk` | [pinSetting](#pinSetting)  |  |  |
-| `spiX.mosi` | [pinSetting](#pinSetting)  |  |  |
-| `spiX.miso` | [pinSetting](#pinSetting)  |  |  |
+| `spiX.clk` | [pinSetting](#pinsetting)  |  |  |
+| `spiX.mosi` | [pinSetting](#pinsetting)  |  |  |
+| `spiX.miso` | [pinSetting](#pinsetting)  |  |  |
 | `spiX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul> |  |
 
 
@@ -852,7 +852,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `spiX.data` | [dataArray32](#dataArray32)  | <ul><li>required</li></ul> |  |
+| `spiX.data` | [dataArray32](#dataarray32)  | <ul><li>required</li></ul> |  |
 | `spiX.read` |  boolean  | <ul><li>required</li></ul> | If false, write without receive |
 
 
@@ -879,7 +879,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `spiX.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `spiX.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -908,8 +908,8 @@ internal pullup is available. But, We recommend use external pull-up resistor.
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `i2cX.mode` |  string  | <ul><li>required</li><li>const `"master"`</li></ul> |  |
-| `i2cX.sda` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
-| `i2cX.scl` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
+| `i2cX.sda` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
+| `i2cX.scl` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
 | `i2cX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 1000000</li></ul> | frequency (Hz) |
 
 
@@ -940,13 +940,13 @@ Related item
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `i2cX.mode` |  string  | <ul><li>required</li><li>enum <ul><li>`"master"`</li><li>`"slave"`</li></ul></li></ul> |  |
-| `i2cX.sda` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
-| `i2cX.scl` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
+| `i2cX.sda` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
+| `i2cX.scl` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
 | `i2cX.slave_address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> |  |
 | `i2cX.slave_address_length` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> |  |
 | `i2cX.address` |  integer  | <ul><li>0 &le; value &le; 1023</li></ul> |  |
 | `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> |  |
-| `i2cX.data` | [dataArray](#dataArray)  |  |  |
+| `i2cX.data` | [dataArray](#dataarray)  |  |  |
 | `i2cX.read` |  integer  | <ul><li>0 &le; value</li></ul> |  |
 
 
@@ -978,7 +978,7 @@ if address over 0b01111111; then address treated as 10bit address automatically.
 |:---- |:---- |:---- |:---- |
 | `i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> |  |
 | `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> |  |
-| `i2cX.data` | [dataArray1024](#dataArray1024)  | <ul><li>required</li></ul> |  |
+| `i2cX.data` | [dataArray1024](#dataarray1024)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1056,7 +1056,7 @@ Related item
 |:---- |:---- |:---- |:---- |
 | `i2cX.mode` |  string  | <ul><li>required</li><li>const `"master"`</li></ul> |  |
 | `i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> |  |
-| `i2cX.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `i2cX.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1082,7 +1082,7 @@ Related item
 | `i2cX.mode` |  string  | <ul><li>required</li><li>const `"slave"`</li></ul> |  |
 | `i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> |  |
 | `i2cX.is_fragmented` |  boolean  | <ul><li>required</li></ul> |  |
-| `i2cX.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `i2cX.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1106,14 +1106,14 @@ Related item
 
 Monitor io logic level changes by sampling io.
 
-###  request: <a name="-request-logicAnalyzer-init">init</a>
+###  request: <a name="-request-logicanalyzer-init">init</a>
 
 
 
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `logic_analyzer.io[]` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
+| `logic_analyzer.io[]` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
 | `logic_analyzer.interval` |  number  | <ul><li>required</li><li>0 < value</li><li> unit: 0.001</li></ul> |  |
 | `logic_analyzer.duration` |  integer  | <ul><li>required</li><li>0 < value</li></ul> |  |
 | `logic_analyzer.triger.value` |  boolean  | <ul><li>required</li></ul> | start value |
@@ -1137,7 +1137,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 ```
 
 
-###  request: <a name="-request-logicAnalyzer-deinit">deinit</a>
+###  request: <a name="-request-logicanalyzer-deinit">deinit</a>
 
 
 
@@ -1160,14 +1160,14 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 
 
-###  response: <a name="-response-logicAnalyzer-data">data</a>
+###  response: <a name="-response-logicanalyzer-data">data</a>
 
 
 
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `logic_analyzer.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `logic_analyzer.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1200,8 +1200,8 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `measure.echo.io_pulse` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
-| `measure.echo.io_echo` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul> |  |
+| `measure.echo.io_pulse` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
+| `measure.echo.io_echo` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> |  |
 | `measure.echo.pulse` |  string  | <ul><li>default `positive`</li><li>enum <ul><li>`"positive"`</li><li>`"negative"`</li></ul></li></ul> |  |
 | `measure.echo.pulse_width` |  number  | <ul><li>required</li><li>0.001 &le; value &le; 1000</li><li> unit: 0.001</li></ul> |  |
 | `measure.echo.measure_edges` |  integer  | <ul><li>1 &le; value &le; 4</li></ul> |  |
@@ -1338,7 +1338,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `display.raw` | [imageData128x64](#imageData128x64)  | <ul><li>required</li></ul> |  |
+| `display.raw` | [imageData128x64](#imagedata128x64)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1439,7 +1439,7 @@ Related item
 
 
 
-##  ble.central
+##  ble,central
 
 
 use obniz as central
@@ -1507,7 +1507,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.connect.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.connect.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1530,7 +1530,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.disconnect.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.disconnect.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1558,7 +1558,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_services.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.get_services.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1586,7 +1586,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_characteristics.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.get_characteristics.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.get_characteristics.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 
 
@@ -1616,7 +1616,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.read_characteristic.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.read_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.read_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.read_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 
@@ -1648,10 +1648,10 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.write_characteristic.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.write_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.write_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.write_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.write_characteristic.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.write_characteristic.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 | `ble.write_characteristic.needResponse` |  boolean  | <ul><li>default `true`</li></ul> |  |
 
 
@@ -1684,14 +1684,14 @@ Related item
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `ble.scan_results[].event_type` |  string  | <ul><li>required</li><li>const `"inquiry_result"`</li></ul> |  |
-| `ble.scan_results[].address` | [deviceAddress](#deviceAddress)  |  |  |
+| `ble.scan_results[].address` | [deviceAddress](#deviceaddress)  |  |  |
 | `ble.scan_results[].ble_event_type` |  string  | <ul><li>enum <ul><li>`"connectable_advertisemnt"`</li><li>`"connectable_directed_advertisemnt"`</li><li>`"scannable_advertising"`</li><li>`"non_connectable_advertising"`</li><li>`"scan_response"`</li></ul></li></ul> |  |
 | `ble.scan_results[].device_type` |  string  | <ul><li>enum <ul><li>`"ble"`</li><li>`"dumo"`</li><li>`"breder"`</li></ul></li></ul> |  |
 | `ble.scan_results[].address_type` |  string  | <ul><li>enum <ul><li>`"public"`</li><li>`"random"`</li><li>`"rpa_public"`</li><li>`"rpa_random"`</li></ul></li></ul> |  |
 | `ble.scan_results[].flag` |  integer  | <ul><li>0 &le; value</li></ul> |  |
 | `ble.scan_results[].rssi` |  integer  | <ul><li>value &le; 0</li></ul> |  |
-| `ble.scan_results[].adv_data` | [bleAdvertiseData](#bleAdvertiseData)  |  |  |
-| `ble.scan_results[].scan_resp` | [bleAdvertiseData](#bleAdvertiseData)  |  |  |
+| `ble.scan_results[].adv_data` | [bleAdvertiseData](#bleadvertisedata)  |  |  |
+| `ble.scan_results[].scan_resp` | [bleAdvertiseData](#bleadvertisedata)  |  |  |
 
 
 
@@ -1749,7 +1749,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.status_updates[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.status_updates[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.status_updates[].status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul> |  |
 
 
@@ -1776,7 +1776,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_service_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.get_service_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.get_service_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 
 
@@ -1803,7 +1803,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_characteristic_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.get_characteristic_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.get_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.get_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 
@@ -1832,7 +1832,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.write_characteristic_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.write_characteristic_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.write_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.write_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.write_characteristic_results[].result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> |  |
@@ -1863,10 +1863,10 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.read_characteristic_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.read_characteristic_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.read_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.read_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.read_characteristic_results[].data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.read_characteristic_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1894,7 +1894,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_descriptors_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.get_descriptors_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.get_descriptors_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.get_descriptors_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.get_descriptors_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
@@ -1925,7 +1925,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.write_descriptor_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.write_descriptor_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.write_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.write_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.write_descriptor_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
@@ -1958,11 +1958,11 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.read_descriptor_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.read_descriptor_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.read_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.read_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.read_descriptor_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.read_descriptor_results[].data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.read_descriptor_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -1993,10 +1993,10 @@ Related item
 |:---- |:---- |:---- |:---- |
 | `ble.errors[].error_code` |  integer  | <ul><li>required</li></ul> |  |
 | `ble.errors[].message` |  string  | <ul><li>required</li></ul> |  |
-| `ble.errors[].address` | [deviceAddress](#deviceAddress)  |  |  |
-| `ble.errors[].service_uuid` | [uuidOrNull](#uuidOrNull)  |  |  |
-| `ble.errors[].characteristic_uuid` | [uuidOrNull](#uuidOrNull)  |  |  |
-| `ble.errors[].descriptor_uuid` | [uuidOrNull](#uuidOrNull)  |  |  |
+| `ble.errors[].address` | [deviceAddress](#deviceaddress)  |  |  |
+| `ble.errors[].service_uuid` | [uuidOrNull](#uuidornull)  |  |  |
+| `ble.errors[].characteristic_uuid` | [uuidOrNull](#uuidornull)  |  |  |
+| `ble.errors[].descriptor_uuid` | [uuidOrNull](#uuidornull)  |  |  |
 
 
 
@@ -2021,7 +2021,7 @@ Related item
 
 
 
-##  ble.peripheral
+##  ble,peripheral
 
 
 use obniz as peripheral
@@ -2038,8 +2038,8 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.advertisement.adv_data` | [bleAdvertiseData](#bleAdvertiseData)  | <ul><li>required</li></ul> |  |
-| `ble.advertisement.scan_resp` | [bleAdvertiseData](#bleAdvertiseData)  |  |  |
+| `ble.advertisement.adv_data` | [bleAdvertiseData](#bleadvertisedata)  | <ul><li>required</li></ul> |  |
+| `ble.advertisement.scan_resp` | [bleAdvertiseData](#bleadvertisedata)  |  |  |
 
 
 
@@ -2096,9 +2096,9 @@ Related item
 |:---- |:---- |:---- |:---- |
 | `ble.peripheral.services[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.services[].characteristics[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.services[].characteristics[].data` | [dataArray](#dataArray)  |  |  |
+| `ble.peripheral.services[].characteristics[].data` | [dataArray](#dataarray)  |  |  |
 | `ble.peripheral.services[].characteristics[].descriptors[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.services[].characteristics[].descriptors[].data` | [dataArray](#dataArray)  |  |  |
+| `ble.peripheral.services[].characteristics[].descriptors[].data` | [dataArray](#dataarray)  |  |  |
 
 
 
@@ -2197,7 +2197,7 @@ Related item
 |:---- |:---- |:---- |:---- |
 | `ble.peripheral.write_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.write_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.write_characteristic.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.write_characteristic.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -2266,7 +2266,7 @@ Related item
 | `ble.peripheral.write_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.write_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.write_descriptor.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.write_descriptor.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.write_descriptor.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -2298,7 +2298,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.connection_status[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.connection_status[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.connection_status[].status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul> |  |
 
 
@@ -2329,7 +2329,7 @@ callback of read characteristic
 |:---- |:---- |:---- |:---- |
 | `ble.peripheral.read_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.read_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.read_characteristic_results[].data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.read_characteristic_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -2389,7 +2389,7 @@ callback of external device read characteristic
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_read_characteristics[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.notify_read_characteristics[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_read_characteristics[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_read_characteristics[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 
@@ -2420,10 +2420,10 @@ callback of external device write characteristic
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_write_characteristics[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.notify_write_characteristics[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_write_characteristics[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_write_characteristics[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.notify_write_characteristics[].data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.notify_write_characteristics[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -2456,7 +2456,7 @@ callback of read descriptor
 | `ble.peripheral.read_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.read_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.read_descriptor_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.read_descriptor_results[].data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.read_descriptor_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -2519,7 +2519,7 @@ callback of external device read descriptor
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_read_descriptors[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.notify_read_descriptors[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_read_descriptors[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_read_descriptors[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_read_descriptors[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
@@ -2552,11 +2552,11 @@ callback of external device write descriptor
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_write_descriptors[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.notify_write_descriptors[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_write_descriptors[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_write_descriptors[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
 | `ble.peripheral.notify_write_descriptors[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> |  |
-| `ble.peripheral.notify_write_descriptors[].data` | [dataArray](#dataArray)  | <ul><li>required</li></ul> |  |
+| `ble.peripheral.notify_write_descriptors[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> |  |
 
 
 
@@ -2589,56 +2589,56 @@ callback of external device write descriptor
 
 
 
-### bleAdvertiseData
-| type | conditions | examples | description
+###  <a name="bleadvertisedata">bleAdvertiseData</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | array| <ul><li>length &le; 31</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101]`</li><li>`[7, 9, 83, 97, 109, 112, 108, 101]`</li></ul> |  |
 
 
-### dataArray
-| type | conditions | examples | description
+###  <a name="dataarray">dataArray</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | array| <ul><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[16, 34, 242]`</li><li>`[100, 255, 21, 0, 21]`</li></ul> | Binary data array. |
 
 
-### dataArray1024
-| type | conditions | examples | description
+###  <a name="dataarray1024">dataArray1024</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | array| <ul><li>length &le; 1024</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[100, 255, 21, 0, 21]`</li></ul> |  |
 
 
-### dataArray32
-| type | conditions | examples | description
+###  <a name="dataarray32">dataArray32</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | array| <ul><li>length &le; 32</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[100, 255, 21, 0, 21]`</li></ul> |  |
 
 
-### deviceAddress
-| type | conditions | examples | description
+###  <a name="deviceaddress">deviceAddress</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | string| <ul><li>length = 12</li></ul>  |  <ul><li>`"77e754ab8591"`</li></ul> | Bluetooth device id. It&#39;s hexString cannot cointain &#39;0x&#39; or &#39;-&#39;. |
 
 
-### imageData128x64
-| type | conditions | examples | description
+###  <a name="imagedata128x64">imageData128x64</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | array| <ul><li>length = 1024</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 240, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 192, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 129, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 254, 7, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 252, 15, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 248, 31, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 240, 63, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 224, 127, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 192, 255, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 129, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 7, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 252, 15, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 248, 31, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 240, 63, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 127, 193, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 252, 64, 255, 128, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 240, 1, 255, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 224, 3, 254, 0, 127, 254, 14, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 252, 30, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 248, 60, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 63, 240, 120, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 127, 224, 240, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 252, 0, 127, 193, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 15, 248, 0, 255, 131, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 240, 31, 240, 39, 255, 7, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 252, 63, 224, 127, 254, 15, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 192, 255, 252, 31, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 129, 255, 248, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 3, 255, 240, 127, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 254, 7, 255, 224, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 252, 15, 255, 193, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 248, 31, 255, 131, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 240, 63, 255, 7, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 224, 127, 254, 15, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 192, 255, 252, 31, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 129, 255, 0, 63, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 3, 254, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 254, 7, 252, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 252, 15, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 248, 31, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 224, 127, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 255, 252, 0, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 1, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 3, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 255, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 255, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]`</li></ul> | Image data bit array. |
 
 
-### pinSetting
-| type | conditions | examples | description
+###  <a name="pinsetting">pinSetting</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | integer| <ul><li>0 &le; value &le; 11</li></ul>  |  <ul><li>`0`</li><li>`1`</li><li>`2`</li><li>`3`</li><li>`4`</li><li>`5`</li><li>`6`</li></ul> |  |
 
 
-### uuid
-| type | conditions | examples | description
+###  <a name="uuid">uuid</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | string| <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
 
 
-### uuidOrNull
-| type | conditions | examples | description
+###  <a name="uuidornull">uuidOrNull</a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | string,null| <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li><li>`null`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
 

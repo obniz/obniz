@@ -9,19 +9,19 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 
 <% for(var module of modules){ %>
-##  <%= module.name.split("/").join(".") %>
+##  <%= module.name.split("/") %>
 <% for(var method of module.methods){ %>
 
 <%- method.schema.description %>
 <% for(var command of method.commands){ %>
-###  <%= method.method %>: <a name="<%= command.uri.split("/").join("-") %>"><%= command.name %></a>
+###  <%= method.method %>: <a name="<%= command.uri.split("/").join("-").toLowerCase() %>"><%= command.name %></a>
 <%- command.schema.description %>
 
 <% if(command.schema.related){ %>
 Related item
 <% if(Array.isArray(command.schema.related)){ %>
 <% for(var one of command.schema.related){
-%>- [<%= one %>](#<%= one.split("/").join("-") %>)
+%>- [<%= one %>](#<%= one.split("/").join("-").toLowerCase() %>)
 <% } %>
 <% }else{ %>
 - [<%= command.schema.related %>](#<%= command.schema.related.split("/").join("-") %>)
@@ -32,7 +32,7 @@ Related item
 |:---- |:---- |:---- |:---- |
 <% for ( var param of command.params){
 
-%>| `<%= param.path.replace(/\d\b/g,"X") %>` | <% if(param.ref){ %>[<%= param.type %>](#<%= param.ref %>) <% }else{ %> <%= param.type %> <% } %> | <%- conditions(param.schema,param) %> | <%= param.schema.description %> |
+%>| `<%= param.path.replace(/\d\b/g,"X") %>` | <% if(param.ref){ %>[<%= param.type %>](#<%= param.ref.toLowerCase() %>) <% }else{ %> <%= param.type %> <% } %> | <%- conditions(param.schema,param) %> | <%= param.schema.description %> |
 <% } %><%# for ( var param of command.params)%>
 
 <%=command.schema.exampleDescription %>
@@ -54,8 +54,8 @@ Related item
         schema.example = schema.example ? [schema.example] : [];
     } %>
 
-### <%= key %>
-| type | conditions | examples | description
+###  <a name="<%= key.toLowerCase() %>"><%= key %></a>
+| type | conditions | examples | description |
 |:----|:----|:----|:----|
 | <%= schema.type %>| <%- conditions(schema) %>  |  <ul><% for(var val of  schema.example){ %><li>`<%- formatter(val) %>`</li><% } %></ul> | <%= schema.description %> |
 <% } %><%# for ( var key in defines )%>
