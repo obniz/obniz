@@ -92,7 +92,6 @@ class Obniz {
   }
 
   wsOnMessage(data) {
-    this.print_debug(data);
     let obj = {};
     if (typeof data === "string") {
       obj = JSON.parse(data);
@@ -113,6 +112,7 @@ class Obniz {
     } else {
       return;
     }
+    this.print_debug(obj);
 
     // notify messaging
     if (typeof obj.message === "object" && this.onmessage) {
