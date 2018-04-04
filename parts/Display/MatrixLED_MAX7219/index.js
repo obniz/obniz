@@ -16,19 +16,18 @@ class MatrixLED_MAX7219 {
     if(obniz.isValidIO(this.params.gnd)){
       obniz.getIO(this.params.gnd).output(false);
     }
-
-    // reset a onece
-    this.cs.output(true);
-    obniz.wait(10);
-    this.cs.output(false);
-    this.cs.output(true);
     
     // max 10Mhz but motor driver can't
-    this.params.frequency = this.params.frequency  || 10 * 1000*1000;
+    this.params.frequency = this.params.frequency  ||  10 * 1000*1000;
     this.params.mode =  "master";
     this.params.mosi = this.params.din;
     this.params.drive = "3v";
     this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    // reset a onece
+    this.cs.output(true);
+    this.cs.output(false);
+    this.cs.output(true);
   }
 
   init(width, height) {
@@ -43,7 +42,9 @@ class MatrixLED_MAX7219 {
     this.write([0x0a, 0x05]); // brightness 9/32 0 to f
     this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
     this.write([0x0c, 0x01]); // Shutdown to normal operation
+    this.write([0x0f, 0x00]);
     this.passingCommands();
+    obniz.wait(10);
   }
 
   test() {
@@ -52,9 +53,7 @@ class MatrixLED_MAX7219 {
   }
 
   passingCommands() {
-    for (let i=0; i<this.width; i+=8) {  // this needed for number of unit
-      this.write([0x00, 0x00]);
-      this.write([0x00, 0x00]);
+    for (let i=8; i<this.width; i+=8) {  // this needed for number of unit
       this.write([0x00, 0x00]);
     }
   }
