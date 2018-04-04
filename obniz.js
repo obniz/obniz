@@ -1,4 +1,4 @@
-var _obniz_js_version = "0.1.45";
+var _obniz_js_version = "0.1.46";
 
 /* global showObnizDebugError  */
 
@@ -90,7 +90,6 @@ class Obniz {
   }
 
   wsOnMessage(data) {
-    this.print_debug(data);
     let obj = {};
     if (typeof data === "string") {
       obj = JSON.parse(data);
@@ -111,6 +110,7 @@ class Obniz {
     } else {
       return;
     }
+    this.print_debug(obj);
   
     // notify messaging
     if (typeof (obj.message) === "object" && this.onmessage) {
