@@ -1,90 +1,6 @@
-# obniz API
-Let use a hardware as API
-
-## All things via API
-
-![](./images/about_api.png)
-
-obniz is fully controllable by sending json via Websocket API.
-Turning IO on/off, sending/receiging data via UART/SPI, using BLE/OLED etc,,,
-
-This is a new way to control things from the internet.
-
-Especially, Websocket api let you to use obniz from your html and bi-directionaly communication.
-[obniz.js](./about_obnizjs) warps this API.
-
-This page shows API details and specifications.
-
-## Endpoint
-
-Each obniz has different API Endpoint.
-
-#### Websocket API
-```
-wss://obniz.io/obniz/{obniz_id}/ws/1
-```
-
-Example javascript usage
-
-```html
-<!-- HTML Example -->
-<html>
-<body>
-<script>
-  // Simplest example
-  var host = 'wss://obniz.io'
-
-  function connect() {
-    var socket = new WebSocket(host + '/obniz/OBNIZ_ID_HERE/ws/1');
-
-    socket.onmessage = function (event) {
-      var obj = JSON.parse(event.data);
-
-      if (obj.ws && obj.ws.redirect) {
-        host = obj.ws.redirect;
-        socket.onmessage = null;
-        socket.close();
-        connect();
-      }
-      if (obj.ws && obj.ws.ready) {
-        socket.send(JSON.stringify({display:{clear:true, text:"Works fine."}}));
-      }
-    }
-
-  }
-
-  connect();
-
-</script>
-</body>
-</html>
-```
-
-#### REST API
-Not only Websocket API. Post json via HTTP REST API.
-But you can't get any values from obniz via this API. Just sending.
-
-```
-POST https://obniz.io/obniz/{obniz_id}/api/1
-```
-
-reqeust content type must be application/json and body must contain json object.
-
-Curl example.
-
-```shell
-curl https://obniz.io/obniz/1234-5678/api -H "Content-Type: application/json" -X POST -d '{display:{clear:true, text:"Works fine."}}'
-```
-
-## Security
-
-After obniz has been owned by someone's account, obniz API can be used with API keys. This is optinoal But recommended.
-See more details on each obniz setting page. It will appear on your account page after registration.
-
-## JSON Formats
+# obniz websocket Formats
 All communication on Websocket is JSON.
 Control obniz by sending JSON and get values by receiving JSON from obniz.
-
 
 
 <% for(var name of moduleNames){ %>
@@ -93,12 +9,12 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 
 <% for(var module of modules){ %>
-###  <%= module.name.split("/").join(".") %>
+##  <%= module.name.split("/").join(".") %>
 <% for(var method of module.methods){ %>
 
 <%- method.schema.description %>
 <% for(var command of method.commands){ %>
-####  <%= method.method %>: <a name="<%= command.uri.split("/").join("-") %>"><%= command.name %></a>
+###  <%= method.method %>: <a name="<%= command.uri.split("/").join("-") %>"><%= command.name %></a>
 <%- command.schema.description %>
 
 <% if(command.schema.related){ %>
