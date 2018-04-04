@@ -7,4 +7,4 @@ description : "available ad0~ad11"
 
 "anyOf":
   -  {$ref : "/request/ad/get"}
-  -  {$ref : "/request/ad/null"}
+  -  {$ref : "/request/ad/deinit"}
