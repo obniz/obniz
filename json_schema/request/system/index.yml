@@ -10,3 +10,4 @@ basePath : "system"
   -  {$ref : "/request/system/reboot"}
   -  {$ref : "/request/system/selfCheck"}
   -  {$ref : "/request/system/keepWorkingAtOffline"}
+  -  {$ref : "/request/system/ping"}

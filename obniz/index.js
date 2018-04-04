@@ -11,6 +11,7 @@ class Obniz {
     this.socket     = null;
     this.debugprint = false;
     this.debugs     = [];
+    this.pongObservers = [];
   
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
   
@@ -142,6 +143,10 @@ class Obniz {
     // ws command
     if (obj["ws"]) {
       this.handleWSCommand(obj["ws"]);
+      return;
+    }
+    if (obj["system"]) {
+      this.handleSystemCommand(obj["system"]);
       return;
     }
   
@@ -535,6 +540,28 @@ class Obniz {
     throw new Error("No More uart Available. max = " + i);
   }
 
+  addPongObserver(callback) {
+    if(callback) {
+      this.pongObservers.push(callback);
+    }
+  }
+  removePongObserver(callback) {
+    if(this.pongObservers.includes(callback)){
+      let index =  this.pongObservers.indexOf(callback);
+      this.pongObservers.splice(index,1);
+    }
+
+  }
+  handleSystemCommand(wsObj) {
+    // ready
+    if (wsObj.pong) {
+      for(let callback of this.pongObservers){
+        callback(wsObj);
+      }
+      
+    }
+  }
+
   handleWSCommand(wsObj) {
     // ready
     if (wsObj.ready) {
@@ -608,6 +635,63 @@ class Obniz {
   selfCheck() { this.send({ system: { self_check: true } }); }
   keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
   resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }
+
+  pingWait(unixtime, rand){
+    unixtime = unixtime || new Date().getTime();
+    let upper = Math.floor( unixtime / Math.pow(2,32));
+    let lower = unixtime - upper;
+    rand = rand || Math.floor(Math.random() * Math.pow(2,4));
+    let buf = [];
+
+    buf.push((upper >>> 8*3) & 0xFF);
+    buf.push((upper >>> 8*2) & 0xFF);
+    buf.push((upper >>> 8*1) & 0xFF);
+    buf.push((upper >>> 8*0) & 0xFF);
+    buf.push((lower >>> 8*3) & 0xFF);
+    buf.push((lower >>> 8*2) & 0xFF);
+    buf.push((lower >>> 8*1) & 0xFF);
+    buf.push((lower >>> 8*0) & 0xFF);
+    buf.push((rand >>> 8*3) & 0xFF);
+    buf.push((rand >>> 8*2) & 0xFF);
+    buf.push((rand >>> 8*1) & 0xFF);
+    buf.push((rand >>> 8*0) & 0xFF);
+    this.send({ system: { ping: {key : buf } }});
+
+    return new Promise((resolve)=>{
+      let callback = (systemObj) => {
+        for(let i =0;i<buf.length;i++){
+          if(buf[i] !== systemObj.pong.key[i]){
+            return;
+          }
+        }
+        this.removePongObserver(callback);
+        if(this.debugprint) {
+          let upper = (systemObj.pong.key[0] << 8 * 3 >>> 0)
+              + (systemObj.pong.key[1] << 8 * 2 >>> 0)
+              + (systemObj.pong.key[2] << 8 * 1 >>> 0)
+              + (systemObj.pong.key[3] << 8 * 0 >>> 0);
+          let lower = (systemObj.pong.key[4] << 8 * 3 >>> 0)
+              + (systemObj.pong.key[5] << 8 * 2 >>> 0)
+              + (systemObj.pong.key[6] << 8 * 1 >>> 0)
+              + (systemObj.pong.key[7] << 8 * 0 >>> 0);
+          let obnizJsPingUnixtime = upper * Math.pow(2, 32) + lower;
+          let obnizJsPongUnixtime = new Date().getTime();
+          let str = "ping " +(obnizJsPongUnixtime- obnizJsPingUnixtime) + "ms (server " + (systemObj.pong.pongServerTime - systemObj.pong.pingServerTime) + "ms)";
+          let results = {
+            obnizJsPingUnixtime,
+            serverPingUnixtime : systemObj.pong.pingServerTime,
+            obnizTime : systemObj.pong.obnizMillis,
+            serverPongUnixtime : systemObj.pong.pongServerTime,
+            obnizJsPongUnixtime
+          }
+          this.print_debug(str);
+        }
+        resolve();
+      };
+      this.addPongObserver(callback);
+    });
+  }
+
 
   warning(msg) {
     if (this.isNode) {

@@ -21,4 +21,5 @@
     message :  {$ref : "/response/message"}
     logic_analyzer :  {$ref : "/response/logicAnalyzer"}
     ws : {$ref : "/response/ws"}
+    system : {$ref : "/response/system"}
         

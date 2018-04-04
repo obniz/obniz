@@ -52,6 +52,7 @@ class WSCommand_System extends WSCommand {
       {uri : "/request/system/wait",                 onValid: this.wait},
       {uri : "/request/system/selfCheck",            onValid: this.selfCheck},
       {uri : "/request/system/keepWorkingAtOffline", onValid: this.keepWorkingAtOffline},
+      {uri : "/request/system/ping"},
     ];
     let res = this.validateCommandSchema(schemaData, module, "system");
 
@@ -62,23 +63,5 @@ class WSCommand_System extends WSCommand {
         throw new WSCommandNotFoundError(`[system]unknown command`);
       }
     }
-    //
-    // if (typeof(module) == "object") {
-    //   if (module.reboot) {
-    //     this.reboot();
-    //   }
-    //   if (module.reset) {
-    //     this.reset();
-    //   }
-    //   if (module.self_check) {
-    //     this.selfCheck();
-    //   }
-    //   if (typeof module.wait === "number") {
-    //     this.wait(module.wait);
-    //   }
-    //   if (typeof(module.keep_working_at_offline) === "boolean") {
-    //     this.resetOnDisconnect(!module.keep_working_at_offline);
-    //   }
-    // }
   }
 }

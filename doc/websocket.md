@@ -221,6 +221,56 @@ reset obniz when obniz gone to offline.
 ```
 
 
+###  request: <a name="-request-system-ping">ping</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.ping.key` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+{
+    "system": {
+        "ping": {
+            "key": [16, 34, 242]
+        }
+    }
+}
+```
+
+
+
+
+
+
+###  response: <a name="-response-system-pong">pong</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.pong.key` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+{
+    "system": {
+        "pong": {
+            "key": [16, 34, 242]
+        }
+    }
+}
+```
+
+
 
 
 ##  <a name="io">io</a>
