@@ -2,7 +2,7 @@
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _obniz_js_version = "0.1.44";
+var _obniz_js_version = "0.1.45";
 
 /* global showObnizDebugError  */
 
@@ -96,6 +96,20 @@ class Obniz {
     let obj = {};
     if (typeof data === "string") {
       obj = JSON.parse(data);
+    } else if (this.wscommands) {
+      data = new Uint8Array(data);
+      while (true) {
+        const frame = WSCommand.dequeueOne(data);
+        if (!frame) break;
+        for (var i = 0; i < this.wscommands.length; i++) {
+          const command = this.wscommands[i];
+          if (command.module === frame.module) {
+            command.notifyFromBinary(obj, frame.func, frame.payload);
+            break;
+          }
+        }
+        data = frame.next;
+      }
     } else {
       return;
     }
@@ -3433,11 +3447,9 @@ class WSCommand {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
       throw new Eror("something wrong. buf less than 3");
-      return null;
     }
     if (buf[0] & 0x80) {
       throw new Eror("reserved bit 1");
-      return null;
     }
     var module = 0x7F & buf[0];
     var func = buf[1];
@@ -3445,7 +3457,6 @@ class WSCommand {
     var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     if (length_type == 4) {
       throw new Eror("invalid length");
-      return null;
     }
     var length = (buf[2] & 0x3F) << length_extra_bytse * 8;
     var index = 3;

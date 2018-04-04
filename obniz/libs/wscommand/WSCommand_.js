@@ -65,11 +65,9 @@ class WSCommand {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
       throw new Eror("something wrong. buf less than 3");
-      return null;
     }
     if (buf[0] & 0x80) {
       throw new Eror("reserved bit 1");
-      return null;
     }
     var module = 0x7F & buf[0];
     var func = buf[1];
@@ -77,7 +75,6 @@ class WSCommand {
     var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
     if (length_type == 4) {
       throw new Eror("invalid length");
-      return null;
     }
     var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
     var index = 3;
