@@ -2724,7 +2724,7 @@ callback of external device write descriptor
 ### uuidOrNull
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| string| <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
+| string,null| <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li><li>`null`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
 
 
 
