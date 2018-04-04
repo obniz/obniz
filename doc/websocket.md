@@ -1439,7 +1439,7 @@ Related item
 
 
 
-##  ble,central
+##  ble.central
 
 
 use obniz as central
@@ -2021,7 +2021,7 @@ Related item
 
 
 
-##  ble,peripheral
+##  ble.peripheral
 
 
 use obniz as peripheral
