@@ -497,7 +497,7 @@ Related item
 ```
 
 
-###  request: <a name="-request-ad-null">null</a>
+###  request: <a name="-request-ad-deinit">deinit</a>
 
 
 
