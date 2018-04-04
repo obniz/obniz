@@ -110,6 +110,24 @@ var convert = function(str){
     param.modules.push(moduleParams);
   }
 
+  function sortOnKeys(dict) {
+
+    var sorted = [];
+    for(var key in dict) {
+      sorted[sorted.length] = key;
+    }
+    sorted.sort();
+
+    var tempDict = {};
+    for(var i = 0; i < sorted.length; i++) {
+      tempDict[sorted[i]] = dict[sorted[i]];
+    }
+
+    return tempDict;
+  }
+
+  param.defines =  sortOnKeys(param.defines);
+
   md.push(ejs.render(docTemplate, param));
 
 

@@ -47,6 +47,7 @@ const packageJsonPath = path.join(__dirname, '../package.json');
 const wsroomSchemaSrcPath = path.join(__dirname, '../../wsroom/json_schema/**/*.yml');
 const schemaSrcPath = path.join(__dirname, '../json_schema/**/*.yml');
 const tempPath = path.join(__dirname, "../temp");
+const docPath = path.join(__dirname, "../doc");
 const tv4Path = require.resolve("tv4", {path:path.resolve(__dirname,"../")});
 if(!tv4Path){
   throw new Error("tv4 not found.npm install please")
@@ -66,8 +67,8 @@ gulp.task("jsonSchemaJoin", function jsonSchemaForVar(){
       .pipe(concatWith("schema.js",{header:"let wsSchema = [", separator:",", footer:"];" }))
       .pipe(gulp.dest(tempPath))
       .pipe(docGenerator())
-      .pipe(rename("schema.md"))
-      .pipe(gulp.dest(__dirname));
+      .pipe(rename("websocket.md"))
+      .pipe(gulp.dest(docPath));
 
 });
 
