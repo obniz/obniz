@@ -9,7 +9,7 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 
 <% for(var module of modules){ %>
-##  <%= module.name.split("/").join(".") %>
+##  <a name="<%= module.name.split("/").join("-") %>"><%= module.name.split("/").join(".") %></a>
 <% for(var method of module.methods){ %>
 
 <%- method.schema.description %>

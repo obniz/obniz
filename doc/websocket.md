@@ -37,7 +37,7 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 
 
-##  ws
+##  <a name="ws">ws</a>
 
 
 
@@ -111,7 +111,7 @@ If the server required you to connect other endpoint to communicate with your ob
 
 
 
-##  system
+##  <a name="system">system</a>
 
 
 
@@ -223,7 +223,7 @@ reset obniz when obniz gone to offline.
 
 
 
-##  io
+##  <a name="io">io</a>
 
 
 General purpose IO available on each io (io0 to io11).
@@ -389,7 +389,7 @@ Related item
 
 
 
-##  ioAnimation
+##  <a name="ioAnimation">ioAnimation</a>
 
 
 io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is avaiable. it loop io changes regarding json array.
@@ -466,7 +466,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 
 
 
-##  ad
+##  <a name="ad">ad</a>
 
 
 available ad0~ad11
@@ -541,7 +541,7 @@ current value (volt)
 
 
 
-##  pwm
+##  <a name="pwm">pwm</a>
 
 
 available 0 to 5
@@ -678,7 +678,7 @@ available 0 to 5
 
 
 
-##  uart
+##  <a name="uart">uart</a>
 
 
 
@@ -787,7 +787,7 @@ available 0 to 1
 
 
 
-##  spi
+##  <a name="spi">spi</a>
 
 
 available spi0, spi1
@@ -895,7 +895,7 @@ Related item
 
 
 
-##  i2c
+##  <a name="i2c">i2c</a>
 
 
 available only i2c0
@@ -1101,7 +1101,7 @@ Related item
 
 
 
-##  logicAnalyzer
+##  <a name="logicAnalyzer">logicAnalyzer</a>
 
 
 Monitor io logic level changes by sampling io.
@@ -1183,7 +1183,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 
 
-##  measure
+##  <a name="measure">measure</a>
 
 
 
@@ -1259,7 +1259,7 @@ Related item
 
 
 
-##  display
+##  <a name="display">display</a>
 
 
 
@@ -1381,7 +1381,7 @@ Related item
 
 
 
-##  switch
+##  <a name="switch">switch</a>
 
 
 the switch embed on obniz itself. If it's state is changed, notification will be fired.
@@ -1439,7 +1439,7 @@ Related item
 
 
 
-##  ble.central
+##  <a name="ble-central">ble.central</a>
 
 
 use obniz as central
@@ -2021,7 +2021,7 @@ Related item
 
 
 
-##  ble.peripheral
+##  <a name="ble-peripheral">ble.peripheral</a>
 
 
 use obniz as peripheral
