@@ -131,7 +131,7 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ws.reset_obniz_on_ws_disconnection` |  boolean  | <ul><li>required</li></ul>|  |
 
@@ -156,7 +156,7 @@ all things ready
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ws.ready` |  boolean  | <ul><li>const `true`</li></ul>|  |
 
@@ -177,7 +177,7 @@ If the server required you to connect other endpoint to communicate with your ob
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ws.redirect` |  string  | | The url you should redirect to. |
 
@@ -205,7 +205,7 @@ If the server required you to connect other endpoint to communicate with your ob
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`system.wait` |  integer  | <ul><li>required</li></ul>| wait time (ms) |
 
@@ -226,7 +226,7 @@ If the server required you to connect other endpoint to communicate with your ob
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`system.reset` |  boolean  | <ul><li>required</li><li>const `true`</li></ul>|  |
 
@@ -247,7 +247,7 @@ If the server required you to connect other endpoint to communicate with your ob
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`system.reboot` |  boolean  | <ul><li>required</li><li>const `true`</li></ul>|  |
 
@@ -268,7 +268,7 @@ circuit IO check
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`system.self_check` |  boolean  | <ul><li>required</li><li>const `true`</li></ul>|  |
 
@@ -289,7 +289,7 @@ reset obniz when obniz gone to offline.
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`system.keep_working_at_offline` |  boolean  | <ul><li>required</li></ul>|  |
 
@@ -322,7 +322,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ioX` |  string  | <ul><li>required</li><li>const `"get"`</li></ul>|  |
 
@@ -346,7 +346,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ioX.direction` |  string  | <ul><li>required</li><li>const `"input"`</li></ul>|  |
 |`ioX.stream` |  boolean  | | enable stream callback when value change |
@@ -369,7 +369,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ioX` |  boolean  | <ul><li>required</li></ul>|  |
 
@@ -388,7 +388,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ioX.direction` |  string  | <ul><li>required</li><li>const `"output"`</li></ul>|  |
 |`ioX.value` |  boolean  | <ul><li>required</li></ul>|  |
@@ -411,7 +411,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ioX.output_type` |  string  | <ul><li>required</li><li>enum <ul><li>`"push-pull5v"`</li><li>`"push-pull3v"`</li><li>`"open-drain"`</li></ul></li></ul>| drive type |
 
@@ -432,7 +432,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ioX.pull_type` |  string  | <ul><li>required</li><li>enum <ul><li>`"pull-up5v"`</li><li>`"pull-up3v"`</li><li>`"pull-down"`</li><li>`"float"`</li></ul></li></ul>|  |
 
@@ -457,7 +457,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ioX` |  boolean  | <ul><li>required</li></ul>|  |
 
@@ -483,7 +483,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`io.animation.animation.name` |  string  | <ul><li>required</li><li>1 &le; length &le; 254</li></ul>| Animation name to use pause/resume |
 |`io.animation.animation.status` |  string  | <ul><li>required</li><li>const `"loop"`</li></ul>|  |
@@ -526,7 +526,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`io.animation.animation.name` |  string  | <ul><li>required</li><li>1 &le; length &le; 254</li></ul>|  |
 |`io.animation.animation.status` |  string  | <ul><li>required</li><li>enum <ul><li>`"pause"`</li><li>`"resume"`</li></ul></li></ul>|  |
@@ -565,7 +565,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`adX.stream` |  boolean  | <ul><li>required</li></ul>| true to continuous notifying on voltage change. |
 
@@ -586,7 +586,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`adX` |  null  | <ul><li>required</li></ul>|  |
 
@@ -609,7 +609,7 @@ current value (volt)
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`adX` |  number  | <ul><li>required</li><li>0 &le; value &le; 5</li></ul>| current value (volt) |
 
@@ -635,7 +635,7 @@ available 0 to 5
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`pwmX.io` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 
@@ -656,7 +656,7 @@ available 0 to 5
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`pwmX.freq` |  integer  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul>| frequency (Hz) |
 
@@ -677,7 +677,7 @@ available 0 to 5
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`pwmX.pulse` |  number  | <ul><li>required</li><li>0 &le; value</li><li> unit: 0.001</li></ul>| pulse width (ms) |
 
@@ -698,7 +698,7 @@ available 0 to 5
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`pwmX.duty` |  number  | <ul><li>required</li><li>0 &le; value &le; 100</li></ul>| % of duty cycle |
 
@@ -719,7 +719,7 @@ available 0 to 5
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`pwmX.modulate.type` |  string  | <ul><li>required</li><li>const `"am"`</li></ul>|  |
 |`pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li><li> unit: 0.001</li></ul>| symbol width (ms) |
@@ -746,7 +746,7 @@ available 0 to 5
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`pwmX` |  null  | <ul><li>required</li></ul>|  |
 
@@ -772,7 +772,7 @@ available 0 to 1
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`uartX.rx` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 |`uartX.tx` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
@@ -809,7 +809,7 @@ available 0 to 1
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`uartX.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul>|  |
 
@@ -830,7 +830,7 @@ available 0 to 1
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`uartX` |  null  | <ul><li>required</li></ul>|  |
 
@@ -853,7 +853,7 @@ available 0 to 1
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`uartX.data` | [dataArray](#dataArray)  | |  |
 
@@ -881,7 +881,7 @@ clk, miso, mosi are optional, but at least one are required
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`spiX.mode` |  string  | <ul><li>required</li><li>const `"master"`</li></ul>|  |
 |`spiX.clk` | [pinSetting](#pinSetting)  | |  |
@@ -910,7 +910,7 @@ clk, miso, mosi are optional, but at least one are required
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`spiX` |  null  | <ul><li>required</li></ul>|  |
 
@@ -934,7 +934,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`spiX.data` | [dataArray32](#dataArray32)  | <ul><li>required</li></ul>|  |
 |`spiX.read` |  boolean  | <ul><li>required</li></ul>| If false, write without receive |
@@ -961,7 +961,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`spiX.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul>|  |
 
@@ -989,7 +989,7 @@ internal pullup is available. But, We recommend use external pull-up resistor.
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`i2cX.mode` |  string  | <ul><li>required</li><li>const `"master"`</li></ul>|  |
 |`i2cX.sda` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
@@ -1021,7 +1021,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`i2cX.mode` |  string  | <ul><li>required</li><li>enum <ul><li>`"master"`</li><li>`"slave"`</li></ul></li></ul>|  |
 |`i2cX.sda` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
@@ -1058,7 +1058,7 @@ if address over 0b01111111; then address treated as 10bit address automatically.
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul>|  |
 |`i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul>|  |
@@ -1088,7 +1088,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul>|  |
 |`i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul>|  |
@@ -1113,7 +1113,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`i2cX` |  null  | <ul><li>required</li></ul>|  |
 
@@ -1136,7 +1136,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`i2cX.mode` |  string  | <ul><li>required</li><li>const `"master"`</li></ul>|  |
 |`i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul>|  |
@@ -1161,7 +1161,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`i2cX.mode` |  string  | <ul><li>required</li><li>const `"slave"`</li></ul>|  |
 |`i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul>|  |
@@ -1195,7 +1195,7 @@ Monitor io logic level changes by sampling io.
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`logic_analyzer.io[]` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 |`logic_analyzer.interval` |  number  | <ul><li>required</li><li>0 < value</li><li> unit: 0.001</li></ul>|  |
@@ -1226,7 +1226,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`logic_analyzer` |  null  | <ul><li>required</li></ul>|  |
 
@@ -1249,7 +1249,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`logic_analyzer.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul>|  |
 
@@ -1282,7 +1282,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`measure.echo.io_pulse` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 |`measure.echo.io_echo` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
@@ -1319,7 +1319,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`measure.echo[].edge` |  boolean  | <ul><li>required</li></ul>| rising = true |
 |`measure.echo[].timing` |  number  | <ul><li>required</li></ul>| msec from end of pulse |
@@ -1353,7 +1353,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`display.text` |  string  | <ul><li>required</li></ul>|  |
 
@@ -1374,7 +1374,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`display.clear` |  boolean  | <ul><li>required</li><li>const `true`</li></ul>|  |
 
@@ -1395,7 +1395,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`display.qr.text` |  string  | <ul><li>required</li></ul>|  |
 |`display.qr.correction` |  string  | <ul><li>default `M`</li><li>enum <ul><li>`"L"`</li><li>`"M"`</li><li>`"Q"`</li><li>`"H"`</li></ul></li></ul>|  |
@@ -1420,7 +1420,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`display.raw` | [imageData128x64](#imageData128x64)  | <ul><li>required</li></ul>|  |
 
@@ -1441,7 +1441,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`display.pin_assign.X.module_name` |  string  | |  |
 |`display.pin_assign.X.pin_name` |  string  | |  |
@@ -1480,7 +1480,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`switch` |  string  | <ul><li>required</li><li>const `"get"`</li></ul>|  |
 
@@ -1503,7 +1503,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`switch.state` |  string  | <ul><li>required</li><li>enum <ul><li>`"none"`</li><li>`"push"`</li><li>`"left"`</li><li>`"right"`</li></ul></li></ul>|  |
 |`switch.action` |  string  | <ul><li>const `"get"`</li></ul>| this is optional and added when user request |
@@ -1540,7 +1540,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.scan.duration` |  integer  | <ul><li>default `30`</li></ul>|  |
 
@@ -1563,7 +1563,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.scan` |  null  | <ul><li>required</li></ul>|  |
 
@@ -1589,7 +1589,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.connect.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 
@@ -1612,7 +1612,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.disconnect.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 
@@ -1640,7 +1640,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.get_services.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 
@@ -1668,7 +1668,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.get_characteristics.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.get_characteristics.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -1698,7 +1698,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.read_characteristic.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.read_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -1730,7 +1730,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.write_characteristic.address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.write_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -1765,7 +1765,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.scan_results[].event_type` |  string  | <ul><li>required</li><li>const `"inquiry_result"`</li></ul>|  |
 |`ble.scan_results[].address` | [deviceAddress](#deviceAddress)  | |  |
@@ -1806,7 +1806,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.scan_results[].event_type` |  string  | <ul><li>required</li><li>const `"inquiry_complete"`</li></ul>|  |
 
@@ -1831,7 +1831,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.status_updates[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.status_updates[].status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul>|  |
@@ -1858,7 +1858,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.get_service_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.get_service_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -1885,7 +1885,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.get_characteristic_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.get_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -1914,7 +1914,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.write_characteristic_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.write_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -1945,7 +1945,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.read_characteristic_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.read_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -1976,7 +1976,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.get_descriptors_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.get_descriptors_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2007,7 +2007,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.write_descriptor_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.write_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2040,7 +2040,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.read_descriptor_results[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.read_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2073,7 +2073,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.errors[].error_code` |  integer  | <ul><li>required</li></ul>|  |
 |`ble.errors[].message` |  string  | <ul><li>required</li></ul>|  |
@@ -2120,7 +2120,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.advertisement.adv_data` | [bleAdvertiseData](#bleAdvertiseData)  | <ul><li>required</li></ul>|  |
 |`ble.advertisement.scan_resp` | [bleAdvertiseData](#bleAdvertiseData)  | |  |
@@ -2145,7 +2145,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.advertisement` |  null  | <ul><li>required</li></ul>|  |
 
@@ -2176,7 +2176,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.services[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.services[].characteristics[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2219,7 +2219,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral` |  null  | <ul><li>required</li></ul>|  |
 
@@ -2245,7 +2245,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.read_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.read_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2277,7 +2277,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.write_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.write_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2311,7 +2311,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.read_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.read_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2345,7 +2345,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.write_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.write_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2380,7 +2380,7 @@ Related item
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.connection_status[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.connection_status[].status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul>|  |
@@ -2409,7 +2409,7 @@ callback of read characteristic
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.read_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.read_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2440,7 +2440,7 @@ callback of write characteristic
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.write_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.write_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2471,7 +2471,7 @@ callback of external device read characteristic
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.notify_read_characteristics[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.notify_read_characteristics[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2502,7 +2502,7 @@ callback of external device write characteristic
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.notify_write_characteristics[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.notify_write_characteristics[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2535,7 +2535,7 @@ callback of read descriptor
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.read_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.read_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2568,7 +2568,7 @@ callback of write descriptor
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.write_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.write_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2601,7 +2601,7 @@ callback of external device read descriptor
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.notify_read_descriptors[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.notify_read_descriptors[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
@@ -2634,7 +2634,7 @@ callback of external device write descriptor
 
 
 
-|path | type | conditions  | description
+|path | type | conditions  | description|
 |:----|:----|:----|:----|:----|
 |`ble.peripheral.notify_write_descriptors[].address` | [deviceAddress](#deviceAddress)  | <ul><li>required</li></ul>|  |
 |`ble.peripheral.notify_write_descriptors[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul>|  |
