@@ -3738,7 +3738,7 @@ class WSCommand_AD extends WSCommand {
       }
 
       let schemaData = [
-        {uri : "/request/ad/null",         onValid: this.deinit},
+        {uri : "/request/ad/deinit",         onValid: this.deinit},
         {uri : "/request/ad/get",          onValid: this.get},
       ];
       let res = this.validateCommandSchema(schemaData, module, "ad"+i, i);
