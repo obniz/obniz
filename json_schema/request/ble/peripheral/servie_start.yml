@@ -2,6 +2,13 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/peripheral/service_start"
+related :
+  - "/response/ble/peripheral/status"
+  - "/response/ble/peripheral/characteristic_notify_read"
+  - "/response/ble/peripheral/characteristic_notify_write"
+  - "/response/ble/peripheral/descriptor_notify_read"
+  - "/response/ble/peripheral/descriptor_notify_write"
+description : "callback of external device connected"
 
 
 type: object

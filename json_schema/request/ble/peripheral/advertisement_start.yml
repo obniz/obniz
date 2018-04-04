@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/peripheral/advertisement_start"
+related : "/response/ble/peripheral/status"
 
 
 type: object

@@ -82,11 +82,16 @@ class WSCommand_I2C extends WSCommand {
   }
 
   read(params, module) {
+    let address = parseInt(params.address);
+
+    if ( params.address_bits === 10 || address > 0x7F) {
+      address = address | 0x8000; // mark 10bit mode
+    }
     let read_length = params.read;
     var buf = new Uint8Array(7);
     buf[0] = module;
-    buf[1] = params.address >> 8;
-    buf[2] = params.address;
+    buf[1] = address >> 8;
+    buf[2] = address;
     buf[3] = read_length >> (3*8);
     buf[4] = read_length >> (2*8);
     buf[5] = read_length >> (1*8);

@@ -16,6 +16,7 @@ properties:
     interval :
         type : number
         minimum : 0
+        multipleOf : 0.001
         exclusiveMinimum: true
 
     duration :
@@ -29,6 +30,7 @@ properties:
 
         additionalProperties: false
         required : [value, samples]
+        default : {value: false, samples: 0}
         properties:
             value :
                 description : "start value"

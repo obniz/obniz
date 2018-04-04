@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/spi/write"
+related : "/response/spi/read"
 
 type: object
 required : [data, read]
@@ -10,3 +11,5 @@ properties:
     read :
        type: boolean
        default : true
+       description : "If false, write without receive"
+

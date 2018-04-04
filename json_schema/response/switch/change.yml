@@ -2,9 +2,10 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/switch/change"
-
+desccription : "value cahnges are always notified."
 
 type: object
+required : [state]
 properties:
     state :
         type: string
@@ -13,4 +14,4 @@ properties:
     action :
         type : string
         enum : [get]
-        optinal : true
+        description : "this is optional and added when user request"

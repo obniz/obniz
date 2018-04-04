@@ -2,7 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/peripheral/characteristic_write"
-
+description : "write characteristic on own service"
+related : "/response/ble/peripheral/characteristic_write"
 
 type: object
 required : [peripheral]

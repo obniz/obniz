@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/uart/init"
-
+description : "available 0 to 1"
 
 type: object
 required : [rx,tx]
@@ -10,18 +10,20 @@ properties:
     rx :  {$ref: "/pinSetting"}
     tx :  {$ref: "/pinSetting"}
     baud :
-        type: number
+        type: integer
         default : 115200
         minimum : 1
         maximum : 5000000
+        description : "baud rate (bps)"
 
     stop:
         type: number
         enum: [1, 1.5, 2]
         default : 1
+        description : "stop bit width"
 
     bits:
-        type: number
+        type: integer
         enum: [5, 6, 7, 8]
         default : 8
 

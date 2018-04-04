@@ -126,8 +126,33 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 
 
-####  response: <a name="-response-ws-ready">ready</a>
+####  request: <a name="-request-ws-reset_obniz_on_ws_disconnection">reset_obniz_on_ws_disconnection</a>
 
+
+
+
+|path | type | conditions  | description
+|:----|:----|:----|:----|:----|
+|`ws.reset_obniz_on_ws_disconnection` |  boolean  | <ul><li>required</li></ul>|  |
+
+
+
+```
+// Json Example
+{
+    "ws": {
+        "reset_obniz_on_ws_disconnection": false
+    }
+}
+```
+
+
+
+
+
+
+####  response: <a name="-response-ws-ready">ready</a>
+all things ready
 
 
 
@@ -148,7 +173,7 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 
 ####  response: <a name="-response-ws-redirect">redirect</a>
-
+If the server required you to connect other endpoint to communicate with your obniz. This json will be sent.
 
 
 
@@ -291,7 +316,10 @@ General purpose IO available on each io (io0 to io11).
 
 
 
-response schema is [get](#-response-io-get)
+Related item
+
+- [/response/io/get](#-response-io-get)
+
 
 
 |path | type | conditions  | description
@@ -312,11 +340,16 @@ response schema is [get](#-response-io-get)
 
 
 
+Related item
+
+- [/response/io/get](#-response-io-get)
+
+
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
 |`ioX.direction` |  string  | <ul><li>required</li><li>const `"input"`</li></ul>|  |
-|`ioX.stream` |  boolean  | |  |
+|`ioX.stream` |  boolean  | | enable stream callback when value change |
 
 
 
@@ -380,7 +413,7 @@ response schema is [get](#-response-io-get)
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
-|`ioX.output_type` |  string  | <ul><li>required</li><li>enum <ul><li>`"push-pull5v"`</li><li>`"push-pull3v"`</li><li>`"open-drain"`</li></ul></li></ul>|  |
+|`ioX.output_type` |  string  | <ul><li>required</li><li>enum <ul><li>`"push-pull5v"`</li><li>`"push-pull3v"`</li><li>`"open-drain"`</li></ul></li></ul>| drive type |
 
 
 
@@ -443,7 +476,7 @@ response schema is [get](#-response-io-get)
 ###  ioAnimation
 
 
-
+io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is avaiable. it loop io changes regarding json array.
 
 ####  request: <a name="-request-ioAnimation-init">init</a>
 
@@ -520,18 +553,21 @@ response schema is [get](#-response-io-get)
 ###  ad
 
 
-
+available ad0~ad11
 
 ####  request: <a name="-request-ad-get">get</a>
 
 
 
-response schema is [get](#-response-ad-get)
+Related item
+
+- [/response/ad/get](#-response-ad-get)
+
 
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
-|`adX.stream` |  boolean  | <ul><li>required</li></ul>|  |
+|`adX.stream` |  boolean  | <ul><li>required</li></ul>| true to continuous notifying on voltage change. |
 
 
 
@@ -569,13 +605,13 @@ response schema is [get](#-response-ad-get)
 
 
 ####  response: <a name="-response-ad-get">get</a>
-
+current value (volt)
 
 
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
-|`adX` |  number  | <ul><li>required</li><li>0 &le; value &le; 5</li></ul>|  |
+|`adX` |  number  | <ul><li>required</li><li>0 &le; value &le; 5</li></ul>| current value (volt) |
 
 
 
@@ -592,7 +628,7 @@ response schema is [get](#-response-ad-get)
 ###  pwm
 
 
-
+available 0 to 5
 
 ####  request: <a name="-request-pwm-init">init</a>
 
@@ -622,7 +658,7 @@ response schema is [get](#-response-ad-get)
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
-|`pwmX.freq` |  integer  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul>| frequency |
+|`pwmX.freq` |  integer  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul>| frequency (Hz) |
 
 
 
@@ -643,7 +679,7 @@ response schema is [get](#-response-ad-get)
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
-|`pwmX.pulse` |  number  | <ul><li>required</li><li> unit: 0.001</li></ul>| pulse width (ms) |
+|`pwmX.pulse` |  number  | <ul><li>required</li><li>0 &le; value</li><li> unit: 0.001</li></ul>| pulse width (ms) |
 
 
 
@@ -686,7 +722,7 @@ response schema is [get](#-response-ad-get)
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
 |`pwmX.modulate.type` |  string  | <ul><li>required</li><li>const `"am"`</li></ul>|  |
-|`pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li></ul>|  |
+|`pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li><li> unit: 0.001</li></ul>| symbol width (ms) |
 |`pwmX.modulate.data` | [dataArray](#dataArray)  | <ul><li>required</li></ul>|  |
 
 
@@ -697,7 +733,7 @@ response schema is [get](#-response-ad-get)
     "pwm0": {
         "modulate": {
             "type": "am",
-            "symbol_length": 500,
+            "symbol_length": 500.024,
             "data": [16, 34, 242]
         }
     }
@@ -732,7 +768,7 @@ response schema is [get](#-response-ad-get)
 
 
 ####  request: <a name="-request-uart-init">init</a>
-
+available 0 to 1
 
 
 
@@ -740,9 +776,9 @@ response schema is [get](#-response-ad-get)
 |:----|:----|:----|:----|:----|
 |`uartX.rx` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 |`uartX.tx` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
-|`uartX.baud` |  number  | <ul><li>default `115200`</li><li>1 &le; value &le; 5000000</li></ul>|  |
-|`uartX.stop` |  number  | <ul><li>default `1`</li><li>enum <ul><li>`1`</li><li>`1.5`</li><li>`2`</li></ul></li></ul>|  |
-|`uartX.bits` |  number  | <ul><li>default `8`</li><li>enum <ul><li>`5`</li><li>`6`</li><li>`7`</li><li>`8`</li></ul></li></ul>|  |
+|`uartX.baud` |  integer  | <ul><li>default `115200`</li><li>1 &le; value &le; 5000000</li></ul>| baud rate (bps) |
+|`uartX.stop` |  number  | <ul><li>default `1`</li><li>enum <ul><li>`1`</li><li>`1.5`</li><li>`2`</li></ul></li></ul>| stop bit width |
+|`uartX.bits` |  integer  | <ul><li>default `8`</li><li>enum <ul><li>`5`</li><li>`6`</li><li>`7`</li><li>`8`</li></ul></li></ul>|  |
 |`uartX.parity` |  string  | <ul><li>default `off`</li><li>enum <ul><li>`"off"`</li><li>`"odd"`</li><li>`"even"`</li></ul></li></ul>|  |
 |`uartX.flowcontrol` |  string  | <ul><li>default `off`</li><li>enum <ul><li>`"off"`</li><li>`"rts"`</li><li>`"cts"`</li><li>`"rts-cts"`</li></ul></li></ul>|  |
 |`uartX.rts` | [pinSetting](#pinSetting)  | |  |
@@ -838,10 +874,10 @@ response schema is [get](#-response-ad-get)
 ###  spi
 
 
-
+available spi0, spi1
 
 ####  request: <a name="-request-spi-init_master">init_master</a>
-
+clk, miso, mosi are optional, but at least one are required
 
 
 
@@ -851,7 +887,7 @@ response schema is [get](#-response-ad-get)
 |`spiX.clk` | [pinSetting](#pinSetting)  | |  |
 |`spiX.mosi` | [pinSetting](#pinSetting)  | |  |
 |`spiX.miso` | [pinSetting](#pinSetting)  | |  |
-|`spiX.clock` |  number  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul>|  |
+|`spiX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul>|  |
 
 
 
@@ -892,11 +928,16 @@ response schema is [get](#-response-ad-get)
 
 
 
+Related item
+
+- [/response/spi/read](#-response-spi-read)
+
+
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
 |`spiX.data` | [dataArray32](#dataArray32)  | <ul><li>required</li></ul>|  |
-|`spiX.read` |  boolean  | <ul><li>required</li></ul>|  |
+|`spiX.read` |  boolean  | <ul><li>required</li></ul>| If false, write without receive |
 
 
 
@@ -941,10 +982,10 @@ response schema is [get](#-response-ad-get)
 ###  i2c
 
 
-
+available only i2c0
 
 ####  request: <a name="-request-i2c-init_master">init_master</a>
-
+internal pullup is available. But, We recommend use external pull-up resistor.
 
 
 
@@ -953,7 +994,7 @@ response schema is [get](#-response-ad-get)
 |`i2cX.mode` |  string  | <ul><li>required</li><li>const `"master"`</li></ul>|  |
 |`i2cX.sda` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 |`i2cX.scl` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
-|`i2cX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 1000000</li></ul>|  |
+|`i2cX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 1000000</li></ul>| frequency (Hz) |
 
 
 
@@ -972,6 +1013,11 @@ response schema is [get](#-response-ad-get)
 
 ####  request: <a name="-request-i2c-init_slave">init_slave</a>
 
+
+
+Related item
+
+- [/response/i2c/slave](#-response-i2c-slave)
 
 
 
@@ -1008,7 +1054,7 @@ response schema is [get](#-response-ad-get)
 
 
 ####  request: <a name="-request-i2c-write">write</a>
-
+if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.
 
 
 
@@ -1033,7 +1079,12 @@ response schema is [get](#-response-ad-get)
 
 
 ####  request: <a name="-request-i2c-read">read</a>
+if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.
 
+
+Related item
+
+- [/response/i2c/master](#-response-i2c-master)
 
 
 
@@ -1147,7 +1198,7 @@ Monitor io logic level changes by sampling io.
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
 |`logic_analyzer.io[]` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
-|`logic_analyzer.interval` |  number  | <ul><li>required</li><li>0 < value</li></ul>|  |
+|`logic_analyzer.interval` |  number  | <ul><li>required</li><li>0 < value</li><li> unit: 0.001</li></ul>|  |
 |`logic_analyzer.duration` |  integer  | <ul><li>required</li><li>0 < value</li></ul>|  |
 |`logic_analyzer.triger.value` |  boolean  | <ul><li>required</li></ul>| start value |
 |`logic_analyzer.triger.samples` |  integer  | <ul><li>required</li><li>0 &le; value</li></ul>| how that values consists |
@@ -1225,7 +1276,10 @@ With below sample code, you will receive only datas which start with &#39;false,
 It measures pulse response.
 
 
-response schema is [echo](#-response-measure-echo)
+Related item
+
+- [/response/measure/echo](#-response-measure-echo)
+
 
 
 |path | type | conditions  | description
@@ -1233,9 +1287,9 @@ response schema is [echo](#-response-measure-echo)
 |`measure.echo.io_pulse` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 |`measure.echo.io_echo` | [pinSetting](#pinSetting)  | <ul><li>required</li></ul>|  |
 |`measure.echo.pulse` |  string  | <ul><li>default `positive`</li><li>enum <ul><li>`"positive"`</li><li>`"negative"`</li></ul></li></ul>|  |
-|`measure.echo.pulse_width` |  number  | <ul><li>required</li><li>0.001 &le; value &le; 1000</li></ul>|  |
+|`measure.echo.pulse_width` |  number  | <ul><li>required</li><li>0.001 &le; value &le; 1000</li><li> unit: 0.001</li></ul>|  |
 |`measure.echo.measure_edges` |  integer  | <ul><li>1 &le; value &le; 4</li></ul>|  |
-|`measure.echo.timeout` |  integer  | <ul><li>default `1000`</li><li>0.001 &le; value &le; 1000</li></ul>|  |
+|`measure.echo.timeout` |  number  | <ul><li>default `1000`</li><li>0.001 &le; value &le; 1000</li><li> unit: 0.001</li></ul>|  |
 
 
 
@@ -1267,8 +1321,8 @@ response schema is [echo](#-response-measure-echo)
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
-|`measure.echo[].edge` |  boolean  | <ul><li>required</li></ul>|  |
-|`measure.echo[].timing` |  number  | <ul><li>required</li></ul>|  |
+|`measure.echo[].edge` |  boolean  | <ul><li>required</li></ul>| rising = true |
+|`measure.echo[].timing` |  number  | <ul><li>required</li></ul>| msec from end of pulse |
 
 
 
@@ -1362,7 +1416,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  request: <a name="-request-display-raw">raw</a>
-
+1 bit represents 1 dot. 1=white, 0=black. 1 byte is part of one line. Order is same like.<br/> {1byte} {2byte} {3byte}...{16byte}<br/> {17byte} {18byte} {19byte}...<br/> .....<br/> .....................{1024byte}
 
 
 
@@ -1414,10 +1468,15 @@ response schema is [echo](#-response-measure-echo)
 ###  switch
 
 
-
+the switch embed on obniz itself. If it's state is changed, notification will be fired.
 
 ####  request: <a name="-request-switch-get">get</a>
 
+
+
+Related item
+
+- [/response/switch/change](#-response-switch-change)
 
 
 
@@ -1446,8 +1505,8 @@ response schema is [echo](#-response-measure-echo)
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
-|`switch.state` |  string  | <ul><li>enum <ul><li>`"none"`</li><li>`"push"`</li><li>`"left"`</li><li>`"right"`</li></ul></li></ul>|  |
-|`switch.action` |  string  | <ul><li>const `"get"`</li></ul>|  |
+|`switch.state` |  string  | <ul><li>required</li><li>enum <ul><li>`"none"`</li><li>`"push"`</li><li>`"left"`</li><li>`"right"`</li></ul></li></ul>|  |
+|`switch.action` |  string  | <ul><li>const `"get"`</li></ul>| this is optional and added when user request |
 
 
 
@@ -1467,9 +1526,16 @@ response schema is [echo](#-response-measure-echo)
 ###  ble.central
 
 
-
+use obniz as central
 
 ####  request: <a name="-request-ble-central-scan_start">scan_start</a>
+
+
+
+Related item
+
+- [/response/ble/central/scan](#-response-ble-central-scan)
+- [/response/ble/central/scan_finish](#-response-ble-central-scan_finish)
 
 
 
@@ -1515,6 +1581,11 @@ response schema is [echo](#-response-measure-echo)
 
 ####  request: <a name="-request-ble-central-connect">connect</a>
 
+
+
+Related item
+
+- [/response/ble/central/status_update](#-response-ble-central-status_update)
 
 
 
@@ -1563,6 +1634,11 @@ response schema is [echo](#-response-measure-echo)
 
 
 
+Related item
+
+- [/response/ble/central/service_get](#-response-ble-central-service_get)
+
+
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
@@ -1584,6 +1660,11 @@ response schema is [echo](#-response-measure-echo)
 
 ####  request: <a name="-request-ble-central-characteristic_get">characteristic_get</a>
 
+
+
+Related item
+
+- [/response/ble/central/characteristic_get](#-response-ble-central-characteristic_get)
 
 
 
@@ -1611,6 +1692,11 @@ response schema is [echo](#-response-measure-echo)
 
 
 
+Related item
+
+- [/response/ble/central/characteristic_read](#-response-ble-central-characteristic_read)
+
+
 
 |path | type | conditions  | description
 |:----|:----|:----|:----|:----|
@@ -1636,6 +1722,11 @@ response schema is [echo](#-response-measure-echo)
 
 ####  request: <a name="-request-ble-central-characteristic_write">characteristic_write</a>
 
+
+
+Related item
+
+- [/response/ble/central/characteristic_write](#-response-ble-central-characteristic_write)
 
 
 
@@ -1681,7 +1772,7 @@ response schema is [echo](#-response-measure-echo)
 |`ble.scan_results[].ble_event_type` |  string  | <ul><li>enum <ul><li>`"connectable_advertisemnt"`</li><li>`"connectable_directed_advertisemnt"`</li><li>`"scannable_advertising"`</li><li>`"non_connectable_advertising"`</li><li>`"scan_response"`</li></ul></li></ul>|  |
 |`ble.scan_results[].device_type` |  string  | <ul><li>enum <ul><li>`"ble"`</li><li>`"dumo"`</li><li>`"breder"`</li></ul></li></ul>|  |
 |`ble.scan_results[].address_type` |  string  | <ul><li>enum <ul><li>`"public"`</li><li>`"random"`</li><li>`"rpa_public"`</li><li>`"rpa_random"`</li></ul></li></ul>|  |
-|`ble.scan_results[].flag` |  integer  | <ul><li>value &le; 0</li></ul>|  |
+|`ble.scan_results[].flag` |  integer  | <ul><li>0 &le; value</li></ul>|  |
 |`ble.scan_results[].rssi` |  integer  | <ul><li>value &le; 0</li></ul>|  |
 |`ble.scan_results[].adv_data` | [bleAdvertiseData](#bleAdvertiseData)  | |  |
 |`ble.scan_results[].scan_resp` | [bleAdvertiseData](#bleAdvertiseData)  | |  |
@@ -1977,15 +2068,55 @@ response schema is [echo](#-response-measure-echo)
 ```
 
 
+####  response: <a name="-response-ble-central-error">error</a>
+
+
+
+
+|path | type | conditions  | description
+|:----|:----|:----|:----|:----|
+|`ble.errors[].error_code` |  integer  | <ul><li>required</li></ul>|  |
+|`ble.errors[].message` |  string  | <ul><li>required</li></ul>|  |
+|`ble.errors[].address` | [deviceAddress](#deviceAddress)  | |  |
+|`ble.errors[].service_uuid` | [uuidOrNull](#uuidOrNull)  | |  |
+|`ble.errors[].characteristic_uuid` | [uuidOrNull](#uuidOrNull)  | |  |
+|`ble.errors[].descriptor_uuid` | [uuidOrNull](#uuidOrNull)  | |  |
+
+
+
+```
+// Json Example
+{
+    "ble": {
+        "errors": [
+            {
+                "error_code": 0,
+                "message": "ERROR MESSAGE",
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c"
+            }
+        ]
+    }
+}
+```
+
+
 
 
 ###  ble.peripheral
 
 
-
+use obniz as peripheral
 
 ####  request: <a name="-request-ble-peripheral-advertisement_start">advertisement_start</a>
 
+
+
+Related item
+
+- [/response/ble/peripheral/status](#-response-ble-peripheral-status)
 
 
 
@@ -2031,6 +2162,16 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  request: <a name="-request-ble-peripheral-service_start">service_start</a>
+callback of external device connected
+
+
+Related item
+
+- [/response/ble/peripheral/status](#-response-ble-peripheral-status)
+- [/response/ble/peripheral/characteristic_notify_read](#-response-ble-peripheral-characteristic_notify_read)
+- [/response/ble/peripheral/characteristic_notify_write](#-response-ble-peripheral-characteristic_notify_write)
+- [/response/ble/peripheral/descriptor_notify_read](#-response-ble-peripheral-descriptor_notify_read)
+- [/response/ble/peripheral/descriptor_notify_write](#-response-ble-peripheral-descriptor_notify_write)
 
 
 
@@ -2095,7 +2236,12 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  request: <a name="-request-ble-peripheral-characteristic_read">characteristic_read</a>
+read characteristic on own service
 
+
+Related item
+
+- [/response/ble/peripheral/characteristic_read](#-response-ble-peripheral-characteristic_read)
 
 
 
@@ -2122,7 +2268,12 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  request: <a name="-request-ble-peripheral-characteristic_write">characteristic_write</a>
+write characteristic on own service
 
+
+Related item
+
+- [/response/ble/peripheral/characteristic_write](#-response-ble-peripheral-characteristic_write)
 
 
 
@@ -2151,7 +2302,12 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  request: <a name="-request-ble-peripheral-descriptor_read">descriptor_read</a>
+read descriptor on own service
 
+
+Related item
+
+- [/response/ble/peripheral/descriptor_read](#-response-ble-peripheral-descriptor_read)
 
 
 
@@ -2180,7 +2336,12 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  request: <a name="-request-ble-peripheral-descriptor_write">descriptor_write</a>
+write descriptor on own service
 
+
+Related item
+
+- [/response/ble/peripheral/descriptor_write](#-response-ble-peripheral-descriptor_write)
 
 
 
@@ -2244,7 +2405,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-characteristic_read">characteristic_read</a>
-
+callback of read characteristic
 
 
 
@@ -2275,7 +2436,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-characteristic_write">characteristic_write</a>
-
+callback of write characteristic
 
 
 
@@ -2306,7 +2467,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-characteristic_notify_read">characteristic_notify_read</a>
-
+callback of external device read characteristic
 
 
 
@@ -2337,7 +2498,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-characteristic_notify_write">characteristic_notify_write</a>
-
+callback of external device write characteristic
 
 
 
@@ -2370,7 +2531,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-descriptor_read">descriptor_read</a>
-
+callback of read descriptor
 
 
 
@@ -2403,7 +2564,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-descriptor_write">descriptor_write</a>
-
+callback of write descriptor
 
 
 
@@ -2436,7 +2597,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-descriptor_notify_read">descriptor_notify_read</a>
-
+callback of external device read descriptor
 
 
 
@@ -2469,7 +2630,7 @@ response schema is [echo](#-response-measure-echo)
 
 
 ####  response: <a name="-response-ble-peripheral-descriptor_notify_write">descriptor_notify_write</a>
-
+callback of external device write descriptor
 
 
 
@@ -2515,49 +2676,55 @@ response schema is [echo](#-response-measure-echo)
 ### pinSetting
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| integer| <ul><li>0 &le; value &le; 11</li></ul>  |  `0`<br/>`1`<br/>`2`<br/>`3`<br/>`4`<br/>`5`<br/>`6`<br/> |  |
+| integer| <ul><li>0 &le; value &le; 11</li></ul>  |  <ul><li>`0`</li><li>`1`</li><li>`2`</li><li>`3`</li><li>`4`</li><li>`5`</li><li>`6`</li></ul> |  |
 
 
 ### dataArray
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| array| <ul><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  `[16, 34, 242]`<br/>`[100, 255, 21, 0, 21]`<br/> | Binary data array. |
+| array| <ul><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[16, 34, 242]`</li><li>`[100, 255, 21, 0, 21]`</li></ul> | Binary data array. |
 
 
 ### dataArray32
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| array| <ul><li>length &le; 32</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  `[100, 255, 21, 0, 21]`<br/> |  |
+| array| <ul><li>length &le; 32</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[100, 255, 21, 0, 21]`</li></ul> |  |
 
 
 ### dataArray1024
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| array| <ul><li>length &le; 1024</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  `[100, 255, 21, 0, 21]`<br/> |  |
+| array| <ul><li>length &le; 1024</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[100, 255, 21, 0, 21]`</li></ul> |  |
 
 
 ### imageData128x64
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| array| <ul><li>length = 1024</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  `[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 240, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 192, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 129, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 254, 7, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 252, 15, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 248, 31, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 240, 63, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 224, 127, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 192, 255, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 129, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 7, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 252, 15, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 248, 31, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 240, 63, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 127, 193, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 252, 64, 255, 128, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 240, 1, 255, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 224, 3, 254, 0, 127, 254, 14, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 252, 30, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 248, 60, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 63, 240, 120, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 127, 224, 240, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 252, 0, 127, 193, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 15, 248, 0, 255, 131, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 240, 31, 240, 39, 255, 7, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 252, 63, 224, 127, 254, 15, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 192, 255, 252, 31, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 129, 255, 248, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 3, 255, 240, 127, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 254, 7, 255, 224, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 252, 15, 255, 193, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 248, 31, 255, 131, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 240, 63, 255, 7, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 224, 127, 254, 15, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 192, 255, 252, 31, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 129, 255, 0, 63, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 3, 254, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 254, 7, 252, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 252, 15, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 248, 31, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 224, 127, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 255, 252, 0, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 1, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 3, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 255, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 255, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]`<br/> | Image data bit array. |
+| array| <ul><li>length = 1024</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 240, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 192, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 129, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 254, 7, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 252, 15, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 248, 31, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 240, 63, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 224, 127, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 192, 255, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 129, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 7, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 252, 15, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 248, 31, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 240, 63, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 127, 193, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 252, 64, 255, 128, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 240, 1, 255, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 224, 3, 254, 0, 127, 254, 14, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 252, 30, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 248, 60, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 63, 240, 120, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 127, 224, 240, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 252, 0, 127, 193, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 15, 248, 0, 255, 131, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 240, 31, 240, 39, 255, 7, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 252, 63, 224, 127, 254, 15, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 192, 255, 252, 31, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 129, 255, 248, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 3, 255, 240, 127, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 254, 7, 255, 224, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 252, 15, 255, 193, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 248, 31, 255, 131, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 240, 63, 255, 7, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 224, 127, 254, 15, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 192, 255, 252, 31, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 129, 255, 0, 63, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 3, 254, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 254, 7, 252, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 252, 15, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 248, 31, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 224, 127, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 255, 252, 0, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 1, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 3, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 255, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 255, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]`</li></ul> | Image data bit array. |
 
 
 ### deviceAddress
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| string| <ul><li>length = 12</li></ul>  |  `"77e754ab8591"`<br/> | Bluetooth device id. It&#39;s hexString cannot cointain &#39;0x&#39; or &#39;-&#39;. |
+| string| <ul><li>length = 12</li></ul>  |  <ul><li>`"77e754ab8591"`</li></ul> | Bluetooth device id. It&#39;s hexString cannot cointain &#39;0x&#39; or &#39;-&#39;. |
 
 
 ### uuid
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| string| <ul><li>4 &le; length &le; 36</li></ul>  |  `"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`<br/>`"8d3591bda71140fd8f9f00535fe57179"`<br/>`"d822b53c"`<br/>`"de44"`<br/> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
+| string| <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
 
 
 ### bleAdvertiseData
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| array| <ul><li>length &le; 31</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  `[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101]`<br/>`[7, 9, 83, 97, 109, 112, 108, 101]`<br/> |  |
+| array| <ul><li>length &le; 31</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101]`</li><li>`[7, 9, 83, 97, 109, 112, 108, 101]`</li></ul> |  |
+
+
+### uuidOrNull
+| type | conditions | examples | description
+|:----|:----|:----|:----|
+| string| <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
 
 
 

@@ -3,7 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/measure/echo"
 description : "It measures pulse response."
-response : "/response/measure/echo"
+related : "/response/measure/echo"
 
 type: object
 required : [echo]
@@ -25,6 +25,7 @@ properties:
           type : number
           minimum : 0.001
           maximum : 1000
+          multipleOf : 0.001
 
 
         measure_edges :
@@ -33,8 +34,9 @@ properties:
           maximum : 4
 
         timeout :
-          type : integer
+          type : number
           default : 1000
           minimum : 0.001
           maximum : 1000
+          multipleOf : 0.001
 

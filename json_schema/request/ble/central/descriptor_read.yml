@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/central/descriptor_read"
+related :  "/response/ble/central/descriptor_read"
 
 
 type: object

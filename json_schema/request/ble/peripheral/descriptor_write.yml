@@ -2,7 +2,9 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/peripheral/descriptor_write"
+related : "/response/ble/peripheral/descriptor_write"
 
+description : "write descriptor on own service"
 
 type: object
 required : [peripheral]

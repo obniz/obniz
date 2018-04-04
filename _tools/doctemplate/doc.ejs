@@ -96,13 +96,20 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 ###  <%= module.name.split("/").join(".") %>
 <% for(var method of module.methods){ %>
 
-<%= method.schema.description %>
+<%- method.schema.description %>
 <% for(var command of method.commands){ %>
 ####  <%= method.method %>: <a name="<%= command.uri.split("/").join("-") %>"><%= command.name %></a>
-<%= command.schema.description %>
+<%- command.schema.description %>
 
-<% if(command.schema.response){ %>
-response schema is [<%= command.schema.response.split("/").pop() %>](#<%= command.schema.response.split("/").join("-") %>)
+<% if(command.schema.related){ %>
+Related item
+<% if(Array.isArray(command.schema.related)){ %>
+<% for(var one of command.schema.related){
+%>- [<%= one %>](#<%= one.split("/").join("-") %>)
+<% } %>
+<% }else{ %>
+- [<%= command.schema.related %>](#<%= command.schema.related.split("/").join("-") %>)
+<% } %>
 <% } %>
 
 |path | type | conditions  | description
@@ -134,7 +141,7 @@ response schema is [<%= command.schema.response.split("/").pop() %>](#<%= comman
 ### <%= key %>
 | type | conditions | examples | description
 |:----|:----|:----|:----|
-| <%= schema.type %>| <%- conditions(schema) %>  |  <% for(var val of  schema.example){ %>`<%- formatter(val) %>`<br/><% } %> | <%= schema.description %> |
+| <%= schema.type %>| <%- conditions(schema) %>  |  <ul><% for(var val of  schema.example){ %><li>`<%- formatter(val) %>`</li><% } %></ul> | <%= schema.description %> |
 <% } %><%# for ( var key in defines )%>
 
 

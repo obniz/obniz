@@ -2,9 +2,10 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/i2c/init_master"
+description : "internal pullup is available. But, We recommend use external pull-up resistor."
 
 type: object
-required : [mode, sda, scl, clock]  #clk, mosi, mosi are optional
+required : [mode, sda, scl, clock]
 properties:
     mode :
         type : string
@@ -15,5 +16,6 @@ properties:
 
     clock:
         type: integer
+        description : "frequency (Hz)"
         minimum : 1
         maximum : 1000000 #1MHz

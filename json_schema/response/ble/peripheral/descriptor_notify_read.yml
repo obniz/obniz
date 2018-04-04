@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/peripheral/descriptor_notify_read"
+description : "callback of external device read descriptor"
 
 
 type: object

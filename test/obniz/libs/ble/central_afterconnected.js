@@ -181,35 +181,62 @@ describe("ble", function () {
     
     expect(this.obniz).to.be.finished;
   });
-  
-  
-  
+
+
+
   it("error", function () {
     var stub = sinon.stub();
     var peripheral = this.peripheral;
     peripheral.onerror = stub;
     sinon.assert.callCount(stub, 0);
-     
+
     testUtil.receiveJson(this.obniz, {
       ble: {
         errors: [
-         {
+          {
             error_code : 1,
             message : "ERROR MESSAGE",
             address : "e5f678800700", //hex string or null
             service_uuid : "FF00",           //hex string or null
             characteristic_uuid : "FF01", //hex string or null
             descriptor_uuid : "FF01" //hex string or null
-         }
+          }
         ]
       }
     });
-    
+
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args).to.be.lengthOf(1);
     expect(stub.getCall(0).args[0].message).to.be.equal("ERROR MESSAGE");
-    
+
     expect(this.obniz).to.be.finished;
   });
-    
+
+
+  it("error2", function () {
+    var stub = sinon.stub();
+    var peripheral = this.peripheral;
+    peripheral.onerror = stub;
+    sinon.assert.callCount(stub, 0);
+
+    testUtil.receiveJson(this.obniz, {
+      ble: {
+        errors: [
+          {
+            error_code : 1,
+            message : "ERROR MESSAGE",
+            address : "e5f678800700", //hex string or null
+            service_uuid : "FF00",           //hex string or null
+          }
+        ]
+      }
+    });
+
+    sinon.assert.callCount(stub, 1);
+    expect(stub.getCall(0).args).to.be.lengthOf(1);
+    expect(stub.getCall(0).args[0].message).to.be.equal("ERROR MESSAGE");
+
+    expect(this.obniz).to.be.finished;
+  });
+
 });

@@ -12,3 +12,4 @@ properties:
                     - push-pull5v
                     - push-pull3v
                     - open-drain
+                description : "drive type"

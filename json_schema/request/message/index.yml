@@ -3,6 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/message"
 basePath : "message"
+description  : "send/receive with other obniz or webhook"
 
 "anyOf":
   -  {$ref : "/request/message/send"}

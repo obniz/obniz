@@ -8,5 +8,6 @@ required : [pulse]
 properties:
         pulse:
             type:  number
+            minimum : 0
             multipleOf: 0.001
             description : "pulse width (ms)"

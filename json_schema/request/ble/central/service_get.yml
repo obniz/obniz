@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/central/service_get"
+related :  "/response/ble/central/service_get"
 
 
 type: object

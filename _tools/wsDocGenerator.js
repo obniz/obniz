@@ -26,9 +26,12 @@ module.exports = function() {
     if (file.isBuffer()) {
       // ファイルの内容をcontentsに読み込み
       var contents = String(file.contents);
-
-      let output = convert(contents);
-
+      let output;
+      try {
+        output = convert(contents);
+      }catch(error){
+        this.emit('error', new PluginError(PLUGIN_NAME, error));
+      }
 
       // 編集した内容を出力
       file.contents = new Buffer(output);
@@ -46,9 +49,9 @@ module.exports = function() {
 };
 
 var convert = function(str){
-  var Obniz  = {};
-  eval(str); //Obniz.wsSchema = [ [....} ]
-  for(let schema of Obniz.wsSchema){
+  let wsSchema;
+  eval(str.substring(3)); //let wsSchema = [ [....} ]
+  for(let schema of wsSchema){
     tv4.addSchema(schema);
   }
   let uris = tv4.getSchemaUris(/^\/request|^\/response/);
@@ -367,15 +370,15 @@ function _checkSchema(schema, path, required, results, needDefs){
 }
 
 
-
-
-//test
-const gulp_yaml = require("gulp-yaml");
-const gulp = require("gulp");
-const concatWith = require("./concatWith");
-const schemaSrcPath = path.join(__dirname, '../json_schema/**/*.yml');
-gulp.src(schemaSrcPath)
-    .pipe(gulp_yaml({ safe: true }))
-    .pipe(concatWith("schema.md",{header:"Obniz.wsSchema = [", separator:",", footer:"];" }))
-    .pipe(module.exports())
-    .pipe(gulp.dest(__dirname));
+//
+//
+// //test
+// const gulp_yaml = require("gulp-yaml");
+// const gulp = require("gulp");
+// const concatWith = require("./concatWith");
+// const schemaSrcPath = path.join(__dirname, '../json_schema/**/*.yml');
+// gulp.src(schemaSrcPath)
+//     .pipe(gulp_yaml({ safe: true }))
+//     .pipe(concatWith("schema.md",{header:"let wsSchema = [", separator:",", footer:"];" }))
+//     .pipe(module.exports())
+//     .pipe(gulp.dest(__dirname));

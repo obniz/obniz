@@ -16,10 +16,12 @@ properties:
             additionalProperties: false
             properties:
                 error_code : 
-                    type: integer 
+                    type: integer
+                    example : 0
                 message : 
-                    type: string 
+                    type: string
+                    example : "ERROR MESSAGE"
                 address : {$ref : "/deviceAddress"}
-                service_uuid : {$ref : "/uuid"}
-                characteristic_uuid : {$ref : "/uuid"}
-                descriptor_uuid : {$ref : "/uuid"}
+                service_uuid : {$ref : "/uuidOrNull"}
+                characteristic_uuid : {$ref : "/uuidOrNull"}
+                descriptor_uuid : {$ref : "/uuidOrNull"}

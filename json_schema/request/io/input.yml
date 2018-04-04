@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/io/input"
-response : "/response/io/get"
+related : "/response/io/get"
 
 type : string
 enum:

@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/message/receive"
-
+related : "/request/message/send"
 
 type: object
 required : [data, from]

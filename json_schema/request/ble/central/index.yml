@@ -3,6 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/central"
 basePath : "ble"
+description : "use obniz as central"
 
 "anyOf":
   -  {$ref : "/request/ble/central/scan_start"}

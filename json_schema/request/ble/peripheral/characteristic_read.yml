@@ -2,7 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/peripheral/characteristic_read"
-
+description : "read characteristic on own service"
+related : "/response/ble/peripheral/characteristic_read"
 
 type: object
 required : [peripheral]

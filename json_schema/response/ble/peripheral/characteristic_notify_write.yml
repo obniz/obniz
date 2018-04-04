@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/peripheral/characteristic_notify_write"
+description : "callback of external device write characteristic"
 
 
 type: object

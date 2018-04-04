@@ -15,6 +15,7 @@ const obnizVersion = require("./obnizVersion");
 const gulp_yaml = require("gulp-yaml");
 const concatWith = require("./concatWith");
 const gulp_sort = require("gulp-sort");
+const docGenerator = require("./wsDocGenerator");
 
 
 
@@ -63,7 +64,10 @@ gulp.task("jsonSchemaJoin", function jsonSchemaForVar(){
       .pipe(gulp_sort())
       .pipe(gulp_yaml({ safe: true }))
       .pipe(concatWith("schema.js",{header:"let wsSchema = [", separator:",", footer:"];" }))
-      .pipe(gulp.dest(tempPath));
+      .pipe(gulp.dest(tempPath))
+      .pipe(docGenerator())
+      .pipe(rename("schema.md"))
+      .pipe(gulp.dest(__dirname));
 
 });
 

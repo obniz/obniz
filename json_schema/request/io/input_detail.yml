@@ -2,6 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/io/input_detail"
+related : "/response/io/get"
 
 type: object
 required : [direction]
@@ -14,3 +15,4 @@ properties:
             stream :
                 type: boolean
                 default: false
+                description : "enable stream callback when value change"
