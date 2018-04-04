@@ -89,8 +89,22 @@ class Obniz {
   wsOnMessage(data) {
     this.print_debug(data);
     let obj = {};
-    if (typeof (data) === "string") {
+    if (typeof data === "string") {
       obj = JSON.parse(data);
+    } else if (this.wscommands){
+      data = new Uint8Array(data);
+      while(true) {
+        const frame = WSCommand.dequeueOne(data);
+        if (!frame) break;
+        for (var i=0; i<this.wscommands.length; i++) {
+          const command = this.wscommands[i];
+          if (command.module === frame.module) {
+            command.notifyFromBinary(obj, frame.func, frame.payload);
+            break;
+          }
+        }
+        data = frame.next;
+      }
     } else {
       return;
     }
