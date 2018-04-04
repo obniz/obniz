@@ -112,11 +112,11 @@ Related item
 <% } %>
 <% } %>
 
-|path | type | conditions  | description|
-|:----|:----|:----|:----|:----|
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |:---- |
 <% for ( var param of command.params){
 
-%>|`<%= param.path.replace(/\d\b/g,"X") %>` | <% if(param.ref){ %>[<%= param.type %>](#<%= param.ref %>) <% }else{ %> <%= param.type %> <% } %> | <%- conditions(param.schema,param) %>| <%= param.schema.description %> |
+%>| `<%= param.path.replace(/\d\b/g,"X") %>` | <% if(param.ref){ %>[<%= param.type %>](#<%= param.ref %>) <% }else{ %> <%= param.type %> <% } %> | <%- conditions(param.schema,param) %> | <%= param.schema.description %> |
 <% } %><%# for ( var param of command.params)%>
 
 <%=command.schema.exampleDescription %>
