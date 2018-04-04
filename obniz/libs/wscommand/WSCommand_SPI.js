@@ -55,14 +55,6 @@ class WSCommand_SPI extends WSCommand {
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-
-  // writeread(module, data) {
-  //   var buf = new Uint8Array(1 + data.length);
-  //   buf[0] = module;
-  //   buf.set(data, 1);
-  //   this.sendCommand(this._CommandWriteRead, buf);
-  // }
-
   write(params, module) {
     var buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
