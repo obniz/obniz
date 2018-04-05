@@ -172,7 +172,9 @@ class WSCommand {
       for(let schema of Obniz.wsSchema){
         Obniz.tv4.addSchema(schema);
       }
+
     }
+
     return Obniz.tv4.getSchema(uri);
   }
 

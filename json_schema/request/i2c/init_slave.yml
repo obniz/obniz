@@ -6,6 +6,7 @@ related : "/response/i2c/slave"
 
 type: object
 required : [mode, sda, scl, slave_address]
+uniqueKeys : [sda,scl]
 properties:
     mode :
         type : string

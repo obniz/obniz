@@ -6,6 +6,7 @@ description : "internal pullup is available. But, We recommend use external pull
 
 type: object
 required : [mode, sda, scl, clock]
+uniqueKeys : [sda,scl]
 properties:
     mode :
         type : string

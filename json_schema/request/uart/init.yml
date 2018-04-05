@@ -6,6 +6,7 @@ description : "available 0 to 1"
 
 type: object
 required : [rx,tx]
+uniqueKeys : [rx,tx,rts,cts]
 properties:
     rx :  {$ref: "/pinSetting"}
     tx :  {$ref: "/pinSetting"}

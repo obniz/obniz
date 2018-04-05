@@ -6,6 +6,7 @@ description : "clk, miso, mosi are optional, but at least one are required"
 
 type: object
 required : [mode, clock]  #
+uniqueKeys : [mosi,miso,clk]
 properties:
     mode  :
         type : string

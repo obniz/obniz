@@ -107,7 +107,7 @@ gulp.task("tv4Wrap", ["jsonSchemaJoin"], function tv4Wrap(){
   let separator = "\n";
   let footer = "; \n Obniz.tv4 = module.exports; wsSchema.map(Obniz.tv4.addSchema) })(this);";
 
-  return gulp.src([tv4Path, path.join(tempPath,"schema.js")])
+  return gulp.src([tv4Path, path.join(tempPath,"schema.js"), path.join(__dirname,"tv4Additional.js")])
       .pipe(plumber({errorHandler: reportError}))
       .pipe(concatWith("tv4Wraped.js",{header,separator, footer}))
       .pipe(gulp.dest(tempPath));
