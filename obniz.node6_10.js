@@ -120,7 +120,7 @@ class Obniz {
   }
 
   notifyToModule(obj) {
-    this.print_debug(obj);
+    this.print_debug(JSON.stringify(obj));
 
     // notify messaging
     if (typeof obj.message === "object" && this.onmessage) {
@@ -756,16 +756,8 @@ class Obniz {
       warning: 'alert-warning alert-dismissible',
       error: 'alert-danger'
     };
-    const timeLabel = Math.random().toString(36).slice(-8);
-    let dismissButton = `
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>`;
     let dom = `
-    <div class="alert ${alerts[obj.alert]} fade show" role="alert">
-      ${obj.message}
-      ${obj.alert === "warning" ? dismissButton : ""}
-    </div>`;
+    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"}">${obj.message}</div>`;
     document.getElementById(this.debugDomId).insertAdjacentHTML('beforeend', dom);
   }
 
