@@ -32,7 +32,7 @@ describe("obniz.libs.system", function () {
     let promise = this.obniz.pingWait(unixtime, rand).then(()=>{resolved = true;});
     expect(this.obniz).send({ system: { ping : {key : [0,0,1,98,144,90,220,115,0,69,123,198]} } });
     expect(resolved).to.be.false;
-    testUtil.receiveJson(this.obniz, { system: { pong : {key : [0,0,1,98,144,90,220,115,0,69,123,198], "obnizMillis":4553670,"pingServerTime":1522840296035,"pongServerTime":1522840297892} }} );
+    testUtil.receiveJson(this.obniz, { system: { pong : {key : [0,0,1,98,144,90,220,115,0,69,123,198], "obnizTime":4553670,"pingServerTime":1522840296035,"pongServerTime":1522840297892} }} );
 
     return promise;
 

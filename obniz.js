@@ -667,7 +667,6 @@ class Obniz {
           }
         }
         this.removePongObserver(callback);
-        if(this.debugprint) {
           let upper = (systemObj.pong.key[0] << 8 * 3 >>> 0)
               + (systemObj.pong.key[1] << 8 * 2 >>> 0)
               + (systemObj.pong.key[2] << 8 * 1 >>> 0)
@@ -678,17 +677,15 @@ class Obniz {
               + (systemObj.pong.key[7] << 8 * 0 >>> 0);
           let obnizJsPingUnixtime = upper * Math.pow(2, 32) + lower;
           let obnizJsPongUnixtime = new Date().getTime();
-          let str = "ping " +(obnizJsPongUnixtime- obnizJsPingUnixtime) + "ms (server " + (systemObj.pong.pongServerTime - systemObj.pong.pingServerTime) + "ms)";
-          let results = {
-            obnizJsPingUnixtime,
-            serverPingUnixtime : systemObj.pong.pingServerTime,
-            obnizTime : systemObj.pong.obnizMillis,
-            serverPongUnixtime : systemObj.pong.pongServerTime,
-            obnizJsPongUnixtime
-          }
+          let allTime = obnizJsPongUnixtime- obnizJsPingUnixtime;
+          let timeJs2server = systemObj.pong.pingServerTime - obnizJsPingUnixtime;
+          let timeServer2Obniz = systemObj.pong.obnizTime - systemObj.pong.pingServerTime ;
+          let timeObniz2Server = systemObj.pong.pongServerTime- systemObj.pong.obnizTime ;
+          let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime ;
+          let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
+
           this.print_debug(str);
-        }
-        resolve();
+        resolve(str);
       };
       this.addPongObserver(callback);
     });
