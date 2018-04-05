@@ -37,7 +37,7 @@ Related item
 
 <%=command.schema.exampleDescription %>
 ```
-// Json Example
+<%if(method.method.indexOf("request") == 0){%>// Json Example<%}else{%>//Response Example<%}%>
 <%- jsonExample(command.params, command.schema ) %>
 ```
 
