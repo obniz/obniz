@@ -5,12 +5,9 @@ id: "/response/ble/central/characteristic_write"
 
 
 type: object
-required : [write_characteristic_results]
+required : [write_characteristic_result]
 properties:
-    write_characteristic_results :
-        type : array
-        minItems : 1
-        items :
+    write_characteristic_result :
             type : object
             required: [address,service_uuid,characteristic_uuid, result]
             additionalProperties: false

@@ -5,12 +5,9 @@ id: "/response/ble/central/error"
 
 
 type: object
-required : [errors]
+required : [error]
 properties:
-    errors :
-        type : array
-        minItems : 1
-        items :
+    error :
             type : object
             required: [error_code, message]
             additionalProperties: false

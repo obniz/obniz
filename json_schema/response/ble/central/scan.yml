@@ -5,12 +5,9 @@ id: "/response/ble/central/scan"
 
 
 type: object
-required : [scan_results]
+required : [scan_result]
 properties:
-    scan_results :
-        type : array
-        minItems : 1
-        items :
+    scan_result :
             type : object
             required: [event_type]
             additionalProperties: false

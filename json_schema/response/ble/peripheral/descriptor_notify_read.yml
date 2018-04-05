@@ -11,12 +11,9 @@ properties:
         peripheral:
             type : object
             additionalProperties: false
-            required : [notify_read_descriptors]
+            required : [notify_read_descriptor]
             properties:
-                notify_read_descriptors :
-                    type : array
-                    minItems : 1
-                    items :
+                notify_read_descriptor :
                         type : object
                         required: [address,service_uuid, characteristic_uuid,descriptor_uuid]
                         additionalProperties: false

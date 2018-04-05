@@ -5,12 +5,9 @@ id: "/response/ble/central/descriptor_get"
 
 
 type: object
-required : [get_descriptors_results]
+required : [get_descriptors_result]
 properties:
-    get_descriptors_results :
-        type : array
-        minItems : 1
-        items :
+    get_descriptors_result :
             type : object
             required: [address,service_uuid,characteristic_uuid, descriptor_uuid]
             additionalProperties: false

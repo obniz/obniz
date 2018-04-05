@@ -10,12 +10,9 @@ properties:
         peripheral:
             type : object
             additionalProperties: false
-            required : [write_characteristic_results]
+            required : [write_characteristic_result]
             properties:
-                write_characteristic_results :
-                    type : array
-                    minItems : 1
-                    items :
+                write_characteristic_result :
                         type : object
                         required: [service_uuid, characteristic_uuid, result]
                         additionalProperties: false

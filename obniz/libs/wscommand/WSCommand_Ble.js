@@ -427,7 +427,7 @@ class WSCommand_Ble extends WSCommand {
           results = {event_type:  "inquiry_complete"};
       }
       
-     this._addRowForPath(objToSend, "ble.scan_results", results);
+     this._addRowForPath(objToSend, "ble.scan_result", results);
     }
   }
   
@@ -439,7 +439,7 @@ class WSCommand_Ble extends WSCommand {
       ];
       
       var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-      this._addRowForPath(objToSend, "ble.status_updates", results);
+      this._addRowForPath(objToSend, "ble.status_update", results);
     }
   }
   
@@ -450,7 +450,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_service_results", results);
+     this._addRowForPath(objToSend, "ble.get_service_result", results);
   }
   
   notifyFromBinaryChacateristics(objToSend, payload) {
@@ -461,7 +461,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_characteristic_results", results);
+     this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
   }
   
   notifyFromBinaryReadChacateristics(objToSend, payload) {
@@ -473,7 +473,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.read_characteristic_results", results);
+     this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
   }
   
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
@@ -485,7 +485,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.write_characteristic_results", results);
+     this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
   }
   
   notifyFromBinaryDescriptors(objToSend, payload) {
@@ -510,7 +510,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.read_descriptor_results", results);
+     this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
   }
   
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
@@ -524,7 +524,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.write_descriptor_results", results);
+     this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
   }
   
   notifyFromBinaryServerConnectionState(objToSend, payload) {
@@ -545,7 +545,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_results", results);
+    this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
   }
 
   notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
@@ -556,7 +556,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.read_characteristic_results", results);
+    this._addRowForPath(objToSend, "ble.peripheral.read_characteristic_result", results);
   }
 
   notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend, payload) {
@@ -567,7 +567,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_read_characteristics", results);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_read_characteristic", results);
   }
 
   notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
@@ -579,7 +579,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_write_characteristics", results);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_write_characteristic", results);
   }
 
   notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
@@ -591,7 +591,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.read_descriptor_results", results);
+    this._addRowForPath(objToSend, "ble.peripheral.read_descriptor_result", results);
   }
 
   notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
@@ -603,7 +603,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_results", results);
+    this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
   }
 
   notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
@@ -615,7 +615,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_read_descriptors", results);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_read_descriptor", results);
   }
 
   notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
@@ -628,7 +628,7 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_write_descriptors", results);
+    this._addRowForPath(objToSend, "ble.peripheral.notify_write_descriptor", results);
   }
 
   notifyFromBinaryError(objToSend, payload) {
@@ -702,8 +702,6 @@ class WSCommand_Ble extends WSCommand {
       target[keys[index]] = target[keys[index]] || {};
       target = target[keys[index]];
     }
-    target[keys[keys.length - 1]] = target[keys[keys.length - 1]] || [];
-    target = target[keys[keys.length - 1]];
-    target.push(row);
+    target[keys[keys.length - 1]] = row;
   }
 }

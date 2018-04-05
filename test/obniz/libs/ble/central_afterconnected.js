@@ -16,8 +16,8 @@ describe("ble", function () {
     this.obniz.ble.startScan();
     expect(this.obniz).send({ble: {scan: {duration: 30}}});
     var results = {"ble":
-          {"scan_results":
-                [{"event_type": "inquiry_result",
+          {"scan_result":
+                {"event_type": "inquiry_result",
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -25,7 +25,7 @@ describe("ble", function () {
                     "rssi": -82,
                     "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "scan_resp": []}]
+                    "scan_resp": []}
           }
     };
     testUtil.receiveJson(this.obniz, results);
@@ -38,10 +38,10 @@ describe("ble", function () {
     sinon.assert.callCount(connectStub, 0);
     testUtil.receiveJson(this.obniz, {
       ble: {
-        status_updates: [{
+        status_update: {
             address: "e5f678800700",
             status: "connected"
-          }]
+          }
       }
     });
     sinon.assert.callCount(connectStub, 1);
@@ -88,14 +88,14 @@ describe("ble", function () {
     
     testUtil.receiveJson(this.obniz, {
       ble: {
-        write_characteristic_results: [
+        write_characteristic_result:
           {
             address: "e5f678800700",
             service_uuid: "FF00", //hex string
             characteristic_uuid: "FF01", //hex string
             result: "success"   //success or failed
           }
-        ]
+
       }
     });
     sinon.assert.callCount(stub, 1);
@@ -126,14 +126,14 @@ describe("ble", function () {
     
     testUtil.receiveJson(this.obniz, {
       ble: {
-        write_characteristic_results: [
+        write_characteristic_result:
           {
             address: "e5f678800700",
             service_uuid: "FF00", //hex string
             characteristic_uuid: "FF01", //hex string
             result: "failed"   //success or failed
           }
-        ]
+
       }
     });
     sinon.assert.callCount(stub, 1);
@@ -163,14 +163,14 @@ describe("ble", function () {
      
     testUtil.receiveJson(this.obniz, {
       ble: {
-        read_characteristic_results: [
+        read_characteristic_result:
           {
             address: "e5f678800700",
             service_uuid: "FF00", //hex string
             characteristic_uuid: "FF01", //hex string
             data: [0x2e, 0x22, 0x97]   //success or failed
           }
-        ]
+
       }
     });
     
@@ -192,7 +192,7 @@ describe("ble", function () {
 
     testUtil.receiveJson(this.obniz, {
       ble: {
-        errors: [
+        error:
           {
             error_code : 1,
             message : "ERROR MESSAGE",
@@ -201,7 +201,7 @@ describe("ble", function () {
             characteristic_uuid : "FF01", //hex string or null
             descriptor_uuid : "FF01" //hex string or null
           }
-        ]
+
       }
     });
 
@@ -221,14 +221,14 @@ describe("ble", function () {
 
     testUtil.receiveJson(this.obniz, {
       ble: {
-        errors: [
+        error:
           {
             error_code : 1,
             message : "ERROR MESSAGE",
             address : "e5f678800700", //hex string or null
             service_uuid : "FF00",           //hex string or null
           }
-        ]
+
       }
     });
 

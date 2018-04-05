@@ -132,7 +132,6 @@ class WSCommand {
     switch(func) {
       case this.COMMAND_FUNC_ID_ERROR:
         if (!objToSend.debug) objToSend.debug = {};
-        if (!objToSend.debug.errors) objToSend.debug.errors = [];
         var err = {
           module: this.module,
           _args: [... payload]
@@ -143,7 +142,7 @@ class WSCommand {
           err.err1 = payload[1];
           err.function = payload[2];
         }
-        objToSend.debug.errors.push(err)
+        objToSend.debug.error = err
         break;
 
       default:
@@ -154,14 +153,12 @@ class WSCommand {
 
   envelopWarning(objToSend, module_key, obj) {
     if (!objToSend[module_key]) objToSend[module_key] = {};
-    if (!objToSend[module_key].warnings) objToSend[module_key].warnings = [];
-    objToSend[module_key].warnings.push(obj);
+    objToSend[module_key].warning = obj;
   }
 
   envelopError(objToSend, module_key, obj) {
     if (!objToSend[module_key]) objToSend[module_key] = {};
-    if (!objToSend[module_key].errors) objToSend[module_key].errors = [];
-    objToSend[module_key].errors.push(obj);
+    objToSend[module_key].error = obj;
   }
 
   isValidIO(io) {

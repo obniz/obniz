@@ -13,9 +13,6 @@ properties:
             required : [connection_status]
             properties:
                 connection_status :
-                    type : array
-                    minItems : 1
-                    items :
                         type : object
                         required: [address, status]
                         additionalProperties: false

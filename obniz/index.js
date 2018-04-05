@@ -88,14 +88,15 @@ class Obniz {
   }
 
   wsOnMessage(data) {
-    let obj = {};
     if (typeof data === "string") {
-      obj = JSON.parse(data);
+      let obj = JSON.parse(data);
+      this.notifyToModule(obj);
     } else if (this.wscommands){
       data = new Uint8Array(data);
       while(true) {
         const frame = WSCommand.dequeueOne(data);
         if (!frame) break;
+        let obj = {};
         for (var i=0; i<this.wscommands.length; i++) {
           const command = this.wscommands[i];
           if (command.module === frame.module) {
@@ -103,13 +104,17 @@ class Obniz {
             break;
           }
         }
+        this.notifyToModule(obj);
         data = frame.next;
       }
     } else {
       return;
     }
+  }
+
+  notifyToModule(obj){
     this.print_debug(obj);
-  
+
     // notify messaging
     if (typeof (obj.message) === "object" && this.onmessage) {
       this.onmessage(obj.message.data, obj.message.from);
@@ -120,21 +125,10 @@ class Obniz {
         let msg = "Warning: " + obj.debug.warning;
         this.warning({alert: 'warning', message: msg});
       }
-      if (obj.debug.warnings) {
-        for (let i=0; i<obj.debug.warnings.length; i++) {
-          let msg = "Warning: " + obj.debug.warnings[i].message;
-          this.warning({alert: 'warning', message:msg});
-        }
-      }
+
       if (obj.debug.error) {
         let msg = "Error: " + obj.debug.error;
         this.error({alert: 'error', message: msg});
-      }
-      if (obj.debug.errors) {
-        for (let i=0; i<obj.debug.errors.length; i++) {
-          let msg = "Error: " + obj.debug.errors[i].message;
-          this.error({alert: 'error', message: msg});
-        }
       }
       if (this.ondebug) {
         this.ondebug(obj.debug);
@@ -149,7 +143,7 @@ class Obniz {
       this.handleSystemCommand(obj["system"]);
       return;
     }
-  
+
     // notify
     let notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
     for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {

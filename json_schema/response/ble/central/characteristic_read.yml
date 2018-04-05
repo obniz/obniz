@@ -5,12 +5,9 @@ id: "/response/ble/central/characteristic_read"
 
 
 type: object
-required : [read_characteristic_results]
+required : [read_characteristic_result]
 properties:
-    read_characteristic_results :
-        type : array
-        minItems : 1
-        items :
+    read_characteristic_result :
             type : object
             required: [address,service_uuid,characteristic_uuid, data]
             additionalProperties: false

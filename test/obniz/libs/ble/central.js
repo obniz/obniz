@@ -48,8 +48,8 @@ describe("ble", function () {
 
 
     var results = {"ble":
-          {"scan_results":
-                [{"event_type": "inquiry_result",
+          {"scan_result":
+                {"event_type": "inquiry_result",
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -57,7 +57,7 @@ describe("ble", function () {
                     "rssi": -82,
                     "adv_data": [2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200],
                     "flag": 26,
-                    "scan_resp": [22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]}]
+                    "scan_resp": [22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]}
           }
     };
 
@@ -86,8 +86,8 @@ describe("ble", function () {
 
 
     var results = {"ble":
-          {"scan_results":
-                [{"event_type": "inquiry_result",
+          {"scan_result":
+                {"event_type": "inquiry_result",
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -95,7 +95,7 @@ describe("ble", function () {
                     "rssi": -82,
                     "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "scan_resp": []}]
+                    "scan_resp": []}
           }
     };
 
@@ -124,8 +124,8 @@ describe("ble", function () {
 
 
     var results = {"ble":
-          {"scan_results":
-                [{"event_type": "inquiry_result",
+          {"scan_result":
+                {"event_type": "inquiry_result",
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -133,7 +133,7 @@ describe("ble", function () {
                     "rssi": -82,
                     "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "scan_resp": []}]
+                    "scan_resp": []}
           }
     };
 
@@ -153,10 +153,10 @@ describe("ble", function () {
 
     testUtil.receiveJson(this.obniz, {
       ble: {
-        status_updates: [{
+        status_update: {
             address: "e5f678800700",
             status: "connected"
-          }]
+          }
       }
     });
 
@@ -177,8 +177,8 @@ describe("ble", function () {
 
 
     var results = {"ble":
-          {"scan_results":
-                [{"event_type": "inquiry_result",
+          {"scan_result":
+                {"event_type": "inquiry_result",
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -186,7 +186,7 @@ describe("ble", function () {
                     "rssi": -82,
                     "adv_data": [2, 1, 26],
                     "flag": 26,
-                    "scan_resp": []}]
+                    "scan_resp": []}
           }
     };
 
@@ -208,10 +208,10 @@ describe("ble", function () {
 
     testUtil.receiveJson(this.obniz, {
       ble: {
-        status_updates: [{
+        status_update: {
             address: "e5f678800700",
             status: "disconnected"
-          }]
+          }
       }
     });
 

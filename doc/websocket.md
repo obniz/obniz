@@ -1733,15 +1733,15 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.scan_results[].event_type` |  string  | <ul><li>required</li><li>const `"inquiry_result"`</li></ul> | &nbsp; |
-| `ble.scan_results[].address` | [deviceAddress](#deviceaddress)  | &nbsp; | &nbsp; |
-| `ble.scan_results[].ble_event_type` |  string  | <ul><li>enum <ul><li>`"connectable_advertisemnt"`</li><li>`"connectable_directed_advertisemnt"`</li><li>`"scannable_advertising"`</li><li>`"non_connectable_advertising"`</li><li>`"scan_response"`</li></ul></li></ul> | &nbsp; |
-| `ble.scan_results[].device_type` |  string  | <ul><li>enum <ul><li>`"ble"`</li><li>`"dumo"`</li><li>`"breder"`</li></ul></li></ul> | &nbsp; |
-| `ble.scan_results[].address_type` |  string  | <ul><li>enum <ul><li>`"public"`</li><li>`"random"`</li><li>`"rpa_public"`</li><li>`"rpa_random"`</li></ul></li></ul> | &nbsp; |
-| `ble.scan_results[].flag` |  integer  | <ul><li>0 &le; value</li></ul> | &nbsp; |
-| `ble.scan_results[].rssi` |  integer  | <ul><li>value &le; 0</li></ul> | &nbsp; |
-| `ble.scan_results[].adv_data` | [bleAdvertiseData](#bleadvertisedata)  | &nbsp; | &nbsp; |
-| `ble.scan_results[].scan_resp` | [bleAdvertiseData](#bleadvertisedata)  | &nbsp; | &nbsp; |
+| `ble.scan_result.event_type` |  string  | <ul><li>required</li><li>const `"inquiry_result"`</li></ul> | &nbsp; |
+| `ble.scan_result.address` | [deviceAddress](#deviceaddress)  | &nbsp; | &nbsp; |
+| `ble.scan_result.ble_event_type` |  string  | <ul><li>enum <ul><li>`"connectable_advertisemnt"`</li><li>`"connectable_directed_advertisemnt"`</li><li>`"scannable_advertising"`</li><li>`"non_connectable_advertising"`</li><li>`"scan_response"`</li></ul></li></ul> | &nbsp; |
+| `ble.scan_result.device_type` |  string  | <ul><li>enum <ul><li>`"ble"`</li><li>`"dumo"`</li><li>`"breder"`</li></ul></li></ul> | &nbsp; |
+| `ble.scan_result.address_type` |  string  | <ul><li>enum <ul><li>`"public"`</li><li>`"random"`</li><li>`"rpa_public"`</li><li>`"rpa_random"`</li></ul></li></ul> | &nbsp; |
+| `ble.scan_result.flag` |  integer  | <ul><li>0 &le; value</li></ul> | &nbsp; |
+| `ble.scan_result.rssi` |  integer  | <ul><li>value &le; 0</li></ul> | &nbsp; |
+| `ble.scan_result.adv_data` | [bleAdvertiseData](#bleadvertisedata)  | &nbsp; | &nbsp; |
+| `ble.scan_result.scan_resp` | [bleAdvertiseData](#bleadvertisedata)  | &nbsp; | &nbsp; |
 
 
 
@@ -1749,19 +1749,17 @@ Related item
 // Json Example
 {
     "ble": {
-        "scan_results": [
-            {
-                "event_type": "inquiry_result",
-                "address": "77e754ab8591",
-                "ble_event_type": "connectable_advertisemnt",
-                "device_type": "ble",
-                "address_type": "public",
-                "flag": 500,
-                "rssi": 500,
-                "adv_data": [2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101],
-                "scan_resp": [7, 9, 83, 97, 109, 112, 108, 101]
-            }
-        ]
+        "scan_result": {
+            "event_type": "inquiry_result",
+            "address": "77e754ab8591",
+            "ble_event_type": "connectable_advertisemnt",
+            "device_type": "ble",
+            "address_type": "public",
+            "flag": 500,
+            "rssi": 500,
+            "adv_data": [2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101],
+            "scan_resp": [7, 9, 83, 97, 109, 112, 108, 101]
+        }
     }
 }
 ```
@@ -1774,7 +1772,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.scan_results[].event_type` |  string  | <ul><li>required</li><li>const `"inquiry_complete"`</li></ul> | &nbsp; |
+| `ble.scan_result.event_type` |  string  | <ul><li>required</li><li>const `"inquiry_complete"`</li></ul> | &nbsp; |
 
 
 
@@ -1782,11 +1780,9 @@ Related item
 // Json Example
 {
     "ble": {
-        "scan_results": [
-            {
-                "event_type": "inquiry_complete"
-            }
-        ]
+        "scan_result": {
+            "event_type": "inquiry_complete"
+        }
     }
 }
 ```
@@ -1799,8 +1795,8 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.status_updates[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.status_updates[].status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul> | &nbsp; |
+| `ble.status_update.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.status_update.status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -1808,12 +1804,10 @@ Related item
 // Json Example
 {
     "ble": {
-        "status_updates": [
-            {
-                "address": "77e754ab8591",
-                "status": "connected"
-            }
-        ]
+        "status_update": {
+            "address": "77e754ab8591",
+            "status": "connected"
+        }
     }
 }
 ```
@@ -1826,8 +1820,8 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_service_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_service_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_service_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_service_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1835,12 +1829,10 @@ Related item
 // Json Example
 {
     "ble": {
-        "get_service_results": [
-            {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
-            }
-        ]
+        "get_service_result": {
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+        }
     }
 }
 ```
@@ -1853,9 +1845,9 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_characteristic_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_characteristic_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1863,13 +1855,11 @@ Related item
 // Json Example
 {
     "ble": {
-        "get_characteristic_results": [
-            {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
-            }
-        ]
+        "get_characteristic_result": {
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+        }
     }
 }
 ```
@@ -1882,10 +1872,10 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.write_characteristic_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.write_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.write_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.write_characteristic_results[].result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
+| `ble.write_characteristic_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_characteristic_result.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -1893,14 +1883,12 @@ Related item
 // Json Example
 {
     "ble": {
-        "write_characteristic_results": [
-            {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "result": "success"
-            }
-        ]
+        "write_characteristic_result": {
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+            "result": "success"
+        }
     }
 }
 ```
@@ -1913,10 +1901,10 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.read_characteristic_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.read_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.read_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.read_characteristic_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_characteristic_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_characteristic_result.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1924,14 +1912,12 @@ Related item
 // Json Example
 {
     "ble": {
-        "read_characteristic_results": [
-            {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "data": [16, 34, 242]
-            }
-        ]
+        "read_characteristic_result": {
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+            "data": [16, 34, 242]
+        }
     }
 }
 ```
@@ -1944,10 +1930,10 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_descriptors_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_descriptors_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_descriptors_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_descriptors_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors_result.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1955,14 +1941,12 @@ Related item
 // Json Example
 {
     "ble": {
-        "get_descriptors_results": [
-            {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c"
-            }
-        ]
+        "get_descriptors_result": {
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+            "descriptor_uuid": "d822b53c"
+        }
     }
 }
 ```
@@ -1975,11 +1959,11 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.write_descriptor_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.write_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.write_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.write_descriptor_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.write_descriptor_results[].result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
+| `ble.write_descriptor_results.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor_results.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor_results.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor_results.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor_results.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -1987,15 +1971,13 @@ Related item
 // Json Example
 {
     "ble": {
-        "write_descriptor_results": [
-            {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c",
-                "result": "success"
-            }
-        ]
+        "write_descriptor_results": {
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+            "descriptor_uuid": "d822b53c",
+            "result": "success"
+        }
     }
 }
 ```
@@ -2008,11 +1990,11 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.read_descriptor_results[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.read_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.read_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.read_descriptor_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.read_descriptor_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor_results.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor_results.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor_results.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor_results.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor_results.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -2020,15 +2002,13 @@ Related item
 // Json Example
 {
     "ble": {
-        "read_descriptor_results": [
-            {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c",
-                "data": [16, 34, 242]
-            }
-        ]
+        "read_descriptor_results": {
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+            "descriptor_uuid": "d822b53c",
+            "data": [16, 34, 242]
+        }
     }
 }
 ```
@@ -2041,12 +2021,12 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.errors[].error_code` |  integer  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.errors[].message` |  string  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.errors[].address` | [deviceAddress](#deviceaddress)  | &nbsp; | &nbsp; |
-| `ble.errors[].service_uuid` | [uuidOrNull](#uuidornull)  | &nbsp; | &nbsp; |
-| `ble.errors[].characteristic_uuid` | [uuidOrNull](#uuidornull)  | &nbsp; | &nbsp; |
-| `ble.errors[].descriptor_uuid` | [uuidOrNull](#uuidornull)  | &nbsp; | &nbsp; |
+| `ble.error.error_code` |  integer  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.error.message` |  string  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.error.address` | [deviceAddress](#deviceaddress)  | &nbsp; | &nbsp; |
+| `ble.error.service_uuid` | [uuidOrNull](#uuidornull)  | &nbsp; | &nbsp; |
+| `ble.error.characteristic_uuid` | [uuidOrNull](#uuidornull)  | &nbsp; | &nbsp; |
+| `ble.error.descriptor_uuid` | [uuidOrNull](#uuidornull)  | &nbsp; | &nbsp; |
 
 
 
@@ -2054,16 +2034,14 @@ Related item
 // Json Example
 {
     "ble": {
-        "errors": [
-            {
-                "error_code": 0,
-                "message": "ERROR MESSAGE",
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c"
-            }
-        ]
+        "error": {
+            "error_code": 0,
+            "message": "ERROR MESSAGE",
+            "address": "77e754ab8591",
+            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+            "descriptor_uuid": "d822b53c"
+        }
     }
 }
 ```
@@ -2348,8 +2326,8 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.connection_status[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.connection_status[].status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul> | &nbsp; |
+| `ble.peripheral.connection_status.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.connection_status.status` |  string  | <ul><li>required</li><li>enum <ul><li>`"connected"`</li><li>`"disconnected"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -2358,12 +2336,10 @@ Related item
 {
     "ble": {
         "peripheral": {
-            "connection_status": [
-                {
-                    "address": "77e754ab8591",
-                    "status": "connected"
-                }
-            ]
+            "connection_status": {
+                "address": "77e754ab8591",
+                "status": "connected"
+            }
         }
     }
 }
@@ -2377,9 +2353,9 @@ callback of read characteristic
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.read_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.read_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.read_characteristic_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_characteristic_result.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -2388,13 +2364,11 @@ callback of read characteristic
 {
     "ble": {
         "peripheral": {
-            "read_characteristic_results": [
-                {
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "data": [16, 34, 242]
-                }
-            ]
+            "read_characteristic_result": {
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "data": [16, 34, 242]
+            }
         }
     }
 }
@@ -2408,9 +2382,9 @@ callback of write characteristic
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.write_characteristic_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.write_characteristic_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.write_characteristic_results[].result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
+| `ble.peripheral.write_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.write_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.write_characteristic_result.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -2419,13 +2393,11 @@ callback of write characteristic
 {
     "ble": {
         "peripheral": {
-            "write_characteristic_results": [
-                {
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "result": "success"
-                }
-            ]
+            "write_characteristic_result": {
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "result": "success"
+            }
         }
     }
 }
@@ -2439,9 +2411,9 @@ callback of external device read characteristic
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_read_characteristics[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_read_characteristics[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_read_characteristics[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_read_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_read_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_read_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -2450,13 +2422,11 @@ callback of external device read characteristic
 {
     "ble": {
         "peripheral": {
-            "notify_read_characteristics": [
-                {
-                    "address": "77e754ab8591",
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
-                }
-            ]
+            "notify_read_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+            }
         }
     }
 }
@@ -2470,10 +2440,10 @@ callback of external device write characteristic
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_write_characteristics[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_write_characteristics[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_write_characteristics[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_write_characteristics[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_characteristic.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -2482,14 +2452,12 @@ callback of external device write characteristic
 {
     "ble": {
         "peripheral": {
-            "notify_write_characteristics": [
-                {
-                    "address": "77e754ab8591",
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "data": [16, 34, 242]
-                }
-            ]
+            "notify_write_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "data": [16, 34, 242]
+            }
         }
     }
 }
@@ -2503,10 +2471,10 @@ callback of read descriptor
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.read_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.read_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.read_descriptor_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.read_descriptor_results[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_descriptor_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_descriptor_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_descriptor_result.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_descriptor_result.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -2515,14 +2483,12 @@ callback of read descriptor
 {
     "ble": {
         "peripheral": {
-            "read_descriptor_results": [
-                {
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "descriptor_uuid": "d822b53c",
-                    "data": [16, 34, 242]
-                }
-            ]
+            "read_descriptor_result": {
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c",
+                "data": [16, 34, 242]
+            }
         }
     }
 }
@@ -2536,10 +2502,10 @@ callback of write descriptor
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.write_descriptor_results[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.write_descriptor_results[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.write_descriptor_results[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.write_descriptor_results[].result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
+| `ble.peripheral.write_descriptor_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.write_descriptor_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.write_descriptor_result.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.write_descriptor_result.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -2548,14 +2514,12 @@ callback of write descriptor
 {
     "ble": {
         "peripheral": {
-            "write_descriptor_results": [
-                {
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "descriptor_uuid": "d822b53c",
-                    "result": "success"
-                }
-            ]
+            "write_descriptor_result": {
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c",
+                "result": "success"
+            }
         }
     }
 }
@@ -2569,10 +2533,10 @@ callback of external device read descriptor
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_read_descriptors[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_read_descriptors[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_read_descriptors[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_read_descriptors[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_read_descriptor.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_read_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_read_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_read_descriptor.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -2581,14 +2545,12 @@ callback of external device read descriptor
 {
     "ble": {
         "peripheral": {
-            "notify_read_descriptors": [
-                {
-                    "address": "77e754ab8591",
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "descriptor_uuid": "d822b53c"
-                }
-            ]
+            "notify_read_descriptor": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c"
+            }
         }
     }
 }
@@ -2602,11 +2564,11 @@ callback of external device write descriptor
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.peripheral.notify_write_descriptors[].address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_write_descriptors[].service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_write_descriptors[].characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_write_descriptors[].descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.peripheral.notify_write_descriptors[].data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_descriptor.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_descriptor.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.notify_write_descriptor.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -2615,15 +2577,13 @@ callback of external device write descriptor
 {
     "ble": {
         "peripheral": {
-            "notify_write_descriptors": [
-                {
-                    "address": "77e754ab8591",
-                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "descriptor_uuid": "d822b53c",
-                    "data": [16, 34, 242]
-                }
-            ]
+            "notify_write_descriptor": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c",
+                "data": [16, 34, 242]
+            }
         }
     }
 }

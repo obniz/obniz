@@ -5,12 +5,9 @@ id: "/response/ble/central/status_update"
 
 
 type: object
-required : [status_updates]
+required : [status_update]
 properties:
-    status_updates :
-        type : array
-        minItems : 1
-        items :
+    status_update :
             type : object
             required: [address, status]
             additionalProperties: false
