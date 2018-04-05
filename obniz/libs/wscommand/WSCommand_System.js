@@ -10,6 +10,8 @@ class WSCommand_System extends WSCommand {
     this._CommandSelfCheck      = 3
     this._CommandWait           = 4
     this._CommandResetOnDisconnect = 5
+
+    this._CommandVCC            = 9
   }
 
   // Commands
@@ -62,6 +64,22 @@ class WSCommand_System extends WSCommand {
       }else{
         throw new WSCommandNotFoundError(`[system]unknown command`);
       }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    switch(func) {
+      case this._CommandVCC:
+        if (payload.byteLength === 3) {
+          let value = (payload[1] << 8) + payload[2];
+          value = value / 100.0;
+          this.envelopWarning(objToSend, 'debug', { message: `Low Voltage ${value}v. connect obniz to more powerful USB.` })
+        }
+        break;
+
+      default:
+        super.notifyFromBinary(objToSend, func, payload);
+        break;
     }
   }
 }

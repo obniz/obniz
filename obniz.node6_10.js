@@ -118,7 +118,7 @@ class Obniz {
   }
 
   notifyToModule(obj) {
-    this.print_debug(obj);
+    this.print_debug(JSON.stringify(obj));
 
     // notify messaging
     if (typeof obj.message === "object" && this.onmessage) {
@@ -127,7 +127,7 @@ class Obniz {
     // debug
     if (typeof obj.debug === "object") {
       if (obj.debug.warning) {
-        let msg = "Warning: " + obj.debug.warning;
+        let msg = "Warning: " + obj.debug.warning.message;
         this.warning({ alert: 'warning', message: msg });
       }
 
@@ -754,16 +754,8 @@ class Obniz {
       warning: 'alert-warning alert-dismissible',
       error: 'alert-danger'
     };
-    const timeLabel = Math.random().toString(36).slice(-8);
-    let dismissButton = `
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>`;
     let dom = `
-    <div class="alert ${alerts[obj.alert]} fade show" role="alert">
-      ${obj.message}
-      ${obj.alert === "warning" ? dismissButton : ""}
-    </div>`;
+    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"}">${obj.message}</div>`;
     document.getElementById(this.debugDomId).insertAdjacentHTML('beforeend', dom);
   }
 
@@ -2656,15 +2648,11 @@ class PeripheralIO {
         this.onchange(obj);
       }
     } else if (obj && typeof obj === "object") {
-      if (obj.warnings) {
-        for (let i = 0; i < obj.warnings.length; i++) {
-          this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warnings[i].message}` });
-        }
+      if (obj.warning) {
+        this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warning.message}` });
       }
-      if (obj.errors) {
-        for (let i = 0; i < obj.errors.length; i++) {
-          this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.errors[i].message}` });
-        }
+      if (obj.error) {
+        this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.error.message}` });
       }
     }
   }
@@ -5153,6 +5141,8 @@ class WSCommand_System extends WSCommand {
     this._CommandSelfCheck = 3;
     this._CommandWait = 4;
     this._CommandResetOnDisconnect = 5;
+
+    this._CommandVCC = 9;
   }
 
   // Commands
@@ -5197,6 +5187,22 @@ class WSCommand_System extends WSCommand {
       } else {
         throw new WSCommandNotFoundError(`[system]unknown command`);
       }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    switch (func) {
+      case this._CommandVCC:
+        if (payload.byteLength === 3) {
+          let value = (payload[1] << 8) + payload[2];
+          value = value / 100.0;
+          this.envelopWarning(objToSend, 'debug', { message: `Low Voltage ${value}v. connect obniz to more powerful USB.` });
+        }
+        break;
+
+      default:
+        super.notifyFromBinary(objToSend, func, payload);
+        break;
     }
   }
 }
