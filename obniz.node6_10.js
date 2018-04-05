@@ -343,28 +343,39 @@ class Obniz {
   }
 
   send(obj) {
-    if (this.sendPool) {
-      this.sendPool.push(obj);return;
-    }
     if (!obj || typeof obj !== "object") {
       console.log("obnizjs. didnt send ", obj);
       return;
     }
-    let sendData = JSON.stringify([obj]);
-    this.print_debug("send: " + sendData);
+    if (Array.isArray(obj)) {
+      for (let i = 0; i < obj.length; i++) {
+        this.send(obj[i]);
+      }
+      return;
+    }
+    if (this.sendPool) {
+      this.sendPool.push(obj);return;
+    }
+
+    let sendData;
     /* compress */
     if (this.wscommand) {
       let compressed;
       try {
-        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+        compressed = this.wscommand.compress(this.wscommands, obj);
         if (compressed) {
           sendData = compressed;
-          this.print_debug("compressed: " + sendData);
         }
       } catch (e) {
         this.error(e);
         return; /* never send when parsing failed */
       }
+    }
+    if (!sendData) {
+      sendData = JSON.stringify([obj]);
+    }
+    if (this.debugprint) {
+      this.print_debug("send: " + (typeof sendData === "string" ? sendData : JSON.stringify(obj)));
     }
     /* queue sending */
     if (typeof sendData === "string") {
