@@ -20,7 +20,7 @@ describe("obniz.libs.display", function () {
   it("clear",  function () {
     this.obniz.display.clear();
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({display:{clear:true}});
+    expect(this.obniz).send([{display:{clear:true}}]);
     expect(this.obniz).to.be.finished;
   });
   
@@ -28,13 +28,13 @@ describe("obniz.libs.display", function () {
   //   it("print",  function () {
   //     this.obniz.display.print("Hello!!");
   //     expect(this.obniz).to.be.obniz;
-  //     expect(this.obniz).send({display:{text:"Hello!!"}});
+  //     expect(this.obniz).send([{display:{text:"Hello!!"}}]);
   //     expect(this.obniz).to.be.finished;
   //   });
   //   it("print_bool",  function () {
   //     this.obniz.display.print(true);
   //     expect(this.obniz).to.be.obniz;
-  //     expect(this.obniz).send({display:{text:"true"}});
+  //     expect(this.obniz).send([{display:{text:"true"}}]);
   //     expect(this.obniz).to.be.finished;
   //   });
   // }
@@ -42,46 +42,46 @@ describe("obniz.libs.display", function () {
   it("qr",  function () {
     this.obniz.display.qr("https://obniz.io");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
+    expect(this.obniz).send([{
       "display": {
         "qr": {
           "text": "https://obniz.io"
         }
       }
-    });
+    }]);
     expect(this.obniz).to.be.finished;
   });
   it("qr-low",  function () {
     this.obniz.display.qr("HELLO!", "L");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
+    expect(this.obniz).send([{
       "display": {
         "qr": {
           "correction": "L",
           "text": "HELLO!"
         }
       }
-    });
+    }]);
     expect(this.obniz).to.be.finished;
   });
   it("qr-high",  function () {
     this.obniz.display.qr("p8baerv9uber:q", "H");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
+    expect(this.obniz).send([{
       "display": {
         "qr": {
           "correction": "H",
           "text": "p8baerv9uber:q"
         }
       }
-    });
+    }]);
     expect(this.obniz).to.be.finished;
   });
 
   it("setPinName",  function () {
     this.obniz.display.setPinName(0, "io", "input");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
+    expect(this.obniz).send([{
       "display": {
         "pin_assign": {
           "0": {
@@ -90,7 +90,7 @@ describe("obniz.libs.display", function () {
           }
         }
       }
-    });
+    }]);
     expect(this.obniz).to.be.finished;
   });
 
@@ -100,7 +100,7 @@ describe("obniz.libs.display", function () {
       2: "output"
     });
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
+    expect(this.obniz).send([{
       "display": {
         "pin_assign": {
           "1": {
@@ -113,7 +113,7 @@ describe("obniz.libs.display", function () {
           }
         }
       }
-    });
+    }]);
     expect(this.obniz).to.be.finished;
   });
 });

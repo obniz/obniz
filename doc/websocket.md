@@ -55,11 +55,13 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 ```
 // Json Example
-{
-    "ws": {
-        "reset_obniz_on_ws_disconnection": false
+[
+    {
+        "ws": {
+            "reset_obniz_on_ws_disconnection": false
+        }
     }
-}
+]
 ```
 
 
@@ -80,11 +82,13 @@ all things ready
 
 ```
 //Response Example
-{
-    "ws": {
-        "ready": true
+[
+    {
+        "ws": {
+            "ready": true
+        }
     }
-}
+]
 ```
 
 
@@ -101,11 +105,13 @@ If the server required you to connect other endpoint to communicate with your ob
 
 ```
 //Response Example
-{
-    "ws": {
-        "redirect": "wss://ws1.obniz.io"
+[
+    {
+        "ws": {
+            "redirect": "wss://ws1.obniz.io"
+        }
     }
-}
+]
 ```
 
 
@@ -129,11 +135,13 @@ If the server required you to connect other endpoint to communicate with your ob
 
 ```
 // Json Example
-{
-    "system": {
-        "wait": 500
+[
+    {
+        "system": {
+            "wait": 500
+        }
     }
-}
+]
 ```
 
 
@@ -150,11 +158,13 @@ If the server required you to connect other endpoint to communicate with your ob
 
 ```
 // Json Example
-{
-    "system": {
-        "reset": true
+[
+    {
+        "system": {
+            "reset": true
+        }
     }
-}
+]
 ```
 
 
@@ -171,11 +181,13 @@ If the server required you to connect other endpoint to communicate with your ob
 
 ```
 // Json Example
-{
-    "system": {
-        "reboot": true
+[
+    {
+        "system": {
+            "reboot": true
+        }
     }
-}
+]
 ```
 
 
@@ -192,11 +204,13 @@ circuit IO check
 
 ```
 // Json Example
-{
-    "system": {
-        "self_check": true
+[
+    {
+        "system": {
+            "self_check": true
+        }
     }
-}
+]
 ```
 
 
@@ -213,11 +227,13 @@ reset obniz when obniz gone to offline.
 
 ```
 // Json Example
-{
-    "system": {
-        "keep_working_at_offline": true
+[
+    {
+        "system": {
+            "keep_working_at_offline": true
+        }
     }
-}
+]
 ```
 
 
@@ -234,13 +250,15 @@ reset obniz when obniz gone to offline.
 
 ```
 // Json Example
-{
-    "system": {
-        "ping": {
-            "key": [16, 34, 242]
+[
+    {
+        "system": {
+            "ping": {
+                "key": [16, 34, 242]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -261,13 +279,15 @@ reset obniz when obniz gone to offline.
 
 ```
 //Response Example
-{
-    "system": {
-        "pong": {
-            "key": [16, 34, 242]
+[
+    {
+        "system": {
+            "pong": {
+                "key": [16, 34, 242]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -296,9 +316,11 @@ Related item
 
 ```
 // Json Example
-{
-    "io0": "get"
-}
+[
+    {
+        "io0": "get"
+    }
+]
 ```
 
 
@@ -321,12 +343,14 @@ Related item
 
 ```
 // Json Example
-{
-    "io0": {
-        "direction": "input",
-        "stream": false
+[
+    {
+        "io0": {
+            "direction": "input",
+            "stream": false
+        }
     }
-}
+]
 ```
 
 
@@ -343,9 +367,11 @@ Related item
 
 ```
 // Json Example
-{
-    "io0": true
-}
+[
+    {
+        "io0": true
+    }
+]
 ```
 
 
@@ -363,12 +389,14 @@ Related item
 
 ```
 // Json Example
-{
-    "io0": {
-        "direction": "output",
-        "value": true
+[
+    {
+        "io0": {
+            "direction": "output",
+            "value": true
+        }
     }
-}
+]
 ```
 
 
@@ -385,11 +413,13 @@ Related item
 
 ```
 // Json Example
-{
-    "io0": {
-        "output_type": "push-pull5v"
+[
+    {
+        "io0": {
+            "output_type": "push-pull5v"
+        }
     }
-}
+]
 ```
 
 
@@ -406,11 +436,13 @@ Related item
 
 ```
 // Json Example
-{
-    "io0": {
-        "pull_type": "pull-up5v"
+[
+    {
+        "io0": {
+            "pull_type": "pull-up5v"
+        }
     }
-}
+]
 ```
 
 
@@ -431,9 +463,11 @@ Related item
 
 ```
 //Response Example
-{
-    "io0": true
-}
+[
+    {
+        "io0": true
+    }
+]
 ```
 
 
@@ -460,30 +494,32 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 
 ```
 // Json Example
-{
-    "io": {
-        "animation": {
+[
+    {
+        "io": {
             "animation": {
-                "name": "anim-1",
-                "status": "loop",
-                "states": [
-                    {
-                        "duration": 500,
-                        "state": {
-                            "io0": true
+                "animation": {
+                    "name": "anim-1",
+                    "status": "loop",
+                    "states": [
+                        {
+                            "duration": 500,
+                            "state": {
+                                "io0": true
+                            }
+                        },
+                        {
+                            "duration": 500,
+                            "state": {
+                                "io0": false
+                            }
                         }
-                    },
-                    {
-                        "duration": 500,
-                        "state": {
-                            "io0": false
-                        }
-                    }
-                ]
+                    ]
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -501,16 +537,18 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 
 ```
 // Json Example
-{
-    "io": {
-        "animation": {
+[
+    {
+        "io": {
             "animation": {
-                "name": "anim-1",
-                "status": "pause"
+                "animation": {
+                    "name": "anim-1",
+                    "status": "pause"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -539,11 +577,13 @@ Related item
 
 ```
 // Json Example
-{
-    "ad0": {
-        "stream": false
+[
+    {
+        "ad0": {
+            "stream": false
+        }
     }
-}
+]
 ```
 
 
@@ -560,9 +600,11 @@ Related item
 
 ```
 // Json Example
-{
-    "ad0": null
-}
+[
+    {
+        "ad0": null
+    }
+]
 ```
 
 
@@ -583,9 +625,11 @@ current value (volt)
 
 ```
 //Response Example
-{
-    "ad0": 3.3
-}
+[
+    {
+        "ad0": 3.3
+    }
+]
 ```
 
 
@@ -609,11 +653,13 @@ available 0 to 5
 
 ```
 // Json Example
-{
-    "pwm0": {
-        "io": 0
+[
+    {
+        "pwm0": {
+            "io": 0
+        }
     }
-}
+]
 ```
 
 
@@ -630,11 +676,13 @@ available 0 to 5
 
 ```
 // Json Example
-{
-    "pwm0": {
-        "freq": 40000000
+[
+    {
+        "pwm0": {
+            "freq": 40000000
+        }
     }
-}
+]
 ```
 
 
@@ -651,11 +699,13 @@ available 0 to 5
 
 ```
 // Json Example
-{
-    "pwm0": {
-        "pulse": 500
+[
+    {
+        "pwm0": {
+            "pulse": 500
+        }
     }
-}
+]
 ```
 
 
@@ -672,11 +722,13 @@ available 0 to 5
 
 ```
 // Json Example
-{
-    "pwm0": {
-        "duty": 50
+[
+    {
+        "pwm0": {
+            "duty": 50
+        }
     }
-}
+]
 ```
 
 
@@ -695,15 +747,17 @@ available 0 to 5
 
 ```
 // Json Example
-{
-    "pwm0": {
-        "modulate": {
-            "type": "am",
-            "symbol_length": 500.024,
-            "data": [16, 34, 242]
+[
+    {
+        "pwm0": {
+            "modulate": {
+                "type": "am",
+                "symbol_length": 500.024,
+                "data": [16, 34, 242]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -720,9 +774,11 @@ available 0 to 5
 
 ```
 // Json Example
-{
-    "pwm0": null
-}
+[
+    {
+        "pwm0": null
+    }
+]
 ```
 
 
@@ -754,19 +810,21 @@ available 0 to 1
 
 ```
 // Json Example
-{
-    "uart0": {
-        "rx": 0,
-        "tx": 1,
-        "baud": 115200,
-        "stop": 1,
-        "bits": 8,
-        "parity": "off",
-        "flowcontrol": "off",
-        "rts": 2,
-        "cts": 3
+[
+    {
+        "uart0": {
+            "rx": 0,
+            "tx": 1,
+            "baud": 115200,
+            "stop": 1,
+            "bits": 8,
+            "parity": "off",
+            "flowcontrol": "off",
+            "rts": 2,
+            "cts": 3
+        }
     }
-}
+]
 ```
 
 
@@ -783,11 +841,13 @@ available 0 to 1
 
 ```
 // Json Example
-{
-    "uart0": {
-        "data": [16, 34, 242]
+[
+    {
+        "uart0": {
+            "data": [16, 34, 242]
+        }
     }
-}
+]
 ```
 
 
@@ -804,9 +864,11 @@ available 0 to 1
 
 ```
 // Json Example
-{
-    "uart0": null
-}
+[
+    {
+        "uart0": null
+    }
+]
 ```
 
 
@@ -827,11 +889,13 @@ available 0 to 1
 
 ```
 //Response Example
-{
-    "uart0": {
-        "data": [16, 34, 242]
+[
+    {
+        "uart0": {
+            "data": [16, 34, 242]
+        }
     }
-}
+]
 ```
 
 
@@ -859,15 +923,17 @@ clk, miso, mosi are optional, but at least one are required
 
 ```
 // Json Example
-{
-    "spi0": {
-        "mode": "master",
-        "clk": 0,
-        "mosi": 1,
-        "miso": 2,
-        "clock": 115200
+[
+    {
+        "spi0": {
+            "mode": "master",
+            "clk": 0,
+            "mosi": 1,
+            "miso": 2,
+            "clock": 115200
+        }
     }
-}
+]
 ```
 
 
@@ -884,9 +950,11 @@ clk, miso, mosi are optional, but at least one are required
 
 ```
 // Json Example
-{
-    "spi0": null
-}
+[
+    {
+        "spi0": null
+    }
+]
 ```
 
 
@@ -909,12 +977,14 @@ Related item
 
 ```
 // Json Example
-{
-    "spi0": {
-        "data": [100, 255, 21, 0, 21],
-        "read": true
+[
+    {
+        "spi0": {
+            "data": [100, 255, 21, 0, 21],
+            "read": true
+        }
     }
-}
+]
 ```
 
 
@@ -935,11 +1005,13 @@ Related item
 
 ```
 //Response Example
-{
-    "spi0": {
-        "data": [16, 34, 242]
+[
+    {
+        "spi0": {
+            "data": [16, 34, 242]
+        }
     }
-}
+]
 ```
 
 
@@ -966,14 +1038,16 @@ internal pullup is available. But, We recommend use external pull-up resistor.
 
 ```
 // Json Example
-{
-    "i2c0": {
-        "mode": "master",
-        "sda": 0,
-        "scl": 1,
-        "clock": 500000
+[
+    {
+        "i2c0": {
+            "mode": "master",
+            "sda": 0,
+            "scl": 1,
+            "clock": 500000
+        }
     }
-}
+]
 ```
 
 
@@ -1003,19 +1077,21 @@ Related item
 
 ```
 // Json Example
-{
-    "i2c0": {
-        "mode": "master",
-        "sda": 0,
-        "scl": 1,
-        "slave_address": 511,
-        "slave_address_length": 7,
-        "address": 511,
-        "address_bits": 7,
-        "data": [16, 34, 242],
-        "read": 500
+[
+    {
+        "i2c0": {
+            "mode": "master",
+            "sda": 0,
+            "scl": 1,
+            "slave_address": 511,
+            "slave_address_length": 7,
+            "address": 511,
+            "address_bits": 7,
+            "data": [16, 34, 242],
+            "read": 500
+        }
     }
-}
+]
 ```
 
 
@@ -1034,13 +1110,15 @@ if address over 0b01111111; then address treated as 10bit address automatically.
 
 ```
 // Json Example
-{
-    "i2c0": {
-        "address": 511,
-        "address_bits": 7,
-        "data": [100, 255, 21, 0, 21]
+[
+    {
+        "i2c0": {
+            "address": 511,
+            "address_bits": 7,
+            "data": [100, 255, 21, 0, 21]
+        }
     }
-}
+]
 ```
 
 
@@ -1064,13 +1142,15 @@ Related item
 
 ```
 // Json Example
-{
-    "i2c0": {
-        "address": 511,
-        "address_bits": 7,
-        "read": 512
+[
+    {
+        "i2c0": {
+            "address": 511,
+            "address_bits": 7,
+            "read": 512
+        }
     }
-}
+]
 ```
 
 
@@ -1087,9 +1167,11 @@ Related item
 
 ```
 // Json Example
-{
-    "i2c0": null
-}
+[
+    {
+        "i2c0": null
+    }
+]
 ```
 
 
@@ -1112,13 +1194,15 @@ Related item
 
 ```
 //Response Example
-{
-    "i2c0": {
-        "mode": "master",
-        "address": 511,
-        "data": [16, 34, 242]
+[
+    {
+        "i2c0": {
+            "mode": "master",
+            "address": 511,
+            "data": [16, 34, 242]
+        }
     }
-}
+]
 ```
 
 
@@ -1138,14 +1222,16 @@ Related item
 
 ```
 //Response Example
-{
-    "i2c0": {
-        "mode": "slave",
-        "address": 511,
-        "is_fragmented": true,
-        "data": [16, 34, 242]
+[
+    {
+        "i2c0": {
+            "mode": "slave",
+            "address": 511,
+            "is_fragmented": true,
+            "data": [16, 34, 242]
+        }
     }
-}
+]
 ```
 
 
@@ -1173,17 +1259,19 @@ Monitor io logic level changes by sampling io.
 With below sample code, you will receive only datas which start with &#39;false, false, false&#39; 3bit.
 ```
 // Json Example
-{
-    "logic_analyzer": {
-        "io": [ 0],
-        "interval": 500,
-        "duration": 500,
-        "triger": {
-            "value": false,
-            "samples": 3
+[
+    {
+        "logic_analyzer": {
+            "io": [ 0],
+            "interval": 500,
+            "duration": 500,
+            "triger": {
+                "value": false,
+                "samples": 3
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1200,9 +1288,11 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 ```
 // Json Example
-{
-    "logic_analyzer": null
-}
+[
+    {
+        "logic_analyzer": null
+    }
+]
 ```
 
 
@@ -1223,11 +1313,13 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 ```
 //Response Example
-{
-    "logic_analyzer": {
-        "data": [16, 34, 242]
+[
+    {
+        "logic_analyzer": {
+            "data": [16, 34, 242]
+        }
     }
-}
+]
 ```
 
 
@@ -1261,18 +1353,20 @@ Related item
 
 ```
 // Json Example
-{
-    "measure": {
-        "echo": {
-            "io_pulse": 0,
-            "io_echo": 1,
-            "pulse": "positive",
-            "pulse_width": 500,
-            "measure_edges": 2,
-            "timeout": 1000
+[
+    {
+        "measure": {
+            "echo": {
+                "io_pulse": 0,
+                "io_echo": 1,
+                "pulse": "positive",
+                "pulse_width": 500,
+                "measure_edges": 2,
+                "timeout": 1000
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1294,16 +1388,18 @@ Related item
 
 ```
 //Response Example
-{
-    "measure": {
-        "echo": [
-            {
-                "edge": true,
-                "timing": 500
-            }
-        ]
+[
+    {
+        "measure": {
+            "echo": [
+                {
+                    "edge": true,
+                    "timing": 500
+                }
+            ]
+        }
     }
-}
+]
 ```
 
 
@@ -1327,11 +1423,13 @@ Related item
 
 ```
 // Json Example
-{
-    "display": {
-        "text": "Hello, obniz!"
+[
+    {
+        "display": {
+            "text": "Hello, obniz!"
+        }
     }
-}
+]
 ```
 
 
@@ -1348,11 +1446,13 @@ Related item
 
 ```
 // Json Example
-{
-    "display": {
-        "clear": true
+[
+    {
+        "display": {
+            "clear": true
+        }
     }
-}
+]
 ```
 
 
@@ -1370,14 +1470,16 @@ Related item
 
 ```
 // Json Example
-{
-    "display": {
-        "qr": {
-            "text": "Hello, obniz!",
-            "correction": "M"
+[
+    {
+        "display": {
+            "qr": {
+                "text": "Hello, obniz!",
+                "correction": "M"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1394,11 +1496,13 @@ Related item
 
 ```
 // Json Example
-{
-    "display": {
-        "raw": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 240, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 192, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 129, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 254, 7, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 252, 15, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 248, 31, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 240, 63, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 224, 127, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 192, 255, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 129, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 7, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 252, 15, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 248, 31, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 240, 63, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 127, 193, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 252, 64, 255, 128, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 240, 1, 255, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 224, 3, 254, 0, 127, 254, 14, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 252, 30, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 248, 60, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 63, 240, 120, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 127, 224, 240, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 252, 0, 127, 193, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 15, 248, 0, 255, 131, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 240, 31, 240, 39, 255, 7, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 252, 63, 224, 127, 254, 15, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 192, 255, 252, 31, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 129, 255, 248, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 3, 255, 240, 127, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 254, 7, 255, 224, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 252, 15, 255, 193, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 248, 31, 255, 131, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 240, 63, 255, 7, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 224, 127, 254, 15, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 192, 255, 252, 31, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 129, 255, 0, 63, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 3, 254, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 254, 7, 252, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 252, 15, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 248, 31, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 224, 127, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 255, 252, 0, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 1, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 3, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 255, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 255, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[
+    {
+        "display": {
+            "raw": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 240, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 192, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 129, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 254, 7, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 252, 15, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 248, 31, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 240, 63, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 224, 127, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 192, 255, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 129, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 7, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 252, 15, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 248, 31, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 240, 63, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 127, 193, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 252, 64, 255, 128, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 240, 1, 255, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 224, 3, 254, 0, 127, 254, 14, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 252, 30, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 248, 60, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 63, 240, 120, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 127, 224, 240, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 252, 0, 127, 193, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 15, 248, 0, 255, 131, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 240, 31, 240, 39, 255, 7, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 252, 63, 224, 127, 254, 15, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 192, 255, 252, 31, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 129, 255, 248, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 3, 255, 240, 127, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 254, 7, 255, 224, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 252, 15, 255, 193, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 248, 31, 255, 131, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 240, 63, 255, 7, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 224, 127, 254, 15, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 192, 255, 252, 31, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 129, 255, 0, 63, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 3, 254, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 254, 7, 252, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 252, 15, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 248, 31, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 224, 127, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 255, 252, 0, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 1, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 3, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 255, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 255, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
     }
-}
+]
 ```
 
 
@@ -1416,16 +1520,18 @@ Related item
 
 ```
 // Json Example
-{
-    "display": {
-        "pin_assign": {
-            "0": {
-                "module_name": "io",
-                "pin_name": "output"
+[
+    {
+        "display": {
+            "pin_assign": {
+                "0": {
+                    "module_name": "io",
+                    "pin_name": "output"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -1454,9 +1560,11 @@ Related item
 
 ```
 // Json Example
-{
-    "switch": "get"
-}
+[
+    {
+        "switch": "get"
+    }
+]
 ```
 
 
@@ -1478,12 +1586,14 @@ Related item
 
 ```
 //Response Example
-{
-    "switch": {
-        "state": "none",
-        "action": "get"
+[
+    {
+        "switch": {
+            "state": "none",
+            "action": "get"
+        }
     }
-}
+]
 ```
 
 
@@ -1514,13 +1624,15 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "scan": {
-            "duration": 30
+[
+    {
+        "ble": {
+            "scan": {
+                "duration": 30
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1537,11 +1649,13 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "scan": null
+[
+    {
+        "ble": {
+            "scan": null
+        }
     }
-}
+]
 ```
 
 
@@ -1563,13 +1677,15 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "connect": {
-            "address": "77e754ab8591"
+[
+    {
+        "ble": {
+            "connect": {
+                "address": "77e754ab8591"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1586,13 +1702,15 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "disconnect": {
-            "address": "77e754ab8591"
+[
+    {
+        "ble": {
+            "disconnect": {
+                "address": "77e754ab8591"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1614,13 +1732,15 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "get_services": {
-            "address": "77e754ab8591"
+[
+    {
+        "ble": {
+            "get_services": {
+                "address": "77e754ab8591"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1643,14 +1763,16 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "get_characteristics": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+[
+    {
+        "ble": {
+            "get_characteristics": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1674,15 +1796,17 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "read_characteristic": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+[
+    {
+        "ble": {
+            "read_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1708,17 +1832,19 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "write_characteristic": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-            "data": [16, 34, 242],
-            "needResponse": true
+[
+    {
+        "ble": {
+            "write_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "data": [16, 34, 242],
+                "needResponse": true
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1747,21 +1873,23 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "scan_result": {
-            "event_type": "inquiry_result",
-            "address": "77e754ab8591",
-            "ble_event_type": "connectable_advertisemnt",
-            "device_type": "ble",
-            "address_type": "public",
-            "flag": 500,
-            "rssi": 500,
-            "adv_data": [2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101],
-            "scan_resp": [7, 9, 83, 97, 109, 112, 108, 101]
+[
+    {
+        "ble": {
+            "scan_result": {
+                "event_type": "inquiry_result",
+                "address": "77e754ab8591",
+                "ble_event_type": "connectable_advertisemnt",
+                "device_type": "ble",
+                "address_type": "public",
+                "flag": 500,
+                "rssi": 500,
+                "adv_data": [2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101],
+                "scan_resp": [7, 9, 83, 97, 109, 112, 108, 101]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1778,13 +1906,15 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "scan_result": {
-            "event_type": "inquiry_complete"
+[
+    {
+        "ble": {
+            "scan_result": {
+                "event_type": "inquiry_complete"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1802,14 +1932,16 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "status_update": {
-            "address": "77e754ab8591",
-            "status": "connected"
+[
+    {
+        "ble": {
+            "status_update": {
+                "address": "77e754ab8591",
+                "status": "connected"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1827,14 +1959,16 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "get_service_result": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+[
+    {
+        "ble": {
+            "get_service_result": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1853,15 +1987,17 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "get_characteristic_result": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+[
+    {
+        "ble": {
+            "get_characteristic_result": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1881,16 +2017,18 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "write_characteristic_result": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-            "result": "success"
+[
+    {
+        "ble": {
+            "write_characteristic_result": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "result": "success"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1910,16 +2048,18 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "read_characteristic_result": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-            "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "read_characteristic_result": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "data": [16, 34, 242]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1939,16 +2079,18 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "get_descriptors_result": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-            "descriptor_uuid": "d822b53c"
+[
+    {
+        "ble": {
+            "get_descriptors_result": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -1969,17 +2111,19 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "write_descriptor_results": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-            "descriptor_uuid": "d822b53c",
-            "result": "success"
+[
+    {
+        "ble": {
+            "write_descriptor_results": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c",
+                "result": "success"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -2000,17 +2144,19 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "read_descriptor_results": {
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-            "descriptor_uuid": "d822b53c",
-            "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "read_descriptor_results": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c",
+                "data": [16, 34, 242]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -2032,18 +2178,20 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "error": {
-            "error_code": 0,
-            "message": "ERROR MESSAGE",
-            "address": "77e754ab8591",
-            "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-            "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-            "descriptor_uuid": "d822b53c"
+[
+    {
+        "ble": {
+            "error": {
+                "error_code": 0,
+                "message": "ERROR MESSAGE",
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c"
+            }
         }
     }
-}
+]
 ```
 
 
@@ -2073,14 +2221,16 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "advertisement": {
-            "adv_data": [2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101],
-            "scan_resp": [7, 9, 83, 97, 109, 112, 108, 101]
+[
+    {
+        "ble": {
+            "advertisement": {
+                "adv_data": [2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101],
+                "scan_resp": [7, 9, 83, 97, 109, 112, 108, 101]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -2097,11 +2247,13 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "advertisement": null
+[
+    {
+        "ble": {
+            "advertisement": null
+        }
     }
-}
+]
 ```
 
 
@@ -2132,29 +2284,31 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "peripheral": {
-            "services": [
-                {
-                    "uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                    "characteristics": [
-                        {
-                            "uuid": "8d3591bda71140fd8f9f00535fe57179",
-                            "data": [16, 34, 242],
-                            "descriptors": [
-                                {
-                                    "uuid": "d822b53c",
-                                    "data": [100, 255, 21, 0, 21]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+[
+    {
+        "ble": {
+            "peripheral": {
+                "services": [
+                    {
+                        "uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                        "characteristics": [
+                            {
+                                "uuid": "8d3591bda71140fd8f9f00535fe57179",
+                                "data": [16, 34, 242],
+                                "descriptors": [
+                                    {
+                                        "uuid": "d822b53c",
+                                        "data": [100, 255, 21, 0, 21]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     }
-}
+]
 ```
 
 
@@ -2171,11 +2325,13 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "peripheral": null
+[
+    {
+        "ble": {
+            "peripheral": null
+        }
     }
-}
+]
 ```
 
 
@@ -2198,16 +2354,18 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "peripheral": {
-            "read_characteristic": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+[
+    {
+        "ble": {
+            "peripheral": {
+                "read_characteristic": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2231,17 +2389,19 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "peripheral": {
-            "write_characteristic": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "peripheral": {
+                "write_characteristic": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "data": [16, 34, 242]
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2265,17 +2425,19 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "peripheral": {
-            "read_descriptor": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c"
+[
+    {
+        "ble": {
+            "peripheral": {
+                "read_descriptor": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "descriptor_uuid": "d822b53c"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2300,18 +2462,20 @@ Related item
 
 ```
 // Json Example
-{
-    "ble": {
-        "peripheral": {
-            "write_descriptor": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c",
-                "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "peripheral": {
+                "write_descriptor": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "descriptor_uuid": "d822b53c",
+                    "data": [16, 34, 242]
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2333,16 +2497,18 @@ Related item
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "connection_status": {
-                "address": "77e754ab8591",
-                "status": "connected"
+[
+    {
+        "ble": {
+            "peripheral": {
+                "connection_status": {
+                    "address": "77e754ab8591",
+                    "status": "connected"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2361,17 +2527,19 @@ callback of read characteristic
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "read_characteristic_result": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "peripheral": {
+                "read_characteristic_result": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "data": [16, 34, 242]
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2390,17 +2558,19 @@ callback of write characteristic
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "write_characteristic_result": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "result": "success"
+[
+    {
+        "ble": {
+            "peripheral": {
+                "write_characteristic_result": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "result": "success"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2419,17 +2589,19 @@ callback of external device read characteristic
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "notify_read_characteristic": {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+[
+    {
+        "ble": {
+            "peripheral": {
+                "notify_read_characteristic": {
+                    "address": "77e754ab8591",
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2449,18 +2621,20 @@ callback of external device write characteristic
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "notify_write_characteristic": {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "peripheral": {
+                "notify_write_characteristic": {
+                    "address": "77e754ab8591",
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "data": [16, 34, 242]
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2480,18 +2654,20 @@ callback of read descriptor
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "read_descriptor_result": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c",
-                "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "peripheral": {
+                "read_descriptor_result": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "descriptor_uuid": "d822b53c",
+                    "data": [16, 34, 242]
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2511,18 +2687,20 @@ callback of write descriptor
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "write_descriptor_result": {
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c",
-                "result": "success"
+[
+    {
+        "ble": {
+            "peripheral": {
+                "write_descriptor_result": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "descriptor_uuid": "d822b53c",
+                    "result": "success"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2542,18 +2720,20 @@ callback of external device read descriptor
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "notify_read_descriptor": {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c"
+[
+    {
+        "ble": {
+            "peripheral": {
+                "notify_read_descriptor": {
+                    "address": "77e754ab8591",
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "descriptor_uuid": "d822b53c"
+                }
             }
         }
     }
-}
+]
 ```
 
 
@@ -2574,19 +2754,21 @@ callback of external device write descriptor
 
 ```
 //Response Example
-{
-    "ble": {
-        "peripheral": {
-            "notify_write_descriptor": {
-                "address": "77e754ab8591",
-                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                "descriptor_uuid": "d822b53c",
-                "data": [16, 34, 242]
+[
+    {
+        "ble": {
+            "peripheral": {
+                "notify_write_descriptor": {
+                    "address": "77e754ab8591",
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                    "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                    "descriptor_uuid": "d822b53c",
+                    "data": [16, 34, 242]
+                }
             }
         }
     }
-}
+]
 ```
 
 

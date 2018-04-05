@@ -20,21 +20,21 @@ describe("ble", function () {
   it("scan", function () {
     this.obniz.ble.startScan({duration: 10});
 
-    expect(this.obniz).send({ble: {scan: {duration: 10}}});
+    expect(this.obniz).send([{ble: {scan: {duration: 10}}}]);
     expect(this.obniz).to.be.finished;
   });
   it("scan default", function () {
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {duration: 30}}});
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
     expect(this.obniz).to.be.finished;
   });
   it("scan stop", function () {
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {duration: 30}}});
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
     this.obniz.ble.stopScan();
-    expect(this.obniz).send({ble: {scan: null}});
+    expect(this.obniz).send([{ble: {scan: null}}]);
     expect(this.obniz).to.be.finished;
   });
 
@@ -44,10 +44,10 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {duration: 30}}});
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
-    var results = {"ble":
+    var results = [{"ble":
           {"scan_result":
                 {"event_type": "inquiry_result",
                     "address": "e5f678800700",
@@ -59,7 +59,7 @@ describe("ble", function () {
                     "flag": 26,
                     "scan_resp": [22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]}
           }
-    };
+    }];
 
     testUtil.receiveJson(this.obniz, results);
 
@@ -82,10 +82,10 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {duration: 30}}});
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
-    var results = {"ble":
+    var results = [{"ble":
           {"scan_result":
                 {"event_type": "inquiry_result",
                     "address": "e5f678800700",
@@ -97,7 +97,7 @@ describe("ble", function () {
                     "flag": 26,
                     "scan_resp": []}
           }
-    };
+    }];
 
     testUtil.receiveJson(this.obniz, results);
 
@@ -120,10 +120,10 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {duration: 30}}});
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
-    var results = {"ble":
+    var results = [{"ble":
           {"scan_result":
                 {"event_type": "inquiry_result",
                     "address": "e5f678800700",
@@ -135,7 +135,7 @@ describe("ble", function () {
                     "flag": 26,
                     "scan_resp": []}
           }
-    };
+    }];
 
     testUtil.receiveJson(this.obniz, results);
 
@@ -147,18 +147,18 @@ describe("ble", function () {
     peripheral.onconnect = connectStub;
     peripheral.connect();
 
-    expect(this.obniz).send({ble: {connect: {address: "e5f678800700"}}});
+    expect(this.obniz).send([{ble: {connect: {address: "e5f678800700"}}}]);
 
     sinon.assert.callCount(connectStub, 0);
 
-    testUtil.receiveJson(this.obniz, {
+    testUtil.receiveJson(this.obniz, [{
       ble: {
         status_update: {
             address: "e5f678800700",
             status: "connected"
           }
       }
-    });
+    }]);
 
     sinon.assert.callCount(connectStub, 1);
 
@@ -173,10 +173,10 @@ describe("ble", function () {
     this.obniz.ble.onscan = stub;
     this.obniz.ble.startScan();
 
-    expect(this.obniz).send({ble: {scan: {duration: 30}}});
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
-    var results = {"ble":
+    var results = [{"ble":
           {"scan_result":
                 {"event_type": "inquiry_result",
                     "address": "e5f678800700",
@@ -188,7 +188,7 @@ describe("ble", function () {
                     "flag": 26,
                     "scan_resp": []}
           }
-    };
+    }];
 
     testUtil.receiveJson(this.obniz, results);
 
@@ -202,18 +202,18 @@ describe("ble", function () {
     peripheral.ondisconnect = disconnectStub;
     peripheral.connect();
 
-    expect(this.obniz).send({ble: {connect: {address: "e5f678800700"}}});
+    expect(this.obniz).send([{ble: {connect: {address: "e5f678800700"}}}]);
 
     sinon.assert.callCount(connectStub, 0);
 
-    testUtil.receiveJson(this.obniz, {
+    testUtil.receiveJson(this.obniz, [{
       ble: {
         status_update: {
             address: "e5f678800700",
             status: "disconnected"
           }
       }
-    });
+    }]);
 
     sinon.assert.callCount(connectStub, 0);
     sinon.assert.callCount(disconnectStub, 1);

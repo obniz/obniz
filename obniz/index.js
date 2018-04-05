@@ -89,8 +89,11 @@ class Obniz {
 
   wsOnMessage(data) {
     if (typeof data === "string") {
-      let obj = JSON.parse(data);
-      this.notifyToModule(obj);
+      let objArray = JSON.parse(data);
+        for(let i in objArray ) {
+          this.notifyToModule(objArray[i]);
+
+      }
     } else if (this.wscommands){
       data = new Uint8Array(data);
       while(true) {
@@ -122,12 +125,12 @@ class Obniz {
     // debug
     if (typeof (obj.debug) === "object") {
       if (obj.debug.warning) {
-        let msg = "Warning: " + obj.debug.warning;
+        let msg = "Warning: " + obj.debug.warning.message;
         this.warning({alert: 'warning', message: msg});
       }
 
       if (obj.debug.error) {
-        let msg = "Error: " + obj.debug.error;
+        let msg = "Error: " + obj.debug.error.message;
         this.error({alert: 'error', message: msg});
       }
       if (this.ondebug) {
@@ -342,13 +345,13 @@ class Obniz {
       console.log("obnizjs. didnt send ", obj);
       return;
     }
-    let sendData = JSON.stringify(obj);
+    let sendData = JSON.stringify([obj]);
     this.print_debug("send: " + sendData);
     /* compress */
     if (this.wscommand) {
       let compressed;
       try {
-        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData));
+        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
         if (compressed) {
           sendData = compressed;
           this.print_debug("compressed: " + sendData);

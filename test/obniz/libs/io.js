@@ -20,7 +20,7 @@ describe("obniz.libs.io", function () {
   it("output", function () {
     this.obniz.io0.output(true);
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io0:true});
+    expect(this.obniz).send([{io0:true}]);
     expect(this.obniz).to.be.finished;
   });
   
@@ -34,21 +34,21 @@ describe("obniz.libs.io", function () {
   it("drive 5v", function () {
     this.obniz.io1.drive("5v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io1:{"output_type":"push-pull5v"}});
+    expect(this.obniz).send([{io1:{"output_type":"push-pull5v"}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("drive 3v", function () {
     this.obniz.io1.drive("3v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io1:{"output_type":"push-pull3v"}});
+    expect(this.obniz).send([{io1:{"output_type":"push-pull3v"}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("drive open-drain", function () {
     this.obniz.io1.drive("open-drain");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io1:{"output_type":"open-drain"}});
+    expect(this.obniz).send([{io1:{"output_type":"open-drain"}}]);
     expect(this.obniz).to.be.finished;
   });
 
@@ -69,28 +69,28 @@ describe("obniz.libs.io", function () {
   it("pull 5v", function () {
     this.obniz.io3.pull("5v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io3:{"pull_type": "pull-up5v"}});
+    expect(this.obniz).send([{io3:{"pull_type": "pull-up5v"}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("pull 3v", function () {
     this.obniz.io3.pull("3v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io3:{"pull_type": "pull-up3v"}});
+    expect(this.obniz).send([{io3:{"pull_type": "pull-up3v"}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("pull down", function () {
     this.obniz.io3.pull("0v");
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io3:{"pull_type": "pull-down"}});
+    expect(this.obniz).send([{io3:{"pull_type": "pull-down"}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("float", function () {
     this.obniz.io3.pull(null);
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io3:{"pull_type": "float"}});
+    expect(this.obniz).send([{io3:{"pull_type": "float"}}]);
     expect(this.obniz).to.be.finished;
   });
 
@@ -105,13 +105,13 @@ describe("obniz.libs.io", function () {
     var stub = sinon.stub();
     this.obniz.io7.input(stub);
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({io7:{"direction": "input", "stream": true}});
+    expect(this.obniz).send([{io7:{"direction": "input", "stream": true}}]);
     
-    testUtil.receiveJson(this.obniz,  {"io7":true});
+    testUtil.receiveJson(this.obniz, [{"io7":true}]);
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args[0]).to.be.true;
     
-    testUtil.receiveJson(this.obniz,  {"io7":false});
+    testUtil.receiveJson(this.obniz, [{"io7":false}]);
     sinon.assert.callCount(stub, 2);
     expect(stub.getCall(1).args[0]).to.be.false;
     
@@ -128,11 +128,11 @@ describe("obniz.libs.io", function () {
       });
 
       expect(this.obniz).to.be.obniz;
-      expect(this.obniz).send({io8:{"direction": "input", "stream": false}});
+      expect(this.obniz).send([{io8:{"direction": "input", "stream": false}}]);
       expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
-        testUtil.receiveJson(this.obniz,  {"io8":true});
+        testUtil.receiveJson(this.obniz, [{"io8":true}]);
       }.bind(this),10);
     }.bind(this));
     
@@ -147,11 +147,11 @@ describe("obniz.libs.io", function () {
         reject("invalid pin");
       });
       expect(this.obniz).to.be.obniz;
-      expect(this.obniz).send({io9:{"direction": "input", "stream": false}});
+      expect(this.obniz).send([{io9:{"direction": "input", "stream": false}}]);
       expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
-        testUtil.receiveJson(this.obniz,  {"io10":true});
+        testUtil.receiveJson(this.obniz, [{"io10":true}]);
       }.bind(this),5);
       setTimeout(function(){    
         if(success){
@@ -180,7 +180,7 @@ describe("obniz.libs.io", function () {
       }
     ]);
     expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send({
+    expect(this.obniz).send([{
         "io": {
           "animation": {
             "name": "animation-1",
@@ -203,7 +203,7 @@ describe("obniz.libs.io", function () {
              "status": "loop"
            }
          }
-      });
+      }]);
     expect(this.obniz).to.be.finished;
       
     
@@ -213,7 +213,7 @@ describe("obniz.libs.io", function () {
     
     this.obniz.io.animation("animation-1", "pause");
     
-    expect(this.obniz).send( 
+    expect(this.obniz).send( [
         {
           "io": 
           {
@@ -222,7 +222,7 @@ describe("obniz.libs.io", function () {
             "status" : "pause"
           }
         }
-    });
+    }]);
    });
    
    
@@ -232,7 +232,7 @@ describe("obniz.libs.io", function () {
     this.obniz.io.animation("anim", "pause");
     
     expect(this.obniz).send( 
-        {
+       [ {
           "io": 
           {
             "animation" : {
@@ -240,7 +240,7 @@ describe("obniz.libs.io", function () {
             "status" : "pause"
           }
         }
-    });
+    }]);
    });
    
   it("ioAnimation-resume", function () {
@@ -248,7 +248,7 @@ describe("obniz.libs.io", function () {
     this.obniz.io.animation("a", "resume");
     
     expect(this.obniz).send( 
-        {
+        [{
           "io": 
           {
             "animation" : {
@@ -256,6 +256,6 @@ describe("obniz.libs.io", function () {
             "status" : "resume"
           }
         }
-    });
+    }]);
    });
 });

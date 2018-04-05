@@ -22,7 +22,7 @@ describe("obniz.libs.switch", function () {
     expect(this.obniz).to.be.obniz;
     sinon.assert.callCount(stub, 0);
     
-    testUtil.receiveJson(this.obniz,  {"switch":{"state":"none"}});
+    testUtil.receiveJson(this.obniz, [{"switch":{"state":"none"}}]);
     
     sinon.assert.callCount(stub, 1);
     expect(stub.getCall(0).args[0]).to.be.equal("none");
@@ -36,7 +36,7 @@ describe("obniz.libs.switch", function () {
     expect(this.obniz).to.be.obniz;
     sinon.assert.callCount(stub, 0);
     
-    testUtil.receiveJson(this.obniz,  {"switch":{"state":"push", "action":"get"}});
+    testUtil.receiveJson(this.obniz, [{"switch":{"state":"push", "action":"get"}}]);
     
     sinon.assert.callCount(stub, 0);
     
@@ -52,11 +52,11 @@ describe("obniz.libs.switch", function () {
       });
 
       expect(this.obniz).to.be.obniz;
-      expect(this.obniz).send({"switch":"get"});  
+      expect(this.obniz).send([{"switch":"get"}]);
         expect(this.obniz).to.be.finished;
 
       setTimeout(function(){    
-        testUtil.receiveJson(this.obniz,  {"switch":{"state":"left", "action":"get"}});
+        testUtil.receiveJson(this.obniz, [{"switch":{"state":"left", "action":"get"}}]);
       }.bind(this),10);
     }.bind(this));
     

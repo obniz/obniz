@@ -88,7 +88,7 @@ describe("obniz.index", function () {
         server2.on('connection',function(){resolve();});
       });
      
-      var val = {ws: {redirect: "ws://localhost:" + port2}};
+      var val = [{ws: {redirect: "ws://localhost:" + port2}}];
       server.clients.values().next().value.send(JSON.stringify(val));
       
       return result;
@@ -124,7 +124,7 @@ describe("obniz.index", function () {
         
         server2.on('connection',function(client){
           setTimeout(function(){
-            var val = {ws: {redirect: "ws://localhost:" + port3}};
+            var val = [{ws: {redirect: "ws://localhost:" + port3}}];
              server2.clients.values().next().value.send(JSON.stringify(val));
           },10);
         });

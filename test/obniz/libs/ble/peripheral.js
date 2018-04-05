@@ -20,14 +20,14 @@ var chai = require('chai');
     it("start",  function () {
       this.obniz.ble.startAdvertisement();
 
-      expect(this.obniz).send({ble:{ advertisement: {adv_data:[]}}});
+      expect(this.obniz).send([{ble:{ advertisement: {adv_data:[]}}}]);
       expect(this.obniz).to.be.finished;
     });
 
     it("stop",  function () {
       this.obniz.ble.stopAdvertisement();
 
-      expect(this.obniz).send({ble:{ advertisement: null}});
+      expect(this.obniz).send([{ble:{ advertisement: null}}]);
       expect(this.obniz).to.be.finished;
     });
 
@@ -35,7 +35,7 @@ var chai = require('chai');
     it("set adv raw",  function () {
       this.obniz.ble.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
       this.obniz.ble.startAdvertisement();
-      expect(this.obniz).send({ble:{ advertisement: {adv_data:[0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]}}});
+      expect(this.obniz).send([{ble:{ advertisement: {adv_data:[0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]}}}]);
       expect(this.obniz).to.be.finished;
     });
 
@@ -49,7 +49,7 @@ var chai = require('chai');
       });
       this.obniz.ble.startAdvertisement();
 
-      expect(this.obniz).send({ble:{ advertisement: {adv_data:[0x02, 0x01, 0x06, 0x1A, 0xFF, 0x4C, 0x00,0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF ]}}});
+      expect(this.obniz).send([{ble:{ advertisement: {adv_data:[0x02, 0x01, 0x06, 0x1A, 0xFF, 0x4C, 0x00,0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF ]}}}]);
       expect(this.obniz).to.be.finished;
     });
 
@@ -57,7 +57,7 @@ var chai = require('chai');
       this.obniz.ble.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
       this.obniz.ble.startAdvertisement();
 
-      expect(this.obniz).send({ble:{ advertisement: {adv_data:[], scan_resp:[0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]}}});
+      expect(this.obniz).send([{ble:{ advertisement: {adv_data:[], scan_resp:[0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]}}}]);
       expect(this.obniz).to.be.finished;
     });
 
@@ -68,7 +68,7 @@ var chai = require('chai');
       });
       this.obniz.ble.startAdvertisement();
 
-      expect(this.obniz).send({ble:{ advertisement: {adv_data:[], scan_resp:[0x0A, 0x09, 0x6f, 0x62, 0x6e, 0x69, 0x7a, 0x20, 0x42, 0x4c, 0x45  ]}}});
+      expect(this.obniz).send([{ble:{ advertisement: {adv_data:[], scan_resp:[0x0A, 0x09, 0x6f, 0x62, 0x6e, 0x69, 0x7a, 0x20, 0x42, 0x4c, 0x45  ]}}}]);
       expect(this.obniz).to.be.finished;
     });
 
@@ -89,7 +89,7 @@ var chai = require('chai');
       };
       this.obniz.ble.peripheral.addService(setting);
 
-      expect(this.obniz).send({"ble":{"peripheral":{"services":[{"characteristics":[{"data":[14,0],"descriptors":[{"data":[104,101,108,108,111,32,119,114,111,108,100,32,99,104,97,114,97,99,116,101,114,105,115,116,105,99],"uuid":"2901"}],"uuid":"fff1"}],"uuid":"fff0"}]}}});
+      expect(this.obniz).send([{"ble":{"peripheral":{"services":[{"characteristics":[{"data":[14,0],"descriptors":[{"data":[104,101,108,108,111,32,119,114,111,108,100,32,99,104,97,114,97,99,116,101,114,105,115,116,105,99],"uuid":"2901"}],"uuid":"fff1"}],"uuid":"fff0"}]}}}]);
       expect(this.obniz).to.be.finished;
     });
   //
@@ -105,7 +105,7 @@ var chai = require('chai');
   //   this.obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
   //
   //
-  //   expect(this.obniz).send({"ble":{"peripheral":{"services":[{"characteristics":[{"data":[14,0],"descriptors":[{"data":[104,101,108,108,111,32,119,114,111,108,100,32,99,104,97,114,97,99,116,101,114,105,115,116,105,99],"uuid":"2901"}],"uuid":"fff1"}],"uuid":"fff0"}]}}});
+  //   expect(this.obniz).send([{"ble":{"peripheral":{"services":[{"characteristics":[{"data":[14,0],"descriptors":[{"data":[104,101,108,108,111,32,119,114,111,108,100,32,99,104,97,114,97,99,116,101,114,105,115,116,105,99],"uuid":"2901"}],"uuid":"fff1"}],"uuid":"fff0"}]}}}]);
   //   expect(this.obniz).to.be.finished;
   // });
   //
