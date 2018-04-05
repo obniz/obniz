@@ -1,0 +1,18 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/debug/warning"
+desccription : "global warnings"
+
+type: object
+properties:
+
+    warning :
+        type : object
+
+        additionalProperties: true
+        properties:
+            message :
+                description : "readable message"
+                type : string
+

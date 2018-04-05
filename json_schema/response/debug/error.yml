@@ -1,0 +1,18 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/debug/error"
+desccription : "global error"
+
+type: object
+properties:
+
+    error :
+        type : object
+
+        additionalProperties: true
+        properties:
+            message :
+                description : "readable message"
+                type : string
+
