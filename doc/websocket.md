@@ -79,7 +79,7 @@ all things ready
 
 
 ```
-// Json Example
+//Response Example
 {
     "ws": {
         "ready": true
@@ -100,7 +100,7 @@ If the server required you to connect other endpoint to communicate with your ob
 
 
 ```
-// Json Example
+//Response Example
 {
     "ws": {
         "redirect": "wss://ws1.obniz.io"
@@ -260,7 +260,7 @@ reset obniz when obniz gone to offline.
 
 
 ```
-// Json Example
+//Response Example
 {
     "system": {
         "pong": {
@@ -430,7 +430,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "io0": true
 }
@@ -582,7 +582,7 @@ current value (volt)
 
 
 ```
-// Json Example
+//Response Example
 {
     "ad0": 3.3
 }
@@ -826,7 +826,7 @@ available 0 to 1
 
 
 ```
-// Json Example
+//Response Example
 {
     "uart0": {
         "data": [16, 34, 242]
@@ -934,7 +934,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "spi0": {
         "data": [16, 34, 242]
@@ -1111,7 +1111,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "i2c0": {
         "mode": "master",
@@ -1137,7 +1137,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "i2c0": {
         "mode": "slave",
@@ -1222,7 +1222,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 
 ```
-// Json Example
+//Response Example
 {
     "logic_analyzer": {
         "data": [16, 34, 242]
@@ -1293,7 +1293,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "measure": {
         "echo": [
@@ -1477,7 +1477,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "switch": {
         "state": "none",
@@ -1746,7 +1746,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "scan_result": {
@@ -1777,7 +1777,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "scan_result": {
@@ -1801,7 +1801,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "status_update": {
@@ -1826,7 +1826,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "get_service_result": {
@@ -1852,7 +1852,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "get_characteristic_result": {
@@ -1880,7 +1880,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "write_characteristic_result": {
@@ -1909,7 +1909,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "read_characteristic_result": {
@@ -1938,7 +1938,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "get_descriptors_result": {
@@ -1968,7 +1968,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "write_descriptor_results": {
@@ -1999,7 +1999,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "read_descriptor_results": {
@@ -2031,7 +2031,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "error": {
@@ -2332,7 +2332,7 @@ Related item
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2360,7 +2360,7 @@ callback of read characteristic
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2389,7 +2389,7 @@ callback of write characteristic
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2418,7 +2418,7 @@ callback of external device read characteristic
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2448,7 +2448,7 @@ callback of external device write characteristic
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2479,7 +2479,7 @@ callback of read descriptor
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2510,7 +2510,7 @@ callback of write descriptor
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2541,7 +2541,7 @@ callback of external device read descriptor
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
@@ -2573,7 +2573,7 @@ callback of external device write descriptor
 
 
 ```
-// Json Example
+//Response Example
 {
     "ble": {
         "peripheral": {
