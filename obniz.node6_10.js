@@ -672,7 +672,7 @@ class Obniz {
   pingWait(unixtime, rand) {
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor(unixtime / Math.pow(2, 32));
-    let lower = unixtime - upper;
+    let lower = unixtime - upper * Math.pow(2, 32);
     rand = rand || Math.floor(Math.random() * Math.pow(2, 4));
     let buf = [];
 
@@ -708,6 +708,8 @@ class Obniz {
         let timeObniz2Server = systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
         let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime;
         let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
+        // let str = `ping,${obnizJsPingUnixtime},${systemObj.pong.pingServerTime},${systemObj.pong.obnizTime},${systemObj.pong.pongServerTime}`;
+
 
         this.print_debug(str);
         resolve(str);

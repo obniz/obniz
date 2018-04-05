@@ -639,9 +639,10 @@ class Obniz {
   pingWait(unixtime, rand){
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor( unixtime / Math.pow(2,32));
-    let lower = unixtime - upper;
+    let lower = unixtime - upper * Math.pow(2,32);
     rand = rand || Math.floor(Math.random() * Math.pow(2,4));
     let buf = [];
+
 
     buf.push((upper >>> 8*3) & 0xFF);
     buf.push((upper >>> 8*2) & 0xFF);
@@ -665,14 +666,14 @@ class Obniz {
           }
         }
         this.removePongObserver(callback);
-        let upper = (systemObj.pong.key[0] << 8 * 3 >>> 0)
-            + (systemObj.pong.key[1] << 8 * 2 >>> 0)
-            + (systemObj.pong.key[2] << 8 * 1 >>> 0)
-            + (systemObj.pong.key[3] << 8 * 0 >>> 0);
-        let lower = (systemObj.pong.key[4] << 8 * 3 >>> 0)
-            + (systemObj.pong.key[5] << 8 * 2 >>> 0)
-            + (systemObj.pong.key[6] << 8 * 1 >>> 0)
-            + (systemObj.pong.key[7] << 8 * 0 >>> 0);
+        let upper = ((systemObj.pong.key[0] << 8 * 3) >>> 0)
+            + ((systemObj.pong.key[1] << 8 * 2) >>> 0)
+            + ((systemObj.pong.key[2] << 8 * 1) >>> 0)
+            + ((systemObj.pong.key[3] << 8 * 0) >>> 0);
+        let lower = ((systemObj.pong.key[4] << 8 * 3) >>> 0)
+            + ((systemObj.pong.key[5] << 8 * 2) >>> 0)
+            + ((systemObj.pong.key[6] << 8 * 1) >>> 0)
+            + ((systemObj.pong.key[7] << 8 * 0) >>> 0);
         let obnizJsPingUnixtime = upper * Math.pow(2, 32) + lower;
         let obnizJsPongUnixtime = new Date().getTime();
         let allTime = obnizJsPongUnixtime- obnizJsPingUnixtime;
@@ -681,6 +682,8 @@ class Obniz {
         let timeObniz2Server = systemObj.pong.pongServerTime- systemObj.pong.obnizTime ;
         let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime ;
         let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
+        // let str = `ping,${obnizJsPingUnixtime},${systemObj.pong.pingServerTime},${systemObj.pong.obnizTime},${systemObj.pong.pongServerTime}`;
+
 
         this.print_debug(str);
         resolve(str);
