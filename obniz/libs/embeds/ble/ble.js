@@ -1,4 +1,12 @@
 
+
+const BlePeripheral = require("./blePeripheral");
+const BleService = require("./bleService");
+const BleCharacteristic = require("./bleCharacteristic");
+const BleDescriptor = require("./bleDescriptor");
+const BleRemotePeripheral = require("./bleRemotePeripheral");
+
+
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
@@ -429,3 +437,6 @@ class ObnizBLE {
     }
   }
 }
+
+
+module.exports = ObnizBLE;

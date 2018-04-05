@@ -1,3 +1,5 @@
+const WSCommand = require("./WSCommand_.js");
+
 class WSCommand_I2C extends WSCommand {
   
   constructor(delegate) {
@@ -178,3 +180,5 @@ class WSCommand_I2C extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_I2C;

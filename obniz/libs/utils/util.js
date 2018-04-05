@@ -1,3 +1,5 @@
+let isNode = (typeof window === 'undefined');
+
 class ObnizUtil {
 
   constructor(obniz) {
@@ -90,3 +92,5 @@ class ObnizUtil {
     return null;
   }
 }
+
+module.exports = ObnizUtil;

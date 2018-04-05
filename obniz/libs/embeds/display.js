@@ -220,3 +220,5 @@ class Display {
     this.raw(vram);
   }
 }
+
+module.exports = Display;

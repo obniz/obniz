@@ -1,3 +1,5 @@
+const WSCommand = require("./WSCommand_.js");
+
 class WSCommand_Display extends WSCommand {
 
   constructor(delegate) {
@@ -108,3 +110,5 @@ class WSCommand_Display extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_Display;

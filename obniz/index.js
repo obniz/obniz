@@ -1,3 +1,28 @@
+
+const ObnizBLE = require("./libs/embeds/ble/ble");
+
+const Display = require("./libs/embeds/display");
+const ObnizSwitch = require("./libs/embeds/switch");
+
+
+const LogicAnalyzer = require("./libs/measurements/logicanalyzer");
+const ObnizMeasure = require("./libs/measurements/measure");
+
+
+const PeripheralAD = require("./libs/io_peripherals/ad");
+const PeripheralI2C = require("./libs/io_peripherals/i2c");
+const PeripheralIO = require("./libs/io_peripherals/io");
+const PeripheralIO_ = require("./libs/io_peripherals/io_");
+const PeripheralPWM = require("./libs/io_peripherals/pwm");
+const PeripheralSPI = require("./libs/io_peripherals/spi");
+const PeripheralUART = require("./libs/io_peripherals/uart");
+
+
+const ObnizUtil = require("./libs/utils/util");
+
+const WSCommand = require("./libs/wscommand");
+
+
 /* global showObnizDebugError  */
 
 let isNode = (typeof window === 'undefined') ;
@@ -54,6 +79,11 @@ class Obniz {
     if(this.auto_connect){
       this.wsconnect();
     }
+  }
+
+  static get version(){
+    let packageJson = require("../package.json");
+    return packageJson.version;
   }
 
   static get WSCommand() {
@@ -229,8 +259,8 @@ class Obniz {
       this.clearSocket(this.socket);
     }
     let url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
-    if (_obniz_js_version) {
-      url += "?obnizjs="+_obniz_js_version;
+    if (this.constructor.version) {
+      url += "?obnizjs="+this.constructor.version;
     }
     if (this._access_token) {
       url += "&access_token="+this._access_token;

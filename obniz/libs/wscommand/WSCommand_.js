@@ -1,3 +1,7 @@
+const JsonSchema = require("./JsonSchema")
+
+let commandClasses = [];
+
 class WSCommand {
 
   constructor(delegate) {
@@ -9,23 +13,28 @@ class WSCommand {
   }
 
   static get CommandClasses() {
-    return {
-      WSCommand_System,
-      WSCommand_Directive,
-      WSCommand_IO,
-      WSCommand_PWM,
-      WSCommand_UART,
-      WSCommand_AD,
-      WSCommand_SPI,
-      WSCommand_I2C,
-      WSCommand_LogicAnalyzer,
-      WSCommand_Display,
-      WSCommand_Switch,
-      WSCommand_Ble,
-      WSCommand_Measurement
-    };
+    return commandClasses;
+    // {
+    //   WSCommand_System,
+    //   WSCommand_Directive,
+    //   WSCommand_IO,
+    //   WSCommand_PWM,
+    //   WSCommand_UART,
+    //   WSCommand_AD,
+    //   WSCommand_SPI,
+    //   WSCommand_I2C,
+    //   WSCommand_LogicAnalyzer,
+    //   WSCommand_Display,
+    //   WSCommand_Switch,
+    //   WSCommand_Ble,
+    //   WSCommand_Measurement
+    // };
   }
-  
+
+  static addCommandClass(classObj){
+    commandClasses.push(classObj);
+  }
+
   static framed(module, func, payload) {
     var payload_length = 0;
     if (payload) {
@@ -168,14 +177,8 @@ class WSCommand {
 
   getSchema(uri){
     //chack isFirst
-    if(!Obniz.tv4.getSchema("/request")){
-      for(let schema of Obniz.wsSchema){
-        Obniz.tv4.addSchema(schema);
-      }
 
-    }
-
-    return Obniz.tv4.getSchema(uri);
+    return JsonSchema.getSchema(uri);
   }
 
 
@@ -203,7 +206,7 @@ class WSCommand {
 
   validate(commandUri, json){
     let schema =  this.getSchema(commandUri);
-    let results =  Obniz.tv4.validateMultiple(json, schema);
+    let results =  JsonSchema.validateMultiple(json, schema);
     return results;
   }
 
@@ -212,20 +215,20 @@ class WSCommand {
     if(validateError.missing && validateError.missing.length > 0){return false;}
 
     let badErrorCodes = [
-      Obniz.tv4.errorCodes.ANY_OF_MISSING,
-      Obniz.tv4.errorCodes.ONE_OF_MISSING,
-      Obniz.tv4.errorCodes.ONE_OF_MULTIPLE,
-      Obniz.tv4.errorCodes.NOT_PASSED,
-      Obniz.tv4.errorCodes.OBJECT_REQUIRED,
-      Obniz.tv4.errorCodes.OBJECT_ADDITIONAL_PROPERTIES,
-      Obniz.tv4.errorCodes.CIRCULAR_REFERENCE,
-      Obniz.tv4.errorCodes.FORMAT_CUSTOM,
-      Obniz.tv4.errorCodes.KEYWORD_CUSTOM,
-      Obniz.tv4.errorCodes.UNKNOWN_PROPERTY
+      JsonSchema.errorCodes.ANY_OF_MISSING,
+      JsonSchema.errorCodes.ONE_OF_MISSING,
+      JsonSchema.errorCodes.ONE_OF_MULTIPLE,
+      JsonSchema.errorCodes.NOT_PASSED,
+      JsonSchema.errorCodes.OBJECT_REQUIRED,
+      JsonSchema.errorCodes.OBJECT_ADDITIONAL_PROPERTIES,
+      JsonSchema.errorCodes.CIRCULAR_REFERENCE,
+      JsonSchema.errorCodes.FORMAT_CUSTOM,
+      JsonSchema.errorCodes.KEYWORD_CUSTOM,
+      JsonSchema.errorCodes.UNKNOWN_PROPERTY
     ];
     let messages = [];
     for (let error of validateError.errors) {
-      if (error.code === Obniz.tv4.errorCodes.INVALID_TYPE) {
+      if (error.code === JsonSchema.errorCodes.INVALID_TYPE) {
         if (error.params.type === "object"
          || error.params.expected === "object") {
           return false;
@@ -250,7 +253,7 @@ class WSCommand {
 
 
     if(schema["$ref"]){
-      let refSchema = Obniz.tv4.getSchema(schema["$ref"]);
+      let refSchema = JsonSchema.getSchema(schema["$ref"]);
       return this._filterSchema(refSchema, json  );
     }
 
@@ -305,3 +308,5 @@ class WSCommand {
 class WSCommandNotFoundError extends Error{
 
 }
+
+module.exports = WSCommand;

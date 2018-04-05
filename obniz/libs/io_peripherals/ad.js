@@ -54,3 +54,5 @@ class PeripheralAD {
     }
   }
 }
+
+module.exports = PeripheralAD;

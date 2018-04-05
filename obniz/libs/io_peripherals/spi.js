@@ -1,3 +1,4 @@
+const ObnizUtil = require("../utils/util");
 
 class PeripheralSPI {
   constructor(Obniz, id) {
@@ -106,3 +107,4 @@ class PeripheralSPI {
     }
   }
 }
+module.exports = PeripheralSPI;

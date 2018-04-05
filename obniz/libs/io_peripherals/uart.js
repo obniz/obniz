@@ -1,3 +1,5 @@
+const ObnizUtil = require("../utils/util");
+const isNode = (typeof window === 'undefined');
 
 class PeripheralUART {
   constructor(Obniz, id) {
@@ -133,3 +135,4 @@ class PeripheralUART {
     this.used = false;
   }
 }
+module.exports = PeripheralUART;
