@@ -67,7 +67,7 @@ class WSCommand_LogicAnalyzer extends WSCommand {
       for (let i=0; i<payload.byteLength;i++) {
         const byte = payload[i]
         for (let bit = 0; bit<8; bit++) {
-          arr[offset] = (byte & (0x80 >> bit)) ? 1 : 0
+          arr[offset] = (byte & (0x80 >>> bit)) ? 1 : 0
           offset++;
         }
       }

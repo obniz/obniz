@@ -741,7 +741,7 @@ available 0 to 5
 |:---- |:---- |:---- |:---- |
 | `pwmX.modulate.type` |  string  | <ul><li>required</li><li>const `"am"`</li></ul> | &nbsp; |
 | `pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li><li> unit: 0.001</li></ul> | symbol width (ms)&nbsp; |
-| `pwmX.modulate.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `pwmX.modulate.data` | [zerooneArray](#zeroonearray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -753,7 +753,7 @@ available 0 to 5
             "modulate": {
                 "type": "am",
                 "symbol_length": 500.024,
-                "data": [16, 34, 242]
+                "data": [0, 1, 1, 0, 0, 1, 1, 0]
             }
         }
     }
@@ -1316,7 +1316,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 [
     {
         "logic_analyzer": {
-            "data": [0, 1, 1, 0]
+            "data": [0, 1, 1, 0, 0, 1, 1, 0]
         }
     }
 ]
@@ -2838,7 +2838,7 @@ callback of external device write descriptor
 ###  <a name="zeroonearray">zerooneArray</a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
-| array| <ul><li>items<br/><ul><li>0 &le; value &le; 1</li></ul></li></ul>  |  <ul><li>`[0, 1, 1, 0]`</li><li>`[0, 0, 1, 0]`</li></ul> | Binary data array represented in 0 1. |
+| array| <ul><li>items<br/><ul><li>0 &le; value &le; 1</li></ul></li></ul>  |  <ul><li>`[0, 1, 1, 0, 0, 1, 1, 0]`</li><li>`[0, 0, 1, 0, 0, 0, 0, 0]`</li></ul> | Binary data array represented in 0 1. |
 
 
 

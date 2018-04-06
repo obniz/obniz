@@ -74,15 +74,23 @@ class WSCommand_PWM extends WSCommand {
   }
 
   amModulate(params, module) {
-    var buf = new Uint8Array(5 + params.modulate.data.length);
-    let symbol_length_usec =  params.modulate.symbol_length * 1000;
+    const bitLength = params.modulate.data.length;
+    const byteLength = parseInt((bitLength+7)/8);
+    let buf = new Uint8Array(5 + byteLength);
+    let symbol_length_usec = params.modulate.symbol_length * 1000;
     buf[0] = module;
     buf[1] = symbol_length_usec >> (8*3);
     buf[2] = symbol_length_usec >> (8*2);
     buf[3] = symbol_length_usec >> (8*1);
     buf[4] = symbol_length_usec;
-    for (var i=0; i<params.modulate.data.length; i++) {
-      buf[5 + i] = params.modulate.data[i];
+    let bitIndex = 0;
+    for (let byte=0; byte<byteLength; byte++) {
+      buf[5 + byte] = 0;
+      for (let bit=0; bit<8; bit++) {
+        if (params.modulate.data[bitIndex++]) {
+          buf[5 + byte] |= (0x80 >>> bit)
+        }
+      }
     }
     this.sendCommand(this._CommandAMModulate, buf);
   }
