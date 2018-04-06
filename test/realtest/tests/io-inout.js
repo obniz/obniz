@@ -13,6 +13,27 @@ module.exports = async function(config) {
   describe(path.basename(__filename), function () {
 
     this.timeout(10000);
+
+    it("input callback works", async function () {
+
+      var record = null;
+      var callback = function(val) {
+        record = val;
+      }
+
+      obnizA.getIO(0).output(false);
+      await obnizA.pingWait();
+      obnizB.getIO(0).input(callback);
+      await obnizB.pingWait();
+      await obnizB.wait(30);
+      expect(record).to.be.equal(false);
+
+      obnizA.getIO(0).output(true);
+      await obnizA.pingWait();
+      await obnizB.pingWait();
+      await obnizB.wait(30);
+      expect(record).to.be.equal(true);
+    });
   
     it("5v low", async function () {
       await ioAisB(0, false)
@@ -82,7 +103,7 @@ module.exports = async function(config) {
       await ioAisB(11, true)
     });
     
-    it("open-drain low", async function () {
+    it("open-drain low is low (floating)", async function () {
       obnizA.getIO(0).pull(null);
       obnizA.getIO(0).drive("open-drain");
       await ioAisB(0, false)
@@ -91,8 +112,28 @@ module.exports = async function(config) {
       obnizA.getIO(11).drive("open-drain");
       await ioAisB(11, false)
     });
+
+    it("open-drain low is low (pullup3)", async function () {
+      obnizA.getIO(0).pull("3v");
+      obnizA.getIO(0).drive("open-drain");
+      await ioAisB(0, false)
+
+      obnizA.getIO(11).pull("3v");
+      obnizA.getIO(11).drive("open-drain");
+      await ioAisB(11, false)
+    });
+
+    it("open-drain low is low (pullup5v)", async function () {
+      obnizA.getIO(0).pull("5v");
+      obnizA.getIO(0).drive("open-drain");
+      await ioAisB(0, false)
+
+      obnizA.getIO(11).pull("5v");
+      obnizA.getIO(11).drive("open-drain");
+      await ioAisB(11, false)
+    });
     
-    it("open-drain high is low(pulldown)", async function () {
+    it("open-drain high is low (pulldown)", async function () {
       obnizA.getIO(0).pull("0v");
       obnizA.getIO(0).drive("open-drain");
       await ioAisB(0, true, false)
@@ -102,7 +143,7 @@ module.exports = async function(config) {
       await ioAisB(11, true, false)
     });
 
-    it("open-drain high is high(pullup5)", async function () {
+    it("open-drain high is high (pullup5)", async function () {
       obnizA.getIO(0).pull("5v");
       obnizA.getIO(0).drive("open-drain");
       await ioAisB(0, true)
@@ -112,7 +153,7 @@ module.exports = async function(config) {
       await ioAisB(11, true)
     });
 
-    it("open-drain high is high(pullup3)", async function () {
+    it("open-drain high is high (pullup3)", async function () {
       obnizA.getIO(0).pull("3v");
       obnizA.getIO(0).drive("open-drain");
       await ioAisB(0, true)

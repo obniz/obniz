@@ -7,6 +7,11 @@ const fs = require('fs');
 
 const Obniz = require('../../index.js');
 
+var obnizA_ID = "10760979";
+var obnizB_ID = "00978479";
+
+console.log(`obniz ${obnizA_ID} ${obnizB_ID}つかうよ!\n２つを"同じ"電源に繋いでね。`)
+
 describe("obniz", async function () {
 
 
@@ -15,10 +20,10 @@ describe("obniz", async function () {
 
   beforeEach(function (done) {
 
-    obnizA = new Obniz("10760979");
+    obnizA = new Obniz(obnizA_ID);
     // obnizA.debugprint = true;
     obnizA.onconnect = () => {
-      obnizB = new Obniz("00978479");
+      obnizB = new Obniz(obnizB_ID);
       // obnizB.debugprint = true;
       obnizB.onconnect = ()=>{
         done();
