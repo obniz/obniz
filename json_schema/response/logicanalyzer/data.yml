@@ -6,4 +6,4 @@ id: "/response/logicAnalyzer/data"
 type: object
 required : [data]
 properties:
-    data : {$ref : "/dataArray" }
+    data : {$ref : "/zerooneArray" }

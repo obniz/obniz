@@ -62,9 +62,14 @@ class WSCommand_LogicAnalyzer extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv) {
-      var arr = new Array(payload.byteLength);
-      for (var i=0; i<payload.byteLength;i++) {
-        arr[i] = payload[i];
+      let arr = new Array(payload.byteLength * 8);
+      let offset = 0;
+      for (let i=0; i<payload.byteLength;i++) {
+        const byte = payload[i]
+        for (let bit = 0; bit<8; bit++) {
+          arr[offset] = (byte & (0x80 >> bit)) ? 1 : 0
+          offset++;
+        }
       }
       objToSend["logic_analyzer"] = {
         data: arr

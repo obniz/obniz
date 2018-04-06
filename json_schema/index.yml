@@ -48,6 +48,19 @@
               minimum : 0
               maximum : 255
 
+      zerooneArray :
+          id : "zerooneArray"
+          type : array
+          default : null
+          description : "Binary data array represented in 0 1."
+          example :
+             - [0, 1, 1, 0, 0, 1, 1, 0]
+             - [0, 0, 1, 0 ,0, 0, 0, 0]
+          items :
+              type : integer
+              minimum : 0
+              maximum : 1
+
       dataArray :
           id : "dataArray"
           type : array

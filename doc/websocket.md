@@ -1307,7 +1307,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `logic_analyzer.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `logic_analyzer.data` | [zerooneArray](#zeroonearray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1316,7 +1316,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 [
     {
         "logic_analyzer": {
-            "data": [16, 34, 242]
+            "data": [0, 1, 1, 0]
         }
     }
 ]
@@ -2833,6 +2833,12 @@ callback of external device write descriptor
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
 | string,null| <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li><li>`null`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored. |
+
+
+###  <a name="zeroonearray">zerooneArray</a>
+| type | conditions | examples | description |
+|:----|:----|:----|:----|
+| array| <ul><li>items<br/><ul><li>0 &le; value &le; 1</li></ul></li></ul>  |  <ul><li>`[0, 1, 1, 0]`</li><li>`[0, 0, 1, 0]`</li></ul> | Binary data array represented in 0 1. |
 
 
 
