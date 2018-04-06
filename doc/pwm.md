@@ -92,7 +92,7 @@ am modulation: data "1" measn output the pwm with duty 50%. "0" means stop pwm. 
 interval defines symbol baud rate. 
 Duty is 50% fixed.
 
-![](./images/pwm_modulate.png)
+![](./images/pwm_modu.png)
 
 This is useful to generate IR signal (Remote control).
 38kHz freq with signals.

@@ -9,25 +9,22 @@
 ioが変化した後のioの変化を指定された時間記録します。
 完了し、データを送信したら再度、ioの変化を待ちます(つまり継続動作します)
 
-1サンプルは1bitとなります。つまり結果の1バイトには8サンプル入っています。
-
-![](./images/logicanalyzer_0.png)
+![](./images/logiana_0.png)
 
 サンプリングの間隔と欲しいサンプルの時間を指定できます。
-例えばinterval（間隔）が1msecでduration(長さ)を800msecにした場合は100byteのデータ(800サンプル)を受けることになります。
-
-![](./images/logicanalyzer_1.png)
+例えばinterval（間隔）が1msecでduration(長さ)を800msecにした場合は800サンプルを受けることになります。
+また、サンプル数は必ず8の倍数となります。
 
 ### Triger Option
 
-デフォルトトリガーは「ioの変化」ですが、これですとノイズも取得しがちです。決まっているパターンを取りたい場合はtrigerValue/trigerValueSamplesを設定します。
+デフォルトトリガーは「ioの変化」ですが、これですとノイズも取得しがちです。信号の開始が決まっているパターンを取りたい場合はtrigerValue/trigerValueSamplesを設定します。
 
 1. trigerValue - 取得開始したい値
 2. trigerValueSamples - その値が何サンプル続けば記録することにするか
 
 このトリガーはつまり "true/(かfalse)がXだけ続いたら記録を開始する"という意味になります。
 
-![](./images/logicanalyzer_2.png)
+![](./images/logiana_1.png)
 
 ## logicAnalyzer.start({io, interval, duration});
 
@@ -59,12 +56,7 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 
 実際にデータを受け取るためのcallbackです。
 データはioのピン状態の配列になっています。
-1bitがある瞬間のioの0,1を表しています。
-例えば1msec intervalの場合で
-[0x01, 0x00]
-といったデータを受け取った場合、
-最初の瞬間だけioが1でそれ以降の15bit分は0だったことがわかります。
-つまり、2msecだけioは1で、それ以降の30msecはioは0だったと推定されます。
+1つがある瞬間のioの0,1を表しています。
 
 ```Javascript
 // Javascript Example

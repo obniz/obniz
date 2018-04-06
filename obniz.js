@@ -6806,7 +6806,7 @@ class IRSensor {
         if (this.dataInverted) {
           let arr = new Uint8Array(levels);
           for (let i=0; i<arr.length; i++) {
-            arr[i] = ~arr[i];
+            arr[i] = arr[i] ? 0 : 1;
           }
           levels = Array.from(arr);
         }
