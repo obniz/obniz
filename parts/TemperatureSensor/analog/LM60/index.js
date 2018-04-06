@@ -1,3 +1,4 @@
+
 var LM60 = function() {
   this.keys = ["vcc","gnd","output"];
   this.requiredKeys = ["output"];
@@ -18,7 +19,5 @@ LM60.prototype.wired = function(obniz) {
 
 };
 
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM60", LM60);
-}
+let Obniz = require("../../../../obniz/index.js");
+Obniz.PartsRegistrate("LM60", LM60);

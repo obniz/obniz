@@ -29,6 +29,7 @@ Button.prototype.isPressedWait = async function() {
   return ret === false;
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("Button", Button);
-}
+
+
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("Button", Button);

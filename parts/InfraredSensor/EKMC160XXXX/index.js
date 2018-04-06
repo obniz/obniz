@@ -29,6 +29,5 @@ PIR_ekmc.prototype.isPressedWait = async function() {
   return ret == false;
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("PIR_ekmc", PIR_ekmc);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("PIR_ekmc", PIR_ekmc);

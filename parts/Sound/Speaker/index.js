@@ -26,6 +26,5 @@ class Speaker {
   }
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("Speaker", Speaker);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("Speaker", Speaker);

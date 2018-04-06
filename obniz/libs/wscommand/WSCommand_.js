@@ -1,4 +1,5 @@
-const JsonSchema = require("./JsonSchema")
+
+const WSSchema = require("./WSSchema");
 
 let commandClasses = [];
 
@@ -178,7 +179,7 @@ class WSCommand {
   getSchema(uri){
     //chack isFirst
 
-    return JsonSchema.getSchema(uri);
+    return WSSchema.getSchema(uri);
   }
 
 
@@ -206,7 +207,7 @@ class WSCommand {
 
   validate(commandUri, json){
     let schema =  this.getSchema(commandUri);
-    let results =  JsonSchema.validateMultiple(json, schema);
+    let results =  WSSchema.validateMultiple(json, schema);
     return results;
   }
 
@@ -215,20 +216,20 @@ class WSCommand {
     if(validateError.missing && validateError.missing.length > 0){return false;}
 
     let badErrorCodes = [
-      JsonSchema.errorCodes.ANY_OF_MISSING,
-      JsonSchema.errorCodes.ONE_OF_MISSING,
-      JsonSchema.errorCodes.ONE_OF_MULTIPLE,
-      JsonSchema.errorCodes.NOT_PASSED,
-      JsonSchema.errorCodes.OBJECT_REQUIRED,
-      JsonSchema.errorCodes.OBJECT_ADDITIONAL_PROPERTIES,
-      JsonSchema.errorCodes.CIRCULAR_REFERENCE,
-      JsonSchema.errorCodes.FORMAT_CUSTOM,
-      JsonSchema.errorCodes.KEYWORD_CUSTOM,
-      JsonSchema.errorCodes.UNKNOWN_PROPERTY
+      WSSchema.errorCodes.ANY_OF_MISSING,
+      WSSchema.errorCodes.ONE_OF_MISSING,
+      WSSchema.errorCodes.ONE_OF_MULTIPLE,
+      WSSchema.errorCodes.NOT_PASSED,
+      WSSchema.errorCodes.OBJECT_REQUIRED,
+      WSSchema.errorCodes.OBJECT_ADDITIONAL_PROPERTIES,
+      WSSchema.errorCodes.CIRCULAR_REFERENCE,
+      WSSchema.errorCodes.FORMAT_CUSTOM,
+      WSSchema.errorCodes.KEYWORD_CUSTOM,
+      WSSchema.errorCodes.UNKNOWN_PROPERTY
     ];
     let messages = [];
     for (let error of validateError.errors) {
-      if (error.code === JsonSchema.errorCodes.INVALID_TYPE) {
+      if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
         if (error.params.type === "object"
          || error.params.expected === "object") {
           return false;
@@ -253,7 +254,7 @@ class WSCommand {
 
 
     if(schema["$ref"]){
-      let refSchema = JsonSchema.getSchema(schema["$ref"]);
+      let refSchema = WSSchema.getSchema(schema["$ref"]);
       return this._filterSchema(refSchema, json  );
     }
 

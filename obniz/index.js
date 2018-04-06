@@ -829,11 +829,11 @@ class Obniz {
 /*===================*/
 let _parts = {};
 
-let PartsRegistrate = function (name, obj) {
+Obniz.PartsRegistrate = function (name, obj) {
   _parts[name] = obj;
 };
 
-let Parts = function (name) {
+Obniz.Parts = function (name) {
   return new _parts[name]();
 };
 
@@ -872,6 +872,13 @@ if (!isNode) {
 /*===================*/
 /* Export */
 /*===================*/
-if (isNode) {
-  module.exports = Obniz;
+module.exports = Obniz;
+
+
+// read parts
+require.context = require('./libs/webpackReplace/require-context');
+if(require.context && require.context.setBaseDir){require.context.setBaseDir(__dirname);}
+let context = require.context(  "../parts/Accessory", true, /\.js$/);
+for( let path of context.keys()){
+  context(path);
 }

@@ -24,6 +24,5 @@ Potentiometer.prototype.wired = function(obniz) {
 };
 
 
-if (PartsRegistrate) {
-  PartsRegistrate("Potentiometer", Potentiometer);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("Potentiometer", Potentiometer);

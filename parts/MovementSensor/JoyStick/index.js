@@ -46,7 +46,6 @@ JoyStick.prototype.isPressedWait = async function() {
   return ret === false;
 };
 
-  
-  if (PartsRegistrate) {
-  PartsRegistrate("JoyStick", JoyStick);
-  }
+
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("JoyStick", JoyStick);

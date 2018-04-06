@@ -128,6 +128,6 @@ class MatrixLED_MAX7219 {
   }
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
-}
+
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);

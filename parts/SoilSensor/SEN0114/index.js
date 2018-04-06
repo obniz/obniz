@@ -23,6 +23,5 @@ SEN0114.prototype.getHumidityWait = async function() {
   return await this.ad.getWait;
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("SEN0114", SEN0114);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("SEN0114", SEN0114);

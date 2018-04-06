@@ -29,7 +29,5 @@ _24LC256.prototype.getWait = async function(address, length) {
   this.i2c.write(0x50, array);
   return await this.i2c.readWait(0x50, length);
 };
-
-if (PartsRegistrate) {
-  PartsRegistrate("24LC256", _24LC256);
-};
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("_24LC256", _24LC256);

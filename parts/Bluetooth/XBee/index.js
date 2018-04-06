@@ -139,6 +139,5 @@ class XBee {
   }
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("XBee", XBee);
-}  
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("Xbee", Xbee);

@@ -316,7 +316,7 @@ class ObnizBLE {
       }
     }
     if (obj.get_characteristic_result) {
-      let params = get_characteristic_result;
+      let params = obj.get_characteristic_result;
       if (params.address) {
         let p = this.findPeripheral(params.address);
         if (p) {

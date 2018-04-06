@@ -69,7 +69,6 @@ SHT31.prototype.getAllWait = async function () {
   return {temperature,humidity};
 };
 
+let Obniz = require("../../../../obniz/index.js");
+Obniz.PartsRegistrate("SHT31", SHT31);
 
-if (PartsRegistrate) {
-  PartsRegistrate("SHT31", SHT31);
-}
