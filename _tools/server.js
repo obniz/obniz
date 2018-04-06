@@ -73,8 +73,8 @@ gulp.task("jsonSchemaDoc", function jsonSchemaForVar(){
 gulp.run("jsonSchemaDoc");
 gulp.watch([schemaSrcPath], ["jsonSchemaDoc"]);
 
-const webpackConfig = require("../webpack.config");
-const webpackConfigNode = require("../webpack.config.node6_10");
+const webpackConfig = require("../webpack.config.js");
+const webpackConfigNode = require("../webpack.node6_10.js");
 
 gulp.task("obniz.js", [] ,function obnizJsBuild(){
 
@@ -87,7 +87,10 @@ gulp.task("obniz.js", [] ,function obnizJsBuild(){
 
 });
 
-gulp.task("obniz.node6_10.js", ["obniz.js"] ,function obnizJsBuild(){
+gulp.run("obniz.js");
+
+
+gulp.task("obniz.node6_10.js", [] ,function obnizNodeBuild(){
 
   return gulp.src(obnizMain)
       .pipe(plumber({errorHandler: reportError}))
@@ -102,7 +105,7 @@ gulp.task("obniz.node6_10.js", ["obniz.js"] ,function obnizJsBuild(){
 
 gulp.run("obniz.node6_10.js");
 
-gulp.watch([obnizPath,partsPath,packageJsonPath,schemaSrcPath], ["obniz.node6_10.js"]);
+gulp.watch([obnizPath,partsPath,packageJsonPath,schemaSrcPath], ["obniz.js", "obniz.node6_10.js"]);
 
 
 function readMeBuild() {
