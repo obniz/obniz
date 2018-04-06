@@ -5410,7 +5410,7 @@ class hx711 {
       _this.spi.end(true);
       _this.sck.output(false);
       let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-      return flag * (((ret[0] & 0x7F) << 16) + (ret[0] << 8) + (ret[0] << 0));
+      return flag * (((ret[0] & 0x7F) << 16) + (ret[1] << 8) + (ret[2] << 0));
     })();
   }
 
