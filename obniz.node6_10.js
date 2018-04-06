@@ -261,7 +261,7 @@ webpackContext.id = "./json_schema sync recursive \\.yml$";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null,"example":[0,1,2,3,4,5,6]},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"example":[[2,1,26,7,9,83,97,109,112,108,101],[7,9,83,97,109,112,108,101]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray":{"id":"dataArray","type":"array","default":null,"description":"Binary data array.","example":[[16,34,242],[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","description":"Image data bit array.","minItems":1024,"maxItems":1024,"example":[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,255,240,56,0,0,0,0,0,0,0,0,0,0,0,0,7,255,224,120,0,0,0,0,0,0,0,0,0,0,0,0,63,255,192,240,0,0,0,0,0,0,0,0,0,0,0,0,127,255,129,248,0,0,0,0,0,0,0,0,0,0,0,1,255,255,3,254,0,0,0,0,0,0,0,0,0,0,0,3,255,254,7,255,0,0,0,0,0,0,0,0,0,0,0,15,255,252,15,255,128,0,0,0,0,0,0,0,0,0,0,31,255,248,31,255,192,0,0,0,0,0,0,0,0,0,0,63,255,240,63,255,224,0,0,0,0,0,0,0,0,0,0,63,255,224,127,255,240,0,0,0,0,0,0,0,0,0,0,127,255,192,255,255,248,0,0,0,0,0,0,0,0,0,0,255,255,129,255,255,252,0,0,0,0,0,0,0,0,0,1,255,255,3,255,255,254,0,0,0,0,0,0,0,0,0,1,255,254,7,255,255,254,0,0,0,0,0,0,0,0,0,3,255,252,15,255,255,255,0,0,0,0,0,0,0,0,0,7,255,248,31,255,255,255,0,0,0,0,0,0,0,0,0,7,255,240,63,255,255,255,128,0,0,0,0,0,0,0,0,7,255,224,127,193,255,255,128,0,0,0,0,0,0,0,0,15,252,64,255,128,255,255,128,0,0,0,0,0,0,0,0,15,240,1,255,0,127,255,0,0,0,0,0,0,0,0,0,15,224,3,254,0,127,254,14,0,0,0,0,0,0,0,0,31,224,7,254,0,63,252,30,0,0,0,0,0,0,0,0,31,224,7,254,0,63,248,60,0,0,0,0,0,0,0,0,31,192,7,254,0,63,240,120,0,0,0,0,0,0,0,0,31,192,7,254,0,127,224,240,0,0,0,0,0,0,0,0,31,224,7,252,0,127,193,224,0,0,0,0,0,0,0,0,31,224,15,248,0,255,131,224,0,0,0,0,0,0,0,0,31,240,31,240,39,255,7,224,0,0,0,0,0,0,0,0,31,252,63,224,127,254,15,224,0,0,0,0,0,0,0,0,31,255,255,192,255,252,31,224,0,0,0,0,0,0,0,0,31,255,255,129,255,248,63,224,0,0,0,0,0,0,0,0,31,255,255,3,255,240,127,224,0,0,0,0,0,0,0,0,31,255,254,7,255,224,255,224,0,0,0,0,0,0,0,0,31,255,252,15,255,193,255,192,0,0,0,0,0,0,0,0,15,255,248,31,255,131,255,192,0,0,0,0,0,0,0,0,15,255,240,63,255,7,255,192,0,0,0,0,0,0,0,0,15,255,224,127,254,15,255,192,0,0,0,0,0,0,0,0,15,255,192,255,252,31,255,128,0,0,0,0,0,0,0,0,7,255,129,255,0,63,255,128,0,0,0,0,0,0,0,0,7,255,3,254,0,127,255,0,0,0,0,0,0,0,0,0,3,254,7,252,0,255,255,0,0,0,0,0,0,0,0,0,3,252,15,252,0,255,254,0,0,0,0,0,0,0,0,0,1,248,31,252,0,255,254,0,0,0,0,0,0,0,0,0,0,240,63,252,0,255,252,0,0,0,0,0,0,0,0,0,0,224,127,252,0,255,252,0,0,0,0,0,0,0,0,0,0,64,255,252,0,255,248,0,0,0,0,0,0,0,0,0,0,1,255,254,1,255,240,0,0,0,0,0,0,0,0,0,0,3,255,255,3,255,224,0,0,0,0,0,0,0,0,0,0,7,255,255,255,255,192,0,0,0,0,0,0,0,0,0,0,15,255,255,255,255,128,0,0,0,0,0,0,0,0,0,0,31,255,255,255,254,0,0,0,0,0,0,0,0,0,0,0,12,255,255,255,252,0,0,0,0,0,0,0,0,0,0,0,0,63,255,255,240,0,0,0,0,0,0,0,0,0,0,0,0,15,255,255,192,0,0,0,0,0,0,0,0,0,0,0,0,3,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,63,224,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$","description":"Bluetooth device id.If it contain '-', it ignored.","example":"8d0fd8f9"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44"]},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44",null]},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12,"description":"Bluetooth device id. It's hexString cannot cointain '0x' or '-'.","example":"77e754ab8591"},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999,"description":"Obniz id. It can contain '-' or not.","example":["1234-5678",12345678]}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null,"example":[0,1,2,3,4,5,6]},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"example":[[2,1,26,7,9,83,97,109,112,108,101],[7,9,83,97,109,112,108,101]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"zerooneArray":{"id":"zerooneArray","type":"array","default":null,"description":"Binary data array represented in 0 1.","example":[[0,1,1,0,0,1,1,0],[0,0,1,0,0,0,0,0]],"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"description":"Binary data array.","example":[[16,34,242],[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","description":"Image data bit array.","minItems":1024,"maxItems":1024,"example":[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,255,240,56,0,0,0,0,0,0,0,0,0,0,0,0,7,255,224,120,0,0,0,0,0,0,0,0,0,0,0,0,63,255,192,240,0,0,0,0,0,0,0,0,0,0,0,0,127,255,129,248,0,0,0,0,0,0,0,0,0,0,0,1,255,255,3,254,0,0,0,0,0,0,0,0,0,0,0,3,255,254,7,255,0,0,0,0,0,0,0,0,0,0,0,15,255,252,15,255,128,0,0,0,0,0,0,0,0,0,0,31,255,248,31,255,192,0,0,0,0,0,0,0,0,0,0,63,255,240,63,255,224,0,0,0,0,0,0,0,0,0,0,63,255,224,127,255,240,0,0,0,0,0,0,0,0,0,0,127,255,192,255,255,248,0,0,0,0,0,0,0,0,0,0,255,255,129,255,255,252,0,0,0,0,0,0,0,0,0,1,255,255,3,255,255,254,0,0,0,0,0,0,0,0,0,1,255,254,7,255,255,254,0,0,0,0,0,0,0,0,0,3,255,252,15,255,255,255,0,0,0,0,0,0,0,0,0,7,255,248,31,255,255,255,0,0,0,0,0,0,0,0,0,7,255,240,63,255,255,255,128,0,0,0,0,0,0,0,0,7,255,224,127,193,255,255,128,0,0,0,0,0,0,0,0,15,252,64,255,128,255,255,128,0,0,0,0,0,0,0,0,15,240,1,255,0,127,255,0,0,0,0,0,0,0,0,0,15,224,3,254,0,127,254,14,0,0,0,0,0,0,0,0,31,224,7,254,0,63,252,30,0,0,0,0,0,0,0,0,31,224,7,254,0,63,248,60,0,0,0,0,0,0,0,0,31,192,7,254,0,63,240,120,0,0,0,0,0,0,0,0,31,192,7,254,0,127,224,240,0,0,0,0,0,0,0,0,31,224,7,252,0,127,193,224,0,0,0,0,0,0,0,0,31,224,15,248,0,255,131,224,0,0,0,0,0,0,0,0,31,240,31,240,39,255,7,224,0,0,0,0,0,0,0,0,31,252,63,224,127,254,15,224,0,0,0,0,0,0,0,0,31,255,255,192,255,252,31,224,0,0,0,0,0,0,0,0,31,255,255,129,255,248,63,224,0,0,0,0,0,0,0,0,31,255,255,3,255,240,127,224,0,0,0,0,0,0,0,0,31,255,254,7,255,224,255,224,0,0,0,0,0,0,0,0,31,255,252,15,255,193,255,192,0,0,0,0,0,0,0,0,15,255,248,31,255,131,255,192,0,0,0,0,0,0,0,0,15,255,240,63,255,7,255,192,0,0,0,0,0,0,0,0,15,255,224,127,254,15,255,192,0,0,0,0,0,0,0,0,15,255,192,255,252,31,255,128,0,0,0,0,0,0,0,0,7,255,129,255,0,63,255,128,0,0,0,0,0,0,0,0,7,255,3,254,0,127,255,0,0,0,0,0,0,0,0,0,3,254,7,252,0,255,255,0,0,0,0,0,0,0,0,0,3,252,15,252,0,255,254,0,0,0,0,0,0,0,0,0,1,248,31,252,0,255,254,0,0,0,0,0,0,0,0,0,0,240,63,252,0,255,252,0,0,0,0,0,0,0,0,0,0,224,127,252,0,255,252,0,0,0,0,0,0,0,0,0,0,64,255,252,0,255,248,0,0,0,0,0,0,0,0,0,0,1,255,254,1,255,240,0,0,0,0,0,0,0,0,0,0,3,255,255,3,255,224,0,0,0,0,0,0,0,0,0,0,7,255,255,255,255,192,0,0,0,0,0,0,0,0,0,0,15,255,255,255,255,128,0,0,0,0,0,0,0,0,0,0,31,255,255,255,254,0,0,0,0,0,0,0,0,0,0,0,12,255,255,255,252,0,0,0,0,0,0,0,0,0,0,0,0,63,255,255,240,0,0,0,0,0,0,0,0,0,0,0,0,15,255,255,192,0,0,0,0,0,0,0,0,0,0,0,0,3,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,63,224,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$","description":"Bluetooth device id.If it contain '-', it ignored.","example":"8d0fd8f9"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44"]},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44",null]},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12,"description":"Bluetooth device id. It's hexString cannot cointain '0x' or '-'.","example":"77e754ab8591"},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999,"description":"Obniz id. It can contain '-' or not.","example":["1234-5678",12345678]}}}
 
 /***/ }),
 
@@ -932,7 +932,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000,"multipleOf":0.001,"description":"symbol width (ms)"},"data":{"$ref":"/dataArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000,"multipleOf":0.001,"description":"symbol width (ms)"},"data":{"$ref":"/zerooneArray"}}}}}
 
 /***/ }),
 
@@ -1537,7 +1537,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/zerooneArray"}}}
 
 /***/ }),
 
@@ -3893,7 +3893,7 @@ class Display {
     }
     if (this.Obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(/*! canvas */ "canvas");
+        const { createCanvas } = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"canvas\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
@@ -5148,7 +5148,7 @@ class ObnizUtil {
   createCanvasContext(width, height) {
     if (this.obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(/*! canvas */ "canvas");
+        const { createCanvas } = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"canvas\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
         return createCanvas(this.width, this.height);
         throw new Error();
       } catch (e) {
@@ -6820,9 +6820,14 @@ class WSCommand_LogicAnalyzer extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv) {
-      var arr = new Array(payload.byteLength);
-      for (var i = 0; i < payload.byteLength; i++) {
-        arr[i] = payload[i];
+      let arr = new Array(payload.byteLength * 8);
+      let offset = 0;
+      for (let i = 0; i < payload.byteLength; i++) {
+        const byte = payload[i];
+        for (let bit = 0; bit < 8; bit++) {
+          arr[offset] = byte & 0x80 >>> bit ? 1 : 0;
+          offset++;
+        }
       }
       objToSend["logic_analyzer"] = {
         data: arr
@@ -7023,15 +7028,23 @@ class WSCommand_PWM extends WSCommand {
   }
 
   amModulate(params, module) {
-    var buf = new Uint8Array(5 + params.modulate.data.length);
+    const bitLength = params.modulate.data.length;
+    const byteLength = parseInt((bitLength + 7) / 8);
+    let buf = new Uint8Array(5 + byteLength);
     let symbol_length_usec = params.modulate.symbol_length * 1000;
     buf[0] = module;
     buf[1] = symbol_length_usec >> 8 * 3;
     buf[2] = symbol_length_usec >> 8 * 2;
     buf[3] = symbol_length_usec >> 8 * 1;
     buf[4] = symbol_length_usec;
-    for (var i = 0; i < params.modulate.data.length; i++) {
-      buf[5 + i] = params.modulate.data[i];
+    let bitIndex = 0;
+    for (let byte = 0; byte < byteLength; byte++) {
+      buf[5 + byte] = 0;
+      for (let bit = 0; bit < 8; bit++) {
+        if (params.modulate.data[bitIndex++]) {
+          buf[5 + byte] |= 0x80 >>> bit;
+        }
+      }
     }
     this.sendCommand(this._CommandAMModulate, buf);
   }
@@ -7830,7 +7843,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.50","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION ./test/index.js","local":"node $NODE_DEBUG_OPTION ./_tools/server.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","tv4":"^1.3.0","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.51","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION ./test/index.js","local":"node $NODE_DEBUG_OPTION ./_tools/server.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","tv4":"^1.3.0","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -7902,17 +7915,6 @@ USB.prototype.off = function () {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("USB", USB);
-
-/***/ }),
-
-/***/ "canvas":
-/*!*************************!*\
-  !*** external "canvas" ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = require("canvas");
 
 /***/ }),
 
