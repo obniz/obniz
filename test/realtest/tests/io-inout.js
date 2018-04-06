@@ -10,7 +10,7 @@ module.exports = async function(config) {
   const obnizA = config.obnizA;
   const obnizB = config.obnizB;
 
-  describe("io-output", function () {
+  describe(path.basename(__filename), function () {
 
     this.timeout(10000);
   
