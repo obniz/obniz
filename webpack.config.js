@@ -1,6 +1,5 @@
 // output.pathに絶対パスを指定する必要があるため、pathモジュールを読み込んでおく
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 
 module.exports = {
@@ -19,15 +18,6 @@ module.exports = {
     library: 'Obniz',
   },
   devtool: "none",
-  optimization: {
-    minimizer: [
-      // we specify a custom UglifyJsPlugin here to get source maps in production
-      new UglifyJsPlugin({
-        cache: true,
-        sourceMap: true,
-      })
-    ]
-  },
   module: {
     rules: [{
       test: /\.(yml|yaml)$/,
@@ -40,5 +30,9 @@ module.exports = {
         }
       ]
     }]
+  },
+  stats:{
+    warningsFilter:[ /(?!require function is used in a way in which dependencies cannot be statically extracted)/]
   }
+
 };
