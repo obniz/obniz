@@ -1,7 +1,19 @@
-var Obniz =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["Obniz"] = factory();
+	else
+		root["Obniz"] = factory();
+})(global, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
+/******/
+/******/ 	// object to store loaded and loading wasm modules
+/******/ 	var installedWasmModules = {};
 /******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
@@ -64,6 +76,9 @@ var Obniz =
 /******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// object with all compiled WebAssembly.Modules
+/******/ 	__webpack_require__.w = {};
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -1702,4122 +1717,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./node_modules/base64-js/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/base64-js/index.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.byteLength = byteLength
-exports.toByteArray = toByteArray
-exports.fromByteArray = fromByteArray
-
-var lookup = []
-var revLookup = []
-var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
-
-var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-for (var i = 0, len = code.length; i < len; ++i) {
-  lookup[i] = code[i]
-  revLookup[code.charCodeAt(i)] = i
-}
-
-// Support decoding URL-safe base64 strings, as Node.js does.
-// See: https://en.wikipedia.org/wiki/Base64#URL_applications
-revLookup['-'.charCodeAt(0)] = 62
-revLookup['_'.charCodeAt(0)] = 63
-
-function placeHoldersCount (b64) {
-  var len = b64.length
-  if (len % 4 > 0) {
-    throw new Error('Invalid string. Length must be a multiple of 4')
-  }
-
-  // the number of equal signs (place holders)
-  // if there are two placeholders, than the two characters before it
-  // represent one byte
-  // if there is only one, then the three characters before it represent 2 bytes
-  // this is just a cheap hack to not do indexOf twice
-  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
-}
-
-function byteLength (b64) {
-  // base64 is 4/3 + up to two characters of the original data
-  return (b64.length * 3 / 4) - placeHoldersCount(b64)
-}
-
-function toByteArray (b64) {
-  var i, l, tmp, placeHolders, arr
-  var len = b64.length
-  placeHolders = placeHoldersCount(b64)
-
-  arr = new Arr((len * 3 / 4) - placeHolders)
-
-  // if there are placeholders, only get up to the last complete 4 chars
-  l = placeHolders > 0 ? len - 4 : len
-
-  var L = 0
-
-  for (i = 0; i < l; i += 4) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
-    arr[L++] = (tmp >> 16) & 0xFF
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
-  }
-
-  if (placeHolders === 2) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[L++] = tmp & 0xFF
-  } else if (placeHolders === 1) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
-  }
-
-  return arr
-}
-
-function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
-}
-
-function encodeChunk (uint8, start, end) {
-  var tmp
-  var output = []
-  for (var i = start; i < end; i += 3) {
-    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
-    output.push(tripletToBase64(tmp))
-  }
-  return output.join('')
-}
-
-function fromByteArray (uint8) {
-  var tmp
-  var len = uint8.length
-  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-  var output = ''
-  var parts = []
-  var maxChunkLength = 16383 // must be multiple of 3
-
-  // go through the array every three bytes, we'll deal with trailing stuff later
-  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
-  }
-
-  // pad the end with zeros, but make sure to not forget the extra bytes
-  if (extraBytes === 1) {
-    tmp = uint8[len - 1]
-    output += lookup[tmp >> 2]
-    output += lookup[(tmp << 4) & 0x3F]
-    output += '=='
-  } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
-    output += lookup[tmp >> 10]
-    output += lookup[(tmp >> 4) & 0x3F]
-    output += lookup[(tmp << 2) & 0x3F]
-    output += '='
-  }
-
-  parts.push(output)
-
-  return parts.join('')
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/buffer/index.js":
-/*!**************************************!*\
-  !*** ./node_modules/buffer/index.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-/* eslint-disable no-proto */
-
-
-
-var base64 = __webpack_require__(/*! base64-js */ "./node_modules/base64-js/index.js")
-var ieee754 = __webpack_require__(/*! ieee754 */ "./node_modules/ieee754/index.js")
-var isArray = __webpack_require__(/*! isarray */ "./node_modules/buffer/node_modules/isarray/index.js")
-
-exports.Buffer = Buffer
-exports.SlowBuffer = SlowBuffer
-exports.INSPECT_MAX_BYTES = 50
-
-/**
- * If `Buffer.TYPED_ARRAY_SUPPORT`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (most compatible, even IE6)
- *
- * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
- * Opera 11.6+, iOS 4.2+.
- *
- * Due to various browser bugs, sometimes the Object implementation will be used even
- * when the browser supports typed arrays.
- *
- * Note:
- *
- *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
- *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
- *
- *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
- *
- *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
- *     incorrect length in some situations.
-
- * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
- * get the Object implementation, which is slower but behaves correctly.
- */
-Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
-  ? global.TYPED_ARRAY_SUPPORT
-  : typedArraySupport()
-
-/*
- * Export kMaxLength after typed array support is determined.
- */
-exports.kMaxLength = kMaxLength()
-
-function typedArraySupport () {
-  try {
-    var arr = new Uint8Array(1)
-    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
-    return arr.foo() === 42 && // typed array instances can be augmented
-        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
-  } catch (e) {
-    return false
-  }
-}
-
-function kMaxLength () {
-  return Buffer.TYPED_ARRAY_SUPPORT
-    ? 0x7fffffff
-    : 0x3fffffff
-}
-
-function createBuffer (that, length) {
-  if (kMaxLength() < length) {
-    throw new RangeError('Invalid typed array length')
-  }
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = new Uint8Array(length)
-    that.__proto__ = Buffer.prototype
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    if (that === null) {
-      that = new Buffer(length)
-    }
-    that.length = length
-  }
-
-  return that
-}
-
-/**
- * The Buffer constructor returns instances of `Uint8Array` that have their
- * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
- * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
- * and the `Uint8Array` methods. Square bracket notation works as expected -- it
- * returns a single octet.
- *
- * The `Uint8Array` prototype remains unmodified.
- */
-
-function Buffer (arg, encodingOrOffset, length) {
-  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
-    return new Buffer(arg, encodingOrOffset, length)
-  }
-
-  // Common case.
-  if (typeof arg === 'number') {
-    if (typeof encodingOrOffset === 'string') {
-      throw new Error(
-        'If encoding is specified then the first argument must be a string'
-      )
-    }
-    return allocUnsafe(this, arg)
-  }
-  return from(this, arg, encodingOrOffset, length)
-}
-
-Buffer.poolSize = 8192 // not used by this implementation
-
-// TODO: Legacy, not needed anymore. Remove in next major version.
-Buffer._augment = function (arr) {
-  arr.__proto__ = Buffer.prototype
-  return arr
-}
-
-function from (that, value, encodingOrOffset, length) {
-  if (typeof value === 'number') {
-    throw new TypeError('"value" argument must not be a number')
-  }
-
-  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
-    return fromArrayBuffer(that, value, encodingOrOffset, length)
-  }
-
-  if (typeof value === 'string') {
-    return fromString(that, value, encodingOrOffset)
-  }
-
-  return fromObject(that, value)
-}
-
-/**
- * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
- * if value is a number.
- * Buffer.from(str[, encoding])
- * Buffer.from(array)
- * Buffer.from(buffer)
- * Buffer.from(arrayBuffer[, byteOffset[, length]])
- **/
-Buffer.from = function (value, encodingOrOffset, length) {
-  return from(null, value, encodingOrOffset, length)
-}
-
-if (Buffer.TYPED_ARRAY_SUPPORT) {
-  Buffer.prototype.__proto__ = Uint8Array.prototype
-  Buffer.__proto__ = Uint8Array
-  if (typeof Symbol !== 'undefined' && Symbol.species &&
-      Buffer[Symbol.species] === Buffer) {
-    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
-    Object.defineProperty(Buffer, Symbol.species, {
-      value: null,
-      configurable: true
-    })
-  }
-}
-
-function assertSize (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('"size" argument must be a number')
-  } else if (size < 0) {
-    throw new RangeError('"size" argument must not be negative')
-  }
-}
-
-function alloc (that, size, fill, encoding) {
-  assertSize(size)
-  if (size <= 0) {
-    return createBuffer(that, size)
-  }
-  if (fill !== undefined) {
-    // Only pay attention to encoding if it's a string. This
-    // prevents accidentally sending in a number that would
-    // be interpretted as a start offset.
-    return typeof encoding === 'string'
-      ? createBuffer(that, size).fill(fill, encoding)
-      : createBuffer(that, size).fill(fill)
-  }
-  return createBuffer(that, size)
-}
-
-/**
- * Creates a new filled Buffer instance.
- * alloc(size[, fill[, encoding]])
- **/
-Buffer.alloc = function (size, fill, encoding) {
-  return alloc(null, size, fill, encoding)
-}
-
-function allocUnsafe (that, size) {
-  assertSize(size)
-  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < size; ++i) {
-      that[i] = 0
-    }
-  }
-  return that
-}
-
-/**
- * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
- * */
-Buffer.allocUnsafe = function (size) {
-  return allocUnsafe(null, size)
-}
-/**
- * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
- */
-Buffer.allocUnsafeSlow = function (size) {
-  return allocUnsafe(null, size)
-}
-
-function fromString (that, string, encoding) {
-  if (typeof encoding !== 'string' || encoding === '') {
-    encoding = 'utf8'
-  }
-
-  if (!Buffer.isEncoding(encoding)) {
-    throw new TypeError('"encoding" must be a valid string encoding')
-  }
-
-  var length = byteLength(string, encoding) | 0
-  that = createBuffer(that, length)
-
-  var actual = that.write(string, encoding)
-
-  if (actual !== length) {
-    // Writing a hex string, for example, that contains invalid characters will
-    // cause everything after the first invalid character to be ignored. (e.g.
-    // 'abxxcd' will be treated as 'ab')
-    that = that.slice(0, actual)
-  }
-
-  return that
-}
-
-function fromArrayLike (that, array) {
-  var length = array.length < 0 ? 0 : checked(array.length) | 0
-  that = createBuffer(that, length)
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255
-  }
-  return that
-}
-
-function fromArrayBuffer (that, array, byteOffset, length) {
-  array.byteLength // this throws if `array` is not a valid ArrayBuffer
-
-  if (byteOffset < 0 || array.byteLength < byteOffset) {
-    throw new RangeError('\'offset\' is out of bounds')
-  }
-
-  if (array.byteLength < byteOffset + (length || 0)) {
-    throw new RangeError('\'length\' is out of bounds')
-  }
-
-  if (byteOffset === undefined && length === undefined) {
-    array = new Uint8Array(array)
-  } else if (length === undefined) {
-    array = new Uint8Array(array, byteOffset)
-  } else {
-    array = new Uint8Array(array, byteOffset, length)
-  }
-
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = array
-    that.__proto__ = Buffer.prototype
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    that = fromArrayLike(that, array)
-  }
-  return that
-}
-
-function fromObject (that, obj) {
-  if (Buffer.isBuffer(obj)) {
-    var len = checked(obj.length) | 0
-    that = createBuffer(that, len)
-
-    if (that.length === 0) {
-      return that
-    }
-
-    obj.copy(that, 0, 0, len)
-    return that
-  }
-
-  if (obj) {
-    if ((typeof ArrayBuffer !== 'undefined' &&
-        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
-      if (typeof obj.length !== 'number' || isnan(obj.length)) {
-        return createBuffer(that, 0)
-      }
-      return fromArrayLike(that, obj)
-    }
-
-    if (obj.type === 'Buffer' && isArray(obj.data)) {
-      return fromArrayLike(that, obj.data)
-    }
-  }
-
-  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
-}
-
-function checked (length) {
-  // Note: cannot use `length < kMaxLength()` here because that fails when
-  // length is NaN (which is otherwise coerced to zero.)
-  if (length >= kMaxLength()) {
-    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
-  }
-  return length | 0
-}
-
-function SlowBuffer (length) {
-  if (+length != length) { // eslint-disable-line eqeqeq
-    length = 0
-  }
-  return Buffer.alloc(+length)
-}
-
-Buffer.isBuffer = function isBuffer (b) {
-  return !!(b != null && b._isBuffer)
-}
-
-Buffer.compare = function compare (a, b) {
-  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
-    throw new TypeError('Arguments must be Buffers')
-  }
-
-  if (a === b) return 0
-
-  var x = a.length
-  var y = b.length
-
-  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-    if (a[i] !== b[i]) {
-      x = a[i]
-      y = b[i]
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-}
-
-Buffer.isEncoding = function isEncoding (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'latin1':
-    case 'binary':
-    case 'base64':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
-
-Buffer.concat = function concat (list, length) {
-  if (!isArray(list)) {
-    throw new TypeError('"list" argument must be an Array of Buffers')
-  }
-
-  if (list.length === 0) {
-    return Buffer.alloc(0)
-  }
-
-  var i
-  if (length === undefined) {
-    length = 0
-    for (i = 0; i < list.length; ++i) {
-      length += list[i].length
-    }
-  }
-
-  var buffer = Buffer.allocUnsafe(length)
-  var pos = 0
-  for (i = 0; i < list.length; ++i) {
-    var buf = list[i]
-    if (!Buffer.isBuffer(buf)) {
-      throw new TypeError('"list" argument must be an Array of Buffers')
-    }
-    buf.copy(buffer, pos)
-    pos += buf.length
-  }
-  return buffer
-}
-
-function byteLength (string, encoding) {
-  if (Buffer.isBuffer(string)) {
-    return string.length
-  }
-  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
-      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
-    return string.byteLength
-  }
-  if (typeof string !== 'string') {
-    string = '' + string
-  }
-
-  var len = string.length
-  if (len === 0) return 0
-
-  // Use a for loop to avoid recursion
-  var loweredCase = false
-  for (;;) {
-    switch (encoding) {
-      case 'ascii':
-      case 'latin1':
-      case 'binary':
-        return len
-      case 'utf8':
-      case 'utf-8':
-      case undefined:
-        return utf8ToBytes(string).length
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return len * 2
-      case 'hex':
-        return len >>> 1
-      case 'base64':
-        return base64ToBytes(string).length
-      default:
-        if (loweredCase) return utf8ToBytes(string).length // assume utf8
-        encoding = ('' + encoding).toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-Buffer.byteLength = byteLength
-
-function slowToString (encoding, start, end) {
-  var loweredCase = false
-
-  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
-  // property of a typed array.
-
-  // This behaves neither like String nor Uint8Array in that we set start/end
-  // to their upper/lower bounds if the value passed is out of range.
-  // undefined is handled specially as per ECMA-262 6th Edition,
-  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
-  if (start === undefined || start < 0) {
-    start = 0
-  }
-  // Return early if start > this.length. Done here to prevent potential uint32
-  // coercion fail below.
-  if (start > this.length) {
-    return ''
-  }
-
-  if (end === undefined || end > this.length) {
-    end = this.length
-  }
-
-  if (end <= 0) {
-    return ''
-  }
-
-  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
-  end >>>= 0
-  start >>>= 0
-
-  if (end <= start) {
-    return ''
-  }
-
-  if (!encoding) encoding = 'utf8'
-
-  while (true) {
-    switch (encoding) {
-      case 'hex':
-        return hexSlice(this, start, end)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Slice(this, start, end)
-
-      case 'ascii':
-        return asciiSlice(this, start, end)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Slice(this, start, end)
-
-      case 'base64':
-        return base64Slice(this, start, end)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return utf16leSlice(this, start, end)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = (encoding + '').toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
-// Buffer instances.
-Buffer.prototype._isBuffer = true
-
-function swap (b, n, m) {
-  var i = b[n]
-  b[n] = b[m]
-  b[m] = i
-}
-
-Buffer.prototype.swap16 = function swap16 () {
-  var len = this.length
-  if (len % 2 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 16-bits')
-  }
-  for (var i = 0; i < len; i += 2) {
-    swap(this, i, i + 1)
-  }
-  return this
-}
-
-Buffer.prototype.swap32 = function swap32 () {
-  var len = this.length
-  if (len % 4 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 32-bits')
-  }
-  for (var i = 0; i < len; i += 4) {
-    swap(this, i, i + 3)
-    swap(this, i + 1, i + 2)
-  }
-  return this
-}
-
-Buffer.prototype.swap64 = function swap64 () {
-  var len = this.length
-  if (len % 8 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 64-bits')
-  }
-  for (var i = 0; i < len; i += 8) {
-    swap(this, i, i + 7)
-    swap(this, i + 1, i + 6)
-    swap(this, i + 2, i + 5)
-    swap(this, i + 3, i + 4)
-  }
-  return this
-}
-
-Buffer.prototype.toString = function toString () {
-  var length = this.length | 0
-  if (length === 0) return ''
-  if (arguments.length === 0) return utf8Slice(this, 0, length)
-  return slowToString.apply(this, arguments)
-}
-
-Buffer.prototype.equals = function equals (b) {
-  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-  if (this === b) return true
-  return Buffer.compare(this, b) === 0
-}
-
-Buffer.prototype.inspect = function inspect () {
-  var str = ''
-  var max = exports.INSPECT_MAX_BYTES
-  if (this.length > 0) {
-    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-    if (this.length > max) str += ' ... '
-  }
-  return '<Buffer ' + str + '>'
-}
-
-Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
-  if (!Buffer.isBuffer(target)) {
-    throw new TypeError('Argument must be a Buffer')
-  }
-
-  if (start === undefined) {
-    start = 0
-  }
-  if (end === undefined) {
-    end = target ? target.length : 0
-  }
-  if (thisStart === undefined) {
-    thisStart = 0
-  }
-  if (thisEnd === undefined) {
-    thisEnd = this.length
-  }
-
-  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
-    throw new RangeError('out of range index')
-  }
-
-  if (thisStart >= thisEnd && start >= end) {
-    return 0
-  }
-  if (thisStart >= thisEnd) {
-    return -1
-  }
-  if (start >= end) {
-    return 1
-  }
-
-  start >>>= 0
-  end >>>= 0
-  thisStart >>>= 0
-  thisEnd >>>= 0
-
-  if (this === target) return 0
-
-  var x = thisEnd - thisStart
-  var y = end - start
-  var len = Math.min(x, y)
-
-  var thisCopy = this.slice(thisStart, thisEnd)
-  var targetCopy = target.slice(start, end)
-
-  for (var i = 0; i < len; ++i) {
-    if (thisCopy[i] !== targetCopy[i]) {
-      x = thisCopy[i]
-      y = targetCopy[i]
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-}
-
-// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
-// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
-//
-// Arguments:
-// - buffer - a Buffer to search
-// - val - a string, Buffer, or number
-// - byteOffset - an index into `buffer`; will be clamped to an int32
-// - encoding - an optional encoding, relevant is val is a string
-// - dir - true for indexOf, false for lastIndexOf
-function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
-  // Empty buffer means no match
-  if (buffer.length === 0) return -1
-
-  // Normalize byteOffset
-  if (typeof byteOffset === 'string') {
-    encoding = byteOffset
-    byteOffset = 0
-  } else if (byteOffset > 0x7fffffff) {
-    byteOffset = 0x7fffffff
-  } else if (byteOffset < -0x80000000) {
-    byteOffset = -0x80000000
-  }
-  byteOffset = +byteOffset  // Coerce to Number.
-  if (isNaN(byteOffset)) {
-    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
-    byteOffset = dir ? 0 : (buffer.length - 1)
-  }
-
-  // Normalize byteOffset: negative offsets start from the end of the buffer
-  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
-  if (byteOffset >= buffer.length) {
-    if (dir) return -1
-    else byteOffset = buffer.length - 1
-  } else if (byteOffset < 0) {
-    if (dir) byteOffset = 0
-    else return -1
-  }
-
-  // Normalize val
-  if (typeof val === 'string') {
-    val = Buffer.from(val, encoding)
-  }
-
-  // Finally, search either indexOf (if dir is true) or lastIndexOf
-  if (Buffer.isBuffer(val)) {
-    // Special case: looking for empty string/buffer always fails
-    if (val.length === 0) {
-      return -1
-    }
-    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
-  } else if (typeof val === 'number') {
-    val = val & 0xFF // Search for a byte value [0-255]
-    if (Buffer.TYPED_ARRAY_SUPPORT &&
-        typeof Uint8Array.prototype.indexOf === 'function') {
-      if (dir) {
-        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
-      } else {
-        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
-      }
-    }
-    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
-  }
-
-  throw new TypeError('val must be string, number or Buffer')
-}
-
-function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
-  var indexSize = 1
-  var arrLength = arr.length
-  var valLength = val.length
-
-  if (encoding !== undefined) {
-    encoding = String(encoding).toLowerCase()
-    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
-        encoding === 'utf16le' || encoding === 'utf-16le') {
-      if (arr.length < 2 || val.length < 2) {
-        return -1
-      }
-      indexSize = 2
-      arrLength /= 2
-      valLength /= 2
-      byteOffset /= 2
-    }
-  }
-
-  function read (buf, i) {
-    if (indexSize === 1) {
-      return buf[i]
-    } else {
-      return buf.readUInt16BE(i * indexSize)
-    }
-  }
-
-  var i
-  if (dir) {
-    var foundIndex = -1
-    for (i = byteOffset; i < arrLength; i++) {
-      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-        if (foundIndex === -1) foundIndex = i
-        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
-      } else {
-        if (foundIndex !== -1) i -= i - foundIndex
-        foundIndex = -1
-      }
-    }
-  } else {
-    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
-    for (i = byteOffset; i >= 0; i--) {
-      var found = true
-      for (var j = 0; j < valLength; j++) {
-        if (read(arr, i + j) !== read(val, j)) {
-          found = false
-          break
-        }
-      }
-      if (found) return i
-    }
-  }
-
-  return -1
-}
-
-Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
-  return this.indexOf(val, byteOffset, encoding) !== -1
-}
-
-Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
-}
-
-Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
-}
-
-function hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0
-  var remaining = buf.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length
-  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2
-  }
-  for (var i = 0; i < length; ++i) {
-    var parsed = parseInt(string.substr(i * 2, 2), 16)
-    if (isNaN(parsed)) return i
-    buf[offset + i] = parsed
-  }
-  return i
-}
-
-function utf8Write (buf, string, offset, length) {
-  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-function asciiWrite (buf, string, offset, length) {
-  return blitBuffer(asciiToBytes(string), buf, offset, length)
-}
-
-function latin1Write (buf, string, offset, length) {
-  return asciiWrite(buf, string, offset, length)
-}
-
-function base64Write (buf, string, offset, length) {
-  return blitBuffer(base64ToBytes(string), buf, offset, length)
-}
-
-function ucs2Write (buf, string, offset, length) {
-  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-Buffer.prototype.write = function write (string, offset, length, encoding) {
-  // Buffer#write(string)
-  if (offset === undefined) {
-    encoding = 'utf8'
-    length = this.length
-    offset = 0
-  // Buffer#write(string, encoding)
-  } else if (length === undefined && typeof offset === 'string') {
-    encoding = offset
-    length = this.length
-    offset = 0
-  // Buffer#write(string, offset[, length][, encoding])
-  } else if (isFinite(offset)) {
-    offset = offset | 0
-    if (isFinite(length)) {
-      length = length | 0
-      if (encoding === undefined) encoding = 'utf8'
-    } else {
-      encoding = length
-      length = undefined
-    }
-  // legacy write(string, encoding, offset, length) - remove in v0.13
-  } else {
-    throw new Error(
-      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
-    )
-  }
-
-  var remaining = this.length - offset
-  if (length === undefined || length > remaining) length = remaining
-
-  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
-    throw new RangeError('Attempt to write outside buffer bounds')
-  }
-
-  if (!encoding) encoding = 'utf8'
-
-  var loweredCase = false
-  for (;;) {
-    switch (encoding) {
-      case 'hex':
-        return hexWrite(this, string, offset, length)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Write(this, string, offset, length)
-
-      case 'ascii':
-        return asciiWrite(this, string, offset, length)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Write(this, string, offset, length)
-
-      case 'base64':
-        // Warning: maxLength not taken into account in base64Write
-        return base64Write(this, string, offset, length)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return ucs2Write(this, string, offset, length)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = ('' + encoding).toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-Buffer.prototype.toJSON = function toJSON () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-function base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
-}
-
-function utf8Slice (buf, start, end) {
-  end = Math.min(buf.length, end)
-  var res = []
-
-  var i = start
-  while (i < end) {
-    var firstByte = buf[i]
-    var codePoint = null
-    var bytesPerSequence = (firstByte > 0xEF) ? 4
-      : (firstByte > 0xDF) ? 3
-      : (firstByte > 0xBF) ? 2
-      : 1
-
-    if (i + bytesPerSequence <= end) {
-      var secondByte, thirdByte, fourthByte, tempCodePoint
-
-      switch (bytesPerSequence) {
-        case 1:
-          if (firstByte < 0x80) {
-            codePoint = firstByte
-          }
-          break
-        case 2:
-          secondByte = buf[i + 1]
-          if ((secondByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
-            if (tempCodePoint > 0x7F) {
-              codePoint = tempCodePoint
-            }
-          }
-          break
-        case 3:
-          secondByte = buf[i + 1]
-          thirdByte = buf[i + 2]
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
-            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
-              codePoint = tempCodePoint
-            }
-          }
-          break
-        case 4:
-          secondByte = buf[i + 1]
-          thirdByte = buf[i + 2]
-          fourthByte = buf[i + 3]
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
-            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
-              codePoint = tempCodePoint
-            }
-          }
-      }
-    }
-
-    if (codePoint === null) {
-      // we did not generate a valid codePoint so insert a
-      // replacement char (U+FFFD) and advance only 1 byte
-      codePoint = 0xFFFD
-      bytesPerSequence = 1
-    } else if (codePoint > 0xFFFF) {
-      // encode to utf16 (surrogate pair dance)
-      codePoint -= 0x10000
-      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
-      codePoint = 0xDC00 | codePoint & 0x3FF
-    }
-
-    res.push(codePoint)
-    i += bytesPerSequence
-  }
-
-  return decodeCodePointsArray(res)
-}
-
-// Based on http://stackoverflow.com/a/22747272/680742, the browser with
-// the lowest limit is Chrome, with 0x10000 args.
-// We go 1 magnitude less, for safety
-var MAX_ARGUMENTS_LENGTH = 0x1000
-
-function decodeCodePointsArray (codePoints) {
-  var len = codePoints.length
-  if (len <= MAX_ARGUMENTS_LENGTH) {
-    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
-  }
-
-  // Decode in chunks to avoid "call stack size exceeded".
-  var res = ''
-  var i = 0
-  while (i < len) {
-    res += String.fromCharCode.apply(
-      String,
-      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
-    )
-  }
-  return res
-}
-
-function asciiSlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i] & 0x7F)
-  }
-  return ret
-}
-
-function latin1Slice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i])
-  }
-  return ret
-}
-
-function hexSlice (buf, start, end) {
-  var len = buf.length
-
-  if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
-
-  var out = ''
-  for (var i = start; i < end; ++i) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function slice (start, end) {
-  var len = this.length
-  start = ~~start
-  end = end === undefined ? len : ~~end
-
-  if (start < 0) {
-    start += len
-    if (start < 0) start = 0
-  } else if (start > len) {
-    start = len
-  }
-
-  if (end < 0) {
-    end += len
-    if (end < 0) end = 0
-  } else if (end > len) {
-    end = len
-  }
-
-  if (end < start) end = start
-
-  var newBuf
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    newBuf = this.subarray(start, end)
-    newBuf.__proto__ = Buffer.prototype
-  } else {
-    var sliceLen = end - start
-    newBuf = new Buffer(sliceLen, undefined)
-    for (var i = 0; i < sliceLen; ++i) {
-      newBuf[i] = this[i + start]
-    }
-  }
-
-  return newBuf
-}
-
-/*
- * Need to make sure that buffer isn't trying to write out of bounds.
- */
-function checkOffset (offset, ext, length) {
-  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
-}
-
-Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    checkOffset(offset, byteLength, this.length)
-  }
-
-  var val = this[offset + --byteLength]
-  var mul = 1
-  while (byteLength > 0 && (mul *= 0x100)) {
-    val += this[offset + --byteLength] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  return this[offset]
-}
-
-Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return this[offset] | (this[offset + 1] << 8)
-}
-
-Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return (this[offset] << 8) | this[offset + 1]
-}
-
-Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return ((this[offset]) |
-      (this[offset + 1] << 8) |
-      (this[offset + 2] << 16)) +
-      (this[offset + 3] * 0x1000000)
-}
-
-Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] * 0x1000000) +
-    ((this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    this[offset + 3])
-}
-
-Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var i = byteLength
-  var mul = 1
-  var val = this[offset + --i]
-  while (i > 0 && (mul *= 0x100)) {
-    val += this[offset + --i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  if (!(this[offset] & 0x80)) return (this[offset])
-  return ((0xff - this[offset] + 1) * -1)
-}
-
-Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset] | (this[offset + 1] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset + 1] | (this[offset] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset]) |
-    (this[offset + 1] << 8) |
-    (this[offset + 2] << 16) |
-    (this[offset + 3] << 24)
-}
-
-Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] << 24) |
-    (this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    (this[offset + 3])
-}
-
-Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, true, 23, 4)
-}
-
-Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, false, 23, 4)
-}
-
-Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, true, 52, 8)
-}
-
-Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, false, 52, 8)
-}
-
-function checkInt (buf, value, offset, ext, max, min) {
-  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
-  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-}
-
-Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1
-    checkInt(this, value, offset, byteLength, maxBytes, 0)
-  }
-
-  var mul = 1
-  var i = 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1
-    checkInt(this, value, offset, byteLength, maxBytes, 0)
-  }
-
-  var i = byteLength - 1
-  var mul = 1
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  this[offset] = (value & 0xff)
-  return offset + 1
-}
-
-function objectWriteUInt16 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
-    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-      (littleEndian ? i : 1 - i) * 8
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = (value & 0xff)
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-function objectWriteUInt32 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffffffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
-    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset + 3] = (value >>> 24)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 1] = (value >>> 8)
-    this[offset] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = 0
-  var mul = 1
-  var sub = 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
-      sub = 1
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = byteLength - 1
-  var mul = 1
-  var sub = 0
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
-      sub = 1
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  if (value < 0) value = 0xff + value + 1
-  this[offset] = (value & 0xff)
-  return offset + 1
-}
-
-Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = (value & 0xff)
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 3] = (value >>> 24)
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (value < 0) value = 0xffffffff + value + 1
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-function checkIEEE754 (buf, value, offset, ext, max, min) {
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-  if (offset < 0) throw new RangeError('Index out of range')
-}
-
-function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-  return offset + 4
-}
-
-Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, false, noAssert)
-}
-
-function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-  return offset + 8
-}
-
-Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, false, noAssert)
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (targetStart >= target.length) targetStart = target.length
-  if (!targetStart) targetStart = 0
-  if (end > 0 && end < start) end = start
-
-  // Copy 0 bytes; we're done
-  if (end === start) return 0
-  if (target.length === 0 || this.length === 0) return 0
-
-  // Fatal error conditions
-  if (targetStart < 0) {
-    throw new RangeError('targetStart out of bounds')
-  }
-  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
-  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length) end = this.length
-  if (target.length - targetStart < end - start) {
-    end = target.length - targetStart + start
-  }
-
-  var len = end - start
-  var i
-
-  if (this === target && start < targetStart && targetStart < end) {
-    // descending copy from end
-    for (i = len - 1; i >= 0; --i) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-    // ascending copy from start
-    for (i = 0; i < len; ++i) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else {
-    Uint8Array.prototype.set.call(
-      target,
-      this.subarray(start, start + len),
-      targetStart
-    )
-  }
-
-  return len
-}
-
-// Usage:
-//    buffer.fill(number[, offset[, end]])
-//    buffer.fill(buffer[, offset[, end]])
-//    buffer.fill(string[, offset[, end]][, encoding])
-Buffer.prototype.fill = function fill (val, start, end, encoding) {
-  // Handle string cases:
-  if (typeof val === 'string') {
-    if (typeof start === 'string') {
-      encoding = start
-      start = 0
-      end = this.length
-    } else if (typeof end === 'string') {
-      encoding = end
-      end = this.length
-    }
-    if (val.length === 1) {
-      var code = val.charCodeAt(0)
-      if (code < 256) {
-        val = code
-      }
-    }
-    if (encoding !== undefined && typeof encoding !== 'string') {
-      throw new TypeError('encoding must be a string')
-    }
-    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
-      throw new TypeError('Unknown encoding: ' + encoding)
-    }
-  } else if (typeof val === 'number') {
-    val = val & 255
-  }
-
-  // Invalid ranges are not set to a default, so can range check early.
-  if (start < 0 || this.length < start || this.length < end) {
-    throw new RangeError('Out of range index')
-  }
-
-  if (end <= start) {
-    return this
-  }
-
-  start = start >>> 0
-  end = end === undefined ? this.length : end >>> 0
-
-  if (!val) val = 0
-
-  var i
-  if (typeof val === 'number') {
-    for (i = start; i < end; ++i) {
-      this[i] = val
-    }
-  } else {
-    var bytes = Buffer.isBuffer(val)
-      ? val
-      : utf8ToBytes(new Buffer(val, encoding).toString())
-    var len = bytes.length
-    for (i = 0; i < end - start; ++i) {
-      this[i + start] = bytes[i % len]
-    }
-  }
-
-  return this
-}
-
-// HELPER FUNCTIONS
-// ================
-
-var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
-
-function base64clean (str) {
-  // Node strips out invalid characters like \n and \t from the string, base64-js does not
-  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
-  // Node converts strings with length < 2 to ''
-  if (str.length < 2) return ''
-  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
-  while (str.length % 4 !== 0) {
-    str = str + '='
-  }
-  return str
-}
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (string, units) {
-  units = units || Infinity
-  var codePoint
-  var length = string.length
-  var leadSurrogate = null
-  var bytes = []
-
-  for (var i = 0; i < length; ++i) {
-    codePoint = string.charCodeAt(i)
-
-    // is surrogate component
-    if (codePoint > 0xD7FF && codePoint < 0xE000) {
-      // last char was a lead
-      if (!leadSurrogate) {
-        // no lead yet
-        if (codePoint > 0xDBFF) {
-          // unexpected trail
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        } else if (i + 1 === length) {
-          // unpaired lead
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        }
-
-        // valid lead
-        leadSurrogate = codePoint
-
-        continue
-      }
-
-      // 2 leads in a row
-      if (codePoint < 0xDC00) {
-        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-        leadSurrogate = codePoint
-        continue
-      }
-
-      // valid surrogate pair
-      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
-    } else if (leadSurrogate) {
-      // valid bmp char, but last char was a lead
-      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-    }
-
-    leadSurrogate = null
-
-    // encode utf8
-    if (codePoint < 0x80) {
-      if ((units -= 1) < 0) break
-      bytes.push(codePoint)
-    } else if (codePoint < 0x800) {
-      if ((units -= 2) < 0) break
-      bytes.push(
-        codePoint >> 0x6 | 0xC0,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x10000) {
-      if ((units -= 3) < 0) break
-      bytes.push(
-        codePoint >> 0xC | 0xE0,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x110000) {
-      if ((units -= 4) < 0) break
-      bytes.push(
-        codePoint >> 0x12 | 0xF0,
-        codePoint >> 0xC & 0x3F | 0x80,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else {
-      throw new Error('Invalid code point')
-    }
-  }
-
-  return bytes
-}
-
-function asciiToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; ++i) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF)
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str, units) {
-  var c, hi, lo
-  var byteArray = []
-  for (var i = 0; i < str.length; ++i) {
-    if ((units -= 2) < 0) break
-
-    c = str.charCodeAt(i)
-    hi = c >> 8
-    lo = c % 256
-    byteArray.push(lo)
-    byteArray.push(hi)
-  }
-
-  return byteArray
-}
-
-function base64ToBytes (str) {
-  return base64.toByteArray(base64clean(str))
-}
-
-function blitBuffer (src, dst, offset, length) {
-  for (var i = 0; i < length; ++i) {
-    if ((i + offset >= dst.length) || (i >= src.length)) break
-    dst[i + offset] = src[i]
-  }
-  return i
-}
-
-function isnan (val) {
-  return val !== val // eslint-disable-line no-self-compare
-}
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
-
-/***/ }),
-
-/***/ "./node_modules/buffer/node_modules/isarray/index.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/buffer/node_modules/isarray/index.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/ieee754/index.js":
-/*!***************************************!*\
-  !*** ./node_modules/ieee754/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = ((value * c) - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/safe-buffer/index.js":
-/*!*******************************************!*\
-  !*** ./node_modules/safe-buffer/index.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable node/no-deprecated-api */
-var buffer = __webpack_require__(/*! buffer */ "./node_modules/buffer/index.js")
-var Buffer = buffer.Buffer
-
-// alternative to using Object.keys for old browsers
-function copyProps (src, dst) {
-  for (var key in src) {
-    dst[key] = src[key]
-  }
-}
-if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow) {
-  module.exports = buffer
-} else {
-  // Copy properties from require('buffer')
-  copyProps(buffer, exports)
-  exports.Buffer = SafeBuffer
-}
-
-function SafeBuffer (arg, encodingOrOffset, length) {
-  return Buffer(arg, encodingOrOffset, length)
-}
-
-// Copy static methods from Buffer
-copyProps(Buffer, SafeBuffer)
-
-SafeBuffer.from = function (arg, encodingOrOffset, length) {
-  if (typeof arg === 'number') {
-    throw new TypeError('Argument must not be a number')
-  }
-  return Buffer(arg, encodingOrOffset, length)
-}
-
-SafeBuffer.alloc = function (size, fill, encoding) {
-  if (typeof size !== 'number') {
-    throw new TypeError('Argument must be a number')
-  }
-  var buf = Buffer(size)
-  if (fill !== undefined) {
-    if (typeof encoding === 'string') {
-      buf.fill(fill, encoding)
-    } else {
-      buf.fill(fill)
-    }
-  } else {
-    buf.fill(0)
-  }
-  return buf
-}
-
-SafeBuffer.allocUnsafe = function (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('Argument must be a number')
-  }
-  return Buffer(size)
-}
-
-SafeBuffer.allocUnsafeSlow = function (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('Argument must be a number')
-  }
-  return buffer.SlowBuffer(size)
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/string_decoder/lib/string_decoder.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/string_decoder/lib/string_decoder.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Buffer = __webpack_require__(/*! safe-buffer */ "./node_modules/safe-buffer/index.js").Buffer;
-
-var isEncoding = Buffer.isEncoding || function (encoding) {
-  encoding = '' + encoding;
-  switch (encoding && encoding.toLowerCase()) {
-    case 'hex':case 'utf8':case 'utf-8':case 'ascii':case 'binary':case 'base64':case 'ucs2':case 'ucs-2':case 'utf16le':case 'utf-16le':case 'raw':
-      return true;
-    default:
-      return false;
-  }
-};
-
-function _normalizeEncoding(enc) {
-  if (!enc) return 'utf8';
-  var retried;
-  while (true) {
-    switch (enc) {
-      case 'utf8':
-      case 'utf-8':
-        return 'utf8';
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return 'utf16le';
-      case 'latin1':
-      case 'binary':
-        return 'latin1';
-      case 'base64':
-      case 'ascii':
-      case 'hex':
-        return enc;
-      default:
-        if (retried) return; // undefined
-        enc = ('' + enc).toLowerCase();
-        retried = true;
-    }
-  }
-};
-
-// Do not cache `Buffer.isEncoding` when checking encoding names as some
-// modules monkey-patch it to support additional encodings
-function normalizeEncoding(enc) {
-  var nenc = _normalizeEncoding(enc);
-  if (typeof nenc !== 'string' && (Buffer.isEncoding === isEncoding || !isEncoding(enc))) throw new Error('Unknown encoding: ' + enc);
-  return nenc || enc;
-}
-
-// StringDecoder provides an interface for efficiently splitting a series of
-// buffers into a series of JS strings without breaking apart multi-byte
-// characters.
-exports.StringDecoder = StringDecoder;
-function StringDecoder(encoding) {
-  this.encoding = normalizeEncoding(encoding);
-  var nb;
-  switch (this.encoding) {
-    case 'utf16le':
-      this.text = utf16Text;
-      this.end = utf16End;
-      nb = 4;
-      break;
-    case 'utf8':
-      this.fillLast = utf8FillLast;
-      nb = 4;
-      break;
-    case 'base64':
-      this.text = base64Text;
-      this.end = base64End;
-      nb = 3;
-      break;
-    default:
-      this.write = simpleWrite;
-      this.end = simpleEnd;
-      return;
-  }
-  this.lastNeed = 0;
-  this.lastTotal = 0;
-  this.lastChar = Buffer.allocUnsafe(nb);
-}
-
-StringDecoder.prototype.write = function (buf) {
-  if (buf.length === 0) return '';
-  var r;
-  var i;
-  if (this.lastNeed) {
-    r = this.fillLast(buf);
-    if (r === undefined) return '';
-    i = this.lastNeed;
-    this.lastNeed = 0;
-  } else {
-    i = 0;
-  }
-  if (i < buf.length) return r ? r + this.text(buf, i) : this.text(buf, i);
-  return r || '';
-};
-
-StringDecoder.prototype.end = utf8End;
-
-// Returns only complete characters in a Buffer
-StringDecoder.prototype.text = utf8Text;
-
-// Attempts to complete a partial non-UTF-8 character using bytes from a Buffer
-StringDecoder.prototype.fillLast = function (buf) {
-  if (this.lastNeed <= buf.length) {
-    buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, this.lastNeed);
-    return this.lastChar.toString(this.encoding, 0, this.lastTotal);
-  }
-  buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, buf.length);
-  this.lastNeed -= buf.length;
-};
-
-// Checks the type of a UTF-8 byte, whether it's ASCII, a leading byte, or a
-// continuation byte.
-function utf8CheckByte(byte) {
-  if (byte <= 0x7F) return 0;else if (byte >> 5 === 0x06) return 2;else if (byte >> 4 === 0x0E) return 3;else if (byte >> 3 === 0x1E) return 4;
-  return -1;
-}
-
-// Checks at most 3 bytes at the end of a Buffer in order to detect an
-// incomplete multi-byte UTF-8 character. The total number of bytes (2, 3, or 4)
-// needed to complete the UTF-8 character (if applicable) are returned.
-function utf8CheckIncomplete(self, buf, i) {
-  var j = buf.length - 1;
-  if (j < i) return 0;
-  var nb = utf8CheckByte(buf[j]);
-  if (nb >= 0) {
-    if (nb > 0) self.lastNeed = nb - 1;
-    return nb;
-  }
-  if (--j < i) return 0;
-  nb = utf8CheckByte(buf[j]);
-  if (nb >= 0) {
-    if (nb > 0) self.lastNeed = nb - 2;
-    return nb;
-  }
-  if (--j < i) return 0;
-  nb = utf8CheckByte(buf[j]);
-  if (nb >= 0) {
-    if (nb > 0) {
-      if (nb === 2) nb = 0;else self.lastNeed = nb - 3;
-    }
-    return nb;
-  }
-  return 0;
-}
-
-// Validates as many continuation bytes for a multi-byte UTF-8 character as
-// needed or are available. If we see a non-continuation byte where we expect
-// one, we "replace" the validated continuation bytes we've seen so far with
-// UTF-8 replacement characters ('\ufffd'), to match v8's UTF-8 decoding
-// behavior. The continuation byte check is included three times in the case
-// where all of the continuation bytes for a character exist in the same buffer.
-// It is also done this way as a slight performance increase instead of using a
-// loop.
-function utf8CheckExtraBytes(self, buf, p) {
-  if ((buf[0] & 0xC0) !== 0x80) {
-    self.lastNeed = 0;
-    return '\ufffd'.repeat(p);
-  }
-  if (self.lastNeed > 1 && buf.length > 1) {
-    if ((buf[1] & 0xC0) !== 0x80) {
-      self.lastNeed = 1;
-      return '\ufffd'.repeat(p + 1);
-    }
-    if (self.lastNeed > 2 && buf.length > 2) {
-      if ((buf[2] & 0xC0) !== 0x80) {
-        self.lastNeed = 2;
-        return '\ufffd'.repeat(p + 2);
-      }
-    }
-  }
-}
-
-// Attempts to complete a multi-byte UTF-8 character using bytes from a Buffer.
-function utf8FillLast(buf) {
-  var p = this.lastTotal - this.lastNeed;
-  var r = utf8CheckExtraBytes(this, buf, p);
-  if (r !== undefined) return r;
-  if (this.lastNeed <= buf.length) {
-    buf.copy(this.lastChar, p, 0, this.lastNeed);
-    return this.lastChar.toString(this.encoding, 0, this.lastTotal);
-  }
-  buf.copy(this.lastChar, p, 0, buf.length);
-  this.lastNeed -= buf.length;
-}
-
-// Returns all complete UTF-8 characters in a Buffer. If the Buffer ended on a
-// partial character, the character's bytes are buffered until the required
-// number of bytes are available.
-function utf8Text(buf, i) {
-  var total = utf8CheckIncomplete(this, buf, i);
-  if (!this.lastNeed) return buf.toString('utf8', i);
-  this.lastTotal = total;
-  var end = buf.length - (total - this.lastNeed);
-  buf.copy(this.lastChar, 0, end);
-  return buf.toString('utf8', i, end);
-}
-
-// For UTF-8, a replacement character for each buffered byte of a (partial)
-// character needs to be added to the output.
-function utf8End(buf) {
-  var r = buf && buf.length ? this.write(buf) : '';
-  if (this.lastNeed) return r + '\ufffd'.repeat(this.lastTotal - this.lastNeed);
-  return r;
-}
-
-// UTF-16LE typically needs two bytes per character, but even if we have an even
-// number of bytes available, we need to check if we end on a leading/high
-// surrogate. In that case, we need to wait for the next two bytes in order to
-// decode the last character properly.
-function utf16Text(buf, i) {
-  if ((buf.length - i) % 2 === 0) {
-    var r = buf.toString('utf16le', i);
-    if (r) {
-      var c = r.charCodeAt(r.length - 1);
-      if (c >= 0xD800 && c <= 0xDBFF) {
-        this.lastNeed = 2;
-        this.lastTotal = 4;
-        this.lastChar[0] = buf[buf.length - 2];
-        this.lastChar[1] = buf[buf.length - 1];
-        return r.slice(0, -1);
-      }
-    }
-    return r;
-  }
-  this.lastNeed = 1;
-  this.lastTotal = 2;
-  this.lastChar[0] = buf[buf.length - 1];
-  return buf.toString('utf16le', i, buf.length - 1);
-}
-
-// For UTF-16LE we do not explicitly append special replacement characters if we
-// end on a partial character, we simply let v8 handle that.
-function utf16End(buf) {
-  var r = buf && buf.length ? this.write(buf) : '';
-  if (this.lastNeed) {
-    var end = this.lastTotal - this.lastNeed;
-    return r + this.lastChar.toString('utf16le', 0, end);
-  }
-  return r;
-}
-
-function base64Text(buf, i) {
-  var n = (buf.length - i) % 3;
-  if (n === 0) return buf.toString('base64', i);
-  this.lastNeed = 3 - n;
-  this.lastTotal = 3;
-  if (n === 1) {
-    this.lastChar[0] = buf[buf.length - 1];
-  } else {
-    this.lastChar[0] = buf[buf.length - 2];
-    this.lastChar[1] = buf[buf.length - 1];
-  }
-  return buf.toString('base64', i, buf.length - n);
-}
-
-function base64End(buf) {
-  var r = buf && buf.length ? this.write(buf) : '';
-  if (this.lastNeed) return r + this.lastChar.toString('base64', 0, 3 - this.lastNeed);
-  return r;
-}
-
-// Pass bytes on through for single-byte encodings (e.g. ascii, latin1, hex)
-function simpleWrite(buf) {
-  return buf.toString(this.encoding);
-}
-
-function simpleEnd(buf) {
-  return buf && buf.length ? this.write(buf) : '';
-}
-
-/***/ }),
-
-/***/ "./node_modules/tv4/tv4.js":
-/*!*********************************!*\
-  !*** ./node_modules/tv4/tv4.js ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
-Author: Geraint Luff and others
-Year: 2013
-
-This code is released into the "public domain" by its author(s).  Anybody may use, alter and distribute the code without restriction.  The author makes no guarantees, and takes no liability of any kind for use of this code.
-
-If you find a bug or make an improvement, it would be courteous to let the author know, but it is not compulsory.
-*/
-(function (global, factory) {
-  if (true) {
-    // AMD. Register as an anonymous module.
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else {}
-}(this, function () {
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FObject%2Fkeys
-if (!Object.keys) {
-	Object.keys = (function () {
-		var hasOwnProperty = Object.prototype.hasOwnProperty,
-			hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
-			dontEnums = [
-				'toString',
-				'toLocaleString',
-				'valueOf',
-				'hasOwnProperty',
-				'isPrototypeOf',
-				'propertyIsEnumerable',
-				'constructor'
-			],
-			dontEnumsLength = dontEnums.length;
-
-		return function (obj) {
-			if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) {
-				throw new TypeError('Object.keys called on non-object');
-			}
-
-			var result = [];
-
-			for (var prop in obj) {
-				if (hasOwnProperty.call(obj, prop)) {
-					result.push(prop);
-				}
-			}
-
-			if (hasDontEnumBug) {
-				for (var i=0; i < dontEnumsLength; i++) {
-					if (hasOwnProperty.call(obj, dontEnums[i])) {
-						result.push(dontEnums[i]);
-					}
-				}
-			}
-			return result;
-		};
-	})();
-}
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
-if (!Object.create) {
-	Object.create = (function(){
-		function F(){}
-
-		return function(o){
-			if (arguments.length !== 1) {
-				throw new Error('Object.create implementation only accepts one parameter.');
-			}
-			F.prototype = o;
-			return new F();
-		};
-	})();
-}
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FArray%2FisArray
-if(!Array.isArray) {
-	Array.isArray = function (vArg) {
-		return Object.prototype.toString.call(vArg) === "[object Array]";
-	};
-}
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FArray%2FindexOf
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {
-		if (this === null) {
-			throw new TypeError();
-		}
-		var t = Object(this);
-		var len = t.length >>> 0;
-
-		if (len === 0) {
-			return -1;
-		}
-		var n = 0;
-		if (arguments.length > 1) {
-			n = Number(arguments[1]);
-			if (n !== n) { // shortcut for verifying if it's NaN
-				n = 0;
-			} else if (n !== 0 && n !== Infinity && n !== -Infinity) {
-				n = (n > 0 || -1) * Math.floor(Math.abs(n));
-			}
-		}
-		if (n >= len) {
-			return -1;
-		}
-		var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
-		for (; k < len; k++) {
-			if (k in t && t[k] === searchElement) {
-				return k;
-			}
-		}
-		return -1;
-	};
-}
-
-// Grungey Object.isFrozen hack
-if (!Object.isFrozen) {
-	Object.isFrozen = function (obj) {
-		var key = "tv4_test_frozen_key";
-		while (obj.hasOwnProperty(key)) {
-			key += Math.random();
-		}
-		try {
-			obj[key] = true;
-			delete obj[key];
-			return false;
-		} catch (e) {
-			return true;
-		}
-	};
-}
-// Based on: https://github.com/geraintluff/uri-templates, but with all the de-substitution stuff removed
-
-var uriTemplateGlobalModifiers = {
-	"+": true,
-	"#": true,
-	".": true,
-	"/": true,
-	";": true,
-	"?": true,
-	"&": true
-};
-var uriTemplateSuffices = {
-	"*": true
-};
-
-function notReallyPercentEncode(string) {
-	return encodeURI(string).replace(/%25[0-9][0-9]/g, function (doubleEncoded) {
-		return "%" + doubleEncoded.substring(3);
-	});
-}
-
-function uriTemplateSubstitution(spec) {
-	var modifier = "";
-	if (uriTemplateGlobalModifiers[spec.charAt(0)]) {
-		modifier = spec.charAt(0);
-		spec = spec.substring(1);
-	}
-	var separator = "";
-	var prefix = "";
-	var shouldEscape = true;
-	var showVariables = false;
-	var trimEmptyString = false;
-	if (modifier === '+') {
-		shouldEscape = false;
-	} else if (modifier === ".") {
-		prefix = ".";
-		separator = ".";
-	} else if (modifier === "/") {
-		prefix = "/";
-		separator = "/";
-	} else if (modifier === '#') {
-		prefix = "#";
-		shouldEscape = false;
-	} else if (modifier === ';') {
-		prefix = ";";
-		separator = ";";
-		showVariables = true;
-		trimEmptyString = true;
-	} else if (modifier === '?') {
-		prefix = "?";
-		separator = "&";
-		showVariables = true;
-	} else if (modifier === '&') {
-		prefix = "&";
-		separator = "&";
-		showVariables = true;
-	}
-
-	var varNames = [];
-	var varList = spec.split(",");
-	var varSpecs = [];
-	var varSpecMap = {};
-	for (var i = 0; i < varList.length; i++) {
-		var varName = varList[i];
-		var truncate = null;
-		if (varName.indexOf(":") !== -1) {
-			var parts = varName.split(":");
-			varName = parts[0];
-			truncate = parseInt(parts[1], 10);
-		}
-		var suffices = {};
-		while (uriTemplateSuffices[varName.charAt(varName.length - 1)]) {
-			suffices[varName.charAt(varName.length - 1)] = true;
-			varName = varName.substring(0, varName.length - 1);
-		}
-		var varSpec = {
-			truncate: truncate,
-			name: varName,
-			suffices: suffices
-		};
-		varSpecs.push(varSpec);
-		varSpecMap[varName] = varSpec;
-		varNames.push(varName);
-	}
-	var subFunction = function (valueFunction) {
-		var result = "";
-		var startIndex = 0;
-		for (var i = 0; i < varSpecs.length; i++) {
-			var varSpec = varSpecs[i];
-			var value = valueFunction(varSpec.name);
-			if (value === null || value === undefined || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0)) {
-				startIndex++;
-				continue;
-			}
-			if (i === startIndex) {
-				result += prefix;
-			} else {
-				result += (separator || ",");
-			}
-			if (Array.isArray(value)) {
-				if (showVariables) {
-					result += varSpec.name + "=";
-				}
-				for (var j = 0; j < value.length; j++) {
-					if (j > 0) {
-						result += varSpec.suffices['*'] ? (separator || ",") : ",";
-						if (varSpec.suffices['*'] && showVariables) {
-							result += varSpec.name + "=";
-						}
-					}
-					result += shouldEscape ? encodeURIComponent(value[j]).replace(/!/g, "%21") : notReallyPercentEncode(value[j]);
-				}
-			} else if (typeof value === "object") {
-				if (showVariables && !varSpec.suffices['*']) {
-					result += varSpec.name + "=";
-				}
-				var first = true;
-				for (var key in value) {
-					if (!first) {
-						result += varSpec.suffices['*'] ? (separator || ",") : ",";
-					}
-					first = false;
-					result += shouldEscape ? encodeURIComponent(key).replace(/!/g, "%21") : notReallyPercentEncode(key);
-					result += varSpec.suffices['*'] ? '=' : ",";
-					result += shouldEscape ? encodeURIComponent(value[key]).replace(/!/g, "%21") : notReallyPercentEncode(value[key]);
-				}
-			} else {
-				if (showVariables) {
-					result += varSpec.name;
-					if (!trimEmptyString || value !== "") {
-						result += "=";
-					}
-				}
-				if (varSpec.truncate != null) {
-					value = value.substring(0, varSpec.truncate);
-				}
-				result += shouldEscape ? encodeURIComponent(value).replace(/!/g, "%21"): notReallyPercentEncode(value);
-			}
-		}
-		return result;
-	};
-	subFunction.varNames = varNames;
-	return {
-		prefix: prefix,
-		substitution: subFunction
-	};
-}
-
-function UriTemplate(template) {
-	if (!(this instanceof UriTemplate)) {
-		return new UriTemplate(template);
-	}
-	var parts = template.split("{");
-	var textParts = [parts.shift()];
-	var prefixes = [];
-	var substitutions = [];
-	var varNames = [];
-	while (parts.length > 0) {
-		var part = parts.shift();
-		var spec = part.split("}")[0];
-		var remainder = part.substring(spec.length + 1);
-		var funcs = uriTemplateSubstitution(spec);
-		substitutions.push(funcs.substitution);
-		prefixes.push(funcs.prefix);
-		textParts.push(remainder);
-		varNames = varNames.concat(funcs.substitution.varNames);
-	}
-	this.fill = function (valueFunction) {
-		var result = textParts[0];
-		for (var i = 0; i < substitutions.length; i++) {
-			var substitution = substitutions[i];
-			result += substitution(valueFunction);
-			result += textParts[i + 1];
-		}
-		return result;
-	};
-	this.varNames = varNames;
-	this.template = template;
-}
-UriTemplate.prototype = {
-	toString: function () {
-		return this.template;
-	},
-	fillFromObject: function (obj) {
-		return this.fill(function (varName) {
-			return obj[varName];
-		});
-	}
-};
-var ValidatorContext = function ValidatorContext(parent, collectMultiple, errorReporter, checkRecursive, trackUnknownProperties) {
-	this.missing = [];
-	this.missingMap = {};
-	this.formatValidators = parent ? Object.create(parent.formatValidators) : {};
-	this.schemas = parent ? Object.create(parent.schemas) : {};
-	this.collectMultiple = collectMultiple;
-	this.errors = [];
-	this.handleError = collectMultiple ? this.collectError : this.returnError;
-	if (checkRecursive) {
-		this.checkRecursive = true;
-		this.scanned = [];
-		this.scannedFrozen = [];
-		this.scannedFrozenSchemas = [];
-		this.scannedFrozenValidationErrors = [];
-		this.validatedSchemasKey = 'tv4_validation_id';
-		this.validationErrorsKey = 'tv4_validation_errors_id';
-	}
-	if (trackUnknownProperties) {
-		this.trackUnknownProperties = true;
-		this.knownPropertyPaths = {};
-		this.unknownPropertyPaths = {};
-	}
-	this.errorReporter = errorReporter || defaultErrorReporter('en');
-	if (typeof this.errorReporter === 'string') {
-		throw new Error('debug');
-	}
-	this.definedKeywords = {};
-	if (parent) {
-		for (var key in parent.definedKeywords) {
-			this.definedKeywords[key] = parent.definedKeywords[key].slice(0);
-		}
-	}
-};
-ValidatorContext.prototype.defineKeyword = function (keyword, keywordFunction) {
-	this.definedKeywords[keyword] = this.definedKeywords[keyword] || [];
-	this.definedKeywords[keyword].push(keywordFunction);
-};
-ValidatorContext.prototype.createError = function (code, messageParams, dataPath, schemaPath, subErrors, data, schema) {
-	var error = new ValidationError(code, messageParams, dataPath, schemaPath, subErrors);
-	error.message = this.errorReporter(error, data, schema);
-	return error;
-};
-ValidatorContext.prototype.returnError = function (error) {
-	return error;
-};
-ValidatorContext.prototype.collectError = function (error) {
-	if (error) {
-		this.errors.push(error);
-	}
-	return null;
-};
-ValidatorContext.prototype.prefixErrors = function (startIndex, dataPath, schemaPath) {
-	for (var i = startIndex; i < this.errors.length; i++) {
-		this.errors[i] = this.errors[i].prefixWith(dataPath, schemaPath);
-	}
-	return this;
-};
-ValidatorContext.prototype.banUnknownProperties = function (data, schema) {
-	for (var unknownPath in this.unknownPropertyPaths) {
-		var error = this.createError(ErrorCodes.UNKNOWN_PROPERTY, {path: unknownPath}, unknownPath, "", null, data, schema);
-		var result = this.handleError(error);
-		if (result) {
-			return result;
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.addFormat = function (format, validator) {
-	if (typeof format === 'object') {
-		for (var key in format) {
-			this.addFormat(key, format[key]);
-		}
-		return this;
-	}
-	this.formatValidators[format] = validator;
-};
-ValidatorContext.prototype.resolveRefs = function (schema, urlHistory) {
-	if (schema['$ref'] !== undefined) {
-		urlHistory = urlHistory || {};
-		if (urlHistory[schema['$ref']]) {
-			return this.createError(ErrorCodes.CIRCULAR_REFERENCE, {urls: Object.keys(urlHistory).join(', ')}, '', '', null, undefined, schema);
-		}
-		urlHistory[schema['$ref']] = true;
-		schema = this.getSchema(schema['$ref'], urlHistory);
-	}
-	return schema;
-};
-ValidatorContext.prototype.getSchema = function (url, urlHistory) {
-	var schema;
-	if (this.schemas[url] !== undefined) {
-		schema = this.schemas[url];
-		return this.resolveRefs(schema, urlHistory);
-	}
-	var baseUrl = url;
-	var fragment = "";
-	if (url.indexOf('#') !== -1) {
-		fragment = url.substring(url.indexOf("#") + 1);
-		baseUrl = url.substring(0, url.indexOf("#"));
-	}
-	if (typeof this.schemas[baseUrl] === 'object') {
-		schema = this.schemas[baseUrl];
-		var pointerPath = decodeURIComponent(fragment);
-		if (pointerPath === "") {
-			return this.resolveRefs(schema, urlHistory);
-		} else if (pointerPath.charAt(0) !== "/") {
-			return undefined;
-		}
-		var parts = pointerPath.split("/").slice(1);
-		for (var i = 0; i < parts.length; i++) {
-			var component = parts[i].replace(/~1/g, "/").replace(/~0/g, "~");
-			if (schema[component] === undefined) {
-				schema = undefined;
-				break;
-			}
-			schema = schema[component];
-		}
-		if (schema !== undefined) {
-			return this.resolveRefs(schema, urlHistory);
-		}
-	}
-	if (this.missing[baseUrl] === undefined) {
-		this.missing.push(baseUrl);
-		this.missing[baseUrl] = baseUrl;
-		this.missingMap[baseUrl] = baseUrl;
-	}
-};
-ValidatorContext.prototype.searchSchemas = function (schema, url) {
-	if (Array.isArray(schema)) {
-		for (var i = 0; i < schema.length; i++) {
-			this.searchSchemas(schema[i], url);
-		}
-	} else if (schema && typeof schema === "object") {
-		if (typeof schema.id === "string") {
-			if (isTrustedUrl(url, schema.id)) {
-				if (this.schemas[schema.id] === undefined) {
-					this.schemas[schema.id] = schema;
-				}
-			}
-		}
-		for (var key in schema) {
-			if (key !== "enum") {
-				if (typeof schema[key] === "object") {
-					this.searchSchemas(schema[key], url);
-				} else if (key === "$ref") {
-					var uri = getDocumentUri(schema[key]);
-					if (uri && this.schemas[uri] === undefined && this.missingMap[uri] === undefined) {
-						this.missingMap[uri] = uri;
-					}
-				}
-			}
-		}
-	}
-};
-ValidatorContext.prototype.addSchema = function (url, schema) {
-	//overload
-	if (typeof url !== 'string' || typeof schema === 'undefined') {
-		if (typeof url === 'object' && typeof url.id === 'string') {
-			schema = url;
-			url = schema.id;
-		}
-		else {
-			return;
-		}
-	}
-	if (url === getDocumentUri(url) + "#") {
-		// Remove empty fragment
-		url = getDocumentUri(url);
-	}
-	this.schemas[url] = schema;
-	delete this.missingMap[url];
-	normSchema(schema, url);
-	this.searchSchemas(schema, url);
-};
-
-ValidatorContext.prototype.getSchemaMap = function () {
-	var map = {};
-	for (var key in this.schemas) {
-		map[key] = this.schemas[key];
-	}
-	return map;
-};
-
-ValidatorContext.prototype.getSchemaUris = function (filterRegExp) {
-	var list = [];
-	for (var key in this.schemas) {
-		if (!filterRegExp || filterRegExp.test(key)) {
-			list.push(key);
-		}
-	}
-	return list;
-};
-
-ValidatorContext.prototype.getMissingUris = function (filterRegExp) {
-	var list = [];
-	for (var key in this.missingMap) {
-		if (!filterRegExp || filterRegExp.test(key)) {
-			list.push(key);
-		}
-	}
-	return list;
-};
-
-ValidatorContext.prototype.dropSchemas = function () {
-	this.schemas = {};
-	this.reset();
-};
-ValidatorContext.prototype.reset = function () {
-	this.missing = [];
-	this.missingMap = {};
-	this.errors = [];
-};
-
-ValidatorContext.prototype.validateAll = function (data, schema, dataPathParts, schemaPathParts, dataPointerPath) {
-	var topLevel;
-	schema = this.resolveRefs(schema);
-	if (!schema) {
-		return null;
-	} else if (schema instanceof ValidationError) {
-		this.errors.push(schema);
-		return schema;
-	}
-
-	var startErrorCount = this.errors.length;
-	var frozenIndex, scannedFrozenSchemaIndex = null, scannedSchemasIndex = null;
-	if (this.checkRecursive && data && typeof data === 'object') {
-		topLevel = !this.scanned.length;
-		if (data[this.validatedSchemasKey]) {
-			var schemaIndex = data[this.validatedSchemasKey].indexOf(schema);
-			if (schemaIndex !== -1) {
-				this.errors = this.errors.concat(data[this.validationErrorsKey][schemaIndex]);
-				return null;
-			}
-		}
-		if (Object.isFrozen(data)) {
-			frozenIndex = this.scannedFrozen.indexOf(data);
-			if (frozenIndex !== -1) {
-				var frozenSchemaIndex = this.scannedFrozenSchemas[frozenIndex].indexOf(schema);
-				if (frozenSchemaIndex !== -1) {
-					this.errors = this.errors.concat(this.scannedFrozenValidationErrors[frozenIndex][frozenSchemaIndex]);
-					return null;
-				}
-			}
-		}
-		this.scanned.push(data);
-		if (Object.isFrozen(data)) {
-			if (frozenIndex === -1) {
-				frozenIndex = this.scannedFrozen.length;
-				this.scannedFrozen.push(data);
-				this.scannedFrozenSchemas.push([]);
-			}
-			scannedFrozenSchemaIndex = this.scannedFrozenSchemas[frozenIndex].length;
-			this.scannedFrozenSchemas[frozenIndex][scannedFrozenSchemaIndex] = schema;
-			this.scannedFrozenValidationErrors[frozenIndex][scannedFrozenSchemaIndex] = [];
-		} else {
-			if (!data[this.validatedSchemasKey]) {
-				try {
-					Object.defineProperty(data, this.validatedSchemasKey, {
-						value: [],
-						configurable: true
-					});
-					Object.defineProperty(data, this.validationErrorsKey, {
-						value: [],
-						configurable: true
-					});
-				} catch (e) {
-					//IE 7/8 workaround
-					data[this.validatedSchemasKey] = [];
-					data[this.validationErrorsKey] = [];
-				}
-			}
-			scannedSchemasIndex = data[this.validatedSchemasKey].length;
-			data[this.validatedSchemasKey][scannedSchemasIndex] = schema;
-			data[this.validationErrorsKey][scannedSchemasIndex] = [];
-		}
-	}
-
-	var errorCount = this.errors.length;
-	var error = this.validateBasic(data, schema, dataPointerPath)
-		|| this.validateNumeric(data, schema, dataPointerPath)
-		|| this.validateString(data, schema, dataPointerPath)
-		|| this.validateArray(data, schema, dataPointerPath)
-		|| this.validateObject(data, schema, dataPointerPath)
-		|| this.validateCombinations(data, schema, dataPointerPath)
-		|| this.validateHypermedia(data, schema, dataPointerPath)
-		|| this.validateFormat(data, schema, dataPointerPath)
-		|| this.validateDefinedKeywords(data, schema, dataPointerPath)
-		|| null;
-
-	if (topLevel) {
-		while (this.scanned.length) {
-			var item = this.scanned.pop();
-			delete item[this.validatedSchemasKey];
-		}
-		this.scannedFrozen = [];
-		this.scannedFrozenSchemas = [];
-	}
-
-	if (error || errorCount !== this.errors.length) {
-		while ((dataPathParts && dataPathParts.length) || (schemaPathParts && schemaPathParts.length)) {
-			var dataPart = (dataPathParts && dataPathParts.length) ? "" + dataPathParts.pop() : null;
-			var schemaPart = (schemaPathParts && schemaPathParts.length) ? "" + schemaPathParts.pop() : null;
-			if (error) {
-				error = error.prefixWith(dataPart, schemaPart);
-			}
-			this.prefixErrors(errorCount, dataPart, schemaPart);
-		}
-	}
-
-	if (scannedFrozenSchemaIndex !== null) {
-		this.scannedFrozenValidationErrors[frozenIndex][scannedFrozenSchemaIndex] = this.errors.slice(startErrorCount);
-	} else if (scannedSchemasIndex !== null) {
-		data[this.validationErrorsKey][scannedSchemasIndex] = this.errors.slice(startErrorCount);
-	}
-
-	return this.handleError(error);
-};
-ValidatorContext.prototype.validateFormat = function (data, schema) {
-	if (typeof schema.format !== 'string' || !this.formatValidators[schema.format]) {
-		return null;
-	}
-	var errorMessage = this.formatValidators[schema.format].call(null, data, schema);
-	if (typeof errorMessage === 'string' || typeof errorMessage === 'number') {
-		return this.createError(ErrorCodes.FORMAT_CUSTOM, {message: errorMessage}, '', '/format', null, data, schema);
-	} else if (errorMessage && typeof errorMessage === 'object') {
-		return this.createError(ErrorCodes.FORMAT_CUSTOM, {message: errorMessage.message || "?"}, errorMessage.dataPath || '', errorMessage.schemaPath || "/format", null, data, schema);
-	}
-	return null;
-};
-ValidatorContext.prototype.validateDefinedKeywords = function (data, schema, dataPointerPath) {
-	for (var key in this.definedKeywords) {
-		if (typeof schema[key] === 'undefined') {
-			continue;
-		}
-		var validationFunctions = this.definedKeywords[key];
-		for (var i = 0; i < validationFunctions.length; i++) {
-			var func = validationFunctions[i];
-			var result = func(data, schema[key], schema, dataPointerPath);
-			if (typeof result === 'string' || typeof result === 'number') {
-				return this.createError(ErrorCodes.KEYWORD_CUSTOM, {key: key, message: result}, '', '', null, data, schema).prefixWith(null, key);
-			} else if (result && typeof result === 'object') {
-				var code = result.code;
-				if (typeof code === 'string') {
-					if (!ErrorCodes[code]) {
-						throw new Error('Undefined error code (use defineError): ' + code);
-					}
-					code = ErrorCodes[code];
-				} else if (typeof code !== 'number') {
-					code = ErrorCodes.KEYWORD_CUSTOM;
-				}
-				var messageParams = (typeof result.message === 'object') ? result.message : {key: key, message: result.message || "?"};
-				var schemaPath = result.schemaPath || ("/" + key.replace(/~/g, '~0').replace(/\//g, '~1'));
-				return this.createError(code, messageParams, result.dataPath || null, schemaPath, null, data, schema);
-			}
-		}
-	}
-	return null;
-};
-
-function recursiveCompare(A, B) {
-	if (A === B) {
-		return true;
-	}
-	if (A && B && typeof A === "object" && typeof B === "object") {
-		if (Array.isArray(A) !== Array.isArray(B)) {
-			return false;
-		} else if (Array.isArray(A)) {
-			if (A.length !== B.length) {
-				return false;
-			}
-			for (var i = 0; i < A.length; i++) {
-				if (!recursiveCompare(A[i], B[i])) {
-					return false;
-				}
-			}
-		} else {
-			var key;
-			for (key in A) {
-				if (B[key] === undefined && A[key] !== undefined) {
-					return false;
-				}
-			}
-			for (key in B) {
-				if (A[key] === undefined && B[key] !== undefined) {
-					return false;
-				}
-			}
-			for (key in A) {
-				if (!recursiveCompare(A[key], B[key])) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	return false;
-}
-
-ValidatorContext.prototype.validateBasic = function validateBasic(data, schema, dataPointerPath) {
-	var error;
-	if (error = this.validateType(data, schema, dataPointerPath)) {
-		return error.prefixWith(null, "type");
-	}
-	if (error = this.validateEnum(data, schema, dataPointerPath)) {
-		return error.prefixWith(null, "type");
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateType = function validateType(data, schema) {
-	if (schema.type === undefined) {
-		return null;
-	}
-	var dataType = typeof data;
-	if (data === null) {
-		dataType = "null";
-	} else if (Array.isArray(data)) {
-		dataType = "array";
-	}
-	var allowedTypes = schema.type;
-	if (!Array.isArray(allowedTypes)) {
-		allowedTypes = [allowedTypes];
-	}
-
-	for (var i = 0; i < allowedTypes.length; i++) {
-		var type = allowedTypes[i];
-		if (type === dataType || (type === "integer" && dataType === "number" && (data % 1 === 0))) {
-			return null;
-		}
-	}
-	return this.createError(ErrorCodes.INVALID_TYPE, {type: dataType, expected: allowedTypes.join("/")}, '', '', null, data, schema);
-};
-
-ValidatorContext.prototype.validateEnum = function validateEnum(data, schema) {
-	if (schema["enum"] === undefined) {
-		return null;
-	}
-	for (var i = 0; i < schema["enum"].length; i++) {
-		var enumVal = schema["enum"][i];
-		if (recursiveCompare(data, enumVal)) {
-			return null;
-		}
-	}
-	return this.createError(ErrorCodes.ENUM_MISMATCH, {value: (typeof JSON !== 'undefined') ? JSON.stringify(data) : data}, '', '', null, data, schema);
-};
-
-ValidatorContext.prototype.validateNumeric = function validateNumeric(data, schema, dataPointerPath) {
-	return this.validateMultipleOf(data, schema, dataPointerPath)
-		|| this.validateMinMax(data, schema, dataPointerPath)
-		|| this.validateNaN(data, schema, dataPointerPath)
-		|| null;
-};
-
-var CLOSE_ENOUGH_LOW = Math.pow(2, -51);
-var CLOSE_ENOUGH_HIGH = 1 - CLOSE_ENOUGH_LOW;
-ValidatorContext.prototype.validateMultipleOf = function validateMultipleOf(data, schema) {
-	var multipleOf = schema.multipleOf || schema.divisibleBy;
-	if (multipleOf === undefined) {
-		return null;
-	}
-	if (typeof data === "number") {
-		var remainder = (data/multipleOf)%1;
-		if (remainder >= CLOSE_ENOUGH_LOW && remainder < CLOSE_ENOUGH_HIGH) {
-			return this.createError(ErrorCodes.NUMBER_MULTIPLE_OF, {value: data, multipleOf: multipleOf}, '', '', null, data, schema);
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateMinMax = function validateMinMax(data, schema) {
-	if (typeof data !== "number") {
-		return null;
-	}
-	if (schema.minimum !== undefined) {
-		if (data < schema.minimum) {
-			return this.createError(ErrorCodes.NUMBER_MINIMUM, {value: data, minimum: schema.minimum}, '', '/minimum', null, data, schema);
-		}
-		if (schema.exclusiveMinimum && data === schema.minimum) {
-			return this.createError(ErrorCodes.NUMBER_MINIMUM_EXCLUSIVE, {value: data, minimum: schema.minimum}, '', '/exclusiveMinimum', null, data, schema);
-		}
-	}
-	if (schema.maximum !== undefined) {
-		if (data > schema.maximum) {
-			return this.createError(ErrorCodes.NUMBER_MAXIMUM, {value: data, maximum: schema.maximum}, '', '/maximum', null, data, schema);
-		}
-		if (schema.exclusiveMaximum && data === schema.maximum) {
-			return this.createError(ErrorCodes.NUMBER_MAXIMUM_EXCLUSIVE, {value: data, maximum: schema.maximum}, '', '/exclusiveMaximum', null, data, schema);
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateNaN = function validateNaN(data, schema) {
-	if (typeof data !== "number") {
-		return null;
-	}
-	if (isNaN(data) === true || data === Infinity || data === -Infinity) {
-		return this.createError(ErrorCodes.NUMBER_NOT_A_NUMBER, {value: data}, '', '/type', null, data, schema);
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateString = function validateString(data, schema, dataPointerPath) {
-	return this.validateStringLength(data, schema, dataPointerPath)
-		|| this.validateStringPattern(data, schema, dataPointerPath)
-		|| null;
-};
-
-ValidatorContext.prototype.validateStringLength = function validateStringLength(data, schema) {
-	if (typeof data !== "string") {
-		return null;
-	}
-	if (schema.minLength !== undefined) {
-		if (data.length < schema.minLength) {
-			return this.createError(ErrorCodes.STRING_LENGTH_SHORT, {length: data.length, minimum: schema.minLength}, '', '/minLength', null, data, schema);
-		}
-	}
-	if (schema.maxLength !== undefined) {
-		if (data.length > schema.maxLength) {
-			return this.createError(ErrorCodes.STRING_LENGTH_LONG, {length: data.length, maximum: schema.maxLength}, '', '/maxLength', null, data, schema);
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateStringPattern = function validateStringPattern(data, schema) {
-	if (typeof data !== "string" || (typeof schema.pattern !== "string" && !(schema.pattern instanceof RegExp))) {
-		return null;
-	}
-	var regexp;
-	if (schema.pattern instanceof RegExp) {
-	  regexp = schema.pattern;
-	}
-	else {
-	  var body, flags = '';
-	  // Check for regular expression literals
-	  // @see http://www.ecma-international.org/ecma-262/5.1/#sec-7.8.5
-	  var literal = schema.pattern.match(/^\/(.+)\/([img]*)$/);
-	  if (literal) {
-	    body = literal[1];
-	    flags = literal[2];
-	  }
-	  else {
-	    body = schema.pattern;
-	  }
-	  regexp = new RegExp(body, flags);
-	}
-	if (!regexp.test(data)) {
-		return this.createError(ErrorCodes.STRING_PATTERN, {pattern: schema.pattern}, '', '/pattern', null, data, schema);
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateArray = function validateArray(data, schema, dataPointerPath) {
-	if (!Array.isArray(data)) {
-		return null;
-	}
-	return this.validateArrayLength(data, schema, dataPointerPath)
-		|| this.validateArrayUniqueItems(data, schema, dataPointerPath)
-		|| this.validateArrayItems(data, schema, dataPointerPath)
-		|| null;
-};
-
-ValidatorContext.prototype.validateArrayLength = function validateArrayLength(data, schema) {
-	var error;
-	if (schema.minItems !== undefined) {
-		if (data.length < schema.minItems) {
-			error = this.createError(ErrorCodes.ARRAY_LENGTH_SHORT, {length: data.length, minimum: schema.minItems}, '', '/minItems', null, data, schema);
-			if (this.handleError(error)) {
-				return error;
-			}
-		}
-	}
-	if (schema.maxItems !== undefined) {
-		if (data.length > schema.maxItems) {
-			error = this.createError(ErrorCodes.ARRAY_LENGTH_LONG, {length: data.length, maximum: schema.maxItems}, '', '/maxItems', null, data, schema);
-			if (this.handleError(error)) {
-				return error;
-			}
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateArrayUniqueItems = function validateArrayUniqueItems(data, schema) {
-	if (schema.uniqueItems) {
-		for (var i = 0; i < data.length; i++) {
-			for (var j = i + 1; j < data.length; j++) {
-				if (recursiveCompare(data[i], data[j])) {
-					var error = this.createError(ErrorCodes.ARRAY_UNIQUE, {match1: i, match2: j}, '', '/uniqueItems', null, data, schema);
-					if (this.handleError(error)) {
-						return error;
-					}
-				}
-			}
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateArrayItems = function validateArrayItems(data, schema, dataPointerPath) {
-	if (schema.items === undefined) {
-		return null;
-	}
-	var error, i;
-	if (Array.isArray(schema.items)) {
-		for (i = 0; i < data.length; i++) {
-			if (i < schema.items.length) {
-				if (error = this.validateAll(data[i], schema.items[i], [i], ["items", i], dataPointerPath + "/" + i)) {
-					return error;
-				}
-			} else if (schema.additionalItems !== undefined) {
-				if (typeof schema.additionalItems === "boolean") {
-					if (!schema.additionalItems) {
-						error = (this.createError(ErrorCodes.ARRAY_ADDITIONAL_ITEMS, {}, '/' + i, '/additionalItems', null, data, schema));
-						if (this.handleError(error)) {
-							return error;
-						}
-					}
-				} else if (error = this.validateAll(data[i], schema.additionalItems, [i], ["additionalItems"], dataPointerPath + "/" + i)) {
-					return error;
-				}
-			}
-		}
-	} else {
-		for (i = 0; i < data.length; i++) {
-			if (error = this.validateAll(data[i], schema.items, [i], ["items"], dataPointerPath + "/" + i)) {
-				return error;
-			}
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateObject = function validateObject(data, schema, dataPointerPath) {
-	if (typeof data !== "object" || data === null || Array.isArray(data)) {
-		return null;
-	}
-	return this.validateObjectMinMaxProperties(data, schema, dataPointerPath)
-		|| this.validateObjectRequiredProperties(data, schema, dataPointerPath)
-		|| this.validateObjectProperties(data, schema, dataPointerPath)
-		|| this.validateObjectDependencies(data, schema, dataPointerPath)
-		|| null;
-};
-
-ValidatorContext.prototype.validateObjectMinMaxProperties = function validateObjectMinMaxProperties(data, schema) {
-	var keys = Object.keys(data);
-	var error;
-	if (schema.minProperties !== undefined) {
-		if (keys.length < schema.minProperties) {
-			error = this.createError(ErrorCodes.OBJECT_PROPERTIES_MINIMUM, {propertyCount: keys.length, minimum: schema.minProperties}, '', '/minProperties', null, data, schema);
-			if (this.handleError(error)) {
-				return error;
-			}
-		}
-	}
-	if (schema.maxProperties !== undefined) {
-		if (keys.length > schema.maxProperties) {
-			error = this.createError(ErrorCodes.OBJECT_PROPERTIES_MAXIMUM, {propertyCount: keys.length, maximum: schema.maxProperties}, '', '/maxProperties', null, data, schema);
-			if (this.handleError(error)) {
-				return error;
-			}
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateObjectRequiredProperties = function validateObjectRequiredProperties(data, schema) {
-	if (schema.required !== undefined) {
-		for (var i = 0; i < schema.required.length; i++) {
-			var key = schema.required[i];
-			if (data[key] === undefined) {
-				var error = this.createError(ErrorCodes.OBJECT_REQUIRED, {key: key}, '', '/required/' + i, null, data, schema);
-				if (this.handleError(error)) {
-					return error;
-				}
-			}
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateObjectProperties = function validateObjectProperties(data, schema, dataPointerPath) {
-	var error;
-	for (var key in data) {
-		var keyPointerPath = dataPointerPath + "/" + key.replace(/~/g, '~0').replace(/\//g, '~1');
-		var foundMatch = false;
-		if (schema.properties !== undefined && schema.properties[key] !== undefined) {
-			foundMatch = true;
-			if (error = this.validateAll(data[key], schema.properties[key], [key], ["properties", key], keyPointerPath)) {
-				return error;
-			}
-		}
-		if (schema.patternProperties !== undefined) {
-			for (var patternKey in schema.patternProperties) {
-				var regexp = new RegExp(patternKey);
-				if (regexp.test(key)) {
-					foundMatch = true;
-					if (error = this.validateAll(data[key], schema.patternProperties[patternKey], [key], ["patternProperties", patternKey], keyPointerPath)) {
-						return error;
-					}
-				}
-			}
-		}
-		if (!foundMatch) {
-			if (schema.additionalProperties !== undefined) {
-				if (this.trackUnknownProperties) {
-					this.knownPropertyPaths[keyPointerPath] = true;
-					delete this.unknownPropertyPaths[keyPointerPath];
-				}
-				if (typeof schema.additionalProperties === "boolean") {
-					if (!schema.additionalProperties) {
-						error = this.createError(ErrorCodes.OBJECT_ADDITIONAL_PROPERTIES, {key: key}, '', '/additionalProperties', null, data, schema).prefixWith(key, null);
-						if (this.handleError(error)) {
-							return error;
-						}
-					}
-				} else {
-					if (error = this.validateAll(data[key], schema.additionalProperties, [key], ["additionalProperties"], keyPointerPath)) {
-						return error;
-					}
-				}
-			} else if (this.trackUnknownProperties && !this.knownPropertyPaths[keyPointerPath]) {
-				this.unknownPropertyPaths[keyPointerPath] = true;
-			}
-		} else if (this.trackUnknownProperties) {
-			this.knownPropertyPaths[keyPointerPath] = true;
-			delete this.unknownPropertyPaths[keyPointerPath];
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateObjectDependencies = function validateObjectDependencies(data, schema, dataPointerPath) {
-	var error;
-	if (schema.dependencies !== undefined) {
-		for (var depKey in schema.dependencies) {
-			if (data[depKey] !== undefined) {
-				var dep = schema.dependencies[depKey];
-				if (typeof dep === "string") {
-					if (data[dep] === undefined) {
-						error = this.createError(ErrorCodes.OBJECT_DEPENDENCY_KEY, {key: depKey, missing: dep}, '', '', null, data, schema).prefixWith(null, depKey).prefixWith(null, "dependencies");
-						if (this.handleError(error)) {
-							return error;
-						}
-					}
-				} else if (Array.isArray(dep)) {
-					for (var i = 0; i < dep.length; i++) {
-						var requiredKey = dep[i];
-						if (data[requiredKey] === undefined) {
-							error = this.createError(ErrorCodes.OBJECT_DEPENDENCY_KEY, {key: depKey, missing: requiredKey}, '', '/' + i, null, data, schema).prefixWith(null, depKey).prefixWith(null, "dependencies");
-							if (this.handleError(error)) {
-								return error;
-							}
-						}
-					}
-				} else {
-					if (error = this.validateAll(data, dep, [], ["dependencies", depKey], dataPointerPath)) {
-						return error;
-					}
-				}
-			}
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateCombinations = function validateCombinations(data, schema, dataPointerPath) {
-	return this.validateAllOf(data, schema, dataPointerPath)
-		|| this.validateAnyOf(data, schema, dataPointerPath)
-		|| this.validateOneOf(data, schema, dataPointerPath)
-		|| this.validateNot(data, schema, dataPointerPath)
-		|| null;
-};
-
-ValidatorContext.prototype.validateAllOf = function validateAllOf(data, schema, dataPointerPath) {
-	if (schema.allOf === undefined) {
-		return null;
-	}
-	var error;
-	for (var i = 0; i < schema.allOf.length; i++) {
-		var subSchema = schema.allOf[i];
-		if (error = this.validateAll(data, subSchema, [], ["allOf", i], dataPointerPath)) {
-			return error;
-		}
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateAnyOf = function validateAnyOf(data, schema, dataPointerPath) {
-	if (schema.anyOf === undefined) {
-		return null;
-	}
-	var errors = [];
-	var startErrorCount = this.errors.length;
-	var oldUnknownPropertyPaths, oldKnownPropertyPaths;
-	if (this.trackUnknownProperties) {
-		oldUnknownPropertyPaths = this.unknownPropertyPaths;
-		oldKnownPropertyPaths = this.knownPropertyPaths;
-	}
-	var errorAtEnd = true;
-	for (var i = 0; i < schema.anyOf.length; i++) {
-		if (this.trackUnknownProperties) {
-			this.unknownPropertyPaths = {};
-			this.knownPropertyPaths = {};
-		}
-		var subSchema = schema.anyOf[i];
-
-		var errorCount = this.errors.length;
-		var error = this.validateAll(data, subSchema, [], ["anyOf", i], dataPointerPath);
-
-		if (error === null && errorCount === this.errors.length) {
-			this.errors = this.errors.slice(0, startErrorCount);
-
-			if (this.trackUnknownProperties) {
-				for (var knownKey in this.knownPropertyPaths) {
-					oldKnownPropertyPaths[knownKey] = true;
-					delete oldUnknownPropertyPaths[knownKey];
-				}
-				for (var unknownKey in this.unknownPropertyPaths) {
-					if (!oldKnownPropertyPaths[unknownKey]) {
-						oldUnknownPropertyPaths[unknownKey] = true;
-					}
-				}
-				// We need to continue looping so we catch all the property definitions, but we don't want to return an error
-				errorAtEnd = false;
-				continue;
-			}
-
-			return null;
-		}
-		if (error) {
-			errors.push(error.prefixWith(null, "" + i).prefixWith(null, "anyOf"));
-		}
-	}
-	if (this.trackUnknownProperties) {
-		this.unknownPropertyPaths = oldUnknownPropertyPaths;
-		this.knownPropertyPaths = oldKnownPropertyPaths;
-	}
-	if (errorAtEnd) {
-		errors = errors.concat(this.errors.slice(startErrorCount));
-		this.errors = this.errors.slice(0, startErrorCount);
-		return this.createError(ErrorCodes.ANY_OF_MISSING, {}, "", "/anyOf", errors, data, schema);
-	}
-};
-
-ValidatorContext.prototype.validateOneOf = function validateOneOf(data, schema, dataPointerPath) {
-	if (schema.oneOf === undefined) {
-		return null;
-	}
-	var validIndex = null;
-	var errors = [];
-	var startErrorCount = this.errors.length;
-	var oldUnknownPropertyPaths, oldKnownPropertyPaths;
-	if (this.trackUnknownProperties) {
-		oldUnknownPropertyPaths = this.unknownPropertyPaths;
-		oldKnownPropertyPaths = this.knownPropertyPaths;
-	}
-	for (var i = 0; i < schema.oneOf.length; i++) {
-		if (this.trackUnknownProperties) {
-			this.unknownPropertyPaths = {};
-			this.knownPropertyPaths = {};
-		}
-		var subSchema = schema.oneOf[i];
-
-		var errorCount = this.errors.length;
-		var error = this.validateAll(data, subSchema, [], ["oneOf", i], dataPointerPath);
-
-		if (error === null && errorCount === this.errors.length) {
-			if (validIndex === null) {
-				validIndex = i;
-			} else {
-				this.errors = this.errors.slice(0, startErrorCount);
-				return this.createError(ErrorCodes.ONE_OF_MULTIPLE, {index1: validIndex, index2: i}, "", "/oneOf", null, data, schema);
-			}
-			if (this.trackUnknownProperties) {
-				for (var knownKey in this.knownPropertyPaths) {
-					oldKnownPropertyPaths[knownKey] = true;
-					delete oldUnknownPropertyPaths[knownKey];
-				}
-				for (var unknownKey in this.unknownPropertyPaths) {
-					if (!oldKnownPropertyPaths[unknownKey]) {
-						oldUnknownPropertyPaths[unknownKey] = true;
-					}
-				}
-			}
-		} else if (error) {
-			errors.push(error);
-		}
-	}
-	if (this.trackUnknownProperties) {
-		this.unknownPropertyPaths = oldUnknownPropertyPaths;
-		this.knownPropertyPaths = oldKnownPropertyPaths;
-	}
-	if (validIndex === null) {
-		errors = errors.concat(this.errors.slice(startErrorCount));
-		this.errors = this.errors.slice(0, startErrorCount);
-		return this.createError(ErrorCodes.ONE_OF_MISSING, {}, "", "/oneOf", errors, data, schema);
-	} else {
-		this.errors = this.errors.slice(0, startErrorCount);
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateNot = function validateNot(data, schema, dataPointerPath) {
-	if (schema.not === undefined) {
-		return null;
-	}
-	var oldErrorCount = this.errors.length;
-	var oldUnknownPropertyPaths, oldKnownPropertyPaths;
-	if (this.trackUnknownProperties) {
-		oldUnknownPropertyPaths = this.unknownPropertyPaths;
-		oldKnownPropertyPaths = this.knownPropertyPaths;
-		this.unknownPropertyPaths = {};
-		this.knownPropertyPaths = {};
-	}
-	var error = this.validateAll(data, schema.not, null, null, dataPointerPath);
-	var notErrors = this.errors.slice(oldErrorCount);
-	this.errors = this.errors.slice(0, oldErrorCount);
-	if (this.trackUnknownProperties) {
-		this.unknownPropertyPaths = oldUnknownPropertyPaths;
-		this.knownPropertyPaths = oldKnownPropertyPaths;
-	}
-	if (error === null && notErrors.length === 0) {
-		return this.createError(ErrorCodes.NOT_PASSED, {}, "", "/not", null, data, schema);
-	}
-	return null;
-};
-
-ValidatorContext.prototype.validateHypermedia = function validateCombinations(data, schema, dataPointerPath) {
-	if (!schema.links) {
-		return null;
-	}
-	var error;
-	for (var i = 0; i < schema.links.length; i++) {
-		var ldo = schema.links[i];
-		if (ldo.rel === "describedby") {
-			var template = new UriTemplate(ldo.href);
-			var allPresent = true;
-			for (var j = 0; j < template.varNames.length; j++) {
-				if (!(template.varNames[j] in data)) {
-					allPresent = false;
-					break;
-				}
-			}
-			if (allPresent) {
-				var schemaUrl = template.fillFromObject(data);
-				var subSchema = {"$ref": schemaUrl};
-				if (error = this.validateAll(data, subSchema, [], ["links", i], dataPointerPath)) {
-					return error;
-				}
-			}
-		}
-	}
-};
-
-// parseURI() and resolveUrl() are from https://gist.github.com/1088850
-//   -  released as public domain by author ("Yaffle") - see comments on gist
-
-function parseURI(url) {
-	var m = String(url).replace(/^\s+|\s+$/g, '').match(/^([^:\/?#]+:)?(\/\/(?:[^:@]*(?::[^:@]*)?@)?(([^:\/?#]*)(?::(\d*))?))?([^?#]*)(\?[^#]*)?(#[\s\S]*)?/);
-	// authority = '//' + user + ':' + pass '@' + hostname + ':' port
-	return (m ? {
-		href     : m[0] || '',
-		protocol : m[1] || '',
-		authority: m[2] || '',
-		host     : m[3] || '',
-		hostname : m[4] || '',
-		port     : m[5] || '',
-		pathname : m[6] || '',
-		search   : m[7] || '',
-		hash     : m[8] || ''
-	} : null);
-}
-
-function resolveUrl(base, href) {// RFC 3986
-
-	function removeDotSegments(input) {
-		var output = [];
-		input.replace(/^(\.\.?(\/|$))+/, '')
-			.replace(/\/(\.(\/|$))+/g, '/')
-			.replace(/\/\.\.$/, '/../')
-			.replace(/\/?[^\/]*/g, function (p) {
-				if (p === '/..') {
-					output.pop();
-				} else {
-					output.push(p);
-				}
-		});
-		return output.join('').replace(/^\//, input.charAt(0) === '/' ? '/' : '');
-	}
-
-	href = parseURI(href || '');
-	base = parseURI(base || '');
-
-	return !href || !base ? null : (href.protocol || base.protocol) +
-		(href.protocol || href.authority ? href.authority : base.authority) +
-		removeDotSegments(href.protocol || href.authority || href.pathname.charAt(0) === '/' ? href.pathname : (href.pathname ? ((base.authority && !base.pathname ? '/' : '') + base.pathname.slice(0, base.pathname.lastIndexOf('/') + 1) + href.pathname) : base.pathname)) +
-		(href.protocol || href.authority || href.pathname ? href.search : (href.search || base.search)) +
-		href.hash;
-}
-
-function getDocumentUri(uri) {
-	return uri.split('#')[0];
-}
-function normSchema(schema, baseUri) {
-	if (schema && typeof schema === "object") {
-		if (baseUri === undefined) {
-			baseUri = schema.id;
-		} else if (typeof schema.id === "string") {
-			baseUri = resolveUrl(baseUri, schema.id);
-			schema.id = baseUri;
-		}
-		if (Array.isArray(schema)) {
-			for (var i = 0; i < schema.length; i++) {
-				normSchema(schema[i], baseUri);
-			}
-		} else {
-			if (typeof schema['$ref'] === "string") {
-				schema['$ref'] = resolveUrl(baseUri, schema['$ref']);
-			}
-			for (var key in schema) {
-				if (key !== "enum") {
-					normSchema(schema[key], baseUri);
-				}
-			}
-		}
-	}
-}
-
-function defaultErrorReporter(language) {
-	language = language || 'en';
-
-	var errorMessages = languages[language];
-
-	return function (error) {
-		var messageTemplate = errorMessages[error.code] || ErrorMessagesDefault[error.code];
-		if (typeof messageTemplate !== 'string') {
-			return "Unknown error code " + error.code + ": " + JSON.stringify(error.messageParams);
-		}
-		var messageParams = error.params;
-		// Adapted from Crockford's supplant()
-		return messageTemplate.replace(/\{([^{}]*)\}/g, function (whole, varName) {
-			var subValue = messageParams[varName];
-			return typeof subValue === 'string' || typeof subValue === 'number' ? subValue : whole;
-		});
-	};
-}
-
-var ErrorCodes = {
-	INVALID_TYPE: 0,
-	ENUM_MISMATCH: 1,
-	ANY_OF_MISSING: 10,
-	ONE_OF_MISSING: 11,
-	ONE_OF_MULTIPLE: 12,
-	NOT_PASSED: 13,
-	// Numeric errors
-	NUMBER_MULTIPLE_OF: 100,
-	NUMBER_MINIMUM: 101,
-	NUMBER_MINIMUM_EXCLUSIVE: 102,
-	NUMBER_MAXIMUM: 103,
-	NUMBER_MAXIMUM_EXCLUSIVE: 104,
-	NUMBER_NOT_A_NUMBER: 105,
-	// String errors
-	STRING_LENGTH_SHORT: 200,
-	STRING_LENGTH_LONG: 201,
-	STRING_PATTERN: 202,
-	// Object errors
-	OBJECT_PROPERTIES_MINIMUM: 300,
-	OBJECT_PROPERTIES_MAXIMUM: 301,
-	OBJECT_REQUIRED: 302,
-	OBJECT_ADDITIONAL_PROPERTIES: 303,
-	OBJECT_DEPENDENCY_KEY: 304,
-	// Array errors
-	ARRAY_LENGTH_SHORT: 400,
-	ARRAY_LENGTH_LONG: 401,
-	ARRAY_UNIQUE: 402,
-	ARRAY_ADDITIONAL_ITEMS: 403,
-	// Custom/user-defined errors
-	FORMAT_CUSTOM: 500,
-	KEYWORD_CUSTOM: 501,
-	// Schema structure
-	CIRCULAR_REFERENCE: 600,
-	// Non-standard validation options
-	UNKNOWN_PROPERTY: 1000
-};
-var ErrorCodeLookup = {};
-for (var key in ErrorCodes) {
-	ErrorCodeLookup[ErrorCodes[key]] = key;
-}
-var ErrorMessagesDefault = {
-	INVALID_TYPE: "Invalid type: {type} (expected {expected})",
-	ENUM_MISMATCH: "No enum match for: {value}",
-	ANY_OF_MISSING: "Data does not match any schemas from \"anyOf\"",
-	ONE_OF_MISSING: "Data does not match any schemas from \"oneOf\"",
-	ONE_OF_MULTIPLE: "Data is valid against more than one schema from \"oneOf\": indices {index1} and {index2}",
-	NOT_PASSED: "Data matches schema from \"not\"",
-	// Numeric errors
-	NUMBER_MULTIPLE_OF: "Value {value} is not a multiple of {multipleOf}",
-	NUMBER_MINIMUM: "Value {value} is less than minimum {minimum}",
-	NUMBER_MINIMUM_EXCLUSIVE: "Value {value} is equal to exclusive minimum {minimum}",
-	NUMBER_MAXIMUM: "Value {value} is greater than maximum {maximum}",
-	NUMBER_MAXIMUM_EXCLUSIVE: "Value {value} is equal to exclusive maximum {maximum}",
-	NUMBER_NOT_A_NUMBER: "Value {value} is not a valid number",
-	// String errors
-	STRING_LENGTH_SHORT: "String is too short ({length} chars), minimum {minimum}",
-	STRING_LENGTH_LONG: "String is too long ({length} chars), maximum {maximum}",
-	STRING_PATTERN: "String does not match pattern: {pattern}",
-	// Object errors
-	OBJECT_PROPERTIES_MINIMUM: "Too few properties defined ({propertyCount}), minimum {minimum}",
-	OBJECT_PROPERTIES_MAXIMUM: "Too many properties defined ({propertyCount}), maximum {maximum}",
-	OBJECT_REQUIRED: "Missing required property: {key}",
-	OBJECT_ADDITIONAL_PROPERTIES: "Additional properties not allowed",
-	OBJECT_DEPENDENCY_KEY: "Dependency failed - key must exist: {missing} (due to key: {key})",
-	// Array errors
-	ARRAY_LENGTH_SHORT: "Array is too short ({length}), minimum {minimum}",
-	ARRAY_LENGTH_LONG: "Array is too long ({length}), maximum {maximum}",
-	ARRAY_UNIQUE: "Array items are not unique (indices {match1} and {match2})",
-	ARRAY_ADDITIONAL_ITEMS: "Additional items not allowed",
-	// Format errors
-	FORMAT_CUSTOM: "Format validation failed ({message})",
-	KEYWORD_CUSTOM: "Keyword failed: {key} ({message})",
-	// Schema structure
-	CIRCULAR_REFERENCE: "Circular $refs: {urls}",
-	// Non-standard validation options
-	UNKNOWN_PROPERTY: "Unknown property (not in schema)"
-};
-
-function ValidationError(code, params, dataPath, schemaPath, subErrors) {
-	Error.call(this);
-	if (code === undefined) {
-		throw new Error ("No error code supplied: " + schemaPath);
-	}
-	this.message = '';
-	this.params = params;
-	this.code = code;
-	this.dataPath = dataPath || "";
-	this.schemaPath = schemaPath || "";
-	this.subErrors = subErrors || null;
-
-	var err = new Error(this.message);
-	this.stack = err.stack || err.stacktrace;
-	if (!this.stack) {
-		try {
-			throw err;
-		}
-		catch(err) {
-			this.stack = err.stack || err.stacktrace;
-		}
-	}
-}
-ValidationError.prototype = Object.create(Error.prototype);
-ValidationError.prototype.constructor = ValidationError;
-ValidationError.prototype.name = 'ValidationError';
-
-ValidationError.prototype.prefixWith = function (dataPrefix, schemaPrefix) {
-	if (dataPrefix !== null) {
-		dataPrefix = dataPrefix.replace(/~/g, "~0").replace(/\//g, "~1");
-		this.dataPath = "/" + dataPrefix + this.dataPath;
-	}
-	if (schemaPrefix !== null) {
-		schemaPrefix = schemaPrefix.replace(/~/g, "~0").replace(/\//g, "~1");
-		this.schemaPath = "/" + schemaPrefix + this.schemaPath;
-	}
-	if (this.subErrors !== null) {
-		for (var i = 0; i < this.subErrors.length; i++) {
-			this.subErrors[i].prefixWith(dataPrefix, schemaPrefix);
-		}
-	}
-	return this;
-};
-
-function isTrustedUrl(baseUrl, testUrl) {
-	if(testUrl.substring(0, baseUrl.length) === baseUrl){
-		var remainder = testUrl.substring(baseUrl.length);
-		if ((testUrl.length > 0 && testUrl.charAt(baseUrl.length - 1) === "/")
-			|| remainder.charAt(0) === "#"
-			|| remainder.charAt(0) === "?") {
-			return true;
-		}
-	}
-	return false;
-}
-
-var languages = {};
-function createApi(language) {
-	var globalContext = new ValidatorContext();
-	var currentLanguage;
-	var customErrorReporter;
-	var api = {
-		setErrorReporter: function (reporter) {
-			if (typeof reporter === 'string') {
-				return this.language(reporter);
-			}
-			customErrorReporter = reporter;
-			return true;
-		},
-		addFormat: function () {
-			globalContext.addFormat.apply(globalContext, arguments);
-		},
-		language: function (code) {
-			if (!code) {
-				return currentLanguage;
-			}
-			if (!languages[code]) {
-				code = code.split('-')[0]; // fall back to base language
-			}
-			if (languages[code]) {
-				currentLanguage = code;
-				return code; // so you can tell if fall-back has happened
-			}
-			return false;
-		},
-		addLanguage: function (code, messageMap) {
-			var key;
-			for (key in ErrorCodes) {
-				if (messageMap[key] && !messageMap[ErrorCodes[key]]) {
-					messageMap[ErrorCodes[key]] = messageMap[key];
-				}
-			}
-			var rootCode = code.split('-')[0];
-			if (!languages[rootCode]) { // use for base language if not yet defined
-				languages[code] = messageMap;
-				languages[rootCode] = messageMap;
-			} else {
-				languages[code] = Object.create(languages[rootCode]);
-				for (key in messageMap) {
-					if (typeof languages[rootCode][key] === 'undefined') {
-						languages[rootCode][key] = messageMap[key];
-					}
-					languages[code][key] = messageMap[key];
-				}
-			}
-			return this;
-		},
-		freshApi: function (language) {
-			var result = createApi();
-			if (language) {
-				result.language(language);
-			}
-			return result;
-		},
-		validate: function (data, schema, checkRecursive, banUnknownProperties) {
-			var def = defaultErrorReporter(currentLanguage);
-			var errorReporter = customErrorReporter ? function (error, data, schema) {
-				return customErrorReporter(error, data, schema) || def(error, data, schema);
-			} : def;
-			var context = new ValidatorContext(globalContext, false, errorReporter, checkRecursive, banUnknownProperties);
-			if (typeof schema === "string") {
-				schema = {"$ref": schema};
-			}
-			context.addSchema("", schema);
-			var error = context.validateAll(data, schema, null, null, "");
-			if (!error && banUnknownProperties) {
-				error = context.banUnknownProperties(data, schema);
-			}
-			this.error = error;
-			this.missing = context.missing;
-			this.valid = (error === null);
-			return this.valid;
-		},
-		validateResult: function () {
-			var result = {toString: function () {
-				return this.valid ? 'valid' : this.error.message;
-			}};
-			this.validate.apply(result, arguments);
-			return result;
-		},
-		validateMultiple: function (data, schema, checkRecursive, banUnknownProperties) {
-			var def = defaultErrorReporter(currentLanguage);
-			var errorReporter = customErrorReporter ? function (error, data, schema) {
-				return customErrorReporter(error, data, schema) || def(error, data, schema);
-			} : def;
-			var context = new ValidatorContext(globalContext, true, errorReporter, checkRecursive, banUnknownProperties);
-			if (typeof schema === "string") {
-				schema = {"$ref": schema};
-			}
-			context.addSchema("", schema);
-			context.validateAll(data, schema, null, null, "");
-			if (banUnknownProperties) {
-				context.banUnknownProperties(data, schema);
-			}
-			var result = {toString: function () {
-				return this.valid ? 'valid' : this.error.message;
-			}};
-			result.errors = context.errors;
-			result.missing = context.missing;
-			result.valid = (result.errors.length === 0);
-			return result;
-		},
-		addSchema: function () {
-			return globalContext.addSchema.apply(globalContext, arguments);
-		},
-		getSchema: function () {
-			return globalContext.getSchema.apply(globalContext, arguments);
-		},
-		getSchemaMap: function () {
-			return globalContext.getSchemaMap.apply(globalContext, arguments);
-		},
-		getSchemaUris: function () {
-			return globalContext.getSchemaUris.apply(globalContext, arguments);
-		},
-		getMissingUris: function () {
-			return globalContext.getMissingUris.apply(globalContext, arguments);
-		},
-		dropSchemas: function () {
-			globalContext.dropSchemas.apply(globalContext, arguments);
-		},
-		defineKeyword: function () {
-			globalContext.defineKeyword.apply(globalContext, arguments);
-		},
-		defineError: function (codeName, codeNumber, defaultMessage) {
-			if (typeof codeName !== 'string' || !/^[A-Z]+(_[A-Z]+)*$/.test(codeName)) {
-				throw new Error('Code name must be a string in UPPER_CASE_WITH_UNDERSCORES');
-			}
-			if (typeof codeNumber !== 'number' || codeNumber%1 !== 0 || codeNumber < 10000) {
-				throw new Error('Code number must be an integer > 10000');
-			}
-			if (typeof ErrorCodes[codeName] !== 'undefined') {
-				throw new Error('Error already defined: ' + codeName + ' as ' + ErrorCodes[codeName]);
-			}
-			if (typeof ErrorCodeLookup[codeNumber] !== 'undefined') {
-				throw new Error('Error code already used: ' + ErrorCodeLookup[codeNumber] + ' as ' + codeNumber);
-			}
-			ErrorCodes[codeName] = codeNumber;
-			ErrorCodeLookup[codeNumber] = codeName;
-			ErrorMessagesDefault[codeName] = ErrorMessagesDefault[codeNumber] = defaultMessage;
-			for (var langCode in languages) {
-				var language = languages[langCode];
-				if (language[codeName]) {
-					language[codeNumber] = language[codeNumber] || language[codeName];
-				}
-			}
-		},
-		reset: function () {
-			globalContext.reset();
-			this.error = null;
-			this.missing = [];
-			this.valid = true;
-		},
-		missing: [],
-		error: null,
-		valid: true,
-		normSchema: normSchema,
-		resolveUrl: resolveUrl,
-		getDocumentUri: getDocumentUri,
-		errorCodes: ErrorCodes
-	};
-	api.language(language || 'en');
-	return api;
-}
-
-var tv4 = createApi();
-tv4.addLanguage('en-gb', ErrorMessagesDefault);
-
-//legacy property
-tv4.tv4 = tv4;
-
-return tv4; // used by _header.js to globalise.
-
-}));
-
-/***/ }),
-
-/***/ "./node_modules/webpack/buildin/global.js":
-/*!***********************************!*\
-  !*** (webpack)/buildin/global.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-
 /***/ "./obniz sync recursive":
 /*!********************!*\
   !*** ./obniz sync ***!
@@ -5844,16 +1743,18 @@ webpackEmptyContext.id = "./obniz sync recursive";
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 const ObnizBLE = __webpack_require__(/*! ./libs/embeds/ble/ble */ "./obniz/libs/embeds/ble/ble.js");
 
 const Display = __webpack_require__(/*! ./libs/embeds/display */ "./obniz/libs/embeds/display.js");
 const ObnizSwitch = __webpack_require__(/*! ./libs/embeds/switch */ "./obniz/libs/embeds/switch.js");
 
-
 const LogicAnalyzer = __webpack_require__(/*! ./libs/measurements/logicanalyzer */ "./obniz/libs/measurements/logicanalyzer.js");
 const ObnizMeasure = __webpack_require__(/*! ./libs/measurements/measure */ "./obniz/libs/measurements/measure.js");
-
 
 const PeripheralAD = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
 const PeripheralI2C = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
@@ -5863,71 +1764,70 @@ const PeripheralPWM = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./ob
 const PeripheralSPI = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
 const PeripheralUART = __webpack_require__(/*! ./libs/io_peripherals/uart */ "./obniz/libs/io_peripherals/uart.js");
 
-
 const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
 
 const WSCommand = __webpack_require__(/*! ./libs/wscommand */ "./obniz/libs/wscommand/index.js");
 
-
 /* global showObnizDebugError  */
 
-let isNode = (typeof window === 'undefined') ;
+let isNode = typeof window === 'undefined';
 
 class Obniz {
 
   constructor(id, options) {
-    this.isNode     = isNode;
+    this.isNode = isNode;
     this.apiversion = 1;
-    this.id         = id;
-    this.socket     = null;
+    this.id = id;
+    this.socket = null;
     this.debugprint = false;
-    this.debugs     = [];
+    this.debugs = [];
     this.pongObservers = [];
-  
+
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
-  
+
     this.init();
-  
+
     if (!options) {
       options = {};
     }
     this.server_obnizio = options.obniz_server || "wss://obniz.io";
     this._access_token = options.access_token;
     this.debugDomId = options.debug_dom_id || "obniz-debug";
-    this.auto_connect = typeof(options.auto_connect) === "boolean" ? options.auto_connect : true;
+    this.auto_connect = typeof options.auto_connect === "boolean" ? options.auto_connect : true;
 
     if (options.binary !== false) {
       this.wscommand = this.constructor.WSCommand;
       let classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
       for (let class_name in classes) {
-       this.wscommands.push(new classes[class_name]());
+        this.wscommands.push(new classes[class_name]());
       }
     }
 
-    if (this.isNode === false) { this.showOffLine(); }
-  
+    if (this.isNode === false) {
+      this.showOffLine();
+    }
+
     if (!this.isValidObnizId(this.id)) {
-      if (isNode)  {
-        this.error("invalid obniz id")
+      if (isNode) {
+        this.error("invalid obniz id");
       } else {
         let filled = _ReadCookie("obniz-last-used") || "";
-        this.prompt(filled , function(obnizid){
+        this.prompt(filled, function (obnizid) {
           this.id = obnizid;
           this.showOffLine();
           this.wsconnect();
-        }.bind(this))
+        }.bind(this));
       }
       return;
     }
 
-
-    if(this.auto_connect){
+    if (this.auto_connect) {
       this.wsconnect();
     }
   }
 
-  static get version(){
+  static get version() {
     let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
     return packageJson.version;
   }
@@ -5942,15 +1842,13 @@ class Obniz {
     }
     str = str.replace("-", "");
     let id = parseInt(str);
-    if (isNaN(id))
-      id = null;
+    if (isNaN(id)) id = null;
     return id != null;
   }
 
   prompt(filled, callback) {
     var obnizid = prompt("Please enter obniz id", filled);
-    if (!obnizid) {
-    } else {
+    if (!obnizid) {} else {
       callback(obnizid);
     }
   }
@@ -5958,7 +1856,7 @@ class Obniz {
   wsOnOpen() {
     this.print_debug("ws connected");
     // wait for {ws:{ready:true}} object
-    if(typeof this.onopen === "function"){
+    if (typeof this.onopen === "function") {
       this.onopen(this);
     }
   }
@@ -5966,17 +1864,16 @@ class Obniz {
   wsOnMessage(data) {
     if (typeof data === "string") {
       let objArray = JSON.parse(data);
-        for(let i in objArray ) {
-          this.notifyToModule(objArray[i]);
-
+      for (let i in objArray) {
+        this.notifyToModule(objArray[i]);
       }
-    } else if (this.wscommands){
+    } else if (this.wscommands) {
       data = new Uint8Array(data);
-      while(true) {
+      while (true) {
         const frame = WSCommand.dequeueOne(data);
         if (!frame) break;
         let obj = {};
-        for (var i=0; i<this.wscommands.length; i++) {
+        for (var i = 0; i < this.wscommands.length; i++) {
           const command = this.wscommands[i];
           if (command.module === frame.module) {
             command.notifyFromBinary(obj, frame.func, frame.payload);
@@ -5991,23 +1888,23 @@ class Obniz {
     }
   }
 
-  notifyToModule(obj){
+  notifyToModule(obj) {
     this.print_debug(JSON.stringify(obj));
 
     // notify messaging
-    if (typeof (obj.message) === "object" && this.onmessage) {
+    if (typeof obj.message === "object" && this.onmessage) {
       this.onmessage(obj.message.data, obj.message.from);
     }
     // debug
-    if (typeof (obj.debug) === "object") {
+    if (typeof obj.debug === "object") {
       if (obj.debug.warning) {
         let msg = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: 'warning', message: msg});
+        this.warning({ alert: 'warning', message: msg });
       }
 
       if (obj.debug.error) {
         let msg = "Error: " + obj.debug.error.message;
-        this.error({alert: 'error', message: msg});
+        this.error({ alert: 'error', message: msg });
       }
       if (this.ondebug) {
         this.ondebug(obj.debug);
@@ -6034,8 +1931,7 @@ class Obniz {
           break;
         }
         let module_value = obj[peripheral + "" + i];
-        if (module_value === undefined)
-          continue;
+        if (module_value === undefined) continue;
         this[peripheral + "" + i].notified(module_value);
       }
     }
@@ -6046,24 +1942,26 @@ class Obniz {
       }
     }
     if (obj.logic_analyzer) {
-      this.logicAnalyzer.notified(obj.logic_analyzer)
+      this.logicAnalyzer.notified(obj.logic_analyzer);
     }
   }
 
   wsOnClose(event) {
     this.print_debug("closed");
-    if (this.isNode === false) { this.showOffLine(); }
+    if (this.isNode === false) {
+      this.showOffLine();
+    }
     if (this.looper) {
       this.looper = null;
     }
-  
+
     this.clearSocket(this.socket);
 
-    if(typeof this.onclose === "function"){
+    if (typeof this.onclose === "function") {
       this.onclose(this);
     }
 
-    if(this.auto_connect) {
+    if (this.auto_connect) {
       setTimeout(function () {
         // always connect to mainserver if ws lost
         this.wsconnect();
@@ -6075,7 +1973,6 @@ class Obniz {
     console.error("websocket error.");
   }
 
-
   wsOnUnexpectedResponse(req, res) {
     let reconnectTime = 1000;
     if (res && res.statusCode == 404) {
@@ -6084,10 +1981,10 @@ class Obniz {
     } else {
       // servder error or someting
       reconnectTime = 5000;
-      this.print_debug( true ? res.statusCode :  undefined);
+      this.print_debug( true ? res.statusCode : undefined);
     }
     this.clearSocket(this.socket);
-    if(this.auto_connect) {
+    if (this.auto_connect) {
       setTimeout(function () {
         // always connect to mainserver if ws lost
         this.wsconnect();
@@ -6104,20 +2001,20 @@ class Obniz {
       this.socket.close();
       this.clearSocket(this.socket);
     }
-    let url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
+    let url = server + "/obniz/" + this.id + "/ws/" + this.apiversion;
     if (this.constructor.version) {
-      url += "?obnizjs="+this.constructor.version;
+      url += "?obnizjs=" + this.constructor.version;
     }
     if (this._access_token) {
-      url += "&access_token="+this._access_token;
+      url += "&access_token=" + this._access_token;
     }
     if (this.wscommand) {
       url += "&accept_binary=true";
     }
     this.print_debug("connecting to " + url);
-  
+
     if (this.isNode) {
-      const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
+      const wsClient = __webpack_require__(/*! ws */ "ws");
       this.socket = new wsClient(url);
       this.socket.on('open', this.wsOnOpen.bind(this));
       this.socket.on('message', this.wsOnMessage.bind(this));
@@ -6158,8 +2055,7 @@ class Obniz {
     this.socket = null;
   }
 
-
-  connect(){
+  connect() {
     this.wsconnect();
   }
 
@@ -6179,9 +2075,9 @@ class Obniz {
     }
     let args = Array.from(arguments);
     args.shift();
-    args.unshift(this); 
-    if(parts.keys){
-      if(parts.requiredKeys){
+    args.unshift(this);
+    if (parts.keys) {
+      if (parts.requiredKeys) {
         let err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
           throw new Error(partsname + " wired param '" + err + "' required, but not found ");
@@ -6192,19 +2088,19 @@ class Obniz {
     }
     parts.obniz = this;
     parts.wired.apply(parts, args);
-    if(parts.keys || parts.ioKeys){
+    if (parts.keys || parts.ioKeys) {
       let keys = parts.ioKeys || parts.keys;
       let displayPartsName = parts.displayName || partsname;
       let ioNames = {};
-      for( let index in keys){
+      for (let index in keys) {
         let pinName = keys[index];
         let io = args[1][pinName];
-        if(parts.displayIoNames && parts.displayIoNames[pinName]){
+        if (parts.displayIoNames && parts.displayIoNames[pinName]) {
           pinName = parts.displayIoNames[pinName];
         }
-        ioNames[io]=pinName;
+        ioNames[io] = pinName;
       }
-      this.display.setPinNames(displayPartsName,ioNames);
+      this.display.setPinNames(displayPartsName, ioNames);
     }
     return parts;
   }
@@ -6216,17 +2112,19 @@ class Obniz {
   }
 
   send(obj) {
-    if (!obj || (typeof obj !== "object")) {
+    if (!obj || typeof obj !== "object") {
       console.log("obnizjs. didnt send ", obj);
       return;
     }
     if (Array.isArray(obj)) {
-      for (let i=0; i<obj.length; i++) {
+      for (let i = 0; i < obj.length; i++) {
         this.send(obj[i]);
       }
       return;
     }
-    if (this.sendPool) { this.sendPool.push(obj); return; }
+    if (this.sendPool) {
+      this.sendPool.push(obj);return;
+    }
 
     let sendData;
     /* compress */
@@ -6237,7 +2135,7 @@ class Obniz {
         if (compressed) {
           sendData = compressed;
         }
-      } catch(e) {
+      } catch (e) {
         this.error(e);
         return; /* never send when parsing failed */
       }
@@ -6246,10 +2144,10 @@ class Obniz {
       sendData = JSON.stringify([obj]);
     }
     if (this.debugprint) {
-      this.print_debug("send: " + ( (typeof sendData === "string") ? sendData : JSON.stringify(obj)) );
+      this.print_debug("send: " + (typeof sendData === "string" ? sendData : JSON.stringify(obj)));
     }
     /* queue sending */
-    if(typeof sendData === "string") {
+    if (typeof sendData === "string") {
       this._drainQueued();
       this.socket.send(sendData);
     } else {
@@ -6265,12 +2163,12 @@ class Obniz {
   _drainQueued() {
     if (!this._sendQueue) return;
     let expectSize = 0;
-    for (let i=0; i<this._sendQueue.length; i++) {
+    for (let i = 0; i < this._sendQueue.length; i++) {
       expectSize += this._sendQueue[i].length;
     }
     let filled = 0;
     let sendData = new Uint8Array(expectSize);
-    for (let i=0; i<this._sendQueue.length; i++) {
+    for (let i = 0; i < this._sendQueue.length; i++) {
       sendData.set(this._sendQueue[i], filled);
       filled += this._sendQueue[i].length;
     }
@@ -6278,7 +2176,7 @@ class Obniz {
     delete this._sendQueue;
     clearTimeout(this._sendQueueTimer);
     this._sendQueueTimer = null;
-    
+
     if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
       this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
     }
@@ -6286,36 +2184,48 @@ class Obniz {
 
   init() {
     this.io = new PeripheralIO_(this);
-    for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
-    for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
-    for (let i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
-    for (let i=0; i<1;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
-    for (let i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
-    for (let i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
-  
+    for (let i = 0; i < 12; i++) {
+      this["io" + i] = new PeripheralIO(this, i);
+    }
+    for (let i = 0; i < 12; i++) {
+      this["ad" + i] = new PeripheralAD(this, i);
+    }
+    for (let i = 0; i < 2; i++) {
+      this["uart" + i] = new PeripheralUART(this, i);
+    }
+    for (let i = 0; i < 1; i++) {
+      this["spi" + i] = new PeripheralSPI(this, i);
+    }
+    for (let i = 0; i < 1; i++) {
+      this["i2c" + i] = new PeripheralI2C(this, i);
+    }
+    for (let i = 0; i < 6; i++) {
+      this["pwm" + i] = new PeripheralPWM(this, i);
+    }
+
     this.display = new Display(this);
     this.switch = new ObnizSwitch(this);
     this.logicAnalyzer = new LogicAnalyzer(this);
     this.ble = new ObnizBLE(this);
     this.measure = new ObnizMeasure(this);
-  
+
     this.util = new ObnizUtil(this);
   }
 
   isValidIO(io) {
-    return (typeof io === "number" && io >= 0 && io < 12);
+    return typeof io === "number" && io >= 0 && io < 12;
   }
 
   setVccGnd(vcc, gnd, drive) {
-    if(this.isValidIO(vcc)){
-      if(drive){
+    if (this.isValidIO(vcc)) {
+      if (drive) {
         this.getIO(vcc).drive(drive);
       }
       this.getIO(vcc).output(true);
     }
-    
-    if(this.isValidIO(gnd)){
-      if(drive){
+
+    if (this.isValidIO(gnd)) {
+      if (drive) {
         this.getIO(gnd).drive(drive);
       }
       this.getIO(gnd).output(false);
@@ -6369,10 +2279,10 @@ class Obniz {
   }
 
   getI2CWithConfig(config) {
-    if(typeof config !== "object" ){
+    if (typeof config !== "object") {
       throw new Error("getI2CWithConfig need config arg");
     }
-    if(config.i2c){
+    if (config.i2c) {
       return config.i2c;
     }
     let i2c = this.getFreeI2C();
@@ -6397,10 +2307,10 @@ class Obniz {
   }
 
   getSpiWithConfig(config) {
-    if(typeof config !== "object" ){
+    if (typeof config !== "object") {
       throw new Error("getSpiWithConfig need config arg");
     }
-    if(config.spi){
+    if (config.spi) {
       return config.spi;
     }
     let spi = this.getFreeSpi();
@@ -6425,37 +2335,37 @@ class Obniz {
   }
 
   addPongObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.pongObservers.push(callback);
     }
   }
   removePongObserver(callback) {
-    if(this.pongObservers.includes(callback)){
-      let index =  this.pongObservers.indexOf(callback);
-      this.pongObservers.splice(index,1);
+    if (this.pongObservers.includes(callback)) {
+      let index = this.pongObservers.indexOf(callback);
+      this.pongObservers.splice(index, 1);
     }
-
   }
   handleSystemCommand(wsObj) {
     // ready
     if (wsObj.pong) {
-      for(let callback of this.pongObservers){
+      for (let callback of this.pongObservers) {
         callback(wsObj);
       }
-      
     }
   }
 
   handleWSCommand(wsObj) {
     // ready
     if (wsObj.ready) {
-  
+
       this.resetOnDisconnect(true);
-      if (this.isNode === false) { this.showOnLine(); }
+      if (this.isNode === false) {
+        this.showOnLine();
+      }
       if (this.onconnect) {
         let promise = this.onconnect(this);
-        if(promise instanceof Promise){
-          promise.catch((err) => {
+        if (promise instanceof Promise) {
+          promise.catch(err => {
             console.error(err);
           });
         }
@@ -6471,7 +2381,7 @@ class Obniz {
 
   message(target, message) {
     let targets = [];
-    if (typeof (target) === "string") {
+    if (typeof target === "string") {
       targets.push(target);
     } else {
       targets = target;
@@ -6484,24 +2394,31 @@ class Obniz {
     });
   }
 
-// --- System ---
+  // --- System ---
 
 
   repeat(callback, interval) {
+    let loop = (() => {
+      var _ref = _asyncToGenerator(function* () {
+        if (typeof self.looper === "function") {
+          yield self.looper();
+          setTimeout(loop, interval);
+        }
+      });
+
+      return function loop() {
+        return _ref.apply(this, arguments);
+      };
+    })();
+
     if (this.looper) {
       this.looper = callback;
       return;
     }
     this.looper = callback;
     let self = this;
-    if (!interval)
-      interval = 100;
-    async function loop() {
-      if (typeof (self.looper) === "function") {
-        await self.looper();
-        setTimeout(loop, interval);
-      }
-    }
+    if (!interval) interval = 100;
+
     loop();
   }
 
@@ -6515,56 +2432,57 @@ class Obniz {
     return new Promise(resolve => setTimeout(resolve, msec));
   }
 
-  reset() { this.send({ system: { reset: true } }); this.init(); }
-  selfCheck() { this.send({ system: { self_check: true } }); }
-  keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
-  resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }
+  reset() {
+    this.send({ system: { reset: true } });this.init();
+  }
+  selfCheck() {
+    this.send({ system: { self_check: true } });
+  }
+  keepWorkingAtOffline(working) {
+    this.send({ system: { keep_working_at_offline: working } });
+  }
+  resetOnDisconnect(reset) {
+    this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
+  }
 
-  pingWait(unixtime, rand){
+  pingWait(unixtime, rand) {
     unixtime = unixtime || new Date().getTime();
-    let upper = Math.floor( unixtime / Math.pow(2,32));
-    let lower = unixtime - upper * Math.pow(2,32);
-    rand = rand || Math.floor(Math.random() * Math.pow(2,4));
+    let upper = Math.floor(unixtime / Math.pow(2, 32));
+    let lower = unixtime - upper * Math.pow(2, 32);
+    rand = rand || Math.floor(Math.random() * Math.pow(2, 4));
     let buf = [];
 
+    buf.push(upper >>> 8 * 3 & 0xFF);
+    buf.push(upper >>> 8 * 2 & 0xFF);
+    buf.push(upper >>> 8 * 1 & 0xFF);
+    buf.push(upper >>> 8 * 0 & 0xFF);
+    buf.push(lower >>> 8 * 3 & 0xFF);
+    buf.push(lower >>> 8 * 2 & 0xFF);
+    buf.push(lower >>> 8 * 1 & 0xFF);
+    buf.push(lower >>> 8 * 0 & 0xFF);
+    buf.push(rand >>> 8 * 3 & 0xFF);
+    buf.push(rand >>> 8 * 2 & 0xFF);
+    buf.push(rand >>> 8 * 1 & 0xFF);
+    buf.push(rand >>> 8 * 0 & 0xFF);
+    this.send({ system: { ping: { key: buf } } });
 
-    buf.push((upper >>> 8*3) & 0xFF);
-    buf.push((upper >>> 8*2) & 0xFF);
-    buf.push((upper >>> 8*1) & 0xFF);
-    buf.push((upper >>> 8*0) & 0xFF);
-    buf.push((lower >>> 8*3) & 0xFF);
-    buf.push((lower >>> 8*2) & 0xFF);
-    buf.push((lower >>> 8*1) & 0xFF);
-    buf.push((lower >>> 8*0) & 0xFF);
-    buf.push((rand >>> 8*3) & 0xFF);
-    buf.push((rand >>> 8*2) & 0xFF);
-    buf.push((rand >>> 8*1) & 0xFF);
-    buf.push((rand >>> 8*0) & 0xFF);
-    this.send({ system: { ping: {key : buf } }});
-
-    return new Promise((resolve)=>{
-      let callback = (systemObj) => {
-        for(let i =0;i<buf.length;i++){
-          if(buf[i] !== systemObj.pong.key[i]){
+    return new Promise(resolve => {
+      let callback = systemObj => {
+        for (let i = 0; i < buf.length; i++) {
+          if (buf[i] !== systemObj.pong.key[i]) {
             return;
           }
         }
         this.removePongObserver(callback);
-        let upper = ((systemObj.pong.key[0] << 8 * 3) >>> 0)
-            + ((systemObj.pong.key[1] << 8 * 2) >>> 0)
-            + ((systemObj.pong.key[2] << 8 * 1) >>> 0)
-            + ((systemObj.pong.key[3] << 8 * 0) >>> 0);
-        let lower = ((systemObj.pong.key[4] << 8 * 3) >>> 0)
-            + ((systemObj.pong.key[5] << 8 * 2) >>> 0)
-            + ((systemObj.pong.key[6] << 8 * 1) >>> 0)
-            + ((systemObj.pong.key[7] << 8 * 0) >>> 0);
+        let upper = (systemObj.pong.key[0] << 8 * 3 >>> 0) + (systemObj.pong.key[1] << 8 * 2 >>> 0) + (systemObj.pong.key[2] << 8 * 1 >>> 0) + (systemObj.pong.key[3] << 8 * 0 >>> 0);
+        let lower = (systemObj.pong.key[4] << 8 * 3 >>> 0) + (systemObj.pong.key[5] << 8 * 2 >>> 0) + (systemObj.pong.key[6] << 8 * 1 >>> 0) + (systemObj.pong.key[7] << 8 * 0 >>> 0);
         let obnizJsPingUnixtime = upper * Math.pow(2, 32) + lower;
         let obnizJsPongUnixtime = new Date().getTime();
-        let allTime = obnizJsPongUnixtime- obnizJsPingUnixtime;
+        let allTime = obnizJsPongUnixtime - obnizJsPingUnixtime;
         let timeJs2server = systemObj.pong.pingServerTime - obnizJsPingUnixtime;
-        let timeServer2Obniz = systemObj.pong.obnizTime - systemObj.pong.pingServerTime ;
-        let timeObniz2Server = systemObj.pong.pongServerTime- systemObj.pong.obnizTime ;
-        let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime ;
+        let timeServer2Obniz = systemObj.pong.obnizTime - systemObj.pong.pingServerTime;
+        let timeObniz2Server = systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
+        let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime;
         let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
         // let str = `ping,${obnizJsPingUnixtime},${systemObj.pong.pingServerTime},${systemObj.pong.obnizTime},${systemObj.pong.pongServerTime}`;
 
@@ -6576,7 +2494,6 @@ class Obniz {
     });
   }
 
-
   warning(msg) {
     if (this.isNode) {
       console.error(msg);
@@ -6586,7 +2503,7 @@ class Obniz {
         console.log(msg.message);
         return;
       }
-      if (typeof (showObnizDebugError) === "function") {
+      if (typeof showObnizDebugError === "function") {
         showObnizDebugError(new Error(msg));
       } else {
         throw new Error(msg);
@@ -6602,7 +2519,7 @@ class Obniz {
         this.showAlertUI(msg);
         msg = msg.message;
       }
-      if (typeof (showObnizDebugError) === "function") {
+      if (typeof showObnizDebugError === "function") {
         showObnizDebugError(new Error(msg));
         console.error(new Error(msg));
       } else {
@@ -6620,53 +2537,56 @@ class Obniz {
       error: 'alert-danger'
     };
     let dom = `
-    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"  }">${obj.message}</div>`;
+    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"}">${obj.message}</div>`;
     document.getElementById(this.debugDomId).insertAdjacentHTML('beforeend', dom);
   }
 
-  getDebugDoms(){
-    if (this.isNode){return;}
+  getDebugDoms() {
+    if (this.isNode) {
+      return;
+    }
     let loaderDom = document.querySelector("#loader");
     let debugDom = document.querySelector("#" + this.debugDomId);
-    let statusDom = document.querySelector("#"+this.debugDomId +" #online-status");
-    if(debugDom && !statusDom){
+    let statusDom = document.querySelector("#" + this.debugDomId + " #online-status");
+    if (debugDom && !statusDom) {
       statusDom = document.createElement("div");
       statusDom.id = 'online-status';
-      statusDom.style.color =  "#FFF";
-      statusDom.style.padding =  "5px";
-      statusDom.style.textAlign =  "center";
+      statusDom.style.color = "#FFF";
+      statusDom.style.padding = "5px";
+      statusDom.style.textAlign = "center";
       debugDom.insertBefore(statusDom, debugDom.firstChild);
     }
-    return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
-
+    return { loaderDom: loaderDom, debugDom: debugDom, statusDom: statusDom };
   }
   showOnLine() {
-    if (this.isNode){return;}
+    if (this.isNode) {
+      return;
+    }
     let doms = this.getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="none";
+    if (doms.loaderDom) {
+      doms.loaderDom.style.display = "none";
     }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#449d44";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = this.id ? "online : "+ this.id : "online";
+    if (doms.statusDom) {
+      doms.statusDom.style.backgroundColor = "#449d44";
+      doms.statusDom.style.color = "#FFF";
+      doms.statusDom.innerHTML = this.id ? "online : " + this.id : "online";
     }
-
   }
   showOffLine() {
-    if (this.isNode){return;}
+    if (this.isNode) {
+      return;
+    }
 
     let doms = this.getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="block";
+    if (doms.loaderDom) {
+      doms.loaderDom.style.display = "block";
     }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#d9534f";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = this.id  ? "offline : "+ this.id : "offline";
+    if (doms.statusDom) {
+      doms.statusDom.style.backgroundColor = "#d9534f";
+      doms.statusDom.style.color = "#FFF";
+      doms.statusDom.innerHTML = this.id ? "offline : " + this.id : "offline";
     }
   }
-
 
 }
 
@@ -6689,47 +2609,47 @@ Obniz.Parts = function (name) {
 function _ReadCookie(name) {
   let nameEQ = name + "=";
   let ca = document.cookie.split(';');
-  for(let i=0;i < ca.length;i++) {
+  for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-      while (c.charAt(0) === ' ') {
-          c = c.substring(1,c.length);
-      }
-      if (c.indexOf(nameEQ) === 0) {
-          return c.substring(nameEQ.length,c.length);
-      }
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1, c.length);
+    }
+    if (c.indexOf(nameEQ) === 0) {
+      return c.substring(nameEQ.length, c.length);
+    }
   }
   return null;
 }
 
 if (!isNode) {
 
-  if(window && window.parent && window.parent.userAppLoaded){
+  if (window && window.parent && window.parent.userAppLoaded) {
     window.parent.userAppLoaded(window);
   }
 
   function showObnizDebugError(err) {
-    if(window.parent && window.parent.logger){
+    if (window.parent && window.parent.logger) {
       window.parent.logger.onObnizError(err);
-    }else{ throw err; }
+    } else {
+      throw err;
+    }
   }
-
 }
-
 
 /*===================*/
 /* Export */
 /*===================*/
 module.exports = Obniz;
 
-
 // read parts
-__webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
-if(__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir){__webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);}
+__webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context.js");
+if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
+  __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
+}
 let context = __webpack_require__("./parts/Accessory sync recursive \\.js$");
-for( let path of context.keys()){
+for (let path of context.keys()) {
   context(path);
 }
-
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
@@ -6741,6 +2661,7 @@ for( let path of context.keys()){
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
 
 
 const BlePeripheral = __webpack_require__(/*! ./blePeripheral */ "./obniz/libs/embeds/ble/blePeripheral.js");
@@ -6749,14 +2670,13 @@ const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obni
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./obniz/libs/embeds/ble/bleRemotePeripheral.js");
 
-
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
-    this.remotePeripherals =  [];
+    this.remotePeripherals = [];
     this.adv_data = [];
     this.scan_resp = [];
-    
+
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
@@ -6767,13 +2687,13 @@ class ObnizBLE {
     var obj = {};
     obj["ble"] = {};
     obj["ble"]["advertisement"] = {
-      adv_data : this.adv_data
+      adv_data: this.adv_data
     };
-    
-    if(this.scan_resp.length > 0){
-       obj["ble"]["advertisement"]["scan_resp"]= this.scan_resp;
+
+    if (this.scan_resp.length > 0) {
+      obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
     }
-    
+
     this.Obniz.send(obj);
     return;
   }
@@ -6798,12 +2718,12 @@ class ObnizBLE {
     return;
   }
 
-  dataBuliderPrototype(){
+  dataBuliderPrototype() {
 
-    var builder = function(Obniz,json){
+    var builder = function (Obniz, json) {
       this.Obniz = Obniz;
-      this.rows  = {};
-      
+      this.rows = {};
+
       if (json) {
         if (json.localName) {
           this.setCompleteLocalName(json.localName);
@@ -6817,103 +2737,97 @@ class ObnizBLE {
           }
         }
       }
-      if(typeof(this.extendEvalJson) === "function"){
+      if (typeof this.extendEvalJson === "function") {
         this.extendEvalJson(json);
       }
-    
-    
     };
-    builder.prototype.setRow = function(type,data){
+    builder.prototype.setRow = function (type, data) {
       this.rows[type] = data;
     };
-    builder.prototype.getRow = function(type){
+    builder.prototype.getRow = function (type) {
       return this.rows[type] || [];
     };
-    
-    builder.prototype.check = function(){
+
+    builder.prototype.check = function () {
       return true;
     };
-    
-    builder.prototype.build = function(){
-      if(!this.check){
+
+    builder.prototype.build = function () {
+      if (!this.check) {
         return;
       }
       var data = [];
-      for(var key in this.rows){
-        if(this.rows[key].length === 0)continue;
-        
-        data.push(this.rows[key].length+1);
+      for (var key in this.rows) {
+        if (this.rows[key].length === 0) continue;
+
+        data.push(this.rows[key].length + 1);
         data.push(parseInt(key));
         Array.prototype.push.apply(data, this.rows[key]);
       }
-      if(data.length > 31){
+      if (data.length > 31) {
         this.Obniz.error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
       }
-      
+
       return data;
     };
-    
-    
-    builder.prototype.setStringData = function (type, string){
+
+    builder.prototype.setStringData = function (type, string) {
       var data = [];
-      
+
       for (var i = 0; i < string.length; i++) {
         data.push(string.charCodeAt(i));
       }
-  
+
       this.setRow(type, data);
     };
-    
-    builder.prototype.setShortenedLocalName = function (name){
-      this.setStringData(0x08,name);
+
+    builder.prototype.setShortenedLocalName = function (name) {
+      this.setStringData(0x08, name);
     };
-    builder.prototype.setCompleteLocalName = function (name){
-      this.setStringData(0x09,name);
+    builder.prototype.setCompleteLocalName = function (name) {
+      this.setStringData(0x09, name);
     };
-    
-    builder.prototype.setManufacturerSpecificData = function (campanyCode, data){
+
+    builder.prototype.setManufacturerSpecificData = function (campanyCode, data) {
       var row = [];
       row.push(campanyCode & 0xFF);
-      row.push((campanyCode >> 8) & 0xFF);
-      Array.prototype.push.apply(row , data);
+      row.push(campanyCode >> 8 & 0xFF);
+      Array.prototype.push.apply(row, data);
       this.setRow(0xFF, row);
     };
-    
-    builder.prototype.setUuid =function(uuid){
+
+    builder.prototype.setUuid = function (uuid) {
       var uuidData = this.convertUuid(uuid);
-      var type = { 16:0x06, 4:0x04, 2:0x02 }[uuidData.length]; 
-      this.setRow(type,uuidData);
+      var type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
+      this.setRow(type, uuidData);
     };
-    
-    builder.prototype.convertUuid = function(uuid){
+
+    builder.prototype.convertUuid = function (uuid) {
       var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
-      if (uuidNumeric.length !== 32 
-          && uuidNumeric.length !== 8 
-          && uuidNumeric.length !== 4 ) {
+      if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
         this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
       }
-      
+
       var data = [];
-      for (var i = uuidNumeric.length; i > 1 ; i -= 2) {
-        data.push(parseInt(uuidNumeric[i-2] + uuidNumeric[i - 1], 16));
+      for (var i = uuidNumeric.length; i > 1; i -= 2) {
+        data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
       }
       return data;
     };
-    
+
     builder.prototype.setIbeaconData = function (uuid, major, minor, txPower) {
       var data = [];
       data.push(0x02, 0x15); // fixed data
-  
+
       var uuidData = this.convertUuid(uuid);
       Array.prototype.push.apply(data, uuidData);
-      
-      
-      data.push((major >> 8) & 0xFF);
-      data.push((major >> 0) & 0xFF);
-      data.push((minor >> 8) & 0xFF);
-      data.push((minor >> 0) & 0xFF);
-      data.push((txPower >> 0) & 0xFF);
-  
+
+      data.push(major >> 8 & 0xFF);
+      data.push(major >> 0 & 0xFF);
+      data.push(minor >> 8 & 0xFF);
+      data.push(minor >> 0 & 0xFF);
+      data.push(txPower >> 0 & 0xFF);
+
       this.setManufacturerSpecificData(0x004c, data);
       return;
     };
@@ -6921,62 +2835,57 @@ class ObnizBLE {
     return builder;
   }
 
-  advDataBulider(jsonVal){
+  advDataBulider(jsonVal) {
     var builder = this.dataBuliderPrototype();
-    
-    builder.prototype.check = function(){
-    
+
+    builder.prototype.check = function () {
+
       return true;
     };
-    
-    builder.prototype.extendEvalJson = function(json){
-      if(json){
+
+    builder.prototype.extendEvalJson = function (json) {
+      if (json) {
         if (json.flags) {
-          if (json.flags.includes("limited_discoverable_mode"))
-            this.setLeLimitedDiscoverableModeFlag();
-          if (json.flags.includes("general_discoverable_mode"))
-            this.setLeGeneralDiscoverableModeFlag();
-          if (json.flags.includes("br_edr_not_supported"))
-            this.setBrEdrNotSupportedFlag();
-          if (json.flags.includes("le_br_edr_controller"))
-            this.setLeBrEdrControllerFlag();
-          if (json.flags.includes("le_br_edr_host"))
-            this.setLeBrEdrHostFlag();
+          if (json.flags.includes("limited_discoverable_mode")) this.setLeLimitedDiscoverableModeFlag();
+          if (json.flags.includes("general_discoverable_mode")) this.setLeGeneralDiscoverableModeFlag();
+          if (json.flags.includes("br_edr_not_supported")) this.setBrEdrNotSupportedFlag();
+          if (json.flags.includes("le_br_edr_controller")) this.setLeBrEdrControllerFlag();
+          if (json.flags.includes("le_br_edr_host")) this.setLeBrEdrHostFlag();
         }
       }
     };
-    
-    builder.prototype.setFlags = function(flag){
+
+    builder.prototype.setFlags = function (flag) {
       var data = this.getRow(0x01);
       data[0] = (data[0] || 0) | flag;
-      this.setRow(0x01,data);
+      this.setRow(0x01, data);
     };
-    builder.prototype.setLeLimitedDiscoverableModeFlag = function (){
+    builder.prototype.setLeLimitedDiscoverableModeFlag = function () {
       this.setFlags(0x01);
     };
-    builder.prototype.setLeGeneralDiscoverableModeFlag = function (){
+    builder.prototype.setLeGeneralDiscoverableModeFlag = function () {
       this.setFlags(0x02);
     };
-    builder.prototype.setBrEdrNotSupportedFlag = function (){
+    builder.prototype.setBrEdrNotSupportedFlag = function () {
       this.setFlags(0x04);
     };
-    builder.prototype.setLeBrEdrControllerFlag = function (){
+    builder.prototype.setLeBrEdrControllerFlag = function () {
       this.setFlags(0x08);
     };
-    builder.prototype.setLeBrEdrHostFlag = function (){
+    builder.prototype.setLeBrEdrHostFlag = function () {
       this.setFlags(0x10);
     };
-    
-    return new builder(this.Obniz,jsonVal);
+
+    return new builder(this.Obniz, jsonVal);
   }
 
-  scanRespDataBuilder(json){
+  scanRespDataBuilder(json) {
     var builder = this.dataBuliderPrototype();
-    return new builder(this.Obniz,json);
+    return new builder(this.Obniz, json);
   }
 
   setScanRespDataRaw(scan_resp) {
-    this.scan_resp = scan_resp; 
+    this.scan_resp = scan_resp;
   }
 
   setScanRespData(json) {
@@ -6987,14 +2896,14 @@ class ObnizBLE {
     var obj = {};
     obj["ble"] = {};
     obj["ble"]["scan"] = {
-  //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-  //    "interval" : settings && settings.interval ? settings.interval : 30,
-      "duration" : settings && settings.duration ? settings.duration : 30
-      
+      //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+      //    "interval" : settings && settings.interval ? settings.interval : 30,
+      "duration": settings && settings.duration ? settings.duration : 30
+
     };
-    
-    this.remotePeripherals =  [];
-    
+
+    this.remotePeripherals = [];
+
     this.Obniz.send(obj);
     return;
   }
@@ -7002,13 +2911,13 @@ class ObnizBLE {
   stopScan() {
     var obj = {};
     obj["ble"] = {};
-     obj["ble"]["scan"] = null;
+    obj["ble"]["scan"] = null;
     this.Obniz.send(obj);
   }
 
-  findPeripheral (address) {
-    for( var key in this.remotePeripherals){
-      if(this.remotePeripherals[key].address === address){
+  findPeripheral(address) {
+    for (var key in this.remotePeripherals) {
+      if (this.remotePeripherals[key].address === address) {
         return this.remotePeripherals[key];
       }
     }
@@ -7035,8 +2944,7 @@ class ObnizBLE {
 
     if (obj.status_update) {
       let params = obj.status_update;
-      if (!params.address)
-        return;
+      if (!params.address) return;
       let p = this.findPeripheral(params.address);
       if (p) {
         if (params.status === "connected") {
@@ -7128,10 +3036,10 @@ class ObnizBLE {
         }
       }
     }
-    
+
     var callbackFunc = function (val, func, type) {
       var obj = null;
-      if(val === undefined) return;
+      if (val === undefined) return;
       if (type === "service") {
         obj = this.peripheral.getService(val);
       } else if (type === "characteristic") {
@@ -7141,46 +3049,45 @@ class ObnizBLE {
       }
       func(val, obj);
     }.bind(this);
-    
-     if (obj.peripheral) {
-       callbackFunc(obj.peripheral.connection_status, function(val){
-         this.peripheral.onconnectionupdates(val);
-       }.bind(this));
-       
-       var paramList = {
-         read_characteristic_result : { method: "onread", obj:"characteristic"},
-         write_characteristic_result : { method: "onwrite", obj:"characteristic"},
-         notify_read_characteristic : { method: "onreadfromremote", obj:"characteristic"},
-         notify_write_characteristic : { method: "onwritefromremote", obj:"characteristic"},
-         read_descriptor_result : { method: "onread", obj:"descriptor"},
-         write_descriptor_result : { method: "onwrite", obj:"descriptor"},
-         notify_read_descriptor : { method: "onreadfromremote", obj:"descriptor"},
-         notify_write_descriptor : { method: "onwritefromremote", obj:"descriptor"},
-       }
-       
-       for(var key in paramList){
-        callbackFunc(obj.peripheral[key], function(val,bleobj){
+
+    if (obj.peripheral) {
+      callbackFunc(obj.peripheral.connection_status, function (val) {
+        this.peripheral.onconnectionupdates(val);
+      }.bind(this));
+
+      var paramList = {
+        read_characteristic_result: { method: "onread", obj: "characteristic" },
+        write_characteristic_result: { method: "onwrite", obj: "characteristic" },
+        notify_read_characteristic: { method: "onreadfromremote", obj: "characteristic" },
+        notify_write_characteristic: { method: "onwritefromremote", obj: "characteristic" },
+        read_descriptor_result: { method: "onread", obj: "descriptor" },
+        write_descriptor_result: { method: "onwrite", obj: "descriptor" },
+        notify_read_descriptor: { method: "onreadfromremote", obj: "descriptor" },
+        notify_write_descriptor: { method: "onwritefromremote", obj: "descriptor" }
+      };
+
+      for (var key in paramList) {
+        callbackFunc(obj.peripheral[key], function (val, bleobj) {
           bleobj[paramList[key].method](val);
         }.bind(this), paramList[key].obj);
       }
-     }
+    }
 
     if (obj.error) {
       let params = obj.error;
-        if (!params.address){
-           if(typeof(this.onerror) === "function"){
-             this.onerror(params);
-           }
+      if (!params.address) {
+        if (typeof this.onerror === "function") {
+          this.onerror(params);
         }
-         
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          p.onerror(params);
-        }
+      }
+
+      let p = this.findPeripheral(params.address);
+      if (p) {
+        p.onerror(params);
+      }
     }
   }
 }
-
 
 module.exports = ObnizBLE;
 
@@ -7193,36 +3100,38 @@ module.exports = ObnizBLE;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 
 class BleCharacteristic {
-  
-  constructor(obj){
+
+  constructor(obj) {
     this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase() ;
+    this.uuid = obj.uuid.toLowerCase();
     this.data = obj.data || null;
-    if(! this.data && obj.text){
+    if (!this.data && obj.text) {
       this.data = ObnizUtil.string2dataArray(obj.text);
     }
-    if(! this.data && obj.value){
+    if (!this.data && obj.value) {
       this.data = obj.value;
     }
-    
+
     this.property = obj.property || [];
-    if(!Array.isArray(this.property)){
+    if (!Array.isArray(this.property)) {
       this.property = [this.property];
     }
-    
-    if(obj["descriptors"]){
-       for(var key in obj["descriptors"]){
+
+    if (obj["descriptors"]) {
+      for (var key in obj["descriptors"]) {
         this.addDescriptor(obj["descriptors"][key]);
       }
     }
   }
 
   addDescriptor(obj) {
-    if(! (obj instanceof BleDescriptor ) ){
+    if (!(obj instanceof BleDescriptor)) {
       obj = new BleDescriptor(obj);
     }
     this.descriptors.push(obj);
@@ -7230,63 +3139,57 @@ class BleCharacteristic {
   }
 
   getDescriptor(uuid) {
-    return this.descriptors.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
+    return this.descriptors.filter(function (element) {
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
     }).shift();
   }
 
-  write(data){
-    if(!Array.isArray(data)){
+  write(data) {
+    if (!Array.isArray(data)) {
       data = [data];
     }
-    this.service.peripheral.Obniz.send(
-        {
-          ble : {
-          peripheral: {
-            write_characteristic: {
-              service_uuid: this.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.uuid.toLowerCase() ,
-              data: data
-            }
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          write_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+            data: data
           }
         }
       }
-    );
+    });
   }
 
-  read(){
-    this.service.peripheral.Obniz.send(
-        {
-          ble : {
-          peripheral: {
-            read_characteristic: {
-              service_uuid: this.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.uuid.toLowerCase() ,
-            }
+  read() {
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          read_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase()
           }
         }
       }
-    );
+    });
   }
-  onwrite(){};
-  onread(){};
-  onwritefromremote(){};
-  onreadfromremote(){};
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
 
-  toJSON(){
+  toJSON() {
     var obj = {
-      uuid : this.uuid.toLowerCase()  ,
-      data : this.data ,
-      descriptors : this.descriptors
+      uuid: this.uuid.toLowerCase(),
+      data: this.data,
+      descriptors: this.descriptors
     };
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-      
+    if (this.property.length > 0) {
+      obj.property = this.property;
     }
     return obj;
   }
 }
-
 
 module.exports = BleCharacteristic;
 
@@ -7299,6 +3202,9 @@ module.exports = BleCharacteristic;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 
 /**
@@ -7308,76 +3214,72 @@ const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/util
  */
 class BleDescriptor {
 
-  constructor(obj){
+  constructor(obj) {
     this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    
+    this.uuid = obj.uuid.toLowerCase();
+
     this.data = obj.data || null;
-    if(! this.data && obj.text){
+    if (!this.data && obj.text) {
       this.data = ObnizUtil.string2dataArray(obj.text);
     }
-    if(! this.data && obj.value){
+    if (!this.data && obj.value) {
       this.data = obj.value;
     }
-    
+
     this.property = obj.property || [];
-    if(!Array.isArray(this.property)){
+    if (!Array.isArray(this.property)) {
       this.property = [this.property];
     }
   }
 
-  toJSON(){
-    var obj =  {
-      uuid : this.uuid.toLowerCase()  ,
-      data : this.data ,
+  toJSON() {
+    var obj = {
+      uuid: this.uuid.toLowerCase(),
+      data: this.data
     };
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
+    if (this.property.length > 0) {
+      obj.property = this.property;
     }
     return obj;
   }
 
-  write(data){
-    if(!Array.isArray(data)){
+  write(data) {
+    if (!Array.isArray(data)) {
       data = [data];
     }
-    this.characteristic.service.peripheral.Obniz.send(
-        {
-          ble : {
-          peripheral: {
-            write_descriptor: {
-              service_uuid: this.characteristic.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
-              descriptor_uuid: this.uuid,
-              data: data
-            }
+    this.characteristic.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          write_descriptor: {
+            service_uuid: this.characteristic.service.uuid.toLowerCase(),
+            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            descriptor_uuid: this.uuid,
+            data: data
           }
         }
       }
-    );
+    });
   }
 
-  read(){
-  
-    this.characteristic.service.peripheral.Obniz.send(
-        {
-          ble : {
-          peripheral: {
-            read_descriptor: {
-              service_uuid: this.characteristic.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
-              descriptor_uuid: this.uuid
-            }
+  read() {
+
+    this.characteristic.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          read_descriptor: {
+            service_uuid: this.characteristic.service.uuid.toLowerCase(),
+            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            descriptor_uuid: this.uuid
           }
         }
       }
-    );
+    });
   }
 
-  onwrite(){};
-  onread(){};
-  onwritefromremote(){}
-  onreadfromremote(){};
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
 }
 
 module.exports = BleDescriptor;
@@ -7391,73 +3293,74 @@ module.exports = BleDescriptor;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
 
 class BlePeripheral {
 
-  constructor(Obniz){
+  constructor(Obniz) {
     this.Obniz = Obniz;
     this.services = [];
   }
 
   addService(obj) {
-    if(! (obj instanceof BleService ) ){
+    if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
     this.services.push(obj);
     obj.peripheral = this;
-    this.Obniz.send({ble:{peripheral:{services:[obj]}}});
+    this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
   }
 
   setJson(json) {
-    if(json["services"]){
-      for(var key in json["services"]){
+    if (json["services"]) {
+      for (var key in json["services"]) {
         this.addService(json["services"][key]);
       }
     }
   }
 
   getService(uuid) {
-    return this.services.filter(function(element){
+    return this.services.filter(function (element) {
       return element.uuid === uuid;
     }).shift();
   }
 
-  toJSON(){
+  toJSON() {
     return {
-      services : this.services
+      services: this.services
     };
   }
 
-  onconnectionupdates(){};
+  onconnectionupdates() {}
 
-  findCharacteristic(param){
-    var serviceUuid = param.service_uuid.toLowerCase() ;
-    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
+  findCharacteristic(param) {
+    var serviceUuid = param.service_uuid.toLowerCase();
+    var characteristicUuid = param.characteristic_uuid.toLowerCase();
     var s = this.getService(serviceUuid);
-    if(s){
+    if (s) {
       var c = s.getCharacteristic(characteristicUuid);
       return c;
     }
     return null;
   }
 
-  findDescriptor(param){
-    var descriptorUuid = param.descriptor_uuid.toLowerCase() ;
+  findDescriptor(param) {
+    var descriptorUuid = param.descriptor_uuid.toLowerCase();
     var c = this.findCharacteristic(param);
-    if(c){
+    if (c) {
       var d = c.getDescriptor(descriptorUuid);
       return d;
     }
     return null;
   }
 
-  end(){
-    this.Obniz.send({ble:{peripheral:null}});
+  end() {
+    this.Obniz.send({ ble: { peripheral: null } });
   }
 }
-
 
 module.exports = BlePeripheral;
 
@@ -7470,102 +3373,107 @@ module.exports = BlePeripheral;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
 
-
 class BleRemoteCharacteristic {
 
-  constructor(Obniz, service, uuid){
+  constructor(Obniz, service, uuid) {
     this.Obniz = Obniz;
     this.service = service;
     this.uuid = uuid;
     this.descriptors = [];
   }
 
-  toString(){
+  toString() {
     return JSON.stringify({
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid
-        });
+      "address": this.service.peripheral.address,
+      "service_uuid": this.service.uuid,
+      "characteristic_uuid": this.uuid
+    });
   }
 
-  read(){
+  read() {
     var obj = {
-      "ble" :{
-        "read_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid
+      "ble": {
+        "read_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  async readWait(){
-    throw new Error("TODO");
+  readWait() {
+    return _asyncToGenerator(function* () {
+      throw new Error("TODO");
+    })();
   }
 
-  write(array){
+  write(array) {
     var obj = {
-      "ble" :{
-        "write_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "data" : array
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "data": array
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  writeNumber(val){
+  writeNumber(val) {
     var obj = {
-      "ble" :{
-        "write_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "value" : val
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "value": val
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  writeText(str){
+  writeText(str) {
     var obj = {
-      "ble" :{
-        "write_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "text" : str
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "text": str
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  discoverAllDescriptors(str){
+  discoverAllDescriptors(str) {
     var obj = {
-      "ble" :{
-        "get_descriptors" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid
+      "ble": {
+        "get_descriptors": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  getDescriptor(uuid){
-    for(var key in this.descriptors){
-      if(this.descriptors[key].uuid === uuid){
+  getDescriptor(uuid) {
+    for (var key in this.descriptors) {
+      if (this.descriptors[key].uuid === uuid) {
         return this.descriptors[key];
       }
     }
@@ -7574,11 +3482,9 @@ class BleRemoteCharacteristic {
     return newDescriptors;
   }
 
-  onwrite(status){};
-  onread(value){};
-  ondiscoverdescriptor(descriptor){};
-
-
+  onwrite(status) {}
+  onread(value) {}
+  ondiscoverdescriptor(descriptor) {}
 }
 module.exports = BleRemoteCharacteristic;
 
@@ -7589,65 +3495,69 @@ module.exports = BleRemoteCharacteristic;
   !*** ./obniz/libs/embeds/ble/bleRemoteDescriptor.js ***!
   \******************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 class BleRemoteDescriptor {
-  constructor(Obniz, characteristic, uuid){
+  constructor(Obniz, characteristic, uuid) {
     this.Obniz = Obniz;
     this.characteristic = characteristic;
     this.uuid = uuid;
   }
 
-  toString(){
+  toString() {
     return JSON.stringify({
-      "address" : this.characteristic.service.peripheral.address,
-      "service_uuid" : this.characteristic.service.uuid,
-      "characteristic_uuid" : this.characteristic.uuid,
-      "descriptor_uuid" : this.uuid
+      "address": this.characteristic.service.peripheral.address,
+      "service_uuid": this.characteristic.service.uuid,
+      "characteristic_uuid": this.characteristic.uuid,
+      "descriptor_uuid": this.uuid
     });
   }
 
-  read(){
+  read() {
     var obj = {
-      "ble" :{
-        "read_descriptor" :{
-          "address" : this.characteristic.service.peripheral.address,
-          "service_uuid" : this.characteristic.service.uuid,
-          "characteristic_uuid" : this.characteristic.uuid,
-          "descriptor_uuid" : this.uuid
+      "ble": {
+        "read_descriptor": {
+          "address": this.characteristic.service.peripheral.address,
+          "service_uuid": this.characteristic.service.uuid,
+          "characteristic_uuid": this.characteristic.uuid,
+          "descriptor_uuid": this.uuid
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  async readWait(){
-    throw new Error("TODO");
+  readWait() {
+    return _asyncToGenerator(function* () {
+      throw new Error("TODO");
+    })();
   }
 
-  write(array){
+  write(array) {
     var obj = {
-      "ble" :{
-        "write_descriptor" :{
-          "address" : this.characteristic.service.peripheral.address,
-          "service_uuid" : this.characteristic.service.uuid,
-          "characteristic_uuid" : this.characteristic.uuid,
-          "descriptor_uuid" : this.uuid,
-          "data" : array
+      "ble": {
+        "write_descriptor": {
+          "address": this.characteristic.service.peripheral.address,
+          "service_uuid": this.characteristic.service.uuid,
+          "characteristic_uuid": this.characteristic.uuid,
+          "descriptor_uuid": this.uuid,
+          "data": array
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  onread(value){};
-  onwrite(value){};
+  onread(value) {}
+  onwrite(value) {}
 }
 
 module.exports = BleRemoteDescriptor;
-
 
 /***/ }),
 
@@ -7658,31 +3568,26 @@ module.exports = BleRemoteDescriptor;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
 
 class BleRemotePeripheral {
 
-  constructor(Obniz, address){
+  constructor(Obniz, address) {
     this.Obniz = Obniz;
     this.address = address;
-    
-    this.keys = [
-      "device_type",
-      "address_type",
-      "ble_event_type",
-      "rssi",
-      "adv_data",
-      "scan_resp",
-    ];
-    
+
+    this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
+
     this.services = [];
   }
 
-/**
- * 
- * @return {String} json value
- */
+  /**
+   * 
+   * @return {String} json value
+   */
   toString() {
     return JSON.stringify({
       id: this.id,
@@ -7697,9 +3602,9 @@ class BleRemotePeripheral {
   }
 
   setParams(dic) {
-    for(var key in dic){
-      if(this.keys.includes(key)){
-        this[key] = dic[key] ;
+    for (var key in dic) {
+      if (this.keys.includes(key)) {
+        this[key] = dic[key];
       }
     }
   }
@@ -7719,7 +3624,7 @@ class BleRemotePeripheral {
         }
       }
       if (this.scan_resp) {
-  
+
         for (var i = 0; i < this.scan_resp.length; i++) {
           var length = this.scan_resp[i];
           var arr = new Array(length);
@@ -7733,11 +3638,10 @@ class BleRemotePeripheral {
     }
   }
 
-
-  serarchTypeVal(type){
+  serarchTypeVal(type) {
     this.analyseAdvertisement();
-    for(var i = 0;i<this.advertise_data_rows.length;i++){
-      if(this.advertise_data_rows[i][0] === type){
+    for (var i = 0; i < this.advertise_data_rows.length; i++) {
+      if (this.advertise_data_rows[i][0] === type) {
         var results = [].concat(this.advertise_data_rows[i]);
         results.shift();
         return results;
@@ -7746,105 +3650,98 @@ class BleRemotePeripheral {
     return undefined;
   }
 
-  localName(){
+  localName() {
     var data = this.serarchTypeVal(0x09);
-    if(!data){
-       data = this.serarchTypeVal(0x08);
+    if (!data) {
+      data = this.serarchTypeVal(0x08);
     }
-    if(!data)return null;
+    if (!data) return null;
     return String.fromCharCode.apply(null, data);
   }
 
-  iBeacon(){
+  iBeacon() {
     var data = this.serarchTypeVal(0xFF);
-    if(!data 
-        || data[0] !== 0x4c
-        || data[1] !== 0x00
-        || data[2] !== 0x02
-        || data[3] !== 0x15 
-        || data.length !== 25)return null;
-    
+    if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) return null;
+
     var uuidData = data.slice(4, 20);
     var uuid = "";
-    for(var i = 0; i< uuidData.length;i++){
-      uuid = uuid + (( '00' + uuidData[i].toString(16) ).slice( -2 ));
-      if(i === (4-1) ||i === (4+2-1) ||i === (4+2*2-1) ||i === (4+2*3-1) ){
+    for (var i = 0; i < uuidData.length; i++) {
+      uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+      if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
         uuid += "-";
       }
     }
-    
-    var major = (data[20]<<8) + data[21];
-    var minor = (data[22]<<8) + data[23];
+
+    var major = (data[20] << 8) + data[21];
+    var minor = (data[22] << 8) + data[23];
     var power = data[24];
-    
+
     return {
-      uuid : uuid,
+      uuid: uuid,
       major: major,
-      minor :minor,
-      power :power,
-      rssi :this.rssi
+      minor: minor,
+      power: power,
+      rssi: this.rssi
     };
   }
 
-  connect(callbacks){
-    var keys = ["onconnect","ondisconnect"];
+  connect(callbacks) {
+    var keys = ["onconnect", "ondisconnect"];
     this.setParams(keys, callbacks);
-    
+
     var obj = {
-      "ble" :{
-        "connect" :{
-          "address" : this.address
+      "ble": {
+        "connect": {
+          "address": this.address
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  disconnect(){
+  disconnect() {
     var obj = {
-      "ble" :{
-        "disconnect" :{
-          "address" : this.address
+      "ble": {
+        "disconnect": {
+          "address": this.address
         }
       }
     };
-    this.Obniz.send(obj); 
+    this.Obniz.send(obj);
   }
 
-  updateRssi(){
+  updateRssi() {
     throw new Error("todo");
   }
 
-  getService(uuid){
-    for(var key in this.services){
-      if(this.services[key].uuid === uuid){
+  getService(uuid) {
+    for (var key in this.services) {
+      if (this.services[key].uuid === uuid) {
         return this.services[key];
       }
     }
-    var newService = new BleRemoteService(this.Obniz,this, uuid);
+    var newService = new BleRemoteService(this.Obniz, this, uuid);
     this.services.push(newService);
     return newService;
   }
 
-  discoverAllServices(){
+  discoverAllServices() {
     var obj = {
-      "ble" :{
-        "get_services" :{
-          "address" : this.address
+      "ble": {
+        "get_services": {
+          "address": this.address
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  onconnect(){};
-  ondisconnect(){};
-  ondiscoverservice(service){};
+  onconnect() {}
+  ondisconnect() {}
+  ondiscoverservice(service) {}
 
-  onerror(err){};
-
+  onerror(err) {}
 }
-
 
 module.exports = BleRemotePeripheral;
 
@@ -7857,42 +3754,44 @@ module.exports = BleRemotePeripheral;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
 
 class BleRemoteService {
 
-  constructor(Obniz, peripheral, uuid){
+  constructor(Obniz, peripheral, uuid) {
     this.Obniz = Obniz;
     this.uuid = uuid;
     this.peripheral = peripheral;
-    
+
     this.characteristics = [];
   }
 
-  toString(){
+  toString() {
     return JSON.stringify({
-          "address" : this.peripheral.address,
-          "service_uuid" : this.uuid
+      "address": this.peripheral.address,
+      "service_uuid": this.uuid
     });
   }
 
-  discoverAllCharacteristics(){
+  discoverAllCharacteristics() {
     var obj = {
-      "ble" :{
-        "get_characteristics" :{
-          "address" : this.peripheral.address,
-          "service_uuid" : this.uuid
+      "ble": {
+        "get_characteristics": {
+          "address": this.peripheral.address,
+          "service_uuid": this.uuid
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  getCharacteristic(uuid){
-  
-    for(var key in this.characteristics){
-      if(this.characteristics[key].uuid === uuid){
+  getCharacteristic(uuid) {
+
+    for (var key in this.characteristics) {
+      if (this.characteristics[key].uuid === uuid) {
         return this.characteristics[key];
       }
     }
@@ -7901,12 +3800,8 @@ class BleRemoteService {
     return newCharacteristic;
   }
 
-
-  ondiscovercharacteristic( characteristic){};
-
+  ondiscovercharacteristic(characteristic) {}
 }
-
-
 
 module.exports = BleRemoteService;
 
@@ -7919,25 +3814,26 @@ module.exports = BleRemoteService;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 
-
 class BleService {
 
-  constructor(obj){
+  constructor(obj) {
     this.characteristics = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    
-    if(obj["characteristics"]){
-       for(var key in obj["characteristics"]){
+    this.uuid = obj.uuid.toLowerCase();
+
+    if (obj["characteristics"]) {
+      for (var key in obj["characteristics"]) {
         this.addCharacteristic(obj["characteristics"][key]);
       }
     }
   }
 
   addCharacteristic(obj) {
-    if(! (obj instanceof BleCharacteristic ) ){
+    if (!(obj instanceof BleCharacteristic)) {
       obj = new BleCharacteristic(obj);
     }
     this.characteristics.push(obj);
@@ -7945,19 +3841,18 @@ class BleService {
   }
 
   getCharacteristic(uuid) {
-    return this.characteristics.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
+    return this.characteristics.filter(function (element) {
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
     }).shift();
   }
 
-  toJSON (){
+  toJSON() {
     return {
-      uuid : this.uuid.toLowerCase()  ,
-      characteristics : this.characteristics
+      uuid: this.uuid.toLowerCase(),
+      characteristics: this.characteristics
     };
   }
 }
-
 
 module.exports = BleService;
 
@@ -7970,6 +3865,8 @@ module.exports = BleService;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 class Display {
 
@@ -7978,7 +3875,7 @@ class Display {
     this.width = 128;
     this.height = 64;
 
-    this._pos = {x:0, y:0}
+    this._pos = { x: 0, y: 0 };
     this._canvas = null;
   }
 
@@ -7996,14 +3893,14 @@ class Display {
     }
     if (this.Obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(/*! canvas */ "./obniz/libs/webpackReplace/canvas.js");
+        const { createCanvas } = __webpack_require__(/*! canvas */ "canvas");
         this._canvas = createCanvas(this.width, this.height);
-      } catch(e){
+      } catch (e) {
         // this.warnCanvasAvailability();
         return null;
       }
     } else {
-      const identifier = 'obnizcanvas-'+this.Obniz.id;
+      const identifier = 'obnizcanvas-' + this.Obniz.id;
       let canvas = document.getElementById(identifier);
       if (!canvas) {
         canvas = document.createElement('canvas');
@@ -8018,14 +3915,14 @@ class Display {
       this._canvas = canvas;
     }
     const ctx = this._canvas.getContext("2d");;
-    ctx.fillStyle='#000'
+    ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, this.width, this.height);
-    ctx.fillStyle='#FFF';
-    ctx.strokeStyle='#FFF';
+    ctx.fillStyle = '#FFF';
+    ctx.strokeStyle = '#FFF';
     this._pos.x = 0;
     this._pos.y = 0;
     this.fontSize = 16;
-    ctx.font = `${this.fontSize}px Arial`
+    ctx.font = `${this.fontSize}px Arial`;
     return this._canvas;
   }
 
@@ -8036,22 +3933,22 @@ class Display {
     }
   }
 
-  font(font, size){
+  font(font, size) {
     const ctx = this._ctx();
-    if(typeof size !== "number") {
+    if (typeof size !== "number") {
       size = 12;
     }
     this.fontSize = size;
-    ctx.font = '' +  + ' ' + size + 'px ' + font;
+    ctx.font = '' + +' ' + size + 'px ' + font;
   }
 
   clear() {
     const ctx = this._ctx();
     if (ctx) {
-      ctx.fillStyle='#000'
+      ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, this.width, this.height);
-      ctx.fillStyle='#FFF';
-      ctx.strokeStyle='#FFF';
+      ctx.fillStyle = '#FFF';
+      ctx.strokeStyle = '#FFF';
     }
     this._pos.x = 0;
     this._pos.y = 0;
@@ -8082,7 +3979,7 @@ class Display {
     } else {
       var obj = {};
       obj["display"] = {
-        text: ""+text
+        text: "" + text
       };
       this.Obniz.send(obj);
     }
@@ -8104,7 +4001,7 @@ class Display {
   rect(x, y, width, height, mustFill) {
     const ctx = this._ctx();
     if (ctx) {
-      if(mustFill) {
+      if (mustFill) {
         ctx.fillRect(x, y, width, height);
       } else {
         ctx.strokeRect(x, y, width, height);
@@ -8120,7 +4017,7 @@ class Display {
     if (ctx) {
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
-      if(mustFill) {
+      if (mustFill) {
         ctx.fill();
       } else {
         ctx.stroke();
@@ -8156,8 +4053,8 @@ class Display {
     var obj = {};
     obj["display"] = {};
     obj["display"]["pin_assign"] = {};
-    obj["display"]["pin_assign"][io] = {module_name : moduleName, pin_name:funcName};
-    
+    obj["display"]["pin_assign"][io] = { module_name: moduleName, pin_name: funcName };
+
     this.Obniz.send(obj);
   }
 
@@ -8165,29 +4062,27 @@ class Display {
     var obj = {};
     obj["display"] = {};
     obj["display"]["pin_assign"] = {};
-    for(var key in data){
-      obj["display"]["pin_assign"][key] = {module_name : moduleName, pin_name:data[key]};
+    for (var key in data) {
+      obj["display"]["pin_assign"][key] = { module_name: moduleName, pin_name: data[key] };
     }
-    
+
     this.Obniz.send(obj);
   }
 
   draw(ctx) {
-    const stride = this.width/8;
+    const stride = this.width / 8;
     let vram = new Array(stride * 64);
     const imageData = ctx.getImageData(0, 0, this.width, this.height);
     const data = imageData.data;
-    
-    for(let i = 0; i < data.length; i += 4) {
+
+    for (let i = 0; i < data.length; i += 4) {
       var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      var index = parseInt(i/4);
-      var line = parseInt(index/this.width);
-      var col = parseInt((index-line*this.width)/8);
-      var bits = parseInt((index-line*this.width))%8;
-      if (bits == 0)
-        vram[line*stride + col] = 0x00;
-      if (brightness > 0x7F)
-      vram[line*stride + col] |= 0x80 >> bits;
+      var index = parseInt(i / 4);
+      var line = parseInt(index / this.width);
+      var col = parseInt((index - line * this.width) / 8);
+      var bits = parseInt(index - line * this.width) % 8;
+      if (bits == 0) vram[line * stride + col] = 0x00;
+      if (brightness > 0x7F) vram[line * stride + col] |= 0x80 >> bits;
     }
     this.raw(vram);
   }
@@ -8202,27 +4097,29 @@ module.exports = Display;
   !*** ./obniz/libs/embeds/switch.js ***!
   \*************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 class ObnizSwitch {
-  
+
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.observers = [];
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   getWait() {
     let self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
       let obj = {};
-      obj["switch"] = "get"
+      obj["switch"] = "get";
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });
@@ -8242,7 +4139,6 @@ class ObnizSwitch {
 
 module.exports = ObnizSwitch;
 
-
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/ad.js":
@@ -8250,7 +4146,9 @@ module.exports = ObnizSwitch;
   !*** ./obniz/libs/io_peripherals/ad.js ***!
   \*****************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 class PeripheralAD {
@@ -8262,7 +4160,7 @@ class PeripheralAD {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
@@ -8270,7 +4168,7 @@ class PeripheralAD {
   start(callback) {
     this.onchange = callback;
     var obj = {};
-    obj["ad"+this.id] = {
+    obj["ad" + this.id] = {
       stream: true
     };
     this.Obniz.send(obj);
@@ -8279,9 +4177,9 @@ class PeripheralAD {
 
   getWait() {
     var self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
       var obj = {};
-      obj["ad"+self.id] = {
+      obj["ad" + self.id] = {
         stream: false
       };
       self.Obniz.send(obj);
@@ -8292,7 +4190,7 @@ class PeripheralAD {
   end() {
     this.onchange = null;
     var obj = {};
-    obj["ad"+this.id] = null;
+    obj["ad" + this.id] = null;
     this.Obniz.send(obj);
     return;
   }
@@ -8320,6 +4218,9 @@ module.exports = PeripheralAD;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class PeripheralI2C {
@@ -8330,36 +4231,37 @@ class PeripheralI2C {
     this.observers = [];
     this.state = {};
     this.used = false;
-  
+
     this.onwritten = undefined;
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
-  
-  start(arg) {
-    var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl"]);
-    if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
-    this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "pull"]);
 
+  start(arg) {
+    var err = ObnizUtil._requiredKeys(arg, ["mode", "sda", "scl"]);
+    if (err) {
+      throw new Error("I2C start param '" + err + "' required, but not found ");return;
+    }
+    this.state = ObnizUtil._keyFilter(arg, ["mode", "sda", "scl", "pull"]);
 
     let ioKeys = ["sda", "scl"];
     for (let key of ioKeys) {
       if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
-        throw new Error("i2c start param '"+key+"' are to be valid io no");
+        throw new Error("i2c start param '" + key + "' are to be valid io no");
       }
     }
 
     var mode = this.state.mode;
-    var clock = (typeof arg.clock === "number") ? parseInt(arg.clock) : null;
-    var slave_address = (typeof arg.slave_address === "number") ? parseInt(arg.slave_address) : null;
-    var slave_address_length = (typeof arg.slave_address_length === "number") ? parseInt(arg.slave_address_length) : null;
-    
+    var clock = typeof arg.clock === "number" ? parseInt(arg.clock) : null;
+    var slave_address = typeof arg.slave_address === "number" ? parseInt(arg.slave_address) : null;
+    var slave_address_length = typeof arg.slave_address_length === "number" ? parseInt(arg.slave_address_length) : null;
+
     if (mode !== "master" && mode !== "slave") {
-      throw new Error("i2c: invalid mode "+mode)
+      throw new Error("i2c: invalid mode " + mode);
     }
     if (mode === "master") {
       if (clock === null) {
@@ -8388,19 +4290,19 @@ class PeripheralI2C {
         throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
       }
     }
-  
+
     this.Obniz.getIO(this.state.sda).drive("open-drain");
     this.Obniz.getIO(this.state.scl).drive("open-drain");
-    
-    if(this.state.pull){
-       this.Obniz.getIO(this.state.sda).pull(this.state.pull);
-       this.Obniz.getIO(this.state.scl).pull(this.state.pull);
-    }else{
+
+    if (this.state.pull) {
+      this.Obniz.getIO(this.state.sda).pull(this.state.pull);
+      this.Obniz.getIO(this.state.scl).pull(this.state.pull);
+    } else {
       this.Obniz.getIO(this.state.sda).pull(null);
       this.Obniz.getIO(this.state.scl).pull(null);
     }
-    
-    var startObj = ObnizUtil._keyFilter(this.state,["mode", "sda", "scl"]);
+
+    var startObj = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl"]);
     if (mode === "master") {
       startObj.clock = clock;
     } else {
@@ -8409,20 +4311,20 @@ class PeripheralI2C {
         startObj.slave_address_length = slave_address_length;
       }
     }
-  
-    var obj = {}; 
-    obj["i2c"+this.id] = startObj;
+
+    var obj = {};
+    obj["i2c" + this.id] = startObj;
     this.used = true;
     this.Obniz.send(obj);
   }
 
   write(address, data) {
-    address = parseInt(address)
+    address = parseInt(address);
     if (isNaN(address)) {
-      throw new Error("i2c: please specify address")
+      throw new Error("i2c: please specify address");
     }
     if (address < 0 || address > 0x3FFF) {
-      throw new Error("i2c: invalid address")
+      throw new Error("i2c: invalid address");
     }
     if (address > 0x7F) {
       address = address | 0x8000; // mark 10bit mode
@@ -8434,7 +4336,7 @@ class PeripheralI2C {
       throw new Error("i2c: data should be under 1024 bytes");
     }
     var obj = {};
-    obj["i2c"+this.id] = {
+    obj["i2c" + this.id] = {
       address,
       data
     };
@@ -8446,12 +4348,12 @@ class PeripheralI2C {
   }
 
   readWait(address, length) {
-    address = parseInt(address)
+    address = parseInt(address);
     if (isNaN(address)) {
-      throw new Error("i2c: please specify address")
+      throw new Error("i2c: please specify address");
     }
     if (address < 0 || address > 0x3FFF) {
-      throw new Error("i2c: invalid address")
+      throw new Error("i2c: invalid address");
     }
     if (address > 0x7F) {
       address = address | 0x8000; // mark 10bit mode
@@ -8464,9 +4366,9 @@ class PeripheralI2C {
       throw new Error("i2c: data length should be under 1024 bytes");
     }
     var self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
       var obj = {};
-      obj["i2c"+self.id] = {
+      obj["i2c" + self.id] = {
         address,
         read: length
       };
@@ -8493,13 +4395,13 @@ class PeripheralI2C {
         }
       }
       if (obj.warnings) {
-        for (let i=0; i<obj.warnings.length; i++) {
-          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` })
+        for (let i = 0; i < obj.warnings.length; i++) {
+          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` });
         }
       }
       if (obj.errors) {
-        for (let i=0; i<obj.errors.length; i++) {
-          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` })
+        for (let i = 0; i < obj.errors.length; i++) {
+          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` });
         }
       }
     }
@@ -8512,7 +4414,7 @@ class PeripheralI2C {
   end() {
     this.state = {};
     var obj = {};
-    obj["i2c"+this.id] = null;
+    obj["i2c" + this.id] = null;
     this.Obniz.send(obj);
     this.used = false;
   }
@@ -8527,7 +4429,9 @@ module.exports = PeripheralI2C;
   !*** ./obniz/libs/io_peripherals/io.js ***!
   \*****************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 class PeripheralIO {
@@ -8540,25 +4444,25 @@ class PeripheralIO {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   output(value) {
     var obj = {};
-    obj["io"+this.id] = value;
+    obj["io" + this.id] = value;
     this.value = value;
     this.Obniz.send(obj);
   }
 
   drive(drive) {
     if (typeof drive !== "string") {
-      throw new Error("please specify drive methods in string")
+      throw new Error("please specify drive methods in string");
       return;
     }
-    let output_type = ""
-    switch(drive) {
+    let output_type = "";
+    switch (drive) {
       case "5v":
         output_type = "push-pull5v";
         break;
@@ -8569,12 +4473,12 @@ class PeripheralIO {
         output_type = "open-drain";
         break;
       default:
-        throw new Error("unknown drive method")
+        throw new Error("unknown drive method");
         break;
     }
-  
+
     var obj = {};
-    obj["io"+this.id] = {
+    obj["io" + this.id] = {
       output_type: output_type
     };
     this.Obniz.send(obj);
@@ -8583,11 +4487,11 @@ class PeripheralIO {
   pull(updown) {
 
     if (typeof updown !== "string" && updown !== null) {
-      throw new Error("please specify pull methods in string")
+      throw new Error("please specify pull methods in string");
       return;
     }
-    let pull_type = ""
-    switch(updown) {
+    let pull_type = "";
+    switch (updown) {
       case "5v":
       case "pull-up5v":
         pull_type = "pull-up5v";
@@ -8605,12 +4509,12 @@ class PeripheralIO {
         pull_type = "float";
         break;
       default:
-        throw new Error("unknown pull_type method")
+        throw new Error("unknown pull_type method");
         break;
     }
-  
+
     var obj = {};
-    obj["io"+this.id] = {
+    obj["io" + this.id] = {
       pull_type: pull_type
     };
     this.Obniz.send(obj);
@@ -8619,7 +4523,7 @@ class PeripheralIO {
   input(callback) {
     this.onchange = callback;
     var obj = {};
-    obj["io"+this.id] = {
+    obj["io" + this.id] = {
       direction: "input",
       stream: true
     };
@@ -8629,9 +4533,9 @@ class PeripheralIO {
 
   inputWait() {
     var self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
       var obj = {};
-      obj["io"+self.id] = {
+      obj["io" + self.id] = {
         direction: "input",
         stream: false
       };
@@ -8647,15 +4551,15 @@ class PeripheralIO {
       if (callback) {
         callback(obj);
       }
-      if (typeof(this.onchange) === "function") {
+      if (typeof this.onchange === "function") {
         this.onchange(obj);
       }
     } else if (obj && typeof obj === "object") {
       if (obj.warning) {
-        this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warning.message}` })
+        this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warning.message}` });
       }
       if (obj.error) {
-        this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.error.message}` })
+        this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.error.message}` });
       }
     }
   }
@@ -8669,7 +4573,10 @@ module.exports = PeripheralIO;
   !*** ./obniz/libs/io_peripherals/io_.js ***!
   \******************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 class PeripheralIO_ {
   constructor(Obniz, id) {
@@ -8684,21 +4591,20 @@ class PeripheralIO_ {
         status: status
       }
     };
-    if (!array)
-      array = [];
-  
+    if (!array) array = [];
+
     let states = [];
-    for (var i=0; i<array.length; i++) {
+    for (var i = 0; i < array.length; i++) {
       let state = array[i];
       let duration = state.duration;
       let func = state.state;
-  
+
       // dry run. and get json commands
       this.Obniz.sendPool = [];
       func(i);
       let pooledJsonArray = this.Obniz.sendPool;
       this.Obniz.sendPool = null;
-  
+
       // simply merge objects
       let merged = {};
       for (var index = 0; index < pooledJsonArray.length; index++) {
@@ -8711,10 +4617,10 @@ class PeripheralIO_ {
         state: merged
       });
     }
-    if(states.length > 0){
+    if (states.length > 0) {
       obj.io.animation.states = states;
     }
-  //  console.log(obj.io.animation);
+    //  console.log(obj.io.animation);
     this.Obniz.send(obj);
   }
 }
@@ -8729,6 +4635,9 @@ module.exports = PeripheralIO_;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class PeripheralPWM {
@@ -8741,14 +4650,16 @@ class PeripheralPWM {
 
   sendWS(obj) {
     var wsObj = {};
-    wsObj["pwm"+this.id] = obj;
+    wsObj["pwm" + this.id] = obj;
     this.Obniz.send(wsObj);
   }
 
   start(params) {
-    const err = ObnizUtil._requiredKeys(params,["io"]);
-    if(err){ throw new Error("pwm start param '" + err +"' required, but not found ");}
-    this.params = ObnizUtil._keyFilter(params,["io", "drive", "pull"]);
+    const err = ObnizUtil._requiredKeys(params, ["io"]);
+    if (err) {
+      throw new Error("pwm start param '" + err + "' required, but not found ");
+    }
+    this.params = ObnizUtil._keyFilter(params, ["io", "drive", "pull"]);
 
     const io = this.params.io;
     const ioObj = this.Obniz.getIO(io);
@@ -8821,6 +4732,9 @@ module.exports = PeripheralPWM;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class PeripheralSPI {
@@ -8832,63 +4746,70 @@ class PeripheralSPI {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   start(params) {
-  
-    var err = ObnizUtil._requiredKeys(params,["mode", "frequency"]);
-    if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
-    this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pull"]);
+
+    var err = ObnizUtil._requiredKeys(params, ["mode", "frequency"]);
+    if (err) {
+      throw new Error("spi start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["mode", "clk", "mosi", "miso", "frequency", "drive", "pull"]);
     var obj = {};
 
     let ioKeys = ["clk", "mosi", "miso"];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '"+key+"' are to be valid io no");
+        throw new Error("spi start param '" + key + "' are to be valid io no");
       }
     }
 
-
-    obj["spi" + this.id]  = {
-        mode : this.params.mode,
-        clock : this.params.frequency   //name different
+    obj["spi" + this.id] = {
+      mode: this.params.mode,
+      clock: this.params.frequency //name different
     };
-    if(this.params.clk  !==  undefined){obj["spi" + this.id].clk = this.params.clk;}
-    if(this.params.mosi !==  undefined){obj["spi" + this.id].mosi = this.params.mosi;}
-    if(this.params.miso !==  undefined){obj["spi" + this.id].miso = this.params.miso;}
-    
-    if(this.params.drive){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive("5v");
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
+    if (this.params.clk !== undefined) {
+      obj["spi" + this.id].clk = this.params.clk;
     }
-    
-    if(this.params.pull){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
+    if (this.params.mosi !== undefined) {
+      obj["spi" + this.id].mosi = this.params.mosi;
     }
-   
-   this.used = true;
+    if (this.params.miso !== undefined) {
+      obj["spi" + this.id].miso = this.params.miso;
+    }
+
+    if (this.params.drive) {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+    } else {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).drive("5v");
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).drive("5v");
+    }
+
+    if (this.params.pull) {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
+    } else {
+      if (this.params.clk !== undefined) this.Obniz.getIO(this.params.clk).pull(null);
+      if (this.params.mosi !== undefined) this.Obniz.getIO(this.params.mosi).pull(null);
+      if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(null);
+    }
+
+    this.used = true;
     this.Obniz.send(obj);
   }
 
   writeWait(data) {
     var self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
       var obj = {};
-      obj["spi"+self.id] = {
+      obj["spi" + self.id] = {
         data: data,
         read: true
       };
@@ -8900,7 +4821,7 @@ class PeripheralSPI {
   write(data) {
     var self = this;
     var obj = {};
-    obj["spi"+self.id] = {
+    obj["spi" + self.id] = {
       data: data,
       read: false
     };
@@ -8922,10 +4843,10 @@ class PeripheralSPI {
   end(reuse) {
     var self = this;
     var obj = {};
-    obj["spi"+self.id] = null;
+    obj["spi" + self.id] = null;
     this.params = null;
     self.Obniz.send(obj);
-    if(!reuse){
+    if (!reuse) {
       this.used = false;
     }
   }
@@ -8941,14 +4862,17 @@ module.exports = PeripheralSPI;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
-const isNode = (typeof window === 'undefined');
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const isNode = typeof window === 'undefined';
 
 class PeripheralUART {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
-    this.received = new Uint8Array([]); 
+    this.received = new Uint8Array([]);
     this.used = false;
   }
 
@@ -8964,30 +4888,28 @@ class PeripheralUART {
     let ioKeys = ["rx", "tx", "rts", "cts"];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
-        throw new Error("uart start param '"+key+"' are to be valid io no");
+        throw new Error("uart start param '" + key + "' are to be valid io no");
       }
     }
 
+    if (this.params.hasOwnProperty("drive")) {
+      this.Obniz.getIO(this.params.rx).drive(this.params.drive);
+      this.Obniz.getIO(this.params.tx).drive(this.params.drive);
+    } else {
+      this.Obniz.getIO(this.params.rx).drive("5v");
+      this.Obniz.getIO(this.params.tx).drive("5v");
+    }
 
-    if( this.params.hasOwnProperty("drive")){
-        this.Obniz.getIO(this.params.rx).drive(this.params.drive);
-        this.Obniz.getIO(this.params.tx).drive(this.params.drive);
-    }else{
-        this.Obniz.getIO(this.params.rx).drive("5v");
-        this.Obniz.getIO(this.params.tx).drive("5v");
-        
+    if (this.params.hasOwnProperty("pull")) {
+      this.Obniz.getIO(this.params.rx).pull(this.params.pull);
+      this.Obniz.getIO(this.params.tx).pull(this.params.pull);
+    } else {
+      this.Obniz.getIO(this.params.rx).pull(null);
+      this.Obniz.getIO(this.params.tx).pull(null);
     }
-    
-    if(this.params.hasOwnProperty("pull") ){
-        this.Obniz.getIO(this.params.rx).pull(this.params.pull);
-        this.Obniz.getIO(this.params.tx).pull(this.params.pull);
-    }else{
-        this.Obniz.getIO(this.params.rx).pull(null);
-        this.Obniz.getIO(this.params.tx).pull(null);
-    }
-    
+
     var obj = {};
-    obj["uart"+this.id] = this.params;
+    obj["uart" + this.id] = this.params;
     this.Obniz.send(obj);
     this.received = [];
     this.used = true;
@@ -8998,42 +4920,42 @@ class PeripheralUART {
     if (data === undefined) {
       return;
     }
-    if (typeof(data) === "number") {
+    if (typeof data === "number") {
       data = [data];
     }
     if (isNode && data instanceof Buffer) {
-      var arr = [... data];
+      var arr = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
-    } else if (typeof(data) === "string") {
+    } else if (typeof data === "string") {
       if (isNode) {
         const buf = Buffer(data);
-        send_data = [... buf];
-      } else if(TextEncoder){
+        send_data = [...buf];
+      } else if (TextEncoder) {
         const typedArray = new TextEncoder("utf-8").encode(data);
         send_data = new Array(typedArray.length);
-        for (var i=0; i<typedArray.length;i++) {
+        for (var i = 0; i < typedArray.length; i++) {
           send_data[i] = typedArray[i];
         }
       }
     }
     var obj = {};
-    obj["uart"+this.id] = {};
-    obj["uart"+this.id].data = send_data;
-  //  console.log(obj);
+    obj["uart" + this.id] = {};
+    obj["uart" + this.id].data = send_data;
+    //  console.log(obj);
     this.Obniz.send(obj);
   }
 
   isDataExists() {
-    return (this.received && this.received.length > 0);
+    return this.received && this.received.length > 0;
   }
 
   readBytes() {
     var results = [];
     if (this.isDataExists()) {
-        for (var i=0;i<this.received.length; i++) {
-          results.push(this.received[i]);
-        }
+      for (var i = 0; i < this.received.length; i++) {
+        results.push(this.received[i]);
+      }
     }
     this.received = [];
     return results;
@@ -9042,8 +4964,8 @@ class PeripheralUART {
   readText() {
     var string = null;
     if (this.isDataExists()) {
-        var data = this.readBytes();
-        string = this.tryConvertString(data);
+      var data = this.readBytes();
+      string = this.tryConvertString(data);
     }
     this.received = [];
     return string;
@@ -9061,7 +4983,7 @@ class PeripheralUART {
       if (!this.received) {
         this.received = [];
       }
-      
+
       this.received.push.apply(this.received, obj.data);
     }
   }
@@ -9072,14 +4994,13 @@ class PeripheralUART {
 
   end() {
     var obj = {};
-    obj["uart"+this.id] = null;
+    obj["uart" + this.id] = null;
     this.params = null;
     this.Obniz.send(obj);
     this.used = false;
   }
 }
 module.exports = PeripheralUART;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -9090,6 +5011,9 @@ module.exports = PeripheralUART;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class LogicAnalyzer {
@@ -9098,13 +5022,14 @@ class LogicAnalyzer {
     this.obniz = obniz;
   }
 
-  start( params ) {
-    
-  var err = ObnizUtil._requiredKeys(params,["io", "interval", "duration"]);
-  if(err){ throw new Error("LogicAnalyzer start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["io", "interval", "duration", "trigerValue", "trigerValueSamples"]);
+  start(params) {
 
-  
+    var err = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
+    if (err) {
+      throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["io", "interval", "duration", "trigerValue", "trigerValueSamples"]);
+
     var obj = {};
     obj.logic_analyzer = {
       io: [this.params.io],
@@ -9115,9 +5040,9 @@ class LogicAnalyzer {
       obj.logic_analyzer.triger = {
         value: !!this.params.trigerValue,
         samples: this.params.trigerValueSamples
-      }
+      };
     }
-  
+
     this.obniz.send(obj);
     return;
   }
@@ -9139,9 +5064,8 @@ class LogicAnalyzer {
       this.measured.push(obj.data);
     }
     return;
-  };
+  }
 }
-
 
 module.exports = LogicAnalyzer;
 
@@ -9152,7 +5076,9 @@ module.exports = LogicAnalyzer;
   !*** ./obniz/libs/measurements/measure.js ***!
   \********************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 class ObnizMeasure {
@@ -9164,9 +5090,11 @@ class ObnizMeasure {
 
   echo(params) {
     var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
-    if(err){ throw new Error("Measure start param '" + err +"' required, but not found ");return;}
-    this.params = ObnizUtil._keyFilter(params,["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
-  
+    if (err) {
+      throw new Error("Measure start param '" + err + "' required, but not found ");return;
+    }
+    this.params = ObnizUtil._keyFilter(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
+
     var echo = {};
     echo.io_pulse = this.params.io_pulse;
     echo.pulse = this.params.pulse;
@@ -9176,14 +5104,14 @@ class ObnizMeasure {
     if (typeof this.params.timeout === "number") {
       echo.timeout = this.params.timeout;
     }
-  
+
     this.obniz.send({
       measure: {
         echo: echo
       }
     });
-  
-    if(this.params.callback) {
+
+    if (this.params.callback) {
       this.observers.push(this.params.callback);
     }
   }
@@ -9193,7 +5121,7 @@ class ObnizMeasure {
     if (callback) {
       callback(obj.echo);
     }
-  }; 
+  }
 }
 module.exports = ObnizMeasure;
 
@@ -9206,7 +5134,10 @@ module.exports = ObnizMeasure;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {let isNode = (typeof window === 'undefined');
+"use strict";
+
+
+let isNode = typeof window === 'undefined';
 
 class ObnizUtil {
 
@@ -9217,10 +5148,10 @@ class ObnizUtil {
   createCanvasContext(width, height) {
     if (this.obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(/*! canvas */ "./obniz/libs/webpackReplace/canvas.js");
+        const { createCanvas } = __webpack_require__(/*! canvas */ "canvas");
         return createCanvas(this.width, this.height);
         throw new Error();
-      } catch(e) {
+      } catch (e) {
         throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
       }
     } else {
@@ -9230,136 +5161,166 @@ class ObnizUtil {
       canvas.style["-webkit-font-smoothing"] = "none";
       var body = document.getElementsByTagName("body")[0];
       body.appendChild(canvas);
-      
+
       var ctx = canvas.getContext("2d");
       return ctx;
-    } 
+    }
   }
-  
-  static _keyFilter(params,keys){
+
+  static _keyFilter(params, keys) {
     var filterdParams = {};
-    if(typeof params !== "object" ){
+    if (typeof params !== "object") {
       return filterdParams;
     }
-    filterdParams =  Object.keys(params)
-    .filter(key => keys.includes(key))
-    .reduce((obj, key) => {
+    filterdParams = Object.keys(params).filter(key => keys.includes(key)).reduce((obj, key) => {
       obj[key] = params[key];
       return obj;
     }, {});
-    
+
     return filterdParams;
   }
-  
+
   /**
    *
    * @return {String} key name of not found. 
    */
-  static _requiredKeys(params, keys){
-    if(typeof params !== "object" ){
+  static _requiredKeys(params, keys) {
+    if (typeof params !== "object") {
       return keys[0];
     }
-    
-    for( var index in keys){
-        if(!(keys[index] in params )){
-            return keys[index];
-        }
+
+    for (var index in keys) {
+      if (!(keys[index] in params)) {
+        return keys[index];
+      }
     }
     return null;
   }
-  
+
   static dataArray2string(data) {
     var string = null;
     try {
-        if(isNode){
-          const StringDecoder = __webpack_require__(/*! string_decoder */ "./node_modules/string_decoder/lib/string_decoder.js").StringDecoder;
-          if(StringDecoder){
-             string = new StringDecoder('utf8').write(Buffer.from(data));
-          }
-        }else if(TextDecoder){
-          string = new TextDecoder("utf-8").decode(new Uint8Array(data));
+      if (isNode) {
+        const StringDecoder = __webpack_require__(/*! string_decoder */ "string_decoder").StringDecoder;
+        if (StringDecoder) {
+          string = new StringDecoder('utf8').write(Buffer.from(data));
         }
-      }catch(e) {
-        //this.obniz.error(e);
+      } else if (TextDecoder) {
+        string = new TextDecoder("utf-8").decode(new Uint8Array(data));
       }
-      return string;
-  };
+    } catch (e) {
+      //this.obniz.error(e);
+    }
+    return string;
+  }
 
-  static string2dataArray(str){
+  static string2dataArray(str) {
     if (isNode) {
       const buf = Buffer(str);
-      return [... buf];
-    } else if(TextEncoder){
+      return [...buf];
+    } else if (TextEncoder) {
       const typedArray = new TextEncoder("utf-8").encode(str);
       var arr = new Array(typedArray.length);
-      for (var i=0; i<typedArray.length;i++) {
+      for (var i = 0; i < typedArray.length; i++) {
         arr[i] = typedArray[i];
       }
       return arr;
-      
     }
     return null;
   }
 }
 
 module.exports = ObnizUtil;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
-/***/ "./obniz/libs/webpackReplace/canvas.js":
-/*!*********************************************!*\
-  !*** ./obniz/libs/webpackReplace/canvas.js ***!
-  \*********************************************/
+/***/ "./obniz/libs/webpackReplace sync recursive":
+/*!****************************************!*\
+  !*** ./obniz/libs/webpackReplace sync ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
-// load from webpack
-
-let canvas;
-
-
-module.exports = canvas;
-
-
-
-/***/ }),
-
-/***/ "./obniz/libs/webpackReplace/require-context-browser.js":
-/*!**************************************************************!*\
-  !*** ./obniz/libs/webpackReplace/require-context-browser.js ***!
-  \**************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {};
-
-/***/ }),
-
-/***/ "./obniz/libs/webpackReplace/ws.js":
-/*!*****************************************!*\
-  !*** ./obniz/libs/webpackReplace/ws.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-
-// load from webpack
-
-let ws;
-
-if (typeof WebSocket !== 'undefined') {
-  ws = WebSocket;
-} else if (typeof MozWebSocket !== 'undefined') {
-  ws = MozWebSocket;
-} else {
-  ws = window.WebSocket || window.MozWebSocket;
+function webpackEmptyContext(req) {
+	var e = new Error('Cannot find module "' + req + '".');
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
 }
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = "./obniz/libs/webpackReplace sync recursive";
 
-module.exports = ws;
+/***/ }),
 
+/***/ "./obniz/libs/webpackReplace/require-context.js":
+/*!******************************************************!*\
+  !*** ./obniz/libs/webpackReplace/require-context.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+
+let baseDir = undefined;
+let yaml = __webpack_require__(/*! js-yaml */ "js-yaml");
+let fs = __webpack_require__(/*! fs */ "fs");
+
+module.exports = function (directory, recursive, regExp) {
+  let dir = __webpack_require__(/*! node-dir */ "node-dir");
+  let path = __webpack_require__(/*! path */ "path");
+
+  // Assume absolute path by default
+  let basepath = directory;
+
+  if (directory[0] === '.') {
+    // Relative path
+    let dir = __dirname;
+    if (baseDir) {
+      dir = baseDir;
+    }
+    basepath = path.join(dir, directory);
+  } else if (!path.isAbsolute(directory)) {
+    // Module path
+    basepath = /*require.resolve*/(__webpack_require__("./obniz/libs/webpackReplace sync recursive").resolve(directory));
+  }
+
+  let keys = dir.files(basepath, {
+    sync: true,
+    recursive: recursive || false
+  }).filter(function (file) {
+    return file.match(regExp || /\.(json|js)$/);
+  }).map(function (file) {
+    return path.join('.', file.slice(basepath.length + 1));
+  });
+
+  let context = function (key) {
+    let path = context.resolve(key);
+    if (/\.(json|js)$/.test(path)) {
+      return __webpack_require__("./obniz/libs/webpackReplace sync recursive")(path);
+    } else if (/\.(yaml|yml)$/.test(path)) {
+      return yaml.safeLoad(fs.readFileSync(path, 'utf8'));
+    } else {
+      throw new Error("unknown type");
+    }
+  };
+
+  context.resolve = function (key) {
+    return path.join(basepath, key);
+  };
+
+  context.keys = function () {
+    return keys;
+  };
+
+  return context;
+};
+
+module.exports.setBaseDir = function (base) {
+  baseDir = base;
+};
+/* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
 
@@ -9389,6 +5350,8 @@ webpackEmptyContext.id = "./obniz/libs/wscommand sync recursive";
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/WSSchema.js");
 
@@ -9400,7 +5363,7 @@ class WSCommand {
     this.delegate = delegate;
 
     //constants
-    this.COMMAND_FUNC_ID_ERROR = 0xFF
+    this.COMMAND_FUNC_ID_ERROR = 0xFF;
     this.ioNotUsed = 0xFF;
   }
 
@@ -9423,7 +5386,7 @@ class WSCommand {
     // };
   }
 
-  static addCommandClass(classObj){
+  static addCommandClass(classObj) {
     commandClasses.push(classObj);
   }
 
@@ -9443,16 +5406,16 @@ class WSCommand {
       throw new Error("too big payload");
       return null;
     }
-    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
+    var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     var header_length = 3 + length_extra_bytse;
     var result = new Uint8Array(header_length + payload_length);
     var index = 0;
     result[index++] = module & 0x7F;
     result[index++] = func;
-    result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse*8));
-    while(length_extra_bytse > 0) {
+    result[index++] = length_type << 6 | payload_length >> length_extra_bytse * 8;
+    while (length_extra_bytse > 0) {
       length_extra_bytse--;
-      result[index++] = payload_length >> (length_extra_bytse*8);
+      result[index++] = payload_length >> length_extra_bytse * 8;
     }
     if (payload_length == 0) {
       return result;
@@ -9472,25 +5435,25 @@ class WSCommand {
     }
     var module = 0x7F & buf[0];
     var func = buf[1];
-    var length_type = (buf[2] >> 6) & 0x3;
-    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
+    var length_type = buf[2] >> 6 & 0x3;
+    var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     if (length_type == 4) {
       throw new Eror("invalid length");
     }
-    var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
+    var length = (buf[2] & 0x3F) << length_extra_bytse * 8;
     var index = 3;
     var shift = length_extra_bytse;
-    while(shift > 0) {
+    while (shift > 0) {
       shift--;
-      length += buf[index] << (shift*8);
+      length += buf[index] << shift * 8;
       index++;
     }
 
     return {
       module: module,
       func: func,
-      payload: buf.slice(3+length_extra_bytse, 3+length_extra_bytse+length),
-      next: buf.slice(3+length_extra_bytse+length)
+      payload: buf.slice(3 + length_extra_bytse, 3 + length_extra_bytse + length),
+      next: buf.slice(3 + length_extra_bytse + length)
     };
   }
 
@@ -9507,7 +5470,7 @@ class WSCommand {
         ret = frame;
       }
     }
-    for (let i=0; i<wscommands.length; i++) {
+    for (let i = 0; i < wscommands.length; i++) {
       const wscommand = wscommands[i];
       wscommand.parsed = append;
       wscommand.parseFromJson(json);
@@ -9524,18 +5487,16 @@ class WSCommand {
     }
   }
 
-  parseFromJson(json) {
-
-  }
+  parseFromJson(json) {}
 
   notifyFromBinary(objToSend, func, payload) {
 
-    switch(func) {
+    switch (func) {
       case this.COMMAND_FUNC_ID_ERROR:
         if (!objToSend.debug) objToSend.debug = {};
         var err = {
           module: this.module,
-          _args: [... payload]
+          _args: [...payload]
         };
         err.message = "Error at " + this.module + " with " + err._args;
         if (payload.byteLength == 3) {
@@ -9543,7 +5504,7 @@ class WSCommand {
           err.err1 = payload[1];
           err.function = payload[2];
         }
-        objToSend.debug.error = err
+        objToSend.debug.error = err;
         break;
 
       default:
@@ -9563,32 +5524,30 @@ class WSCommand {
   }
 
   isValidIO(io) {
-    return (typeof(io) === "number" && 0 <= io && io <= 11) 
+    return typeof io === "number" && 0 <= io && io <= 11;
   }
 
-
-  getSchema(uri){
+  getSchema(uri) {
     //chack isFirst
 
     return WSSchema.getSchema(uri);
   }
 
-
-  validateCommandSchema(uriList, json, rootPath, customArg){
-    let res = {valid : 0 , invalid: 0, results:[], invalidButLike:[]};
-    for(let oneRow of uriList){
+  validateCommandSchema(uriList, json, rootPath, customArg) {
+    let res = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
+    for (let oneRow of uriList) {
       let errors = this.validate(oneRow.uri, json);
       res.results.push(errors);
-      if(errors.valid){
+      if (errors.valid) {
         res.valid++;
-        if(oneRow.onValid){
+        if (oneRow.onValid) {
           oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
         }
-      }else{
+      } else {
         res.invalid++;
-        let message =  this.onlyTypeErrorMessage(errors,rootPath);
-        if(message){
-          res.invalidButLike.push ({uri: oneRow.uri, message});
+        let message = this.onlyTypeErrorMessage(errors, rootPath);
+        if (message) {
+          res.invalidButLike.push({ uri: oneRow.uri, message });
         }
       }
     }
@@ -9596,95 +5555,78 @@ class WSCommand {
     return res;
   }
 
-  validate(commandUri, json){
-    let schema =  this.getSchema(commandUri);
-    let results =  WSSchema.validateMultiple(json, schema);
+  validate(commandUri, json) {
+    let schema = this.getSchema(commandUri);
+    let results = WSSchema.validateMultiple(json, schema);
     return results;
   }
 
-  onlyTypeErrorMessage(validateError, rootPath){
-    if(validateError.valid){return true;}
-    if(validateError.missing && validateError.missing.length > 0){return false;}
+  onlyTypeErrorMessage(validateError, rootPath) {
+    if (validateError.valid) {
+      return true;
+    }
+    if (validateError.missing && validateError.missing.length > 0) {
+      return false;
+    }
 
-    let badErrorCodes = [
-      WSSchema.errorCodes.ANY_OF_MISSING,
-      WSSchema.errorCodes.ONE_OF_MISSING,
-      WSSchema.errorCodes.ONE_OF_MULTIPLE,
-      WSSchema.errorCodes.NOT_PASSED,
-      WSSchema.errorCodes.OBJECT_REQUIRED,
-      WSSchema.errorCodes.OBJECT_ADDITIONAL_PROPERTIES,
-      WSSchema.errorCodes.CIRCULAR_REFERENCE,
-      WSSchema.errorCodes.FORMAT_CUSTOM,
-      WSSchema.errorCodes.KEYWORD_CUSTOM,
-      WSSchema.errorCodes.UNKNOWN_PROPERTY
-    ];
+    let badErrorCodes = [WSSchema.errorCodes.ANY_OF_MISSING, WSSchema.errorCodes.ONE_OF_MISSING, WSSchema.errorCodes.ONE_OF_MULTIPLE, WSSchema.errorCodes.NOT_PASSED, WSSchema.errorCodes.OBJECT_REQUIRED, WSSchema.errorCodes.OBJECT_ADDITIONAL_PROPERTIES, WSSchema.errorCodes.CIRCULAR_REFERENCE, WSSchema.errorCodes.FORMAT_CUSTOM, WSSchema.errorCodes.KEYWORD_CUSTOM, WSSchema.errorCodes.UNKNOWN_PROPERTY];
     let messages = [];
     for (let error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
-        if (error.params.type === "object"
-         || error.params.expected === "object") {
+        if (error.params.type === "object" || error.params.expected === "object") {
           return false;
         }
-      }else if (badErrorCodes.includes(error.code)){
+      } else if (badErrorCodes.includes(error.code)) {
         return false;
       }
 
-      let path  = rootPath + error.dataPath.replace(/\//g,".");
-      messages.push( `[${path}]${error.message}`  );
-
+      let path = rootPath + error.dataPath.replace(/\//g, ".");
+      messages.push(`[${path}]${error.message}`);
     }
     return messages.join(";");
   }
 
-  filter(commandUri, json){
-    let schema =  this.getSchema(commandUri);
-    return this._filterSchema( schema, json)
+  filter(commandUri, json) {
+    let schema = this.getSchema(commandUri);
+    return this._filterSchema(schema, json);
   }
 
-  _filterSchema(schema,json){
+  _filterSchema(schema, json) {
 
-
-    if(schema["$ref"]){
+    if (schema["$ref"]) {
       let refSchema = WSSchema.getSchema(schema["$ref"]);
-      return this._filterSchema(refSchema, json  );
+      return this._filterSchema(refSchema, json);
     }
 
-    if(json === undefined ){
+    if (json === undefined) {
       return schema.default;
     }
 
-    if(schema.type === "string"
-        || schema.type === "integer"
-        || schema.type === "boolean"
-        || schema.type === "number"
-        || schema.type === "null"
-        || schema.filter === "pass_all"){
+    if (schema.type === "string" || schema.type === "integer" || schema.type === "boolean" || schema.type === "number" || schema.type === "null" || schema.filter === "pass_all") {
       return json;
-
     }
 
-    if(schema.type === "array"){
+    if (schema.type === "array") {
       let results = [];
-      for( let key  in json){
-        results[key] = this._filterSchema( schema.items,json[key]);
+      for (let key in json) {
+        results[key] = this._filterSchema(schema.items, json[key]);
       }
       return results;
     }
 
-    if(schema.type === "object"){
+    if (schema.type === "object") {
       let results = {};
-      for( let key in schema.properties){
-        results[key] = this._filterSchema(schema.properties[key], json[key]  );
+      for (let key in schema.properties) {
+        results[key] = this._filterSchema(schema.properties[key], json[key]);
       }
 
-      for(let pattern in schema.patternProperties){
+      for (let pattern in schema.patternProperties) {
         let reg = new RegExp(pattern);
-        for(let key in Object.keys(json)){
-          if( reg.test(key) ){
-            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]  );
+        for (let key in Object.keys(json)) {
+          if (reg.test(key)) {
+            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]);
           }
         }
-
       }
       return results;
     }
@@ -9692,14 +5634,12 @@ class WSCommand {
     throw Error("unknown json schema type");
   }
 
-  get WSCommandNotFoundError(){
+  get WSCommandNotFoundError() {
     return WSCommandNotFoundError;
   }
 }
 
-class WSCommandNotFoundError extends Error{
-
-}
+class WSCommandNotFoundError extends Error {}
 
 module.exports = WSCommand;
 
@@ -9712,27 +5652,29 @@ module.exports = WSCommand;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_AD extends WSCommand {
-  
+
   constructor(delegate) {
     super(delegate);
     this.module = 7;
 
-    this._CommandInitNormalInterval     = 0
-    this._CommandDeinit       = 1
-    this._CommandNotifyValue  = 2
-    this._CommandDoOnece      = 3
+    this._CommandInitNormalInterval = 0;
+    this._CommandDeinit = 1;
+    this._CommandNotifyValue = 2;
+    this._CommandDoOnece = 3;
   }
 
   // Commands
 
 
-  get(params, no){
+  get(params, no) {
     var buf = new Uint8Array([no]);
     this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
-
   }
 
   deinit(params, no) {
@@ -9740,25 +5682,20 @@ class WSCommand_AD extends WSCommand {
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-
-
   parseFromJson(json) {
-    for (var i=0; i<12;i++) {
-      var module = json["ad"+i];
+    for (var i = 0; i < 12; i++) {
+      var module = json["ad" + i];
       if (module === undefined) {
         continue;
       }
 
-      let schemaData = [
-        {uri : "/request/ad/deinit",         onValid: this.deinit},
-        {uri : "/request/ad/get",          onValid: this.get},
-      ];
-      let res = this.validateCommandSchema(schemaData, module, "ad"+i, i);
+      let schemaData = [{ uri: "/request/ad/deinit", onValid: this.deinit }, { uri: "/request/ad/get", onValid: this.get }];
+      let res = this.validateCommandSchema(schemaData, module, "ad" + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new WSCommandNotFoundError(`[ad${i}]unknown command`);
         }
       }
@@ -9767,13 +5704,13 @@ class WSCommand_AD extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotifyValue) {
-      for (var i=0; i<payload.byteLength; i+=3) {
-        var value = (payload[i+1] << 8) + payload[i+2];
+      for (var i = 0; i < payload.byteLength; i += 3) {
+        var value = (payload[i + 1] << 8) + payload[i + 2];
         value = value / 100.0;
-        objToSend["ad"+payload[i]] = value;
+        objToSend["ad" + payload[i]] = value;
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
@@ -9789,6 +5726,9 @@ module.exports = WSCommand_AD;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const JsonBinaryConverter = __webpack_require__(/*! ./jsonBinaryConverter */ "./obniz/libs/wscommand/jsonBinaryConverter.js");
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
@@ -9797,8 +5737,8 @@ class WSCommand_Ble extends WSCommand {
   constructor(delegate) {
     super(delegate);
     this.module = 11;
-    
-    this.uuidLength = 16+2;
+
+    this.uuidLength = 16 + 2;
 
     this._CommandSetAdvData = 0;
     this._CommandSetScanRespData = 1;
@@ -9866,15 +5806,11 @@ class WSCommand_Ble extends WSCommand {
     };
   }
 
-
-
   /* CENTRAL   */
 
   centralScanStart(params) {
-    let schema = [
-      { path : "scan.duration" ,  length: 4, type: "int",   default:30 }
-    ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    let schema = [{ path: "scan.duration", length: 4, type: "int", default: 30 }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandStartScan, buf);
   }
 
@@ -9883,101 +5819,60 @@ class WSCommand_Ble extends WSCommand {
   }
 
   centralConnect(params) {
-    let schema = [
-      { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
-      { path : null  ,            length: 1, type: "char",  default:false }   //const val
-    ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    let schema = [{ path: "connect.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: null, length: 1, type: "char", default: false //const val
+    }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandConnect, buf);
   }
 
   centralDisconnect(params) {
-    let schema = [
-    { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
-    { path : null  ,            length: 1, type: "char",  default:true }   //const val
-  ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    let schema = [{ path: "connect.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: null, length: 1, type: "char", default: true //const val
+    }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandConnect, buf);
   }
 
   centralServiceGet(params) {
-    let schema = [
-      { path : "get_services.address" , length: 6, type: "hex", required:true , endianness:"little"},
-    ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    let schema = [{ path: "get_services.address", length: 6, type: "hex", required: true, endianness: "little" }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServices, buf);
   }
 
   centralCharacteristicGet(params) {
-    var schema = [
-      { path : "get_characteristics.address" , length: 6, type: "hex", required:true , endianness:"little"},
-      { path : "get_characteristics.service_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    var schema = [{ path: "get_characteristics.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "get_characteristics.service_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandCharacteristics, buf);
   }
 
-
   centralCharacteristicRead(params) {
-    var schema = [
-      { path : "read_characteristic.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "read_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "read_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
-      this.sendCommand(this._CommandReadCharacteristics, buf);
+    var schema = [{ path: "read_characteristic.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "read_characteristic.service_uuid", length: 18, type: "uuid", required: true }, { path: "read_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandReadCharacteristics, buf);
   }
 
   centralCharacteristicWrite(params) {
-    var schema = [
-      { path : "write_characteristic.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "write_characteristic.needResponse" , length: 1, type: "char", default:1 },
-      { path : "write_characteristic.data" , length: null, type: "dataArray", }
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    var schema = [{ path: "write_characteristic.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "write_characteristic.service_uuid", length: 18, type: "uuid", required: true }, { path: "write_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "write_characteristic.needResponse", length: 1, type: "char", default: 1 }, { path: "write_characteristic.data", length: null, type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteCharacteristics, buf);
-
   }
 
-
-  centralDescriptorGet(params){
-    var schema = [
-      { path : "get_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "get_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "get_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+  centralDescriptorGet(params) {
+    var schema = [{ path: "get_descriptor.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "get_descriptor.service_uuid", length: 18, type: "uuid", required: true }, { path: "get_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandDescriptors, buf);
   }
 
-  centralDescriptorRead(params){
-    var schema = [
-      { path : "read_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "read_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "read_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "read_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+  centralDescriptorRead(params) {
+    var schema = [{ path: "read_descriptor.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "read_descriptor.service_uuid", length: 18, type: "uuid", required: true }, { path: "read_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "read_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandReadDescriptor, buf);
-
   }
 
-  centralDescriptorWrite(params){
-    var schema = [
-      { path : "write_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "write_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "write_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "write_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
-      { path : "write_descriptor.needResponse" , length: 1, type: "char", default:1 },
-      { path : "write_descriptor.data" , length: null, type: "dataArray" }
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+  centralDescriptorWrite(params) {
+    var schema = [{ path: "write_descriptor.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "write_descriptor.service_uuid", length: 18, type: "uuid", required: true }, { path: "write_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "write_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true }, { path: "write_descriptor.needResponse", length: 1, type: "char", default: 1 }, { path: "write_descriptor.data", length: null, type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteDescriptor, buf);
   }
-
-
 
   /* PERIPHERAL   */
 
@@ -9995,44 +5890,32 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandStopAdv, null);
   }
 
-
-  peripheralServiceStart(params){
+  peripheralServiceStart(params) {
     let val = params["peripheral"];
     var propFlags = {
-      0x01 : "broadcast",
-      0x02 : "read",
-      0x04 : "write_no_response",
-      0x08 : "write",
-      0x10 : "notify",
-      0x20 : "indiate",
-      0x40 : "auth",
-      0x80 : "ext_prop"
+      0x01: "broadcast",
+      0x02: "read",
+      0x04: "write_no_response",
+      0x08: "write",
+      0x10: "notify",
+      0x20: "indiate",
+      0x40: "auth",
+      0x80: "ext_prop"
     };
     var schema = {
-      service : {
-        command : this._CommandServerAddService,
-        schema: [
-          { path : "uuid" , length: 18, type: "uuid", required:true }
-        ]
+      service: {
+        command: this._CommandServerAddService,
+        schema: [{ path: "uuid", length: 18, type: "uuid", required: true }]
       },
-      characteristic : {
-        command : this._CommandServerAddCharacteristic,
-        schema: [
-          { path : "service_uuid" , length: 18, type: "uuid", required:true },
-          { path : "uuid" , length: 18, type: "uuid", required:true },
-          { path : "property" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK
-          { path : "data" , type: "dataArray" }
-        ]
+      characteristic: {
+        command: this._CommandServerAddCharacteristic,
+        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "property", length: 1, type: "flag", default: ["write", "read"], flags: propFlags }, //read and write OK
+        { path: "data", type: "dataArray" }]
       },
-      descriptor : {
-        command : this._CommandServerAddDescriptor,
-        schema: [
-          { path : "service_uuid" , length: 18, type: "uuid", required:true },
-          { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
-          { path : "uuid" , length: 18, type: "uuid", required:true },
-          { path : "property" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK
-          { path : "data" , type: "dataArray" }
-        ]
+      descriptor: {
+        command: this._CommandServerAddDescriptor,
+        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "property", length: 1, type: "flag", default: ["read"], flags: propFlags }, //read OK
+        { path: "data", type: "dataArray" }]
       }
     };
 
@@ -10041,30 +5924,36 @@ class WSCommand_Ble extends WSCommand {
     for (var serviceIndex in val["services"]) {
       var service = val["services"][serviceIndex];
       buf = JsonBinaryConverter.createSendBuffer(schema["service"].schema, service);
-      if(buf.length === 0){return;}
-      sendBufs.push({command: schema["service"].command, buffer: buf});
+      if (buf.length === 0) {
+        return;
+      }
+      sendBufs.push({ command: schema["service"].command, buffer: buf });
 
       for (var charaIndex in service["characteristics"]) {
         var chara = service["characteristics"][charaIndex];
         chara.service_uuid = service.uuid;
         buf = JsonBinaryConverter.createSendBuffer(schema["characteristic"].schema, chara);
-        if(buf.length === 0){return;}
-        sendBufs.push({command: schema["characteristic"].command, buffer: buf});
+        if (buf.length === 0) {
+          return;
+        }
+        sendBufs.push({ command: schema["characteristic"].command, buffer: buf });
 
         for (var descIndex in chara["descriptors"]) {
           var desc = chara["descriptors"][descIndex];
           desc.service_uuid = service.uuid;
           desc.characteristic_uuid = chara.uuid;
           buf = JsonBinaryConverter.createSendBuffer(schema["descriptor"].schema, desc);
-          if(buf.length === 0){return;}
-          sendBufs.push({command: schema["descriptor"].command, buffer: buf});
+          if (buf.length === 0) {
+            return;
+          }
+          sendBufs.push({ command: schema["descriptor"].command, buffer: buf });
         }
       }
     }
-    if(sendBufs.length > 0){
-      sendBufs.push({command:this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
+    if (sendBufs.length > 0) {
+      sendBufs.push({ command: this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
     }
-    for(var index in sendBufs){
+    for (var index in sendBufs) {
       this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
     }
   }
@@ -10074,82 +5963,40 @@ class WSCommand_Ble extends WSCommand {
   }
 
   peripheralCharacteristicRead(params) {
-    var schema = [
-      { path : "peripheral.read_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "peripheral.read_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    var schema = [{ path: "peripheral.read_characteristic.service_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.read_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
-
   }
 
   peripheralCharacteristicWrite(params) {
-    var schema = [
-    { path : "peripheral.write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
-    { path : "peripheral.write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
-    { path : "peripheral.write_characteristic.data" , type: "dataArray" },
-  ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    var schema = [{ path: "peripheral.write_characteristic.service_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.write_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.write_characteristic.data", type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
-
   }
 
   peripheralDescriptorRead(params) {
-    var schema = [
-      { path : "peripheral.read_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "peripheral.read_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "peripheral.read_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    var schema = [{ path: "peripheral.read_descriptor.service_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.read_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.read_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerReadDescriptorValue, buf);
   }
 
   peripheralDescriptorWrite(params) {
-    var schema = [
-      { path : "peripheral.write_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "peripheral.write_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
-      { path : "peripheral.write_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
-      { path : "peripheral.write_descriptor.data" , type: "dataArray" },
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    var schema = [{ path: "peripheral.write_descriptor.service_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.write_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.write_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.write_descriptor.data", type: "dataArray" }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
   }
-
-
-
-
 
   parseFromJson(json) {
     var module = json["ble"];
     if (module === undefined) {
       return;
     }
-    let schemaData = [
-      {uri : "/request/ble/central/scan_start",             onValid: this.centralScanStart},
-      {uri : "/request/ble/central/scan_stop",              onValid: this.centralScanStop},
-      {uri : "/request/ble/central/connect",                onValid: this.centralConnect},
-      {uri : "/request/ble/central/disconnect",             onValid: this.centralDisconnect},
-      {uri : "/request/ble/central/service_get",            onValid: this.centralServiceGet},
-      {uri : "/request/ble/central/characteristic_get",     onValid: this.centralCharacteristicGet},
-      {uri : "/request/ble/central/characteristic_read",    onValid: this.centralCharacteristicRead},
-      {uri : "/request/ble/central/characteristic_write",   onValid: this.centralCharacteristicWrite},
-      {uri : "/request/ble/central/descriptor_get",         onValid: this.centralDescriptorGet},
-      {uri : "/request/ble/central/descriptor_read",        onValid: this.centralDescriptorRead},
-      {uri : "/request/ble/central/descriptor_write",       onValid: this.centralDescriptorWrite},
-      {uri : "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart},
-      {uri : "/request/ble/peripheral/advertisement_stop",  onValid: this.peripheralAdvertisementStop},
-      {uri : "/request/ble/peripheral/service_start",       onValid: this.peripheralServiceStart},
-      {uri : "/request/ble/peripheral/service_stop",        onValid: this.peripheralServiceStop},
-      {uri : "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
-      {uri : "/request/ble/peripheral/characteristic_write",onValid: this.peripheralCharacteristicWrite},
-      {uri : "/request/ble/peripheral/descriptor_read",     onValid: this.peripheralDescriptorRead},
-      {uri : "/request/ble/peripheral/descriptor_write",    onValid: this.peripheralDescriptorWrite},
-    ];
+    let schemaData = [{ uri: "/request/ble/central/scan_start", onValid: this.centralScanStart }, { uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop }, { uri: "/request/ble/central/connect", onValid: this.centralConnect }, { uri: "/request/ble/central/disconnect", onValid: this.centralDisconnect }, { uri: "/request/ble/central/service_get", onValid: this.centralServiceGet }, { uri: "/request/ble/central/characteristic_get", onValid: this.centralCharacteristicGet }, { uri: "/request/ble/central/characteristic_read", onValid: this.centralCharacteristicRead }, { uri: "/request/ble/central/characteristic_write", onValid: this.centralCharacteristicWrite }, { uri: "/request/ble/central/descriptor_get", onValid: this.centralDescriptorGet }, { uri: "/request/ble/central/descriptor_read", onValid: this.centralDescriptorRead }, { uri: "/request/ble/central/descriptor_write", onValid: this.centralDescriptorWrite }, { uri: "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart }, { uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop }, { uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart }, { uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop }, { uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead }, { uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite }, { uri: "/request/ble/peripheral/descriptor_read", onValid: this.peripheralDescriptorRead }, { uri: "/request/ble/peripheral/descriptor_write", onValid: this.peripheralDescriptorWrite }];
     let res = this.validateCommandSchema(schemaData, module, "ble");
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new WSCommandNotFoundError(`[ble]unknown command`);
       }
     }
@@ -10158,15 +6005,15 @@ class WSCommand_Ble extends WSCommand {
   notifyFromBinary(objToSend, func, payload) {
     let funcList = {};
     funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
-    funcList[this._CommandConnect]=this.notifyFromBinaryConnect.bind(this);
-    funcList[this._CommandServices]   =this.notifyFromBinaryServices.bind(this);
-    funcList[this._CommandCharacteristics]  = this.notifyFromBinaryChacateristics.bind(this);
-    funcList[this._CommandWriteCharacteristics]  = this.notifyFromBinaryWriteChacateristics.bind(this);
-    funcList[this._CommandReadCharacteristics]  = this.notifyFromBinaryReadChacateristics.bind(this);
-    funcList[this._CommandDescriptors]  = this.notifyFromBinaryDescriptors.bind(this);
-    funcList[this._CommandWriteDescriptor]  = this.notifyFromBinaryWriteDescriptor.bind(this);
-    funcList[this._CommandReadDescriptor]  = this.notifyFromBinaryReadDescriptor.bind(this);
-    
+    funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
+    funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
+    funcList[this._CommandCharacteristics] = this.notifyFromBinaryChacateristics.bind(this);
+    funcList[this._CommandWriteCharacteristics] = this.notifyFromBinaryWriteChacateristics.bind(this);
+    funcList[this._CommandReadCharacteristics] = this.notifyFromBinaryReadChacateristics.bind(this);
+    funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(this);
+    funcList[this._CommandWriteDescriptor] = this.notifyFromBinaryWriteDescriptor.bind(this);
+    funcList[this._CommandReadDescriptor] = this.notifyFromBinaryReadDescriptor.bind(this);
+
     funcList[this._CommandServerNotifyConnect] = this.notifyFromBinaryServerConnectionState.bind(this);
     funcList[this._CommandServerReadCharavteristicValue] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
     funcList[this._CommandServerWriteCharavteristicValue] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
@@ -10176,291 +6023,193 @@ class WSCommand_Ble extends WSCommand {
     funcList[this._CommandServerWriteDescriptorValue] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
     funcList[this._CommandServerNotifyReadDescriptorValue] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
     funcList[this._CommandServerNotifyWriteDescriptorValue] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
-    
-    funcList[this.COMMAND_FUNC_ID_ERROR]  = this.notifyFromBinaryError.bind(this);
-   
-    if(funcList[func]){
+
+    funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(this);
+
+    if (funcList[func]) {
       funcList[func](objToSend, payload);
     }
   }
 
   notifyFromBinaryScanResponse(objToSend, payload) {
     if (payload.byteLength > 1) {
-      
-      var schema =  [
-        { name:"event_type",           type : "enum",      length: 1, enum:this._CommandScanResultsEvet },
-        { name:"address",              type : "hex",       length: 6 , endianness:"little"},
-        { name:"device_type",          type : "enum",      length: 1, enum:this._CommandScanResultsDevice },
-        { name:"address_type",         type : "enum",      length: 1, enum:this._CommandScanResultsDeviceAddress },
-        { name:"ble_event_type",       type : "enum",      length: 1, enum:this._CommandScanResultsBleEvent },
-        { name:"rssi",                 type : "signed number",    length: 4 },
-        { name:"adv_data",             type : "dataArray", length: 31*2 },
-        { name:"flag",                 type : "number",    length: 4 },
-        { name:"num_response",         type : "number",    length: 4 },
-        { name:"advertise_length",     type : "number",    length: 1 },
-        { name:"scan_response_length", type : "number",    length: 1 }
-      ];
-    
+
+      var schema = [{ name: "event_type", type: "enum", length: 1, enum: this._CommandScanResultsEvet }, { name: "address", type: "hex", length: 6, endianness: "little" }, { name: "device_type", type: "enum", length: 1, enum: this._CommandScanResultsDevice }, { name: "address_type", type: "enum", length: 1, enum: this._CommandScanResultsDeviceAddress }, { name: "ble_event_type", type: "enum", length: 1, enum: this._CommandScanResultsBleEvent }, { name: "rssi", type: "signed number", length: 4 }, { name: "adv_data", type: "dataArray", length: 31 * 2 }, { name: "flag", type: "number", length: 4 }, { name: "num_response", type: "number", length: 4 }, { name: "advertise_length", type: "number", length: 1 }, { name: "scan_response_length", type: "number", length: 1 }];
+
       var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-      
-      results.scan_resp = results.adv_data.slice(results.advertise_length,results.advertise_length+results.scan_response_length); 
-      results.adv_data = results.adv_data.slice(0,results.advertise_length); 
-      
-//      if(results.scan_response_length === 0){
-//          results.scan_resp = [];
-//      }else{
-//        results.scan_resp = results.adv_data.slice(results.advertise_length);
-//        results.adv_data = results.adv_data.slice(0, results.advertise_length);;
-//      }
+
+      results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
+      results.adv_data = results.adv_data.slice(0, results.advertise_length);
+
+      //      if(results.scan_response_length === 0){
+      //          results.scan_resp = [];
+      //      }else{
+      //        results.scan_resp = results.adv_data.slice(results.advertise_length);
+      //        results.adv_data = results.adv_data.slice(0, results.advertise_length);;
+      //      }
       delete results.num_response;
       delete results.advertise_length;
       delete results.scan_response_length;
       delete results.advertise_data;
-      
-      if(results.event_type === "inquiry_complete"){
-          results = {event_type:  "inquiry_complete"};
+
+      if (results.event_type === "inquiry_complete") {
+        results = { event_type: "inquiry_complete" };
       }
-      
-     this._addRowForPath(objToSend, "ble.scan_result", results);
+
+      this._addRowForPath(objToSend, "ble.scan_result", results);
     }
   }
-  
+
   notifyFromBinaryConnect(objToSend, payload) {
-    if(payload.length === 7){
-      var schema =  [
-        { name:"address",   type : "hex",       length: 6 , endianness:"little"},
-        { name:"status",           type : "enum",      length: 1, enum:{"connected":0,"disconnected":1} }
-      ];
-      
+    if (payload.length === 7) {
+      var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "status", type: "enum", length: 1, enum: { "connected": 0, "disconnected": 1 } }];
+
       var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
       this._addRowForPath(objToSend, "ble.status_update", results);
     }
   }
-  
+
   notifyFromBinaryServices(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6 , endianness:"little"},
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_service_result", results);
+    this._addRowForPath(objToSend, "ble.get_service_result", results);
   }
-  
+
   notifyFromBinaryChacateristics(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+    this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
   }
-  
+
   notifyFromBinaryReadChacateristics(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"data",   type : "dataArray", length: null }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
+    this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
   }
-  
+
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
+    this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
   }
-  
+
   notifyFromBinaryDescriptors(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: uuidLength }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
+    this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
   }
-  
+
   notifyFromBinaryReadDescriptor(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"data",   type : "dataArray", length: null }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
+    this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
   }
-  
+
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var uuidLength = 16+2;
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
-    ];
-    
+    var uuidLength = 16 + 2;
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: uuidLength }, { name: "characteristic_uuid", type: "uuid", length: uuidLength }, { name: "descriptor_uuid", type: "uuid", length: uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
+    this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
   }
-  
+
   notifyFromBinaryServerConnectionState(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-     { name:"status",   type : "enum", length: 1 , enum:{"connected":1,"disconnected":0}}
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "status", type: "enum", length: 1, enum: { "connected": 1, "disconnected": 0 } }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.connection_status", results);
   }
 
   notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
-    var schema =  [
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
-    ];
-    
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
   }
 
   notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
-    var schema =  [
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"data",   type : "dataArray", length: null }
-    ];
-    
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.read_characteristic_result", results);
   }
 
   notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_read_characteristic", results);
   }
 
   notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"data",   type : "dataArray", length: null }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_write_characteristic", results);
   }
 
   notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
-    var schema =  [
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"data",   type : "dataArray", length: null }
-    ];
-    
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.read_descriptor_result", results);
   }
 
   notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
-    var schema =  [
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
-    ];
-    
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
   }
 
   notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_read_descriptor", results);
   }
 
   notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
-    var schema =  [
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"data",   type : "dataArray", length: null }
-    ];
-    
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_write_descriptor", results);
   }
 
   notifyFromBinaryError(objToSend, payload) {
-    var schema =  [
-      { name:"esp_error_code", type : "char", length: 1},
-      { name:"error_code",    type : "char", length: 1 },
-      { name:"function_code",    type : "char", length: 1 },
-      { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
-    ];
-    
+    var schema = [{ name: "esp_error_code", type: "char", length: 1 }, { name: "error_code", type: "char", length: 1 }, { name: "function_code", type: "char", length: 1 }, { name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }];
+
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    
+
     var errorMessage = {
-      0x00 : "error",
-      0x01 : "device not connected",
-      0x02 : "service not found",
-      0x03 : "charavteristic not found",
-      0x04 : "descriptor not found",
-      0x05 : "no permission",
-      0x06 : "device not found",
-      0x07 : "ble is busy",
-      0x08 : "service already running",
+      0x00: "error",
+      0x01: "device not connected",
+      0x02: "service not found",
+      0x03: "charavteristic not found",
+      0x04: "descriptor not found",
+      0x05: "no permission",
+      0x06: "device not found",
+      0x07: "ble is busy",
+      0x08: "service already running"
     };
-    
+
     var functionMessage = {
-      0 : "on setting advertisement data",
-      1 : "on setting scan response data",
-      2 : "on starting advertisement",
-      3 : "on stopping advertisement",
-      4 : "on starting scan",
-      5 : "on stoping scan",
-      6 : "",
-      7 : "on connecting device",
-      8 : "on getting services",
-      9 : "on getting characteristic",
+      0: "on setting advertisement data",
+      1: "on setting scan response data",
+      2: "on starting advertisement",
+      3: "on stopping advertisement",
+      4: "on starting scan",
+      5: "on stoping scan",
+      6: "",
+      7: "on connecting device",
+      8: "on getting services",
+      9: "on getting characteristic",
       10: "on writing characteristic",
       11: "on reading characteristic",
       14: "on getting descriptor",
@@ -10478,18 +6227,18 @@ class WSCommand_Ble extends WSCommand {
       29: "on writing descriptor",
       30: "on reading descriptor",
       31: "on writing descriptor from remote",
-      32: "on reading descriptor from remote",
+      32: "on reading descriptor from remote"
     };
-    
+
     results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
-    
+
     delete results.esp_error_code;
     delete results.function_code;
-    
+
     this.envelopError(objToSend, 'ble', results);
   }
-  
-  _addRowForPath(sendObj, path, row){
+
+  _addRowForPath(sendObj, path, row) {
     var keys = path.split('.');
     var target = sendObj;
     for (var index = 0; index < keys.length - 1; index++) {
@@ -10511,10 +6260,13 @@ module.exports = WSCommand_Ble;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Directive extends WSCommand {
-  
+
   constructor(delegate) {
     super(delegate);
     this.module = 1;
@@ -10533,9 +6285,12 @@ module.exports = WSCommand_Directive;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+"use strict";
 
-let isNode = (typeof window === 'undefined') ;
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
+let isNode = typeof window === 'undefined';
 
 class WSCommand_Display extends WSCommand {
 
@@ -10543,12 +6298,12 @@ class WSCommand_Display extends WSCommand {
     super(delegate);
     this.module = 8;
 
-    this._CommandClear                    = 0;
-    this._CommandPrint                    = 1;
-    this._CommandDrawCampusVerticalBytes  = 2;
+    this._CommandClear = 0;
+    this._CommandPrint = 1;
+    this._CommandDrawCampusVerticalBytes = 2;
     this._CommandDrawCampusHorizonalBytes = 3;
-    this._CommandDrawIOState              = 4;
-    this._CommandSetPinName               = 5;
+    this._CommandDrawIOState = 4;
+    this._CommandSetPinName = 5;
   }
 
   // Commands
@@ -10560,34 +6315,33 @@ class WSCommand_Display extends WSCommand {
   print(buf) {
     this.sendCommand(this._CommandPrint, buf);
   }
-  
+
   printText(text) {
     var result;
     if (isNode) {
       const buf = Buffer(text, 'utf8');
       result = new Uint8Array(buf);
-    } else if(TextEncoder){
+    } else if (TextEncoder) {
       result = new Uint8Array(new TextEncoder("utf-8").encode(text));
     }
     this.print(result);
   }
 
-  text(params){
+  text(params) {
     this.printText(params.text);
   }
-  raw(params){
+  raw(params) {
     this.drawHorizonally(new Uint8Array(params.raw));
   }
-  
+
   pinName(params) {
     for (var i = 0; i < 12; i++) {
-      if (typeof (params.pin_assign[i]) === "object") {
+      if (typeof params.pin_assign[i] === "object") {
         this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
       }
     }
-
   }
-  
+
   drawVertically(buf) {
     this.sendCommand(this._CommandDrawCampusVerticalBytes, buf);
   }
@@ -10595,25 +6349,24 @@ class WSCommand_Display extends WSCommand {
   drawHorizonally(buf) {
     this.sendCommand(this._CommandDrawCampusHorizonalBytes, buf);
   }
-  
+
   drawIOState(val) {
-    var buf = new Uint8Array([!val])
+    var buf = new Uint8Array([!val]);
     this.sendCommand(this._CommandDrawIOState, buf);
   }
-  
-  
-  setPinName(no, moduleName, pinName ) {
-    var str = moduleName.slice(0,4) + " "+ pinName;
-    str = str.slice(0,9);
+
+  setPinName(no, moduleName, pinName) {
+    var str = moduleName.slice(0, 4) + " " + pinName;
+    str = str.slice(0, 9);
 
     var buf = new Uint8Array(1);
-    buf[0] = no; 
+    buf[0] = no;
 
     var stringarray;
     if (isNode) {
       const buf = Buffer(str, 'utf8');
       stringarray = new Uint8Array(buf);
-    } else if(TextEncoder){
+    } else if (TextEncoder) {
       stringarray = new Uint8Array(new TextEncoder("utf-8").encode(str));
     }
     var combined = new Uint8Array(buf.length + stringarray.length);
@@ -10622,26 +6375,21 @@ class WSCommand_Display extends WSCommand {
 
     this.sendCommand(this._CommandSetPinName, combined);
   }
-  
+
   parseFromJson(json) {
     var module = json["display"];
     if (module === undefined) {
       return;
     }
 
-    let schemaData = [
-      {uri : "/request/display/text",  onValid: this.text},
-      {uri : "/request/display/clear", onValid: this.clear},
-      {uri : "/request/display/raw", onValid: this.raw},
-      {uri : "/request/display/pin_assign", onValid: this.pinName},
-      {uri : "/request/display/qr"} // nothing to do 
-    ];
-    let res = this.validateCommandSchema(schemaData, module, "display" );
+    let schemaData = [{ uri: "/request/display/text", onValid: this.text }, { uri: "/request/display/clear", onValid: this.clear }, { uri: "/request/display/raw", onValid: this.raw }, { uri: "/request/display/pin_assign", onValid: this.pinName }, { uri: "/request/display/qr" // nothing to do 
+    }];
+    let res = this.validateCommandSchema(schemaData, module, "display");
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new WSCommandNotFoundError(`[display]unknown command`);
       }
     }
@@ -10649,7 +6397,6 @@ class WSCommand_Display extends WSCommand {
 }
 
 module.exports = WSCommand_Display;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -10660,19 +6407,22 @@ module.exports = WSCommand_Display;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_I2C extends WSCommand {
-  
+
   constructor(delegate) {
     super(delegate);
     this.module = 6;
 
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandWrite    = 2
-    this._CommandRead     = 3
-    this._CommandSlvWritten = 4
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandWrite = 2;
+    this._CommandRead = 3;
+    this._CommandSlvWritten = 4;
   }
 
   // Commands
@@ -10684,14 +6434,14 @@ class WSCommand_I2C extends WSCommand {
     var scl = parseInt(params.scl);
     var clock = parseInt(params.clock);
 
-    var buf = new Uint8Array(8 );
+    var buf = new Uint8Array(8);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
     buf[3] = scl;
-    buf[4] = clock >> (3*8);
-    buf[5] = clock >> (2*8);
-    buf[6] = clock >> (1*8);
+    buf[4] = clock >> 3 * 8;
+    buf[5] = clock >> 2 * 8;
+    buf[6] = clock >> 1 * 8;
     buf[7] = clock;
 
     this.sendCommand(this._CommandInit, buf);
@@ -10710,14 +6460,14 @@ class WSCommand_I2C extends WSCommand {
       addressLength = 10;
     }
 
-    var buf = new Uint8Array( 11 );
+    var buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
     buf[3] = scl;
-    buf[4] = clock >> (3*8);
-    buf[5] = clock >> (2*8);
-    buf[6] = clock >> (1*8);
+    buf[4] = clock >> 3 * 8;
+    buf[5] = clock >> 2 * 8;
+    buf[6] = clock >> 1 * 8;
     buf[7] = clock;
     buf[8] = addressLength;
     buf[9] = address >> 8;
@@ -10734,7 +6484,7 @@ class WSCommand_I2C extends WSCommand {
   write(params, module) {
     let address = parseInt(params.address);
 
-    if ( params.address_bits === 10 || address > 0x7F) {
+    if (params.address_bits === 10 || address > 0x7F) {
       address = address | 0x8000; // mark 10bit mode
     }
     var buf = new Uint8Array(3 + params.data.length);
@@ -10748,7 +6498,7 @@ class WSCommand_I2C extends WSCommand {
   read(params, module) {
     let address = parseInt(params.address);
 
-    if ( params.address_bits === 10 || address > 0x7F) {
+    if (params.address_bits === 10 || address > 0x7F) {
       address = address | 0x8000; // mark 10bit mode
     }
     let read_length = params.read;
@@ -10756,34 +6506,28 @@ class WSCommand_I2C extends WSCommand {
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
-    buf[3] = read_length >> (3*8);
-    buf[4] = read_length >> (2*8);
-    buf[5] = read_length >> (1*8);
+    buf[3] = read_length >> 3 * 8;
+    buf[4] = read_length >> 2 * 8;
+    buf[5] = read_length >> 1 * 8;
     buf[6] = read_length;
     this.sendCommand(this._CommandRead, buf);
   }
 
   parseFromJson(json) {
     // 0
-    for (var i=0; i<1;i++) {
-      var module = json["i2c"+i];
+    for (var i = 0; i < 1; i++) {
+      var module = json["i2c" + i];
       if (module === undefined) {
         continue;
       }
 
-      let schemaData = [
-        {uri : "/request/i2c/init_master",  onValid: this.initMaster},
-        {uri : "/request/i2c/init_slave",   onValid: this.initSlave},
-        {uri : "/request/i2c/write",        onValid: this.write},
-        {uri : "/request/i2c/read",         onValid: this.read},
-        {uri : "/request/i2c/deinit",       onValid: this.deinit},
-      ];
-      let res = this.validateCommandSchema(schemaData, module, "i2c"+i, i);
+      let schemaData = [{ uri: "/request/i2c/init_master", onValid: this.initMaster }, { uri: "/request/i2c/init_slave", onValid: this.initSlave }, { uri: "/request/i2c/write", onValid: this.write }, { uri: "/request/i2c/read", onValid: this.read }, { uri: "/request/i2c/deinit", onValid: this.deinit }];
+      let res = this.validateCommandSchema(schemaData, module, "i2c" + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new WSCommandNotFoundError(`[i2c${i}]unknown command`);
         }
       }
@@ -10796,49 +6540,50 @@ class WSCommand_I2C extends WSCommand {
       var address = (payload[1] << 8) + payload[2];
 
       var arr = new Array(payload.byteLength - 3);
-      for (var i=0; i<arr.length;i++) {
+      for (var i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 3];
       }
-      
-      objToSend["i2c"+module_index] = {
+
+      objToSend["i2c" + module_index] = {
         mode: "master",
         address: address,
         data: arr
       };
     } else if (func === this._CommandSlvWritten && payload.byteLength > 4) {
       var module_index = payload[0];
-      var address_bit_length = payload[1]
+      var address_bit_length = payload[1];
       var address = (payload[2] << 8) + payload[3];
 
       var arr = new Array(payload.byteLength - 4);
-      for (var i=0; i<arr.length; i++) {
+      for (var i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 4];
       }
 
-      objToSend["i2c"+module_index] = {
+      objToSend["i2c" + module_index] = {
         mode: "slave",
         is_fragmented: true,
         address: address,
         data: arr
       };
-    } else if(func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength > 2){
+    } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength > 2) {
       const esperr = payload[0];
       const err = payload[1];
       const ref_func_id = payload[2];
 
       if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
-        let reason = '' + ( (ref_func_id === this._CommandWrite) ? 'writing' : 'reading' ) + ' error. ';
-        if (err === 7) { // in fact. it is 0x107. but truncated
-          reason += 'Communication Timeout. Maybe, target is not connected.'
+        let reason = '' + (ref_func_id === this._CommandWrite ? 'writing' : 'reading') + ' error. ';
+        if (err === 7) {
+          // in fact. it is 0x107. but truncated
+          reason += 'Communication Timeout. Maybe, target is not connected.';
         } else if (err === 255) {
-          reason += 'Communication Failed. Maybe, target is not connected.'
+          reason += 'Communication Failed. Maybe, target is not connected.';
         }
-        this.envelopError(objToSend, `i2c0`, { message: reason })
+        this.envelopError(objToSend, `i2c0`, { message: reason });
       } else {
-        super.notifyFromBinary(objToSend, func, payload)
+        super.notifyFromBinary(objToSend, func, payload);
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
@@ -10854,22 +6599,24 @@ module.exports = WSCommand_I2C;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
-
-const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1
-const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2
-const COMMAND_IO_ERRORS_IO_TOO_LOW  = 3
-const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4
-const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xF0
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
+const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
+const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4;
+const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xF0;
 
 const COMMAND_IO_ERROR_MESSAGES = {
   0: 'unknown error',
   1: 'heavy output. output voltage is too low when driving high',
   2: 'heavy output. output voltage is too high when driving low',
   3: 'output voltage is too low when driving high. io state has changed output to input',
-  4: 'output voltage is too high when driving low. io state has changed output to input',
-}
+  4: 'output voltage is too high when driving low. io state has changed output to input'
+};
 
 const COMMAND_IO_MUTEX_NAMES = {
   1: 'io.input',
@@ -10880,7 +6627,7 @@ const COMMAND_IO_MUTEX_NAMES = {
   6: 'spi',
   7: 'LogicAnalyzer',
   8: 'Measure'
-}
+};
 
 class WSCommand_IO extends WSCommand {
 
@@ -10888,15 +6635,14 @@ class WSCommand_IO extends WSCommand {
     super(delegate);
     this.module = 2;
 
-    this._CommandOutput           = 0;
-    this._CommandInputStream      = 1;
-    this._CommandInputOnece       = 2;
-    this._CommandOutputType       = 3;
+    this._CommandOutput = 0;
+    this._CommandInputStream = 1;
+    this._CommandInputOnece = 2;
+    this._CommandOutputType = 3;
     this._CommandPullResisterType = 4;
   }
 
   // Commands
-
 
 
   output(value, id) {
@@ -10909,15 +6655,14 @@ class WSCommand_IO extends WSCommand {
     this.sendCommand(this._CommandOutput, buf);
   }
 
-
   input(params, id) {
     var buf = new Uint8Array([id]);
-    this.sendCommand( this._CommandInputOnece, buf);
+    this.sendCommand(this._CommandInputOnece, buf);
   }
 
   inputDetail(params, id) {
     var buf = new Uint8Array([id]);
-    this.sendCommand( params.stream ? this._CommandInputStream : this._CommandInputOnece, buf);
+    this.sendCommand(params.stream ? this._CommandInputStream : this._CommandInputOnece, buf);
   }
 
   outputType(params, id) {
@@ -10930,7 +6675,7 @@ class WSCommand_IO extends WSCommand {
     } else if (params.output_type === "open-drain") {
       buf[1] = 3;
     } else {
-      return "io unknown outputtype: "+params.output_type;
+      return "io unknown outputtype: " + params.output_type;
     }
     this.sendCommand(this._CommandOutputType, buf);
   }
@@ -10947,32 +6692,25 @@ class WSCommand_IO extends WSCommand {
     } else if (params.pull_type === "pull-up5v") {
       buf[1] = 3;
     } else {
-      return "io unknown pull_type: "+params.pull_type;
+      return "io unknown pull_type: " + params.pull_type;
     }
     this.sendCommand(this._CommandPullResisterType, buf);
   }
 
   parseFromJson(json) {
-    for (var i=0; i<=11;i++) {
-      var module = json["io"+i];
+    for (var i = 0; i <= 11; i++) {
+      var module = json["io" + i];
       if (module === undefined) {
         continue;
       }
 
-      let schemaData = [
-        {uri : "/request/io/input",         onValid: this.input},
-        {uri : "/request/io/input_detail",  onValid: this.inputDetail},
-        {uri : "/request/io/output",        onValid: this.output},
-        {uri : "/request/io/output_detail", onValid: this.outputDetail},
-        {uri : "/request/io/output_type",   onValid: this.outputType},
-        {uri : "/request/io/pull_type",     onValid: this.pullType}
-      ];
-      let res = this.validateCommandSchema(schemaData, module, "io"+i, i);
+      let schemaData = [{ uri: "/request/io/input", onValid: this.input }, { uri: "/request/io/input_detail", onValid: this.inputDetail }, { uri: "/request/io/output", onValid: this.output }, { uri: "/request/io/output_detail", onValid: this.outputDetail }, { uri: "/request/io/output_type", onValid: this.outputType }, { uri: "/request/io/pull_type", onValid: this.pullType }];
+      let res = this.validateCommandSchema(schemaData, module, "io" + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new WSCommandNotFoundError(`[io${i}]unknown command`);
         }
       }
@@ -10982,10 +6720,9 @@ class WSCommand_IO extends WSCommand {
   notifyFromBinary(objToSend, func, payload) {
 
     if (func === this._CommandInputStream || func === this._CommandInputOnece) {
-      for (var i=0; i<payload.byteLength; i+=2) {
-        objToSend["io"+payload[i]] = (payload[i+1] > 0);
+      for (var i = 0; i < payload.byteLength; i += 2) {
+        objToSend["io" + payload[i]] = payload[i + 1] > 0;
       }
-
     } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
       const esperr = payload[0];
       const err = payload[1];
@@ -10993,22 +6730,19 @@ class WSCommand_IO extends WSCommand {
       const module_index = payload[3];
 
       if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
-        this.envelopWarning(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
-
-      } else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH)  {
-        this.envelopError(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
-
-      } else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6){
+        this.envelopWarning(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
+      } else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH) {
+        this.envelopError(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] });
+      } else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6) {
         const oldMutexOwner = payload[4];
         const newMutexOwner = payload[5];
-        this.envelopWarning(objToSend, 'debug', { message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.` })
+        this.envelopWarning(objToSend, 'debug', { message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.` });
       }
     } else {
       super.notifyFromBinary(objToSend, func, payload);
     }
   }
 };
-
 
 module.exports = WSCommand_IO;
 
@@ -11021,17 +6755,20 @@ module.exports = WSCommand_IO;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_LogicAnalyzer extends WSCommand {
-  
+
   constructor(delegate) {
     super(delegate);
     this.module = 10;
 
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandRecv     = 2
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandRecv = 2;
   }
 
   // Commands
@@ -11046,13 +6783,13 @@ class WSCommand_LogicAnalyzer extends WSCommand {
     var buf = new Uint8Array(12);
     buf[0] = 1;
     buf[1] = io;
-    buf[2] = intervalUsec >> (8*3);
-    buf[3] = intervalUsec >> (8*2);
-    buf[4] = intervalUsec >> (8*1);
+    buf[2] = intervalUsec >> 8 * 3;
+    buf[3] = intervalUsec >> 8 * 2;
+    buf[4] = intervalUsec >> 8 * 1;
     buf[5] = intervalUsec;
-    buf[6] = durationUsec >> (8*3);
-    buf[7] = durationUsec >> (8*2);
-    buf[8] = durationUsec >> (8*1);
+    buf[6] = durationUsec >> 8 * 3;
+    buf[7] = durationUsec >> 8 * 2;
+    buf[8] = durationUsec >> 8 * 1;
     buf[9] = durationUsec;
     buf[10] = matchValue;
     buf[11] = matchCount;
@@ -11069,37 +6806,32 @@ class WSCommand_LogicAnalyzer extends WSCommand {
     if (module === undefined) {
       return;
     }
-    let schemaData = [
-      {uri : "/request/logicAnalyzer/init",    onValid: this.init},
-      {uri : "/request/logicAnalyzer/deinit",  onValid: this.deinit},
-    ];
+    let schemaData = [{ uri: "/request/logicAnalyzer/init", onValid: this.init }, { uri: "/request/logicAnalyzer/deinit", onValid: this.deinit }];
     let res = this.validateCommandSchema(schemaData, module, "logic_analyzer");
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new WSCommandNotFoundError(`[logic_analyzer]unknown command`);
       }
     }
-
   }
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv) {
       var arr = new Array(payload.byteLength);
-      for (var i=0; i<payload.byteLength;i++) {
+      for (var i = 0; i < payload.byteLength; i++) {
         arr[i] = payload[i];
       }
       objToSend["logic_analyzer"] = {
         data: arr
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
-
 
 module.exports = WSCommand_LogicAnalyzer;
 
@@ -11112,6 +6844,9 @@ module.exports = WSCommand_LogicAnalyzer;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Measurement extends WSCommand {
@@ -11120,7 +6855,7 @@ class WSCommand_Measurement extends WSCommand {
     super(delegate);
     this.module = 12;
 
-    this._CommandMeasurementEcho  = 0
+    this._CommandMeasurementEcho = 0;
   }
 
   // Commands
@@ -11128,25 +6863,25 @@ class WSCommand_Measurement extends WSCommand {
   echo(params) {
     let type = 0;
     let trigerIO = params.echo.io_pulse;
-    let  trigerPosNeg = params.echo.pulse === "negative" ? false : true;
-    let trigerWidthUs = parseInt(params.echo.pulse_width*1000);
+    let trigerPosNeg = params.echo.pulse === "negative" ? false : true;
+    let trigerWidthUs = parseInt(params.echo.pulse_width * 1000);
     let echoIO = params.echo.io_echo;
     let responseCount = params.echo.measure_edges;
     let timeoutUs = params.echo.timeout * 1000;
     timeoutUs = parseInt(timeoutUs);
 
     var buf = new Uint8Array(13);
-    buf[0]  = 0;
-    buf[1]  = trigerIO;
-    buf[2]  = trigerPosNeg ? 1 : 0;
-    buf[3]  = trigerWidthUs >> 8*3;
-    buf[4]  = trigerWidthUs >> 8*2;
-    buf[5]  = trigerWidthUs >> 8;
-    buf[6]  = trigerWidthUs;
-    buf[7]  = echoIO;
-    buf[8]  = responseCount;
-    buf[9]  = timeoutUs >> 8*3;
-    buf[10] = timeoutUs >> 8*2;
+    buf[0] = 0;
+    buf[1] = trigerIO;
+    buf[2] = trigerPosNeg ? 1 : 0;
+    buf[3] = trigerWidthUs >> 8 * 3;
+    buf[4] = trigerWidthUs >> 8 * 2;
+    buf[5] = trigerWidthUs >> 8;
+    buf[6] = trigerWidthUs;
+    buf[7] = echoIO;
+    buf[8] = responseCount;
+    buf[9] = timeoutUs >> 8 * 3;
+    buf[10] = timeoutUs >> 8 * 2;
     buf[11] = timeoutUs >> 8;
     buf[12] = timeoutUs;
     this.sendCommand(this._CommandMeasurementEcho, buf);
@@ -11157,48 +6892,44 @@ class WSCommand_Measurement extends WSCommand {
     if (module === undefined) {
       return;
     }
-    let schemaData = [
-      {uri : "/request/measure/echo",    onValid: this.echo},
-    ];
+    let schemaData = [{ uri: "/request/measure/echo", onValid: this.echo }];
     let res = this.validateCommandSchema(schemaData, module, "measure");
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new WSCommandNotFoundError(`[measure]unknown command`);
       }
     }
-
   }
-  
+
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandMeasurementEcho) {
       var index = 0;
       var count = parseInt(payload[index++]);
       var array = [];
-      for (var i=0; i<count; i++) {
+      for (var i = 0; i < count; i++) {
         var timing;
-        var edge = (payload[index++] > 0) ? true : false;
-        timing  = payload[index++] << (8*3);
-        timing += payload[index++] << (8*2);
+        var edge = payload[index++] > 0 ? true : false;
+        timing = payload[index++] << 8 * 3;
+        timing += payload[index++] << 8 * 2;
         timing += payload[index++] << 8;
         timing += payload[index++];
         timing = timing / 1000;
         array.push({
           edge,
           timing
-        })
+        });
       }
       objToSend["measure"] = {
         echo: array
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
-
 
 module.exports = WSCommand_Measurement;
 
@@ -11211,6 +6942,9 @@ module.exports = WSCommand_Measurement;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_PWM extends WSCommand {
@@ -11221,16 +6955,16 @@ class WSCommand_PWM extends WSCommand {
     this.ModuleNum = 6;
     this.resetInternalStatus();
 
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandSetFreq  = 2
-    this._CommandSetDuty  = 3
-    this._CommandAMModulate = 4
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandSetFreq = 2;
+    this._CommandSetDuty = 3;
+    this._CommandAMModulate = 4;
   }
 
   resetInternalStatus() {
     this.pwms = [];
-    for (var i=0; i<this.ModuleNum; i++) {
+    for (var i = 0; i < this.ModuleNum; i++) {
       this.pwms.push({});
     }
   }
@@ -11255,21 +6989,21 @@ class WSCommand_PWM extends WSCommand {
   freq(params, module) {
     var buf = new Uint8Array(5);
     buf[0] = module;
-    buf[1] = params.freq >> (8*3);
-    buf[2] = params.freq >> (8*2);
-    buf[3] = params.freq >> (8*1);
+    buf[1] = params.freq >> 8 * 3;
+    buf[2] = params.freq >> 8 * 2;
+    buf[3] = params.freq >> 8 * 1;
     buf[4] = params.freq;
     this.pwms[module].freq = params.freq;
     this.sendCommand(this._CommandSetFreq, buf);
   }
 
-  pulse(params, module){
+  pulse(params, module) {
     let buf = new Uint8Array(5);
     let pulseUSec = params.pulse * 1000;
     buf[0] = module;
-    buf[1] = pulseUSec >> (8*3);
-    buf[2] = pulseUSec >> (8*2);
-    buf[3] = pulseUSec >> (8*1);
+    buf[1] = pulseUSec >> 8 * 3;
+    buf[2] = pulseUSec >> 8 * 2;
+    buf[3] = pulseUSec >> 8 * 1;
     buf[4] = pulseUSec;
     this.pwms[module].pulseUSec = pulseUSec;
     this.sendCommand(this._CommandSetDuty, buf);
@@ -11280,9 +7014,9 @@ class WSCommand_PWM extends WSCommand {
     let pulseUSec = 1.0 / this.pwms[module].freq * params.duty * 0.01 * 1000000;
     pulseUSec = parseInt(pulseUSec);
     buf[0] = module;
-    buf[1] = pulseUSec >> (8*3);
-    buf[2] = pulseUSec >> (8*2);
-    buf[3] = pulseUSec >> (8*1);
+    buf[1] = pulseUSec >> 8 * 3;
+    buf[2] = pulseUSec >> 8 * 2;
+    buf[3] = pulseUSec >> 8 * 1;
     buf[4] = pulseUSec;
     this.pwms[module].pulseUSec = pulseUSec;
     this.sendCommand(this._CommandSetDuty, buf);
@@ -11290,39 +7024,32 @@ class WSCommand_PWM extends WSCommand {
 
   amModulate(params, module) {
     var buf = new Uint8Array(5 + params.modulate.data.length);
-    let symbol_length_usec =  params.modulate.symbol_length * 1000;
+    let symbol_length_usec = params.modulate.symbol_length * 1000;
     buf[0] = module;
-    buf[1] = symbol_length_usec >> (8*3);
-    buf[2] = symbol_length_usec >> (8*2);
-    buf[3] = symbol_length_usec >> (8*1);
+    buf[1] = symbol_length_usec >> 8 * 3;
+    buf[2] = symbol_length_usec >> 8 * 2;
+    buf[3] = symbol_length_usec >> 8 * 1;
     buf[4] = symbol_length_usec;
-    for (var i=0; i<params.modulate.data.length; i++) {
+    for (var i = 0; i < params.modulate.data.length; i++) {
       buf[5 + i] = params.modulate.data[i];
     }
     this.sendCommand(this._CommandAMModulate, buf);
   }
 
   parseFromJson(json) {
-    for (var i=0; i<this.ModuleNum;i++) {
-      var module = json["pwm"+i];
+    for (var i = 0; i < this.ModuleNum; i++) {
+      var module = json["pwm" + i];
       if (module === undefined) {
         continue;
       }
 
-      let schemaData = [
-        {uri : "/request/pwm/init",           onValid: this.init},
-        {uri : "/request/pwm/freq",         onValid: this.freq},
-        {uri : "/request/pwm/pulse",        onValid: this.pulse},
-        {uri : "/request/pwm/duty",         onValid: this.duty},
-        {uri : "/request/pwm/modulate",     onValid: this.amModulate},
-        {uri : "/request/pwm/deinit",         onValid: this.deinit},
-      ];
-      let res = this.validateCommandSchema(schemaData, module, "pwm"+i, i);
+      let schemaData = [{ uri: "/request/pwm/init", onValid: this.init }, { uri: "/request/pwm/freq", onValid: this.freq }, { uri: "/request/pwm/pulse", onValid: this.pulse }, { uri: "/request/pwm/duty", onValid: this.duty }, { uri: "/request/pwm/modulate", onValid: this.amModulate }, { uri: "/request/pwm/deinit", onValid: this.deinit }];
+      let res = this.validateCommandSchema(schemaData, module, "pwm" + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new WSCommandNotFoundError(`[pwm${i}]unknown command`);
         }
       }
@@ -11341,6 +7068,9 @@ module.exports = WSCommand_PWM;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_SPI extends WSCommand {
@@ -11349,22 +7079,22 @@ class WSCommand_SPI extends WSCommand {
     super(delegate);
     this.module = 5;
 
-    this._CommandInit      = 0
-    this._CommandDeinit    = 1
-    this._CommandWriteRead = 2
-    this._CommandWrite     = 3
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandWriteRead = 2;
+    this._CommandWrite = 3;
   }
 
   // Commands
 
   initMaster(params, module) {
 
-    var mode = 0;//master mode
+    var mode = 0; //master mode
 
-    let clk  = params.clk;
+    let clk = params.clk;
     let mosi = params.mosi;
     let miso = params.miso;
-    let cs   = params.cs;
+    let cs = params.cs;
 
     var clock = params.clock;
 
@@ -11373,22 +7103,22 @@ class WSCommand_SPI extends WSCommand {
       return;
     }
 
-    if (clk  === null) clk  = this.ioNotUsed;
+    if (clk === null) clk = this.ioNotUsed;
     if (mosi === null) mosi = this.ioNotUsed;
     if (miso === null) miso = this.ioNotUsed;
-    if (cs === null)   cs   = this.ioNotUsed;
+    if (cs === null) cs = this.ioNotUsed;
 
-    var buf = new Uint8Array(11 );
-    buf[0]  = module;
-    buf[1]  = mode;
-    buf[2]  = clk;
-    buf[3]  = mosi;
-    buf[4]  = miso;
-    buf[5]  = this.ioNotUsed; //wp
-    buf[6]  = this.ioNotUsed; // hd
-    buf[7]  = clock >> (3*8);
-    buf[8]  = clock >> (2*8);
-    buf[9]  = clock >> (1*8);
+    var buf = new Uint8Array(11);
+    buf[0] = module;
+    buf[1] = mode;
+    buf[2] = clk;
+    buf[3] = mosi;
+    buf[4] = miso;
+    buf[5] = this.ioNotUsed; //wp
+    buf[6] = this.ioNotUsed; // hd
+    buf[7] = clock >> 3 * 8;
+    buf[8] = clock >> 2 * 8;
+    buf[9] = clock >> 1 * 8;
     buf[10] = clock;
     buf[11] = cs;
 
@@ -11404,31 +7134,27 @@ class WSCommand_SPI extends WSCommand {
     var buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
-    if(params.read){
+    if (params.read) {
       this.sendCommand(this._CommandWriteRead, buf);
-    }else{
+    } else {
       this.sendCommand(this._CommandWrite, buf);
     }
   }
 
   parseFromJson(json) {
-    for (var i=0; i<2;i++) {
-      var module = json["spi"+i];
+    for (var i = 0; i < 2; i++) {
+      var module = json["spi" + i];
       if (module === undefined) {
         continue;
       }
 
-      let schemaData = [
-        {uri : "/request/spi/init_master",    onValid: this.initMaster},
-        {uri : "/request/spi/write",          onValid: this.write},
-        {uri : "/request/spi/deinit",         onValid: this.deinit},
-      ];
-      let res = this.validateCommandSchema(schemaData, module, "spi"+i, i);
+      let schemaData = [{ uri: "/request/spi/init_master", onValid: this.initMaster }, { uri: "/request/spi/write", onValid: this.write }, { uri: "/request/spi/deinit", onValid: this.deinit }];
+      let res = this.validateCommandSchema(schemaData, module, "spi" + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new WSCommandNotFoundError(`[spi${i}]unknown command`);
         }
       }
@@ -11441,14 +7167,14 @@ class WSCommand_SPI extends WSCommand {
       var received = payload.slice(1);
 
       var arr = new Array(payload.byteLength - 1);
-      for (var i=0; i<arr.length;i++) {
+      for (var i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
-      objToSend["spi"+module_index] = {
+      objToSend["spi" + module_index] = {
         data: arr
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
@@ -11464,6 +7190,9 @@ module.exports = WSCommand_SPI;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Switch extends WSCommand {
@@ -11472,8 +7201,8 @@ class WSCommand_Switch extends WSCommand {
     super(delegate);
     this.module = 9;
 
-    this._CommandNotifyValue  = 0;
-    this._CommandOnece        = 1;
+    this._CommandNotifyValue = 0;
+    this._CommandOnece = 1;
   }
 
   // Commands
@@ -11488,37 +7217,30 @@ class WSCommand_Switch extends WSCommand {
     if (module === undefined) {
       return;
     }
-    let schemaData = [
-      {uri : "/request/switch/get",       onValid: this.get},
-    ];
+    let schemaData = [{ uri: "/request/switch/get", onValid: this.get }];
     let res = this.validateCommandSchema(schemaData, module, "switch");
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new WSCommandNotFoundError(`[switch]unknown command`);
       }
     }
   }
-  
+
   notifyFromBinary(objToSend, func, payload) {
     if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength == 1) {
       var state = parseInt(payload[0]);
-      var states = [
-        "none",
-        "push",
-        "left",
-        "right"
-      ]
+      var states = ["none", "push", "left", "right"];
       objToSend["switch"] = {
         state: states[state]
       };
       if (func === this._CommandOnece) {
-        objToSend["switch"].action = "get"
+        objToSend["switch"].action = "get";
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
@@ -11534,6 +7256,9 @@ module.exports = WSCommand_Switch;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_System extends WSCommand {
@@ -11542,14 +7267,14 @@ class WSCommand_System extends WSCommand {
     super(delegate);
     this.module = 0;
 
-    this._CommandReboot         = 0
-    
-    this._CommandReset          = 2
-    this._CommandSelfCheck      = 3
-    this._CommandWait           = 4
-    this._CommandResetOnDisconnect = 5
+    this._CommandReboot = 0;
 
-    this._CommandVCC            = 9
+    this._CommandReset = 2;
+    this._CommandSelfCheck = 3;
+    this._CommandWait = 4;
+    this._CommandResetOnDisconnect = 5;
+
+    this._CommandVCC = 9;
   }
 
   // Commands
@@ -11571,9 +7296,8 @@ class WSCommand_System extends WSCommand {
     var buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
-  keepWorkingAtOffline(params){
+  keepWorkingAtOffline(params) {
     this.resetOnDisconnect(!params.keep_working_at_offline);
-
   }
   resetOnDisconnect(mustReset) {
     var buf = new Uint8Array([mustReset ? 1 : 0]);
@@ -11582,36 +7306,29 @@ class WSCommand_System extends WSCommand {
 
   parseFromJson(json) {
     var module = json["system"];
-    if(module === undefined){
+    if (module === undefined) {
       return;
     }
 
-    let schemaData = [
-      {uri : "/request/system/reboot",               onValid: this.reboot},
-      {uri : "/request/system/reset",                onValid: this.reset},
-      {uri : "/request/system/wait",                 onValid: this.wait},
-      {uri : "/request/system/selfCheck",            onValid: this.selfCheck},
-      {uri : "/request/system/keepWorkingAtOffline", onValid: this.keepWorkingAtOffline},
-      {uri : "/request/system/ping"},
-    ];
+    let schemaData = [{ uri: "/request/system/reboot", onValid: this.reboot }, { uri: "/request/system/reset", onValid: this.reset }, { uri: "/request/system/wait", onValid: this.wait }, { uri: "/request/system/selfCheck", onValid: this.selfCheck }, { uri: "/request/system/keepWorkingAtOffline", onValid: this.keepWorkingAtOffline }, { uri: "/request/system/ping" }];
     let res = this.validateCommandSchema(schemaData, module, "system");
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new WSCommandNotFoundError(`[system]unknown command`);
       }
     }
   }
 
   notifyFromBinary(objToSend, func, payload) {
-    switch(func) {
+    switch (func) {
       case this._CommandVCC:
         if (payload.byteLength === 3) {
           let value = (payload[1] << 8) + payload[2];
           value = value / 100.0;
-          this.envelopWarning(objToSend, 'debug', { message: `Low Voltage ${value}v. connect obniz to more powerful USB.` })
+          this.envelopWarning(objToSend, 'debug', { message: `Low Voltage ${value}v. connect obniz to more powerful USB.` });
         }
         break;
 
@@ -11621,7 +7338,6 @@ class WSCommand_System extends WSCommand {
     }
   }
 }
-
 
 module.exports = WSCommand_System;
 
@@ -11634,6 +7350,9 @@ module.exports = WSCommand_System;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_UART extends WSCommand {
@@ -11642,10 +7361,10 @@ class WSCommand_UART extends WSCommand {
     super(delegate);
     this.module = 4;
 
-    this._CommandInit     = 0;
-    this._CommandDeinit   = 1;
-    this._CommandSend     = 2;
-    this._CommandRecv     = 3;
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandSend = 2;
+    this._CommandRecv = 3;
   }
 
   // Commands
@@ -11656,9 +7375,9 @@ class WSCommand_UART extends WSCommand {
     buf[1] = parseInt(params.tx);
     buf[2] = parseInt(params.rx);
 
-    buf[3] = params.baud >> (3*8);
-    buf[4] = params.baud >> (2*8);
-    buf[5] = params.baud >> (1*8);
+    buf[3] = params.baud >> 3 * 8;
+    buf[4] = params.baud >> 2 * 8;
+    buf[5] = params.baud >> 1 * 8;
     buf[6] = params.baud;
 
     if (params.stop === 1) {
@@ -11671,7 +7390,7 @@ class WSCommand_UART extends WSCommand {
       buf[7] = 0;
     } else {
       //ここには来ない
-      throw new Error("uart: invalid stop bits")
+      throw new Error("uart: invalid stop bits");
     }
 
     buf[8] = params.bits;
@@ -11690,9 +7409,9 @@ class WSCommand_UART extends WSCommand {
       buf[10] = 4;
     }
 
-    if(params.rts !== null)buf[11] = params.rts;
-    if(params.cts !== null)buf[12] = params.cts;
-    
+    if (params.rts !== null) buf[11] = params.rts;
+    if (params.cts !== null) buf[12] = params.cts;
+
     this.sendCommand(this._CommandInit, buf);
   }
 
@@ -11711,22 +7430,18 @@ class WSCommand_UART extends WSCommand {
 
   parseFromJson(json) {
     // 0~2
-    for (var i=0; i<3;i++) {
-      var module = json["uart"+i];
+    for (var i = 0; i < 3; i++) {
+      var module = json["uart" + i];
       if (module === undefined) {
         continue;
       }
-      let schemaData = [
-        {uri : "/request/uart/init",       onValid: this.init},
-        {uri : "/request/uart/send",       onValid: this.send},
-        {uri : "/request/uart/deinit",     onValid: this.deinit},
-      ];
-      let res = this.validateCommandSchema(schemaData, module, "uart"+i, i);
+      let schemaData = [{ uri: "/request/uart/init", onValid: this.init }, { uri: "/request/uart/send", onValid: this.send }, { uri: "/request/uart/deinit", onValid: this.deinit }];
+      let res = this.validateCommandSchema(schemaData, module, "uart" + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new WSCommandNotFoundError(`[uart${i}]unknown command`);
         }
       }
@@ -11737,19 +7452,18 @@ class WSCommand_UART extends WSCommand {
     if (func === this._CommandRecv && payload.byteLength > 1) {
       var module_index = payload[0];
       var arr = new Array(payload.byteLength - 1);
-      for (var i=0; i<arr.length;i++) {
+      for (var i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
 
-      objToSend["uart"+module_index] = {
+      objToSend["uart" + module_index] = {
         data: arr
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 };
-
 
 module.exports = WSCommand_UART;
 
@@ -11762,7 +7476,10 @@ module.exports = WSCommand_UART;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__dirname) {const tv4 = __webpack_require__(/*! tv4 */ "./node_modules/tv4/tv4.js");
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+
+const tv4 = __webpack_require__(/*! tv4 */ "tv4");
 
 tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
 
@@ -11780,31 +7497,27 @@ tv4.defineKeyword("uniqueKeys", function (data, value, schema) {
     return self.indexOf(x) !== self.lastIndexOf(x);
   });
   if (duplicated.length > 0) {
-    return {code: tv4.errorCodes.UNIQUE_KEYS, message: {uniqueKeys:value.join(",")}};
+    return { code: tv4.errorCodes.UNIQUE_KEYS, message: { uniqueKeys: value.join(",") } };
   }
   return null;
-
 });
-
 
 //todo
 
 let wsSchema = [];
-__webpack_require__("./obniz/libs/wscommand sync recursive").context = __webpack_require__(/*! ../webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
-if(__webpack_require__("./obniz/libs/wscommand sync recursive").context && __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir){__webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir(__dirname);}
+__webpack_require__("./obniz/libs/wscommand sync recursive").context = __webpack_require__(/*! ../webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context.js");
+if (__webpack_require__("./obniz/libs/wscommand sync recursive").context && __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir) {
+  __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir(__dirname);
+}
 let context = __webpack_require__("./json_schema sync recursive \\.yml$");
-for( let path of context.keys()){
+for (let path of context.keys()) {
   let oneSchema = context(path);
-  wsSchema.push( oneSchema );
+  wsSchema.push(oneSchema);
 }
 
-
- wsSchema.map(tv4.addSchema);
-
+wsSchema.map(tv4.addSchema);
 
 module.exports = tv4;
-
-
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
@@ -11816,8 +7529,10 @@ module.exports = tv4;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_ */ "./obniz/libs/wscommand/WSCommand_.js");
+"use strict";
 
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_ */ "./obniz/libs/wscommand/WSCommand_.js");
 
 WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_System */ "./obniz/libs/wscommand/WSCommand_System.js"));
 WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Directive */ "./obniz/libs/wscommand/WSCommand_Directive.js"));
@@ -11844,85 +7559,90 @@ module.exports = WSCommand;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {class JsonBinaryConverter {
-  
-  static convertFromBinaryToJson(schema, binary){
+"use strict";
+
+
+class JsonBinaryConverter {
+
+  static convertFromBinaryToJson(schema, binary) {
     var types = {
-      hex : this.hexFromBinary.bind(this),
-      uuid : this.uuidFromBinary.bind(this),
-      number : this.numberFromBinary.bind(this),
-      "signed number" : this.signedNumberFromBinary.bind(this),
-      int : this.numberFromBinary.bind(this),
-      char : this.numberFromBinary.bind(this),
-      enum : this.enumFromBinary.bind(this),
-      dataArray : this.dataArrayFromBinary.bind(this)
+      hex: this.hexFromBinary.bind(this),
+      uuid: this.uuidFromBinary.bind(this),
+      number: this.numberFromBinary.bind(this),
+      "signed number": this.signedNumberFromBinary.bind(this),
+      int: this.numberFromBinary.bind(this),
+      char: this.numberFromBinary.bind(this),
+      enum: this.enumFromBinary.bind(this),
+      dataArray: this.dataArrayFromBinary.bind(this)
     };
     var json = {};
     var count = 0;
-    for(var i = 0; i<schema.length; i++){
-      var data = binary.slice(count, schema[i].length? count+schema[i].length: undefined);
-      json[schema[i].name] = types[schema[i].type](data, schema[i]) ;
-      
-      if(schema[i].length){
+    for (var i = 0; i < schema.length; i++) {
+      var data = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
+      json[schema[i].name] = types[schema[i].type](data, schema[i]);
+
+      if (schema[i].length) {
         count += schema[i].length;
-      }else{
+      } else {
         break;
       }
     }
     return json;
   }
-  
-  static hexFromBinary(data, schema){
+
+  static hexFromBinary(data, schema) {
     var str = "";
     for (var i = 0; i < data.length; i++) {
-      if(schema.endianness && schema.endianness === "little"){
-        str = ("00" + data[i].toString(16)).slice(-2) +  str ;
-      }else{
-        str = str + ("00" + data[i].toString(16)).slice(-2)  ;
+      if (schema.endianness && schema.endianness === "little") {
+        str = ("00" + data[i].toString(16)).slice(-2) + str;
+      } else {
+        str = str + ("00" + data[i].toString(16)).slice(-2);
       }
     }
     return str;
   }
-  
-  static uuidFromBinary(data){
+
+  static uuidFromBinary(data) {
     var len = data[0] * 16 + data[1];
-    if(len === 0){
+    if (len === 0) {
       return null;
     }
     var uuidData = data.slice(2);
     var str = "";
     for (var i = 0; i < len; i++) {
       str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
-    }    
-    return str ;
+    }
+    return str;
   }
-  
-  static signedNumberFromBinary(data, schema){  //big adian
+
+  static signedNumberFromBinary(data, schema) {
+    //big adian
     var val = data[0] & 0x7F;
-    for(var i=1; i<data.length;i++){
-      val = val* 256 + data[i];
+    for (var i = 1; i < data.length; i++) {
+      val = val * 256 + data[i];
     }
-    if((data[0] & 0x80 )!== 0){
-      val = val - Math.pow(2, (data.length*8-1));
+    if ((data[0] & 0x80) !== 0) {
+      val = val - Math.pow(2, data.length * 8 - 1);
     }
     return val;
   }
-  
-  static numberFromBinary(data){  //big adian
+
+  static numberFromBinary(data) {
+    //big adian
     var val = 0;
-    for(var i=0; i<data.length;i++){
-      val = val* 256 + data[i];
+    for (var i = 0; i < data.length; i++) {
+      val = val * 256 + data[i];
     }
     return val;
   }
-  
+
   static keyForVal(enumvals, val) {
     return Object.keys(enumvals).filter(function (k) {
       return enumvals[k] === val;
     })[0];
     return undefined;
   }
-  
+
   static enumFromBinary(data, schema) {
     var enumVals = schema.enum;
     var val = this.numberFromBinary(data);
@@ -11930,56 +7650,54 @@ module.exports = WSCommand;
     if (tmp) {
       val = tmp;
     }
-    
+
     return val;
   }
-  
-  static dataArrayFromBinary(data){
+
+  static dataArrayFromBinary(data) {
     var arr = new Array(data.length);
     for (var i = 0; i < data.length; i++) {
       arr[i] = data[i];
     }
     return arr;
   }
-  
-  static createSendBuffer(schema, data){
+
+  static createSendBuffer(schema, data) {
     var array = [];
-    for(var i=0; i<schema.length; i++){
+    for (var i = 0; i < schema.length; i++) {
       var schemaRow = schema[i];
-      
+
       var row = undefined;
-      if(Array.isArray(schemaRow)){
-        for( var key in schemaRow){
-          var customSchemaRow = Object.assign({},schemaRow[key],{required:true});
+      if (Array.isArray(schemaRow)) {
+        for (var key in schemaRow) {
+          var customSchemaRow = Object.assign({}, schemaRow[key], { required: true });
           row = this.analyzeSchema(data, customSchemaRow);
-          if(row){
+          if (row) {
             break;
           }
         }
-        
-      }else{
-        row = this.analyzeSchema(data,schemaRow);
+      } else {
+        row = this.analyzeSchema(data, schemaRow);
       }
 
       Array.prototype.push.apply(array, row);
     }
     return new Uint8Array(array);
-    
   }
-  
-  static analyzeSchema(allData, schemaRow){
-     var types = {
-      hex : this.hexToBinary.bind(this),
-      uuid : this.uuidToBinary.bind(this),
-      int : this.intToBinary.bind(this),
-      char : this.charToBinary.bind(this),
-      dataArray : this.dataArrayToBinary.bind(this),
+
+  static analyzeSchema(allData, schemaRow) {
+    var types = {
+      hex: this.hexToBinary.bind(this),
+      uuid: this.uuidToBinary.bind(this),
+      int: this.intToBinary.bind(this),
+      char: this.charToBinary.bind(this),
+      dataArray: this.dataArrayToBinary.bind(this),
       enum: this.enumToBinary.bind(this),
       string: this.stringToBinary.bind(this),
       text: this.stringToBinary.bind(this),
       flag: this.flagToBinary.bind(this)
     };
-    
+
     var val = undefined;
     if (schemaRow.path) {
       val = this.getProperty(allData, schemaRow.path);
@@ -11991,127 +7709,117 @@ module.exports = WSCommand;
       val = schemaRow.default;
     }
 
-
     var row = types[schemaRow.type](val, schemaRow);
 
     if (schemaRow.length && row.length !== schemaRow.length) {
       console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
     }
-    
+
     return row;
   }
-  
-  
-  
-  
+
   static getProperty(object, path) {
-    if(path === "" || path === undefined){
+    if (path === "" || path === undefined) {
       return object;
     }
-    if (typeof path === 'string')
-      path = path.split('.');
-    if (!Array.isArray(path))
-      path = [path];
-    
-      var index = 0,
-          length = path.length;
+    if (typeof path === 'string') path = path.split('.');
+    if (!Array.isArray(path)) path = [path];
 
-      while (index < length) {
-        object = object[path[index++]];
-        if(object === undefined){
-          return undefined;
-        }
+    var index = 0,
+        length = path.length;
+
+    while (index < length) {
+      object = object[path[index++]];
+      if (object === undefined) {
+        return undefined;
       }
-      return (index && index === length) ? object : undefined;
-    
+    }
+    return index && index === length ? object : undefined;
   }
-  
-  static hexToBinary(data,schema){
+
+  static hexToBinary(data, schema) {
     var array = [];
     var hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    for (var i = 0; i < hex.length/2; i++) {
+    for (var i = 0; i < hex.length / 2; i++) {
       array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
     }
-    if(schema && schema.endianness && schema.endianness === "little"){
+    if (schema && schema.endianness && schema.endianness === "little") {
       array.reverse();
     }
     return array;
   }
-  
-  
-  static intToBinary(data){
+
+  static intToBinary(data) {
     var array = [];
-    array[0] = (data >> 8*3) & 0xFF;
-    array[1] = (data >> 8*2) & 0xFF;
-    array[2] = (data >> 8*1) & 0xFF;
-    array[3] = (data >> 8*0) & 0xFF;
+    array[0] = data >> 8 * 3 & 0xFF;
+    array[1] = data >> 8 * 2 & 0xFF;
+    array[2] = data >> 8 * 1 & 0xFF;
+    array[3] = data >> 8 * 0 & 0xFF;
     return array;
   }
-  
-  static charToBinary(data){
+
+  static charToBinary(data) {
     var array = [];
-    array[0] = data  & 0xFF;
+    array[0] = data & 0xFF;
     return array;
   }
-  
-  static dataArrayToBinary(data){
-    if(!Array.isArray(data)){
+
+  static dataArrayToBinary(data) {
+    if (!Array.isArray(data)) {
       data = [data];
     }
     return data;
   }
-  static uuidToBinary(data){
-    
-    var uuid = this.hexToBinary(data)
-    uuid.reverse();  //big endianness -> little endianness;
+  static uuidToBinary(data) {
+
+    var uuid = this.hexToBinary(data);
+    uuid.reverse(); //big endianness -> little endianness;
     var length = uuid.length;
-    
+
     var array = [];
-    
-    array[0] = (length >> 8*1) & 0xFF;
-    array[1] = (length >> 8*0) & 0xFF;
-    
+
+    array[0] = length >> 8 * 1 & 0xFF;
+    array[1] = length >> 8 * 0 & 0xFF;
+
     Array.prototype.push.apply(array, uuid);
-    for(var i = array.length; i < 16+2;i++){
+    for (var i = array.length; i < 16 + 2; i++) {
       array[i] = 0;
     }
-    
+
     return array;
   }
-  
-  static enumToBinary(data, schema){
+
+  static enumToBinary(data, schema) {
     var array = [];
     array.push(schema.enum[data]);
     return array;
   }
-  
-  
-  static flagToBinary(data, schema){
-    if(!Array.isArray(data)){
+
+  static flagToBinary(data, schema) {
+    if (!Array.isArray(data)) {
       data = [data];
     }
     var flags = schema.flags;
     var value = 0;
-    for( var key in flags){
-      if(data.includes(flags[key])){
+    for (var key in flags) {
+      if (data.includes(flags[key])) {
         value += parseInt(key);
       }
     }
     return [value];
   }
-  
-  static stringToBinary(data){
+
+  static stringToBinary(data) {
     var array = [];
     if (isNode) {
       return new Uint8Array(Buffer(data, 'utf8'));
-    } else if(TextEncoder){
+    } else if (TextEncoder) {
       return new Uint8Array(new TextEncoder("utf-8").encode(data));
     }
   }
 }
 
 module.exports = JsonBinaryConverter;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -12168,32 +7876,122 @@ webpackContext.id = "./parts/Accessory sync recursive \\.js$";
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var USB = function() {
-    this.keys = ["vcc","gnd"];
-    this.requiredKeys = ["vcc","gnd"];
+"use strict";
+
+
+var USB = function () {
+  this.keys = ["vcc", "gnd"];
+  this.requiredKeys = ["vcc", "gnd"];
 };
 
-USB.prototype.wired = function(obniz) {
+USB.prototype.wired = function (obniz) {
   this.obniz = obniz;
   this.io_vdd = obniz.getIO(this.params.vcc);
   this.io_gnd = obniz.getIO(this.params.gnd);
-  
+
   this.io_gnd.output(false);
-  
 };
 
-USB.prototype.on = function() {
+USB.prototype.on = function () {
   this.io_vdd.output(true);
 };
 
-USB.prototype.off = function() {
+USB.prototype.off = function () {
   this.io_vdd.output(false);
 };
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("USB", USB);
 
+/***/ }),
+
+/***/ "canvas":
+/*!*************************!*\
+  !*** external "canvas" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("canvas");
+
+/***/ }),
+
+/***/ "fs":
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+
+/***/ "js-yaml":
+/*!**************************!*\
+  !*** external "js-yaml" ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("js-yaml");
+
+/***/ }),
+
+/***/ "node-dir":
+/*!***************************!*\
+  !*** external "node-dir" ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("node-dir");
+
+/***/ }),
+
+/***/ "path":
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+
+/***/ "string_decoder":
+/*!*********************************!*\
+  !*** external "string_decoder" ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("string_decoder");
+
+/***/ }),
+
+/***/ "tv4":
+/*!**********************!*\
+  !*** external "tv4" ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("tv4");
+
+/***/ }),
+
+/***/ "ws":
+/*!*********************!*\
+  !*** external "ws" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("ws");
 
 /***/ })
 
 /******/ });
+});
