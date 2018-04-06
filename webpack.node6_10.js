@@ -26,11 +26,12 @@ const path = require('path');
 //
 //
 // module.exports = config;
-
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   // モードの設定、v4系以降はmodeを指定しないと、webpack実行時に警告が出る
   mode: 'development',
+  target : "node",
   // エントリーポイントの設定
   entry: './obniz/index.js',
   // entry: './test.js',
@@ -41,6 +42,8 @@ module.exports = {
     // 出力先のパス（v2系以降は絶対パスを指定する必要がある）
     path: path.join(__dirname),
 
+    library: 'Obniz',
+    libraryTarget: "umd"
   },
   devtool: "none",
   module: {
@@ -67,7 +70,8 @@ module.exports = {
       }
     }]
   },
+  externals: [nodeExternals()],
   stats:{
     warningsFilter:[ /(?!require function is used in a way in which dependencies cannot be statically extracted)/]
-  }
+  },
 };
