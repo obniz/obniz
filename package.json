@@ -64,7 +64,6 @@
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
-    "canvas": "^1.6.10",
     "js-yaml": "^3.11.0",
     "node-dir": "^0.1.17",
     "ws": "^5.1.1"
