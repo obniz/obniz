@@ -1,5 +1,4 @@
 const tv4 = require("tv4");
-const yaml = require("yaml-loader");
 
 tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
 
@@ -32,10 +31,6 @@ if(require.context && require.context.setBaseDir){require.context.setBaseDir(__d
 let context = require.context(  "../../../json_schema", true, /\.yml$/);
 for( let path of context.keys()){
   let oneSchema = context(path);
-  let json = yaml.safeLoad(
-      fs.readFileSync(file, 'utf8'),
-      {schema: yaml.JSON_SCHEMA}
-  );
   wsSchema.push( oneSchema );
 }
 
