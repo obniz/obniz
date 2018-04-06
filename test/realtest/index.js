@@ -7,7 +7,8 @@ const fs = require('fs');
 
 const Obniz = require('../../index.js');
 
-describe("obniz.index", function () {
+describe("obniz", async function () {
+
 
   var obnizA;
   var obnizB;
@@ -15,10 +16,10 @@ describe("obniz.index", function () {
   beforeEach(function (done) {
 
     obnizA = new Obniz("10760979");
-    //obnizA.debugprint = true;
+    // obnizA.debugprint = true;
     obnizA.onconnect = () => {
       obnizB = new Obniz("00978479");
-      //obnizB.debugprint = true;
+      // obnizB.debugprint = true;
       obnizB.onconnect = ()=>{
         done();
       }
@@ -27,14 +28,14 @@ describe("obniz.index", function () {
   });
 
   afterEach(function () {
-    //obnizA.close();
-    //obnizB.close();
+    // obnizA.close();
+    // obnizB.close();
   });
 
   const files = fs.readdirSync(path.join(__dirname, 'tests'));
   for (let i=0; i<files.length; i++) {
     if (files[i].indexOf(".js") >=0) {
-      it("tests/"+files[i], async function () {
+      it("tests/"+files[i], function () {
         const test = require(path.join(__dirname, 'tests', files[i]))
         test({obnizA, obnizB});
       });
