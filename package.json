@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION ./test/index.js",
+    "realtest": "./node_modules/.bin/mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "local": "node $NODE_DEBUG_OPTION ./_tools/server.js"
   },
   "keywords": [
