@@ -1,4 +1,4 @@
-var _obniz_js_version = "0.1.51";
+var _obniz_js_version = "0.1.52";
 
 /* global showObnizDebugError  */
 
@@ -5715,7 +5715,7 @@ class hx711 {
     this.spi.end(true);
     this.sck.output(false);
     let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-    return flag * (((ret[0] & 0x7F) << 16)+(ret[0] << 8)+(ret[0] << 0)) ;
+    return flag * (((ret[0] & 0x7F) << 16)+(ret[1] << 8)+(ret[2] << 0)) ;
   }
 
 
