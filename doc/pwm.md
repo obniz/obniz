@@ -92,7 +92,7 @@ am modulation: data "1" measn output the pwm with duty 50%. "0" means stop pwm. 
 interval defines symbol baud rate. 
 Duty is 50% fixed.
 
-![](./images/pwm_modulate.png)
+![](./images/pwm_modu.png)
 
 This is useful to generate IR signal (Remote control).
 38kHz freq with signals.
@@ -104,7 +104,7 @@ pwm.start({io:0});
 pwm.freq(38000); // set pwm frequency to 38khz
 
 // signal for room heater's remote signal
-var arr = [255,0,0,0,0,0,0,255,255,254,1,192,62,3,255,254,3,192,63,255,192,60,3,224,62,3,255,254,3,255,254,3,224,62,3,224,63,255,192,63,255,224,62,3,224,62,3,224,62,3,224,62,3,240,31,3,240,31,1,240,31,1,255,255,1,240,31,1,240,31,1,248,31,129,240,31,255,248,31,129,248,15,128,248,15,255,248,15,128,248,15,128,248,15,128,252,15,255,255];
+var arr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1];
 
 pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70usec.
 ```
