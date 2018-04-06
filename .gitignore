@@ -11,3 +11,5 @@ test/**/*.html
 .idea/vcs.xml
 .idea/workspace.xml
 temp
+.idea
+log
