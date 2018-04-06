@@ -1,3 +1,4 @@
+const ObnizUtil = require("../utils/util");
 
 class PeripheralI2C {
 
@@ -194,3 +195,5 @@ class PeripheralI2C {
     this.used = false;
   }
 }
+
+module.exports = PeripheralI2C;

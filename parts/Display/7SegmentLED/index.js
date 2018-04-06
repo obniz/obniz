@@ -81,6 +81,6 @@ _7SegmentLED.prototype.off = function() {
   this.common.output( this.isCathodeCommon ? true : false);
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("7SegmentLED", _7SegmentLED);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);
+

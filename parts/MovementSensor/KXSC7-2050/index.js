@@ -43,7 +43,5 @@ KXSC7_2050.prototype.wired = async function(obniz) {
   
 };
 
-
-if (PartsRegistrate) {
-  PartsRegistrate("KXSC7_2050", KXSC7_2050);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("KXSC7_2050", KXSC7_2050);

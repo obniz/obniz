@@ -27,6 +27,6 @@ FSR40X.prototype.wired = function(obniz) {
 
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("FSR40X", FSR40X);
-}
+
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("FSR40X", FSR40X);

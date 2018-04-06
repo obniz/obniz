@@ -1,3 +1,5 @@
+const WSCommand = require("./WSCommand_.js");
+
 class WSCommand_LogicAnalyzer extends WSCommand {
   
   constructor(delegate) {
@@ -79,3 +81,6 @@ class WSCommand_LogicAnalyzer extends WSCommand {
     }
   }
 }
+
+
+module.exports = WSCommand_LogicAnalyzer;

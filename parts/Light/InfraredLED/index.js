@@ -29,6 +29,5 @@ class InfraredLED {
   }
 }
 
-if (typeof PartsRegistrate === 'function') {
-  PartsRegistrate("InfraredLED", InfraredLED);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("InfraredLED", InfraredLED);

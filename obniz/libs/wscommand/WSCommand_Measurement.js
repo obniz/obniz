@@ -1,3 +1,5 @@
+const WSCommand = require("./WSCommand_.js");
+
 class WSCommand_Measurement extends WSCommand {
 
   constructor(delegate) {
@@ -82,3 +84,6 @@ class WSCommand_Measurement extends WSCommand {
     }
   }
 }
+
+
+module.exports = WSCommand_Measurement;

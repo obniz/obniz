@@ -1,3 +1,5 @@
+const WSCommand = require("./WSCommand_.js");
+
 class WSCommand_Directive extends WSCommand {
   
   constructor(delegate) {
@@ -6,3 +8,5 @@ class WSCommand_Directive extends WSCommand {
   }
 
 }
+
+module.exports = WSCommand_Directive;

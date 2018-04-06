@@ -121,6 +121,5 @@ class FullColorLed{
 
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("FullColorLed", FullColorLed);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("FullColorLed", FullColorLed);

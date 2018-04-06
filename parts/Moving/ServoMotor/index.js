@@ -36,6 +36,5 @@ ServoMotor.prototype.off = function() {
   }
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("ServoMotor", ServoMotor);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("ServoMotor", ServoMotor);

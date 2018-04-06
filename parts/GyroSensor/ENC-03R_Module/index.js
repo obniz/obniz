@@ -48,6 +48,5 @@ ENC03R_Module.prototype.getValueSens2 = async function() {
   return (this.ad1.value - 1.35) / Sens;
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("ENC03R_Module", ENC03R_Module);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("ENC03R_Module", ENC03R_Module);

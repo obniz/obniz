@@ -178,6 +178,5 @@ class JpegSerialCam {
 
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("JpegSerialCam", JpegSerialCam);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("JpegSerialCam", JpegSerialCam);

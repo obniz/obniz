@@ -1,3 +1,4 @@
+const ObnizUtil = require("../utils/util");
 
 class PeripheralPWM {
   constructor(Obniz, id) {
@@ -78,3 +79,4 @@ class PeripheralPWM {
     });
   }
 }
+module.exports = PeripheralPWM;

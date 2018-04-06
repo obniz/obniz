@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const webpackStream = require("webpack-stream");
+const webpack = require("webpack");
 
 
 const gulp = require('gulp');
@@ -41,111 +43,69 @@ app.listen(port, (err) => {
 
 
 
+const obnizMain = path.join(__dirname, '../obniz/index.js');
 const obnizPath = path.join(__dirname, '../obniz/**/*.js');
 const partsPath = path.join(__dirname, '../parts/**/*.js');
 const packageJsonPath = path.join(__dirname, '../package.json');
-const wsroomSchemaSrcPath = path.join(__dirname, '../../wsroom/json_schema/**/*.yml');
 const schemaSrcPath = path.join(__dirname, '../json_schema/**/*.yml');
-const tempPath = path.join(__dirname, "../temp");
 const docPath = path.join(__dirname, "../doc");
 const tv4Path = require.resolve("tv4", {path:path.resolve(__dirname,"../")});
 if(!tv4Path){
   throw new Error("tv4 not found.npm install please")
 }
 
-if(!fs.existsSync(tempPath)){
-  fs.mkdirSync(tempPath);
-}
 
 
-
-gulp.task("jsonSchemaJoin", function jsonSchemaForVar(){
+gulp.task("jsonSchemaDoc", function jsonSchemaForVar(){
   return gulp.src(schemaSrcPath)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_sort())
       .pipe(gulp_yaml({ safe: true }))
       .pipe(concatWith("schema.js",{header:"let wsSchema = [", separator:",", footer:"];" }))
-      .pipe(gulp.dest(tempPath))
       .pipe(docGenerator())
       .pipe(rename("websocket.md"))
-      .pipe(gulp.dest(docPath));
+      .pipe(gulp.dest(docPath))
+      .on('end', function(){ console.log('jsonSchemaDoc compiled!'); });;
 
 });
 
 
-gulp.task("packageJsonConvert", function packageJsonConvert(){
-  return gulp.src(packageJsonPath)
+gulp.run("jsonSchemaDoc");
+gulp.watch([schemaSrcPath], ["jsonSchemaDoc"]);
+
+const webpackConfig = require("../webpack.config.js");
+const webpackConfigNode = require("../webpack.node6_10.js");
+
+gulp.task("obniz.js", [] ,function obnizJsBuild(){
+
+  return gulp.src(obnizMain)
       .pipe(plumber({errorHandler: reportError}))
-      .pipe(obnizVersion())
-      .pipe(rename("obnizVersion.js"))
-      .pipe(gulp.dest(tempPath));
-});
-
-
-//順番が関係あるので予めやる
-gulp.task("partsJoin", function partsJoin(){
-  return gulp.src(partsPath)
-      .pipe(plumber({errorHandler: reportError}))
-      .pipe(gulp_sort())
-      .pipe(gulp_concat("obnizParts.js"))
-      .pipe(gulp.dest(tempPath));
-});
-
-
-//順番が関係あるので予めやる
-gulp.task("obnizMain", function partsJoin(){
-  return gulp.src(obnizPath)
-      .pipe(plumber({errorHandler: reportError}))
-      .pipe(gulp_sort())
-      .pipe(gulp_concat("obnizMain.js"))
-      .pipe(gulp.dest(tempPath));
-});
-
-
-gulp.task("tv4Wrap", ["jsonSchemaJoin"], function tv4Wrap(){
-  let header = "(function(global){ let module = {exports:{}};";
-  let separator = "\n";
-  let footer = "; \n Obniz.tv4 = module.exports; wsSchema.map(Obniz.tv4.addSchema) })(this);";
-
-  return gulp.src([tv4Path, path.join(tempPath,"schema.js"), path.join(__dirname,"tv4Additional.js")])
-      .pipe(plumber({errorHandler: reportError}))
-      .pipe(concatWith("tv4Wraped.js",{header,separator, footer}))
-      .pipe(gulp.dest(tempPath));
-});
-
-
-gulp.task("obniz.js", ["obnizMain","packageJsonConvert","partsJoin", "tv4Wrap"] ,function obnizJsBuild(){
-
-
-
-  let obnizjsSrcPaths = [
-    path.join(tempPath,"obnizVersion.js"),
-    path.join(tempPath,"obnizMain.js"),
-    path.join(tempPath,"obnizParts.js"),
-    path.join(tempPath,"schema.js"),
-    path.join(tempPath,"tv4Wraped.js"),
-  ];
-  return  gulp.src(obnizjsSrcPaths)
-      .pipe(plumber({errorHandler: reportError}))
-      .pipe(gulp_concat("obniz.js"))
-      .pipe(gulp.dest(path.join(__dirname, '../')))
-
-      .pipe(gulp_babel({
-        "presets": [
-          ["env", {"targets": {"node": "6.10"}}]
-        ]
-      }))
-      .pipe(rename("obniz.node6_10.js"))
+      .pipe(webpackStream(webpackConfig, webpack))
+      .pipe(rename("obniz.js"))
       .pipe(gulp.dest(path.join(__dirname, '../')))
       .on('end', function(){ console.log('obniz.js compiled!'); });
+
 });
 
 gulp.run("obniz.js");
 
 
-gulp.watch([obnizPath,partsPath,packageJsonPath,schemaSrcPath], ["obniz.js"]);
+gulp.task("obniz.node6_10.js", [] ,function obnizNodeBuild(){
 
+  return gulp.src(obnizMain)
+      .pipe(plumber({errorHandler: reportError}))
+      .pipe(webpackStream(webpackConfigNode, webpack))
+      .pipe(rename("obniz.node6_10.js"))
+      .pipe(gulp.dest(path.join(__dirname, '../')))
+      .on('end', function(){
+        console.log('obniz.node6_10.js compiled!');
+      });
 
+});
+
+gulp.run("obniz.node6_10.js");
+
+gulp.watch([obnizPath,partsPath,packageJsonPath,schemaSrcPath], ["obniz.js", "obniz.node6_10.js"]);
 
 
 function readMeBuild() {

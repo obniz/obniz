@@ -1,3 +1,6 @@
+const JsonBinaryConverter = require("./jsonBinaryConverter");
+const WSCommand = require("./WSCommand_.js");
+
 class WSCommand_Ble extends WSCommand {
 
   constructor(delegate) {
@@ -705,3 +708,5 @@ class WSCommand_Ble extends WSCommand {
     target[keys[keys.length - 1]] = row;
   }
 }
+
+module.exports = WSCommand_Ble;

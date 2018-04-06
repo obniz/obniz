@@ -1,8 +1,1772 @@
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["Obniz"] = factory();
+	else
+		root["Obniz"] = factory();
+})(global, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// object to store loaded and loading wasm modules
+/******/ 	var installedWasmModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// object with all compiled WebAssembly.Modules
+/******/ 	__webpack_require__.w = {};
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./obniz/index.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./json_schema sync recursive \\.yml$":
+/*!*********************************!*\
+  !*** ./json_schema sync \.yml$ ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./index.yml": "./json_schema/index.yml",
+	"./request/ad/deinit.yml": "./json_schema/request/ad/deinit.yml",
+	"./request/ad/index.yml": "./json_schema/request/ad/index.yml",
+	"./request/ad/input.yml": "./json_schema/request/ad/input.yml",
+	"./request/ble/central/characteristic_get.yml": "./json_schema/request/ble/central/characteristic_get.yml",
+	"./request/ble/central/characteristic_read.yml": "./json_schema/request/ble/central/characteristic_read.yml",
+	"./request/ble/central/characteristic_write.yml": "./json_schema/request/ble/central/characteristic_write.yml",
+	"./request/ble/central/connect.yml": "./json_schema/request/ble/central/connect.yml",
+	"./request/ble/central/descriptor_get.yml": "./json_schema/request/ble/central/descriptor_get.yml",
+	"./request/ble/central/descriptor_read.yml": "./json_schema/request/ble/central/descriptor_read.yml",
+	"./request/ble/central/descriptor_write.yml": "./json_schema/request/ble/central/descriptor_write.yml",
+	"./request/ble/central/disconnect.yml": "./json_schema/request/ble/central/disconnect.yml",
+	"./request/ble/central/index.yml": "./json_schema/request/ble/central/index.yml",
+	"./request/ble/central/scan_start.yml": "./json_schema/request/ble/central/scan_start.yml",
+	"./request/ble/central/scan_stop.yml": "./json_schema/request/ble/central/scan_stop.yml",
+	"./request/ble/central/service_get.yml": "./json_schema/request/ble/central/service_get.yml",
+	"./request/ble/index.yml": "./json_schema/request/ble/index.yml",
+	"./request/ble/peripheral/advertisement_start.yml": "./json_schema/request/ble/peripheral/advertisement_start.yml",
+	"./request/ble/peripheral/advertisement_stop.yml": "./json_schema/request/ble/peripheral/advertisement_stop.yml",
+	"./request/ble/peripheral/characteristic_read.yml": "./json_schema/request/ble/peripheral/characteristic_read.yml",
+	"./request/ble/peripheral/characteristic_write.yml": "./json_schema/request/ble/peripheral/characteristic_write.yml",
+	"./request/ble/peripheral/descriptor_read.yml": "./json_schema/request/ble/peripheral/descriptor_read.yml",
+	"./request/ble/peripheral/descriptor_write.yml": "./json_schema/request/ble/peripheral/descriptor_write.yml",
+	"./request/ble/peripheral/index.yml": "./json_schema/request/ble/peripheral/index.yml",
+	"./request/ble/peripheral/servie_start.yml": "./json_schema/request/ble/peripheral/servie_start.yml",
+	"./request/ble/peripheral/servie_stop.yml": "./json_schema/request/ble/peripheral/servie_stop.yml",
+	"./request/display/clear.yml": "./json_schema/request/display/clear.yml",
+	"./request/display/index.yml": "./json_schema/request/display/index.yml",
+	"./request/display/pin_assign.yml": "./json_schema/request/display/pin_assign.yml",
+	"./request/display/qr.yml": "./json_schema/request/display/qr.yml",
+	"./request/display/raw.yml": "./json_schema/request/display/raw.yml",
+	"./request/display/text.yml": "./json_schema/request/display/text.yml",
+	"./request/i2c/deinit.yml": "./json_schema/request/i2c/deinit.yml",
+	"./request/i2c/index.yml": "./json_schema/request/i2c/index.yml",
+	"./request/i2c/init_master.yml": "./json_schema/request/i2c/init_master.yml",
+	"./request/i2c/init_slave.yml": "./json_schema/request/i2c/init_slave.yml",
+	"./request/i2c/read.yml": "./json_schema/request/i2c/read.yml",
+	"./request/i2c/write.yml": "./json_schema/request/i2c/write.yml",
+	"./request/index.yml": "./json_schema/request/index.yml",
+	"./request/io/index.yml": "./json_schema/request/io/index.yml",
+	"./request/io/input.yml": "./json_schema/request/io/input.yml",
+	"./request/io/input_detail.yml": "./json_schema/request/io/input_detail.yml",
+	"./request/io/output.yml": "./json_schema/request/io/output.yml",
+	"./request/io/output_detail.yml": "./json_schema/request/io/output_detail.yml",
+	"./request/io/output_type.yml": "./json_schema/request/io/output_type.yml",
+	"./request/io/pull_type.yml": "./json_schema/request/io/pull_type.yml",
+	"./request/ioanimation/changeState.yml": "./json_schema/request/ioanimation/changeState.yml",
+	"./request/ioanimation/index.yml": "./json_schema/request/ioanimation/index.yml",
+	"./request/ioanimation/init.yml": "./json_schema/request/ioanimation/init.yml",
+	"./request/logicanalyzer/deinit.yml": "./json_schema/request/logicanalyzer/deinit.yml",
+	"./request/logicanalyzer/index.yml": "./json_schema/request/logicanalyzer/index.yml",
+	"./request/logicanalyzer/init.yml": "./json_schema/request/logicanalyzer/init.yml",
+	"./request/measure/echo.yml": "./json_schema/request/measure/echo.yml",
+	"./request/measure/index.yml": "./json_schema/request/measure/index.yml",
+	"./request/message/index.yml": "./json_schema/request/message/index.yml",
+	"./request/message/send.yml": "./json_schema/request/message/send.yml",
+	"./request/pwm/deinit.yml": "./json_schema/request/pwm/deinit.yml",
+	"./request/pwm/duty.yml": "./json_schema/request/pwm/duty.yml",
+	"./request/pwm/freq.yml": "./json_schema/request/pwm/freq.yml",
+	"./request/pwm/index.yml": "./json_schema/request/pwm/index.yml",
+	"./request/pwm/init.yml": "./json_schema/request/pwm/init.yml",
+	"./request/pwm/modulate.yml": "./json_schema/request/pwm/modulate.yml",
+	"./request/pwm/pulse.yml": "./json_schema/request/pwm/pulse.yml",
+	"./request/spi/deinit.yml": "./json_schema/request/spi/deinit.yml",
+	"./request/spi/index.yml": "./json_schema/request/spi/index.yml",
+	"./request/spi/init_master.yml": "./json_schema/request/spi/init_master.yml",
+	"./request/spi/write.yml": "./json_schema/request/spi/write.yml",
+	"./request/switch/get.yml": "./json_schema/request/switch/get.yml",
+	"./request/switch/index.yml": "./json_schema/request/switch/index.yml",
+	"./request/system/index.yml": "./json_schema/request/system/index.yml",
+	"./request/system/keep_working_at_offline.yml": "./json_schema/request/system/keep_working_at_offline.yml",
+	"./request/system/ping.yml": "./json_schema/request/system/ping.yml",
+	"./request/system/reboot.yml": "./json_schema/request/system/reboot.yml",
+	"./request/system/reset.yml": "./json_schema/request/system/reset.yml",
+	"./request/system/self_check.yml": "./json_schema/request/system/self_check.yml",
+	"./request/system/wait.yml": "./json_schema/request/system/wait.yml",
+	"./request/uart/deinit.yml": "./json_schema/request/uart/deinit.yml",
+	"./request/uart/index.yml": "./json_schema/request/uart/index.yml",
+	"./request/uart/init.yml": "./json_schema/request/uart/init.yml",
+	"./request/uart/send.yml": "./json_schema/request/uart/send.yml",
+	"./request/ws/index.yml": "./json_schema/request/ws/index.yml",
+	"./request/ws/reset_obniz_on_ws_disconnection.yml": "./json_schema/request/ws/reset_obniz_on_ws_disconnection.yml",
+	"./response/ad/get.yml": "./json_schema/response/ad/get.yml",
+	"./response/ad/index.yml": "./json_schema/response/ad/index.yml",
+	"./response/ble/central/characteristic_get.yml": "./json_schema/response/ble/central/characteristic_get.yml",
+	"./response/ble/central/characteristic_read.yml": "./json_schema/response/ble/central/characteristic_read.yml",
+	"./response/ble/central/characteristic_write.yml": "./json_schema/response/ble/central/characteristic_write.yml",
+	"./response/ble/central/descriptor_get.yml": "./json_schema/response/ble/central/descriptor_get.yml",
+	"./response/ble/central/descriptor_read.yml": "./json_schema/response/ble/central/descriptor_read.yml",
+	"./response/ble/central/descriptor_write.yml": "./json_schema/response/ble/central/descriptor_write.yml",
+	"./response/ble/central/error.yml": "./json_schema/response/ble/central/error.yml",
+	"./response/ble/central/index.yml": "./json_schema/response/ble/central/index.yml",
+	"./response/ble/central/scan.yml": "./json_schema/response/ble/central/scan.yml",
+	"./response/ble/central/scan_finish.yml": "./json_schema/response/ble/central/scan_finish.yml",
+	"./response/ble/central/service_get.yml": "./json_schema/response/ble/central/service_get.yml",
+	"./response/ble/central/status_update.yml": "./json_schema/response/ble/central/status_update.yml",
+	"./response/ble/index.yml": "./json_schema/response/ble/index.yml",
+	"./response/ble/peripheral/characteristic_notify_read.yml": "./json_schema/response/ble/peripheral/characteristic_notify_read.yml",
+	"./response/ble/peripheral/characteristic_notify_write.yml": "./json_schema/response/ble/peripheral/characteristic_notify_write.yml",
+	"./response/ble/peripheral/characteristic_read.yml": "./json_schema/response/ble/peripheral/characteristic_read.yml",
+	"./response/ble/peripheral/characteristic_write.yml": "./json_schema/response/ble/peripheral/characteristic_write.yml",
+	"./response/ble/peripheral/descriptor_notify_read.yml": "./json_schema/response/ble/peripheral/descriptor_notify_read.yml",
+	"./response/ble/peripheral/descriptor_notify_write.yml": "./json_schema/response/ble/peripheral/descriptor_notify_write.yml",
+	"./response/ble/peripheral/descriptor_read.yml": "./json_schema/response/ble/peripheral/descriptor_read.yml",
+	"./response/ble/peripheral/descriptor_write.yml": "./json_schema/response/ble/peripheral/descriptor_write.yml",
+	"./response/ble/peripheral/index.yml": "./json_schema/response/ble/peripheral/index.yml",
+	"./response/ble/peripheral/status.yml": "./json_schema/response/ble/peripheral/status.yml",
+	"./response/debug/error.yml": "./json_schema/response/debug/error.yml",
+	"./response/debug/index.yml": "./json_schema/response/debug/index.yml",
+	"./response/debug/warning.yml": "./json_schema/response/debug/warning.yml",
+	"./response/i2c/index.yml": "./json_schema/response/i2c/index.yml",
+	"./response/i2c/master.yml": "./json_schema/response/i2c/master.yml",
+	"./response/i2c/slave.yml": "./json_schema/response/i2c/slave.yml",
+	"./response/index.yml": "./json_schema/response/index.yml",
+	"./response/io/get.yml": "./json_schema/response/io/get.yml",
+	"./response/io/index.yml": "./json_schema/response/io/index.yml",
+	"./response/logicanalyzer/data.yml": "./json_schema/response/logicanalyzer/data.yml",
+	"./response/logicanalyzer/index.yml": "./json_schema/response/logicanalyzer/index.yml",
+	"./response/measure/echo.yml": "./json_schema/response/measure/echo.yml",
+	"./response/measure/index.yml": "./json_schema/response/measure/index.yml",
+	"./response/message/index.yml": "./json_schema/response/message/index.yml",
+	"./response/message/receive.yml": "./json_schema/response/message/receive.yml",
+	"./response/spi/index.yml": "./json_schema/response/spi/index.yml",
+	"./response/spi/read.yml": "./json_schema/response/spi/read.yml",
+	"./response/switch/change.yml": "./json_schema/response/switch/change.yml",
+	"./response/switch/index.yml": "./json_schema/response/switch/index.yml",
+	"./response/system/index.yml": "./json_schema/response/system/index.yml",
+	"./response/system/pong.yml": "./json_schema/response/system/pong.yml",
+	"./response/uart/index.yml": "./json_schema/response/uart/index.yml",
+	"./response/uart/receive.yml": "./json_schema/response/uart/receive.yml",
+	"./response/ws/index.yml": "./json_schema/response/ws/index.yml",
+	"./response/ws/ready.yml": "./json_schema/response/ws/ready.yml",
+	"./response/ws/redirect.yml": "./json_schema/response/ws/redirect.yml"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	var module = __webpack_require__(id);
+	return module;
+}
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
+		var e = new Error('Cannot find module "' + req + '".');
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return id;
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./json_schema sync recursive \\.yml$";
+
+/***/ }),
+
+/***/ "./json_schema/index.yml":
+/*!*******************************!*\
+  !*** ./json_schema/index.yml ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null,"example":[0,1,2,3,4,5,6]},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"example":[[2,1,26,7,9,83,97,109,112,108,101],[7,9,83,97,109,112,108,101]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray":{"id":"dataArray","type":"array","default":null,"description":"Binary data array.","example":[[16,34,242],[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","description":"Image data bit array.","minItems":1024,"maxItems":1024,"example":[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,255,240,56,0,0,0,0,0,0,0,0,0,0,0,0,7,255,224,120,0,0,0,0,0,0,0,0,0,0,0,0,63,255,192,240,0,0,0,0,0,0,0,0,0,0,0,0,127,255,129,248,0,0,0,0,0,0,0,0,0,0,0,1,255,255,3,254,0,0,0,0,0,0,0,0,0,0,0,3,255,254,7,255,0,0,0,0,0,0,0,0,0,0,0,15,255,252,15,255,128,0,0,0,0,0,0,0,0,0,0,31,255,248,31,255,192,0,0,0,0,0,0,0,0,0,0,63,255,240,63,255,224,0,0,0,0,0,0,0,0,0,0,63,255,224,127,255,240,0,0,0,0,0,0,0,0,0,0,127,255,192,255,255,248,0,0,0,0,0,0,0,0,0,0,255,255,129,255,255,252,0,0,0,0,0,0,0,0,0,1,255,255,3,255,255,254,0,0,0,0,0,0,0,0,0,1,255,254,7,255,255,254,0,0,0,0,0,0,0,0,0,3,255,252,15,255,255,255,0,0,0,0,0,0,0,0,0,7,255,248,31,255,255,255,0,0,0,0,0,0,0,0,0,7,255,240,63,255,255,255,128,0,0,0,0,0,0,0,0,7,255,224,127,193,255,255,128,0,0,0,0,0,0,0,0,15,252,64,255,128,255,255,128,0,0,0,0,0,0,0,0,15,240,1,255,0,127,255,0,0,0,0,0,0,0,0,0,15,224,3,254,0,127,254,14,0,0,0,0,0,0,0,0,31,224,7,254,0,63,252,30,0,0,0,0,0,0,0,0,31,224,7,254,0,63,248,60,0,0,0,0,0,0,0,0,31,192,7,254,0,63,240,120,0,0,0,0,0,0,0,0,31,192,7,254,0,127,224,240,0,0,0,0,0,0,0,0,31,224,7,252,0,127,193,224,0,0,0,0,0,0,0,0,31,224,15,248,0,255,131,224,0,0,0,0,0,0,0,0,31,240,31,240,39,255,7,224,0,0,0,0,0,0,0,0,31,252,63,224,127,254,15,224,0,0,0,0,0,0,0,0,31,255,255,192,255,252,31,224,0,0,0,0,0,0,0,0,31,255,255,129,255,248,63,224,0,0,0,0,0,0,0,0,31,255,255,3,255,240,127,224,0,0,0,0,0,0,0,0,31,255,254,7,255,224,255,224,0,0,0,0,0,0,0,0,31,255,252,15,255,193,255,192,0,0,0,0,0,0,0,0,15,255,248,31,255,131,255,192,0,0,0,0,0,0,0,0,15,255,240,63,255,7,255,192,0,0,0,0,0,0,0,0,15,255,224,127,254,15,255,192,0,0,0,0,0,0,0,0,15,255,192,255,252,31,255,128,0,0,0,0,0,0,0,0,7,255,129,255,0,63,255,128,0,0,0,0,0,0,0,0,7,255,3,254,0,127,255,0,0,0,0,0,0,0,0,0,3,254,7,252,0,255,255,0,0,0,0,0,0,0,0,0,3,252,15,252,0,255,254,0,0,0,0,0,0,0,0,0,1,248,31,252,0,255,254,0,0,0,0,0,0,0,0,0,0,240,63,252,0,255,252,0,0,0,0,0,0,0,0,0,0,224,127,252,0,255,252,0,0,0,0,0,0,0,0,0,0,64,255,252,0,255,248,0,0,0,0,0,0,0,0,0,0,1,255,254,1,255,240,0,0,0,0,0,0,0,0,0,0,3,255,255,3,255,224,0,0,0,0,0,0,0,0,0,0,7,255,255,255,255,192,0,0,0,0,0,0,0,0,0,0,15,255,255,255,255,128,0,0,0,0,0,0,0,0,0,0,31,255,255,255,254,0,0,0,0,0,0,0,0,0,0,0,12,255,255,255,252,0,0,0,0,0,0,0,0,0,0,0,0,63,255,255,240,0,0,0,0,0,0,0,0,0,0,0,0,15,255,255,192,0,0,0,0,0,0,0,0,0,0,0,0,3,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,63,224,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$","description":"Bluetooth device id.If it contain '-', it ignored.","example":"8d0fd8f9"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44"]},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44",null]},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12,"description":"Bluetooth device id. It's hexString cannot cointain '0x' or '-'.","example":"77e754ab8591"},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999,"description":"Obniz id. It can contain '-' or not.","example":["1234-5678",12345678]}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ad/deinit.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/ad/deinit.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./json_schema/request/ad/index.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/ad/index.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","basePath":"ad0","description":"available ad0~ad11","anyOf":[{"$ref":"/request/ad/get"},{"$ref":"/request/ad/deinit"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ad/input.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/ad/input.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","related":"/response/ad/get","desription":"enable & start ad module at io.","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false,"description":"true to continuous notifying on voltage change."}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/characteristic_get.yml":
+/*!****************************************************************!*\
+  !*** ./json_schema/request/ble/central/characteristic_get.yml ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_get","related":"/response/ble/central/characteristic_get","type":"object","required":["get_characteristics"],"properties":{"get_characteristics":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/characteristic_read.yml":
+/*!*****************************************************************!*\
+  !*** ./json_schema/request/ble/central/characteristic_read.yml ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_read","related":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/characteristic_write.yml":
+/*!******************************************************************!*\
+  !*** ./json_schema/request/ble/central/characteristic_write.yml ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_write","related":"/response/ble/central/characteristic_write","type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/connect.yml":
+/*!*****************************************************!*\
+  !*** ./json_schema/request/ble/central/connect.yml ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/connect","related":"/response/ble/central/status_update","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/descriptor_get.yml":
+/*!************************************************************!*\
+  !*** ./json_schema/request/ble/central/descriptor_get.yml ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_get","related":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptors"],"properties":{"get_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/descriptor_read.yml":
+/*!*************************************************************!*\
+  !*** ./json_schema/request/ble/central/descriptor_read.yml ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_read","related":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptors"],"properties":{"read_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/descriptor_write.yml":
+/*!**************************************************************!*\
+  !*** ./json_schema/request/ble/central/descriptor_write.yml ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_write","related":"/response/ble/central/descriptor_write","type":"object","required":["write_descriptors"],"properties":{"write_descriptors":{"type":"object","required":["address","service_uuid","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/disconnect.yml":
+/*!********************************************************!*\
+  !*** ./json_schema/request/ble/central/disconnect.yml ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/index.yml":
+/*!***************************************************!*\
+  !*** ./json_schema/request/ble/central/index.yml ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","description":"use obniz as central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/scan_start.yml":
+/*!********************************************************!*\
+  !*** ./json_schema/request/ble/central/scan_start.yml ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_start","related":["/response/ble/central/scan","/response/ble/central/scan_finish"],"type":"object","required":["scan"],"properties":{"scan":{"type":"object","additionalProperties":false,"properties":{"duration":{"type":"integer","default":30}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/scan_stop.yml":
+/*!*******************************************************!*\
+  !*** ./json_schema/request/ble/central/scan_stop.yml ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_stop","type":"object","required":["scan"],"properties":{"scan":{"type":"null"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/service_get.yml":
+/*!*********************************************************!*\
+  !*** ./json_schema/request/ble/central/service_get.yml ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/service_get","related":"/response/ble/central/service_get","type":"object","required":["get_services"],"properties":{"get_services":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/index.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/ble/index.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/advertisement_start.yml":
+/*!********************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/advertisement_start.yml ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_start","related":"/response/ble/peripheral/status","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"object","required":["adv_data"],"additionalProperties":false,"properties":{"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/advertisement_stop.yml":
+/*!*******************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/advertisement_stop.yml ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_stop","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"null"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/characteristic_read.yml":
+/*!********************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/characteristic_read.yml ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_read","description":"read characteristic on own service","related":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/characteristic_write.yml":
+/*!*********************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/characteristic_write.yml ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_write","description":"write characteristic on own service","related":"/response/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/descriptor_read.yml":
+/*!****************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/descriptor_read.yml ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_read","related":"/response/ble/peripheral/descriptor_read","description":"read descriptor on own service","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_descriptor"],"properties":{"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/descriptor_write.yml":
+/*!*****************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/descriptor_write.yml ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","related":"/response/ble/peripheral/descriptor_write","description":"write descriptor on own service","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/index.yml":
+/*!******************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/index.yml ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","description":"use obniz as peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/servie_start.yml":
+/*!*************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/servie_start.yml ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/servie_stop.yml":
+/*!************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/servie_stop.yml ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/display/clear.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/request/display/clear.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/clear","type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/display/index.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/request/display/index.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display","basePath":"display","anyOf":[{"$ref":"/request/display/text"},{"$ref":"/request/display/clear"},{"$ref":"/request/display/qr"},{"$ref":"/request/display/raw"},{"$ref":"/request/display/pin_assign"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/display/pin_assign.yml":
+/*!****************************************************!*\
+  !*** ./json_schema/request/display/pin_assign.yml ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/pin_assign","type":"object","required":["pin_assign"],"properties":{"pin_assign":{"type":"object","minProperties":1,"patternExample":[0,1,2,3],"patternProperties":{"^[0-9]$":{"type":"object","properties":{"module_name":{"type":"string","example":"io"},"pin_name":{"type":"string","example":"output"}}},"^1[0-1]$":{"type":"object","properties":{"module_name":{"type":"string","example":"io"},"pin_name":{"type":"string","example":"output"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/display/qr.yml":
+/*!********************************************!*\
+  !*** ./json_schema/request/display/qr.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/qr","type":"object","required":["qr"],"properties":{"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string","example":"Hello, obniz!"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/display/raw.yml":
+/*!*********************************************!*\
+  !*** ./json_schema/request/display/raw.yml ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","description":"1 bit represents 1 dot. 1=white, 0=black. 1 byte is part of one line. Order is same like.<br/> {1byte} {2byte} {3byte}...{16byte}<br/> {17byte} {18byte} {19byte}...<br/> .....<br/> .....................{1024byte}","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/display/text.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/display/text.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/text","type":"object","required":["text"],"properties":{"text":{"type":"string","example":"Hello, obniz!"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/i2c/deinit.yml":
+/*!********************************************!*\
+  !*** ./json_schema/request/i2c/deinit.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./json_schema/request/i2c/index.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/i2c/index.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","basePath":"i2c0","description":"available only i2c0","anyOf":[{"$ref":"/request/i2c/init_master"},{"$ref":"/request/i2c/init_slave"},{"$ref":"/request/i2c/write"},{"$ref":"/request/i2c/read"},{"$ref":"/request/i2c/deinit"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/i2c/init_master.yml":
+/*!*************************************************!*\
+  !*** ./json_schema/request/i2c/init_master.yml ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_master","description":"internal pullup is available. But, We recommend use external pull-up resistor.","type":"object","required":["mode","sda","scl","clock"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"clock":{"type":"integer","description":"frequency (Hz)","minimum":1,"maximum":1000000}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/i2c/init_slave.yml":
+/*!************************************************!*\
+  !*** ./json_schema/request/i2c/init_slave.yml ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","related":"/response/i2c/slave","type":"object","required":["mode","sda","scl","slave_address"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximum":1023},"slave_address_length":{"type":"integer","enum":[7,10],"default":7},"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/i2c/read.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/i2c/read.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/i2c/write.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/i2c/write.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray1024"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/index.yml":
+/*!***************************************!*\
+  !*** ./json_schema/request/index.yml ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/io/index.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/io/index.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","basePath":"io0","description":"General purpose IO available on each io (io0 to io11).","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/io/input.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/io/input.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input","related":"/response/io/get","type":"string","enum":["get"]}
+
+/***/ }),
+
+/***/ "./json_schema/request/io/input_detail.yml":
+/*!*************************************************!*\
+  !*** ./json_schema/request/io/input_detail.yml ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","related":"/response/io/get","type":"object","required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false,"description":"enable stream callback when value change"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/io/output.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/io/output.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output","type":"boolean"}
+
+/***/ }),
+
+/***/ "./json_schema/request/io/output_detail.yml":
+/*!**************************************************!*\
+  !*** ./json_schema/request/io/output_detail.yml ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_detail","type":"object","required":["direction","value"],"properties":{"direction":{"type":"string","enum":["output"]},"value":{"type":"boolean"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/io/output_type.yml":
+/*!************************************************!*\
+  !*** ./json_schema/request/io/output_type.yml ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"],"description":"drive type"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/io/pull_type.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/io/pull_type.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/pull_type","type":"object","required":["pull_type"],"properties":{"pull_type":{"type":"string","enum":["pull-up5v","pull-up3v","pull-down","float"]}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ioanimation/changeState.yml":
+/*!*********************************************************!*\
+  !*** ./json_schema/request/ioanimation/changeState.yml ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","example":"anim-1","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ioanimation/index.yml":
+/*!***************************************************!*\
+  !*** ./json_schema/request/ioanimation/index.yml ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","basePath":"io.animation","description":"io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is avaiable. it loop io changes regarding json array.","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ioanimation/init.yml":
+/*!**************************************************!*\
+  !*** ./json_schema/request/ioanimation/init.yml ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"anim-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","description":"Animation name to use pause/resume","example":"anim-1","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","description":"State duration time(ms)","minimum":0,"maximum":60000,"multipleOf":0.001,"example":500},"state":{"type":"object","description":"io/pwm commands.","filter":"pass_all","example":[{"io0":true},{"io0":false}]}}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/logicanalyzer/deinit.yml":
+/*!******************************************************!*\
+  !*** ./json_schema/request/logicanalyzer/deinit.yml ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./json_schema/request/logicanalyzer/index.yml":
+/*!*****************************************************!*\
+  !*** ./json_schema/request/logicanalyzer/index.yml ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","basePath":"logic_analyzer","description":"Monitor io logic level changes by sampling io.","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/logicanalyzer/init.yml":
+/*!****************************************************!*\
+  !*** ./json_schema/request/logicanalyzer/init.yml ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","exampleDescription":"With below sample code, you will receive only datas which start with 'false, false, false' 3bit.","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":0,"multipleOf":0.001,"exclusiveMinimum":true},"duration":{"type":"integer","minimum":0,"exclusiveMinimum":true},"triger":{"type":"object","description":"Without this, logicanalyzer will start with any io level changes. trigger specify start position. ","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"description":"start value","type":"boolean","default":false},"samples":{"type":"integer","description":"how that values consists","minimum":0,"default":0,"example":3}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/measure/echo.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/measure/echo.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure/echo","description":"It measures pulse response.","related":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"object","required":["io_pulse","io_echo","pulse_width"],"properties":{"io_pulse":{"$ref":"/pinSetting"},"io_echo":{"$ref":"/pinSetting"},"pulse":{"type":"string","default":"positive","enum":["positive","negative"]},"pulse_width":{"type":"number","minimum":0.001,"maximum":1000,"multipleOf":0.001},"measure_edges":{"type":"integer","minimum":1,"maximum":4},"timeout":{"type":"number","default":1000,"minimum":0.001,"maximum":1000,"multipleOf":0.001}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/measure/index.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/request/measure/index.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure","basePath":"measure","anyOf":[{"$ref":"/request/measure/echo"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/message/index.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/request/message/index.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","basePath":"message","description":"send/receive with other obniz or webhook","anyOf":[{"$ref":"/request/message/send"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/message/send.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/message/send.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","related":"/response/message/receive","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{"description":"All type of data is pass."},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/pwm/deinit.yml":
+/*!********************************************!*\
+  !*** ./json_schema/request/pwm/deinit.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./json_schema/request/pwm/duty.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/pwm/duty.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/duty","type":"object","required":["duty"],"properties":{"duty":{"type":"number","description":"% of duty cycle","minimum":0,"maximum":100}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/pwm/freq.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/pwm/freq.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/freq","type":"object","required":["freq"],"properties":{"freq":{"type":"integer","description":"frequency (Hz)","minimum":1,"maximum":80000000}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/pwm/index.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/pwm/index.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","description":"available 0 to 5","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/duty"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/pwm/init.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/pwm/init.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/init","type":"object","required":["io"],"properties":{"io":{"$ref":"/pinSetting"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/pwm/modulate.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/pwm/modulate.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000,"multipleOf":0.001,"description":"symbol width (ms)"},"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/pwm/pulse.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/pwm/pulse.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/pulse","type":"object","required":["pulse"],"properties":{"pulse":{"type":"number","minimum":0,"multipleOf":0.001,"description":"pulse width (ms)"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/spi/deinit.yml":
+/*!********************************************!*\
+  !*** ./json_schema/request/spi/deinit.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./json_schema/request/spi/index.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/spi/index.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","basePath":"spi0","description":"available spi0, spi1","anyOf":[{"$ref":"/request/spi/init_master"},{"$ref":"/request/spi/deinit"},{"$ref":"/request/spi/write"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/spi/init_master.yml":
+/*!*************************************************!*\
+  !*** ./json_schema/request/spi/init_master.yml ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","description":"clk, miso, mosi are optional, but at least one are required","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":80000000,"desription":"frequency (Hz)"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/spi/write.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/spi/write.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray32"},"read":{"type":"boolean","default":true,"description":"If false, write without receive"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/switch/get.yml":
+/*!********************************************!*\
+  !*** ./json_schema/request/switch/get.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch/get","related":"/response/switch/change","type":"string","enum":["get"]}
+
+/***/ }),
+
+/***/ "./json_schema/request/switch/index.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/switch/index.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","basePath":"switch","description":"the switch embed on obniz itself. If it's state is changed, notification will be fired.","anyOf":[{"$ref":"/request/switch/get"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/index.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/system/index.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/keep_working_at_offline.yml":
+/*!****************************************************************!*\
+  !*** ./json_schema/request/system/keep_working_at_offline.yml ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/keepWorkingAtOffline","description":"reset obniz when obniz gone to offline.","type":"object","required":["keep_working_at_offline"],"properties":{"keep_working_at_offline":{"type":"boolean"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/ping.yml":
+/*!*********************************************!*\
+  !*** ./json_schema/request/system/ping.yml ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/ping","response":"/response/system/pong","type":"object","required":["ping"],"properties":{"ping":{"type":"object","required":["key"],"properties":{"key":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/reboot.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/request/system/reboot.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reboot","type":"object","required":["reboot"],"properties":{"reboot":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/reset.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/request/system/reset.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reset","type":"object","required":["reset"],"properties":{"reset":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/self_check.yml":
+/*!***************************************************!*\
+  !*** ./json_schema/request/system/self_check.yml ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","description":"circuit IO check","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/wait.yml":
+/*!*********************************************!*\
+  !*** ./json_schema/request/system/wait.yml ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/wait","type":"object","required":["wait"],"properties":{"wait":{"type":"integer","description":"wait time (ms)"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/uart/deinit.yml":
+/*!*********************************************!*\
+  !*** ./json_schema/request/uart/deinit.yml ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./json_schema/request/uart/index.yml":
+/*!********************************************!*\
+  !*** ./json_schema/request/uart/index.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart","basePath":"uart0","anyOf":[{"$ref":"/request/uart/init"},{"$ref":"/request/uart/send"},{"$ref":"/request/uart/deinit"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/uart/init.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/uart/init.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/init","description":"available 0 to 1","type":"object","required":["rx","tx"],"uniqueKeys":["rx","tx","rts","cts"],"properties":{"rx":{"$ref":"/pinSetting"},"tx":{"$ref":"/pinSetting"},"baud":{"type":"integer","default":115200,"minimum":1,"maximum":5000000,"description":"baud rate (bps)"},"stop":{"type":"number","enum":[1,1.5,2],"default":1,"description":"stop bit width"},"bits":{"type":"integer","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref":"/pinSetting"},"cts":{"$ref":"/pinSetting"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/uart/send.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/uart/send.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/send","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ws/index.yml":
+/*!******************************************!*\
+  !*** ./json_schema/request/ws/index.yml ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ws","basePath":"ws","anyOf":[{"$ref":"/request/ws/reset_obniz_on_ws_disconnection"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ws/reset_obniz_on_ws_disconnection.yml":
+/*!********************************************************************!*\
+  !*** ./json_schema/request/ws/reset_obniz_on_ws_disconnection.yml ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ws/reset_obniz_on_ws_disconnection","type":"object","required":["reset_obniz_on_ws_disconnection"],"properties":{"reset_obniz_on_ws_disconnection":{"type":"boolean","default":false}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ad/get.yml":
+/*!*****************************************!*\
+  !*** ./json_schema/response/ad/get.yml ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad/get","type":"number","example":3.3,"minimum":0,"maximum":5,"description":"current value (volt)"}
+
+/***/ }),
+
+/***/ "./json_schema/response/ad/index.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/response/ad/index.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad","basePath":"ad0","anyOf":[{"$ref":"/response/ad/get"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/characteristic_get.yml":
+/*!*****************************************************************!*\
+  !*** ./json_schema/response/ble/central/characteristic_get.yml ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_get","type":"object","required":["get_characteristic_result"],"properties":{"get_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/characteristic_read.yml":
+/*!******************************************************************!*\
+  !*** ./json_schema/response/ble/central/characteristic_read.yml ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/characteristic_write.yml":
+/*!*******************************************************************!*\
+  !*** ./json_schema/response/ble/central/characteristic_write.yml ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_write","type":"object","required":["write_characteristic_result"],"properties":{"write_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/descriptor_get.yml":
+/*!*************************************************************!*\
+  !*** ./json_schema/response/ble/central/descriptor_get.yml ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptors_result"],"properties":{"get_descriptors_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/descriptor_read.yml":
+/*!**************************************************************!*\
+  !*** ./json_schema/response/ble/central/descriptor_read.yml ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/descriptor_write.yml":
+/*!***************************************************************!*\
+  !*** ./json_schema/response/ble/central/descriptor_write.yml ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_write","type":"object","required":["write_descriptor_result"],"properties":{"write_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/error.yml":
+/*!****************************************************!*\
+  !*** ./json_schema/response/ble/central/error.yml ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer","example":0},"message":{"type":"string","example":"ERROR MESSAGE"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/index.yml":
+/*!****************************************************!*\
+  !*** ./json_schema/response/ble/central/index.yml ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"},{"$ref":"/response/ble/central/error"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/scan.yml":
+/*!***************************************************!*\
+  !*** ./json_schema/response/ble/central/scan.yml ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result"]},"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/scan_finish.yml":
+/*!**********************************************************!*\
+  !*** ./json_schema/response/ble/central/scan_finish.yml ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_complete"]}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/service_get.yml":
+/*!**********************************************************!*\
+  !*** ./json_schema/response/ble/central/service_get.yml ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/service_get","type":"object","required":["get_service_result"],"properties":{"get_service_result":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/status_update.yml":
+/*!************************************************************!*\
+  !*** ./json_schema/response/ble/central/status_update.yml ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/status_update","type":"object","required":["status_update"],"properties":{"status_update":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"status":{"type":"string","enum":["connected","disconnected"]}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/index.yml":
+/*!********************************************!*\
+  !*** ./json_schema/response/ble/index.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","basePath":"ble","anyOf":[{"$ref":"/response/ble/central"},{"$ref":"/response/ble/peripheral"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/characteristic_notify_read.yml":
+/*!****************************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/characteristic_notify_read.yml ***!
+  \****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_read","description":"callback of external device read characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_characteristic"],"properties":{"notify_read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/characteristic_notify_write.yml":
+/*!*****************************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/characteristic_notify_write.yml ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_write","description":"callback of external device write characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_characteristic"],"properties":{"notify_write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/characteristic_read.yml":
+/*!*********************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/characteristic_read.yml ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_read","description":"callback of read characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/characteristic_write.yml":
+/*!**********************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/characteristic_write.yml ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_write","description":"callback of write characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_characteristic_result"],"properties":{"write_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/descriptor_notify_read.yml":
+/*!************************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/descriptor_notify_read.yml ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_read","description":"callback of external device read descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_descriptor"],"properties":{"notify_read_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/descriptor_notify_write.yml":
+/*!*************************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/descriptor_notify_write.yml ***!
+  \*************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_write","description":"callback of external device write descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_descriptor"],"properties":{"notify_write_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/descriptor_read.yml":
+/*!*****************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/descriptor_read.yml ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_read","description":"callback of read descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_descriptor_results"],"properties":{"read_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/descriptor_write.yml":
+/*!******************************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/descriptor_write.yml ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_write","description":"callback of write descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_descriptor_results"],"properties":{"write_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/index.yml":
+/*!*******************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/index.yml ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral","basePath":"ble","anyOf":[{"$ref":"/response/ble/peripheral/status"},{"$ref":"/response/ble/peripheral/characteristic_read"},{"$ref":"/response/ble/peripheral/characteristic_write"},{"$ref":"/response/ble/peripheral/characteristic_notify_read"},{"$ref":"/response/ble/peripheral/characteristic_notify_write"},{"$ref":"/response/ble/peripheral/descriptor_read"},{"$ref":"/response/ble/peripheral/descriptor_write"},{"$ref":"/response/ble/peripheral/descriptor_notify_read"},{"$ref":"/response/ble/peripheral/descriptor_notify_write"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/peripheral/status.yml":
+/*!********************************************************!*\
+  !*** ./json_schema/response/ble/peripheral/status.yml ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/status","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["connection_status"],"properties":{"connection_status":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"status":{"type":"string","enum":["connected","disconnected"]}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/debug/error.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/response/debug/error.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/error","desccription":"global error","type":"object","properties":{"error":{"type":"object","additionalProperties":true,"properties":{"message":{"description":"readable message","type":"string"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/debug/index.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/response/debug/index.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug","basePath":"debug","anyOf":[{"$ref":"/response/debug/warning"},{"$ref":"/response/debug/error"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/debug/warning.yml":
+/*!************************************************!*\
+  !*** ./json_schema/response/debug/warning.yml ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/warning","desccription":"global warnings","type":"object","properties":{"warning":{"type":"object","additionalProperties":true,"properties":{"message":{"description":"readable message","type":"string"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/i2c/index.yml":
+/*!********************************************!*\
+  !*** ./json_schema/response/i2c/index.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","basePath":"i2c0","anyOf":[{"$ref":"/response/i2c/master"},{"$ref":"/response/i2c/slave"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/i2c/master.yml":
+/*!*********************************************!*\
+  !*** ./json_schema/response/i2c/master.yml ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/master","type":"object","required":["mode","address","data"],"properties":{"mode":{"type":"string","enum":["master"]},"address":{"type":"integer","minimum":0,"maximum":1023},"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/i2c/slave.yml":
+/*!********************************************!*\
+  !*** ./json_schema/response/i2c/slave.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/slave","type":"object","required":["mode","address","is_fragmented","data"],"properties":{"mode":{"type":"string","enum":["slave"]},"address":{"type":"integer","minimum":0,"maximum":1023},"is_fragmented":{"type":"boolean"},"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/index.yml":
+/*!****************************************!*\
+  !*** ./json_schema/response/index.yml ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"mesure":{"$ref":"/response/mesure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"ws":{"$ref":"/response/ws"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/io/get.yml":
+/*!*****************************************!*\
+  !*** ./json_schema/response/io/get.yml ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io/get","type":"boolean"}
+
+/***/ }),
+
+/***/ "./json_schema/response/io/index.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/response/io/index.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","basePath":"io0","anyOf":[{"$ref":"/response/io/get"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/logicanalyzer/data.yml":
+/*!*****************************************************!*\
+  !*** ./json_schema/response/logicanalyzer/data.yml ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/logicanalyzer/index.yml":
+/*!******************************************************!*\
+  !*** ./json_schema/response/logicanalyzer/index.yml ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/measure/echo.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/response/measure/echo.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"array","minItesm":1,"items":{"type":"object","required":["edge","timing"],"properties":{"edge":{"type":"boolean","description":"rising = true"},"timing":{"type":"number","description":"msec from end of pulse"}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/measure/index.yml":
+/*!************************************************!*\
+  !*** ./json_schema/response/measure/index.yml ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure","basePath":"measure","anyOf":[{"$ref":"/response/measure/echo"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/message/index.yml":
+/*!************************************************!*\
+  !*** ./json_schema/response/message/index.yml ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message","basePath":"message","anyOf":[{"$ref":"/response/message/receive"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/message/receive.yml":
+/*!**************************************************!*\
+  !*** ./json_schema/response/message/receive.yml ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","related":"/request/message/send","type":"object","required":["data","from"],"properties":{"data":{},"example":"1234-5678","from":{"type":["string","null"]}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/spi/index.yml":
+/*!********************************************!*\
+  !*** ./json_schema/response/spi/index.yml ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi","basePath":"spi0","anyOf":[{"$ref":"/response/spi/read"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/spi/read.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/response/spi/read.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi/read","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/switch/change.yml":
+/*!************************************************!*\
+  !*** ./json_schema/response/switch/change.yml ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch/change","desccription":"value cahnges are always notified.","type":"object","required":["state"],"properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"],"description":"this is optional and added when user request"}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/switch/index.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/response/switch/index.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch","basePath":"switch","anyOf":[{"$ref":"/response/switch/change"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/system/index.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/response/system/index.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system","basePath":"system","anyOf":[{"$ref":"/response/system/pong"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/system/pong.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/response/system/pong.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system/pong","desccription":"pong response with same key of ping request","type":"object","required":["pong"],"properties":{"pong":{"type":"object","required":["key"],"properties":{"key":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/uart/index.yml":
+/*!*********************************************!*\
+  !*** ./json_schema/response/uart/index.yml ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart","basePath":"uart0","anyOf":[{"$ref":"/response/uart/receive"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/uart/receive.yml":
+/*!***********************************************!*\
+  !*** ./json_schema/response/uart/receive.yml ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart/receive","type":"object","properties":{"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ws/index.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/response/ws/index.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","basePath":"ws","anyOf":[{"$ref":"/response/ws/ready"},{"$ref":"/response/ws/redirect"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ws/ready.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/response/ws/ready.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/ready","description":"all things ready","type":"object","properties":{"ready":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ws/redirect.yml":
+/*!**********************************************!*\
+  !*** ./json_schema/response/ws/redirect.yml ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/redirect","description":"If the server required you to connect other endpoint to communicate with your obniz. This json will be sent.","type":"object","properties":{"redirect":{"type":"string","example":"wss://ws1.obniz.io","description":"The url you should redirect to."}}}
+
+/***/ }),
+
+/***/ "./obniz sync recursive":
+/*!********************!*\
+  !*** ./obniz sync ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function webpackEmptyContext(req) {
+	var e = new Error('Cannot find module "' + req + '".');
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = "./obniz sync recursive";
+
+/***/ }),
+
+/***/ "./obniz/index.js":
+/*!************************!*\
+  !*** ./obniz/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _obniz_js_version = "0.1.51";
+const ObnizBLE = __webpack_require__(/*! ./libs/embeds/ble/ble */ "./obniz/libs/embeds/ble/ble.js");
+
+const Display = __webpack_require__(/*! ./libs/embeds/display */ "./obniz/libs/embeds/display.js");
+const ObnizSwitch = __webpack_require__(/*! ./libs/embeds/switch */ "./obniz/libs/embeds/switch.js");
+
+const LogicAnalyzer = __webpack_require__(/*! ./libs/measurements/logicanalyzer */ "./obniz/libs/measurements/logicanalyzer.js");
+const ObnizMeasure = __webpack_require__(/*! ./libs/measurements/measure */ "./obniz/libs/measurements/measure.js");
+
+const PeripheralAD = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
+const PeripheralI2C = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
+const PeripheralIO = __webpack_require__(/*! ./libs/io_peripherals/io */ "./obniz/libs/io_peripherals/io.js");
+const PeripheralIO_ = __webpack_require__(/*! ./libs/io_peripherals/io_ */ "./obniz/libs/io_peripherals/io_.js");
+const PeripheralPWM = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./obniz/libs/io_peripherals/pwm.js");
+const PeripheralSPI = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
+const PeripheralUART = __webpack_require__(/*! ./libs/io_peripherals/uart */ "./obniz/libs/io_peripherals/uart.js");
+
+const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
+
+const WSCommand = __webpack_require__(/*! ./libs/wscommand */ "./obniz/libs/wscommand/index.js");
 
 /* global showObnizDebugError  */
 
@@ -61,6 +1825,11 @@ class Obniz {
     if (this.auto_connect) {
       this.wsconnect();
     }
+  }
+
+  static get version() {
+    let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
+    return packageJson.version;
   }
 
   static get WSCommand() {
@@ -212,7 +1981,7 @@ class Obniz {
     } else {
       // servder error or someting
       reconnectTime = 5000;
-      this.print_debug("invalid server response " + res ? res.statusCode : '');
+      this.print_debug( true ? res.statusCode : undefined);
     }
     this.clearSocket(this.socket);
     if (this.auto_connect) {
@@ -233,8 +2002,8 @@ class Obniz {
       this.clearSocket(this.socket);
     }
     let url = server + "/obniz/" + this.id + "/ws/" + this.apiversion;
-    if (_obniz_js_version) {
-      url += "?obnizjs=" + _obniz_js_version;
+    if (this.constructor.version) {
+      url += "?obnizjs=" + this.constructor.version;
     }
     if (this._access_token) {
       url += "&access_token=" + this._access_token;
@@ -245,7 +2014,7 @@ class Obniz {
     this.print_debug("connecting to " + url);
 
     if (this.isNode) {
-      const wsClient = require('ws');
+      const wsClient = __webpack_require__(/*! ws */ "ws");
       this.socket = new wsClient(url);
       this.socket.on('open', this.wsOnOpen.bind(this));
       this.socket.on('message', this.wsOnMessage.bind(this));
@@ -826,11 +2595,11 @@ class Obniz {
 /*===================*/
 let _parts = {};
 
-let PartsRegistrate = function (name, obj) {
+Obniz.PartsRegistrate = function (name, obj) {
   _parts[name] = obj;
 };
 
-let Parts = function (name) {
+Obniz.Parts = function (name) {
   return new _parts[name]();
 };
 
@@ -870,9 +2639,36 @@ if (!isNode) {
 /*===================*/
 /* Export */
 /*===================*/
-if (isNode) {
-  module.exports = Obniz;
+module.exports = Obniz;
+
+// read parts
+__webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context.js");
+if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
+  __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
+let context = __webpack_require__("./parts/Accessory sync recursive \\.js$");
+for (let path of context.keys()) {
+  context(path);
+}
+/* WEBPACK VAR INJECTION */}.call(this, "/"))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/ble.js":
+/*!**************************************!*\
+  !*** ./obniz/libs/embeds/ble/ble.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const BlePeripheral = __webpack_require__(/*! ./blePeripheral */ "./obniz/libs/embeds/ble/blePeripheral.js");
+const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
+const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
+const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
+const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./obniz/libs/embeds/ble/bleRemotePeripheral.js");
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -1171,7 +2967,7 @@ class ObnizBLE {
       }
     }
     if (obj.get_characteristic_result) {
-      let params = get_characteristic_result;
+      let params = obj.get_characteristic_result;
       if (params.address) {
         let p = this.findPeripheral(params.address);
         if (p) {
@@ -1293,127 +3089,21 @@ class ObnizBLE {
   }
 }
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+module.exports = ObnizBLE;
 
-/**
- * 
- * @param {type} rawData
- * @return {BlePeripheral}
- */
+/***/ }),
 
-class BlePeripheral {
+/***/ "./obniz/libs/embeds/ble/bleCharacteristic.js":
+/*!****************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleCharacteristic.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-  constructor(Obniz) {
-    this.Obniz = Obniz;
-    this.services = [];
-  }
+"use strict";
 
-  addService(obj) {
-    if (!(obj instanceof BleService)) {
-      obj = new BleService(obj);
-    }
-    this.services.push(obj);
-    obj.peripheral = this;
-    this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
-  }
 
-  setJson(json) {
-    if (json["services"]) {
-      for (var key in json["services"]) {
-        this.addService(json["services"][key]);
-      }
-    }
-  }
-
-  getService(uuid) {
-    return this.services.filter(function (element) {
-      return element.uuid === uuid;
-    }).shift();
-  }
-
-  toJSON() {
-    return {
-      services: this.services
-    };
-  }
-
-  onconnectionupdates() {}
-
-  findCharacteristic(param) {
-    var serviceUuid = param.service_uuid.toLowerCase();
-    var characteristicUuid = param.characteristic_uuid.toLowerCase();
-    var s = this.getService(serviceUuid);
-    if (s) {
-      var c = s.getCharacteristic(characteristicUuid);
-      return c;
-    }
-    return null;
-  }
-
-  findDescriptor(param) {
-    var descriptorUuid = param.descriptor_uuid.toLowerCase();
-    var c = this.findCharacteristic(param);
-    if (c) {
-      var d = c.getDescriptor(descriptorUuid);
-      return d;
-    }
-    return null;
-  }
-
-  end() {
-    this.Obniz.send({ ble: { peripheral: null } });
-  }
-}
-
-/**
- * 
- * @param {type} rawData
- * @return {BleServiuce}
- */
-class BleService {
-
-  constructor(obj) {
-    this.characteristics = [];
-    this.uuid = obj.uuid.toLowerCase();
-
-    if (obj["characteristics"]) {
-      for (var key in obj["characteristics"]) {
-        this.addCharacteristic(obj["characteristics"][key]);
-      }
-    }
-  }
-
-  addCharacteristic(obj) {
-    if (!(obj instanceof BleCharacteristic)) {
-      obj = new BleCharacteristic(obj);
-    }
-    this.characteristics.push(obj);
-    obj.service = this;
-  }
-
-  getCharacteristic(uuid) {
-    return this.characteristics.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
-    }).shift();
-  }
-
-  toJSON() {
-    return {
-      uuid: this.uuid.toLowerCase(),
-      characteristics: this.characteristics
-    };
-  }
-}
-
-/**
- * 
- * @param {type} rawData
- * @return {BleServiuce}
- */
+const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 
 class BleCharacteristic {
 
@@ -1501,6 +3191,22 @@ class BleCharacteristic {
   }
 }
 
+module.exports = BleCharacteristic;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleDescriptor.js":
+/*!************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleDescriptor.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
+
 /**
  * 
  * @param {type} rawData
@@ -1575,17 +3281,298 @@ class BleDescriptor {
   onwritefromremote() {}
   onreadfromremote() {}
 }
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- * 
- * @param {type} rawData
- * @return {BleRemotePeripheral}
- */
+module.exports = BleDescriptor;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/blePeripheral.js":
+/*!************************************************!*\
+  !*** ./obniz/libs/embeds/ble/blePeripheral.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
+
+class BlePeripheral {
+
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.services = [];
+  }
+
+  addService(obj) {
+    if (!(obj instanceof BleService)) {
+      obj = new BleService(obj);
+    }
+    this.services.push(obj);
+    obj.peripheral = this;
+    this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
+  }
+
+  setJson(json) {
+    if (json["services"]) {
+      for (var key in json["services"]) {
+        this.addService(json["services"][key]);
+      }
+    }
+  }
+
+  getService(uuid) {
+    return this.services.filter(function (element) {
+      return element.uuid === uuid;
+    }).shift();
+  }
+
+  toJSON() {
+    return {
+      services: this.services
+    };
+  }
+
+  onconnectionupdates() {}
+
+  findCharacteristic(param) {
+    var serviceUuid = param.service_uuid.toLowerCase();
+    var characteristicUuid = param.characteristic_uuid.toLowerCase();
+    var s = this.getService(serviceUuid);
+    if (s) {
+      var c = s.getCharacteristic(characteristicUuid);
+      return c;
+    }
+    return null;
+  }
+
+  findDescriptor(param) {
+    var descriptorUuid = param.descriptor_uuid.toLowerCase();
+    var c = this.findCharacteristic(param);
+    if (c) {
+      var d = c.getDescriptor(descriptorUuid);
+      return d;
+    }
+    return null;
+  }
+
+  end() {
+    this.Obniz.send({ ble: { peripheral: null } });
+  }
+}
+
+module.exports = BlePeripheral;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js":
+/*!**********************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleRemoteCharacteristic.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
+
+class BleRemoteCharacteristic {
+
+  constructor(Obniz, service, uuid) {
+    this.Obniz = Obniz;
+    this.service = service;
+    this.uuid = uuid;
+    this.descriptors = [];
+  }
+
+  toString() {
+    return JSON.stringify({
+      "address": this.service.peripheral.address,
+      "service_uuid": this.service.uuid,
+      "characteristic_uuid": this.uuid
+    });
+  }
+
+  read() {
+    var obj = {
+      "ble": {
+        "read_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  readWait() {
+    return _asyncToGenerator(function* () {
+      throw new Error("TODO");
+    })();
+  }
+
+  write(array) {
+    var obj = {
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "data": array
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  writeNumber(val) {
+    var obj = {
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "value": val
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  writeText(str) {
+    var obj = {
+      "ble": {
+        "write_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid,
+          "text": str
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  discoverAllDescriptors(str) {
+    var obj = {
+      "ble": {
+        "get_descriptors": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  getDescriptor(uuid) {
+    for (var key in this.descriptors) {
+      if (this.descriptors[key].uuid === uuid) {
+        return this.descriptors[key];
+      }
+    }
+    var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    this.descriptors.push(newDescriptors);
+    return newDescriptors;
+  }
+
+  onwrite(status) {}
+  onread(value) {}
+  ondiscoverdescriptor(descriptor) {}
+}
+module.exports = BleRemoteCharacteristic;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js":
+/*!******************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleRemoteDescriptor.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class BleRemoteDescriptor {
+  constructor(Obniz, characteristic, uuid) {
+    this.Obniz = Obniz;
+    this.characteristic = characteristic;
+    this.uuid = uuid;
+  }
+
+  toString() {
+    return JSON.stringify({
+      "address": this.characteristic.service.peripheral.address,
+      "service_uuid": this.characteristic.service.uuid,
+      "characteristic_uuid": this.characteristic.uuid,
+      "descriptor_uuid": this.uuid
+    });
+  }
+
+  read() {
+    var obj = {
+      "ble": {
+        "read_descriptor": {
+          "address": this.characteristic.service.peripheral.address,
+          "service_uuid": this.characteristic.service.uuid,
+          "characteristic_uuid": this.characteristic.uuid,
+          "descriptor_uuid": this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  readWait() {
+    return _asyncToGenerator(function* () {
+      throw new Error("TODO");
+    })();
+  }
+
+  write(array) {
+    var obj = {
+      "ble": {
+        "write_descriptor": {
+          "address": this.characteristic.service.peripheral.address,
+          "service_uuid": this.characteristic.service.uuid,
+          "characteristic_uuid": this.characteristic.uuid,
+          "descriptor_uuid": this.uuid,
+          "data": array
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  onread(value) {}
+  onwrite(value) {}
+}
+
+module.exports = BleRemoteDescriptor;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleRemotePeripheral.js":
+/*!******************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleRemotePeripheral.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
+
 class BleRemotePeripheral {
 
   constructor(Obniz, address) {
@@ -1756,13 +3743,21 @@ class BleRemotePeripheral {
   onerror(err) {}
 }
 
-/**
- * 
- * @param {type} Obniz
- * @param {type} peripheral
- * @param {type} uuid
- * @return {BleRemoteService}
- */
+module.exports = BleRemotePeripheral;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleRemoteService.js":
+/*!***************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleRemoteService.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
 
 class BleRemoteService {
 
@@ -1808,183 +3803,70 @@ class BleRemoteService {
   ondiscovercharacteristic(characteristic) {}
 }
 
-/**
- * 
- * @param {type} Obniz
- * @param {type} service
- * @param {type} uuid
- * @return {BleRemoteCharacteristic}
- */
+module.exports = BleRemoteService;
 
-class BleRemoteCharacteristic {
+/***/ }),
 
-  constructor(Obniz, service, uuid) {
-    this.Obniz = Obniz;
-    this.service = service;
-    this.uuid = uuid;
-    this.descriptors = [];
-  }
+/***/ "./obniz/libs/embeds/ble/bleService.js":
+/*!*********************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleService.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-  toString() {
-    return JSON.stringify({
-      "address": this.service.peripheral.address,
-      "service_uuid": this.service.uuid,
-      "characteristic_uuid": this.uuid
-    });
-  }
+"use strict";
 
-  read() {
-    var obj = {
-      "ble": {
-        "read_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
-    };
-    this.Obniz.send(obj);
-  }
 
-  readWait() {
-    return _asyncToGenerator(function* () {
-      throw new Error("TODO");
-    })();
-  }
+const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 
-  write(array) {
-    var obj = {
-      "ble": {
-        "write_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid,
-          "data": array
-        }
-      }
-    };
-    this.Obniz.send(obj);
-  }
+class BleService {
 
-  writeNumber(val) {
-    var obj = {
-      "ble": {
-        "write_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid,
-          "value": val
-        }
-      }
-    };
-    this.Obniz.send(obj);
-  }
+  constructor(obj) {
+    this.characteristics = [];
+    this.uuid = obj.uuid.toLowerCase();
 
-  writeText(str) {
-    var obj = {
-      "ble": {
-        "write_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid,
-          "text": str
-        }
-      }
-    };
-    this.Obniz.send(obj);
-  }
-
-  discoverAllDescriptors(str) {
-    var obj = {
-      "ble": {
-        "get_descriptors": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
-    };
-    this.Obniz.send(obj);
-  }
-
-  getDescriptor(uuid) {
-    for (var key in this.descriptors) {
-      if (this.descriptors[key].uuid === uuid) {
-        return this.descriptors[key];
+    if (obj["characteristics"]) {
+      for (var key in obj["characteristics"]) {
+        this.addCharacteristic(obj["characteristics"][key]);
       }
     }
-    var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
-    this.descriptors.push(newDescriptors);
-    return newDescriptors;
   }
 
-  onwrite(status) {}
-  onread(value) {}
-  ondiscoverdescriptor(descriptor) {}
+  addCharacteristic(obj) {
+    if (!(obj instanceof BleCharacteristic)) {
+      obj = new BleCharacteristic(obj);
+    }
+    this.characteristics.push(obj);
+    obj.service = this;
+  }
+
+  getCharacteristic(uuid) {
+    return this.characteristics.filter(function (element) {
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
+    }).shift();
+  }
+
+  toJSON() {
+    return {
+      uuid: this.uuid.toLowerCase(),
+      characteristics: this.characteristics
+    };
+  }
 }
 
-/**
- * 
- * @param {type} Obniz
- * @param {type} characteristic
- * @param {type} uuid
- * @return {BleRemoteCharacteristic}
- */
+module.exports = BleService;
 
-class BleRemoteDescriptor {
-  constructor(Obniz, characteristic, uuid) {
-    this.Obniz = Obniz;
-    this.characteristic = characteristic;
-    this.uuid = uuid;
-  }
+/***/ }),
 
-  toString() {
-    return JSON.stringify({
-      "address": this.characteristic.service.peripheral.address,
-      "service_uuid": this.characteristic.service.uuid,
-      "characteristic_uuid": this.characteristic.uuid,
-      "descriptor_uuid": this.uuid
-    });
-  }
+/***/ "./obniz/libs/embeds/display.js":
+/*!**************************************!*\
+  !*** ./obniz/libs/embeds/display.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-  read() {
-    var obj = {
-      "ble": {
-        "read_descriptor": {
-          "address": this.characteristic.service.peripheral.address,
-          "service_uuid": this.characteristic.service.uuid,
-          "characteristic_uuid": this.characteristic.uuid,
-          "descriptor_uuid": this.uuid
-        }
-      }
-    };
-    this.Obniz.send(obj);
-  }
+"use strict";
 
-  readWait() {
-    return _asyncToGenerator(function* () {
-      throw new Error("TODO");
-    })();
-  }
-
-  write(array) {
-    var obj = {
-      "ble": {
-        "write_descriptor": {
-          "address": this.characteristic.service.peripheral.address,
-          "service_uuid": this.characteristic.service.uuid,
-          "characteristic_uuid": this.characteristic.uuid,
-          "descriptor_uuid": this.uuid,
-          "data": array
-        }
-      }
-    };
-    this.Obniz.send(obj);
-  }
-
-  onread(value) {}
-  onwrite(value) {}
-}
 
 class Display {
 
@@ -2011,7 +3893,7 @@ class Display {
     }
     if (this.Obniz.isNode) {
       try {
-        const { createCanvas } = require('canvas');
+        const { createCanvas } = __webpack_require__(/*! canvas */ "canvas");
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
@@ -2206,6 +4088,20 @@ class Display {
   }
 }
 
+module.exports = Display;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/switch.js":
+/*!*************************************!*\
+  !*** ./obniz/libs/embeds/switch.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 class ObnizSwitch {
 
   constructor(Obniz) {
@@ -2240,6 +4136,20 @@ class ObnizSwitch {
     }
   }
 }
+
+module.exports = ObnizSwitch;
+
+/***/ }),
+
+/***/ "./obniz/libs/io_peripherals/ad.js":
+/*!*****************************************!*\
+  !*** ./obniz/libs/io_peripherals/ad.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 class PeripheralAD {
   constructor(Obniz, id) {
@@ -2296,6 +4206,22 @@ class PeripheralAD {
     }
   }
 }
+
+module.exports = PeripheralAD;
+
+/***/ }),
+
+/***/ "./obniz/libs/io_peripherals/i2c.js":
+/*!******************************************!*\
+  !*** ./obniz/libs/io_peripherals/i2c.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class PeripheralI2C {
 
@@ -2493,52 +4419,20 @@ class PeripheralI2C {
     this.used = false;
   }
 }
-class PeripheralIO_ {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-  }
 
-  animation(name, status, array) {
-    var obj = {};
-    obj.io = {
-      animation: {
-        name: name,
-        status: status
-      }
-    };
-    if (!array) array = [];
+module.exports = PeripheralI2C;
 
-    let states = [];
-    for (var i = 0; i < array.length; i++) {
-      let state = array[i];
-      let duration = state.duration;
-      let func = state.state;
+/***/ }),
 
-      // dry run. and get json commands
-      this.Obniz.sendPool = [];
-      func(i);
-      let pooledJsonArray = this.Obniz.sendPool;
-      this.Obniz.sendPool = null;
+/***/ "./obniz/libs/io_peripherals/io.js":
+/*!*****************************************!*\
+  !*** ./obniz/libs/io_peripherals/io.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-      // simply merge objects
-      let merged = {};
-      for (var index = 0; index < pooledJsonArray.length; index++) {
-        for (let key in pooledJsonArray[index]) {
-          merged[key] = pooledJsonArray[index][key];
-        }
-      }
-      states.push({
-        duration: duration,
-        state: merged
-      });
-    }
-    if (states.length > 0) {
-      obj.io.animation.states = states;
-    }
-    //  console.log(obj.io.animation);
-    this.Obniz.send(obj);
-  }
-}
+"use strict";
+
 
 class PeripheralIO {
 
@@ -2670,6 +4564,81 @@ class PeripheralIO {
     }
   }
 }
+module.exports = PeripheralIO;
+
+/***/ }),
+
+/***/ "./obniz/libs/io_peripherals/io_.js":
+/*!******************************************!*\
+  !*** ./obniz/libs/io_peripherals/io_.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class PeripheralIO_ {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+  }
+
+  animation(name, status, array) {
+    var obj = {};
+    obj.io = {
+      animation: {
+        name: name,
+        status: status
+      }
+    };
+    if (!array) array = [];
+
+    let states = [];
+    for (var i = 0; i < array.length; i++) {
+      let state = array[i];
+      let duration = state.duration;
+      let func = state.state;
+
+      // dry run. and get json commands
+      this.Obniz.sendPool = [];
+      func(i);
+      let pooledJsonArray = this.Obniz.sendPool;
+      this.Obniz.sendPool = null;
+
+      // simply merge objects
+      let merged = {};
+      for (var index = 0; index < pooledJsonArray.length; index++) {
+        for (let key in pooledJsonArray[index]) {
+          merged[key] = pooledJsonArray[index][key];
+        }
+      }
+      states.push({
+        duration: duration,
+        state: merged
+      });
+    }
+    if (states.length > 0) {
+      obj.io.animation.states = states;
+    }
+    //  console.log(obj.io.animation);
+    this.Obniz.send(obj);
+  }
+}
+module.exports = PeripheralIO_;
+
+/***/ }),
+
+/***/ "./obniz/libs/io_peripherals/pwm.js":
+/*!******************************************!*\
+  !*** ./obniz/libs/io_peripherals/pwm.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class PeripheralPWM {
   constructor(Obniz, id) {
@@ -2752,6 +4721,21 @@ class PeripheralPWM {
     });
   }
 }
+module.exports = PeripheralPWM;
+
+/***/ }),
+
+/***/ "./obniz/libs/io_peripherals/spi.js":
+/*!******************************************!*\
+  !*** ./obniz/libs/io_peripherals/spi.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class PeripheralSPI {
   constructor(Obniz, id) {
@@ -2867,6 +4851,22 @@ class PeripheralSPI {
     }
   }
 }
+module.exports = PeripheralSPI;
+
+/***/ }),
+
+/***/ "./obniz/libs/io_peripherals/uart.js":
+/*!*******************************************!*\
+  !*** ./obniz/libs/io_peripherals/uart.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const isNode = typeof window === 'undefined';
 
 class PeripheralUART {
   constructor(Obniz, id) {
@@ -3000,6 +5000,21 @@ class PeripheralUART {
     this.used = false;
   }
 }
+module.exports = PeripheralUART;
+
+/***/ }),
+
+/***/ "./obniz/libs/measurements/logicanalyzer.js":
+/*!**************************************************!*\
+  !*** ./obniz/libs/measurements/logicanalyzer.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class LogicAnalyzer {
 
@@ -3052,6 +5067,20 @@ class LogicAnalyzer {
   }
 }
 
+module.exports = LogicAnalyzer;
+
+/***/ }),
+
+/***/ "./obniz/libs/measurements/measure.js":
+/*!********************************************!*\
+  !*** ./obniz/libs/measurements/measure.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 class ObnizMeasure {
 
   constructor(obniz) {
@@ -3094,6 +5123,22 @@ class ObnizMeasure {
     }
   }
 }
+module.exports = ObnizMeasure;
+
+/***/ }),
+
+/***/ "./obniz/libs/utils/util.js":
+/*!**********************************!*\
+  !*** ./obniz/libs/utils/util.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+let isNode = typeof window === 'undefined';
+
 class ObnizUtil {
 
   constructor(obniz) {
@@ -3103,8 +5148,9 @@ class ObnizUtil {
   createCanvasContext(width, height) {
     if (this.obniz.isNode) {
       try {
-        const { createCanvas } = require('canvas');
+        const { createCanvas } = __webpack_require__(/*! canvas */ "canvas");
         return createCanvas(this.width, this.height);
+        throw new Error();
       } catch (e) {
         throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
       }
@@ -3155,7 +5201,7 @@ class ObnizUtil {
     var string = null;
     try {
       if (isNode) {
-        const StringDecoder = require('string_decoder').StringDecoder;
+        const StringDecoder = __webpack_require__(/*! string_decoder */ "string_decoder").StringDecoder;
         if (StringDecoder) {
           string = new StringDecoder('utf8').write(Buffer.from(data));
         }
@@ -3183,262 +5229,134 @@ class ObnizUtil {
     return null;
   }
 }
-class JsonBinaryConverter {
 
-  static convertFromBinaryToJson(schema, binary) {
-    var types = {
-      hex: this.hexFromBinary.bind(this),
-      uuid: this.uuidFromBinary.bind(this),
-      number: this.numberFromBinary.bind(this),
-      "signed number": this.signedNumberFromBinary.bind(this),
-      int: this.numberFromBinary.bind(this),
-      char: this.numberFromBinary.bind(this),
-      enum: this.enumFromBinary.bind(this),
-      dataArray: this.dataArrayFromBinary.bind(this)
-    };
-    var json = {};
-    var count = 0;
-    for (var i = 0; i < schema.length; i++) {
-      var data = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
-      json[schema[i].name] = types[schema[i].type](data, schema[i]);
+module.exports = ObnizUtil;
 
-      if (schema[i].length) {
-        count += schema[i].length;
-      } else {
-        break;
-      }
-    }
-    return json;
-  }
+/***/ }),
 
-  static hexFromBinary(data, schema) {
-    var str = "";
-    for (var i = 0; i < data.length; i++) {
-      if (schema.endianness && schema.endianness === "little") {
-        str = ("00" + data[i].toString(16)).slice(-2) + str;
-      } else {
-        str = str + ("00" + data[i].toString(16)).slice(-2);
-      }
-    }
-    return str;
-  }
+/***/ "./obniz/libs/webpackReplace sync recursive":
+/*!****************************************!*\
+  !*** ./obniz/libs/webpackReplace sync ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-  static uuidFromBinary(data) {
-    var len = data[0] * 16 + data[1];
-    if (len === 0) {
-      return null;
-    }
-    var uuidData = data.slice(2);
-    var str = "";
-    for (var i = 0; i < len; i++) {
-      str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
-    }
-    return str;
-  }
-
-  static signedNumberFromBinary(data, schema) {
-    //big adian
-    var val = data[0] & 0x7F;
-    for (var i = 1; i < data.length; i++) {
-      val = val * 256 + data[i];
-    }
-    if ((data[0] & 0x80) !== 0) {
-      val = val - Math.pow(2, data.length * 8 - 1);
-    }
-    return val;
-  }
-
-  static numberFromBinary(data) {
-    //big adian
-    var val = 0;
-    for (var i = 0; i < data.length; i++) {
-      val = val * 256 + data[i];
-    }
-    return val;
-  }
-
-  static keyForVal(enumvals, val) {
-    return Object.keys(enumvals).filter(function (k) {
-      return enumvals[k] === val;
-    })[0];
-    return undefined;
-  }
-
-  static enumFromBinary(data, schema) {
-    var enumVals = schema.enum;
-    var val = this.numberFromBinary(data);
-    var tmp = this.keyForVal(enumVals, val);
-    if (tmp) {
-      val = tmp;
-    }
-
-    return val;
-  }
-
-  static dataArrayFromBinary(data) {
-    var arr = new Array(data.length);
-    for (var i = 0; i < data.length; i++) {
-      arr[i] = data[i];
-    }
-    return arr;
-  }
-
-  static createSendBuffer(schema, data) {
-    var array = [];
-    for (var i = 0; i < schema.length; i++) {
-      var schemaRow = schema[i];
-
-      var row = undefined;
-      if (Array.isArray(schemaRow)) {
-        for (var key in schemaRow) {
-          var customSchemaRow = Object.assign({}, schemaRow[key], { required: true });
-          row = this.analyzeSchema(data, customSchemaRow);
-          if (row) {
-            break;
-          }
-        }
-      } else {
-        row = this.analyzeSchema(data, schemaRow);
-      }
-
-      Array.prototype.push.apply(array, row);
-    }
-    return new Uint8Array(array);
-  }
-
-  static analyzeSchema(allData, schemaRow) {
-    var types = {
-      hex: this.hexToBinary.bind(this),
-      uuid: this.uuidToBinary.bind(this),
-      int: this.intToBinary.bind(this),
-      char: this.charToBinary.bind(this),
-      dataArray: this.dataArrayToBinary.bind(this),
-      enum: this.enumToBinary.bind(this),
-      string: this.stringToBinary.bind(this),
-      text: this.stringToBinary.bind(this),
-      flag: this.flagToBinary.bind(this)
-    };
-
-    var val = undefined;
-    if (schemaRow.path) {
-      val = this.getProperty(allData, schemaRow.path);
-    }
-    if (val === undefined && schemaRow.required) {
-      return null;
-    }
-    if (val === undefined && schemaRow.default) {
-      val = schemaRow.default;
-    }
-
-    var row = types[schemaRow.type](val, schemaRow);
-
-    if (schemaRow.length && row.length !== schemaRow.length) {
-      console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
-    }
-
-    return row;
-  }
-
-  static getProperty(object, path) {
-    if (path === "" || path === undefined) {
-      return object;
-    }
-    if (typeof path === 'string') path = path.split('.');
-    if (!Array.isArray(path)) path = [path];
-
-    var index = 0,
-        length = path.length;
-
-    while (index < length) {
-      object = object[path[index++]];
-      if (object === undefined) {
-        return undefined;
-      }
-    }
-    return index && index === length ? object : undefined;
-  }
-
-  static hexToBinary(data, schema) {
-    var array = [];
-    var hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    for (var i = 0; i < hex.length / 2; i++) {
-      array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
-    }
-    if (schema && schema.endianness && schema.endianness === "little") {
-      array.reverse();
-    }
-    return array;
-  }
-
-  static intToBinary(data) {
-    var array = [];
-    array[0] = data >> 8 * 3 & 0xFF;
-    array[1] = data >> 8 * 2 & 0xFF;
-    array[2] = data >> 8 * 1 & 0xFF;
-    array[3] = data >> 8 * 0 & 0xFF;
-    return array;
-  }
-
-  static charToBinary(data) {
-    var array = [];
-    array[0] = data & 0xFF;
-    return array;
-  }
-
-  static dataArrayToBinary(data) {
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
-    return data;
-  }
-  static uuidToBinary(data) {
-
-    var uuid = this.hexToBinary(data);
-    uuid.reverse(); //big endianness -> little endianness;
-    var length = uuid.length;
-
-    var array = [];
-
-    array[0] = length >> 8 * 1 & 0xFF;
-    array[1] = length >> 8 * 0 & 0xFF;
-
-    Array.prototype.push.apply(array, uuid);
-    for (var i = array.length; i < 16 + 2; i++) {
-      array[i] = 0;
-    }
-
-    return array;
-  }
-
-  static enumToBinary(data, schema) {
-    var array = [];
-    array.push(schema.enum[data]);
-    return array;
-  }
-
-  static flagToBinary(data, schema) {
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
-    var flags = schema.flags;
-    var value = 0;
-    for (var key in flags) {
-      if (data.includes(flags[key])) {
-        value += parseInt(key);
-      }
-    }
-    return [value];
-  }
-
-  static stringToBinary(data) {
-    var array = [];
-    if (isNode) {
-      return new Uint8Array(Buffer(data, 'utf8'));
-    } else if (TextEncoder) {
-      return new Uint8Array(new TextEncoder("utf-8").encode(data));
-    }
-  }
+function webpackEmptyContext(req) {
+	var e = new Error('Cannot find module "' + req + '".');
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
 }
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = "./obniz/libs/webpackReplace sync recursive";
+
+/***/ }),
+
+/***/ "./obniz/libs/webpackReplace/require-context.js":
+/*!******************************************************!*\
+  !*** ./obniz/libs/webpackReplace/require-context.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+
+let baseDir = undefined;
+let yaml = __webpack_require__(/*! js-yaml */ "js-yaml");
+let fs = __webpack_require__(/*! fs */ "fs");
+
+module.exports = function (directory, recursive, regExp) {
+  let dir = __webpack_require__(/*! node-dir */ "node-dir");
+  let path = __webpack_require__(/*! path */ "path");
+
+  // Assume absolute path by default
+  let basepath = directory;
+
+  if (directory[0] === '.') {
+    // Relative path
+    let dir = __dirname;
+    if (baseDir) {
+      dir = baseDir;
+    }
+    basepath = path.join(dir, directory);
+  } else if (!path.isAbsolute(directory)) {
+    // Module path
+    basepath = /*require.resolve*/(__webpack_require__("./obniz/libs/webpackReplace sync recursive").resolve(directory));
+  }
+
+  let keys = dir.files(basepath, {
+    sync: true,
+    recursive: recursive || false
+  }).filter(function (file) {
+    return file.match(regExp || /\.(json|js)$/);
+  }).map(function (file) {
+    return path.join('.', file.slice(basepath.length + 1));
+  });
+
+  let context = function (key) {
+    let path = context.resolve(key);
+    if (/\.(json|js)$/.test(path)) {
+      return __webpack_require__("./obniz/libs/webpackReplace sync recursive")(path);
+    } else if (/\.(yaml|yml)$/.test(path)) {
+      return yaml.safeLoad(fs.readFileSync(path, 'utf8'));
+    } else {
+      throw new Error("unknown type");
+    }
+  };
+
+  context.resolve = function (key) {
+    return path.join(basepath, key);
+  };
+
+  context.keys = function () {
+    return keys;
+  };
+
+  return context;
+};
+
+module.exports.setBaseDir = function (base) {
+  baseDir = base;
+};
+/* WEBPACK VAR INJECTION */}.call(this, "/"))
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand sync recursive":
+/*!***********************************!*\
+  !*** ./obniz/libs/wscommand sync ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function webpackEmptyContext(req) {
+	var e = new Error('Cannot find module "' + req + '".');
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = "./obniz/libs/wscommand sync recursive";
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_.js":
+/*!********************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/WSSchema.js");
+
+let commandClasses = [];
+
 class WSCommand {
 
   constructor(delegate) {
@@ -3450,21 +5368,26 @@ class WSCommand {
   }
 
   static get CommandClasses() {
-    return {
-      WSCommand_System,
-      WSCommand_Directive,
-      WSCommand_IO,
-      WSCommand_PWM,
-      WSCommand_UART,
-      WSCommand_AD,
-      WSCommand_SPI,
-      WSCommand_I2C,
-      WSCommand_LogicAnalyzer,
-      WSCommand_Display,
-      WSCommand_Switch,
-      WSCommand_Ble,
-      WSCommand_Measurement
-    };
+    return commandClasses;
+    // {
+    //   WSCommand_System,
+    //   WSCommand_Directive,
+    //   WSCommand_IO,
+    //   WSCommand_PWM,
+    //   WSCommand_UART,
+    //   WSCommand_AD,
+    //   WSCommand_SPI,
+    //   WSCommand_I2C,
+    //   WSCommand_LogicAnalyzer,
+    //   WSCommand_Display,
+    //   WSCommand_Switch,
+    //   WSCommand_Ble,
+    //   WSCommand_Measurement
+    // };
+  }
+
+  static addCommandClass(classObj) {
+    commandClasses.push(classObj);
   }
 
   static framed(module, func, payload) {
@@ -3606,13 +5529,8 @@ class WSCommand {
 
   getSchema(uri) {
     //chack isFirst
-    if (!Obniz.tv4.getSchema("/request")) {
-      for (let schema of Obniz.wsSchema) {
-        Obniz.tv4.addSchema(schema);
-      }
-    }
 
-    return Obniz.tv4.getSchema(uri);
+    return WSSchema.getSchema(uri);
   }
 
   validateCommandSchema(uriList, json, rootPath, customArg) {
@@ -3639,7 +5557,7 @@ class WSCommand {
 
   validate(commandUri, json) {
     let schema = this.getSchema(commandUri);
-    let results = Obniz.tv4.validateMultiple(json, schema);
+    let results = WSSchema.validateMultiple(json, schema);
     return results;
   }
 
@@ -3651,10 +5569,10 @@ class WSCommand {
       return false;
     }
 
-    let badErrorCodes = [Obniz.tv4.errorCodes.ANY_OF_MISSING, Obniz.tv4.errorCodes.ONE_OF_MISSING, Obniz.tv4.errorCodes.ONE_OF_MULTIPLE, Obniz.tv4.errorCodes.NOT_PASSED, Obniz.tv4.errorCodes.OBJECT_REQUIRED, Obniz.tv4.errorCodes.OBJECT_ADDITIONAL_PROPERTIES, Obniz.tv4.errorCodes.CIRCULAR_REFERENCE, Obniz.tv4.errorCodes.FORMAT_CUSTOM, Obniz.tv4.errorCodes.KEYWORD_CUSTOM, Obniz.tv4.errorCodes.UNKNOWN_PROPERTY];
+    let badErrorCodes = [WSSchema.errorCodes.ANY_OF_MISSING, WSSchema.errorCodes.ONE_OF_MISSING, WSSchema.errorCodes.ONE_OF_MULTIPLE, WSSchema.errorCodes.NOT_PASSED, WSSchema.errorCodes.OBJECT_REQUIRED, WSSchema.errorCodes.OBJECT_ADDITIONAL_PROPERTIES, WSSchema.errorCodes.CIRCULAR_REFERENCE, WSSchema.errorCodes.FORMAT_CUSTOM, WSSchema.errorCodes.KEYWORD_CUSTOM, WSSchema.errorCodes.UNKNOWN_PROPERTY];
     let messages = [];
     for (let error of validateError.errors) {
-      if (error.code === Obniz.tv4.errorCodes.INVALID_TYPE) {
+      if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
         if (error.params.type === "object" || error.params.expected === "object") {
           return false;
         }
@@ -3676,7 +5594,7 @@ class WSCommand {
   _filterSchema(schema, json) {
 
     if (schema["$ref"]) {
-      let refSchema = Obniz.tv4.getSchema(schema["$ref"]);
+      let refSchema = WSSchema.getSchema(schema["$ref"]);
       return this._filterSchema(refSchema, json);
     }
 
@@ -3722,6 +5640,22 @@ class WSCommand {
 }
 
 class WSCommandNotFoundError extends Error {}
+
+module.exports = WSCommand;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_AD.js":
+/*!**********************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_AD.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_AD extends WSCommand {
 
@@ -3780,6 +5714,23 @@ class WSCommand_AD extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_AD;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_Ble.js":
+/*!***********************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_Ble.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const JsonBinaryConverter = __webpack_require__(/*! ./jsonBinaryConverter */ "./obniz/libs/wscommand/jsonBinaryConverter.js");
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Ble extends WSCommand {
 
@@ -4298,6 +6249,22 @@ class WSCommand_Ble extends WSCommand {
   }
 }
 
+module.exports = WSCommand_Ble;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_Directive.js":
+/*!*****************************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_Directive.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
 class WSCommand_Directive extends WSCommand {
 
   constructor(delegate) {
@@ -4306,6 +6273,24 @@ class WSCommand_Directive extends WSCommand {
   }
 
 }
+
+module.exports = WSCommand_Directive;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_Display.js":
+/*!***************************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_Display.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
+let isNode = typeof window === 'undefined';
 
 class WSCommand_Display extends WSCommand {
 
@@ -4410,6 +6395,23 @@ class WSCommand_Display extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_Display;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_I2C.js":
+/*!***********************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_I2C.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
 class WSCommand_I2C extends WSCommand {
 
   constructor(delegate) {
@@ -4585,6 +6587,23 @@ class WSCommand_I2C extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_I2C;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_IO.js":
+/*!**********************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_IO.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
 const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
@@ -4724,6 +6743,23 @@ class WSCommand_IO extends WSCommand {
     }
   }
 };
+
+module.exports = WSCommand_IO;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js":
+/*!*********************************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
 class WSCommand_LogicAnalyzer extends WSCommand {
 
   constructor(delegate) {
@@ -4784,14 +6820,9 @@ class WSCommand_LogicAnalyzer extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv) {
-      let arr = new Array(payload.byteLength * 8);
-      let offset = 0;
-      for (let i = 0; i < payload.byteLength; i++) {
-        const byte = payload[i];
-        for (let bit = 0; bit < 8; bit++) {
-          arr[offset] = byte & 0x80 >>> bit ? 1 : 0;
-          offset++;
-        }
+      var arr = new Array(payload.byteLength);
+      for (var i = 0; i < payload.byteLength; i++) {
+        arr[i] = payload[i];
       }
       objToSend["logic_analyzer"] = {
         data: arr
@@ -4801,6 +6832,22 @@ class WSCommand_LogicAnalyzer extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_LogicAnalyzer;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_Measurement.js":
+/*!*******************************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_Measurement.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Measurement extends WSCommand {
 
@@ -4883,6 +6930,23 @@ class WSCommand_Measurement extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_Measurement;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_PWM.js":
+/*!***********************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_PWM.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
 class WSCommand_PWM extends WSCommand {
 
   constructor(delegate) {
@@ -4959,23 +7023,15 @@ class WSCommand_PWM extends WSCommand {
   }
 
   amModulate(params, module) {
-    const bitLength = params.modulate.data.length;
-    const byteLength = parseInt((bitLength + 7) / 8);
-    let buf = new Uint8Array(5 + byteLength);
+    var buf = new Uint8Array(5 + params.modulate.data.length);
     let symbol_length_usec = params.modulate.symbol_length * 1000;
     buf[0] = module;
     buf[1] = symbol_length_usec >> 8 * 3;
     buf[2] = symbol_length_usec >> 8 * 2;
     buf[3] = symbol_length_usec >> 8 * 1;
     buf[4] = symbol_length_usec;
-    let bitIndex = 0;
-    for (let byte = 0; byte < byteLength; byte++) {
-      buf[5 + byte] = 0;
-      for (let bit = 0; bit < 8; bit++) {
-        if (params.modulate.data[bitIndex++]) {
-          buf[5 + byte] |= 0x80 >>> bit;
-        }
-      }
+    for (var i = 0; i < params.modulate.data.length; i++) {
+      buf[5 + i] = params.modulate.data[i];
     }
     this.sendCommand(this._CommandAMModulate, buf);
   }
@@ -5000,6 +7056,22 @@ class WSCommand_PWM extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_PWM;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_SPI.js":
+/*!***********************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_SPI.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_SPI extends WSCommand {
 
@@ -5107,6 +7179,22 @@ class WSCommand_SPI extends WSCommand {
   }
 }
 
+module.exports = WSCommand_SPI;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_Switch.js":
+/*!**************************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_Switch.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
 class WSCommand_Switch extends WSCommand {
 
   constructor(delegate) {
@@ -5156,6 +7244,23 @@ class WSCommand_Switch extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_Switch;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_System.js":
+/*!**************************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_System.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+
 class WSCommand_System extends WSCommand {
 
   constructor(delegate) {
@@ -5233,6 +7338,22 @@ class WSCommand_System extends WSCommand {
     }
   }
 }
+
+module.exports = WSCommand_System;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_UART.js":
+/*!************************************************!*\
+  !*** ./obniz/libs/wscommand/WSCommand_UART.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_UART extends WSCommand {
 
@@ -5344,6 +7465,420 @@ class WSCommand_UART extends WSCommand {
   }
 };
 
+module.exports = WSCommand_UART;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSSchema.js":
+/*!******************************************!*\
+  !*** ./obniz/libs/wscommand/WSSchema.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+
+const tv4 = __webpack_require__(/*! tv4 */ "tv4");
+
+tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
+
+tv4.defineKeyword("uniqueKeys", function (data, value, schema) {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+  let targets = [];
+  for (let key of value) {
+    if (data[key] !== null && data[key] !== undefined) {
+      targets.push(data[key]);
+    }
+  }
+  let duplicated = targets.filter(function (x, i, self) {
+    return self.indexOf(x) !== self.lastIndexOf(x);
+  });
+  if (duplicated.length > 0) {
+    return { code: tv4.errorCodes.UNIQUE_KEYS, message: { uniqueKeys: value.join(",") } };
+  }
+  return null;
+});
+
+//todo
+
+let wsSchema = [];
+__webpack_require__("./obniz/libs/wscommand sync recursive").context = __webpack_require__(/*! ../webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context.js");
+if (__webpack_require__("./obniz/libs/wscommand sync recursive").context && __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir) {
+  __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir(__dirname);
+}
+let context = __webpack_require__("./json_schema sync recursive \\.yml$");
+for (let path of context.keys()) {
+  let oneSchema = context(path);
+  wsSchema.push(oneSchema);
+}
+
+wsSchema.map(tv4.addSchema);
+
+module.exports = tv4;
+/* WEBPACK VAR INJECTION */}.call(this, "/"))
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/index.js":
+/*!***************************************!*\
+  !*** ./obniz/libs/wscommand/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const WSCommand = __webpack_require__(/*! ./WSCommand_ */ "./obniz/libs/wscommand/WSCommand_.js");
+
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_System */ "./obniz/libs/wscommand/WSCommand_System.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Directive */ "./obniz/libs/wscommand/WSCommand_Directive.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_UART */ "./obniz/libs/wscommand/WSCommand_UART.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_AD */ "./obniz/libs/wscommand/WSCommand_AD.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_SPI */ "./obniz/libs/wscommand/WSCommand_SPI.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_I2C */ "./obniz/libs/wscommand/WSCommand_I2C.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_LogicAnalyzer */ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Display */ "./obniz/libs/wscommand/WSCommand_Display.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Switch */ "./obniz/libs/wscommand/WSCommand_Switch.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Ble */ "./obniz/libs/wscommand/WSCommand_Ble.js"));
+WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Measurement */ "./obniz/libs/wscommand/WSCommand_Measurement.js"));
+
+module.exports = WSCommand;
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/jsonBinaryConverter.js":
+/*!*****************************************************!*\
+  !*** ./obniz/libs/wscommand/jsonBinaryConverter.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class JsonBinaryConverter {
+
+  static convertFromBinaryToJson(schema, binary) {
+    var types = {
+      hex: this.hexFromBinary.bind(this),
+      uuid: this.uuidFromBinary.bind(this),
+      number: this.numberFromBinary.bind(this),
+      "signed number": this.signedNumberFromBinary.bind(this),
+      int: this.numberFromBinary.bind(this),
+      char: this.numberFromBinary.bind(this),
+      enum: this.enumFromBinary.bind(this),
+      dataArray: this.dataArrayFromBinary.bind(this)
+    };
+    var json = {};
+    var count = 0;
+    for (var i = 0; i < schema.length; i++) {
+      var data = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
+      json[schema[i].name] = types[schema[i].type](data, schema[i]);
+
+      if (schema[i].length) {
+        count += schema[i].length;
+      } else {
+        break;
+      }
+    }
+    return json;
+  }
+
+  static hexFromBinary(data, schema) {
+    var str = "";
+    for (var i = 0; i < data.length; i++) {
+      if (schema.endianness && schema.endianness === "little") {
+        str = ("00" + data[i].toString(16)).slice(-2) + str;
+      } else {
+        str = str + ("00" + data[i].toString(16)).slice(-2);
+      }
+    }
+    return str;
+  }
+
+  static uuidFromBinary(data) {
+    var len = data[0] * 16 + data[1];
+    if (len === 0) {
+      return null;
+    }
+    var uuidData = data.slice(2);
+    var str = "";
+    for (var i = 0; i < len; i++) {
+      str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
+    }
+    return str;
+  }
+
+  static signedNumberFromBinary(data, schema) {
+    //big adian
+    var val = data[0] & 0x7F;
+    for (var i = 1; i < data.length; i++) {
+      val = val * 256 + data[i];
+    }
+    if ((data[0] & 0x80) !== 0) {
+      val = val - Math.pow(2, data.length * 8 - 1);
+    }
+    return val;
+  }
+
+  static numberFromBinary(data) {
+    //big adian
+    var val = 0;
+    for (var i = 0; i < data.length; i++) {
+      val = val * 256 + data[i];
+    }
+    return val;
+  }
+
+  static keyForVal(enumvals, val) {
+    return Object.keys(enumvals).filter(function (k) {
+      return enumvals[k] === val;
+    })[0];
+    return undefined;
+  }
+
+  static enumFromBinary(data, schema) {
+    var enumVals = schema.enum;
+    var val = this.numberFromBinary(data);
+    var tmp = this.keyForVal(enumVals, val);
+    if (tmp) {
+      val = tmp;
+    }
+
+    return val;
+  }
+
+  static dataArrayFromBinary(data) {
+    var arr = new Array(data.length);
+    for (var i = 0; i < data.length; i++) {
+      arr[i] = data[i];
+    }
+    return arr;
+  }
+
+  static createSendBuffer(schema, data) {
+    var array = [];
+    for (var i = 0; i < schema.length; i++) {
+      var schemaRow = schema[i];
+
+      var row = undefined;
+      if (Array.isArray(schemaRow)) {
+        for (var key in schemaRow) {
+          var customSchemaRow = Object.assign({}, schemaRow[key], { required: true });
+          row = this.analyzeSchema(data, customSchemaRow);
+          if (row) {
+            break;
+          }
+        }
+      } else {
+        row = this.analyzeSchema(data, schemaRow);
+      }
+
+      Array.prototype.push.apply(array, row);
+    }
+    return new Uint8Array(array);
+  }
+
+  static analyzeSchema(allData, schemaRow) {
+    var types = {
+      hex: this.hexToBinary.bind(this),
+      uuid: this.uuidToBinary.bind(this),
+      int: this.intToBinary.bind(this),
+      char: this.charToBinary.bind(this),
+      dataArray: this.dataArrayToBinary.bind(this),
+      enum: this.enumToBinary.bind(this),
+      string: this.stringToBinary.bind(this),
+      text: this.stringToBinary.bind(this),
+      flag: this.flagToBinary.bind(this)
+    };
+
+    var val = undefined;
+    if (schemaRow.path) {
+      val = this.getProperty(allData, schemaRow.path);
+    }
+    if (val === undefined && schemaRow.required) {
+      return null;
+    }
+    if (val === undefined && schemaRow.default) {
+      val = schemaRow.default;
+    }
+
+    var row = types[schemaRow.type](val, schemaRow);
+
+    if (schemaRow.length && row.length !== schemaRow.length) {
+      console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
+    }
+
+    return row;
+  }
+
+  static getProperty(object, path) {
+    if (path === "" || path === undefined) {
+      return object;
+    }
+    if (typeof path === 'string') path = path.split('.');
+    if (!Array.isArray(path)) path = [path];
+
+    var index = 0,
+        length = path.length;
+
+    while (index < length) {
+      object = object[path[index++]];
+      if (object === undefined) {
+        return undefined;
+      }
+    }
+    return index && index === length ? object : undefined;
+  }
+
+  static hexToBinary(data, schema) {
+    var array = [];
+    var hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    for (var i = 0; i < hex.length / 2; i++) {
+      array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
+    }
+    if (schema && schema.endianness && schema.endianness === "little") {
+      array.reverse();
+    }
+    return array;
+  }
+
+  static intToBinary(data) {
+    var array = [];
+    array[0] = data >> 8 * 3 & 0xFF;
+    array[1] = data >> 8 * 2 & 0xFF;
+    array[2] = data >> 8 * 1 & 0xFF;
+    array[3] = data >> 8 * 0 & 0xFF;
+    return array;
+  }
+
+  static charToBinary(data) {
+    var array = [];
+    array[0] = data & 0xFF;
+    return array;
+  }
+
+  static dataArrayToBinary(data) {
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+    return data;
+  }
+  static uuidToBinary(data) {
+
+    var uuid = this.hexToBinary(data);
+    uuid.reverse(); //big endianness -> little endianness;
+    var length = uuid.length;
+
+    var array = [];
+
+    array[0] = length >> 8 * 1 & 0xFF;
+    array[1] = length >> 8 * 0 & 0xFF;
+
+    Array.prototype.push.apply(array, uuid);
+    for (var i = array.length; i < 16 + 2; i++) {
+      array[i] = 0;
+    }
+
+    return array;
+  }
+
+  static enumToBinary(data, schema) {
+    var array = [];
+    array.push(schema.enum[data]);
+    return array;
+  }
+
+  static flagToBinary(data, schema) {
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+    var flags = schema.flags;
+    var value = 0;
+    for (var key in flags) {
+      if (data.includes(flags[key])) {
+        value += parseInt(key);
+      }
+    }
+    return [value];
+  }
+
+  static stringToBinary(data) {
+    var array = [];
+    if (isNode) {
+      return new Uint8Array(Buffer(data, 'utf8'));
+    } else if (TextEncoder) {
+      return new Uint8Array(new TextEncoder("utf-8").encode(data));
+    }
+  }
+}
+
+module.exports = JsonBinaryConverter;
+
+/***/ }),
+
+/***/ "./package.json":
+/*!**********************!*\
+  !*** ./package.json ***!
+  \**********************/
+/*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
+/***/ (function(module) {
+
+module.exports = {"name":"obniz","version":"0.1.50","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION ./test/index.js","local":"node $NODE_DEBUG_OPTION ./_tools/server.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","tv4":"^1.3.0","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+
+/***/ }),
+
+/***/ "./parts/Accessory sync recursive \\.js$":
+/*!************************************!*\
+  !*** ./parts/Accessory sync \.js$ ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./USB/index.js": "./parts/Accessory/USB/index.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	var module = __webpack_require__(id);
+	return module;
+}
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
+		var e = new Error('Cannot find module "' + req + '".');
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return id;
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./parts/Accessory sync recursive \\.js$";
+
+/***/ }),
+
+/***/ "./parts/Accessory/USB/index.js":
+/*!**************************************!*\
+  !*** ./parts/Accessory/USB/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var USB = function () {
   this.keys = ["vcc", "gnd"];
   this.requiredKeys = ["vcc", "gnd"];
@@ -5365,3958 +7900,98 @@ USB.prototype.off = function () {
   this.io_vdd.output(false);
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("USB", USB);
-}
-class hx711 {
-  constructor() {
-    this.keys = ["vcc", "gnd", "sck", "dout"];
-    this.requiredKeys = ["sck", "dout"];
-    this.offset = 0;
-    this.scale = 1;
-  }
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("USB", USB);
 
-  wired(obniz) {
-    this.obniz = obniz;
-    this.spi = obniz.getFreeSpi();
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+/***/ }),
 
-    let ioKeys = ["clk", "dout"];
-    for (let key of ioKeys) {
-      if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '" + key + "' are to be valid io no");
-      }
-    }
-    this.sck = obniz.getIO(this.params.sck);
-    this.dout = obniz.getIO(this.params.dout);
+/***/ "canvas":
+/*!*************************!*\
+  !*** external "canvas" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-    this.sck.output(true);
-  }
+module.exports = require("canvas");
 
-  readWait() {
-    var _this = this;
+/***/ }),
 
-    return _asyncToGenerator(function* () {
+/***/ "fs":
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-      _this.sck.output(false);
+module.exports = require("fs");
 
-      // while(true) {
-      //   let val = await this.dout.inputWait();
-      //   if (val == false) break;
-      // }
-      _this.spi.start({ mode: "master", clk: _this.params.sck, miso: _this.params.dout, frequency: 66 * 1000 });
+/***/ }),
 
-      let ret = yield _this.spi.writeWait([0, 0, 0]);
-      _this.spi.end(true);
-      _this.sck.output(false);
-      let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-      return flag * (((ret[0] & 0x7F) << 16) + (ret[1] << 8) + (ret[2] << 0));
-    })();
-  }
+/***/ "js-yaml":
+/*!**************************!*\
+  !*** external "js-yaml" ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-  readAverageWait(times) {
-    var _this2 = this;
+module.exports = require("js-yaml");
 
-    return _asyncToGenerator(function* () {
-      let results = [];
-      for (let i = 0; i < times; i++) {
-        results.push((yield _this2.readWait()));
-      }
-      return results.reduce(function (prev, current, i) {
-        return prev + current;
-      }, 0) / results.length;
-    })();
-  }
+/***/ }),
 
-  powerDown() {
-    this.sck.output(true);
-  }
+/***/ "node-dir":
+/*!***************************!*\
+  !*** external "node-dir" ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-  powerUp() {
-    this.sck.output(false);
-  }
+module.exports = require("node-dir");
 
-  zeroAdjust(times) {
-    var _this3 = this;
+/***/ }),
 
-    return _asyncToGenerator(function* () {
-      times = parseInt(times) || 1;
-      _this3.offset = yield _this3.readAverageWait(times);
-    })();
-  }
+/***/ "path":
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-  getValueWait(times) {
-    var _this4 = this;
+module.exports = require("path");
 
-    return _asyncToGenerator(function* () {
-      times = parseInt(times) || 1;
-      let val = yield _this4.readAverageWait(times);
-      return (val - _this4.offset) / _this4.scale;
-    })();
-  }
+/***/ }),
 
-}
+/***/ "string_decoder":
+/*!*********************************!*\
+  !*** external "string_decoder" ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-if (PartsRegistrate) {
-  PartsRegistrate("hx711", hx711);
-}
+module.exports = require("string_decoder");
 
-var AE_MICAMP = function () {
-  this.keys = ["vcc", "gnd", "out"];
-  this.requiredKeys = ["out"];
-};
+/***/ }),
 
-AE_MICAMP.prototype.wired = (() => {
-  var _ref2 = _asyncToGenerator(function* (obniz) {
-    this.obniz = obniz;
+/***/ "tv4":
+/*!**********************!*\
+  !*** external "tv4" ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-    this.ad = obniz.getAD(this.params.out);
+module.exports = require("tv4");
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+/***/ }),
 
-    var self = this;
-    this.ad.start(function (value) {
-      self.voltage = value;
-      if (self.onchange) {
-        self.onchange(self.voltage);
-      }
-    });
+/***/ "ws":
+/*!*********************!*\
+  !*** external "ws" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-    /*
-      var self = this;
-      var analogin = [];
-      var cnt = 0;
-      while(true){
-        var sum = 0;
-        if (cnt == 10) {
-          cnt = 0;
-        }
-        analogin[cnt] = this.ad.value;
-        cnt++;
-        for (var i = 0; i < 10; i++) {
-          if (typeof(analogin[i])=="number") {sum += analogin[i];}
-        }
-        var average = sum / 10;
-        //console.log('average='+average);
-        await obniz.wait(1);
-      }
-      self.voltage_ave = average;
-      if (self.average) {
-        self.average(self.voltage_ave);
-      }
-      */
-  });
+module.exports = require("ws");
 
-  return function (_x) {
-    return _ref2.apply(this, arguments);
-  };
-})();
+/***/ })
 
-/*
-//移動平均を返す
-AE_MICAMP.prototype.Average = function(callback) {
-  this.average = callback;
-};
-*/
-
-if (PartsRegistrate) {
-  PartsRegistrate("AE_MICAMP", AE_MICAMP);
-}
-
-var RN42 = function () {
-  this.keys = ["tx", "rx", "gnd"];
-  this.requiredKeys = ["tx", "rx"];
-};
-
-RN42.prototype.wired = function (obniz) {
-  if (obniz.isValidIO(this.params.gnd)) {
-    obniz.getIO(this.params.gnd).output(false);
-  }
-
-  this.uart = obniz.getFreeUart();
-
-  this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 115200, drive: "3v" });
-  var self = this;
-  this.uart.onreceive = function (data, text) {
-    // this is not perfect. separation is possible.
-    if (text.indexOf("CONNECT") >= 0) {
-      console.log("connected");
-    } else if (text.indexOf("DISCONNECT") >= 0) {
-      console.log("disconnected");
-    }
-    if (typeof self.onreceive === "function") {
-      self.onreceive(data, text);
-    }
-  };
-};
-
-RN42.prototype.send = function (data) {
-  this.uart.send(data);
-};
-
-RN42.prototype.sendCommand = function (data) {
-  this.uart.send(data + '\n');
-  this.obniz.wait(100);
-};
-
-RN42.prototype.enterCommandMode = function () {
-  this.send('$$$');
-  this.obniz.wait(100);
-};
-
-RN42.prototype.config = function (json) {
-  this.enterCommandMode();
-  if (typeof json !== "object") {
-    // TODO: warning
-    return;
-  }
-  // remove noize data
-  this.sendCommand("");
-
-  if (json.master_slave) {
-    this.config_masterslave(json.master_slave);
-  }
-  if (json.auth) {
-    this.config_auth(json.auth);
-  }
-  if (json.hid_flag) {
-    this.config_HIDflag(json.hid_flag);
-  }
-  if (json.profile) {
-    this.config_profile(json.profile);
-  }
-  if (json.power) {
-    this.config_power(json.power);
-  }
-  if (json.display_name) {
-    this.config_displayName(json.display_name);
-  }
-  this.config_reboot();
-};
-
-RN42.prototype.config_reboot = function () {
-  this.sendCommand('R,1');
-};
-
-RN42.prototype.config_masterslave = function (mode) {
-  var val = -1;
-  if (typeof mode === "number") {
-    val = mode;
-  } else if (typeof mode === "string") {
-    var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"];
-    for (var i = 0; i < modes.length; i++) {
-      if (modes[i] === mode) {
-        val = i;
-        break;
-      }
-    }
-  }
-  if (val === -1) {
-    // TODO: warning
-    return;
-  }
-  this.sendCommand('SM,' + val);
-};
-
-RN42.prototype.config_displayName = function (name) {
-  this.sendCommand('SN,' + name);
-};
-
-// // SH,0200 HID Flag register. Descriptor=keyboard
-RN42.prototype.config_HIDflag = function (flag) {
-  this.sendCommand('SH,' + flag);
-};
-
-RN42.prototype.config_profile = function (mode) {
-  var val = -1;
-  if (typeof mode === "number") {
-    val = mode;
-  } else if (typeof mode === "string") {
-    var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
-    for (var i = 0; i < modes.length; i++) {
-      if (modes[i] === mode) {
-        val = i;
-        break;
-      }
-    }
-  }
-  if (val === -1) {
-    // TODO: warning
-    return;
-  }
-  this.sendCommand('S~,' + val);
-};
-
-RN42.prototype.config_revert_localecho = function () {
-  this.sendCommand('+');
-};
-
-RN42.prototype.config_auth = function (mode) {
-  var val = -1;
-  if (typeof mode === "number") {
-    val = mode;
-  } else if (typeof mode === "string") {
-    var modes = ["open", "ssp-keyboard", "just-work", "pincode"];
-    for (var i = 0; i < modes.length; i++) {
-      if (modes[i] === mode) {
-        val = i;
-        break;
-      }
-    }
-  }
-  if (val === -1) {
-    // TODO: warning
-    return;
-  }
-  this.sendCommand('SA,' + val);
-};
-
-RN42.prototype.config_power = function (dbm) {
-
-  var val = "0010";
-  if (16 > dbm && dbm >= 12) {
-    val = "000C";
-  } else if (12 > dbm && dbm >= 8) {
-    val = "0008";
-  } else if (8 > dbm && dbm >= 4) {
-    val = "0004";
-  } else if (4 > dbm && dbm >= 0) {
-    val = "0000";
-  } else if (0 > dbm && dbm >= -4) {
-    val = "FFFC";
-  } else if (-4 > dbm && dbm >= -8) {
-    val = "FFF8";
-  } else if (-8 > dbm) {
-    val = "FFF4";
-  }
-
-  this.sendCommand('SY,' + val);
-};
-
-RN42.prototype.config_get_setting = function () {
-  this.sendCommand('D');
-};
-
-RN42.prototype.config_get_extendSetting = function () {
-  this.sendCommand('E');
-};
-
-// Module functions
-
-if (PartsRegistrate) {
-  PartsRegistrate("RN42", RN42);
-}
-/* global PartsRegistrate */
-
-class XBee {
-
-  constructor() {
-    this.keys = ["tx", "rx", "gnd"];
-    this.requiredKeys = ["tx", "rx"];
-
-    this.displayIoNames = { "tx": "<tx", "rx": ">rx" };
-  }
-
-  wired(obniz) {
-
-    this.uart = obniz.getFreeUart();
-    this.currentCommand = null;
-    this.commands = [];
-    this.isAtMode = false;
-    this.onFinishAtModeCallback = null;
-
-    if (typeof this.params.gnd === "number") {
-      obniz.getIO(this.params.gnd).output(false);
-    }
-
-    this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 9600, drive: "3v" });
-
-    this.uart.onreceive = function (data, text) {
-      if (this.isAtMode) {
-        this.onAtResultsRecieve(data, text);
-      } else {
-        if (typeof this.onreceive === "function") {
-          this.onreceive(data, text);
-        }
-      }
-    }.bind(this);
-  }
-
-  send(text) {
-    if (this.isAtMode === false) {
-      this.uart.send(text);
-    } else {
-      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
-    }
-  }
-
-  onAtResultsRecieve(data, text) {
-    if (!this.isAtMode) {
-      return;
-    }
-
-    var next = function () {
-      this.currentCommand = null;
-      this.sendCommand();
-    }.bind(this);
-
-    if (text === "OK\r") {
-      if (this.currentCommand === "ATCN") {
-        this.isAtMode = false;
-        this.currentCommand = null;
-        if (typeof this.onFinishAtModeCallback === "function") {
-          this.onFinishAtModeCallback();
-          this.onFinishAtModeCallback = null;
-        }
-        return;
-      }
-      next();
-    } else if (text === "ERROR\r") {
-      this.obniz.error("XBee config error : " + this.currentCommand);
-    } else {
-      //response of at command.
-      console.log("XBEE : no catch message", data);
-      next();
-    }
-  }
-
-  addCommand(command, value) {
-    var str = command + (value ? " " + value : "");
-    this.commands.push(str);
-    if (this.isAtMode === true && this.currentCommand === null) {
-      this.sendCommand();
-    }
-  }
-
-  sendCommand() {
-    if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
-      this.currentCommand = "AT" + this.commands.shift();
-      this.uart.send(this.currentCommand + "\r");
-    }
-  }
-
-  enterAtMode() {
-    if (this.currentCommand !== null) return;
-    this.isAtMode = true;
-    this.obniz.wait(1000);
-    var command = "+++";
-    this.currentCommand = command;
-    this.uart.send(this.currentCommand);
-    this.obniz.wait(1000);
-  }
-
-  exitAtMode() {
-    this.addCommand("CN");
-  }
-
-  configWait(config) {
-    var _this5 = this;
-
-    return _asyncToGenerator(function* () {
-      if (_this5.isAtMode) {
-        throw new Error("Xbee : duplicate config setting");
-      };
-      return new Promise(function (resolve, reject) {
-        var standaloneKeys = {
-          "destination_address_high": "DH",
-          "destination_address_low": "DL",
-          "source_address": "MY"
-        };
-        var highLowKeys = ["destination_address"];
-        this.enterAtMode();
-        for (var key in config) {
-          if (key.length === 2) {
-            this.addCommand(key, config[key]);
-          } else if (standaloneKeys[key]) {
-            this.addCommand(standaloneKeys[key], config[key]);
-          } else if (highLowKeys.includes(key)) {
-            var high = config[key].slice(0, -8);
-            if (!high) {
-              high = "0";
-            }
-            var low = config[key].slice(-8);
-
-            this.addCommand(standaloneKeys[key + "_high"], high);
-            this.addCommand(standaloneKeys[key + "_low"], low);
-          }
-        }
-        this.exitAtMode();
-        this.onFinishAtModeCallback = function () {
-          resolve();
-        };
-      }.bind(_this5));
-    })();
-  }
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("XBee", XBee);
-}
-class JpegSerialCam {
-
-  constructor() {
-    this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
-    this.requiredKeys = ["cam_tx", "cam_rx"];
-
-    this.ioKeys = this.keys;
-    this.displayName = "Jcam";
-    this.displayIoNames = { "cam_tx": "camTx", "cam_rx": "camRx" };
-  }
-
-  wired() {
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this.my_tx = this.params.cam_rx;
-    this.my_rx = this.params.cam_tx;
-
-    this.obniz.getIO(this.my_tx).drive("3v");
-
-    this.uart = this.obniz.getFreeUart();
-  }
-
-  _drainUntil(uart, search, recv) {
-    var _this6 = this;
-
-    return _asyncToGenerator(function* () {
-      if (!recv) recv = [];
-      while (true) {
-        var readed = uart.readBytes();
-        recv = recv.concat(readed);
-        var tail = _this6._seekTail(search, recv);
-        if (tail >= 0) {
-          recv.splice(0, tail);
-          return recv;
-        }
-        yield _this6.obniz.wait(10);
-      }
-    })();
-  }
-
-  _seekTail(search, src) {
-    var f = 0;
-    for (var i = 0; i < src.length; i++) {
-      if (src[i] === search[f]) {
-        f++;
-        if (f === search.length) {
-          return i + 1;
-        }
-      } else {
-        f = 0;
-      }
-    }
-    return -1;
-  }
-
-  arrayToBase64(buf) {
-    if (typeof btoa === "function") {
-      var binstr = Array.prototype.map.call(buf, function (ch) {
-        return String.fromCharCode(ch);
-      }).join('');
-      return btoa(binstr);
-    }
-    // TODO: 
-  }
-
-  startwait(obj) {
-    var _this7 = this;
-
-    return _asyncToGenerator(function* () {
-      if (!obj) obj = {};
-      _this7.uart.start({ tx: _this7.my_tx, rx: _this7.my_rx, baud: obj.baud || 38400 });
-      _this7.obniz.display.setPinName(_this7.my_tx, "JpegSerialCam", "camRx");
-      _this7.obniz.display.setPinName(_this7.my_rx, "JpegSerialCam", "camTx");
-      yield _this7.obniz.wait(2500);
-    })();
-  }
-
-  resetwait() {
-    var _this8 = this;
-
-    return _asyncToGenerator(function* () {
-      _this8.uart.send([0x56, 0x00, 0x26, 0x00]);
-      yield _this8._drainUntil(_this8.uart, [0x76, 0x00, 0x26, 0x00]);
-      yield _this8.obniz.wait(2500);
-    })();
-  }
-
-  setResolusionWait(resolution) {
-    var _this9 = this;
-
-    return _asyncToGenerator(function* () {
-      let val;
-      if (resolution === "640*480") {
-        val = 0x00;
-      } else if (resolution === "320*240") {
-        val = 0x11;
-      } else if (resolution === "160*120") {
-        val = 0x22;
-      } else {
-        throw new Error("invalid resolution");
-      }
-      _this9.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-      yield _this9._drainUntil(_this9.uart, [0x76, 0x00, 0x31, 0x00]);
-      yield _this9.resetwait();
-    })();
-  }
-
-  setCompressibilityWait(compress) {
-    var _this10 = this;
-
-    return _asyncToGenerator(function* () {
-      let val = Math.floor(compress / 100 * 0xFF);
-      _this10.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-      yield _this10._drainUntil(_this10.uart, [0x76, 0x00, 0x31, 0x00]);
-      yield _this10.resetwait();
-    })();
-  }
-
-  setBaudWait(baud) {
-    var _this11 = this;
-
-    return _asyncToGenerator(function* () {
-      let val;
-      switch (baud) {
-        case 9600:
-          val = [0xAE, 0xC8];
-          break;
-        case 19200:
-          val = [0x56, 0xE4];
-          break;
-        case 38400:
-          val = [0x2A, 0xF2];
-          break;
-        case 57600:
-          val = [0x1C, 0x4C];
-          break;
-        case 115200:
-          val = [0x0D, 0xA6];
-          break;
-        default:
-          throw new Error("invalid baud rate");
-      }
-      _this11.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
-      yield _this11._drainUntil(_this11.uart, [0x76, 0x00, 0x31, 0x00]);
-      //await this.obniz.wait(1000);
-      yield _this11.startwait({
-        baud
-      });
-    })();
-  }
-
-  takewait() {
-    var _this12 = this;
-
-    return _asyncToGenerator(function* () {
-      const uart = _this12.uart;
-      //console.log("stop a photo")
-      uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-      yield _this12._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-
-      //console.log("take a photo")
-      uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-      yield _this12._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-
-      //console.log("read length")
-      uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-      var recv = yield _this12._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
-      var XX;
-      var YY;
-      while (true) {
-        var readed = uart.readBytes();
-        //console.log(recv);
-        recv = recv.concat(readed);
-        if (recv.length >= 2) {
-          XX = recv[0];
-          YY = recv[1];
-          break;
-        }
-        yield _this12.obniz.wait(1000);
-      }
-      let databytes = XX * 256 + YY;
-      //console.log("image: " + databytes + " Bytes");
-      const high = databytes >> 8 & 0xFF;
-      const low = databytes & 0xFF;
-
-      //console.log("start reading image")
-      uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
-      var recv = yield _this12._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
-      //console.log("reading...");
-      while (true) {
-        var readed = uart.readBytes();
-        recv = recv.concat(readed);
-        //console.log(readed.length);
-        if (recv.length >= databytes) {
-          break;
-        }
-        yield _this12.obniz.wait(10);
-      }
-      //console.log("done");
-      recv = recv.splice(0, databytes); // remove tail
-      recv = recv.concat([0xFF, 0xD9]);
-      return recv;
-    })();
-  }
-
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("JpegSerialCam", JpegSerialCam);
-}
-var _7SegmentLED = function () {
-  this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
-  this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
-
-  this.digits = [0x3F, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
-};
-
-_7SegmentLED.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.ios = [];
-  this.ios.push(obniz.getIO(this.params.a));
-  this.ios.push(obniz.getIO(this.params.b));
-  this.ios.push(obniz.getIO(this.params.c));
-  this.ios.push(obniz.getIO(this.params.d));
-  this.ios.push(obniz.getIO(this.params.e));
-  this.ios.push(obniz.getIO(this.params.f));
-  this.ios.push(obniz.getIO(this.params.g));
-
-  this.dp = obniz.getIO(this.params.dp);
-  this.common = obniz.getIO(this.params.common);
-  this.isCathodeCommon = this.params.commonType === "anode" ? false : true;
-};
-
-_7SegmentLED.prototype.print = function (data) {
-  if (typeof data === "number") {
-    data = parseInt(data);
-    data = data % 10;
-
-    for (let i = 0; i < 7; i++) {
-      if (this.ios[i]) {
-        var val = this.digits[data] & 1 << i ? true : false;
-        if (!this.isCathodeCommon) {
-          val = ~val;
-        }
-        this.ios[i].output(val);
-      }
-    }
-    this.on();
-  }
-};
-
-_7SegmentLED.prototype.printRaw = function (data) {
-  if (typeof data === "number") {
-    for (let i = 0; i < 7; i++) {
-      if (this.ios[i]) {
-        var val = data & 1 << i ? true : false;
-        if (!this.isCathodeCommon) {
-          val = !val;
-        }
-        this.ios[i].output(val);
-      }
-    }
-    this.on();
-  }
-};
-
-_7SegmentLED.prototype.dpShow = function (show) {
-  if (this.dp) {
-    this.dp.output(this.isCathodeCommon ? show : !show);
-  }
-};
-
-_7SegmentLED.prototype.on = function () {
-  this.common.output(this.isCathodeCommon ? false : true);
-};
-
-_7SegmentLED.prototype.off = function () {
-  this.common.output(this.isCathodeCommon ? true : false);
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("7SegmentLED", _7SegmentLED);
-}
-
-var _7SegmentLEDArray = function () {
-  this.identifier = "" + new Date().getTime();
-
-  this.keys = ["seg0", "seg1", "seg2", "seg3"];
-  this.requiredKeys = ["seg0"];
-};
-
-_7SegmentLEDArray.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-
-  this.segments = [];
-  if (this.params.seg0) {
-    this.segments.unshift(this.params.seg0);
-  }
-  if (this.params.seg1) {
-    this.segments.unshift(this.params.seg1);
-  }
-  if (this.params.seg2) {
-    this.segments.unshift(this.params.seg2);
-  }
-  if (this.params.seg3) {
-    this.segments.unshift(this.params.seg3);
-  }
-};
-
-_7SegmentLEDArray.prototype.print = function (data) {
-  if (typeof data === "number") {
-    data = parseInt(data);
-
-    var segments = this.segments;
-    var print = function (index) {
-      let val = data;
-
-      for (let i = 0; i < segments.length; i++) {
-        console.log(val);
-        if (index === i) {
-          segments[i].print(val % 10);
-        } else {
-          segments[i].off();
-        }
-        val = val / 10;
-      }
-    };
-
-    var animations = [];
-    for (let i = 0; i < segments.length; i++) {
-      animations.push({
-        duration: 3,
-        state: print
-      });
-    }
-
-    var segments = this.segments;
-    this.obniz.io.animation(this.identifier, "loop", animations);
-  };
-};
-
-_7SegmentLEDArray.prototype.on = function () {
-  this.obniz.io.animation(this.identifier, "resume");
-};
-
-_7SegmentLEDArray.prototype.off = function () {
-  this.obniz.io.animation(this.identifier, "pause");
-  for (let i = 0; i < this.segments.length; i++) {
-    this.segments[i].off();
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
-}
-
-class MatrixLED_MAX7219 {
-
-  constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-    this.requiredKeys = ["din", "cs", "clk"];
-  }
-
-  wired(obniz) {
-    this.cs = obniz.getIO(this.params.cs);
-    // logich high must 3.5v <=
-    if (obniz.isValidIO(this.params.vcc)) {
-      obniz.getIO(this.params.vcc).output(true);
-    }
-    if (obniz.isValidIO(this.params.gnd)) {
-      obniz.getIO(this.params.gnd).output(false);
-    }
-
-    // max 10Mhz but motor driver can't
-    this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
-    this.params.mode = "master";
-    this.params.mosi = this.params.din;
-    this.params.drive = "3v";
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-
-    // reset a onece
-    this.cs.output(true);
-    this.cs.output(false);
-    this.cs.output(true);
-  }
-
-  init(width, height) {
-    this.width = width;
-    this.height = height;
-    this.preparevram(width, height);
-    this.initModule();
-  }
-
-  initModule() {
-    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
-    this.write([0x0a, 0x05]); // brightness 9/32 0 to f
-    this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
-    this.write([0x0c, 0x01]); // Shutdown to normal operation
-    this.write([0x0f, 0x00]);
-    this.passingCommands();
-    obniz.wait(10);
-  }
-
-  test() {
-    this.write([0x0f, 0x00]); // test command
-    this.passingCommands();
-  }
-
-  passingCommands() {
-    for (let i = 8; i < this.width; i += 8) {
-      // this needed for number of unit
-      this.write([0x00, 0x00]);
-    }
-  }
-
-  brightness(val) {
-    this.write([0x0a, val]); // 0 to 15;
-    this.passingCommands();
-  }
-
-  preparevram(width, height) {
-    this.vram = [];
-    for (let i = 0; i < height; i++) {
-      let dots = new Array(width / 8);
-      for (let ii = 0; ii < dots.length; ii++) {
-        dots[ii] = 0x00;
-      }
-      this.vram.push(dots);
-    }
-  }
-
-  write(data) {
-    this.cs.output(false);
-    this.spi.write(data);
-    this.cs.output(true);
-  }
-
-  writeVram() {
-    for (let line_num = 0; line_num < this.height; line_num++) {
-      let addr = line_num + 1;
-      let line = this.vram[line_num];
-      let data = [];
-      for (let col = 0; col < line.length; col++) {
-        data.push(addr);
-        data.push(line[col]);
-      }
-      this.write(data);
-    }
-  }
-
-  clear() {
-    for (let line_num = 0; line_num < this.height; line_num++) {
-      let line = this.vram[line_num];
-      for (let col = 0; col < line.length; col++) {
-        this.vram[line_num][col] = 0x00;
-      }
-      this.writeVram();
-    }
-  }
-
-  draw(ctx) {
-    let isNode = typeof window === 'undefined';
-    if (isNode) {
-      // TODO:
-      throw new Error("node js mode is under working.");
-    } else {
-      const imageData = ctx.getImageData(0, 0, this.width, this.height);
-      const data = imageData.data;
-
-      for (let i = 0; i < data.length; i += 4) {
-        let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        let index = parseInt(i / 4);
-        let line = parseInt(index / this.width);
-        let col = parseInt((index - line * this.width) / 8);
-        let bits = parseInt(index - line * this.width) % 8;
-        if (bits === 0) this.vram[line][col] = 0x00;
-        if (brightness > 0x7F) this.vram[line][col] |= 0x80 >> bits;
-      }
-    }
-    this.writeVram();
-  }
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
-}
-
-var HCSR04 = function () {
-  this.keys = ["vcc", "triger", "echo", "gnd"];
-  this.requiredKeys = ["vcc", "triger", "echo"];
-
-  this._unit = "mm";
-};
-
-HCSR04.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-
-  obniz.setVccGnd(null, this.params.gnd, "5v");
-
-  this.vccIO = obniz.getIO(this.params.vcc);
-  this.triger = this.params.triger;
-  this.echo = this.params.echo;
-};
-
-HCSR04.prototype.measure = (() => {
-  var _ref3 = _asyncToGenerator(function* (callback) {
-
-    this.vccIO.drive("5v");
-    this.vccIO.output(true);
-    yield this.obniz.wait(10);
-
-    var self = this;
-    this.obniz.measure.echo({
-      io_pulse: this.triger,
-      io_echo: this.echo,
-      pulse: "positive",
-      pulse_width: 0.011,
-      measure_edges: 3,
-      timeout: 10 / 340 * 1000,
-      callback: function (edges) {
-        self.vccIO.output(false);
-        var distance = null;
-        for (var i = 0; i < edges.length - 1; i++) {
-          // HCSR04's output of io_echo is initially high when triger is finshed
-          if (edges[i].edge === true) {
-            distance = (edges[i + 1].timing - edges[i].timing) * 1000;
-            if (self._unit === "mm") {
-              distance = distance / 5.8;
-            } else if (self._unit === "inch") {
-              distance = distance / 148.0;
-            }
-          }
-        }
-        if (typeof callback === "function") {
-          callback(distance);
-        }
-      }
-    });
-  });
-
-  return function (_x2) {
-    return _ref3.apply(this, arguments);
-  };
-})();
-
-HCSR04.prototype.unit = function (unit) {
-  if (unit === "mm") {
-    this._unit = "mm";
-  } else if (unit === "inch") {
-    this._unit = "inch";
-  } else {
-    throw new Error("HCSR04: unknown unit " + unit);
-  }
-};
-
-// Module functions
-
-if (PartsRegistrate) {
-  PartsRegistrate("HC-SR04", HCSR04);
-}
-var ENC03R_Module = function () {
-
-  this.keys = ["vcc", "out1", "out2", "gnd"];
-  this.required = ["out1", "out2"];
-  this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
-};
-
-ENC03R_Module.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad0 = obniz.getAD(this.params.out1);
-  this.ad1 = obniz.getAD(this.params.out2);
-
-  this.io_pwr.output(true);
-
-  var self = this;
-  this.ad0.start(function (value) {
-    self.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-    //console.log('raw='+value);
-    if (self.onchange1) {
-      self.onchange1(self.sens1);
-    }
-  });
-
-  this.ad1.start(function (value) {
-    self.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-    if (self.onchange2) {
-      self.onchange2(self.sens2);
-    }
-  });
-};
-
-ENC03R_Module.prototype.onChangeSens1 = function (callback) {
-  this.onchange1 = callback;
-};
-ENC03R_Module.prototype.onChangeSens2 = function (callback) {
-  this.onchange2 = callback;
-};
-
-ENC03R_Module.prototype.getValueSens1 = _asyncToGenerator(function* () {
-  return (this.ad0.value - 1.47) / Sens;
+/******/ });
 });
-
-ENC03R_Module.prototype.getValueSens2 = _asyncToGenerator(function* () {
-  return (this.ad1.value - 1.35) / Sens;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("ENC03R_Module", ENC03R_Module);
-}
-
-var PIR_ekmc = function () {
-  this.keys = ["vcc", "gnd", "signal"];
-  this.requiredKeys = ["signal"];
-};
-
-PIR_ekmc.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.io_signal = obniz.getIO(this.params.signal);
-  this.io_signal.pull("0v");
-
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  var self = this;
-  this.io_signal.input(function (value) {
-    self.isPressed = value === false;
-    if (self.onchange) {
-      self.onchange(value === false);
-    }
-  });
-};
-
-PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var self = this;
-  var ret = yield this.io_signal.inputWait();
-  return ret == false;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("PIR_ekmc", PIR_ekmc);
-}
-class IRSensor {
-
-  constructor() {
-    this.keys = ["output", "vcc", "gnd"];
-    this.requiredKeys = ["output"];
-
-    this.dataSymbolLength = 0.07;
-    this.duration = 200; // 200msec
-    this.dataInverted = true;
-    this.trigerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
-    this.cutTail = true;
-    this.output_pullup = true;
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    if (!obniz.isValidIO(this.params.output)) {
-      throw new Errro('output is not valid io');
-    }
-  }
-
-  start(callback) {
-    this.ondetect = callback;
-    if (this.output_pullup) {
-      obniz.getIO(this.params.output).pull('5v');
-    }
-
-    obniz.logicAnalyzer.start({ io: this.params.output, interval: this.dataSymbolLength, duration: this.duration, trigerValue: this.dataInverted ? false : true, trigerValueSamples: this.trigerSampleCount });
-    obniz.logicAnalyzer.onmeasured = levels => {
-      if (typeof this.ondetect === "function") {
-        if (this.dataInverted) {
-          let arr = new Uint8Array(levels);
-          for (let i = 0; i < arr.length; i++) {
-            arr[i] = arr[i] ? 0 : 1;
-          }
-          levels = Array.from(arr);
-        }
-
-        if (this.cutTail) {
-          for (let i = levels.length - 1; i > 1; i--) {
-            if (levels[i] === 0 && levels[i - 1] === 0) {
-              levels.splice(i, 1);
-            } else {
-              break;
-            }
-          }
-        }
-
-        this.ondetect(levels);
-      }
-    };
-  }
-}
-
-if (typeof PartsRegistrate === 'function') {
-  PartsRegistrate("IRSensor", IRSensor);
-}
-class FullColorLed {
-  constructor() {
-
-    this.COMMON_TYPE_ANODE = 1;
-    this.COMMON_TYPE_CATHODE = 0;
-
-    this.anode_keys = ['anode', 'anode_common', 'anodeCommon', 'vcc'];
-    this.cathode_keys = ['cathode', 'cathode_common', 'cathodeCommon', 'gnd'];
-    this.animationName = "FullColorLed-" + Math.round(Math.random() * 1000);
-
-    this.keys = ["r", "g", "b", "common", "commonType"];
-    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
-  }
-
-  wired(obniz) {
-    var r = this.params.r;
-    var g = this.params.g;
-    var b = this.params.b;
-    var common = this.params.common;
-    var commontype = this.params.commonType;
-
-    this.obniz = obniz;
-    if (this.anode_keys.includes(commontype)) {
-      this.commontype = this.COMMON_TYPE_ANODE;
-    } else if (this.cathode_keys.includes(commontype)) {
-      this.commontype = this.COMMON_TYPE_CATHODE;
-    } else {
-      this.obniz.error("FullColorLed param need common type [  anode_common or cathode_common ] ");
-    }
-
-    this.common = this.obniz.getIO(common);
-    this.common.drive("3v");
-    this.common.output(this.commontype);
-
-    this.obniz.getIO(r).drive("3v");
-    this.obniz.getIO(r).output(this.commontype);
-    this.obniz.getIO(g).drive("3v");
-    this.obniz.getIO(g).output(this.commontype);
-    this.obniz.getIO(b).drive("3v");
-    this.obniz.getIO(b).output(this.commontype);
-    this.pwmR = this.obniz.getFreePwm();this.pwmR.start({ io: r });this.pwmR.freq(1000);
-    this.pwmG = this.obniz.getFreePwm();this.pwmG.start({ io: g });this.pwmG.freq(1000);
-    this.pwmB = this.obniz.getFreePwm();this.pwmB.start({ io: b });this.pwmB.freq(1000);
-    this.rgb(0, 0, 0);
-  }
-
-  rgb(r, g, b) {
-    r = Math.min(Math.max(parseInt(r), 0), 255);
-    g = Math.min(Math.max(parseInt(g), 0), 255);
-    b = Math.min(Math.max(parseInt(b), 0), 255);
-
-    if (this.commontype === this.COMMON_TYPE_ANODE) {
-      r = 255 - r;
-      g = 255 - g;
-      b = 255 - b;
-    }
-    this.pwmR.duty(r / 255 * 100);
-    this.pwmG.duty(g / 255 * 100);
-    this.pwmB.duty(b / 255 * 100);
-  }
-
-  hsv(h, s, v) {
-    var C = v * s;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {
-      [R, G, B] = [C, X, 0];
-    };
-    if (1 <= Hp && Hp < 2) {
-      [R, G, B] = [X, C, 0];
-    };
-    if (2 <= Hp && Hp < 3) {
-      [R, G, B] = [0, C, X];
-    };
-    if (3 <= Hp && Hp < 4) {
-      [R, G, B] = [0, X, C];
-    };
-    if (4 <= Hp && Hp < 5) {
-      [R, G, B] = [X, 0, C];
-    };
-    if (5 <= Hp && Hp < 6) {
-      [R, G, B] = [C, 0, X];
-    };
-
-    var m = v - C;
-    [R, G, B] = [R + m, G + m, B + m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-
-    this.rgb(R, G, B);
-  }
-
-  gradation(cycletime_ms) {
-
-    var frames = [];
-    var max = 36 / 2;
-    var duration = Math.round(cycletime_ms / max);
-    for (var i = 0; i < max; i++) {
-      var oneFrame = {
-        duration: duration,
-        state: function (index) {
-          // index = 0
-          this.hsv(index * 10 * 2, 1, 1);
-        }.bind(this)
-      };
-      frames.push(oneFrame);
-    }
-    this.obniz.io.animation(this.animationName, "loop", frames);
-  }
-  stopgradation() {
-    this.obniz.io.animation(this.animationName, "pause");
-  }
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("FullColorLed", FullColorLed);
-}
-class InfraredLED {
-
-  constructor() {
-    this.keys = ["anode", "cathode"];
-    this.requiredKeys = ["anode"];
-
-    this.dataSymbolLength = 0.07;
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    if (!this.obniz.isValidIO(this.params.anode)) {
-      throw new Error("anode is not valid io");
-    }
-    if (this.params.cathode) {
-      if (!this.obniz.isValidIO(this.params.cathode)) {
-        throw new Error("cathode is not valid io");
-      }
-      this.io_cathode = obniz.getIO(this.params.cathode);
-      this.io_cathode.output(false);
-    }
-    this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({ io: this.params.anode });
-    this.pwm.freq(38000);
-  }
-
-  send(arr) {
-    this.pwm.modulate("am", this.dataSymbolLength, arr);
-  }
-}
-
-if (typeof PartsRegistrate === 'function') {
-  PartsRegistrate("InfraredLED", InfraredLED);
-}
-var LED = function () {
-  this.keys = ["anode", "cathode"];
-  this.requiredKeys = ["anode"];
-
-  this.animationName = "Led-" + Math.round(Math.random() * 1000);
-};
-
-LED.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.io_anode = obniz.getIO(this.params.anode);
-  if (this.params.cathode) {
-    this.io_cathode = obniz.getIO(this.params.cathode);
-    this.io_cathode.output(false);
-  }
-};
-
-// Module functions
-
-LED.prototype.on = function () {
-  this.endBlink();
-  this.io_anode.output(true);
-};
-
-LED.prototype.off = function () {
-  this.endBlink();
-  this.io_anode.output(false);
-};
-
-LED.prototype.endBlink = function () {
-  this.obniz.io.animation(this.animationName, "pause");
-};
-
-LED.prototype.blink = function (interval) {
-  if (!interval) {
-    interval = 100;
-  }
-  var frames = [{
-    duration: interval,
-    state: function (index) {
-      // index = 0
-      this.io_anode.output(true); // on
-    }.bind(this)
-  }, {
-    duration: interval,
-    state: function (index) {
-      // index = 0
-      this.io_anode.output(false); //off
-    }.bind(this)
-  }];
-
-  this.obniz.io.animation(this.animationName, "loop", frames);
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LED", LED);
-}
-
-class WS2811 {
-
-  constructor() {
-    this.key = ["din", "vcc", "gnd"];
-    this.requiredKey = ["din"];
-  }
-
-  wired(obniz) {
-
-    this.obniz = obniz;
-
-    this.params.mode = "master";
-    this.params.frequency = 2 * 1000 * 1000;
-    this.params.mosi = this.params.din;
-    this.params.drive = "3v";
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  }
-
-  static _generateFromByte(val) {
-
-    val = parseInt(val);
-    const zero = 0x8;
-    const one = 0xE;
-    let ret = [];
-    for (var i = 0; i < 8; i += 2) {
-      let byte = 0;
-      if (val & 0x80 >> i) {
-        byte = one << 4;
-      } else {
-        byte = zero << 4;
-      }
-      if (val & 0x80 >> i + 1) {
-        byte |= one;
-      } else {
-        byte |= zero;
-      }
-      ret.push(byte);
-    }
-    return ret;
-  }
-
-  static _generateColor(r, g, b) {
-
-    let array = WS2811._generateFromByte(r);
-    array = array.concat(WS2811._generateFromByte(g));
-    array = array.concat(WS2811._generateFromByte(b));
-    return array;
-  }
-
-  static _generateHsvColor(h, s, v) {
-    var C = v * s;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {
-      [R, G, B] = [C, X, 0];
-    };
-    if (1 <= Hp && Hp < 2) {
-      [R, G, B] = [X, C, 0];
-    };
-    if (2 <= Hp && Hp < 3) {
-      [R, G, B] = [0, C, X];
-    };
-    if (3 <= Hp && Hp < 4) {
-      [R, G, B] = [0, X, C];
-    };
-    if (4 <= Hp && Hp < 5) {
-      [R, G, B] = [X, 0, C];
-    };
-    if (5 <= Hp && Hp < 6) {
-      [R, G, B] = [C, 0, X];
-    };
-
-    var m = v - C;
-    [R, G, B] = [R + m, G + m, B + m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-
-    let array = WS2811._generateFromByte(R);
-    array = array.concat(WS2811._generateFromByte(G));
-    array = array.concat(WS2811._generateFromByte(B));
-    return array;
-  }
-
-  rgb(r, g, b) {
-    this.spi.write(WS2811._generateColor(r, g, b));
-  }
-
-  hsv(h, s, v) {
-    this.spi.write(WS2811._generateHsvColor(h, s, v));
-  }
-
-  rgbs(array) {
-    let bytes = [];
-    for (var i = 0; i < array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-  hsvs(array) {
-    let bytes = [];
-    for (var i = 0; i < array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("WS2811", WS2811);
-}
-var _24LC256 = function () {
-  this.requiredKeys = ["address"];
-  this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
-};
-
-_24LC256.prototype.wired = function (obniz) {
-  this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.clock = this.params.clock || 400 * 1000; //for i2c
-  this.i2c = obniz.getI2CWithConfig(this.params);
-};
-
-// Module functions
-
-_24LC256.prototype.set = function (address, data) {
-  var array = [];
-  array.push(address >> 8 & 0xFF);
-  array.push(address & 0xFF);
-  array.push.apply(array, data);
-  this.i2c.write(0x50, array);
-  this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
-};
-
-_24LC256.prototype.getWait = (() => {
-  var _ref7 = _asyncToGenerator(function* (address, length) {
-    var array = [];
-    array.push(address >> 8 & 0xFF);
-    array.push(address & 0xFF);
-    this.i2c.write(0x50, array);
-    return yield this.i2c.readWait(0x50, length);
-  });
-
-  return function (_x3, _x4) {
-    return _ref7.apply(this, arguments);
-  };
-})();
-
-if (PartsRegistrate) {
-  PartsRegistrate("24LC256", _24LC256);
-};
-var Button = function () {
-  this.keys = ["signal", "gnd"];
-  this.required = ["signal"];
-};
-
-Button.prototype.wired = function (obniz) {
-  this.io_signal = obniz.getIO(this.params.signal);
-
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_supply = obniz.getIO(this.params.gnd);
-    this.io_supply.output(false);
-  }
-
-  // start input
-  this.io_signal.pull("5v");
-
-  var self = this;
-  this.io_signal.input(function (value) {
-    self.isPressed = value === false;
-    if (self.onchange) {
-      self.onchange(value === false);
-    }
-  });
-};
-
-Button.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var ret = yield this.io_signal.inputWait();
-  return ret === false;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("Button", Button);
-}
-var JoyStick = function () {
-  this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
-  this.requiredKeys = ["sw", "y", "x"];
-  this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
-  this.pinname = { "sw": "sw12" };
-  this.shortName = "joyS";
-};
-
-JoyStick.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  this.io_sig_sw = obniz.getIO(this.params.sw);
-  this.ad_x = obniz.getAD(this.params.x);
-  this.ad_y = obniz.getAD(this.params.y);
-
-  this.io_sig_sw.pull("5v");
-
-  var self = this;
-  this.ad_x.start(function (value) {
-    self.positionX = value / 5.0;
-    if (self.onchangex) {
-      self.onchangex(self.positionX * 2 - 1);
-    }
-  });
-
-  this.ad_y.start(function (value) {
-    self.positionY = value / 5.0;
-    if (self.onchangey) {
-      self.onchangey(self.positionY * 2 - 1);
-    }
-  });
-
-  this.io_sig_sw.input(function (value) {
-    self.isPressed = value === false;
-    if (self.onchangesw) {
-      self.onchangesw(value === false);
-    }
-  });
-};
-
-JoyStick.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var ret = yield this.io_sig_sw.inputWait();
-  return ret === false;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("JoyStick", JoyStick);
-}
-var KXSC7_2050 = function () {
-  this.keys = ["x", "y", "z", "vcc", "gnd"];
-  this.requiredKeys = ["x", "y", "z"];
-};
-
-KXSC7_2050.prototype.wired = (() => {
-  var _ref10 = _asyncToGenerator(function* (obniz) {
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
-    this.ad_x = obniz.getAD(this.params.x);
-    this.ad_y = obniz.getAD(this.params.y);
-    this.ad_z = obniz.getAD(this.params.z);
-
-    yield obniz.wait(500);
-    var ad = obniz.getAD(this.params.vcc);
-    var pwrVoltage = yield ad.getWait();
-    var horizontalZ = yield this.ad_z.getWait();
-    var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-    var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
-
-    var self = this;
-    this.ad_x.start(function (value) {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangex) {
-        self.onchangex(self.gravity);
-      }
-    });
-
-    this.ad_y.start(function (value) {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangey) {
-        self.onchangey(self.gravity);
-      }
-    });
-
-    this.ad_z.start(function (value) {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangez) {
-        self.onchangez(self.gravity);
-      }
-    });
-  });
-
-  return function (_x5) {
-    return _ref10.apply(this, arguments);
-  };
-})();
-
-if (PartsRegistrate) {
-  PartsRegistrate("KXSC7_2050", KXSC7_2050);
-}
-var Potentiometer = function () {
-  this.keys = ["pin0", "pin1", "pin2"];
-  this.reuiredKeys = ["pin0", "pin1", "pin2"];
-
-  this.vcc_voltage = 5.0;
-};
-
-Potentiometer.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
-  this.ad = obniz.getAD(this.params.pin1);
-
-  var self = this;
-
-  obniz.getAD(this.params.pin0).start(function (value) {
-    self.vcc_voltage = value;
-  });
-
-  this.ad.start(function (value) {
-    self.position = value / self.vcc_voltage;
-    if (self.onchange) {
-      self.onchange(self.position);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("Potentiometer", Potentiometer);
-}
-var DCMotor = function () {
-  this.keys = ["forward", "back"];
-  this.requiredKeys = ["forward", "back"];
-};
-
-DCMotor.prototype.wired = function (obniz) {
-  this.status = {
-    direction: null,
-    power: null
-  };
-
-  this.pwm1_io_num = this.params.forward;
-  this.pwm2_io_num = this.params.back;
-
-  this.pwm1 = obniz.getFreePwm();
-  this.pwm1.start({ io: this.pwm1_io_num });
-  this.pwm1.freq(100000);
-  this.pwm2 = obniz.getFreePwm();
-  this.pwm2.start({ io: this.pwm2_io_num });
-  this.pwm2.freq(100000);
-  this.power(30);
-};
-
-// Module functions
-
-DCMotor.prototype.forward = function () {
-  this.move(true);
-};
-
-DCMotor.prototype.reverse = function () {
-  this.move(false);
-};
-
-DCMotor.prototype.stop = function () {
-  if (this.status.direction === null) {
-    return;
-  }
-  this.status.direction = null;
-  this.pwm1.duty(0);
-  this.pwm2.duty(0);
-};
-
-DCMotor.prototype.move = function (forward) {
-  if (forward) {
-    if (this.status.direction === true) {
-      return;
-    }
-    this.status.direction = true;
-  } else {
-    if (this.status.direction === false) {
-      return;
-    }
-    this.status.direction = false;
-  }
-  var power = this.power();
-  this.power(0);
-  this.power(power);
-};
-
-DCMotor.prototype.power = function (power) {
-  if (power === undefined) {
-    return this.status.power;
-  }
-  this.status.power = power;
-  if (this.status.direction === null) {
-    this.pwm1.duty(0);
-    this.pwm2.duty(0);
-    return;
-  }
-  if (this.status.direction) {
-    this.pwm1.duty(power);
-    this.pwm2.duty(0);
-  } else {
-    this.pwm1.duty(0);
-    this.pwm2.duty(power);
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("DCMotor", DCMotor);
-}
-var ServoMotor = function () {
-  this.keys = ["gnd", "vcc", "signal"];
-  this.requiredKeys = ["signal"];
-};
-
-ServoMotor.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  this.pwm = obniz.getFreePwm();
-  this.pwm_io_num = this.params.signal;
-
-  this.pwm.start({ io: this.pwm_io_num });
-  this.pwm.freq(50);
-};
-
-// Module functions
-
-ServoMotor.prototype.angle = function (ratio) {
-  var max = 2.4;
-  var min = 0.5;
-  var val = (max - min) * ratio / 180.0 + min;
-  this.pwm.pulse(val);
-};
-
-ServoMotor.prototype.on = function () {
-  if (this.io_power) {
-    this.io_power.output(true);
-  }
-};
-
-ServoMotor.prototype.off = function () {
-  if (this.io_power) {
-    this.io_power.output(false);
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("ServoMotor", ServoMotor);
-}
-//Todo:抵抗を追加して圧力(kg)を求められるように改造する
-var FSR40X = function () {
-  this.keys = ["pin0", "pin1"];
-  this.requiredKeys = ["pin0", "pin1"];
-};
-
-FSR40X.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-
-  this.io_pwr = obniz.getIO(this.params.pin0);
-  this.ad = obniz.getAD(this.params.pin1);
-
-  this.io_pwr.drive("5v");
-  this.io_pwr.output(true);
-
-  var self = this;
-  this.ad.start(function (value) {
-    pressure = value * 100;
-    if (pressure >= 49) {
-      pressure = 49;
-    }
-    self.press = pressure;
-    if (self.onchange) {
-      self.onchange(self.press);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("FSR40X", FSR40X);
-}
-
-var SEN0114 = function () {
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = ["output"];
-};
-
-SEN0114.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
-
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-SEN0114.prototype.getHumidityWait = _asyncToGenerator(function* () {
-  return yield this.ad.getWait;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("SEN0114", SEN0114);
-}
-
-class Speaker {
-
-  constructor(obniz) {
-    this.keys = ["signal", "gnd"];
-    this.requiredKeys = ["gnd"];
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.obniz.setVccGnd(null, this.params.gnd, "5v");
-    this.pwm = obniz.getFreePwm();
-    this.pwm.start({ io: this.params.signal });
-  }
-
-  play(freq) {
-    if (freq > 0) {
-      this.pwm.freq(freq);
-      this.pwm.pulse(1 / freq / 2 * 1000);
-    } else {
-      this.pwm.pulse(0);
-    }
-  }
-
-  stop() {
-    this.play(0);
-  }
-}
-
-if (PartsRegistrate) {
-  PartsRegistrate("Speaker", Speaker);
-}
-class AnalogTemplatureSensor {
-  constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["signal"];
-    this.drive = "5v";
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-    this.ad = obniz.getAD(this.params.signal);
-
-    this.ad.start(function (voltage) {
-      this.temp = this.calc(voltage);
-      this.onchange(this.temp);
-    }.bind(this));
-  }
-
-  onchange(temp) {}
-
-  calc(voltage) {
-    return 0;
-  }
-
-}
-class LM35DZ extends AnalogTemplatureSensor {
-  calc(voltage) {
-    return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM35DZ", LM35DZ);
-}
-
-var LM60 = function () {
-  this.keys = ["vcc", "gnd", "output"];
-  this.requiredKeys = ["output"];
-};
-
-LM60.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.ad = obniz.getAD(this.params.output);
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM60", LM60);
-}
-
-class LM61 extends AnalogTemplatureSensor {
-  calc(voltage) {
-    return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]  
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("LM61", LM61);
-}
-
-class MCP9700 extends AnalogTemplatureSensor {
-  calc(voltage) {
-    return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("MCP9700", MCP9700);
-}
-
-class MCP9701 extends AnalogTemplatureSensor {
-  calc(voltage) {
-    return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("MCP9701", MCP9701);
-}
-
-//センサから出力が無い(出力インピーダンス高すぎ？)
-
-class S8100B extends AnalogTemplatureSensor {
-  calc(voltage) {
-    return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("S8100B", S8100B);
-}
-
-//不調, 正しく測れるときもある...
-//原因1:obnizの入力インピーダンスが低すぎる?
-//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
-
-class S8120C extends AnalogTemplatureSensor {
-  calc(voltage) {
-    return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
-  }
-};
-
-if (PartsRegistrate) {
-  PartsRegistrate("S8120C", S8120C);
-}
-
-var ADT7410 = function () {
-  this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
-  this.requiredKey = ["addressMode"];
-};
-
-ADT7410.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  if (this.params.addressMode === 8) {
-    this.address = 0x48;
-  } else if (this.params.addressMode === 9) {
-    this.address = 0x49;
-  }
-
-  this.params.clock = 400000;
-  this.params.pull = "5v";
-  this.params.mode = "master";
-
-  this.i2c = obniz.getI2CWithConfig(this.params);
-};
-
-ADT7410.prototype.getTempWait = _asyncToGenerator(function* () {
-  var ret = yield this.i2c.readWait(this.address, 2);
-  var tempBin = ret[0] << 8;
-  tempBin |= ret[1];
-  tempBin = tempBin >> 3;
-
-  if (tempBin & 0x1000) {
-    //0度以下の時の処理
-    tempBin = tempBin - 8192;
-  }
-
-  return tempBin / 16;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("ADT7410", ADT7410);
-}
-
-//センサからの反応なし
-var S5851A = function () {
-  this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
-  this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
-};
-
-S5851A.prototype.wired = function (obniz) {
-  //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
-  this.io_adr0 = obniz.getIO(this.params.adr0);
-  this.io_adr1 = obniz.getIO(this.params.adr1);
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  switch (this.params.adr_select) {
-    case 8:
-      this.io_adr0.output(false);
-      this.io_adr1.output(false);
-      this.address = 0x48;
-      break;
-    case 9:
-      this.io_adr0.pull(null);
-      this.io_adr1.output(false);
-      this.address = 0x49;
-      break;
-    case 'A':
-      this.io_adr0.output(true);
-      this.io_adr1.output(false);
-      this.address = 0x4A;
-      break;
-    case 'B':
-      this.io_adr0.output(false);
-      this.io_adr1.output(true);
-      this.address = 0x4B;
-      break;
-    case 'C':
-      this.io_adr0.pull(null);
-      this.io_adr1.output(true);
-      this.address = 0x4C;
-      break;
-    case 'D':
-      this.io_adr0.output(true);
-      this.io_adr1.output(true);
-      this.address = 0x4D;
-      break;
-    case 'E':
-      this.io_adr0.output(false);
-      this.io_adr1.pull(null);
-      this.address = 0x4E;
-      break;
-    case 'F':
-      this.io_adr0.output(true);
-      this.io_adr1.pull(null);
-      this.address = 0x4F;
-      break;
-    default:
-      this.io_adr0.output(false);
-      this.io_adr1.output(false);
-      this.address = 0x48;
-      break;
-  }
-  console.log('i2c address=' + this.address);
-
-  this.params.clock = this.params.clock || 400 * 1000; //for i2c
-  this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.pull = this.params.pull || "5v"; //for i2c
-  this.i2c = obniz.getI2CWithConfig(this.params);
-  //obniz.i2c0.write(address, [0x20, 0x24]);
-};
-
-S5851A.prototype.getTempWait = _asyncToGenerator(function* () {
-  //console.log("gettempwait");
-  //obniz.i2c0.write(address, [0x20, 0x24]);
-  //obniz.i2c0.write(address, [0xE0, 0x00]);
-  var ret = yield this.i2c0.readWait(address, 2);
-  //console.log('ret:' + ret);
-  var tempBin = ret[0].toString(2) + ('00000000' + ret[1].toString(2)).slice(-8);
-  var temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
-  return temperature;
-});
-
-S5851A.prototype.getHumdWait = _asyncToGenerator(function* () {
-  this.i2c.write(address, [0x20, 0x24]);
-  this.i2c.write(address, [0xE0, 0x00]);
-  var ret = yield this.i2c.readWait(address, 4);
-  var humdBin = ret[2].toString(2) + ('00000000' + ret[3].toString(2)).slice(-8);
-  var humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
-  return humidity;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("S5851A", S5851A);
-}
-
-var SHT31 = function () {
-  this.requiredKeys = ["adr", "addressmode"];
-  this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
-  this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
-
-  this.commands = {};
-  this.commands.softReset = [0x30, 0xA2];
-  this.commands.highRepeatStreach = [0x2C, 0x06];
-  this.commands.middleRepeatStreach = [0x2C, 0x0D];
-  this.commands.lowRepeatStreach = [0x2C, 0x10];
-  this.commands.highRepeat = [0x24, 0x00];
-  this.commands.mediumRepeat = [0x24, 0x0B];
-  this.commands.lowRepeat = [0x24, 0x16];
-
-  this.waitTime = {};
-  this.waitTime.wakeup = 1;
-  this.waitTime.softReset = 1;
-  this.waitTime.lowRepeat = 4;
-  this.waitTime.mediumRepeat = 6;
-  this.waitTime.highRepeat = 15;
-
-  //not tested
-  this.commands.readStatus = [0xF3, 0x2D];
-};
-
-SHT31.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.io_adr = obniz.getIO(this.params.adr);
-
-  if (this.params.addressmode === 4) {
-    this.io_adr.output(false);
-    this.address = 0x44;
-  } else if (this.params.addressmode === 5) {
-    this.io_adr.pull(null);
-    this.address = 0x45;
-  }
-
-  this.params.clock = this.params.clock || 400 * 1000; //for i2c
-  this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.pullType = this.params.pullType || "float"; //for i2c
-  this.i2c = obniz.getI2CWithConfig(this.params);
-  obniz.i2c0.write(this.address, this.commands.softReset);
-};
-
-SHT31.prototype.getData = _asyncToGenerator(function* () {
-  this.i2c.write(this.address, this.commands.highRepeat);
-  yield obniz.wait(this.waitTime.highRepeat);
-  return yield this.i2c.readWait(this.address, 6);
-});
-
-SHT31.prototype.getTempWait = _asyncToGenerator(function* () {
-  return (yield this.getAllWait()).temperature;
-});
-
-SHT31.prototype.getHumdWait = _asyncToGenerator(function* () {
-  return (yield this.getAllWait()).humidity;
-});
-
-SHT31.prototype.getAllWait = _asyncToGenerator(function* () {
-  let ret = yield this.getData();
-
-  let tempBin = ret[0] * 256 + ret[1];
-  let temperature = -45 + 175 * (tempBin / (65536 - 1));
-
-  let humdBin = ret[3] * 256 + ret[4];
-  let humidity = 100 * (humdBin / (65536 - 1));
-  return { temperature, humidity };
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("SHT31", SHT31);
-}
-
-var ADT7310 = function () {
-  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
-  this.requiredKeys = [];
-};
-
-ADT7310.prototype.wired = (() => {
-  var _ref19 = _asyncToGenerator(function* (obniz) {
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-    this.params.mode = this.params.mode || "master";
-    this.params.frequency = this.params.frequency || 500000;
-    this.params.mosi = this.params.din;
-    this.params.miso = this.params.dout;
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  });
-
-  return function (_x6) {
-    return _ref19.apply(this, arguments);
-  };
-})();
-
-ADT7310.prototype.getTempWait = _asyncToGenerator(function* () {
-  yield this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-  yield this.obniz.wait(200); //適度な値でないと安定しない
-  var ret = yield this.spi.writeWait([0x00, 0x00]);
-  var tempBin = ret[0] << 8;
-  tempBin |= ret[1];
-  tempBin = tempBin >> 3;
-
-  if (tempBin & 0x1000) {
-    //0度以下の時の処理
-    tempBin = tempBin - 8192;
-  }
-
-  return tempBin / 16;
-});
-
-if (PartsRegistrate) {
-  PartsRegistrate("ADT7310", ADT7310);
-}
-
-let wsSchema = [{ "$schema": "http://json-schema.org/draft-04/schema#", "id": "/", "definitions": { "pinSetting": { "id": "pinSetting", "type": "integer", "minimum": 0, "maximum": 11, "default": null, "example": [0, 1, 2, 3, 4, 5, 6] }, "bleAdvertiseData": { "id": "bleAdvertiseData", "type": "array", "default": null, "maxItems": 31, "example": [[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101], [7, 9, 83, 97, 109, 112, 108, 101]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "dataArray32": { "id": "dataArray32", "type": "array", "default": null, "maxItems": 32, "example": [[100, 255, 21, 0, 21]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "dataArray1024": { "id": "dataArray1024", "type": "array", "default": null, "maxItems": 1024, "example": [[100, 255, 21, 0, 21]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "zerooneArray": { "id": "zerooneArray", "type": "array", "default": null, "description": "Binary data array represented in 0 1.", "example": [[0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 1, 0, 0, 0, 0, 0]], "items": { "type": "integer", "minimum": 0, "maximum": 1 } }, "dataArray": { "id": "dataArray", "type": "array", "default": null, "description": "Binary data array.", "example": [[16, 34, 242], [100, 255, 21, 0, 21]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "imageData128x64": { "id": "imageData128x64", "type": "array", "description": "Image data bit array.", "minItems": 1024, "maxItems": 1024, "example": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 240, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 192, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 129, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 254, 7, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 252, 15, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 248, 31, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 240, 63, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 224, 127, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 192, 255, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 129, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 7, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 252, 15, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 248, 31, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 240, 63, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 127, 193, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 252, 64, 255, 128, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 240, 1, 255, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 224, 3, 254, 0, 127, 254, 14, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 252, 30, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 248, 60, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 63, 240, 120, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 127, 224, 240, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 252, 0, 127, 193, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 15, 248, 0, 255, 131, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 240, 31, 240, 39, 255, 7, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 252, 63, 224, 127, 254, 15, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 192, 255, 252, 31, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 129, 255, 248, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 3, 255, 240, 127, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 254, 7, 255, 224, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 252, 15, 255, 193, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 248, 31, 255, 131, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 240, 63, 255, 7, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 224, 127, 254, 15, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 192, 255, 252, 31, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 129, 255, 0, 63, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 3, 254, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 254, 7, 252, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 252, 15, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 248, 31, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 224, 127, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 255, 252, 0, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 1, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 3, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 255, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 255, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "hexString": { "id": "hexString", "type": "string", "default": null, "pattern": "^([0-9a-fA-F]+)$", "description": "Bluetooth device id.If it contain '-', it ignored.", "example": "8d0fd8f9" }, "uuid": { "id": "uuid", "type": "string", "pattern": "^([-0-9a-fA-F]+)$", "minLength": 4, "maxLength": 36, "description": "Bluetooth uuid. If it contain '-', it ignored.", "example": ["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e", "8d3591bda71140fd8f9f00535fe57179", "d822b53c", "de44"] }, "uuidOrNull": { "id": "uuidOrNull", "type": ["string", "null"], "pattern": "^([-0-9a-fA-F]+)$", "minLength": 4, "maxLength": 36, "description": "Bluetooth uuid. If it contain '-', it ignored.", "example": ["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e", "8d3591bda71140fd8f9f00535fe57179", "d822b53c", "de44", null] }, "deviceAddress": { "id": "deviceAddress", "type": "string", "pattern": "^([0-9a-fA-F]+)$", "minLength": 12, "maxLength": 12, "description": "Bluetooth device id. It's hexString cannot cointain '0x' or '-'.", "example": "77e754ab8591" }, "obnizId": { "id": "obnizId", "type": ["string", "integer"], "pattern": "^[0-9]{4}-?[0-9]{4}$", "minimum": 0, "maximum": 99999999, "description": "Obniz id. It can contain '-' or not.", "example": ["1234-5678", 12345678] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ad/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ad", "basePath": "ad0", "description": "available ad0~ad11", "anyOf": [{ "$ref": "/request/ad/get" }, { "$ref": "/request/ad/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ad/get", "related": "/response/ad/get", "desription": "enable & start ad module at io.", "type": "object", "required": ["stream"], "properties": { "stream": { "type": "boolean", "default": false, "description": "true to continuous notifying on voltage change." } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/characteristic_get", "related": "/response/ble/central/characteristic_get", "type": "object", "required": ["get_characteristics"], "properties": { "get_characteristics": { "type": "object", "required": ["address", "service_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/characteristic_read", "related": "/response/ble/central/characteristic_read", "type": "object", "required": ["read_characteristic"], "properties": { "read_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/characteristic_write", "related": "/response/ble/central/characteristic_write", "type": "object", "required": ["write_characteristic"], "properties": { "write_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" }, "needResponse": { "type": "boolean", "default": true } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/connect", "related": "/response/ble/central/status_update", "type": "object", "required": ["connect"], "properties": { "connect": { "type": "object", "required": ["address"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/descriptor_get", "related": "/response/ble/central/descriptor_get", "type": "object", "required": ["get_descriptors"], "properties": { "get_descriptors": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/descriptor_read", "related": "/response/ble/central/descriptor_read", "type": "object", "required": ["read_descriptors"], "properties": { "read_descriptors": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/descriptor_write", "related": "/response/ble/central/descriptor_write", "type": "object", "required": ["write_descriptors"], "properties": { "write_descriptors": { "type": "object", "required": ["address", "service_uuid", "service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" }, "needResponse": { "type": "boolean", "default": true } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/disconnect", "type": "object", "required": ["disconnect"], "properties": { "disconnect": { "type": "object", "required": ["address"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central", "basePath": "ble", "description": "use obniz as central", "anyOf": [{ "$ref": "/request/ble/central/scan_start" }, { "$ref": "/request/ble/central/scan_stop" }, { "$ref": "/request/ble/central/connect" }, { "$ref": "/request/ble/central/disconnect" }, { "$ref": "/request/ble/central/service_get" }, { "$ref": "/request/ble/central/characteristic_get" }, { "$ref": "/request/ble/central/characteristic_read" }, { "$ref": "/request/ble/central/characteristic_write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/scan_start", "related": ["/response/ble/central/scan", "/response/ble/central/scan_finish"], "type": "object", "required": ["scan"], "properties": { "scan": { "type": "object", "additionalProperties": false, "properties": { "duration": { "type": "integer", "default": 30 } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/scan_stop", "type": "object", "required": ["scan"], "properties": { "scan": { "type": "null" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/service_get", "related": "/response/ble/central/service_get", "type": "object", "required": ["get_services"], "properties": { "get_services": { "type": "object", "required": ["address"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble", "basePath": "ble", "anyOf": [{ "$ref": "/request/ble/peripheral" }, { "$ref": "/request/ble/central" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/advertisement_start", "related": "/response/ble/peripheral/status", "type": "object", "required": ["advertisement"], "properties": { "advertisement": { "type": "object", "required": ["adv_data"], "additionalProperties": false, "properties": { "adv_data": { "$ref": "/bleAdvertiseData" }, "scan_resp": { "$ref": "/bleAdvertiseData" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/advertisement_stop", "type": "object", "required": ["advertisement"], "properties": { "advertisement": { "type": "null" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/characteristic_read", "description": "read characteristic on own service", "related": "/response/ble/peripheral/characteristic_read", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["read_characteristic"], "properties": { "read_characteristic": { "type": "object", "required": ["service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/characteristic_write", "description": "write characteristic on own service", "related": "/response/ble/peripheral/characteristic_write", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["write_characteristic"], "properties": { "write_characteristic": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/descriptor_read", "related": "/response/ble/peripheral/descriptor_read", "description": "read descriptor on own service", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["read_descriptor"], "properties": { "read_descriptor": { "type": "object", "required": ["service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/descriptor_write", "related": "/response/ble/peripheral/descriptor_write", "description": "write descriptor on own service", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["write_characteristic"], "properties": { "write_descriptor": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral", "basePath": "ble", "description": "use obniz as peripheral", "anyOf": [{ "$ref": "/request/ble/peripheral/advertisement_start" }, { "$ref": "/request/ble/peripheral/advertisement_stop" }, { "$ref": "/request/ble/peripheral/service_start" }, { "$ref": "/request/ble/peripheral/service_stop" }, { "$ref": "/request/ble/peripheral/characteristic_read" }, { "$ref": "/request/ble/peripheral/characteristic_write" }, { "$ref": "/request/ble/peripheral/descriptor_read" }, { "$ref": "/request/ble/peripheral/descriptor_write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/service_start", "related": ["/response/ble/peripheral/status", "/response/ble/peripheral/characteristic_notify_read", "/response/ble/peripheral/characteristic_notify_write", "/response/ble/peripheral/descriptor_notify_read", "/response/ble/peripheral/descriptor_notify_write"], "description": "callback of external device connected", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["services"], "properties": { "services": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["uuid"], "additionalProperties": false, "properties": { "uuid": { "$ref": "/uuid" }, "characteristics": { "type": "array", "minItems": 0, "items": { "type": "object", "required": ["uuid"], "additionalProperties": false, "properties": { "uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" }, "descriptors": { "type": "array", "items": { "type": "object", "required": ["uuid"], "additionalProperties": false, "properties": { "uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } } } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/service_stop", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "null" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/clear", "type": "object", "required": ["clear"], "properties": { "clear": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display", "basePath": "display", "anyOf": [{ "$ref": "/request/display/text" }, { "$ref": "/request/display/clear" }, { "$ref": "/request/display/qr" }, { "$ref": "/request/display/raw" }, { "$ref": "/request/display/pin_assign" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/pin_assign", "type": "object", "required": ["pin_assign"], "properties": { "pin_assign": { "type": "object", "minProperties": 1, "patternExample": [0, 1, 2, 3], "patternProperties": { "^[0-9]$": { "type": "object", "properties": { "module_name": { "type": "string", "example": "io" }, "pin_name": { "type": "string", "example": "output" } } }, "^1[0-1]$": { "type": "object", "properties": { "module_name": { "type": "string", "example": "io" }, "pin_name": { "type": "string", "example": "output" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/qr", "type": "object", "required": ["qr"], "properties": { "qr": { "type": "object", "required": ["text"], "additionalProperties": false, "properties": { "text": { "type": "string", "example": "Hello, obniz!" }, "correction": { "type": "string", "enum": ["L", "M", "Q", "H"], "default": "M" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/raw", "description": "1 bit represents 1 dot. 1=white, 0=black. 1 byte is part of one line. Order is same like.<br/> {1byte} {2byte} {3byte}...{16byte}<br/> {17byte} {18byte} {19byte}...<br/> .....<br/> .....................{1024byte}", "type": "object", "required": ["raw"], "properties": { "raw": { "$ref": "/imageData128x64" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/text", "type": "object", "required": ["text"], "properties": { "text": { "type": "string", "example": "Hello, obniz!" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c", "basePath": "i2c0", "description": "available only i2c0", "anyOf": [{ "$ref": "/request/i2c/init_master" }, { "$ref": "/request/i2c/init_slave" }, { "$ref": "/request/i2c/write" }, { "$ref": "/request/i2c/read" }, { "$ref": "/request/i2c/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/init_master", "description": "internal pullup is available. But, We recommend use external pull-up resistor.", "type": "object", "required": ["mode", "sda", "scl", "clock"], "uniqueKeys": ["sda", "scl"], "properties": { "mode": { "type": "string", "enum": ["master"] }, "sda": { "$ref": "/pinSetting" }, "scl": { "$ref": "/pinSetting" }, "clock": { "type": "integer", "description": "frequency (Hz)", "minimum": 1, "maximum": 1000000 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/init_slave", "related": "/response/i2c/slave", "type": "object", "required": ["mode", "sda", "scl", "slave_address"], "uniqueKeys": ["sda", "scl"], "properties": { "mode": { "type": "string", "enum": ["master", "slave"] }, "sda": { "$ref": "/pinSetting" }, "scl": { "$ref": "/pinSetting" }, "slave_address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "slave_address_length": { "type": "integer", "enum": [7, 10], "default": 7 }, "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "address_bits": { "type": "integer", "enum": [7, 10], "default": 7 }, "data": { "$ref": "/dataArray" }, "read": { "type": "integer", "minimum": 0 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/read", "description": "if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.", "related": "/response/i2c/master", "type": "object", "required": ["address", "read"], "properties": { "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "address_bits": { "type": "integer", "enum": [7, 10], "default": 7 }, "read": { "type": "integer", "minimum": 0, "maximum": 1024 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/write", "description": "if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.", "type": "object", "required": ["address", "data"], "properties": { "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "address_bits": { "type": "integer", "enum": [7, 10], "default": 7 }, "data": { "$ref": "/dataArray1024" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request", "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "patternProperties": { "^io[0-9]$": { "$ref": "/request/io" }, "^io1[0-1]$": { "$ref": "/request/io" }, "^ad[0-9]$": { "$ref": "/request/ad" }, "^ad1[0-1]$": { "$ref": "/request/ad" }, "^pwm[0-5]$": { "$ref": "/request/pwm" }, "^uart[0-1]$": { "$ref": "/request/uart" }, "^spi[0-1]$": { "$ref": "/request/spi" }, "^i2c0$": { "$ref": "/request/i2c" } }, "properties": { "io": { "$ref": "/request/ioAnimation" }, "ble": { "$ref": "/request/ble" }, "switch": { "$ref": "/request/switch" }, "display": { "$ref": "/request/display" }, "measure": { "$ref": "/request/measure" }, "message": { "$ref": "/request/message" }, "logic_analyzer": { "$ref": "/request/logicAnalyzer" }, "system": { "$ref": "/request/system" } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io", "basePath": "io0", "description": "General purpose IO available on each io (io0 to io11).", "anyOf": [{ "$ref": "/request/io/input" }, { "$ref": "/request/io/input_detail" }, { "$ref": "/request/io/output" }, { "$ref": "/request/io/output_detail" }, { "$ref": "/request/io/output_type" }, { "$ref": "/request/io/pull_type" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/input_detail", "related": "/response/io/get", "type": "object", "required": ["direction"], "properties": { "direction": { "type": "string", "enum": ["input"] }, "stream": { "type": "boolean", "default": false, "description": "enable stream callback when value change" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/input", "related": "/response/io/get", "type": "string", "enum": ["get"] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/output_detail", "type": "object", "required": ["direction", "value"], "properties": { "direction": { "type": "string", "enum": ["output"] }, "value": { "type": "boolean" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/output_type", "type": "object", "required": ["output_type"], "properties": { "output_type": { "type": "string", "enum": ["push-pull5v", "push-pull3v", "open-drain"], "description": "drive type" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/output", "type": "boolean" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/pull_type", "type": "object", "required": ["pull_type"], "properties": { "pull_type": { "type": "string", "enum": ["pull-up5v", "pull-up3v", "pull-down", "float"] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ioAnimation/changeState", "type": "object", "required": ["animation"], "properties": { "animation": { "type": "object", "required": ["name", "status"], "additionalProperties": false, "properties": { "name": { "type": "string", "example": "anim-1", "minLength": 1, "maxLength": 254 }, "status": { "type": "string", "enum": ["pause", "resume"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ioAnimation", "basePath": "io.animation", "description": "io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is avaiable. it loop io changes regarding json array.", "anyOf": [{ "$ref": "/request/ioAnimation/init" }, { "$ref": "/request/ioAnimation/changeState" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ioAnimation/init", "commandExample": { "io": { "animation": { "animation": { "name": "anim-1", "status": "loop", "states": [{ "duration": 500, "state": { "io0": true } }, { "duration": 500, "state": { "io0": false } }] } } } }, "type": "object", "required": ["animation"], "properties": { "animation": { "type": "object", "required": ["name", "status", "states"], "additionalProperties": false, "properties": { "name": { "type": "string", "description": "Animation name to use pause/resume", "example": "anim-1", "minLength": 1, "maxLength": 254 }, "status": { "type": "string", "default": "loop", "enum": ["loop"] }, "states": { "type": "array", "default": [], "items": { "type": "object", "required": ["duration", "state"], "additionalProperties": false, "properties": { "duration": { "type": "integer", "description": "State duration time(ms)", "minimum": 0, "maximum": 60000, "multipleOf": 0.001, "example": 500 }, "state": { "type": "object", "description": "io/pwm commands.", "filter": "pass_all", "example": [{ "io0": true }, { "io0": false }] } } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/logicAnalyzer/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/logicAnalyzer", "basePath": "logic_analyzer", "description": "Monitor io logic level changes by sampling io.", "anyOf": [{ "$ref": "/request/logicAnalyzer/init" }, { "$ref": "/request/logicAnalyzer/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/logicAnalyzer/init", "exampleDescription": "With below sample code, you will receive only datas which start with 'false, false, false' 3bit.", "type": "object", "required": ["io", "interval", "duration"], "properties": { "io": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "/pinSetting" } }, "interval": { "type": "number", "minimum": 0, "multipleOf": 0.001, "exclusiveMinimum": true }, "duration": { "type": "integer", "minimum": 0, "exclusiveMinimum": true }, "triger": { "type": "object", "description": "Without this, logicanalyzer will start with any io level changes. trigger specify start position. ", "additionalProperties": false, "required": ["value", "samples"], "default": { "value": false, "samples": 0 }, "properties": { "value": { "description": "start value", "type": "boolean", "default": false }, "samples": { "type": "integer", "description": "how that values consists", "minimum": 0, "default": 0, "example": 3 } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/measure/echo", "description": "It measures pulse response.", "related": "/response/measure/echo", "type": "object", "required": ["echo"], "properties": { "echo": { "type": "object", "required": ["io_pulse", "io_echo", "pulse_width"], "properties": { "io_pulse": { "$ref": "/pinSetting" }, "io_echo": { "$ref": "/pinSetting" }, "pulse": { "type": "string", "default": "positive", "enum": ["positive", "negative"] }, "pulse_width": { "type": "number", "minimum": 0.001, "maximum": 1000, "multipleOf": 0.001 }, "measure_edges": { "type": "integer", "minimum": 1, "maximum": 4 }, "timeout": { "type": "number", "default": 1000, "minimum": 0.001, "maximum": 1000, "multipleOf": 0.001 } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/measure", "basePath": "measure", "anyOf": [{ "$ref": "/request/measure/echo" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/message", "basePath": "message", "description": "send/receive with other obniz or webhook", "anyOf": [{ "$ref": "/request/message/send" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/message/send", "related": "/response/message/receive", "type": "object", "additionalProperties": false, "required": ["data", "to"], "properties": { "data": { "description": "All type of data is pass." }, "to": { "type": "array", "minItems": 1, "items": { "$ref": "/obnizId" } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/duty", "type": "object", "required": ["duty"], "properties": { "duty": { "type": "number", "description": "% of duty cycle", "minimum": 0, "maximum": 100 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/freq", "type": "object", "required": ["freq"], "properties": { "freq": { "type": "integer", "description": "frequency (Hz)", "minimum": 1, "maximum": 80000000 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm", "basePath": "pwm0", "description": "available 0 to 5", "anyOf": [{ "$ref": "/request/pwm/init" }, { "$ref": "/request/pwm/freq" }, { "$ref": "/request/pwm/pulse" }, { "$ref": "/request/pwm/duty" }, { "$ref": "/request/pwm/modulate" }, { "$ref": "/request/pwm/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/init", "type": "object", "required": ["io"], "properties": { "io": { "$ref": "/pinSetting" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/modulate", "type": "object", "required": ["modulate"], "properties": { "modulate": { "type": "object", "required": ["type", "symbol_length", "data"], "additionalProperties": false, "properties": { "type": { "type": "string", "enum": ["am"] }, "symbol_length": { "type": "number", "minimum": 0.05, "maximum": 1000, "multipleOf": 0.001, "description": "symbol width (ms)" }, "data": { "$ref": "/zerooneArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/pulse", "type": "object", "required": ["pulse"], "properties": { "pulse": { "type": "number", "minimum": 0, "multipleOf": 0.001, "description": "pulse width (ms)" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi", "basePath": "spi0", "description": "available spi0, spi1", "anyOf": [{ "$ref": "/request/spi/init_master" }, { "$ref": "/request/spi/deinit" }, { "$ref": "/request/spi/write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi/init_master", "description": "clk, miso, mosi are optional, but at least one are required", "type": "object", "required": ["mode", "clock"], "uniqueKeys": ["mosi", "miso", "clk"], "properties": { "mode": { "type": "string", "enum": ["master"] }, "clk": { "$ref": "/pinSetting" }, "mosi": { "$ref": "/pinSetting" }, "miso": { "$ref": "/pinSetting" }, "clock": { "type": "integer", "default": 115200, "minimum": 1, "maximum": 80000000, "desription": "frequency (Hz)" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi/write", "related": "/response/spi/read", "type": "object", "required": ["data", "read"], "properties": { "data": { "$ref": "/dataArray32" }, "read": { "type": "boolean", "default": true, "description": "If false, write without receive" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/switch/get", "related": "/response/switch/change", "type": "string", "enum": ["get"] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/switch", "basePath": "switch", "description": "the switch embed on obniz itself. If it's state is changed, notification will be fired.", "anyOf": [{ "$ref": "/request/switch/get" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system", "basePath": "system", "anyOf": [{ "$ref": "/request/system/wait" }, { "$ref": "/request/system/reset" }, { "$ref": "/request/system/reboot" }, { "$ref": "/request/system/selfCheck" }, { "$ref": "/request/system/keepWorkingAtOffline" }, { "$ref": "/request/system/ping" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/keepWorkingAtOffline", "description": "reset obniz when obniz gone to offline.", "type": "object", "required": ["keep_working_at_offline"], "properties": { "keep_working_at_offline": { "type": "boolean" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/ping", "response": "/response/system/pong", "type": "object", "required": ["ping"], "properties": { "ping": { "type": "object", "required": ["key"], "properties": { "key": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/reboot", "type": "object", "required": ["reboot"], "properties": { "reboot": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/reset", "type": "object", "required": ["reset"], "properties": { "reset": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/selfCheck", "description": "circuit IO check", "type": "object", "required": ["self_check"], "properties": { "self_check": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/wait", "type": "object", "required": ["wait"], "properties": { "wait": { "type": "integer", "description": "wait time (ms)" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart", "basePath": "uart0", "anyOf": [{ "$ref": "/request/uart/init" }, { "$ref": "/request/uart/send" }, { "$ref": "/request/uart/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart/init", "description": "available 0 to 1", "type": "object", "required": ["rx", "tx"], "uniqueKeys": ["rx", "tx", "rts", "cts"], "properties": { "rx": { "$ref": "/pinSetting" }, "tx": { "$ref": "/pinSetting" }, "baud": { "type": "integer", "default": 115200, "minimum": 1, "maximum": 5000000, "description": "baud rate (bps)" }, "stop": { "type": "number", "enum": [1, 1.5, 2], "default": 1, "description": "stop bit width" }, "bits": { "type": "integer", "enum": [5, 6, 7, 8], "default": 8 }, "parity": { "type": "string", "enum": ["off", "odd", "even"], "default": "off" }, "flowcontrol": { "type": "string", "enum": ["off", "rts", "cts", "rts-cts"], "default": "off" }, "rts": { "$ref": "/pinSetting" }, "cts": { "$ref": "/pinSetting" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart/send", "type": "object", "required": ["data"], "properties": { "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ws", "basePath": "ws", "anyOf": [{ "$ref": "/request/ws/reset_obniz_on_ws_disconnection" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ws/reset_obniz_on_ws_disconnection", "type": "object", "required": ["reset_obniz_on_ws_disconnection"], "properties": { "reset_obniz_on_ws_disconnection": { "type": "boolean", "default": false } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ad/get", "type": "number", "example": 3.3, "minimum": 0, "maximum": 5, "description": "current value (volt)" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ad", "basePath": "ad0", "anyOf": [{ "$ref": "/response/ad/get" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/characteristic_get", "type": "object", "required": ["get_characteristic_result"], "properties": { "get_characteristic_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/characteristic_read", "type": "object", "required": ["read_characteristic_result"], "properties": { "read_characteristic_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/characteristic_write", "type": "object", "required": ["write_characteristic_result"], "properties": { "write_characteristic_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "result"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/descriptor_get", "type": "object", "required": ["get_descriptors_result"], "properties": { "get_descriptors_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/descriptor_read", "type": "object", "required": ["read_descriptor_result"], "properties": { "read_descriptor_results": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/descriptor_write", "type": "object", "required": ["write_descriptor_result"], "properties": { "write_descriptor_results": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid", "result"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/error", "type": "object", "required": ["error"], "properties": { "error": { "type": "object", "required": ["error_code", "message"], "additionalProperties": false, "properties": { "error_code": { "type": "integer", "example": 0 }, "message": { "type": "string", "example": "ERROR MESSAGE" }, "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuidOrNull" }, "characteristic_uuid": { "$ref": "/uuidOrNull" }, "descriptor_uuid": { "$ref": "/uuidOrNull" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central", "basePath": "ble", "anyOf": [{ "$ref": "/response/ble/central/scan" }, { "$ref": "/response/ble/central/scan_finish" }, { "$ref": "/response/ble/central/status_update" }, { "$ref": "/response/ble/central/service_get" }, { "$ref": "/response/ble/central/characteristic_get" }, { "$ref": "/response/ble/central/characteristic_write" }, { "$ref": "/response/ble/central/characteristic_read" }, { "$ref": "/response/ble/central/descriptor_get" }, { "$ref": "/response/ble/central/descriptor_write" }, { "$ref": "/response/ble/central/descriptor_read" }, { "$ref": "/response/ble/central/error" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/scan_finish", "type": "object", "required": ["scan_result"], "properties": { "scan_result": { "type": "object", "required": ["event_type"], "additionalProperties": false, "properties": { "event_type": { "type": "string", "enum": ["inquiry_complete"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/scan", "type": "object", "required": ["scan_result"], "properties": { "scan_result": { "type": "object", "required": ["event_type"], "additionalProperties": false, "properties": { "event_type": { "type": "string", "enum": ["inquiry_result"] }, "address": { "$ref": "/deviceAddress" }, "ble_event_type": { "type": "string", "enum": ["connectable_advertisemnt", "connectable_directed_advertisemnt", "scannable_advertising", "non_connectable_advertising", "scan_response"] }, "device_type": { "type": "string", "enum": ["ble", "dumo", "breder"] }, "address_type": { "type": "string", "enum": ["public", "random", "rpa_public", "rpa_random"] }, "flag": { "type": "integer", "minimum": 0 }, "rssi": { "type": "integer", "maximum": 0 }, "adv_data": { "$ref": "/bleAdvertiseData" }, "scan_resp": { "$ref": "/bleAdvertiseData" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/service_get", "type": "object", "required": ["get_service_result"], "properties": { "get_service_result": { "type": "object", "required": ["address", "service_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/status_update", "type": "object", "required": ["status_update"], "properties": { "status_update": { "type": "object", "required": ["address", "status"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "status": { "type": "string", "enum": ["connected", "disconnected"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble", "basePath": "ble", "anyOf": [{ "$ref": "/response/ble/central" }, { "$ref": "/response/ble/peripheral" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_notify_read", "description": "callback of external device read characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_read_characteristic"], "properties": { "notify_read_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_notify_write", "description": "callback of external device write characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_write_characteristic"], "properties": { "notify_write_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_read", "description": "callback of read characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["read_characteristic_result"], "properties": { "read_characteristic_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_write", "description": "callback of write characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["write_characteristic_result"], "properties": { "write_characteristic_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "result"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_notify_read", "description": "callback of external device read descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_read_descriptor"], "properties": { "notify_read_descriptor": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_notify_write", "description": "callback of external device write descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_write_descriptor"], "properties": { "notify_write_descriptor": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_read", "description": "callback of read descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["read_descriptor_results"], "properties": { "read_descriptor_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_write", "description": "callback of write descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["write_descriptor_results"], "properties": { "write_descriptor_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "descriptor_uuid", "result"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral", "basePath": "ble", "anyOf": [{ "$ref": "/response/ble/peripheral/status" }, { "$ref": "/response/ble/peripheral/characteristic_read" }, { "$ref": "/response/ble/peripheral/characteristic_write" }, { "$ref": "/response/ble/peripheral/characteristic_notify_read" }, { "$ref": "/response/ble/peripheral/characteristic_notify_write" }, { "$ref": "/response/ble/peripheral/descriptor_read" }, { "$ref": "/response/ble/peripheral/descriptor_write" }, { "$ref": "/response/ble/peripheral/descriptor_notify_read" }, { "$ref": "/response/ble/peripheral/descriptor_notify_write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/status", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["connection_status"], "properties": { "connection_status": { "type": "object", "required": ["address", "status"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "status": { "type": "string", "enum": ["connected", "disconnected"] } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/debug/error", "desccription": "global error", "type": "object", "properties": { "error": { "type": "object", "additionalProperties": true, "properties": { "message": { "description": "readable message", "type": "string" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/debug", "basePath": "debug", "anyOf": [{ "$ref": "/response/debug/warning" }, { "$ref": "/response/debug/error" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/debug/warning", "desccription": "global warnings", "type": "object", "properties": { "warning": { "type": "object", "additionalProperties": true, "properties": { "message": { "description": "readable message", "type": "string" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/i2c", "basePath": "i2c0", "anyOf": [{ "$ref": "/response/i2c/master" }, { "$ref": "/response/i2c/slave" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/i2c/master", "type": "object", "required": ["mode", "address", "data"], "properties": { "mode": { "type": "string", "enum": ["master"] }, "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/i2c/slave", "type": "object", "required": ["mode", "address", "is_fragmented", "data"], "properties": { "mode": { "type": "string", "enum": ["slave"] }, "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "is_fragmented": { "type": "boolean" }, "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response", "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "patternProperties": { "^io[0-9]$": { "$ref": "/response/io" }, "^io1[0-1]$": { "$ref": "/response/io" }, "^ad[0-9]$": { "$ref": "/response/ad" }, "^ad1[0-1]$": { "$ref": "/response/ad" }, "^uart[0-1]$": { "$ref": "/response/uart" }, "^spi[0-1]$": { "$ref": "/response/spi" }, "^i2c0$": { "$ref": "/response/i2c" } }, "properties": { "switch": { "$ref": "/response/switch" }, "ble": { "$ref": "/response/ble" }, "mesure": { "$ref": "/response/mesure" }, "message": { "$ref": "/response/message" }, "logic_analyzer": { "$ref": "/response/logicAnalyzer" }, "ws": { "$ref": "/response/ws" }, "system": { "$ref": "/response/system" }, "debug": { "$ref": "/response/debug" } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/io/get", "type": "boolean" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/io", "basePath": "io0", "anyOf": [{ "$ref": "/response/io/get" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/logicAnalyzer/data", "type": "object", "required": ["data"], "properties": { "data": { "$ref": "/zerooneArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/logicAnalyzer", "basePath": "logic_analyzer", "anyOf": [{ "$ref": "/response/logicAnalyzer/data" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/measure/echo", "type": "object", "required": ["echo"], "properties": { "echo": { "type": "array", "minItesm": 1, "items": { "type": "object", "required": ["edge", "timing"], "properties": { "edge": { "type": "boolean", "description": "rising = true" }, "timing": { "type": "number", "description": "msec from end of pulse" } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/measure", "basePath": "measure", "anyOf": [{ "$ref": "/response/measure/echo" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/message", "basePath": "message", "anyOf": [{ "$ref": "/response/message/receive" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/message/receive", "related": "/request/message/send", "type": "object", "required": ["data", "from"], "properties": { "data": {}, "example": "1234-5678", "from": { "type": ["string", "null"] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/spi", "basePath": "spi0", "anyOf": [{ "$ref": "/response/spi/read" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/spi/read", "type": "object", "required": ["data"], "properties": { "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/switch/change", "desccription": "value cahnges are always notified.", "type": "object", "required": ["state"], "properties": { "state": { "type": "string", "enum": ["none", "push", "left", "right"] }, "action": { "type": "string", "enum": ["get"], "description": "this is optional and added when user request" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/switch", "basePath": "switch", "anyOf": [{ "$ref": "/response/switch/change" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/system", "basePath": "system", "anyOf": [{ "$ref": "/response/system/pong" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/system/pong", "desccription": "pong response with same key of ping request", "type": "object", "required": ["pong"], "properties": { "pong": { "type": "object", "required": ["key"], "properties": { "key": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/uart", "basePath": "uart0", "anyOf": [{ "$ref": "/response/uart/receive" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/uart/receive", "type": "object", "properties": { "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ws", "basePath": "ws", "anyOf": [{ "$ref": "/response/ws/ready" }, { "$ref": "/response/ws/redirect" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ws/ready", "description": "all things ready", "type": "object", "properties": { "ready": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ws/redirect", "description": "If the server required you to connect other endpoint to communicate with your obniz. This json will be sent.", "type": "object", "properties": { "redirect": { "type": "string", "example": "wss://ws1.obniz.io", "description": "The url you should redirect to." } } }];
-(function (global) {
-  let module = { exports: {} }; /*
-                                Author: Geraint Luff and others
-                                Year: 2013
-                                This code is released into the "public domain" by its author(s).  Anybody may use, alter and distribute the code without restriction.  The author makes no guarantees, and takes no liability of any kind for use of this code.
-                                If you find a bug or make an improvement, it would be courteous to let the author know, but it is not compulsory.
-                                */
-  (function (global, factory) {
-    if (typeof define === 'function' && define.amd) {
-      // AMD. Register as an anonymous module.
-      define([], factory);
-    } else if (typeof module !== 'undefined' && module.exports) {
-      // CommonJS. Define export.
-      module.exports = factory();
-    } else {
-      // Browser globals
-      global.tv4 = factory();
-    }
-  })(this, function () {
-
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FObject%2Fkeys
-    if (!Object.keys) {
-      Object.keys = function () {
-        var hasOwnProperty = Object.prototype.hasOwnProperty,
-            hasDontEnumBug = !{ toString: null }.propertyIsEnumerable('toString'),
-            dontEnums = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'],
-            dontEnumsLength = dontEnums.length;
-
-        return function (obj) {
-          if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) {
-            throw new TypeError('Object.keys called on non-object');
-          }
-
-          var result = [];
-
-          for (var prop in obj) {
-            if (hasOwnProperty.call(obj, prop)) {
-              result.push(prop);
-            }
-          }
-
-          if (hasDontEnumBug) {
-            for (var i = 0; i < dontEnumsLength; i++) {
-              if (hasOwnProperty.call(obj, dontEnums[i])) {
-                result.push(dontEnums[i]);
-              }
-            }
-          }
-          return result;
-        };
-      }();
-    }
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
-    if (!Object.create) {
-      Object.create = function () {
-        function F() {}
-
-        return function (o) {
-          if (arguments.length !== 1) {
-            throw new Error('Object.create implementation only accepts one parameter.');
-          }
-          F.prototype = o;
-          return new F();
-        };
-      }();
-    }
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FArray%2FisArray
-    if (!Array.isArray) {
-      Array.isArray = function (vArg) {
-        return Object.prototype.toString.call(vArg) === "[object Array]";
-      };
-    }
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FArray%2FindexOf
-    if (!Array.prototype.indexOf) {
-      Array.prototype.indexOf = function (searchElement /*, fromIndex */) {
-        if (this === null) {
-          throw new TypeError();
-        }
-        var t = Object(this);
-        var len = t.length >>> 0;
-
-        if (len === 0) {
-          return -1;
-        }
-        var n = 0;
-        if (arguments.length > 1) {
-          n = Number(arguments[1]);
-          if (n !== n) {
-            // shortcut for verifying if it's NaN
-            n = 0;
-          } else if (n !== 0 && n !== Infinity && n !== -Infinity) {
-            n = (n > 0 || -1) * Math.floor(Math.abs(n));
-          }
-        }
-        if (n >= len) {
-          return -1;
-        }
-        var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
-        for (; k < len; k++) {
-          if (k in t && t[k] === searchElement) {
-            return k;
-          }
-        }
-        return -1;
-      };
-    }
-
-    // Grungey Object.isFrozen hack
-    if (!Object.isFrozen) {
-      Object.isFrozen = function (obj) {
-        var key = "tv4_test_frozen_key";
-        while (obj.hasOwnProperty(key)) {
-          key += Math.random();
-        }
-        try {
-          obj[key] = true;
-          delete obj[key];
-          return false;
-        } catch (e) {
-          return true;
-        }
-      };
-    }
-    // Based on: https://github.com/geraintluff/uri-templates, but with all the de-substitution stuff removed
-
-    var uriTemplateGlobalModifiers = {
-      "+": true,
-      "#": true,
-      ".": true,
-      "/": true,
-      ";": true,
-      "?": true,
-      "&": true
-    };
-    var uriTemplateSuffices = {
-      "*": true
-    };
-
-    function notReallyPercentEncode(string) {
-      return encodeURI(string).replace(/%25[0-9][0-9]/g, function (doubleEncoded) {
-        return "%" + doubleEncoded.substring(3);
-      });
-    }
-
-    function uriTemplateSubstitution(spec) {
-      var modifier = "";
-      if (uriTemplateGlobalModifiers[spec.charAt(0)]) {
-        modifier = spec.charAt(0);
-        spec = spec.substring(1);
-      }
-      var separator = "";
-      var prefix = "";
-      var shouldEscape = true;
-      var showVariables = false;
-      var trimEmptyString = false;
-      if (modifier === '+') {
-        shouldEscape = false;
-      } else if (modifier === ".") {
-        prefix = ".";
-        separator = ".";
-      } else if (modifier === "/") {
-        prefix = "/";
-        separator = "/";
-      } else if (modifier === '#') {
-        prefix = "#";
-        shouldEscape = false;
-      } else if (modifier === ';') {
-        prefix = ";";
-        separator = ";";
-        showVariables = true;
-        trimEmptyString = true;
-      } else if (modifier === '?') {
-        prefix = "?";
-        separator = "&";
-        showVariables = true;
-      } else if (modifier === '&') {
-        prefix = "&";
-        separator = "&";
-        showVariables = true;
-      }
-
-      var varNames = [];
-      var varList = spec.split(",");
-      var varSpecs = [];
-      var varSpecMap = {};
-      for (var i = 0; i < varList.length; i++) {
-        var varName = varList[i];
-        var truncate = null;
-        if (varName.indexOf(":") !== -1) {
-          var parts = varName.split(":");
-          varName = parts[0];
-          truncate = parseInt(parts[1], 10);
-        }
-        var suffices = {};
-        while (uriTemplateSuffices[varName.charAt(varName.length - 1)]) {
-          suffices[varName.charAt(varName.length - 1)] = true;
-          varName = varName.substring(0, varName.length - 1);
-        }
-        var varSpec = {
-          truncate: truncate,
-          name: varName,
-          suffices: suffices
-        };
-        varSpecs.push(varSpec);
-        varSpecMap[varName] = varSpec;
-        varNames.push(varName);
-      }
-      var subFunction = function (valueFunction) {
-        var result = "";
-        var startIndex = 0;
-        for (var i = 0; i < varSpecs.length; i++) {
-          var varSpec = varSpecs[i];
-          var value = valueFunction(varSpec.name);
-          if (value === null || value === undefined || Array.isArray(value) && value.length === 0 || typeof value === 'object' && Object.keys(value).length === 0) {
-            startIndex++;
-            continue;
-          }
-          if (i === startIndex) {
-            result += prefix;
-          } else {
-            result += separator || ",";
-          }
-          if (Array.isArray(value)) {
-            if (showVariables) {
-              result += varSpec.name + "=";
-            }
-            for (var j = 0; j < value.length; j++) {
-              if (j > 0) {
-                result += varSpec.suffices['*'] ? separator || "," : ",";
-                if (varSpec.suffices['*'] && showVariables) {
-                  result += varSpec.name + "=";
-                }
-              }
-              result += shouldEscape ? encodeURIComponent(value[j]).replace(/!/g, "%21") : notReallyPercentEncode(value[j]);
-            }
-          } else if (typeof value === "object") {
-            if (showVariables && !varSpec.suffices['*']) {
-              result += varSpec.name + "=";
-            }
-            var first = true;
-            for (var key in value) {
-              if (!first) {
-                result += varSpec.suffices['*'] ? separator || "," : ",";
-              }
-              first = false;
-              result += shouldEscape ? encodeURIComponent(key).replace(/!/g, "%21") : notReallyPercentEncode(key);
-              result += varSpec.suffices['*'] ? '=' : ",";
-              result += shouldEscape ? encodeURIComponent(value[key]).replace(/!/g, "%21") : notReallyPercentEncode(value[key]);
-            }
-          } else {
-            if (showVariables) {
-              result += varSpec.name;
-              if (!trimEmptyString || value !== "") {
-                result += "=";
-              }
-            }
-            if (varSpec.truncate != null) {
-              value = value.substring(0, varSpec.truncate);
-            }
-            result += shouldEscape ? encodeURIComponent(value).replace(/!/g, "%21") : notReallyPercentEncode(value);
-          }
-        }
-        return result;
-      };
-      subFunction.varNames = varNames;
-      return {
-        prefix: prefix,
-        substitution: subFunction
-      };
-    }
-
-    function UriTemplate(template) {
-      if (!(this instanceof UriTemplate)) {
-        return new UriTemplate(template);
-      }
-      var parts = template.split("{");
-      var textParts = [parts.shift()];
-      var prefixes = [];
-      var substitutions = [];
-      var varNames = [];
-      while (parts.length > 0) {
-        var part = parts.shift();
-        var spec = part.split("}")[0];
-        var remainder = part.substring(spec.length + 1);
-        var funcs = uriTemplateSubstitution(spec);
-        substitutions.push(funcs.substitution);
-        prefixes.push(funcs.prefix);
-        textParts.push(remainder);
-        varNames = varNames.concat(funcs.substitution.varNames);
-      }
-      this.fill = function (valueFunction) {
-        var result = textParts[0];
-        for (var i = 0; i < substitutions.length; i++) {
-          var substitution = substitutions[i];
-          result += substitution(valueFunction);
-          result += textParts[i + 1];
-        }
-        return result;
-      };
-      this.varNames = varNames;
-      this.template = template;
-    }
-    UriTemplate.prototype = {
-      toString: function () {
-        return this.template;
-      },
-      fillFromObject: function (obj) {
-        return this.fill(function (varName) {
-          return obj[varName];
-        });
-      }
-    };
-    var ValidatorContext = function ValidatorContext(parent, collectMultiple, errorReporter, checkRecursive, trackUnknownProperties) {
-      this.missing = [];
-      this.missingMap = {};
-      this.formatValidators = parent ? Object.create(parent.formatValidators) : {};
-      this.schemas = parent ? Object.create(parent.schemas) : {};
-      this.collectMultiple = collectMultiple;
-      this.errors = [];
-      this.handleError = collectMultiple ? this.collectError : this.returnError;
-      if (checkRecursive) {
-        this.checkRecursive = true;
-        this.scanned = [];
-        this.scannedFrozen = [];
-        this.scannedFrozenSchemas = [];
-        this.scannedFrozenValidationErrors = [];
-        this.validatedSchemasKey = 'tv4_validation_id';
-        this.validationErrorsKey = 'tv4_validation_errors_id';
-      }
-      if (trackUnknownProperties) {
-        this.trackUnknownProperties = true;
-        this.knownPropertyPaths = {};
-        this.unknownPropertyPaths = {};
-      }
-      this.errorReporter = errorReporter || defaultErrorReporter('en');
-      if (typeof this.errorReporter === 'string') {
-        throw new Error('debug');
-      }
-      this.definedKeywords = {};
-      if (parent) {
-        for (var key in parent.definedKeywords) {
-          this.definedKeywords[key] = parent.definedKeywords[key].slice(0);
-        }
-      }
-    };
-    ValidatorContext.prototype.defineKeyword = function (keyword, keywordFunction) {
-      this.definedKeywords[keyword] = this.definedKeywords[keyword] || [];
-      this.definedKeywords[keyword].push(keywordFunction);
-    };
-    ValidatorContext.prototype.createError = function (code, messageParams, dataPath, schemaPath, subErrors, data, schema) {
-      var error = new ValidationError(code, messageParams, dataPath, schemaPath, subErrors);
-      error.message = this.errorReporter(error, data, schema);
-      return error;
-    };
-    ValidatorContext.prototype.returnError = function (error) {
-      return error;
-    };
-    ValidatorContext.prototype.collectError = function (error) {
-      if (error) {
-        this.errors.push(error);
-      }
-      return null;
-    };
-    ValidatorContext.prototype.prefixErrors = function (startIndex, dataPath, schemaPath) {
-      for (var i = startIndex; i < this.errors.length; i++) {
-        this.errors[i] = this.errors[i].prefixWith(dataPath, schemaPath);
-      }
-      return this;
-    };
-    ValidatorContext.prototype.banUnknownProperties = function (data, schema) {
-      for (var unknownPath in this.unknownPropertyPaths) {
-        var error = this.createError(ErrorCodes.UNKNOWN_PROPERTY, { path: unknownPath }, unknownPath, "", null, data, schema);
-        var result = this.handleError(error);
-        if (result) {
-          return result;
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.addFormat = function (format, validator) {
-      if (typeof format === 'object') {
-        for (var key in format) {
-          this.addFormat(key, format[key]);
-        }
-        return this;
-      }
-      this.formatValidators[format] = validator;
-    };
-    ValidatorContext.prototype.resolveRefs = function (schema, urlHistory) {
-      if (schema['$ref'] !== undefined) {
-        urlHistory = urlHistory || {};
-        if (urlHistory[schema['$ref']]) {
-          return this.createError(ErrorCodes.CIRCULAR_REFERENCE, { urls: Object.keys(urlHistory).join(', ') }, '', '', null, undefined, schema);
-        }
-        urlHistory[schema['$ref']] = true;
-        schema = this.getSchema(schema['$ref'], urlHistory);
-      }
-      return schema;
-    };
-    ValidatorContext.prototype.getSchema = function (url, urlHistory) {
-      var schema;
-      if (this.schemas[url] !== undefined) {
-        schema = this.schemas[url];
-        return this.resolveRefs(schema, urlHistory);
-      }
-      var baseUrl = url;
-      var fragment = "";
-      if (url.indexOf('#') !== -1) {
-        fragment = url.substring(url.indexOf("#") + 1);
-        baseUrl = url.substring(0, url.indexOf("#"));
-      }
-      if (typeof this.schemas[baseUrl] === 'object') {
-        schema = this.schemas[baseUrl];
-        var pointerPath = decodeURIComponent(fragment);
-        if (pointerPath === "") {
-          return this.resolveRefs(schema, urlHistory);
-        } else if (pointerPath.charAt(0) !== "/") {
-          return undefined;
-        }
-        var parts = pointerPath.split("/").slice(1);
-        for (var i = 0; i < parts.length; i++) {
-          var component = parts[i].replace(/~1/g, "/").replace(/~0/g, "~");
-          if (schema[component] === undefined) {
-            schema = undefined;
-            break;
-          }
-          schema = schema[component];
-        }
-        if (schema !== undefined) {
-          return this.resolveRefs(schema, urlHistory);
-        }
-      }
-      if (this.missing[baseUrl] === undefined) {
-        this.missing.push(baseUrl);
-        this.missing[baseUrl] = baseUrl;
-        this.missingMap[baseUrl] = baseUrl;
-      }
-    };
-    ValidatorContext.prototype.searchSchemas = function (schema, url) {
-      if (Array.isArray(schema)) {
-        for (var i = 0; i < schema.length; i++) {
-          this.searchSchemas(schema[i], url);
-        }
-      } else if (schema && typeof schema === "object") {
-        if (typeof schema.id === "string") {
-          if (isTrustedUrl(url, schema.id)) {
-            if (this.schemas[schema.id] === undefined) {
-              this.schemas[schema.id] = schema;
-            }
-          }
-        }
-        for (var key in schema) {
-          if (key !== "enum") {
-            if (typeof schema[key] === "object") {
-              this.searchSchemas(schema[key], url);
-            } else if (key === "$ref") {
-              var uri = getDocumentUri(schema[key]);
-              if (uri && this.schemas[uri] === undefined && this.missingMap[uri] === undefined) {
-                this.missingMap[uri] = uri;
-              }
-            }
-          }
-        }
-      }
-    };
-    ValidatorContext.prototype.addSchema = function (url, schema) {
-      //overload
-      if (typeof url !== 'string' || typeof schema === 'undefined') {
-        if (typeof url === 'object' && typeof url.id === 'string') {
-          schema = url;
-          url = schema.id;
-        } else {
-          return;
-        }
-      }
-      if (url === getDocumentUri(url) + "#") {
-        // Remove empty fragment
-        url = getDocumentUri(url);
-      }
-      this.schemas[url] = schema;
-      delete this.missingMap[url];
-      normSchema(schema, url);
-      this.searchSchemas(schema, url);
-    };
-
-    ValidatorContext.prototype.getSchemaMap = function () {
-      var map = {};
-      for (var key in this.schemas) {
-        map[key] = this.schemas[key];
-      }
-      return map;
-    };
-
-    ValidatorContext.prototype.getSchemaUris = function (filterRegExp) {
-      var list = [];
-      for (var key in this.schemas) {
-        if (!filterRegExp || filterRegExp.test(key)) {
-          list.push(key);
-        }
-      }
-      return list;
-    };
-
-    ValidatorContext.prototype.getMissingUris = function (filterRegExp) {
-      var list = [];
-      for (var key in this.missingMap) {
-        if (!filterRegExp || filterRegExp.test(key)) {
-          list.push(key);
-        }
-      }
-      return list;
-    };
-
-    ValidatorContext.prototype.dropSchemas = function () {
-      this.schemas = {};
-      this.reset();
-    };
-    ValidatorContext.prototype.reset = function () {
-      this.missing = [];
-      this.missingMap = {};
-      this.errors = [];
-    };
-
-    ValidatorContext.prototype.validateAll = function (data, schema, dataPathParts, schemaPathParts, dataPointerPath) {
-      var topLevel;
-      schema = this.resolveRefs(schema);
-      if (!schema) {
-        return null;
-      } else if (schema instanceof ValidationError) {
-        this.errors.push(schema);
-        return schema;
-      }
-
-      var startErrorCount = this.errors.length;
-      var frozenIndex,
-          scannedFrozenSchemaIndex = null,
-          scannedSchemasIndex = null;
-      if (this.checkRecursive && data && typeof data === 'object') {
-        topLevel = !this.scanned.length;
-        if (data[this.validatedSchemasKey]) {
-          var schemaIndex = data[this.validatedSchemasKey].indexOf(schema);
-          if (schemaIndex !== -1) {
-            this.errors = this.errors.concat(data[this.validationErrorsKey][schemaIndex]);
-            return null;
-          }
-        }
-        if (Object.isFrozen(data)) {
-          frozenIndex = this.scannedFrozen.indexOf(data);
-          if (frozenIndex !== -1) {
-            var frozenSchemaIndex = this.scannedFrozenSchemas[frozenIndex].indexOf(schema);
-            if (frozenSchemaIndex !== -1) {
-              this.errors = this.errors.concat(this.scannedFrozenValidationErrors[frozenIndex][frozenSchemaIndex]);
-              return null;
-            }
-          }
-        }
-        this.scanned.push(data);
-        if (Object.isFrozen(data)) {
-          if (frozenIndex === -1) {
-            frozenIndex = this.scannedFrozen.length;
-            this.scannedFrozen.push(data);
-            this.scannedFrozenSchemas.push([]);
-          }
-          scannedFrozenSchemaIndex = this.scannedFrozenSchemas[frozenIndex].length;
-          this.scannedFrozenSchemas[frozenIndex][scannedFrozenSchemaIndex] = schema;
-          this.scannedFrozenValidationErrors[frozenIndex][scannedFrozenSchemaIndex] = [];
-        } else {
-          if (!data[this.validatedSchemasKey]) {
-            try {
-              Object.defineProperty(data, this.validatedSchemasKey, {
-                value: [],
-                configurable: true
-              });
-              Object.defineProperty(data, this.validationErrorsKey, {
-                value: [],
-                configurable: true
-              });
-            } catch (e) {
-              //IE 7/8 workaround
-              data[this.validatedSchemasKey] = [];
-              data[this.validationErrorsKey] = [];
-            }
-          }
-          scannedSchemasIndex = data[this.validatedSchemasKey].length;
-          data[this.validatedSchemasKey][scannedSchemasIndex] = schema;
-          data[this.validationErrorsKey][scannedSchemasIndex] = [];
-        }
-      }
-
-      var errorCount = this.errors.length;
-      var error = this.validateBasic(data, schema, dataPointerPath) || this.validateNumeric(data, schema, dataPointerPath) || this.validateString(data, schema, dataPointerPath) || this.validateArray(data, schema, dataPointerPath) || this.validateObject(data, schema, dataPointerPath) || this.validateCombinations(data, schema, dataPointerPath) || this.validateHypermedia(data, schema, dataPointerPath) || this.validateFormat(data, schema, dataPointerPath) || this.validateDefinedKeywords(data, schema, dataPointerPath) || null;
-
-      if (topLevel) {
-        while (this.scanned.length) {
-          var item = this.scanned.pop();
-          delete item[this.validatedSchemasKey];
-        }
-        this.scannedFrozen = [];
-        this.scannedFrozenSchemas = [];
-      }
-
-      if (error || errorCount !== this.errors.length) {
-        while (dataPathParts && dataPathParts.length || schemaPathParts && schemaPathParts.length) {
-          var dataPart = dataPathParts && dataPathParts.length ? "" + dataPathParts.pop() : null;
-          var schemaPart = schemaPathParts && schemaPathParts.length ? "" + schemaPathParts.pop() : null;
-          if (error) {
-            error = error.prefixWith(dataPart, schemaPart);
-          }
-          this.prefixErrors(errorCount, dataPart, schemaPart);
-        }
-      }
-
-      if (scannedFrozenSchemaIndex !== null) {
-        this.scannedFrozenValidationErrors[frozenIndex][scannedFrozenSchemaIndex] = this.errors.slice(startErrorCount);
-      } else if (scannedSchemasIndex !== null) {
-        data[this.validationErrorsKey][scannedSchemasIndex] = this.errors.slice(startErrorCount);
-      }
-
-      return this.handleError(error);
-    };
-    ValidatorContext.prototype.validateFormat = function (data, schema) {
-      if (typeof schema.format !== 'string' || !this.formatValidators[schema.format]) {
-        return null;
-      }
-      var errorMessage = this.formatValidators[schema.format].call(null, data, schema);
-      if (typeof errorMessage === 'string' || typeof errorMessage === 'number') {
-        return this.createError(ErrorCodes.FORMAT_CUSTOM, { message: errorMessage }, '', '/format', null, data, schema);
-      } else if (errorMessage && typeof errorMessage === 'object') {
-        return this.createError(ErrorCodes.FORMAT_CUSTOM, { message: errorMessage.message || "?" }, errorMessage.dataPath || '', errorMessage.schemaPath || "/format", null, data, schema);
-      }
-      return null;
-    };
-    ValidatorContext.prototype.validateDefinedKeywords = function (data, schema, dataPointerPath) {
-      for (var key in this.definedKeywords) {
-        if (typeof schema[key] === 'undefined') {
-          continue;
-        }
-        var validationFunctions = this.definedKeywords[key];
-        for (var i = 0; i < validationFunctions.length; i++) {
-          var func = validationFunctions[i];
-          var result = func(data, schema[key], schema, dataPointerPath);
-          if (typeof result === 'string' || typeof result === 'number') {
-            return this.createError(ErrorCodes.KEYWORD_CUSTOM, { key: key, message: result }, '', '', null, data, schema).prefixWith(null, key);
-          } else if (result && typeof result === 'object') {
-            var code = result.code;
-            if (typeof code === 'string') {
-              if (!ErrorCodes[code]) {
-                throw new Error('Undefined error code (use defineError): ' + code);
-              }
-              code = ErrorCodes[code];
-            } else if (typeof code !== 'number') {
-              code = ErrorCodes.KEYWORD_CUSTOM;
-            }
-            var messageParams = typeof result.message === 'object' ? result.message : { key: key, message: result.message || "?" };
-            var schemaPath = result.schemaPath || "/" + key.replace(/~/g, '~0').replace(/\//g, '~1');
-            return this.createError(code, messageParams, result.dataPath || null, schemaPath, null, data, schema);
-          }
-        }
-      }
-      return null;
-    };
-
-    function recursiveCompare(A, B) {
-      if (A === B) {
-        return true;
-      }
-      if (A && B && typeof A === "object" && typeof B === "object") {
-        if (Array.isArray(A) !== Array.isArray(B)) {
-          return false;
-        } else if (Array.isArray(A)) {
-          if (A.length !== B.length) {
-            return false;
-          }
-          for (var i = 0; i < A.length; i++) {
-            if (!recursiveCompare(A[i], B[i])) {
-              return false;
-            }
-          }
-        } else {
-          var key;
-          for (key in A) {
-            if (B[key] === undefined && A[key] !== undefined) {
-              return false;
-            }
-          }
-          for (key in B) {
-            if (A[key] === undefined && B[key] !== undefined) {
-              return false;
-            }
-          }
-          for (key in A) {
-            if (!recursiveCompare(A[key], B[key])) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }
-      return false;
-    }
-
-    ValidatorContext.prototype.validateBasic = function validateBasic(data, schema, dataPointerPath) {
-      var error;
-      if (error = this.validateType(data, schema, dataPointerPath)) {
-        return error.prefixWith(null, "type");
-      }
-      if (error = this.validateEnum(data, schema, dataPointerPath)) {
-        return error.prefixWith(null, "type");
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateType = function validateType(data, schema) {
-      if (schema.type === undefined) {
-        return null;
-      }
-      var dataType = typeof data;
-      if (data === null) {
-        dataType = "null";
-      } else if (Array.isArray(data)) {
-        dataType = "array";
-      }
-      var allowedTypes = schema.type;
-      if (!Array.isArray(allowedTypes)) {
-        allowedTypes = [allowedTypes];
-      }
-
-      for (var i = 0; i < allowedTypes.length; i++) {
-        var type = allowedTypes[i];
-        if (type === dataType || type === "integer" && dataType === "number" && data % 1 === 0) {
-          return null;
-        }
-      }
-      return this.createError(ErrorCodes.INVALID_TYPE, { type: dataType, expected: allowedTypes.join("/") }, '', '', null, data, schema);
-    };
-
-    ValidatorContext.prototype.validateEnum = function validateEnum(data, schema) {
-      if (schema["enum"] === undefined) {
-        return null;
-      }
-      for (var i = 0; i < schema["enum"].length; i++) {
-        var enumVal = schema["enum"][i];
-        if (recursiveCompare(data, enumVal)) {
-          return null;
-        }
-      }
-      return this.createError(ErrorCodes.ENUM_MISMATCH, { value: typeof JSON !== 'undefined' ? JSON.stringify(data) : data }, '', '', null, data, schema);
-    };
-
-    ValidatorContext.prototype.validateNumeric = function validateNumeric(data, schema, dataPointerPath) {
-      return this.validateMultipleOf(data, schema, dataPointerPath) || this.validateMinMax(data, schema, dataPointerPath) || this.validateNaN(data, schema, dataPointerPath) || null;
-    };
-
-    var CLOSE_ENOUGH_LOW = Math.pow(2, -51);
-    var CLOSE_ENOUGH_HIGH = 1 - CLOSE_ENOUGH_LOW;
-    ValidatorContext.prototype.validateMultipleOf = function validateMultipleOf(data, schema) {
-      var multipleOf = schema.multipleOf || schema.divisibleBy;
-      if (multipleOf === undefined) {
-        return null;
-      }
-      if (typeof data === "number") {
-        var remainder = data / multipleOf % 1;
-        if (remainder >= CLOSE_ENOUGH_LOW && remainder < CLOSE_ENOUGH_HIGH) {
-          return this.createError(ErrorCodes.NUMBER_MULTIPLE_OF, { value: data, multipleOf: multipleOf }, '', '', null, data, schema);
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateMinMax = function validateMinMax(data, schema) {
-      if (typeof data !== "number") {
-        return null;
-      }
-      if (schema.minimum !== undefined) {
-        if (data < schema.minimum) {
-          return this.createError(ErrorCodes.NUMBER_MINIMUM, { value: data, minimum: schema.minimum }, '', '/minimum', null, data, schema);
-        }
-        if (schema.exclusiveMinimum && data === schema.minimum) {
-          return this.createError(ErrorCodes.NUMBER_MINIMUM_EXCLUSIVE, { value: data, minimum: schema.minimum }, '', '/exclusiveMinimum', null, data, schema);
-        }
-      }
-      if (schema.maximum !== undefined) {
-        if (data > schema.maximum) {
-          return this.createError(ErrorCodes.NUMBER_MAXIMUM, { value: data, maximum: schema.maximum }, '', '/maximum', null, data, schema);
-        }
-        if (schema.exclusiveMaximum && data === schema.maximum) {
-          return this.createError(ErrorCodes.NUMBER_MAXIMUM_EXCLUSIVE, { value: data, maximum: schema.maximum }, '', '/exclusiveMaximum', null, data, schema);
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateNaN = function validateNaN(data, schema) {
-      if (typeof data !== "number") {
-        return null;
-      }
-      if (isNaN(data) === true || data === Infinity || data === -Infinity) {
-        return this.createError(ErrorCodes.NUMBER_NOT_A_NUMBER, { value: data }, '', '/type', null, data, schema);
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateString = function validateString(data, schema, dataPointerPath) {
-      return this.validateStringLength(data, schema, dataPointerPath) || this.validateStringPattern(data, schema, dataPointerPath) || null;
-    };
-
-    ValidatorContext.prototype.validateStringLength = function validateStringLength(data, schema) {
-      if (typeof data !== "string") {
-        return null;
-      }
-      if (schema.minLength !== undefined) {
-        if (data.length < schema.minLength) {
-          return this.createError(ErrorCodes.STRING_LENGTH_SHORT, { length: data.length, minimum: schema.minLength }, '', '/minLength', null, data, schema);
-        }
-      }
-      if (schema.maxLength !== undefined) {
-        if (data.length > schema.maxLength) {
-          return this.createError(ErrorCodes.STRING_LENGTH_LONG, { length: data.length, maximum: schema.maxLength }, '', '/maxLength', null, data, schema);
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateStringPattern = function validateStringPattern(data, schema) {
-      if (typeof data !== "string" || typeof schema.pattern !== "string" && !(schema.pattern instanceof RegExp)) {
-        return null;
-      }
-      var regexp;
-      if (schema.pattern instanceof RegExp) {
-        regexp = schema.pattern;
-      } else {
-        var body,
-            flags = '';
-        // Check for regular expression literals
-        // @see http://www.ecma-international.org/ecma-262/5.1/#sec-7.8.5
-        var literal = schema.pattern.match(/^\/(.+)\/([img]*)$/);
-        if (literal) {
-          body = literal[1];
-          flags = literal[2];
-        } else {
-          body = schema.pattern;
-        }
-        regexp = new RegExp(body, flags);
-      }
-      if (!regexp.test(data)) {
-        return this.createError(ErrorCodes.STRING_PATTERN, { pattern: schema.pattern }, '', '/pattern', null, data, schema);
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateArray = function validateArray(data, schema, dataPointerPath) {
-      if (!Array.isArray(data)) {
-        return null;
-      }
-      return this.validateArrayLength(data, schema, dataPointerPath) || this.validateArrayUniqueItems(data, schema, dataPointerPath) || this.validateArrayItems(data, schema, dataPointerPath) || null;
-    };
-
-    ValidatorContext.prototype.validateArrayLength = function validateArrayLength(data, schema) {
-      var error;
-      if (schema.minItems !== undefined) {
-        if (data.length < schema.minItems) {
-          error = this.createError(ErrorCodes.ARRAY_LENGTH_SHORT, { length: data.length, minimum: schema.minItems }, '', '/minItems', null, data, schema);
-          if (this.handleError(error)) {
-            return error;
-          }
-        }
-      }
-      if (schema.maxItems !== undefined) {
-        if (data.length > schema.maxItems) {
-          error = this.createError(ErrorCodes.ARRAY_LENGTH_LONG, { length: data.length, maximum: schema.maxItems }, '', '/maxItems', null, data, schema);
-          if (this.handleError(error)) {
-            return error;
-          }
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateArrayUniqueItems = function validateArrayUniqueItems(data, schema) {
-      if (schema.uniqueItems) {
-        for (var i = 0; i < data.length; i++) {
-          for (var j = i + 1; j < data.length; j++) {
-            if (recursiveCompare(data[i], data[j])) {
-              var error = this.createError(ErrorCodes.ARRAY_UNIQUE, { match1: i, match2: j }, '', '/uniqueItems', null, data, schema);
-              if (this.handleError(error)) {
-                return error;
-              }
-            }
-          }
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateArrayItems = function validateArrayItems(data, schema, dataPointerPath) {
-      if (schema.items === undefined) {
-        return null;
-      }
-      var error, i;
-      if (Array.isArray(schema.items)) {
-        for (i = 0; i < data.length; i++) {
-          if (i < schema.items.length) {
-            if (error = this.validateAll(data[i], schema.items[i], [i], ["items", i], dataPointerPath + "/" + i)) {
-              return error;
-            }
-          } else if (schema.additionalItems !== undefined) {
-            if (typeof schema.additionalItems === "boolean") {
-              if (!schema.additionalItems) {
-                error = this.createError(ErrorCodes.ARRAY_ADDITIONAL_ITEMS, {}, '/' + i, '/additionalItems', null, data, schema);
-                if (this.handleError(error)) {
-                  return error;
-                }
-              }
-            } else if (error = this.validateAll(data[i], schema.additionalItems, [i], ["additionalItems"], dataPointerPath + "/" + i)) {
-              return error;
-            }
-          }
-        }
-      } else {
-        for (i = 0; i < data.length; i++) {
-          if (error = this.validateAll(data[i], schema.items, [i], ["items"], dataPointerPath + "/" + i)) {
-            return error;
-          }
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateObject = function validateObject(data, schema, dataPointerPath) {
-      if (typeof data !== "object" || data === null || Array.isArray(data)) {
-        return null;
-      }
-      return this.validateObjectMinMaxProperties(data, schema, dataPointerPath) || this.validateObjectRequiredProperties(data, schema, dataPointerPath) || this.validateObjectProperties(data, schema, dataPointerPath) || this.validateObjectDependencies(data, schema, dataPointerPath) || null;
-    };
-
-    ValidatorContext.prototype.validateObjectMinMaxProperties = function validateObjectMinMaxProperties(data, schema) {
-      var keys = Object.keys(data);
-      var error;
-      if (schema.minProperties !== undefined) {
-        if (keys.length < schema.minProperties) {
-          error = this.createError(ErrorCodes.OBJECT_PROPERTIES_MINIMUM, { propertyCount: keys.length, minimum: schema.minProperties }, '', '/minProperties', null, data, schema);
-          if (this.handleError(error)) {
-            return error;
-          }
-        }
-      }
-      if (schema.maxProperties !== undefined) {
-        if (keys.length > schema.maxProperties) {
-          error = this.createError(ErrorCodes.OBJECT_PROPERTIES_MAXIMUM, { propertyCount: keys.length, maximum: schema.maxProperties }, '', '/maxProperties', null, data, schema);
-          if (this.handleError(error)) {
-            return error;
-          }
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateObjectRequiredProperties = function validateObjectRequiredProperties(data, schema) {
-      if (schema.required !== undefined) {
-        for (var i = 0; i < schema.required.length; i++) {
-          var key = schema.required[i];
-          if (data[key] === undefined) {
-            var error = this.createError(ErrorCodes.OBJECT_REQUIRED, { key: key }, '', '/required/' + i, null, data, schema);
-            if (this.handleError(error)) {
-              return error;
-            }
-          }
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateObjectProperties = function validateObjectProperties(data, schema, dataPointerPath) {
-      var error;
-      for (var key in data) {
-        var keyPointerPath = dataPointerPath + "/" + key.replace(/~/g, '~0').replace(/\//g, '~1');
-        var foundMatch = false;
-        if (schema.properties !== undefined && schema.properties[key] !== undefined) {
-          foundMatch = true;
-          if (error = this.validateAll(data[key], schema.properties[key], [key], ["properties", key], keyPointerPath)) {
-            return error;
-          }
-        }
-        if (schema.patternProperties !== undefined) {
-          for (var patternKey in schema.patternProperties) {
-            var regexp = new RegExp(patternKey);
-            if (regexp.test(key)) {
-              foundMatch = true;
-              if (error = this.validateAll(data[key], schema.patternProperties[patternKey], [key], ["patternProperties", patternKey], keyPointerPath)) {
-                return error;
-              }
-            }
-          }
-        }
-        if (!foundMatch) {
-          if (schema.additionalProperties !== undefined) {
-            if (this.trackUnknownProperties) {
-              this.knownPropertyPaths[keyPointerPath] = true;
-              delete this.unknownPropertyPaths[keyPointerPath];
-            }
-            if (typeof schema.additionalProperties === "boolean") {
-              if (!schema.additionalProperties) {
-                error = this.createError(ErrorCodes.OBJECT_ADDITIONAL_PROPERTIES, { key: key }, '', '/additionalProperties', null, data, schema).prefixWith(key, null);
-                if (this.handleError(error)) {
-                  return error;
-                }
-              }
-            } else {
-              if (error = this.validateAll(data[key], schema.additionalProperties, [key], ["additionalProperties"], keyPointerPath)) {
-                return error;
-              }
-            }
-          } else if (this.trackUnknownProperties && !this.knownPropertyPaths[keyPointerPath]) {
-            this.unknownPropertyPaths[keyPointerPath] = true;
-          }
-        } else if (this.trackUnknownProperties) {
-          this.knownPropertyPaths[keyPointerPath] = true;
-          delete this.unknownPropertyPaths[keyPointerPath];
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateObjectDependencies = function validateObjectDependencies(data, schema, dataPointerPath) {
-      var error;
-      if (schema.dependencies !== undefined) {
-        for (var depKey in schema.dependencies) {
-          if (data[depKey] !== undefined) {
-            var dep = schema.dependencies[depKey];
-            if (typeof dep === "string") {
-              if (data[dep] === undefined) {
-                error = this.createError(ErrorCodes.OBJECT_DEPENDENCY_KEY, { key: depKey, missing: dep }, '', '', null, data, schema).prefixWith(null, depKey).prefixWith(null, "dependencies");
-                if (this.handleError(error)) {
-                  return error;
-                }
-              }
-            } else if (Array.isArray(dep)) {
-              for (var i = 0; i < dep.length; i++) {
-                var requiredKey = dep[i];
-                if (data[requiredKey] === undefined) {
-                  error = this.createError(ErrorCodes.OBJECT_DEPENDENCY_KEY, { key: depKey, missing: requiredKey }, '', '/' + i, null, data, schema).prefixWith(null, depKey).prefixWith(null, "dependencies");
-                  if (this.handleError(error)) {
-                    return error;
-                  }
-                }
-              }
-            } else {
-              if (error = this.validateAll(data, dep, [], ["dependencies", depKey], dataPointerPath)) {
-                return error;
-              }
-            }
-          }
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateCombinations = function validateCombinations(data, schema, dataPointerPath) {
-      return this.validateAllOf(data, schema, dataPointerPath) || this.validateAnyOf(data, schema, dataPointerPath) || this.validateOneOf(data, schema, dataPointerPath) || this.validateNot(data, schema, dataPointerPath) || null;
-    };
-
-    ValidatorContext.prototype.validateAllOf = function validateAllOf(data, schema, dataPointerPath) {
-      if (schema.allOf === undefined) {
-        return null;
-      }
-      var error;
-      for (var i = 0; i < schema.allOf.length; i++) {
-        var subSchema = schema.allOf[i];
-        if (error = this.validateAll(data, subSchema, [], ["allOf", i], dataPointerPath)) {
-          return error;
-        }
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateAnyOf = function validateAnyOf(data, schema, dataPointerPath) {
-      if (schema.anyOf === undefined) {
-        return null;
-      }
-      var errors = [];
-      var startErrorCount = this.errors.length;
-      var oldUnknownPropertyPaths, oldKnownPropertyPaths;
-      if (this.trackUnknownProperties) {
-        oldUnknownPropertyPaths = this.unknownPropertyPaths;
-        oldKnownPropertyPaths = this.knownPropertyPaths;
-      }
-      var errorAtEnd = true;
-      for (var i = 0; i < schema.anyOf.length; i++) {
-        if (this.trackUnknownProperties) {
-          this.unknownPropertyPaths = {};
-          this.knownPropertyPaths = {};
-        }
-        var subSchema = schema.anyOf[i];
-
-        var errorCount = this.errors.length;
-        var error = this.validateAll(data, subSchema, [], ["anyOf", i], dataPointerPath);
-
-        if (error === null && errorCount === this.errors.length) {
-          this.errors = this.errors.slice(0, startErrorCount);
-
-          if (this.trackUnknownProperties) {
-            for (var knownKey in this.knownPropertyPaths) {
-              oldKnownPropertyPaths[knownKey] = true;
-              delete oldUnknownPropertyPaths[knownKey];
-            }
-            for (var unknownKey in this.unknownPropertyPaths) {
-              if (!oldKnownPropertyPaths[unknownKey]) {
-                oldUnknownPropertyPaths[unknownKey] = true;
-              }
-            }
-            // We need to continue looping so we catch all the property definitions, but we don't want to return an error
-            errorAtEnd = false;
-            continue;
-          }
-
-          return null;
-        }
-        if (error) {
-          errors.push(error.prefixWith(null, "" + i).prefixWith(null, "anyOf"));
-        }
-      }
-      if (this.trackUnknownProperties) {
-        this.unknownPropertyPaths = oldUnknownPropertyPaths;
-        this.knownPropertyPaths = oldKnownPropertyPaths;
-      }
-      if (errorAtEnd) {
-        errors = errors.concat(this.errors.slice(startErrorCount));
-        this.errors = this.errors.slice(0, startErrorCount);
-        return this.createError(ErrorCodes.ANY_OF_MISSING, {}, "", "/anyOf", errors, data, schema);
-      }
-    };
-
-    ValidatorContext.prototype.validateOneOf = function validateOneOf(data, schema, dataPointerPath) {
-      if (schema.oneOf === undefined) {
-        return null;
-      }
-      var validIndex = null;
-      var errors = [];
-      var startErrorCount = this.errors.length;
-      var oldUnknownPropertyPaths, oldKnownPropertyPaths;
-      if (this.trackUnknownProperties) {
-        oldUnknownPropertyPaths = this.unknownPropertyPaths;
-        oldKnownPropertyPaths = this.knownPropertyPaths;
-      }
-      for (var i = 0; i < schema.oneOf.length; i++) {
-        if (this.trackUnknownProperties) {
-          this.unknownPropertyPaths = {};
-          this.knownPropertyPaths = {};
-        }
-        var subSchema = schema.oneOf[i];
-
-        var errorCount = this.errors.length;
-        var error = this.validateAll(data, subSchema, [], ["oneOf", i], dataPointerPath);
-
-        if (error === null && errorCount === this.errors.length) {
-          if (validIndex === null) {
-            validIndex = i;
-          } else {
-            this.errors = this.errors.slice(0, startErrorCount);
-            return this.createError(ErrorCodes.ONE_OF_MULTIPLE, { index1: validIndex, index2: i }, "", "/oneOf", null, data, schema);
-          }
-          if (this.trackUnknownProperties) {
-            for (var knownKey in this.knownPropertyPaths) {
-              oldKnownPropertyPaths[knownKey] = true;
-              delete oldUnknownPropertyPaths[knownKey];
-            }
-            for (var unknownKey in this.unknownPropertyPaths) {
-              if (!oldKnownPropertyPaths[unknownKey]) {
-                oldUnknownPropertyPaths[unknownKey] = true;
-              }
-            }
-          }
-        } else if (error) {
-          errors.push(error);
-        }
-      }
-      if (this.trackUnknownProperties) {
-        this.unknownPropertyPaths = oldUnknownPropertyPaths;
-        this.knownPropertyPaths = oldKnownPropertyPaths;
-      }
-      if (validIndex === null) {
-        errors = errors.concat(this.errors.slice(startErrorCount));
-        this.errors = this.errors.slice(0, startErrorCount);
-        return this.createError(ErrorCodes.ONE_OF_MISSING, {}, "", "/oneOf", errors, data, schema);
-      } else {
-        this.errors = this.errors.slice(0, startErrorCount);
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateNot = function validateNot(data, schema, dataPointerPath) {
-      if (schema.not === undefined) {
-        return null;
-      }
-      var oldErrorCount = this.errors.length;
-      var oldUnknownPropertyPaths, oldKnownPropertyPaths;
-      if (this.trackUnknownProperties) {
-        oldUnknownPropertyPaths = this.unknownPropertyPaths;
-        oldKnownPropertyPaths = this.knownPropertyPaths;
-        this.unknownPropertyPaths = {};
-        this.knownPropertyPaths = {};
-      }
-      var error = this.validateAll(data, schema.not, null, null, dataPointerPath);
-      var notErrors = this.errors.slice(oldErrorCount);
-      this.errors = this.errors.slice(0, oldErrorCount);
-      if (this.trackUnknownProperties) {
-        this.unknownPropertyPaths = oldUnknownPropertyPaths;
-        this.knownPropertyPaths = oldKnownPropertyPaths;
-      }
-      if (error === null && notErrors.length === 0) {
-        return this.createError(ErrorCodes.NOT_PASSED, {}, "", "/not", null, data, schema);
-      }
-      return null;
-    };
-
-    ValidatorContext.prototype.validateHypermedia = function validateCombinations(data, schema, dataPointerPath) {
-      if (!schema.links) {
-        return null;
-      }
-      var error;
-      for (var i = 0; i < schema.links.length; i++) {
-        var ldo = schema.links[i];
-        if (ldo.rel === "describedby") {
-          var template = new UriTemplate(ldo.href);
-          var allPresent = true;
-          for (var j = 0; j < template.varNames.length; j++) {
-            if (!(template.varNames[j] in data)) {
-              allPresent = false;
-              break;
-            }
-          }
-          if (allPresent) {
-            var schemaUrl = template.fillFromObject(data);
-            var subSchema = { "$ref": schemaUrl };
-            if (error = this.validateAll(data, subSchema, [], ["links", i], dataPointerPath)) {
-              return error;
-            }
-          }
-        }
-      }
-    };
-
-    // parseURI() and resolveUrl() are from https://gist.github.com/1088850
-    //   -  released as public domain by author ("Yaffle") - see comments on gist
-
-    function parseURI(url) {
-      var m = String(url).replace(/^\s+|\s+$/g, '').match(/^([^:\/?#]+:)?(\/\/(?:[^:@]*(?::[^:@]*)?@)?(([^:\/?#]*)(?::(\d*))?))?([^?#]*)(\?[^#]*)?(#[\s\S]*)?/);
-      // authority = '//' + user + ':' + pass '@' + hostname + ':' port
-      return m ? {
-        href: m[0] || '',
-        protocol: m[1] || '',
-        authority: m[2] || '',
-        host: m[3] || '',
-        hostname: m[4] || '',
-        port: m[5] || '',
-        pathname: m[6] || '',
-        search: m[7] || '',
-        hash: m[8] || ''
-      } : null;
-    }
-
-    function resolveUrl(base, href) {
-      // RFC 3986
-
-      function removeDotSegments(input) {
-        var output = [];
-        input.replace(/^(\.\.?(\/|$))+/, '').replace(/\/(\.(\/|$))+/g, '/').replace(/\/\.\.$/, '/../').replace(/\/?[^\/]*/g, function (p) {
-          if (p === '/..') {
-            output.pop();
-          } else {
-            output.push(p);
-          }
-        });
-        return output.join('').replace(/^\//, input.charAt(0) === '/' ? '/' : '');
-      }
-
-      href = parseURI(href || '');
-      base = parseURI(base || '');
-
-      return !href || !base ? null : (href.protocol || base.protocol) + (href.protocol || href.authority ? href.authority : base.authority) + removeDotSegments(href.protocol || href.authority || href.pathname.charAt(0) === '/' ? href.pathname : href.pathname ? (base.authority && !base.pathname ? '/' : '') + base.pathname.slice(0, base.pathname.lastIndexOf('/') + 1) + href.pathname : base.pathname) + (href.protocol || href.authority || href.pathname ? href.search : href.search || base.search) + href.hash;
-    }
-
-    function getDocumentUri(uri) {
-      return uri.split('#')[0];
-    }
-    function normSchema(schema, baseUri) {
-      if (schema && typeof schema === "object") {
-        if (baseUri === undefined) {
-          baseUri = schema.id;
-        } else if (typeof schema.id === "string") {
-          baseUri = resolveUrl(baseUri, schema.id);
-          schema.id = baseUri;
-        }
-        if (Array.isArray(schema)) {
-          for (var i = 0; i < schema.length; i++) {
-            normSchema(schema[i], baseUri);
-          }
-        } else {
-          if (typeof schema['$ref'] === "string") {
-            schema['$ref'] = resolveUrl(baseUri, schema['$ref']);
-          }
-          for (var key in schema) {
-            if (key !== "enum") {
-              normSchema(schema[key], baseUri);
-            }
-          }
-        }
-      }
-    }
-
-    function defaultErrorReporter(language) {
-      language = language || 'en';
-
-      var errorMessages = languages[language];
-
-      return function (error) {
-        var messageTemplate = errorMessages[error.code] || ErrorMessagesDefault[error.code];
-        if (typeof messageTemplate !== 'string') {
-          return "Unknown error code " + error.code + ": " + JSON.stringify(error.messageParams);
-        }
-        var messageParams = error.params;
-        // Adapted from Crockford's supplant()
-        return messageTemplate.replace(/\{([^{}]*)\}/g, function (whole, varName) {
-          var subValue = messageParams[varName];
-          return typeof subValue === 'string' || typeof subValue === 'number' ? subValue : whole;
-        });
-      };
-    }
-
-    var ErrorCodes = {
-      INVALID_TYPE: 0,
-      ENUM_MISMATCH: 1,
-      ANY_OF_MISSING: 10,
-      ONE_OF_MISSING: 11,
-      ONE_OF_MULTIPLE: 12,
-      NOT_PASSED: 13,
-      // Numeric errors
-      NUMBER_MULTIPLE_OF: 100,
-      NUMBER_MINIMUM: 101,
-      NUMBER_MINIMUM_EXCLUSIVE: 102,
-      NUMBER_MAXIMUM: 103,
-      NUMBER_MAXIMUM_EXCLUSIVE: 104,
-      NUMBER_NOT_A_NUMBER: 105,
-      // String errors
-      STRING_LENGTH_SHORT: 200,
-      STRING_LENGTH_LONG: 201,
-      STRING_PATTERN: 202,
-      // Object errors
-      OBJECT_PROPERTIES_MINIMUM: 300,
-      OBJECT_PROPERTIES_MAXIMUM: 301,
-      OBJECT_REQUIRED: 302,
-      OBJECT_ADDITIONAL_PROPERTIES: 303,
-      OBJECT_DEPENDENCY_KEY: 304,
-      // Array errors
-      ARRAY_LENGTH_SHORT: 400,
-      ARRAY_LENGTH_LONG: 401,
-      ARRAY_UNIQUE: 402,
-      ARRAY_ADDITIONAL_ITEMS: 403,
-      // Custom/user-defined errors
-      FORMAT_CUSTOM: 500,
-      KEYWORD_CUSTOM: 501,
-      // Schema structure
-      CIRCULAR_REFERENCE: 600,
-      // Non-standard validation options
-      UNKNOWN_PROPERTY: 1000
-    };
-    var ErrorCodeLookup = {};
-    for (var key in ErrorCodes) {
-      ErrorCodeLookup[ErrorCodes[key]] = key;
-    }
-    var ErrorMessagesDefault = {
-      INVALID_TYPE: "Invalid type: {type} (expected {expected})",
-      ENUM_MISMATCH: "No enum match for: {value}",
-      ANY_OF_MISSING: "Data does not match any schemas from \"anyOf\"",
-      ONE_OF_MISSING: "Data does not match any schemas from \"oneOf\"",
-      ONE_OF_MULTIPLE: "Data is valid against more than one schema from \"oneOf\": indices {index1} and {index2}",
-      NOT_PASSED: "Data matches schema from \"not\"",
-      // Numeric errors
-      NUMBER_MULTIPLE_OF: "Value {value} is not a multiple of {multipleOf}",
-      NUMBER_MINIMUM: "Value {value} is less than minimum {minimum}",
-      NUMBER_MINIMUM_EXCLUSIVE: "Value {value} is equal to exclusive minimum {minimum}",
-      NUMBER_MAXIMUM: "Value {value} is greater than maximum {maximum}",
-      NUMBER_MAXIMUM_EXCLUSIVE: "Value {value} is equal to exclusive maximum {maximum}",
-      NUMBER_NOT_A_NUMBER: "Value {value} is not a valid number",
-      // String errors
-      STRING_LENGTH_SHORT: "String is too short ({length} chars), minimum {minimum}",
-      STRING_LENGTH_LONG: "String is too long ({length} chars), maximum {maximum}",
-      STRING_PATTERN: "String does not match pattern: {pattern}",
-      // Object errors
-      OBJECT_PROPERTIES_MINIMUM: "Too few properties defined ({propertyCount}), minimum {minimum}",
-      OBJECT_PROPERTIES_MAXIMUM: "Too many properties defined ({propertyCount}), maximum {maximum}",
-      OBJECT_REQUIRED: "Missing required property: {key}",
-      OBJECT_ADDITIONAL_PROPERTIES: "Additional properties not allowed",
-      OBJECT_DEPENDENCY_KEY: "Dependency failed - key must exist: {missing} (due to key: {key})",
-      // Array errors
-      ARRAY_LENGTH_SHORT: "Array is too short ({length}), minimum {minimum}",
-      ARRAY_LENGTH_LONG: "Array is too long ({length}), maximum {maximum}",
-      ARRAY_UNIQUE: "Array items are not unique (indices {match1} and {match2})",
-      ARRAY_ADDITIONAL_ITEMS: "Additional items not allowed",
-      // Format errors
-      FORMAT_CUSTOM: "Format validation failed ({message})",
-      KEYWORD_CUSTOM: "Keyword failed: {key} ({message})",
-      // Schema structure
-      CIRCULAR_REFERENCE: "Circular $refs: {urls}",
-      // Non-standard validation options
-      UNKNOWN_PROPERTY: "Unknown property (not in schema)"
-    };
-
-    function ValidationError(code, params, dataPath, schemaPath, subErrors) {
-      Error.call(this);
-      if (code === undefined) {
-        throw new Error("No error code supplied: " + schemaPath);
-      }
-      this.message = '';
-      this.params = params;
-      this.code = code;
-      this.dataPath = dataPath || "";
-      this.schemaPath = schemaPath || "";
-      this.subErrors = subErrors || null;
-
-      var err = new Error(this.message);
-      this.stack = err.stack || err.stacktrace;
-      if (!this.stack) {
-        try {
-          throw err;
-        } catch (err) {
-          this.stack = err.stack || err.stacktrace;
-        }
-      }
-    }
-    ValidationError.prototype = Object.create(Error.prototype);
-    ValidationError.prototype.constructor = ValidationError;
-    ValidationError.prototype.name = 'ValidationError';
-
-    ValidationError.prototype.prefixWith = function (dataPrefix, schemaPrefix) {
-      if (dataPrefix !== null) {
-        dataPrefix = dataPrefix.replace(/~/g, "~0").replace(/\//g, "~1");
-        this.dataPath = "/" + dataPrefix + this.dataPath;
-      }
-      if (schemaPrefix !== null) {
-        schemaPrefix = schemaPrefix.replace(/~/g, "~0").replace(/\//g, "~1");
-        this.schemaPath = "/" + schemaPrefix + this.schemaPath;
-      }
-      if (this.subErrors !== null) {
-        for (var i = 0; i < this.subErrors.length; i++) {
-          this.subErrors[i].prefixWith(dataPrefix, schemaPrefix);
-        }
-      }
-      return this;
-    };
-
-    function isTrustedUrl(baseUrl, testUrl) {
-      if (testUrl.substring(0, baseUrl.length) === baseUrl) {
-        var remainder = testUrl.substring(baseUrl.length);
-        if (testUrl.length > 0 && testUrl.charAt(baseUrl.length - 1) === "/" || remainder.charAt(0) === "#" || remainder.charAt(0) === "?") {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    var languages = {};
-    function createApi(language) {
-      var globalContext = new ValidatorContext();
-      var currentLanguage;
-      var customErrorReporter;
-      var api = {
-        setErrorReporter: function (reporter) {
-          if (typeof reporter === 'string') {
-            return this.language(reporter);
-          }
-          customErrorReporter = reporter;
-          return true;
-        },
-        addFormat: function () {
-          globalContext.addFormat.apply(globalContext, arguments);
-        },
-        language: function (code) {
-          if (!code) {
-            return currentLanguage;
-          }
-          if (!languages[code]) {
-            code = code.split('-')[0]; // fall back to base language
-          }
-          if (languages[code]) {
-            currentLanguage = code;
-            return code; // so you can tell if fall-back has happened
-          }
-          return false;
-        },
-        addLanguage: function (code, messageMap) {
-          var key;
-          for (key in ErrorCodes) {
-            if (messageMap[key] && !messageMap[ErrorCodes[key]]) {
-              messageMap[ErrorCodes[key]] = messageMap[key];
-            }
-          }
-          var rootCode = code.split('-')[0];
-          if (!languages[rootCode]) {
-            // use for base language if not yet defined
-            languages[code] = messageMap;
-            languages[rootCode] = messageMap;
-          } else {
-            languages[code] = Object.create(languages[rootCode]);
-            for (key in messageMap) {
-              if (typeof languages[rootCode][key] === 'undefined') {
-                languages[rootCode][key] = messageMap[key];
-              }
-              languages[code][key] = messageMap[key];
-            }
-          }
-          return this;
-        },
-        freshApi: function (language) {
-          var result = createApi();
-          if (language) {
-            result.language(language);
-          }
-          return result;
-        },
-        validate: function (data, schema, checkRecursive, banUnknownProperties) {
-          var def = defaultErrorReporter(currentLanguage);
-          var errorReporter = customErrorReporter ? function (error, data, schema) {
-            return customErrorReporter(error, data, schema) || def(error, data, schema);
-          } : def;
-          var context = new ValidatorContext(globalContext, false, errorReporter, checkRecursive, banUnknownProperties);
-          if (typeof schema === "string") {
-            schema = { "$ref": schema };
-          }
-          context.addSchema("", schema);
-          var error = context.validateAll(data, schema, null, null, "");
-          if (!error && banUnknownProperties) {
-            error = context.banUnknownProperties(data, schema);
-          }
-          this.error = error;
-          this.missing = context.missing;
-          this.valid = error === null;
-          return this.valid;
-        },
-        validateResult: function () {
-          var result = { toString: function () {
-              return this.valid ? 'valid' : this.error.message;
-            } };
-          this.validate.apply(result, arguments);
-          return result;
-        },
-        validateMultiple: function (data, schema, checkRecursive, banUnknownProperties) {
-          var def = defaultErrorReporter(currentLanguage);
-          var errorReporter = customErrorReporter ? function (error, data, schema) {
-            return customErrorReporter(error, data, schema) || def(error, data, schema);
-          } : def;
-          var context = new ValidatorContext(globalContext, true, errorReporter, checkRecursive, banUnknownProperties);
-          if (typeof schema === "string") {
-            schema = { "$ref": schema };
-          }
-          context.addSchema("", schema);
-          context.validateAll(data, schema, null, null, "");
-          if (banUnknownProperties) {
-            context.banUnknownProperties(data, schema);
-          }
-          var result = { toString: function () {
-              return this.valid ? 'valid' : this.error.message;
-            } };
-          result.errors = context.errors;
-          result.missing = context.missing;
-          result.valid = result.errors.length === 0;
-          return result;
-        },
-        addSchema: function () {
-          return globalContext.addSchema.apply(globalContext, arguments);
-        },
-        getSchema: function () {
-          return globalContext.getSchema.apply(globalContext, arguments);
-        },
-        getSchemaMap: function () {
-          return globalContext.getSchemaMap.apply(globalContext, arguments);
-        },
-        getSchemaUris: function () {
-          return globalContext.getSchemaUris.apply(globalContext, arguments);
-        },
-        getMissingUris: function () {
-          return globalContext.getMissingUris.apply(globalContext, arguments);
-        },
-        dropSchemas: function () {
-          globalContext.dropSchemas.apply(globalContext, arguments);
-        },
-        defineKeyword: function () {
-          globalContext.defineKeyword.apply(globalContext, arguments);
-        },
-        defineError: function (codeName, codeNumber, defaultMessage) {
-          if (typeof codeName !== 'string' || !/^[A-Z]+(_[A-Z]+)*$/.test(codeName)) {
-            throw new Error('Code name must be a string in UPPER_CASE_WITH_UNDERSCORES');
-          }
-          if (typeof codeNumber !== 'number' || codeNumber % 1 !== 0 || codeNumber < 10000) {
-            throw new Error('Code number must be an integer > 10000');
-          }
-          if (typeof ErrorCodes[codeName] !== 'undefined') {
-            throw new Error('Error already defined: ' + codeName + ' as ' + ErrorCodes[codeName]);
-          }
-          if (typeof ErrorCodeLookup[codeNumber] !== 'undefined') {
-            throw new Error('Error code already used: ' + ErrorCodeLookup[codeNumber] + ' as ' + codeNumber);
-          }
-          ErrorCodes[codeName] = codeNumber;
-          ErrorCodeLookup[codeNumber] = codeName;
-          ErrorMessagesDefault[codeName] = ErrorMessagesDefault[codeNumber] = defaultMessage;
-          for (var langCode in languages) {
-            var language = languages[langCode];
-            if (language[codeName]) {
-              language[codeNumber] = language[codeNumber] || language[codeName];
-            }
-          }
-        },
-        reset: function () {
-          globalContext.reset();
-          this.error = null;
-          this.missing = [];
-          this.valid = true;
-        },
-        missing: [],
-        error: null,
-        valid: true,
-        normSchema: normSchema,
-        resolveUrl: resolveUrl,
-        getDocumentUri: getDocumentUri,
-        errorCodes: ErrorCodes
-      };
-      api.language(language || 'en');
-      return api;
-    }
-
-    var tv4 = createApi();
-    tv4.addLanguage('en-gb', ErrorMessagesDefault);
-
-    //legacy property
-    tv4.tv4 = tv4;
-
-    return tv4; // used by _header.js to globalise.
-  });
-  let wsSchema = [{ "$schema": "http://json-schema.org/draft-04/schema#", "id": "/", "definitions": { "pinSetting": { "id": "pinSetting", "type": "integer", "minimum": 0, "maximum": 11, "default": null, "example": [0, 1, 2, 3, 4, 5, 6] }, "bleAdvertiseData": { "id": "bleAdvertiseData", "type": "array", "default": null, "maxItems": 31, "example": [[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101], [7, 9, 83, 97, 109, 112, 108, 101]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "dataArray32": { "id": "dataArray32", "type": "array", "default": null, "maxItems": 32, "example": [[100, 255, 21, 0, 21]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "dataArray1024": { "id": "dataArray1024", "type": "array", "default": null, "maxItems": 1024, "example": [[100, 255, 21, 0, 21]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "zerooneArray": { "id": "zerooneArray", "type": "array", "default": null, "description": "Binary data array represented in 0 1.", "example": [[0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 1, 0, 0, 0, 0, 0]], "items": { "type": "integer", "minimum": 0, "maximum": 1 } }, "dataArray": { "id": "dataArray", "type": "array", "default": null, "description": "Binary data array.", "example": [[16, 34, 242], [100, 255, 21, 0, 21]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "imageData128x64": { "id": "imageData128x64", "type": "array", "description": "Image data bit array.", "minItems": 1024, "maxItems": 1024, "example": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 240, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 192, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 129, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 254, 7, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 252, 15, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 248, 31, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 240, 63, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 224, 127, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 192, 255, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 129, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 255, 3, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 7, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 252, 15, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 248, 31, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 240, 63, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 224, 127, 193, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 252, 64, 255, 128, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 15, 240, 1, 255, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 224, 3, 254, 0, 127, 254, 14, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 252, 30, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 254, 0, 63, 248, 60, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 63, 240, 120, 0, 0, 0, 0, 0, 0, 0, 0, 31, 192, 7, 254, 0, 127, 224, 240, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 7, 252, 0, 127, 193, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 224, 15, 248, 0, 255, 131, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 240, 31, 240, 39, 255, 7, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 252, 63, 224, 127, 254, 15, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 192, 255, 252, 31, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 129, 255, 248, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 3, 255, 240, 127, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 254, 7, 255, 224, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 252, 15, 255, 193, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 248, 31, 255, 131, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 240, 63, 255, 7, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 224, 127, 254, 15, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 192, 255, 252, 31, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 129, 255, 0, 63, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 3, 254, 0, 127, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 254, 7, 252, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 252, 15, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 248, 31, 252, 0, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 224, 127, 252, 0, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 255, 252, 0, 255, 248, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 255, 254, 1, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 3, 255, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 255, 255, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 255, 255, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 255, 255, 255, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 255, 255, 255, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 255, 255, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 255, 255, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], "items": { "type": "integer", "minimum": 0, "maximum": 255 } }, "hexString": { "id": "hexString", "type": "string", "default": null, "pattern": "^([0-9a-fA-F]+)$", "description": "Bluetooth device id.If it contain '-', it ignored.", "example": "8d0fd8f9" }, "uuid": { "id": "uuid", "type": "string", "pattern": "^([-0-9a-fA-F]+)$", "minLength": 4, "maxLength": 36, "description": "Bluetooth uuid. If it contain '-', it ignored.", "example": ["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e", "8d3591bda71140fd8f9f00535fe57179", "d822b53c", "de44"] }, "uuidOrNull": { "id": "uuidOrNull", "type": ["string", "null"], "pattern": "^([-0-9a-fA-F]+)$", "minLength": 4, "maxLength": 36, "description": "Bluetooth uuid. If it contain '-', it ignored.", "example": ["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e", "8d3591bda71140fd8f9f00535fe57179", "d822b53c", "de44", null] }, "deviceAddress": { "id": "deviceAddress", "type": "string", "pattern": "^([0-9a-fA-F]+)$", "minLength": 12, "maxLength": 12, "description": "Bluetooth device id. It's hexString cannot cointain '0x' or '-'.", "example": "77e754ab8591" }, "obnizId": { "id": "obnizId", "type": ["string", "integer"], "pattern": "^[0-9]{4}-?[0-9]{4}$", "minimum": 0, "maximum": 99999999, "description": "Obniz id. It can contain '-' or not.", "example": ["1234-5678", 12345678] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ad/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ad", "basePath": "ad0", "description": "available ad0~ad11", "anyOf": [{ "$ref": "/request/ad/get" }, { "$ref": "/request/ad/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ad/get", "related": "/response/ad/get", "desription": "enable & start ad module at io.", "type": "object", "required": ["stream"], "properties": { "stream": { "type": "boolean", "default": false, "description": "true to continuous notifying on voltage change." } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/characteristic_get", "related": "/response/ble/central/characteristic_get", "type": "object", "required": ["get_characteristics"], "properties": { "get_characteristics": { "type": "object", "required": ["address", "service_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/characteristic_read", "related": "/response/ble/central/characteristic_read", "type": "object", "required": ["read_characteristic"], "properties": { "read_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/characteristic_write", "related": "/response/ble/central/characteristic_write", "type": "object", "required": ["write_characteristic"], "properties": { "write_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" }, "needResponse": { "type": "boolean", "default": true } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/connect", "related": "/response/ble/central/status_update", "type": "object", "required": ["connect"], "properties": { "connect": { "type": "object", "required": ["address"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/descriptor_get", "related": "/response/ble/central/descriptor_get", "type": "object", "required": ["get_descriptors"], "properties": { "get_descriptors": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/descriptor_read", "related": "/response/ble/central/descriptor_read", "type": "object", "required": ["read_descriptors"], "properties": { "read_descriptors": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/descriptor_write", "related": "/response/ble/central/descriptor_write", "type": "object", "required": ["write_descriptors"], "properties": { "write_descriptors": { "type": "object", "required": ["address", "service_uuid", "service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" }, "needResponse": { "type": "boolean", "default": true } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/disconnect", "type": "object", "required": ["disconnect"], "properties": { "disconnect": { "type": "object", "required": ["address"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central", "basePath": "ble", "description": "use obniz as central", "anyOf": [{ "$ref": "/request/ble/central/scan_start" }, { "$ref": "/request/ble/central/scan_stop" }, { "$ref": "/request/ble/central/connect" }, { "$ref": "/request/ble/central/disconnect" }, { "$ref": "/request/ble/central/service_get" }, { "$ref": "/request/ble/central/characteristic_get" }, { "$ref": "/request/ble/central/characteristic_read" }, { "$ref": "/request/ble/central/characteristic_write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/scan_start", "related": ["/response/ble/central/scan", "/response/ble/central/scan_finish"], "type": "object", "required": ["scan"], "properties": { "scan": { "type": "object", "additionalProperties": false, "properties": { "duration": { "type": "integer", "default": 30 } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/scan_stop", "type": "object", "required": ["scan"], "properties": { "scan": { "type": "null" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/central/service_get", "related": "/response/ble/central/service_get", "type": "object", "required": ["get_services"], "properties": { "get_services": { "type": "object", "required": ["address"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble", "basePath": "ble", "anyOf": [{ "$ref": "/request/ble/peripheral" }, { "$ref": "/request/ble/central" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/advertisement_start", "related": "/response/ble/peripheral/status", "type": "object", "required": ["advertisement"], "properties": { "advertisement": { "type": "object", "required": ["adv_data"], "additionalProperties": false, "properties": { "adv_data": { "$ref": "/bleAdvertiseData" }, "scan_resp": { "$ref": "/bleAdvertiseData" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/advertisement_stop", "type": "object", "required": ["advertisement"], "properties": { "advertisement": { "type": "null" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/characteristic_read", "description": "read characteristic on own service", "related": "/response/ble/peripheral/characteristic_read", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["read_characteristic"], "properties": { "read_characteristic": { "type": "object", "required": ["service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/characteristic_write", "description": "write characteristic on own service", "related": "/response/ble/peripheral/characteristic_write", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["write_characteristic"], "properties": { "write_characteristic": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/descriptor_read", "related": "/response/ble/peripheral/descriptor_read", "description": "read descriptor on own service", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["read_descriptor"], "properties": { "read_descriptor": { "type": "object", "required": ["service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/descriptor_write", "related": "/response/ble/peripheral/descriptor_write", "description": "write descriptor on own service", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["write_characteristic"], "properties": { "write_descriptor": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral", "basePath": "ble", "description": "use obniz as peripheral", "anyOf": [{ "$ref": "/request/ble/peripheral/advertisement_start" }, { "$ref": "/request/ble/peripheral/advertisement_stop" }, { "$ref": "/request/ble/peripheral/service_start" }, { "$ref": "/request/ble/peripheral/service_stop" }, { "$ref": "/request/ble/peripheral/characteristic_read" }, { "$ref": "/request/ble/peripheral/characteristic_write" }, { "$ref": "/request/ble/peripheral/descriptor_read" }, { "$ref": "/request/ble/peripheral/descriptor_write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/service_start", "related": ["/response/ble/peripheral/status", "/response/ble/peripheral/characteristic_notify_read", "/response/ble/peripheral/characteristic_notify_write", "/response/ble/peripheral/descriptor_notify_read", "/response/ble/peripheral/descriptor_notify_write"], "description": "callback of external device connected", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "required": ["services"], "properties": { "services": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["uuid"], "additionalProperties": false, "properties": { "uuid": { "$ref": "/uuid" }, "characteristics": { "type": "array", "minItems": 0, "items": { "type": "object", "required": ["uuid"], "additionalProperties": false, "properties": { "uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" }, "descriptors": { "type": "array", "items": { "type": "object", "required": ["uuid"], "additionalProperties": false, "properties": { "uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } } } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ble/peripheral/service_stop", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "null" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/clear", "type": "object", "required": ["clear"], "properties": { "clear": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display", "basePath": "display", "anyOf": [{ "$ref": "/request/display/text" }, { "$ref": "/request/display/clear" }, { "$ref": "/request/display/qr" }, { "$ref": "/request/display/raw" }, { "$ref": "/request/display/pin_assign" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/pin_assign", "type": "object", "required": ["pin_assign"], "properties": { "pin_assign": { "type": "object", "minProperties": 1, "patternExample": [0, 1, 2, 3], "patternProperties": { "^[0-9]$": { "type": "object", "properties": { "module_name": { "type": "string", "example": "io" }, "pin_name": { "type": "string", "example": "output" } } }, "^1[0-1]$": { "type": "object", "properties": { "module_name": { "type": "string", "example": "io" }, "pin_name": { "type": "string", "example": "output" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/qr", "type": "object", "required": ["qr"], "properties": { "qr": { "type": "object", "required": ["text"], "additionalProperties": false, "properties": { "text": { "type": "string", "example": "Hello, obniz!" }, "correction": { "type": "string", "enum": ["L", "M", "Q", "H"], "default": "M" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/raw", "description": "1 bit represents 1 dot. 1=white, 0=black. 1 byte is part of one line. Order is same like.<br/> {1byte} {2byte} {3byte}...{16byte}<br/> {17byte} {18byte} {19byte}...<br/> .....<br/> .....................{1024byte}", "type": "object", "required": ["raw"], "properties": { "raw": { "$ref": "/imageData128x64" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/display/text", "type": "object", "required": ["text"], "properties": { "text": { "type": "string", "example": "Hello, obniz!" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c", "basePath": "i2c0", "description": "available only i2c0", "anyOf": [{ "$ref": "/request/i2c/init_master" }, { "$ref": "/request/i2c/init_slave" }, { "$ref": "/request/i2c/write" }, { "$ref": "/request/i2c/read" }, { "$ref": "/request/i2c/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/init_master", "description": "internal pullup is available. But, We recommend use external pull-up resistor.", "type": "object", "required": ["mode", "sda", "scl", "clock"], "uniqueKeys": ["sda", "scl"], "properties": { "mode": { "type": "string", "enum": ["master"] }, "sda": { "$ref": "/pinSetting" }, "scl": { "$ref": "/pinSetting" }, "clock": { "type": "integer", "description": "frequency (Hz)", "minimum": 1, "maximum": 1000000 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/init_slave", "related": "/response/i2c/slave", "type": "object", "required": ["mode", "sda", "scl", "slave_address"], "uniqueKeys": ["sda", "scl"], "properties": { "mode": { "type": "string", "enum": ["master", "slave"] }, "sda": { "$ref": "/pinSetting" }, "scl": { "$ref": "/pinSetting" }, "slave_address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "slave_address_length": { "type": "integer", "enum": [7, 10], "default": 7 }, "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "address_bits": { "type": "integer", "enum": [7, 10], "default": 7 }, "data": { "$ref": "/dataArray" }, "read": { "type": "integer", "minimum": 0 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/read", "description": "if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.", "related": "/response/i2c/master", "type": "object", "required": ["address", "read"], "properties": { "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "address_bits": { "type": "integer", "enum": [7, 10], "default": 7 }, "read": { "type": "integer", "minimum": 0, "maximum": 1024 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/i2c/write", "description": "if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.", "type": "object", "required": ["address", "data"], "properties": { "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "address_bits": { "type": "integer", "enum": [7, 10], "default": 7 }, "data": { "$ref": "/dataArray1024" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request", "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "patternProperties": { "^io[0-9]$": { "$ref": "/request/io" }, "^io1[0-1]$": { "$ref": "/request/io" }, "^ad[0-9]$": { "$ref": "/request/ad" }, "^ad1[0-1]$": { "$ref": "/request/ad" }, "^pwm[0-5]$": { "$ref": "/request/pwm" }, "^uart[0-1]$": { "$ref": "/request/uart" }, "^spi[0-1]$": { "$ref": "/request/spi" }, "^i2c0$": { "$ref": "/request/i2c" } }, "properties": { "io": { "$ref": "/request/ioAnimation" }, "ble": { "$ref": "/request/ble" }, "switch": { "$ref": "/request/switch" }, "display": { "$ref": "/request/display" }, "measure": { "$ref": "/request/measure" }, "message": { "$ref": "/request/message" }, "logic_analyzer": { "$ref": "/request/logicAnalyzer" }, "system": { "$ref": "/request/system" } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io", "basePath": "io0", "description": "General purpose IO available on each io (io0 to io11).", "anyOf": [{ "$ref": "/request/io/input" }, { "$ref": "/request/io/input_detail" }, { "$ref": "/request/io/output" }, { "$ref": "/request/io/output_detail" }, { "$ref": "/request/io/output_type" }, { "$ref": "/request/io/pull_type" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/input_detail", "related": "/response/io/get", "type": "object", "required": ["direction"], "properties": { "direction": { "type": "string", "enum": ["input"] }, "stream": { "type": "boolean", "default": false, "description": "enable stream callback when value change" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/input", "related": "/response/io/get", "type": "string", "enum": ["get"] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/output_detail", "type": "object", "required": ["direction", "value"], "properties": { "direction": { "type": "string", "enum": ["output"] }, "value": { "type": "boolean" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/output_type", "type": "object", "required": ["output_type"], "properties": { "output_type": { "type": "string", "enum": ["push-pull5v", "push-pull3v", "open-drain"], "description": "drive type" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/output", "type": "boolean" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/io/pull_type", "type": "object", "required": ["pull_type"], "properties": { "pull_type": { "type": "string", "enum": ["pull-up5v", "pull-up3v", "pull-down", "float"] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ioAnimation/changeState", "type": "object", "required": ["animation"], "properties": { "animation": { "type": "object", "required": ["name", "status"], "additionalProperties": false, "properties": { "name": { "type": "string", "example": "anim-1", "minLength": 1, "maxLength": 254 }, "status": { "type": "string", "enum": ["pause", "resume"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ioAnimation", "basePath": "io.animation", "description": "io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is avaiable. it loop io changes regarding json array.", "anyOf": [{ "$ref": "/request/ioAnimation/init" }, { "$ref": "/request/ioAnimation/changeState" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ioAnimation/init", "commandExample": { "io": { "animation": { "animation": { "name": "anim-1", "status": "loop", "states": [{ "duration": 500, "state": { "io0": true } }, { "duration": 500, "state": { "io0": false } }] } } } }, "type": "object", "required": ["animation"], "properties": { "animation": { "type": "object", "required": ["name", "status", "states"], "additionalProperties": false, "properties": { "name": { "type": "string", "description": "Animation name to use pause/resume", "example": "anim-1", "minLength": 1, "maxLength": 254 }, "status": { "type": "string", "default": "loop", "enum": ["loop"] }, "states": { "type": "array", "default": [], "items": { "type": "object", "required": ["duration", "state"], "additionalProperties": false, "properties": { "duration": { "type": "integer", "description": "State duration time(ms)", "minimum": 0, "maximum": 60000, "multipleOf": 0.001, "example": 500 }, "state": { "type": "object", "description": "io/pwm commands.", "filter": "pass_all", "example": [{ "io0": true }, { "io0": false }] } } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/logicAnalyzer/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/logicAnalyzer", "basePath": "logic_analyzer", "description": "Monitor io logic level changes by sampling io.", "anyOf": [{ "$ref": "/request/logicAnalyzer/init" }, { "$ref": "/request/logicAnalyzer/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/logicAnalyzer/init", "exampleDescription": "With below sample code, you will receive only datas which start with 'false, false, false' 3bit.", "type": "object", "required": ["io", "interval", "duration"], "properties": { "io": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "/pinSetting" } }, "interval": { "type": "number", "minimum": 0, "multipleOf": 0.001, "exclusiveMinimum": true }, "duration": { "type": "integer", "minimum": 0, "exclusiveMinimum": true }, "triger": { "type": "object", "description": "Without this, logicanalyzer will start with any io level changes. trigger specify start position. ", "additionalProperties": false, "required": ["value", "samples"], "default": { "value": false, "samples": 0 }, "properties": { "value": { "description": "start value", "type": "boolean", "default": false }, "samples": { "type": "integer", "description": "how that values consists", "minimum": 0, "default": 0, "example": 3 } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/measure/echo", "description": "It measures pulse response.", "related": "/response/measure/echo", "type": "object", "required": ["echo"], "properties": { "echo": { "type": "object", "required": ["io_pulse", "io_echo", "pulse_width"], "properties": { "io_pulse": { "$ref": "/pinSetting" }, "io_echo": { "$ref": "/pinSetting" }, "pulse": { "type": "string", "default": "positive", "enum": ["positive", "negative"] }, "pulse_width": { "type": "number", "minimum": 0.001, "maximum": 1000, "multipleOf": 0.001 }, "measure_edges": { "type": "integer", "minimum": 1, "maximum": 4 }, "timeout": { "type": "number", "default": 1000, "minimum": 0.001, "maximum": 1000, "multipleOf": 0.001 } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/measure", "basePath": "measure", "anyOf": [{ "$ref": "/request/measure/echo" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/message", "basePath": "message", "description": "send/receive with other obniz or webhook", "anyOf": [{ "$ref": "/request/message/send" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/message/send", "related": "/response/message/receive", "type": "object", "additionalProperties": false, "required": ["data", "to"], "properties": { "data": { "description": "All type of data is pass." }, "to": { "type": "array", "minItems": 1, "items": { "$ref": "/obnizId" } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/duty", "type": "object", "required": ["duty"], "properties": { "duty": { "type": "number", "description": "% of duty cycle", "minimum": 0, "maximum": 100 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/freq", "type": "object", "required": ["freq"], "properties": { "freq": { "type": "integer", "description": "frequency (Hz)", "minimum": 1, "maximum": 80000000 } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm", "basePath": "pwm0", "description": "available 0 to 5", "anyOf": [{ "$ref": "/request/pwm/init" }, { "$ref": "/request/pwm/freq" }, { "$ref": "/request/pwm/pulse" }, { "$ref": "/request/pwm/duty" }, { "$ref": "/request/pwm/modulate" }, { "$ref": "/request/pwm/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/init", "type": "object", "required": ["io"], "properties": { "io": { "$ref": "/pinSetting" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/modulate", "type": "object", "required": ["modulate"], "properties": { "modulate": { "type": "object", "required": ["type", "symbol_length", "data"], "additionalProperties": false, "properties": { "type": { "type": "string", "enum": ["am"] }, "symbol_length": { "type": "number", "minimum": 0.05, "maximum": 1000, "multipleOf": 0.001, "description": "symbol width (ms)" }, "data": { "$ref": "/zerooneArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/pwm/pulse", "type": "object", "required": ["pulse"], "properties": { "pulse": { "type": "number", "minimum": 0, "multipleOf": 0.001, "description": "pulse width (ms)" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi", "basePath": "spi0", "description": "available spi0, spi1", "anyOf": [{ "$ref": "/request/spi/init_master" }, { "$ref": "/request/spi/deinit" }, { "$ref": "/request/spi/write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi/init_master", "description": "clk, miso, mosi are optional, but at least one are required", "type": "object", "required": ["mode", "clock"], "uniqueKeys": ["mosi", "miso", "clk"], "properties": { "mode": { "type": "string", "enum": ["master"] }, "clk": { "$ref": "/pinSetting" }, "mosi": { "$ref": "/pinSetting" }, "miso": { "$ref": "/pinSetting" }, "clock": { "type": "integer", "default": 115200, "minimum": 1, "maximum": 80000000, "desription": "frequency (Hz)" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/spi/write", "related": "/response/spi/read", "type": "object", "required": ["data", "read"], "properties": { "data": { "$ref": "/dataArray32" }, "read": { "type": "boolean", "default": true, "description": "If false, write without receive" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/switch/get", "related": "/response/switch/change", "type": "string", "enum": ["get"] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/switch", "basePath": "switch", "description": "the switch embed on obniz itself. If it's state is changed, notification will be fired.", "anyOf": [{ "$ref": "/request/switch/get" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system", "basePath": "system", "anyOf": [{ "$ref": "/request/system/wait" }, { "$ref": "/request/system/reset" }, { "$ref": "/request/system/reboot" }, { "$ref": "/request/system/selfCheck" }, { "$ref": "/request/system/keepWorkingAtOffline" }, { "$ref": "/request/system/ping" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/keepWorkingAtOffline", "description": "reset obniz when obniz gone to offline.", "type": "object", "required": ["keep_working_at_offline"], "properties": { "keep_working_at_offline": { "type": "boolean" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/ping", "response": "/response/system/pong", "type": "object", "required": ["ping"], "properties": { "ping": { "type": "object", "required": ["key"], "properties": { "key": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/reboot", "type": "object", "required": ["reboot"], "properties": { "reboot": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/reset", "type": "object", "required": ["reset"], "properties": { "reset": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/selfCheck", "description": "circuit IO check", "type": "object", "required": ["self_check"], "properties": { "self_check": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/system/wait", "type": "object", "required": ["wait"], "properties": { "wait": { "type": "integer", "description": "wait time (ms)" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart/deinit", "type": "null" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart", "basePath": "uart0", "anyOf": [{ "$ref": "/request/uart/init" }, { "$ref": "/request/uart/send" }, { "$ref": "/request/uart/deinit" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart/init", "description": "available 0 to 1", "type": "object", "required": ["rx", "tx"], "uniqueKeys": ["rx", "tx", "rts", "cts"], "properties": { "rx": { "$ref": "/pinSetting" }, "tx": { "$ref": "/pinSetting" }, "baud": { "type": "integer", "default": 115200, "minimum": 1, "maximum": 5000000, "description": "baud rate (bps)" }, "stop": { "type": "number", "enum": [1, 1.5, 2], "default": 1, "description": "stop bit width" }, "bits": { "type": "integer", "enum": [5, 6, 7, 8], "default": 8 }, "parity": { "type": "string", "enum": ["off", "odd", "even"], "default": "off" }, "flowcontrol": { "type": "string", "enum": ["off", "rts", "cts", "rts-cts"], "default": "off" }, "rts": { "$ref": "/pinSetting" }, "cts": { "$ref": "/pinSetting" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/uart/send", "type": "object", "required": ["data"], "properties": { "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ws", "basePath": "ws", "anyOf": [{ "$ref": "/request/ws/reset_obniz_on_ws_disconnection" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/request/ws/reset_obniz_on_ws_disconnection", "type": "object", "required": ["reset_obniz_on_ws_disconnection"], "properties": { "reset_obniz_on_ws_disconnection": { "type": "boolean", "default": false } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ad/get", "type": "number", "example": 3.3, "minimum": 0, "maximum": 5, "description": "current value (volt)" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ad", "basePath": "ad0", "anyOf": [{ "$ref": "/response/ad/get" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/characteristic_get", "type": "object", "required": ["get_characteristic_result"], "properties": { "get_characteristic_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/characteristic_read", "type": "object", "required": ["read_characteristic_result"], "properties": { "read_characteristic_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/characteristic_write", "type": "object", "required": ["write_characteristic_result"], "properties": { "write_characteristic_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "result"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/descriptor_get", "type": "object", "required": ["get_descriptors_result"], "properties": { "get_descriptors_result": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/descriptor_read", "type": "object", "required": ["read_descriptor_result"], "properties": { "read_descriptor_results": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/descriptor_write", "type": "object", "required": ["write_descriptor_result"], "properties": { "write_descriptor_results": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid", "result"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/error", "type": "object", "required": ["error"], "properties": { "error": { "type": "object", "required": ["error_code", "message"], "additionalProperties": false, "properties": { "error_code": { "type": "integer", "example": 0 }, "message": { "type": "string", "example": "ERROR MESSAGE" }, "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuidOrNull" }, "characteristic_uuid": { "$ref": "/uuidOrNull" }, "descriptor_uuid": { "$ref": "/uuidOrNull" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central", "basePath": "ble", "anyOf": [{ "$ref": "/response/ble/central/scan" }, { "$ref": "/response/ble/central/scan_finish" }, { "$ref": "/response/ble/central/status_update" }, { "$ref": "/response/ble/central/service_get" }, { "$ref": "/response/ble/central/characteristic_get" }, { "$ref": "/response/ble/central/characteristic_write" }, { "$ref": "/response/ble/central/characteristic_read" }, { "$ref": "/response/ble/central/descriptor_get" }, { "$ref": "/response/ble/central/descriptor_write" }, { "$ref": "/response/ble/central/descriptor_read" }, { "$ref": "/response/ble/central/error" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/scan_finish", "type": "object", "required": ["scan_result"], "properties": { "scan_result": { "type": "object", "required": ["event_type"], "additionalProperties": false, "properties": { "event_type": { "type": "string", "enum": ["inquiry_complete"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/scan", "type": "object", "required": ["scan_result"], "properties": { "scan_result": { "type": "object", "required": ["event_type"], "additionalProperties": false, "properties": { "event_type": { "type": "string", "enum": ["inquiry_result"] }, "address": { "$ref": "/deviceAddress" }, "ble_event_type": { "type": "string", "enum": ["connectable_advertisemnt", "connectable_directed_advertisemnt", "scannable_advertising", "non_connectable_advertising", "scan_response"] }, "device_type": { "type": "string", "enum": ["ble", "dumo", "breder"] }, "address_type": { "type": "string", "enum": ["public", "random", "rpa_public", "rpa_random"] }, "flag": { "type": "integer", "minimum": 0 }, "rssi": { "type": "integer", "maximum": 0 }, "adv_data": { "$ref": "/bleAdvertiseData" }, "scan_resp": { "$ref": "/bleAdvertiseData" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/service_get", "type": "object", "required": ["get_service_result"], "properties": { "get_service_result": { "type": "object", "required": ["address", "service_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/central/status_update", "type": "object", "required": ["status_update"], "properties": { "status_update": { "type": "object", "required": ["address", "status"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "status": { "type": "string", "enum": ["connected", "disconnected"] } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble", "basePath": "ble", "anyOf": [{ "$ref": "/response/ble/central" }, { "$ref": "/response/ble/peripheral" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_notify_read", "description": "callback of external device read characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_read_characteristic"], "properties": { "notify_read_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_notify_write", "description": "callback of external device write characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_write_characteristic"], "properties": { "notify_write_characteristic": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_read", "description": "callback of read characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["read_characteristic_result"], "properties": { "read_characteristic_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/characteristic_write", "description": "callback of write characteristic", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["write_characteristic_result"], "properties": { "write_characteristic_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "result"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_notify_read", "description": "callback of external device read descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_read_descriptor"], "properties": { "notify_read_descriptor": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_notify_write", "description": "callback of external device write descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["notify_write_descriptor"], "properties": { "notify_write_descriptor": { "type": "object", "required": ["address", "service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_read", "description": "callback of read descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["read_descriptor_results"], "properties": { "read_descriptor_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "descriptor_uuid", "data"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "data": { "$ref": "/dataArray" } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/descriptor_write", "description": "callback of write descriptor", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["write_descriptor_results"], "properties": { "write_descriptor_result": { "type": "object", "required": ["service_uuid", "characteristic_uuid", "descriptor_uuid", "result"], "additionalProperties": false, "properties": { "service_uuid": { "$ref": "/uuid" }, "characteristic_uuid": { "$ref": "/uuid" }, "descriptor_uuid": { "$ref": "/uuid" }, "result": { "type": "string", "enum": ["success", "failed"] } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral", "basePath": "ble", "anyOf": [{ "$ref": "/response/ble/peripheral/status" }, { "$ref": "/response/ble/peripheral/characteristic_read" }, { "$ref": "/response/ble/peripheral/characteristic_write" }, { "$ref": "/response/ble/peripheral/characteristic_notify_read" }, { "$ref": "/response/ble/peripheral/characteristic_notify_write" }, { "$ref": "/response/ble/peripheral/descriptor_read" }, { "$ref": "/response/ble/peripheral/descriptor_write" }, { "$ref": "/response/ble/peripheral/descriptor_notify_read" }, { "$ref": "/response/ble/peripheral/descriptor_notify_write" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ble/peripheral/status", "type": "object", "required": ["peripheral"], "properties": { "peripheral": { "type": "object", "additionalProperties": false, "required": ["connection_status"], "properties": { "connection_status": { "type": "object", "required": ["address", "status"], "additionalProperties": false, "properties": { "address": { "$ref": "/deviceAddress" }, "status": { "type": "string", "enum": ["connected", "disconnected"] } } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/debug/error", "desccription": "global error", "type": "object", "properties": { "error": { "type": "object", "additionalProperties": true, "properties": { "message": { "description": "readable message", "type": "string" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/debug", "basePath": "debug", "anyOf": [{ "$ref": "/response/debug/warning" }, { "$ref": "/response/debug/error" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/debug/warning", "desccription": "global warnings", "type": "object", "properties": { "warning": { "type": "object", "additionalProperties": true, "properties": { "message": { "description": "readable message", "type": "string" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/i2c", "basePath": "i2c0", "anyOf": [{ "$ref": "/response/i2c/master" }, { "$ref": "/response/i2c/slave" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/i2c/master", "type": "object", "required": ["mode", "address", "data"], "properties": { "mode": { "type": "string", "enum": ["master"] }, "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/i2c/slave", "type": "object", "required": ["mode", "address", "is_fragmented", "data"], "properties": { "mode": { "type": "string", "enum": ["slave"] }, "address": { "type": "integer", "minimum": 0, "maximum": 1023 }, "is_fragmented": { "type": "boolean" }, "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response", "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "patternProperties": { "^io[0-9]$": { "$ref": "/response/io" }, "^io1[0-1]$": { "$ref": "/response/io" }, "^ad[0-9]$": { "$ref": "/response/ad" }, "^ad1[0-1]$": { "$ref": "/response/ad" }, "^uart[0-1]$": { "$ref": "/response/uart" }, "^spi[0-1]$": { "$ref": "/response/spi" }, "^i2c0$": { "$ref": "/response/i2c" } }, "properties": { "switch": { "$ref": "/response/switch" }, "ble": { "$ref": "/response/ble" }, "mesure": { "$ref": "/response/mesure" }, "message": { "$ref": "/response/message" }, "logic_analyzer": { "$ref": "/response/logicAnalyzer" }, "ws": { "$ref": "/response/ws" }, "system": { "$ref": "/response/system" }, "debug": { "$ref": "/response/debug" } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/io/get", "type": "boolean" }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/io", "basePath": "io0", "anyOf": [{ "$ref": "/response/io/get" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/logicAnalyzer/data", "type": "object", "required": ["data"], "properties": { "data": { "$ref": "/zerooneArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/logicAnalyzer", "basePath": "logic_analyzer", "anyOf": [{ "$ref": "/response/logicAnalyzer/data" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/measure/echo", "type": "object", "required": ["echo"], "properties": { "echo": { "type": "array", "minItesm": 1, "items": { "type": "object", "required": ["edge", "timing"], "properties": { "edge": { "type": "boolean", "description": "rising = true" }, "timing": { "type": "number", "description": "msec from end of pulse" } } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/measure", "basePath": "measure", "anyOf": [{ "$ref": "/response/measure/echo" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/message", "basePath": "message", "anyOf": [{ "$ref": "/response/message/receive" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/message/receive", "related": "/request/message/send", "type": "object", "required": ["data", "from"], "properties": { "data": {}, "example": "1234-5678", "from": { "type": ["string", "null"] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/spi", "basePath": "spi0", "anyOf": [{ "$ref": "/response/spi/read" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/spi/read", "type": "object", "required": ["data"], "properties": { "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/switch/change", "desccription": "value cahnges are always notified.", "type": "object", "required": ["state"], "properties": { "state": { "type": "string", "enum": ["none", "push", "left", "right"] }, "action": { "type": "string", "enum": ["get"], "description": "this is optional and added when user request" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/switch", "basePath": "switch", "anyOf": [{ "$ref": "/response/switch/change" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/system", "basePath": "system", "anyOf": [{ "$ref": "/response/system/pong" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/system/pong", "desccription": "pong response with same key of ping request", "type": "object", "required": ["pong"], "properties": { "pong": { "type": "object", "required": ["key"], "properties": { "key": { "$ref": "/dataArray" } } } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/uart", "basePath": "uart0", "anyOf": [{ "$ref": "/response/uart/receive" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/uart/receive", "type": "object", "properties": { "data": { "$ref": "/dataArray" } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ws", "basePath": "ws", "anyOf": [{ "$ref": "/response/ws/ready" }, { "$ref": "/response/ws/redirect" }] }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ws/ready", "description": "all things ready", "type": "object", "properties": { "ready": { "type": "boolean", "enum": [true] } } }, { "$schema": "http://json-schema.org/draft-04/schema#", "id": "/response/ws/redirect", "description": "If the server required you to connect other endpoint to communicate with your obniz. This json will be sent.", "type": "object", "properties": { "redirect": { "type": "string", "example": "wss://ws1.obniz.io", "description": "The url you should redirect to." } } }];
-  module.exports.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
-
-  module.exports.defineKeyword("uniqueKeys", function (data, value, schema) {
-    if (!Array.isArray(value)) {
-      return null;
-    }
-    let targets = [];
-    for (let key of value) {
-      if (data[key] !== null && data[key] !== undefined) {
-        targets.push(data[key]);
-      }
-    }
-    let duplicated = targets.filter(function (x, i, self) {
-      return self.indexOf(x) !== self.lastIndexOf(x);
-    });
-    if (duplicated.length > 0) {
-      return { code: Obniz.tv4.errorCodes.UNIQUE_KEYS, message: { uniqueKeys: value.join(",") } };
-    }
-    return null;
-  });;
-  Obniz.tv4 = module.exports;wsSchema.map(Obniz.tv4.addSchema);
-})(undefined);

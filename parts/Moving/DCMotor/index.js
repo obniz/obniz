@@ -76,6 +76,6 @@ DCMotor.prototype.power = function(power) {
   }
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("DCMotor", DCMotor);
-}
+
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("DCMotor", DCMotor);

@@ -1,3 +1,6 @@
+const WSCommand = require("./WSCommand_.js");
+
+
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2
 const COMMAND_IO_ERRORS_IO_TOO_LOW  = 3
@@ -149,3 +152,6 @@ class WSCommand_IO extends WSCommand {
     }
   }
 };
+
+
+module.exports = WSCommand_IO;
