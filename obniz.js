@@ -5988,7 +5988,7 @@ class Obniz {
     if(typeof data === "string"){
       json = JSON.parse(data);
     }else if(this.wscommands) { //binary
-      json = binary2Json(data);
+      json = this.binary2Json(data);
     }
 
     if(Array.isArray(json)){
