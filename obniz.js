@@ -1577,7 +1577,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","related":"/request/message/send","type":"object","required":["data","from"],"properties":{"data":{},"example":"1234-5678","from":{"type":["string","null"]}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","related":"/request/message/send","type":"object","required":["data","from"],"properties":{"data":{},"from":{"type":["string","null"]}}}
 
 /***/ }),
 

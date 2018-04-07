@@ -252,9 +252,6 @@ describe("uart.log", function () {
 
 
 
-    
-
-
     it("request test no.10",  function () {
         let requestJson  = [{"uart1":null}];
         let expecteBinaryStrings = ["04 01 01 01"];
