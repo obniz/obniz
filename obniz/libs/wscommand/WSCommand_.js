@@ -1,7 +1,7 @@
 
 const WSSchema = require("./WSSchema");
 
-let commandClasses = [];
+let commandClasses = {};
 
 class WSCommand {
 
@@ -13,6 +13,9 @@ class WSCommand {
     this.ioNotUsed = 0xFF;
   }
 
+  static get schema(){
+    return WSSchema;
+  }
   static get CommandClasses() {
     return commandClasses;
     // {
@@ -32,8 +35,8 @@ class WSCommand {
     // };
   }
 
-  static addCommandClass(classObj){
-    commandClasses.push(classObj);
+  static addCommandClass(name, classObj){
+    commandClasses[name] = classObj;
   }
 
   static framed(module, func, payload) {
@@ -104,7 +107,7 @@ class WSCommand {
   }
 
   static compress(wscommands, json) {
-    var ret;
+    var ret = null;
     function append(module, func, payload) {
       var frame = WSCommand.framed(module, func, payload);
       if (ret) {

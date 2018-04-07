@@ -11,7 +11,7 @@ required : [peripheral]
 properties:
     peripheral :
         type : object
-        required : [write_characteristic]
+        required : [write_descriptor]
         properties:
             write_descriptor :
                 type : object

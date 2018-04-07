@@ -281,11 +281,9 @@ class ObnizBLE {
         let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
         val.setParams(obj.scan_result);
         this.remotePeripherals.push(val);
-        if (this.onscan) {
-          this.onscan(val);
-        }
+        this.onscan(val);
       }
-      if (isFinished && this.onscanfinish) {
+      if (isFinished ) {
         this.onscanfinish(this.remotePeripherals);
       }
     }
@@ -381,7 +379,7 @@ class ObnizBLE {
           let service = p.getService(params.service_uuid);
           let chara = service.getCharacteristic(params.characteristic_uuid);
           let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.onwrite(params.data);
+          descr.onwrite(params.result);
         }
       }
     }
@@ -436,6 +434,9 @@ class ObnizBLE {
         }
     }
   }
+
+  onscanfinish(){} //dummy
+  onscan(){} //dummy
 }
 
 

@@ -1848,6 +1848,116 @@ Related item
 ```
 
 
+###  request: <a name="-request-ble-central-descriptor_get">descriptor_get</a>
+
+
+
+Related item
+
+- [/response/ble/central/descriptor_get](#-response-ble-central-descriptor_get)
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.get_descriptors.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "get_descriptors": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+            }
+        }
+    }
+]
+```
+
+
+###  request: <a name="-request-ble-central-descriptor_read">descriptor_read</a>
+
+
+
+Related item
+
+- [/response/ble/central/descriptor_read](#-response-ble-central-descriptor_read)
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.read_descriptor.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "read_descriptor": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c"
+            }
+        }
+    }
+]
+```
+
+
+###  request: <a name="-request-ble-central-descriptor_write">descriptor_write</a>
+
+
+
+Related item
+
+- [/response/ble/central/descriptor_write](#-response-ble-central-descriptor_write)
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.write_descriptor.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.write_descriptor.needResponse` |  boolean  | <ul><li>default `true`</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "write_descriptor": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "descriptor_uuid": "d822b53c",
+                "data": [16, 34, 242],
+                "needResponse": true
+            }
+        }
+    }
+]
+```
+
+
 
 
 

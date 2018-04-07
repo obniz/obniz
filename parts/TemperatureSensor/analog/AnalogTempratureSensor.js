@@ -28,3 +28,5 @@ class AnalogTemplatureSensor {
   }
   
 }
+
+module.exports = AnalogTemplatureSensor;
