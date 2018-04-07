@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -36,6 +36,14 @@ describe("ble", function () {
     this.obniz.ble.stopScan();
     expect(this.obniz).send([{ble: {scan: null}}]);
     expect(this.obniz).to.be.finished;
+  });
+
+
+  it("callback default function onscan", function () {
+    expect(this.obniz.ble.onscan).to.have.not.throws();
+  });
+  it("callback default function onscanfinish", function () {
+    expect(this.obniz.ble.onscanfinish).to.have.not.throws();
   });
 
   it("on scan", function () {
@@ -88,14 +96,14 @@ describe("ble", function () {
     var results = [{"ble":
           {"scan_result":
                 {"event_type": "inquiry_result",
-                    "address": "e5f678800700",
-                    "device_type": "dumo",
-                    "address_type": "public",
-                    "ble_event_type": "connectable_advertisemnt",
-                    "rssi": -82,
-                    "adv_data": [2, 1, 26],
-                    "flag": 26,
-                    "scan_resp": []}
+                  "address": "e5f678800700",
+                  "device_type": "dumo",
+                  "address_type": "public",
+                  "ble_event_type": "connectable_advertisemnt",
+                  "rssi": -82,
+                  "adv_data": [2, 1, 26],
+                  "flag": 26,
+                  "scan_resp": []}
           }
     }];
 
@@ -103,6 +111,100 @@ describe("ble", function () {
 
     sinon.assert.callCount(stub, 1);
     var peripheral = stub.getCall(0).args[0];
+    expect(typeof peripheral === "object").to.be.true;
+
+
+    expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26]);
+    expect(peripheral.localName()).to.be.null;
+    expect(peripheral.iBeacon()).to.be.null;
+
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("on scan finished", function () {
+    var stub1 = sinon.stub();
+    var stub2 = sinon.stub();
+
+    this.obniz.ble.onscan = stub1;
+    this.obniz.ble.onscanfinish = stub2;
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
+
+
+
+    var results = [
+      {
+        "ble": {
+          "scan_result": {
+            "event_type": "inquiry_complete"
+          }
+        }
+      }
+    ];
+
+    testUtil.receiveJson(this.obniz, results);
+
+    sinon.assert.callCount(stub1, 0);
+    sinon.assert.callCount(stub2, 1);
+
+    var peripherals = stub2.getCall(0).args[0];
+    expect(peripherals).to.be.an("array");
+    expect(peripherals.length).to.be.equal(0);
+
+
+    expect(this.obniz).to.be.finished;
+  });
+
+  it("on scan finished2", function () {
+    var stub1 = sinon.stub();
+    var stub2 = sinon.stub();
+
+    this.obniz.ble.onscan = stub1;
+    this.obniz.ble.onscanfinish = stub2;
+    this.obniz.ble.startScan();
+
+    expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
+
+    var results1 = [{"ble":
+          {"scan_result":
+                {"event_type": "inquiry_result",
+                  "address": "e5f678800700",
+                  "device_type": "dumo",
+                  "address_type": "public",
+                  "ble_event_type": "connectable_advertisemnt",
+                  "rssi": -82,
+                  "adv_data": [2, 1, 26],
+                  "flag": 26,
+                  "scan_resp": []}
+          }
+    }];
+
+    testUtil.receiveJson(this.obniz, results1);
+
+    sinon.assert.callCount(stub1, 1);
+    sinon.assert.callCount(stub2, 0);
+
+
+    var results2 = [
+      {
+        "ble": {
+          "scan_result": {
+            "event_type": "inquiry_complete"
+          }
+        }
+      }
+    ];
+
+    testUtil.receiveJson(this.obniz, results2);
+
+    sinon.assert.callCount(stub1, 1);
+    sinon.assert.callCount(stub2, 1);
+
+    var peripherals = stub2.getCall(0).args[0];
+    expect(peripherals).to.be.an("array");
+    expect(peripherals.length).to.be.equal(1);
+    let peripheral = peripherals[0];
     expect(typeof peripheral === "object").to.be.true;
 
 

@@ -6,11 +6,11 @@ related :  "/response/ble/central/descriptor_write"
 
 
 type: object
-required : [write_descriptors]
+required : [write_descriptor]
 properties:
-    write_descriptors :
+    write_descriptor :
         type : object
-        required: [address,service_uuid,service_uuid,characteristic_uuid,descriptor_uuid,data]
+        required: [address, service_uuid, characteristic_uuid, descriptor_uuid,data]
         additionalProperties: false
         properties:
             address : {$ref : "/deviceAddress"}

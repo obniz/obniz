@@ -11,7 +11,7 @@ properties:
         peripheral:
             type : object
             additionalProperties: false
-            required : [write_descriptor_results]
+            required : [write_descriptor_result]
             properties:
                 write_descriptor_result :
                         type : object

@@ -1,4 +1,4 @@
-
+const ObnizUtil = require("../../utils/util");
 const BleDescriptor = require("./bleDescriptor");
 
 class BleCharacteristic {
