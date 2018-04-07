@@ -15,7 +15,7 @@ properties:
 
     address_bits:
         type: integer
-        enum: [7, 10]
+        enum: [7]
         default: 7
 
     read :

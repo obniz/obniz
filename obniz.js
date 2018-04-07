@@ -631,7 +631,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","related":"/response/i2c/slave","type":"object","required":["mode","sda","scl","slave_address"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximum":1023},"slave_address_length":{"type":"integer","enum":[7,10],"default":7},"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","related":"/response/i2c/slave","type":"object","required":["mode","sda","scl","slave_address"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximum":1023},"slave_address_length":{"type":"integer","enum":[7],"default":7},"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}}
 
 /***/ }),
 
@@ -642,7 +642,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
 
 /***/ }),
 
@@ -653,7 +653,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray1024"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray1024"}}}
 
 /***/ }),
 
@@ -8378,14 +8378,14 @@ class PeripheralI2C {
       if (slave_address === null) {
         throw new Error("i2c: please specify slave_address");
       }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
+      if (slave_address < 0 || slave_address > 0x7F) {
         throw new Error("i2c: invalid slave_address");
       }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
+      if (slave_address < 0 || slave_address > 0x7F) {
         throw new Error("i2c: invalid slave_address");
       }
-      if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
-        throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
+      if (slave_address_length !== null && slave_address_length !== 7) {
+        throw new Error("i2c: invalid slave_address_length. please specify 7");
       }
     }
   
@@ -8421,11 +8421,8 @@ class PeripheralI2C {
     if (isNaN(address)) {
       throw new Error("i2c: please specify address")
     }
-    if (address < 0 || address > 0x3FFF) {
+    if (address < 0 || address > 0x7F) {
       throw new Error("i2c: invalid address")
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
     }
     if (!data) {
       throw new Error("i2c: please provide data");
@@ -8441,20 +8438,13 @@ class PeripheralI2C {
     this.Obniz.send(obj);
   }
 
-  write10bit(address, data) {
-    return this.write(address | 0x8000, data);
-  }
-
   readWait(address, length) {
     address = parseInt(address)
     if (isNaN(address)) {
       throw new Error("i2c: please specify address")
     }
-    if (address < 0 || address > 0x3FFF) {
+    if (address < 0 || address > 0x7F) {
       throw new Error("i2c: invalid address")
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
     }
     length = parseInt(length);
     if (isNaN(length) || length < 0) {
@@ -8473,10 +8463,6 @@ class PeripheralI2C {
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });
-  }
-
-  read10bitWait(address, length) {
-    return this.readWait(address | 0x8000, length);
   }
 
   notified(obj) {

@@ -19,8 +19,6 @@ obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"});
 
 // slave mode
 obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01, pull: "5v"});
 ```
 
 # obniz.getFreeI2C()
@@ -60,14 +58,10 @@ obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"});
 
 // slave mode
 obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01, pull: "5v"});
 ```
 ## write(address, data);
 
-send data to device which has the address.
-if address is >0x7F. then obniz will send as 10bit address mode.
-If you want to send data as 10bit adress mode even address <= 0x7F, then use write10bit();
+send data to device which has the address. 7bit address only.
 max data length is 1024;
 
 ```Javascript
@@ -75,15 +69,7 @@ max data length is 1024;
 obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
-## write10bit(address, data);
-This is same as write() function. But this function will communicate to device 10bit address mode.
-max data length is 1024;
 
-```Javascript
-// Javascript Example
-obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
-obniz.i2c0.write10bit(0x50, [0x00, 0x00, 0x12]);
-```
 ## [await] readWait(address, length);
 read the data from device. length define the length of bytes. Treatment of address is same as write() function.
 This function will wait until data received.
@@ -93,16 +79,6 @@ max length is 1024;
 // Javascript Example
 obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
-```
-## [await] read10bitWait(address, length);
-This function will read the data with 10bit address mode.
-max length is 1024;
-
-```Javascript
-// Javascript Example
-obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
-var ret = await obniz.i2c0.read10bitWait(0x50, 1);
 console.log("readed"+ret);
 ```
 

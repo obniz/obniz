@@ -20,8 +20,6 @@ obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"});
 
 // slave mode
 obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01, pull: "5v"});
 ```
 
 # obniz.getFreeI2C()
@@ -70,15 +68,11 @@ obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"});
 
 // slave mode
 obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01});
-obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address_length: 7, slave_address: 0x01, pull: "5v"});
 ```
 
 ## write(address, data);
 
-addressにデータを送信します。
-addressが0x7Fより大きな場合は自動的に10bitアドレスとして送信します。
-それより小さな値でも10bitアドレスとして送信したい場合はwrite10bit関数を使って下さい。
+addressにデータを送信します。アドレスは7bitモードのみ対応です。
 dataの最大は1024バイトです。
 
 Example
@@ -89,18 +83,7 @@ Example
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
-## write10bit(address, data);
 
-addressにデータを送信します。
-addressの値が何であれ必ず10bitアドレスモードで送信します。
-dataの最大は1024バイトです。
-
-```Javascript
-// Javascript Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
-obniz.i2c0.write10bit(0x50, [0x00, 0x00, 0x12]);
-```
 ## [await] readWait(address, length);
 
 addressからlengthで指定しただけデータを読み取ります。
@@ -112,20 +95,6 @@ lengthの最大は1024バイトです。
 // master mode sda=2 scl=3 400khz no pullup
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
-```
-
-## [await] read10bitWait(address, length);
-
-addressからlengthで指定しただけデータを読み取ります。
-addressの値が何であれ必ず10bitアドレスモードで送信します。
-lengthの最大は1024バイトです。
-
-```Javascript
-// Javascript Example
-// master mode sda=2 scl=3 400khz no pullup
-obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
-var ret = await obniz.i2c0.read10bitWait(0x50, 1);
 console.log("readed"+ret);
 ```
 

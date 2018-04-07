@@ -1067,9 +1067,9 @@ Related item
 | `i2cX.sda` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
 | `i2cX.scl` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
 | `i2cX.slave_address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.slave_address_length` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.slave_address_length` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.address` |  integer  | <ul><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.data` | [dataArray](#dataarray)  | &nbsp; | &nbsp; |
 | `i2cX.read` |  integer  | <ul><li>0 &le; value</li></ul> | &nbsp; |
 
@@ -1103,7 +1103,7 @@ if address over 0b01111111; then address treated as 10bit address automatically.
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.data` | [dataArray1024](#dataarray1024)  | <ul><li>required</li></ul> | &nbsp; |
 
 
@@ -1135,7 +1135,7 @@ Related item
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.read` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1024</li></ul> | &nbsp; |
 
 
