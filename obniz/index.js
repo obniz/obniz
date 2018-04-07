@@ -117,32 +117,43 @@ class Obniz {
     }
   }
 
-  wsOnMessage(data) {
-    if (typeof data === "string") {
-      let objArray = JSON.parse(data);
-        for(let i in objArray ) {
-          this.notifyToModule(objArray[i]);
-
-      }
-    } else if (this.wscommands){
-      data = new Uint8Array(data);
-      while(true) {
-        const frame = WSCommand.dequeueOne(data);
-        if (!frame) break;
-        let obj = {};
-        for (var i=0; i<this.wscommands.length; i++) {
-          const command = this.wscommands[i];
-          if (command.module === frame.module) {
-            command.notifyFromBinary(obj, frame.func, frame.payload);
-            break;
-          }
+  binary2Json(binary){
+    let data = new Uint8Array(binary);
+    let json = [];
+    while(true) {
+      const frame = WSCommand.dequeueOne(data);
+      if (!frame) break;
+      let obj = {};
+      for (var i=0; i<this.wscommands.length; i++) {
+        const command = this.wscommands[i];
+        if (command.module === frame.module) {
+          command.notifyFromBinary(obj, frame.func, frame.payload);
+          break;
         }
-        this.notifyToModule(obj);
-        data = frame.next;
       }
-    } else {
-      return;
+      json.push(obj);
+      data = frame.next;
     }
+    return json;
+  }
+
+  wsOnMessage(data) {
+    let json ;
+    if(typeof data === "string"){
+      json = JSON.parse(data);
+    }else if(this.wscommands) { //binary
+      json = binary2Json(data);
+    }
+
+    if(Array.isArray(json)){
+      for(let i in json ) {
+        this.notifyToModule(json[i]);
+      }
+
+    }else{
+      //invalid json
+    }
+
   }
 
   notifyToModule(obj){
@@ -879,7 +890,7 @@ module.exports = Obniz;
 // read parts
 require.context = require('./libs/webpackReplace/require-context');
 if(require.context && require.context.setBaseDir){require.context.setBaseDir(__dirname);}
-let context = require.context(  "../parts/Accessory", true, /\.js$/);
+let context = require.context(  "../parts", true, /\.js$/);
 for( let path of context.keys()){
   context(path);
 }
