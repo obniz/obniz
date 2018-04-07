@@ -41,9 +41,6 @@ class BleCharacteristic {
   }
 
   write(data){
-    if(!Array.isArray(data)){
-      data = [data];
-    }
     this.service.peripheral.Obniz.send(
         {
           ble : {
@@ -58,6 +55,15 @@ class BleCharacteristic {
       }
     );
   }
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
 
   read(){
     this.service.peripheral.Obniz.send(

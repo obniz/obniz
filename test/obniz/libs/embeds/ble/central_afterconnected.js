@@ -60,6 +60,94 @@ describe("ble", function () {
   });
 
 
+
+  it("callback default function onconnect", function () {
+    expect(this.peripheral.onconnect).to.have.not.throws();
+  });
+  it("callback default function ondisconnect", function () {
+    expect(this.peripheral.ondisconnect).to.have.not.throws();
+  });
+  it("callback default function ondiscoverservice", function () {
+    expect(this.peripheral.ondiscoverservice).to.have.not.throws();
+  });
+  it("callback default function onerror", function () {
+    expect(this.peripheral.onerror).to.have.not.throws();
+  });
+
+  it("rssi", function () {
+    expect(this.peripheral.rssi).to.below(0);
+  });
+
+  it("to string", function () {
+    let str = "" + this.peripheral;
+    expect(str).to.be.equal("{\"address\":\"e5f678800700\",\"advertisement\":[2,1,26],\"scanResponse\":[],\"rssi\":-82}");
+  });
+
+  it("disconnect", function () {
+    var peripheral = this.peripheral.disconnect();
+    expect(this.obniz).send(
+        [{
+          ble: {
+            disconnect: {
+              address: "e5f678800700"
+            }
+          }
+        }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+
+
+  it("discoverService", function () {
+    var peripheral = this.peripheral;
+    peripheral.discoverAllServices();
+    expect(this.obniz).send(
+        [{
+          ble: {
+            get_services: {
+              address: "e5f678800700"
+            }
+          }
+        }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+  it("discoverCharacteristic", function () {
+    var peripheral = this.peripheral;
+    peripheral.getService("FF00").discoverAllCharacteristics();
+    expect(this.obniz).send(
+        [{
+          ble: {
+            get_characteristics: {
+              address: "e5f678800700",
+              service_uuid: "FF00",
+            }
+          }
+        }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+
+  it("discoverDescriptor", function () {
+    var peripheral = this.peripheral;
+    peripheral.getService("FF00").getCharacteristic("FF01").discoverAllDescriptors();
+    expect(this.obniz).send(
+        [{
+          ble: {
+            get_descriptors: {
+              address: "e5f678800700",
+              service_uuid: "FF00",
+              characteristic_uuid: "FF01",
+            }
+          }
+        }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
   it("write", function () {
     var peripheral = this.peripheral;
     peripheral.getService("FF00").getCharacteristic("FF01").write([0x01, 0xe8]);
@@ -76,6 +164,7 @@ describe("ble", function () {
         }]);
     expect(this.obniz).to.be.finished;
   });
+
 
 
   it("onwrite", function () {

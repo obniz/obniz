@@ -49,6 +49,15 @@ class BleRemoteDescriptor {
     this.Obniz.send(obj);
   }
 
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
   onread(value){};
   onwrite(value){};
 }

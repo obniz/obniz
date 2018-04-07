@@ -334,7 +334,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_get","related":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptor"],"properties":{"get_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_get","related":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptors"],"properties":{"get_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
 
 /***/ }),
 
@@ -7248,9 +7248,6 @@ class BleCharacteristic {
   }
 
   write(data){
-    if(!Array.isArray(data)){
-      data = [data];
-    }
     this.service.peripheral.Obniz.send(
         {
           ble : {
@@ -7265,6 +7262,15 @@ class BleCharacteristic {
       }
     );
   }
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
 
   read(){
     this.service.peripheral.Obniz.send(
@@ -7349,10 +7355,7 @@ class BleDescriptor {
     return obj;
   }
 
-  write(data){
-    if(!Array.isArray(data)){
-      data = [data];
-    }
+  write(arr){
     this.characteristic.service.peripheral.Obniz.send(
         {
           ble : {
@@ -7368,6 +7371,15 @@ class BleDescriptor {
       }
     );
   }
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
 
   read(){
   
@@ -7482,7 +7494,7 @@ module.exports = BlePeripheral;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
 
 
@@ -7535,31 +7547,11 @@ class BleRemoteCharacteristic {
   }
 
   writeNumber(val){
-    var obj = {
-      "ble" :{
-        "write_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "value" : val
-        }
-      }
-    };
-    this.Obniz.send(obj);
+    this.write([val]);
   }
 
-  writeText(str){
-    var obj = {
-      "ble" :{
-        "write_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "text" : str
-        }
-      }
-    };
-    this.Obniz.send(obj);
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
   }
 
   discoverAllDescriptors(str){
@@ -7652,6 +7644,15 @@ class BleRemoteDescriptor {
       }
     };
     this.Obniz.send(obj);
+  }
+
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
   }
 
   onread(value){};

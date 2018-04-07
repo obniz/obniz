@@ -1860,9 +1860,9 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.get_descriptor.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_descriptor.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
-| `ble.get_descriptor.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1871,7 +1871,7 @@ Related item
 [
     {
         "ble": {
-            "get_descriptor": {
+            "get_descriptors": {
                 "address": "77e754ab8591",
                 "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
                 "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"

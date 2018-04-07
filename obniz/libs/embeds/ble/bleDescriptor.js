@@ -36,10 +36,7 @@ class BleDescriptor {
     return obj;
   }
 
-  write(data){
-    if(!Array.isArray(data)){
-      data = [data];
-    }
+  write(arr){
     this.characteristic.service.peripheral.Obniz.send(
         {
           ble : {
@@ -55,6 +52,15 @@ class BleDescriptor {
       }
     );
   }
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
 
   read(){
   
