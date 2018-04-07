@@ -359,7 +359,7 @@ class WSCommand_Ble extends WSCommand {
       if(res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       }else{
-        throw new WSCommandNotFoundError(`[ble]unknown command`);
+        throw new this.WSCommandNotFoundError(`[ble]unknown command`);
       }
     }
   }

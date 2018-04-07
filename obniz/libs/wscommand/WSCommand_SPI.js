@@ -86,7 +86,7 @@ class WSCommand_SPI extends WSCommand {
         if(res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         }else{
-          throw new WSCommandNotFoundError(`[spi${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[spi${i}]unknown command`);
         }
       }
     }

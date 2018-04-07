@@ -5699,7 +5699,7 @@ class WSCommand_AD extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[ad${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[ad${i}]unknown command`);
         }
       }
     }
@@ -6000,7 +6000,7 @@ class WSCommand_Ble extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[ble]unknown command`);
+        throw new this.WSCommandNotFoundError(`[ble]unknown command`);
       }
     }
   }
@@ -6393,7 +6393,7 @@ class WSCommand_Display extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[display]unknown command`);
+        throw new this.WSCommandNotFoundError(`[display]unknown command`);
       }
     }
   }
@@ -6531,7 +6531,7 @@ class WSCommand_I2C extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[i2c${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[i2c${i}]unknown command`);
         }
       }
     }
@@ -6714,7 +6714,7 @@ class WSCommand_IO extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[io${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[io${i}]unknown command`);
         }
       }
     }
@@ -6816,7 +6816,7 @@ class WSCommand_LogicAnalyzer extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[logic_analyzer]unknown command`);
+        throw new this.WSCommandNotFoundError(`[logic_analyzer]unknown command`);
       }
     }
   }
@@ -6907,7 +6907,7 @@ class WSCommand_Measurement extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[measure]unknown command`);
+        throw new this.WSCommandNotFoundError(`[measure]unknown command`);
       }
     }
   }
@@ -7066,7 +7066,7 @@ class WSCommand_PWM extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[pwm${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[pwm${i}]unknown command`);
         }
       }
     }
@@ -7171,7 +7171,7 @@ class WSCommand_SPI extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[spi${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[spi${i}]unknown command`);
         }
       }
     }
@@ -7240,7 +7240,7 @@ class WSCommand_Switch extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[switch]unknown command`);
+        throw new this.WSCommandNotFoundError(`[switch]unknown command`);
       }
     }
   }
@@ -7333,7 +7333,7 @@ class WSCommand_System extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[system]unknown command`);
+        throw new this.WSCommandNotFoundError(`[system]unknown command`);
       }
     }
   }
@@ -7458,7 +7458,7 @@ class WSCommand_UART extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[uart${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[uart${i}]unknown command`);
         }
       }
     }

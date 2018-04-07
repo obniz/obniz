@@ -118,7 +118,7 @@ class WSCommand_PWM extends WSCommand {
         if(res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         }else{
-          throw new WSCommandNotFoundError(`[pwm${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[pwm${i}]unknown command`);
         }
       }
     }

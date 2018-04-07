@@ -56,7 +56,7 @@ class WSCommand_LogicAnalyzer extends WSCommand {
       if(res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       }else{
-        throw new WSCommandNotFoundError(`[logic_analyzer]unknown command`);
+        throw new this.WSCommandNotFoundError(`[logic_analyzer]unknown command`);
       }
     }
 

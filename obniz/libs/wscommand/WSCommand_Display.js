@@ -107,7 +107,7 @@ class WSCommand_Display extends WSCommand {
       if(res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       }else{
-        throw new WSCommandNotFoundError(`[display]unknown command`);
+        throw new this.WSCommandNotFoundError(`[display]unknown command`);
       }
     }
   }
