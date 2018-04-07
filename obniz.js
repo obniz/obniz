@@ -7355,7 +7355,7 @@ class BleDescriptor {
     return obj;
   }
 
-  write(arr){
+  write(dataArray){
     this.characteristic.service.peripheral.Obniz.send(
         {
           ble : {
@@ -7364,7 +7364,7 @@ class BleDescriptor {
               service_uuid: this.characteristic.service.uuid.toLowerCase() ,
               characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
               descriptor_uuid: this.uuid,
-              data: data
+              data: dataArray
             }
           }
         }

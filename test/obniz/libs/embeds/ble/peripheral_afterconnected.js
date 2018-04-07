@@ -218,7 +218,7 @@ describe("ble", function () {
   it("write char2", function () {
     let service = this.obniz.ble.peripheral.getService("FFF0");
     let chara = service.getCharacteristic("FFF1");
-    chara.write(0x23);
+    chara.writeNumber(0x23);
     expect(this.obniz).send([
       {
         "ble": {
@@ -403,7 +403,7 @@ describe("ble", function () {
     let service = this.obniz.ble.peripheral.getService("FFF0");
     let chara = service.getCharacteristic("FFF1");
     let desciptor = chara.getDescriptor("2901");
-    desciptor.write( 16);
+    desciptor.writeNumber( 16);
     expect(this.obniz).send([
       {
         "ble": {
