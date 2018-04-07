@@ -510,7 +510,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -6239,22 +6239,20 @@ class Obniz {
     }
     if (this.sendPool) { this.sendPool.push(obj); return; }
 
-    let sendData;
+    let sendData = JSON.stringify([obj]);
     /* compress */
     if (this.wscommand) {
       let compressed;
       try {
-        compressed = this.wscommand.compress(this.wscommands, obj);
+        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
         if (compressed) {
           sendData = compressed;
         }
       } catch(e) {
-        this.error(e);
-        return; /* never send when parsing failed */
+        this.error('------ errored json -------');
+        this.error(sendData)
+        throw e;
       }
-    }
-    if (!sendData) {
-      sendData = JSON.stringify([obj]);
     }
     if (this.debugprint) {
       this.print_debug("send: " + ( (typeof sendData === "string") ? sendData : JSON.stringify(obj)) );
@@ -7293,10 +7291,10 @@ class BleCharacteristic {
 
   toJSON(){
     var obj = {
-      uuid : this.uuid.toLowerCase()  ,
-      data : this.data ,
-      descriptors : this.descriptors
+      uuid : this.uuid.toLowerCase()
     };
+    if (this.data) { obj.data = this.data }
+    if (this.descriptors) { obj.descriptors = this.descriptors }
     if (this.property.length > 0 ) {
       obj.property =  this.property;
       
@@ -7346,9 +7344,11 @@ class BleDescriptor {
 
   toJSON(){
     var obj =  {
-      uuid : this.uuid.toLowerCase()  ,
-      data : this.data ,
+      uuid : this.uuid.toLowerCase()
     };
+    if (this.data) {
+      obj.data = this.data;
+    }
     if (this.property.length > 0 ) {
       obj.property =  this.property;
     }
