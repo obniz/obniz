@@ -87,6 +87,47 @@ module.exports = async function(config) {
         pwms[i].end();
       }
     });
+
+    it("pwm with push-pull3v", async function () {
+      const pwm = obnizA.getFreePwm();
+      pwm.start({io:0, drive:"3v"});
+      pwm.freq(100);
+      pwm.duty(50);
+
+      await obnizA.pingWait();
+      await detectPulse(0, [40, 60]);
+
+      pwm.end();
+    });
+
+    it("pwm with open-drain", async function () {
+      const pwm = obnizA.getFreePwm();
+      pwm.start({io:0, drive:"open-drain", pull:"5v"}); 
+      pwm.freq(100);
+      pwm.duty(50);
+      
+      await obnizA.pingWait();
+      await detectPulse(0, [40, 60]);
+
+      pwm.end();
+    });
+
+    it("pwm with open-drain(no pullup)", async function () {
+      const pwm = obnizA.getFreePwm();
+      pwm.start({io:0, drive:"open-drain"}); 
+      pwm.freq(1000);
+      pwm.duty(99);
+      
+      await obnizA.pingWait();
+      var valB = await obnizB.getIO(0).inputWait();
+      expect(valB).to.be.equal(false);
+      valB = await obnizB.getIO(0).inputWait();
+      expect(valB).to.be.equal(false);
+      valB = await obnizB.getIO(0).inputWait();
+      expect(valB).to.be.equal(false);
+
+      pwm.end();
+    });
   });
 
   function detectPulse(io, ratioRange) {
