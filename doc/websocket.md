@@ -917,7 +917,7 @@ clk, miso, mosi are optional, but at least one are required
 | `spiX.clk` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
 | `spiX.mosi` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
 | `spiX.miso` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
-| `spiX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul> | &nbsp; |
+| `spiX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 26000000</li></ul> | &nbsp; |
 
 
 

@@ -443,7 +443,7 @@ class Obniz {
     for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
     for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
     for (let i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
-    for (let i=0; i<1;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
+    for (let i=0; i<2;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
     for (let i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
     for (let i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
   
