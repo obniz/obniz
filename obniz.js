@@ -2547,10 +2547,7 @@ class PeripheralIO_ {
         state: merged
       });
     }
-    if(states.length > 0){
-      obj.io.animation.states = states;
-    }
-  //  console.log(obj.io.animation);
+    obj.io.animation.states = states;
     this.Obniz.send(obj);
   }
 }

@@ -120,13 +120,19 @@ obniz.io.animation("animation-1", "loop", [
 
 ![](./images/ioanimation.png)
 
-Pause animation
+io animationの削除
+```Javascript
+// Example
+obniz.io.animation("animation-1", "loop")
+```
+
+io animationの一時停止
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "pause")
 ```
 
-Resume animation
+io aniomationの再開
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "resume")
