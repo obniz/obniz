@@ -102,7 +102,7 @@ obniz.uart0.send("Hello");
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
-    if(obniz.uart0.isDataExists){
+    if(obniz.uart0.isDataExists()){
         console.log(obniz.uart0.readText());
     }
     await obniz.wait(10);  //wait for 10ms
@@ -117,7 +117,7 @@ while(1){
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
-    if(obniz.uart0.isDataExists){
+    if(obniz.uart0.isDataExists()){
         console.log(obniz.uart0.readBytes());
     }
     await obniz.wait(10);  //wait for 10ms
@@ -133,7 +133,7 @@ while(1){
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
-    if(obniz.uart0.isDataExists){
+    if(obniz.uart0.isDataExists()){
         console.log(obniz.uart0.readText());
     }
     await obniz.wait(10);  //wait for 10ms
