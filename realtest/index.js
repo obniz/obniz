@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const path = require('path');
 const fs = require('fs');
 
-const Obniz = require('../../index.js');
+const Obniz = require('../index.js');
 
 var obnizA_ID = "10760979";
 var obnizB_ID = "00978479";
