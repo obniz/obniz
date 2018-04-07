@@ -191,10 +191,4 @@ module.exports = async function(config) {
     
   });
   
-  async function ioBisInRange(io, range) {
-    await obnizA.pingWait();
-    var voltage = await obnizB.getAD(io).getWait();
-    expect(voltage).to.be.within(range[0], range[1]);
-  }
-
 }
