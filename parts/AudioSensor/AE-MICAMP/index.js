@@ -51,6 +51,6 @@ AE_MICAMP.prototype.Average = function(callback) {
 };
 */
 
-if (PartsRegistrate) {
-  PartsRegistrate("AE_MICAMP", AE_MICAMP);
-}
+
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("AE_MICAMP", AE_MICAMP);

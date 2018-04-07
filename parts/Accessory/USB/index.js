@@ -20,6 +20,5 @@ USB.prototype.off = function() {
   this.io_vdd.output(false);
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("USB", USB);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("USB", USB);

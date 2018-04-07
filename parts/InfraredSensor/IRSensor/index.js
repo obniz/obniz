@@ -53,6 +53,5 @@ class IRSensor {
   }
 }
 
-if (typeof PartsRegistrate === 'function') {
-  PartsRegistrate("IRSensor", IRSensor);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("IRSensor", IRSensor);

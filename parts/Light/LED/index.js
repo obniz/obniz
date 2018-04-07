@@ -52,6 +52,5 @@ LED.prototype.blink = function(interval) {
 
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("LED", LED);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("LED", LED);

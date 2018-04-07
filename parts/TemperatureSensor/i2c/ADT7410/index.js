@@ -34,6 +34,5 @@ ADT7410.prototype.wired = function(obniz) {
     return (tempBin/16);
   };
 
-if (PartsRegistrate) {
-  PartsRegistrate("ADT7410", ADT7410);
-}
+let Obniz = require("../../../../obniz/index.js");
+Obniz.PartsRegistrate("ADT7410", ADT7410);

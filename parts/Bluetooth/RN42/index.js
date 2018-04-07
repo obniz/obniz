@@ -178,6 +178,5 @@ RN42.prototype.config_get_extendSetting = function() {
 
 // Module functions
 
-if (PartsRegistrate) {
-  PartsRegistrate("RN42", RN42);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("RN42", RN42);

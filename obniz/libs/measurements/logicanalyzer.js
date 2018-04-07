@@ -1,4 +1,4 @@
-
+const ObnizUtil = require("../utils/util");
 
 class LogicAnalyzer {
 
@@ -49,3 +49,6 @@ class LogicAnalyzer {
     return;
   };
 }
+
+
+module.exports = LogicAnalyzer;

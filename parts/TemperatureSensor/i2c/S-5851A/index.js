@@ -88,6 +88,5 @@ S5851A.prototype.wired = function(obniz) {
     return humidity;
   };
 
-if (PartsRegistrate) {
-  PartsRegistrate("S5851A", S5851A);
-}
+let Obniz = require("../../../../obniz/index.js");
+Obniz.PartsRegistrate("S5851A", S5851A);

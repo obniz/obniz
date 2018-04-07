@@ -1,3 +1,6 @@
+
+const AnalogTemplatureSensor = require("../AnalogTempratureSensor");
+
 //センサから出力が無い(出力インピーダンス高すぎ？)
 
 class S8100B extends AnalogTemplatureSensor {
@@ -6,7 +9,5 @@ class S8100B extends AnalogTemplatureSensor {
   }
 };
 
-
-if (PartsRegistrate) {
-  PartsRegistrate("S8100B", S8100B);
-}
+let Obniz = require("../../../../obniz/index.js");
+Obniz.PartsRegistrate("S8100B", S8100B);

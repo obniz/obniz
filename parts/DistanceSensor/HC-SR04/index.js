@@ -61,6 +61,5 @@ HCSR04.prototype.unit = function(unit) {
 
 // Module functions
 
-if (PartsRegistrate) {
-  PartsRegistrate("HC-SR04", HCSR04);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("HC-SR04", HCSR04);

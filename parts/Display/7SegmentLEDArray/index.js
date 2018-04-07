@@ -67,6 +67,5 @@ _7SegmentLEDArray.prototype.off = function() {
   }
 };
 
-if (PartsRegistrate) {
-  PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);

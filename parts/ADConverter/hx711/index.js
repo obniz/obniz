@@ -76,11 +76,7 @@ class hx711 {
     return (val - this.offset) / this.scale;
   }
 
-
-
-
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("hx711", hx711);
-}
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("hx711", hx711);

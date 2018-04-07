@@ -1,3 +1,5 @@
+const WSCommand = require("./WSCommand_.js");
+
 class WSCommand_UART extends WSCommand {
 
   constructor(delegate) {
@@ -111,3 +113,6 @@ class WSCommand_UART extends WSCommand {
     }
   }
 };
+
+
+module.exports = WSCommand_UART;

@@ -25,7 +25,7 @@ class Display {
     if (this.Obniz.isNode) {
       try {
         const { createCanvas } = require('canvas');
-        this._canvas = createCanvas(this.width, this.height); 
+        this._canvas = createCanvas(this.width, this.height);
       } catch(e){
         // this.warnCanvasAvailability();
         return null;
@@ -220,3 +220,5 @@ class Display {
     this.raw(vram);
   }
 }
+
+module.exports = Display;

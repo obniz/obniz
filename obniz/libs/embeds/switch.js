@@ -33,3 +33,5 @@ class ObnizSwitch {
     }
   }
 }
+
+module.exports = ObnizSwitch;

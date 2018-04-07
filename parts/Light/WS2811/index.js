@@ -101,6 +101,6 @@ class WS2811 {
 
 }
 
-if (PartsRegistrate) {
-  PartsRegistrate("WS2811", WS2811);
-}
+
+let Obniz = require("../../../obniz/index.js");
+Obniz.PartsRegistrate("WS2811", WS2811);

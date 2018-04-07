@@ -31,6 +31,5 @@ ADT7310.prototype.wired = async function(obniz) {
     return (tempBin/16);
   }
 
-if (PartsRegistrate) {
-  PartsRegistrate("ADT7310", ADT7310);
-}
+let Obniz = require("../../../../obniz/index.js");
+Obniz.PartsRegistrate("ADT7310", ADT7310);

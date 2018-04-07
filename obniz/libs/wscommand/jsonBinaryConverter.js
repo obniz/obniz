@@ -263,3 +263,5 @@ class JsonBinaryConverter {
     }
   }
 }
+
+module.exports = JsonBinaryConverter;

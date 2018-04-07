@@ -42,3 +42,4 @@ class PeripheralIO_ {
     this.Obniz.send(obj);
   }
 }
+module.exports = PeripheralIO_;

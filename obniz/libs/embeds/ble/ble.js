@@ -1,4 +1,12 @@
 
+
+const BlePeripheral = require("./blePeripheral");
+const BleService = require("./bleService");
+const BleCharacteristic = require("./bleCharacteristic");
+const BleDescriptor = require("./bleDescriptor");
+const BleRemotePeripheral = require("./bleRemotePeripheral");
+
+
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
@@ -308,7 +316,7 @@ class ObnizBLE {
       }
     }
     if (obj.get_characteristic_result) {
-      let params = get_characteristic_result;
+      let params = obj.get_characteristic_result;
       if (params.address) {
         let p = this.findPeripheral(params.address);
         if (p) {
@@ -429,3 +437,6 @@ class ObnizBLE {
     }
   }
 }
+
+
+module.exports = ObnizBLE;
