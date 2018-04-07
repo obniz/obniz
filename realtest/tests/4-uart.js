@@ -31,7 +31,7 @@ module.exports = async function(config) {
               break;
             }
         }
-        await obnizA.wait(1);  //wait for 10ms
+        await wait(1);  //wait for 10ms
       }
       receiver.end();
       sender.end();
@@ -54,7 +54,7 @@ module.exports = async function(config) {
               break;
             }
         }
-        await obnizA.wait(1);  //wait for 10ms
+        await wait(1);  //wait for 10ms
       }
       receiver.end();
       sender.end();
@@ -80,7 +80,7 @@ module.exports = async function(config) {
               break;
             }
         }
-        await obnizA.wait(1);  //wait for 10ms
+        await wait(1);  //wait for 10ms
       }
 
       receiver.end();
@@ -107,7 +107,7 @@ module.exports = async function(config) {
               break;
             }
         }
-        await obnizA.wait(1);  //wait for 10ms
+        await wait(1);  //wait for 10ms
       }
 
       receiver.end();
@@ -134,7 +134,7 @@ module.exports = async function(config) {
               break;
             }
         }
-        await obnizA.wait(1);  //wait for 10ms
+        await wait(1);  //wait for 10ms
       }
 
       receiver.end();
@@ -180,7 +180,7 @@ module.exports = async function(config) {
         if(found == 2) {
           break;
         }
-        await obnizA.wait(1);  //wait for 10ms
+        await wait(1);  //wait for 10ms
       }
 
       receiver0.end();
@@ -190,5 +190,9 @@ module.exports = async function(config) {
     });
     
   });
+
+  function wait(ms) {
+    return new Promise(resolve => {setTimeout(resolve, ms)})
+  }
   
 }
