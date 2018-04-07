@@ -4617,7 +4617,9 @@ class PeripheralIO_ {
         state: merged
       });
     }
-    obj.io.animation.states = states;
+    if (status === "loop") {
+      obj.io.animation.states = states;
+    }
     this.Obniz.send(obj);
   }
 }
