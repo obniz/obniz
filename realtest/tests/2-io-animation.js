@@ -14,7 +14,7 @@ module.exports = async function(config) {
 
     this.timeout(20000);
 
-    it("animation", function (done) {
+    it("animation", async function () {
       obnizA.io.animation("animation-1", "loop", [
         {
           duration: 10,
@@ -28,27 +28,8 @@ module.exports = async function(config) {
           }
         }
       ]);
-
-      var ignores = 1;
-
-      obnizB.logicAnalyzer.start({io:0, interval:1, duration:100}); 
-      obnizB.logicAnalyzer.onmeasured = async function(array) {
-        if (ignores > 0) {
-          ignores--;
-          return;
-        }
-        var ret = { }
-        ret[0] = 0;
-        ret[1] = 0;
-        for (var i=0; i<array.length; i++) {
-          ret[array[i]]++;
-        }
-        expect(ret[0]).to.be.within(40, 60); // 割合だけ見る。パターンは間違っているかもしれない。
-
-        obnizB.logicAnalyzer.end();
-        await obnizB.pingWait();
-        done();
-      }
+      await obnizA.pingWait();
+      await detectPulse(0, [40, 60]);
     });
 
     it("animation pause", async function () {
@@ -59,31 +40,10 @@ module.exports = async function(config) {
       await ioAisB(0, true)
     });
 
-    it("animation resume", function (done) {
+    it("animation resume", async function () {
       obnizA.io.animation("animation-1", "resume");
-
-      var ignores = 1;
-
-      obnizB.logicAnalyzer.start({io:0, interval:1, duration:100}); 
-      obnizB.logicAnalyzer.onmeasured = async function(array) {
-        if (ignores > 0) {
-          ignores--;
-          return;
-        }
-        var ret = { }
-        ret[0] = 0;
-        ret[1] = 0;
-        for (var i=0; i<array.length; i++) {
-          ret[array[i]]++;
-        }
-        expect(ret[0]).to.be.within(40, 60); // 割合だけ見る。パターンは間違っているかもしれない。
-
-        obnizB.logicAnalyzer.end();
-        await obnizB.pingWait();
-        done();
-      }
-
-
+      await obnizA.pingWait();
+      await detectPulse(0, [40, 60]);
     });
 
     it("animation remove", async function () {
@@ -95,6 +55,34 @@ module.exports = async function(config) {
     });
 
   });
+
+  function detectPulse(io, ratioRange) {
+    return new Promise((resolve, reject) => {
+      var ignores = 0;
+      obnizB.logicAnalyzer.start({io, interval:1, duration:100}); 
+      obnizB.logicAnalyzer.onmeasured = async function(array) {
+        if (ignores > 0) {
+          ignores--;
+          return;
+        }
+        var ret = { }
+        ret[0] = 0;
+        ret[1] = 0;
+        for (var i=0; i<array.length; i++) {
+          ret[array[i]]++;
+        }
+        try {
+          expect(ret[1]/(ret[0] + ret[1])*100).to.be.within(ratioRange[0], ratioRange[1]); // 割合だけ見る。パターンは間違っているかもしれない。
+        } catch(e) {
+          reject(e);
+        }
+  
+        obnizB.logicAnalyzer.end();
+        await obnizB.pingWait();
+        resolve();
+      }
+    })
+  }
 
   async function ioAisB(io, val, mustbe) {
     if (mustbe === undefined) {

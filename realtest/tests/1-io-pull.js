@@ -37,11 +37,11 @@ module.exports = async function(config) {
     it("pullup 5v", async function () {
       obnizA.getIO(0).pull("5v");
       obnizA.getIO(0).input();
-      await ioBisInRange(0, [4.0, 5.5]);
+      await ioBisInRange(0, [3.5, 5.5]);
 
       obnizA.getIO(11).pull("5v");
       obnizA.getIO(11).input();
-      await ioBisInRange(11, [4.0, 5.5]);
+      await ioBisInRange(11, [3.5, 5.5]);
     });
     
   });
