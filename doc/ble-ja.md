@@ -559,7 +559,7 @@ obniz.ble.startScan({duration : 10});
 
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).writeNumber(value)
-characteristicに数字を4byteのbigadianとしてを書き込みます
+characteristicに数字を1byteとしてを書き込みます
 
 ```Javascript
 // Javascript Example
@@ -567,7 +567,7 @@ obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
         peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").writeNumber(1000);
+            peripheral.getService("FF00").getCharacteristic("FF01").writeNumber(100);
         }
         peripheral.connect();
     }

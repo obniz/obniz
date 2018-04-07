@@ -6,9 +6,9 @@ related :  "/response/ble/central/descriptor_read"
 
 
 type: object
-required : [read_descriptors]
+required : [read_descriptor]
 properties:
-    read_descriptors :
+    read_descriptor :
         type : object
         required: [address,service_uuid,characteristic_uuid,descriptor_uuid]
         additionalProperties: false

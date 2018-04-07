@@ -11,7 +11,7 @@ properties:
         peripheral:
             type : object
             additionalProperties: false
-            required : [read_descriptor_results]
+            required : [read_descriptor_result]
             properties:
 
                 read_descriptor_result :

@@ -547,7 +547,7 @@ obniz.ble.startScan({duration : 10});
 ```
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).writeNumber(value)
-write data to the characteristic from value as 4byte bigadian int.
+write data to the characteristic from value as 1byte.
 
 ```Javascript
 // Javascript Example
@@ -555,7 +555,7 @@ obniz.ble.onscan = function(peripheral){
     if(peripheral.localName() == "my peripheral"){
 
         peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").writeNumber(1000);
+            peripheral.getService("FF00").getCharacteristic("FF01").writeNumber(100);
         }
         peripheral.connect();
     }

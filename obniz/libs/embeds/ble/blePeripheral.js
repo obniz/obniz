@@ -27,7 +27,7 @@ class BlePeripheral {
 
   getService(uuid) {
     return this.services.filter(function(element){
-      return element.uuid === uuid;
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
     }).shift();
   }
 

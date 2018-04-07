@@ -1,4 +1,4 @@
-
+const ObnizUtil = require("../../utils/util");
 const BleRemoteDescriptor = require("./bleRemoteDescriptor");
 
 
@@ -51,31 +51,11 @@ class BleRemoteCharacteristic {
   }
 
   writeNumber(val){
-    var obj = {
-      "ble" :{
-        "write_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "value" : val
-        }
-      }
-    };
-    this.Obniz.send(obj);
+    this.write([val]);
   }
 
-  writeText(str){
-    var obj = {
-      "ble" :{
-        "write_characteristic" :{
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "text" : str
-        }
-      }
-    };
-    this.Obniz.send(obj);
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
   }
 
   discoverAllDescriptors(str){
