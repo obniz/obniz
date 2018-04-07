@@ -503,7 +503,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","related":"/response/ble/peripheral/descriptor_write","description":"write descriptor on own service","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","related":"/response/ble/peripheral/descriptor_write","description":"write descriptor on own service","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_descriptor"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
 
 /***/ }),
 
@@ -1861,30 +1861,41 @@ class Obniz {
     }
   }
 
-  wsOnMessage(data) {
-    if (typeof data === "string") {
-      let objArray = JSON.parse(data);
-      for (let i in objArray) {
-        this.notifyToModule(objArray[i]);
-      }
-    } else if (this.wscommands) {
-      data = new Uint8Array(data);
-      while (true) {
-        const frame = WSCommand.dequeueOne(data);
-        if (!frame) break;
-        let obj = {};
-        for (var i = 0; i < this.wscommands.length; i++) {
-          const command = this.wscommands[i];
-          if (command.module === frame.module) {
-            command.notifyFromBinary(obj, frame.func, frame.payload);
-            break;
-          }
+  binary2Json(binary) {
+    let data = new Uint8Array(binary);
+    let json = [];
+    while (true) {
+      const frame = WSCommand.dequeueOne(data);
+      if (!frame) break;
+      let obj = {};
+      for (var i = 0; i < this.wscommands.length; i++) {
+        const command = this.wscommands[i];
+        if (command.module === frame.module) {
+          command.notifyFromBinary(obj, frame.func, frame.payload);
+          break;
         }
-        this.notifyToModule(obj);
-        data = frame.next;
+      }
+      json.push(obj);
+      data = frame.next;
+    }
+    return json;
+  }
+
+  wsOnMessage(data) {
+    let json;
+    if (typeof data === "string") {
+      json = JSON.parse(data);
+    } else if (this.wscommands) {
+      //binary
+      json = binary2Json(data);
+    }
+
+    if (Array.isArray(json)) {
+      for (let i in json) {
+        this.notifyToModule(json[i]);
       }
     } else {
-      return;
+      //invalid json
     }
   }
 
@@ -2646,7 +2657,7 @@ __webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! 
 if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
-let context = __webpack_require__("./parts/Accessory sync recursive \\.js$");
+let context = __webpack_require__("./parts sync recursive \\.js$");
 for (let path of context.keys()) {
   context(path);
 }
@@ -5355,7 +5366,7 @@ webpackEmptyContext.id = "./obniz/libs/wscommand sync recursive";
 
 const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/WSSchema.js");
 
-let commandClasses = [];
+let commandClasses = {};
 
 class WSCommand {
 
@@ -5367,6 +5378,9 @@ class WSCommand {
     this.ioNotUsed = 0xFF;
   }
 
+  static get schema() {
+    return WSSchema;
+  }
   static get CommandClasses() {
     return commandClasses;
     // {
@@ -5386,8 +5400,8 @@ class WSCommand {
     // };
   }
 
-  static addCommandClass(classObj) {
-    commandClasses.push(classObj);
+  static addCommandClass(name, classObj) {
+    commandClasses[name] = classObj;
   }
 
   static framed(module, func, payload) {
@@ -5458,7 +5472,7 @@ class WSCommand {
   }
 
   static compress(wscommands, json) {
-    var ret;
+    var ret = null;
     function append(module, func, payload) {
       var frame = WSCommand.framed(module, func, payload);
       if (ret) {
@@ -7547,19 +7561,19 @@ module.exports = tv4;
 
 const WSCommand = __webpack_require__(/*! ./WSCommand_ */ "./obniz/libs/wscommand/WSCommand_.js");
 
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_System */ "./obniz/libs/wscommand/WSCommand_System.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Directive */ "./obniz/libs/wscommand/WSCommand_Directive.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_UART */ "./obniz/libs/wscommand/WSCommand_UART.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_AD */ "./obniz/libs/wscommand/WSCommand_AD.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_SPI */ "./obniz/libs/wscommand/WSCommand_SPI.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_I2C */ "./obniz/libs/wscommand/WSCommand_I2C.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_LogicAnalyzer */ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Display */ "./obniz/libs/wscommand/WSCommand_Display.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Switch */ "./obniz/libs/wscommand/WSCommand_Switch.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Ble */ "./obniz/libs/wscommand/WSCommand_Ble.js"));
-WSCommand.addCommandClass(__webpack_require__(/*! ./WSCommand_Measurement */ "./obniz/libs/wscommand/WSCommand_Measurement.js"));
+WSCommand.addCommandClass("WSCommand_System", __webpack_require__(/*! ./WSCommand_System */ "./obniz/libs/wscommand/WSCommand_System.js"));
+WSCommand.addCommandClass("WSCommand_Directive", __webpack_require__(/*! ./WSCommand_Directive */ "./obniz/libs/wscommand/WSCommand_Directive.js"));
+WSCommand.addCommandClass("WSCommand_IO", __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js"));
+WSCommand.addCommandClass("WSCommand_PWM", __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js"));
+WSCommand.addCommandClass("WSCommand_UART", __webpack_require__(/*! ./WSCommand_UART */ "./obniz/libs/wscommand/WSCommand_UART.js"));
+WSCommand.addCommandClass("WSCommand_AD", __webpack_require__(/*! ./WSCommand_AD */ "./obniz/libs/wscommand/WSCommand_AD.js"));
+WSCommand.addCommandClass("WSCommand_SPI", __webpack_require__(/*! ./WSCommand_SPI */ "./obniz/libs/wscommand/WSCommand_SPI.js"));
+WSCommand.addCommandClass("WSCommand_I2C", __webpack_require__(/*! ./WSCommand_I2C */ "./obniz/libs/wscommand/WSCommand_I2C.js"));
+WSCommand.addCommandClass("WSCommand_LogicAnalyzer", __webpack_require__(/*! ./WSCommand_LogicAnalyzer */ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
+WSCommand.addCommandClass("WSCommand_Display", __webpack_require__(/*! ./WSCommand_Display */ "./obniz/libs/wscommand/WSCommand_Display.js"));
+WSCommand.addCommandClass("WSCommand_Switch", __webpack_require__(/*! ./WSCommand_Switch */ "./obniz/libs/wscommand/WSCommand_Switch.js"));
+WSCommand.addCommandClass("WSCommand_Ble", __webpack_require__(/*! ./WSCommand_Ble */ "./obniz/libs/wscommand/WSCommand_Ble.js"));
+WSCommand.addCommandClass("WSCommand_Measurement", __webpack_require__(/*! ./WSCommand_Measurement */ "./obniz/libs/wscommand/WSCommand_Measurement.js"));
 
 module.exports = WSCommand;
 
@@ -7847,15 +7861,53 @@ module.exports = {"name":"obniz","version":"0.1.52","description":"Obniz Basic L
 
 /***/ }),
 
-/***/ "./parts/Accessory sync recursive \\.js$":
-/*!************************************!*\
-  !*** ./parts/Accessory sync \.js$ ***!
-  \************************************/
+/***/ "./parts sync recursive \\.js$":
+/*!**************************!*\
+  !*** ./parts sync \.js$ ***!
+  \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./USB/index.js": "./parts/Accessory/USB/index.js"
+	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
+	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
+	"./AudioSensor/AE-MICAMP/index.js": "./parts/AudioSensor/AE-MICAMP/index.js",
+	"./Bluetooth/RN42/index.js": "./parts/Bluetooth/RN42/index.js",
+	"./Bluetooth/XBee/index.js": "./parts/Bluetooth/XBee/index.js",
+	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
+	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
+	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
+	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
+	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
+	"./GyroSensor/ENC-03R_Module/index.js": "./parts/GyroSensor/ENC-03R_Module/index.js",
+	"./InfraredSensor/EKMC160XXXX/index.js": "./parts/InfraredSensor/EKMC160XXXX/index.js",
+	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
+	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
+	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
+	"./Light/LED/index.js": "./parts/Light/LED/index.js",
+	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
+	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
+	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
+	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
+	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
+	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
+	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
+	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
+	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
+	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
+	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
+	"./TemperatureSensor/analog/AnalogTempratureSensor.js": "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js",
+	"./TemperatureSensor/analog/LM35DZ/index.js": "./parts/TemperatureSensor/analog/LM35DZ/index.js",
+	"./TemperatureSensor/analog/LM60/index.js": "./parts/TemperatureSensor/analog/LM60/index.js",
+	"./TemperatureSensor/analog/LM61/index.js": "./parts/TemperatureSensor/analog/LM61/index.js",
+	"./TemperatureSensor/analog/MCP9700/index.js": "./parts/TemperatureSensor/analog/MCP9700/index.js",
+	"./TemperatureSensor/analog/MCP9701/index.js": "./parts/TemperatureSensor/analog/MCP9701/index.js",
+	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
+	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
+	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
+	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
+	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js"
 };
 
 
@@ -7878,7 +7930,113 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./parts/Accessory sync recursive \\.js$";
+webpackContext.id = "./parts sync recursive \\.js$";
+
+/***/ }),
+
+/***/ "./parts/ADConverter/hx711/index.js":
+/*!******************************************!*\
+  !*** ./parts/ADConverter/hx711/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class hx711 {
+  constructor() {
+    this.keys = ["vcc", "gnd", "sck", "dout"];
+    this.requiredKeys = ["sck", "dout"];
+    this.offset = 0;
+    this.scale = 1;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.spi = obniz.getFreeSpi();
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    let ioKeys = ["clk", "dout"];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
+        throw new Error("spi start param '" + key + "' are to be valid io no");
+      }
+    }
+    this.sck = obniz.getIO(this.params.sck);
+    this.dout = obniz.getIO(this.params.dout);
+
+    this.sck.output(true);
+  }
+
+  readWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+
+      _this.sck.output(false);
+
+      // while(true) {
+      //   let val = await this.dout.inputWait();
+      //   if (val == false) break;
+      // }
+      _this.spi.start({ mode: "master", clk: _this.params.sck, miso: _this.params.dout, frequency: 66 * 1000 });
+
+      let ret = yield _this.spi.writeWait([0, 0, 0]);
+      _this.spi.end(true);
+      _this.sck.output(false);
+      let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
+      return flag * (((ret[0] & 0x7F) << 16) + (ret[1] << 8) + (ret[2] << 0));
+    })();
+  }
+
+  readAverageWait(times) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      let results = [];
+      for (let i = 0; i < times; i++) {
+        results.push((yield _this2.readWait()));
+      }
+      return results.reduce(function (prev, current, i) {
+        return prev + current;
+      }, 0) / results.length;
+    })();
+  }
+
+  powerDown() {
+    this.sck.output(true);
+  }
+
+  powerUp() {
+    this.sck.output(false);
+  }
+
+  zeroAdjust(times) {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      times = parseInt(times) || 1;
+      _this3.offset = yield _this3.readAverageWait(times);
+    })();
+  }
+
+  getValueWait(times) {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      times = parseInt(times) || 1;
+      let val = yield _this4.readAverageWait(times);
+      return (val - _this4.offset) / _this4.scale;
+    })();
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("hx711", hx711);
 
 /***/ }),
 
@@ -7915,6 +8073,2668 @@ USB.prototype.off = function () {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("USB", USB);
+
+/***/ }),
+
+/***/ "./parts/AudioSensor/AE-MICAMP/index.js":
+/*!**********************************************!*\
+  !*** ./parts/AudioSensor/AE-MICAMP/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var AE_MICAMP = function () {
+  this.keys = ["vcc", "gnd", "out"];
+  this.requiredKeys = ["out"];
+};
+
+AE_MICAMP.prototype.wired = (() => {
+  var _ref = _asyncToGenerator(function* (obniz) {
+    this.obniz = obniz;
+
+    this.ad = obniz.getAD(this.params.out);
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    var self = this;
+    this.ad.start(function (value) {
+      self.voltage = value;
+      if (self.onchange) {
+        self.onchange(self.voltage);
+      }
+    });
+
+    /*
+      var self = this;
+      var analogin = [];
+      var cnt = 0;
+      while(true){
+        var sum = 0;
+        if (cnt == 10) {
+          cnt = 0;
+        }
+        analogin[cnt] = this.ad.value;
+        cnt++;
+        for (var i = 0; i < 10; i++) {
+          if (typeof(analogin[i])=="number") {sum += analogin[i];}
+        }
+        var average = sum / 10;
+        //console.log('average='+average);
+        await obniz.wait(1);
+      }
+      self.voltage_ave = average;
+      if (self.average) {
+        self.average(self.voltage_ave);
+      }
+      */
+  });
+
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+})();
+
+/*
+//移動平均を返す
+AE_MICAMP.prototype.Average = function(callback) {
+  this.average = callback;
+};
+*/
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("AE_MICAMP", AE_MICAMP);
+
+/***/ }),
+
+/***/ "./parts/Bluetooth/RN42/index.js":
+/*!***************************************!*\
+  !*** ./parts/Bluetooth/RN42/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var RN42 = function () {
+  this.keys = ["tx", "rx", "gnd"];
+  this.requiredKeys = ["tx", "rx"];
+};
+
+RN42.prototype.wired = function (obniz) {
+  if (obniz.isValidIO(this.params.gnd)) {
+    obniz.getIO(this.params.gnd).output(false);
+  }
+
+  this.uart = obniz.getFreeUart();
+
+  this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 115200, drive: "3v" });
+  var self = this;
+  this.uart.onreceive = function (data, text) {
+    // this is not perfect. separation is possible.
+    if (text.indexOf("CONNECT") >= 0) {
+      console.log("connected");
+    } else if (text.indexOf("DISCONNECT") >= 0) {
+      console.log("disconnected");
+    }
+    if (typeof self.onreceive === "function") {
+      self.onreceive(data, text);
+    }
+  };
+};
+
+RN42.prototype.send = function (data) {
+  this.uart.send(data);
+};
+
+RN42.prototype.sendCommand = function (data) {
+  this.uart.send(data + '\n');
+  this.obniz.wait(100);
+};
+
+RN42.prototype.enterCommandMode = function () {
+  this.send('$$$');
+  this.obniz.wait(100);
+};
+
+RN42.prototype.config = function (json) {
+  this.enterCommandMode();
+  if (typeof json !== "object") {
+    // TODO: warning
+    return;
+  }
+  // remove noize data
+  this.sendCommand("");
+
+  if (json.master_slave) {
+    this.config_masterslave(json.master_slave);
+  }
+  if (json.auth) {
+    this.config_auth(json.auth);
+  }
+  if (json.hid_flag) {
+    this.config_HIDflag(json.hid_flag);
+  }
+  if (json.profile) {
+    this.config_profile(json.profile);
+  }
+  if (json.power) {
+    this.config_power(json.power);
+  }
+  if (json.display_name) {
+    this.config_displayName(json.display_name);
+  }
+  this.config_reboot();
+};
+
+RN42.prototype.config_reboot = function () {
+  this.sendCommand('R,1');
+};
+
+RN42.prototype.config_masterslave = function (mode) {
+  var val = -1;
+  if (typeof mode === "number") {
+    val = mode;
+  } else if (typeof mode === "string") {
+    var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"];
+    for (var i = 0; i < modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('SM,' + val);
+};
+
+RN42.prototype.config_displayName = function (name) {
+  this.sendCommand('SN,' + name);
+};
+
+// // SH,0200 HID Flag register. Descriptor=keyboard
+RN42.prototype.config_HIDflag = function (flag) {
+  this.sendCommand('SH,' + flag);
+};
+
+RN42.prototype.config_profile = function (mode) {
+  var val = -1;
+  if (typeof mode === "number") {
+    val = mode;
+  } else if (typeof mode === "string") {
+    var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
+    for (var i = 0; i < modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('S~,' + val);
+};
+
+RN42.prototype.config_revert_localecho = function () {
+  this.sendCommand('+');
+};
+
+RN42.prototype.config_auth = function (mode) {
+  var val = -1;
+  if (typeof mode === "number") {
+    val = mode;
+  } else if (typeof mode === "string") {
+    var modes = ["open", "ssp-keyboard", "just-work", "pincode"];
+    for (var i = 0; i < modes.length; i++) {
+      if (modes[i] === mode) {
+        val = i;
+        break;
+      }
+    }
+  }
+  if (val === -1) {
+    // TODO: warning
+    return;
+  }
+  this.sendCommand('SA,' + val);
+};
+
+RN42.prototype.config_power = function (dbm) {
+
+  var val = "0010";
+  if (16 > dbm && dbm >= 12) {
+    val = "000C";
+  } else if (12 > dbm && dbm >= 8) {
+    val = "0008";
+  } else if (8 > dbm && dbm >= 4) {
+    val = "0004";
+  } else if (4 > dbm && dbm >= 0) {
+    val = "0000";
+  } else if (0 > dbm && dbm >= -4) {
+    val = "FFFC";
+  } else if (-4 > dbm && dbm >= -8) {
+    val = "FFF8";
+  } else if (-8 > dbm) {
+    val = "FFF4";
+  }
+
+  this.sendCommand('SY,' + val);
+};
+
+RN42.prototype.config_get_setting = function () {
+  this.sendCommand('D');
+};
+
+RN42.prototype.config_get_extendSetting = function () {
+  this.sendCommand('E');
+};
+
+// Module functions
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("RN42", RN42);
+
+/***/ }),
+
+/***/ "./parts/Bluetooth/XBee/index.js":
+/*!***************************************!*\
+  !*** ./parts/Bluetooth/XBee/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class XBee {
+
+  constructor() {
+    this.keys = ["tx", "rx", "gnd"];
+    this.requiredKeys = ["tx", "rx"];
+
+    this.displayIoNames = { "tx": "<tx", "rx": ">rx" };
+  }
+
+  wired(obniz) {
+
+    this.uart = obniz.getFreeUart();
+    this.currentCommand = null;
+    this.commands = [];
+    this.isAtMode = false;
+    this.onFinishAtModeCallback = null;
+
+    if (typeof this.params.gnd === "number") {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 9600, drive: "3v" });
+
+    this.uart.onreceive = function (data, text) {
+      if (this.isAtMode) {
+        this.onAtResultsRecieve(data, text);
+      } else {
+        if (typeof this.onreceive === "function") {
+          this.onreceive(data, text);
+        }
+      }
+    }.bind(this);
+  }
+
+  send(text) {
+    if (this.isAtMode === false) {
+      this.uart.send(text);
+    } else {
+      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
+    }
+  }
+
+  onAtResultsRecieve(data, text) {
+    if (!this.isAtMode) {
+      return;
+    }
+
+    var next = function () {
+      this.currentCommand = null;
+      this.sendCommand();
+    }.bind(this);
+
+    if (text === "OK\r") {
+      if (this.currentCommand === "ATCN") {
+        this.isAtMode = false;
+        this.currentCommand = null;
+        if (typeof this.onFinishAtModeCallback === "function") {
+          this.onFinishAtModeCallback();
+          this.onFinishAtModeCallback = null;
+        }
+        return;
+      }
+      next();
+    } else if (text === "ERROR\r") {
+      this.obniz.error("XBee config error : " + this.currentCommand);
+    } else {
+      //response of at command.
+      console.log("XBEE : no catch message", data);
+      next();
+    }
+  }
+
+  addCommand(command, value) {
+    var str = command + (value ? " " + value : "");
+    this.commands.push(str);
+    if (this.isAtMode === true && this.currentCommand === null) {
+      this.sendCommand();
+    }
+  }
+
+  sendCommand() {
+    if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
+      this.currentCommand = "AT" + this.commands.shift();
+      this.uart.send(this.currentCommand + "\r");
+    }
+  }
+
+  enterAtMode() {
+    if (this.currentCommand !== null) return;
+    this.isAtMode = true;
+    this.obniz.wait(1000);
+    var command = "+++";
+    this.currentCommand = command;
+    this.uart.send(this.currentCommand);
+    this.obniz.wait(1000);
+  }
+
+  exitAtMode() {
+    this.addCommand("CN");
+  }
+
+  configWait(config) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      if (_this.isAtMode) {
+        throw new Error("Xbee : duplicate config setting");
+      };
+      return new Promise(function (resolve, reject) {
+        var standaloneKeys = {
+          "destination_address_high": "DH",
+          "destination_address_low": "DL",
+          "source_address": "MY"
+        };
+        var highLowKeys = ["destination_address"];
+        this.enterAtMode();
+        for (var key in config) {
+          if (key.length === 2) {
+            this.addCommand(key, config[key]);
+          } else if (standaloneKeys[key]) {
+            this.addCommand(standaloneKeys[key], config[key]);
+          } else if (highLowKeys.includes(key)) {
+            var high = config[key].slice(0, -8);
+            if (!high) {
+              high = "0";
+            }
+            var low = config[key].slice(-8);
+
+            this.addCommand(standaloneKeys[key + "_high"], high);
+            this.addCommand(standaloneKeys[key + "_low"], low);
+          }
+        }
+        this.exitAtMode();
+        this.onFinishAtModeCallback = function () {
+          resolve();
+        };
+      }.bind(_this));
+    })();
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("XBee", XBee);
+
+/***/ }),
+
+/***/ "./parts/Camera/JpegSerialCam/index.js":
+/*!*********************************************!*\
+  !*** ./parts/Camera/JpegSerialCam/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class JpegSerialCam {
+
+  constructor() {
+    this.keys = ["vcc", "cam_tx", "cam_rx", "gnd"];
+    this.requiredKeys = ["cam_tx", "cam_rx"];
+
+    this.ioKeys = this.keys;
+    this.displayName = "Jcam";
+    this.displayIoNames = { "cam_tx": "camTx", "cam_rx": "camRx" };
+  }
+
+  wired() {
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.my_tx = this.params.cam_rx;
+    this.my_rx = this.params.cam_tx;
+
+    this.obniz.getIO(this.my_tx).drive("3v");
+
+    this.uart = this.obniz.getFreeUart();
+  }
+
+  _drainUntil(uart, search, recv) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      if (!recv) recv = [];
+      while (true) {
+        var readed = uart.readBytes();
+        recv = recv.concat(readed);
+        var tail = _this._seekTail(search, recv);
+        if (tail >= 0) {
+          recv.splice(0, tail);
+          return recv;
+        }
+        yield _this.obniz.wait(10);
+      }
+    })();
+  }
+
+  _seekTail(search, src) {
+    var f = 0;
+    for (var i = 0; i < src.length; i++) {
+      if (src[i] === search[f]) {
+        f++;
+        if (f === search.length) {
+          return i + 1;
+        }
+      } else {
+        f = 0;
+      }
+    }
+    return -1;
+  }
+
+  arrayToBase64(buf) {
+    if (typeof btoa === "function") {
+      var binstr = Array.prototype.map.call(buf, function (ch) {
+        return String.fromCharCode(ch);
+      }).join('');
+      return btoa(binstr);
+    }
+    // TODO: 
+  }
+
+  startwait(obj) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      if (!obj) obj = {};
+      _this2.uart.start({ tx: _this2.my_tx, rx: _this2.my_rx, baud: obj.baud || 38400 });
+      _this2.obniz.display.setPinName(_this2.my_tx, "JpegSerialCam", "camRx");
+      _this2.obniz.display.setPinName(_this2.my_rx, "JpegSerialCam", "camTx");
+      yield _this2.obniz.wait(2500);
+    })();
+  }
+
+  resetwait() {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      _this3.uart.send([0x56, 0x00, 0x26, 0x00]);
+      yield _this3._drainUntil(_this3.uart, [0x76, 0x00, 0x26, 0x00]);
+      yield _this3.obniz.wait(2500);
+    })();
+  }
+
+  setResolusionWait(resolution) {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      let val;
+      if (resolution === "640*480") {
+        val = 0x00;
+      } else if (resolution === "320*240") {
+        val = 0x11;
+      } else if (resolution === "160*120") {
+        val = 0x22;
+      } else {
+        throw new Error("invalid resolution");
+      }
+      _this4.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
+      yield _this4._drainUntil(_this4.uart, [0x76, 0x00, 0x31, 0x00]);
+      yield _this4.resetwait();
+    })();
+  }
+
+  setCompressibilityWait(compress) {
+    var _this5 = this;
+
+    return _asyncToGenerator(function* () {
+      let val = Math.floor(compress / 100 * 0xFF);
+      _this5.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+      yield _this5._drainUntil(_this5.uart, [0x76, 0x00, 0x31, 0x00]);
+      yield _this5.resetwait();
+    })();
+  }
+
+  setBaudWait(baud) {
+    var _this6 = this;
+
+    return _asyncToGenerator(function* () {
+      let val;
+      switch (baud) {
+        case 9600:
+          val = [0xAE, 0xC8];
+          break;
+        case 19200:
+          val = [0x56, 0xE4];
+          break;
+        case 38400:
+          val = [0x2A, 0xF2];
+          break;
+        case 57600:
+          val = [0x1C, 0x4C];
+          break;
+        case 115200:
+          val = [0x0D, 0xA6];
+          break;
+        default:
+          throw new Error("invalid baud rate");
+      }
+      _this6.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
+      yield _this6._drainUntil(_this6.uart, [0x76, 0x00, 0x31, 0x00]);
+      //await this.obniz.wait(1000);
+      yield _this6.startwait({
+        baud
+      });
+    })();
+  }
+
+  takewait() {
+    var _this7 = this;
+
+    return _asyncToGenerator(function* () {
+      const uart = _this7.uart;
+      //console.log("stop a photo")
+      uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
+      yield _this7._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+
+      //console.log("take a photo")
+      uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
+      yield _this7._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+
+      //console.log("read length")
+      uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
+      var recv = yield _this7._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
+      var XX;
+      var YY;
+      while (true) {
+        var readed = uart.readBytes();
+        //console.log(recv);
+        recv = recv.concat(readed);
+        if (recv.length >= 2) {
+          XX = recv[0];
+          YY = recv[1];
+          break;
+        }
+        yield _this7.obniz.wait(1000);
+      }
+      let databytes = XX * 256 + YY;
+      //console.log("image: " + databytes + " Bytes");
+      const high = databytes >> 8 & 0xFF;
+      const low = databytes & 0xFF;
+
+      //console.log("start reading image")
+      uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
+      var recv = yield _this7._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+      //console.log("reading...");
+      while (true) {
+        var readed = uart.readBytes();
+        recv = recv.concat(readed);
+        //console.log(readed.length);
+        if (recv.length >= databytes) {
+          break;
+        }
+        yield _this7.obniz.wait(10);
+      }
+      //console.log("done");
+      recv = recv.splice(0, databytes); // remove tail
+      recv = recv.concat([0xFF, 0xD9]);
+      return recv;
+    })();
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("JpegSerialCam", JpegSerialCam);
+
+/***/ }),
+
+/***/ "./parts/Display/7SegmentLED/index.js":
+/*!********************************************!*\
+  !*** ./parts/Display/7SegmentLED/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _7SegmentLED = function () {
+  this.requiredKeys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+  this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+
+  this.digits = [0x3F, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x6f];
+};
+
+_7SegmentLED.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.ios = [];
+  this.ios.push(obniz.getIO(this.params.a));
+  this.ios.push(obniz.getIO(this.params.b));
+  this.ios.push(obniz.getIO(this.params.c));
+  this.ios.push(obniz.getIO(this.params.d));
+  this.ios.push(obniz.getIO(this.params.e));
+  this.ios.push(obniz.getIO(this.params.f));
+  this.ios.push(obniz.getIO(this.params.g));
+
+  this.dp = obniz.getIO(this.params.dp);
+  this.common = obniz.getIO(this.params.common);
+  this.isCathodeCommon = this.params.commonType === "anode" ? false : true;
+};
+
+_7SegmentLED.prototype.print = function (data) {
+  if (typeof data === "number") {
+    data = parseInt(data);
+    data = data % 10;
+
+    for (let i = 0; i < 7; i++) {
+      if (this.ios[i]) {
+        var val = this.digits[data] & 1 << i ? true : false;
+        if (!this.isCathodeCommon) {
+          val = ~val;
+        }
+        this.ios[i].output(val);
+      }
+    }
+    this.on();
+  }
+};
+
+_7SegmentLED.prototype.printRaw = function (data) {
+  if (typeof data === "number") {
+    for (let i = 0; i < 7; i++) {
+      if (this.ios[i]) {
+        var val = data & 1 << i ? true : false;
+        if (!this.isCathodeCommon) {
+          val = !val;
+        }
+        this.ios[i].output(val);
+      }
+    }
+    this.on();
+  }
+};
+
+_7SegmentLED.prototype.dpShow = function (show) {
+  if (this.dp) {
+    this.dp.output(this.isCathodeCommon ? show : !show);
+  }
+};
+
+_7SegmentLED.prototype.on = function () {
+  this.common.output(this.isCathodeCommon ? false : true);
+};
+
+_7SegmentLED.prototype.off = function () {
+  this.common.output(this.isCathodeCommon ? true : false);
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);
+
+/***/ }),
+
+/***/ "./parts/Display/7SegmentLEDArray/index.js":
+/*!*************************************************!*\
+  !*** ./parts/Display/7SegmentLEDArray/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _7SegmentLEDArray = function () {
+  this.identifier = "" + new Date().getTime();
+
+  this.keys = ["seg0", "seg1", "seg2", "seg3"];
+  this.requiredKeys = ["seg0"];
+};
+
+_7SegmentLEDArray.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+
+  this.segments = [];
+  if (this.params.seg0) {
+    this.segments.unshift(this.params.seg0);
+  }
+  if (this.params.seg1) {
+    this.segments.unshift(this.params.seg1);
+  }
+  if (this.params.seg2) {
+    this.segments.unshift(this.params.seg2);
+  }
+  if (this.params.seg3) {
+    this.segments.unshift(this.params.seg3);
+  }
+};
+
+_7SegmentLEDArray.prototype.print = function (data) {
+  if (typeof data === "number") {
+    data = parseInt(data);
+
+    var segments = this.segments;
+    var print = function (index) {
+      let val = data;
+
+      for (let i = 0; i < segments.length; i++) {
+        console.log(val);
+        if (index === i) {
+          segments[i].print(val % 10);
+        } else {
+          segments[i].off();
+        }
+        val = val / 10;
+      }
+    };
+
+    var animations = [];
+    for (let i = 0; i < segments.length; i++) {
+      animations.push({
+        duration: 3,
+        state: print
+      });
+    }
+
+    var segments = this.segments;
+    this.obniz.io.animation(this.identifier, "loop", animations);
+  };
+};
+
+_7SegmentLEDArray.prototype.on = function () {
+  this.obniz.io.animation(this.identifier, "resume");
+};
+
+_7SegmentLEDArray.prototype.off = function () {
+  this.obniz.io.animation(this.identifier, "pause");
+  for (let i = 0; i < this.segments.length; i++) {
+    this.segments[i].off();
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
+
+/***/ }),
+
+/***/ "./parts/Display/MatrixLED_MAX7219/index.js":
+/*!**************************************************!*\
+  !*** ./parts/Display/MatrixLED_MAX7219/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MatrixLED_MAX7219 {
+
+  constructor() {
+    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
+    this.requiredKeys = ["din", "cs", "clk"];
+  }
+
+  wired(obniz) {
+    this.cs = obniz.getIO(this.params.cs);
+    // logich high must 3.5v <=
+    if (obniz.isValidIO(this.params.vcc)) {
+      obniz.getIO(this.params.vcc).output(true);
+    }
+    if (obniz.isValidIO(this.params.gnd)) {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    // max 10Mhz but motor driver can't
+    this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+    this.params.mode = "master";
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    // reset a onece
+    this.cs.output(true);
+    this.cs.output(false);
+    this.cs.output(true);
+  }
+
+  init(width, height) {
+    this.width = width;
+    this.height = height;
+    this.preparevram(width, height);
+    this.initModule();
+  }
+
+  initModule() {
+    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
+    this.write([0x0a, 0x05]); // brightness 9/32 0 to f
+    this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
+    this.write([0x0c, 0x01]); // Shutdown to normal operation
+    this.write([0x0f, 0x00]);
+    this.passingCommands();
+    obniz.wait(10);
+  }
+
+  test() {
+    this.write([0x0f, 0x00]); // test command
+    this.passingCommands();
+  }
+
+  passingCommands() {
+    for (let i = 8; i < this.width; i += 8) {
+      // this needed for number of unit
+      this.write([0x00, 0x00]);
+    }
+  }
+
+  brightness(val) {
+    this.write([0x0a, val]); // 0 to 15;
+    this.passingCommands();
+  }
+
+  preparevram(width, height) {
+    this.vram = [];
+    for (let i = 0; i < height; i++) {
+      let dots = new Array(width / 8);
+      for (let ii = 0; ii < dots.length; ii++) {
+        dots[ii] = 0x00;
+      }
+      this.vram.push(dots);
+    }
+  }
+
+  write(data) {
+    this.cs.output(false);
+    this.spi.write(data);
+    this.cs.output(true);
+  }
+
+  writeVram() {
+    for (let line_num = 0; line_num < this.height; line_num++) {
+      let addr = line_num + 1;
+      let line = this.vram[line_num];
+      let data = [];
+      for (let col = 0; col < line.length; col++) {
+        data.push(addr);
+        data.push(line[col]);
+      }
+      this.write(data);
+    }
+  }
+
+  clear() {
+    for (let line_num = 0; line_num < this.height; line_num++) {
+      let line = this.vram[line_num];
+      for (let col = 0; col < line.length; col++) {
+        this.vram[line_num][col] = 0x00;
+      }
+      this.writeVram();
+    }
+  }
+
+  draw(ctx) {
+    let isNode = typeof window === 'undefined';
+    if (isNode) {
+      // TODO:
+      throw new Error("node js mode is under working.");
+    } else {
+      const imageData = ctx.getImageData(0, 0, this.width, this.height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        let index = parseInt(i / 4);
+        let line = parseInt(index / this.width);
+        let col = parseInt((index - line * this.width) / 8);
+        let bits = parseInt(index - line * this.width) % 8;
+        if (bits === 0) this.vram[line][col] = 0x00;
+        if (brightness > 0x7F) this.vram[line][col] |= 0x80 >> bits;
+      }
+    }
+    this.writeVram();
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
+
+/***/ }),
+
+/***/ "./parts/DistanceSensor/HC-SR04/index.js":
+/*!***********************************************!*\
+  !*** ./parts/DistanceSensor/HC-SR04/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var HCSR04 = function () {
+  this.keys = ["vcc", "triger", "echo", "gnd"];
+  this.requiredKeys = ["vcc", "triger", "echo"];
+
+  this._unit = "mm";
+};
+
+HCSR04.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+
+  obniz.setVccGnd(null, this.params.gnd, "5v");
+
+  this.vccIO = obniz.getIO(this.params.vcc);
+  this.triger = this.params.triger;
+  this.echo = this.params.echo;
+};
+
+HCSR04.prototype.measure = (() => {
+  var _ref = _asyncToGenerator(function* (callback) {
+
+    this.vccIO.drive("5v");
+    this.vccIO.output(true);
+    yield this.obniz.wait(10);
+
+    var self = this;
+    this.obniz.measure.echo({
+      io_pulse: this.triger,
+      io_echo: this.echo,
+      pulse: "positive",
+      pulse_width: 0.011,
+      measure_edges: 3,
+      timeout: 10 / 340 * 1000,
+      callback: function (edges) {
+        self.vccIO.output(false);
+        var distance = null;
+        for (var i = 0; i < edges.length - 1; i++) {
+          // HCSR04's output of io_echo is initially high when triger is finshed
+          if (edges[i].edge === true) {
+            distance = (edges[i + 1].timing - edges[i].timing) * 1000;
+            if (self._unit === "mm") {
+              distance = distance / 5.8;
+            } else if (self._unit === "inch") {
+              distance = distance / 148.0;
+            }
+          }
+        }
+        if (typeof callback === "function") {
+          callback(distance);
+        }
+      }
+    });
+  });
+
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+})();
+
+HCSR04.prototype.unit = function (unit) {
+  if (unit === "mm") {
+    this._unit = "mm";
+  } else if (unit === "inch") {
+    this._unit = "inch";
+  } else {
+    throw new Error("HCSR04: unknown unit " + unit);
+  }
+};
+
+// Module functions
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("HC-SR04", HCSR04);
+
+/***/ }),
+
+/***/ "./parts/GyroSensor/ENC-03R_Module/index.js":
+/*!**************************************************!*\
+  !*** ./parts/GyroSensor/ENC-03R_Module/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var ENC03R_Module = function () {
+
+  this.keys = ["vcc", "out1", "out2", "gnd"];
+  this.required = ["out1", "out2"];
+  this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+};
+
+ENC03R_Module.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad0 = obniz.getAD(this.params.out1);
+  this.ad1 = obniz.getAD(this.params.out2);
+
+  this.io_pwr.output(true);
+
+  var self = this;
+  this.ad0.start(function (value) {
+    self.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    //console.log('raw='+value);
+    if (self.onchange1) {
+      self.onchange1(self.sens1);
+    }
+  });
+
+  this.ad1.start(function (value) {
+    self.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+    if (self.onchange2) {
+      self.onchange2(self.sens2);
+    }
+  });
+};
+
+ENC03R_Module.prototype.onChangeSens1 = function (callback) {
+  this.onchange1 = callback;
+};
+ENC03R_Module.prototype.onChangeSens2 = function (callback) {
+  this.onchange2 = callback;
+};
+
+ENC03R_Module.prototype.getValueSens1 = _asyncToGenerator(function* () {
+  return (this.ad0.value - 1.47) / Sens;
+});
+
+ENC03R_Module.prototype.getValueSens2 = _asyncToGenerator(function* () {
+  return (this.ad1.value - 1.35) / Sens;
+});
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("ENC03R_Module", ENC03R_Module);
+
+/***/ }),
+
+/***/ "./parts/InfraredSensor/EKMC160XXXX/index.js":
+/*!***************************************************!*\
+  !*** ./parts/InfraredSensor/EKMC160XXXX/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var PIR_ekmc = function () {
+  this.keys = ["vcc", "gnd", "signal"];
+  this.requiredKeys = ["signal"];
+};
+
+PIR_ekmc.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.io_signal = obniz.getIO(this.params.signal);
+  this.io_signal.pull("0v");
+
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+  var self = this;
+  this.io_signal.input(function (value) {
+    self.isPressed = value === false;
+    if (self.onchange) {
+      self.onchange(value === false);
+    }
+  });
+};
+
+PIR_ekmc.prototype.isPressedWait = _asyncToGenerator(function* () {
+  var self = this;
+  var ret = yield this.io_signal.inputWait();
+  return ret == false;
+});
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("PIR_ekmc", PIR_ekmc);
+
+/***/ }),
+
+/***/ "./parts/InfraredSensor/IRSensor/index.js":
+/*!************************************************!*\
+  !*** ./parts/InfraredSensor/IRSensor/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class IRSensor {
+
+  constructor() {
+    this.keys = ["output", "vcc", "gnd"];
+    this.requiredKeys = ["output"];
+
+    this.dataSymbolLength = 0.07;
+    this.duration = 200; // 200msec
+    this.dataInverted = true;
+    this.trigerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
+    this.cutTail = true;
+    this.output_pullup = true;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    if (!obniz.isValidIO(this.params.output)) {
+      throw new Errro('output is not valid io');
+    }
+  }
+
+  start(callback) {
+    this.ondetect = callback;
+    if (this.output_pullup) {
+      obniz.getIO(this.params.output).pull('5v');
+    }
+
+    obniz.logicAnalyzer.start({ io: this.params.output, interval: this.dataSymbolLength, duration: this.duration, trigerValue: this.dataInverted ? false : true, trigerValueSamples: this.trigerSampleCount });
+    obniz.logicAnalyzer.onmeasured = levels => {
+      if (typeof this.ondetect === "function") {
+        if (this.dataInverted) {
+          let arr = new Uint8Array(levels);
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] = arr[i] ? 0 : 1;
+          }
+          levels = Array.from(arr);
+        }
+
+        if (this.cutTail) {
+          for (let i = levels.length - 1; i > 1; i--) {
+            if (levels[i] === 0 && levels[i - 1] === 0) {
+              levels.splice(i, 1);
+            } else {
+              break;
+            }
+          }
+        }
+
+        this.ondetect(levels);
+      }
+    };
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("IRSensor", IRSensor);
+
+/***/ }),
+
+/***/ "./parts/Light/FullColorLED/index.js":
+/*!*******************************************!*\
+  !*** ./parts/Light/FullColorLED/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class FullColorLed {
+  constructor() {
+
+    this.COMMON_TYPE_ANODE = 1;
+    this.COMMON_TYPE_CATHODE = 0;
+
+    this.anode_keys = ['anode', 'anode_common', 'anodeCommon', 'vcc'];
+    this.cathode_keys = ['cathode', 'cathode_common', 'cathodeCommon', 'gnd'];
+    this.animationName = "FullColorLed-" + Math.round(Math.random() * 1000);
+
+    this.keys = ["r", "g", "b", "common", "commonType"];
+    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+  }
+
+  wired(obniz) {
+    var r = this.params.r;
+    var g = this.params.g;
+    var b = this.params.b;
+    var common = this.params.common;
+    var commontype = this.params.commonType;
+
+    this.obniz = obniz;
+    if (this.anode_keys.includes(commontype)) {
+      this.commontype = this.COMMON_TYPE_ANODE;
+    } else if (this.cathode_keys.includes(commontype)) {
+      this.commontype = this.COMMON_TYPE_CATHODE;
+    } else {
+      this.obniz.error("FullColorLed param need common type [  anode_common or cathode_common ] ");
+    }
+
+    this.common = this.obniz.getIO(common);
+    this.common.drive("3v");
+    this.common.output(this.commontype);
+
+    this.obniz.getIO(r).drive("3v");
+    this.obniz.getIO(r).output(this.commontype);
+    this.obniz.getIO(g).drive("3v");
+    this.obniz.getIO(g).output(this.commontype);
+    this.obniz.getIO(b).drive("3v");
+    this.obniz.getIO(b).output(this.commontype);
+    this.pwmR = this.obniz.getFreePwm();this.pwmR.start({ io: r });this.pwmR.freq(1000);
+    this.pwmG = this.obniz.getFreePwm();this.pwmG.start({ io: g });this.pwmG.freq(1000);
+    this.pwmB = this.obniz.getFreePwm();this.pwmB.start({ io: b });this.pwmB.freq(1000);
+    this.rgb(0, 0, 0);
+  }
+
+  rgb(r, g, b) {
+    r = Math.min(Math.max(parseInt(r), 0), 255);
+    g = Math.min(Math.max(parseInt(g), 0), 255);
+    b = Math.min(Math.max(parseInt(b), 0), 255);
+
+    if (this.commontype === this.COMMON_TYPE_ANODE) {
+      r = 255 - r;
+      g = 255 - g;
+      b = 255 - b;
+    }
+    this.pwmR.duty(r / 255 * 100);
+    this.pwmG.duty(g / 255 * 100);
+    this.pwmB.duty(b / 255 * 100);
+  }
+
+  hsv(h, s, v) {
+    var C = v * s;
+    var Hp = h / 60;
+    var X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    var R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    };
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    };
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    };
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    };
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    };
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    };
+
+    var m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    this.rgb(R, G, B);
+  }
+
+  gradation(cycletime_ms) {
+
+    var frames = [];
+    var max = 36 / 2;
+    var duration = Math.round(cycletime_ms / max);
+    for (var i = 0; i < max; i++) {
+      var oneFrame = {
+        duration: duration,
+        state: function (index) {
+          // index = 0
+          this.hsv(index * 10 * 2, 1, 1);
+        }.bind(this)
+      };
+      frames.push(oneFrame);
+    }
+    this.obniz.io.animation(this.animationName, "loop", frames);
+  }
+  stopgradation() {
+    this.obniz.io.animation(this.animationName, "pause");
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("FullColorLed", FullColorLed);
+
+/***/ }),
+
+/***/ "./parts/Light/InfraredLED/index.js":
+/*!******************************************!*\
+  !*** ./parts/Light/InfraredLED/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class InfraredLED {
+
+  constructor() {
+    this.keys = ["anode", "cathode"];
+    this.requiredKeys = ["anode"];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error("anode is not valid io");
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error("cathode is not valid io");
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start({ io: this.params.anode });
+    this.pwm.freq(38000);
+  }
+
+  send(arr) {
+    this.pwm.modulate("am", this.dataSymbolLength, arr);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("InfraredLED", InfraredLED);
+
+/***/ }),
+
+/***/ "./parts/Light/LED/index.js":
+/*!**********************************!*\
+  !*** ./parts/Light/LED/index.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var LED = function () {
+  this.keys = ["anode", "cathode"];
+  this.requiredKeys = ["anode"];
+
+  this.animationName = "Led-" + Math.round(Math.random() * 1000);
+};
+
+LED.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.io_anode = obniz.getIO(this.params.anode);
+  if (this.params.cathode) {
+    this.io_cathode = obniz.getIO(this.params.cathode);
+    this.io_cathode.output(false);
+  }
+};
+
+// Module functions
+
+LED.prototype.on = function () {
+  this.endBlink();
+  this.io_anode.output(true);
+};
+
+LED.prototype.off = function () {
+  this.endBlink();
+  this.io_anode.output(false);
+};
+
+LED.prototype.endBlink = function () {
+  this.obniz.io.animation(this.animationName, "pause");
+};
+
+LED.prototype.blink = function (interval) {
+  if (!interval) {
+    interval = 100;
+  }
+  var frames = [{
+    duration: interval,
+    state: function (index) {
+      // index = 0
+      this.io_anode.output(true); // on
+    }.bind(this)
+  }, {
+    duration: interval,
+    state: function (index) {
+      // index = 0
+      this.io_anode.output(false); //off
+    }.bind(this)
+  }];
+
+  this.obniz.io.animation(this.animationName, "loop", frames);
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("LED", LED);
+
+/***/ }),
+
+/***/ "./parts/Light/WS2811/index.js":
+/*!*************************************!*\
+  !*** ./parts/Light/WS2811/index.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class WS2811 {
+
+  constructor() {
+    this.key = ["din", "vcc", "gnd"];
+    this.requiredKey = ["din"];
+  }
+
+  wired(obniz) {
+
+    this.obniz = obniz;
+
+    this.params.mode = "master";
+    this.params.frequency = 2 * 1000 * 1000;
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  static _generateFromByte(val) {
+
+    val = parseInt(val);
+    const zero = 0x8;
+    const one = 0xE;
+    let ret = [];
+    for (var i = 0; i < 8; i += 2) {
+      let byte = 0;
+      if (val & 0x80 >> i) {
+        byte = one << 4;
+      } else {
+        byte = zero << 4;
+      }
+      if (val & 0x80 >> i + 1) {
+        byte |= one;
+      } else {
+        byte |= zero;
+      }
+      ret.push(byte);
+    }
+    return ret;
+  }
+
+  static _generateColor(r, g, b) {
+
+    let array = WS2811._generateFromByte(r);
+    array = array.concat(WS2811._generateFromByte(g));
+    array = array.concat(WS2811._generateFromByte(b));
+    return array;
+  }
+
+  static _generateHsvColor(h, s, v) {
+    var C = v * s;
+    var Hp = h / 60;
+    var X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    var R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    };
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    };
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    };
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    };
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    };
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    };
+
+    var m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    let array = WS2811._generateFromByte(R);
+    array = array.concat(WS2811._generateFromByte(G));
+    array = array.concat(WS2811._generateFromByte(B));
+    return array;
+  }
+
+  rgb(r, g, b) {
+    this.spi.write(WS2811._generateColor(r, g, b));
+  }
+
+  hsv(h, s, v) {
+    this.spi.write(WS2811._generateHsvColor(h, s, v));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (var i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (var i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("WS2811", WS2811);
+
+/***/ }),
+
+/***/ "./parts/Memory/24LC256/index.js":
+/*!***************************************!*\
+  !*** ./parts/Memory/24LC256/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var _24LC256 = function () {
+  this.requiredKeys = ["address"];
+  this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
+};
+
+_24LC256.prototype.wired = function (obniz) {
+  this.params.mode = this.params.mode || "master"; //for i2c
+  this.params.clock = this.params.clock || 400 * 1000; //for i2c
+  this.i2c = obniz.getI2CWithConfig(this.params);
+};
+
+// Module functions
+
+_24LC256.prototype.set = function (address, data) {
+  var array = [];
+  array.push(address >> 8 & 0xFF);
+  array.push(address & 0xFF);
+  array.push.apply(array, data);
+  this.i2c.write(0x50, array);
+  this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+};
+
+_24LC256.prototype.getWait = (() => {
+  var _ref = _asyncToGenerator(function* (address, length) {
+    var array = [];
+    array.push(address >> 8 & 0xFF);
+    array.push(address & 0xFF);
+    this.i2c.write(0x50, array);
+    return yield this.i2c.readWait(0x50, length);
+  });
+
+  return function (_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+})();
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("_24LC256", _24LC256);
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/Button/index.js":
+/*!**********************************************!*\
+  !*** ./parts/MovementSensor/Button/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var Button = function () {
+  this.keys = ["signal", "gnd"];
+  this.required = ["signal"];
+};
+
+Button.prototype.wired = function (obniz) {
+  this.io_signal = obniz.getIO(this.params.signal);
+
+  if (obniz.isValidIO(this.params.gnd)) {
+    this.io_supply = obniz.getIO(this.params.gnd);
+    this.io_supply.output(false);
+  }
+
+  // start input
+  this.io_signal.pull("5v");
+
+  var self = this;
+  this.io_signal.input(function (value) {
+    self.isPressed = value === false;
+    if (self.onchange) {
+      self.onchange(value === false);
+    }
+  });
+};
+
+Button.prototype.isPressedWait = _asyncToGenerator(function* () {
+  var ret = yield this.io_signal.inputWait();
+  return ret === false;
+});
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("Button", Button);
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/JoyStick/index.js":
+/*!************************************************!*\
+  !*** ./parts/MovementSensor/JoyStick/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var JoyStick = function () {
+  this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
+  this.requiredKeys = ["sw", "y", "x"];
+  this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
+  this.pinname = { "sw": "sw12" };
+  this.shortName = "joyS";
+};
+
+JoyStick.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+  this.io_sig_sw = obniz.getIO(this.params.sw);
+  this.ad_x = obniz.getAD(this.params.x);
+  this.ad_y = obniz.getAD(this.params.y);
+
+  this.io_sig_sw.pull("5v");
+
+  var self = this;
+  this.ad_x.start(function (value) {
+    self.positionX = value / 5.0;
+    if (self.onchangex) {
+      self.onchangex(self.positionX * 2 - 1);
+    }
+  });
+
+  this.ad_y.start(function (value) {
+    self.positionY = value / 5.0;
+    if (self.onchangey) {
+      self.onchangey(self.positionY * 2 - 1);
+    }
+  });
+
+  this.io_sig_sw.input(function (value) {
+    self.isPressed = value === false;
+    if (self.onchangesw) {
+      self.onchangesw(value === false);
+    }
+  });
+};
+
+JoyStick.prototype.isPressedWait = _asyncToGenerator(function* () {
+  var ret = yield this.io_sig_sw.inputWait();
+  return ret === false;
+});
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("JoyStick", JoyStick);
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/KXSC7-2050/index.js":
+/*!**************************************************!*\
+  !*** ./parts/MovementSensor/KXSC7-2050/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var KXSC7_2050 = function () {
+  this.keys = ["x", "y", "z", "vcc", "gnd"];
+  this.requiredKeys = ["x", "y", "z"];
+};
+
+KXSC7_2050.prototype.wired = (() => {
+  var _ref = _asyncToGenerator(function* (obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
+    this.ad_z = obniz.getAD(this.params.z);
+
+    yield obniz.wait(500);
+    var ad = obniz.getAD(this.params.vcc);
+    var pwrVoltage = yield ad.getWait();
+    var horizontalZ = yield this.ad_z.getWait();
+    var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+    var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+
+    var self = this;
+    this.ad_x.start(function (value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
+      if (self.onchangex) {
+        self.onchangex(self.gravity);
+      }
+    });
+
+    this.ad_y.start(function (value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
+      if (self.onchangey) {
+        self.onchangey(self.gravity);
+      }
+    });
+
+    this.ad_z.start(function (value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
+      if (self.onchangez) {
+        self.onchangez(self.gravity);
+      }
+    });
+  });
+
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+})();
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("KXSC7_2050", KXSC7_2050);
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/Potentiometer/index.js":
+/*!*****************************************************!*\
+  !*** ./parts/MovementSensor/Potentiometer/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Potentiometer = function () {
+  this.keys = ["pin0", "pin1", "pin2"];
+  this.reuiredKeys = ["pin0", "pin1", "pin2"];
+
+  this.vcc_voltage = 5.0;
+};
+
+Potentiometer.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+  this.ad = obniz.getAD(this.params.pin1);
+
+  var self = this;
+
+  obniz.getAD(this.params.pin0).start(function (value) {
+    self.vcc_voltage = value;
+  });
+
+  this.ad.start(function (value) {
+    self.position = value / self.vcc_voltage;
+    if (self.onchange) {
+      self.onchange(self.position);
+    }
+  });
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("Potentiometer", Potentiometer);
+
+/***/ }),
+
+/***/ "./parts/Moving/DCMotor/index.js":
+/*!***************************************!*\
+  !*** ./parts/Moving/DCMotor/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var DCMotor = function () {
+  this.keys = ["forward", "back"];
+  this.requiredKeys = ["forward", "back"];
+};
+
+DCMotor.prototype.wired = function (obniz) {
+  this.status = {
+    direction: null,
+    power: null
+  };
+
+  this.pwm1_io_num = this.params.forward;
+  this.pwm2_io_num = this.params.back;
+
+  this.pwm1 = obniz.getFreePwm();
+  this.pwm1.start({ io: this.pwm1_io_num });
+  this.pwm1.freq(100000);
+  this.pwm2 = obniz.getFreePwm();
+  this.pwm2.start({ io: this.pwm2_io_num });
+  this.pwm2.freq(100000);
+  this.power(30);
+};
+
+// Module functions
+
+DCMotor.prototype.forward = function () {
+  this.move(true);
+};
+
+DCMotor.prototype.reverse = function () {
+  this.move(false);
+};
+
+DCMotor.prototype.stop = function () {
+  if (this.status.direction === null) {
+    return;
+  }
+  this.status.direction = null;
+  this.pwm1.duty(0);
+  this.pwm2.duty(0);
+};
+
+DCMotor.prototype.move = function (forward) {
+  if (forward) {
+    if (this.status.direction === true) {
+      return;
+    }
+    this.status.direction = true;
+  } else {
+    if (this.status.direction === false) {
+      return;
+    }
+    this.status.direction = false;
+  }
+  var power = this.power();
+  this.power(0);
+  this.power(power);
+};
+
+DCMotor.prototype.power = function (power) {
+  if (power === undefined) {
+    return this.status.power;
+  }
+  this.status.power = power;
+  if (this.status.direction === null) {
+    this.pwm1.duty(0);
+    this.pwm2.duty(0);
+    return;
+  }
+  if (this.status.direction) {
+    this.pwm1.duty(power);
+    this.pwm2.duty(0);
+  } else {
+    this.pwm1.duty(0);
+    this.pwm2.duty(power);
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("DCMotor", DCMotor);
+
+/***/ }),
+
+/***/ "./parts/Moving/ServoMotor/index.js":
+/*!******************************************!*\
+  !*** ./parts/Moving/ServoMotor/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ServoMotor = function () {
+  this.keys = ["gnd", "vcc", "signal"];
+  this.requiredKeys = ["signal"];
+};
+
+ServoMotor.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+  this.pwm = obniz.getFreePwm();
+  this.pwm_io_num = this.params.signal;
+
+  this.pwm.start({ io: this.pwm_io_num });
+  this.pwm.freq(50);
+};
+
+// Module functions
+
+ServoMotor.prototype.angle = function (ratio) {
+  var max = 2.4;
+  var min = 0.5;
+  var val = (max - min) * ratio / 180.0 + min;
+  this.pwm.pulse(val);
+};
+
+ServoMotor.prototype.on = function () {
+  if (this.io_power) {
+    this.io_power.output(true);
+  }
+};
+
+ServoMotor.prototype.off = function () {
+  if (this.io_power) {
+    this.io_power.output(false);
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("ServoMotor", ServoMotor);
+
+/***/ }),
+
+/***/ "./parts/PressureSensor/FSR-40X/index.js":
+/*!***********************************************!*\
+  !*** ./parts/PressureSensor/FSR-40X/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+var FSR40X = function () {
+  this.keys = ["pin0", "pin1"];
+  this.requiredKeys = ["pin0", "pin1"];
+};
+
+FSR40X.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+
+  this.io_pwr = obniz.getIO(this.params.pin0);
+  this.ad = obniz.getAD(this.params.pin1);
+
+  this.io_pwr.drive("5v");
+  this.io_pwr.output(true);
+
+  var self = this;
+  this.ad.start(function (value) {
+    pressure = value * 100;
+    if (pressure >= 49) {
+      pressure = 49;
+    }
+    self.press = pressure;
+    if (self.onchange) {
+      self.onchange(self.press);
+    }
+  });
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("FSR40X", FSR40X);
+
+/***/ }),
+
+/***/ "./parts/SoilSensor/SEN0114/index.js":
+/*!*******************************************!*\
+  !*** ./parts/SoilSensor/SEN0114/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var SEN0114 = function () {
+  this.keys = ["vcc", "output", "gnd"];
+  this.requiredKeys = ["output"];
+};
+
+SEN0114.prototype.wired = function (obniz) {
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.ad = obniz.getAD(this.params.output);
+
+  var self = this;
+  this.ad.start(function (value) {
+    self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+};
+
+SEN0114.prototype.getHumidityWait = _asyncToGenerator(function* () {
+  return yield this.ad.getWait;
+});
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("SEN0114", SEN0114);
+
+/***/ }),
+
+/***/ "./parts/Sound/Speaker/index.js":
+/*!**************************************!*\
+  !*** ./parts/Sound/Speaker/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class Speaker {
+
+  constructor(obniz) {
+    this.keys = ["signal", "gnd"];
+    this.requiredKeys = ["gnd"];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(null, this.params.gnd, "5v");
+    this.pwm = obniz.getFreePwm();
+    this.pwm.start({ io: this.params.signal });
+  }
+
+  play(freq) {
+    if (freq > 0) {
+      this.pwm.freq(freq);
+      this.pwm.pulse(1 / freq / 2 * 1000);
+    } else {
+      this.pwm.pulse(0);
+    }
+  }
+
+  stop() {
+    this.play(0);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("Speaker", Speaker);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js":
+/*!******************************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/AnalogTempratureSensor.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class AnalogTemplatureSensor {
+  constructor() {
+    this.keys = ["vcc", "gnd", "signal"];
+    this.requiredKeys = ["signal"];
+    this.drive = "5v";
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+    this.ad = obniz.getAD(this.params.signal);
+
+    this.ad.start(function (voltage) {
+      this.temp = this.calc(voltage);
+      this.onchange(this.temp);
+    }.bind(this));
+  }
+
+  onchange(temp) {}
+
+  calc(voltage) {
+    return 0;
+  }
+
+}
+
+module.exports = AnalogTemplatureSensor;
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/LM35DZ/index.js":
+/*!********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/LM35DZ/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+class LM35DZ extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("LM35DZ", LM35DZ);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/LM60/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/LM60/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var LM60 = function () {
+  this.keys = ["vcc", "gnd", "output"];
+  this.requiredKeys = ["output"];
+};
+
+LM60.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.ad = obniz.getAD(this.params.output);
+
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  var self = this;
+  this.ad.start(function (value) {
+    self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    if (self.onchange) {
+      self.onchange(self.temp);
+    }
+  });
+};
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("LM60", LM60);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/LM61/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/LM61/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+class LM61 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]  
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("LM61", LM61);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/MCP9700/index.js":
+/*!*********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/MCP9700/index.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+class MCP9700 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("MCP9700", MCP9700);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/MCP9701/index.js":
+/*!*********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/MCP9701/index.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+class MCP9701 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("MCP9701", MCP9701);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/S8100B/index.js":
+/*!********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/S8100B/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+//センサから出力が無い(出力インピーダンス高すぎ？)
+
+class S8100B extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("S8100B", S8100B);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/S8120C/index.js":
+/*!********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/S8120C/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+//不調, 正しく測れるときもある...
+//原因1:obnizの入力インピーダンスが低すぎる?
+//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
+
+class S8120C extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
+  }
+};
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("S8120C", S8120C);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/ADT7410/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/ADT7410/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var ADT7410 = function () {
+  this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
+  this.requiredKey = ["addressMode"];
+};
+
+ADT7410.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+  if (this.params.addressMode === 8) {
+    this.address = 0x48;
+  } else if (this.params.addressMode === 9) {
+    this.address = 0x49;
+  }
+
+  this.params.clock = 400000;
+  this.params.pull = "5v";
+  this.params.mode = "master";
+
+  this.i2c = obniz.getI2CWithConfig(this.params);
+};
+
+ADT7410.prototype.getTempWait = _asyncToGenerator(function* () {
+  var ret = yield this.i2c.readWait(this.address, 2);
+  var tempBin = ret[0] << 8;
+  tempBin |= ret[1];
+  tempBin = tempBin >> 3;
+
+  if (tempBin & 0x1000) {
+    //0度以下の時の処理
+    tempBin = tempBin - 8192;
+  }
+
+  return tempBin / 16;
+});
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("ADT7410", ADT7410);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/S-5851A/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/S-5851A/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+//センサからの反応なし
+var S5851A = function () {
+  this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
+  this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
+};
+
+S5851A.prototype.wired = function (obniz) {
+  //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
+  this.io_adr0 = obniz.getIO(this.params.adr0);
+  this.io_adr1 = obniz.getIO(this.params.adr1);
+
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+  switch (this.params.adr_select) {
+    case 8:
+      this.io_adr0.output(false);
+      this.io_adr1.output(false);
+      this.address = 0x48;
+      break;
+    case 9:
+      this.io_adr0.pull(null);
+      this.io_adr1.output(false);
+      this.address = 0x49;
+      break;
+    case 'A':
+      this.io_adr0.output(true);
+      this.io_adr1.output(false);
+      this.address = 0x4A;
+      break;
+    case 'B':
+      this.io_adr0.output(false);
+      this.io_adr1.output(true);
+      this.address = 0x4B;
+      break;
+    case 'C':
+      this.io_adr0.pull(null);
+      this.io_adr1.output(true);
+      this.address = 0x4C;
+      break;
+    case 'D':
+      this.io_adr0.output(true);
+      this.io_adr1.output(true);
+      this.address = 0x4D;
+      break;
+    case 'E':
+      this.io_adr0.output(false);
+      this.io_adr1.pull(null);
+      this.address = 0x4E;
+      break;
+    case 'F':
+      this.io_adr0.output(true);
+      this.io_adr1.pull(null);
+      this.address = 0x4F;
+      break;
+    default:
+      this.io_adr0.output(false);
+      this.io_adr1.output(false);
+      this.address = 0x48;
+      break;
+  }
+  console.log('i2c address=' + this.address);
+
+  this.params.clock = this.params.clock || 400 * 1000; //for i2c
+  this.params.mode = this.params.mode || "master"; //for i2c
+  this.params.pull = this.params.pull || "5v"; //for i2c
+  this.i2c = obniz.getI2CWithConfig(this.params);
+  //obniz.i2c0.write(address, [0x20, 0x24]);
+};
+
+S5851A.prototype.getTempWait = _asyncToGenerator(function* () {
+  //console.log("gettempwait");
+  //obniz.i2c0.write(address, [0x20, 0x24]);
+  //obniz.i2c0.write(address, [0xE0, 0x00]);
+  var ret = yield this.i2c0.readWait(address, 2);
+  //console.log('ret:' + ret);
+  var tempBin = ret[0].toString(2) + ('00000000' + ret[1].toString(2)).slice(-8);
+  var temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
+  return temperature;
+});
+
+S5851A.prototype.getHumdWait = _asyncToGenerator(function* () {
+  this.i2c.write(address, [0x20, 0x24]);
+  this.i2c.write(address, [0xE0, 0x00]);
+  var ret = yield this.i2c.readWait(address, 4);
+  var humdBin = ret[2].toString(2) + ('00000000' + ret[3].toString(2)).slice(-8);
+  var humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
+  return humidity;
+});
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("S5851A", S5851A);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/SHT31/index.js":
+/*!****************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/SHT31/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var SHT31 = function () {
+  this.requiredKeys = ["adr", "addressmode"];
+  this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
+  this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
+
+  this.commands = {};
+  this.commands.softReset = [0x30, 0xA2];
+  this.commands.highRepeatStreach = [0x2C, 0x06];
+  this.commands.middleRepeatStreach = [0x2C, 0x0D];
+  this.commands.lowRepeatStreach = [0x2C, 0x10];
+  this.commands.highRepeat = [0x24, 0x00];
+  this.commands.mediumRepeat = [0x24, 0x0B];
+  this.commands.lowRepeat = [0x24, 0x16];
+
+  this.waitTime = {};
+  this.waitTime.wakeup = 1;
+  this.waitTime.softReset = 1;
+  this.waitTime.lowRepeat = 4;
+  this.waitTime.mediumRepeat = 6;
+  this.waitTime.highRepeat = 15;
+
+  //not tested
+  this.commands.readStatus = [0xF3, 0x2D];
+};
+
+SHT31.prototype.wired = function (obniz) {
+  this.obniz = obniz;
+  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+  this.io_adr = obniz.getIO(this.params.adr);
+
+  if (this.params.addressmode === 4) {
+    this.io_adr.output(false);
+    this.address = 0x44;
+  } else if (this.params.addressmode === 5) {
+    this.io_adr.pull(null);
+    this.address = 0x45;
+  }
+
+  this.params.clock = this.params.clock || 400 * 1000; //for i2c
+  this.params.mode = this.params.mode || "master"; //for i2c
+  this.params.pullType = this.params.pullType || "float"; //for i2c
+  this.i2c = obniz.getI2CWithConfig(this.params);
+  obniz.i2c0.write(this.address, this.commands.softReset);
+};
+
+SHT31.prototype.getData = _asyncToGenerator(function* () {
+  this.i2c.write(this.address, this.commands.highRepeat);
+  yield obniz.wait(this.waitTime.highRepeat);
+  return yield this.i2c.readWait(this.address, 6);
+});
+
+SHT31.prototype.getTempWait = _asyncToGenerator(function* () {
+  return (yield this.getAllWait()).temperature;
+});
+
+SHT31.prototype.getHumdWait = _asyncToGenerator(function* () {
+  return (yield this.getAllWait()).humidity;
+});
+
+SHT31.prototype.getAllWait = _asyncToGenerator(function* () {
+  let ret = yield this.getData();
+
+  let tempBin = ret[0] * 256 + ret[1];
+  let temperature = -45 + 175 * (tempBin / (65536 - 1));
+
+  let humdBin = ret[3] * 256 + ret[4];
+  let humidity = 100 * (humdBin / (65536 - 1));
+  return { temperature, humidity };
+});
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("SHT31", SHT31);
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/spi/ADT7310/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/spi/ADT7310/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var ADT7310 = function () {
+  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+  this.requiredKeys = [];
+};
+
+ADT7310.prototype.wired = (() => {
+  var _ref = _asyncToGenerator(function* (obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    this.params.mode = this.params.mode || "master";
+    this.params.frequency = this.params.frequency || 500000;
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.dout;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  });
+
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+})();
+
+ADT7310.prototype.getTempWait = _asyncToGenerator(function* () {
+  yield this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+  yield this.obniz.wait(200); //適度な値でないと安定しない
+  var ret = yield this.spi.writeWait([0x00, 0x00]);
+  var tempBin = ret[0] << 8;
+  tempBin |= ret[1];
+  tempBin = tempBin >> 3;
+
+  if (tempBin & 0x1000) {
+    //0度以下の時の処理
+    tempBin = tempBin - 8192;
+  }
+
+  return tempBin / 16;
+});
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("ADT7310", ADT7310);
 
 /***/ }),
 

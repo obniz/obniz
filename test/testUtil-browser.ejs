@@ -21,25 +21,28 @@ var testUtil = {
     return wss;
   },
 
-  createObniz: function (port, obnizId) {
-    return new Obniz(obnizId, {obniz_server: "ws://localhost:" + port, binary:false });
+  createObniz: function (port, obnizId, options) {
+    let binary =  options && options.binary !== undefined ? options.binary : false;
+    return new Obniz(obnizId, {obniz_server: "ws://localhost:" + port, binary: binary});
   },
 
-  setupObnizPromise: function (obj, done ) {
+  setupObnizPromise: function (obj, done, options) {
+    options = options || {};
     var stub = sinon.stub();
     stub.on = sinon.stub();
     stub.send = sinon.stub();
     stub.close = sinon.stub();
     stub.removeAllListeners = sinon.stub();
-    
+
     sinon.stub(Obniz.prototype , 'wsconnect');
-    obj.obniz = this.createObniz(100, "12345678");
+    obj.obniz = this.createObniz(100, "12345678",options );
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
     obj.obniz.wsOnOpen();
     serverDataCount = 0;
     done();
   },
+
 
   releaseObnizePromise: function (obj,done) {
     obj.obniz.close();

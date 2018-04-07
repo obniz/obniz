@@ -1,4 +1,3 @@
-/* global PartsRegistrate */
 
 class XBee {
 
@@ -140,4 +139,4 @@ class XBee {
 }
 
 let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("Xbee", Xbee);
+Obniz.PartsRegistrate("XBee", XBee);
