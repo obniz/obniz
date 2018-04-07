@@ -51,6 +51,41 @@ module.exports = async function(config) {
       }
     });
 
+    it("animation pause", async function () {
+      obnizA.io.animation("animation-1", "pause");
+      await obnizA.pingWait();
+
+      await ioAisB(0, false) // ioanimationが動いている場合は、outputしても上書きされてしまい値が一致しないというのが起こる。
+      await ioAisB(0, true)
+    });
+
+    it("animation resume", function (done) {
+      obnizA.io.animation("animation-1", "resume");
+
+      var ignores = 1;
+
+      obnizB.logicAnalyzer.start({io:0, interval:1, duration:100}); 
+      obnizB.logicAnalyzer.onmeasured = async function(array) {
+        if (ignores > 0) {
+          ignores--;
+          return;
+        }
+        var ret = { }
+        ret[0] = 0;
+        ret[1] = 0;
+        for (var i=0; i<array.length; i++) {
+          ret[array[i]]++;
+        }
+        expect(ret[0]).to.be.within(40, 60); // 割合だけ見る。パターンは間違っているかもしれない。
+
+        obnizB.logicAnalyzer.end();
+        await obnizB.pingWait();
+        done();
+      }
+
+
+    });
+
     it("animation remove", async function () {
       obnizA.io.animation("animation-1", "loop");
       await obnizA.pingWait();
@@ -58,7 +93,6 @@ module.exports = async function(config) {
       await ioAisB(0, false) // ioanimationが動いている場合は、outputしても上書きされてしまい値が一致しないというのが起こる。
       await ioAisB(0, true)
     });
-    
 
   });
 
@@ -72,5 +106,6 @@ module.exports = async function(config) {
     expect(valB).to.be.equal(mustbe);
   }
   
+
 
 }
