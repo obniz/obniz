@@ -393,22 +393,20 @@ class Obniz {
     }
     if (this.sendPool) { this.sendPool.push(obj); return; }
 
-    let sendData;
+    let sendData = JSON.stringify([obj]);
     /* compress */
     if (this.wscommand) {
       let compressed;
       try {
-        compressed = this.wscommand.compress(this.wscommands, obj);
+        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
         if (compressed) {
           sendData = compressed;
         }
       } catch(e) {
-        this.error(e);
-        return; /* never send when parsing failed */
+        this.error('------ errored json -------');
+        this.error(sendData)
+        throw e;
       }
-    }
-    if (!sendData) {
-      sendData = JSON.stringify([obj]);
     }
     if (this.debugprint) {
       this.print_debug("send: " + ( (typeof sendData === "string") ? sendData : JSON.stringify(obj)) );
