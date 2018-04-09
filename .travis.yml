@@ -42,6 +42,8 @@ after_success:
   - echo COMMITTER_EMAIL=${OBNIZ_DEPLOY}
   - echo COMMIT_INFO=${OBNIZ_DEPLOY}
   - echo TRAVIS_COMMIT_MESSAGE=${OBNIZ_DEPLOY}
+  - 'if [[ ${COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* ]] ; then OBNIZ_DEPLOY=0 ; fi;'
+  - echo COMMITTER_EMAIL=${OBNIZ_DEPLOY}
 
 
 
@@ -55,7 +57,7 @@ deploy:
     repo: obniz/obniz
     tags: false
     node: lts/*
-    condition: ' ${OBNIZ_DEPLOY} = 1 && ${COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* '
+    condition: ' ${OBNIZ_DEPLOY} = 1  '
 
   skip_cleanup: true
 
