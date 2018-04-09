@@ -29,7 +29,7 @@ after_success:
   - git add --all
   - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
   - npm install -g travis-deploy-once
-  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once && git push origin master'
+  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once && git push --quiet -f https://${GITHUB_TOKEN}@github.com/obniz/obniz master >& /dev/null'
 
 deploy:
   provider: npm
@@ -42,3 +42,10 @@ deploy:
     tag: true
 
   skip_cleanup: true
+
+env:
+  global:
+    - GIT_COMMITTER_NAME=obniz@travis
+    - GIT_COMMITTER_EMAIL=obniz@travis
+    - GIT_AUTHOR_NAME=obniz@travis
+    - GIT_AUTHOR_EMAIL=obniz@travis
