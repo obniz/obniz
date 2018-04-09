@@ -31,6 +31,13 @@ describe("ble", function () {
     expect(this.obniz).to.be.finished;
   });
 
+  it("service generate ad",  function () {
+    var service = new this.obniz.ble.service({
+      uuid : "FFF0"
+    });
+    expect(service.advData).to.deep.equal({serviceUuids: ["fff0"]});
+    expect(this.obniz).to.be.finished;
+  });
 
   it("set adv raw", function () {
     this.obniz.ble.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65]);

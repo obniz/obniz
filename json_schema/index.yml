@@ -15,7 +15,6 @@
           id : "bleAdvertiseData"
           type : array
           default : null
-          minimum : 1
           maxItems : 31
           example :
              - [0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]

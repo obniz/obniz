@@ -21,9 +21,6 @@ class ObnizBLE {
   }
 
   startAdvertisement() {
-    if (!this.adv_data || (Array.isArray(this.adv_data) && this.adv_data.length == 0)) {
-      throw new Error('no advData exist.');
-    }
     var obj = {};
     obj["ble"] = {};
     obj["ble"]["advertisement"] = {

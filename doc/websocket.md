@@ -2894,7 +2894,7 @@ callback of external device write descriptor
 ###  <a name="bleadvertisedata">bleAdvertiseData</a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
-| array| <ul><li>length &le; 31</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101]`</li><li>`[7, 9, 83, 97, 109, 112, 108, 101]`</li></ul> |  |
+| array| <ul><li>1 &le; value</li><li>length &le; 31</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101]`</li><li>`[7, 9, 83, 97, 109, 112, 108, 101]`</li></ul> |  |
 
 
 ###  <a name="dataarray">dataArray</a>
