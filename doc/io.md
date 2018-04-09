@@ -124,13 +124,19 @@ It will generate signals like
 
 ![](./images/ioanimation.png)
 
+Remove animation
+```Javascript
+// Example
+obniz.io.animation("animation-1", "loop")
+```
+
 Pause animation
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "pause")
 ```
 
-Resume animation
+Resume paused animation
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "resume")

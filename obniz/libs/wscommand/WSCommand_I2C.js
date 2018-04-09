@@ -122,7 +122,7 @@ class WSCommand_I2C extends WSCommand {
         if(res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         }else{
-          throw new WSCommandNotFoundError(`[i2c${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[i2c${i}]unknown command`);
         }
       }
     }

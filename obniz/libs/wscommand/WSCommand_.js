@@ -149,11 +149,14 @@ class WSCommand {
           module: this.module,
           _args: [... payload]
         };
-        err.message = "Error at " + this.module + " with " + err._args;
+        
         if (payload.byteLength == 3) {
           err.err0 = payload[0];
           err.err1 = payload[1];
           err.function = payload[2];
+          err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
+        } else {
+          err.message = `Error module=${this.module} with + ${err._args}`;
         }
         objToSend.debug.error = err
         break;

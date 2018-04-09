@@ -52,7 +52,7 @@ class WSCommand_Measurement extends WSCommand {
       if(res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       }else{
-        throw new WSCommandNotFoundError(`[measure]unknown command`);
+        throw new this.WSCommandNotFoundError(`[measure]unknown command`);
       }
     }
 

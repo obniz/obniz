@@ -27,9 +27,11 @@ class BleDescriptor {
 
   toJSON(){
     var obj =  {
-      uuid : this.uuid.toLowerCase()  ,
-      data : this.data ,
+      uuid : this.uuid.toLowerCase()
     };
+    if (this.data) {
+      obj.data = this.data;
+    }
     if (this.property.length > 0 ) {
       obj.property =  this.property;
     }

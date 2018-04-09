@@ -86,10 +86,10 @@ class BleCharacteristic {
 
   toJSON(){
     var obj = {
-      uuid : this.uuid.toLowerCase()  ,
-      data : this.data ,
-      descriptors : this.descriptors
+      uuid : this.uuid.toLowerCase()
     };
+    if (this.data) { obj.data = this.data }
+    if (this.descriptors) { obj.descriptors = this.descriptors }
     if (this.property.length > 0 ) {
       obj.property =  this.property;
       

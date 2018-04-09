@@ -917,7 +917,7 @@ clk, miso, mosi are optional, but at least one are required
 | `spiX.clk` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
 | `spiX.mosi` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
 | `spiX.miso` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
-| `spiX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 80000000</li></ul> | &nbsp; |
+| `spiX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 26000000</li></ul> | &nbsp; |
 
 
 
@@ -1067,9 +1067,9 @@ Related item
 | `i2cX.sda` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
 | `i2cX.scl` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
 | `i2cX.slave_address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.slave_address_length` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.slave_address_length` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.address` |  integer  | <ul><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.data` | [dataArray](#dataarray)  | &nbsp; | &nbsp; |
 | `i2cX.read` |  integer  | <ul><li>0 &le; value</li></ul> | &nbsp; |
 
@@ -1103,7 +1103,7 @@ if address over 0b01111111; then address treated as 10bit address automatically.
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.data` | [dataArray1024](#dataarray1024)  | <ul><li>required</li></ul> | &nbsp; |
 
 
@@ -1135,7 +1135,7 @@ Related item
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `i2cX.address` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1023</li></ul> | &nbsp; |
-| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>enum <ul><li>`7`</li><li>`10`</li></ul></li></ul> | &nbsp; |
+| `i2cX.address_bits` |  integer  | <ul><li>default `7`</li><li>const `7`</li></ul> | &nbsp; |
 | `i2cX.read` |  integer  | <ul><li>required</li><li>0 &le; value &le; 1024</li></ul> | &nbsp; |
 
 
@@ -2894,7 +2894,7 @@ callback of external device write descriptor
 ###  <a name="bleadvertisedata">bleAdvertiseData</a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
-| array| <ul><li>length &le; 31</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101]`</li><li>`[7, 9, 83, 97, 109, 112, 108, 101]`</li></ul> |  |
+| array| <ul><li>1 &le; value</li><li>length &le; 31</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[2, 1, 26, 7, 9, 83, 97, 109, 112, 108, 101]`</li><li>`[7, 9, 83, 97, 109, 112, 108, 101]`</li></ul> |  |
 
 
 ###  <a name="dataarray">dataArray</a>

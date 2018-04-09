@@ -525,7 +525,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -646,7 +646,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","related":"/response/i2c/slave","type":"object","required":["mode","sda","scl","slave_address"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximum":1023},"slave_address_length":{"type":"integer","enum":[7,10],"default":7},"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","related":"/response/i2c/slave","type":"object","required":["mode","sda","scl","slave_address"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximum":1023},"slave_address_length":{"type":"integer","enum":[7],"default":7},"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}}
 
 /***/ }),
 
@@ -657,7 +657,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
 
 /***/ }),
 
@@ -668,7 +668,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7,10],"default":7},"data":{"$ref":"/dataArray1024"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray1024"}}}
 
 /***/ }),
 
@@ -976,7 +976,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","description":"clk, miso, mosi are optional, but at least one are required","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":80000000,"desription":"frequency (Hz)"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","description":"clk, miso, mosi are optional, but at least one are required","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":26000000,"desription":"frequency (Hz)"}}}
 
 /***/ }),
 
@@ -1887,7 +1887,7 @@ class Obniz {
       json = JSON.parse(data);
     } else if (this.wscommands) {
       //binary
-      json = binary2Json(data);
+      json = this.binary2Json(data);
     }
 
     if (Array.isArray(json)) {
@@ -2137,22 +2137,20 @@ class Obniz {
       this.sendPool.push(obj);return;
     }
 
-    let sendData;
+    let sendData = JSON.stringify([obj]);
     /* compress */
     if (this.wscommand) {
       let compressed;
       try {
-        compressed = this.wscommand.compress(this.wscommands, obj);
+        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
         if (compressed) {
           sendData = compressed;
         }
       } catch (e) {
-        this.error(e);
-        return; /* never send when parsing failed */
+        this.error('------ errored json -------');
+        this.error(sendData);
+        throw e;
       }
-    }
-    if (!sendData) {
-      sendData = JSON.stringify([obj]);
     }
     if (this.debugprint) {
       this.print_debug("send: " + (typeof sendData === "string" ? sendData : JSON.stringify(obj)));
@@ -2204,7 +2202,7 @@ class Obniz {
     for (let i = 0; i < 2; i++) {
       this["uart" + i] = new PeripheralUART(this, i);
     }
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 2; i++) {
       this["spi" + i] = new PeripheralSPI(this, i);
     }
     for (let i = 0; i < 1; i++) {
@@ -2776,7 +2774,7 @@ class ObnizBLE {
         Array.prototype.push.apply(data, this.rows[key]);
       }
       if (data.length > 31) {
-        this.Obniz.error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
+        this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
       }
 
       return data;
@@ -3084,15 +3082,21 @@ class ObnizBLE {
 
     if (obj.error) {
       let params = obj.error;
+      let handled = false;
       if (!params.address) {
         if (typeof this.onerror === "function") {
           this.onerror(params);
+          handled = true;
         }
       }
 
       let p = this.findPeripheral(params.address);
       if (p) {
         p.onerror(params);
+        handled = true;
+      }
+      if (!handled) {
+        this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
       }
     }
   }
@@ -3198,10 +3202,14 @@ class BleCharacteristic {
 
   toJSON() {
     var obj = {
-      uuid: this.uuid.toLowerCase(),
-      data: this.data,
-      descriptors: this.descriptors
+      uuid: this.uuid.toLowerCase()
     };
+    if (this.data) {
+      obj.data = this.data;
+    }
+    if (this.descriptors) {
+      obj.descriptors = this.descriptors;
+    }
     if (this.property.length > 0) {
       obj.property = this.property;
     }
@@ -3252,9 +3260,11 @@ class BleDescriptor {
 
   toJSON() {
     var obj = {
-      uuid: this.uuid.toLowerCase(),
-      data: this.data
+      uuid: this.uuid.toLowerCase()
     };
+    if (this.data) {
+      obj.data = this.data;
+    }
     if (this.property.length > 0) {
       obj.property = this.property;
     }
@@ -3864,6 +3874,13 @@ class BleService {
       characteristics: this.characteristics
     };
   }
+
+  get advData() {
+    return {
+      flags: ["general_discoverable_mode", "br_edr_not_supported"],
+      serviceUuids: [this.uuid]
+    };
+  }
 }
 
 module.exports = BleService;
@@ -4292,14 +4309,14 @@ class PeripheralI2C {
       if (slave_address === null) {
         throw new Error("i2c: please specify slave_address");
       }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
+      if (slave_address < 0 || slave_address > 0x7F) {
         throw new Error("i2c: invalid slave_address");
       }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
+      if (slave_address < 0 || slave_address > 0x7F) {
         throw new Error("i2c: invalid slave_address");
       }
-      if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
-        throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
+      if (slave_address_length !== null && slave_address_length !== 7) {
+        throw new Error("i2c: invalid slave_address_length. please specify 7");
       }
     }
 
@@ -4335,11 +4352,8 @@ class PeripheralI2C {
     if (isNaN(address)) {
       throw new Error("i2c: please specify address");
     }
-    if (address < 0 || address > 0x3FFF) {
+    if (address < 0 || address > 0x7F) {
       throw new Error("i2c: invalid address");
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
     }
     if (!data) {
       throw new Error("i2c: please provide data");
@@ -4355,20 +4369,13 @@ class PeripheralI2C {
     this.Obniz.send(obj);
   }
 
-  write10bit(address, data) {
-    return this.write(address | 0x8000, data);
-  }
-
   readWait(address, length) {
     address = parseInt(address);
     if (isNaN(address)) {
       throw new Error("i2c: please specify address");
     }
-    if (address < 0 || address > 0x3FFF) {
+    if (address < 0 || address > 0x7F) {
       throw new Error("i2c: invalid address");
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
     }
     length = parseInt(length);
     if (isNaN(length) || length < 0) {
@@ -4387,10 +4394,6 @@ class PeripheralI2C {
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });
-  }
-
-  read10bitWait(address, length) {
-    return this.readWait(address | 0x8000, length);
   }
 
   notified(obj) {
@@ -4629,10 +4632,9 @@ class PeripheralIO_ {
         state: merged
       });
     }
-    if (states.length > 0) {
+    if (status === "loop") {
       obj.io.animation.states = states;
     }
-    //  console.log(obj.io.animation);
     this.Obniz.send(obj);
   }
 }
@@ -5513,11 +5515,14 @@ class WSCommand {
           module: this.module,
           _args: [...payload]
         };
-        err.message = "Error at " + this.module + " with " + err._args;
+
         if (payload.byteLength == 3) {
           err.err0 = payload[0];
           err.err1 = payload[1];
           err.function = payload[2];
+          err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
+        } else {
+          err.message = `Error module=${this.module} with + ${err._args}`;
         }
         objToSend.debug.error = err;
         break;
@@ -5711,7 +5716,7 @@ class WSCommand_AD extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[ad${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[ad${i}]unknown command`);
         }
       }
     }
@@ -6012,7 +6017,7 @@ class WSCommand_Ble extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[ble]unknown command`);
+        throw new this.WSCommandNotFoundError(`[ble]unknown command`);
       }
     }
   }
@@ -6405,7 +6410,7 @@ class WSCommand_Display extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[display]unknown command`);
+        throw new this.WSCommandNotFoundError(`[display]unknown command`);
       }
     }
   }
@@ -6543,7 +6548,7 @@ class WSCommand_I2C extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[i2c${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[i2c${i}]unknown command`);
         }
       }
     }
@@ -6726,7 +6731,7 @@ class WSCommand_IO extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[io${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[io${i}]unknown command`);
         }
       }
     }
@@ -6828,7 +6833,7 @@ class WSCommand_LogicAnalyzer extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[logic_analyzer]unknown command`);
+        throw new this.WSCommandNotFoundError(`[logic_analyzer]unknown command`);
       }
     }
   }
@@ -6919,7 +6924,7 @@ class WSCommand_Measurement extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[measure]unknown command`);
+        throw new this.WSCommandNotFoundError(`[measure]unknown command`);
       }
     }
   }
@@ -7078,7 +7083,7 @@ class WSCommand_PWM extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[pwm${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[pwm${i}]unknown command`);
         }
       }
     }
@@ -7183,7 +7188,7 @@ class WSCommand_SPI extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[spi${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[spi${i}]unknown command`);
         }
       }
     }
@@ -7252,7 +7257,7 @@ class WSCommand_Switch extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[switch]unknown command`);
+        throw new this.WSCommandNotFoundError(`[switch]unknown command`);
       }
     }
   }
@@ -7345,7 +7350,7 @@ class WSCommand_System extends WSCommand {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       } else {
-        throw new WSCommandNotFoundError(`[system]unknown command`);
+        throw new this.WSCommandNotFoundError(`[system]unknown command`);
       }
     }
   }
@@ -7470,7 +7475,7 @@ class WSCommand_UART extends WSCommand {
         if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         } else {
-          throw new WSCommandNotFoundError(`[uart${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[uart${i}]unknown command`);
         }
       }
     }
@@ -7858,7 +7863,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.52","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION ./test/index.js","local":"node $NODE_DEBUG_OPTION ./_tools/server.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","tv4":"^1.3.0","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.52","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"node $NODE_DEBUG_OPTION ./_tools/server.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","tv4":"^1.3.0","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 

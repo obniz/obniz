@@ -39,6 +39,7 @@ properties:
                                     data : {$ref : "/dataArray"}
                                     descriptors :
                                         type : array
+                                        minItems : 0
                                         items :
                                             type : object
                                             required: [uuid]
