@@ -27,10 +27,9 @@ notifications:
 
 
 after_success:
-  - git add --all
-  - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
   - npm install -g travis-deploy-once
   - git checkout master
+  - git status
   - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && npm version patch && git push --tags --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master && OBNIZ_DEPLOY=1'
   - git fetch
   - git log --oneline --graph --decorate -5
