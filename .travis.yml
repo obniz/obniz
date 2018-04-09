@@ -39,11 +39,11 @@ after_success:
   - git log --oneline --graph --decorate -5
   - 'COMMITTER_EMAIL=(git log -1 $TRAVIS_COMMIT --pretty="%cE")'
   - 'COMMIT_INFO=(git log -1 $TRAVIS_COMMIT --pretty="%d")'
-  - echo COMMITTER_EMAIL=${OBNIZ_DEPLOY}
-  - echo COMMIT_INFO=${OBNIZ_DEPLOY}
-  - echo TRAVIS_COMMIT_MESSAGE=${OBNIZ_DEPLOY}
+  - echo COMMITTER_EMAIL=${COMMITTER_EMAIL}
+  - echo COMMIT_INFO=${COMMIT_INFO}
+  - echo TRAVIS_COMMIT_MESSAGE=${TRAVIS_COMMIT_MESSAGE}
   - 'if [[ ${COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* ]] ; then OBNIZ_DEPLOY=0 ; fi;'
-  - echo COMMITTER_EMAIL=${OBNIZ_DEPLOY}
+  - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
 
 
 
