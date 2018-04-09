@@ -37,12 +37,12 @@ after_success:
   - '[ "$OBNIZ_DEPLOY" = 1 ] && git push --tags --force https://${GITHUB_TOKEN}@github.com/obniz/obniz.git master'
   - git fetch
   - git log --oneline --graph --decorate -5
-  - 'COMMITTER_EMAIL=(git log -1 $TRAVIS_COMMIT --pretty="%cE")'
-  - 'COMMIT_INFO=(git log -1 $TRAVIS_COMMIT --pretty="%d")'
-  - echo COMMITTER_EMAIL=${COMMITTER_EMAIL}
-  - echo COMMIT_INFO=${COMMIT_INFO}
+  - 'export OBNIZ_COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")'
+  - 'export OBNIZ_COMMIT_INFO="$(git log -1 $TRAVIS_COMMIT --pretty="%d")'
+  - echo OBNIZ_COMMITTER_EMAIL=${OBNIZ_COMMITTER_EMAIL}
+  - echo OBNIZ_COMMIT_INFO=${OBNIZ_COMMIT_INFO}
   - echo TRAVIS_COMMIT_MESSAGE=${TRAVIS_COMMIT_MESSAGE}
-  - 'if [[ ${COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* ]] ; then OBNIZ_DEPLOY=0 ; fi;'
+  - 'if [[ ${OBNIZ_COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* ]] ; then OBNIZ_DEPLOY=0 ; fi;'
   - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
 
 
