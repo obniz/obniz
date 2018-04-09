@@ -9,10 +9,27 @@ sudo: required
 addons:
   chrome: stable
 
+install:
+  - npm install
+  - npm run build
+
 cache:
   directories:
   - node_modules
+
 notifications:
   slack:
-    email : false
+    email: false
     secure: RJiPWGMnu05o/ywMqJup7FA4+TaXQ9DyGGfou9a0a37Ptm+JeK8bYOZEoDG7xGwP+VMXtYbn9c3WCf0bPrt1+zMeR3s0VRWTyjwTwwD60uob8yv9ppe+41yg8/77Myc51fdWFZD/I6KdorCP8G9Uhg4xQAVq1fuW798yDy64LO/1uXvxE7oWhwpg1ezuRNBB6N0LYAH4kOp8Z5DSEgmQZeu6S+NEk/b0xG6sHqwIPVCfz3BpI4okp2AsaUo67pwT6AOtw0QtoXMab4mSda1luLV5E3PI4scWvgjbeq9KB7tAOtRfp3N0bfY2bx5GHb3GS5JQ0gwC5X8wJdnIwo31UzcEwU3u7o2g0Sotznf3nZcHjgDIEJos6YPefb7giSk0HV6JrXCDFquiaASgKjzwp3yGjiHOQyNv1KwKwEwalFzze4HbiiskEe8nnofBxpv8W/YesnpH3KLSkoisD17hRttklDTqj1ly0TsLleqxCphB2pDk8mefgSoBE005r90V9gxcIWyEvtZXz0QMFmFXob6A6UAV//KIcrzA21kPu4b54CaJjqFbQwPxNA6bH4boFnO1IE6LF7Lt5IjwAzlCMzLAUGa5/K99XSIh3Iq980tOCACZ+mw14HgthVIVeXhsS1VJe4mcmaw9WGO0tChbT0eK5SJuHK7DMGo/WJZ7nPM=
+
+deploy:
+  provider: npm
+  email: kido@9wick.com
+  api_key:
+    secure: anFnQpaNfLVMC1Un/yqCFd4DBHGqv/ZL/ggi+Vhxr/260ty++c0FgvqPjos8cqN1cG0XdXUzKGokI+RzPMhyTA/jYt6iMsMgqjvgFSwR6Z3CNZrJvgXzIreFPQ0R6s9og4rCU3aRWGGLzvhxTY0dHqYrC3ygTTEATteWp0VdzUjFuSjwtzziq6TFm7gQcTOjXE99XrAbkaJlZvK7E19025EqxRcRzR4a4xoVpZLvNEocJoFaoOaCimi+IVpy2kFbU+ir72w3GQR6nwrK6BWjFhuoUGYtWYGmpyvm5m4YiD7gvBotBUyiuAqZjanZFZcbZxr3Pj8ziNc/rvCgjHq3i80lUfxVlTb/1IZrx1ztjGvG8cHw/FoH4WTJINrLj+AHQctUDERno9PHEJnkvmmLwzCGghKBSN6Rq16D5WpLSyoLVKCHDuGqgFDZK2GqDSya7iErPxvxzcyiPeGzXkdz1FFMfZjDqyGefNJdWaRH4NWEqnHklePdTZwxiAFAUjw9SCyL3SHJyuaFmk+HiENvGGt+BFmEs3rxrBME5o1cFhii+lDrtukutvxX68sBDGXRC44z4H+3sDl0TxDtuZ69LVo7zaayaXnFTJMZ/R3rhjc5tkIviJZK6TShn+855AzbYJPfzXIM1Ohy+/VmXCvytwxhHMuoxXSDBo+jcRQLASM=
+  on:
+    branch: master
+    repo: obniz/obniz
+
+  skip_cleanup: true
+  tag: next
