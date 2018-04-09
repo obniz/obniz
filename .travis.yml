@@ -26,11 +26,10 @@ notifications:
 
 
 before_deploy:
-  - npm install -g travis-deploy-once
-  - travis-deploy-once
   - git add --all
   - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
-  - git push origin master
+  - npm install -g travis-deploy-once
+  - travis-deploy-once && git push origin master
 
 deploy:
   provider: npm
