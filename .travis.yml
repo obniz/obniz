@@ -29,11 +29,6 @@ notifications:
 after_success:
   - npm install -g travis-deploy-once
   - git checkout master
-  - git status
-  - git log --oneline --graph --decorate -5
-  - git fetch
-  - git log --oneline --graph --decorate -5
-  - git status
   - git add --all
   - git commit -m "build by travisCI"
   - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && OBNIZ_DEPLOY=1'
@@ -42,8 +37,12 @@ after_success:
   - '[ "$OBNIZ_DEPLOY" = 1 ] && git push --tags --force https://${GITHUB_TOKEN}@github.com/obniz/obniz.git master'
   - git fetch
   - git log --oneline --graph --decorate -5
-  - git status
-  - '[ "$OBNIZ_DEPLOY" = 1 ] && git push --tags --force https://${GITHUB_TOKEN}@github.com/obniz/obniz.git master'
+  - 'COMMITTER_EMAIL=(git log -1 $TRAVIS_COMMIT --pretty="%cE")'
+  - 'COMMIT_INFO=(git log -1 $TRAVIS_COMMIT --pretty="%d")'
+  - echo COMMITTER_EMAIL=${OBNIZ_DEPLOY}
+  - echo COMMIT_INFO=${OBNIZ_DEPLOY}
+  - echo TRAVIS_COMMIT_MESSAGE=${OBNIZ_DEPLOY}
+
 
 
 deploy:
@@ -56,7 +55,7 @@ deploy:
     repo: obniz/obniz
     tags: false
     node: lts/*
-    condition: "${OBNIZ_DEPLOY} = 1"
+    condition: ' ${OBNIZ_DEPLOY} = 1 && ${COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* '
 
   skip_cleanup: true
 
