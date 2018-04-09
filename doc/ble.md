@@ -5,14 +5,17 @@ You can use Bluetooth Low Energy with obniz as peripheral/central
 
 ## startAdvertisement()
 Start advertisement .
-Before call this function, you shoud call setAdvDataRaw for set data.
+Before call this function, you shoud call setAdvData/setAdvDataRaw for set data.
 
 ```Javascript
+// Javascript Example
+var service = new obniz.ble.service({
+  uuid : "FFF0"
+});
+obniz.ble.peripheral.addService(service); 
+obniz.ble.setAdvData(service.advData);
 obniz.ble.startAdvertisement();
-obniz.ble.stopAdvertisement();
 ```
-
-
 
 ## stopAdvertisement()
 
@@ -41,12 +44,11 @@ obniz.ble.startAdvertisement();
 
 Set advertise data from json.
 
-
-
 ```Javascript
 // Javascript Example
 obniz.ble.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
+  serviceUuids: ["fff0"],
   manufacturerData:{
     campanyCode : 0x004C,
     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
@@ -76,15 +78,12 @@ Json parameters are here.．
 ## setScanRespDataRaw(data[])
 Set scan response data from data array.
 
-
 ```Javascript
 obniz.ble.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
 
 obniz.ble.startAdvertisement();
 ```
-
-
 
 ## setScanRespData(setting)
 
@@ -118,38 +117,22 @@ Json parameters are here.．
 
 start as peripheral with setting_json or service_obj.
 
-setting_json
-```Javascript
-var setting = {
-    "uuid" : "FFF0",
-    "characteristics" : [{
-      "uuid" : "FFF1",
-      "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
-      "descriptors" : [{
-        "uuid" : "2901",   //Characteristic User Description
-        "text" : "hello wrold characteristic", //data for dataArray or  text for string
-      }]
-    }]
-};
-obniz.ble.peripheral.addService(setting);
-
-
-```
-
 service_obj
 ```Javascript
-    var service = new obniz.ble.service({"uuid" : "FFF0"});
-    var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
-    var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
+/* Service without characteristics */
+var service = new obniz.ble.service({"uuid" : "FFF0"});
+obniz.ble.peripheral.addService(service);
 
-    service.addCharacteristic(characteristic);
-    characteristic.addDescriptor(descriptor);
+/* Service with characteristics/descriptor */
+var service = new obniz.ble.service({"uuid" : "FFF0"});
+var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
 
-    obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
+service.addCharacteristic(characteristic);
+characteristic.addDescriptor(descriptor);
 
-
+obniz.ble.peripheral.addService(service); // call this after all descriptors and characteristics added to service.
 ```
-
 
 ## peripheral.onconnectionupdates
 
@@ -169,11 +152,8 @@ end peripheral
 
 obniz.ble.peripheral.addService(setting);
 
-
 obniz.ble.peripheral.end();
-
 ```
-
 
 ## new service(json)
 
@@ -181,18 +161,18 @@ create service object
 uuid is required and characteristics is optional.
 
 ```Javascript
-    var service = new obniz.ble.service({
-                  "uuid" : "FFF0",
-                  "characteristics" : [{
-                    "uuid" : "FFF1",
-                    "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
-                    "descriptors" : [{
-                      "uuid" : "2901",   //Characteristic User Description
-                      "text" : "hello wrold characteristic", //data for dataArray or  text for string
-                    }]
-                  }]
-              });
-    obniz.ble.peripheral.addService(service); 
+var service = new obniz.ble.service({
+                "uuid" : "FFF0",
+                "characteristics" : [{
+                "uuid" : "FFF1",
+                "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
+                "descriptors" : [{
+                    "uuid" : "2901",   //Characteristic User Description
+                    "text" : "hello wrold characteristic", //data for dataArray or  text for string
+                }]
+                }]
+            });
+obniz.ble.peripheral.addService(service); 
 ```
 
 
@@ -201,14 +181,14 @@ uuid is required and characteristics is optional.
 ## new characteristic(json)
 
 ```Javascript
-    var characteristic = new obniz.ble.characteristic({
-                    "uuid" : "FFF1",
-                    "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
-                    "descriptors" : [{
-                      "uuid" : "2901",   //Characteristic User Description
-                      "text" : "hello wrold characteristic",    //data for dataArray or  text for string
-                    }]
-                  });
+var characteristic = new obniz.ble.characteristic({
+                "uuid" : "FFF1",
+                "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+                "descriptors" : [{
+                    "uuid" : "2901",   //Characteristic User Description
+                    "text" : "hello wrold characteristic",    //data for dataArray or  text for string
+                }]
+                });
 
 var service = new obniz.ble.service({
                   "uuid" : "FFF0",
@@ -371,14 +351,10 @@ descriptor.onreadfromremote = function(val){
 Start scan.
 
 ```Javascript
-{
-     duration: 30,   //scan duration in seconds
-}
-```
-
-```Javascript
 // Javascript Example
-obniz.ble.startScan({duration : 10});
+obniz.ble.startScan({
+  duration : 10   //scan duration in seconds
+});
 
 obniz.ble.startScan();   //setting arg is optinal
 

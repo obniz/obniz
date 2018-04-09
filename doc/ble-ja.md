@@ -5,14 +5,17 @@ Bluetooth Low Energyでperipheral/centralとして通信ができます
 
 ## startAdvertisement()
 
-BLEのAdvertisementを開始します
+BLEのAdvertisementを開始します。setAdvData/setAdvDataRaw関数で何をAdvertiseするのか指定できます。
 
 ```Javascript
 // Javascript Example
+var service = new obniz.ble.service({
+  uuid : "FFF0"
+});
+obniz.ble.peripheral.addService(service); 
+obniz.ble.setAdvData(service.advData);
 obniz.ble.startAdvertisement();
-obniz.ble.stopAdvertisement();
 ```
-
 
 
 ## stopAdvertisement()
@@ -33,8 +36,6 @@ BLEの規格に従い，bytesの長さは31以下にする必要があります�
 
 Advertisementで出力するデータバイト列を生成するadvDataBuilderも参照ください
 
-
-
 ```Javascript
 // Javascript Example
 obniz.ble.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
@@ -49,13 +50,13 @@ obniz.ble.startAdvertisement();
 settingに渡した引数に従って，BLEのAdvertisementで出力するデータを設定します
 
 
-
 ```Javascript
 // Javascript Example
 obniz.ble.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
   manufacturerData:{
     campanyCode : 0x004C,
+    serviceUuids: ["fff0"],
     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
   },
 });
@@ -76,7 +77,6 @@ obniz.ble.startAdvertisement();
      	campanyCode : <int>,
         data : [ <int>, ... ],
      },
-   
 }
 ```
 
@@ -129,34 +129,20 @@ obniz.ble.startAdvertisement();
 peripheralとしてサービスを開始します
 引数にjsonデータもしくはサービスオブジェクトを渡します．
 
-jsonを渡す場合
 ```Javascript
-var setting = {
-    "uuid" : "FFF0",
-    "characteristics" : [{
-      "uuid" : "FFF1",
-      "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
-      "descriptors" : [{
-        "uuid" : "2901",   //Characteristic User Description
-        "text" : "hello wrold characteristic", //data for dataArray or  text for string
-      }]
-    }]
-};
-obniz.ble.peripheral.addService(setting);
+/* Service without characteristics */
+var service = new obniz.ble.service({"uuid" : "FFF0"});
+obniz.ble.peripheral.addService(service);
 
+/* Service with characteristics/descriptor */
+var service = new obniz.ble.service({"uuid" : "FFF0"});
+var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
 
-```
+service.addCharacteristic(characteristic);
+characteristic.addDescriptor(descriptor);
 
-サービスオブジェクトを渡す場合
-```Javascript
-    var service = new obniz.ble.service({"uuid" : "FFF0"});
-    var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
-    var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
-
-    service.addCharacteristic(characteristic);
-    characteristic.addDescriptor(descriptor);
-
-    obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
+obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
 ```
 
 ## peripheral.onconnectionupdates
@@ -190,18 +176,18 @@ obniz.ble.peripheral.end();
 jsonにはuuid（必須）およびcharacteristics（オプション）を設定できます
 
 ```Javascript
-    var service = new obniz.ble.service({
-                  "uuid" : "FFF0",
-                  "characteristics" : [{
-                    "uuid" : "FFF1",
-                    "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
-                    "descriptors" : [{
-                      "uuid" : "2901",   //Characteristic User Description
-                      "text" : "hello wrold characteristic", //data for dataArray or  text for string
-                    }]
-                  }]
-              });
-    obniz.ble.peripheral.addService(service); 
+var service = new obniz.ble.service({
+                "uuid" : "FFF0",
+                "characteristics" : [{
+                "uuid" : "FFF1",
+                "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
+                "descriptors" : [{
+                    "uuid" : "2901",   //Characteristic User Description
+                    "text" : "hello wrold characteristic", //data for dataArray or  text for string
+                }]
+                }]
+            });
+obniz.ble.peripheral.addService(service); 
 ```
 
 
@@ -210,14 +196,14 @@ jsonにはuuid（必須）およびcharacteristics（オプション）を設定
 ## new characteristic(json)
 
 ```Javascript
-    var characteristic = new obniz.ble.characteristic({
-                    "uuid" : "FFF1",
-                    "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
-                    "descriptors" : [{
-                      "uuid" : "2901",   //Characteristic User Description
-                      "text" : "hello wrold characteristic",    //data for dataArray or  text for string
-                    }]
-                  });
+var characteristic = new obniz.ble.characteristic({
+                "uuid" : "FFF1",
+                "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+                "descriptors" : [{
+                    "uuid" : "2901",   //Characteristic User Description
+                    "text" : "hello wrold characteristic",    //data for dataArray or  text for string
+                }]
+                });
 
 var service = new obniz.ble.service({
                   "uuid" : "FFF0",
@@ -383,16 +369,12 @@ settingに渡した引数に従って，BLEのscanを開始します
 設定できるパラメータフォーマットは下記のとおりです．
 
 ```Javascript
-{
-     duration: 30,   //scanをする期間を秒で指定．デフォルト30秒
-}
-```
-
-```Javascript
 // Javascript Example
-obniz.ble.startScan({duration : 10});
+obniz.ble.startScan({
+  duration : 10   //scanをする期間を秒で指定．指定なしではデフォルト30秒
+});
 
-obniz.ble.startScan();   //引数なしも可能
+obniz.ble.startScan();  // 引数なしも可能
 
 ```
 
