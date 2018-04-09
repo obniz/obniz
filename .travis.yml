@@ -29,7 +29,8 @@ before_deploy:
   - git add --all
   - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
   - npm install -g travis-deploy-once
-  - travis-deploy-once && git push origin master
+  - travis-deploy-once
+  - git push origin master
 
 deploy:
   provider: npm
