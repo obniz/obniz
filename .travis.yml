@@ -31,19 +31,22 @@ after_success:
   - git checkout master
   - git add --all
   - git commit -m "build by travisCI"
-  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && OBNIZ_DEPLOY=1'
+  - 'export OBNIZ_COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")'
+  - 'export OBNIZ_COMMIT_INFO="$(git log -1 $TRAVIS_COMMIT --pretty="%d")'
+  - echo OBNIZ_COMMITTER_EMAIL=${OBNIZ_COMMITTER_EMAIL}
+  - echo OBNIZ_COMMIT_INFO=${OBNIZ_COMMIT_INFO}
+  - echo TRAVIS_COMMIT_MESSAGE=${TRAVIS_COMMIT_MESSAGE}
+  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && OBNIZ_DEPLOY=1' #ほかのプロセス終了確認
+  - 'if [[ ${OBNIZ_COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* ]] ; then OBNIZ_DEPLOY=0 ; fi;'
   - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
-  - '[ "$OBNIZ_DEPLOY" = 1 ] && npm version patch'
-  - '[ "$OBNIZ_DEPLOY" = 1 ] && git push --tags --force https://${GITHUB_TOKEN}@github.com/obniz/obniz.git master'
+
+
+before_deploy :
+  - npm version patch
+  - git push --tags --force https://${GITHUB_TOKEN}@github.com/obniz/obniz.git master
   - git fetch
   - git log --oneline --graph --decorate -5
-  - 'COMMITTER_EMAIL=(git log -1 $TRAVIS_COMMIT --pretty="%cE")'
-  - 'COMMIT_INFO=(git log -1 $TRAVIS_COMMIT --pretty="%d")'
-  - echo COMMITTER_EMAIL=${OBNIZ_DEPLOY}
-  - echo COMMIT_INFO=${OBNIZ_DEPLOY}
-  - echo TRAVIS_COMMIT_MESSAGE=${OBNIZ_DEPLOY}
-  - 'if [[ ${COMMIT_INFO} = *"${TRAVIS_COMMIT_MESSAGE}"* ]] ; then OBNIZ_DEPLOY=0 ; fi;'
-  - echo COMMITTER_EMAIL=${OBNIZ_DEPLOY}
+  - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
 
 
 
