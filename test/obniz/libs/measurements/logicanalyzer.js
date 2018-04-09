@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -53,7 +53,18 @@ describe("obniz.libs.logicanalyser", function () {
   });
   
   it("onmeasured need pin no");
-  
+
+
+
+  it("finished",  function () {
+    this.obniz.logicAnalyzer.start({io:1, interval:0.1, duration:100});
+
+    expect(this.obniz).send([{logic_analyzer: { interval: 0.1, io:[1] , duration:100}}]);
+    expect(this.obniz).to.be.finished;
+
+    this.obniz.logicAnalyzer.end();
+    expect(this.obniz).send([{logic_analyzer:null}]);
+  });
   
   
 });

@@ -147,7 +147,7 @@ class PeripheralI2C {
     if (obj && typeof obj === "object") {
       if (obj.data) {
         if (obj.mode === "slave" && typeof this.onwritten === "function") {
-          this.onwritten(obj.data);
+          this.onwritten(obj.data, obj.address);
         } else {
           // TODO: we should compare byte length from sent
           var callback = this.observers.shift();

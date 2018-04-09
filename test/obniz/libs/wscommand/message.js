@@ -23,7 +23,7 @@ describe("message.log", function () {
 
       expect(requestJson.length).to.be.equal(1);
 
-      let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+      let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
       expect(isValidCommand.valid).to.be.true;
 
       let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);

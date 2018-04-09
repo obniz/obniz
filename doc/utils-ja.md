@@ -69,11 +69,11 @@ console.log((new Date()).getTime() - time.getTime()) // => about 1000
 ## keepWorkingAtOffline(working)
 obnizがWifiから切断した時に、ioの状態などをリセットするかどうかを設定できます。
 通常はリセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
-この関数でそれを無効にし、リセットしないようにできます。
+この関数でtrueに設定するとそれを無効にし、リセットしないようにできます。
 この設定はobnizの電源が切れない限りはずっと保持されます。
 ```Javascript
 // Example
-obniz.keepWorkingAtOffline(false);
+obniz.keepWorkingAtOffline(true);
 ```
 
 ## resetOnDisconnect(reset)

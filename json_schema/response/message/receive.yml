@@ -7,6 +7,10 @@ related : "/request/message/send"
 type: object
 required : [data, from]
 properties:
-    data : {}  ## all ok
+    data :
+       example : "button pressed"
+       description : "All type of data is pass."
     from :
        type : [string, "null"]
+       example : "1234-5678"
+       description : "From obniz id. Null is used when webhook message."

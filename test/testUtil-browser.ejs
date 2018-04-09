@@ -74,7 +74,20 @@ var testUtil = {
   receiveJson: function(obniz, jsonVal){
     obniz.wsOnMessage(JSON.stringify(jsonVal));
   },
-  
+
+
+  isValidCommandRequestJson: function(jsonVal){
+    //browser
+    return  {valid : true};
+
+  },
+
+  isValidCommandResponseJson: function(jsonVal){
+    //browser
+    return  {valid : true};
+
+  },
+
   obnizAssert : function(_chai, utils){
      _chai.Assertion.addProperty('obniz', function() {
        var obj = utils.flag(this, 'object');

@@ -1,9 +1,18 @@
-
 var path = require('path');
+var mocha = require('mocha');
 var ejs = require('ejs');
 var expect = require('chai').expect;
 
 global.appRoot = path.resolve(__dirname + "/../") + "/";
+
+const obnizJsonValidator = require("./obnizJsonValidator");
+
+
+process.on("exit", () => {
+  console.warn(obnizJsonValidator.checkResults("json", "obniz.js <=> json "));
+  console.warn(obnizJsonValidator.checkResults("wscommand", "json <=> binary"));
+});
+
 
 //先にjsファイルでテストをする
 require('mocha-directory')();
@@ -11,11 +20,9 @@ require('mocha-directory')();
 
 //htmlファイルのテスト
 var testUtil = require(global.appRoot + "/test/testUtil.js");
-var  _ = require( 'underscore' );
-var  fs = require( 'fs' );
+var _ = require('underscore');
+var fs = require('fs');
 var semver = require('semver');
-
-
 
 
 var exclude = [
@@ -46,21 +53,21 @@ var recursiveTestImport = function (root_directory) {
       .filter(function (file) {
         return !exclude.includes(file);
       }).each(function (file) {
-        var src = fs.readFileSync(file,'utf8');
-        var describeIndex = src.search('describe');
-        var noTestIndex = src.search('no_html_test_build');
-        if(describeIndex < 0) return;
-        if(noTestIndex >= 0) return;
-        var template = fs.readFileSync(global.appRoot + "/test/testTemplate.ejs",'utf8');
-        var param = {appRoot : global.appRoot, describe : src.substring(describeIndex)};
-        
-        html = ejs.render(template, param);
-        
-        var newFilename = file.replace(".js","") + ".html";
+    var src = fs.readFileSync(file, 'utf8');
+    var describeIndex = src.search('describe');
+    var noTestIndex = src.search('no_html_test_build');
+    if (describeIndex < 0) return;
+    if (noTestIndex >= 0) return;
+    var template = fs.readFileSync(global.appRoot + "/test/testTemplate.ejs", 'utf8');
+    var param = {appRoot: global.appRoot, describe: src.substring(describeIndex)};
 
-        fs.writeFileSync(newFilename, html);
-       });
-  
+    html = ejs.render(template, param);
+
+    var newFilename = file.replace(".js", "") + ".html";
+
+    fs.writeFileSync(newFilename, html);
+  });
+
 //refresh
   file_list = fs.readdirSync(root_directory);
 
@@ -88,8 +95,8 @@ var recursiveTestImport = function (root_directory) {
       .each(function (file) {
         var basename = path.basename(file, '.html');
         var relativePath = path.relative(__dirname, file);
-        
-        describe(basename, function() {
+
+        describe(basename, function () {
           this.timeout(60000); //browserは多めに取る
           it('runs ' + relativePath, () => {
             return testUtil.browser(file).then((results) => {
@@ -119,16 +126,7 @@ var recursiveTestImport = function (root_directory) {
 
 if (testUtil.needBrowserTest()) {
 
-  describe('browser', ()=>{
-//    var wait = function(){
-//      return new Promise(function(resolve,reject){
-//          setTimeout(resolve,500);
-//      });
-//    };
-//
-//    (async function () {
-//      await wait();
-//    })();
+  describe('browser', () => {
     recursiveTestImport(__dirname);
   });
 }

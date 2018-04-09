@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -35,9 +35,74 @@ describe("obniz.libs.system", function () {
     testUtil.receiveJson(this.obniz, [{ system: { pong : {key : [0,0,1,98,144,90,221,213,0,69,123,198], "obnizTime":4553670,"pingServerTime":1522840296035,"pongServerTime":1522840297892} }}] );
 
     return promise;
-
-
   });
-  
 
+
+
+  it("keepWrokingAtOffline",  function () {
+
+    this.obniz.keepWorkingAtOffline(true);
+    expect(this.obniz).send([{ system: {  "keep_working_at_offline": true } }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+  it("reboot",  function () {
+
+    this.obniz.reboot(true);
+    expect(this.obniz).send([{ system: {  "reboot": true } }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+  it("reset",  function () {
+
+    this.obniz.reset(true);
+    expect(this.obniz).send([{ system: {  "reset": true } }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+  it("selfCheck",  function () {
+
+    this.obniz.selfCheck(true);
+    expect(this.obniz).send([{ system: {  "self_check": true } }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+  it("wait",  function () {
+
+    this.obniz.wait(500);
+    expect(this.obniz).send([{ system: {  "wait": 500 } }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+
+  it("wait delay",  function () {
+
+    function wait(ms){
+      return new Promise((resolve,reject)=>{
+        setTimeout(reject,ms);
+      })
+    }
+    let promise = Promise.race([this.obniz.wait(500),wait(501)]);
+    expect(this.obniz).send([{ system: {  "wait": 500 } }]);
+    expect(this.obniz).to.be.finished;
+    return promise;
+  });
+
+
+  it("wait delay2",  function () {
+
+    function wait(ms){
+      return new Promise((resolve,reject)=>{
+        setTimeout(resolve,ms);
+      })
+    }
+    let promise = Promise.race([this.obniz.wait(500).then(()=>{return Promise.reject("too early")}),wait(495)]);
+    expect(this.obniz).send([{ system: {  "wait": 500 } }]);
+    expect(this.obniz).to.be.finished;
+    return promise;
+  });
 });

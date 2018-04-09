@@ -26,4 +26,5 @@
           message :  {$ref : "/request/message" }
           logic_analyzer :  {$ref : "/request/logicAnalyzer" }
           system :  {$ref : "/request/system" }
+          ws :  {$ref : "/request/ws" }
 

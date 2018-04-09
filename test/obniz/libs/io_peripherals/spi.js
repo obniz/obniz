@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -50,6 +50,8 @@ describe("obniz.libs.spi", function () {
     }.bind(this),10);
     return r;
   });
+
+
   it.skip("SPIで2byte送って3byte帰ってきたときの対応？",  function () {
     this.obniz.spi0.start({"clk": 0, "frequency": 1000000, "miso": 2, "mode":"master","mosi":1 }); 
     expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
@@ -71,6 +73,26 @@ describe("obniz.libs.spi", function () {
     }.bind(this),10);
     return r;
   });
-  
-  
+
+
+
+  it("end",  function () {
+    this.obniz.spi0.start({"clk": 0, "frequency": 1000000, "miso": 2, "mode":"master","mosi":1 });
+
+    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master","mosi":1 }}]);
+    expect(this.obniz).to.be.finished;
+
+    this.obniz.spi0.end();
+    expect(this.obniz).send([{spi0:null}]);
+    expect(this.obniz).to.be.finished;
+
+
+  });
+
 });
