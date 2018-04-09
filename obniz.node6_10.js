@@ -134,6 +134,7 @@ var map = {
 	"./request/i2c/read.yml": "./json_schema/request/i2c/read.yml",
 	"./request/i2c/write.yml": "./json_schema/request/i2c/write.yml",
 	"./request/index.yml": "./json_schema/request/index.yml",
+	"./request/io/deinit.yml": "./json_schema/request/io/deinit.yml",
 	"./request/io/index.yml": "./json_schema/request/io/index.yml",
 	"./request/io/input.yml": "./json_schema/request/io/input.yml",
 	"./request/io/input_detail.yml": "./json_schema/request/io/input_detail.yml",
@@ -683,6 +684,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./json_schema/request/io/deinit.yml":
+/*!*******************************************!*\
+  !*** ./json_schema/request/io/deinit.yml ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/deinit","type":"null"}
+
+/***/ }),
+
 /***/ "./json_schema/request/io/index.yml":
 /*!******************************************!*\
   !*** ./json_schema/request/io/index.yml ***!
@@ -690,7 +702,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","basePath":"io0","description":"General purpose IO available on each io (io0 to io11).","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","basePath":"io0","description":"General purpose IO available on each io (io0 to io11).","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"},{"$ref":"/request/io/deinit"}]}
 
 /***/ }),
 
@@ -4559,6 +4571,12 @@ class PeripheralIO {
     });
   }
 
+  end() {
+    var obj = {};
+    obj["io" + this.id] = null;
+    this.Obniz.send(obj);
+  }
+
   notified(obj) {
     if (typeof obj === "boolean") {
       this.value = obj;
@@ -6660,6 +6678,7 @@ class WSCommand_IO extends WSCommand {
     this._CommandInputOnece = 2;
     this._CommandOutputType = 3;
     this._CommandPullResisterType = 4;
+    this._CommandEnd = 5;
   }
 
   // Commands
@@ -6717,6 +6736,11 @@ class WSCommand_IO extends WSCommand {
     this.sendCommand(this._CommandPullResisterType, buf);
   }
 
+  deinit(params, id) {
+    var buf = new Uint8Array([id]);
+    this.sendCommand(this._CommandEnd, buf);
+  }
+
   parseFromJson(json) {
     for (var i = 0; i <= 11; i++) {
       var module = json["io" + i];
@@ -6724,7 +6748,7 @@ class WSCommand_IO extends WSCommand {
         continue;
       }
 
-      let schemaData = [{ uri: "/request/io/input", onValid: this.input }, { uri: "/request/io/input_detail", onValid: this.inputDetail }, { uri: "/request/io/output", onValid: this.output }, { uri: "/request/io/output_detail", onValid: this.outputDetail }, { uri: "/request/io/output_type", onValid: this.outputType }, { uri: "/request/io/pull_type", onValid: this.pullType }];
+      let schemaData = [{ uri: "/request/io/input", onValid: this.input }, { uri: "/request/io/input_detail", onValid: this.inputDetail }, { uri: "/request/io/output", onValid: this.output }, { uri: "/request/io/output_detail", onValid: this.outputDetail }, { uri: "/request/io/output_type", onValid: this.outputType }, { uri: "/request/io/pull_type", onValid: this.pullType }, { uri: "/request/io/deinit", onValid: this.deinit }];
       let res = this.validateCommandSchema(schemaData, module, "io" + i, i);
 
       if (res.valid === 0) {

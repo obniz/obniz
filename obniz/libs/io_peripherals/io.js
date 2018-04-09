@@ -109,6 +109,12 @@ class PeripheralIO {
     });
   }
 
+  end() {
+    var obj = {};
+    obj["io"+this.id] = null;
+    this.Obniz.send(obj);
+  }
+
   notified(obj) {
     if (typeof obj === "boolean") {
       this.value = obj;

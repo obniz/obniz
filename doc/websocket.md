@@ -446,6 +446,27 @@ Related item
 ```
 
 
+###  request: <a name="-request-io-deinit">deinit</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ioX` |  null  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "io0": null
+    }
+]
+```
+
+
 
 
 

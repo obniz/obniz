@@ -37,6 +37,7 @@ class WSCommand_IO extends WSCommand {
     this._CommandInputOnece       = 2;
     this._CommandOutputType       = 3;
     this._CommandPullResisterType = 4;
+    this._CommandEnd              = 5;
   }
 
   // Commands
@@ -96,6 +97,11 @@ class WSCommand_IO extends WSCommand {
     this.sendCommand(this._CommandPullResisterType, buf);
   }
 
+  deinit(params, id) {
+    var buf = new Uint8Array([id]);
+    this.sendCommand( this._CommandEnd, buf);
+  }
+
   parseFromJson(json) {
     for (var i=0; i<=11;i++) {
       var module = json["io"+i];
@@ -109,7 +115,8 @@ class WSCommand_IO extends WSCommand {
         {uri : "/request/io/output",        onValid: this.output},
         {uri : "/request/io/output_detail", onValid: this.outputDetail},
         {uri : "/request/io/output_type",   onValid: this.outputType},
-        {uri : "/request/io/pull_type",     onValid: this.pullType}
+        {uri : "/request/io/pull_type",     onValid: this.pullType},
+        {uri : "/request/io/deinit",        onValid: this.deinit}
       ];
       let res = this.validateCommandSchema(schemaData, module, "io"+i, i);
 

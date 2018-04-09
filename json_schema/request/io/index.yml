@@ -12,3 +12,4 @@ description : "General purpose IO available on each io (io0 to io11)."
   -  {$ref : "/request/io/output_detail"}
   -  {$ref : "/request/io/output_type"}
   -  {$ref : "/request/io/pull_type"}
+  -  {$ref : "/request/io/deinit"}
