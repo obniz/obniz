@@ -35,7 +35,7 @@ describe("ble", function () {
     var service = new this.obniz.ble.service({
       uuid : "FFF0"
     });
-    expect(service.advData).to.deep.equal({serviceUuids: ["fff0"]});
+    expect(service.advData).to.deep.equal({flags: ["general_discoverable_mode", "br_edr_not_supported"], serviceUuids: ["fff0"]});
     expect(this.obniz).to.be.finished;
   });
 
