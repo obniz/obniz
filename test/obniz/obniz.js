@@ -134,7 +134,6 @@ describe("obniz", function () {
   });
 
 
-
   it("error",  function () {
 
     let error = this.obniz.error;

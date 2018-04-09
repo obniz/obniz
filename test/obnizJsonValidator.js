@@ -132,6 +132,7 @@ class obnizJsonValidator {
 
   checkResults(type,prefix){
     let results = [];
+    this.useCommands[type] = this.useCommands[type] || [];
     let useCommandUnique = this.useCommands[type].filter(function (x, i, self) {
       return self.indexOf(x) === i;
     });
