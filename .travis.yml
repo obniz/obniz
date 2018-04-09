@@ -32,6 +32,8 @@ after_success:
   - git checkout master
   - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && npm version patch && git push --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master'
   - git fetch
+  - git log --oneline --graph --decorate -5
+
 
 deploy:
   provider: npm
