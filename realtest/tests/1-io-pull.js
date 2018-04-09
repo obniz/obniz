@@ -16,31 +16,31 @@ module.exports = async function(config) {
 
     it("pulldown", async function () {
       obnizA.getIO(0).pull("0v");
-      obnizA.getIO(0).input();
+      obnizA.getIO(0).end();
       await ioBisInRange(0, [0.0, 0.5]);
 
       obnizA.getIO(11).pull("0v");
-      obnizA.getIO(11).input();
+      obnizA.getIO(11).end();
       await ioBisInRange(11, [0.0, 0.5]);
     });
 
     it("pullup 3v", async function () {
       obnizA.getIO(0).pull("3v");
-      obnizA.getIO(0).input();
+      obnizA.getIO(0).end();
       await ioBisInRange(0, [2.4, 3.4]);
 
       obnizA.getIO(11).pull("3v");
-      obnizA.getIO(11).input();
+      obnizA.getIO(11).end();
       await ioBisInRange(11, [2.4, 3.4]);
     });
 
     it("pullup 5v", async function () {
       obnizA.getIO(0).pull("5v");
-      obnizA.getIO(0).input();
+      obnizA.getIO(0).end();
       await ioBisInRange(0, [3.5, 5.5]);
 
       obnizA.getIO(11).pull("5v");
-      obnizA.getIO(11).input();
+      obnizA.getIO(11).end();
       await ioBisInRange(11, [3.5, 5.5]);
     });
     
