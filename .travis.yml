@@ -12,7 +12,7 @@ addons:
 install:
   - npm install
   - echo TRAVIS_TAG=${TRAVIS_TAG}
-  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && npm version patch'
+  - echo TRAVIS_TAG=${TRAVIS_BRANCH}
   - npm run build
 
 cache:
@@ -29,7 +29,8 @@ after_success:
   - git add --all
   - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
   - npm install -g travis-deploy-once
-  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once && git push -f https://${GITHUB_TOKEN}@github.com/obniz/obniz master'
+  - git checkout master
+  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && npm version patch && git push --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master'
 
 deploy:
   provider: npm
