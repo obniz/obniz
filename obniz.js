@@ -6696,6 +6696,8 @@ class Obniz {
 /*===================*/
 let _parts = {};
 
+Obniz._parts = _parts;
+
 Obniz.PartsRegistrate = function (name, obj) {
   _parts[name] = obj;
 };
