@@ -118,7 +118,7 @@ describe("obniz.index", function () {
   if(testUtil.needBrowserTest()){
   
     it("browser", function () {
-      this.timeout(5000);
+      this.timeout(10000);
       var port1, port2, port3, server1, server2, server3;
       
       return getPort().then(function (p) {
