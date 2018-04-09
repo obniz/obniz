@@ -137,6 +137,13 @@ describe("obniz.libs.io", function () {
     }.bind(this));
     
   });
+
+  it("end", function () {
+    this.obniz.io0.end();
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send([{io0:null}]);
+    expect(this.obniz).to.be.finished;
+  });
   
   it("inputWaitfalse", function () {
     
