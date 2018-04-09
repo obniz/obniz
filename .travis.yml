@@ -35,6 +35,7 @@ after_success:
   - git log --oneline --graph --decorate -5
   - git status
   - git add --all
+  - git commit -m "build by travisCI"
   - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && OBNIZ_DEPLOY=1'
   - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
   - '[ "$OBNIZ_DEPLOY" = 1 ] && npm version patch'
