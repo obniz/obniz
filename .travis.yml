@@ -41,7 +41,7 @@ after_success:
   - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
 
 
-before_deploy
+before_deploy :
   - npm version patch
   - git push --tags --force https://${GITHUB_TOKEN}@github.com/obniz/obniz.git master
   - git fetch
