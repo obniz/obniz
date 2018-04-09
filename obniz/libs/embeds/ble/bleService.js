@@ -35,6 +35,12 @@ class BleService {
       characteristics : this.characteristics
     };
   }
+
+  get advData() {
+    return {
+      serviceUuids: [this.uuid]
+    }
+  }
 }
 
 
