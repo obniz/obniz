@@ -7174,16 +7174,22 @@ class ObnizBLE {
 
     if (obj.error) {
       let params = obj.error;
-        if (!params.address){
-           if(typeof(this.onerror) === "function"){
-             this.onerror(params);
-           }
-        }
-         
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          p.onerror(params);
-        }
+      let handled = false;
+      if (!params.address){
+          if(typeof(this.onerror) === "function"){
+            this.onerror(params);
+            handled = true;
+          }
+      }
+        
+      let p = this.findPeripheral(params.address);
+      if (p) {
+        p.onerror(params);
+        handled = true;
+      }
+      if (!handled) {
+        this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
+      }
     }
   }
 
