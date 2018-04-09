@@ -30,9 +30,10 @@ after_success:
   - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
   - npm install -g travis-deploy-once
   - git checkout master
-  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && npm version patch && git push --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master'
+  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && npm version patch && git push --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master && OBNIZ_DEPLOY=1'
   - git fetch
   - git log --oneline --graph --decorate -5
+  - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
 
 
 deploy:
@@ -44,6 +45,9 @@ deploy:
     branch: master
     repo: obniz/obniz
     tag: true
+    node:
+      - lts/*
+    condition: "${OBNIZ_DEPLOY} = 1"
 
   skip_cleanup: true
 
