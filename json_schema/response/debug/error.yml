@@ -5,6 +5,7 @@ id: "/response/debug/error"
 desccription : "global error"
 
 type: object
+required : [error]
 properties:
 
     error :
@@ -15,4 +16,4 @@ properties:
             message :
                 description : "readable message"
                 type : string
-
+                example : "voltage down"

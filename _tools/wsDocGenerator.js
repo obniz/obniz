@@ -81,7 +81,8 @@ var convert = function (str) {
     "switch",
     "ble/central",
     "ble/peripheral",
-    "message"
+    "message",
+    "debug"
   ];
   let md = [];
 

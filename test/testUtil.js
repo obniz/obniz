@@ -114,7 +114,7 @@ var testUtil = {
     if(testUtil.isNode()){
       var validator = require("./obnizJsonValidator");
       var results = validator.requestValidate(jsonVal,"wscommand");
-      // require("chai").expect(results.valid,results.errors).to.be.true;
+      require("chai").expect(results.valid,results.errors).to.be.true;
       return results;
     }
 
@@ -127,7 +127,7 @@ var testUtil = {
     if(testUtil.isNode()){
       var validator = require("./obnizJsonValidator");
       var results = validator.responseValidate(jsonVal,"wscommand");
-      // require("chai").expect(results.valid,results.errors).to.be.true;
+      require("chai").expect(results.valid,results.errors).to.be.true;
       return results;
     }
     //browser
@@ -158,8 +158,8 @@ var testUtil = {
        
        if(testUtil.isNode()){
          var validator = require("./obnizJsonValidator");   
-         var validateErrors = validator.requestValidate(val,"json").errors;
-         new _chai.Assertion(validateErrors,validateErrors.toString()).to.be.lengthOf(0);
+         var validateErrors = validator.requestValidate(val,"json");
+         new _chai.Assertion(validateErrors.valid, validateErrors.errors).to.be.true;
        }
      });
      

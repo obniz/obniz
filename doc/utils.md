@@ -67,11 +67,11 @@ console.log((new Date()).getTime() - time.getTime()) // => about 1000
 ## keepWorkingAtOffline(working)
 By default. obniz will reset after disconnect from cloud.
 It measn output value and pwms are all stop at that time.
-this function can set "do not reset when offline".
+this function with argument true can set "do not reset when offline".
 This configration will consist until obniz power down.
 ```Javascript
 // Example
-obniz.keepWorkingAtOffline(false);
+obniz.keepWorkingAtOffline(true);
 ```
 
 ## resetOnDisconnect(reset)

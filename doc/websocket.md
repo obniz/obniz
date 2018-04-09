@@ -36,6 +36,8 @@ Control obniz by sending JSON and get values by receiving JSON from obniz.
 
 -  [message](#message)
 
+-  [debug](#debug)
+
 
 
 
@@ -78,7 +80,7 @@ all things ready
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ws.ready` |  boolean  | <ul><li>const `true`</li></ul> | &nbsp; |
+| `ws.ready` |  boolean  | <ul><li>required</li><li>const `true`</li></ul> | &nbsp; |
 
 
 
@@ -101,7 +103,7 @@ If the server required you to connect other endpoint to communicate with your ob
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ws.redirect` |  string  | &nbsp; | The url you should redirect to.&nbsp; |
+| `ws.redirect` |  string  | <ul><li>required</li></ul> | The url you should redirect to.&nbsp; |
 
 
 
@@ -2951,6 +2953,63 @@ Related item
         "message": {
             "data": "button pressed",
             "from": "1234-5678"
+        }
+    }
+]
+```
+
+
+
+
+##  <a name="debug">debug</a>
+
+
+
+
+###  response: <a name="-response-debug-warning">warning</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `debug.warning.message` |  string  | &nbsp; | readable message&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "debug": {
+            "warning": {
+                "message": "unknown command"
+            }
+        }
+    }
+]
+```
+
+
+###  response: <a name="-response-debug-error">error</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `debug.error.message` |  string  | &nbsp; | readable message&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "debug": {
+            "error": {
+                "message": "voltage down"
+            }
         }
     }
 ]

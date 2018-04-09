@@ -22,6 +22,6 @@
         measure :  {$ref : "/response/measure"}
         message :  {$ref : "/response/message"}
         logic_analyzer :  {$ref : "/response/logicAnalyzer"}
-        ws : {$ref : "/response/ws"}
         system : {$ref : "/response/system"}
         debug : {$ref : "/response/debug"}
+        ws : {$ref : "/response/ws"}
