@@ -104,7 +104,7 @@ class ObnizBLE {
         Array.prototype.push.apply(data, this.rows[key]);
       }
       if(data.length > 31){
-        this.Obniz.error("Too more data. Advertise/ScanResponse data are must be less than 32 byte.");
+        this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
       }
       
       return data;

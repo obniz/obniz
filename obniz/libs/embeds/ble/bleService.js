@@ -38,6 +38,7 @@ class BleService {
 
   get advData() {
     return {
+      flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid]
     }
   }

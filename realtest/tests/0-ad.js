@@ -12,7 +12,7 @@ module.exports = async function(config) {
 
   describe(path.basename(__filename), function () {
 
-    this.timeout(10000);
+    this.timeout(15000);
 
     it("can detect low on io0-11", async function () {
       for (var i=0; i<12; i++) {
