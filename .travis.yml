@@ -13,6 +13,7 @@ install:
   - npm install
   - echo TRAVIS_TAG=${TRAVIS_TAG}
   - echo TRAVIS_TAG=${TRAVIS_BRANCH}
+  - git fetch --tags
   - npm run build
 
 cache:
@@ -30,7 +31,6 @@ after_success:
   - git commit -m "by Travis CI (JOB $TRAVIS_JOB_NUMBER)"
   - npm install -g travis-deploy-once
   - git checkout master
-  - git pull --tags
   - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && npm version patch && git push --tags --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master && OBNIZ_DEPLOY=1'
   - git fetch
   - git log --oneline --graph --decorate -5
@@ -45,9 +45,8 @@ deploy:
   on:
     branch: master
     repo: obniz/obniz
-    tag: true
-    node:
-      - lts/*
+    tags: false
+    node: lts/*
     condition: "${OBNIZ_DEPLOY} = 1"
 
   skip_cleanup: true
