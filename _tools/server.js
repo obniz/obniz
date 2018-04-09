@@ -24,20 +24,24 @@ const docGenerator = require("./wsDocGenerator");
 const app = express();
 const port = 3100;
 
-app.get('/', (request, response) => {
-  response.send('Hello from Express!')
-});
 
-app.get('/obniz.js', (request, response) => {
-  response.header('Access-Control-Allow-Origin', '*');
-  response.sendFile(path.join(__dirname, '../obniz.js'));
-});
 
-app.listen(port, (err) => {
-  if (err) {
-    return console.log('something bad happened', err)
-  }
-  console.log(`server is listening on ${port}`)
+gulp.task("server", function jsonSchemaForVar() {
+  app.get('/', (request, response) => {
+    response.send('Hello from Express!')
+  });
+
+  app.get('/obniz.js', (request, response) => {
+    response.header('Access-Control-Allow-Origin', '*');
+    response.sendFile(path.join(__dirname, '../obniz.js'));
+  });
+
+  app.listen(port, (err) => {
+    if (err) {
+      return console.log('something bad happened', err)
+    }
+    console.log(`server is listening on ${port}`)
+  });
 });
 
 
@@ -70,8 +74,6 @@ gulp.task("jsonSchemaDoc", function jsonSchemaForVar(){
 });
 
 
-gulp.run("jsonSchemaDoc");
-gulp.watch([schemaSrcPath], ["jsonSchemaDoc"]);
 
 const webpackConfig = require("../webpack.config.js");
 const webpackConfigNode = require("../webpack.node6_10.js");
@@ -87,7 +89,6 @@ gulp.task("obniz.js", [] ,function obnizJsBuild(){
 
 });
 
-gulp.run("obniz.js");
 
 
 gulp.task("obniz.node6_10.js", [] ,function obnizNodeBuild(){
@@ -103,22 +104,15 @@ gulp.task("obniz.node6_10.js", [] ,function obnizNodeBuild(){
 
 });
 
-gulp.run("obniz.node6_10.js");
-
-gulp.watch([obnizPath,partsPath,packageJsonPath,schemaSrcPath], ["obniz.js", "obniz.node6_10.js"]);
-
-
-function readMeBuild() {
+gulp.task("readMe", [] , function readMeBuild() {
   return gulp.src(path.join(partsPath, '/**/README.ejs'))
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_ejs())
       .pipe(rename({extname: '.md'}))
       .pipe(gulp.dest(partsPath))
       .on('end', function(){ console.log('ejs compiled!'); });
-}
+});
 
-gulp.watch(path.join(partsPath, '/**/README.ejs'), readMeBuild);
-readMeBuild();
 
 
 function reportError(error) {
@@ -138,3 +132,16 @@ function reportError(error) {
   console.error(report);
 
 }
+
+
+gulp.task("watch",()=>{
+  gulp.watch([schemaSrcPath], ["jsonSchemaDoc"]);
+  gulp.watch(path.join(partsPath, '/**/README.ejs'), ["readMe"]);
+  gulp.watch([obnizPath,partsPath,packageJsonPath,schemaSrcPath], ["obniz.js", "obniz.node6_10.js"]);
+});
+
+
+gulp.task("build",["jsonSchemaDoc","obniz.js","obniz.node6_10.js","readMe"]);
+gulp.task("default",["server","build","watch"]);
+
+

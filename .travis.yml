@@ -9,9 +9,14 @@ sudo: required
 addons:
   chrome: stable
 
+install:
+    - npm install
+    - npm build
+
 cache:
   directories:
   - node_modules
+
 notifications:
   slack:
     email : false
