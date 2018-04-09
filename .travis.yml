@@ -12,7 +12,7 @@ addons:
 install:
   - npm install
   - echo TRAVIS_TAG=${TRAVIS_TAG}
-  -' [ "$TRAVIS_TAG" ] && npm version patch '
+  - '[ "$TRAVIS_TAG" ] && npm version patch'
   - npm run build
 
 cache:
