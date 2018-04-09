@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require("../../../..//testUtil.js");
+var testUtil = require("../../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 

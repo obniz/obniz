@@ -2,7 +2,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -257,5 +257,43 @@ describe("obniz.libs.io", function () {
           }
         }
     }]);
+    expect(this.obniz).to.be.finished;
    });
+
+  it("input simple", function () {
+    this.obniz.send({
+      io1 : "get"
+    });
+
+    expect(this.obniz).send(
+        [{
+          "io1": "get"
+
+        }]);
+
+    expect(this.obniz).to.be.finished;
+
+  });
+
+
+  it("output detail", function () {
+    this.obniz.send({
+      "io0": {
+        "direction": "output",
+        "value": true
+      }
+    });
+
+    expect(this.obniz).send(
+        [
+          {
+            "io0": {
+              "direction": "output",
+              "value": true
+            }
+          }]);
+
+    expect(this.obniz).to.be.finished;
+
+  });
 });

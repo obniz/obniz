@@ -1,4 +1,6 @@
 
+const ObnizUtil = require("../utils/util");
+
 class ObnizMeasure {
 
   constructor(obniz) {

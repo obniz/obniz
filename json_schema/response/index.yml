@@ -19,7 +19,7 @@
       properties:
         switch : {$ref : "/response/switch"}
         ble : {$ref : "/response/ble"}
-        mesure :  {$ref : "/response/mesure"}
+        measure :  {$ref : "/response/measure"}
         message :  {$ref : "/response/message"}
         logic_analyzer :  {$ref : "/response/logicAnalyzer"}
         ws : {$ref : "/response/ws"}
