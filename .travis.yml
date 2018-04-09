@@ -35,11 +35,13 @@ after_success:
   - git log --oneline --graph --decorate -5
   - git status
   - git add --all
-  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && npm version patch && git push --tags --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master && OBNIZ_DEPLOY=1'
+  - '[ "$TRAVIS_TAG" = ""  ] && [ "$TRAVIS_BRANCH" = "master"  ] && travis-deploy-once  && OBNIZ_DEPLOY=1'
+  - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
+  - '[ "$OBNIZ_DEPLOY" = 1 ] && npm version patch'
+  - '[ "$OBNIZ_DEPLOY" = 1 ] && git push --tags --force-with-lease https://${GITHUB_TOKEN}@github.com/obniz/obniz master'
   - git fetch
   - git log --oneline --graph --decorate -5
   - git status
-  - echo OBNIZ_DEPLOY=${OBNIZ_DEPLOY}
 
 
 deploy:
