@@ -31,7 +31,7 @@ class WSCommand_Switch extends WSCommand {
       if(res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       }else{
-        throw new WSCommandNotFoundError(`[switch]unknown command`);
+        throw new this.WSCommandNotFoundError(`[switch]unknown command`);
       }
     }
   }

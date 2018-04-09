@@ -56,14 +56,14 @@ class PeripheralI2C {
       if (slave_address === null) {
         throw new Error("i2c: please specify slave_address");
       }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
+      if (slave_address < 0 || slave_address > 0x7F) {
         throw new Error("i2c: invalid slave_address");
       }
-      if (slave_address < 0 || slave_address > 0x3FFF) {
+      if (slave_address < 0 || slave_address > 0x7F) {
         throw new Error("i2c: invalid slave_address");
       }
-      if (slave_address_length !== null && slave_address_length !== 7 && slave_address_length !== 10) {
-        throw new Error("i2c: invalid slave_address_length. please specify 7 or 10");
+      if (slave_address_length !== null && slave_address_length !== 7) {
+        throw new Error("i2c: invalid slave_address_length. please specify 7");
       }
     }
   
@@ -99,11 +99,8 @@ class PeripheralI2C {
     if (isNaN(address)) {
       throw new Error("i2c: please specify address")
     }
-    if (address < 0 || address > 0x3FFF) {
+    if (address < 0 || address > 0x7F) {
       throw new Error("i2c: invalid address")
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
     }
     if (!data) {
       throw new Error("i2c: please provide data");
@@ -119,20 +116,13 @@ class PeripheralI2C {
     this.Obniz.send(obj);
   }
 
-  write10bit(address, data) {
-    return this.write(address | 0x8000, data);
-  }
-
   readWait(address, length) {
     address = parseInt(address)
     if (isNaN(address)) {
       throw new Error("i2c: please specify address")
     }
-    if (address < 0 || address > 0x3FFF) {
+    if (address < 0 || address > 0x7F) {
       throw new Error("i2c: invalid address")
-    }
-    if (address > 0x7F) {
-      address = address | 0x8000; // mark 10bit mode
     }
     length = parseInt(length);
     if (isNaN(length) || length < 0) {
@@ -151,10 +141,6 @@ class PeripheralI2C {
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });
-  }
-
-  read10bitWait(address, length) {
-    return this.readWait(address | 0x8000, length);
   }
 
   notified(obj) {

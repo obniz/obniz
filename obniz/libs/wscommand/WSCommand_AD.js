@@ -45,7 +45,7 @@ class WSCommand_AD extends WSCommand {
         if(res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
         }else{
-          throw new WSCommandNotFoundError(`[ad${i}]unknown command`);
+          throw new this.WSCommandNotFoundError(`[ad${i}]unknown command`);
         }
       }
     }

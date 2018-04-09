@@ -107,7 +107,7 @@ if you are using onreceive callback, it always false because you get data from c
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
-    if(obniz.uart0.isDataExists){
+    if(obniz.uart0.isDataExists()){
         console.log(obniz.uart0.readText());
     }
     await obniz.wait(10);  //wait for 10ms
@@ -122,7 +122,7 @@ return received data array which recieved and you don't get yet.
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
-    if(obniz.uart0.isDataExists){
+    if(obniz.uart0.isDataExists()){
         console.log(obniz.uart0.readBytes());
     }
     await obniz.wait(10);  //wait for 10ms
@@ -138,7 +138,7 @@ return received data as string which recieved and you don't get yet.
 obniz.uart0.start({tx:0, rx:1})
 
 while(1){
-    if(obniz.uart0.isDataExists){
+    if(obniz.uart0.isDataExists()){
         console.log(obniz.uart0.readText());
     }
     await obniz.wait(10);  //wait for 10ms

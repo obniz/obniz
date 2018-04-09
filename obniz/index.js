@@ -142,7 +142,7 @@ class Obniz {
     if(typeof data === "string"){
       json = JSON.parse(data);
     }else if(this.wscommands) { //binary
-      json = binary2Json(data);
+      json = this.binary2Json(data);
     }
 
     if(Array.isArray(json)){
@@ -393,22 +393,20 @@ class Obniz {
     }
     if (this.sendPool) { this.sendPool.push(obj); return; }
 
-    let sendData;
+    let sendData = JSON.stringify([obj]);
     /* compress */
     if (this.wscommand) {
       let compressed;
       try {
-        compressed = this.wscommand.compress(this.wscommands, obj);
+        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
         if (compressed) {
           sendData = compressed;
         }
       } catch(e) {
-        this.error(e);
-        return; /* never send when parsing failed */
+        this.error('------ errored json -------');
+        this.error(sendData)
+        throw e;
       }
-    }
-    if (!sendData) {
-      sendData = JSON.stringify([obj]);
     }
     if (this.debugprint) {
       this.print_debug("send: " + ( (typeof sendData === "string") ? sendData : JSON.stringify(obj)) );
@@ -454,7 +452,7 @@ class Obniz {
     for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
     for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
     for (let i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
-    for (let i=0; i<1;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
+    for (let i=0; i<2;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
     for (let i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
     for (let i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
   

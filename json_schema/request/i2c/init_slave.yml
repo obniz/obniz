@@ -21,7 +21,7 @@ properties:
 
     slave_address_length :
         type : integer
-        enum : [7,10]
+        enum : [7]
         default : 7
 
 
@@ -33,7 +33,7 @@ properties:
 
     address_bits:
         type: integer
-        enum: [7, 10]
+        enum: [7]
         default: 7
 
     data : {$ref: "/dataArray"}

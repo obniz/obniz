@@ -64,7 +64,7 @@ class WSCommand_System extends WSCommand {
       if(res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
       }else{
-        throw new WSCommandNotFoundError(`[system]unknown command`);
+        throw new this.WSCommandNotFoundError(`[system]unknown command`);
       }
     }
   }
