@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -149,7 +149,7 @@ describe("obniz.libs.i2c", function () {
   });
 
   it("slave start",  function () {
-    this.obniz.i2c0.start({mode:"slave" , sda:2,scl: 3, slave_address:1, pull:null}); 
+    this.obniz.i2c0.start({mode:"slave" , sda:2,scl: 3, slave_address:1, pull:null});
     expect(this.obniz).send([{ io2: { output_type: 'open-drain' } }]);
     expect(this.obniz).send([{ io3: { output_type: 'open-drain' } }]);
     expect(this.obniz).send([{io2:{"pull_type":"float"}}]);
@@ -157,5 +157,80 @@ describe("obniz.libs.i2c", function () {
     expect(this.obniz).send([{i2c0:{"slave_address": 1, "sda": 2, "scl":3,"mode":"slave" }}]);
     expect(this.obniz).to.be.finished;
   });
-  
+
+
+
+  it("slave data get",  function () {
+    this.obniz.i2c0.start({mode:"slave" , sda:2,scl: 3, slave_address:1, pull:null});
+    expect(this.obniz).send([{ io2: { output_type: 'open-drain' } }]);
+    expect(this.obniz).send([{ io3: { output_type: 'open-drain' } }]);
+    expect(this.obniz).send([{io2:{"pull_type":"float"}}]);
+    expect(this.obniz).send([{io3:{"pull_type":"float"}}]);
+    expect(this.obniz).send([{i2c0:{"slave_address": 1, "sda": 2, "scl":3,"mode":"slave" }}]);
+    expect(this.obniz).to.be.finished;
+
+    this.obniz.i2c0.onwritten = sinon.stub();
+    expect( this.obniz.i2c0.onwritten.callCount).to.be.equal(0);
+
+    testUtil.receiveJson(this.obniz,
+        [
+          {
+            "i2c0": {
+              "mode": "slave",
+              "address": 1,
+              "is_fragmented": true,
+              "data": [16, 34, 242]
+            }
+          }
+        ]
+    );
+
+    expect( this.obniz.i2c0.onwritten.callCount).to.be.equal(1);
+    expect( this.obniz.i2c0.onwritten.getCall(0).args.length).to.be.equal(2);
+
+    let data = this.obniz.i2c0.onwritten.getCall(0).args[0];
+    expect( data).to.be.deep.equal([16, 34, 242]);
+
+    let address = this.obniz.i2c0.onwritten.getCall(0).args[1];
+    expect( address).to.be.deep.equal(1);
+
+  });
+
+
+  it("slave data another data",  function () {
+    this.obniz.i2c0.start({mode:"slave" , sda:2,scl: 3, slave_address:1, pull:null});
+    expect(this.obniz).send([{ io2: { output_type: 'open-drain' } }]);
+    expect(this.obniz).send([{ io3: { output_type: 'open-drain' } }]);
+    expect(this.obniz).send([{io2:{"pull_type":"float"}}]);
+    expect(this.obniz).send([{io3:{"pull_type":"float"}}]);
+    expect(this.obniz).send([{i2c0:{"slave_address": 1, "sda": 2, "scl":3,"mode":"slave" }}]);
+    expect(this.obniz).to.be.finished;
+
+    this.obniz.i2c0.onwritten = sinon.stub();
+    expect( this.obniz.i2c0.onwritten.callCount).to.be.equal(0);
+
+    testUtil.receiveJson(this.obniz,
+        [
+          {
+            "i2c0": {
+              "mode": "slave",
+              "address": 2,
+              "is_fragmented": true,
+              "data": [16, 34, 242]
+            }
+          }
+        ]
+    );
+
+    expect( this.obniz.i2c0.onwritten.callCount).to.be.equal(1);
+    expect( this.obniz.i2c0.onwritten.getCall(0).args.length).to.be.equal(2);
+
+    let data = this.obniz.i2c0.onwritten.getCall(0).args[0];
+    expect( data).to.be.deep.equal([16, 34, 242]);
+
+    let address = this.obniz.i2c0.onwritten.getCall(0).args[1];
+    expect( address).to.be.deep.equal(2);
+
+  });
+
 });

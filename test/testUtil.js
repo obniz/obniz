@@ -100,15 +100,42 @@ var testUtil = {
   },
   receiveJson: function(obniz, jsonVal){
     if(testUtil.isNode()){
-         var validator = require("./obnizJsonValidator");   
-         var results = validator.responseValidate(jsonVal);
-         require("chai").expect(results.valid,results.errors).to.be.true;
-      
+      var validator = require("./obnizJsonValidator");
+      var results = validator.responseValidate(jsonVal,"json");
+      require("chai").expect(results.valid,results.errors).to.be.true;
+
     }
-       
+
     obniz.wsOnMessage(JSON.stringify(jsonVal));
   },
-  
+
+
+  isValidCommandRequestJson: function(jsonVal){
+    if(testUtil.isNode()){
+      var validator = require("./obnizJsonValidator");
+      var results = validator.requestValidate(jsonVal,"wscommand");
+      require("chai").expect(results.valid,results.errors).to.be.true;
+      return results;
+    }
+
+    //browser
+    return  {valid : true};
+
+  },
+
+  isValidCommandResponseJson: function(jsonVal){
+    if(testUtil.isNode()){
+      var validator = require("./obnizJsonValidator");
+      var results = validator.responseValidate(jsonVal,"wscommand");
+      require("chai").expect(results.valid,results.errors).to.be.true;
+      return results;
+    }
+    //browser
+    return  {valid : true};
+
+  },
+
+
   obnizAssert : function(_chai, utils){
      _chai.Assertion.addProperty('obniz', function() {
        var obj = utils.flag(this, 'object');
@@ -131,8 +158,8 @@ var testUtil = {
        
        if(testUtil.isNode()){
          var validator = require("./obnizJsonValidator");   
-         var validateErrors = validator.requestValidate(val).errors;      
-         new _chai.Assertion(validateErrors,validateErrors.toString()).to.be.lengthOf(0);
+         var validateErrors = validator.requestValidate(val,"json");
+         new _chai.Assertion(validateErrors.valid, validateErrors.errors).to.be.true;
        }
      });
      

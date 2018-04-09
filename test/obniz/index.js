@@ -6,7 +6,9 @@ var expect = chai.expect;
 var sinon = require('sinon');
 var path = require('path');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../testUtil.js");
+chai.use(require('chai-like'));
+chai.use(testUtil.obnizAssert);
 
 const getPort = require('get-port');
 
@@ -15,6 +17,8 @@ var waitMs = 50;
 function wait(msec) {
   return new Promise(resolve => setTimeout(resolve, msec));
 }
+
+
 
 describe("obniz.index", function () {
   beforeEach(function () {
@@ -89,6 +93,13 @@ describe("obniz.index", function () {
       });
      
       var val = [{ws: {redirect: "ws://localhost:" + port2}}];
+
+      if(testUtil.isNode()){
+        var validator = require("../obnizJsonValidator");
+        var results = validator.responseValidate(val,"json");
+        require("chai").expect(results.valid,results.errors).to.be.true;
+      }
+
       server.clients.values().next().value.send(JSON.stringify(val));
       
       return result;

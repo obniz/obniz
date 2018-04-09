@@ -4,6 +4,7 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ws/redirect"
 description : "If the server required you to connect other endpoint to communicate with your obniz. This json will be sent."
 type: object
+required : [redirect]
 properties:
     redirect:
         type : string

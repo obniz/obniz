@@ -600,7 +600,7 @@ class Obniz {
 
   }
   handleSystemCommand(wsObj) {
-    // ready
+    // ping pong
     if (wsObj.pong) {
       for(let callback of this.pongObservers){
         callback(wsObj);
@@ -679,6 +679,7 @@ class Obniz {
   }
 
   reset() { this.send({ system: { reset: true } }); this.init(); }
+  reboot() { this.send({ system: { reboot: true } }); this.init(); }
   selfCheck() { this.send({ system: { self_check: true } }); }
   keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
   resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }

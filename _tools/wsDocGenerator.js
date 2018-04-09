@@ -80,7 +80,9 @@ var convert = function (str) {
     "display",
     "switch",
     "ble/central",
-    "ble/peripheral"
+    "ble/peripheral",
+    "message",
+    "debug"
   ];
   let md = [];
 
@@ -246,6 +248,8 @@ function jsonExample(params, schema) {
         value = true;
       } else if (param.schema.type === "null") {
         value = null;
+      } else if (param.schema.type === undefined) {
+        value = undefined;
       } else if (param.schema.type === "integer" || param.schema.type === "number") {
         let min = param.schema.minimum || 0;
         let max = param.schema.maximum || 1000;
@@ -381,6 +385,32 @@ function _checkSchema(schema, path, required, results, needDefs) {
       };
       results.push(row);
     }
+    return;
+  }
+  if (Array.isArray(schema.type)) {
+    // let oneResult = [];
+    // let oneSchema = Object.assign({},schema);
+    // for(let type of schema.type){
+    //   oneSchema.type = type;
+    //   _checkSchema(oneSchema, path, false, oneResult, needDefs);
+    // }
+    let row = {
+      path: path,
+      type: schema.type,
+      schema: schema,
+    };
+    results.push(row);
+    return;
+  }
+
+  if (schema.type === undefined) {
+    schema.required = required;
+    let row = {
+      path: path,
+      type: "anyType",
+      schema: schema,
+    };
+    results.push(row);
     return;
   }
 

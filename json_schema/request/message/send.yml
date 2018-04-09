@@ -9,6 +9,7 @@ additionalProperties: false
 required : [data, to]
 properties:
     data :
+       example : "button pressed"
        description : "All type of data is pass."
     to :
         type : array

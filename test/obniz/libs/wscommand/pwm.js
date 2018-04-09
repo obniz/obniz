@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -25,7 +25,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -49,7 +49,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -73,7 +73,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -97,7 +97,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -121,7 +121,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -145,7 +145,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -169,7 +169,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -193,7 +193,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -217,7 +217,7 @@ describe("pwm.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -240,7 +240,7 @@ describe("pwm.log", function () {
 
     expect(requestJson.length).to.be.equal(1);
 
-    let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
     let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);

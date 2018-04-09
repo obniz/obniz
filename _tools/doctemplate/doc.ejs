@@ -57,7 +57,8 @@ Related item
 ###  <a name="<%= key.toLowerCase() %>"><%= key %></a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
-| <%= schema.type %>| <%- conditions(schema) %>  |  <ul><% for(var val of  schema.example){ %><li>`<%- formatter(val) %>`</li><% } %></ul> | <%= schema.description %> |
+| <%= schema.type %> | <%- conditions(schema) %>  |  <ul><% for(var val of  schema.example){ %><li>`<%- formatter(val) %>`</li><% } %></ul> | <%= schema.description %>&nbsp; |
+
 <% } %><%# for ( var key in defines )%>
 
 
