@@ -12,7 +12,8 @@ const obnizJsonValidator = require("./obnizJsonValidator");
 describe("test", () => {
 
   after(function() {
-    console.warn(obnizJsonValidator.checkResults());
+    console.warn(obnizJsonValidator.checkResults("json","obniz.js <=> json "));
+    console.warn(obnizJsonValidator.checkResults("wscommand","json <=> binary" ));
   });
 
 //先にjsファイルでテストをする

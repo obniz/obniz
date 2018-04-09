@@ -25,7 +25,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -49,7 +49,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -76,7 +76,7 @@ describe("spi.log", function () {
 
         let json = this.obniz.binary2Json(binary);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/response",json);
+        let isValidCommand = testUtil.isValidCommandResponseJson(json);
         expect(isValidCommand.valid).to.be.true;
 
         expect(json).to.be.deep.equal(expectJson);
@@ -93,7 +93,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -117,7 +117,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -141,7 +141,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -165,7 +165,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -189,7 +189,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -216,7 +216,7 @@ describe("spi.log", function () {
 
         let json = this.obniz.binary2Json(binary);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/response",json);
+        let isValidCommand = testUtil.isValidCommandResponseJson(json);
         expect(isValidCommand.valid).to.be.true;
 
         expect(json).to.be.deep.equal(expectJson);
@@ -233,7 +233,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
@@ -257,7 +257,7 @@ describe("spi.log", function () {
 
         expect(requestJson.length).to.be.equal(1);
 
-        let isValidCommand = this.obniz.wscommands[0].validate("/request",requestJson);
+        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
         expect(isValidCommand.valid).to.be.true;
 
         let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
