@@ -1229,7 +1229,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptors_result"],"properties":{"get_descriptors_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptor_result"],"properties":{"get_descriptor_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}
 
 /***/ }),
 
@@ -1240,7 +1240,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_get_finish","type":"object","required":["get_descriptors_result_finish"],"properties":{"get_descriptors_result_finish":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_get_finish","type":"object","required":["get_descriptor_result_finish"],"properties":{"get_descriptor_result_finish":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
 
 /***/ }),
 
@@ -6032,6 +6032,10 @@ class Obniz {
   }
 
   wsOnMessage(data) {
+    if(this.debugprintBinary && typeof data !== "string" ){
+      this.print_debug("" + new Uint8Array(data).toString());
+    }
+
     let json ;
     if(typeof data === "string"){
       json = JSON.parse(data);
@@ -6304,6 +6308,9 @@ class Obniz {
     }
     if (this.debugprint) {
       this.print_debug("send: " + ( (typeof sendData === "string") ? sendData : JSON.stringify(obj)) );
+      if(this.debugprintBinary && typeof sendData !== "string" ){
+        this.print_debug("send: " + sendData.toString());
+      }
     }
     /* queue sending */
     if(typeof sendData === "string") {
@@ -7112,10 +7119,23 @@ class ObnizBLE {
         let p = this.findPeripheral(params.address);
         if (p) {
           let service = p.getService(params.service_uuid);
+          service.discoverdOnRemote = true;
           p.ondiscoverservice(service);
         }
       }
     }
+
+    if (obj.get_service_result_finish) {
+      let params = obj.get_service_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let services = p.services.filter((elm)=>{return elm.discoverdOnRemote});
+          p.ondiscoverservicefinished(services);
+        }
+      }
+    }
+
     if (obj.get_characteristic_result) {
       let params = obj.get_characteristic_result;
       if (params.address) {
@@ -7123,7 +7143,19 @@ class ObnizBLE {
         if (p) {
           let service = p.getService(params.service_uuid);
           let chara = service.getCharacteristic(params.characteristic_uuid);
+          chara.discoverdOnRemote = true;
           service.ondiscovercharacteristic(chara);
+        }
+      }
+    }
+    if (obj.get_characteristic_result_finish) {
+      let params = obj.get_characteristic_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let charas = service.characteristics.filter((elm)=>{return elm.discoverdOnRemote});
+          service.ondiscovercharacteristicfinished(charas);
         }
       }
     }
@@ -7150,18 +7182,34 @@ class ObnizBLE {
         }
       }
     }
-    if (obj.get_descriptors_result) {
-      let params = obj.get_descriptors_result;
+    if (obj.get_descriptor_result) {
+      let params = obj.get_descriptor_result;
       if (params.address) {
         let p = this.findPeripheral(params.address);
         if (p) {
           let service = p.getService(params.service_uuid);
           let chara = service.getCharacteristic(params.characteristic_uuid);
           let descr = chara.getDescriptor(params.descriptor_uuid);
+          descr.discoverdOnRemote = true;
           chara.ondiscoverdescriptor(descr);
         }
       }
     }
+
+
+    if (obj.get_descriptor_result_finish) {
+      let params = obj.get_descriptor_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descrs = chara.descriptors.filter((elm)=>{return elm.discoverdOnRemote});
+          chara.ondiscoverdescriptorfinished(descrs);
+        }
+      }
+    }
+
     if (obj.read_descriptor_result) {
       let params = obj.read_descriptor_result;
       if (params.address) {
@@ -7561,6 +7609,7 @@ class BleRemoteCharacteristic {
     this.Obniz = Obniz;
     this.service = service;
     this.uuid = uuid;
+    this.discoverdOnRemote = false;
     this.descriptors = [];
   }
 
@@ -7638,6 +7687,7 @@ class BleRemoteCharacteristic {
   onwrite(status){};
   onread(value){};
   ondiscoverdescriptor(descriptor){};
+  ondiscoverdescriptorfinished(services){};
 
 
 }
@@ -7658,6 +7708,7 @@ class BleRemoteDescriptor {
   constructor(Obniz, characteristic, uuid){
     this.Obniz = Obniz;
     this.characteristic = characteristic;
+    this.discoverdOnRemote = false;
     this.uuid = uuid;
   }
 
@@ -7910,6 +7961,7 @@ class BleRemotePeripheral {
   onconnect(){};
   ondisconnect(){};
   ondiscoverservice(service){};
+  ondiscoverservicefinished(services){};
 
   onerror(err){};
 
@@ -7936,6 +7988,7 @@ class BleRemoteService {
     this.Obniz = Obniz;
     this.uuid = uuid;
     this.peripheral = peripheral;
+    this.discoverdOnRemote = false;
     
     this.characteristics = [];
   }
@@ -7973,6 +8026,7 @@ class BleRemoteService {
 
 
   ondiscovercharacteristic( characteristic){};
+  ondiscovercharacteristicfinished( characteristic){};
 
 }
 
@@ -9969,7 +10023,7 @@ class WSCommand_Ble extends WSCommand {
 
   centralDisconnect(params) {
     let schema = [
-    { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
+    { path : "disconnect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
     { path : null  ,            length: 1, type: "char",  default:true }   //const val
   ];
     let buf = JsonBinaryConverter.createSendBuffer(schema,params);
@@ -10020,9 +10074,9 @@ class WSCommand_Ble extends WSCommand {
 
   centralDescriptorGet(params){
     var schema = [
-      { path : "get_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "get_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "get_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptors.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "get_descriptors.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptors.characteristic_uuid" , length: 18, type: "uuid", required:true },
     ];
     var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandDescriptors, buf);
@@ -10320,7 +10374,14 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_service_result", results);
+
+    if(results.service_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_service_result", results);
+    }else{
+      delete results.service_uuid;
+      this._addRowForPath(objToSend, "ble.get_service_result_finish", results);
+    }
+
   }
   
   notifyFromBinaryChacateristics(objToSend, payload) {
@@ -10331,7 +10392,13 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+
+    if(results.characteristic_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+    }else{
+      delete results.characteristic_uuid;
+      this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
+    }
   }
   
   notifyFromBinaryReadChacateristics(objToSend, payload) {
@@ -10363,11 +10430,17 @@ class WSCommand_Ble extends WSCommand {
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength }
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
+
+    if(results.descriptor_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_descriptor_result", results);
+    }else{
+      delete results.descriptor_uuid;
+      this._addRowForPath(objToSend, "ble.get_descriptor_result_finish", results);
+    }
   }
   
   notifyFromBinaryReadDescriptor(objToSend, payload) {

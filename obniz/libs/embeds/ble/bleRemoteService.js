@@ -7,6 +7,7 @@ class BleRemoteService {
     this.Obniz = Obniz;
     this.uuid = uuid;
     this.peripheral = peripheral;
+    this.discoverdOnRemote = false;
     
     this.characteristics = [];
   }
@@ -44,6 +45,7 @@ class BleRemoteService {
 
 
   ondiscovercharacteristic( characteristic){};
+  ondiscovercharacteristicfinished( characteristic){};
 
 }
 

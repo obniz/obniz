@@ -102,7 +102,7 @@ class WSCommand_Ble extends WSCommand {
 
   centralDisconnect(params) {
     let schema = [
-    { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
+    { path : "disconnect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
     { path : null  ,            length: 1, type: "char",  default:true }   //const val
   ];
     let buf = JsonBinaryConverter.createSendBuffer(schema,params);
@@ -153,9 +153,9 @@ class WSCommand_Ble extends WSCommand {
 
   centralDescriptorGet(params){
     var schema = [
-      { path : "get_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "get_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "get_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptors.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "get_descriptors.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptors.characteristic_uuid" , length: 18, type: "uuid", required:true },
     ];
     var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandDescriptors, buf);
@@ -509,16 +509,16 @@ class WSCommand_Ble extends WSCommand {
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength }
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     if(results.descriptor_uuid !== null){
-      this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
+      this._addRowForPath(objToSend, "ble.get_descriptor_result", results);
     }else{
       delete results.descriptor_uuid;
-      this._addRowForPath(objToSend, "ble.get_descriptors_results_finish", results);
+      this._addRowForPath(objToSend, "ble.get_descriptor_result_finish", results);
     }
   }
   

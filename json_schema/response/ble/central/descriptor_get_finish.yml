@@ -5,9 +5,9 @@ id: "/response/ble/central/descriptor_get_finish"
 
 
 type: object
-required : [get_descriptors_result_finish]
+required : [get_descriptor_result_finish]
 properties:
-    get_descriptors_result_finish :
+    get_descriptor_result_finish :
             type : object
             required: [address,service_uuid,characteristic_uuid]
             additionalProperties: false

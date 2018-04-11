@@ -309,10 +309,23 @@ class ObnizBLE {
         let p = this.findPeripheral(params.address);
         if (p) {
           let service = p.getService(params.service_uuid);
+          service.discoverdOnRemote = true;
           p.ondiscoverservice(service);
         }
       }
     }
+
+    if (obj.get_service_result_finish) {
+      let params = obj.get_service_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let services = p.services.filter((elm)=>{return elm.discoverdOnRemote});
+          p.ondiscoverservicefinished(services);
+        }
+      }
+    }
+
     if (obj.get_characteristic_result) {
       let params = obj.get_characteristic_result;
       if (params.address) {
@@ -320,7 +333,19 @@ class ObnizBLE {
         if (p) {
           let service = p.getService(params.service_uuid);
           let chara = service.getCharacteristic(params.characteristic_uuid);
+          chara.discoverdOnRemote = true;
           service.ondiscovercharacteristic(chara);
+        }
+      }
+    }
+    if (obj.get_characteristic_result_finish) {
+      let params = obj.get_characteristic_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let charas = service.characteristics.filter((elm)=>{return elm.discoverdOnRemote});
+          service.ondiscovercharacteristicfinished(charas);
         }
       }
     }
@@ -347,18 +372,34 @@ class ObnizBLE {
         }
       }
     }
-    if (obj.get_descriptors_result) {
-      let params = obj.get_descriptors_result;
+    if (obj.get_descriptor_result) {
+      let params = obj.get_descriptor_result;
       if (params.address) {
         let p = this.findPeripheral(params.address);
         if (p) {
           let service = p.getService(params.service_uuid);
           let chara = service.getCharacteristic(params.characteristic_uuid);
           let descr = chara.getDescriptor(params.descriptor_uuid);
+          descr.discoverdOnRemote = true;
           chara.ondiscoverdescriptor(descr);
         }
       }
     }
+
+
+    if (obj.get_descriptor_result_finish) {
+      let params = obj.get_descriptor_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descrs = chara.descriptors.filter((elm)=>{return elm.discoverdOnRemote});
+          chara.ondiscoverdescriptorfinished(descrs);
+        }
+      }
+    }
+
     if (obj.read_descriptor_result) {
       let params = obj.read_descriptor_result;
       if (params.address) {

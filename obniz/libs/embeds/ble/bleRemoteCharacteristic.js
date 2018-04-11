@@ -8,6 +8,7 @@ class BleRemoteCharacteristic {
     this.Obniz = Obniz;
     this.service = service;
     this.uuid = uuid;
+    this.discoverdOnRemote = false;
     this.descriptors = [];
   }
 
@@ -85,6 +86,7 @@ class BleRemoteCharacteristic {
   onwrite(status){};
   onread(value){};
   ondiscoverdescriptor(descriptor){};
+  ondiscoverdescriptorfinished(services){};
 
 
 }

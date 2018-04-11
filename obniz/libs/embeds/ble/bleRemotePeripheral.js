@@ -180,6 +180,7 @@ class BleRemotePeripheral {
   onconnect(){};
   ondisconnect(){};
   ondiscoverservice(service){};
+  ondiscoverservicefinished(services){};
 
   onerror(err){};
 
