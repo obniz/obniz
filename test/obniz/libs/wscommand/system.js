@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -163,6 +163,26 @@ describe("system.log", function () {
 
   });
 
+
+  it("pong",  function () {
+    let responseBinaryString = "0 8 1c 0 0 1 62 9e 60 f7 22 0 0 1 62 9e 60 f6 6e 0 0 1 62 9e 60 f6 65 0 0 0 2";
+
+    let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+    expect(json).to.be.deep.equal([{}]); // use server
+
+  });
+
+
+  it("pong formtat",  function () {
+    let expectJson  = [{"system":{pong:{key : [0, 0]}}}];
+    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    expect(isValidCommand.valid).to.be.true;
+
+
+  });
 
 
 });

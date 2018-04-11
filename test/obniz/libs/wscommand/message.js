@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+var testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -17,7 +17,7 @@ describe("message.log", function () {
     });
 
 
-    it("test no.0",  function () {
+    it("message",  function () {
 
       let requestJson  =[{"message":{"to":["1111-1111"],"data":"pressed"}}];
 
@@ -33,7 +33,22 @@ describe("message.log", function () {
     });
 
 
-    
+
+  it("receive formtat",  function () {
+    let expectJson  = [{"message":{"from":"1111-1111","data":"pressed"}}];
+    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    expect(isValidCommand.valid).to.be.true;
+
+  });
+
+
+  it("receive formtat null",  function () {
+    let expectJson  = [{"message":{"from":null,"data":"pressed"}}];
+    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    expect(isValidCommand.valid).to.be.true;
+
+  });
+
 
 
 });

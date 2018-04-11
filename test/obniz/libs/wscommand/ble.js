@@ -1341,9 +1341,6 @@ describe("ble.log", function () {
 
 
 
-
-
-
   it("response get_characteristic_result1",  function () {
     let responseBinaryString = "b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80";
     let expectJson  = [{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}];
@@ -1358,10 +1355,6 @@ describe("ble.log", function () {
 
     expect(json).to.be.deep.equal(expectJson);
   });
-
-
-
-
 
 
   it("response get_characteristic_result2",  function () {
@@ -1380,10 +1373,6 @@ describe("ble.log", function () {
   });
 
 
-
-
-
-
   it("response write_characteristic_result",  function () {
     let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1";
     let expectJson  = [{"ble":{"peripheral":{"write_characteristic_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","result":"success"}}}},{"ble":{"peripheral":{"write_characteristic_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","result":"success"}}}}];
@@ -1399,6 +1388,22 @@ describe("ble.log", function () {
     expect(json).to.be.deep.equal(expectJson);
   });
 
+
+
+  it.skip("response get_descriptor_result1",  function () {
+    let responseBinaryString = "b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80";
+    let expectJson  = [{"ble":{"get_descriptor_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}];
+
+    let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
 
 
 

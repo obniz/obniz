@@ -49,8 +49,8 @@ Full Example
 ```javascript
 // Javascript Example
 obniz.measure.echo({
-  io_pulse: this.triger, // io for generate pulse
-  io_echo: this.echo, // io to be measured
+  io_pulse: 0, // io for generate pulse
+  io_echo: 1, // io to be measured
   pulse: "positive", // generate pulse pattern
   pulse_width: 0.1,  // generate pulse width
   measure_edges: 3, // 1 to 4. maximum edges to measure
