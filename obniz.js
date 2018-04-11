@@ -9719,7 +9719,7 @@ class WSCommand {
 
       for(let pattern in schema.patternProperties){
         let reg = new RegExp(pattern);
-        for(let key in Object.keys(json)){
+        for(let key of Object.keys(json)){
           if( reg.test(key) ){
             results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]  );
           }
