@@ -2107,6 +2107,31 @@ Related item
 ```
 
 
+###  response: <a name="-response-ble-central-service_get_finish">service_get_finish</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.get_service_result_finish.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "ble": {
+            "get_service_result_finish": {
+                "address": "77e754ab8591"
+            }
+        }
+    }
+]
+```
+
+
 ###  response: <a name="-response-ble-central-characteristic_get">characteristic_get</a>
 
 
@@ -2129,6 +2154,33 @@ Related item
                 "address": "77e754ab8591",
                 "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
                 "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+            }
+        }
+    }
+]
+```
+
+
+###  response: <a name="-response-ble-central-characteristic_get_finish">characteristic_get_finish</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.get_characteristic_result_finish.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_characteristic_result_finish.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "ble": {
+            "get_characteristic_result_finish": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
             }
         }
     }
@@ -2222,6 +2274,35 @@ Related item
                 "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
                 "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
                 "descriptor_uuid": "d822b53c"
+            }
+        }
+    }
+]
+```
+
+
+###  response: <a name="-response-ble-central-descriptor_get_finish">descriptor_get_finish</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.get_descriptors_result_finish.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors_result_finish.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_descriptors_result_finish.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "ble": {
+            "get_descriptors_result_finish": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
             }
         }
     }

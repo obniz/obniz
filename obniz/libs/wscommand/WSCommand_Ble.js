@@ -453,7 +453,14 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_service_result", results);
+
+    if(results.service_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_service_result", results);
+    }else{
+      delete results.service_uuid;
+      this._addRowForPath(objToSend, "ble.get_service_result_finish", results);
+    }
+
   }
   
   notifyFromBinaryChacateristics(objToSend, payload) {
@@ -464,7 +471,13 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+
+    if(results.characteristic_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+    }else{
+      delete results.characteristic_uuid;
+      this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
+    }
   }
   
   notifyFromBinaryReadChacateristics(objToSend, payload) {
@@ -500,7 +513,13 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
+
+    if(results.descriptor_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
+    }else{
+      delete results.descriptor_uuid;
+      this._addRowForPath(objToSend, "ble.get_descriptors_results_finish", results);
+    }
   }
   
   notifyFromBinaryReadDescriptor(objToSend, payload) {
