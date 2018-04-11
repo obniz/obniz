@@ -163,6 +163,89 @@ describe("obniz", function () {
 
 
 
+  it("unknown part",  function () {
+
+    expect(()=>{this.obniz.wired("unknown parts",{anode:0, cathode:1})} ).throws;
+
+    expect(this.obniz).to.be.finished;
+  });
+
+
+
+  it("free i2c",  function () {
+    let i2c = this.obniz.getFreeI2C();
+    expect(i2c).to.be.equal(this.obniz.i2c0);
+
+    expect( this.obniz.getFreeI2C ).throws;
+    i2c.end();
+
+    let i2c2 = this.obniz.getFreeI2C();
+    expect(i2c2).to.be.equal(this.obniz.i2c0);
+  });
+
+
+  it("free pwm",  function () {
+    let pwm0 = this.obniz.getFreePwm();
+    expect(pwm0).to.be.equal(this.obniz.pwm0);
+
+    let pwm1 = this.obniz.getFreePwm();
+    expect(pwm1).to.be.equal(this.obniz.pwm1);
+
+    let pwm2 = this.obniz.getFreePwm();
+    expect(pwm2).to.be.equal(this.obniz.pwm2);
+
+    let pwm3 = this.obniz.getFreePwm();
+    expect(pwm3).to.be.equal(this.obniz.pwm3);
+
+    let pwm4 = this.obniz.getFreePwm();
+    expect(pwm4).to.be.equal(this.obniz.pwm4);
+
+    let pwm5 = this.obniz.getFreePwm();
+    expect(pwm5).to.be.equal(this.obniz.pwm5);
+
+    expect( this.obniz.getFreePwm ).throws;
+    pwm4.end();
+
+    let pwm6 = this.obniz.getFreePwm();
+    expect(pwm6).to.be.equal(this.obniz.pwm4);
+  });
+
+
+  it("free spi",  function () {
+    let spi0 = this.obniz.getFreeSpi();
+    expect(spi0).to.be.equal(this.obniz.spi0);
+
+    let spi1 = this.obniz.getFreeSpi();
+    expect(spi1).to.be.equal(this.obniz.spi1);
+
+    expect( this.obniz.getFreeSpi ).throws;
+    spi1.end();
+
+    let spi2 = this.obniz.getFreeSpi();
+    expect(spi2).to.be.equal(this.obniz.spi1);
+  });
+
+
+
+  it("free Uart",  function () {
+    let uart0 = this.obniz.getFreeUart();
+    expect(uart0).to.be.equal(this.obniz.uart0);
+
+    let uart1 = this.obniz.getFreeUart();
+    expect(uart1).to.be.equal(this.obniz.uart1);
+
+    expect( this.obniz.getFreeUart ).throws;
+    uart0.end();
+
+    let uart = this.obniz.getFreeUart();
+    expect(uart).to.be.equal(this.obniz.uart0);
+  });
+
+
+
+
+
+
 
 
 });
