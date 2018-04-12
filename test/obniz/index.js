@@ -156,4 +156,34 @@ describe("obniz.index", function () {
     });
   }
 
+
+
+
+  it("compress",  function () {
+
+    return new Promise((resolve) => {testUtil.setupObnizPromise(this, resolve,{binary:true})})
+        .then(() => {
+
+          expect(this.obniz).to.be.obniz;
+          expect(this.obniz).to.be.finished;  // input queue
+
+          this.obniz.io1.output(true);
+
+          return new Promise((resolve)=>{ setTimeout(resolve, 5)});
+        }).then(() => {
+
+        expect(this.obniz).sendBinary(new Uint8Array([ 2, 0, 2, 1, 1 ]));
+        expect(this.obniz).to.be.finished;
+
+        return new Promise((resolve) => {testUtil.releaseObnizePromise(this, resolve);});
+    }).then(function(){
+      return Promise.resolve();
+    });
+   });
+
+
+  function wait(ms){
+    return new Promise((resolve)=>{ setTimeout(resolve, ms)});
+  }
+
 });
