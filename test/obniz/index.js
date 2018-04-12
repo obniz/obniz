@@ -159,19 +159,25 @@ describe("obniz.index", function () {
 
 
 
-  it("compress",  async function () {
+  it("compress",  function () {
 
-    await new Promise((resolve)=>{testUtil.setupObnizPromise(this, resolve,{binary:true})});
-    this.obniz.io1.output(true);
+    new Promise(function(resolve){testUtil.setupObnizPromise(this, resolve,{binary:true})})
+        .then(function(){
 
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).to.be.finished;  // input queue
+          expect(this.obniz).to.be.obniz;
+          expect(this.obniz).to.be.finished;  // input queue
 
-    await wait(5);
-    expect(this.obniz).sendBinary(new Uint8Array([ 2, 0, 2, 1, 1 ]));
-    expect(this.obniz).to.be.finished;
-    await new Promise((resolve)=>{testUtil.releaseObnizePromise(this,resolve);});
-  });
+          this.obniz.io1.output(true);
+
+          return wait(5);
+        }).then(function(){
+
+        expect(this.obniz).sendBinary(new Uint8Array([ 2, 0, 2, 1, 1 ]));
+        expect(this.obniz).to.be.finished;
+
+        return new Promise((resolve)=>{testUtil.releaseObnizePromise(this,resolve);});
+    })
+   });
 
 
   function wait(ms){
