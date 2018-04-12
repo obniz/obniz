@@ -178,8 +178,6 @@ describe("obniz.index", function () {
         return new Promise((resolve) => {testUtil.releaseObnizePromise(this, resolve);});
     }).then(function(){
       return Promise.resolve();
-    }).catch((err)=>{
-      console.log(err);
     });
    });
 
