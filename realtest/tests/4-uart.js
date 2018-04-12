@@ -4,15 +4,25 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const path = require('path');
 const fs = require('fs');
+const config = require('../config.js');
 
-module.exports = async function(config) {
 
-  const obnizA = config.obnizA;
-  const obnizB = config.obnizB;
+let obnizA, obnizB ;
 
-  describe(path.basename(__filename), function () {
+
+describe("4-uart", function () {
 
     this.timeout(10000);
+
+  before(function () {
+    return new Promise((resolve) => {
+      config.waitForConenct(() => {
+        obnizA = config.obnizA;
+        obnizB = config.obnizB;
+        resolve();
+      })
+    });
+  });
 
     it("short string tx rx", async function () {
       const receiver = obnizB.getFreeUart();
@@ -195,4 +205,3 @@ module.exports = async function(config) {
     return new Promise(resolve => {setTimeout(resolve, ms)})
   }
   
-}
