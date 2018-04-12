@@ -165,7 +165,7 @@ describe("obniz", function () {
 
   it("unknown part",  function () {
 
-    expect(()=>{this.obniz.wired("unknown parts",{anode:0, cathode:1})} ).throws;
+    expect(() => {this.obniz.wired("unknown parts",{anode:0, cathode:1})} ).throws;
 
     expect(this.obniz).to.be.finished;
   });

@@ -13,10 +13,7 @@ process.on("exit", () => {
   console.warn(obnizJsonValidator.checkResults("wscommand", "json <=> binary"));
 });
 
-describe('all', () => {
-  it('should ', function () {
-    
-  });
+describe('all', function(){
 
 //先にjsファイルでテストをする
   require('mocha-directory')();
