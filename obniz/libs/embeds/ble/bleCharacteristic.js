@@ -60,7 +60,7 @@ class BleCharacteristic {
     this.write([val]);
   }
 
-  writeText(val){
+  writeText(str){
     this.write(ObnizUtil.string2dataArray(str));
   }
 
