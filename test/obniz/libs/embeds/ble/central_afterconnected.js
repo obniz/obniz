@@ -70,9 +70,15 @@ describe("ble", function () {
   it("callback default function ondiscoverservice", function () {
     expect(this.peripheral.ondiscoverservice).to.have.not.throws();
   });
+
+  it("callback default function ondiscoverservicefinish", function () {
+    expect(this.peripheral.ondiscoverservicefinished).to.have.not.throws();
+  });
+
   it("callback default function onerror", function () {
     expect(this.peripheral.onerror).to.have.not.throws();
   });
+
 
   it("rssi", function () {
     expect(this.peripheral.rssi).to.below(0);
@@ -150,6 +156,86 @@ describe("ble", function () {
   });
 
 
+
+
+  it("discoverServiceResultsFinished", function () {
+    var peripheral = this.peripheral;
+    peripheral.ondiscoverservicefinished = sinon.stub();
+    peripheral.discoverAllServices();
+    expect(this.obniz).send(
+        [{
+          ble: {
+            get_services: {
+              address: "e5f678800700"
+            }
+          }
+        }]);
+    expect(this.obniz).to.be.finished;
+
+    expect( peripheral.ondiscoverservicefinished.callCount).to.be.equal(0);
+    testUtil.receiveJson(this.obniz,[
+      {
+        "ble": {
+          "get_service_result": {
+            "address": "e5f678800700",
+            "service_uuid": "FF00",
+          }
+        }
+      }
+    ]);
+
+    testUtil.receiveJson(this.obniz,[
+      {
+        "ble": {
+          "get_service_result": {
+            "address": "e5f678800700",
+            "service_uuid": "FF01",
+          }
+        }
+      }
+    ]);
+
+    testUtil.receiveJson(this.obniz,[
+      {
+        "ble": {
+          "get_service_result": {
+            "address": "e5f678800701",
+            "service_uuid": "FF01",
+          }
+        }
+      }
+    ]);
+
+    expect( peripheral.ondiscoverservicefinished.callCount).to.be.equal(0);
+
+
+    testUtil.receiveJson(this.obniz,[
+      {
+        "ble": {
+          "get_service_result_finish": {
+            "address": "e5f678800700",
+          }
+        }
+      }
+    ]);
+
+    expect( peripheral.ondiscoverservicefinished.callCount).to.be.equal(1);
+    expect( peripheral.ondiscoverservicefinished.getCall(0).args.length).to.be.equal(1);
+
+    let services = peripheral.ondiscoverservicefinished.getCall(0).args[0];
+    expect(services.length).to.be.equal(2);
+    expect(services[0]).to.be.a("object");
+    expect(services[0].peripheral).to.be.equal(peripheral);
+    expect(services[0].uuid ).to.be.equal("FF00");
+    expect(services[0]).to.be.equal(peripheral.getService("FF00"));
+    expect(services[1]).to.be.a("object");
+    expect(services[1].peripheral).to.be.equal(peripheral);
+    expect(services[1].uuid ).to.be.equal("FF01");
+    expect(services[1]).to.be.equal(peripheral.getService("FF01"));
+
+  });
+
+
   it("discoverServiceResults2", function () {
     var peripheral = this.peripheral;
     peripheral.ondiscoverservice = sinon.stub();
@@ -220,7 +306,8 @@ describe("ble", function () {
           "get_characteristic_result": {
             "address": "e5f678800700",
             "service_uuid": "FF00",
-            "characteristic_uuid": "FF01"
+            "characteristic_uuid": "FF01",
+            "properties" : ["read","write"]
           }
         }
       }
@@ -234,6 +321,10 @@ describe("ble", function () {
     expect(chara.service).to.be.equal(service);
     expect(chara.uuid ).to.be.equal("FF01");
     expect(chara).to.be.equal(service.getCharacteristic("FF01"));
+    expect(chara.canWrite()).to.be.true;
+    expect(chara.canRead()).to.be.true;
+    expect(chara.canNotify()).to.be.false;
+    expect(chara.canIndicate()).to.be.false;
 
   });
 
@@ -261,7 +352,8 @@ describe("ble", function () {
           "get_characteristic_result": {
             "address": "e5f678800700",
             "service_uuid": "FF01",
-            "characteristic_uuid": "FF01"
+            "characteristic_uuid": "FF01",
+            "properties" : ["read","write"]
           }
         }
       }
@@ -310,7 +402,7 @@ describe("ble", function () {
     testUtil.receiveJson(this.obniz,[
       {
         "ble": {
-          "get_descriptors_result": {
+          "get_descriptor_result": {
             "address": "e5f678800700",
             "service_uuid": "FF00",
             "characteristic_uuid": "FF01",
@@ -355,7 +447,7 @@ describe("ble", function () {
     testUtil.receiveJson(this.obniz,[
       {
         "ble": {
-          "get_descriptors_result": {
+          "get_descriptor_result": {
             "address": "e5f678800700",
             "service_uuid": "FF00",
             "characteristic_uuid": "FF02",

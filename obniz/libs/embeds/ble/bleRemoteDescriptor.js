@@ -4,6 +4,7 @@ class BleRemoteDescriptor {
   constructor(Obniz, characteristic, uuid){
     this.Obniz = Obniz;
     this.characteristic = characteristic;
+    this.discoverdOnRemote = false;
     this.uuid = uuid;
   }
 

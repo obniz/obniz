@@ -73,6 +73,17 @@ class WSCommand_Ble extends WSCommand {
       non_connectable_advertising: 0x03, /*!< Non connectable undirected advertising (ADV_NONCONN_IND) */
       scan_response: 0x04 /*!< Scan Response (SCAN_RSP) */
     };
+
+    this._CommandCharacteristicsProperties = {
+      broadcast : 0x01,
+      read : 0x02,
+      write_without_response : 0x04,
+      write : 0x08,
+      notify : 0x10,
+      indicate : 0x20,
+      auth : 0x40,
+      extended_properties : 0x80,
+    };
   }
 
 
@@ -102,7 +113,7 @@ class WSCommand_Ble extends WSCommand {
 
   centralDisconnect(params) {
     let schema = [
-    { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
+    { path : "disconnect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
     { path : null  ,            length: 1, type: "char",  default:true }   //const val
   ];
     let buf = JsonBinaryConverter.createSendBuffer(schema,params);
@@ -153,9 +164,9 @@ class WSCommand_Ble extends WSCommand {
 
   centralDescriptorGet(params){
     var schema = [
-      { path : "get_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
-      { path : "get_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
-      { path : "get_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptors.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "get_descriptors.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptors.characteristic_uuid" , length: 18, type: "uuid", required:true },
     ];
     var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandDescriptors, buf);
@@ -453,18 +464,33 @@ class WSCommand_Ble extends WSCommand {
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_service_result", results);
+
+    if(results.service_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_service_result", results);
+    }else{
+      delete results.service_uuid;
+      this._addRowForPath(objToSend, "ble.get_service_result_finish", results);
+    }
+
   }
   
   notifyFromBinaryChacateristics(objToSend, payload) {
     var schema =  [
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength }
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"properties",   type : "enum", length: 1, enum:this._CommandCharacteristicsProperties, flags:true }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+
+    if(results.characteristic_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+    }else{
+      delete results.characteristic_uuid;
+      delete results.properties;
+      this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
+    }
   }
   
   notifyFromBinaryReadChacateristics(objToSend, payload) {
@@ -496,11 +522,17 @@ class WSCommand_Ble extends WSCommand {
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength }
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.get_descriptors_results", results);
+
+    if(results.descriptor_uuid !== null){
+      this._addRowForPath(objToSend, "ble.get_descriptor_result", results);
+    }else{
+      delete results.descriptor_uuid;
+      this._addRowForPath(objToSend, "ble.get_descriptor_result_finish", results);
+    }
   }
   
   notifyFromBinaryReadDescriptor(objToSend, payload) {
@@ -517,12 +549,11 @@ class WSCommand_Ble extends WSCommand {
   }
   
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var uuidLength = 16+2;
     var schema =  [
       { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
       { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
     ];
     

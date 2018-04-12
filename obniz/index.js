@@ -138,6 +138,10 @@ class Obniz {
   }
 
   wsOnMessage(data) {
+    if(this.debugprintBinary && typeof data !== "string" ){
+      this.print_debug("" + new Uint8Array(data).toString());
+    }
+
     let json ;
     if(typeof data === "string"){
       json = JSON.parse(data);
@@ -412,6 +416,9 @@ class Obniz {
     }
     if (this.debugprint) {
       this.print_debug("send: " + ( (typeof sendData === "string") ? sendData : JSON.stringify(obj)) );
+      if(this.debugprintBinary && typeof sendData !== "string" ){
+        this.print_debug("send: " + sendData.toString());
+      }
     }
     /* queue sending */
     if(typeof sendData === "string") {

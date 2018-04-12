@@ -9,9 +9,24 @@ required : [get_characteristic_result]
 properties:
     get_characteristic_result :
             type : object
-            required: [address,service_uuid,characteristic_uuid]
+            required: [address,service_uuid,characteristic_uuid,properties]
             additionalProperties: false
             properties:
                 address : {$ref : "/deviceAddress"}
                 service_uuid : {$ref : "/uuid"}
                 characteristic_uuid : {$ref : "/uuid"}
+                properties :
+                  type : array
+                  items :
+                    type : string
+                    enum :
+                      - broadcast
+                      - read
+                      - write_without_response
+                      - write
+                      - notify
+                      - indicate
+                      - auth
+                      - extended_properties
+
+

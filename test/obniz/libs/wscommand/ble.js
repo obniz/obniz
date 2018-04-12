@@ -1,9 +1,9 @@
-var chai = require('chai');
-var assert = chai.assert;
-var expect = chai.expect;
-var sinon = require('sinon');
+const chai = require('chai');
+const assert = chai.assert;
+const expect = chai.expect;
+const sinon = require('sinon');
 
-var testUtil = require(global.appRoot + "/test/testUtil.js");
+const testUtil = require("../../../testUtil.js");
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -364,34 +364,55 @@ describe("ble.log", function () {
 
 
 
-    
-
-
-    it("request test no.17",  function () {
-        let requestJson  = [{"ble":{"connect":{"address":"e5f678800700"}}}];
-        let expecteBinaryStrings = ["b 7 7 0 7 80 78 f6 e5 0"];
-
-        expect(requestJson.length).to.be.equal(1);
-
-        let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
-        expect(isValidCommand.valid).to.be.true;
-
-        let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
-
-
-        let binaryArray = expecteBinaryStrings.join(" ").split(" ").map(function(val,index){return parseInt(val, 16);});
-        expect(binaryArray.length).to.be.above(2);
-        let binary = new Uint8Array(binaryArray);
-
-        expect(compress).to.be.deep.equal(binary);
-    });
 
 
 
-    
+  it("request test no.17",  function () {
+    let requestJson  = [{"ble":{"connect":{"address":"e5f678800700"}}}];
+    let expecteBinaryStrings = ["b 7 7 0 7 80 78 f6 e5 0"];
+
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
 
 
-    it("response test no.18",  function () {
+    let binaryArray = expecteBinaryStrings.join(" ").split(" ").map(function(val,index){return parseInt(val, 16);});
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+
+
+  it("disconnect",  function () {
+    let requestJson  = [{"ble":{"disconnect":{"address":"e5f678800700"}}}];
+    let expecteBinaryStrings = ["b 7 7 0 7 80 78 f6 e5 1"];
+
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    let binaryArray = expecteBinaryStrings.join(" ").split(" ").map(function(val,index){return parseInt(val, 16);});
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+
+
+
+
+
+  it("response test no.18",  function () {
         let responseBinaryString = "b 7 7 0 7 80 78 f6 e5 0";
         let expectJson  = [{"ble":{"status_update":{"address":"e5f678800700","status":"connected"}}}];
 
@@ -1252,6 +1273,30 @@ describe("ble.log", function () {
 
 
 
+  it("request stop advertise",  function () {
+    let requestJson  = [{"ble":{"advertisement":null}}];
+    let expecteBinaryStrings = ["0b 03 0"];
+
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    let binaryArray = expecteBinaryStrings.join(" ").split(" ").map(function(val,index){return parseInt(val, 16);});
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+
+
+
+
+
   it("request scanresp",  function () {
     let requestJson  = [{"ble":{"advertisement":{"adv_data":[2,1,26,7,9,83,97,109,112,108,101],"scan_resp":[7,9,83,97,109,112,108,101]}}}];
     let expecteBinaryStrings = ["0b 00 0b 02 01 1a 07 09 53 61 6d 70 6c 65","0b 01 08 07 09 53 61 6d 70 6c 65","0b 02 00"];
@@ -1270,6 +1315,9 @@ describe("ble.log", function () {
 
     expect(compress).to.be.deep.equal(binary);
   });
+
+
+
 
 
 
@@ -1339,11 +1387,28 @@ describe("ble.log", function () {
     expect(json).to.be.deep.equal(expectJson);
   });
 
+  it("response get_service_result_finish",  function () {
+    let binaryArray = [11,8,24,111,8,224,40,78,101,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    let expectJson  = [{"ble":{"get_service_result_finish":{"address":"654e28e0086f"}}}];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
 
 
   it("response get_characteristic_result1",  function () {
-    let responseBinaryString = "b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80";
-    let expectJson  = [{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}];
+    let responseBinaryString = "b 9 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 00 " +
+        "b 9 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 0a " +
+        "b 9 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 84";
+    let expectJson  = [{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000", "properties": []}}},
+      {"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001", "properties": ["read","write"]}}},
+      {"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002", "properties": ["write_without_response","extended_properties"]}}}];
 
     let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
     let binary = new Uint8Array(binaryArray);
@@ -1358,8 +1423,12 @@ describe("ble.log", function () {
 
 
   it("response get_characteristic_result2",  function () {
-    let responseBinaryString = "b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80";
-    let expectJson  = [{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}];
+    let responseBinaryString = "b 9 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 00 " +
+        "b 9 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 00 " +
+        "b 9 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 00";
+    let expectJson  = [{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000",properties:[]}}},
+      {"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001",properties:[]}}},
+      {"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002",properties:[]}}}];
 
     let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
     let binary = new Uint8Array(binaryArray);
@@ -1390,11 +1459,266 @@ describe("ble.log", function () {
 
 
 
-  it.skip("response get_descriptor_result1",  function () {
-    let responseBinaryString = "b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 b 9 2a 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80";
-    let expectJson  = [{"ble":{"get_descriptor_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}},{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}];
+  it("response get_characteristic_result3",  function () {
+    let binaryArray = [
+      11,9,43,111,8,224,40,78,101,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,48,0,1,0,0,0,0,0,0,0,209,4,17,128,144,0];
 
-    let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
+    let expectJson  = [
+      {"ble":{"get_characteristic_result":{"address":"654e28e0086f","service_uuid":"3000","characteristic_uuid":"3000",properties:[]}}}];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+
+  it("response get_characteristic_result4",  function () {
+    let binaryArray = [
+      11,9,43,111,8,224,40,78,101,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,48,0,1,0,0,0,0,0,0,0,209,4,17,128,144,0,
+      11,9,43,111,8,224,40,78,101,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,48,0,1,0,0,0,0,0,0,0,209,4,17,128,144,0,
+      11,9,43,111,8,224,40,78,101,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,48,0,1,0,0,0,0,0,0,0,209,4,17,128,144,0,
+      11,9,43,111,8,224,40,78,101,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    let expectJson  = [
+      {"ble":{"get_characteristic_result":{"address":"654e28e0086f","service_uuid":"3000","characteristic_uuid":"3000",properties:[]}}},
+      {"ble":{"get_characteristic_result":{"address":"654e28e0086f","service_uuid":"3000","characteristic_uuid":"3001",properties:[]}}},
+      {"ble":{"get_characteristic_result":{"address":"654e28e0086f","service_uuid":"3000","characteristic_uuid":"3002",properties:[]}}},
+      {"ble":{"get_characteristic_result_finish":{"address":"654e28e0086f","service_uuid":"3000"}}}];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+  it("response get_characteristic_finish",  function () {
+    let binaryArray = [11,9,43,111,8,224,40,78,101,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    let expectJson  = [
+      {"ble":{"get_characteristic_result_finish":{"address":"654e28e0086f","service_uuid":"3000"}}}];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+
+  it("response get_descriptor",  function () {
+    let requestJson  =[{
+      ble: {
+        get_descriptors: {
+          address: "e5f678800700",
+          service_uuid: "FF00",
+          characteristic_uuid: "FF01",
+        }
+      }
+    }];
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    let binaryArray = [11,14,42,0,7,128,120,246,229,0,2,0,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+  it("response get_descriptor_result",  function () {
+    let binaryArray = [11,14,60,101,30,129,87,138,172,0,16,220,248,85,173,2,197,244,142,58,67,54,15,43,80,211,137,0,16,215,213,187,112,168,163,171,166,216,70,171,35,140,243,178,198,0,2,0,41,98,98,32,55,48,32,97,56,32,97,64,15,17,128,];
+
+    let expectJson  = [{"ble":{"get_descriptor_result":{"address":"ac8a57811e65","service_uuid":"89d3502b0f36433a8ef4c502ad55f8dc","characteristic_uuid":"c6b2f38c23ab46d8a6aba3a870bbd5d7","descriptor_uuid":"2900"}}}]
+
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+
+
+  it("response get_descriptor_result_finish",  function () {
+    let binaryArray = [11,14,60,101,30,129,87,138,172,0,16,220,248,85,173,2,197,244,142,58,67,54,15,43,80,211,137,0,16,215,213,187,112,168,163,171,166,216,70,171,35,140,243,178,198,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    let expectJson  = [{"ble":{"get_descriptor_result_finish":{"address":"ac8a57811e65","service_uuid":"89d3502b0f36433a8ef4c502ad55f8dc","characteristic_uuid":"c6b2f38c23ab46d8a6aba3a870bbd5d7"}}}]
+
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+
+
+  it("request read_descriptor",  function () {
+    let requestJson  = [{"ble":{"read_descriptor":{"address":"84edf3b7694f","service_uuid":"1801","characteristic_uuid":"2a05","descriptor_uuid":"2902"}}}];
+    let binaryArray = [11,16,60,79,105,183,243,237,132,0,2,1,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,5,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+
+  it("response read_descriptor_result",  function () {
+    let binaryArray = [11,16,62,79,105,183,243,237,132,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,48,0,1,0,0,0,0,0,0,0,209,4,17,128,32,0,2,0,41,0,0,1,0,0,0,0,0,0,0,64,15,17,128,1,0];
+    let expectJson  = [ {"ble":{"read_descriptor_result":{"address":"84edf3b7694f","service_uuid":"3000","characteristic_uuid":"3002","descriptor_uuid":"2900","data":[1,0]}}}];
+      let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+  it("request write_descriptor",  function () {
+    let requestJson  = [{"ble":{"write_descriptor":{"address":"84edf3b7694f","service_uuid":"d0611e78bbb44591a5f8487910ae4366","characteristic_uuid":"8667556c9a374c9184ed54ee27d90049","descriptor_uuid":"2900","data":[1,0]}}}];
+    let binaryArray = [11,15,63,79,105,183,243,237,132,0,16,102,67,174,16,121,72,248,165,145,69,180,187,120,30,97,208,0,16,73,0,217,39,238,84,237,132,145,76,55,154,108,85,103,134,0,2,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0];
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+  it("response write_descriptor_result",  function () {
+    let binaryArray = [11,15,61,79,105,183,243,237,132,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,48,0,1,0,0,0,0,0,0,0,209,4,17,128,32,0,2,0,41,0,0,1,0,0,0,0,0,0,0,64,15,17,128,1];
+    let expectJson  = [ {"ble":{"write_descriptor_result":{"address":"84edf3b7694f","service_uuid":"3000","characteristic_uuid":"3002","descriptor_uuid":"2900",result:"success"}}}];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+
+
+
+
+  it("request peripheral write_descriptor",  function () {
+    let requestJson  = [{"ble":{"peripheral":{"write_descriptor":{"service_uuid":"fff0","characteristic_uuid":"fff1","descriptor_uuid":"2901","data":[72,69,69,69,69,69]}}}}];
+    let binaryArray = [11,29,60,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,72,69,69,69,69,69];
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+
+  it("request peripheral read_descriptor",  function () {
+    let requestJson  = [{"ble":{"peripheral":{"read_descriptor":{"service_uuid":"fff0","characteristic_uuid":"fff1","descriptor_uuid":"2901"}}}}];
+    let binaryArray = [11,30,54,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+
+  it("response peripheral write_descriptor",  function () {
+    let binaryArray = [11,29,55,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
+    let expectJson  = [ {"ble":{"peripheral":{"write_descriptor_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","descriptor_uuid":"2901","result":"success"}}}}];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+  it("response peripheral read_descriptor",  function () {
+    let binaryArray = [11,30,64,80,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,104,101,108,108,111,32,119,114,111,108,100,32,99,104,97,114,97,99,116,101,114,105,115,116,105,99];
+    let expectJson  = [ {"ble":{"peripheral":{"read_descriptor_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","descriptor_uuid":"2901","data":[104,101,108,108,111,32,119,114,111,108,100,32,99,104,97,114,97,99,116,101,114,105,115,116,105,99]}}}}     ];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+
+  it("response peripheral notify_write_descriptor",  function () {
+    let binaryArray = [11,31,64,69,140,133,144,24,228,5,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,97,97,97,97,115,101,100,102,97];
+    let expectJson  = [  {"ble":{"peripheral":{"notify_write_descriptor":{"address":"05e41890858c","service_uuid":"fff0","characteristic_uuid":"fff1","descriptor_uuid":"2901","data":[97,97,97,97,115,101,100,102,97]}}}}];
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
+  it("response peripheral notify_read_descriptor",  function () {
+    let binaryArray = [11,32,60,140,133,144,24,228,5,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    let expectJson  = [ {"ble":{"peripheral":{"notify_read_descriptor":{"address":"05e41890858c","service_uuid":"fff0","characteristic_uuid":"fff1","descriptor_uuid":"2901"}}}}];
     let binary = new Uint8Array(binaryArray);
 
     let json = this.obniz.binary2Json(binary);
