@@ -1185,7 +1185,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_get","type":"object","required":["get_characteristic_result"],"properties":{"get_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_get","type":"object","required":["get_characteristic_result"],"properties":{"get_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","properties"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"properties":{"type":"array","items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}}}}}}
 
 /***/ }),
 
@@ -7144,6 +7144,7 @@ class ObnizBLE {
           let service = p.getService(params.service_uuid);
           let chara = service.getCharacteristic(params.characteristic_uuid);
           chara.discoverdOnRemote = true;
+          chara.properties = params.properties;
           service.ondiscovercharacteristic(chara);
         }
       }
@@ -7611,13 +7612,15 @@ class BleRemoteCharacteristic {
     this.uuid = uuid;
     this.discoverdOnRemote = false;
     this.descriptors = [];
+    this.properties = [];
   }
 
   toString(){
     return JSON.stringify({
           "address" : this.service.peripheral.address,
           "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid
+          "characteristic_uuid" : this.uuid,
+          "properties" : this.properties
         });
   }
 
@@ -7683,6 +7686,26 @@ class BleRemoteCharacteristic {
     this.descriptors.push(newDescriptors);
     return newDescriptors;
   }
+
+  canBroadcast(){
+    return this.properties.includes("broadcast");
+  }
+  canNotify(){
+    return  this.properties.includes("notify");
+  }
+  canRead(){
+    return this.properties.includes("read");
+  }
+  canWrite(){
+    return this.properties.includes("write");
+  }
+  canWriteWithoutResponse(){
+    return this.properties.includes("write_without_response");
+  }
+  canIndicate(){
+    return this.properties.includes("indicate");
+  }
+
 
   onwrite(status){};
   onread(value){};
@@ -9994,6 +10017,17 @@ class WSCommand_Ble extends WSCommand {
       non_connectable_advertising: 0x03, /*!< Non connectable undirected advertising (ADV_NONCONN_IND) */
       scan_response: 0x04 /*!< Scan Response (SCAN_RSP) */
     };
+
+    this._CommandCharacteristicsProperties = {
+      broadcast : 0x01,
+      read : 0x02,
+      write_without_response : 0x04,
+      write : 0x08,
+      notify : 0x10,
+      indicate : 0x20,
+      auth : 0x40,
+      extended_properties : 0x80,
+    };
   }
 
 
@@ -10388,7 +10422,8 @@ class WSCommand_Ble extends WSCommand {
     var schema =  [
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength }
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"properties",   type : "enum", length: 1, enum:this._CommandCharacteristicsProperties, flags:true }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
@@ -10397,6 +10432,7 @@ class WSCommand_Ble extends WSCommand {
       this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
     }else{
       delete results.characteristic_uuid;
+      delete results.properties;
       this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
     }
   }
@@ -12093,13 +12129,25 @@ module.exports = WSCommand;
   }
   
   static enumFromBinary(data, schema) {
-    var enumVals = schema.enum;
-    var val = this.numberFromBinary(data);
-    var tmp = this.keyForVal(enumVals, val);
-    if (tmp) {
-      val = tmp;
+    let enumVals = schema.enum;
+    let val = this.numberFromBinary(data);
+
+    if(schema.flags === true){
+      let temp = [];
+      for(let key of Object.keys(enumVals)) {
+        let flag = (enumVals[key] & val);
+        if(flag) {
+          temp.push(key);
+        }
+      }
+      val = temp;
+
+    }else {
+      let tmp = this.keyForVal(enumVals, val);
+      if (tmp) {
+        val = tmp;
+      }
     }
-    
     return val;
   }
   

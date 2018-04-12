@@ -334,6 +334,7 @@ class ObnizBLE {
           let service = p.getService(params.service_uuid);
           let chara = service.getCharacteristic(params.characteristic_uuid);
           chara.discoverdOnRemote = true;
+          chara.properties = params.properties;
           service.ondiscovercharacteristic(chara);
         }
       }

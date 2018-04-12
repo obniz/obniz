@@ -10,13 +10,15 @@ class BleRemoteCharacteristic {
     this.uuid = uuid;
     this.discoverdOnRemote = false;
     this.descriptors = [];
+    this.properties = [];
   }
 
   toString(){
     return JSON.stringify({
           "address" : this.service.peripheral.address,
           "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid
+          "characteristic_uuid" : this.uuid,
+          "properties" : this.properties
         });
   }
 
@@ -82,6 +84,26 @@ class BleRemoteCharacteristic {
     this.descriptors.push(newDescriptors);
     return newDescriptors;
   }
+
+  canBroadcast(){
+    return this.properties.includes("broadcast");
+  }
+  canNotify(){
+    return  this.properties.includes("notify");
+  }
+  canRead(){
+    return this.properties.includes("read");
+  }
+  canWrite(){
+    return this.properties.includes("write");
+  }
+  canWriteWithoutResponse(){
+    return this.properties.includes("write_without_response");
+  }
+  canIndicate(){
+    return this.properties.includes("indicate");
+  }
+
 
   onwrite(status){};
   onread(value){};

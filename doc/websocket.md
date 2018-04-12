@@ -2142,6 +2142,7 @@ Related item
 | `ble.get_characteristic_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.get_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.get_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.get_characteristic_result.properties[]` |  string  | <ul><li>enum <ul><li>`"broadcast"`</li><li>`"read"`</li><li>`"write_without_response"`</li><li>`"write"`</li><li>`"notify"`</li><li>`"indicate"`</li><li>`"auth"`</li><li>`"extended_properties"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -2153,7 +2154,10 @@ Related item
             "get_characteristic_result": {
                 "address": "77e754ab8591",
                 "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
-                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "properties": [
+                    "broadcast"
+                ]
             }
         }
     }

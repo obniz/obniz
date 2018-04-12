@@ -78,13 +78,25 @@ class JsonBinaryConverter {
   }
   
   static enumFromBinary(data, schema) {
-    var enumVals = schema.enum;
-    var val = this.numberFromBinary(data);
-    var tmp = this.keyForVal(enumVals, val);
-    if (tmp) {
-      val = tmp;
+    let enumVals = schema.enum;
+    let val = this.numberFromBinary(data);
+
+    if(schema.flags === true){
+      let temp = [];
+      for(let key of Object.keys(enumVals)) {
+        let flag = (enumVals[key] & val);
+        if(flag) {
+          temp.push(key);
+        }
+      }
+      val = temp;
+
+    }else {
+      let tmp = this.keyForVal(enumVals, val);
+      if (tmp) {
+        val = tmp;
+      }
     }
-    
     return val;
   }
   

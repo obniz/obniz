@@ -73,6 +73,17 @@ class WSCommand_Ble extends WSCommand {
       non_connectable_advertising: 0x03, /*!< Non connectable undirected advertising (ADV_NONCONN_IND) */
       scan_response: 0x04 /*!< Scan Response (SCAN_RSP) */
     };
+
+    this._CommandCharacteristicsProperties = {
+      broadcast : 0x01,
+      read : 0x02,
+      write_without_response : 0x04,
+      write : 0x08,
+      notify : 0x10,
+      indicate : 0x20,
+      auth : 0x40,
+      extended_properties : 0x80,
+    };
   }
 
 
@@ -467,7 +478,8 @@ class WSCommand_Ble extends WSCommand {
     var schema =  [
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength }
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"properties",   type : "enum", length: 1, enum:this._CommandCharacteristicsProperties, flags:true }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
@@ -476,6 +488,7 @@ class WSCommand_Ble extends WSCommand {
       this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
     }else{
       delete results.characteristic_uuid;
+      delete results.properties;
       this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
     }
   }
@@ -536,12 +549,11 @@ class WSCommand_Ble extends WSCommand {
   }
   
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var uuidLength = 16+2;
     var schema =  [
       { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
       { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
     ];
     
