@@ -108,10 +108,23 @@ var testUtil = {
        var val = JSON.parse(stub.args[count][0]);
        new _chai.Assertion(val).to.deep.equal(expected);
      });
-     
-     
-     
-     _chai.Assertion.addProperty('finished', function(expected) {
+
+
+      _chai.Assertion.addMethod('sendBinary', function (expected) {
+        var count = serverDataCount;
+        serverDataCount++;
+
+        var obniz = utils.flag(this, 'object');
+        var stub = obniz.socket.send;
+
+        var message = "[obniz.send] no more send data. (called " + stub.callCount + " times, but you expect " + (count + 1) + " times) ";
+        new _chai.Assertion(stub.callCount, message).to.be.above(count);
+
+        new _chai.Assertion(stub.args[count][0]).to.deep.equal(expected);
+      });
+
+
+_chai.Assertion.addProperty('finished', function(expected) {
        var obniz = utils.flag(this, 'object');
         var stub = obniz.socket.send;
        var message  = "[obniz.send] not finished. (send: called " + stub.callCount  + " times, but you expect "+(serverDataCount)+" times) ";

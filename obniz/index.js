@@ -368,10 +368,12 @@ class Obniz {
       for( let index in keys){
         let pinName = keys[index];
         let io = args[1][pinName];
-        if(parts.displayIoNames && parts.displayIoNames[pinName]){
-          pinName = parts.displayIoNames[pinName];
+        if(this.isValidIO(io)) {
+          if (parts.displayIoNames && parts.displayIoNames[pinName]) {
+            pinName = parts.displayIoNames[pinName];
+          }
+          ioNames[io] = pinName;
         }
-        ioNames[io]=pinName;
       }
       this.display.setPinNames(displayPartsName,ioNames);
     }
