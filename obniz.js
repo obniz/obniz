@@ -7373,7 +7373,7 @@ class BleCharacteristic {
     this.write([val]);
   }
 
-  writeText(val){
+  writeText(str){
     this.write(ObnizUtil.string2dataArray(str));
   }
 
@@ -7484,7 +7484,7 @@ class BleDescriptor {
     this.write([val]);
   }
 
-  writeText(val){
+  writeText(str){
     this.write(ObnizUtil.string2dataArray(str));
   }
 
@@ -10495,12 +10495,11 @@ class WSCommand_Ble extends WSCommand {
   }
   
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var uuidLength = 16+2;
     var schema =  [
       { name:"address", type : "hex", length: 6, endianness:"little" },
-      { name:"service_uuid",   type : "uuid", length: uuidLength },
-      { name:"characteristic_uuid",   type : "uuid", length: uuidLength },
-      { name:"descriptor_uuid",   type : "uuid", length: uuidLength },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
       { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
     ];
     
