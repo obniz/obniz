@@ -31,7 +31,7 @@ var errorDataCount = 0;
 var testUtil = {
   log: console.log,
   isNode: function () {
-    return (typeof window === 'undefined') ? true : false;
+    return (typeof window === 'undefined');
   },
   createServer: function (port, velify) {
     var wss = new WSServer({host: "localhost", port: port, clientTracking: true});
