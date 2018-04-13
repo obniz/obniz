@@ -43,6 +43,7 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
         });
         resolve(children);
       });
+      this.discoverChildren();
     })
   }
 
@@ -58,8 +59,8 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
 
   };
 
-  notify(notifyName, params) {
-    super.notify(notifyName, params);
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case "discover" : {
         let child = this.getChild(params[this.wsChildUuidName]);

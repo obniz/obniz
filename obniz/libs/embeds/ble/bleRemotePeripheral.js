@@ -164,18 +164,10 @@ class BleRemotePeripheral {
 
   connectWait(){
     return new Promise((resolve)=>{
-      this._onconnect = ()=>{
-        this._onconnect = ()=>{};
-        this._ondisconnect = ()=>{};
-        resolve(true);
-      };
-      this._ondisconnect = ()=>{
-        this._onconnect = ()=>{};
-        this._ondisconnect = ()=>{};
-        resolve(false);
-      };
+      this.emitter.once("statusupdate", (params)=>{
+        resolve(params.status === "connected");
+      });
       this.connect();
-
     })
   }
 
@@ -211,7 +203,6 @@ class BleRemotePeripheral {
 
   findService(param){
     var serviceUuid = param.service_uuid.toLowerCase() ;
-    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
     var s = this.getService(serviceUuid);
     return s;
   }
@@ -251,24 +242,21 @@ class BleRemotePeripheral {
 
   discoverAllServicesWait(){
     return new Promise((resolve)=>{
-      this._ondiscoverservicefinished = (services)=>{
-        this._ondiscoverservicefinished = function(){};
-        resolve(services);
-      };
+      this.emitter.once("discoverfinished", ()=>{
+        let children = this.services.filter(elm=>{return elm.discoverdOnRemote;});
+        resolve(children);
+      });
       this.discoverAllServices();
 
     })
   }
 
-  _onconnect(){};
   onconnect(){};
-  _ondisconnect(){};
   ondisconnect(){};
 
 
   ondiscoverservice(service){};
 
-  _ondiscoverservicefinished(services){};
   ondiscoverservicefinished(services){};
 
 

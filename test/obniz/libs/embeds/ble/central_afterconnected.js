@@ -775,7 +775,7 @@ describe("ble", function () {
   it("error", function () {
     var stub = sinon.stub();
     var peripheral = this.peripheral;
-    peripheral.onerror = stub;
+    peripheral.getService("ff00").getCharacteristic("ff01").getDescriptor("ff01").onerror = stub;
     sinon.assert.callCount(stub, 0);
 
     testUtil.receiveJson(this.obniz, [{
@@ -804,7 +804,7 @@ describe("ble", function () {
   it("error2", function () {
     var stub = sinon.stub();
     var peripheral = this.peripheral;
-    peripheral.onerror = stub;
+    peripheral.getService("ff00").onerror = stub;
     sinon.assert.callCount(stub, 0);
 
     testUtil.receiveJson(this.obniz, [{

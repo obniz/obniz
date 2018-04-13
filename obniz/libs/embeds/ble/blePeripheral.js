@@ -65,6 +65,7 @@ class BlePeripheral {
   }
 
   onconnectionupdates(){};
+  onerror(){};
 }
 
 

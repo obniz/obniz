@@ -6,6 +6,13 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
 
   constructor(params){
     super(params);
+
+    this.properties = params.properties || [];
+    if(!Array.isArray(this.properties)){
+      this.properties = [this.properties];
+    }
+
+
   }
 
   get parentName(){
@@ -83,9 +90,18 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
     return this.discoverChildren();
   }
 
-
   discoverAllDescriptorsWait(){
     return this.discoverChildrenWait();
+  }
+
+
+  toJSON (){
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0 ) {
+      obj.properties =  this.properties;
+    }
+    return obj;
   }
 
   canBroadcast(){
@@ -125,11 +141,11 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
 
 
 
-  ondiscover(characteristic) {
-    this.ondiscoverdescriptor(characteristic);
+  ondiscover(descriptor) {
+    this.ondiscoverdescriptor(descriptor);
   }
-  ondiscoverfinished(characteristics) {
-    this.ondiscoverdescriptorfinished(characteristic);
+  ondiscoverfinished(descriptors) {
+    this.ondiscoverdescriptorfinished(descriptors);
   }
 
   ondiscoverdescriptor(descriptor){};

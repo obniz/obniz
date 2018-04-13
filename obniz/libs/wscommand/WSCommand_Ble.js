@@ -41,6 +41,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerReadDescriptorValue = 30;
     this._CommandServerNotifyWriteDescriptorValue = 31;
     this._CommandServerNotifyReadDescriptorValue = 32;
+    this._CommandServerNofityCharavteristic = 33;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -84,6 +85,11 @@ class WSCommand_Ble extends WSCommand {
       auth : 0x40,
       extended_properties : 0x80,
     };
+
+    this._commandResults = {
+      success : 0,
+      failed : 1,
+    }
   }
 
 
@@ -240,7 +246,7 @@ class WSCommand_Ble extends WSCommand {
         schema: [
           { path : "service_uuid" , length: 18, type: "uuid", required:true },
           { path : "uuid" , length: 18, type: "uuid", required:true },
-          { path : "property" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK
+          { path : "properties" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK
           { path : "data" , type: "dataArray" }
         ]
       },
@@ -250,7 +256,7 @@ class WSCommand_Ble extends WSCommand {
           { path : "service_uuid" , length: 18, type: "uuid", required:true },
           { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
           { path : "uuid" , length: 18, type: "uuid", required:true },
-          { path : "property" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK
+          { path : "properties" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK
           { path : "data" , type: "dataArray" }
         ]
       }
@@ -305,12 +311,24 @@ class WSCommand_Ble extends WSCommand {
 
   peripheralCharacteristicWrite(params) {
     var schema = [
-    { path : "peripheral.write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
-    { path : "peripheral.write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
-    { path : "peripheral.write_characteristic.data" , type: "dataArray" },
-  ];
+      { path : "peripheral.write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_characteristic.data" , type: "dataArray" },
+    ];
     var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
+
+  }
+
+
+
+  peripheralCharacteristicNotify(params) {
+    var schema = [
+      { path : "peripheral.notify_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.notify_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandServerNofityCharavteristic, buf);
 
   }
 
@@ -362,6 +380,7 @@ class WSCommand_Ble extends WSCommand {
       {uri : "/request/ble/peripheral/service_stop",        onValid: this.peripheralServiceStop},
       {uri : "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
       {uri : "/request/ble/peripheral/characteristic_write",onValid: this.peripheralCharacteristicWrite},
+      {uri : "/request/ble/peripheral/characteristic_notify",onValid: this.peripheralCharacteristicNotify},
       {uri : "/request/ble/peripheral/descriptor_read",     onValid: this.peripheralDescriptorRead},
       {uri : "/request/ble/peripheral/descriptor_write",    onValid: this.peripheralDescriptorWrite},
     ];
@@ -497,11 +516,13 @@ class WSCommand_Ble extends WSCommand {
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "int", length: 1},
       { name:"data",   type : "dataArray", length: null }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
+    this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
   }
   
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
@@ -509,10 +530,11 @@ class WSCommand_Ble extends WSCommand {
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
      this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
   }
   
@@ -540,10 +562,12 @@ class WSCommand_Ble extends WSCommand {
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
       { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "int", length: 1},
       { name:"data",   type : "dataArray", length: null }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
      this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
   }
   
@@ -553,10 +577,11 @@ class WSCommand_Ble extends WSCommand {
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
       { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
      this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
   }
   
@@ -574,10 +599,11 @@ class WSCommand_Ble extends WSCommand {
     var schema =  [
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
   }
 
@@ -632,10 +658,11 @@ class WSCommand_Ble extends WSCommand {
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
       { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
   }
 
@@ -678,7 +705,7 @@ class WSCommand_Ble extends WSCommand {
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     
     var errorMessage = {
-      0x00 : "error",
+      0x00 : "no error",
       0x01 : "device not connected",
       0x02 : "service not found",
       0x03 : "charavteristic not found",
@@ -687,6 +714,7 @@ class WSCommand_Ble extends WSCommand {
       0x06 : "device not found",
       0x07 : "ble is busy",
       0x08 : "service already running",
+      0xFF : "error",
     };
     
     var functionMessage = {

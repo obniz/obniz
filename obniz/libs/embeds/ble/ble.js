@@ -254,6 +254,9 @@ class ObnizBLE {
     };
 
     this.scanTarget = target;
+    if(this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)){
+      this.scanTarget.uuids = this.scanTarget.uuids.map((elm)=>{ return elm.toLowerCase() ;});
+    }
     this.remotePeripherals =  [];
     this.Obniz.send(obj);
     return;
@@ -363,7 +366,7 @@ class ObnizBLE {
     for(let key in paramList){
       remotePeripheralcallbackFunc(obj[key], function(val,bleobj){
 
-        bleobj.notify(paramList[key].name, val);
+        bleobj.notifyFromServer(paramList[key].name, val);
       }.bind(this), paramList[key].obj);
     }
 
@@ -403,7 +406,7 @@ class ObnizBLE {
        
        for(let key in paramList){
         callbackFunc(obj.peripheral[key], function(val,bleobj){
-          bleobj.notify(paramList[key].name, val);
+          bleobj.notifyFromServer(paramList[key].name, val);
         }.bind(this), paramList[key].obj);
       }
      }
@@ -411,18 +414,30 @@ class ObnizBLE {
     if (obj.error) {
       let params = obj.error;
       let handled = false;
+      let peripheral,target;
       if (!params.address){
-          if(typeof(this.onerror) === "function"){
-            this.onerror(params);
-            handled = true;
-          }
+        peripheral = this.peripheral;
+      }else{
+        peripheral = this.findPeripheral(params.address);
       }
-        
-      let p = this.findPeripheral(params.address);
-      if (p) {
-        p.onerror(params);
-        handled = true;
+
+      if (peripheral) {
+        if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
+          target = peripheral.findDescriptor(params);
+        } else if (params.service_uuid && params.characteristic_uuid) {
+          target = peripheral.findCharacteristic(params);
+        } else if (params.service_uuid) {
+          target = peripheral.findService(params);
+        }
+        if (target) {
+          target.notifyFromServer("onerror", params);
+          handled = true;
+        } else  {
+          peripheral.onerror(params);
+          handled = true;
+        }
       }
+
       if (!handled) {
         this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
       }
@@ -432,7 +447,7 @@ class ObnizBLE {
   _dataArray2uuidHex( data, reverse){
     let uuid = [];
     for(var i = 0; i< data.length;i++){
-      uuid.push(( '00' + data[i].toString(16) ).slice( -2 ));
+      uuid.push(( '00' + data[i].toString(16).toLowerCase() ).slice( -2 ));
     }
     if(reverse){
       uuid =  uuid.reverse();

@@ -99,6 +99,7 @@ var map = {
 	"./request/ble/index.yml": "./json_schema/request/ble/index.yml",
 	"./request/ble/peripheral/advertisement_start.yml": "./json_schema/request/ble/peripheral/advertisement_start.yml",
 	"./request/ble/peripheral/advertisement_stop.yml": "./json_schema/request/ble/peripheral/advertisement_stop.yml",
+	"./request/ble/peripheral/characteristic_notify.yml": "./json_schema/request/ble/peripheral/characteristic_notify.yml",
 	"./request/ble/peripheral/characteristic_read.yml": "./json_schema/request/ble/peripheral/characteristic_read.yml",
 	"./request/ble/peripheral/characteristic_write.yml": "./json_schema/request/ble/peripheral/characteristic_write.yml",
 	"./request/ble/peripheral/descriptor_read.yml": "./json_schema/request/ble/peripheral/descriptor_read.yml",
@@ -452,6 +453,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./json_schema/request/ble/peripheral/characteristic_notify.yml":
+/*!**********************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/characteristic_notify.yml ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_notify","description":"notify characteristic for connected device","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["notify_characteristic"],"properties":{"notify_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
+
+/***/ }),
+
 /***/ "./json_schema/request/ble/peripheral/characteristic_read.yml":
 /*!********************************************************************!*\
   !*** ./json_schema/request/ble/peripheral/characteristic_read.yml ***!
@@ -514,7 +526,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","items":{"default":["read","write"],"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -7414,6 +7426,9 @@ class ObnizBLE {
     };
 
     this.scanTarget = target;
+    if(this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)){
+      this.scanTarget.uuids = this.scanTarget.uuids.map((elm)=>{ return elm.toLowerCase() ;});
+    }
     this.remotePeripherals =  [];
     this.Obniz.send(obj);
     return;
@@ -7485,7 +7500,6 @@ class ObnizBLE {
       this._onscanfinish(this.remotePeripherals);
       this.onscanfinish(this.remotePeripherals);
     }
-
 
 
 
@@ -7572,18 +7586,30 @@ class ObnizBLE {
     if (obj.error) {
       let params = obj.error;
       let handled = false;
+      let peripheral,target;
       if (!params.address){
-          if(typeof(this.onerror) === "function"){
-            this.onerror(params);
-            handled = true;
-          }
+        peripheral = this.peripheral;
+      }else{
+        peripheral = this.findPeripheral(params.address);
       }
-        
-      let p = this.findPeripheral(params.address);
-      if (p) {
-        p.onerror(params);
-        handled = true;
+
+      if (peripheral) {
+        if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
+          target = peripheral.findDescriptor(params);
+        } else if (params.service_uuid && params.characteristic_uuid) {
+          target = peripheral.findCharacteristic(params);
+        } else if (params.service_uuid) {
+          target = peripheral.findService(params);
+        }
+        if (target) {
+          target.notify("onerror", params);
+          handled = true;
+        } else  {
+          peripheral.onerror(params);
+          handled = true;
+        }
       }
+
       if (!handled) {
         this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
       }
@@ -7593,7 +7619,7 @@ class ObnizBLE {
   _dataArray2uuidHex( data, reverse){
     let uuid = [];
     for(var i = 0; i< data.length;i++){
-      uuid.push(( '00' + data[i].toString(16) ).slice( -2 ));
+      uuid.push(( '00' + data[i].toString(16).toLowerCase() ).slice( -2 ));
     }
     if(reverse){
       uuid =  uuid.reverse();
@@ -7644,11 +7670,6 @@ class BleAttributreAbstruct {
     }
     if(! this.data && params.value){
       this.data = params.value;
-    }
-
-    this.property = params.property || [];
-    if(!Array.isArray(this.property)){
-      this.property = [this.property];
     }
 
     if(params[this.childrenName]){
@@ -7704,9 +7725,6 @@ class BleAttributreAbstruct {
     }
     child.parent = this;
 
-    //あとでけす
-    child.characteristic = this;
-
     this.children.push(child);
     return child;
   }
@@ -7731,9 +7749,6 @@ class BleAttributreAbstruct {
     if (this.data) {
       obj.data = this.data
     }
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-    }
     return obj;
   }
 
@@ -7756,7 +7771,11 @@ class BleAttributreAbstruct {
   readWait(){
     return new Promise(resolve => {
       this.emitter.once("onread",(params)=>{
-        resolve(params.data);
+        if(params.result === "success") {
+          resolve(params.data);
+        }else{
+          resolve(undefined);
+        }
       });
       this.read();
     })
@@ -7805,9 +7824,17 @@ class BleAttributreAbstruct {
 
   };
 
+  onerror(err){
+    console.error(err.message);
+  }
+
   notify(notifyName, params){
     this.emitter.emit(notifyName, params);
     switch(notifyName){
+      case "onerror" : {
+        this.onerror(params);
+        break;
+      }
       case "onwrite" : {
         this.onwrite(params.result);
         break;
@@ -7850,6 +7877,12 @@ class BleCharacteristic extends BleAttributeAbstract{
 
     this.addDescriptor = this.addChild;
     this.getDescriptor = this.getChild;
+
+    this.properties = obj.properties || [];
+    if(!Array.isArray(this.properties)){
+      this.properties = [this.properties];
+    }
+
   }
 
   get parentName(){
@@ -7861,6 +7894,29 @@ class BleCharacteristic extends BleAttributeAbstract{
   }
   get childrenName(){
     return "descriptors";
+  }
+
+
+
+  toJSON (){
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0 ) {
+      obj.properties =  this.properties;
+    }
+    return obj;
+  }
+
+  addProperty(param){
+    if(!this.properties.includes(param)){
+      this.properties.push(param);
+    }
+  }
+  removeProperty(param){
+    this.properties.filter(elm=>{
+      return elm !== param;
+    })
+
   }
 
   write(data){
@@ -7897,6 +7953,20 @@ class BleCharacteristic extends BleAttributeAbstract{
   }
 
 
+  notify(){
+    this.service.peripheral.Obniz.send(
+        {
+          ble : {
+            peripheral: {
+               notify_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase() ,
+                characteristic_uuid: this.uuid.toLowerCase() ,
+              }
+            }
+          }
+        }
+    );
+  }
 
 }
 
@@ -8047,6 +8117,7 @@ class BlePeripheral {
   }
 
   onconnectionupdates(){};
+  onerror(){};
 }
 
 
@@ -8106,6 +8177,7 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
         });
         resolve(children);
       });
+      this.discoverChildren();
     })
   }
 
@@ -8161,6 +8233,13 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
 
   constructor(params){
     super(params);
+
+    this.properties = params.properties || [];
+    if(!Array.isArray(this.properties)){
+      this.properties = [this.properties];
+    }
+
+
   }
 
   get parentName(){
@@ -8238,9 +8317,18 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
     return this.discoverChildren();
   }
 
-
   discoverAllDescriptorsWait(){
     return this.discoverChildrenWait();
+  }
+
+
+  toJSON (){
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0 ) {
+      obj.properties =  this.properties;
+    }
+    return obj;
   }
 
   canBroadcast(){
@@ -8280,11 +8368,11 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
 
 
 
-  ondiscover(characteristic) {
-    this.ondiscoverdescriptor(characteristic);
+  ondiscover(descriptor) {
+    this.ondiscoverdescriptor(descriptor);
   }
-  ondiscoverfinished(characteristics) {
-    this.ondiscoverdescriptorfinished(characteristic);
+  ondiscoverfinished(descriptors) {
+    this.ondiscoverdescriptorfinished(descriptors);
   }
 
   ondiscoverdescriptor(descriptor){};
@@ -8525,18 +8613,10 @@ class BleRemotePeripheral {
 
   connectWait(){
     return new Promise((resolve)=>{
-      this._onconnect = ()=>{
-        this._onconnect = ()=>{};
-        this._ondisconnect = ()=>{};
-        resolve(true);
-      };
-      this._ondisconnect = ()=>{
-        this._onconnect = ()=>{};
-        this._ondisconnect = ()=>{};
-        resolve(false);
-      };
+      this.emitter.once("statusupdate", (params)=>{
+        resolve(params.status === "connected");
+      });
       this.connect();
-
     })
   }
 
@@ -8572,7 +8652,6 @@ class BleRemotePeripheral {
 
   findService(param){
     var serviceUuid = param.service_uuid.toLowerCase() ;
-    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
     var s = this.getService(serviceUuid);
     return s;
   }
@@ -8612,24 +8691,21 @@ class BleRemotePeripheral {
 
   discoverAllServicesWait(){
     return new Promise((resolve)=>{
-      this._ondiscoverservicefinished = (services)=>{
-        this._ondiscoverservicefinished = function(){};
-        resolve(services);
-      };
+      this.emitter.once("discoverfinished", ()=>{
+        let children = this.services.filter(elm=>{return elm.discoverdOnRemote;});
+        resolve(children);
+      });
       this.discoverAllServices();
 
     })
   }
 
-  _onconnect(){};
   onconnect(){};
-  _ondisconnect(){};
   ondisconnect(){};
 
 
   ondiscoverservice(service){};
 
-  _ondiscoverservicefinished(services){};
   ondiscoverservicefinished(services){};
 
 
@@ -8741,7 +8817,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract{
     this.ondiscovercharacteristic(characteristic);
   }
   ondiscoverfinished(characteristics) {
-    this.ondiscovercharacteristicfinished(characteristic);
+    this.ondiscovercharacteristicfinished(characteristics);
   }
 
   ondiscovercharacteristic( characteristic){};
@@ -10673,6 +10749,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerReadDescriptorValue = 30;
     this._CommandServerNotifyWriteDescriptorValue = 31;
     this._CommandServerNotifyReadDescriptorValue = 32;
+    this._CommandServerNofityCharavteristic = 33;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -10716,6 +10793,11 @@ class WSCommand_Ble extends WSCommand {
       auth : 0x40,
       extended_properties : 0x80,
     };
+
+    this._commandResults = {
+      success : 0,
+      failed : 1,
+    }
   }
 
 
@@ -10872,7 +10954,7 @@ class WSCommand_Ble extends WSCommand {
         schema: [
           { path : "service_uuid" , length: 18, type: "uuid", required:true },
           { path : "uuid" , length: 18, type: "uuid", required:true },
-          { path : "property" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK
+          { path : "properties" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK
           { path : "data" , type: "dataArray" }
         ]
       },
@@ -10882,7 +10964,7 @@ class WSCommand_Ble extends WSCommand {
           { path : "service_uuid" , length: 18, type: "uuid", required:true },
           { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
           { path : "uuid" , length: 18, type: "uuid", required:true },
-          { path : "property" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK
+          { path : "properties" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK
           { path : "data" , type: "dataArray" }
         ]
       }
@@ -10937,12 +11019,24 @@ class WSCommand_Ble extends WSCommand {
 
   peripheralCharacteristicWrite(params) {
     var schema = [
-    { path : "peripheral.write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
-    { path : "peripheral.write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
-    { path : "peripheral.write_characteristic.data" , type: "dataArray" },
-  ];
+      { path : "peripheral.write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_characteristic.data" , type: "dataArray" },
+    ];
     var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
+
+  }
+
+
+
+  peripheralCharacteristicNotify(params) {
+    var schema = [
+      { path : "peripheral.notify_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.notify_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+    this.sendCommand(this._CommandServerNofityCharavteristic, buf);
 
   }
 
@@ -10994,6 +11088,7 @@ class WSCommand_Ble extends WSCommand {
       {uri : "/request/ble/peripheral/service_stop",        onValid: this.peripheralServiceStop},
       {uri : "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
       {uri : "/request/ble/peripheral/characteristic_write",onValid: this.peripheralCharacteristicWrite},
+      {uri : "/request/ble/peripheral/characteristic_notify",onValid: this.peripheralCharacteristicNotify},
       {uri : "/request/ble/peripheral/descriptor_read",     onValid: this.peripheralDescriptorRead},
       {uri : "/request/ble/peripheral/descriptor_write",    onValid: this.peripheralDescriptorWrite},
     ];
@@ -11129,11 +11224,13 @@ class WSCommand_Ble extends WSCommand {
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "int", length: 1},
       { name:"data",   type : "dataArray", length: null }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-     this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
+    this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
   }
   
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
@@ -11141,10 +11238,11 @@ class WSCommand_Ble extends WSCommand {
       { name:"address", type : "hex", length: 6, endianness:"little" },
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
      this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
   }
   
@@ -11172,10 +11270,12 @@ class WSCommand_Ble extends WSCommand {
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
       { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "int", length: 1},
       { name:"data",   type : "dataArray", length: null }
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
      this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
   }
   
@@ -11185,10 +11285,11 @@ class WSCommand_Ble extends WSCommand {
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
       { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
      this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
   }
   
@@ -11206,10 +11307,11 @@ class WSCommand_Ble extends WSCommand {
     var schema =  [
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
   }
 
@@ -11264,10 +11366,11 @@ class WSCommand_Ble extends WSCommand {
       { name:"service_uuid",   type : "uuid", length: this.uuidLength },
       { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
       { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
-      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
+      { name:"result",   type : "int", length: 1},
     ];
     
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
   }
 
@@ -11310,7 +11413,7 @@ class WSCommand_Ble extends WSCommand {
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     
     var errorMessage = {
-      0x00 : "error",
+      0x00 : "no error",
       0x01 : "device not connected",
       0x02 : "service not found",
       0x03 : "charavteristic not found",
@@ -11319,6 +11422,7 @@ class WSCommand_Ble extends WSCommand {
       0x06 : "device not found",
       0x07 : "ble is busy",
       0x08 : "service already running",
+      0xFF : "error",
     };
     
     var functionMessage = {

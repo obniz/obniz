@@ -9,6 +9,12 @@ class BleCharacteristic extends BleAttributeAbstract{
 
     this.addDescriptor = this.addChild;
     this.getDescriptor = this.getChild;
+
+    this.properties = obj.properties || [];
+    if(!Array.isArray(this.properties)){
+      this.properties = [this.properties];
+    }
+
   }
 
   get parentName(){
@@ -20,6 +26,29 @@ class BleCharacteristic extends BleAttributeAbstract{
   }
   get childrenName(){
     return "descriptors";
+  }
+
+
+
+  toJSON (){
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0 ) {
+      obj.properties =  this.properties;
+    }
+    return obj;
+  }
+
+  addProperty(param){
+    if(!this.properties.includes(param)){
+      this.properties.push(param);
+    }
+  }
+  removeProperty(param){
+    this.properties.filter(elm=>{
+      return elm !== param;
+    })
+
   }
 
   write(data){
@@ -56,6 +85,20 @@ class BleCharacteristic extends BleAttributeAbstract{
   }
 
 
+  notify(){
+    this.service.peripheral.Obniz.send(
+        {
+          ble : {
+            peripheral: {
+               notify_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase() ,
+                characteristic_uuid: this.uuid.toLowerCase() ,
+              }
+            }
+          }
+        }
+    );
+  }
 
 }
 

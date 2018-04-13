@@ -37,6 +37,21 @@ properties:
                                 properties:
                                     uuid : {$ref : "/uuid"}
                                     data : {$ref : "/dataArray"}
+                                    properties :
+                                      type : array
+                                      items :
+                                        default : [read,write]
+                                        type : string
+                                        enum :
+                                          - broadcast
+                                          - read
+                                          - write_without_response
+                                          - write
+                                          - notify
+                                          - indicate
+                                          - auth
+                                          - extended_properties
+
                                     descriptors :
                                         type : array
                                         minItems : 0

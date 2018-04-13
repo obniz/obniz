@@ -19,11 +19,6 @@ class BleAttributreAbstruct {
       this.data = params.value;
     }
 
-    this.property = params.property || [];
-    if(!Array.isArray(this.property)){
-      this.property = [this.property];
-    }
-
     if(params[this.childrenName]){
       for(var key in params[this.childrenName]){
         this.addChild(params[this.childrenName][key]);
@@ -77,9 +72,6 @@ class BleAttributreAbstruct {
     }
     child.parent = this;
 
-    //あとでけす
-    child.characteristic = this;
-
     this.children.push(child);
     return child;
   }
@@ -104,9 +96,6 @@ class BleAttributreAbstruct {
     if (this.data) {
       obj.data = this.data
     }
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-    }
     return obj;
   }
 
@@ -129,7 +118,11 @@ class BleAttributreAbstruct {
   readWait(){
     return new Promise(resolve => {
       this.emitter.once("onread",(params)=>{
-        resolve(params.data);
+        if(params.result === "success") {
+          resolve(params.data);
+        }else{
+          resolve(undefined);
+        }
       });
       this.read();
     })
@@ -178,9 +171,17 @@ class BleAttributreAbstruct {
 
   };
 
-  notify(notifyName, params){
+  onerror(err){
+    console.error(err.message);
+  }
+
+  notifyFromServer(notifyName, params){
     this.emitter.emit(notifyName, params);
     switch(notifyName){
+      case "onerror" : {
+        this.onerror(params);
+        break;
+      }
       case "onwrite" : {
         this.onwrite(params.result);
         break;

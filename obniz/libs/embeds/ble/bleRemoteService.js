@@ -54,7 +54,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract{
     this.ondiscovercharacteristic(characteristic);
   }
   ondiscoverfinished(characteristics) {
-    this.ondiscovercharacteristicfinished(characteristic);
+    this.ondiscovercharacteristicfinished(characteristics);
   }
 
   ondiscovercharacteristic( characteristic){};
