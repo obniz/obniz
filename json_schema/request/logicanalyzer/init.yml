@@ -16,7 +16,6 @@ properties:
     interval :
         type : number
         minimum : 0
-        multipleOf : 0.001
         exclusiveMinimum: true
 
     duration :
