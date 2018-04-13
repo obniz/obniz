@@ -1234,7 +1234,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1278,7 +1278,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -3101,7 +3101,7 @@ class ObnizBLE {
     for (let key in paramList) {
       remotePeripheralcallbackFunc(obj[key], function (val, bleobj) {
 
-        bleobj.notify(paramList[key].name, val);
+        bleobj.notifyFromServer(paramList[key].name, val);
       }.bind(this), paramList[key].obj);
     }
 
@@ -3141,7 +3141,7 @@ class ObnizBLE {
 
       for (let key in paramList) {
         callbackFunc(obj.peripheral[key], function (val, bleobj) {
-          bleobj.notify(paramList[key].name, val);
+          bleobj.notifyFromServer(paramList[key].name, val);
         }.bind(this), paramList[key].obj);
       }
     }
@@ -3165,7 +3165,7 @@ class ObnizBLE {
           target = peripheral.findService(params);
         }
         if (target) {
-          target.notify("onerror", params);
+          target.notifyFromServer("onerror", params);
           handled = true;
         } else {
           peripheral.onerror(params);
@@ -3378,7 +3378,7 @@ class BleAttributreAbstruct {
     console.error(err.message);
   }
 
-  notify(notifyName, params) {
+  notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case "onerror":
@@ -3543,7 +3543,7 @@ class BleDescriptor extends BleAttributeAbstract {
   }
 
   get parentName() {
-    return "characteritic";
+    return "characteristic";
   }
 
   write(dataArray) {
@@ -3724,8 +3724,8 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
 
   ondiscoverfinished() {}
 
-  notify(notifyName, params) {
-    super.notify(notifyName, params);
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case "discover":
         {
@@ -4225,7 +4225,7 @@ class BleRemotePeripheral {
   ondiscover() {}
   ondiscoverfinished() {}
 
-  notify(notifyName, params) {
+  notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case "statusupdate":
@@ -5952,7 +5952,7 @@ class WSCommand {
   static dequeueOne(buf) {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
-      throw new Eror("something wrong. buf less than 3");
+      throw new Error("something wrong. buf less than 3");
     }
     if (buf[0] & 0x80) {
       throw new Eror("reserved bit 1");

@@ -77,7 +77,7 @@ class WSCommand {
   static dequeueOne(buf) {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
-      throw new Eror("something wrong. buf less than 3");
+      throw new Error("something wrong. buf less than 3");
     }
     if (buf[0] & 0x80) {
       throw new Eror("reserved bit 1");

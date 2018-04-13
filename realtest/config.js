@@ -1,7 +1,10 @@
 const Obniz = require('../index.js');
 
 const obnizA_ID = "10760979";
-const obnizB_ID = "00978479";
+// const obnizB_ID = "00978479";
+
+// const obnizA_ID = "25800064";
+const obnizB_ID = "25800064";
 
 let obnizA, obnizB;
 
@@ -21,7 +24,7 @@ function connectTwoObniz (done) {
     obnizA.debugprint = true;
   }
   obnizA.onconnect = () => {
-    obnizB = new Obniz(obnizB_ID);
+    obnizB = new Obniz(obnizB_ID,{obniz_server:"ws://localhost:3000"});
     if (process.env.DEBUG) {
       obnizB.debugprint = true;
     }

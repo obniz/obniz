@@ -2229,6 +2229,7 @@ Related item
 | `ble.read_characteristic_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.read_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.read_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_characteristic_result.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 | `ble.read_characteristic_result.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
@@ -2242,6 +2243,7 @@ Related item
                 "address": "77e754ab8591",
                 "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
                 "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "result": "success",
                 "data": [16, 34, 242]
             }
         }
@@ -2354,6 +2356,7 @@ Related item
 | `ble.read_descriptor_results.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.read_descriptor_results.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.read_descriptor_results.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.read_descriptor_results.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 | `ble.read_descriptor_results.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
@@ -2368,6 +2371,7 @@ Related item
                 "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
                 "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
                 "descriptor_uuid": "d822b53c",
+                "result": "success",
                 "data": [16, 34, 242]
             }
         }

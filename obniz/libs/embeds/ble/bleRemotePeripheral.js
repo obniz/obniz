@@ -268,7 +268,7 @@ class BleRemotePeripheral {
   };
 
 
-  notify(notifyName, params){
+  notifyFromServer(notifyName, params){
     this.emitter.emit(notifyName, params);
     switch(notifyName){
       case "statusupdate" : {

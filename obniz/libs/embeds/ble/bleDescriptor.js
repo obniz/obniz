@@ -14,7 +14,7 @@ class BleDescriptor extends BleAttributeAbstract {
   }
 
   get parentName(){
-    return "characteritic";
+    return "characteristic";
   }
 
   write(dataArray){

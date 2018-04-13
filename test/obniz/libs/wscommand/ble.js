@@ -481,7 +481,7 @@ describe("ble.log", function () {
 
 
     it("response test no.21",  function () {
-        let responseBinaryString = "b a 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 1";
+        let responseBinaryString = "b a 2b 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 0";
         let expectJson  = [{"ble":{"write_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002","result":"success"}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
@@ -501,8 +501,8 @@ describe("ble.log", function () {
 
 
     it("response test no.22",  function () {
-        let responseBinaryString = "b b 32 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 0 0 0 0 0 0 0 0";
-        let expectJson  = [{"ble":{"read_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001","data":[0,0,0,0,0,0,0,0]}}}];
+        let responseBinaryString = "b b 33 0 7 80 78 f6 e5 0 2 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 30 3f c 0 0 0 0 0 0 0 b9 a4 d 80 80 0 0 0 0 0 0 0 0 0";
+        let expectJson  = [{"ble":{"read_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001","data":[0,0,0,0,0,0,0,0],result:"success"}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -950,7 +950,7 @@ describe("ble.log", function () {
 
 
     it("response test no.43",  function () {
-        let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1";
+        let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
         let expectJson  = [{"ble":{"peripheral":{"write_characteristic_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","result":"success"}}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
@@ -1166,7 +1166,7 @@ describe("ble.log", function () {
 
 
     it("response test no.53",  function () {
-        let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1";
+        let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
         let expectJson  = [{"ble":{"peripheral":{"write_characteristic_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","result":"success"}}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
@@ -1230,7 +1230,7 @@ describe("ble.log", function () {
 
 
     it("response test no.56",  function () {
-        let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1";
+        let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
         let expectJson  = [{"ble":{"peripheral":{"write_characteristic_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","result":"success"}}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
@@ -1443,7 +1443,7 @@ describe("ble.log", function () {
 
 
   it("response write_characteristic_result",  function () {
-    let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1";
+    let responseBinaryString = "b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 b 19 25 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
     let expectJson  = [{"ble":{"peripheral":{"write_characteristic_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","result":"success"}}}},{"ble":{"peripheral":{"write_characteristic_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","result":"success"}}}}];
 
     let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
@@ -1594,8 +1594,8 @@ describe("ble.log", function () {
 
 
   it("response read_descriptor_result",  function () {
-    let binaryArray = [11,16,62,79,105,183,243,237,132,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,48,0,1,0,0,0,0,0,0,0,209,4,17,128,32,0,2,0,41,0,0,1,0,0,0,0,0,0,0,64,15,17,128,1,0];
-    let expectJson  = [ {"ble":{"read_descriptor_result":{"address":"84edf3b7694f","service_uuid":"3000","characteristic_uuid":"3002","descriptor_uuid":"2900","data":[1,0]}}}];
+    let binaryArray = [11,16,63,79,105,183,243,237,132,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,48,0,1,0,0,0,0,0,0,0,209,4,17,128,32,0,2,0,41,0,0,1,0,0,0,0,0,0,0,64,15,17,128,0,1,0];
+    let expectJson  = [ {"ble":{"read_descriptor_result":{"address":"84edf3b7694f","service_uuid":"3000","characteristic_uuid":"3002","descriptor_uuid":"2900","data":[1,0],result:"success"}}}];
       let binary = new Uint8Array(binaryArray);
 
     let json = this.obniz.binary2Json(binary);
@@ -1624,7 +1624,7 @@ describe("ble.log", function () {
   });
 
   it("response write_descriptor_result",  function () {
-    let binaryArray = [11,15,61,79,105,183,243,237,132,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,48,0,1,0,0,0,0,0,0,0,209,4,17,128,32,0,2,0,41,0,0,1,0,0,0,0,0,0,0,64,15,17,128,1];
+    let binaryArray = [11,15,61,79,105,183,243,237,132,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,48,0,1,0,0,0,0,0,0,0,209,4,17,128,32,0,2,0,41,0,0,1,0,0,0,0,0,0,0,64,15,17,128,0];
     let expectJson  = [ {"ble":{"write_descriptor_result":{"address":"84edf3b7694f","service_uuid":"3000","characteristic_uuid":"3002","descriptor_uuid":"2900",result:"success"}}}];
     let binary = new Uint8Array(binaryArray);
 
@@ -1677,7 +1677,7 @@ describe("ble.log", function () {
 
 
   it("response peripheral write_descriptor",  function () {
-    let binaryArray = [11,29,55,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
+    let binaryArray = [11,29,55,0,2,240,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,241,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     let expectJson  = [ {"ble":{"peripheral":{"write_descriptor_result":{"service_uuid":"fff0","characteristic_uuid":"fff1","descriptor_uuid":"2901","result":"success"}}}}];
     let binary = new Uint8Array(binaryArray);
 

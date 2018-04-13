@@ -595,6 +595,7 @@ describe("ble", function () {
               address: "e5f678800700",
               service_uuid: "FF00", //hex string
               characteristic_uuid: "FF01", //hex string
+              result: "success",
               data: [0x2e, 0x22, 0x97]   //success or failed
             }
 
