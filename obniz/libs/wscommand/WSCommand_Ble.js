@@ -221,7 +221,7 @@ class WSCommand_Ble extends WSCommand {
     var propFlags = {
       0x01 : "broadcast",
       0x02 : "read",
-      0x04 : "write_no_response",
+      0x04 : "write_without_response",
       0x08 : "write",
       0x10 : "notify",
       0x20 : "indiate",
@@ -425,23 +425,22 @@ class WSCommand_Ble extends WSCommand {
       
       results.scan_resp = results.adv_data.slice(results.advertise_length,results.advertise_length+results.scan_response_length); 
       results.adv_data = results.adv_data.slice(0,results.advertise_length); 
-      
-//      if(results.scan_response_length === 0){
-//          results.scan_resp = [];
-//      }else{
-//        results.scan_resp = results.adv_data.slice(results.advertise_length);
-//        results.adv_data = results.adv_data.slice(0, results.advertise_length);;
-//      }
+
       delete results.num_response;
       delete results.advertise_length;
       delete results.scan_response_length;
       delete results.advertise_data;
       
-      if(results.event_type === "inquiry_complete"){
-          results = {event_type:  "inquiry_complete"};
+      if(results.event_type === "inquiry_result"){
+        delete results.event_type;
+        this._addRowForPath(objToSend, "ble.scan_result", results);
+      }else if(results.event_type === "inquiry_complete"){
+        this._addRowForPath(objToSend, "ble.scan_result_finish", true);
+
       }
-      
-     this._addRowForPath(objToSend, "ble.scan_result", results);
+
+
+
     }
   }
   

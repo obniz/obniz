@@ -45,7 +45,7 @@ describe("ble.log", function () {
 
     it("response test no.1",  function () {
         let responseBinaryString = "b 6 40 56 0 3d 97 3c b8 e0 50 2 1 3 ff ff ff cd 1e ff 6 0 1 9 20 0 bc 5 3f b0 df 8a 88 30 c 4e 83 f3 ea 3a 18 74 74 5b 52 df 11 97 8a 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1f 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"50e0b83c973d","device_type":"ble","address_type":"random","ble_event_type":"non_connectable_advertising","rssi":-51,"adv_data":[30,255,6,0,1,9,32,0,188,5,63,176,223,138,136,48,12,78,131,243,234,58,24,116,116,91,82,223,17,151,138],"flag":0,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"50e0b83c973d","device_type":"ble","address_type":"random","ble_event_type":"non_connectable_advertising","rssi":-51,"adv_data":[30,255,6,0,1,9,32,0,188,5,63,176,223,138,136,48,12,78,131,243,234,58,24,116,116,91,82,223,17,151,138],"flag":0,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -65,7 +65,7 @@ describe("ble.log", function () {
 
     it("response test no.2",  function () {
         let responseBinaryString = "b 6 40 56 0 78 3b d2 78 6b 9b 2 1 0 ff ff ff bf 2 1 6 13 ff 4c 0 c e 0 ad 5a f0 9e ff f1 f4 75 b9 42 5d 7c ce 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 17 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"9b6b78d23b78","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-65,"adv_data":[2,1,6,19,255,76,0,12,14,0,173,90,240,158,255,241,244,117,185,66,93,124,206],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"9b6b78d23b78","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-65,"adv_data":[2,1,6,19,255,76,0,12,14,0,173,90,240,158,255,241,244,117,185,66,93,124,206],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -85,7 +85,7 @@ describe("ble.log", function () {
 
     it("response test no.3",  function () {
         let responseBinaryString = "b 6 40 56 0 f4 5c 89 ab 65 1a 2 0 0 ff ff ff bd 2 1 6 7 ff 4c 0 10 2 b 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 b 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"1a65ab895cf4","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-67,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"1a65ab895cf4","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-67,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -105,7 +105,7 @@ describe("ble.log", function () {
 
     it("response test no.4",  function () {
         let responseBinaryString = "b 6 40 56 0 8c 85 90 18 e4 5 2 0 0 ff ff ff c9 2 1 6 7 ff 4c 0 10 2 b 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 b 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"05e41890858c","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-55,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"05e41890858c","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-55,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -125,7 +125,7 @@ describe("ble.log", function () {
 
     it("response test no.5",  function () {
         let responseBinaryString = "b 6 40 56 0 50 ac 95 29 c5 b3 2 1 0 ff ff ff ca 2 1 6 13 ff 4c 0 c e 8 d8 65 bc 54 6a ef 9e 22 82 d9 2c 1c a6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 17 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"b3c52995ac50","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-54,"adv_data":[2,1,6,19,255,76,0,12,14,8,216,101,188,84,106,239,158,34,130,217,44,28,166],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"b3c52995ac50","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-54,"adv_data":[2,1,6,19,255,76,0,12,14,8,216,101,188,84,106,239,158,34,130,217,44,28,166],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -145,7 +145,7 @@ describe("ble.log", function () {
 
     it("response test no.6",  function () {
         let responseBinaryString = "b 6 40 56 0 40 9f 38 ff 88 90 3 0 3 ff ff ff ac 3 3 9f fe 17 16 9f fe 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1c 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"9088ff389f40","device_type":"dumo","address_type":"public","ble_event_type":"non_connectable_advertising","rssi":-84,"adv_data":[3,3,159,254,23,22,159,254,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"flag":0,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"9088ff389f40","device_type":"dumo","address_type":"public","ble_event_type":"non_connectable_advertising","rssi":-84,"adv_data":[3,3,159,254,23,22,159,254,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"flag":0,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -165,7 +165,7 @@ describe("ble.log", function () {
 
     it("response test no.7",  function () {
         let responseBinaryString = "b 6 40 56 1 0 0 0 0 23 3 20 6c cc 0 0 20 0 4c 13 8 80 30 c3 fd 3f 98 c5 fd 3f 0 0 0 0 0 0 0 0 1 0 0 0 cd cd 0 0 0 0 0 0 8 0 0 0 f8 f9 fc 3f 98 c5 fd 3f e0 c2 0 40 f6 c2 0 40 0 0 0 0 8d 22 8 40 1 0 40 8 f0 f8 0 0 0 19 0 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_complete"}}}];
+        let expectJson  = [{"ble":{"scan_result_finish":true}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -209,7 +209,7 @@ describe("ble.log", function () {
 
     it("response test no.9",  function () {
         let responseBinaryString = "b 6 40 56 0 29 9d 59 3b 2 e0 2 1 3 ff ff ff bd 1e ff 6 0 1 9 20 0 bc 5 3f b0 df 8a 88 30 c 4e 83 f3 ea 3a 18 74 74 5b 52 df 11 97 8a 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1f 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"e0023b599d29","device_type":"ble","address_type":"random","ble_event_type":"non_connectable_advertising","rssi":-67,"adv_data":[30,255,6,0,1,9,32,0,188,5,63,176,223,138,136,48,12,78,131,243,234,58,24,116,116,91,82,223,17,151,138],"flag":0,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"e0023b599d29","device_type":"ble","address_type":"random","ble_event_type":"non_connectable_advertising","rssi":-67,"adv_data":[30,255,6,0,1,9,32,0,188,5,63,176,223,138,136,48,12,78,131,243,234,58,24,116,116,91,82,223,17,151,138],"flag":0,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -229,7 +229,7 @@ describe("ble.log", function () {
 
     it("response test no.10",  function () {
         let responseBinaryString = "b 6 40 56 0 f4 5c 89 ab 65 1a 2 0 0 ff ff ff b0 2 1 6 7 ff 4c 0 10 2 b 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 b 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"1a65ab895cf4","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-80,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"1a65ab895cf4","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-80,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -249,7 +249,7 @@ describe("ble.log", function () {
 
     it("response test no.11",  function () {
         let responseBinaryString = "b 6 40 56 0 78 3b d2 78 6b 9b 2 1 0 ff ff ff bd 2 1 6 13 ff 4c 0 c e 8 d1 5a 8a 99 a8 e3 53 da 57 89 b6 c4 e7 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 17 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"9b6b78d23b78","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-67,"adv_data":[2,1,6,19,255,76,0,12,14,8,209,90,138,153,168,227,83,218,87,137,182,196,231],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"9b6b78d23b78","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-67,"adv_data":[2,1,6,19,255,76,0,12,14,8,209,90,138,153,168,227,83,218,87,137,182,196,231],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -269,7 +269,7 @@ describe("ble.log", function () {
 
     it("response test no.12",  function () {
         let responseBinaryString = "b 6 40 56 0 8c 85 90 18 e4 5 2 0 0 ff ff ff cf 2 1 6 7 ff 4c 0 10 2 b 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 b 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"05e41890858c","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-49,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"05e41890858c","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-49,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -289,7 +289,7 @@ describe("ble.log", function () {
 
     it("response test no.13",  function () {
         let responseBinaryString = "b 6 40 56 0 50 ac 95 29 c5 b3 2 1 0 ff ff ff d1 2 1 6 13 ff 4c 0 c e 8 f4 65 41 4a 77 60 fb b6 76 13 4b 88 fb 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 17 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"b3c52995ac50","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-47,"adv_data":[2,1,6,19,255,76,0,12,14,8,244,101,65,74,119,96,251,182,118,19,75,136,251],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"b3c52995ac50","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-47,"adv_data":[2,1,6,19,255,76,0,12,14,8,244,101,65,74,119,96,251,182,118,19,75,136,251],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -309,7 +309,7 @@ describe("ble.log", function () {
 
     it("response test no.14",  function () {
         let responseBinaryString = "b 6 40 56 0 50 e3 39 7a 8b 57 2 1 0 ff ff ff df 2 1 1a a ff 4c 0 10 5 b 10 ca e5 8 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1a 0 0 0 1 e 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"578b7a39e350","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-33,"adv_data":[2,1,26,10,255,76,0,16,5,11,16,202,229,8],"flag":26,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"578b7a39e350","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-33,"adv_data":[2,1,26,10,255,76,0,16,5,11,16,202,229,8],"flag":26,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -329,7 +329,7 @@ describe("ble.log", function () {
 
     it("response test no.15",  function () {
         let responseBinaryString = "b 6 40 56 0 0 7 80 78 f6 e5 3 0 0 ff ff ff b7 2 1 1a 1a ff 4c 0 2 15 c9 61 ac a7 94 a6 40 78 b1 ff 96 2c b2 55 cc db 78 b0 68 a c8 16 9 53 6d 61 70 6f 2d 53 65 72 76 69 63 65 37 38 3a 46 36 3a 45 35 0 0 0 0 0 0 0 0 0 0 0 0 1a 0 0 0 1 1e 17";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"e5f678800700","device_type":"dumo","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-73,"adv_data":[2,1,26,26,255,76,0,2,21,201,97,172,167,148,166,64,120,177,255,150,44,178,85,204,219,120,176,104,10,200],"scan_resp":[22,9,83,109,97,112,111,45,83,101,114,118,105,99,101,55,56,58,70,54,58,69,53],"flag":26}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"e5f678800700","device_type":"dumo","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-73,"adv_data":[2,1,26,26,255,76,0,2,21,201,97,172,167,148,166,64,120,177,255,150,44,178,85,204,219,120,176,104,10,200],"scan_resp":[22,9,83,109,97,112,111,45,83,101,114,118,105,99,101,55,56,58,70,54,58,69,53],"flag":26}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -349,7 +349,7 @@ describe("ble.log", function () {
 
     it("response test no.16",  function () {
         let responseBinaryString = "b 6 40 56 1 0 0 0 0 23 d 20 cc cc 0 0 20 0 4c 13 8 80 30 c3 fd 3f 98 c5 fd 3f 0 0 0 0 0 0 0 0 1 0 0 0 cd cd 0 0 0 0 0 0 8 0 0 0 f8 f9 fc 3f 98 c5 fd 3f e0 c2 0 40 f6 c2 0 40 0 0 0 0 8d 22 8 40 1 0 40 8 f0 f8 0 0 0 78 0 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_complete"}}}];
+        let expectJson  = [{"ble":{"scan_result_finish":true}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -634,7 +634,7 @@ describe("ble.log", function () {
 
     it("response test no.28",  function () {
         let responseBinaryString = "b 6 40 56 0 8c 85 90 18 e4 5 2 0 0 ff ff ff d3 2 1 6 7 ff 4c 0 10 2 b 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 b 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"05e41890858c","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-45,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"05e41890858c","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-45,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -654,7 +654,7 @@ describe("ble.log", function () {
 
     it("response test no.29",  function () {
         let responseBinaryString = "b 6 40 56 0 50 ac 95 29 c5 b3 2 1 0 ff ff ff d4 2 1 6 13 ff 4c 0 c e 0 4c 66 84 51 e7 71 ce b9 a 98 0 93 21 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 17 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"b3c52995ac50","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-44,"adv_data":[2,1,6,19,255,76,0,12,14,0,76,102,132,81,231,113,206,185,10,152,0,147,33],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"b3c52995ac50","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-44,"adv_data":[2,1,6,19,255,76,0,12,14,0,76,102,132,81,231,113,206,185,10,152,0,147,33],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -674,7 +674,7 @@ describe("ble.log", function () {
 
     it("response test no.30",  function () {
         let responseBinaryString = "b 6 40 56 0 f4 5c 89 ab 65 1a 2 0 0 ff ff ff bd 2 1 6 7 ff 4c 0 10 2 b 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 b 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"1a65ab895cf4","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-67,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"1a65ab895cf4","device_type":"ble","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-67,"adv_data":[2,1,6,7,255,76,0,16,2,11,0],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -694,7 +694,7 @@ describe("ble.log", function () {
 
     it("response test no.31",  function () {
         let responseBinaryString = "b 6 40 56 0 11 95 15 5d 80 3b 2 1 3 ff ff ff bb 1e ff 6 0 1 9 20 0 44 88 68 82 ef 83 8 63 4b 94 87 61 43 1b 63 7f 5d 89 d7 23 f 2c 65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1f 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"3b805d159511","device_type":"ble","address_type":"random","ble_event_type":"non_connectable_advertising","rssi":-69,"adv_data":[30,255,6,0,1,9,32,0,68,136,104,130,239,131,8,99,75,148,135,97,67,27,99,127,93,137,215,35,15,44,101],"flag":0,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"3b805d159511","device_type":"ble","address_type":"random","ble_event_type":"non_connectable_advertising","rssi":-69,"adv_data":[30,255,6,0,1,9,32,0,68,136,104,130,239,131,8,99,75,148,135,97,67,27,99,127,93,137,215,35,15,44,101],"flag":0,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -714,7 +714,7 @@ describe("ble.log", function () {
 
     it("response test no.32",  function () {
         let responseBinaryString = "b 6 40 56 0 78 3b d2 78 6b 9b 2 1 0 ff ff ff be 2 1 6 13 ff 4c 0 c e 8 5 5b 3e 1f 70 f0 e df b0 cd 13 96 76 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 0 0 0 1 17 0";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"9b6b78d23b78","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-66,"adv_data":[2,1,6,19,255,76,0,12,14,8,5,91,62,31,112,240,14,223,176,205,19,150,118],"flag":6,"scan_resp":[]}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"9b6b78d23b78","device_type":"ble","address_type":"random","ble_event_type":"connectable_advertisemnt","rssi":-66,"adv_data":[2,1,6,19,255,76,0,12,14,8,5,91,62,31,112,240,14,223,176,205,19,150,118],"flag":6,"scan_resp":[]}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);
@@ -734,7 +734,7 @@ describe("ble.log", function () {
 
     it("response test no.33",  function () {
         let responseBinaryString = "b 6 40 56 0 0 7 80 78 f6 e5 3 0 0 ff ff ff b7 2 1 1a 1a ff 4c 0 2 15 c9 61 ac a7 94 a6 40 78 b1 ff 96 2c b2 55 cc db 75 c4 68 a c8 16 9 53 6d 61 70 6f 2d 53 65 72 76 69 63 65 37 38 3a 46 36 3a 45 35 0 0 0 0 0 0 0 0 0 0 0 0 1a 0 0 0 1 1e 17";
-        let expectJson  = [{"ble":{"scan_result":{"event_type":"inquiry_result","address":"e5f678800700","device_type":"dumo","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-73,"adv_data":[2,1,26,26,255,76,0,2,21,201,97,172,167,148,166,64,120,177,255,150,44,178,85,204,219,117,196,104,10,200],"scan_resp":[22,9,83,109,97,112,111,45,83,101,114,118,105,99,101,55,56,58,70,54,58,69,53],"flag":26}}}];
+        let expectJson  = [{"ble":{"scan_result":{"address":"e5f678800700","device_type":"dumo","address_type":"public","ble_event_type":"connectable_advertisemnt","rssi":-73,"adv_data":[2,1,26,26,255,76,0,2,21,201,97,172,167,148,166,64,120,177,255,150,44,178,85,204,219,117,196,104,10,200],"scan_resp":[22,9,83,109,97,112,111,45,83,101,114,118,105,99,101,55,56,58,70,54,58,69,53],"flag":26}}}];
 
         let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
         let binary = new Uint8Array(binaryArray);

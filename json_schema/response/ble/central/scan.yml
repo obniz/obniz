@@ -9,12 +9,9 @@ required : [scan_result]
 properties:
     scan_result :
             type : object
-            required: [event_type]
+            required: [address,ble_event_type,device_type,address_type,flag,rssi]
             additionalProperties: false
             properties:
-                event_type :
-                    type : string
-                    enum : [inquiry_result]
                 address : {$ref : "/deviceAddress"}
                 ble_event_type :
                     type : string

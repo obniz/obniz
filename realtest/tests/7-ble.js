@@ -46,7 +46,7 @@ describe("7-ble", function () {
         found = true;
       }
     }
-    obnizB.ble.startScan({duration: 30});
+    obnizB.ble.startScan(null,{duration: 30});
 
     while (!found) {
       await wait(1);
@@ -76,7 +76,7 @@ describe("7-ble", function () {
         found = true;
       }
     };
-    obnizB.ble.startScan({duration: 30});
+    obnizB.ble.startScan(null, {duration: 30});
 
     while (!found) {
       await wait(1);
@@ -84,6 +84,28 @@ describe("7-ble", function () {
     obnizA.ble.stopAdvertisement();
     obnizA.ble.peripheral.end();
   });
+
+
+  it("create service",async ()=>{
+    var service = new obnizA.ble.service({"uuid" : "FFF0"});
+    var characteristic = new obnizA.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
+    var descriptor = new obnizA.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
+
+    service.addCharacteristic(characteristic);
+    characteristic.addDescriptor(descriptor);
+
+    obnizA.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
+
+    let ad = service.advData;
+    obnizA.ble.setAdvData(ad);
+    obnizA.ble.startAdvertisement();
+
+
+
+
+
+  })
+
 });
 
 function wait(ms) {

@@ -1,43 +1,25 @@
-const ObnizUtil = require("../../utils/util");
-const BleDescriptor = require("./bleDescriptor");
 
-class BleCharacteristic {
+const BleDescriptor = require("./bleDescriptor");
+const BleAttributeAbstract = require("./bleAttributeAbstract");
+
+class BleCharacteristic extends BleAttributeAbstract{
   
   constructor(obj){
-    this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    this.data = obj.data || null;
-    if(! this.data && obj.text){
-      this.data = ObnizUtil.string2dataArray(obj.text);
-    }
-    if(! this.data && obj.value){
-      this.data = obj.value;
-    }
-    
-    this.property = obj.property || [];
-    if(!Array.isArray(this.property)){
-      this.property = [this.property];
-    }
-    
-    if(obj["descriptors"]){
-       for(var key in obj["descriptors"]){
-        this.addDescriptor(obj["descriptors"][key]);
-      }
-    }
+    super(obj);
+
+    this.addDescriptor = this.addChild;
+    this.getDescriptor = this.getChild;
   }
 
-  addDescriptor(obj) {
-    if(! (obj instanceof BleDescriptor ) ){
-      obj = new BleDescriptor(obj);
-    }
-    this.descriptors.push(obj);
-    obj.characteristic = this;
+  get parentName(){
+    return "service";
   }
 
-  getDescriptor(uuid) {
-    return this.descriptors.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
+  get childrenClass(){
+    return BleDescriptor;
+  }
+  get childrenName(){
+    return "descriptors";
   }
 
   write(data){
@@ -56,13 +38,6 @@ class BleCharacteristic {
     );
   }
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(str){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
 
 
   read(){
@@ -79,23 +54,9 @@ class BleCharacteristic {
       }
     );
   }
-  onwrite(){};
-  onread(){};
-  onwritefromremote(){};
-  onreadfromremote(){};
 
-  toJSON(){
-    var obj = {
-      uuid : this.uuid.toLowerCase()
-    };
-    if (this.data) { obj.data = this.data }
-    if (this.descriptors) { obj.descriptors = this.descriptors }
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-      
-    }
-    return obj;
-  }
+
+
 }
 
 

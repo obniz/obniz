@@ -4,7 +4,8 @@
   "description": "Obniz Basic Library",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js",
+    "test": "./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION  ./test/index.js",
+    "buildAndtest": "npm run build && npm test",
     "realtest": "./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
     "local": "./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .",
     "build": "./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build",
@@ -57,7 +58,6 @@
     "sinon": "^4.5.0",
     "svg-to-png": "^3.1.2",
     "through2": "^2.0.3",
-    "tv4": "^1.3.0",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "vinyl": "^2.1.0",
     "webpack": "^4.5.0",
@@ -67,6 +67,7 @@
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "eventemitter3": "^3.0.1",
     "js-yaml": "^3.11.0",
     "node-dir": "^0.1.17",
     "ws": "^5.1.1"

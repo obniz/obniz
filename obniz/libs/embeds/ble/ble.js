@@ -7,6 +7,7 @@ const BleDescriptor = require("./bleDescriptor");
 const BleRemotePeripheral = require("./bleRemotePeripheral");
 
 
+
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
@@ -18,6 +19,8 @@ class ObnizBLE {
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
     this.peripheral = new BlePeripheral(Obniz);
+
+    this.scanTarget  = null;
   }
 
   startAdvertisement() {
@@ -240,7 +243,7 @@ class ObnizBLE {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 
-  startScan(settings) {
+  startScan(target,  settings) {
     var obj = {};
     obj["ble"] = {};
     obj["ble"]["scan"] = {
@@ -249,11 +252,32 @@ class ObnizBLE {
       "duration" : settings && settings.duration ? settings.duration : 30
       
     };
-    
+
+    this.scanTarget = target;
     this.remotePeripherals =  [];
-    
     this.Obniz.send(obj);
     return;
+  }
+
+  startScanWait( target, settings) {
+    return new Promise((resolve)=>{
+      let result = null;
+      this._onscan = (peripheral)=>{
+        this.stopScan();
+        this._onscan = function(){};
+        this._onscanfinish = function(){};
+        resolve(peripheral);
+      };
+      this._onscanfinish = ()=>{
+        this._onscan = function(){};
+        this._onscanfinish = function(){};
+        resolve(null);
+      }
+
+      this.startScan(target, settings);
+
+    });
+
   }
 
   stopScan() {
@@ -273,191 +297,113 @@ class ObnizBLE {
   }
 
   notified(obj) {
+
     if (obj.scan_result) {
       let isFinished = false;
-      if (obj.scan_result.event_type === "inquiry_complete") {
-        isFinished = true;
-      } else if (obj.scan_result.event_type === "inquiry_result") {
-        let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+         let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
         val.setParams(obj.scan_result);
         this.remotePeripherals.push(val);
+
+        if(this.scanTarget && this.scanTarget.localName && val.localName() !== this.scanTarget.localName){
+          return;
+        }
+        if(this.scanTarget && this.scanTarget.uuids){
+          let uuids = val.advertisementServiceUuids();
+          for(let uuid of this.scanTarget.uuids){
+            if(!uuids.includes(uuid)){
+              return;
+            }
+          }
+        }
+
+        this._onscan(val);
         this.onscan(val);
-      }
-      if (isFinished ) {
-        this.onscanfinish(this.remotePeripherals);
-      }
+
     }
 
-    if (obj.status_update) {
-      let params = obj.status_update;
-      if (!params.address)
-        return;
-      let p = this.findPeripheral(params.address);
-      if (p) {
-        if (params.status === "connected") {
-          p.onconnect();
-        }
-        if (params.status === "disconnected") {
-          p.ondisconnect();
-        }
-      }
-    }
-
-    if (obj.get_service_result) {
-      let params = obj.get_service_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          service.discoverdOnRemote = true;
-          p.ondiscoverservice(service);
-        }
-      }
-    }
-
-    if (obj.get_service_result_finish) {
-      let params = obj.get_service_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let services = p.services.filter((elm)=>{return elm.discoverdOnRemote});
-          p.ondiscoverservicefinished(services);
-        }
-      }
-    }
-
-    if (obj.get_characteristic_result) {
-      let params = obj.get_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.discoverdOnRemote = true;
-          chara.properties = params.properties;
-          service.ondiscovercharacteristic(chara);
-        }
-      }
-    }
-    if (obj.get_characteristic_result_finish) {
-      let params = obj.get_characteristic_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let charas = service.characteristics.filter((elm)=>{return elm.discoverdOnRemote});
-          service.ondiscovercharacteristicfinished(charas);
-        }
-      }
-    }
-    if (obj.write_characteristic_result) {
-      let params = obj.write_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.onwrite(params.result);
-        }
-      }
-    }
-
-    if (obj.read_characteristic_result) {
-      let params = obj.read_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.onread(params.data);
-        }
-      }
-    }
-    if (obj.get_descriptor_result) {
-      let params = obj.get_descriptor_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.discoverdOnRemote = true;
-          chara.ondiscoverdescriptor(descr);
-        }
-      }
+    if (obj.scan_result_finish ) {
+      this._onscanfinish(this.remotePeripherals);
+      this.onscanfinish(this.remotePeripherals);
     }
 
 
-    if (obj.get_descriptor_result_finish) {
-      let params = obj.get_descriptor_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descrs = chara.descriptors.filter((elm)=>{return elm.discoverdOnRemote});
-          chara.ondiscoverdescriptorfinished(descrs);
-        }
+
+    var remotePeripheralcallbackFunc = function (val, func, type) {
+      var obj = null;
+      if(val === undefined) return;
+      let p = this.findPeripheral(val.address);
+      if(!p){return;}
+      if (type === "peripheral") {
+        obj = p;
+      }else if (type === "service") {
+        obj = p.findService(val);
+      } else if (type === "characteristic") {
+        obj = p.findCharacteristic(val);
+      } else if (type === "descriptor") {
+        obj = p.findDescriptor(val);
       }
+      if(!obj){return;}
+      func(val, obj);
+    }.bind(this);
+
+    const paramList = {
+      status_update : { name: "statusupdate", obj:"peripheral"},
+      get_service_result : { name: "discover", obj:"peripheral"},
+      get_service_result_finish : { name: "discoverfinished", obj:"peripheral"},
+      get_characteristic_result : { name: "discover", obj:"service"},
+      get_characteristic_result_finish : { name: "discoverfinished", obj:"service"},
+      write_characteristic_result : { name: "onwrite", obj:"characteristic"},
+      read_characteristic_result : { name: "onread", obj:"characteristic"},
+      get_descriptor_result : { name: "discover", obj:"characteristic"},
+      get_descriptor_result_finish : { name: "discoverfinished", obj:"characteristic"},
+      write_descriptor_result : { name: "onwrite", obj:"descriptor"},
+      read_descriptor_result : { name: "onread", obj:"descriptor"},
+    };
+
+    for(let key in paramList){
+      remotePeripheralcallbackFunc(obj[key], function(val,bleobj){
+
+        bleobj.notify(paramList[key].name, val);
+      }.bind(this), paramList[key].obj);
     }
 
-    if (obj.read_descriptor_result) {
-      let params = obj.read_descriptor_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.onread(params.data);
-        }
-      }
-    }
-    if (obj.write_descriptor_result) {
-      let params = obj.write_descriptor_result;
-      if (params.address) {
-        var p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.onwrite(params.result);
-        }
-      }
-    }
-    
+
+
     var callbackFunc = function (val, func, type) {
       var obj = null;
       if(val === undefined) return;
-      if (type === "service") {
+      if (type === "peripheral") {
+        obj = this.peripheral;
+      }else if (type === "service") {
         obj = this.peripheral.getService(val);
       } else if (type === "characteristic") {
         obj = this.peripheral.findCharacteristic(val);
       } else if (type === "descriptor") {
         obj = this.peripheral.findDescriptor(val);
       }
+      if(!obj){return;}
       func(val, obj);
     }.bind(this);
     
      if (obj.peripheral) {
        callbackFunc(obj.peripheral.connection_status, function(val){
          this.peripheral.onconnectionupdates(val);
-       }.bind(this));
+       }.bind(this),"peripheral");
        
-       var paramList = {
-         read_characteristic_result : { method: "onread", obj:"characteristic"},
-         write_characteristic_result : { method: "onwrite", obj:"characteristic"},
-         notify_read_characteristic : { method: "onreadfromremote", obj:"characteristic"},
-         notify_write_characteristic : { method: "onwritefromremote", obj:"characteristic"},
-         read_descriptor_result : { method: "onread", obj:"descriptor"},
-         write_descriptor_result : { method: "onwrite", obj:"descriptor"},
-         notify_read_descriptor : { method: "onreadfromremote", obj:"descriptor"},
-         notify_write_descriptor : { method: "onwritefromremote", obj:"descriptor"},
-       }
+       const paramList = {
+         read_characteristic_result : { name: "onread", obj:"characteristic"},
+         write_characteristic_result : { name: "onwrite", obj:"characteristic"},
+         notify_read_characteristic : { name: "onreadfromremote", obj:"characteristic"},
+         notify_write_characteristic : { name: "onwritefromremote", obj:"characteristic"},
+         read_descriptor_result : { name: "onread", obj:"descriptor"},
+         write_descriptor_result : { name: "onwrite", obj:"descriptor"},
+         notify_read_descriptor : { name: "onreadfromremote", obj:"descriptor"},
+         notify_write_descriptor : { name: "onwritefromremote", obj:"descriptor"},
+       };
        
-       for(var key in paramList){
+       for(let key in paramList){
         callbackFunc(obj.peripheral[key], function(val,bleobj){
-          bleobj[paramList[key].method](val);
+          bleobj.notify(paramList[key].name, val);
         }.bind(this), paramList[key].obj);
       }
      }
@@ -483,8 +429,27 @@ class ObnizBLE {
     }
   }
 
+  _dataArray2uuidHex( data, reverse){
+    let uuid = [];
+    for(var i = 0; i< data.length;i++){
+      uuid.push(( '00' + data[i].toString(16) ).slice( -2 ));
+    }
+    if(reverse){
+      uuid =  uuid.reverse();
+    }
+    let str = uuid.join("");
+    if(uuid.length >= 16){
+      str = str.slice(0,8) + "-" + str.slice(8,12) + "-" + str.slice(12,16) + "-" + str.slice(16,20) + "-" + str.slice(20);
+    }
+    return str;
+
+  }
+
   onscanfinish(){} //dummy
   onscan(){} //dummy
+
+  _onscanfinish(){} //dummy
+  _onscan(){} //dummy
 }
 
 

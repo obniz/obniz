@@ -1,26 +1,43 @@
 const ObnizUtil = require("../../utils/util");
 const BleRemoteDescriptor = require("./bleRemoteDescriptor");
+const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
 
+class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
 
-class BleRemoteCharacteristic {
-
-  constructor(Obniz, service, uuid){
-    this.Obniz = Obniz;
-    this.service = service;
-    this.uuid = uuid;
-    this.discoverdOnRemote = false;
-    this.descriptors = [];
-    this.properties = [];
+  constructor(params){
+    super(params);
   }
 
-  toString(){
-    return JSON.stringify({
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "properties" : this.properties
-        });
+  get parentName(){
+    return "service";
   }
+
+  get childrenClass(){
+    return BleRemoteDescriptor;
+  }
+  get childrenName(){
+    return "descriptors";
+  }
+
+
+  addDescriptor(params) {
+    return this.addChild(params)
+  }
+  //
+  // getCharacteristic(params) {
+  //   return this.getChild(params)
+  // }
+
+  getDescriptor(uuid){
+
+    let obj = this.getChild(uuid);
+    if(obj){return obj;}
+    var newCharacteristic = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    this.addChild(newCharacteristic);
+    return newCharacteristic;
+  }
+
+
 
   read(){
     var obj = {
@@ -32,11 +49,7 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
-  }
-
-  async readWait(){
-    throw new Error("TODO");
+    this.service.peripheral.Obniz.send(obj);
   }
 
   write(array){
@@ -50,18 +63,10 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.service.peripheral.Obniz.send(obj);
   }
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(val){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-  discoverAllDescriptors(str){
+  discoverChildren(){
     var obj = {
       "ble" :{
         "get_descriptors" :{
@@ -71,18 +76,16 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.service.peripheral.Obniz.send(obj);
   }
 
-  getDescriptor(uuid){
-    for(var key in this.descriptors){
-      if(this.descriptors[key].uuid === uuid){
-        return this.descriptors[key];
-      }
-    }
-    var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
-    this.descriptors.push(newDescriptors);
-    return newDescriptors;
+  discoverAllDescriptors(){
+    return this.discoverChildren();
+  }
+
+
+  discoverAllDescriptorsWait(){
+    return this.discoverChildrenWait();
   }
 
   canBroadcast(){
@@ -104,9 +107,31 @@ class BleRemoteCharacteristic {
     return this.properties.includes("indicate");
   }
 
+  // notify_onwrite(params){
+  //   this.onwrite(params.result);
+  // };
+  //
+  // notify_onread(params){
+  //   this.onwrite(params.data);
+  // };
+  //
+  // notify_ondiscoverdescriptor(descriptor){
+  //   this.ondiscoverdescriptor(descriptor);
+  // };
+  //
+  // notify_ondiscoverdescriptorfinished(descriptors){
+  //   this.ondiscoverdescriptorfinished(descriptors);
+  // };
 
-  onwrite(status){};
-  onread(value){};
+
+
+  ondiscover(characteristic) {
+    this.ondiscoverdescriptor(characteristic);
+  }
+  ondiscoverfinished(characteristics) {
+    this.ondiscoverdescriptorfinished(characteristic);
+  }
+
   ondiscoverdescriptor(descriptor){};
   ondiscoverdescriptorfinished(services){};
 

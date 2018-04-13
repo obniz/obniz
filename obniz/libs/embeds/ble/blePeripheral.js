@@ -26,8 +26,9 @@ class BlePeripheral {
   }
 
   getService(uuid) {
+    uuid = uuid.toLowerCase();
     return this.services.filter(function(element){
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
+      return element.uuid.toLowerCase() === uuid;
     }).shift();
   }
 
@@ -37,7 +38,6 @@ class BlePeripheral {
     };
   }
 
-  onconnectionupdates(){};
 
   findCharacteristic(param){
     var serviceUuid = param.service_uuid.toLowerCase() ;
@@ -63,6 +63,8 @@ class BlePeripheral {
   end(){
     this.Obniz.send({ble:{peripheral:null}});
   }
+
+  onconnectionupdates(){};
 }
 
 

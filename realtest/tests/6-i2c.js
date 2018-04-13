@@ -19,6 +19,7 @@ describe("6-i2c", function () {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         obnizB = config.obnizB;
+        obnizA.io11.output(true);
         resolve();
       })
     });

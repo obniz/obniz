@@ -1,11 +1,14 @@
 
 const BleRemoteService = require("./bleRemoteService");
+const emitter = require("eventemitter3");
+const BleAttributeAbstract = require("./bleAttributeAbstract");
 
 class BleRemotePeripheral {
 
   constructor(Obniz, address){
     this.Obniz = Obniz;
     this.address = address;
+    this.connected = false;
     
     this.keys = [
       "device_type",
@@ -17,6 +20,7 @@ class BleRemotePeripheral {
     ];
     
     this.services = [];
+    this.emitter = new emitter();
   }
 
 /**
@@ -126,10 +130,28 @@ class BleRemotePeripheral {
     };
   }
 
-  connect(callbacks){
-    var keys = ["onconnect","ondisconnect"];
-    this.setParams(keys, callbacks);
-    
+  _addServiceUuids(results, data, bit){
+    if(!data)return;
+    let uuidLength = bit / 4;
+    for(let i =0; i< data.length; i = i + uuidLength){
+      let one = data.slice(i,i+uuidLength);
+      results.push(this.Obniz.ble._dataArray2uuidHex(one,true));
+    }
+  }
+
+  advertisementServiceUuids(){
+    let results = [];
+    this._addServiceUuids(results,this.serarchTypeVal(0x02), 16);
+    this._addServiceUuids(results,this.serarchTypeVal(0x03), 16);
+    this._addServiceUuids(results,this.serarchTypeVal(0x04), 32);
+    this._addServiceUuids(results,this.serarchTypeVal(0x05), 32);
+    this._addServiceUuids(results,this.serarchTypeVal(0x06), 64);
+    this._addServiceUuids(results,this.serarchTypeVal(0x07), 64);
+    return results;
+  }
+
+
+  connect(){
     var obj = {
       "ble" :{
         "connect" :{
@@ -138,6 +160,23 @@ class BleRemotePeripheral {
       }
     };
     this.Obniz.send(obj);
+  }
+
+  connectWait(){
+    return new Promise((resolve)=>{
+      this._onconnect = ()=>{
+        this._onconnect = ()=>{};
+        this._ondisconnect = ()=>{};
+        resolve(true);
+      };
+      this._ondisconnect = ()=>{
+        this._onconnect = ()=>{};
+        this._ondisconnect = ()=>{};
+        resolve(false);
+      };
+      this.connect();
+
+    })
   }
 
   disconnect(){
@@ -151,20 +190,53 @@ class BleRemotePeripheral {
     this.Obniz.send(obj); 
   }
 
+
+
   updateRssi(){
     throw new Error("todo");
   }
 
   getService(uuid){
+    uuid = uuid.toLowerCase();
     for(var key in this.services){
       if(this.services[key].uuid === uuid){
         return this.services[key];
       }
     }
-    var newService = new BleRemoteService(this.Obniz,this, uuid);
+    var newService = new BleRemoteService({uuid});
+    newService.parent = this;
     this.services.push(newService);
     return newService;
   }
+
+  findService(param){
+    var serviceUuid = param.service_uuid.toLowerCase() ;
+    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
+    var s = this.getService(serviceUuid);
+    return s;
+  }
+
+  findCharacteristic(param){
+    var serviceUuid = param.service_uuid.toLowerCase() ;
+    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
+    var s = this.getService(serviceUuid);
+    if(s){
+      var c = s.getCharacteristic(characteristicUuid);
+      return c;
+    }
+    return null;
+  }
+
+  findDescriptor(param){
+    var descriptorUuid = param.descriptor_uuid.toLowerCase() ;
+    var c = this.findCharacteristic(param);
+    if(c){
+      var d = c.getDescriptor(descriptorUuid);
+      return d;
+    }
+    return null;
+  }
+
 
   discoverAllServices(){
     var obj = {
@@ -177,10 +249,64 @@ class BleRemotePeripheral {
     this.Obniz.send(obj);
   }
 
+  discoverAllServicesWait(){
+    return new Promise((resolve)=>{
+      this._ondiscoverservicefinished = (services)=>{
+        this._ondiscoverservicefinished = function(){};
+        resolve(services);
+      };
+      this.discoverAllServices();
+
+    })
+  }
+
+  _onconnect(){};
   onconnect(){};
+  _ondisconnect(){};
   ondisconnect(){};
+
+
   ondiscoverservice(service){};
+
+  _ondiscoverservicefinished(services){};
   ondiscoverservicefinished(services){};
+
+
+  ondiscover(){
+
+  };
+  ondiscoverfinished(){
+
+  };
+
+
+  notify(notifyName, params){
+    this.emitter.emit(notifyName, params);
+    switch(notifyName){
+      case "statusupdate" : {
+        if (params.status === "connected") {
+          this.connected = true;
+          this.onconnect();
+        }
+        if (params.status === "disconnected") {
+          this.connected = false;
+          this.ondisconnect();
+        }
+        break;
+      }
+      case "discover" : {
+        let child = this.getService(params.service_uuid);
+        child.discoverdOnRemote = true;
+        this.ondiscoverservice(child);
+        break;
+      }
+      case "discoverfinished" : {
+        let children = this.services.filter(elm=>{return elm.discoverdOnRemote;});
+        this.ondiscoverservicefinished(children);
+        break;
+      }
+    }
+  }
 
   onerror(err){};
 

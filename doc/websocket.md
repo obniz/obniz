@@ -1994,13 +1994,12 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.scan_result.event_type` |  string  | <ul><li>required</li><li>const `"inquiry_result"`</li></ul> | &nbsp; |
-| `ble.scan_result.address` | [deviceAddress](#deviceaddress)  | &nbsp; | &nbsp; |
-| `ble.scan_result.ble_event_type` |  string  | <ul><li>enum <ul><li>`"connectable_advertisemnt"`</li><li>`"connectable_directed_advertisemnt"`</li><li>`"scannable_advertising"`</li><li>`"non_connectable_advertising"`</li><li>`"scan_response"`</li></ul></li></ul> | &nbsp; |
-| `ble.scan_result.device_type` |  string  | <ul><li>enum <ul><li>`"ble"`</li><li>`"dumo"`</li><li>`"breder"`</li></ul></li></ul> | &nbsp; |
-| `ble.scan_result.address_type` |  string  | <ul><li>enum <ul><li>`"public"`</li><li>`"random"`</li><li>`"rpa_public"`</li><li>`"rpa_random"`</li></ul></li></ul> | &nbsp; |
-| `ble.scan_result.flag` |  integer  | <ul><li>0 &le; value</li></ul> | &nbsp; |
-| `ble.scan_result.rssi` |  integer  | <ul><li>value &le; 0</li></ul> | &nbsp; |
+| `ble.scan_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.scan_result.ble_event_type` |  string  | <ul><li>required</li><li>enum <ul><li>`"connectable_advertisemnt"`</li><li>`"connectable_directed_advertisemnt"`</li><li>`"scannable_advertising"`</li><li>`"non_connectable_advertising"`</li><li>`"scan_response"`</li></ul></li></ul> | &nbsp; |
+| `ble.scan_result.device_type` |  string  | <ul><li>required</li><li>enum <ul><li>`"ble"`</li><li>`"dumo"`</li><li>`"breder"`</li></ul></li></ul> | &nbsp; |
+| `ble.scan_result.address_type` |  string  | <ul><li>required</li><li>enum <ul><li>`"public"`</li><li>`"random"`</li><li>`"rpa_public"`</li><li>`"rpa_random"`</li></ul></li></ul> | &nbsp; |
+| `ble.scan_result.flag` |  integer  | <ul><li>required</li><li>0 &le; value</li></ul> | &nbsp; |
+| `ble.scan_result.rssi` |  integer  | <ul><li>required</li><li>value &le; 0</li></ul> | &nbsp; |
 | `ble.scan_result.adv_data` | [bleAdvertiseData](#bleadvertisedata)  | &nbsp; | &nbsp; |
 | `ble.scan_result.scan_resp` | [bleAdvertiseData](#bleadvertisedata)  | &nbsp; | &nbsp; |
 
@@ -2012,7 +2011,6 @@ Related item
     {
         "ble": {
             "scan_result": {
-                "event_type": "inquiry_result",
                 "address": "77e754ab8591",
                 "ble_event_type": "connectable_advertisemnt",
                 "device_type": "ble",
@@ -2035,7 +2033,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `ble.scan_result.event_type` |  string  | <ul><li>required</li><li>const `"inquiry_complete"`</li></ul> | &nbsp; |
+| `ble.scan_result_finish` |  boolean  | <ul><li>required</li><li>const `true`</li></ul> | &nbsp; |
 
 
 
@@ -2044,9 +2042,7 @@ Related item
 [
     {
         "ble": {
-            "scan_result": {
-                "event_type": "inquiry_complete"
-            }
+            "scan_result_finish": true
         }
     }
 ]

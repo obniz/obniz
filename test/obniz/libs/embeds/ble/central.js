@@ -18,7 +18,7 @@ describe("ble", function () {
 
 
   it("scan", function () {
-    this.obniz.ble.startScan({duration: 10});
+    this.obniz.ble.startScan(null,{duration: 10});
 
     expect(this.obniz).send([{ble: {scan: {duration: 10}}}]);
     expect(this.obniz).to.be.finished;
@@ -57,7 +57,7 @@ describe("ble", function () {
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -95,7 +95,7 @@ describe("ble", function () {
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                   "address": "e5f678800700",
                   "device_type": "dumo",
                   "address_type": "public",
@@ -136,9 +136,7 @@ describe("ble", function () {
     var results = [
       {
         "ble": {
-          "scan_result": {
-            "event_type": "inquiry_complete"
-          }
+          "scan_result_finish": true
         }
       }
     ];
@@ -168,7 +166,7 @@ describe("ble", function () {
 
     var results1 = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                   "address": "e5f678800700",
                   "device_type": "dumo",
                   "address_type": "public",
@@ -189,9 +187,7 @@ describe("ble", function () {
     var results2 = [
       {
         "ble": {
-          "scan_result": {
-            "event_type": "inquiry_complete"
-          }
+          "scan_result_finish": true
         }
       }
     ];
@@ -227,7 +223,7 @@ describe("ble", function () {
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -280,7 +276,7 @@ describe("ble", function () {
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",

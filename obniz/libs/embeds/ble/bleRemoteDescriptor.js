@@ -1,20 +1,13 @@
 
+const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
 
-class BleRemoteDescriptor {
-  constructor(Obniz, characteristic, uuid){
-    this.Obniz = Obniz;
-    this.characteristic = characteristic;
-    this.discoverdOnRemote = false;
-    this.uuid = uuid;
+class BleRemoteDescriptor extends BleRemoteAttributeAbstract{
+  constructor(params){
+    super(params);
   }
 
-  toString(){
-    return JSON.stringify({
-      "address" : this.characteristic.service.peripheral.address,
-      "service_uuid" : this.characteristic.service.uuid,
-      "characteristic_uuid" : this.characteristic.uuid,
-      "descriptor_uuid" : this.uuid
-    });
+  get parentName(){
+    return "characteristic";
   }
 
   read(){
@@ -28,11 +21,7 @@ class BleRemoteDescriptor {
         }
       }
     };
-    this.Obniz.send(obj);
-  }
-
-  async readWait(){
-    throw new Error("TODO");
+    this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
   write(array){
@@ -47,20 +36,10 @@ class BleRemoteDescriptor {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(val){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-  onread(value){};
-  onwrite(value){};
 }
 
 module.exports = BleRemoteDescriptor;

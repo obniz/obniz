@@ -1295,7 +1295,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result"]},"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["address","ble_event_type","device_type","address_type","flag","rssi"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
 
 /***/ }),
 
@@ -1306,7 +1306,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_complete"]}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result_finish"],"properties":{"scan_result_finish":{"type":"boolean","enum":[true]}}}
 
 /***/ }),
 
@@ -3692,6 +3692,354 @@ var toString = {}.toString;
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/eventemitter3/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/eventemitter3/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var has = Object.prototype.hasOwnProperty
+  , prefix = '~';
+
+/**
+ * Constructor to create a storage for our `EE` objects.
+ * An `Events` instance is a plain object whose properties are event names.
+ *
+ * @constructor
+ * @private
+ */
+function Events() {}
+
+//
+// We try to not inherit from `Object.prototype`. In some engines creating an
+// instance in this way is faster than calling `Object.create(null)` directly.
+// If `Object.create(null)` is not supported we prefix the event names with a
+// character to make sure that the built-in object properties are not
+// overridden or used as an attack vector.
+//
+if (Object.create) {
+  Events.prototype = Object.create(null);
+
+  //
+  // This hack is needed because the `__proto__` property is still inherited in
+  // some old browsers like Android 4, iPhone 5.1, Opera 11 and Safari 5.
+  //
+  if (!new Events().__proto__) prefix = false;
+}
+
+/**
+ * Representation of a single event listener.
+ *
+ * @param {Function} fn The listener function.
+ * @param {*} context The context to invoke the listener with.
+ * @param {Boolean} [once=false] Specify if the listener is a one-time listener.
+ * @constructor
+ * @private
+ */
+function EE(fn, context, once) {
+  this.fn = fn;
+  this.context = context;
+  this.once = once || false;
+}
+
+/**
+ * Add a listener for a given event.
+ *
+ * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {*} context The context to invoke the listener with.
+ * @param {Boolean} once Specify if the listener is a one-time listener.
+ * @returns {EventEmitter}
+ * @private
+ */
+function addListener(emitter, event, fn, context, once) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('The listener must be a function');
+  }
+
+  var listener = new EE(fn, context || emitter, once)
+    , evt = prefix ? prefix + event : event;
+
+  if (!emitter._events[evt]) emitter._events[evt] = listener, emitter._eventsCount++;
+  else if (!emitter._events[evt].fn) emitter._events[evt].push(listener);
+  else emitter._events[evt] = [emitter._events[evt], listener];
+
+  return emitter;
+}
+
+/**
+ * Clear event by name.
+ *
+ * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
+ * @param {(String|Symbol)} evt The Event name.
+ * @private
+ */
+function clearEvent(emitter, evt) {
+  if (--emitter._eventsCount === 0) emitter._events = new Events();
+  else delete emitter._events[evt];
+}
+
+/**
+ * Minimal `EventEmitter` interface that is molded against the Node.js
+ * `EventEmitter` interface.
+ *
+ * @constructor
+ * @public
+ */
+function EventEmitter() {
+  this._events = new Events();
+  this._eventsCount = 0;
+}
+
+/**
+ * Return an array listing the events for which the emitter has registered
+ * listeners.
+ *
+ * @returns {Array}
+ * @public
+ */
+EventEmitter.prototype.eventNames = function eventNames() {
+  var names = []
+    , events
+    , name;
+
+  if (this._eventsCount === 0) return names;
+
+  for (name in (events = this._events)) {
+    if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
+  }
+
+  if (Object.getOwnPropertySymbols) {
+    return names.concat(Object.getOwnPropertySymbols(events));
+  }
+
+  return names;
+};
+
+/**
+ * Return the listeners registered for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @returns {Array} The registered listeners.
+ * @public
+ */
+EventEmitter.prototype.listeners = function listeners(event) {
+  var evt = prefix ? prefix + event : event
+    , handlers = this._events[evt];
+
+  if (!handlers) return [];
+  if (handlers.fn) return [handlers.fn];
+
+  for (var i = 0, l = handlers.length, ee = new Array(l); i < l; i++) {
+    ee[i] = handlers[i].fn;
+  }
+
+  return ee;
+};
+
+/**
+ * Return the number of listeners listening to a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @returns {Number} The number of listeners.
+ * @public
+ */
+EventEmitter.prototype.listenerCount = function listenerCount(event) {
+  var evt = prefix ? prefix + event : event
+    , listeners = this._events[evt];
+
+  if (!listeners) return 0;
+  if (listeners.fn) return 1;
+  return listeners.length;
+};
+
+/**
+ * Calls each of the listeners registered for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @returns {Boolean} `true` if the event had listeners, else `false`.
+ * @public
+ */
+EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
+  var evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) return false;
+
+  var listeners = this._events[evt]
+    , len = arguments.length
+    , args
+    , i;
+
+  if (listeners.fn) {
+    if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
+
+    switch (len) {
+      case 1: return listeners.fn.call(listeners.context), true;
+      case 2: return listeners.fn.call(listeners.context, a1), true;
+      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
+      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
+      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
+    }
+
+    for (i = 1, args = new Array(len -1); i < len; i++) {
+      args[i - 1] = arguments[i];
+    }
+
+    listeners.fn.apply(listeners.context, args);
+  } else {
+    var length = listeners.length
+      , j;
+
+    for (i = 0; i < length; i++) {
+      if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
+
+      switch (len) {
+        case 1: listeners[i].fn.call(listeners[i].context); break;
+        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
+        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
+        case 4: listeners[i].fn.call(listeners[i].context, a1, a2, a3); break;
+        default:
+          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
+            args[j - 1] = arguments[j];
+          }
+
+          listeners[i].fn.apply(listeners[i].context, args);
+      }
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Add a listener for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {*} [context=this] The context to invoke the listener with.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.on = function on(event, fn, context) {
+  return addListener(this, event, fn, context, false);
+};
+
+/**
+ * Add a one-time listener for a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn The listener function.
+ * @param {*} [context=this] The context to invoke the listener with.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.once = function once(event, fn, context) {
+  return addListener(this, event, fn, context, true);
+};
+
+/**
+ * Remove the listeners of a given event.
+ *
+ * @param {(String|Symbol)} event The event name.
+ * @param {Function} fn Only remove the listeners that match this function.
+ * @param {*} context Only remove the listeners that have this context.
+ * @param {Boolean} once Only remove one-time listeners.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+  var evt = prefix ? prefix + event : event;
+
+  if (!this._events[evt]) return this;
+  if (!fn) {
+    clearEvent(this, evt);
+    return this;
+  }
+
+  var listeners = this._events[evt];
+
+  if (listeners.fn) {
+    if (
+      listeners.fn === fn &&
+      (!once || listeners.once) &&
+      (!context || listeners.context === context)
+    ) {
+      clearEvent(this, evt);
+    }
+  } else {
+    for (var i = 0, events = [], length = listeners.length; i < length; i++) {
+      if (
+        listeners[i].fn !== fn ||
+        (once && !listeners[i].once) ||
+        (context && listeners[i].context !== context)
+      ) {
+        events.push(listeners[i]);
+      }
+    }
+
+    //
+    // Reset the array, or remove it completely if we have no more listeners.
+    //
+    if (events.length) this._events[evt] = events.length === 1 ? events[0] : events;
+    else clearEvent(this, evt);
+  }
+
+  return this;
+};
+
+/**
+ * Remove all listeners, or those of the specified event.
+ *
+ * @param {(String|Symbol)} [event] The event name.
+ * @returns {EventEmitter} `this`.
+ * @public
+ */
+EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
+  var evt;
+
+  if (event) {
+    evt = prefix ? prefix + event : event;
+    if (this._events[evt]) clearEvent(this, evt);
+  } else {
+    this._events = new Events();
+    this._eventsCount = 0;
+  }
+
+  return this;
+};
+
+//
+// Alias methods names because people roll like that.
+//
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+EventEmitter.prototype.addListener = EventEmitter.prototype.on;
+
+//
+// Expose the prefix.
+//
+EventEmitter.prefixed = prefix;
+
+//
+// Allow `EventEmitter` to be imported as module namespace.
+//
+EventEmitter.EventEmitter = EventEmitter;
+
+//
+// Expose the module.
+//
+if (true) {
+  module.exports = EventEmitter;
+}
 
 
 /***/ }),
@@ -6819,6 +7167,7 @@ const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/e
 const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./obniz/libs/embeds/ble/bleRemotePeripheral.js");
 
 
+
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
@@ -6830,6 +7179,8 @@ class ObnizBLE {
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
     this.peripheral = new BlePeripheral(Obniz);
+
+    this.scanTarget  = null;
   }
 
   startAdvertisement() {
@@ -7052,7 +7403,7 @@ class ObnizBLE {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 
-  startScan(settings) {
+  startScan(target,  settings) {
     var obj = {};
     obj["ble"] = {};
     obj["ble"]["scan"] = {
@@ -7061,11 +7412,32 @@ class ObnizBLE {
       "duration" : settings && settings.duration ? settings.duration : 30
       
     };
-    
+
+    this.scanTarget = target;
     this.remotePeripherals =  [];
-    
     this.Obniz.send(obj);
     return;
+  }
+
+  startScanWait( target, settings) {
+    return new Promise((resolve)=>{
+      let result = null;
+      this._onscan = (peripheral)=>{
+        this.stopScan();
+        this._onscan = function(){};
+        this._onscanfinish = function(){};
+        resolve(peripheral);
+      };
+      this._onscanfinish = ()=>{
+        this._onscan = function(){};
+        this._onscanfinish = function(){};
+        resolve(null);
+      }
+
+      this.startScan(target, settings);
+
+    });
+
   }
 
   stopScan() {
@@ -7085,191 +7457,114 @@ class ObnizBLE {
   }
 
   notified(obj) {
+
     if (obj.scan_result) {
       let isFinished = false;
-      if (obj.scan_result.event_type === "inquiry_complete") {
-        isFinished = true;
-      } else if (obj.scan_result.event_type === "inquiry_result") {
-        let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+         let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
         val.setParams(obj.scan_result);
         this.remotePeripherals.push(val);
+
+        if(this.scanTarget && this.scanTarget.localName && val.localName() !== this.scanTarget.localName){
+          return;
+        }
+        if(this.scanTarget && this.scanTarget.uuids){
+          let uuids = val.advertisementServiceUuids();
+          for(let uuid of this.scanTarget.uuids){
+            if(!uuids.includes(uuid)){
+              return;
+            }
+          }
+        }
+
+        this._onscan(val);
         this.onscan(val);
-      }
-      if (isFinished ) {
-        this.onscanfinish(this.remotePeripherals);
-      }
+
     }
 
-    if (obj.status_update) {
-      let params = obj.status_update;
-      if (!params.address)
-        return;
-      let p = this.findPeripheral(params.address);
-      if (p) {
-        if (params.status === "connected") {
-          p.onconnect();
-        }
-        if (params.status === "disconnected") {
-          p.ondisconnect();
-        }
-      }
-    }
-
-    if (obj.get_service_result) {
-      let params = obj.get_service_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          service.discoverdOnRemote = true;
-          p.ondiscoverservice(service);
-        }
-      }
-    }
-
-    if (obj.get_service_result_finish) {
-      let params = obj.get_service_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let services = p.services.filter((elm)=>{return elm.discoverdOnRemote});
-          p.ondiscoverservicefinished(services);
-        }
-      }
-    }
-
-    if (obj.get_characteristic_result) {
-      let params = obj.get_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.discoverdOnRemote = true;
-          chara.properties = params.properties;
-          service.ondiscovercharacteristic(chara);
-        }
-      }
-    }
-    if (obj.get_characteristic_result_finish) {
-      let params = obj.get_characteristic_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let charas = service.characteristics.filter((elm)=>{return elm.discoverdOnRemote});
-          service.ondiscovercharacteristicfinished(charas);
-        }
-      }
-    }
-    if (obj.write_characteristic_result) {
-      let params = obj.write_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.onwrite(params.result);
-        }
-      }
-    }
-
-    if (obj.read_characteristic_result) {
-      let params = obj.read_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.onread(params.data);
-        }
-      }
-    }
-    if (obj.get_descriptor_result) {
-      let params = obj.get_descriptor_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.discoverdOnRemote = true;
-          chara.ondiscoverdescriptor(descr);
-        }
-      }
+    if (obj.scan_result_finish ) {
+      this._onscanfinish(this.remotePeripherals);
+      this.onscanfinish(this.remotePeripherals);
     }
 
 
-    if (obj.get_descriptor_result_finish) {
-      let params = obj.get_descriptor_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descrs = chara.descriptors.filter((elm)=>{return elm.discoverdOnRemote});
-          chara.ondiscoverdescriptorfinished(descrs);
-        }
+
+
+    var remotePeripheralcallbackFunc = function (val, func, type) {
+      var obj = null;
+      if(val === undefined) return;
+      let p = this.findPeripheral(val.address);
+      if(!p){return;}
+      if (type === "peripheral") {
+        obj = p;
+      }else if (type === "service") {
+        obj = p.findService(val);
+      } else if (type === "characteristic") {
+        obj = p.findCharacteristic(val);
+      } else if (type === "descriptor") {
+        obj = p.findDescriptor(val);
       }
+      if(!obj){return;}
+      func(val, obj);
+    }.bind(this);
+
+    const paramList = {
+      status_update : { name: "statusupdate", obj:"peripheral"},
+      get_service_result : { name: "discover", obj:"peripheral"},
+      get_service_result_finish : { name: "discoverfinished", obj:"peripheral"},
+      get_characteristic_result : { name: "discover", obj:"service"},
+      get_characteristic_result_finish : { name: "discoverfinished", obj:"service"},
+      write_characteristic_result : { name: "onwrite", obj:"characteristic"},
+      read_characteristic_result : { name: "onread", obj:"characteristic"},
+      get_descriptor_result : { name: "discover", obj:"characteristic"},
+      get_descriptor_result_finish : { name: "discoverfinished", obj:"characteristic"},
+      write_descriptor_result : { name: "onwrite", obj:"descriptor"},
+      read_descriptor_result : { name: "onread", obj:"descriptor"},
+    };
+
+    for(let key in paramList){
+      remotePeripheralcallbackFunc(obj[key], function(val,bleobj){
+
+        bleobj.notify(paramList[key].name, val);
+      }.bind(this), paramList[key].obj);
     }
 
-    if (obj.read_descriptor_result) {
-      let params = obj.read_descriptor_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.onread(params.data);
-        }
-      }
-    }
-    if (obj.write_descriptor_result) {
-      let params = obj.write_descriptor_result;
-      if (params.address) {
-        var p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.onwrite(params.result);
-        }
-      }
-    }
-    
+
+
     var callbackFunc = function (val, func, type) {
       var obj = null;
       if(val === undefined) return;
-      if (type === "service") {
+      if (type === "peripheral") {
+        obj = this.peripheral;
+      }else if (type === "service") {
         obj = this.peripheral.getService(val);
       } else if (type === "characteristic") {
         obj = this.peripheral.findCharacteristic(val);
       } else if (type === "descriptor") {
         obj = this.peripheral.findDescriptor(val);
       }
+      if(!obj){return;}
       func(val, obj);
     }.bind(this);
     
      if (obj.peripheral) {
        callbackFunc(obj.peripheral.connection_status, function(val){
          this.peripheral.onconnectionupdates(val);
-       }.bind(this));
+       }.bind(this),"peripheral");
        
-       var paramList = {
-         read_characteristic_result : { method: "onread", obj:"characteristic"},
-         write_characteristic_result : { method: "onwrite", obj:"characteristic"},
-         notify_read_characteristic : { method: "onreadfromremote", obj:"characteristic"},
-         notify_write_characteristic : { method: "onwritefromremote", obj:"characteristic"},
-         read_descriptor_result : { method: "onread", obj:"descriptor"},
-         write_descriptor_result : { method: "onwrite", obj:"descriptor"},
-         notify_read_descriptor : { method: "onreadfromremote", obj:"descriptor"},
-         notify_write_descriptor : { method: "onwritefromremote", obj:"descriptor"},
-       }
+       const paramList = {
+         read_characteristic_result : { name: "onread", obj:"characteristic"},
+         write_characteristic_result : { name: "onwrite", obj:"characteristic"},
+         notify_read_characteristic : { name: "onreadfromremote", obj:"characteristic"},
+         notify_write_characteristic : { name: "onwritefromremote", obj:"characteristic"},
+         read_descriptor_result : { name: "onread", obj:"descriptor"},
+         write_descriptor_result : { name: "onwrite", obj:"descriptor"},
+         notify_read_descriptor : { name: "onreadfromremote", obj:"descriptor"},
+         notify_write_descriptor : { name: "onwritefromremote", obj:"descriptor"},
+       };
        
-       for(var key in paramList){
+       for(let key in paramList){
         callbackFunc(obj.peripheral[key], function(val,bleobj){
-          bleobj[paramList[key].method](val);
+          bleobj.notify(paramList[key].name, val);
         }.bind(this), paramList[key].obj);
       }
      }
@@ -7295,12 +7590,245 @@ class ObnizBLE {
     }
   }
 
+  _dataArray2uuidHex( data, reverse){
+    let uuid = [];
+    for(var i = 0; i< data.length;i++){
+      uuid.push(( '00' + data[i].toString(16) ).slice( -2 ));
+    }
+    if(reverse){
+      uuid =  uuid.reverse();
+    }
+    let str = uuid.join("");
+    if(uuid.length >= 16){
+      str = str.slice(0,8) + "-" + str.slice(8,12) + "-" + str.slice(12,16) + "-" + str.slice(16,20) + "-" + str.slice(20);
+    }
+    return str;
+
+  }
+
   onscanfinish(){} //dummy
   onscan(){} //dummy
+
+  _onscanfinish(){} //dummy
+  _onscan(){} //dummy
 }
 
 
 module.exports = ObnizBLE;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleAttributeAbstract.js":
+/*!*******************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleAttributeAbstract.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
+const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
+
+class BleAttributreAbstruct {
+
+  constructor(params){
+    this.uuid = params.uuid.toLowerCase();
+    this.parent = null;
+    this.children = [];
+
+    this.isRemote = false;
+    this.discoverdOnRemote = false;
+
+    this.data = params.data || null;
+    if(! this.data && params.text){
+      this.data = ObnizUtil.string2dataArray(params.text);
+    }
+    if(! this.data && params.value){
+      this.data = params.value;
+    }
+
+    this.property = params.property || [];
+    if(!Array.isArray(this.property)){
+      this.property = [this.property];
+    }
+
+    if(params[this.childrenName]){
+      for(var key in params[this.childrenName]){
+        this.addChild(params[this.childrenName][key]);
+      }
+    }
+
+    this.setFunctions();
+
+
+    this.emitter =  new emitter();
+
+  }
+
+  setFunctions() {
+    let childrenName = this.childrenName;
+    if(childrenName){
+      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      let childName = childrenName.slice(0,-1);
+
+      let funcName = "add" + childName;
+      this[funcName] = this.addChild;
+
+      funcName = "get" + childName;
+      this[funcName] = this.getChild;
+    }
+
+    let parentName = this.parentName;
+    if(parentName){
+      Object.defineProperty(this, parentName, {
+        get() { return this.parent; },
+        set(newValue) { this.parent = newValue; }
+      });
+    }
+
+  }
+
+
+  get childrenClass(){
+    return Object;
+  }
+  get childrenName(){
+    return null;
+  }
+  get parentName(){
+    return null;
+  }
+
+  addChild(child){
+    if( ! (child instanceof this.childrenClass) ){
+      child = new this.childrenClass(child);
+    }
+    child.parent = this;
+
+    //あとでけす
+    child.characteristic = this;
+
+    this.children.push(child);
+    return child;
+  }
+
+  getChild(uuid){
+
+    return this.children.filter(function(element){
+      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
+    }).shift();
+
+  }
+
+
+
+  toJSON (){
+    let obj = {uuid: this.uuid.toLowerCase()}
+
+    if (this.children.length > 0) {
+      let key = this.childrenName;
+      obj[key] = this.children;
+    }
+    if (this.data) {
+      obj.data = this.data
+    }
+    if (this.property.length > 0 ) {
+      obj.property =  this.property;
+    }
+    return obj;
+  }
+
+
+  /**
+   * WS COMMANDS
+   */
+
+  read() {}
+  write(data){}
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(str){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
+  readWait(){
+    return new Promise(resolve => {
+      this.emitter.once("onread",(params)=>{
+        resolve(params.data);
+      });
+      this.read();
+    })
+  }
+
+  writeWait(data){
+    return new Promise(resolve => {
+      this.emitter.once("onwrite",(params)=>{
+        resolve(params.result);
+      });
+      this.write(data);
+    })
+  }
+
+  readFromRemoteWait(){
+    return new Promise(resolve => {
+      this.emitter.once("onreadfromremote",(params)=>{
+        resolve();
+      });
+    })
+  }
+
+  writeFromRemoteWait(){
+    return new Promise(resolve => {
+      this.emitter.once("onreadfromremote",(params)=>{
+        resolve(params.data);
+      });
+    })
+  }
+
+
+
+  /**
+   * CALLBACKS
+   */
+  onwrite(){
+
+  };
+  onread(){
+
+  };
+  onwritefromremote(){
+
+  }
+  onreadfromremote(){
+
+  };
+
+  notify(notifyName, params){
+    this.emitter.emit(notifyName, params);
+    switch(notifyName){
+      case "onwrite" : {
+        this.onwrite(params.result);
+        break;
+      }
+      case "onread" : {
+        this.onread(params.data);
+        break;
+      }
+      case "onwritefromremote" : {
+        this.onwritefromremote(params.address, params.data);
+        break;
+      }
+      case "onreadfromremote" : {
+        this.onreadfromremote(params.address);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleAttributreAbstruct;
 
 /***/ }),
 
@@ -7311,46 +7839,28 @@ module.exports = ObnizBLE;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
-const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 
-class BleCharacteristic {
+const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+
+class BleCharacteristic extends BleAttributeAbstract{
   
   constructor(obj){
-    this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    this.data = obj.data || null;
-    if(! this.data && obj.text){
-      this.data = ObnizUtil.string2dataArray(obj.text);
-    }
-    if(! this.data && obj.value){
-      this.data = obj.value;
-    }
-    
-    this.property = obj.property || [];
-    if(!Array.isArray(this.property)){
-      this.property = [this.property];
-    }
-    
-    if(obj["descriptors"]){
-       for(var key in obj["descriptors"]){
-        this.addDescriptor(obj["descriptors"][key]);
-      }
-    }
+    super(obj);
+
+    this.addDescriptor = this.addChild;
+    this.getDescriptor = this.getChild;
   }
 
-  addDescriptor(obj) {
-    if(! (obj instanceof BleDescriptor ) ){
-      obj = new BleDescriptor(obj);
-    }
-    this.descriptors.push(obj);
-    obj.characteristic = this;
+  get parentName(){
+    return "service";
   }
 
-  getDescriptor(uuid) {
-    return this.descriptors.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
+  get childrenClass(){
+    return BleDescriptor;
+  }
+  get childrenName(){
+    return "descriptors";
   }
 
   write(data){
@@ -7369,13 +7879,6 @@ class BleCharacteristic {
     );
   }
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(str){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
 
 
   read(){
@@ -7392,23 +7895,9 @@ class BleCharacteristic {
       }
     );
   }
-  onwrite(){};
-  onread(){};
-  onwritefromremote(){};
-  onreadfromremote(){};
 
-  toJSON(){
-    var obj = {
-      uuid : this.uuid.toLowerCase()
-    };
-    if (this.data) { obj.data = this.data }
-    if (this.descriptors) { obj.descriptors = this.descriptors }
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-      
-    }
-    return obj;
-  }
+
+
 }
 
 
@@ -7424,43 +7913,22 @@ module.exports = BleCharacteristic;
 /***/ (function(module, exports, __webpack_require__) {
 
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+
 
 /**
  * 
  * @param {type} rawData
  * @return {BleServiuce}
  */
-class BleDescriptor {
+class BleDescriptor extends BleAttributeAbstract {
 
   constructor(obj){
-    this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    
-    this.data = obj.data || null;
-    if(! this.data && obj.text){
-      this.data = ObnizUtil.string2dataArray(obj.text);
-    }
-    if(! this.data && obj.value){
-      this.data = obj.value;
-    }
-    
-    this.property = obj.property || [];
-    if(!Array.isArray(this.property)){
-      this.property = [this.property];
-    }
+    super(obj);
   }
 
-  toJSON(){
-    var obj =  {
-      uuid : this.uuid.toLowerCase()
-    };
-    if (this.data) {
-      obj.data = this.data;
-    }
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-    }
-    return obj;
+  get parentName(){
+    return "characteritic";
   }
 
   write(dataArray){
@@ -7480,17 +7948,8 @@ class BleDescriptor {
     );
   }
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(str){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
 
   read(){
-  
     this.characteristic.service.peripheral.Obniz.send(
         {
           ble : {
@@ -7506,10 +7965,8 @@ class BleDescriptor {
     );
   }
 
-  onwrite(){};
-  onread(){};
-  onwritefromremote(){}
-  onreadfromremote(){};
+
+
 }
 
 module.exports = BleDescriptor;
@@ -7551,8 +8008,9 @@ class BlePeripheral {
   }
 
   getService(uuid) {
+    uuid = uuid.toLowerCase();
     return this.services.filter(function(element){
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
+      return element.uuid.toLowerCase() === uuid;
     }).shift();
   }
 
@@ -7562,7 +8020,6 @@ class BlePeripheral {
     };
   }
 
-  onconnectionupdates(){};
 
   findCharacteristic(param){
     var serviceUuid = param.service_uuid.toLowerCase() ;
@@ -7588,10 +8045,104 @@ class BlePeripheral {
   end(){
     this.Obniz.send({ble:{peripheral:null}});
   }
+
+  onconnectionupdates(){};
 }
 
 
 module.exports = BlePeripheral;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js":
+/*!*************************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
+const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+
+class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
+
+  constructor(params) {
+    super(params);
+
+    this.isRemote = false;
+    this.discoverdOnRemote = false;
+
+
+  }
+
+
+  get wsChildUuidName() {
+    let childrenName = this.childrenName;
+    if (!childrenName) {
+      return null
+    }
+    let childName = childrenName.slice(0, -1);
+    return childName + "_uuid";
+  }
+
+  getChild(uuid) {
+    let obj = super.getChild(uuid);
+    if (!obj) {
+      obj = this.addChild({uuid});
+    }
+    return obj;
+  }
+
+  discoverChildren() {
+
+  }
+
+  discoverChildrenWait() {
+    return new Promise(resolve => {
+      this.emitter.once("discoverfinished", (params) => {
+        let children = this.children.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        resolve(children);
+      });
+    })
+  }
+
+
+  /**
+   * CALLBACKS
+   */
+  ondiscover() {
+
+  };
+
+  ondiscoverfinished() {
+
+  };
+
+  notify(notifyName, params) {
+    super.notify(notifyName, params);
+    switch (notifyName) {
+      case "discover" : {
+        let child = this.getChild(params[this.wsChildUuidName]);
+        child.discoverdOnRemote = true;
+        child.properties = params.properties || [];
+        this.ondiscover(child);
+        break;
+      }
+      case "discoverfinished" : {
+        let children = this.children.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        this.ondiscoverfinished(children);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleRemoteAttributreAbstruct;
 
 /***/ }),
 
@@ -7604,27 +8155,44 @@ module.exports = BlePeripheral;
 
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
+const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
+class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
 
-class BleRemoteCharacteristic {
-
-  constructor(Obniz, service, uuid){
-    this.Obniz = Obniz;
-    this.service = service;
-    this.uuid = uuid;
-    this.discoverdOnRemote = false;
-    this.descriptors = [];
-    this.properties = [];
+  constructor(params){
+    super(params);
   }
 
-  toString(){
-    return JSON.stringify({
-          "address" : this.service.peripheral.address,
-          "service_uuid" : this.service.uuid,
-          "characteristic_uuid" : this.uuid,
-          "properties" : this.properties
-        });
+  get parentName(){
+    return "service";
   }
+
+  get childrenClass(){
+    return BleRemoteDescriptor;
+  }
+  get childrenName(){
+    return "descriptors";
+  }
+
+
+  addDescriptor(params) {
+    return this.addChild(params)
+  }
+  //
+  // getCharacteristic(params) {
+  //   return this.getChild(params)
+  // }
+
+  getDescriptor(uuid){
+
+    let obj = this.getChild(uuid);
+    if(obj){return obj;}
+    var newCharacteristic = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    this.addChild(newCharacteristic);
+    return newCharacteristic;
+  }
+
+
 
   read(){
     var obj = {
@@ -7636,11 +8204,7 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
-  }
-
-  async readWait(){
-    throw new Error("TODO");
+    this.service.peripheral.Obniz.send(obj);
   }
 
   write(array){
@@ -7654,18 +8218,10 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.service.peripheral.Obniz.send(obj);
   }
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(val){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-  discoverAllDescriptors(str){
+  discoverChildren(){
     var obj = {
       "ble" :{
         "get_descriptors" :{
@@ -7675,18 +8231,16 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.service.peripheral.Obniz.send(obj);
   }
 
-  getDescriptor(uuid){
-    for(var key in this.descriptors){
-      if(this.descriptors[key].uuid === uuid){
-        return this.descriptors[key];
-      }
-    }
-    var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
-    this.descriptors.push(newDescriptors);
-    return newDescriptors;
+  discoverAllDescriptors(){
+    return this.discoverChildren();
+  }
+
+
+  discoverAllDescriptorsWait(){
+    return this.discoverChildrenWait();
   }
 
   canBroadcast(){
@@ -7708,9 +8262,31 @@ class BleRemoteCharacteristic {
     return this.properties.includes("indicate");
   }
 
+  // notify_onwrite(params){
+  //   this.onwrite(params.result);
+  // };
+  //
+  // notify_onread(params){
+  //   this.onwrite(params.data);
+  // };
+  //
+  // notify_ondiscoverdescriptor(descriptor){
+  //   this.ondiscoverdescriptor(descriptor);
+  // };
+  //
+  // notify_ondiscoverdescriptorfinished(descriptors){
+  //   this.ondiscoverdescriptorfinished(descriptors);
+  // };
 
-  onwrite(status){};
-  onread(value){};
+
+
+  ondiscover(characteristic) {
+    this.ondiscoverdescriptor(characteristic);
+  }
+  ondiscoverfinished(characteristics) {
+    this.ondiscoverdescriptorfinished(characteristic);
+  }
+
   ondiscoverdescriptor(descriptor){};
   ondiscoverdescriptorfinished(services){};
 
@@ -7725,25 +8301,18 @@ module.exports = BleRemoteCharacteristic;
   !*** ./obniz/libs/embeds/ble/bleRemoteDescriptor.js ***!
   \******************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 
+const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteDescriptor {
-  constructor(Obniz, characteristic, uuid){
-    this.Obniz = Obniz;
-    this.characteristic = characteristic;
-    this.discoverdOnRemote = false;
-    this.uuid = uuid;
+class BleRemoteDescriptor extends BleRemoteAttributeAbstract{
+  constructor(params){
+    super(params);
   }
 
-  toString(){
-    return JSON.stringify({
-      "address" : this.characteristic.service.peripheral.address,
-      "service_uuid" : this.characteristic.service.uuid,
-      "characteristic_uuid" : this.characteristic.uuid,
-      "descriptor_uuid" : this.uuid
-    });
+  get parentName(){
+    return "characteristic";
   }
 
   read(){
@@ -7757,11 +8326,7 @@ class BleRemoteDescriptor {
         }
       }
     };
-    this.Obniz.send(obj);
-  }
-
-  async readWait(){
-    throw new Error("TODO");
+    this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
   write(array){
@@ -7776,20 +8341,10 @@ class BleRemoteDescriptor {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(val){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-  onread(value){};
-  onwrite(value){};
 }
 
 module.exports = BleRemoteDescriptor;
@@ -7806,12 +8361,15 @@ module.exports = BleRemoteDescriptor;
 
 
 const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
+const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleRemotePeripheral {
 
   constructor(Obniz, address){
     this.Obniz = Obniz;
     this.address = address;
+    this.connected = false;
     
     this.keys = [
       "device_type",
@@ -7823,6 +8381,7 @@ class BleRemotePeripheral {
     ];
     
     this.services = [];
+    this.emitter = new emitter();
   }
 
 /**
@@ -7932,10 +8491,28 @@ class BleRemotePeripheral {
     };
   }
 
-  connect(callbacks){
-    var keys = ["onconnect","ondisconnect"];
-    this.setParams(keys, callbacks);
-    
+  _addServiceUuids(results, data, bit){
+    if(!data)return;
+    let uuidLength = bit / 4;
+    for(let i =0; i< data.length; i = i + uuidLength){
+      let one = data.slice(i,i+uuidLength);
+      results.push(this.Obniz.ble._dataArray2uuidHex(one,true));
+    }
+  }
+
+  advertisementServiceUuids(){
+    let results = [];
+    this._addServiceUuids(results,this.serarchTypeVal(0x02), 16);
+    this._addServiceUuids(results,this.serarchTypeVal(0x03), 16);
+    this._addServiceUuids(results,this.serarchTypeVal(0x04), 32);
+    this._addServiceUuids(results,this.serarchTypeVal(0x05), 32);
+    this._addServiceUuids(results,this.serarchTypeVal(0x06), 64);
+    this._addServiceUuids(results,this.serarchTypeVal(0x07), 64);
+    return results;
+  }
+
+
+  connect(){
     var obj = {
       "ble" :{
         "connect" :{
@@ -7944,6 +8521,23 @@ class BleRemotePeripheral {
       }
     };
     this.Obniz.send(obj);
+  }
+
+  connectWait(){
+    return new Promise((resolve)=>{
+      this._onconnect = ()=>{
+        this._onconnect = ()=>{};
+        this._ondisconnect = ()=>{};
+        resolve(true);
+      };
+      this._ondisconnect = ()=>{
+        this._onconnect = ()=>{};
+        this._ondisconnect = ()=>{};
+        resolve(false);
+      };
+      this.connect();
+
+    })
   }
 
   disconnect(){
@@ -7957,20 +8551,53 @@ class BleRemotePeripheral {
     this.Obniz.send(obj); 
   }
 
+
+
   updateRssi(){
     throw new Error("todo");
   }
 
   getService(uuid){
+    uuid = uuid.toLowerCase();
     for(var key in this.services){
       if(this.services[key].uuid === uuid){
         return this.services[key];
       }
     }
-    var newService = new BleRemoteService(this.Obniz,this, uuid);
+    var newService = new BleRemoteService({uuid});
+    newService.parent = this;
     this.services.push(newService);
     return newService;
   }
+
+  findService(param){
+    var serviceUuid = param.service_uuid.toLowerCase() ;
+    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
+    var s = this.getService(serviceUuid);
+    return s;
+  }
+
+  findCharacteristic(param){
+    var serviceUuid = param.service_uuid.toLowerCase() ;
+    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
+    var s = this.getService(serviceUuid);
+    if(s){
+      var c = s.getCharacteristic(characteristicUuid);
+      return c;
+    }
+    return null;
+  }
+
+  findDescriptor(param){
+    var descriptorUuid = param.descriptor_uuid.toLowerCase() ;
+    var c = this.findCharacteristic(param);
+    if(c){
+      var d = c.getDescriptor(descriptorUuid);
+      return d;
+    }
+    return null;
+  }
+
 
   discoverAllServices(){
     var obj = {
@@ -7983,10 +8610,64 @@ class BleRemotePeripheral {
     this.Obniz.send(obj);
   }
 
+  discoverAllServicesWait(){
+    return new Promise((resolve)=>{
+      this._ondiscoverservicefinished = (services)=>{
+        this._ondiscoverservicefinished = function(){};
+        resolve(services);
+      };
+      this.discoverAllServices();
+
+    })
+  }
+
+  _onconnect(){};
   onconnect(){};
+  _ondisconnect(){};
   ondisconnect(){};
+
+
   ondiscoverservice(service){};
+
+  _ondiscoverservicefinished(services){};
   ondiscoverservicefinished(services){};
+
+
+  ondiscover(){
+
+  };
+  ondiscoverfinished(){
+
+  };
+
+
+  notify(notifyName, params){
+    this.emitter.emit(notifyName, params);
+    switch(notifyName){
+      case "statusupdate" : {
+        if (params.status === "connected") {
+          this.connected = true;
+          this.onconnect();
+        }
+        if (params.status === "disconnected") {
+          this.connected = false;
+          this.ondisconnect();
+        }
+        break;
+      }
+      case "discover" : {
+        let child = this.getService(params.service_uuid);
+        child.discoverdOnRemote = true;
+        this.ondiscoverservice(child);
+        break;
+      }
+      case "discoverfinished" : {
+        let children = this.services.filter(elm=>{return elm.discoverdOnRemote;});
+        this.ondiscoverservicefinished(children);
+        break;
+      }
+    }
+  }
 
   onerror(err){};
 
@@ -8006,26 +8687,44 @@ module.exports = BleRemotePeripheral;
 
 
 const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
+const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteService {
+class BleRemoteService extends BleRemoteAttributeAbstract{
 
-  constructor(Obniz, peripheral, uuid){
-    this.Obniz = Obniz;
-    this.uuid = uuid;
-    this.peripheral = peripheral;
-    this.discoverdOnRemote = false;
-    
-    this.characteristics = [];
+  constructor(obj){
+    super(obj);
   }
 
-  toString(){
-    return JSON.stringify({
-          "address" : this.peripheral.address,
-          "service_uuid" : this.uuid
-    });
+  get parentName(){
+    return "peripheral";
   }
+
+  get childrenClass(){
+    return BleRemoteCharacteristic;
+  }
+  get childrenName(){
+    return "characteristics";
+  }
+
+
+  addCharacteristic(params) {
+    return this.addChild(params)
+  }
+
+  getCharacteristic(params) {
+    return this.getChild(params)
+  }
+
+
 
   discoverAllCharacteristics(){
+    return this.discoverChildren();
+  }
+  discoverAllCharacteristicsWait(){
+    return this.discoverChildrenWait();
+  }
+
+  discoverChildren(){
     var obj = {
       "ble" :{
         "get_characteristics" :{
@@ -8034,24 +8733,19 @@ class BleRemoteService {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.parent.Obniz.send(obj);
   }
 
-  getCharacteristic(uuid){
-  
-    for(var key in this.characteristics){
-      if(this.characteristics[key].uuid === uuid){
-        return this.characteristics[key];
-      }
-    }
-    var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
-    this.characteristics.push(newCharacteristic);
-    return newCharacteristic;
-  }
 
+  ondiscover(characteristic) {
+    this.ondiscovercharacteristic(characteristic);
+  }
+  ondiscoverfinished(characteristics) {
+    this.ondiscovercharacteristicfinished(characteristic);
+  }
 
   ondiscovercharacteristic( characteristic){};
-  ondiscovercharacteristicfinished( characteristic){};
+  ondiscovercharacteristicfinished( characteristics){};
 
 }
 
@@ -8069,41 +8763,29 @@ module.exports = BleRemoteService;
 /***/ (function(module, exports, __webpack_require__) {
 
 
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 
 
-class BleService {
+class BleService extends BleAttributeAbstract{
 
   constructor(obj){
-    this.characteristics = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    
-    if(obj["characteristics"]){
-       for(var key in obj["characteristics"]){
-        this.addCharacteristic(obj["characteristics"][key]);
-      }
-    }
+    super(obj);
+
+
+    this.addCharacteristic = this.addChild;
+    this.getCharacteristic = this.getChild;
   }
 
-  addCharacteristic(obj) {
-    if(! (obj instanceof BleCharacteristic ) ){
-      obj = new BleCharacteristic(obj);
-    }
-    this.characteristics.push(obj);
-    obj.service = this;
+  get parentName(){
+    return "peripheral";
   }
 
-  getCharacteristic(uuid) {
-    return this.characteristics.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
+  get childrenName(){
+    return "characteristics";
   }
-
-  toJSON (){
-    return {
-      uuid : this.uuid.toLowerCase()  ,
-      characteristics : this.characteristics
-    };
+  get childrenClass(){
+    return BleCharacteristic;
   }
 
   get advData() {
@@ -8111,6 +8793,10 @@ class BleService {
       flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid]
     }
+  }
+
+  notify(notifyName, params){
+    //nothing
   }
 }
 
@@ -10167,7 +10853,7 @@ class WSCommand_Ble extends WSCommand {
     var propFlags = {
       0x01 : "broadcast",
       0x02 : "read",
-      0x04 : "write_no_response",
+      0x04 : "write_without_response",
       0x08 : "write",
       0x10 : "notify",
       0x20 : "indiate",
@@ -10371,23 +11057,22 @@ class WSCommand_Ble extends WSCommand {
       
       results.scan_resp = results.adv_data.slice(results.advertise_length,results.advertise_length+results.scan_response_length); 
       results.adv_data = results.adv_data.slice(0,results.advertise_length); 
-      
-//      if(results.scan_response_length === 0){
-//          results.scan_resp = [];
-//      }else{
-//        results.scan_resp = results.adv_data.slice(results.advertise_length);
-//        results.adv_data = results.adv_data.slice(0, results.advertise_length);;
-//      }
+
       delete results.num_response;
       delete results.advertise_length;
       delete results.scan_response_length;
       delete results.advertise_data;
       
-      if(results.event_type === "inquiry_complete"){
-          results = {event_type:  "inquiry_complete"};
+      if(results.event_type === "inquiry_result"){
+        delete results.event_type;
+        this._addRowForPath(objToSend, "ble.scan_result", results);
+      }else if(results.event_type === "inquiry_complete"){
+        this._addRowForPath(objToSend, "ble.scan_result_finish", true);
+
       }
-      
-     this._addRowForPath(objToSend, "ble.scan_result", results);
+
+
+
     }
   }
   
@@ -12340,7 +13025,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.72","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","tv4":"^1.3.0","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.72","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 

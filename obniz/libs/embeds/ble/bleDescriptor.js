@@ -1,41 +1,20 @@
 const ObnizUtil = require("../../utils/util");
+const BleAttributeAbstract = require("./bleAttributeAbstract");
+
 
 /**
  * 
  * @param {type} rawData
  * @return {BleServiuce}
  */
-class BleDescriptor {
+class BleDescriptor extends BleAttributeAbstract {
 
   constructor(obj){
-    this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    
-    this.data = obj.data || null;
-    if(! this.data && obj.text){
-      this.data = ObnizUtil.string2dataArray(obj.text);
-    }
-    if(! this.data && obj.value){
-      this.data = obj.value;
-    }
-    
-    this.property = obj.property || [];
-    if(!Array.isArray(this.property)){
-      this.property = [this.property];
-    }
+    super(obj);
   }
 
-  toJSON(){
-    var obj =  {
-      uuid : this.uuid.toLowerCase()
-    };
-    if (this.data) {
-      obj.data = this.data;
-    }
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-    }
-    return obj;
+  get parentName(){
+    return "characteritic";
   }
 
   write(dataArray){
@@ -55,17 +34,8 @@ class BleDescriptor {
     );
   }
 
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(str){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
 
   read(){
-  
     this.characteristic.service.peripheral.Obniz.send(
         {
           ble : {
@@ -81,10 +51,8 @@ class BleDescriptor {
     );
   }
 
-  onwrite(){};
-  onread(){};
-  onwritefromremote(){}
-  onreadfromremote(){};
+
+
 }
 
 module.exports = BleDescriptor;
