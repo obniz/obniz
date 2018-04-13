@@ -39,7 +39,6 @@ properties:
                             description : "State duration time(ms)"
                             minimum : 0
                             maximum : 60000
-                            multipleOf: 0.001
                             example : 500
                         state :
                             type: object

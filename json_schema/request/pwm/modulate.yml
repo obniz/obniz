@@ -20,7 +20,6 @@ properties:
                type : number
                minimum : 0.05
                maximum : 1000
-               multipleOf : 0.001
                description : "symbol width (ms)"
 
            data : {$ref : "/zerooneArray" }
