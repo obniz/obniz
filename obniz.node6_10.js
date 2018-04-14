@@ -1827,6 +1827,7 @@ class Obniz {
     this.apiversion = 1;
     this.id = id;
     this.socket = null;
+    this.socket_local = null;
     this.debugprint = false;
     this.debugs = [];
     this.pongObservers = [];
@@ -1838,6 +1839,7 @@ class Obniz {
     if (!options) {
       options = {};
     }
+    this.options = options;
     this.server_obnizio = options.obniz_server || "wss://obniz.io";
     this._access_token = options.access_token;
     this.debugDomId = options.debug_dom_id || "obniz-debug";
@@ -2076,24 +2078,26 @@ class Obniz {
     }
     this.print_debug("connecting to " + url);
 
+    let socket;
     if (this.isNode) {
       const wsClient = __webpack_require__(/*! ws */ "ws");
-      this.socket = new wsClient(url);
-      this.socket.on('open', this.wsOnOpen.bind(this));
-      this.socket.on('message', this.wsOnMessage.bind(this));
-      this.socket.on('close', this.wsOnClose.bind(this));
-      this.socket.on('error', this.wsOnError.bind(this));
-      this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
+      socket = new wsClient(url);
+      socket.on('open', this.wsOnOpen.bind(this));
+      socket.on('message', this.wsOnMessage.bind(this));
+      socket.on('close', this.wsOnClose.bind(this));
+      socket.on('error', this.wsOnError.bind(this));
+      socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
     } else {
-      this.socket = new WebSocket(url);
-      this.socket.binaryType = 'arraybuffer';
-      this.socket.onopen = this.wsOnOpen.bind(this);
-      this.socket.onmessage = function (event) {
+      socket = new WebSocket(url);
+      socket.binaryType = 'arraybuffer';
+      socket.onopen = this.wsOnOpen.bind(this);
+      socket.onmessage = function (event) {
         this.wsOnMessage(event.data);
       }.bind(this);
-      this.socket.onclose = this.wsOnClose.bind(this);
-      this.socket.onerror = this.wsOnError.bind(this);
+      socket.onclose = this.wsOnClose.bind(this);
+      socket.onerror = this.wsOnError.bind(this);
     }
+    this.socket = socket;
   }
 
   clearSocket(socket) {
@@ -2215,7 +2219,7 @@ class Obniz {
     /* queue sending */
     if (typeof sendData === "string") {
       this._drainQueued();
-      this.socket.send(sendData);
+      this._sendRouted(sendData);
     } else {
       if (this._sendQueue) {
         this._sendQueue.push(sendData);
@@ -2223,6 +2227,17 @@ class Obniz {
         this._sendQueue = [sendData];
         this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
       }
+    }
+  }
+
+  _sendRouted(data) {
+    let canSendViaLocal = this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string";
+    if (canSendViaLocal) {
+      this.print_debug("routed via local");
+      this.print_debug(data);
+      this.socket_local.send(data);
+    } else {
+      this.socket.send(data);
     }
   }
 
@@ -2238,7 +2253,7 @@ class Obniz {
       sendData.set(this._sendQueue[i], filled);
       filled += this._sendQueue[i].length;
     }
-    this.socket.send(sendData);
+    this._sendRouted(sendData);
     delete this._sendQueue;
     clearTimeout(this._sendQueueTimer);
     this._sendQueueTimer = null;
@@ -2420,13 +2435,47 @@ class Obniz {
     }
   }
 
+  _connectLocal(host) {
+    const url = 'ws://' + host;
+    this.print_debug("local connect to " + url);
+    let ws;
+    if (this.isNode) {
+      const wsClient = __webpack_require__(/*! ws */ "ws");
+      ws = new wsClient(url);
+      // ws.on('open', this.wsOnOpen.bind(this));
+      ws.on('message', this.wsOnMessage.bind(this));
+      // ws.on('close', this.wsOnClose.bind(this));
+      // ws.on('error', this.wsOnError.bind(this));
+      // ws.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
+    } else {
+      ws = new WebSocket(url);
+      ws.binaryType = 'arraybuffer';
+      ws.onopen = () => {
+        console.log("onconnect to local");
+      };
+      ws.onmessage = function (event) {
+        this.print_debug("recvd via local");
+        this.wsOnMessage(event.data);
+      }.bind(this);
+      ws.onclose = event => {
+        console.log(event);
+      };
+      ws.onerror = err => {
+        console.log(err);
+      };
+    }
+    this.socket_local = ws;
+  }
+
   handleWSCommand(wsObj) {
     // ready
     if (wsObj.ready) {
-
       this.resetOnDisconnect(true);
       if (this.isNode === false) {
         this.showOnLine();
+      }
+      if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect !== false) {
+        this._connectLocal(wsObj.local_connect.ip);
       }
       if (this.onconnect) {
         let promise = this.onconnect(this);
@@ -5589,17 +5638,17 @@ class WSCommand {
   static dequeueOne(buf) {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
-      throw new Eror("something wrong. buf less than 3");
+      throw new Error("something wrong. buf less than 3");
     }
     if (buf[0] & 0x80) {
-      throw new Eror("reserved bit 1");
+      throw new Error("reserved bit 1");
     }
     var module = 0x7F & buf[0];
     var func = buf[1];
     var length_type = buf[2] >> 6 & 0x3;
     var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     if (length_type == 4) {
-      throw new Eror("invalid length");
+      throw new Error("invalid length");
     }
     var length = (buf[2] & 0x3F) << length_extra_bytse * 8;
     var index = 3;
