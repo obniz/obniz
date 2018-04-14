@@ -2196,6 +2196,9 @@ class Obniz {
     }
 
     let sendData = JSON.stringify([obj]);
+    if (this.debugprint) {
+      this.print_debug("send: " + sendData);
+    }
     /* compress */
     if (this.wscommand) {
       let compressed;
@@ -2210,12 +2213,7 @@ class Obniz {
         throw e;
       }
     }
-    if (this.debugprint) {
-      this.print_debug("send: " + (typeof sendData === "string" ? sendData : JSON.stringify(obj)));
-      if (this.debugprintBinary && typeof sendData !== "string") {
-        this.print_debug("send: " + sendData.toString());
-      }
-    }
+
     /* queue sending */
     if (typeof sendData === "string") {
       this._drainQueued();
@@ -2233,7 +2231,7 @@ class Obniz {
   _sendRouted(data) {
     let canSendViaLocal = this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string";
     if (canSendViaLocal) {
-      this.print_debug("routed via local");
+      this.print_debug("send via local");
       this.print_debug(data);
       this.socket_local.send(data);
     } else {
