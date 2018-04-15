@@ -51,6 +51,29 @@ module.exports = class Obniz extends ObnizUIs {
     });
   }
 
+  notifyToModule(obj){
+    super.notifyToModule(obj);
+    // notify messaging
+    if (typeof (obj.message) === "object" && this.onmessage) {
+      this.onmessage(obj.message.data, obj.message.from);
+    }
+    // debug
+    if (typeof (obj.debug) === "object") {
+      if (obj.debug.warning) {
+        let msg = "Warning: " + obj.debug.warning.message;
+        this.warning({alert: 'warning', message: msg});
+      }
+
+      if (obj.debug.error) {
+        let msg = "Error: " + obj.debug.error.message;
+        this.error({alert: 'error', message: msg});
+      }
+      if (this.ondebug) {
+        this.ondebug(obj.debug);
+      }
+    }
+  }
+
   warning(msg) {
     if (this.isNode) {
       console.error(msg);

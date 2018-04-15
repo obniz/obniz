@@ -20,39 +20,29 @@ module.exports = class ObnizComponents extends ObnizParts {
 
   constructor(id, options) {
     super(id, options)
+    this.pongObservers = [];
+  }
+
+  _prepareComponents() {
+    this.io = new PeripheralIO_(this);
+    for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
+    for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
+    for (let i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
+    for (let i=0; i<2;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
+    for (let i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
+    for (let i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
+  
+    this.display = new Display(this);
+    this.switch = new ObnizSwitch(this);
+    this.logicAnalyzer = new LogicAnalyzer(this);
+    this.ble = new ObnizBLE(this);
+    this.measure = new ObnizMeasure(this);
+  
+    this.util = new ObnizUtil(this);
   }
 
   notifyToModule(obj){
-    this.print_debug(JSON.stringify(obj));
-
-    // notify messaging
-    if (typeof (obj.message) === "object" && this.onmessage) {
-      this.onmessage(obj.message.data, obj.message.from);
-    }
-    // debug
-    if (typeof (obj.debug) === "object") {
-      if (obj.debug.warning) {
-        let msg = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: 'warning', message: msg});
-      }
-
-      if (obj.debug.error) {
-        let msg = "Error: " + obj.debug.error.message;
-        this.error({alert: 'error', message: msg});
-      }
-      if (this.ondebug) {
-        this.ondebug(obj.debug);
-      }
-    }
-    // ws command
-    if (obj["ws"]) {
-      this.handleWSCommand(obj["ws"]);
-      return;
-    }
-    if (obj["system"]) {
-      this.handleSystemCommand(obj["system"]);
-      return;
-    }
+    super.notifyToModule(obj);
     const notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
     for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
       const peripheral = notifyHandlers[handerIndex];
@@ -75,48 +65,8 @@ module.exports = class ObnizComponents extends ObnizParts {
     }
   }
 
-  _prepareComponents() {
-    this.io = new PeripheralIO_(this);
-    for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
-    for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
-    for (let i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
-    for (let i=0; i<2;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
-    for (let i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
-    for (let i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
-  
-    this.display = new Display(this);
-    this.switch = new ObnizSwitch(this);
-    this.logicAnalyzer = new LogicAnalyzer(this);
-    this.ble = new ObnizBLE(this);
-    this.measure = new ObnizMeasure(this);
-  
-    this.util = new ObnizUtil(this);
-  }
-
-  handleWSCommand(wsObj) {
-    // 
-    if (wsObj.ready) {
-      this.resetOnDisconnect(true);
-      if (wsObj.local_connect
-        && wsObj.local_connect.ip
-        && this.wscommand
-        && this.options.local_connect) {
-        this._connectLocal(wsObj.local_connect.ip);
-        this._waitForLocalConnectReadyTimer = setTimeout(()=>{ this._callOnConnect(); }, 1000);
-      }
-      if (!this._waitForLocalConnectReadyTimer) {
-        this._callOnConnect();
-      }
-    }
-    if (wsObj.redirect) {
-      let server = wsObj.redirect;
-      this.print_debug("WS connection changed to " + server);
-      this.close();
-      this.wsconnect(server);
-    }
-  }
-
   handleSystemCommand(wsObj) {
+    super.handleSystemCommand(wsObj);
     // ping pong
     if (wsObj.pong) {
       for(let callback of this.pongObservers){

@@ -1816,58 +1816,7 @@ module.exports = class ObnizComponents extends ObnizParts {
 
   constructor(id, options) {
     super(id, options);
-  }
-
-  notifyToModule(obj) {
-    this.print_debug(JSON.stringify(obj));
-
-    // notify messaging
-    if (typeof obj.message === "object" && this.onmessage) {
-      this.onmessage(obj.message.data, obj.message.from);
-    }
-    // debug
-    if (typeof obj.debug === "object") {
-      if (obj.debug.warning) {
-        let msg = "Warning: " + obj.debug.warning.message;
-        this.warning({ alert: 'warning', message: msg });
-      }
-
-      if (obj.debug.error) {
-        let msg = "Error: " + obj.debug.error.message;
-        this.error({ alert: 'error', message: msg });
-      }
-      if (this.ondebug) {
-        this.ondebug(obj.debug);
-      }
-    }
-    // ws command
-    if (obj["ws"]) {
-      this.handleWSCommand(obj["ws"]);
-      return;
-    }
-    if (obj["system"]) {
-      this.handleSystemCommand(obj["system"]);
-      return;
-    }
-    const notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
-    for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
-      const peripheral = notifyHandlers[handerIndex];
-      let i = -1;
-      while (this[peripheral + "" + ++i]) {
-        let module_value = obj[peripheral + "" + i];
-        if (module_value === undefined) continue;
-        this[peripheral + "" + i].notified(module_value);
-      }
-    }
-    const names = ["switch", "ble", "measure"];
-    for (let i = 0; i < names.length; i++) {
-      if (obj[names[i]]) {
-        this[names[i]].notified(obj[names[i]]);
-      }
-    }
-    if (obj.logic_analyzer) {
-      this.logicAnalyzer.notified(obj.logic_analyzer);
-    }
+    this.pongObservers = [];
   }
 
   _prepareComponents() {
@@ -1900,29 +1849,31 @@ module.exports = class ObnizComponents extends ObnizParts {
     this.util = new ObnizUtil(this);
   }
 
-  handleWSCommand(wsObj) {
-    // 
-    if (wsObj.ready) {
-      this.resetOnDisconnect(true);
-      if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect) {
-        this._connectLocal(wsObj.local_connect.ip);
-        this._waitForLocalConnectReadyTimer = setTimeout(() => {
-          this._callOnConnect();
-        }, 1000);
-      }
-      if (!this._waitForLocalConnectReadyTimer) {
-        this._callOnConnect();
+  notifyToModule(obj) {
+    super.notifyToModule(obj);
+    const notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
+    for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
+      const peripheral = notifyHandlers[handerIndex];
+      let i = -1;
+      while (this[peripheral + "" + ++i]) {
+        let module_value = obj[peripheral + "" + i];
+        if (module_value === undefined) continue;
+        this[peripheral + "" + i].notified(module_value);
       }
     }
-    if (wsObj.redirect) {
-      let server = wsObj.redirect;
-      this.print_debug("WS connection changed to " + server);
-      this.close();
-      this.wsconnect(server);
+    const names = ["switch", "ble", "measure"];
+    for (let i = 0; i < names.length; i++) {
+      if (obj[names[i]]) {
+        this[names[i]].notified(obj[names[i]]);
+      }
+    }
+    if (obj.logic_analyzer) {
+      this.logicAnalyzer.notified(obj.logic_analyzer);
     }
   }
 
   handleSystemCommand(wsObj) {
+    super.handleSystemCommand(wsObj);
     // ping pong
     if (wsObj.pong) {
       for (let callback of this.pongObservers) {
@@ -2092,7 +2043,6 @@ module.exports = class ObnizConnection {
     this.socket_local = null;
     this.debugprint = false;
     this.debugs = [];
-    this.pongObservers = [];
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this._prepareComponents();
     if (!options) {
@@ -2113,21 +2063,6 @@ module.exports = class ObnizConnection {
       for (let class_name in classes) {
         this.wscommands.push(new classes[class_name]());
       }
-    }
-    if (this.isNode === false) {
-      this.showOffLine();
-    }
-    if (!this.isValidObnizId(this.id)) {
-      if (this.isNode) {
-        console.error("invalid obniz id");
-      } else {
-        let filled = _ReadCookie("obniz-last-used") || "";
-        this.prompt(filled, function (obnizid) {
-          this.id = obnizid;
-          this.wsconnect();
-        }.bind(this));
-      }
-      return;
     }
     if (this.options.auto_connect) {
       this.wsconnect();
@@ -2470,7 +2405,42 @@ module.exports = class ObnizConnection {
 
   _prepareComponents() {}
 
-  notifyToModule() {}
+  notifyToModule(obj) {
+    this.print_debug(JSON.stringify(obj));
+
+    if (obj["ws"]) {
+      this.handleWSCommand(obj["ws"]);
+      return;
+    }
+    if (obj["system"]) {
+      this.handleSystemCommand(obj["system"]);
+      return;
+    }
+  }
+
+  handleWSCommand(wsObj) {
+    // 
+    if (wsObj.ready) {
+      this.resetOnDisconnect(true);
+      if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect) {
+        this._connectLocal(wsObj.local_connect.ip);
+        this._waitForLocalConnectReadyTimer = setTimeout(() => {
+          this._callOnConnect();
+        }, 1000);
+      }
+      if (!this._waitForLocalConnectReadyTimer) {
+        this._callOnConnect();
+      }
+    }
+    if (wsObj.redirect) {
+      let server = wsObj.redirect;
+      this.print_debug("WS connection changed to " + server);
+      this.close();
+      this.wsconnect(server);
+    }
+  }
+
+  handleSystemCommand(wsObj) {}
 
   static get WSCommand() {
     return WSCommand;
@@ -2499,22 +2469,15 @@ module.exports = class ObnizConnection {
   showOnLine() {}
 
   showOffLine() {}
-};
 
-function _ReadCookie(name) {
-  let nameEQ = name + "=";
-  let ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') {
-      c = c.substring(1, c.length);
-    }
-    if (c.indexOf(nameEQ) === 0) {
-      return c.substring(nameEQ.length, c.length);
-    }
+  warning(msg) {
+    console.log('warning:' + msg);
   }
-  return null;
-}
+
+  error(msg) {
+    console.error('error:' + msg);
+  }
+};
 
 /***/ }),
 
@@ -2708,6 +2671,25 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     super(id, options);
   }
 
+  wsconnect(desired_server) {
+    if (this.isNode === false) {
+      this.showOffLine();
+    }
+    if (!this.isValidObnizId(this.id)) {
+      if (this.isNode) {
+        this.error("invalid obniz id");
+      } else {
+        let filled = _ReadCookie("obniz-last-used") || "";
+        this.prompt(filled, function (obnizid) {
+          this.id = obnizid;
+          this.wsconnect(desired_server);
+        }.bind(this));
+      }
+      return;
+    }
+    super.wsconnect(desired_server);
+  }
+
   showAlertUI(obj) {
     if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
       return;
@@ -2770,6 +2752,21 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     }
   }
 };
+
+function _ReadCookie(name) {
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1, c.length);
+    }
+    if (c.indexOf(nameEQ) === 0) {
+      return c.substring(nameEQ.length, c.length);
+    }
+  }
+  return null;
+}
 
 /***/ }),
 
@@ -2842,6 +2839,29 @@ module.exports = class Obniz extends ObnizUIs {
         data: message
       }
     });
+  }
+
+  notifyToModule(obj) {
+    super.notifyToModule(obj);
+    // notify messaging
+    if (typeof obj.message === "object" && this.onmessage) {
+      this.onmessage(obj.message.data, obj.message.from);
+    }
+    // debug
+    if (typeof obj.debug === "object") {
+      if (obj.debug.warning) {
+        let msg = "Warning: " + obj.debug.warning.message;
+        this.warning({ alert: 'warning', message: msg });
+      }
+
+      if (obj.debug.error) {
+        let msg = "Error: " + obj.debug.error.message;
+        this.error({ alert: 'error', message: msg });
+      }
+      if (this.ondebug) {
+        this.ondebug(obj.debug);
+      }
+    }
   }
 
   warning(msg) {

@@ -5,7 +5,27 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   constructor(id, options) {
     super(id, options)
   }
-  
+
+  wsconnect(desired_server) {
+    if (this.isNode === false) {
+      this.showOffLine();
+    }
+    if (!this.isValidObnizId(this.id)) {
+      if (this.isNode) {
+        this.error("invalid obniz id");
+      }
+      else {
+        let filled = _ReadCookie("obniz-last-used") || "";
+        this.prompt(filled, function (obnizid) {
+          this.id = obnizid;
+          this.wsconnect(desired_server);
+        }.bind(this));
+      }
+      return;
+    }
+    super.wsconnect(desired_server);
+  }
+
   showAlertUI(obj) {
     if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
       return;
@@ -61,4 +81,19 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
       doms.statusDom.innerHTML = this.id  ? "offline : "+ this.id : "offline";
     }
   }
+}
+
+function _ReadCookie(name) {
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for(let i=0;i < ca.length;i++) {
+    let c = ca[i];
+      while (c.charAt(0) === ' ') {
+          c = c.substring(1,c.length);
+      }
+      if (c.indexOf(nameEQ) === 0) {
+          return c.substring(nameEQ.length,c.length);
+      }
+  }
+  return null;
 }
