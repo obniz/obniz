@@ -512,7 +512,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 |:---- |:---- |:---- |:---- |
 | `io.animation.animation.name` |  string  | <ul><li>required</li><li>1 &le; length &le; 254</li></ul> | Animation name to use pause/resume&nbsp; |
 | `io.animation.animation.status` |  string  | <ul><li>required</li><li>const `"loop"`</li></ul> | &nbsp; |
-| `io.animation.animation.states[].duration` |  integer  | <ul><li>required</li><li>0 &le; value &le; 60000</li><li> unit: 0.001</li></ul> | State duration time(ms)&nbsp; |
+| `io.animation.animation.states[].duration` |  integer  | <ul><li>required</li><li>0 &le; value &le; 60000</li></ul> | State duration time(ms)&nbsp; |
 | `io.animation.animation.states[].state` |  object  | <ul><li>required</li></ul> | io/pwm commands.&nbsp; |
 
 
@@ -718,7 +718,7 @@ available 0 to 5
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `pwmX.pulse` |  number  | <ul><li>required</li><li>0 &le; value</li><li> unit: 0.001</li></ul> | pulse width (ms)&nbsp; |
+| `pwmX.pulse` |  number  | <ul><li>required</li><li>0 &le; value</li></ul> | pulse width (ms)&nbsp; |
 
 
 
@@ -765,7 +765,7 @@ available 0 to 5
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `pwmX.modulate.type` |  string  | <ul><li>required</li><li>const `"am"`</li></ul> | &nbsp; |
-| `pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li><li> unit: 0.001</li></ul> | symbol width (ms)&nbsp; |
+| `pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li></ul> | symbol width (ms)&nbsp; |
 | `pwmX.modulate.data` | [zerooneArray](#zeroonearray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
@@ -777,7 +777,7 @@ available 0 to 5
         "pwm0": {
             "modulate": {
                 "type": "am",
-                "symbol_length": 500.024,
+                "symbol_length": 500,
                 "data": [0, 1, 1, 0, 0, 1, 1, 0]
             }
         }
@@ -1275,7 +1275,7 @@ Monitor io logic level changes by sampling io.
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `logic_analyzer.io[]` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
-| `logic_analyzer.interval` |  number  | <ul><li>required</li><li>0 < value</li><li> unit: 0.001</li></ul> | &nbsp; |
+| `logic_analyzer.interval` |  number  | <ul><li>required</li><li>0 < value</li></ul> | &nbsp; |
 | `logic_analyzer.duration` |  integer  | <ul><li>required</li><li>0 < value</li></ul> | &nbsp; |
 | `logic_analyzer.triger.value` |  boolean  | <ul><li>required</li></ul> | start value&nbsp; |
 | `logic_analyzer.triger.samples` |  integer  | <ul><li>required</li><li>0 &le; value</li></ul> | how that values consists&nbsp; |
@@ -1370,9 +1370,9 @@ Related item
 | `measure.echo.io_pulse` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
 | `measure.echo.io_echo` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
 | `measure.echo.pulse` |  string  | <ul><li>default `positive`</li><li>enum <ul><li>`"positive"`</li><li>`"negative"`</li></ul></li></ul> | &nbsp; |
-| `measure.echo.pulse_width` |  number  | <ul><li>required</li><li>0.001 &le; value &le; 1000</li><li> unit: 0.001</li></ul> | &nbsp; |
+| `measure.echo.pulse_width` |  number  | <ul><li>required</li><li>0.001 &le; value &le; 1000</li></ul> | &nbsp; |
 | `measure.echo.measure_edges` |  integer  | <ul><li>1 &le; value &le; 4</li></ul> | &nbsp; |
-| `measure.echo.timeout` |  number  | <ul><li>default `1000`</li><li>0.001 &le; value &le; 1000</li><li> unit: 0.001</li></ul> | &nbsp; |
+| `measure.echo.timeout` |  number  | <ul><li>default `1000`</li><li>0.001 &le; value &le; 1000</li></ul> | &nbsp; |
 
 
 
