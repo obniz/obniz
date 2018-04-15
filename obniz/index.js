@@ -230,7 +230,7 @@ class Obniz {
   }
 
   wsOnError(event) {
-    console.error("websocket error.");
+    // console.error(event);
   }
 
   wsOnUnexpectedResponse(req, res) {
