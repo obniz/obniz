@@ -2016,6 +2016,7 @@ class Obniz {
     }
 
     this.clearSocket(this.socket);
+    delete this.socket;
 
     if (typeof this.onclose === "function") {
       this.onclose(this);
@@ -2030,7 +2031,7 @@ class Obniz {
   }
 
   wsOnError(event) {
-    console.error("websocket error.");
+    // console.error(event);
   }
 
   wsOnUnexpectedResponse(req, res) {
@@ -2043,6 +2044,7 @@ class Obniz {
       this.print_debug( true ? res.statusCode : undefined);
     }
     this.clearSocket(this.socket);
+    delete this.socket;
     if (this.options.auto_connect) {
       setTimeout(function () {
         // always connect to mainserver if ws lost
@@ -2056,10 +2058,9 @@ class Obniz {
     if (desired_server) {
       server = "" + desired_server;
     }
-    if (this.socket) {
-      this.socket.close();
-      this.clearSocket(this.socket);
-    }
+
+    this.close();
+
     let url = server + "/obniz/" + this.id + "/ws/1";
     if (this.constructor.version) {
       url += "?obnizjs=" + this.constructor.version;
@@ -2095,6 +2096,7 @@ class Obniz {
   }
 
   clearSocket(socket) {
+    if (!socket) return;
     /* send queue */
     if (this._sendQueueTimer) {
       delete this._sendQueue;
@@ -2103,7 +2105,7 @@ class Obniz {
     }
     /* unbind */
     if (this.isNode) {
-      let shouldRemoveObservers = ['open', 'message', 'close', 'error'];
+      let shouldRemoveObservers = ['open', 'message', 'close', 'error', 'unexpected-response'];
       for (let i = 0; i < shouldRemoveObservers.length; i++) {
         socket.removeAllListeners(shouldRemoveObservers[i]);
       }
@@ -2113,7 +2115,6 @@ class Obniz {
       socket.onclose = null;
       socket.onerror = null;
     }
-    this.socket = null;
   }
 
   connect() {
@@ -2121,10 +2122,12 @@ class Obniz {
   }
 
   close() {
+    this._drainQueued();
+    this._disconnectLocal();
     if (this.socket) {
-      this._drainQueued();
       this.socket.close(1000, 'close');
       this.clearSocket(this.socket);
+      delete this.socket;
     }
   }
 
@@ -2436,7 +2439,7 @@ class Obniz {
     if (this.isNode) {
       const wsClient = __webpack_require__(/*! ws */ "ws");
       ws = new wsClient(url);
-      ws.on('open', this.wsOnOpen.bind(this));
+      // ws.on('open', this.wsOnOpen.bind(this));
       ws.on('message', event => {
         this.print_debug("recvd via local");
         this.wsOnMessage(event.data);
@@ -2451,38 +2454,52 @@ class Obniz {
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
         this.print_debug("connected to " + url);
+        if (this._waitForLocalConnectReadyTimer) {
+          clearTimeout(this._waitForLocalConnectReadyTimer);
+          this._waitForLocalConnectReadyTimer = null;
+          this._callOnConnect();
+        }
       };
       ws.onmessage = event => {
         this.print_debug("recvd via local");
         this.wsOnMessage(event.data);
       };
       ws.onclose = event => {
-        console.log(event);
+        console.log('local websocket closed');
+        this._disconnectLocal();
       };
       ws.onerror = err => {
-        console.error("local websocket error.");
+        console.log("local websocket error.", err);
+        this._disconnectLocal();
       };
     }
     this.socket_local = ws;
   }
 
+  _disconnectLocal() {
+    if (this._waitForLocalConnectReadyTimer) {
+      clearTimeout(this._waitForLocalConnectReadyTimer);
+      this._waitForLocalConnectReadyTimer = null;
+    }
+    if (this.socket_local) {
+      this.socket_local.close();
+      this.clearSocket(this.socket_local);
+      delete this.socket_local;
+    }
+  }
+
   handleWSCommand(wsObj) {
-    // ready
+    // 
     if (wsObj.ready) {
       this.resetOnDisconnect(true);
-      if (this.isNode === false) {
-        this.showOnLine();
-      }
       if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect) {
         this._connectLocal(wsObj.local_connect.ip);
+        this._waitForLocalConnectReadyTimer = setTimeout(() => {
+          this._callOnConnect();
+        }, 1000);
       }
-      if (this.onconnect) {
-        let promise = this.onconnect(this);
-        if (promise instanceof Promise) {
-          promise.catch(err => {
-            console.error(err);
-          });
-        }
+      if (!this._waitForLocalConnectReadyTimer) {
+        this._callOnConnect();
       }
     }
     if (wsObj.redirect) {
@@ -2490,6 +2507,23 @@ class Obniz {
       this.print_debug("WS connection changed to " + server);
       this.close();
       this.wsconnect(server);
+    }
+  }
+
+  _callOnConnect() {
+    if (this.isNode === false) {
+      this.showOnLine();
+    }
+    if (this._waitForLocalConnectReadyTimer) {
+      clearTimeout(this._waitForLocalConnectReadyTimer);
+      this._waitForLocalConnectReadyTimer = null;
+    }
+    if (typeof this.onconnect !== "function") return;
+    const promise = this.onconnect(this);
+    if (promise instanceof Promise) {
+      promise.catch(err => {
+        console.error(err);
+      });
     }
   }
 
