@@ -6446,7 +6446,7 @@ module.exports = class ObnizConnection {
         this._sendQueue.push(sendData);
       } else {
         this._sendQueue = [sendData];
-        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
+        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
       }
     }
   }
