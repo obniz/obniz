@@ -35,7 +35,7 @@ class BlePeripheral {
   removeService(uuid){
     this.services = this.services.filter(function(element){
       return element.uuid.toLowerCase() !== uuid;
-    }).shift();
+    });
   }
 
   stopAllService(){
