@@ -10,6 +10,7 @@ description : "use obniz as peripheral"
   -  {$ref : "/request/ble/peripheral/advertisement_stop"}
   -  {$ref : "/request/ble/peripheral/service_start"}
   -  {$ref : "/request/ble/peripheral/service_stop"}
+  -  {$ref : "/request/ble/peripheral/service_stop_all"}
   -  {$ref : "/request/ble/peripheral/characteristic_read"}
   -  {$ref : "/request/ble/peripheral/characteristic_write"}
   -  {$ref : "/request/ble/peripheral/descriptor_read"}

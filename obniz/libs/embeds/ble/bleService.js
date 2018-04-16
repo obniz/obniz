@@ -31,6 +31,21 @@ class BleService extends BleAttributeAbstract{
     }
   }
 
+  end(){
+    this.peripheral.Obniz.send(
+        {
+          ble : {
+            peripheral: {
+              stop_service: {
+                service_uuid: this.uuid.toLowerCase() ,
+              }
+            }
+          }
+        }
+    );
+    this.peripheral.removeService(this.uuid);
+  }
+
   notify(notifyName, params){
     //nothing
   }

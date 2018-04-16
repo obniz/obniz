@@ -7,4 +7,13 @@ type: object
 required : [peripheral]
 properties:
     peripheral :
-        type : "null"
+        type : object
+        required : [stop_service]
+        properties:
+            stop_service :
+                type : object
+                required: [service_uuid]
+                additionalProperties: false
+                properties:
+                    service_uuid : {$ref : "/uuid"}
+

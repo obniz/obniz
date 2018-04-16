@@ -43,6 +43,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerNotifyWriteDescriptorValue = 31;
     this._CommandServerNotifyReadDescriptorValue = 32;
     this._CommandServerNofityCharavteristic = 33;
+    this._CommandServerStartStopService = 34;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -291,10 +292,18 @@ class WSCommand_Ble extends WSCommand {
           {path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags},
           {path: "data", type: "dataArray"}
         ]
+      },
+      startService : {
+        command: this._CommandServerStartStopService,
+        schema: [
+          {path: "uuid", length: 18, type: "uuid", required: true},
+          {path: null, length: 1, type: "char", default: 0},   //const val
+        ]
       }
     };
 
     var sendBufs = [];
+    var startServiceBufs = [];
     var buf;
     for (var serviceIndex in val["services"]) {
       var service = val["services"][serviceIndex];
@@ -303,6 +312,9 @@ class WSCommand_Ble extends WSCommand {
         return;
       }
       sendBufs.push({command: schema["service"].command, buffer: buf});
+
+      buf = JsonBinaryConverter.createSendBuffer(schema["startService"].schema, service);
+      startServiceBufs.push({command: schema["startService"].command, buffer: buf})
 
       for (var charaIndex in service["characteristics"]) {
         var chara = service["characteristics"][charaIndex];
@@ -325,15 +337,24 @@ class WSCommand_Ble extends WSCommand {
         }
       }
     }
-    if (sendBufs.length > 0) {
-      sendBufs.push({command: this._CommandServerStartPeripheral, buffer: new Uint8Array([0])});
-    }
     for (var index in sendBufs) {
       this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
+    }
+    for (var index in startServiceBufs) {
+      this.sendCommand(startServiceBufs[index].command, startServiceBufs[index].buffer);
     }
   }
 
   peripheralServiceStop(params) {
+    var schema = [
+      {path: "peripheral.stop_service.service_uuid", length: 18, type: "uuid", required: true},
+      {path: null, length: 1, type: "char", default: 1},   //const val
+    ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandServerStartStopService, buf);
+  }
+
+  peripheralServiceStopAll(params) {
     this.sendCommand(this._CommandServerStartPeripheral, new Uint8Array([1]));
   }
 
@@ -414,6 +435,7 @@ class WSCommand_Ble extends WSCommand {
       {uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop},
       {uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart},
       {uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop},
+      {uri: "/request/ble/peripheral/service_stop_all", onValid: this.peripheralServiceStopAll},
       {uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
       {uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite},
       {uri: "/request/ble/peripheral/characteristic_notify", onValid: this.peripheralCharacteristicNotify},

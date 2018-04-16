@@ -1,0 +1,10 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/peripheral/service_stop_all"
+
+type: object
+required : [peripheral]
+properties:
+    peripheral :
+        type : "null"

@@ -32,6 +32,24 @@ class BlePeripheral {
     }).shift();
   }
 
+  removeService(uuid){
+    this.services = this.services.filter(function(element){
+      return element.uuid.toLowerCase() !== uuid;
+    }).shift();
+  }
+
+  stopAllService(){
+    this.Obniz.send(
+        {
+          ble : {
+            peripheral: null
+
+          }
+        }
+    );
+    this.services = [];
+  }
+
   toJSON(){
     return {
       services : this.services
