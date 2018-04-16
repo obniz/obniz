@@ -14,8 +14,8 @@ describe("ble", function () {
     testUtil.setupObnizPromise(this, function () {
     });
     var stub = sinon.stub();
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
     var results = [{
       "ble":

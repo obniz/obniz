@@ -18,39 +18,39 @@ describe("ble", function () {
 
 
   it("scan", function () {
-    this.obniz.ble.startScan(null,{duration: 10});
+    this.obniz.ble.scan.start(null,{duration: 10});
 
     expect(this.obniz).send([{ble: {scan: {duration: 10}}}]);
     expect(this.obniz).to.be.finished;
   });
   it("scan default", function () {
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
     expect(this.obniz).to.be.finished;
   });
   it("scan stop", function () {
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
-    this.obniz.ble.stopScan();
+    this.obniz.ble.scan.end();
     expect(this.obniz).send([{ble: {scan: null}}]);
     expect(this.obniz).to.be.finished;
   });
 
 
-  it("callback default function onscan", function () {
-    expect(this.obniz.ble.onscan).to.have.not.throws();
+  it("callback default function onfind", function () {
+    expect(this.obniz.ble.scan.onfind).to.have.not.throws();
   });
-  it("callback default function onscanfinish", function () {
-    expect(this.obniz.ble.onscanfinish).to.have.not.throws();
+  it("callback default function onfindfinish", function () {
+    expect(this.obniz.ble.scan.onfinish).to.have.not.throws();
   });
 
   it("on scan", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
@@ -87,8 +87,8 @@ describe("ble", function () {
   it("on scan2", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
@@ -125,9 +125,9 @@ describe("ble", function () {
     var stub1 = sinon.stub();
     var stub2 = sinon.stub();
 
-    this.obniz.ble.onscan = stub1;
-    this.obniz.ble.onscanfinish = stub2;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub1;
+    this.obniz.ble.scan.onfinish = stub2;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
@@ -158,9 +158,9 @@ describe("ble", function () {
     var stub1 = sinon.stub();
     var stub2 = sinon.stub();
 
-    this.obniz.ble.onscan = stub1;
-    this.obniz.ble.onscanfinish = stub2;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub1;
+    this.obniz.ble.scan.onfinish = stub2;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
@@ -215,8 +215,8 @@ describe("ble", function () {
   it("connect", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
@@ -268,8 +268,8 @@ describe("ble", function () {
   it("disconnect", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 

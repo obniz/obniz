@@ -29,8 +29,8 @@ describe("7-ble", function () {
     });
     obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
-    obnizA.ble.setAdvData(ad);
-    obnizA.ble.startAdvertisement();
+    obnizA.ble.advertisement.setAdvData(ad);
+    obnizA.ble.advertisement.start();
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
@@ -46,7 +46,7 @@ describe("7-ble", function () {
         found = true;
       }
     }
-    obnizB.ble.startScan(null,{duration: 30});
+    obnizB.ble.scan.start(null,{duration: 30});
 
     while (!found) {
       await wait(1);
@@ -66,8 +66,8 @@ describe("7-ble", function () {
     obnizA.ble.setScanRespData({
       localName: localName
     });
-    obnizA.ble.setAdvData(ad);
-    obnizA.ble.startAdvertisement();
+    obnizA.ble.advertisement.setAdvData(ad);
+    obnizA.ble.advertisement.start();
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
@@ -76,7 +76,7 @@ describe("7-ble", function () {
         found = true;
       }
     };
-    obnizB.ble.startScan(null, {duration: 30});
+    obnizB.ble.scan.start(null, {duration: 30});
 
     while (!found) {
       await wait(1);

@@ -48,13 +48,13 @@ describe("7-ble", function () {
     obnizA.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
 
     let ad = service.advData;
-    obnizA.ble.setAdvData(ad);
-    obnizA.ble.startAdvertisement();
+    obnizA.ble.advertisement.setAdvData(ad);
+    obnizA.ble.advertisement.start();
     console.log("service created");
     await obnizA.pingWait();
     console.log("scannning");
-    await obnizB.ble.startScanWait({uuids: ["FFF0"]});
-    let peripheral = await obnizB.ble.startScanWait({uuids: ["FFF0"]});
+    await obnizB.ble.scan.startWait({uuids: ["FFF0"]});
+    let peripheral = await obnizB.ble.scan.startWait({uuids: ["FFF0"]});
     if (!peripheral) {
       throw new Error("NOT FOUND");
     }

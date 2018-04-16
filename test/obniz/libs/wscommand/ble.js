@@ -1326,7 +1326,7 @@ describe("ble.log", function () {
 
   it("request set service",  function () {
     let requestJson  = [{"ble":{"peripheral":{"services":[{"uuid":"ffe0","characteristics":[{"uuid":"fff1","data":[72,105],"descriptors":[]}]}]}}}];
-    let expecteBinaryStrings = ["b 16 12 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 29 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 a 48 69","b 14 1 0"];
+    let expecteBinaryStrings = ["b 16 12 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 29 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 a 48 69","b 22 13 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -1350,7 +1350,7 @@ describe("ble.log", function () {
 
   it("request set service2",  function () {
     let requestJson  = [{"ble":{"peripheral":{"services":[{"uuid":"fff0","characteristics":[{"uuid":"fff1","data":[72,105],"descriptors":[{"uuid":"00ff","data":[1,2]}]}]}]}}}];
-    let expecteBinaryStrings = ["b 16 12 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 29 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 a 48 69","b 18 3a 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 1 2","b 14 1 0"];
+    let expecteBinaryStrings = ["b 16 12 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 29 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 a 48 69","b 18 3a 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 1 2","b 22 13 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"];
 
     expect(requestJson.length).to.be.equal(1);
 

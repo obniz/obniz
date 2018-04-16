@@ -2723,6 +2723,33 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
+| `ble.peripheral.stop_service.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "peripheral": {
+                "stop_service": {
+                    "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"
+                }
+            }
+        }
+    }
+]
+```
+
+
+###  request: <a name="-request-ble-peripheral-service_stop_all">service_stop_all</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
 | `ble.peripheral` |  null  | <ul><li>required</li></ul> | &nbsp; |
 
 

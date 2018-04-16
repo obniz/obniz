@@ -124,6 +124,7 @@ var map = {
 	"./request/ble/peripheral/index.yml": "./json_schema/request/ble/peripheral/index.yml",
 	"./request/ble/peripheral/servie_start.yml": "./json_schema/request/ble/peripheral/servie_start.yml",
 	"./request/ble/peripheral/servie_stop.yml": "./json_schema/request/ble/peripheral/servie_stop.yml",
+	"./request/ble/peripheral/servie_stop_all.yml": "./json_schema/request/ble/peripheral/servie_stop_all.yml",
 	"./request/display/clear.yml": "./json_schema/request/display/clear.yml",
 	"./request/display/index.yml": "./json_schema/request/display/index.yml",
 	"./request/display/pin_assign.yml": "./json_schema/request/display/pin_assign.yml",
@@ -557,7 +558,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","description":"use obniz as peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","description":"use obniz as peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/service_stop_all"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
 
 /***/ }),
 
@@ -579,7 +580,18 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["stop_service"],"properties":{"stop_service":{"type":"object","required":["service_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/peripheral/servie_stop_all.yml":
+/*!****************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/servie_stop_all.yml ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop_all","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
 
 /***/ }),
 
@@ -2812,13 +2824,13 @@ const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./obniz/libs/embeds/ble/bleRemotePeripheral.js");
+const BleAdvertisement = __webpack_require__(/*! ./bleAdvertisement */ "./obniz/libs/embeds/ble/bleAdvertisement.js");
+const BleScan = __webpack_require__(/*! ./bleScan */ "./obniz/libs/embeds/ble/bleScan.js");
 
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.remotePeripherals = [];
-    this.adv_data = [];
-    this.scan_resp = [];
 
     this.service = BleService;
     this.characteristic = BleCharacteristic;
@@ -2826,262 +2838,9 @@ class ObnizBLE {
     this.peripheral = new BlePeripheral(Obniz);
 
     this.scanTarget = null;
-  }
 
-  startAdvertisement() {
-    var obj = {};
-    obj["ble"] = {};
-    obj["ble"]["advertisement"] = {
-      adv_data: this.adv_data
-    };
-
-    if (this.scan_resp.length > 0) {
-      obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
-    }
-
-    this.Obniz.send(obj);
-    return;
-  }
-
-  stopAdvertisement() {
-    var obj = {};
-    obj["ble"] = {};
-    obj["ble"]["advertisement"] = null;
-    this.Obniz.send(obj);
-    return;
-  }
-
-  setAdvDataRaw(adv_data) {
-    var obj = {};
-    this.adv_data = adv_data;
-    return;
-  }
-
-  setAdvData(json) {
-    var builder = this.advDataBulider(json);
-    this.setAdvDataRaw(builder.build());
-    return;
-  }
-
-  dataBuliderPrototype() {
-
-    var builder = function (Obniz, json) {
-      this.Obniz = Obniz;
-      this.rows = {};
-
-      if (json) {
-        if (json.localName) {
-          this.setCompleteLocalName(json.localName);
-        }
-        if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
-          this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
-        }
-        if (json.serviceUuids) {
-          for (var key in json.serviceUuids) {
-            this.setUuid(json.serviceUuids[key]);
-          }
-        }
-      }
-      if (typeof this.extendEvalJson === "function") {
-        this.extendEvalJson(json);
-      }
-    };
-    builder.prototype.setRow = function (type, data) {
-      this.rows[type] = data;
-    };
-    builder.prototype.getRow = function (type) {
-      return this.rows[type] || [];
-    };
-
-    builder.prototype.check = function () {
-      return true;
-    };
-
-    builder.prototype.build = function () {
-      if (!this.check) {
-        return;
-      }
-      var data = [];
-      for (var key in this.rows) {
-        if (this.rows[key].length === 0) continue;
-
-        data.push(this.rows[key].length + 1);
-        data.push(parseInt(key));
-        Array.prototype.push.apply(data, this.rows[key]);
-      }
-      if (data.length > 31) {
-        this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
-      }
-
-      return data;
-    };
-
-    builder.prototype.setStringData = function (type, string) {
-      var data = [];
-
-      for (var i = 0; i < string.length; i++) {
-        data.push(string.charCodeAt(i));
-      }
-
-      this.setRow(type, data);
-    };
-
-    builder.prototype.setShortenedLocalName = function (name) {
-      this.setStringData(0x08, name);
-    };
-    builder.prototype.setCompleteLocalName = function (name) {
-      this.setStringData(0x09, name);
-    };
-
-    builder.prototype.setManufacturerSpecificData = function (campanyCode, data) {
-      var row = [];
-      row.push(campanyCode & 0xFF);
-      row.push(campanyCode >> 8 & 0xFF);
-      Array.prototype.push.apply(row, data);
-      this.setRow(0xFF, row);
-    };
-
-    builder.prototype.setUuid = function (uuid) {
-      var uuidData = this.convertUuid(uuid);
-      var type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
-      this.setRow(type, uuidData);
-    };
-
-    builder.prototype.convertUuid = function (uuid) {
-      var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
-      if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
-        this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
-      }
-
-      var data = [];
-      for (var i = uuidNumeric.length; i > 1; i -= 2) {
-        data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
-      }
-      return data;
-    };
-
-    builder.prototype.setIbeaconData = function (uuid, major, minor, txPower) {
-      var data = [];
-      data.push(0x02, 0x15); // fixed data
-
-      var uuidData = this.convertUuid(uuid);
-      Array.prototype.push.apply(data, uuidData);
-
-      data.push(major >> 8 & 0xFF);
-      data.push(major >> 0 & 0xFF);
-      data.push(minor >> 8 & 0xFF);
-      data.push(minor >> 0 & 0xFF);
-      data.push(txPower >> 0 & 0xFF);
-
-      this.setManufacturerSpecificData(0x004c, data);
-      return;
-    };
-
-    return builder;
-  }
-
-  advDataBulider(jsonVal) {
-    var builder = this.dataBuliderPrototype();
-
-    builder.prototype.check = function () {
-
-      return true;
-    };
-
-    builder.prototype.extendEvalJson = function (json) {
-      if (json) {
-        if (json.flags) {
-          if (json.flags.includes("limited_discoverable_mode")) this.setLeLimitedDiscoverableModeFlag();
-          if (json.flags.includes("general_discoverable_mode")) this.setLeGeneralDiscoverableModeFlag();
-          if (json.flags.includes("br_edr_not_supported")) this.setBrEdrNotSupportedFlag();
-          if (json.flags.includes("le_br_edr_controller")) this.setLeBrEdrControllerFlag();
-          if (json.flags.includes("le_br_edr_host")) this.setLeBrEdrHostFlag();
-        }
-      }
-    };
-
-    builder.prototype.setFlags = function (flag) {
-      var data = this.getRow(0x01);
-      data[0] = (data[0] || 0) | flag;
-      this.setRow(0x01, data);
-    };
-    builder.prototype.setLeLimitedDiscoverableModeFlag = function () {
-      this.setFlags(0x01);
-    };
-    builder.prototype.setLeGeneralDiscoverableModeFlag = function () {
-      this.setFlags(0x02);
-    };
-    builder.prototype.setBrEdrNotSupportedFlag = function () {
-      this.setFlags(0x04);
-    };
-    builder.prototype.setLeBrEdrControllerFlag = function () {
-      this.setFlags(0x08);
-    };
-    builder.prototype.setLeBrEdrHostFlag = function () {
-      this.setFlags(0x10);
-    };
-
-    return new builder(this.Obniz, jsonVal);
-  }
-
-  scanRespDataBuilder(json) {
-    var builder = this.dataBuliderPrototype();
-    return new builder(this.Obniz, json);
-  }
-
-  setScanRespDataRaw(scan_resp) {
-    this.scan_resp = scan_resp;
-  }
-
-  setScanRespData(json) {
-    this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
-  }
-
-  startScan(target, settings) {
-    var obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = {
-      //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-      //    "interval" : settings && settings.interval ? settings.interval : 30,
-      "duration": settings && settings.duration ? settings.duration : 30
-
-    };
-
-    this.scanTarget = target;
-    if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
-        return elm.toLowerCase();
-      });
-    }
-    this.remotePeripherals = [];
-    this.Obniz.send(obj);
-    return;
-  }
-
-  startScanWait(target, settings) {
-    return new Promise(resolve => {
-      let result = null;
-      this._onscan = peripheral => {
-        this.stopScan();
-        this._onscan = function () {};
-        this._onscanfinish = function () {};
-        resolve(peripheral);
-      };
-      this._onscanfinish = () => {
-        this._onscan = function () {};
-        this._onscanfinish = function () {};
-        resolve(null);
-      };
-
-      this.startScan(target, settings);
-    });
-  }
-
-  stopScan() {
-    var obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = null;
-    this.Obniz.send(obj);
+    this.advertisement = new BleAdvertisement(Obniz);
+    this.scan = new BleScan(Obniz);
   }
 
   findPeripheral(address) {
@@ -3096,30 +2855,20 @@ class ObnizBLE {
   notified(obj) {
 
     if (obj.scan_result) {
-      let isFinished = false;
-      let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+
+      let val = this.findPeripheral(obj.scan_result.address);
+      if (!val) {
+        val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+        this.remotePeripherals.push(val);
+      }
+      val.discoverdOnRemote = true;
       val.setParams(obj.scan_result);
-      this.remotePeripherals.push(val);
 
-      if (this.scanTarget && this.scanTarget.localName && val.localName() !== this.scanTarget.localName) {
-        return;
-      }
-      if (this.scanTarget && this.scanTarget.uuids) {
-        let uuids = val.advertisementServiceUuids();
-        for (let uuid of this.scanTarget.uuids) {
-          if (!uuids.includes(uuid)) {
-            return;
-          }
-        }
-      }
-
-      this._onscan(val);
-      this.onscan(val);
+      this.scan.notifyFromServer("onfind", val);
     }
 
     if (obj.scan_result_finish) {
-      this._onscanfinish(this.remotePeripherals);
-      this.onscanfinish(this.remotePeripherals);
+      this.scan.notifyFromServer("onfinish");
     }
 
     var remotePeripheralcallbackFunc = function (val, func, type) {
@@ -3257,14 +3006,248 @@ class ObnizBLE {
     return str;
   }
 
-  onscanfinish() {} //dummy
-  onscan() {} //dummy
-
-  _onscanfinish() {} //dummy
-  _onscan() {} //dummy
 }
 
 module.exports = ObnizBLE;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleAdvertisement.js":
+/*!***************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleAdvertisement.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Builder = __webpack_require__(/*! ./bleAdvertisementBuilder */ "./obniz/libs/embeds/ble/bleAdvertisementBuilder.js");
+
+class BleAdvertisement {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.adv_data = [];
+    this.scan_resp = [];
+  }
+
+  start() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["advertisement"] = {
+      adv_data: this.adv_data
+    };
+
+    if (this.scan_resp.length > 0) {
+      obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
+    }
+
+    this.Obniz.send(obj);
+    return;
+  }
+
+  end() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["advertisement"] = null;
+    this.Obniz.send(obj);
+    return;
+  }
+
+  setAdvDataRaw(adv_data) {
+    var obj = {};
+    this.adv_data = adv_data;
+    return;
+  }
+
+  setAdvData(json) {
+    var builder = this.advDataBulider(json);
+    this.setAdvDataRaw(builder.build());
+    return;
+  }
+
+  advDataBulider(jsonVal) {
+    return new Builder(this.Obniz, jsonVal);
+  }
+
+  scanRespDataBuilder(json) {
+    return new Builder(this.Obniz, json);
+  }
+
+  setScanRespDataRaw(scan_resp) {
+    this.scan_resp = scan_resp;
+  }
+
+  setScanRespData(json) {
+    this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+  }
+
+}
+
+module.exports = BleAdvertisement;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleAdvertisementBuilder.js":
+/*!**********************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleAdvertisementBuilder.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class BleAdvertisementBuilder {
+
+  constructor(Obniz, json) {
+    this.Obniz = Obniz;
+    this.rows = {};
+
+    if (json) {
+      if (json.localName) {
+        this.setCompleteLocalName(json.localName);
+      }
+      if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
+        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
+      }
+      if (json.serviceUuids) {
+        for (var key in json.serviceUuids) {
+          this.setUuid(json.serviceUuids[key]);
+        }
+      }
+    }
+    if (typeof this.extendEvalJson === "function") {
+      this.extendEvalJson(json);
+    }
+  }
+
+  setRow(type, data) {
+    this.rows[type] = data;
+  }
+  getRow(type) {
+    return this.rows[type] || [];
+  }
+
+  check() {
+    return true;
+  }
+
+  build() {
+    if (!this.check) {
+      return;
+    }
+    var data = [];
+    for (var key in this.rows) {
+      if (this.rows[key].length === 0) continue;
+
+      data.push(this.rows[key].length + 1);
+      data.push(parseInt(key));
+      Array.prototype.push.apply(data, this.rows[key]);
+    }
+    if (data.length > 31) {
+      this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+    }
+
+    return data;
+  }
+
+  setStringData(type, string) {
+    var data = [];
+
+    for (var i = 0; i < string.length; i++) {
+      data.push(string.charCodeAt(i));
+    }
+
+    this.setRow(type, data);
+  }
+
+  setShortenedLocalName(name) {
+    this.setStringData(0x08, name);
+  }
+  setCompleteLocalName(name) {
+    this.setStringData(0x09, name);
+  }
+
+  setManufacturerSpecificData(campanyCode, data) {
+    var row = [];
+    row.push(campanyCode & 0xFF);
+    row.push(campanyCode >> 8 & 0xFF);
+    Array.prototype.push.apply(row, data);
+    this.setRow(0xFF, row);
+  }
+
+  setUuid(uuid) {
+    var uuidData = this.convertUuid(uuid);
+    var type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
+    this.setRow(type, uuidData);
+  }
+
+  convertUuid(uuid) {
+    var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
+      this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+    }
+
+    var data = [];
+    for (var i = uuidNumeric.length; i > 1; i -= 2) {
+      data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
+    }
+    return data;
+  }
+
+  setIbeaconData(uuid, major, minor, txPower) {
+    var data = [];
+    data.push(0x02, 0x15); // fixed data
+
+    var uuidData = this.convertUuid(uuid);
+    Array.prototype.push.apply(data, uuidData);
+
+    data.push(major >> 8 & 0xFF);
+    data.push(major >> 0 & 0xFF);
+    data.push(minor >> 8 & 0xFF);
+    data.push(minor >> 0 & 0xFF);
+    data.push(txPower >> 0 & 0xFF);
+
+    this.setManufacturerSpecificData(0x004c, data);
+    return;
+  }
+
+  extendEvalJson(json) {
+    if (json) {
+      if (json.flags) {
+        if (json.flags.includes("limited_discoverable_mode")) this.setLeLimitedDiscoverableModeFlag();
+        if (json.flags.includes("general_discoverable_mode")) this.setLeGeneralDiscoverableModeFlag();
+        if (json.flags.includes("br_edr_not_supported")) this.setBrEdrNotSupportedFlag();
+        if (json.flags.includes("le_br_edr_controller")) this.setLeBrEdrControllerFlag();
+        if (json.flags.includes("le_br_edr_host")) this.setLeBrEdrHostFlag();
+      }
+    }
+  }
+
+  setFlags(flag) {
+    var data = this.getRow(0x01);
+    data[0] = (data[0] || 0) | flag;
+    this.setRow(0x01, data);
+  }
+  setLeLimitedDiscoverableModeFlag() {
+    this.setFlags(0x01);
+  }
+  setLeGeneralDiscoverableModeFlag() {
+    this.setFlags(0x02);
+  }
+  setBrEdrNotSupportedFlag() {
+    this.setFlags(0x04);
+  }
+  setLeBrEdrControllerFlag() {
+    this.setFlags(0x08);
+  }
+  setLeBrEdrHostFlag() {
+    this.setFlags(0x10);
+  }
+}
+
+module.exports = BleAdvertisementBuilder;
 
 /***/ }),
 
@@ -3748,6 +3731,22 @@ class BlePeripheral {
     return this.services.filter(function (element) {
       return element.uuid.toLowerCase() === uuid;
     }).shift();
+  }
+
+  removeService(uuid) {
+    this.services = this.services.filter(function (element) {
+      return element.uuid.toLowerCase() !== uuid;
+    });
+  }
+
+  stopAllService() {
+    this.Obniz.send({
+      ble: {
+        peripheral: null
+
+      }
+    });
+    this.services = [];
   }
 
   toJSON() {
@@ -4508,6 +4507,111 @@ module.exports = BleRemoteService;
 
 /***/ }),
 
+/***/ "./obniz/libs/embeds/ble/bleScan.js":
+/*!******************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleScan.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+class BleScan {
+  constructor(Obniz) {
+    this.scanTarget = null;
+    this.Obniz = Obniz;
+    this.emitter = new emitter();
+
+    this.scanedPeripherals = [];
+  }
+
+  start(target, settings) {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["scan"] = {
+      //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+      //    "interval" : settings && settings.interval ? settings.interval : 30,
+      "duration": settings && settings.duration ? settings.duration : 30
+
+    };
+
+    this.scanTarget = target;
+    if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
+      this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
+        return elm.toLowerCase();
+      });
+    }
+    this.scanedPeripherals = [];
+    this.Obniz.send(obj);
+    return;
+  }
+
+  startWait(target, settings) {
+    return new Promise.race([new Promise(resolve => {
+      this.emitter.once("onfind", param => {
+        resolve(param);
+      });
+    }), new Promise(resolve => {
+      this.emitter.once("onfinish", param => {
+        resolve(null);
+      });
+
+      this.start(target, settings);
+    })]);
+  }
+
+  end() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["scan"] = null;
+    this.Obniz.send(obj);
+  }
+
+  isTarget(peripheral) {
+    if (this.scanTarget && this.scanTarget.localName && peripheral.localName() !== this.scanTarget.localName) {
+      return false;
+    }
+    if (this.scanTarget && this.scanTarget.uuids) {
+      let uuids = peripheral.advertisementServiceUuids();
+      for (let uuid of this.scanTarget.uuids) {
+        if (!uuids.includes(uuid)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  onfinish() {} //dummy
+  onfind() {} //dummy
+
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case "onfind":
+        {
+          if (this.isTarget(params)) {
+            this.scanedPeripherals.push(params);
+            this.emitter.emit(notifyName, params);
+            this.onfind(params);
+          }
+          break;
+        }
+      case "onfinish":
+        {
+          this.emitter.emit(notifyName, this.scanedPeripherals);
+          this.onfinish(this.scanedPeripherals);
+          break;
+        }
+    }
+  }
+}
+
+module.exports = BleScan;
+
+/***/ }),
+
 /***/ "./obniz/libs/embeds/ble/bleService.js":
 /*!*********************************************!*\
   !*** ./obniz/libs/embeds/ble/bleService.js ***!
@@ -4546,6 +4650,19 @@ class BleService extends BleAttributeAbstract {
       flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid]
     };
+  }
+
+  end() {
+    this.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          stop_service: {
+            service_uuid: this.uuid.toLowerCase()
+          }
+        }
+      }
+    });
+    this.peripheral.removeService(this.uuid);
   }
 
   notify(notifyName, params) {
@@ -6472,6 +6589,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerNotifyWriteDescriptorValue = 31;
     this._CommandServerNotifyReadDescriptorValue = 32;
     this._CommandServerNofityCharavteristic = 33;
+    this._CommandServerStartStopService = 34;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -6653,10 +6771,15 @@ class WSCommand_Ble extends WSCommand {
       descriptor: {
         command: this._CommandServerAddDescriptor,
         schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags }, { path: "data", type: "dataArray" }]
+      },
+      startService: {
+        command: this._CommandServerStartStopService,
+        schema: [{ path: "uuid", length: 18, type: "uuid", required: true }, { path: null, length: 1, type: "char", default: 0 }]
       }
     };
 
     var sendBufs = [];
+    var startServiceBufs = [];
     var buf;
     for (var serviceIndex in val["services"]) {
       var service = val["services"][serviceIndex];
@@ -6665,6 +6788,9 @@ class WSCommand_Ble extends WSCommand {
         return;
       }
       sendBufs.push({ command: schema["service"].command, buffer: buf });
+
+      buf = JsonBinaryConverter.createSendBuffer(schema["startService"].schema, service);
+      startServiceBufs.push({ command: schema["startService"].command, buffer: buf });
 
       for (var charaIndex in service["characteristics"]) {
         var chara = service["characteristics"][charaIndex];
@@ -6687,15 +6813,21 @@ class WSCommand_Ble extends WSCommand {
         }
       }
     }
-    if (sendBufs.length > 0) {
-      sendBufs.push({ command: this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
-    }
     for (var index in sendBufs) {
       this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
+    }
+    for (var index in startServiceBufs) {
+      this.sendCommand(startServiceBufs[index].command, startServiceBufs[index].buffer);
     }
   }
 
   peripheralServiceStop(params) {
+    var schema = [{ path: "peripheral.stop_service.service_uuid", length: 18, type: "uuid", required: true }, { path: null, length: 1, type: "char", default: 1 }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandServerStartStopService, buf);
+  }
+
+  peripheralServiceStopAll(params) {
     this.sendCommand(this._CommandServerStartPeripheral, new Uint8Array([1]));
   }
 
@@ -6734,7 +6866,7 @@ class WSCommand_Ble extends WSCommand {
     if (module === undefined) {
       return;
     }
-    let schemaData = [{ uri: "/request/ble/central/scan_start", onValid: this.centralScanStart }, { uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop }, { uri: "/request/ble/central/connect", onValid: this.centralConnect }, { uri: "/request/ble/central/disconnect", onValid: this.centralDisconnect }, { uri: "/request/ble/central/service_get", onValid: this.centralServiceGet }, { uri: "/request/ble/central/characteristic_get", onValid: this.centralCharacteristicGet }, { uri: "/request/ble/central/characteristic_read", onValid: this.centralCharacteristicRead }, { uri: "/request/ble/central/characteristic_write", onValid: this.centralCharacteristicWrite }, { uri: "/request/ble/central/characteristic_register_notify", onValid: this.centralCharacteristicRegisterNotify }, { uri: "/request/ble/central/characteristic_unregister_notify", onValid: this.centralCharacteristicUnregisterNotify }, { uri: "/request/ble/central/descriptor_get", onValid: this.centralDescriptorGet }, { uri: "/request/ble/central/descriptor_read", onValid: this.centralDescriptorRead }, { uri: "/request/ble/central/descriptor_write", onValid: this.centralDescriptorWrite }, { uri: "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart }, { uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop }, { uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart }, { uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop }, { uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead }, { uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite }, { uri: "/request/ble/peripheral/characteristic_notify", onValid: this.peripheralCharacteristicNotify }, { uri: "/request/ble/peripheral/descriptor_read", onValid: this.peripheralDescriptorRead }, { uri: "/request/ble/peripheral/descriptor_write", onValid: this.peripheralDescriptorWrite }];
+    let schemaData = [{ uri: "/request/ble/central/scan_start", onValid: this.centralScanStart }, { uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop }, { uri: "/request/ble/central/connect", onValid: this.centralConnect }, { uri: "/request/ble/central/disconnect", onValid: this.centralDisconnect }, { uri: "/request/ble/central/service_get", onValid: this.centralServiceGet }, { uri: "/request/ble/central/characteristic_get", onValid: this.centralCharacteristicGet }, { uri: "/request/ble/central/characteristic_read", onValid: this.centralCharacteristicRead }, { uri: "/request/ble/central/characteristic_write", onValid: this.centralCharacteristicWrite }, { uri: "/request/ble/central/characteristic_register_notify", onValid: this.centralCharacteristicRegisterNotify }, { uri: "/request/ble/central/characteristic_unregister_notify", onValid: this.centralCharacteristicUnregisterNotify }, { uri: "/request/ble/central/descriptor_get", onValid: this.centralDescriptorGet }, { uri: "/request/ble/central/descriptor_read", onValid: this.centralDescriptorRead }, { uri: "/request/ble/central/descriptor_write", onValid: this.centralDescriptorWrite }, { uri: "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart }, { uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop }, { uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart }, { uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop }, { uri: "/request/ble/peripheral/service_stop_all", onValid: this.peripheralServiceStopAll }, { uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead }, { uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite }, { uri: "/request/ble/peripheral/characteristic_notify", onValid: this.peripheralCharacteristicNotify }, { uri: "/request/ble/peripheral/descriptor_read", onValid: this.peripheralDescriptorRead }, { uri: "/request/ble/peripheral/descriptor_write", onValid: this.peripheralDescriptorWrite }];
     let res = this.validateCommandSchema(schemaData, module, "ble");
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
