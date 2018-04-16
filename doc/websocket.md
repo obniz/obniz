@@ -1873,6 +1873,74 @@ Related item
 ```
 
 
+###  request: <a name="-request-ble-central-characteristic_register_notify">characteristic_register_notify</a>
+
+
+
+Related item
+
+- [/response/ble/central/characteristic_register_notify](#-response-ble-central-characteristic_register_notify)
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.register_notify_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.register_notify_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.register_notify_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "register_notify_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+            }
+        }
+    }
+]
+```
+
+
+###  request: <a name="-request-ble-central-characteristic_unregister_notify">characteristic_unregister_notify</a>
+
+
+
+Related item
+
+- [/response/ble/central/characteristic_unregister_notify](#-response-ble-central-characteristic_unregister_notify)
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.unregister_notify_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.unregister_notify_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.unregister_notify_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "ble": {
+            "unregister_notify_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179"
+            }
+        }
+    }
+]
+```
+
+
 ###  request: <a name="-request-ble-central-descriptor_get">descriptor_get</a>
 
 
@@ -2252,6 +2320,104 @@ Related item
 ```
 
 
+###  response: <a name="-response-ble-central-characteristic_register_notify">characteristic_register_notify</a>
+
+
+
+Related item
+
+- [/request/ble/central/characteristic_register_notify](#-request-ble-central-characteristic_register_notify)
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.characteristic_register_notify_result.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.characteristic_register_notify_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.characteristic_register_notify_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.characteristic_register_notify_result.result` |  boolean  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "ble": {
+            "characteristic_register_notify_result": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "result": true
+            }
+        }
+    }
+]
+```
+
+
+###  response: <a name="-response-ble-central-characteristic_notify">characteristic_notify</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.nofity_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.nofity_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.nofity_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.nofity_characteristic.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "ble": {
+            "nofity_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "data": [16, 34, 242]
+            }
+        }
+    }
+]
+```
+
+
+###  response: <a name="-response-ble-central-characteristic_notify">characteristic_notify</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ble.nofity_characteristic.address` | [deviceAddress](#deviceaddress)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.nofity_characteristic.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.nofity_characteristic.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.nofity_characteristic.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "ble": {
+            "nofity_characteristic": {
+                "address": "77e754ab8591",
+                "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
+                "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
+                "data": [16, 34, 242]
+            }
+        }
+    }
+]
+```
+
+
 ###  response: <a name="-response-ble-central-descriptor_get">descriptor_get</a>
 
 
@@ -2497,9 +2663,11 @@ Related item
 | `ble.peripheral.services[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.services[].characteristics[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.services[].characteristics[].data` | [dataArray](#dataarray)  | &nbsp; | &nbsp; |
-| `ble.peripheral.services[].characteristics[].properties[]` |  string  | <ul><li>default `read,write`</li><li>enum <ul><li>`"broadcast"`</li><li>`"read"`</li><li>`"write_without_response"`</li><li>`"write"`</li><li>`"notify"`</li><li>`"indicate"`</li><li>`"auth"`</li><li>`"extended_properties"`</li></ul></li></ul> | &nbsp; |
+| `ble.peripheral.services[].characteristics[].properties[]` |  string  | <ul><li>enum <ul><li>`"broadcast"`</li><li>`"read"`</li><li>`"write_without_response"`</li><li>`"write"`</li><li>`"notify"`</li><li>`"indicate"`</li><li>`"auth"`</li><li>`"extended_properties"`</li></ul></li></ul> | &nbsp; |
+| `ble.peripheral.services[].characteristics[].permissions[]` |  string  | <ul><li>default `read,write`</li><li>enum <ul><li>`"read"`</li><li>`"write"`</li></ul></li></ul> | &nbsp; |
 | `ble.peripheral.services[].characteristics[].descriptors[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.services[].characteristics[].descriptors[].data` | [dataArray](#dataarray)  | &nbsp; | &nbsp; |
+| `ble.peripheral.services[].characteristics[].descriptors[].permissions[]` |  string  | <ul><li>default `read,write`</li><li>enum <ul><li>`"read"`</li><li>`"write"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -2517,6 +2685,9 @@ Related item
                                 "uuid": "8d3591bda71140fd8f9f00535fe57179",
                                 "data": [16, 34, 242],
                                 "properties": [
+                                    "broadcast"
+                                ],
+                                "permissions": [
                                     [
                                         "read",
                                         "write"
@@ -2525,7 +2696,13 @@ Related item
                                 "descriptors": [
                                     {
                                         "uuid": "d822b53c",
-                                        "data": [100, 255, 21, 0, 21]
+                                        "data": [100, 255, 21, 0, 21],
+                                        "permissions": [
+                                            [
+                                                "read",
+                                                "write"
+                                            ]
+                                        ]
                                     }
                                 ]
                             }

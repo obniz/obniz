@@ -1326,7 +1326,7 @@ describe("ble.log", function () {
 
   it("request set service",  function () {
     let requestJson  = [{"ble":{"peripheral":{"services":[{"uuid":"ffe0","characteristics":[{"uuid":"fff1","data":[72,105],"descriptors":[]}]}]}}}];
-    let expecteBinaryStrings = ["b 16 12 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 27 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 a 48 69","b 14 1 0"];
+    let expecteBinaryStrings = ["b 16 12 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 29 0 2 e0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 a 48 69","b 14 1 0"];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -1350,7 +1350,7 @@ describe("ble.log", function () {
 
   it("request set service2",  function () {
     let requestJson  = [{"ble":{"peripheral":{"services":[{"uuid":"fff0","characteristics":[{"uuid":"fff1","data":[72,105],"descriptors":[{"uuid":"00ff","data":[1,2]}]}]}]}}}];
-    let expecteBinaryStrings = ["b 16 12 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 27 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 a 48 69","b 18 39 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 2","b 14 1 0"];
+    let expecteBinaryStrings = ["b 16 12 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0","b 17 29 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 a 48 69","b 18 3a 0 2 f0 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 f1 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 ff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 11 1 2","b 14 1 0"];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -1727,6 +1727,27 @@ describe("ble.log", function () {
     expect(isValidCommand.valid).to.be.true;
 
     expect(json).to.be.deep.equal(expectJson);
+  });
+
+
+
+
+  it("request notify unregister",  function () {
+    let requestJson  = [{"ble":{"unregister_notify_characteristic":{"address":"dc6b4da38352","service_uuid":"3000","characteristic_uuid":"3000"}}}];
+    let binaryArray = [11,13,42,82,131,163,77,107,220,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
+
+
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
   });
 
 

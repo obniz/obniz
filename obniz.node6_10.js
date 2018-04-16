@@ -101,6 +101,8 @@ var map = {
 	"./request/ad/input.yml": "./json_schema/request/ad/input.yml",
 	"./request/ble/central/characteristic_get.yml": "./json_schema/request/ble/central/characteristic_get.yml",
 	"./request/ble/central/characteristic_read.yml": "./json_schema/request/ble/central/characteristic_read.yml",
+	"./request/ble/central/characteristic_register_notify.yml": "./json_schema/request/ble/central/characteristic_register_notify.yml",
+	"./request/ble/central/characteristic_unregister_notify.yml": "./json_schema/request/ble/central/characteristic_unregister_notify.yml",
 	"./request/ble/central/characteristic_write.yml": "./json_schema/request/ble/central/characteristic_write.yml",
 	"./request/ble/central/connect.yml": "./json_schema/request/ble/central/connect.yml",
 	"./request/ble/central/descriptor_get.yml": "./json_schema/request/ble/central/descriptor_get.yml",
@@ -114,6 +116,7 @@ var map = {
 	"./request/ble/index.yml": "./json_schema/request/ble/index.yml",
 	"./request/ble/peripheral/advertisement_start.yml": "./json_schema/request/ble/peripheral/advertisement_start.yml",
 	"./request/ble/peripheral/advertisement_stop.yml": "./json_schema/request/ble/peripheral/advertisement_stop.yml",
+	"./request/ble/peripheral/characteristic_notify.yml": "./json_schema/request/ble/peripheral/characteristic_notify.yml",
 	"./request/ble/peripheral/characteristic_read.yml": "./json_schema/request/ble/peripheral/characteristic_read.yml",
 	"./request/ble/peripheral/characteristic_write.yml": "./json_schema/request/ble/peripheral/characteristic_write.yml",
 	"./request/ble/peripheral/descriptor_read.yml": "./json_schema/request/ble/peripheral/descriptor_read.yml",
@@ -182,7 +185,10 @@ var map = {
 	"./response/ad/index.yml": "./json_schema/response/ad/index.yml",
 	"./response/ble/central/characteristic_get.yml": "./json_schema/response/ble/central/characteristic_get.yml",
 	"./response/ble/central/characteristic_get_finish.yml": "./json_schema/response/ble/central/characteristic_get_finish.yml",
+	"./response/ble/central/characteristic_notify.yml": "./json_schema/response/ble/central/characteristic_notify.yml",
 	"./response/ble/central/characteristic_read.yml": "./json_schema/response/ble/central/characteristic_read.yml",
+	"./response/ble/central/characteristic_register_notify.yml": "./json_schema/response/ble/central/characteristic_register_notify.yml",
+	"./response/ble/central/characteristic_unregister_notify.yml": "./json_schema/response/ble/central/characteristic_unregister_notify.yml",
 	"./response/ble/central/characteristic_write.yml": "./json_schema/response/ble/central/characteristic_write.yml",
 	"./response/ble/central/descriptor_get.yml": "./json_schema/response/ble/central/descriptor_get.yml",
 	"./response/ble/central/descriptor_get_finish.yml": "./json_schema/response/ble/central/descriptor_get_finish.yml",
@@ -324,6 +330,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./json_schema/request/ble/central/characteristic_register_notify.yml":
+/*!****************************************************************************!*\
+  !*** ./json_schema/request/ble/central/characteristic_register_notify.yml ***!
+  \****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_register_notify","related":"/response/ble/central/characteristic_register_notify","type":"object","required":["register_notify_characteristic"],"properties":{"register_notify_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/central/characteristic_unregister_notify.yml":
+/*!******************************************************************************!*\
+  !*** ./json_schema/request/ble/central/characteristic_unregister_notify.yml ***!
+  \******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_unregister_notify","related":"/response/ble/central/characteristic_unregister_notify","type":"object","required":["unregister_notify_characteristic"],"properties":{"unregister_notify_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
+
+/***/ }),
+
 /***/ "./json_schema/request/ble/central/characteristic_write.yml":
 /*!******************************************************************!*\
   !*** ./json_schema/request/ble/central/characteristic_write.yml ***!
@@ -397,7 +425,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","description":"use obniz as central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"},{"$ref":"/request/ble/central/descriptor_get"},{"$ref":"/request/ble/central/descriptor_read"},{"$ref":"/request/ble/central/descriptor_write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","description":"use obniz as central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"},{"$ref":"/request/ble/central/characteristic_register_notify"},{"$ref":"/request/ble/central/characteristic_unregister_notify"},{"$ref":"/request/ble/central/descriptor_get"},{"$ref":"/request/ble/central/descriptor_read"},{"$ref":"/request/ble/central/descriptor_write"}]}
 
 /***/ }),
 
@@ -467,6 +495,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./json_schema/request/ble/peripheral/characteristic_notify.yml":
+/*!**********************************************************************!*\
+  !*** ./json_schema/request/ble/peripheral/characteristic_notify.yml ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_notify","description":"notify characteristic for connected device","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["notify_characteristic"],"properties":{"notify_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
+
+/***/ }),
+
 /***/ "./json_schema/request/ble/peripheral/characteristic_read.yml":
 /*!********************************************************************!*\
   !*** ./json_schema/request/ble/peripheral/characteristic_read.yml ***!
@@ -529,7 +568,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -1215,6 +1254,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./json_schema/response/ble/central/characteristic_notify.yml":
+/*!********************************************************************!*\
+  !*** ./json_schema/response/ble/central/characteristic_notify.yml ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_notify","type":"object","required":["nofity_characteristic"],"properties":{"nofity_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
 /***/ "./json_schema/response/ble/central/characteristic_read.yml":
 /*!******************************************************************!*\
   !*** ./json_schema/response/ble/central/characteristic_read.yml ***!
@@ -1222,7 +1272,29 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/characteristic_register_notify.yml":
+/*!*****************************************************************************!*\
+  !*** ./json_schema/response/ble/central/characteristic_register_notify.yml ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_register_notify","related":"/request/ble/central/characteristic_register_notify","type":"object","required":["characteristic_register_notify_result"],"properties":{"characteristic_register_notify_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"boolean"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/central/characteristic_unregister_notify.yml":
+/*!*******************************************************************************!*\
+  !*** ./json_schema/response/ble/central/characteristic_unregister_notify.yml ***!
+  \*******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_unregister_notify","related":"/request/ble/central/characteristic_unregister_notify","type":"object","required":["unregister_notify_characteristic_result"],"properties":{"unregister_notify_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"boolean"}}}}}
 
 /***/ }),
 
@@ -1266,7 +1338,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1299,7 +1371,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/service_get_finish"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_get_finish"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_get_finish"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"},{"$ref":"/response/ble/central/error"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/service_get_finish"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_get_finish"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/characteristic_register_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_get_finish"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"},{"$ref":"/response/ble/central/error"}]}
 
 /***/ }),
 
@@ -1310,7 +1382,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result"]},"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["address","ble_event_type","device_type","address_type","flag","rssi"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
 
 /***/ }),
 
@@ -1321,7 +1393,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_complete"]}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result_finish"],"properties":{"scan_result_finish":{"type":"boolean","enum":[true]}}}
 
 /***/ }),
 
@@ -2752,6 +2824,8 @@ class ObnizBLE {
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
     this.peripheral = new BlePeripheral(Obniz);
+
+    this.scanTarget = null;
   }
 
   startAdvertisement() {
@@ -2963,7 +3037,7 @@ class ObnizBLE {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
 
-  startScan(settings) {
+  startScan(target, settings) {
     var obj = {};
     obj["ble"] = {};
     obj["ble"]["scan"] = {
@@ -2973,10 +3047,34 @@ class ObnizBLE {
 
     };
 
+    this.scanTarget = target;
+    if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
+      this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
+        return elm.toLowerCase();
+      });
+    }
     this.remotePeripherals = [];
-
     this.Obniz.send(obj);
     return;
+  }
+
+  startScanWait(target, settings) {
+    return new Promise(resolve => {
+      let result = null;
+      this._onscan = peripheral => {
+        this.stopScan();
+        this._onscan = function () {};
+        this._onscanfinish = function () {};
+        resolve(peripheral);
+      };
+      this._onscanfinish = () => {
+        this._onscan = function () {};
+        this._onscanfinish = function () {};
+        resolve(null);
+      };
+
+      this.startScan(target, settings);
+    });
   }
 
   stopScan() {
@@ -2996,172 +3094,94 @@ class ObnizBLE {
   }
 
   notified(obj) {
+
     if (obj.scan_result) {
       let isFinished = false;
-      if (obj.scan_result.event_type === "inquiry_complete") {
-        isFinished = true;
-      } else if (obj.scan_result.event_type === "inquiry_result") {
-        let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
-        val.setParams(obj.scan_result);
-        this.remotePeripherals.push(val);
-        this.onscan(val);
+      let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+      val.setParams(obj.scan_result);
+      this.remotePeripherals.push(val);
+
+      if (this.scanTarget && this.scanTarget.localName && val.localName() !== this.scanTarget.localName) {
+        return;
       }
-      if (isFinished) {
-        this.onscanfinish(this.remotePeripherals);
+      if (this.scanTarget && this.scanTarget.uuids) {
+        let uuids = val.advertisementServiceUuids();
+        for (let uuid of this.scanTarget.uuids) {
+          if (!uuids.includes(uuid)) {
+            return;
+          }
+        }
       }
+
+      this._onscan(val);
+      this.onscan(val);
     }
 
-    if (obj.status_update) {
-      let params = obj.status_update;
-      if (!params.address) return;
-      let p = this.findPeripheral(params.address);
-      if (p) {
-        if (params.status === "connected") {
-          p.onconnect();
-        }
-        if (params.status === "disconnected") {
-          p.ondisconnect();
-        }
-      }
+    if (obj.scan_result_finish) {
+      this._onscanfinish(this.remotePeripherals);
+      this.onscanfinish(this.remotePeripherals);
     }
 
-    if (obj.get_service_result) {
-      let params = obj.get_service_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          service.discoverdOnRemote = true;
-          p.ondiscoverservice(service);
-        }
+    var remotePeripheralcallbackFunc = function (val, func, type) {
+      var obj = null;
+      if (val === undefined) return;
+      let p = this.findPeripheral(val.address);
+      if (!p) {
+        return;
       }
-    }
+      if (type === "peripheral") {
+        obj = p;
+      } else if (type === "service") {
+        obj = p.findService(val);
+      } else if (type === "characteristic") {
+        obj = p.findCharacteristic(val);
+      } else if (type === "descriptor") {
+        obj = p.findDescriptor(val);
+      }
+      if (!obj) {
+        return;
+      }
+      func(val, obj);
+    }.bind(this);
 
-    if (obj.get_service_result_finish) {
-      let params = obj.get_service_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let services = p.services.filter(elm => {
-            return elm.discoverdOnRemote;
-          });
-          p.ondiscoverservicefinished(services);
-        }
-      }
-    }
+    const paramList = {
+      status_update: { name: "statusupdate", obj: "peripheral" },
+      get_service_result: { name: "discover", obj: "peripheral" },
+      get_service_result_finish: { name: "discoverfinished", obj: "peripheral" },
+      get_characteristic_result: { name: "discover", obj: "service" },
+      get_characteristic_result_finish: { name: "discoverfinished", obj: "service" },
+      write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+      read_characteristic_result: { name: "onread", obj: "characteristic" },
+      register_notify_characteristic_result: { name: "onregisternotify", obj: "characteristic" },
+      unregister_notify_characteristic_result: { name: "onunregisternotify", obj: "characteristic" },
+      nofity_characteristic: { name: "onnotify", obj: "characteristic" },
+      get_descriptor_result: { name: "discover", obj: "characteristic" },
+      get_descriptor_result_finish: { name: "discoverfinished", obj: "characteristic" },
+      write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+      read_descriptor_result: { name: "onread", obj: "descriptor" }
+    };
 
-    if (obj.get_characteristic_result) {
-      let params = obj.get_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.discoverdOnRemote = true;
-          chara.properties = params.properties;
-          service.ondiscovercharacteristic(chara);
-        }
-      }
-    }
-    if (obj.get_characteristic_result_finish) {
-      let params = obj.get_characteristic_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let charas = service.characteristics.filter(elm => {
-            return elm.discoverdOnRemote;
-          });
-          service.ondiscovercharacteristicfinished(charas);
-        }
-      }
-    }
-    if (obj.write_characteristic_result) {
-      let params = obj.write_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.onwrite(params.result);
-        }
-      }
-    }
+    for (let key in paramList) {
+      remotePeripheralcallbackFunc(obj[key], function (val, bleobj) {
 
-    if (obj.read_characteristic_result) {
-      let params = obj.read_characteristic_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          chara.onread(params.data);
-        }
-      }
-    }
-    if (obj.get_descriptor_result) {
-      let params = obj.get_descriptor_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.discoverdOnRemote = true;
-          chara.ondiscoverdescriptor(descr);
-        }
-      }
-    }
-
-    if (obj.get_descriptor_result_finish) {
-      let params = obj.get_descriptor_result_finish;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descrs = chara.descriptors.filter(elm => {
-            return elm.discoverdOnRemote;
-          });
-          chara.ondiscoverdescriptorfinished(descrs);
-        }
-      }
-    }
-
-    if (obj.read_descriptor_result) {
-      let params = obj.read_descriptor_result;
-      if (params.address) {
-        let p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.onread(params.data);
-        }
-      }
-    }
-    if (obj.write_descriptor_result) {
-      let params = obj.write_descriptor_result;
-      if (params.address) {
-        var p = this.findPeripheral(params.address);
-        if (p) {
-          let service = p.getService(params.service_uuid);
-          let chara = service.getCharacteristic(params.characteristic_uuid);
-          let descr = chara.getDescriptor(params.descriptor_uuid);
-          descr.onwrite(params.result);
-        }
-      }
+        bleobj.notifyFromServer(paramList[key].name, val);
+      }.bind(this), paramList[key].obj);
     }
 
     var callbackFunc = function (val, func, type) {
       var obj = null;
       if (val === undefined) return;
-      if (type === "service") {
+      if (type === "peripheral") {
+        obj = this.peripheral;
+      } else if (type === "service") {
         obj = this.peripheral.getService(val);
       } else if (type === "characteristic") {
         obj = this.peripheral.findCharacteristic(val);
       } else if (type === "descriptor") {
         obj = this.peripheral.findDescriptor(val);
+      }
+      if (!obj) {
+        return;
       }
       func(val, obj);
     }.bind(this);
@@ -3169,22 +3189,22 @@ class ObnizBLE {
     if (obj.peripheral) {
       callbackFunc(obj.peripheral.connection_status, function (val) {
         this.peripheral.onconnectionupdates(val);
-      }.bind(this));
+      }.bind(this), "peripheral");
 
-      var paramList = {
-        read_characteristic_result: { method: "onread", obj: "characteristic" },
-        write_characteristic_result: { method: "onwrite", obj: "characteristic" },
-        notify_read_characteristic: { method: "onreadfromremote", obj: "characteristic" },
-        notify_write_characteristic: { method: "onwritefromremote", obj: "characteristic" },
-        read_descriptor_result: { method: "onread", obj: "descriptor" },
-        write_descriptor_result: { method: "onwrite", obj: "descriptor" },
-        notify_read_descriptor: { method: "onreadfromremote", obj: "descriptor" },
-        notify_write_descriptor: { method: "onwritefromremote", obj: "descriptor" }
+      const paramList = {
+        read_characteristic_result: { name: "onread", obj: "characteristic" },
+        write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+        notify_read_characteristic: { name: "onreadfromremote", obj: "characteristic" },
+        notify_write_characteristic: { name: "onwritefromremote", obj: "characteristic" },
+        read_descriptor_result: { name: "onread", obj: "descriptor" },
+        write_descriptor_result: { name: "onwrite", obj: "descriptor" },
+        notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
+        notify_write_descriptor: { name: "onwritefromremote", obj: "descriptor" }
       };
 
-      for (var key in paramList) {
+      for (let key in paramList) {
         callbackFunc(obj.peripheral[key], function (val, bleobj) {
-          bleobj[paramList[key].method](val);
+          bleobj.notifyFromServer(paramList[key].name, val);
         }.bind(this), paramList[key].obj);
       }
     }
@@ -3192,29 +3212,286 @@ class ObnizBLE {
     if (obj.error) {
       let params = obj.error;
       let handled = false;
+      let peripheral, target;
       if (!params.address) {
-        if (typeof this.onerror === "function") {
-          this.onerror(params);
+        peripheral = this.peripheral;
+      } else {
+        peripheral = this.findPeripheral(params.address);
+      }
+
+      if (peripheral) {
+        if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
+          target = peripheral.findDescriptor(params);
+        } else if (params.service_uuid && params.characteristic_uuid) {
+          target = peripheral.findCharacteristic(params);
+        } else if (params.service_uuid) {
+          target = peripheral.findService(params);
+        }
+        if (target) {
+          target.notifyFromServer("onerror", params);
+          handled = true;
+        } else {
+          peripheral.onerror(params);
           handled = true;
         }
       }
 
-      let p = this.findPeripheral(params.address);
-      if (p) {
-        p.onerror(params);
-        handled = true;
-      }
       if (!handled) {
         this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
       }
     }
   }
 
+  _dataArray2uuidHex(data, reverse) {
+    let uuid = [];
+    for (var i = 0; i < data.length; i++) {
+      uuid.push(('00' + data[i].toString(16).toLowerCase()).slice(-2));
+    }
+    if (reverse) {
+      uuid = uuid.reverse();
+    }
+    let str = uuid.join("");
+    if (uuid.length >= 16) {
+      str = str.slice(0, 8) + "-" + str.slice(8, 12) + "-" + str.slice(12, 16) + "-" + str.slice(16, 20) + "-" + str.slice(20);
+    }
+    return str;
+  }
+
   onscanfinish() {} //dummy
   onscan() {} //dummy
+
+  _onscanfinish() {} //dummy
+  _onscan() {} //dummy
 }
 
 module.exports = ObnizBLE;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleAttributeAbstract.js":
+/*!*******************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleAttributeAbstract.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
+const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+
+class BleAttributreAbstruct {
+
+  constructor(params) {
+    this.uuid = params.uuid.toLowerCase();
+    this.parent = null;
+    this.children = [];
+
+    this.isRemote = false;
+    this.discoverdOnRemote = false;
+
+    this.data = params.data || null;
+    if (!this.data && params.text) {
+      this.data = ObnizUtil.string2dataArray(params.text);
+    }
+    if (!this.data && params.value) {
+      this.data = [params.value];
+    }
+
+    if (params[this.childrenName]) {
+      for (var key in params[this.childrenName]) {
+        this.addChild(params[this.childrenName][key]);
+      }
+    }
+
+    this.setFunctions();
+
+    this.emitter = new emitter();
+  }
+
+  setFunctions() {
+    let childrenName = this.childrenName;
+    if (childrenName) {
+      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      let childName = childrenName.slice(0, -1);
+
+      let funcName = "add" + childName;
+      this[funcName] = this.addChild;
+
+      funcName = "get" + childName;
+      this[funcName] = this.getChild;
+    }
+
+    let parentName = this.parentName;
+    if (parentName) {
+      Object.defineProperty(this, parentName, {
+        get() {
+          return this.parent;
+        },
+        set(newValue) {
+          this.parent = newValue;
+        }
+      });
+    }
+  }
+
+  get childrenClass() {
+    return Object;
+  }
+  get childrenName() {
+    return null;
+  }
+  get parentName() {
+    return null;
+  }
+
+  addChild(child) {
+    if (!(child instanceof this.childrenClass)) {
+      child = new this.childrenClass(child);
+    }
+    child.parent = this;
+
+    this.children.push(child);
+    return child;
+  }
+
+  getChild(uuid) {
+
+    return this.children.filter(function (element) {
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
+    }).shift();
+  }
+
+  toJSON() {
+    let obj = { uuid: this.uuid.toLowerCase() };
+
+    if (this.children.length > 0) {
+      let key = this.childrenName;
+      obj[key] = this.children;
+    }
+    if (this.data) {
+      obj.data = this.data;
+    }
+    return obj;
+  }
+
+  /**
+   * WS COMMANDS
+   */
+
+  read() {}
+  write(data) {}
+
+  writeNumber(val) {
+    this.write([val]);
+  }
+
+  writeText(str) {
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
+  readWait() {
+    return new Promise(resolve => {
+      this.emitter.once("onread", params => {
+        if (params.result === "success") {
+          resolve(params.data);
+        } else {
+          resolve(undefined);
+        }
+      });
+      this.read();
+    });
+  }
+
+  writeWait(data) {
+    return new Promise(resolve => {
+      this.emitter.once("onwrite", params => {
+        resolve(params.result);
+      });
+      this.write(data);
+    });
+  }
+
+  writeTextWait(data) {
+    return new Promise(resolve => {
+      this.emitter.once("onwrite", params => {
+        resolve(params.result);
+      });
+      this.writeText(data);
+    });
+  }
+
+  writeNumberWait(data) {
+    return new Promise(resolve => {
+      this.emitter.once("onwrite", params => {
+        resolve(params.result);
+      });
+      this.writeNumber(data);
+    });
+  }
+
+  readFromRemoteWait() {
+    return new Promise(resolve => {
+      this.emitter.once("onreadfromremote", params => {
+        resolve();
+      });
+    });
+  }
+
+  writeFromRemoteWait() {
+    return new Promise(resolve => {
+      this.emitter.once("onreadfromremote", params => {
+        resolve(params.data);
+      });
+    });
+  }
+
+  /**
+   * CALLBACKS
+   */
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
+
+  onerror(err) {
+    console.error(err.message);
+  }
+
+  notifyFromServer(notifyName, params) {
+    this.emitter.emit(notifyName, params);
+    switch (notifyName) {
+      case "onerror":
+        {
+          this.onerror(params);
+          break;
+        }
+      case "onwrite":
+        {
+          this.onwrite(params.result);
+          break;
+        }
+      case "onread":
+        {
+          this.onread(params.data);
+          break;
+        }
+      case "onwritefromremote":
+        {
+          this.onwritefromremote(params.address, params.data);
+          break;
+        }
+      case "onreadfromremote":
+        {
+          this.onreadfromremote(params.address);
+          break;
+        }
+    }
+  }
+}
+
+module.exports = BleAttributreAbstruct;
 
 /***/ }),
 
@@ -3228,46 +3505,72 @@ module.exports = ObnizBLE;
 "use strict";
 
 
-const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
-class BleCharacteristic {
+class BleCharacteristic extends BleAttributeAbstract {
 
   constructor(obj) {
-    this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase();
-    this.data = obj.data || null;
-    if (!this.data && obj.text) {
-      this.data = ObnizUtil.string2dataArray(obj.text);
-    }
-    if (!this.data && obj.value) {
-      this.data = obj.value;
+    super(obj);
+
+    this.addDescriptor = this.addChild;
+    this.getDescriptor = this.getChild;
+
+    this.properties = obj.properties || [];
+    if (!Array.isArray(this.properties)) {
+      this.properties = [this.properties];
     }
 
-    this.property = obj.property || [];
-    if (!Array.isArray(this.property)) {
-      this.property = [this.property];
-    }
-
-    if (obj["descriptors"]) {
-      for (var key in obj["descriptors"]) {
-        this.addDescriptor(obj["descriptors"][key]);
-      }
+    this.permissions = obj.permissions || [];
+    if (!Array.isArray(this.permissions)) {
+      this.permissions = [this.permissions];
     }
   }
 
-  addDescriptor(obj) {
-    if (!(obj instanceof BleDescriptor)) {
-      obj = new BleDescriptor(obj);
-    }
-    this.descriptors.push(obj);
-    obj.characteristic = this;
+  get parentName() {
+    return "service";
   }
 
-  getDescriptor(uuid) {
-    return this.descriptors.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
-    }).shift();
+  get childrenClass() {
+    return BleDescriptor;
+  }
+  get childrenName() {
+    return "descriptors";
+  }
+
+  toJSON() {
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0) {
+      obj.properties = this.properties;
+    }
+
+    if (this.permissions.length > 0) {
+      obj.permissions = this.permissions;
+    }
+    return obj;
+  }
+
+  addProperty(param) {
+    if (!this.properties.includes(param)) {
+      this.properties.push(param);
+    }
+  }
+  removeProperty(param) {
+    this.properties = this.properties.filter(elm => {
+      return elm !== param;
+    });
+  }
+
+  addPermission(param) {
+    if (!this.permissions.includes(param)) {
+      this.permissions.push(param);
+    }
+  }
+  removePermission(param) {
+    this.permissions = this.permissions.filter(elm => {
+      return elm !== param;
+    });
   }
 
   write(data) {
@@ -3284,14 +3587,6 @@ class BleCharacteristic {
     });
   }
 
-  writeNumber(val) {
-    this.write([val]);
-  }
-
-  writeText(str) {
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
   read() {
     this.service.peripheral.Obniz.send({
       ble: {
@@ -3304,26 +3599,20 @@ class BleCharacteristic {
       }
     });
   }
-  onwrite() {}
-  onread() {}
-  onwritefromremote() {}
-  onreadfromremote() {}
 
-  toJSON() {
-    var obj = {
-      uuid: this.uuid.toLowerCase()
-    };
-    if (this.data) {
-      obj.data = this.data;
-    }
-    if (this.descriptors) {
-      obj.descriptors = this.descriptors;
-    }
-    if (this.property.length > 0) {
-      obj.property = this.property;
-    }
-    return obj;
+  notify() {
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          notify_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase()
+          }
+        }
+      }
+    });
   }
+
 }
 
 module.exports = BleCharacteristic;
@@ -3341,41 +3630,44 @@ module.exports = BleCharacteristic;
 
 
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 /**
  * 
  * @param {type} rawData
  * @return {BleServiuce}
  */
-class BleDescriptor {
+class BleDescriptor extends BleAttributeAbstract {
 
   constructor(obj) {
-    this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase();
+    super(obj);
 
-    this.data = obj.data || null;
-    if (!this.data && obj.text) {
-      this.data = ObnizUtil.string2dataArray(obj.text);
-    }
-    if (!this.data && obj.value) {
-      this.data = obj.value;
-    }
-
-    this.property = obj.property || [];
-    if (!Array.isArray(this.property)) {
-      this.property = [this.property];
+    this.permissions = obj.permissions || [];
+    if (!Array.isArray(this.permissions)) {
+      this.permissions = [this.permissions];
     }
   }
 
-  toJSON() {
-    var obj = {
-      uuid: this.uuid.toLowerCase()
-    };
-    if (this.data) {
-      obj.data = this.data;
+  get parentName() {
+    return "characteristic";
+  }
+
+  addPermission(param) {
+    if (!this.permissions.includes(param)) {
+      this.permissions.push(param);
     }
-    if (this.property.length > 0) {
-      obj.property = this.property;
+  }
+  removePermission(param) {
+    this.permissions = this.permissions.filter(elm => {
+      return elm !== param;
+    });
+  }
+
+  toJSON() {
+    let obj = super.toJSON();
+
+    if (this.permissions.length > 0) {
+      obj.permissions = this.permissions;
     }
     return obj;
   }
@@ -3395,16 +3687,7 @@ class BleDescriptor {
     });
   }
 
-  writeNumber(val) {
-    this.write([val]);
-  }
-
-  writeText(str) {
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
   read() {
-
     this.characteristic.service.peripheral.Obniz.send({
       ble: {
         peripheral: {
@@ -3418,10 +3701,6 @@ class BleDescriptor {
     });
   }
 
-  onwrite() {}
-  onread() {}
-  onwritefromremote() {}
-  onreadfromremote() {}
 }
 
 module.exports = BleDescriptor;
@@ -3465,8 +3744,9 @@ class BlePeripheral {
   }
 
   getService(uuid) {
+    uuid = uuid.toLowerCase();
     return this.services.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
+      return element.uuid.toLowerCase() === uuid;
     }).shift();
   }
 
@@ -3475,8 +3755,6 @@ class BlePeripheral {
       services: this.services
     };
   }
-
-  onconnectionupdates() {}
 
   findCharacteristic(param) {
     var serviceUuid = param.service_uuid.toLowerCase();
@@ -3502,9 +3780,100 @@ class BlePeripheral {
   end() {
     this.Obniz.send({ ble: { peripheral: null } });
   }
+
+  onconnectionupdates() {}
+  onerror() {}
 }
 
 module.exports = BlePeripheral;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js":
+/*!*************************************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
+const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+
+class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
+
+  constructor(params) {
+    super(params);
+
+    this.isRemote = false;
+    this.discoverdOnRemote = false;
+  }
+
+  get wsChildUuidName() {
+    let childrenName = this.childrenName;
+    if (!childrenName) {
+      return null;
+    }
+    let childName = childrenName.slice(0, -1);
+    return childName + "_uuid";
+  }
+
+  getChild(uuid) {
+    let obj = super.getChild(uuid);
+    if (!obj) {
+      obj = this.addChild({ uuid });
+    }
+    return obj;
+  }
+
+  discoverChildren() {}
+
+  discoverChildrenWait() {
+    return new Promise(resolve => {
+      this.emitter.once("discoverfinished", params => {
+        let children = this.children.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        resolve(children);
+      });
+      this.discoverChildren();
+    });
+  }
+
+  /**
+   * CALLBACKS
+   */
+  ondiscover() {}
+
+  ondiscoverfinished() {}
+
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
+    switch (notifyName) {
+      case "discover":
+        {
+          let child = this.getChild(params[this.wsChildUuidName]);
+          child.discoverdOnRemote = true;
+          child.properties = params.properties || [];
+          this.ondiscover(child);
+          break;
+        }
+      case "discoverfinished":
+        {
+          let children = this.children.filter(elm => {
+            return elm.discoverdOnRemote;
+          });
+          this.ondiscoverfinished(children);
+          break;
+        }
+    }
+  }
+}
+
+module.exports = BleRemoteAttributreAbstruct;
 
 /***/ }),
 
@@ -3518,28 +3887,84 @@ module.exports = BlePeripheral;
 "use strict";
 
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
+const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteCharacteristic {
+class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
-  constructor(Obniz, service, uuid) {
-    this.Obniz = Obniz;
-    this.service = service;
-    this.uuid = uuid;
-    this.discoverdOnRemote = false;
-    this.descriptors = [];
-    this.properties = [];
+  constructor(params) {
+    super(params);
+
+    this.properties = params.properties || [];
+    if (!Array.isArray(this.properties)) {
+      this.properties = [this.properties];
+    }
   }
 
-  toString() {
-    return JSON.stringify({
-      "address": this.service.peripheral.address,
-      "service_uuid": this.service.uuid,
-      "characteristic_uuid": this.uuid,
-      "properties": this.properties
+  get parentName() {
+    return "service";
+  }
+
+  get childrenClass() {
+    return BleRemoteDescriptor;
+  }
+  get childrenName() {
+    return "descriptors";
+  }
+
+  addDescriptor(params) {
+    return this.addChild(params);
+  }
+  //
+  // getCharacteristic(params) {
+  //   return this.getChild(params)
+  // }
+
+  getDescriptor(uuid) {
+
+    let obj = this.getChild(uuid);
+    if (obj) {
+      return obj;
+    }
+    var newCharacteristic = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    this.addChild(newCharacteristic);
+    return newCharacteristic;
+  }
+
+  registerNotify(callback) {
+    this.onnotify = callback;
+    var obj = {
+      "ble": {
+        "register_notify_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
+        }
+      }
+    };
+    this.service.peripheral.Obniz.send(obj);
+  }
+
+  unregisterNotify() {
+    this.onnotify = function () {};
+    var obj = {
+      "ble": {
+        "unregister_notify_characteristic": {
+          "address": this.service.peripheral.address,
+          "service_uuid": this.service.uuid,
+          "characteristic_uuid": this.uuid
+        }
+      }
+    };
+    this.service.peripheral.Obniz.send(obj);
+  }
+
+  readFromRemoteWait() {
+    return new Promise(resolve => {
+      this.emitter.once("onreadfromremote", params => {
+        resolve();
+      });
     });
   }
 
@@ -3553,13 +3978,7 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
-  }
-
-  readWait() {
-    return _asyncToGenerator(function* () {
-      throw new Error("TODO");
-    })();
+    this.service.peripheral.Obniz.send(obj);
   }
 
   write(array) {
@@ -3573,18 +3992,10 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.service.peripheral.Obniz.send(obj);
   }
 
-  writeNumber(val) {
-    this.write([val]);
-  }
-
-  writeText(val) {
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-  discoverAllDescriptors(str) {
+  discoverChildren() {
     var obj = {
       "ble": {
         "get_descriptors": {
@@ -3594,18 +4005,24 @@ class BleRemoteCharacteristic {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.service.peripheral.Obniz.send(obj);
   }
 
-  getDescriptor(uuid) {
-    for (var key in this.descriptors) {
-      if (this.descriptors[key].uuid === uuid) {
-        return this.descriptors[key];
-      }
+  discoverAllDescriptors() {
+    return this.discoverChildren();
+  }
+
+  discoverAllDescriptorsWait() {
+    return this.discoverChildrenWait();
+  }
+
+  toJSON() {
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0) {
+      obj.properties = this.properties;
     }
-    var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
-    this.descriptors.push(newDescriptors);
-    return newDescriptors;
+    return obj;
   }
 
   canBroadcast() {
@@ -3627,10 +4044,41 @@ class BleRemoteCharacteristic {
     return this.properties.includes("indicate");
   }
 
-  onwrite(status) {}
-  onread(value) {}
+  ondiscover(descriptor) {
+    this.ondiscoverdescriptor(descriptor);
+  }
+  ondiscoverfinished(descriptors) {
+    this.ondiscoverdescriptorfinished(descriptors);
+  }
+
   ondiscoverdescriptor(descriptor) {}
   ondiscoverdescriptorfinished(services) {}
+
+  onregisternofity() {}
+  onunregisternofity() {}
+  onnotify() {}
+
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
+    switch (notifyName) {
+      case "onregisternofity":
+        {
+          this.onregisternofity();
+          break;
+        }
+      case "onunregisternofity":
+        {
+          this.onunregisternofity();
+          break;
+        }
+      case "onnotify":
+        {
+          this.onnotify();
+          break;
+        }
+    }
+  }
+
 }
 module.exports = BleRemoteCharacteristic;
 
@@ -3646,23 +4094,15 @@ module.exports = BleRemoteCharacteristic;
 "use strict";
 
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteDescriptor {
-  constructor(Obniz, characteristic, uuid) {
-    this.Obniz = Obniz;
-    this.characteristic = characteristic;
-    this.discoverdOnRemote = false;
-    this.uuid = uuid;
+class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
+  constructor(params) {
+    super(params);
   }
 
-  toString() {
-    return JSON.stringify({
-      "address": this.characteristic.service.peripheral.address,
-      "service_uuid": this.characteristic.service.uuid,
-      "characteristic_uuid": this.characteristic.uuid,
-      "descriptor_uuid": this.uuid
-    });
+  get parentName() {
+    return "characteristic";
   }
 
   read() {
@@ -3676,13 +4116,7 @@ class BleRemoteDescriptor {
         }
       }
     };
-    this.Obniz.send(obj);
-  }
-
-  readWait() {
-    return _asyncToGenerator(function* () {
-      throw new Error("TODO");
-    })();
+    this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
   write(array) {
@@ -3697,19 +4131,9 @@ class BleRemoteDescriptor {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
-  writeNumber(val) {
-    this.write([val]);
-  }
-
-  writeText(val) {
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-  onread(value) {}
-  onwrite(value) {}
 }
 
 module.exports = BleRemoteDescriptor;
@@ -3727,16 +4151,20 @@ module.exports = BleRemoteDescriptor;
 
 
 const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
+const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleRemotePeripheral {
 
   constructor(Obniz, address) {
     this.Obniz = Obniz;
     this.address = address;
+    this.connected = false;
 
     this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
 
     this.services = [];
+    this.emitter = new emitter();
   }
 
   /**
@@ -3840,10 +4268,27 @@ class BleRemotePeripheral {
     };
   }
 
-  connect(callbacks) {
-    var keys = ["onconnect", "ondisconnect"];
-    this.setParams(keys, callbacks);
+  _addServiceUuids(results, data, bit) {
+    if (!data) return;
+    let uuidLength = bit / 4;
+    for (let i = 0; i < data.length; i = i + uuidLength) {
+      let one = data.slice(i, i + uuidLength);
+      results.push(this.Obniz.ble._dataArray2uuidHex(one, true));
+    }
+  }
 
+  advertisementServiceUuids() {
+    let results = [];
+    this._addServiceUuids(results, this.serarchTypeVal(0x02), 16);
+    this._addServiceUuids(results, this.serarchTypeVal(0x03), 16);
+    this._addServiceUuids(results, this.serarchTypeVal(0x04), 32);
+    this._addServiceUuids(results, this.serarchTypeVal(0x05), 32);
+    this._addServiceUuids(results, this.serarchTypeVal(0x06), 64);
+    this._addServiceUuids(results, this.serarchTypeVal(0x07), 64);
+    return results;
+  }
+
+  connect() {
     var obj = {
       "ble": {
         "connect": {
@@ -3852,6 +4297,15 @@ class BleRemotePeripheral {
       }
     };
     this.Obniz.send(obj);
+  }
+
+  connectWait() {
+    return new Promise(resolve => {
+      this.emitter.once("statusupdate", params => {
+        resolve(params.status === "connected");
+      });
+      this.connect();
+    });
   }
 
   disconnect() {
@@ -3870,14 +4324,43 @@ class BleRemotePeripheral {
   }
 
   getService(uuid) {
+    uuid = uuid.toLowerCase();
     for (var key in this.services) {
       if (this.services[key].uuid === uuid) {
         return this.services[key];
       }
     }
-    var newService = new BleRemoteService(this.Obniz, this, uuid);
+    var newService = new BleRemoteService({ uuid });
+    newService.parent = this;
     this.services.push(newService);
     return newService;
+  }
+
+  findService(param) {
+    var serviceUuid = param.service_uuid.toLowerCase();
+    var s = this.getService(serviceUuid);
+    return s;
+  }
+
+  findCharacteristic(param) {
+    var serviceUuid = param.service_uuid.toLowerCase();
+    var characteristicUuid = param.characteristic_uuid.toLowerCase();
+    var s = this.getService(serviceUuid);
+    if (s) {
+      var c = s.getCharacteristic(characteristicUuid);
+      return c;
+    }
+    return null;
+  }
+
+  findDescriptor(param) {
+    var descriptorUuid = param.descriptor_uuid.toLowerCase();
+    var c = this.findCharacteristic(param);
+    if (c) {
+      var d = c.getDescriptor(descriptorUuid);
+      return d;
+    }
+    return null;
   }
 
   discoverAllServices() {
@@ -3891,10 +4374,60 @@ class BleRemotePeripheral {
     this.Obniz.send(obj);
   }
 
+  discoverAllServicesWait() {
+    return new Promise(resolve => {
+      this.emitter.once("discoverfinished", () => {
+        let children = this.services.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        resolve(children);
+      });
+      this.discoverAllServices();
+    });
+  }
+
   onconnect() {}
   ondisconnect() {}
+
   ondiscoverservice(service) {}
+
   ondiscoverservicefinished(services) {}
+
+  ondiscover() {}
+  ondiscoverfinished() {}
+
+  notifyFromServer(notifyName, params) {
+    this.emitter.emit(notifyName, params);
+    switch (notifyName) {
+      case "statusupdate":
+        {
+          if (params.status === "connected") {
+            this.connected = true;
+            this.onconnect();
+          }
+          if (params.status === "disconnected") {
+            this.connected = false;
+            this.ondisconnect();
+          }
+          break;
+        }
+      case "discover":
+        {
+          let child = this.getService(params.service_uuid);
+          child.discoverdOnRemote = true;
+          this.ondiscoverservice(child);
+          break;
+        }
+      case "discoverfinished":
+        {
+          let children = this.services.filter(elm => {
+            return elm.discoverdOnRemote;
+          });
+          this.ondiscoverservicefinished(children);
+          break;
+        }
+    }
+  }
 
   onerror(err) {}
 }
@@ -3914,26 +4447,41 @@ module.exports = BleRemotePeripheral;
 
 
 const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
+const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteService {
+class BleRemoteService extends BleRemoteAttributeAbstract {
 
-  constructor(Obniz, peripheral, uuid) {
-    this.Obniz = Obniz;
-    this.uuid = uuid;
-    this.peripheral = peripheral;
-    this.discoverdOnRemote = false;
-
-    this.characteristics = [];
+  constructor(obj) {
+    super(obj);
   }
 
-  toString() {
-    return JSON.stringify({
-      "address": this.peripheral.address,
-      "service_uuid": this.uuid
-    });
+  get parentName() {
+    return "peripheral";
+  }
+
+  get childrenClass() {
+    return BleRemoteCharacteristic;
+  }
+  get childrenName() {
+    return "characteristics";
+  }
+
+  addCharacteristic(params) {
+    return this.addChild(params);
+  }
+
+  getCharacteristic(params) {
+    return this.getChild(params);
   }
 
   discoverAllCharacteristics() {
+    return this.discoverChildren();
+  }
+  discoverAllCharacteristicsWait() {
+    return this.discoverChildrenWait();
+  }
+
+  discoverChildren() {
     var obj = {
       "ble": {
         "get_characteristics": {
@@ -3942,23 +4490,18 @@ class BleRemoteService {
         }
       }
     };
-    this.Obniz.send(obj);
+    this.parent.Obniz.send(obj);
   }
 
-  getCharacteristic(uuid) {
-
-    for (var key in this.characteristics) {
-      if (this.characteristics[key].uuid === uuid) {
-        return this.characteristics[key];
-      }
-    }
-    var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
-    this.characteristics.push(newCharacteristic);
-    return newCharacteristic;
+  ondiscover(characteristic) {
+    this.ondiscovercharacteristic(characteristic);
+  }
+  ondiscoverfinished(characteristics) {
+    this.ondiscovercharacteristicfinished(characteristics);
   }
 
   ondiscovercharacteristic(characteristic) {}
-  ondiscovercharacteristicfinished(characteristic) {}
+  ondiscovercharacteristicfinished(characteristics) {}
 }
 
 module.exports = BleRemoteService;
@@ -3975,40 +4518,27 @@ module.exports = BleRemoteService;
 "use strict";
 
 
+const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 
-class BleService {
+class BleService extends BleAttributeAbstract {
 
   constructor(obj) {
-    this.characteristics = [];
-    this.uuid = obj.uuid.toLowerCase();
+    super(obj);
 
-    if (obj["characteristics"]) {
-      for (var key in obj["characteristics"]) {
-        this.addCharacteristic(obj["characteristics"][key]);
-      }
-    }
+    this.addCharacteristic = this.addChild;
+    this.getCharacteristic = this.getChild;
   }
 
-  addCharacteristic(obj) {
-    if (!(obj instanceof BleCharacteristic)) {
-      obj = new BleCharacteristic(obj);
-    }
-    this.characteristics.push(obj);
-    obj.service = this;
+  get parentName() {
+    return "peripheral";
   }
 
-  getCharacteristic(uuid) {
-    return this.characteristics.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
-    }).shift();
+  get childrenName() {
+    return "characteristics";
   }
-
-  toJSON() {
-    return {
-      uuid: this.uuid.toLowerCase(),
-      characteristics: this.characteristics
-    };
+  get childrenClass() {
+    return BleCharacteristic;
   }
 
   get advData() {
@@ -4016,6 +4546,10 @@ class BleService {
       flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid]
     };
+  }
+
+  notify(notifyName, params) {
+    //nothing
   }
 }
 
@@ -5589,7 +6123,7 @@ class WSCommand {
   static dequeueOne(buf) {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
-      throw new Eror("something wrong. buf less than 3");
+      throw new Error("something wrong. buf less than 3");
     }
     if (buf[0] & 0x80) {
       throw new Eror("reserved bit 1");
@@ -5917,11 +6451,12 @@ class WSCommand_Ble extends WSCommand {
     this._CommandCharacteristics = 9;
     this._CommandWriteCharacteristics = 10;
     this._CommandReadCharacteristics = 11;
-    // this._CommandNotifyCharacteristics = 12; // currently not used
-    // this._CommandNotifyCharacteristicsResults = 13; // currently not used
+    this._CommandRegisterNotifyCharacteristic = 12;
+    this._CommandUnregisterNotifyCharacteristic = 13;
     this._CommandDescriptors = 14;
     this._CommandWriteDescriptor = 15;
     this._CommandReadDescriptor = 16;
+    this._CommandNotifyCharacteristic = 17;
 
     this._CommandServerStartPeripheral = 20;
     this._CommandServerNotifyConnect = 21;
@@ -5936,6 +6471,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerReadDescriptorValue = 30;
     this._CommandServerNotifyWriteDescriptorValue = 31;
     this._CommandServerNotifyReadDescriptorValue = 32;
+    this._CommandServerNofityCharavteristic = 33;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -5978,6 +6514,11 @@ class WSCommand_Ble extends WSCommand {
       indicate: 0x20,
       auth: 0x40,
       extended_properties: 0x80
+    };
+
+    this._commandResults = {
+      success: 0,
+      failed: 1
     };
   }
 
@@ -6031,6 +6572,18 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandWriteCharacteristics, buf);
   }
 
+  centralCharacteristicRegisterNotify(params) {
+    var schema = [{ path: "register_notify_characteristic.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "register_notify_characteristic.service_uuid", length: 18, type: "uuid", required: true }, { path: "register_notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandRegisterNotifyCharacteristic, buf);
+  }
+
+  centralCharacteristicUnregisterNotify(params) {
+    var schema = [{ path: "unregister_notify_characteristic.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "unregister_notify_characteristic.service_uuid", length: 18, type: "uuid", required: true }, { path: "unregister_notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandUnregisterNotifyCharacteristic, buf);
+  }
+
   centralDescriptorGet(params) {
     var schema = [{ path: "get_descriptors.address", length: 6, type: "hex", required: true, endianness: "little" }, { path: "get_descriptors.service_uuid", length: 18, type: "uuid", required: true }, { path: "get_descriptors.characteristic_uuid", length: 18, type: "uuid", required: true }];
     var buf = JsonBinaryConverter.createSendBuffer(schema, params);
@@ -6070,12 +6623,23 @@ class WSCommand_Ble extends WSCommand {
     var propFlags = {
       0x01: "broadcast",
       0x02: "read",
-      0x04: "write_no_response",
+      0x04: "write_without_response",
       0x08: "write",
       0x10: "notify",
       0x20: "indiate",
       0x40: "auth",
       0x80: "ext_prop"
+    };
+
+    var permissionFlags = {
+      0x001: "read",
+      0x002: "read_encrypted",
+      0x004: "read_enc_mitm",
+      0x010: "write",
+      0x020: "write_encrypted",
+      0x040: "write_enc_mitm",
+      0x080: "write_signed",
+      0x100: "write_signed_mitm"
     };
     var schema = {
       service: {
@@ -6084,13 +6648,11 @@ class WSCommand_Ble extends WSCommand {
       },
       characteristic: {
         command: this._CommandServerAddCharacteristic,
-        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "property", length: 1, type: "flag", default: ["write", "read"], flags: propFlags }, //read and write OK
-        { path: "data", type: "dataArray" }]
+        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags }, { path: "properties", length: 1, type: "flag", default: ["write", "read"], flags: propFlags }, { path: "data", type: "dataArray" }]
       },
       descriptor: {
         command: this._CommandServerAddDescriptor,
-        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "property", length: 1, type: "flag", default: ["read"], flags: propFlags }, //read OK
-        { path: "data", type: "dataArray" }]
+        schema: [{ path: "service_uuid", length: 18, type: "uuid", required: true }, { path: "characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "uuid", length: 18, type: "uuid", required: true }, { path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags }, { path: "data", type: "dataArray" }]
       }
     };
 
@@ -6149,6 +6711,12 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
   }
 
+  peripheralCharacteristicNotify(params) {
+    var schema = [{ path: "peripheral.notify_characteristic.service_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true }];
+    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandServerNofityCharavteristic, buf);
+  }
+
   peripheralDescriptorRead(params) {
     var schema = [{ path: "peripheral.read_descriptor.service_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.read_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true }, { path: "peripheral.read_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true }];
     var buf = JsonBinaryConverter.createSendBuffer(schema, params);
@@ -6166,7 +6734,7 @@ class WSCommand_Ble extends WSCommand {
     if (module === undefined) {
       return;
     }
-    let schemaData = [{ uri: "/request/ble/central/scan_start", onValid: this.centralScanStart }, { uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop }, { uri: "/request/ble/central/connect", onValid: this.centralConnect }, { uri: "/request/ble/central/disconnect", onValid: this.centralDisconnect }, { uri: "/request/ble/central/service_get", onValid: this.centralServiceGet }, { uri: "/request/ble/central/characteristic_get", onValid: this.centralCharacteristicGet }, { uri: "/request/ble/central/characteristic_read", onValid: this.centralCharacteristicRead }, { uri: "/request/ble/central/characteristic_write", onValid: this.centralCharacteristicWrite }, { uri: "/request/ble/central/descriptor_get", onValid: this.centralDescriptorGet }, { uri: "/request/ble/central/descriptor_read", onValid: this.centralDescriptorRead }, { uri: "/request/ble/central/descriptor_write", onValid: this.centralDescriptorWrite }, { uri: "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart }, { uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop }, { uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart }, { uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop }, { uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead }, { uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite }, { uri: "/request/ble/peripheral/descriptor_read", onValid: this.peripheralDescriptorRead }, { uri: "/request/ble/peripheral/descriptor_write", onValid: this.peripheralDescriptorWrite }];
+    let schemaData = [{ uri: "/request/ble/central/scan_start", onValid: this.centralScanStart }, { uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop }, { uri: "/request/ble/central/connect", onValid: this.centralConnect }, { uri: "/request/ble/central/disconnect", onValid: this.centralDisconnect }, { uri: "/request/ble/central/service_get", onValid: this.centralServiceGet }, { uri: "/request/ble/central/characteristic_get", onValid: this.centralCharacteristicGet }, { uri: "/request/ble/central/characteristic_read", onValid: this.centralCharacteristicRead }, { uri: "/request/ble/central/characteristic_write", onValid: this.centralCharacteristicWrite }, { uri: "/request/ble/central/characteristic_register_notify", onValid: this.centralCharacteristicRegisterNotify }, { uri: "/request/ble/central/characteristic_unregister_notify", onValid: this.centralCharacteristicUnregisterNotify }, { uri: "/request/ble/central/descriptor_get", onValid: this.centralDescriptorGet }, { uri: "/request/ble/central/descriptor_read", onValid: this.centralDescriptorRead }, { uri: "/request/ble/central/descriptor_write", onValid: this.centralDescriptorWrite }, { uri: "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart }, { uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop }, { uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart }, { uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop }, { uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead }, { uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite }, { uri: "/request/ble/peripheral/characteristic_notify", onValid: this.peripheralCharacteristicNotify }, { uri: "/request/ble/peripheral/descriptor_read", onValid: this.peripheralDescriptorRead }, { uri: "/request/ble/peripheral/descriptor_write", onValid: this.peripheralDescriptorWrite }];
     let res = this.validateCommandSchema(schemaData, module, "ble");
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -6185,6 +6753,9 @@ class WSCommand_Ble extends WSCommand {
     funcList[this._CommandCharacteristics] = this.notifyFromBinaryChacateristics.bind(this);
     funcList[this._CommandWriteCharacteristics] = this.notifyFromBinaryWriteChacateristics.bind(this);
     funcList[this._CommandReadCharacteristics] = this.notifyFromBinaryReadChacateristics.bind(this);
+    funcList[this._CommandRegisterNotifyCharacteristic] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
+    funcList[this._CommandUnregisterNotifyCharacteristic] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
+    funcList[this._CommandNotifyCharacteristic] = this.notifyFromBinaryNotifyChacateristic.bind(this);
     funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(this);
     funcList[this._CommandWriteDescriptor] = this.notifyFromBinaryWriteDescriptor.bind(this);
     funcList[this._CommandReadDescriptor] = this.notifyFromBinaryReadDescriptor.bind(this);
@@ -6216,22 +6787,17 @@ class WSCommand_Ble extends WSCommand {
       results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
       results.adv_data = results.adv_data.slice(0, results.advertise_length);
 
-      //      if(results.scan_response_length === 0){
-      //          results.scan_resp = [];
-      //      }else{
-      //        results.scan_resp = results.adv_data.slice(results.advertise_length);
-      //        results.adv_data = results.adv_data.slice(0, results.advertise_length);;
-      //      }
       delete results.num_response;
       delete results.advertise_length;
       delete results.scan_response_length;
       delete results.advertise_data;
 
-      if (results.event_type === "inquiry_complete") {
-        results = { event_type: "inquiry_complete" };
+      if (results.event_type === "inquiry_result") {
+        delete results.event_type;
+        this._addRowForPath(objToSend, "ble.scan_result", results);
+      } else if (results.event_type === "inquiry_complete") {
+        this._addRowForPath(objToSend, "ble.scan_result_finish", true);
       }
-
-      this._addRowForPath(objToSend, "ble.scan_result", results);
     }
   }
 
@@ -6272,17 +6838,42 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryReadChacateristics(objToSend, payload) {
-    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }, { name: "data", type: "dataArray", length: null }];
 
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
   }
 
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
-    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }];
 
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
+  }
+
+  notifyFromBinaryRegisterNotifyChacateristic(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
+    this._addRowForPath(objToSend, "ble.register_nofity_characteristic_result", results);
+  }
+
+  notifyFromBinaryUnregisterNotifyChacateristic(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
+    this._addRowForPath(objToSend, "ble.unregister_nofity_characteristic_result", results);
+  }
+  notifyFromBinaryNotifyChacateristic(objToSend, payload) {
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "is_notify", type: "int", length: 1 }, { name: "data", type: "dataArray", length: null }];
+
+    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.is_notify = results.is_notify === 1;
+    this._addRowForPath(objToSend, "ble.nofity_characteristic", results);
   }
 
   notifyFromBinaryDescriptors(objToSend, payload) {
@@ -6299,16 +6890,18 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryReadDescriptor(objToSend, payload) {
-    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "data", type: "dataArray", length: null }];
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }, { name: "data", type: "dataArray", length: null }];
 
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
   }
 
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+    var schema = [{ name: "address", type: "hex", length: 6, endianness: "little" }, { name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }];
 
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
   }
 
@@ -6320,9 +6913,10 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
-    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }];
 
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
   }
 
@@ -6355,9 +6949,10 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
-    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "enum", length: 1, enum: { "success": 1, "failed": 0 } }];
+    var schema = [{ name: "service_uuid", type: "uuid", length: this.uuidLength }, { name: "characteristic_uuid", type: "uuid", length: this.uuidLength }, { name: "descriptor_uuid", type: "uuid", length: this.uuidLength }, { name: "result", type: "int", length: 1 }];
 
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
   }
 
@@ -6381,7 +6976,7 @@ class WSCommand_Ble extends WSCommand {
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     var errorMessage = {
-      0x00: "error",
+      0x00: "no error",
       0x01: "device not connected",
       0x02: "service not found",
       0x03: "charavteristic not found",
@@ -6389,7 +6984,8 @@ class WSCommand_Ble extends WSCommand {
       0x05: "no permission",
       0x06: "device not found",
       0x07: "ble is busy",
-      0x08: "service already running"
+      0x08: "service already running",
+      0xFF: "error"
     };
 
     var functionMessage = {
@@ -7993,6 +8589,7 @@ class JsonBinaryConverter {
     }
     return data;
   }
+
   static uuidToBinary(data) {
 
     var uuid = this.hexToBinary(data);
@@ -8029,7 +8626,13 @@ class JsonBinaryConverter {
         value += parseInt(key);
       }
     }
-    return [value];
+    var array = [];
+    let length = schema.length || 1;
+    for (let i = length - 1; i >= 0; i--) {
+      array.push(value >> i & 0xFF);
+    }
+
+    return array;
   }
 
   static stringToBinary(data) {
@@ -8053,7 +8656,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.74","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","tv4":"^1.3.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.74","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","tv4":"^1.3.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -10931,6 +11534,17 @@ ADT7310.prototype.getTempWait = _asyncToGenerator(function* () {
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("ADT7310", ADT7310);
+
+/***/ }),
+
+/***/ "eventemitter3":
+/*!********************************!*\
+  !*** external "eventemitter3" ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("eventemitter3");
 
 /***/ }),
 

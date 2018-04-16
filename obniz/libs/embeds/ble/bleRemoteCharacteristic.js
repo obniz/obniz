@@ -44,6 +44,43 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
     return newCharacteristic;
   }
 
+  registerNotify(callback){
+    this.onnotify = callback;
+    var obj = {
+      "ble" :{
+        "register_notify_characteristic" :{
+          "address" : this.service.peripheral.address,
+          "service_uuid" : this.service.uuid,
+          "characteristic_uuid" : this.uuid
+        }
+      }
+    };
+    this.service.peripheral.Obniz.send(obj);
+  }
+
+
+  unregisterNotify(){
+    this.onnotify = function () {};
+    var obj = {
+      "ble" :{
+        "unregister_notify_characteristic" :{
+          "address" : this.service.peripheral.address,
+          "service_uuid" : this.service.uuid,
+          "characteristic_uuid" : this.uuid
+        }
+      }
+    };
+    this.service.peripheral.Obniz.send(obj);
+  }
+
+  readFromRemoteWait(){
+    return new Promise(resolve => {
+      this.emitter.once("onreadfromremote",(params)=>{
+        resolve();
+      });
+    })
+  }
+
 
 
   read(){
@@ -123,22 +160,6 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
     return this.properties.includes("indicate");
   }
 
-  // notify_onwrite(params){
-  //   this.onwrite(params.result);
-  // };
-  //
-  // notify_onread(params){
-  //   this.onwrite(params.data);
-  // };
-  //
-  // notify_ondiscoverdescriptor(descriptor){
-  //   this.ondiscoverdescriptor(descriptor);
-  // };
-  //
-  // notify_ondiscoverdescriptorfinished(descriptors){
-  //   this.ondiscoverdescriptorfinished(descriptors);
-  // };
-
 
 
   ondiscover(descriptor) {
@@ -151,6 +172,27 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract{
   ondiscoverdescriptor(descriptor){};
   ondiscoverdescriptorfinished(services){};
 
+  onregisternofity(){};
+  onunregisternofity(){};
+  onnotify(){};
+
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
+    switch (notifyName) {
+      case "onregisternofity" : {
+        this.onregisternofity();
+        break;
+      }
+      case "onunregisternofity" : {
+        this.onunregisternofity();
+        break;
+      }
+      case "onnotify" : {
+        this.onnotify();
+        break;
+      }
+    }
+  }
 
 }
 module.exports = BleRemoteCharacteristic;

@@ -15,6 +15,11 @@ class BleCharacteristic extends BleAttributeAbstract{
       this.properties = [this.properties];
     }
 
+    this.permissions = obj.permissions || [];
+    if(!Array.isArray(this.permissions)){
+      this.permissions = [this.permissions];
+    }
+
   }
 
   get parentName(){
@@ -36,6 +41,10 @@ class BleCharacteristic extends BleAttributeAbstract{
     if (this.properties.length > 0 ) {
       obj.properties =  this.properties;
     }
+
+    if (this.permissions.length > 0 ) {
+      obj.permissions =  this.permissions;
+    }
     return obj;
   }
 
@@ -45,7 +54,19 @@ class BleCharacteristic extends BleAttributeAbstract{
     }
   }
   removeProperty(param){
-    this.properties.filter(elm=>{
+    this.properties = this.properties.filter(elm=>{
+      return elm !== param;
+    })
+
+  }
+
+  addPermission(param){
+    if(!this.permissions.includes(param)){
+      this.permissions.push(param);
+    }
+  }
+  removePermission(param){
+    this.permissions = this.permissions.filter(elm=>{
       return elm !== param;
     })
 

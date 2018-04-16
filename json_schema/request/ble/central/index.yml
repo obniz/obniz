@@ -14,6 +14,8 @@ description : "use obniz as central"
   -  {$ref : "/request/ble/central/characteristic_get"}
   -  {$ref : "/request/ble/central/characteristic_read"}
   -  {$ref : "/request/ble/central/characteristic_write"}
+  -  {$ref : "/request/ble/central/characteristic_register_notify"}
+  -  {$ref : "/request/ble/central/characteristic_unregister_notify"}
   -  {$ref : "/request/ble/central/descriptor_get"}
   -  {$ref : "/request/ble/central/descriptor_read"}
   -  {$ref : "/request/ble/central/descriptor_write"}

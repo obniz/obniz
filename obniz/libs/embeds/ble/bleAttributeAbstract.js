@@ -16,7 +16,7 @@ class BleAttributreAbstruct {
       this.data = ObnizUtil.string2dataArray(params.text);
     }
     if(! this.data && params.value){
-      this.data = params.value;
+      this.data = [params.value];
     }
 
     if(params[this.childrenName]){
@@ -134,6 +134,26 @@ class BleAttributreAbstruct {
         resolve(params.result);
       });
       this.write(data);
+    })
+  }
+
+
+  writeTextWait(data){
+    return new Promise(resolve => {
+      this.emitter.once("onwrite",(params)=>{
+        resolve(params.result);
+      });
+      this.writeText(data);
+    })
+  }
+
+
+  writeNumberWait(data){
+    return new Promise(resolve => {
+      this.emitter.once("onwrite",(params)=>{
+        resolve(params.result);
+      });
+      this.writeNumber(data);
     })
   }
 
