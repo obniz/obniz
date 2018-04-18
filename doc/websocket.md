@@ -734,29 +734,6 @@ available 0 to 5
 ```
 
 
-###  request: <a name="-request-pwm-duty">duty</a>
-
-
-
-
-| path | type | conditions  | description |
-|:---- |:---- |:---- |:---- |
-| `pwmX.duty` |  number  | <ul><li>required</li><li>0 &le; value &le; 100</li></ul> | % of duty cycle&nbsp; |
-
-
-
-```
-// Json Example
-[
-    {
-        "pwm0": {
-            "duty": 50
-        }
-    }
-]
-```
-
-
 ###  request: <a name="-request-pwm-modulate">modulate</a>
 
 
