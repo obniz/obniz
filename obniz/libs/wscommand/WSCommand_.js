@@ -3,7 +3,7 @@ const WSSchema = require("./WSSchema");
 
 let commandClasses = {};
 
-class WSCommand {
+module.exports = class WSCommand {
 
   constructor(delegate) {
     this.delegate = delegate;
@@ -18,21 +18,6 @@ class WSCommand {
   }
   static get CommandClasses() {
     return commandClasses;
-    // {
-    //   WSCommand_System,
-    //   WSCommand_Directive,
-    //   WSCommand_IO,
-    //   WSCommand_PWM,
-    //   WSCommand_UART,
-    //   WSCommand_AD,
-    //   WSCommand_SPI,
-    //   WSCommand_I2C,
-    //   WSCommand_LogicAnalyzer,
-    //   WSCommand_Display,
-    //   WSCommand_Switch,
-    //   WSCommand_Ble,
-    //   WSCommand_Measurement
-    // };
   }
 
   static addCommandClass(name, classObj){
@@ -315,5 +300,3 @@ class WSCommand {
 class WSCommandNotFoundError extends Error{
 
 }
-
-module.exports = WSCommand;

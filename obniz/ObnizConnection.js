@@ -10,6 +10,7 @@ module.exports = class ObnizConnection {
     this.socket = null;
     this.socket_local = null;
     this.debugprint = false;
+    this.debugprintBinary = false;
     this.debugs = [];
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this._prepareComponents();
@@ -313,6 +314,9 @@ module.exports = class ObnizConnection {
         compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
         if (compressed) {
           sendData = compressed;
+          if(this.debugprintBinary){
+            this.print_debug("binalized: " + new Uint8Array(compressed).toString());
+          }
         }
       } catch(e) {
         this.error('------ errored json -------');

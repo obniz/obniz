@@ -6126,6 +6126,7 @@ module.exports = class ObnizConnection {
     this.socket = null;
     this.socket_local = null;
     this.debugprint = false;
+    this.debugprintBinary = false;
     this.debugs = [];
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this._prepareComponents();
@@ -6429,6 +6430,9 @@ module.exports = class ObnizConnection {
         compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
         if (compressed) {
           sendData = compressed;
+          if(this.debugprintBinary){
+            this.print_debug("binalized: " + new Uint8Array(compressed).toString());
+          }
         }
       } catch(e) {
         this.error('------ errored json -------');
@@ -9733,7 +9737,7 @@ const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/W
 
 let commandClasses = {};
 
-class WSCommand {
+module.exports = class WSCommand {
 
   constructor(delegate) {
     this.delegate = delegate;
@@ -9748,21 +9752,6 @@ class WSCommand {
   }
   static get CommandClasses() {
     return commandClasses;
-    // {
-    //   WSCommand_System,
-    //   WSCommand_Directive,
-    //   WSCommand_IO,
-    //   WSCommand_PWM,
-    //   WSCommand_UART,
-    //   WSCommand_AD,
-    //   WSCommand_SPI,
-    //   WSCommand_I2C,
-    //   WSCommand_LogicAnalyzer,
-    //   WSCommand_Display,
-    //   WSCommand_Switch,
-    //   WSCommand_Ble,
-    //   WSCommand_Measurement
-    // };
   }
 
   static addCommandClass(name, classObj){
@@ -10045,8 +10034,6 @@ class WSCommand {
 class WSCommandNotFoundError extends Error{
 
 }
-
-module.exports = WSCommand;
 
 /***/ }),
 
@@ -10888,17 +10875,130 @@ module.exports = WSCommand_Ble;
 /***/ (function(module, exports, __webpack_require__) {
 
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js")
 
-class WSCommand_Directive extends WSCommand {
-  
+module.exports = class WSCommand_Directive extends WSCommand {
+
   constructor(delegate) {
     super(delegate);
     this.module = 1;
+
+    this._CommandRegistrate     = 0;
+    this._CommandPause          = 1;
+    this._CommandResume         = 2;
+
+    const CommandIO = __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js");
+    const CommandPWM = __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js");
+
+    this.availableCommands = [
+      new CommandIO(),
+      new CommandPWM()
+    ]
   }
 
-}
+  // Commands
 
-module.exports = WSCommand_Directive;
+  init(params, originalParams) {
+
+    const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+    let frame = new Uint8Array(nameArray.length + 2);
+    frame[0] = nameArray.length+1;
+    frame.set(nameArray, 1);
+    frame[frame.byteLength - 1] = 0; // null string
+    const commandJsonArray = params.animation.states;
+
+    for (let i=0; i<commandJsonArray.length; i++) {
+      const obj = commandJsonArray[i];
+      const duration = parseInt(obj.duration * 1000);
+      const state = obj.state;
+
+      // Dry run commands
+
+      const compressed = WSCommand.compress(this.availableCommands, JSON.parse(JSON.stringify(state)));
+      if (!compressed) {
+        throw new Error("[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.");
+      }
+      const length = compressed.byteLength;
+      
+      var commandHeader = new Uint8Array(8);
+      commandHeader[0] = length >> (8*3);
+      commandHeader[1] = length >> (8*2);
+      commandHeader[2] = length >> (8*1);
+      commandHeader[3] = length;
+      commandHeader[4] = duration >> (8*3);
+      commandHeader[5] = duration >> (8*2);
+      commandHeader[6] = duration >> (8*1);
+      commandHeader[7] = duration;
+
+      const combined =  new Uint8Array(frame.byteLength + commandHeader.byteLength + compressed.byteLength);
+      combined.set(frame, 0);
+      combined.set(commandHeader, frame.byteLength);
+      combined.set(compressed, frame.byteLength + commandHeader.byteLength);
+
+      frame = combined;
+    }
+
+    if (frame.byteLength > 1000) {
+      // 1kbyte over
+      throw new Error("[io.animation]Too big animation datas");
+    }
+
+    this.sendCommand(this._CommandRegistrate, frame);
+  }
+
+  changeState(params){
+    if(params.animation.status === "resume"){
+      const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+      let frame = new Uint8Array(nameArray.length + 2);
+      frame[0] = nameArray.length+1;
+      frame.set(nameArray, 1);
+      frame[frame.byteLength - 1] = 0;
+      this.sendCommand(this._CommandResume, frame);
+
+    } else if(params.animation.status === "pause"){
+      const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+      let frame = new Uint8Array(nameArray.length + 2);
+      frame[0] = nameArray.length+1;
+      frame.set(nameArray, 1);
+      frame[frame.byteLength - 1] = 0;
+      this.sendCommand(this._CommandPause, frame);
+
+    }
+  }
+  
+  parseFromJson(json) {
+    let parentCommandNotFound = false;
+    try {
+      super.parseFromJson(json);
+    }catch(err) {
+      if( err instanceof this.WSCommandNotFoundError){
+        parentCommandNotFound = true;
+      }else {
+        throw err;
+      }
+    }
+
+    const module = json["io"];
+    if (module === undefined) {
+      return;
+    }
+
+    const schemaData = [
+      {uri : "/request/ioAnimation/init",  onValid: this.init},
+      {uri : "/request/ioAnimation/changeState",  onValid: this.changeState}
+    ];
+    const res = this.validateCommandSchema(schemaData, module, "io", module );
+
+    if(res.valid === 0 && parentCommandNotFound){
+      if(res.invalidButLike.length > 0) {
+        throw new Error(res.invalidButLike[0].message);
+      }else{
+        let WSCommandNotFoundError = this.WSCommandNotFoundError;
+        throw new WSCommandNotFoundError( `[io.animation]unknown command`);
+      }
+    }
+  }
+}
 
 /***/ }),
 
