@@ -157,7 +157,7 @@ describe("7-ble", function () {
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
     let result = await chara.writeTextWait("hello");
-    expect(result).to.be.equal("success");
+    expect(result).to.be.equal(true);
     let data = await chara.readWait();
     expect(data).to.be.deep.equal([104, 101, 108, 108, 111]);
 
@@ -172,7 +172,7 @@ describe("7-ble", function () {
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
     let result = await chara.writeTextWait("hello");
-    expect(result).to.be.equal("failed");
+    expect(result).to.be.equal(false);
     let data = await chara.readWait();
     expect(data).to.be.deep.equal([101,51,214]);
   });

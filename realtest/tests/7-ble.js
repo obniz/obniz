@@ -17,10 +17,6 @@ describe("7-ble", function () {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         obnizB = config.obnizB;
-        obnizA.debugprint = true;
-        obnizA.debugprintBinary = true;
-        obnizB.debugprint = true;
-        obnizB.debugprintBinary = true;
         resolve();
       })
     });
@@ -76,7 +72,7 @@ describe("7-ble", function () {
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 1, 0];
     obnizB.ble.scan.onfind = function (peripheral) {
-      if (peripheral.localName() === localName) {
+      if (peripheral.localName === localName) {
         found = true;
       }
     };

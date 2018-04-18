@@ -184,7 +184,7 @@ class BleRemotePeripheral {
     this.Obniz.send(obj);
   }
 
-  connectWait() {
+  disconnectWait() {
     return new Promise((resolve) => {
       this.emitter.once("statusupdate", (params) => {
         resolve(params.status === "disconnected");

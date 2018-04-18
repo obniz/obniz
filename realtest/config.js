@@ -21,12 +21,12 @@ function waitForConenct(done){
 
 function connectTwoObniz (done) {
   if (obnizA) return;
-  obnizA = new Obniz(obnizA_ID);
+  obnizA = new Obniz(obnizA_ID,{local_connect:false});
   if (process.env.DEBUG) {
     obnizA.debugprint = true;
   }
   obnizA.onconnect = () => {
-    obnizB = new Obniz(obnizB_ID);
+    obnizB = new Obniz(obnizB_ID,{local_connect:false});
     if (process.env.DEBUG) {
       obnizB.debugprint = true;
     }
