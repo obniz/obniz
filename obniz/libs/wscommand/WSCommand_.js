@@ -3,7 +3,7 @@ const WSSchema = require("./WSSchema");
 
 let commandClasses = {};
 
-class WSCommand {
+module.exports = class WSCommand {
 
   constructor(delegate) {
     this.delegate = delegate;
@@ -18,21 +18,6 @@ class WSCommand {
   }
   static get CommandClasses() {
     return commandClasses;
-    // {
-    //   WSCommand_System,
-    //   WSCommand_Directive,
-    //   WSCommand_IO,
-    //   WSCommand_PWM,
-    //   WSCommand_UART,
-    //   WSCommand_AD,
-    //   WSCommand_SPI,
-    //   WSCommand_I2C,
-    //   WSCommand_LogicAnalyzer,
-    //   WSCommand_Display,
-    //   WSCommand_Switch,
-    //   WSCommand_Ble,
-    //   WSCommand_Measurement
-    // };
   }
 
   static addCommandClass(name, classObj){
@@ -77,17 +62,17 @@ class WSCommand {
   static dequeueOne(buf) {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
-      throw new Eror("something wrong. buf less than 3");
+      throw new Error("something wrong. buf less than 3");
     }
     if (buf[0] & 0x80) {
-      throw new Eror("reserved bit 1");
+      throw new Error("reserved bit 1");
     }
     var module = 0x7F & buf[0];
     var func = buf[1];
     var length_type = (buf[2] >> 6) & 0x3;
     var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
     if (length_type == 4) {
-      throw new Eror("invalid length");
+      throw new Error("invalid length");
     }
     var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
     var index = 3;
@@ -315,5 +300,3 @@ class WSCommand {
 class WSCommandNotFoundError extends Error{
 
 }
-
-module.exports = WSCommand;

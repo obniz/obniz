@@ -1,4 +1,5 @@
 const WSCommand = require("./WSCommand_.js");
+const qrcode = require("../utils/qr");
 
 let isNode = (typeof window === 'undefined') ;
 
@@ -40,8 +41,50 @@ class WSCommand_Display extends WSCommand {
   text(params){
     this.printText(params.text);
   }
+
   raw(params){
     this.drawHorizonally(new Uint8Array(params.raw));
+  }
+
+  qr(params) {
+    const text = params.qr.text
+    const correctionLevel = params.qr.correction || 'M';
+
+    const typeNumber = 0; // auto detect type.
+    const qr = qrcode(typeNumber, correctionLevel);
+    qr.addData(text);
+    qr.make();
+    let size = qr.getModuleCount();
+    if (size) {
+      size *= 2;
+      const modules = qr.getModules();
+      let vram = new Uint8Array(1024);
+      vram.fill(0);
+
+      for (let row=0; row<2; row++){
+        for (let col=0; col<size+4; col++){
+          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+          vram[parseInt((row + size + 2)*16 + col/8)] |= 0x80 >> (col%8);
+        }
+      }
+      for (let row=2; row<size+2; row++){
+        for (let col=0; col<2; col++){
+          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+        }
+        for (let col=size+2; col<size+4; col++){
+          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+        }
+      }
+
+      for (let row=0; row<size; row++){
+        for (let col=0; col<size; col++){
+          if (!modules[parseInt(row/2)][parseInt(col/2)]) {
+            vram[parseInt((row+2)*16 + (col+2)/8)] |= 0x80 >> ((col+2)%8);
+          }
+        }
+      }
+      this.drawHorizonally(vram);
+    }
   }
   
   pinName(params) {
@@ -99,7 +142,7 @@ class WSCommand_Display extends WSCommand {
       {uri : "/request/display/clear", onValid: this.clear},
       {uri : "/request/display/raw", onValid: this.raw},
       {uri : "/request/display/pin_assign", onValid: this.pinName},
-      {uri : "/request/display/qr"} // nothing to do 
+      {uri : "/request/display/qr", onValid: this.qr}
     ];
     let res = this.validateCommandSchema(schemaData, module, "display" );
 
