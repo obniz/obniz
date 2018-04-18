@@ -1,19 +1,21 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/request/ble/peripheral/service_stop"
+id: "/request/ble/peripheral/characteristic_notify"
+description : "notify characteristic for connected device"
 
 type: object
 required : [peripheral]
 properties:
     peripheral :
         type : object
-        required : [stop_service]
+        required : [notify_characteristic]
         properties:
-            stop_service :
+            notify_characteristic :
                 type : object
-                required: [service_uuid]
+                required: [service_uuid,characteristic_uuid]
                 additionalProperties: false
                 properties:
                     service_uuid : {$ref : "/uuid"}
+                    characteristic_uuid : {$ref : "/uuid"}
 

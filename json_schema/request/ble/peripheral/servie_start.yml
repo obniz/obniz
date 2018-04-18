@@ -37,6 +37,31 @@ properties:
                                 properties:
                                     uuid : {$ref : "/uuid"}
                                     data : {$ref : "/dataArray"}
+                                    properties :
+                                      type : array
+                                      default : [read,write]
+                                      items :
+                                        type : string
+                                        enum :
+                                          - broadcast
+                                          - read
+                                          - write_without_response
+                                          - write
+                                          - notify
+                                          - indicate
+                                          - auth
+                                          - extended_properties
+
+                                    permissions :
+                                      type : array
+                                      default : [read,write]
+                                      items :
+                                        default : [read,write]
+                                        type : string
+                                        enum :
+                                          - read
+                                          - write
+
                                     descriptors :
                                         type : array
                                         minItems : 0
@@ -47,4 +72,13 @@ properties:
                                             properties:
                                                 uuid : {$ref : "/uuid"}
                                                 data : {$ref : "/dataArray"}
+                                                permissions :
+                                                  type : array
+                                                  default : [read,write]
+                                                  items :
+                                                    default : [read,write]
+                                                    type : string
+                                                    enum :
+                                                      - read
+                                                      - write
 

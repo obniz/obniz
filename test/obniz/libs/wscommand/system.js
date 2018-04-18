@@ -154,7 +154,7 @@ describe("system.log", function () {
     expect(compress[1]).to.be.deep.equal(8);
   });
 
-  it.only("pong",  function () {
+  it("pong",  function () {
 
     let responseBinaryString = "0 8 1c 0 0 1 62 9e 60 f7 22 0 0 1 62 9e 60 f6 6e 0 0 1 62 9e 60 f6 65 0 0 0 2";
 

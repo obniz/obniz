@@ -18,46 +18,46 @@ describe("ble", function () {
 
 
   it("scan", function () {
-    this.obniz.ble.startScan({duration: 10});
+    this.obniz.ble.scan.start(null,{duration: 10});
 
     expect(this.obniz).send([{ble: {scan: {duration: 10}}}]);
     expect(this.obniz).to.be.finished;
   });
   it("scan default", function () {
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
     expect(this.obniz).to.be.finished;
   });
   it("scan stop", function () {
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
-    this.obniz.ble.stopScan();
+    this.obniz.ble.scan.end();
     expect(this.obniz).send([{ble: {scan: null}}]);
     expect(this.obniz).to.be.finished;
   });
 
 
-  it("callback default function onscan", function () {
-    expect(this.obniz.ble.onscan).to.have.not.throws();
+  it("callback default function onfind", function () {
+    expect(this.obniz.ble.scan.onfind).to.have.not.throws();
   });
-  it("callback default function onscanfinish", function () {
-    expect(this.obniz.ble.onscanfinish).to.have.not.throws();
+  it("callback default function onfindfinish", function () {
+    expect(this.obniz.ble.scan.onfinish).to.have.not.throws();
   });
 
   it("on scan", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -78,8 +78,8 @@ describe("ble", function () {
 
     expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200]);
     expect(peripheral.scan_resp).to.be.deep.equal([22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]);
-    expect(peripheral.localName()).to.be.equal("SSSSSSService78:F6:E5");
-    expect(peripheral.iBeacon()).to.be.deep.equal({major: 15747, minor: 26634, power: 200, rssi: -82, uuid: "c961aca7-94a6-4078-b1ff-962cb255ccdb"});
+    expect(peripheral.localName).to.be.equal("SSSSSSService78:F6:E5");
+    expect(peripheral.iBeacon).to.be.deep.equal({major: 15747, minor: 26634, power: 200, rssi: -82, uuid: "c961aca7-94a6-4078-b1ff-962cb255ccdb"});
 
     expect(this.obniz).to.be.finished;
   });
@@ -87,15 +87,15 @@ describe("ble", function () {
   it("on scan2", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                   "address": "e5f678800700",
                   "device_type": "dumo",
                   "address_type": "public",
@@ -115,8 +115,8 @@ describe("ble", function () {
 
 
     expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26]);
-    expect(peripheral.localName()).to.be.null;
-    expect(peripheral.iBeacon()).to.be.null;
+    expect(peripheral.localName).to.be.null;
+    expect(peripheral.iBeacon).to.be.null;
 
     expect(this.obniz).to.be.finished;
   });
@@ -125,9 +125,9 @@ describe("ble", function () {
     var stub1 = sinon.stub();
     var stub2 = sinon.stub();
 
-    this.obniz.ble.onscan = stub1;
-    this.obniz.ble.onscanfinish = stub2;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub1;
+    this.obniz.ble.scan.onfinish = stub2;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
@@ -136,9 +136,7 @@ describe("ble", function () {
     var results = [
       {
         "ble": {
-          "scan_result": {
-            "event_type": "inquiry_complete"
-          }
+          "scan_result_finish": true
         }
       }
     ];
@@ -160,15 +158,15 @@ describe("ble", function () {
     var stub1 = sinon.stub();
     var stub2 = sinon.stub();
 
-    this.obniz.ble.onscan = stub1;
-    this.obniz.ble.onscanfinish = stub2;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub1;
+    this.obniz.ble.scan.onfinish = stub2;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
     var results1 = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                   "address": "e5f678800700",
                   "device_type": "dumo",
                   "address_type": "public",
@@ -189,9 +187,7 @@ describe("ble", function () {
     var results2 = [
       {
         "ble": {
-          "scan_result": {
-            "event_type": "inquiry_complete"
-          }
+          "scan_result_finish": true
         }
       }
     ];
@@ -209,8 +205,8 @@ describe("ble", function () {
 
 
     expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26]);
-    expect(peripheral.localName()).to.be.null;
-    expect(peripheral.iBeacon()).to.be.null;
+    expect(peripheral.localName).to.be.null;
+    expect(peripheral.iBeacon).to.be.null;
 
     expect(this.obniz).to.be.finished;
   });
@@ -219,15 +215,15 @@ describe("ble", function () {
   it("connect", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",
@@ -272,15 +268,15 @@ describe("ble", function () {
   it("disconnect", function () {
     var stub = sinon.stub();
 
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
 
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
 
 
     var results = [{"ble":
           {"scan_result":
-                {"event_type": "inquiry_result",
+                {
                     "address": "e5f678800700",
                     "device_type": "dumo",
                     "address_type": "public",

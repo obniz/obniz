@@ -1,101 +1,126 @@
-const ObnizUtil = require("../../utils/util");
 const BleDescriptor = require("./bleDescriptor");
+const BleAttributeAbstract = require("./bleAttributeAbstract");
 
-class BleCharacteristic {
-  
-  constructor(obj){
-    this.descriptors = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    this.data = obj.data || null;
-    if(! this.data && obj.text){
-      this.data = ObnizUtil.string2dataArray(obj.text);
+class BleCharacteristic extends BleAttributeAbstract {
+
+  constructor(obj) {
+    super(obj);
+
+    this.addDescriptor = this.addChild;
+    this.getDescriptor = this.getChild;
+
+    this.properties = obj.properties || [];
+    if (!Array.isArray(this.properties)) {
+      this.properties = [this.properties];
     }
-    if(! this.data && obj.value){
-      this.data = obj.value;
+
+    this.permissions = obj.permissions || [];
+    if (!Array.isArray(this.permissions)) {
+      this.permissions = [this.permissions];
     }
-    
-    this.property = obj.property || [];
-    if(!Array.isArray(this.property)){
-      this.property = [this.property];
+
+  }
+
+  get parentName() {
+    return "service";
+  }
+
+  get childrenClass() {
+    return BleDescriptor;
+  }
+
+  get childrenName() {
+    return "descriptors";
+  }
+
+
+  toJSON() {
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0) {
+      obj.properties = this.properties;
     }
-    
-    if(obj["descriptors"]){
-       for(var key in obj["descriptors"]){
-        this.addDescriptor(obj["descriptors"][key]);
-      }
-    }
-  }
 
-  addDescriptor(obj) {
-    if(! (obj instanceof BleDescriptor ) ){
-      obj = new BleDescriptor(obj);
-    }
-    this.descriptors.push(obj);
-    obj.characteristic = this;
-  }
-
-  getDescriptor(uuid) {
-    return this.descriptors.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
-  }
-
-  write(data){
-    this.service.peripheral.Obniz.send(
-        {
-          ble : {
-          peripheral: {
-            write_characteristic: {
-              service_uuid: this.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.uuid.toLowerCase() ,
-              data: data
-            }
-          }
-        }
-      }
-    );
-  }
-
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(str){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-
-  read(){
-    this.service.peripheral.Obniz.send(
-        {
-          ble : {
-          peripheral: {
-            read_characteristic: {
-              service_uuid: this.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.uuid.toLowerCase() ,
-            }
-          }
-        }
-      }
-    );
-  }
-  onwrite(){};
-  onread(){};
-  onwritefromremote(){};
-  onreadfromremote(){};
-
-  toJSON(){
-    var obj = {
-      uuid : this.uuid.toLowerCase()
-    };
-    if (this.data) { obj.data = this.data }
-    if (this.descriptors) { obj.descriptors = this.descriptors }
-    if (this.property.length > 0 ) {
-      obj.property =  this.property;
-      
+    if (this.permissions.length > 0) {
+      obj.permissions = this.permissions;
     }
     return obj;
   }
+
+  addProperty(param) {
+    if (!this.properties.includes(param)) {
+      this.properties.push(param);
+    }
+  }
+
+  removeProperty(param) {
+    this.properties = this.properties.filter(elm => {
+      return elm !== param;
+    })
+
+  }
+
+  addPermission(param) {
+    if (!this.permissions.includes(param)) {
+      this.permissions.push(param);
+    }
+  }
+
+  removePermission(param) {
+    this.permissions = this.permissions.filter(elm => {
+      return elm !== param;
+    })
+
+  }
+
+  write(data) {
+    this.service.peripheral.Obniz.send(
+        {
+          ble: {
+            peripheral: {
+              write_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase(),
+                characteristic_uuid: this.uuid.toLowerCase(),
+                data: data
+              }
+            }
+          }
+        }
+    );
+  }
+
+
+  read() {
+    this.service.peripheral.Obniz.send(
+        {
+          ble: {
+            peripheral: {
+              read_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase(),
+                characteristic_uuid: this.uuid.toLowerCase(),
+              }
+            }
+          }
+        }
+    );
+  }
+
+
+  notify() {
+    this.service.peripheral.Obniz.send(
+        {
+          ble: {
+            peripheral: {
+              notify_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase(),
+                characteristic_uuid: this.uuid.toLowerCase(),
+              }
+            }
+          }
+        }
+    );
+  }
+
 }
 
 

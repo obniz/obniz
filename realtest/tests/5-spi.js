@@ -4,15 +4,25 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const path = require('path');
 const fs = require('fs');
+const config = require('../config.js');
 
-module.exports = async function(config) {
 
-  const obnizA = config.obnizA;
-  const obnizB = config.obnizB;
+let obnizA, obnizB ;
 
-  describe(path.basename(__filename), function () {
+
+describe("5-spi", function () {
 
     this.timeout(10000);
+
+  before(function () {
+    return new Promise((resolve) => {
+      config.waitForConenct(() => {
+        obnizA = config.obnizA;
+        obnizB = config.obnizB;
+        resolve();
+      })
+    });
+  });
 
     it("send-receive", async function () {
       var spi0 = obnizA.getFreeSpi();
@@ -106,4 +116,3 @@ module.exports = async function(config) {
       obnizB.io5.input();
     });
   });
-}

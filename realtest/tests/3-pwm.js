@@ -4,16 +4,25 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const path = require('path');
 const fs = require('fs');
+const config = require('../config.js');
 
-module.exports = async function(config) {
 
-  const obnizA = config.obnizA;
-  const obnizB = config.obnizB;
+let obnizA, obnizB ;
 
-  describe(path.basename(__filename), function () {
+
+describe("3-pwm", function () {
 
     this.timeout(20000);
 
+  before(function () {
+    return new Promise((resolve) => {
+      config.waitForConenct(() => {
+        obnizA = config.obnizA;
+        obnizB = config.obnizB;
+        resolve();
+      })
+    });
+  });
 
     let pwms = new Array(6);
 
@@ -158,5 +167,3 @@ module.exports = async function(config) {
     })
   }
 
-
-}

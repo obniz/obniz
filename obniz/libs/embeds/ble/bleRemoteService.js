@@ -1,54 +1,70 @@
-
 const BleRemoteCharacteristic = require("./bleRemoteCharacteristic");
+const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
 
-class BleRemoteService {
+class BleRemoteService extends BleRemoteAttributeAbstract {
 
-  constructor(Obniz, peripheral, uuid){
-    this.Obniz = Obniz;
-    this.uuid = uuid;
-    this.peripheral = peripheral;
-    this.discoverdOnRemote = false;
-    
-    this.characteristics = [];
+  constructor(obj) {
+    super(obj);
   }
 
-  toString(){
-    return JSON.stringify({
-          "address" : this.peripheral.address,
-          "service_uuid" : this.uuid
-    });
+  get parentName() {
+    return "peripheral";
   }
 
-  discoverAllCharacteristics(){
-    var obj = {
-      "ble" :{
-        "get_characteristics" :{
-          "address" : this.peripheral.address,
-          "service_uuid" : this.uuid
+  get childrenClass() {
+    return BleRemoteCharacteristic;
+  }
+
+  get childrenName() {
+    return "characteristics";
+  }
+
+
+  addCharacteristic(params) {
+    return this.addChild(params)
+  }
+
+  getCharacteristic(params) {
+    return this.getChild(params)
+  }
+
+
+  discoverAllCharacteristics() {
+    return this.discoverChildren();
+  }
+
+  discoverAllCharacteristicsWait() {
+    return this.discoverChildrenWait();
+  }
+
+  discoverChildren() {
+    const obj = {
+      "ble": {
+        "get_characteristics": {
+          "address": this.peripheral.address,
+          "service_uuid": this.uuid
         }
       }
     };
-    this.Obniz.send(obj);
-  }
-
-  getCharacteristic(uuid){
-  
-    for(var key in this.characteristics){
-      if(this.characteristics[key].uuid === uuid){
-        return this.characteristics[key];
-      }
-    }
-    var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
-    this.characteristics.push(newCharacteristic);
-    return newCharacteristic;
+    this.parent.Obniz.send(obj);
   }
 
 
-  ondiscovercharacteristic( characteristic){};
-  ondiscovercharacteristicfinished( characteristic){};
+  ondiscover(characteristic) {
+    this.ondiscovercharacteristic(characteristic);
+  }
+
+  ondiscoverfinished(characteristics) {
+    this.ondiscovercharacteristicfinished(characteristics);
+  }
+
+  ondiscovercharacteristic() {
+  };
+
+  ondiscovercharacteristicfinished() {
+  };
 
 }
-
 
 
 module.exports = BleRemoteService;

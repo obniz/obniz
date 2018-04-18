@@ -14,15 +14,15 @@ describe("ble", function () {
     testUtil.setupObnizPromise(this, function () {
     });
     var stub = sinon.stub();
-    this.obniz.ble.onscan = stub;
-    this.obniz.ble.startScan();
+    this.obniz.ble.scan.onfind = stub;
+    this.obniz.ble.scan.start();
     expect(this.obniz).send([{ble: {scan: {duration: 30}}}]);
     var results = [{
       "ble":
           {
             "scan_result":
                 {
-                  "event_type": "inquiry_result",
+
                   "address": "e5f678800700",
                   "device_type": "dumo",
                   "address_type": "public",
@@ -86,7 +86,7 @@ describe("ble", function () {
 
   it("to string", function () {
     let str = "" + this.peripheral;
-    expect(str).to.be.equal("{\"address\":\"e5f678800700\",\"advertisement\":[2,1,26],\"scanResponse\":[],\"rssi\":-82}");
+    expect(str).to.be.equal("{\"address\":\"e5f678800700\",\"addressType\":\"public\",\"advertisement\":[2,1,26],\"scanResponse\":[],\"rssi\":-82}");
   });
 
   it("disconnect", function () {
@@ -150,7 +150,7 @@ describe("ble", function () {
     let service = peripheral.ondiscoverservice.getCall(0).args[0];
     expect(service).to.be.a("object");
     expect(service.peripheral).to.be.equal(peripheral);
-    expect(service.uuid ).to.be.equal("FF00");
+    expect(service.uuid ).to.be.equal("ff00");
     expect(service).to.be.equal(peripheral.getService("FF00"));
 
   });
@@ -226,11 +226,11 @@ describe("ble", function () {
     expect(services.length).to.be.equal(2);
     expect(services[0]).to.be.a("object");
     expect(services[0].peripheral).to.be.equal(peripheral);
-    expect(services[0].uuid ).to.be.equal("FF00");
+    expect(services[0].uuid ).to.be.equal("ff00");
     expect(services[0]).to.be.equal(peripheral.getService("FF00"));
     expect(services[1]).to.be.a("object");
     expect(services[1].peripheral).to.be.equal(peripheral);
-    expect(services[1].uuid ).to.be.equal("FF01");
+    expect(services[1].uuid ).to.be.equal("ff01");
     expect(services[1]).to.be.equal(peripheral.getService("FF01"));
 
   });
@@ -274,7 +274,7 @@ describe("ble", function () {
           ble: {
             get_characteristics: {
               address: "e5f678800700",
-              service_uuid: "FF00",
+              service_uuid: "ff00",
             }
           }
         }]);
@@ -293,7 +293,7 @@ describe("ble", function () {
           ble: {
             get_characteristics: {
               address: "e5f678800700",
-              service_uuid: "FF00",
+              service_uuid: "ff00",
             }
           }
         }]);
@@ -305,8 +305,8 @@ describe("ble", function () {
         "ble": {
           "get_characteristic_result": {
             "address": "e5f678800700",
-            "service_uuid": "FF00",
-            "characteristic_uuid": "FF01",
+            "service_uuid": "ff00",
+            "characteristic_uuid": "ff01",
             "properties" : ["read","write"]
           }
         }
@@ -319,7 +319,7 @@ describe("ble", function () {
     let chara = service.ondiscovercharacteristic.getCall(0).args[0];
     expect(chara).to.be.a("object");
     expect(chara.service).to.be.equal(service);
-    expect(chara.uuid ).to.be.equal("FF01");
+    expect(chara.uuid ).to.be.equal("ff01");
     expect(chara).to.be.equal(service.getCharacteristic("FF01"));
     expect(chara.canWrite()).to.be.true;
     expect(chara.canRead()).to.be.true;
@@ -339,7 +339,7 @@ describe("ble", function () {
           ble: {
             get_characteristics: {
               address: "e5f678800700",
-              service_uuid: "FF00",
+              service_uuid: "ff00",
             }
           }
         }]);
@@ -370,8 +370,8 @@ describe("ble", function () {
           ble: {
             get_descriptors: {
               address: "e5f678800700",
-              service_uuid: "FF00",
-              characteristic_uuid: "FF01",
+              service_uuid: "ff00",
+              characteristic_uuid: "ff01",
             }
           }
         }]);
@@ -391,8 +391,8 @@ describe("ble", function () {
           ble: {
             get_descriptors: {
               address: "e5f678800700",
-              service_uuid: "FF00",
-              characteristic_uuid: "FF01",
+              service_uuid: "ff00",
+              characteristic_uuid: "ff01",
             }
           }
         }]);
@@ -436,8 +436,8 @@ describe("ble", function () {
           ble: {
             get_descriptors: {
               address: "e5f678800700",
-              service_uuid: "FF00",
-              characteristic_uuid: "FF01",
+              service_uuid: "ff00",
+              characteristic_uuid: "ff01",
             }
           }
         }]);
@@ -472,8 +472,8 @@ describe("ble", function () {
           ble: {
             write_characteristic: {
               address: "e5f678800700",
-              service_uuid: "FF00",
-              characteristic_uuid: "FF01",
+              service_uuid: "ff00",
+              characteristic_uuid: "ff01",
               data: [0x01, 0xe8]
             }
           }
@@ -496,8 +496,8 @@ describe("ble", function () {
         ble: {
           write_characteristic: {
             address: "e5f678800700",
-            service_uuid: "FF00",
-            characteristic_uuid: "FF01",
+            service_uuid: "ff00",
+            characteristic_uuid: "ff01",
             data: [0x01, 0xe8]
           }
         }
@@ -510,7 +510,7 @@ describe("ble", function () {
         write_characteristic_result:
             {
               address: "e5f678800700",
-              service_uuid: "FF00", //hex string
+              service_uuid: "ff00", //hex string
               characteristic_uuid: "FF01", //hex string
               result: "success"   //success or failed
             }
@@ -538,8 +538,8 @@ describe("ble", function () {
         ble: {
           write_characteristic: {
             address: "e5f678800700",
-            service_uuid: "FF00",
-            characteristic_uuid: "FF01",
+            service_uuid: "ff00",
+            characteristic_uuid: "ff01",
             data: [0x01, 0xe8]
           }
         }
@@ -580,8 +580,8 @@ describe("ble", function () {
         ble: {
           read_characteristic: {
             address: "e5f678800700",
-            service_uuid: "FF00",
-            characteristic_uuid: "FF01",
+            service_uuid: "ff00",
+            characteristic_uuid: "ff01",
           }
         }
       }]);
@@ -595,6 +595,7 @@ describe("ble", function () {
               address: "e5f678800700",
               service_uuid: "FF00", //hex string
               characteristic_uuid: "FF01", //hex string
+              result: "success",
               data: [0x2e, 0x22, 0x97]   //success or failed
             }
 
@@ -621,8 +622,8 @@ describe("ble", function () {
           ble: {
             write_descriptor: {
               address: "e5f678800700",
-              service_uuid: "FF00",
-              characteristic_uuid: "FF01",
+              service_uuid: "ff00",
+              characteristic_uuid: "ff01",
               descriptor_uuid : "2901",
               data: [0x01, 0xe8]
             }
@@ -645,8 +646,8 @@ describe("ble", function () {
         ble: {
           write_descriptor: {
             address: "e5f678800700",
-            service_uuid: "FF00",
-            characteristic_uuid: "FF01",
+            service_uuid: "ff00",
+            characteristic_uuid: "ff01",
             descriptor_uuid : "2901",
             data: [0x01, 0xe8]
           }
@@ -689,8 +690,8 @@ describe("ble", function () {
         ble: {
           write_descriptor: {
             address: "e5f678800700",
-            service_uuid: "FF00",
-            characteristic_uuid: "FF01",
+            service_uuid: "ff00",
+            characteristic_uuid: "ff01",
             descriptor_uuid : "2901",
             data: [0x01, 0xe8]
           }
@@ -733,8 +734,8 @@ describe("ble", function () {
         ble: {
           read_descriptor: {
             address: "e5f678800700",
-            service_uuid: "FF00",
-            characteristic_uuid: "FF01",
+            service_uuid: "ff00",
+            characteristic_uuid: "ff01",
             descriptor_uuid : "2901",
           }
         }
@@ -775,7 +776,7 @@ describe("ble", function () {
   it("error", function () {
     var stub = sinon.stub();
     var peripheral = this.peripheral;
-    peripheral.onerror = stub;
+    peripheral.getService("ff00").getCharacteristic("ff01").getDescriptor("ff01").onerror = stub;
     sinon.assert.callCount(stub, 0);
 
     testUtil.receiveJson(this.obniz, [{
@@ -785,7 +786,7 @@ describe("ble", function () {
               error_code: 1,
               message: "ERROR MESSAGE",
               address: "e5f678800700", //hex string or null
-              service_uuid: "FF00",           //hex string or null
+              service_uuid: "ff00",           //hex string or null
               characteristic_uuid: "FF01", //hex string or null
               descriptor_uuid: "FF01" //hex string or null
             }
@@ -804,7 +805,7 @@ describe("ble", function () {
   it("error2", function () {
     var stub = sinon.stub();
     var peripheral = this.peripheral;
-    peripheral.onerror = stub;
+    peripheral.getService("ff00").onerror = stub;
     sinon.assert.callCount(stub, 0);
 
     testUtil.receiveJson(this.obniz, [{

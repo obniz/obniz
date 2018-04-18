@@ -5,13 +5,8 @@ id: "/response/ble/central/scan_finish"
 
 
 type: object
-required : [scan_result]
+required : [scan_result_finish]
 properties:
-    scan_result :
-            type : object
-            required: [event_type]
-            additionalProperties: false
-            properties:
-                event_type :
-                    type : string
-                    enum : [inquiry_complete]
+    scan_result_finish :
+            type : boolean
+            enum : [true]

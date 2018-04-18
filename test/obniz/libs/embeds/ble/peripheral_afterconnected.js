@@ -255,11 +255,7 @@ describe("ble", function () {
     ]);
 
     expect(chara.onwrite.getCall(0).args.length).to.be.equal(1);
-    expect(chara.onwrite.getCall(0).args[0]).to.be.deep.equal( {
-      "service_uuid": "FFF0",
-      "characteristic_uuid": "FFF1",
-      "result": "success"
-    });
+    expect(chara.onwrite.getCall(0).args[0]).to.be.deep.equal( "success");
     expect(this.obniz).to.be.finished;
 
   });
@@ -284,13 +280,9 @@ describe("ble", function () {
       }
     ]);
 
-    expect(chara.onwritefromremote.getCall(0).args.length).to.be.equal(1);
-    expect(chara.onwritefromremote.getCall(0).args[0]).to.be.deep.equal( {
-      "address": "77e754ab8591",
-      "service_uuid": "FFF0",
-      "characteristic_uuid": "FFF1",
-      "data": [16, 34, 242]
-    });
+    expect(chara.onwritefromremote.getCall(0).args.length).to.be.equal(2);
+    expect(chara.onwritefromremote.getCall(0).args[0]).to.be.deep.equal( "77e754ab8591");
+    expect(chara.onwritefromremote.getCall(0).args[1]).to.be.deep.equal( [16, 34, 242]);
     expect(this.obniz).to.be.finished;
 
   });
@@ -336,11 +328,7 @@ describe("ble", function () {
     ]);
 
     expect(chara.onread.getCall(0).args.length).to.be.equal(1);
-    expect(chara.onread.getCall(0).args[0]).to.be.deep.equal( {
-      "service_uuid": "FFF0",
-      "characteristic_uuid": "FFF1",
-      "data": [16, 34, 242]
-    });
+    expect(chara.onread.getCall(0).args[0]).to.be.deep.equal(  [16, 34, 242]);
     expect(this.obniz).to.be.finished;
 
   });
@@ -365,11 +353,7 @@ describe("ble", function () {
     ]);
 
     expect(chara.onreadfromremote.getCall(0).args.length).to.be.equal(1);
-    expect(chara.onreadfromremote.getCall(0).args[0]).to.be.deep.equal( {
-      "address": "77e754ab8591",
-      "service_uuid": "FFF0",
-      "characteristic_uuid": "FFF1"
-    });
+    expect(chara.onreadfromremote.getCall(0).args[0]).to.be.deep.equal( "77e754ab8591");
     expect(this.obniz).to.be.finished;
 
   });
@@ -442,12 +426,7 @@ describe("ble", function () {
     ]);
 
     expect(desciptor.onwrite.getCall(0).args.length).to.be.equal(1);
-    expect(desciptor.onwrite.getCall(0).args[0]).to.be.deep.equal( {
-      "service_uuid": "fff0",
-      "characteristic_uuid": "fff1",
-      "descriptor_uuid": "2901",
-      "result": "success"
-    });
+    expect(desciptor.onwrite.getCall(0).args[0]).to.be.deep.equal( "success" );
     expect(this.obniz).to.be.finished;
 
   });
@@ -474,14 +453,9 @@ describe("ble", function () {
       }
     ]);
 
-    expect(desciptor.onwritefromremote.getCall(0).args.length).to.be.equal(1);
-    expect(desciptor.onwritefromremote.getCall(0).args[0]).to.be.deep.equal( {
-      "address": "77e754ab8591",
-          "service_uuid": "fff0",
-          "characteristic_uuid": "fff1",
-          "descriptor_uuid": "2901",
-          "data": [16, 34, 242]
-    });
+    expect(desciptor.onwritefromremote.getCall(0).args.length).to.be.equal(2);
+    expect(desciptor.onwritefromremote.getCall(0).args[0]).to.be.deep.equal(  "77e754ab8591");
+    expect(desciptor.onwritefromremote.getCall(0).args[1]).to.be.deep.equal(  [16, 34, 242]);
     expect(this.obniz).to.be.finished;
 
   });
@@ -531,12 +505,7 @@ describe("ble", function () {
     ]);
 
     expect(desciptor.onread.getCall(0).args.length).to.be.equal(1);
-    expect(desciptor.onread.getCall(0).args[0]).to.be.deep.equal( {
-      "service_uuid": "FFF0",
-      "characteristic_uuid": "FFF1",
-      "descriptor_uuid": "2901",
-      "data": [16, 34, 242]
-    });
+    expect(desciptor.onread.getCall(0).args[0]).to.be.deep.equal( [16, 34, 242]);
     expect(this.obniz).to.be.finished;
 
   });
@@ -563,12 +532,7 @@ describe("ble", function () {
     ]);
 
     expect(desciptor.onreadfromremote.getCall(0).args.length).to.be.equal(1);
-    expect(desciptor.onreadfromremote.getCall(0).args[0]).to.be.deep.equal( {
-      "address": "77e754ab8591",
-      "service_uuid": "fff0",
-      "characteristic_uuid": "fff1",
-      "descriptor_uuid": "2901"
-    });
+    expect(desciptor.onreadfromremote.getCall(0).args[0]).to.be.deep.equal( "77e754ab8591" );
     expect(this.obniz).to.be.finished;
 
   });

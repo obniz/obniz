@@ -18,14 +18,14 @@ describe("ble", function () {
 
 
   it("start", function () {
-    this.obniz.ble.startAdvertisement();
+    this.obniz.ble.advertisement.start();
 
     expect(this.obniz).send([{ble: {advertisement: {adv_data: []}}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("stop", function () {
-    this.obniz.ble.stopAdvertisement();
+    this.obniz.ble.advertisement.end();
 
     expect(this.obniz).send([{ble: {advertisement: null}}]);
     expect(this.obniz).to.be.finished;
@@ -40,29 +40,29 @@ describe("ble", function () {
   });
 
   it("set adv raw", function () {
-    this.obniz.ble.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65]);
-    this.obniz.ble.startAdvertisement();
+    this.obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65]);
+    this.obniz.ble.advertisement.start();
     expect(this.obniz).send([{ble: {advertisement: {adv_data: [0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65]}}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("set adv", function () {
-    this.obniz.ble.setAdvData({
+    this.obniz.ble.advertisement.setAdvData({
       flags: ["general_discoverable_mode", "br_edr_not_supported"],
       manufacturerData: {
         campanyCode: 0x004C,
         data: [0x02, 0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb, 0x10, 0x00, 0x00, 0x10, 0xFF],
       }
     });
-    this.obniz.ble.startAdvertisement();
+    this.obniz.ble.advertisement.start();
 
     expect(this.obniz).send([{ble: {advertisement: {adv_data: [0x02, 0x01, 0x06, 0x1A, 0xFF, 0x4C, 0x00, 0x02, 0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb, 0x10, 0x00, 0x00, 0x10, 0xFF]}}}]);
     expect(this.obniz).to.be.finished;
   });
 
   it("set scan resp raw", function () {
-    this.obniz.ble.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65]);
-    this.obniz.ble.startAdvertisement();
+    this.obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65]);
+    this.obniz.ble.advertisement.start();
 
     expect(this.obniz).send([{
       ble: {
@@ -77,10 +77,10 @@ describe("ble", function () {
 
 
   it("set scan resp", function () {
-    this.obniz.ble.setScanRespData({
+    this.obniz.ble.advertisement.setScanRespData({
       localName: "obniz BLE"
     });
-    this.obniz.ble.startAdvertisement();
+    this.obniz.ble.advertisement.start();
 
     expect(this.obniz).send([{
       ble: {
@@ -210,11 +210,11 @@ describe("ble", function () {
         "peripheral": {
           "services": [{
             "characteristics": [{
-              "data": [72, 105],
               "descriptors": [{
                 "data": [104, 101, 108, 108, 111, 32, 119, 114, 111, 108, 100, 32, 99, 104, 97, 114, 97, 99, 116, 101, 114, 105, 115, 116, 105, 99],
                 "uuid": "2901"
               }],
+              "data": [72, 105],
               "uuid": "fff1"
             }], "uuid": "fff0"
           }]
@@ -229,11 +229,11 @@ describe("ble", function () {
         "uuid": "fff0",
         "characteristics": [{
           "uuid": "fff1",
-          "data": [72, 105],
           "descriptors": [{
             "uuid": "2901",
             "data": [104, 101, 108, 108, 111, 32, 119, 114, 111, 108, 100, 32, 99, 104, 97, 114, 97, 99, 116, 101, 114, 105, 115, 116, 105, 99],
           }],
+          "data": [72, 105],
         }]
       }]
     }));

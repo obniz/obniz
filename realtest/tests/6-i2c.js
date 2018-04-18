@@ -4,15 +4,26 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const path = require('path');
 const fs = require('fs');
+const config = require('../config.js');
 
-module.exports = async function(config) {
 
-  const obnizA = config.obnizA;
-  const obnizB = config.obnizB;
+let obnizA, obnizB ;
 
-  describe(path.basename(__filename), function () {
+
+describe("6-i2c", function () {
 
     this.timeout(10000);
+
+  before(function () {
+    return new Promise((resolve) => {
+      config.waitForConenct(() => {
+        obnizA = config.obnizA;
+        obnizB = config.obnizB;
+        obnizA.io11.output(true);
+        resolve();
+      })
+    });
+  });
 
     it("1k data", async function () {
       const sender = obnizA.getFreeI2C();
@@ -114,4 +125,3 @@ module.exports = async function(config) {
     return new Promise(resolve => {setTimeout(resolve, ms)})
   }
   
-}

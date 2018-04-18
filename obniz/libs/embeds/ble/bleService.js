@@ -1,39 +1,27 @@
-
+const BleAttributeAbstract = require("./bleAttributeAbstract");
 const BleCharacteristic = require("./bleCharacteristic");
 
 
-class BleService {
+class BleService extends BleAttributeAbstract {
 
-  constructor(obj){
-    this.characteristics = [];
-    this.uuid = obj.uuid.toLowerCase() ;
-    
-    if(obj["characteristics"]){
-       for(var key in obj["characteristics"]){
-        this.addCharacteristic(obj["characteristics"][key]);
-      }
-    }
+  constructor(obj) {
+    super(obj);
+
+
+    this.addCharacteristic = this.addChild;
+    this.getCharacteristic = this.getChild;
   }
 
-  addCharacteristic(obj) {
-    if(! (obj instanceof BleCharacteristic ) ){
-      obj = new BleCharacteristic(obj);
-    }
-    this.characteristics.push(obj);
-    obj.service = this;
+  get parentName() {
+    return "peripheral";
   }
 
-  getCharacteristic(uuid) {
-    return this.characteristics.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
+  get childrenName() {
+    return "characteristics";
   }
 
-  toJSON (){
-    return {
-      uuid : this.uuid.toLowerCase()  ,
-      characteristics : this.characteristics
-    };
+  get childrenClass() {
+    return BleCharacteristic;
   }
 
   get advData() {
@@ -41,6 +29,25 @@ class BleService {
       flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid]
     }
+  }
+
+  end() {
+    this.peripheral.Obniz.send(
+        {
+          ble: {
+            peripheral: {
+              stop_service: {
+                service_uuid: this.uuid.toLowerCase(),
+              }
+            }
+          }
+        }
+    );
+    this.peripheral.removeService(this.uuid);
+  }
+
+  notify(notifyName, params) {
+    //nothing
   }
 }
 

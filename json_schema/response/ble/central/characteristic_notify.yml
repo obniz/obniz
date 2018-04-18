@@ -1,22 +1,19 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/response/ble/central/characteristic_read"
+id: "/response/ble/central/characteristic_notify"
 
 
 type: object
-required : [read_characteristic_result]
+required : [nofity_characteristic]
 properties:
-    read_characteristic_result :
+    nofity_characteristic :
             type : object
-            required: [address,service_uuid,characteristic_uuid,result, data]
+            required: [address,service_uuid,characteristic_uuid, data]
             additionalProperties: false
             properties:
                 address : {$ref : "/deviceAddress"}
                 service_uuid : {$ref : "/uuid"}
                 characteristic_uuid : {$ref : "/uuid"}
-                result :
-                  type : string
-                  enum : [success, failed]
                 data : {$ref : "/dataArray" }
 
