@@ -138,7 +138,6 @@ var map = {
 	"./request/message/index.yml": "./json_schema/request/message/index.yml",
 	"./request/message/send.yml": "./json_schema/request/message/send.yml",
 	"./request/pwm/deinit.yml": "./json_schema/request/pwm/deinit.yml",
-	"./request/pwm/duty.yml": "./json_schema/request/pwm/duty.yml",
 	"./request/pwm/freq.yml": "./json_schema/request/pwm/freq.yml",
 	"./request/pwm/index.yml": "./json_schema/request/pwm/index.yml",
 	"./request/pwm/init.yml": "./json_schema/request/pwm/init.yml",
@@ -878,17 +877,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/deinit","type":"null"}
-
-/***/ }),
-
-/***/ "./json_schema/request/pwm/duty.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/pwm/duty.yml ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/duty","type":"object","required":["duty"],"properties":{"duty":{"type":"number","description":"% of duty cycle","minimum":0,"maximum":100}}}
 
 /***/ }),
 
@@ -9104,8 +9092,10 @@ class PeripheralPWM {
     ioObj.drive(this.params.drive || '5v');
     ioObj.pull(this.params.pull || null);
 
-    var obj = {};
-    this.state.io = io;
+    this.state = {
+      io: io,
+      freq: 1000
+    }
     this.sendWS({
       io: io
     });
@@ -9113,26 +9103,56 @@ class PeripheralPWM {
   }
 
   freq(freq) {
+    freq *= 1;
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
+    if (typeof freq !== "number") {
+      throw new Error("please provide freq in number");
+    }
     var obj = {};
     this.state.freq = freq;
     this.sendWS({
       freq: freq
     });
+    if (typeof this.state.duty === "number") {
+      this.duty(this.state.duty);
+    }
   }
 
   pulse(pulse_width) {
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
     var obj = {};
     this.state.pulse = pulse_width;
+    delete this.state.duty;
     this.sendWS({
       pulse: pulse_width
     });
   }
 
   duty(duty) {
-    var obj = {};
+    duty *= 1;
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
+    if (typeof this.state.freq !== "number" || this.state.freq <= 0) {
+      throw new Error("please provide freq first.");
+    }
+    if (typeof duty !== "number") {
+      throw new Error("please provide duty in number");
+    }
+    if (duty < 0) {
+      duty = 0;
+    }
+    if (duty > 100) {
+      duty = 100;
+    }
+    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
-      duty: duty
+      pulse: pulse_width
     });
   }
 
@@ -9148,6 +9168,9 @@ class PeripheralPWM {
   }
 
   modulate(type, symbol_length, data) {
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
     var obj = {};
     this.sendWS({
       modulate: {
@@ -13660,19 +13683,6 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  duty(params, module) {
-    let buf = new Uint8Array(5);
-    let pulseUSec = 1.0 / this.pwms[module].freq * params.duty * 0.01 * 1000000;
-    pulseUSec = parseInt(pulseUSec);
-    buf[0] = module;
-    buf[1] = pulseUSec >> (8*3);
-    buf[2] = pulseUSec >> (8*2);
-    buf[3] = pulseUSec >> (8*1);
-    buf[4] = pulseUSec;
-    this.pwms[module].pulseUSec = pulseUSec;
-    this.sendCommand(this._CommandSetDuty, buf);
-  }
-
   amModulate(params, module) {
     const bitLength = params.modulate.data.length;
     const byteLength = parseInt((bitLength+7)/8);
@@ -13706,7 +13716,6 @@ class WSCommand_PWM extends WSCommand {
         {uri : "/request/pwm/init",           onValid: this.init},
         {uri : "/request/pwm/freq",         onValid: this.freq},
         {uri : "/request/pwm/pulse",        onValid: this.pulse},
-        {uri : "/request/pwm/duty",         onValid: this.duty},
         {uri : "/request/pwm/modulate",     onValid: this.amModulate},
         {uri : "/request/pwm/deinit",         onValid: this.deinit},
       ];

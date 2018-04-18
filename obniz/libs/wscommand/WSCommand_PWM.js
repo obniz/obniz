@@ -62,19 +62,6 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  duty(params, module) {
-    let buf = new Uint8Array(5);
-    let pulseUSec = 1.0 / this.pwms[module].freq * params.duty * 0.01 * 1000000;
-    pulseUSec = parseInt(pulseUSec);
-    buf[0] = module;
-    buf[1] = pulseUSec >> (8*3);
-    buf[2] = pulseUSec >> (8*2);
-    buf[3] = pulseUSec >> (8*1);
-    buf[4] = pulseUSec;
-    this.pwms[module].pulseUSec = pulseUSec;
-    this.sendCommand(this._CommandSetDuty, buf);
-  }
-
   amModulate(params, module) {
     const bitLength = params.modulate.data.length;
     const byteLength = parseInt((bitLength+7)/8);
@@ -108,7 +95,6 @@ class WSCommand_PWM extends WSCommand {
         {uri : "/request/pwm/init",           onValid: this.init},
         {uri : "/request/pwm/freq",         onValid: this.freq},
         {uri : "/request/pwm/pulse",        onValid: this.pulse},
-        {uri : "/request/pwm/duty",         onValid: this.duty},
         {uri : "/request/pwm/modulate",     onValid: this.amModulate},
         {uri : "/request/pwm/deinit",         onValid: this.deinit},
       ];
