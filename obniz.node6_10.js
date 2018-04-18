@@ -3385,7 +3385,7 @@ class BleAttributeAbstract {
   writeWait(data) {
     return new Promise(resolve => {
       this.emitter.once("onwrite", params => {
-        resolve(params.result);
+        resolve(params.result === "success");
       });
       this.write(data);
     });
@@ -3394,7 +3394,7 @@ class BleAttributeAbstract {
   writeTextWait(data) {
     return new Promise(resolve => {
       this.emitter.once("onwrite", params => {
-        resolve(params.result);
+        resolve(params.result === "success");
       });
       this.writeText(data);
     });
@@ -3403,7 +3403,7 @@ class BleAttributeAbstract {
   writeNumberWait(data) {
     return new Promise(resolve => {
       this.emitter.once("onwrite", params => {
-        resolve(params.result);
+        resolve(params.result === "success");
       });
       this.writeNumber(data);
     });
@@ -4312,6 +4312,15 @@ class BleRemotePeripheral {
       }
     };
     this.Obniz.send(obj);
+  }
+
+  connectWait() {
+    return new Promise(resolve => {
+      this.emitter.once("statusupdate", params => {
+        resolve(params.status === "disconnected");
+      });
+      this.disconnect();
+    });
   }
 
   getService(uuid) {
