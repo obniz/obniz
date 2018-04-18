@@ -22,13 +22,13 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
   keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
   resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }
 
-  pingWait(unixtime, rand){
+  pingWait(unixtime, rand, forceGlobalNetwork){
+
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor( unixtime / Math.pow(2,32));
     let lower = unixtime - upper * Math.pow(2,32);
     rand = rand || Math.floor(Math.random() * Math.pow(2,4));
     let buf = [];
-
 
     buf.push((upper >>> 8*3) & 0xFF);
     buf.push((upper >>> 8*2) & 0xFF);
@@ -42,8 +42,17 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     buf.push((rand >>> 8*2) & 0xFF);
     buf.push((rand >>> 8*1) & 0xFF);
     buf.push((rand >>> 8*0) & 0xFF);
-    this.send({ system: { ping: {key : buf } }});
 
+    let obj = {
+      system: {
+        ping: {
+          key: buf
+        }
+      }
+    }
+
+    this.send(obj, {local_connect: forceGlobalNetwork ? false : true});
+    
     return new Promise((resolve)=>{
       let callback = (systemObj) => {
         for(let i =0;i<buf.length;i++){
@@ -68,8 +77,6 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
         let timeObniz2Server = systemObj.pong.pongServerTime- systemObj.pong.obnizTime ;
         let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime ;
         let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
-        // let str = `ping,${obnizJsPingUnixtime},${systemObj.pong.pingServerTime},${systemObj.pong.obnizTime},${systemObj.pong.pongServerTime}`;
-
 
         this.print_debug(str);
         resolve(str);

@@ -290,7 +290,7 @@ module.exports = class ObnizConnection {
     }
   }
 
-  send(obj) {
+  send(obj, options) {
     if (!obj || (typeof obj !== "object")) {
       console.log("obnizjs. didnt send ", obj);
       return;
@@ -308,7 +308,7 @@ module.exports = class ObnizConnection {
       this.print_debug("send: " + sendData);
     }
     /* compress */
-    if (this.wscommand) {
+    if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
       let compressed;
       try {
         compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);

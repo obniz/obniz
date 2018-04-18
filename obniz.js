@@ -6406,7 +6406,7 @@ module.exports = class ObnizConnection {
     }
   }
 
-  send(obj) {
+  send(obj, options) {
     if (!obj || (typeof obj !== "object")) {
       console.log("obnizjs. didnt send ", obj);
       return;
@@ -6424,7 +6424,7 @@ module.exports = class ObnizConnection {
       this.print_debug("send: " + sendData);
     }
     /* compress */
-    if (this.wscommand) {
+    if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
       let compressed;
       try {
         compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
@@ -6681,13 +6681,13 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
   keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
   resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }
 
-  pingWait(unixtime, rand){
+  pingWait(unixtime, rand, forceGlobalNetwork){
+
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor( unixtime / Math.pow(2,32));
     let lower = unixtime - upper * Math.pow(2,32);
     rand = rand || Math.floor(Math.random() * Math.pow(2,4));
     let buf = [];
-
 
     buf.push((upper >>> 8*3) & 0xFF);
     buf.push((upper >>> 8*2) & 0xFF);
@@ -6701,8 +6701,17 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     buf.push((rand >>> 8*2) & 0xFF);
     buf.push((rand >>> 8*1) & 0xFF);
     buf.push((rand >>> 8*0) & 0xFF);
-    this.send({ system: { ping: {key : buf } }});
 
+    let obj = {
+      system: {
+        ping: {
+          key: buf
+        }
+      }
+    }
+
+    this.send(obj, {local_connect: forceGlobalNetwork ? false : true});
+    
     return new Promise((resolve)=>{
       let callback = (systemObj) => {
         for(let i =0;i<buf.length;i++){
@@ -6727,8 +6736,6 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
         let timeObniz2Server = systemObj.pong.pongServerTime- systemObj.pong.obnizTime ;
         let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime ;
         let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
-        // let str = `ping,${obnizJsPingUnixtime},${systemObj.pong.pingServerTime},${systemObj.pong.obnizTime},${systemObj.pong.pongServerTime}`;
-
 
         this.print_debug(str);
         resolve(str);
@@ -13920,7 +13927,7 @@ module.exports = WSCommand_Switch;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_System extends WSCommand {
 
@@ -13928,14 +13935,15 @@ class WSCommand_System extends WSCommand {
     super(delegate);
     this.module = 0;
 
-    this._CommandReboot         = 0
+    this._CommandReboot            = 0
     
-    this._CommandReset          = 2
-    this._CommandSelfCheck      = 3
-    this._CommandWait           = 4
+    this._CommandReset             = 2
+    this._CommandSelfCheck         = 3
+    this._CommandWait              = 4
     this._CommandResetOnDisconnect = 5
 
-    this._CommandVCC            = 9
+    this._CommandPingPong          = 8
+    this._CommandVCC               = 9
   }
 
   // Commands
@@ -13957,10 +13965,32 @@ class WSCommand_System extends WSCommand {
     var buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
+
   keepWorkingAtOffline(params){
     this.resetOnDisconnect(!params.keep_working_at_offline);
 
   }
+
+  ping(params) {
+    let unixtime = new Date().getTime();
+    let buf = new Uint8Array(params.ping.key.length + 8);
+    let upper = Math.floor( unixtime / Math.pow(2,32));
+    let lower = unixtime - upper*Math.pow(2,32);
+    buf[0] = upper >> 8*3;
+    buf[1] = upper >> 8*2;
+    buf[2] = upper >> 8*1;
+    buf[3] = upper >> 8*0;
+    buf[4] = lower >> 8*3;
+    buf[5] = lower >> 8*2;
+    buf[6] = lower >> 8*1;
+    buf[7] = lower >> 8*0;
+    for(let i = 0; i < params.ping.key.length; i++){
+      buf[8+i] = params.ping.key[i];
+    }
+    
+    this.sendCommand(this._CommandPingPong, buf);
+  }
+
   resetOnDisconnect(mustReset) {
     var buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
@@ -13978,7 +14008,7 @@ class WSCommand_System extends WSCommand {
       {uri : "/request/system/wait",                 onValid: this.wait},
       {uri : "/request/system/selfCheck",            onValid: this.selfCheck},
       {uri : "/request/system/keepWorkingAtOffline", onValid: this.keepWorkingAtOffline},
-      {uri : "/request/system/ping"},
+      {uri : "/request/system/ping",                 onValid: this.ping},
     ];
     let res = this.validateCommandSchema(schemaData, module, "system");
 
@@ -13988,6 +14018,28 @@ class WSCommand_System extends WSCommand {
       }else{
         throw new this.WSCommandNotFoundError(`[system]unknown command`);
       }
+    }
+  }
+
+  pong(objToSend, payload){
+    objToSend["system"] = objToSend["system"] || {};
+    const pongServerTime = new Date().getTime();
+
+    if (payload.length >= 16) {
+      payload = Buffer(payload);
+      let obnizTime = payload.readUIntBE(0, 4) * Math.pow(2,32) + payload.readUIntBE(4, 4) ;
+      let pingServerTime  = (payload.readUIntBE(8, 4) * Math.pow(2,32) )+ payload.readUIntBE(12, 4) ;
+      let key = [];
+      for(let i = 16;i < payload.length; i++){
+        key.push(payload[i] );
+      }
+      objToSend["system"].pong = {
+        key, obnizTime, pingServerTime, pongServerTime
+      };
+    } else {
+      objToSend["system"].pong = {
+        pongServerTime
+      };
     }
   }
 
@@ -14001,6 +14053,11 @@ class WSCommand_System extends WSCommand {
         }
         break;
 
+      case this._CommandPingPong:
+        this.pong(objToSend,payload);
+
+        break;
+
       default:
         super.notifyFromBinary(objToSend, func, payload);
         break;
@@ -14010,6 +14067,7 @@ class WSCommand_System extends WSCommand {
 
 
 module.exports = WSCommand_System;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
