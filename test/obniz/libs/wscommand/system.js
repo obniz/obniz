@@ -146,43 +146,29 @@ describe("system.log", function () {
     expect(compress).to.be.deep.equal(binary);
   });
 
-
-
-
   it("ping",  function () {
     let requestJson  = [{ system: { ping : {key : [0,0,1,98,144,90,221,213,0,69,123,198]} } }];
 
-    expect(requestJson.length).to.be.equal(1);
-
-    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
-    expect(isValidCommand.valid).to.be.true;
-
     let compress = this.obniz.constructor.WSCommand.compress(this.obniz.wscommands, requestJson[0]);
-    expect(compress).to.be.null; // use server
-
-
+    expect(compress[0]).to.be.deep.equal(0);
+    expect(compress[1]).to.be.deep.equal(8);
   });
 
+  it.only("pong",  function () {
 
-  it("pong",  function () {
     let responseBinaryString = "0 8 1c 0 0 1 62 9e 60 f7 22 0 0 1 62 9e 60 f6 6e 0 0 1 62 9e 60 f6 65 0 0 0 2";
+
+    // let expectJson  = [{"system":{"pong":{"key":[0,0,1,98,158,96,246,101,0,0,0,2],"obnizTime":1523075577634,"pingServerTime":1523075577454,"pongServerTime":1524037003191}}}];
 
     let binaryArray = responseBinaryString.split(" ").map(function(val,index){return parseInt(val, 16);});
     let binary = new Uint8Array(binaryArray);
 
     let json = this.obniz.binary2Json(binary);
-    expect(json).to.be.deep.equal([{}]); // use server
 
-  });
-
-
-  it("pong formtat",  function () {
-    let expectJson  = [{"system":{pong:{key : [0, 0]}}}];
-    let isValidCommand = testUtil.isValidCommandResponseJson(expectJson);
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
 
-
+    expect(json[0]).to.have.any.keys('system');
   });
-
 
 });

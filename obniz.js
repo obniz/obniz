@@ -86,8 +86,6 @@ var map = {
 	"./request/ad/input.yml": "./json_schema/request/ad/input.yml",
 	"./request/ble/central/characteristic_get.yml": "./json_schema/request/ble/central/characteristic_get.yml",
 	"./request/ble/central/characteristic_read.yml": "./json_schema/request/ble/central/characteristic_read.yml",
-	"./request/ble/central/characteristic_register_notify.yml": "./json_schema/request/ble/central/characteristic_register_notify.yml",
-	"./request/ble/central/characteristic_unregister_notify.yml": "./json_schema/request/ble/central/characteristic_unregister_notify.yml",
 	"./request/ble/central/characteristic_write.yml": "./json_schema/request/ble/central/characteristic_write.yml",
 	"./request/ble/central/connect.yml": "./json_schema/request/ble/central/connect.yml",
 	"./request/ble/central/descriptor_get.yml": "./json_schema/request/ble/central/descriptor_get.yml",
@@ -101,7 +99,6 @@ var map = {
 	"./request/ble/index.yml": "./json_schema/request/ble/index.yml",
 	"./request/ble/peripheral/advertisement_start.yml": "./json_schema/request/ble/peripheral/advertisement_start.yml",
 	"./request/ble/peripheral/advertisement_stop.yml": "./json_schema/request/ble/peripheral/advertisement_stop.yml",
-	"./request/ble/peripheral/characteristic_notify.yml": "./json_schema/request/ble/peripheral/characteristic_notify.yml",
 	"./request/ble/peripheral/characteristic_read.yml": "./json_schema/request/ble/peripheral/characteristic_read.yml",
 	"./request/ble/peripheral/characteristic_write.yml": "./json_schema/request/ble/peripheral/characteristic_write.yml",
 	"./request/ble/peripheral/descriptor_read.yml": "./json_schema/request/ble/peripheral/descriptor_read.yml",
@@ -109,7 +106,6 @@ var map = {
 	"./request/ble/peripheral/index.yml": "./json_schema/request/ble/peripheral/index.yml",
 	"./request/ble/peripheral/servie_start.yml": "./json_schema/request/ble/peripheral/servie_start.yml",
 	"./request/ble/peripheral/servie_stop.yml": "./json_schema/request/ble/peripheral/servie_stop.yml",
-	"./request/ble/peripheral/servie_stop_all.yml": "./json_schema/request/ble/peripheral/servie_stop_all.yml",
 	"./request/display/clear.yml": "./json_schema/request/display/clear.yml",
 	"./request/display/index.yml": "./json_schema/request/display/index.yml",
 	"./request/display/pin_assign.yml": "./json_schema/request/display/pin_assign.yml",
@@ -171,10 +167,7 @@ var map = {
 	"./response/ad/index.yml": "./json_schema/response/ad/index.yml",
 	"./response/ble/central/characteristic_get.yml": "./json_schema/response/ble/central/characteristic_get.yml",
 	"./response/ble/central/characteristic_get_finish.yml": "./json_schema/response/ble/central/characteristic_get_finish.yml",
-	"./response/ble/central/characteristic_notify.yml": "./json_schema/response/ble/central/characteristic_notify.yml",
 	"./response/ble/central/characteristic_read.yml": "./json_schema/response/ble/central/characteristic_read.yml",
-	"./response/ble/central/characteristic_register_notify.yml": "./json_schema/response/ble/central/characteristic_register_notify.yml",
-	"./response/ble/central/characteristic_unregister_notify.yml": "./json_schema/response/ble/central/characteristic_unregister_notify.yml",
 	"./response/ble/central/characteristic_write.yml": "./json_schema/response/ble/central/characteristic_write.yml",
 	"./response/ble/central/descriptor_get.yml": "./json_schema/response/ble/central/descriptor_get.yml",
 	"./response/ble/central/descriptor_get_finish.yml": "./json_schema/response/ble/central/descriptor_get_finish.yml",
@@ -316,28 +309,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
-/***/ "./json_schema/request/ble/central/characteristic_register_notify.yml":
-/*!****************************************************************************!*\
-  !*** ./json_schema/request/ble/central/characteristic_register_notify.yml ***!
-  \****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_register_notify","related":"/response/ble/central/characteristic_register_notify","type":"object","required":["register_notify_characteristic"],"properties":{"register_notify_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
-
-/***/ }),
-
-/***/ "./json_schema/request/ble/central/characteristic_unregister_notify.yml":
-/*!******************************************************************************!*\
-  !*** ./json_schema/request/ble/central/characteristic_unregister_notify.yml ***!
-  \******************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_unregister_notify","related":"/response/ble/central/characteristic_unregister_notify","type":"object","required":["unregister_notify_characteristic"],"properties":{"unregister_notify_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
-
-/***/ }),
-
 /***/ "./json_schema/request/ble/central/characteristic_write.yml":
 /*!******************************************************************!*\
   !*** ./json_schema/request/ble/central/characteristic_write.yml ***!
@@ -411,7 +382,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","description":"use obniz as central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"},{"$ref":"/request/ble/central/characteristic_register_notify"},{"$ref":"/request/ble/central/characteristic_unregister_notify"},{"$ref":"/request/ble/central/descriptor_get"},{"$ref":"/request/ble/central/descriptor_read"},{"$ref":"/request/ble/central/descriptor_write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","description":"use obniz as central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"},{"$ref":"/request/ble/central/descriptor_get"},{"$ref":"/request/ble/central/descriptor_read"},{"$ref":"/request/ble/central/descriptor_write"}]}
 
 /***/ }),
 
@@ -481,17 +452,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
-/***/ "./json_schema/request/ble/peripheral/characteristic_notify.yml":
-/*!**********************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/characteristic_notify.yml ***!
-  \**********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_notify","description":"notify characteristic for connected device","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["notify_characteristic"],"properties":{"notify_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
-
-/***/ }),
-
 /***/ "./json_schema/request/ble/peripheral/characteristic_read.yml":
 /*!********************************************************************!*\
   !*** ./json_schema/request/ble/peripheral/characteristic_read.yml ***!
@@ -543,7 +503,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","description":"use obniz as peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/service_stop_all"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","description":"use obniz as peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
 
 /***/ }),
 
@@ -554,7 +514,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -565,18 +525,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["stop_service"],"properties":{"stop_service":{"type":"object","required":["service_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"}}}}}}}
-
-/***/ }),
-
-/***/ "./json_schema/request/ble/peripheral/servie_stop_all.yml":
-/*!****************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/servie_stop_all.yml ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop_all","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
 
 /***/ }),
 
@@ -1251,17 +1200,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
-/***/ "./json_schema/response/ble/central/characteristic_notify.yml":
-/*!********************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_notify.yml ***!
-  \********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_notify","type":"object","required":["nofity_characteristic"],"properties":{"nofity_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
-
-/***/ }),
-
 /***/ "./json_schema/response/ble/central/characteristic_read.yml":
 /*!******************************************************************!*\
   !*** ./json_schema/response/ble/central/characteristic_read.yml ***!
@@ -1269,29 +1207,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
-
-/***/ }),
-
-/***/ "./json_schema/response/ble/central/characteristic_register_notify.yml":
-/*!*****************************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_register_notify.yml ***!
-  \*****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_register_notify","related":"/request/ble/central/characteristic_register_notify","type":"object","required":["characteristic_register_notify_result"],"properties":{"characteristic_register_notify_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"boolean"}}}}}
-
-/***/ }),
-
-/***/ "./json_schema/response/ble/central/characteristic_unregister_notify.yml":
-/*!*******************************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_unregister_notify.yml ***!
-  \*******************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_unregister_notify","related":"/request/ble/central/characteristic_unregister_notify","type":"object","required":["unregister_notify_characteristic_result"],"properties":{"unregister_notify_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"boolean"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1335,7 +1251,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1368,7 +1284,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/service_get_finish"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_get_finish"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/characteristic_register_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_get_finish"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"},{"$ref":"/response/ble/central/error"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/service_get_finish"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_get_finish"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_get_finish"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"},{"$ref":"/response/ble/central/error"}]}
 
 /***/ }),
 
@@ -1379,7 +1295,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["address","ble_event_type","device_type","address_type","flag","rssi"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_result"]},"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
 
 /***/ }),
 
@@ -1390,7 +1306,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result_finish"],"properties":{"scan_result_finish":{"type":"boolean","enum":[true]}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["event_type"],"additionalProperties":false,"properties":{"event_type":{"type":"string","enum":["inquiry_complete"]}}}}}
 
 /***/ }),
 
@@ -3780,354 +3696,6 @@ module.exports = Array.isArray || function (arr) {
 
 /***/ }),
 
-/***/ "./node_modules/eventemitter3/index.js":
-/*!*********************************************!*\
-  !*** ./node_modules/eventemitter3/index.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var has = Object.prototype.hasOwnProperty
-  , prefix = '~';
-
-/**
- * Constructor to create a storage for our `EE` objects.
- * An `Events` instance is a plain object whose properties are event names.
- *
- * @constructor
- * @private
- */
-function Events() {}
-
-//
-// We try to not inherit from `Object.prototype`. In some engines creating an
-// instance in this way is faster than calling `Object.create(null)` directly.
-// If `Object.create(null)` is not supported we prefix the event names with a
-// character to make sure that the built-in object properties are not
-// overridden or used as an attack vector.
-//
-if (Object.create) {
-  Events.prototype = Object.create(null);
-
-  //
-  // This hack is needed because the `__proto__` property is still inherited in
-  // some old browsers like Android 4, iPhone 5.1, Opera 11 and Safari 5.
-  //
-  if (!new Events().__proto__) prefix = false;
-}
-
-/**
- * Representation of a single event listener.
- *
- * @param {Function} fn The listener function.
- * @param {*} context The context to invoke the listener with.
- * @param {Boolean} [once=false] Specify if the listener is a one-time listener.
- * @constructor
- * @private
- */
-function EE(fn, context, once) {
-  this.fn = fn;
-  this.context = context;
-  this.once = once || false;
-}
-
-/**
- * Add a listener for a given event.
- *
- * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn The listener function.
- * @param {*} context The context to invoke the listener with.
- * @param {Boolean} once Specify if the listener is a one-time listener.
- * @returns {EventEmitter}
- * @private
- */
-function addListener(emitter, event, fn, context, once) {
-  if (typeof fn !== 'function') {
-    throw new TypeError('The listener must be a function');
-  }
-
-  var listener = new EE(fn, context || emitter, once)
-    , evt = prefix ? prefix + event : event;
-
-  if (!emitter._events[evt]) emitter._events[evt] = listener, emitter._eventsCount++;
-  else if (!emitter._events[evt].fn) emitter._events[evt].push(listener);
-  else emitter._events[evt] = [emitter._events[evt], listener];
-
-  return emitter;
-}
-
-/**
- * Clear event by name.
- *
- * @param {EventEmitter} emitter Reference to the `EventEmitter` instance.
- * @param {(String|Symbol)} evt The Event name.
- * @private
- */
-function clearEvent(emitter, evt) {
-  if (--emitter._eventsCount === 0) emitter._events = new Events();
-  else delete emitter._events[evt];
-}
-
-/**
- * Minimal `EventEmitter` interface that is molded against the Node.js
- * `EventEmitter` interface.
- *
- * @constructor
- * @public
- */
-function EventEmitter() {
-  this._events = new Events();
-  this._eventsCount = 0;
-}
-
-/**
- * Return an array listing the events for which the emitter has registered
- * listeners.
- *
- * @returns {Array}
- * @public
- */
-EventEmitter.prototype.eventNames = function eventNames() {
-  var names = []
-    , events
-    , name;
-
-  if (this._eventsCount === 0) return names;
-
-  for (name in (events = this._events)) {
-    if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
-  }
-
-  if (Object.getOwnPropertySymbols) {
-    return names.concat(Object.getOwnPropertySymbols(events));
-  }
-
-  return names;
-};
-
-/**
- * Return the listeners registered for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @returns {Array} The registered listeners.
- * @public
- */
-EventEmitter.prototype.listeners = function listeners(event) {
-  var evt = prefix ? prefix + event : event
-    , handlers = this._events[evt];
-
-  if (!handlers) return [];
-  if (handlers.fn) return [handlers.fn];
-
-  for (var i = 0, l = handlers.length, ee = new Array(l); i < l; i++) {
-    ee[i] = handlers[i].fn;
-  }
-
-  return ee;
-};
-
-/**
- * Return the number of listeners listening to a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @returns {Number} The number of listeners.
- * @public
- */
-EventEmitter.prototype.listenerCount = function listenerCount(event) {
-  var evt = prefix ? prefix + event : event
-    , listeners = this._events[evt];
-
-  if (!listeners) return 0;
-  if (listeners.fn) return 1;
-  return listeners.length;
-};
-
-/**
- * Calls each of the listeners registered for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @returns {Boolean} `true` if the event had listeners, else `false`.
- * @public
- */
-EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
-  var evt = prefix ? prefix + event : event;
-
-  if (!this._events[evt]) return false;
-
-  var listeners = this._events[evt]
-    , len = arguments.length
-    , args
-    , i;
-
-  if (listeners.fn) {
-    if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
-
-    switch (len) {
-      case 1: return listeners.fn.call(listeners.context), true;
-      case 2: return listeners.fn.call(listeners.context, a1), true;
-      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
-      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
-      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
-      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
-    }
-
-    for (i = 1, args = new Array(len -1); i < len; i++) {
-      args[i - 1] = arguments[i];
-    }
-
-    listeners.fn.apply(listeners.context, args);
-  } else {
-    var length = listeners.length
-      , j;
-
-    for (i = 0; i < length; i++) {
-      if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
-
-      switch (len) {
-        case 1: listeners[i].fn.call(listeners[i].context); break;
-        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
-        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
-        case 4: listeners[i].fn.call(listeners[i].context, a1, a2, a3); break;
-        default:
-          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
-            args[j - 1] = arguments[j];
-          }
-
-          listeners[i].fn.apply(listeners[i].context, args);
-      }
-    }
-  }
-
-  return true;
-};
-
-/**
- * Add a listener for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn The listener function.
- * @param {*} [context=this] The context to invoke the listener with.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.on = function on(event, fn, context) {
-  return addListener(this, event, fn, context, false);
-};
-
-/**
- * Add a one-time listener for a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn The listener function.
- * @param {*} [context=this] The context to invoke the listener with.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.once = function once(event, fn, context) {
-  return addListener(this, event, fn, context, true);
-};
-
-/**
- * Remove the listeners of a given event.
- *
- * @param {(String|Symbol)} event The event name.
- * @param {Function} fn Only remove the listeners that match this function.
- * @param {*} context Only remove the listeners that have this context.
- * @param {Boolean} once Only remove one-time listeners.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
-  var evt = prefix ? prefix + event : event;
-
-  if (!this._events[evt]) return this;
-  if (!fn) {
-    clearEvent(this, evt);
-    return this;
-  }
-
-  var listeners = this._events[evt];
-
-  if (listeners.fn) {
-    if (
-      listeners.fn === fn &&
-      (!once || listeners.once) &&
-      (!context || listeners.context === context)
-    ) {
-      clearEvent(this, evt);
-    }
-  } else {
-    for (var i = 0, events = [], length = listeners.length; i < length; i++) {
-      if (
-        listeners[i].fn !== fn ||
-        (once && !listeners[i].once) ||
-        (context && listeners[i].context !== context)
-      ) {
-        events.push(listeners[i]);
-      }
-    }
-
-    //
-    // Reset the array, or remove it completely if we have no more listeners.
-    //
-    if (events.length) this._events[evt] = events.length === 1 ? events[0] : events;
-    else clearEvent(this, evt);
-  }
-
-  return this;
-};
-
-/**
- * Remove all listeners, or those of the specified event.
- *
- * @param {(String|Symbol)} [event] The event name.
- * @returns {EventEmitter} `this`.
- * @public
- */
-EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
-  var evt;
-
-  if (event) {
-    evt = prefix ? prefix + event : event;
-    if (this._events[evt]) clearEvent(this, evt);
-  } else {
-    this._events = new Events();
-    this._eventsCount = 0;
-  }
-
-  return this;
-};
-
-//
-// Alias methods names because people roll like that.
-//
-EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-EventEmitter.prototype.addListener = EventEmitter.prototype.on;
-
-//
-// Expose the prefix.
-//
-EventEmitter.prefixed = prefix;
-
-//
-// Allow `EventEmitter` to be imported as module namespace.
-//
-EventEmitter.EventEmitter = EventEmitter;
-
-//
-// Expose the module.
-//
-if (true) {
-  module.exports = EventEmitter;
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/ieee754/index.js":
 /*!***************************************!*\
   !*** ./node_modules/ieee754/index.js ***!
@@ -6317,472 +5885,39 @@ webpackEmptyContext.id = "./obniz sync recursive";
 
 /***/ }),
 
-/***/ "./obniz/index.js":
-/*!************************!*\
-  !*** ./obniz/index.js ***!
-  \************************/
+/***/ "./obniz/ObnizComponents.js":
+/*!**********************************!*\
+  !*** ./obniz/ObnizComponents.js ***!
+  \**********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__dirname) {
-const ObnizBLE = __webpack_require__(/*! ./libs/embeds/ble/ble */ "./obniz/libs/embeds/ble/ble.js");
+const ObnizBLE       = __webpack_require__(/*! ./libs/embeds/ble/ble */ "./obniz/libs/embeds/ble/ble.js");
+const Display        = __webpack_require__(/*! ./libs/embeds/display */ "./obniz/libs/embeds/display.js");
+const ObnizSwitch    = __webpack_require__(/*! ./libs/embeds/switch */ "./obniz/libs/embeds/switch.js");
 
-const Display = __webpack_require__(/*! ./libs/embeds/display */ "./obniz/libs/embeds/display.js");
-const ObnizSwitch = __webpack_require__(/*! ./libs/embeds/switch */ "./obniz/libs/embeds/switch.js");
+const LogicAnalyzer  = __webpack_require__(/*! ./libs/measurements/logicanalyzer */ "./obniz/libs/measurements/logicanalyzer.js");
+const ObnizMeasure   = __webpack_require__(/*! ./libs/measurements/measure */ "./obniz/libs/measurements/measure.js");
 
-
-const LogicAnalyzer = __webpack_require__(/*! ./libs/measurements/logicanalyzer */ "./obniz/libs/measurements/logicanalyzer.js");
-const ObnizMeasure = __webpack_require__(/*! ./libs/measurements/measure */ "./obniz/libs/measurements/measure.js");
-
-
-const PeripheralAD = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
-const PeripheralI2C = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
-const PeripheralIO = __webpack_require__(/*! ./libs/io_peripherals/io */ "./obniz/libs/io_peripherals/io.js");
-const PeripheralIO_ = __webpack_require__(/*! ./libs/io_peripherals/io_ */ "./obniz/libs/io_peripherals/io_.js");
-const PeripheralPWM = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./obniz/libs/io_peripherals/pwm.js");
-const PeripheralSPI = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
+const PeripheralAD   = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
+const PeripheralI2C  = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
+const PeripheralIO   = __webpack_require__(/*! ./libs/io_peripherals/io */ "./obniz/libs/io_peripherals/io.js");
+const PeripheralIO_  = __webpack_require__(/*! ./libs/io_peripherals/io_ */ "./obniz/libs/io_peripherals/io_.js");
+const PeripheralPWM  = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./obniz/libs/io_peripherals/pwm.js");
+const PeripheralSPI  = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
 const PeripheralUART = __webpack_require__(/*! ./libs/io_peripherals/uart */ "./obniz/libs/io_peripherals/uart.js");
 
-
 const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
+const ObnizParts = __webpack_require__(/*! ./ObnizParts */ "./obniz/ObnizParts.js")
 
-const WSCommand = __webpack_require__(/*! ./libs/wscommand */ "./obniz/libs/wscommand/index.js");
-
-
-/* global showObnizDebugError  */
-
-let isNode = (typeof window === 'undefined') ;
-
-class Obniz {
+module.exports = class ObnizComponents extends ObnizParts {
 
   constructor(id, options) {
-    this.isNode     = isNode;
-    this.apiversion = 1;
-    this.id         = id;
-    this.socket     = null;
-    this.debugprint = false;
-    this.debugs     = [];
+    super(id, options)
     this.pongObservers = [];
-  
-    this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
-  
-    this.init();
-  
-    if (!options) {
-      options = {};
-    }
-    this.server_obnizio = options.obniz_server || "wss://obniz.io";
-    this._access_token = options.access_token;
-    this.debugDomId = options.debug_dom_id || "obniz-debug";
-    this.auto_connect = typeof(options.auto_connect) === "boolean" ? options.auto_connect : true;
-
-    if (options.binary !== false) {
-      this.wscommand = this.constructor.WSCommand;
-      let classes = this.constructor.WSCommand.CommandClasses;
-      this.wscommands = [];
-      for (let class_name in classes) {
-       this.wscommands.push(new classes[class_name]());
-      }
-    }
-
-    if (this.isNode === false) { this.showOffLine(); }
-  
-    if (!this.isValidObnizId(this.id)) {
-      if (isNode)  {
-        this.error("invalid obniz id")
-      } else {
-        let filled = _ReadCookie("obniz-last-used") || "";
-        this.prompt(filled , function(obnizid){
-          this.id = obnizid;
-          this.showOffLine();
-          this.wsconnect();
-        }.bind(this))
-      }
-      return;
-    }
-
-
-    if(this.auto_connect){
-      this.wsconnect();
-    }
   }
 
-  static get version(){
-    let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
-    return packageJson.version;
-  }
-
-  static get WSCommand() {
-    return WSCommand;
-  }
-
-  isValidObnizId(str) {
-    if (typeof str != "string" || str.length < 8) {
-      return null;
-    }
-    str = str.replace("-", "");
-    let id = parseInt(str);
-    if (isNaN(id))
-      id = null;
-    return id != null;
-  }
-
-  prompt(filled, callback) {
-    var obnizid = prompt("Please enter obniz id", filled);
-    if (!obnizid) {
-    } else {
-      callback(obnizid);
-    }
-  }
-
-  wsOnOpen() {
-    this.print_debug("ws connected");
-    // wait for {ws:{ready:true}} object
-    if(typeof this.onopen === "function"){
-      this.onopen(this);
-    }
-  }
-
-  binary2Json(binary){
-    let data = new Uint8Array(binary);
-    let json = [];
-    while(true) {
-      const frame = WSCommand.dequeueOne(data);
-      if (!frame) break;
-      let obj = {};
-      for (var i=0; i<this.wscommands.length; i++) {
-        const command = this.wscommands[i];
-        if (command.module === frame.module) {
-          command.notifyFromBinary(obj, frame.func, frame.payload);
-          break;
-        }
-      }
-      json.push(obj);
-      data = frame.next;
-    }
-    return json;
-  }
-
-  wsOnMessage(data) {
-    if(this.debugprintBinary && typeof data !== "string" ){
-      this.print_debug("" + new Uint8Array(data).toString());
-    }
-
-    let json ;
-    if(typeof data === "string"){
-      json = JSON.parse(data);
-    }else if(this.wscommands) { //binary
-      json = this.binary2Json(data);
-    }
-
-    if(Array.isArray(json)){
-      for(let i in json ) {
-        this.notifyToModule(json[i]);
-      }
-
-    }else{
-      //invalid json
-    }
-
-  }
-
-  notifyToModule(obj){
-    this.print_debug(JSON.stringify(obj));
-
-    // notify messaging
-    if (typeof (obj.message) === "object" && this.onmessage) {
-      this.onmessage(obj.message.data, obj.message.from);
-    }
-    // debug
-    if (typeof (obj.debug) === "object") {
-      if (obj.debug.warning) {
-        let msg = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: 'warning', message: msg});
-      }
-
-      if (obj.debug.error) {
-        let msg = "Error: " + obj.debug.error.message;
-        this.error({alert: 'error', message: msg});
-      }
-      if (this.ondebug) {
-        this.ondebug(obj.debug);
-      }
-    }
-    // ws command
-    if (obj["ws"]) {
-      this.handleWSCommand(obj["ws"]);
-      return;
-    }
-    if (obj["system"]) {
-      this.handleSystemCommand(obj["system"]);
-      return;
-    }
-
-    // notify
-    let notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
-    for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
-      let i = -1;
-      let peripheral = notifyHandlers[handerIndex];
-      while (true) {
-        i++;
-        if (this[peripheral + "" + i] === undefined) {
-          break;
-        }
-        let module_value = obj[peripheral + "" + i];
-        if (module_value === undefined)
-          continue;
-        this[peripheral + "" + i].notified(module_value);
-      }
-    }
-    let names = ["switch", "ble", "measure"];
-    for (let i = 0; i < names.length; i++) {
-      if (obj[names[i]]) {
-        this[names[i]].notified(obj[names[i]]);
-      }
-    }
-    if (obj.logic_analyzer) {
-      this.logicAnalyzer.notified(obj.logic_analyzer)
-    }
-  }
-
-  wsOnClose(event) {
-    this.print_debug("closed");
-    if (this.isNode === false) { this.showOffLine(); }
-    if (this.looper) {
-      this.looper = null;
-    }
-  
-    this.clearSocket(this.socket);
-
-    if(typeof this.onclose === "function"){
-      this.onclose(this);
-    }
-
-    if(this.auto_connect) {
-      setTimeout(function () {
-        // always connect to mainserver if ws lost
-        this.wsconnect();
-      }.bind(this), 1000);
-    }
-  }
-
-  wsOnError(event) {
-    console.error("websocket error.");
-  }
-
-
-  wsOnUnexpectedResponse(req, res) {
-    let reconnectTime = 1000;
-    if (res && res.statusCode == 404) {
-      // obniz not online
-      this.print_debug("obniz not online");
-    } else {
-      // servder error or someting
-      reconnectTime = 5000;
-      this.print_debug( true ? res.statusCode :  undefined);
-    }
-    this.clearSocket(this.socket);
-    if(this.auto_connect) {
-      setTimeout(function () {
-        // always connect to mainserver if ws lost
-        this.wsconnect();
-      }.bind(this), reconnectTime);
-    }
-  }
-
-  wsconnect(desired_server) {
-    let server = this.server_obnizio;
-    if (desired_server) {
-      server = "" + desired_server;
-    }
-    if (this.socket) {
-      this.socket.close();
-      this.clearSocket(this.socket);
-    }
-    let url = server + "/obniz/" + this.id + "/ws/"+this.apiversion;
-    if (this.constructor.version) {
-      url += "?obnizjs="+this.constructor.version;
-    }
-    if (this._access_token) {
-      url += "&access_token="+this._access_token;
-    }
-    if (this.wscommand) {
-      url += "&accept_binary=true";
-    }
-    this.print_debug("connecting to " + url);
-  
-    if (this.isNode) {
-      const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
-      this.socket = new wsClient(url);
-      this.socket.on('open', this.wsOnOpen.bind(this));
-      this.socket.on('message', this.wsOnMessage.bind(this));
-      this.socket.on('close', this.wsOnClose.bind(this));
-      this.socket.on('error', this.wsOnError.bind(this));
-      this.socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
-    } else {
-      this.socket = new WebSocket(url);
-      this.socket.binaryType = 'arraybuffer';
-      this.socket.onopen = this.wsOnOpen.bind(this);
-      this.socket.onmessage = function (event) {
-        this.wsOnMessage(event.data);
-      }.bind(this);
-      this.socket.onclose = this.wsOnClose.bind(this);
-      this.socket.onerror = this.wsOnError.bind(this);
-    }
-  }
-
-  clearSocket(socket) {
-    /* send queue */
-    if (this._sendQueueTimer) {
-      delete this._sendQueue;
-      clearTimeout(this._sendQueueTimer);
-      this._sendQueueTimer = null;
-    }
-    /* unbind */
-    if (this.isNode) {
-      let shouldRemoveObservers = ['open', 'message', 'close', 'error'];
-      for (let i = 0; i < shouldRemoveObservers.length; i++) {
-        socket.removeAllListeners(shouldRemoveObservers[i]);
-      }
-    } else {
-      socket.onopen = null;
-      socket.onmessage = null;
-      socket.onclose = null;
-      socket.onerror = null;
-    }
-    this.socket = null;
-  }
-
-
-  connect(){
-    this.wsconnect();
-  }
-
-  close() {
-    if (this.socket) {
-      this._drainQueued();
-      this.socket.close(1000, 'close');
-      this.clearSocket(this.socket);
-    }
-  }
-
-  wired(partsname) {
-    let parts = new _parts[partsname]();
-    if (!parts) {
-      throw new Error("No such a parts [" + partsname + "] found");
-      return;
-    }
-    let args = Array.from(arguments);
-    args.shift();
-    args.unshift(this); 
-    if(parts.keys){
-      if(parts.requiredKeys){
-        let err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
-        if (err) {
-          throw new Error(partsname + " wired param '" + err + "' required, but not found ");
-          return;
-        }
-      }
-      parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
-    }
-    parts.obniz = this;
-    parts.wired.apply(parts, args);
-    if(parts.keys || parts.ioKeys){
-      let keys = parts.ioKeys || parts.keys;
-      let displayPartsName = parts.displayName || partsname;
-      let ioNames = {};
-      for( let index in keys){
-        let pinName = keys[index];
-        let io = args[1][pinName];
-        if(this.isValidIO(io)) {
-          if (parts.displayIoNames && parts.displayIoNames[pinName]) {
-            pinName = parts.displayIoNames[pinName];
-          }
-          ioNames[io] = pinName;
-        }
-      }
-      this.display.setPinNames(displayPartsName,ioNames);
-    }
-    return parts;
-  }
-
-  print_debug(str) {
-    if (this.debugprint) {
-      console.log("Obniz: " + str);
-    }
-  }
-
-  send(obj) {
-    if (!obj || (typeof obj !== "object")) {
-      console.log("obnizjs. didnt send ", obj);
-      return;
-    }
-    if (Array.isArray(obj)) {
-      for (let i=0; i<obj.length; i++) {
-        this.send(obj[i]);
-      }
-      return;
-    }
-    if (this.sendPool) { this.sendPool.push(obj); return; }
-
-    let sendData = JSON.stringify([obj]);
-    /* compress */
-    if (this.wscommand) {
-      let compressed;
-      try {
-        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
-        if (compressed) {
-          sendData = compressed;
-        }
-      } catch(e) {
-        this.error('------ errored json -------');
-        this.error(sendData)
-        throw e;
-      }
-    }
-    if (this.debugprint) {
-      this.print_debug("send: " + ( (typeof sendData === "string") ? sendData : JSON.stringify(obj)) );
-      if(this.debugprintBinary && typeof sendData !== "string" ){
-        this.print_debug("send: " + sendData.toString());
-      }
-    }
-    /* queue sending */
-    if(typeof sendData === "string") {
-      this._drainQueued();
-      this.socket.send(sendData);
-    } else {
-      if (this._sendQueue) {
-        this._sendQueue.push(sendData);
-      } else {
-        this._sendQueue = [sendData];
-        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 1);
-      }
-    }
-  }
-
-  _drainQueued() {
-    if (!this._sendQueue) return;
-    let expectSize = 0;
-    for (let i=0; i<this._sendQueue.length; i++) {
-      expectSize += this._sendQueue[i].length;
-    }
-    let filled = 0;
-    let sendData = new Uint8Array(expectSize);
-    for (let i=0; i<this._sendQueue.length; i++) {
-      sendData.set(this._sendQueue[i], filled);
-      filled += this._sendQueue[i].length;
-    }
-    this.socket.send(sendData);
-    delete this._sendQueue;
-    clearTimeout(this._sendQueueTimer);
-    this._sendQueueTimer = null;
-    
-    if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-      this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
-    }
-  }
-
-  init() {
+  _prepareComponents() {
     this.io = new PeripheralIO_(this);
     for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
     for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
@@ -6798,6 +5933,53 @@ class Obniz {
     this.measure = new ObnizMeasure(this);
   
     this.util = new ObnizUtil(this);
+  }
+
+  notifyToModule(obj){
+    super.notifyToModule(obj);
+    const notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
+    for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
+      const peripheral = notifyHandlers[handerIndex];
+      let i = -1;
+      while (this[peripheral + "" + (++i)]) {
+        let module_value = obj[peripheral + "" + i];
+        if (module_value === undefined)
+          continue;
+        this[peripheral + "" + i].notified(module_value);
+      }
+    }
+    const names = ["switch", "ble", "measure"];
+    for (let i = 0; i < names.length; i++) {
+      if (obj[names[i]]) {
+        this[names[i]].notified(obj[names[i]]);
+      }
+    }
+    if (obj.logic_analyzer) {
+      this.logicAnalyzer.notified(obj.logic_analyzer)
+    }
+  }
+
+  handleSystemCommand(wsObj) {
+    super.handleSystemCommand(wsObj);
+    // ping pong
+    if (wsObj.pong) {
+      for(let callback of this.pongObservers){
+        callback(wsObj);
+      }
+    }
+  }
+
+  addPongObserver(callback) {
+    if(callback) {
+      this.pongObservers.push(callback);
+    }
+  }
+
+  removePongObserver(callback) {
+    if(this.pongObservers.includes(callback)){
+      let index =  this.pongObservers.indexOf(callback);
+      this.pongObservers.splice(index,1);
+    }
   }
 
   isValidIO(io) {
@@ -6921,42 +6103,421 @@ class Obniz {
     }
     throw new Error("No More uart Available. max = " + i);
   }
+}
 
-  addPongObserver(callback) {
-    if(callback) {
-      this.pongObservers.push(callback);
-    }
-  }
-  removePongObserver(callback) {
-    if(this.pongObservers.includes(callback)){
-      let index =  this.pongObservers.indexOf(callback);
-      this.pongObservers.splice(index,1);
-    }
+/***/ }),
 
-  }
-  handleSystemCommand(wsObj) {
-    // ping pong
-    if (wsObj.pong) {
-      for(let callback of this.pongObservers){
-        callback(wsObj);
+/***/ "./obniz/ObnizConnection.js":
+/*!**********************************!*\
+  !*** ./obniz/ObnizConnection.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const WSCommand = __webpack_require__(/*! ./libs/wscommand */ "./obniz/libs/wscommand/index.js");
+
+const isNode = (typeof window === 'undefined');
+
+module.exports = class ObnizConnection {
+
+  constructor(id, options) {
+    this.isNode = isNode;
+    this.id = id;
+    this.socket = null;
+    this.socket_local = null;
+    this.debugprint = false;
+    this.debugprintBinary = false;
+    this.debugs = [];
+    this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
+    this._prepareComponents();
+    if (!options) {
+      options = {};
+    }
+    this.options = {
+      binary: options.binary === false ? false : true,
+      local_connect: options.local_connect === false ? false : true,
+      debug_dom_id: options.debug_dom_id || "obniz-debug",
+      auto_connect: options.auto_connect === false ? false : true,
+      access_token: options.access_token || null,
+      obniz_server: options.obniz_server || "wss://obniz.io"
+    };
+    if (this.options.binary) {
+      this.wscommand = this.constructor.WSCommand;
+      let classes = this.constructor.WSCommand.CommandClasses;
+      this.wscommands = [];
+      for (let class_name in classes) {
+        this.wscommands.push(new classes[class_name]());
       }
-      
+    }
+    if (this.options.auto_connect) {
+      this.wsconnect();
+    }
+  }
+
+  isValidObnizId(str) {
+    if (typeof str != "string" || str.length < 8) {
+      return null;
+    }
+    str = str.replace("-", "");
+    let id = parseInt(str);
+    if (isNaN(id))
+      id = null;
+    return id != null;
+  }
+
+  prompt(filled, callback) {
+    var obnizid = prompt("Please enter obniz id", filled);
+    if (!obnizid) {
+    } else {
+      callback(obnizid);
+    }
+  }
+
+  static get version(){
+    let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
+    return packageJson.version;
+  }
+
+  wsOnOpen() {
+    this.print_debug("ws connected");
+    // wait for {ws:{ready:true}} object
+    if(typeof this.onopen === "function"){
+      this.onopen(this);
+    }
+  }
+
+  wsOnMessage(data) {
+    if(this.debugprintBinary && typeof data !== "string" ){
+      this.print_debug("" + new Uint8Array(data).toString());
+    }
+
+    let json ;
+    if(typeof data === "string"){
+      json = JSON.parse(data);
+    }else if(this.wscommands) { //binary
+      json = this.binary2Json(data);
+    }
+
+    if(Array.isArray(json)){
+      for(let i in json ) {
+        this.notifyToModule(json[i]);
+      }
+    }else{
+      //invalid json
+    }
+  }
+
+  wsOnClose(event) {
+    this.print_debug("closed");
+    if (this.isNode === false) { this.showOffLine(); }
+  
+    this.clearSocket(this.socket);
+    delete this.socket;
+
+    if(typeof this.onclose === "function"){
+      this.onclose(this);
+    }
+
+    if(this.options.auto_connect) {
+      setTimeout(function () {
+        // always connect to mainserver if ws lost
+        this.wsconnect();
+      }.bind(this), 1000);
+    }
+  }
+
+  wsOnError(event) {
+    // console.error(event);
+  }
+
+  wsOnUnexpectedResponse(req, res) {
+    let reconnectTime = 1000;
+    if (res && res.statusCode == 404) {
+      this.print_debug("obniz not online");
+    } else {
+      // server error or someting
+      reconnectTime = 5000;
+      this.print_debug( true ? res.statusCode :  undefined);
+    }
+    this.clearSocket(this.socket);
+    delete this.socket;
+    if(this.options.auto_connect) {
+      setTimeout(function () {
+        // always connect to mainserver if ws lost
+        this.wsconnect();
+      }.bind(this), reconnectTime);
+    }
+  }
+
+  wsconnect(desired_server) {
+    let server = this.options.obniz_server;
+    if (desired_server) {
+      server = "" + desired_server;
+    }
+
+    this.close();
+
+    let url = server + "/obniz/" + this.id + "/ws/1";
+    if (this.constructor.version) {
+      url += "?obnizjs="+this.constructor.version;
+    }
+    if (this.options.access_token) {
+      url += "&access_token="+this.options._access_token;
+    }
+    if (this.wscommand) {
+      url += "&accept_binary=true";
+    }
+    this.print_debug("connecting to " + url);
+  
+    let socket;
+    if (this.isNode) {
+      const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
+      socket = new wsClient(url);
+      socket.on('open', this.wsOnOpen.bind(this));
+      socket.on('message', this.wsOnMessage.bind(this));
+      socket.on('close', this.wsOnClose.bind(this));
+      socket.on('error', this.wsOnError.bind(this));
+      socket.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
+    } else {
+      socket = new WebSocket(url);
+      socket.binaryType = 'arraybuffer';
+      socket.onopen = this.wsOnOpen.bind(this);
+      socket.onmessage = function (event) {
+        this.wsOnMessage(event.data);
+      }.bind(this);
+      socket.onclose = this.wsOnClose.bind(this);
+      socket.onerror = this.wsOnError.bind(this);
+    }
+    this.socket = socket;
+  }
+
+  _connectLocal(host) {
+    const url = 'ws://' + host
+    this.print_debug("local connect to " + url)
+    let ws;
+    if (this.isNode) {
+      const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
+      ws = new wsClient(url);
+      // ws.on('open', this.wsOnOpen.bind(this));
+      ws.on('message', (event) => {
+        this.print_debug("recvd via local");
+        this.wsOnMessage(event.data);
+      });
+      // ws.on('close', this.wsOnClose.bind(this));
+      ws.on('error', (err) => {
+        console.error("local websocket error.", err);
+      });
+      // ws.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
+    } else {
+      ws = new WebSocket(url);
+      ws.binaryType = 'arraybuffer';
+      ws.onopen = () => {
+        this.print_debug("connected to " + url)
+        if (this._waitForLocalConnectReadyTimer) {
+          clearTimeout(this._waitForLocalConnectReadyTimer);
+          this._waitForLocalConnectReadyTimer = null;
+          this._callOnConnect();
+        }
+      }
+      ws.onmessage = (event) => {
+        this.print_debug("recvd via local");
+        this.wsOnMessage(event.data);
+      };
+      ws.onclose = (event) => {
+        console.log('local websocket closed');
+        this._disconnectLocal();
+      }
+      ws.onerror = (err) => {
+        console.log("local websocket error.", err);
+        this._disconnectLocal();
+      }
+    }
+    this.socket_local = ws;
+  }
+
+  _disconnectLocal() {
+    if (this._waitForLocalConnectReadyTimer) {
+      clearTimeout(this._waitForLocalConnectReadyTimer);
+      this._waitForLocalConnectReadyTimer = null;
+    }
+    if (this.socket_local) {
+      this.socket_local.close();
+      this.clearSocket(this.socket_local);
+      delete this.socket_local;
+    }
+  }
+
+  clearSocket(socket) {
+    if (!socket)
+      return
+    /* send queue */
+    if (this._sendQueueTimer) {
+      delete this._sendQueue;
+      clearTimeout(this._sendQueueTimer);
+      this._sendQueueTimer = null;
+    }
+    /* unbind */
+    if (this.isNode) {
+      let shouldRemoveObservers = ['open', 'message', 'close', 'error', 'unexpected-response'];
+      for (let i = 0; i < shouldRemoveObservers.length; i++) {
+        socket.removeAllListeners(shouldRemoveObservers[i]);
+      }
+    } else {
+      socket.onopen = null;
+      socket.onmessage = null;
+      socket.onclose = null;
+      socket.onerror = null;
+    }
+  }
+
+  connect(){
+    this.wsconnect();
+  }
+
+  close() {
+    this._drainQueued();
+    this._disconnectLocal();
+    if (this.socket) {
+      this.socket.close(1000, 'close');
+      this.clearSocket(this.socket);
+      delete this.socket;
+    }
+  }
+
+  _callOnConnect() {
+    if (this.isNode === false) { this.showOnLine(); }
+    if (this._waitForLocalConnectReadyTimer) {
+      clearTimeout(this._waitForLocalConnectReadyTimer);
+      this._waitForLocalConnectReadyTimer = null;
+    }
+    if (typeof this.onconnect !== "function")
+      return;
+    const promise = this.onconnect(this);
+    if(promise instanceof Promise){
+      promise.catch((err) => {
+        console.error(err);
+      });
+    }
+  }
+
+  print_debug(str) {
+    if (this.debugprint) {
+      console.log("Obniz: " + str);
+    }
+  }
+
+  send(obj, options) {
+    if (!obj || (typeof obj !== "object")) {
+      console.log("obnizjs. didnt send ", obj);
+      return;
+    }
+    if (Array.isArray(obj)) {
+      for (let i=0; i<obj.length; i++) {
+        this.send(obj[i]);
+      }
+      return;
+    }
+    if (this.sendPool) { this.sendPool.push(obj); return; }
+
+    let sendData = JSON.stringify([obj]);
+    if (this.debugprint) {
+      this.print_debug("send: " + sendData);
+    }
+    /* compress */
+    if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
+      let compressed;
+      try {
+        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+        if (compressed) {
+          sendData = compressed;
+          if(this.debugprintBinary){
+            this.print_debug("binalized: " + new Uint8Array(compressed).toString());
+          }
+        }
+      } catch(e) {
+        this.error('------ errored json -------');
+        this.error(sendData)
+        throw e;
+      }
+    }
+    
+    /* queue sending */
+    if(typeof sendData === "string") {
+      this._drainQueued();
+      this._sendRouted(sendData);
+    } else {
+      if (this._sendQueue) {
+        this._sendQueue.push(sendData);
+      } else {
+        this._sendQueue = [sendData];
+        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+      }
+    }
+  }
+
+  _sendRouted(data) {
+    let canSendViaLocal = (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string")
+    if (canSendViaLocal) {
+      this.print_debug("send via local");
+      this.print_debug(data);
+      this.socket_local.send(data);
+    } else {
+      this.socket.send(data);
+    }
+  }
+
+  _drainQueued() {
+    if (!this._sendQueue) return;
+    let expectSize = 0;
+    for (let i=0; i<this._sendQueue.length; i++) {
+      expectSize += this._sendQueue[i].length;
+    }
+    let filled = 0;
+    let sendData = new Uint8Array(expectSize);
+    for (let i=0; i<this._sendQueue.length; i++) {
+      sendData.set(this._sendQueue[i], filled);
+      filled += this._sendQueue[i].length;
+    }
+    this._sendRouted(sendData);
+    delete this._sendQueue;
+    clearTimeout(this._sendQueueTimer);
+    this._sendQueueTimer = null;
+    
+    if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+      this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+    }
+  }
+
+  _prepareComponents() {
+
+  }
+
+  notifyToModule(obj){
+    this.print_debug(JSON.stringify(obj));
+    
+    if (obj["ws"]) {
+      this.handleWSCommand(obj["ws"]);
+      return;
+    }
+    if (obj["system"]) {
+      this.handleSystemCommand(obj["system"]);
+      return;
     }
   }
 
   handleWSCommand(wsObj) {
-    // ready
+    // 
     if (wsObj.ready) {
-  
       this.resetOnDisconnect(true);
-      if (this.isNode === false) { this.showOnLine(); }
-      if (this.onconnect) {
-        let promise = this.onconnect(this);
-        if(promise instanceof Promise){
-          promise.catch((err) => {
-            console.error(err);
-          });
-        }
+      if (wsObj.local_connect
+        && wsObj.local_connect.ip
+        && this.wscommand
+        && this.options.local_connect) {
+        this._connectLocal(wsObj.local_connect.ip);
+        this._waitForLocalConnectReadyTimer = setTimeout(()=>{ this._callOnConnect(); }, 1000);
+      }
+      if (!this._waitForLocalConnectReadyTimer) {
+        this._callOnConnect();
       }
     }
     if (wsObj.redirect) {
@@ -6967,40 +6528,141 @@ class Obniz {
     }
   }
 
-  message(target, message) {
-    let targets = [];
-    if (typeof (target) === "string") {
-      targets.push(target);
-    } else {
-      targets = target;
-    }
-    this.send({
-      message: {
-        to: targets,
-        data: message
-      }
-    });
+  handleSystemCommand(wsObj) {
+
   }
 
-// --- System ---
+  static get WSCommand() {
+    return WSCommand;
+  }
+
+  binary2Json(binary){
+    let data = new Uint8Array(binary);
+    let json = [];
+    while(true) {
+      const frame = WSCommand.dequeueOne(data);
+      if (!frame) break;
+      let obj = {};
+      for (var i=0; i<this.wscommands.length; i++) {
+        const command = this.wscommands[i];
+        if (command.module === frame.module) {
+          command.notifyFromBinary(obj, frame.func, frame.payload);
+          break;
+        }
+      }
+      json.push(obj);
+      data = frame.next;
+    }
+    return json;
+  }
+
+  showOnLine() {
+
+  }
+
+  showOffLine() {
+
+  }
+
+  warning(msg) {
+    console.log('warning:' + msg)
+  }
+
+  error(msg) {
+    console.error('error:' + msg)
+  }
+}
+
+/***/ }),
+
+/***/ "./obniz/ObnizParts.js":
+/*!*****************************!*\
+  !*** ./obniz/ObnizParts.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 
-  repeat(callback, interval) {
-    if (this.looper) {
-      this.looper = callback;
+
+const ObnizConnection = __webpack_require__(/*! ./ObnizConnection */ "./obniz/ObnizConnection.js")
+const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
+
+let _parts = {};
+
+module.exports = class ObnizParts extends ObnizConnection {
+
+  constructor(id, options) {
+    super(id, options)
+  }
+
+  static _parts() {
+    return _parts;
+  }
+
+  static PartsRegistrate (name, obj) {
+    _parts[name] = obj;
+  }
+
+  static Parts(name) {
+    return new _parts[name]();
+  }
+
+  wired(partsname) {
+    let parts = ObnizParts.Parts(partsname);
+    if (!parts) {
+      throw new Error("No such a parts [" + partsname + "] found");
       return;
     }
-    this.looper = callback;
-    let self = this;
-    if (!interval)
-      interval = 100;
-    async function loop() {
-      if (typeof (self.looper) === "function") {
-        await self.looper();
-        setTimeout(loop, interval);
+    let args = Array.from(arguments);
+    args.shift();
+    args.unshift(this); 
+    if(parts.keys){
+      if(parts.requiredKeys){
+        let err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
+        if (err) {
+          throw new Error(partsname + " wired param '" + err + "' required, but not found ");
+          return;
+        }
       }
+      parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
     }
-    loop();
+    parts.obniz = this;
+    parts.wired.apply(parts, args);
+    if(parts.keys || parts.ioKeys){
+      let keys = parts.ioKeys || parts.keys;
+      let displayPartsName = parts.displayName || partsname;
+      let ioNames = {};
+      for( let index in keys){
+        let pinName = keys[index];
+        let io = args[1][pinName];
+        if(this.isValidIO(io)) {
+          if (parts.displayIoNames && parts.displayIoNames[pinName]) {
+            pinName = parts.displayIoNames[pinName];
+          }
+          ioNames[io] = pinName;
+        }
+      }
+      this.display.setPinNames(displayPartsName,ioNames);
+    }
+    return parts;
+  }
+}
+
+/***/ }),
+
+/***/ "./obniz/ObnizSystemMethods.js":
+/*!*************************************!*\
+  !*** ./obniz/ObnizSystemMethods.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const ObnizComponents = __webpack_require__(/*! ./ObnizComponents */ "./obniz/ObnizComponents.js")
+
+module.exports = class ObnizSystemMethods extends ObnizComponents {
+
+  constructor(id, options) {
+    super(id, options)
   }
 
   wait(msec) {
@@ -7013,19 +6675,19 @@ class Obniz {
     return new Promise(resolve => setTimeout(resolve, msec));
   }
 
-  reset() { this.send({ system: { reset: true } }); this.init(); }
-  reboot() { this.send({ system: { reboot: true } }); this.init(); }
+  reset() { this.send({ system: { reset: true } }); this._prepareComponents(); }
+  reboot() { this.send({ system: { reboot: true } }); this._prepareComponents(); }
   selfCheck() { this.send({ system: { self_check: true } }); }
   keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
   resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }
 
-  pingWait(unixtime, rand){
+  pingWait(unixtime, rand, forceGlobalNetwork){
+
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor( unixtime / Math.pow(2,32));
     let lower = unixtime - upper * Math.pow(2,32);
     rand = rand || Math.floor(Math.random() * Math.pow(2,4));
     let buf = [];
-
 
     buf.push((upper >>> 8*3) & 0xFF);
     buf.push((upper >>> 8*2) & 0xFF);
@@ -7039,8 +6701,17 @@ class Obniz {
     buf.push((rand >>> 8*2) & 0xFF);
     buf.push((rand >>> 8*1) & 0xFF);
     buf.push((rand >>> 8*0) & 0xFF);
-    this.send({ system: { ping: {key : buf } }});
 
+    let obj = {
+      system: {
+        ping: {
+          key: buf
+        }
+      }
+    }
+
+    this.send(obj, {local_connect: forceGlobalNetwork ? false : true});
+    
     return new Promise((resolve)=>{
       let callback = (systemObj) => {
         for(let i =0;i<buf.length;i++){
@@ -7065,8 +6736,6 @@ class Obniz {
         let timeObniz2Server = systemObj.pong.pongServerTime- systemObj.pong.obnizTime ;
         let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime ;
         let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
-        // let str = `ping,${obnizJsPingUnixtime},${systemObj.pong.pingServerTime},${systemObj.pong.obnizTime},${systemObj.pong.pongServerTime}`;
-
 
         this.print_debug(str);
         resolve(str);
@@ -7074,7 +6743,201 @@ class Obniz {
       this.addPongObserver(callback);
     });
   }
+}
 
+/***/ }),
+
+/***/ "./obniz/ObnizUIs.js":
+/*!***************************!*\
+  !*** ./obniz/ObnizUIs.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const ObnizSystemMethods = __webpack_require__(/*! ./ObnizSystemMethods */ "./obniz/ObnizSystemMethods.js")
+
+module.exports = class ObnizUIs extends ObnizSystemMethods {
+
+  constructor(id, options) {
+    super(id, options)
+  }
+
+  wsconnect(desired_server) {
+    if (this.isNode === false) {
+      this.showOffLine();
+    }
+    if (!this.isValidObnizId(this.id)) {
+      if (this.isNode) {
+        this.error("invalid obniz id");
+      }
+      else {
+        let filled = _ReadCookie("obniz-last-used") || "";
+        this.prompt(filled, function (obnizid) {
+          this.id = obnizid;
+          this.wsconnect(desired_server);
+        }.bind(this));
+      }
+      return;
+    }
+    super.wsconnect(desired_server);
+  }
+
+  showAlertUI(obj) {
+    if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
+      return;
+    }
+    const alerts = {
+      warning: 'alert-warning alert-dismissible',
+      error: 'alert-danger'
+    };
+    let dom = `
+    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"  }">${obj.message}</div>`;
+    document.getElementById(this.options.debug_dom_id).insertAdjacentHTML('beforeend', dom);
+  }
+
+  getDebugDoms(){
+    if (this.isNode){return;}
+    let loaderDom = document.querySelector("#loader");
+    let debugDom = document.querySelector("#" + this.options.debug_dom_id);
+    let statusDom = document.querySelector("#"+this.options.debug_dom_id +" #online-status");
+    if(debugDom && !statusDom){
+      statusDom = document.createElement("div");
+      statusDom.id = 'online-status';
+      statusDom.style.color =  "#FFF";
+      statusDom.style.padding =  "5px";
+      statusDom.style.textAlign =  "center";
+      debugDom.insertBefore(statusDom, debugDom.firstChild);
+    }
+    return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
+  }
+
+  showOnLine() {
+    if (this.isNode){return;}
+    let doms = this.getDebugDoms();
+    if(doms.loaderDom){
+      doms.loaderDom.style.display="none";
+    }
+    if(doms.statusDom){
+      doms.statusDom.style.backgroundColor =  "#449d44";
+      doms.statusDom.style.color =  "#FFF";
+      doms.statusDom.innerHTML = this.id ? "online : "+ this.id : "online";
+    }
+  }
+
+  showOffLine() {
+    if (this.isNode){return;}
+
+    let doms = this.getDebugDoms();
+    if(doms.loaderDom){
+      doms.loaderDom.style.display="block";
+    }
+    if(doms.statusDom){
+      doms.statusDom.style.backgroundColor =  "#d9534f";
+      doms.statusDom.style.color =  "#FFF";
+      doms.statusDom.innerHTML = this.id  ? "offline : "+ this.id : "offline";
+    }
+  }
+}
+
+function _ReadCookie(name) {
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for(let i=0;i < ca.length;i++) {
+    let c = ca[i];
+      while (c.charAt(0) === ' ') {
+          c = c.substring(1,c.length);
+      }
+      if (c.indexOf(nameEQ) === 0) {
+          return c.substring(nameEQ.length,c.length);
+      }
+  }
+  return null;
+}
+
+/***/ }),
+
+/***/ "./obniz/index.js":
+/*!************************!*\
+  !*** ./obniz/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(__dirname) {
+const ObnizUIs = __webpack_require__(/*! ./ObnizUIs */ "./obniz/ObnizUIs.js");
+
+/* global showObnizDebugError  */
+
+const isNode = (typeof window === 'undefined');
+
+module.exports = class Obniz extends ObnizUIs {
+
+  constructor(id, options) {
+    super(id, options);
+  }
+
+  repeat(callback, interval) {
+    if (this.looper) {
+      this.looper = callback;
+      return;
+    }
+    this.looper = callback;
+    let self = this;
+    if (!interval)
+      interval = 100;
+    async function loop() {
+      if (typeof (self.looper) === "function") {
+        await self.looper();
+        setTimeout(loop, interval);
+      }
+    }
+    loop();
+  }
+
+  wsOnClose(){
+    super.wsOnClose();
+    if (this.looper) {
+      this.looper = null;
+    }
+  }
+
+  message(target, message) {
+    let targets = [];
+    if (typeof (target) === "string") {
+      targets.push(target);
+    } else {
+      targets = target;
+    }
+    this.send({
+      message: {
+        to: targets,
+        data: message
+      }
+    });
+  }
+
+  notifyToModule(obj){
+    super.notifyToModule(obj);
+    // notify messaging
+    if (typeof (obj.message) === "object" && this.onmessage) {
+      this.onmessage(obj.message.data, obj.message.from);
+    }
+    // debug
+    if (typeof (obj.debug) === "object") {
+      if (obj.debug.warning) {
+        let msg = "Warning: " + obj.debug.warning.message;
+        this.warning({alert: 'warning', message: msg});
+      }
+
+      if (obj.debug.error) {
+        let msg = "Error: " + obj.debug.error.message;
+        this.error({alert: 'error', message: msg});
+      }
+      if (this.ondebug) {
+        this.ondebug(obj.debug);
+      }
+    }
+  }
 
   warning(msg) {
     if (this.isNode) {
@@ -7109,101 +6972,12 @@ class Obniz {
       }
     }
   }
-
-  showAlertUI(obj) {
-    if (this.isNode || !document.getElementById(this.debugDomId)) {
-      return;
-    }
-    const alerts = {
-      warning: 'alert-warning alert-dismissible',
-      error: 'alert-danger'
-    };
-    let dom = `
-    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"  }">${obj.message}</div>`;
-    document.getElementById(this.debugDomId).insertAdjacentHTML('beforeend', dom);
-  }
-
-  getDebugDoms(){
-    if (this.isNode){return;}
-    let loaderDom = document.querySelector("#loader");
-    let debugDom = document.querySelector("#" + this.debugDomId);
-    let statusDom = document.querySelector("#"+this.debugDomId +" #online-status");
-    if(debugDom && !statusDom){
-      statusDom = document.createElement("div");
-      statusDom.id = 'online-status';
-      statusDom.style.color =  "#FFF";
-      statusDom.style.padding =  "5px";
-      statusDom.style.textAlign =  "center";
-      debugDom.insertBefore(statusDom, debugDom.firstChild);
-    }
-    return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
-
-  }
-  showOnLine() {
-    if (this.isNode){return;}
-    let doms = this.getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="none";
-    }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#449d44";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = this.id ? "online : "+ this.id : "online";
-    }
-
-  }
-  showOffLine() {
-    if (this.isNode){return;}
-
-    let doms = this.getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="block";
-    }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#d9534f";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = this.id  ? "offline : "+ this.id : "offline";
-    }
-  }
-
-
 }
-
-/*===================*/
-/* Parts */
-/*===================*/
-let _parts = {};
-
-Obniz._parts = _parts;
-
-Obniz.PartsRegistrate = function (name, obj) {
-  _parts[name] = obj;
-};
-
-Obniz.Parts = function (name) {
-  return new _parts[name]();
-};
 
 /*===================*/
 /* Utils */
 /*===================*/
-function _ReadCookie(name) {
-  let nameEQ = name + "=";
-  let ca = document.cookie.split(';');
-  for(let i=0;i < ca.length;i++) {
-    let c = ca[i];
-      while (c.charAt(0) === ' ') {
-          c = c.substring(1,c.length);
-      }
-      if (c.indexOf(nameEQ) === 0) {
-          return c.substring(nameEQ.length,c.length);
-      }
-  }
-  return null;
-}
-
 if (!isNode) {
-
   if(window && window.parent && window.parent.userAppLoaded){
     window.parent.userAppLoaded(window);
   }
@@ -7213,23 +6987,18 @@ if (!isNode) {
       window.parent.logger.onObnizError(err);
     }else{ throw err; }
   }
-
 }
 
-
 /*===================*/
-/* Export */
+/* ReadParts */
 /*===================*/
-module.exports = Obniz;
-
-
-// read parts
 __webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
 if(__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir){__webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);}
 let context = __webpack_require__("./parts sync recursive \\.js$");
 for( let path of context.keys()){
   context(path);
 }
+
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
@@ -7242,35 +7011,274 @@ for( let path of context.keys()){
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+
+
 const BlePeripheral = __webpack_require__(/*! ./blePeripheral */ "./obniz/libs/embeds/ble/blePeripheral.js");
 const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./obniz/libs/embeds/ble/bleRemotePeripheral.js");
-const BleAdvertisement = __webpack_require__(/*! ./bleAdvertisement */ "./obniz/libs/embeds/ble/bleAdvertisement.js");
-const BleScan = __webpack_require__(/*! ./bleScan */ "./obniz/libs/embeds/ble/bleScan.js");
 
 
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
-    this.remotePeripherals = [];
-
+    this.remotePeripherals =  [];
+    this.adv_data = [];
+    this.scan_resp = [];
+    
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
     this.peripheral = new BlePeripheral(Obniz);
-
-    this.scanTarget = null;
-
-    this.advertisement = new BleAdvertisement(Obniz);
-    this.scan = new BleScan(Obniz);
   }
 
+  startAdvertisement() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["advertisement"] = {
+      adv_data : this.adv_data
+    };
+    
+    if(this.scan_resp.length > 0){
+       obj["ble"]["advertisement"]["scan_resp"]= this.scan_resp;
+    }
+    
+    this.Obniz.send(obj);
+    return;
+  }
 
-  findPeripheral(address) {
-    for (let key in this.remotePeripherals) {
-      if (this.remotePeripherals[key].address === address) {
+  stopAdvertisement() {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["advertisement"] = null;
+    this.Obniz.send(obj);
+    return;
+  }
+
+  setAdvDataRaw(adv_data) {
+    var obj = {};
+    this.adv_data = adv_data;
+    return;
+  }
+
+  setAdvData(json) {
+    var builder = this.advDataBulider(json);
+    this.setAdvDataRaw(builder.build());
+    return;
+  }
+
+  dataBuliderPrototype(){
+
+    var builder = function(Obniz,json){
+      this.Obniz = Obniz;
+      this.rows  = {};
+      
+      if (json) {
+        if (json.localName) {
+          this.setCompleteLocalName(json.localName);
+        }
+        if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
+          this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
+        }
+        if (json.serviceUuids) {
+          for (var key in json.serviceUuids) {
+            this.setUuid(json.serviceUuids[key]);
+          }
+        }
+      }
+      if(typeof(this.extendEvalJson) === "function"){
+        this.extendEvalJson(json);
+      }
+    
+    
+    };
+    builder.prototype.setRow = function(type,data){
+      this.rows[type] = data;
+    };
+    builder.prototype.getRow = function(type){
+      return this.rows[type] || [];
+    };
+    
+    builder.prototype.check = function(){
+      return true;
+    };
+    
+    builder.prototype.build = function(){
+      if(!this.check){
+        return;
+      }
+      var data = [];
+      for(var key in this.rows){
+        if(this.rows[key].length === 0)continue;
+        
+        data.push(this.rows[key].length+1);
+        data.push(parseInt(key));
+        Array.prototype.push.apply(data, this.rows[key]);
+      }
+      if(data.length > 31){
+        this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+      }
+      
+      return data;
+    };
+    
+    
+    builder.prototype.setStringData = function (type, string){
+      var data = [];
+      
+      for (var i = 0; i < string.length; i++) {
+        data.push(string.charCodeAt(i));
+      }
+  
+      this.setRow(type, data);
+    };
+    
+    builder.prototype.setShortenedLocalName = function (name){
+      this.setStringData(0x08,name);
+    };
+    builder.prototype.setCompleteLocalName = function (name){
+      this.setStringData(0x09,name);
+    };
+    
+    builder.prototype.setManufacturerSpecificData = function (campanyCode, data){
+      var row = [];
+      row.push(campanyCode & 0xFF);
+      row.push((campanyCode >> 8) & 0xFF);
+      Array.prototype.push.apply(row , data);
+      this.setRow(0xFF, row);
+    };
+    
+    builder.prototype.setUuid =function(uuid){
+      var uuidData = this.convertUuid(uuid);
+      var type = { 16:0x06, 4:0x04, 2:0x02 }[uuidData.length]; 
+      this.setRow(type,uuidData);
+    };
+    
+    builder.prototype.convertUuid = function(uuid){
+      var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+      if (uuidNumeric.length !== 32 
+          && uuidNumeric.length !== 8 
+          && uuidNumeric.length !== 4 ) {
+        this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+      }
+      
+      var data = [];
+      for (var i = uuidNumeric.length; i > 1 ; i -= 2) {
+        data.push(parseInt(uuidNumeric[i-2] + uuidNumeric[i - 1], 16));
+      }
+      return data;
+    };
+    
+    builder.prototype.setIbeaconData = function (uuid, major, minor, txPower) {
+      var data = [];
+      data.push(0x02, 0x15); // fixed data
+  
+      var uuidData = this.convertUuid(uuid);
+      Array.prototype.push.apply(data, uuidData);
+      
+      
+      data.push((major >> 8) & 0xFF);
+      data.push((major >> 0) & 0xFF);
+      data.push((minor >> 8) & 0xFF);
+      data.push((minor >> 0) & 0xFF);
+      data.push((txPower >> 0) & 0xFF);
+  
+      this.setManufacturerSpecificData(0x004c, data);
+      return;
+    };
+
+    return builder;
+  }
+
+  advDataBulider(jsonVal){
+    var builder = this.dataBuliderPrototype();
+    
+    builder.prototype.check = function(){
+    
+      return true;
+    };
+    
+    builder.prototype.extendEvalJson = function(json){
+      if(json){
+        if (json.flags) {
+          if (json.flags.includes("limited_discoverable_mode"))
+            this.setLeLimitedDiscoverableModeFlag();
+          if (json.flags.includes("general_discoverable_mode"))
+            this.setLeGeneralDiscoverableModeFlag();
+          if (json.flags.includes("br_edr_not_supported"))
+            this.setBrEdrNotSupportedFlag();
+          if (json.flags.includes("le_br_edr_controller"))
+            this.setLeBrEdrControllerFlag();
+          if (json.flags.includes("le_br_edr_host"))
+            this.setLeBrEdrHostFlag();
+        }
+      }
+    };
+    
+    builder.prototype.setFlags = function(flag){
+      var data = this.getRow(0x01);
+      data[0] = (data[0] || 0) | flag;
+      this.setRow(0x01,data);
+    };
+    builder.prototype.setLeLimitedDiscoverableModeFlag = function (){
+      this.setFlags(0x01);
+    };
+    builder.prototype.setLeGeneralDiscoverableModeFlag = function (){
+      this.setFlags(0x02);
+    };
+    builder.prototype.setBrEdrNotSupportedFlag = function (){
+      this.setFlags(0x04);
+    };
+    builder.prototype.setLeBrEdrControllerFlag = function (){
+      this.setFlags(0x08);
+    };
+    builder.prototype.setLeBrEdrHostFlag = function (){
+      this.setFlags(0x10);
+    };
+    
+    return new builder(this.Obniz,jsonVal);
+  }
+
+  scanRespDataBuilder(json){
+    var builder = this.dataBuliderPrototype();
+    return new builder(this.Obniz,json);
+  }
+
+  setScanRespDataRaw(scan_resp) {
+    this.scan_resp = scan_resp; 
+  }
+
+  setScanRespData(json) {
+    this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+  }
+
+  startScan(settings) {
+    var obj = {};
+    obj["ble"] = {};
+    obj["ble"]["scan"] = {
+  //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+  //    "interval" : settings && settings.interval ? settings.interval : 30,
+      "duration" : settings && settings.duration ? settings.duration : 30
+      
+    };
+    
+    this.remotePeripherals =  [];
+    
+    this.Obniz.send(obj);
+    return;
+  }
+
+  stopScan() {
+    var obj = {};
+    obj["ble"] = {};
+     obj["ble"]["scan"] = null;
+    this.Obniz.send(obj);
+  }
+
+  findPeripheral (address) {
+    for( var key in this.remotePeripherals){
+      if(this.remotePeripherals[key].address === address){
         return this.remotePeripherals[key];
       }
     }
@@ -7278,645 +7286,222 @@ class ObnizBLE {
   }
 
   notified(obj) {
-
     if (obj.scan_result) {
-
-      let val = this.findPeripheral(obj.scan_result.address);
-      if (!val) {
-        val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+      let isFinished = false;
+      if (obj.scan_result.event_type === "inquiry_complete") {
+        isFinished = true;
+      } else if (obj.scan_result.event_type === "inquiry_result") {
+        let val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+        val.setParams(obj.scan_result);
         this.remotePeripherals.push(val);
+        this.onscan(val);
       }
-      val.discoverdOnRemote = true;
-      val.setParams(obj.scan_result);
-
-      this.scan.notifyFromServer("onfind", val);
+      if (isFinished ) {
+        this.onscanfinish(this.remotePeripherals);
+      }
     }
 
-    if (obj.scan_result_finish) {
-      this.scan.notifyFromServer("onfinish");
-    }
-
-
-    let remotePeripheralcallbackFunc = function (val, func, type) {
-      let obj = null;
-      if (val === undefined) return;
-      let p = this.findPeripheral(val.address);
-      if (!p) {
+    if (obj.status_update) {
+      let params = obj.status_update;
+      if (!params.address)
         return;
+      let p = this.findPeripheral(params.address);
+      if (p) {
+        if (params.status === "connected") {
+          p.onconnect();
+        }
+        if (params.status === "disconnected") {
+          p.ondisconnect();
+        }
       }
-      if (type === "peripheral") {
-        obj = p;
-      } else if (type === "service") {
-        obj = p.findService(val);
-      } else if (type === "characteristic") {
-        obj = p.findCharacteristic(val);
-      } else if (type === "descriptor") {
-        obj = p.findDescriptor(val);
+    }
+
+    if (obj.get_service_result) {
+      let params = obj.get_service_result;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          service.discoverdOnRemote = true;
+          p.ondiscoverservice(service);
+        }
       }
-      if (!obj) {
-        return;
+    }
+
+    if (obj.get_service_result_finish) {
+      let params = obj.get_service_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let services = p.services.filter((elm)=>{return elm.discoverdOnRemote});
+          p.ondiscoverservicefinished(services);
+        }
       }
-      func(val, obj);
-    }.bind(this);
+    }
 
-    const paramList = {
-      status_update: {name: "statusupdate", obj: "peripheral"},
-      get_service_result: {name: "discover", obj: "peripheral"},
-      get_service_result_finish: {name: "discoverfinished", obj: "peripheral"},
-      get_characteristic_result: {name: "discover", obj: "service"},
-      get_characteristic_result_finish: {name: "discoverfinished", obj: "service"},
-      write_characteristic_result: {name: "onwrite", obj: "characteristic"},
-      read_characteristic_result: {name: "onread", obj: "characteristic"},
-      register_notify_characteristic_result: {name: "onregisternotify", obj: "characteristic"},
-      unregister_notify_characteristic_result: {name: "onunregisternotify", obj: "characteristic"},
-      nofity_characteristic: {name: "onnotify", obj: "characteristic"},
-      get_descriptor_result: {name: "discover", obj: "characteristic"},
-      get_descriptor_result_finish: {name: "discoverfinished", obj: "characteristic"},
-      write_descriptor_result: {name: "onwrite", obj: "descriptor"},
-      read_descriptor_result: {name: "onread", obj: "descriptor"},
-    };
+    if (obj.get_characteristic_result) {
+      let params = obj.get_characteristic_result;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          chara.discoverdOnRemote = true;
+          chara.properties = params.properties;
+          service.ondiscovercharacteristic(chara);
+        }
+      }
+    }
+    if (obj.get_characteristic_result_finish) {
+      let params = obj.get_characteristic_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let charas = service.characteristics.filter((elm)=>{return elm.discoverdOnRemote});
+          service.ondiscovercharacteristicfinished(charas);
+        }
+      }
+    }
+    if (obj.write_characteristic_result) {
+      let params = obj.write_characteristic_result;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          chara.onwrite(params.result);
+        }
+      }
+    }
 
-    for (let key in paramList) {
-      remotePeripheralcallbackFunc(obj[key], function (val, bleobj) {
-
-        bleobj.notifyFromServer(paramList[key].name, val);
-      }.bind(this), paramList[key].obj);
+    if (obj.read_characteristic_result) {
+      let params = obj.read_characteristic_result;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          chara.onread(params.data);
+        }
+      }
+    }
+    if (obj.get_descriptor_result) {
+      let params = obj.get_descriptor_result;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descr = chara.getDescriptor(params.descriptor_uuid);
+          descr.discoverdOnRemote = true;
+          chara.ondiscoverdescriptor(descr);
+        }
+      }
     }
 
 
-    let callbackFunc = function (val, func, type) {
-      let obj = null;
-      if (val === undefined) return;
-      if (type === "peripheral") {
-        obj = this.peripheral;
-      } else if (type === "service") {
+    if (obj.get_descriptor_result_finish) {
+      let params = obj.get_descriptor_result_finish;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descrs = chara.descriptors.filter((elm)=>{return elm.discoverdOnRemote});
+          chara.ondiscoverdescriptorfinished(descrs);
+        }
+      }
+    }
+
+    if (obj.read_descriptor_result) {
+      let params = obj.read_descriptor_result;
+      if (params.address) {
+        let p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descr = chara.getDescriptor(params.descriptor_uuid);
+          descr.onread(params.data);
+        }
+      }
+    }
+    if (obj.write_descriptor_result) {
+      let params = obj.write_descriptor_result;
+      if (params.address) {
+        var p = this.findPeripheral(params.address);
+        if (p) {
+          let service = p.getService(params.service_uuid);
+          let chara = service.getCharacteristic(params.characteristic_uuid);
+          let descr = chara.getDescriptor(params.descriptor_uuid);
+          descr.onwrite(params.result);
+        }
+      }
+    }
+    
+    var callbackFunc = function (val, func, type) {
+      var obj = null;
+      if(val === undefined) return;
+      if (type === "service") {
         obj = this.peripheral.getService(val);
       } else if (type === "characteristic") {
         obj = this.peripheral.findCharacteristic(val);
       } else if (type === "descriptor") {
         obj = this.peripheral.findDescriptor(val);
       }
-      if (!obj) {
-        return;
-      }
       func(val, obj);
     }.bind(this);
-
-    if (obj.peripheral) {
-      callbackFunc(obj.peripheral.connection_status, function (val) {
-        this.peripheral.onconnectionupdates(val);
-      }.bind(this), "peripheral");
-
-      const paramList = {
-        read_characteristic_result: {name: "onread", obj: "characteristic"},
-        write_characteristic_result: {name: "onwrite", obj: "characteristic"},
-        notify_read_characteristic: {name: "onreadfromremote", obj: "characteristic"},
-        notify_write_characteristic: {name: "onwritefromremote", obj: "characteristic"},
-        read_descriptor_result: {name: "onread", obj: "descriptor"},
-        write_descriptor_result: {name: "onwrite", obj: "descriptor"},
-        notify_read_descriptor: {name: "onreadfromremote", obj: "descriptor"},
-        notify_write_descriptor: {name: "onwritefromremote", obj: "descriptor"},
-      };
-
-      for (let key in paramList) {
-        callbackFunc(obj.peripheral[key], function (val, bleobj) {
-          bleobj.notifyFromServer(paramList[key].name, val);
+    
+     if (obj.peripheral) {
+       callbackFunc(obj.peripheral.connection_status, function(val){
+         this.peripheral.onconnectionupdates(val);
+       }.bind(this));
+       
+       var paramList = {
+         read_characteristic_result : { method: "onread", obj:"characteristic"},
+         write_characteristic_result : { method: "onwrite", obj:"characteristic"},
+         notify_read_characteristic : { method: "onreadfromremote", obj:"characteristic"},
+         notify_write_characteristic : { method: "onwritefromremote", obj:"characteristic"},
+         read_descriptor_result : { method: "onread", obj:"descriptor"},
+         write_descriptor_result : { method: "onwrite", obj:"descriptor"},
+         notify_read_descriptor : { method: "onreadfromremote", obj:"descriptor"},
+         notify_write_descriptor : { method: "onwritefromremote", obj:"descriptor"},
+       }
+       
+       for(var key in paramList){
+        callbackFunc(obj.peripheral[key], function(val,bleobj){
+          bleobj[paramList[key].method](val);
         }.bind(this), paramList[key].obj);
       }
-    }
+     }
 
     if (obj.error) {
       let params = obj.error;
       let handled = false;
-      let peripheral, target;
-      if (!params.address) {
-        peripheral = this.peripheral;
-      } else {
-        peripheral = this.findPeripheral(params.address);
+      if (!params.address){
+          if(typeof(this.onerror) === "function"){
+            this.onerror(params);
+            handled = true;
+          }
       }
-
-      if (peripheral) {
-        if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
-          target = peripheral.findDescriptor(params);
-        } else if (params.service_uuid && params.characteristic_uuid) {
-          target = peripheral.findCharacteristic(params);
-        } else if (params.service_uuid) {
-          target = peripheral.findService(params);
-        }
-        if (target) {
-          target.notifyFromServer("onerror", params);
-          handled = true;
-        } else {
-          peripheral.onerror(params);
-          handled = true;
-        }
+        
+      let p = this.findPeripheral(params.address);
+      if (p) {
+        p.onerror(params);
+        handled = true;
       }
-
       if (!handled) {
         this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
       }
     }
   }
 
-  static _dataArray2uuidHex(data, reverse) {
-    let uuid = [];
-    for (let i = 0; i < data.length; i++) {
-      uuid.push(('00' + data[i].toString(16).toLowerCase()).slice(-2));
-    }
-    if (reverse) {
-      uuid = uuid.reverse();
-    }
-    let str = uuid.join("");
-    if (uuid.length >= 16) {
-      str = str.slice(0, 8) + "-" + str.slice(8, 12) + "-" + str.slice(12, 16) + "-" + str.slice(16, 20) + "-" + str.slice(20);
-    }
-    return str;
-
-  }
-
+  onscanfinish(){} //dummy
+  onscan(){} //dummy
 }
 
 
 module.exports = ObnizBLE;
-
-/***/ }),
-
-/***/ "./obniz/libs/embeds/ble/bleAdvertisement.js":
-/*!***************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleAdvertisement.js ***!
-  \***************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Builder = __webpack_require__(/*! ./bleAdvertisementBuilder */ "./obniz/libs/embeds/ble/bleAdvertisementBuilder.js");
-
-class BleAdvertisement {
-  constructor(Obniz) {
-    this.Obniz = Obniz;
-    this.adv_data = [];
-    this.scan_resp = [];
-  }
-
-  start() {
-    let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["advertisement"] = {
-      adv_data: this.adv_data
-    };
-
-    if (this.scan_resp.length > 0) {
-      obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
-    }
-
-    this.Obniz.send(obj);
-  }
-
-  end() {
-    let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["advertisement"] = null;
-    this.Obniz.send(obj);
-  }
-
-  setAdvDataRaw(adv_data) {
-    this.adv_data = adv_data;
-  }
-
-  setAdvData(json) {
-    let builder = this.advDataBulider(json);
-    this.setAdvDataRaw(builder.build());
-  }
-
-  advDataBulider(jsonVal) {
-    return new Builder(this.Obniz, jsonVal);
-  }
-
-  scanRespDataBuilder(json) {
-    return new Builder(this.Obniz, json);
-  }
-
-  setScanRespDataRaw(scan_resp) {
-    this.scan_resp = scan_resp;
-  }
-
-  setScanRespData(json) {
-    this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
-  }
-
-
-}
-
-
-module.exports = BleAdvertisement;
-
-/***/ }),
-
-/***/ "./obniz/libs/embeds/ble/bleAdvertisementBuilder.js":
-/*!**********************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleAdvertisementBuilder.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-class BleAdvertisementBuilder {
-
-  constructor(Obniz, json) {
-    this.Obniz = Obniz;
-    this.rows = {};
-
-    if (json) {
-      if (json.localName) {
-        this.setCompleteLocalName(json.localName);
-      }
-      if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
-        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
-      }
-      if (json.serviceUuids) {
-        for (let uuid of json.serviceUuids) {
-          this.setUuid(uuid);
-        }
-      }
-    }
-    if (typeof(this.extendEvalJson) === "function") {
-      this.extendEvalJson(json);
-    }
-
-  };
-
-  setRow(type, data) {
-    this.rows[type] = data;
-  };
-
-  getRow(type) {
-    return this.rows[type] || [];
-  };
-
-  build() {
-    let data = [];
-    for (let key in this.rows) {
-      if (this.rows[key].length === 0) continue;
-
-      data.push(this.rows[key].length + 1);
-      data.push(parseInt(key));
-      Array.prototype.push.apply(data, this.rows[key]);
-    }
-    if (data.length > 31) {
-      this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
-    }
-
-    return data;
-  };
-
-
-  setStringData(type, string) {
-    let data = [];
-
-    for (let i = 0; i < string.length; i++) {
-      data.push(string.charCodeAt(i));
-    }
-
-    this.setRow(type, data);
-  };
-
-  setShortenedLocalName(name) {
-    this.setStringData(0x08, name);
-  };
-
-  setCompleteLocalName(name) {
-    this.setStringData(0x09, name);
-  };
-
-  setManufacturerSpecificData(campanyCode, data) {
-    let row = [];
-    row.push(campanyCode & 0xFF);
-    row.push((campanyCode >> 8) & 0xFF);
-    Array.prototype.push.apply(row, data);
-    this.setRow(0xFF, row);
-  };
-
-  setUuid(uuid) {
-    let uuidData = this.convertUuid(uuid);
-    let type = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length];
-    this.setRow(type, uuidData);
-  };
-
-  convertUuid(uuid) {
-    let uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    if (uuidNumeric.length !== 32
-        && uuidNumeric.length !== 8
-        && uuidNumeric.length !== 4) {
-      this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
-    }
-
-    let data = [];
-    for (let i = uuidNumeric.length; i > 1; i -= 2) {
-      data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
-    }
-    return data;
-  };
-
-  setIbeaconData(uuid, major, minor, txPower) {
-    let data = [];
-    data.push(0x02, 0x15); // fixed data
-
-    let uuidData = this.convertUuid(uuid);
-    Array.prototype.push.apply(data, uuidData);
-
-
-    data.push((major >> 8) & 0xFF);
-    data.push((major >> 0) & 0xFF);
-    data.push((minor >> 8) & 0xFF);
-    data.push((minor >> 0) & 0xFF);
-    data.push((txPower >> 0) & 0xFF);
-
-    this.setManufacturerSpecificData(0x004c, data);
-    return;
-  };
-
-
-  extendEvalJson(json) {
-    if (json) {
-      if (json.flags) {
-        if (json.flags.includes("limited_discoverable_mode"))
-          this.setLeLimitedDiscoverableModeFlag();
-        if (json.flags.includes("general_discoverable_mode"))
-          this.setLeGeneralDiscoverableModeFlag();
-        if (json.flags.includes("br_edr_not_supported"))
-          this.setBrEdrNotSupportedFlag();
-        if (json.flags.includes("le_br_edr_controller"))
-          this.setLeBrEdrControllerFlag();
-        if (json.flags.includes("le_br_edr_host"))
-          this.setLeBrEdrHostFlag();
-      }
-    }
-  };
-
-  setFlags(flag) {
-    let data = this.getRow(0x01);
-    data[0] = (data[0] || 0) | flag;
-    this.setRow(0x01, data);
-  };
-
-  setLeLimitedDiscoverableModeFlag() {
-    this.setFlags(0x01);
-  };
-
-  setLeGeneralDiscoverableModeFlag() {
-    this.setFlags(0x02);
-  };
-
-  setBrEdrNotSupportedFlag() {
-    this.setFlags(0x04);
-  };
-
-  setLeBrEdrControllerFlag() {
-    this.setFlags(0x08);
-  };
-
-  setLeBrEdrHostFlag() {
-    this.setFlags(0x10);
-  };
-
-
-}
-
-
-module.exports = BleAdvertisementBuilder;
-
-/***/ }),
-
-/***/ "./obniz/libs/embeds/ble/bleAttributeAbstract.js":
-/*!*******************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleAttributeAbstract.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
-const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
-
-class BleAttributeAbstract {
-
-  constructor(params){
-    this.uuid = params.uuid.toLowerCase();
-    this.parent = null;
-    this.children = [];
-
-    this.isRemote = false;
-    this.discoverdOnRemote = false;
-
-    this.data = params.data || null;
-    if(! this.data && params.text){
-      this.data = ObnizUtil.string2dataArray(params.text);
-    }
-    if(! this.data && params.value){
-      this.data = [params.value];
-    }
-
-    if(params[this.childrenName]){
-      for(let child of params[this.childrenName]){
-        this.addChild(child);
-      }
-    }
-
-    this.setFunctions();
-
-
-    this.emitter =  new emitter();
-
-  }
-
-  setFunctions() {
-    let childrenName = this.childrenName;
-    if(childrenName){
-      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
-      let childName = childrenName.slice(0,-1);
-
-      let funcName = "add" + childName;
-      this[funcName] = this.addChild;
-
-      funcName = "get" + childName;
-      this[funcName] = this.getChild;
-    }
-
-    let parentName = this.parentName;
-    if(parentName){
-      Object.defineProperty(this, parentName, {
-        get() { return this.parent; },
-        set(newValue) { this.parent = newValue; }
-      });
-    }
-
-  }
-
-
-  get childrenClass(){
-    return Object;
-  }
-  get childrenName(){
-    return null;
-  }
-  get parentName(){
-    return null;
-  }
-
-  addChild(child){
-    if( ! (child instanceof this.childrenClass) ){
-      child = new this.childrenClass(child);
-    }
-    child.parent = this;
-
-    this.children.push(child);
-    return child;
-  }
-
-  getChild(uuid){
-
-    return this.children.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
-
-  }
-
-
-
-  toJSON (){
-    let obj = {uuid: this.uuid.toLowerCase()};
-
-    if (this.children.length > 0) {
-      let key = this.childrenName;
-      obj[key] = this.children;
-    }
-    if (this.data) {
-      obj.data = this.data
-    }
-    return obj;
-  }
-
-
-  /**
-   * WS COMMANDS
-   */
-
-  read() {}
-  write(){}
-
-  writeNumber(val){
-    this.write([val]);
-  }
-
-  writeText(str){
-    this.write(ObnizUtil.string2dataArray(str));
-  }
-
-  readWait(){
-    return new Promise(resolve => {
-      this.emitter.once("onread",(params)=>{
-        if(params.result === "success") {
-          resolve(params.data);
-        }else{
-          resolve(undefined);
-        }
-      });
-      this.read();
-    })
-  }
-
-  writeWait(data){
-    return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
-      });
-      this.write(data);
-    })
-  }
-
-
-  writeTextWait(data){
-    return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
-      });
-      this.writeText(data);
-    })
-  }
-
-
-  writeNumberWait(data){
-    return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
-      });
-      this.writeNumber(data);
-    })
-  }
-
-  readFromRemoteWait(){
-    return new Promise(resolve => {
-      this.emitter.once("onreadfromremote",()=>{
-        resolve();
-      });
-    })
-  }
-
-  writeFromRemoteWait(){
-    return new Promise(resolve => {
-      this.emitter.once("onreadfromremote",(params)=>{
-        resolve(params.data);
-      });
-    })
-  }
-
-
-
-  /**
-   * CALLBACKS
-   */
-  onwrite(){
-
-  };
-  onread(){
-
-  };
-  onwritefromremote(){
-
-  }
-  onreadfromremote(){
-
-  };
-
-  onerror(err){
-    console.error(err.message);
-  }
-
-  notifyFromServer(notifyName, params){
-    this.emitter.emit(notifyName, params);
-    switch(notifyName){
-      case "onerror" : {
-        this.onerror(params);
-        break;
-      }
-      case "onwrite" : {
-        this.onwrite(params.result);
-        break;
-      }
-      case "onread" : {
-        this.onread(params.data);
-        break;
-      }
-      case "onwritefromremote" : {
-        this.onwritefromremote(params.address, params.data);
-        break;
-      }
-      case "onreadfromremote" : {
-        this.onreadfromremote(params.address);
-        break;
-      }
-    }
-  }
-}
-
-module.exports = BleAttributeAbstract;
 
 /***/ }),
 
@@ -7927,129 +7512,104 @@ module.exports = BleAttributeAbstract;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
-class BleCharacteristic extends BleAttributeAbstract {
-
-  constructor(obj) {
-    super(obj);
-
-    this.addDescriptor = this.addChild;
-    this.getDescriptor = this.getChild;
-
-    this.properties = obj.properties || [];
-    if (!Array.isArray(this.properties)) {
-      this.properties = [this.properties];
+class BleCharacteristic {
+  
+  constructor(obj){
+    this.descriptors = [];
+    this.uuid = obj.uuid.toLowerCase() ;
+    this.data = obj.data || null;
+    if(! this.data && obj.text){
+      this.data = ObnizUtil.string2dataArray(obj.text);
     }
-
-    this.permissions = obj.permissions || [];
-    if (!Array.isArray(this.permissions)) {
-      this.permissions = [this.permissions];
+    if(! this.data && obj.value){
+      this.data = obj.value;
     }
-
-  }
-
-  get parentName() {
-    return "service";
-  }
-
-  get childrenClass() {
-    return BleDescriptor;
-  }
-
-  get childrenName() {
-    return "descriptors";
-  }
-
-
-  toJSON() {
-    let obj = super.toJSON();
-
-    if (this.properties.length > 0) {
-      obj.properties = this.properties;
+    
+    this.property = obj.property || [];
+    if(!Array.isArray(this.property)){
+      this.property = [this.property];
     }
+    
+    if(obj["descriptors"]){
+       for(var key in obj["descriptors"]){
+        this.addDescriptor(obj["descriptors"][key]);
+      }
+    }
+  }
 
-    if (this.permissions.length > 0) {
-      obj.permissions = this.permissions;
+  addDescriptor(obj) {
+    if(! (obj instanceof BleDescriptor ) ){
+      obj = new BleDescriptor(obj);
+    }
+    this.descriptors.push(obj);
+    obj.characteristic = this;
+  }
+
+  getDescriptor(uuid) {
+    return this.descriptors.filter(function(element){
+      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
+    }).shift();
+  }
+
+  write(data){
+    this.service.peripheral.Obniz.send(
+        {
+          ble : {
+          peripheral: {
+            write_characteristic: {
+              service_uuid: this.service.uuid.toLowerCase() ,
+              characteristic_uuid: this.uuid.toLowerCase() ,
+              data: data
+            }
+          }
+        }
+      }
+    );
+  }
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(str){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
+
+  read(){
+    this.service.peripheral.Obniz.send(
+        {
+          ble : {
+          peripheral: {
+            read_characteristic: {
+              service_uuid: this.service.uuid.toLowerCase() ,
+              characteristic_uuid: this.uuid.toLowerCase() ,
+            }
+          }
+        }
+      }
+    );
+  }
+  onwrite(){};
+  onread(){};
+  onwritefromremote(){};
+  onreadfromremote(){};
+
+  toJSON(){
+    var obj = {
+      uuid : this.uuid.toLowerCase()
+    };
+    if (this.data) { obj.data = this.data }
+    if (this.descriptors) { obj.descriptors = this.descriptors }
+    if (this.property.length > 0 ) {
+      obj.property =  this.property;
+      
     }
     return obj;
   }
-
-  addProperty(param) {
-    if (!this.properties.includes(param)) {
-      this.properties.push(param);
-    }
-  }
-
-  removeProperty(param) {
-    this.properties = this.properties.filter(elm => {
-      return elm !== param;
-    })
-
-  }
-
-  addPermission(param) {
-    if (!this.permissions.includes(param)) {
-      this.permissions.push(param);
-    }
-  }
-
-  removePermission(param) {
-    this.permissions = this.permissions.filter(elm => {
-      return elm !== param;
-    })
-
-  }
-
-  write(data) {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              write_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-                data: data
-              }
-            }
-          }
-        }
-    );
-  }
-
-
-  read() {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              read_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
-  }
-
-
-  notify() {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              notify_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
-  }
-
 }
 
 
@@ -8064,83 +7624,93 @@ module.exports = BleCharacteristic;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 
+/**
+ * 
+ * @param {type} rawData
+ * @return {BleServiuce}
+ */
+class BleDescriptor {
 
-class BleDescriptor extends BleAttributeAbstract {
-
-  constructor(obj) {
-    super(obj);
-
-    this.permissions = obj.permissions || [];
-    if (!Array.isArray(this.permissions)) {
-      this.permissions = [this.permissions];
+  constructor(obj){
+    this.descriptors = [];
+    this.uuid = obj.uuid.toLowerCase() ;
+    
+    this.data = obj.data || null;
+    if(! this.data && obj.text){
+      this.data = ObnizUtil.string2dataArray(obj.text);
     }
-
-  }
-
-  get parentName() {
-    return "characteristic";
-  }
-
-  addPermission(param) {
-    if (!this.permissions.includes(param)) {
-      this.permissions.push(param);
+    if(! this.data && obj.value){
+      this.data = obj.value;
+    }
+    
+    this.property = obj.property || [];
+    if(!Array.isArray(this.property)){
+      this.property = [this.property];
     }
   }
 
-  removePermission(param) {
-    this.permissions = this.permissions.filter(elm => {
-      return elm !== param;
-    })
-
-  }
-
-  toJSON() {
-    let obj = super.toJSON();
-
-    if (this.permissions.length > 0) {
-      obj.permissions = this.permissions;
+  toJSON(){
+    var obj =  {
+      uuid : this.uuid.toLowerCase()
+    };
+    if (this.data) {
+      obj.data = this.data;
+    }
+    if (this.property.length > 0 ) {
+      obj.property =  this.property;
     }
     return obj;
   }
 
-
-  write(dataArray) {
+  write(dataArray){
     this.characteristic.service.peripheral.Obniz.send(
         {
-          ble: {
-            peripheral: {
-              write_descriptor: {
-                service_uuid: this.characteristic.service.uuid.toLowerCase(),
-                characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-                descriptor_uuid: this.uuid,
-                data: dataArray
-              }
+          ble : {
+          peripheral: {
+            write_descriptor: {
+              service_uuid: this.characteristic.service.uuid.toLowerCase() ,
+              characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
+              descriptor_uuid: this.uuid,
+              data: dataArray
             }
           }
         }
+      }
     );
   }
 
+  writeNumber(val){
+    this.write([val]);
+  }
 
-  read() {
+  writeText(str){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
+
+  read(){
+  
     this.characteristic.service.peripheral.Obniz.send(
         {
-          ble: {
-            peripheral: {
-              read_descriptor: {
-                service_uuid: this.characteristic.service.uuid.toLowerCase(),
-                characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-                descriptor_uuid: this.uuid
-              }
+          ble : {
+          peripheral: {
+            read_descriptor: {
+              service_uuid: this.characteristic.service.uuid.toLowerCase() ,
+              characteristic_uuid: this.characteristic.uuid.toLowerCase() ,
+              descriptor_uuid: this.uuid
             }
           }
         }
+      }
     );
   }
 
-
+  onwrite(){};
+  onread(){};
+  onwritefromremote(){}
+  onreadfromremote(){};
 }
 
 module.exports = BleDescriptor;
@@ -8154,187 +7724,75 @@ module.exports = BleDescriptor;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+
 const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
 
 class BlePeripheral {
 
-  constructor(Obniz) {
+  constructor(Obniz){
     this.Obniz = Obniz;
     this.services = [];
   }
 
   addService(obj) {
-    if (!(obj instanceof BleService)) {
+    if(! (obj instanceof BleService ) ){
       obj = new BleService(obj);
     }
     this.services.push(obj);
     obj.peripheral = this;
-    this.Obniz.send({ble: {peripheral: {services: [obj]}}});
+    this.Obniz.send({ble:{peripheral:{services:[obj]}}});
   }
 
   setJson(json) {
-    if (json["services"]) {
-      for (let service of json["services"]) {
-        this.addService(service);
+    if(json["services"]){
+      for(var key in json["services"]){
+        this.addService(json["services"][key]);
       }
     }
   }
 
   getService(uuid) {
-    uuid = uuid.toLowerCase();
-    return this.services.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid;
+    return this.services.filter(function(element){
+      return element.uuid.toLowerCase() === uuid.toLowerCase();
     }).shift();
   }
 
-  removeService(uuid) {
-    this.services = this.services.filter(function (element) {
-      return element.uuid.toLowerCase() !== uuid;
-    });
-  }
-
-  stopAllService() {
-    this.Obniz.send(
-        {
-          ble: {
-            peripheral: null
-
-          }
-        }
-    );
-    this.services = [];
-  }
-
-  toJSON() {
+  toJSON(){
     return {
-      services: this.services
+      services : this.services
     };
   }
 
+  onconnectionupdates(){};
 
-  findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
-    let s = this.getService(serviceUuid);
-    if (s) {
-      return s.getCharacteristic(characteristicUuid);
+  findCharacteristic(param){
+    var serviceUuid = param.service_uuid.toLowerCase() ;
+    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
+    var s = this.getService(serviceUuid);
+    if(s){
+      var c = s.getCharacteristic(characteristicUuid);
+      return c;
     }
     return null;
   }
 
-  findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
-    let c = this.findCharacteristic(param);
-    if (c) {
-      return c.getDescriptor(descriptorUuid);
+  findDescriptor(param){
+    var descriptorUuid = param.descriptor_uuid.toLowerCase() ;
+    var c = this.findCharacteristic(param);
+    if(c){
+      var d = c.getDescriptor(descriptorUuid);
+      return d;
     }
     return null;
   }
 
-  end() {
-    this.Obniz.send({ble: {peripheral: null}});
+  end(){
+    this.Obniz.send({ble:{peripheral:null}});
   }
-
-  onconnectionupdates() {
-  };
-
-  onerror() {
-  };
 }
 
 
 module.exports = BlePeripheral;
-
-/***/ }),
-
-/***/ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js":
-/*!*************************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
-
-class BleRemoteAttributeAbstract extends BleAttributeAbstract {
-
-  constructor(params) {
-    super(params);
-
-    this.isRemote = false;
-    this.discoverdOnRemote = false;
-
-
-  }
-
-
-  get wsChildUuidName() {
-    let childrenName = this.childrenName;
-    if (!childrenName) {
-      return null
-    }
-    let childName = childrenName.slice(0, -1);
-    return childName + "_uuid";
-  }
-
-  getChild(uuid) {
-    let obj = super.getChild(uuid);
-    if (!obj) {
-      obj = this.addChild({uuid});
-    }
-    return obj;
-  }
-
-  discoverChildren() {
-
-  }
-
-  discoverChildrenWait() {
-    return new Promise(resolve => {
-      this.emitter.once("discoverfinished", () => {
-        let children = this.children.filter(elm => {
-          return elm.discoverdOnRemote;
-        });
-        resolve(children);
-      });
-      this.discoverChildren();
-    })
-  }
-
-
-  /**
-   * CALLBACKS
-   */
-  ondiscover() {
-
-  };
-
-  ondiscoverfinished() {
-
-  };
-
-  notifyFromServer(notifyName, params) {
-    super.notifyFromServer(notifyName, params);
-    switch (notifyName) {
-      case "discover" : {
-        let child = this.getChild(params[this.wsChildUuidName]);
-        child.discoverdOnRemote = true;
-        child.properties = params.properties || [];
-        this.ondiscover(child);
-        break;
-      }
-      case "discoverfinished" : {
-        let children = this.children.filter(elm => {
-          return elm.discoverdOnRemote;
-        });
-        this.ondiscoverfinished(children);
-        break;
-      }
-    }
-  }
-}
-
-module.exports = BleRemoteAttributeAbstract;
 
 /***/ }),
 
@@ -8345,212 +7803,120 @@ module.exports = BleRemoteAttributeAbstract;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
-const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
-  constructor(params) {
-    super(params);
+class BleRemoteCharacteristic {
 
-    this.properties = params.properties || [];
-    if (!Array.isArray(this.properties)) {
-      this.properties = [this.properties];
+  constructor(Obniz, service, uuid){
+    this.Obniz = Obniz;
+    this.service = service;
+    this.uuid = uuid;
+    this.discoverdOnRemote = false;
+    this.descriptors = [];
+    this.properties = [];
+  }
+
+  toString(){
+    return JSON.stringify({
+          "address" : this.service.peripheral.address,
+          "service_uuid" : this.service.uuid,
+          "characteristic_uuid" : this.uuid,
+          "properties" : this.properties
+        });
+  }
+
+  read(){
+    var obj = {
+      "ble" :{
+        "read_characteristic" :{
+          "address" : this.service.peripheral.address,
+          "service_uuid" : this.service.uuid,
+          "characteristic_uuid" : this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  async readWait(){
+    throw new Error("TODO");
+  }
+
+  write(array){
+    var obj = {
+      "ble" :{
+        "write_characteristic" :{
+          "address" : this.service.peripheral.address,
+          "service_uuid" : this.service.uuid,
+          "characteristic_uuid" : this.uuid,
+          "data" : array
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
+  discoverAllDescriptors(str){
+    var obj = {
+      "ble" :{
+        "get_descriptors" :{
+          "address" : this.service.peripheral.address,
+          "service_uuid" : this.service.uuid,
+          "characteristic_uuid" : this.uuid
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  getDescriptor(uuid){
+    for(var key in this.descriptors){
+      if(this.descriptors[key].uuid === uuid){
+        return this.descriptors[key];
+      }
     }
-
-
+    var newDescriptors = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    this.descriptors.push(newDescriptors);
+    return newDescriptors;
   }
 
-  get parentName() {
-    return "service";
-  }
-
-  get childrenClass() {
-    return BleRemoteDescriptor;
-  }
-
-  get childrenName() {
-    return "descriptors";
-  }
-
-
-  addDescriptor(params) {
-    return this.addChild(params)
-  }
-
-  //
-  // getCharacteristic(params) {
-  //   return this.getChild(params)
-  // }
-
-  getDescriptor(uuid) {
-
-    let obj = this.getChild(uuid);
-    if (obj) {
-      return obj;
-    }
-    let newCharacteristic = new BleRemoteDescriptor(this.Obniz, this, uuid);
-    this.addChild(newCharacteristic);
-    return newCharacteristic;
-  }
-
-  registerNotify(callback) {
-    this.onnotify = callback;
-    const obj = {
-      "ble": {
-        "register_notify_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
-    };
-    this.service.peripheral.Obniz.send(obj);
-  }
-
-
-  unregisterNotify() {
-    this.onnotify = function () {
-    };
-    const obj = {
-      "ble": {
-        "unregister_notify_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
-    };
-    this.service.peripheral.Obniz.send(obj);
-  }
-
-
-  read() {
-    const obj = {
-      "ble": {
-        "read_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
-    };
-    this.service.peripheral.Obniz.send(obj);
-  }
-
-  write(array) {
-    const obj = {
-      "ble": {
-        "write_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid,
-          "data": array
-        }
-      }
-    };
-    this.service.peripheral.Obniz.send(obj);
-  }
-
-  discoverChildren() {
-    const obj = {
-      "ble": {
-        "get_descriptors": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
-    };
-    this.service.peripheral.Obniz.send(obj);
-  }
-
-  discoverAllDescriptors() {
-    return this.discoverChildren();
-  }
-
-  discoverAllDescriptorsWait() {
-    return this.discoverChildrenWait();
-  }
-
-
-  toJSON() {
-    let obj = super.toJSON();
-
-    if (this.properties.length > 0) {
-      obj.properties = this.properties;
-    }
-    return obj;
-  }
-
-  canBroadcast() {
+  canBroadcast(){
     return this.properties.includes("broadcast");
   }
-
-  canNotify() {
-    return this.properties.includes("notify");
+  canNotify(){
+    return  this.properties.includes("notify");
   }
-
-  canRead() {
+  canRead(){
     return this.properties.includes("read");
   }
-
-  canWrite() {
+  canWrite(){
     return this.properties.includes("write");
   }
-
-  canWriteWithoutResponse() {
+  canWriteWithoutResponse(){
     return this.properties.includes("write_without_response");
   }
-
-  canIndicate() {
+  canIndicate(){
     return this.properties.includes("indicate");
   }
 
 
-  ondiscover(descriptor) {
-    this.ondiscoverdescriptor(descriptor);
-  }
+  onwrite(status){};
+  onread(value){};
+  ondiscoverdescriptor(descriptor){};
+  ondiscoverdescriptorfinished(services){};
 
-  ondiscoverfinished(descriptors) {
-    this.ondiscoverdescriptorfinished(descriptors);
-  }
-
-  ondiscoverdescriptor() {
-  };
-
-  ondiscoverdescriptorfinished() {
-  };
-
-  onregisternofity() {
-  };
-
-  onunregisternofity() {
-  };
-
-  onnotify() {
-  };
-
-  notifyFromServer(notifyName, params) {
-    super.notifyFromServer(notifyName, params);
-    switch (notifyName) {
-      case "onregisternofity" : {
-        this.onregisternofity();
-        break;
-      }
-      case "onunregisternofity" : {
-        this.onunregisternofity();
-        break;
-      }
-      case "onnotify" : {
-        this.onnotify();
-        break;
-      }
-    }
-  }
 
 }
-
 module.exports = BleRemoteCharacteristic;
 
 /***/ }),
@@ -8560,49 +7926,71 @@ module.exports = BleRemoteCharacteristic;
   !*** ./obniz/libs/embeds/ble/bleRemoteDescriptor.js ***!
   \******************************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
-  constructor(params) {
-    super(params);
+
+class BleRemoteDescriptor {
+  constructor(Obniz, characteristic, uuid){
+    this.Obniz = Obniz;
+    this.characteristic = characteristic;
+    this.discoverdOnRemote = false;
+    this.uuid = uuid;
   }
 
-  get parentName() {
-    return "characteristic";
+  toString(){
+    return JSON.stringify({
+      "address" : this.characteristic.service.peripheral.address,
+      "service_uuid" : this.characteristic.service.uuid,
+      "characteristic_uuid" : this.characteristic.uuid,
+      "descriptor_uuid" : this.uuid
+    });
   }
 
-  read() {
-    const obj = {
-      "ble": {
-        "read_descriptor": {
-          "address": this.characteristic.service.peripheral.address,
-          "service_uuid": this.characteristic.service.uuid,
-          "characteristic_uuid": this.characteristic.uuid,
-          "descriptor_uuid": this.uuid
+  read(){
+    var obj = {
+      "ble" :{
+        "read_descriptor" :{
+          "address" : this.characteristic.service.peripheral.address,
+          "service_uuid" : this.characteristic.service.uuid,
+          "characteristic_uuid" : this.characteristic.uuid,
+          "descriptor_uuid" : this.uuid
         }
       }
     };
-    this.characteristic.service.peripheral.Obniz.send(obj);
+    this.Obniz.send(obj);
   }
 
-  write(array) {
-    const obj = {
-      "ble": {
-        "write_descriptor": {
-          "address": this.characteristic.service.peripheral.address,
-          "service_uuid": this.characteristic.service.uuid,
-          "characteristic_uuid": this.characteristic.uuid,
-          "descriptor_uuid": this.uuid,
-          "data": array
+  async readWait(){
+    throw new Error("TODO");
+  }
+
+  write(array){
+    var obj = {
+      "ble" :{
+        "write_descriptor" :{
+          "address" : this.characteristic.service.peripheral.address,
+          "service_uuid" : this.characteristic.service.uuid,
+          "characteristic_uuid" : this.characteristic.uuid,
+          "descriptor_uuid" : this.uuid,
+          "data" : array
         }
       }
     };
-    this.characteristic.service.peripheral.Obniz.send(obj);
+    this.Obniz.send(obj);
   }
 
 
+  writeNumber(val){
+    this.write([val]);
+  }
+
+  writeText(val){
+    this.write(ObnizUtil.string2dataArray(str));
+  }
+
+  onread(value){};
+  onwrite(value){};
 }
 
 module.exports = BleRemoteDescriptor;
@@ -8617,23 +8005,15 @@ module.exports = BleRemoteDescriptor;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+
 const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
-const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
 
 class BleRemotePeripheral {
 
-  constructor(Obniz, address) {
+  constructor(Obniz, address){
     this.Obniz = Obniz;
     this.address = address;
-    this.connected = false;
-
-    this.device_type = null;
-    this.address_type = null;
-    this.ble_event_type = null;
-    this.rssi = null;
-    this.adv_data = null;
-    this.scan_resp = null;
-
+    
     this.keys = [
       "device_type",
       "address_type",
@@ -8642,29 +8022,31 @@ class BleRemotePeripheral {
       "adv_data",
       "scan_resp",
     ];
-
+    
     this.services = [];
-    this.emitter = new emitter();
   }
 
-  /**
-   *
-   * @return {String} json value
-   */
+/**
+ * 
+ * @return {String} json value
+ */
   toString() {
     return JSON.stringify({
+      id: this.id,
       address: this.address,
-      addressType: this.address_type,
+      addressType: this.addressType,
+      connectable: this.connectable,
       advertisement: this.adv_data,
       scanResponse: this.scan_resp,
-      rssi: this.rssi
+      rssi: this.rssi,
+      state: this.state
     });
   }
 
   setParams(dic) {
-    for (let key in dic) {
-      if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-        this[key] = dic[key];
+    for(var key in dic){
+      if(this.keys.includes(key)){
+        this[key] = dic[key] ;
       }
     }
   }
@@ -8673,10 +8055,10 @@ class BleRemotePeripheral {
     if (!this.advertise_data_rows) {
       this.advertise_data_rows = [];
       if (this.adv_data) {
-        for (let i = 0; i < this.adv_data.length; i++) {
-          let length = this.adv_data[i];
-          let arr = new Array(length);
-          for (let j = 0; j < length; j++) {
+        for (var i = 0; i < this.adv_data.length; i++) {
+          var length = this.adv_data[i];
+          var arr = new Array(length);
+          for (var j = 0; j < length; j++) {
             arr[j] = this.adv_data[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -8684,11 +8066,11 @@ class BleRemotePeripheral {
         }
       }
       if (this.scan_resp) {
-
-        for (let i = 0; i < this.scan_resp.length; i++) {
-          let length = this.scan_resp[i];
-          let arr = new Array(length);
-          for (let j = 0; j < length; j++) {
+  
+        for (var i = 0; i < this.scan_resp.length; i++) {
+          var length = this.scan_resp[i];
+          var arr = new Array(length);
+          for (var j = 0; j < length; j++) {
             arr[j] = this.scan_resp[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -8699,11 +8081,11 @@ class BleRemotePeripheral {
   }
 
 
-  searchTypeVal(type) {
+  serarchTypeVal(type){
     this.analyseAdvertisement();
-    for (let i = 0; i < this.advertise_data_rows.length; i++) {
-      if (this.advertise_data_rows[i][0] === type) {
-        let results = [].concat(this.advertise_data_rows[i]);
+    for(var i = 0;i<this.advertise_data_rows.length;i++){
+      if(this.advertise_data_rows[i][0] === type){
+        var results = [].concat(this.advertise_data_rows[i]);
         results.shift();
         return results;
       }
@@ -8711,224 +8093,103 @@ class BleRemotePeripheral {
     return undefined;
   }
 
-  get localName() {
-    let data = this.searchTypeVal(0x09);
-    if (!data) {
-      data = this.searchTypeVal(0x08);
+  localName(){
+    var data = this.serarchTypeVal(0x09);
+    if(!data){
+       data = this.serarchTypeVal(0x08);
     }
-    if (!data) return null;
+    if(!data)return null;
     return String.fromCharCode.apply(null, data);
   }
 
-  get iBeacon() {
-    let data = this.searchTypeVal(0xFF);
-    if (!data
+  iBeacon(){
+    var data = this.serarchTypeVal(0xFF);
+    if(!data 
         || data[0] !== 0x4c
         || data[1] !== 0x00
         || data[2] !== 0x02
-        || data[3] !== 0x15
-        || data.length !== 25) return null;
-
-    let uuidData = data.slice(4, 20);
-    let uuid = "";
-    for (let i = 0; i < uuidData.length; i++) {
-      uuid = uuid + (('00' + uuidData[i].toString(16)).slice(-2));
-      if (i === (4 - 1) || i === (4 + 2 - 1) || i === (4 + 2 * 2 - 1) || i === (4 + 2 * 3 - 1)) {
+        || data[3] !== 0x15 
+        || data.length !== 25)return null;
+    
+    var uuidData = data.slice(4, 20);
+    var uuid = "";
+    for(var i = 0; i< uuidData.length;i++){
+      uuid = uuid + (( '00' + uuidData[i].toString(16) ).slice( -2 ));
+      if(i === (4-1) ||i === (4+2-1) ||i === (4+2*2-1) ||i === (4+2*3-1) ){
         uuid += "-";
       }
     }
-
-    let major = (data[20] << 8) + data[21];
-    let minor = (data[22] << 8) + data[23];
-    let power = data[24];
-
+    
+    var major = (data[20]<<8) + data[21];
+    var minor = (data[22]<<8) + data[23];
+    var power = data[24];
+    
     return {
-      uuid: uuid,
+      uuid : uuid,
       major: major,
-      minor: minor,
-      power: power,
-      rssi: this.rssi
+      minor :minor,
+      power :power,
+      rssi :this.rssi
     };
   }
 
-  _addServiceUuids(results, data, bit) {
-    if (!data) return;
-    let uuidLength = bit / 4;
-    for (let i = 0; i < data.length; i = i + uuidLength) {
-      let one = data.slice(i, i + uuidLength);
-      results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
-    }
-  }
-
-  advertisementServiceUuids() {
-    let results = [];
-    this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-    this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-    this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-    this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-    this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
-    this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
-    return results;
-  }
-
-
-  connect() {
-    let obj = {
-      "ble": {
-        "connect": {
-          "address": this.address
+  connect(callbacks){
+    var keys = ["onconnect","ondisconnect"];
+    this.setParams(keys, callbacks);
+    
+    var obj = {
+      "ble" :{
+        "connect" :{
+          "address" : this.address
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  connectWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("statusupdate", (params) => {
-        resolve(params.status === "connected");
-      });
-      this.connect();
-    })
-  }
-
-  disconnect() {
-    let obj = {
-      "ble": {
-        "disconnect": {
-          "address": this.address
+  disconnect(){
+    var obj = {
+      "ble" :{
+        "disconnect" :{
+          "address" : this.address
         }
       }
     };
-    this.Obniz.send(obj);
+    this.Obniz.send(obj); 
   }
 
-  connectWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("statusupdate", (params) => {
-        resolve(params.status === "disconnected");
-      });
-      this.disconnect();
-    })
+  updateRssi(){
+    throw new Error("todo");
   }
 
-  getService(uuid) {
-    uuid = uuid.toLowerCase();
-    for (let key in this.services) {
-      if (this.services[key].uuid === uuid) {
+  getService(uuid){
+    for(var key in this.services){
+      if(this.services[key].uuid === uuid){
         return this.services[key];
       }
     }
-    let newService = new BleRemoteService({uuid});
-    newService.parent = this;
+    var newService = new BleRemoteService(this.Obniz,this, uuid);
     this.services.push(newService);
     return newService;
   }
 
-  findService(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    return this.getService(serviceUuid);
-  }
-
-  findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
-    let s = this.getService(serviceUuid);
-    if (s) {
-      return s.getCharacteristic(characteristicUuid);
-    }
-    return null;
-  }
-
-  findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
-    let c = this.findCharacteristic(param);
-    if (c) {
-      return c.getDescriptor(descriptorUuid);
-    }
-    return null;
-  }
-
-
-  discoverAllServices() {
-    let obj = {
-      "ble": {
-        "get_services": {
-          "address": this.address
+  discoverAllServices(){
+    var obj = {
+      "ble" :{
+        "get_services" :{
+          "address" : this.address
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  discoverAllServicesWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("discoverfinished", () => {
-        let children = this.services.filter(elm => {
-          return elm.discoverdOnRemote;
-        });
-        resolve(children);
-      });
-      this.discoverAllServices();
+  onconnect(){};
+  ondisconnect(){};
+  ondiscoverservice(service){};
+  ondiscoverservicefinished(services){};
 
-    })
-  }
-
-  onconnect() {
-  };
-
-  ondisconnect() {
-  };
-
-
-  ondiscoverservice() {
-  };
-
-  ondiscoverservicefinished() {
-  };
-
-
-  ondiscover() {
-
-  };
-
-  ondiscoverfinished() {
-
-  };
-
-
-  notifyFromServer(notifyName, params) {
-    this.emitter.emit(notifyName, params);
-    switch (notifyName) {
-      case "statusupdate" : {
-        if (params.status === "connected") {
-          this.connected = true;
-          this.onconnect();
-        }
-        if (params.status === "disconnected") {
-          this.connected = false;
-          this.ondisconnect();
-        }
-        break;
-      }
-      case "discover" : {
-        let child = this.getService(params.service_uuid);
-        child.discoverdOnRemote = true;
-        this.ondiscoverservice(child);
-        break;
-      }
-      case "discoverfinished" : {
-        let children = this.services.filter(elm => {
-          return elm.discoverdOnRemote;
-        });
-        this.ondiscoverservicefinished(children);
-        break;
-      }
-    }
-  }
-
-  onerror() {
-  };
+  onerror(err){};
 
 }
 
@@ -8944,207 +8205,60 @@ module.exports = BleRemotePeripheral;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+
 const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
-const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
-class BleRemoteService extends BleRemoteAttributeAbstract {
+class BleRemoteService {
 
-  constructor(obj) {
-    super(obj);
+  constructor(Obniz, peripheral, uuid){
+    this.Obniz = Obniz;
+    this.uuid = uuid;
+    this.peripheral = peripheral;
+    this.discoverdOnRemote = false;
+    
+    this.characteristics = [];
   }
 
-  get parentName() {
-    return "peripheral";
+  toString(){
+    return JSON.stringify({
+          "address" : this.peripheral.address,
+          "service_uuid" : this.uuid
+    });
   }
 
-  get childrenClass() {
-    return BleRemoteCharacteristic;
-  }
-
-  get childrenName() {
-    return "characteristics";
-  }
-
-
-  addCharacteristic(params) {
-    return this.addChild(params)
-  }
-
-  getCharacteristic(params) {
-    return this.getChild(params)
-  }
-
-
-  discoverAllCharacteristics() {
-    return this.discoverChildren();
-  }
-
-  discoverAllCharacteristicsWait() {
-    return this.discoverChildrenWait();
-  }
-
-  discoverChildren() {
-    const obj = {
-      "ble": {
-        "get_characteristics": {
-          "address": this.peripheral.address,
-          "service_uuid": this.uuid
+  discoverAllCharacteristics(){
+    var obj = {
+      "ble" :{
+        "get_characteristics" :{
+          "address" : this.peripheral.address,
+          "service_uuid" : this.uuid
         }
       }
     };
-    this.parent.Obniz.send(obj);
+    this.Obniz.send(obj);
+  }
+
+  getCharacteristic(uuid){
+  
+    for(var key in this.characteristics){
+      if(this.characteristics[key].uuid === uuid){
+        return this.characteristics[key];
+      }
+    }
+    var newCharacteristic = new BleRemoteCharacteristic(this.Obniz, this, uuid);
+    this.characteristics.push(newCharacteristic);
+    return newCharacteristic;
   }
 
 
-  ondiscover(characteristic) {
-    this.ondiscovercharacteristic(characteristic);
-  }
-
-  ondiscoverfinished(characteristics) {
-    this.ondiscovercharacteristicfinished(characteristics);
-  }
-
-  ondiscovercharacteristic() {
-  };
-
-  ondiscovercharacteristicfinished() {
-  };
+  ondiscovercharacteristic( characteristic){};
+  ondiscovercharacteristicfinished( characteristic){};
 
 }
+
 
 
 module.exports = BleRemoteService;
-
-/***/ }),
-
-/***/ "./obniz/libs/embeds/ble/bleScan.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleScan.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
-
-class BleScan {
-  constructor(Obniz) {
-    this.scanTarget = null;
-    this.Obniz = Obniz;
-    this.emitter = new emitter();
-
-    this.scanedPeripherals = [];
-  }
-
-
-  start(target, settings) {
-    let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = {
-      //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-      //    "interval" : settings && settings.interval ? settings.interval : 30,
-      "duration": settings && settings.duration ? settings.duration : 30
-
-    };
-
-    this.scanTarget = target;
-    if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
-        return elm.toLowerCase();
-      });
-    }
-    this.scanedPeripherals = [];
-    this.Obniz.send(obj);
-  }
-
-  startOneWait(target, settings) {
-    let state = 0;
-
-    return new Promise((resolve) => {
-      this.emitter.once("onfind", (param) => {
-        if (state === 0) {
-          state = 1;
-          this.end();
-          resolve(param);
-
-        }
-      });
-
-      this.emitter.once("onfinish", () => {
-        if (state === 0) {
-          state = 1;
-          resolve(null);
-        }
-      });
-
-      this.start(target, settings);
-    });
-
-  }
-
-
-  startAllWait(target, settings) {
-
-    return new Promise((resolve) => {
-      this.emitter.once("onfinish", () => {
-        resolve(this.scanedPeripherals);
-      });
-
-      this.start(target, settings);
-    });
-
-  }
-
-  end() {
-    let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = null;
-    this.Obniz.send(obj);
-  }
-
-  isTarget(peripheral) {
-    if (this.scanTarget && this.scanTarget.localName && peripheral.localName() !== this.scanTarget.localName) {
-      return false;
-    }
-    if (this.scanTarget && this.scanTarget.uuids) {
-      let uuids = peripheral.advertisementServiceUuids();
-      for (let uuid of this.scanTarget.uuids) {
-        if (!uuids.includes(uuid)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-
-  onfinish() {
-  } //dummy
-  onfind() {
-  } //dummy
-
-  notifyFromServer(notifyName, params) {
-    switch (notifyName) {
-      case "onfind" : {
-        if (this.isTarget(params)) {
-          this.scanedPeripherals.push(params);
-          this.emitter.emit(notifyName, params);
-          this.onfind(params);
-        }
-        break;
-      }
-      case "onfinish" : {
-        this.emitter.emit(notifyName, this.scanedPeripherals);
-        this.onfinish(this.scanedPeripherals);
-        break;
-      }
-    }
-
-
-  }
-}
-
-
-module.exports = BleScan;
 
 /***/ }),
 
@@ -9155,30 +8269,42 @@ module.exports = BleScan;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 
 
-class BleService extends BleAttributeAbstract {
+class BleService {
 
-  constructor(obj) {
-    super(obj);
-
-
-    this.addCharacteristic = this.addChild;
-    this.getCharacteristic = this.getChild;
+  constructor(obj){
+    this.characteristics = [];
+    this.uuid = obj.uuid.toLowerCase() ;
+    
+    if(obj["characteristics"]){
+       for(var key in obj["characteristics"]){
+        this.addCharacteristic(obj["characteristics"][key]);
+      }
+    }
   }
 
-  get parentName() {
-    return "peripheral";
+  addCharacteristic(obj) {
+    if(! (obj instanceof BleCharacteristic ) ){
+      obj = new BleCharacteristic(obj);
+    }
+    this.characteristics.push(obj);
+    obj.service = this;
   }
 
-  get childrenName() {
-    return "characteristics";
+  getCharacteristic(uuid) {
+    return this.characteristics.filter(function(element){
+      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
+    }).shift();
   }
 
-  get childrenClass() {
-    return BleCharacteristic;
+  toJSON (){
+    return {
+      uuid : this.uuid.toLowerCase()  ,
+      characteristics : this.characteristics
+    };
   }
 
   get advData() {
@@ -9186,25 +8312,6 @@ class BleService extends BleAttributeAbstract {
       flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid]
     }
-  }
-
-  end() {
-    this.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              stop_service: {
-                service_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
-    this.peripheral.removeService(this.uuid);
-  }
-
-  notify(notifyName, params) {
-    //nothing
   }
 }
 
@@ -10442,6 +9549,1853 @@ module.exports = ObnizMeasure;
 
 /***/ }),
 
+/***/ "./obniz/libs/utils/qr.js":
+/*!********************************!*\
+  !*** ./obniz/libs/utils/qr.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/* Thanks Kazuhiko Arase */
+/* https://github.com/kazuhikoarase/qrcode-generator/tree/master/js */
+
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.getModules = function() {
+      return _modules;
+    }
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+module.exports = qrcode;
+
+/***/ }),
+
 /***/ "./obniz/libs/utils/util.js":
 /*!**********************************!*\
   !*** ./obniz/libs/utils/util.js ***!
@@ -10637,7 +11591,7 @@ const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/W
 
 let commandClasses = {};
 
-class WSCommand {
+module.exports = class WSCommand {
 
   constructor(delegate) {
     this.delegate = delegate;
@@ -10652,21 +11606,6 @@ class WSCommand {
   }
   static get CommandClasses() {
     return commandClasses;
-    // {
-    //   WSCommand_System,
-    //   WSCommand_Directive,
-    //   WSCommand_IO,
-    //   WSCommand_PWM,
-    //   WSCommand_UART,
-    //   WSCommand_AD,
-    //   WSCommand_SPI,
-    //   WSCommand_I2C,
-    //   WSCommand_LogicAnalyzer,
-    //   WSCommand_Display,
-    //   WSCommand_Switch,
-    //   WSCommand_Ble,
-    //   WSCommand_Measurement
-    // };
   }
 
   static addCommandClass(name, classObj){
@@ -10714,14 +11653,14 @@ class WSCommand {
       throw new Error("something wrong. buf less than 3");
     }
     if (buf[0] & 0x80) {
-      throw new Eror("reserved bit 1");
+      throw new Error("reserved bit 1");
     }
     var module = 0x7F & buf[0];
     var func = buf[1];
     var length_type = (buf[2] >> 6) & 0x3;
     var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
     if (length_type == 4) {
-      throw new Eror("invalid length");
+      throw new Error("invalid length");
     }
     var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
     var index = 3;
@@ -10950,8 +11889,6 @@ class WSCommandNotFoundError extends Error{
 
 }
 
-module.exports = WSCommand;
-
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_AD.js":
@@ -11046,8 +11983,8 @@ class WSCommand_Ble extends WSCommand {
   constructor(delegate) {
     super(delegate);
     this.module = 11;
-
-    this.uuidLength = 16 + 2;
+    
+    this.uuidLength = 16+2;
 
     this._CommandSetAdvData = 0;
     this._CommandSetScanRespData = 1;
@@ -11062,12 +11999,11 @@ class WSCommand_Ble extends WSCommand {
     this._CommandCharacteristics = 9;
     this._CommandWriteCharacteristics = 10;
     this._CommandReadCharacteristics = 11;
-    this._CommandRegisterNotifyCharacteristic = 12;
-    this._CommandUnregisterNotifyCharacteristic = 13;
+    // this._CommandNotifyCharacteristics = 12; // currently not used
+    // this._CommandNotifyCharacteristicsResults = 13; // currently not used
     this._CommandDescriptors = 14;
     this._CommandWriteDescriptor = 15;
     this._CommandReadDescriptor = 16;
-    this._CommandNotifyCharacteristic = 17;
 
     this._CommandServerStartPeripheral = 20;
     this._CommandServerNotifyConnect = 21;
@@ -11082,8 +12018,6 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerReadDescriptorValue = 30;
     this._CommandServerNotifyWriteDescriptorValue = 31;
     this._CommandServerNotifyReadDescriptorValue = 32;
-    this._CommandServerNofityCharavteristic = 33;
-    this._CommandServerStartStopService = 34;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -11118,30 +12052,26 @@ class WSCommand_Ble extends WSCommand {
     };
 
     this._CommandCharacteristicsProperties = {
-      broadcast: 0x01,
-      read: 0x02,
-      write_without_response: 0x04,
-      write: 0x08,
-      notify: 0x10,
-      indicate: 0x20,
-      auth: 0x40,
-      extended_properties: 0x80,
+      broadcast : 0x01,
+      read : 0x02,
+      write_without_response : 0x04,
+      write : 0x08,
+      notify : 0x10,
+      indicate : 0x20,
+      auth : 0x40,
+      extended_properties : 0x80,
     };
-
-    this._commandResults = {
-      success: 0,
-      failed: 1,
-    }
   }
+
 
 
   /* CENTRAL   */
 
   centralScanStart(params) {
     let schema = [
-      {path: "scan.duration", length: 4, type: "int", default: 30}
+      { path : "scan.duration" ,  length: 4, type: "int",   default:30 }
     ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandStartScan, buf);
   }
 
@@ -11151,118 +12081,99 @@ class WSCommand_Ble extends WSCommand {
 
   centralConnect(params) {
     let schema = [
-      {path: "connect.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: null, length: 1, type: "char", default: false}   //const val
+      { path : "connect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
+      { path : null  ,            length: 1, type: "char",  default:false }   //const val
     ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandConnect, buf);
   }
 
   centralDisconnect(params) {
     let schema = [
-      {path: "disconnect.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: null, length: 1, type: "char", default: true}   //const val
-    ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    { path : "disconnect.address" , length: 6, type: "hex",   required:true , endianness:"little"},
+    { path : null  ,            length: 1, type: "char",  default:true }   //const val
+  ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandConnect, buf);
   }
 
   centralServiceGet(params) {
     let schema = [
-      {path: "get_services.address", length: 6, type: "hex", required: true, endianness: "little"},
+      { path : "get_services.address" , length: 6, type: "hex", required:true , endianness:"little"},
     ];
-    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandServices, buf);
   }
 
   centralCharacteristicGet(params) {
     var schema = [
-      {path: "get_characteristics.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "get_characteristics.service_uuid", length: 18, type: "uuid", required: true},
+      { path : "get_characteristics.address" , length: 6, type: "hex", required:true , endianness:"little"},
+      { path : "get_characteristics.service_uuid" , length: 18, type: "uuid", required:true },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandCharacteristics, buf);
   }
 
 
   centralCharacteristicRead(params) {
     var schema = [
-      {path: "read_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "read_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "read_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+      { path : "read_characteristic.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "read_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "read_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
-    this.sendCommand(this._CommandReadCharacteristics, buf);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
+      this.sendCommand(this._CommandReadCharacteristics, buf);
   }
 
   centralCharacteristicWrite(params) {
     var schema = [
-      {path: "write_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "write_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_characteristic.needResponse", length: 1, type: "char", default: 1},
-      {path: "write_characteristic.data", length: null, type: "dataArray",}
+      { path : "write_characteristic.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_characteristic.needResponse" , length: 1, type: "char", default:1 },
+      { path : "write_characteristic.data" , length: null, type: "dataArray", }
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandWriteCharacteristics, buf);
 
   }
 
-  centralCharacteristicRegisterNotify(params) {
-    var schema = [
-      {path: "register_notify_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "register_notify_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "register_notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
-    this.sendCommand(this._CommandRegisterNotifyCharacteristic, buf);
-  }
 
-  centralCharacteristicUnregisterNotify(params) {
+  centralDescriptorGet(params){
     var schema = [
-      {path: "unregister_notify_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "unregister_notify_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "unregister_notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+      { path : "get_descriptors.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "get_descriptors.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "get_descriptors.characteristic_uuid" , length: 18, type: "uuid", required:true },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
-    this.sendCommand(this._CommandUnregisterNotifyCharacteristic, buf);
-  }
-
-
-  centralDescriptorGet(params) {
-    var schema = [
-      {path: "get_descriptors.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "get_descriptors.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "get_descriptors.characteristic_uuid", length: 18, type: "uuid", required: true},
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandDescriptors, buf);
   }
 
-  centralDescriptorRead(params) {
+  centralDescriptorRead(params){
     var schema = [
-      {path: "read_descriptor.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "read_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "read_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "read_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
+      { path : "read_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "read_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "read_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "read_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandReadDescriptor, buf);
 
   }
 
-  centralDescriptorWrite(params) {
+  centralDescriptorWrite(params){
     var schema = [
-      {path: "write_descriptor.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "write_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_descriptor.needResponse", length: 1, type: "char", default: 1},
-      {path: "write_descriptor.data", length: null, type: "dataArray"}
+      { path : "write_descriptor.address" , length: 6, type: "hex", required:true, endianness:"little" },
+      { path : "write_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
+      { path : "write_descriptor.needResponse" , length: 1, type: "char", default:1 },
+      { path : "write_descriptor.data" , length: null, type: "dataArray" }
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandWriteDescriptor, buf);
   }
+
 
 
   /* PERIPHERAL   */
@@ -11282,87 +12193,59 @@ class WSCommand_Ble extends WSCommand {
   }
 
 
-  peripheralServiceStart(params) {
+  peripheralServiceStart(params){
     let val = params["peripheral"];
     var propFlags = {
-      0x01: "broadcast",
-      0x02: "read",
-      0x04: "write_without_response",
-      0x08: "write",
-      0x10: "notify",
-      0x20: "indiate",
-      0x40: "auth",
-      0x80: "ext_prop"
-    };
-
-
-    var permissionFlags = {
-      0x001: "read",
-      0x002: "read_encrypted",
-      0x004: "read_enc_mitm",
-      0x010: "write",
-      0x020: "write_encrypted",
-      0x040: "write_enc_mitm",
-      0x080: "write_signed",
-      0x100: "write_signed_mitm"
+      0x01 : "broadcast",
+      0x02 : "read",
+      0x04 : "write_no_response",
+      0x08 : "write",
+      0x10 : "notify",
+      0x20 : "indiate",
+      0x40 : "auth",
+      0x80 : "ext_prop"
     };
     var schema = {
-      service: {
-        command: this._CommandServerAddService,
+      service : {
+        command : this._CommandServerAddService,
         schema: [
-          {path: "uuid", length: 18, type: "uuid", required: true}
+          { path : "uuid" , length: 18, type: "uuid", required:true }
         ]
       },
-      characteristic: {
-        command: this._CommandServerAddCharacteristic,
+      characteristic : {
+        command : this._CommandServerAddCharacteristic,
         schema: [
-          {path: "service_uuid", length: 18, type: "uuid", required: true},
-          {path: "uuid", length: 18, type: "uuid", required: true},
-          {path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags},
-          {path: "properties", length: 1, type: "flag", default: ["write", "read"], flags: propFlags},
-          {path: "data", type: "dataArray"}
+          { path : "service_uuid" , length: 18, type: "uuid", required:true },
+          { path : "uuid" , length: 18, type: "uuid", required:true },
+          { path : "property" , length: 1, type: "flag", default:["write","read"], flags:propFlags},   //read and write OK
+          { path : "data" , type: "dataArray" }
         ]
       },
-      descriptor: {
-        command: this._CommandServerAddDescriptor,
+      descriptor : {
+        command : this._CommandServerAddDescriptor,
         schema: [
-          {path: "service_uuid", length: 18, type: "uuid", required: true},
-          {path: "characteristic_uuid", length: 18, type: "uuid", required: true},
-          {path: "uuid", length: 18, type: "uuid", required: true},
-          {path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags},
-          {path: "data", type: "dataArray"}
-        ]
-      },
-      startService : {
-        command: this._CommandServerStartStopService,
-        schema: [
-          {path: "uuid", length: 18, type: "uuid", required: true},
-          {path: null, length: 1, type: "char", default: 0},   //const val
+          { path : "service_uuid" , length: 18, type: "uuid", required:true },
+          { path : "characteristic_uuid" , length: 18, type: "uuid", required:true },
+          { path : "uuid" , length: 18, type: "uuid", required:true },
+          { path : "property" , length: 1, type: "flag", default:["read"], flags:propFlags},   //read OK
+          { path : "data" , type: "dataArray" }
         ]
       }
     };
 
     var sendBufs = [];
-    var startServiceBufs = [];
     var buf;
     for (var serviceIndex in val["services"]) {
       var service = val["services"][serviceIndex];
       buf = JsonBinaryConverter.createSendBuffer(schema["service"].schema, service);
-      if (buf.length === 0) {
-        return;
-      }
+      if(buf.length === 0){return;}
       sendBufs.push({command: schema["service"].command, buffer: buf});
-
-      buf = JsonBinaryConverter.createSendBuffer(schema["startService"].schema, service);
-      startServiceBufs.push({command: schema["startService"].command, buffer: buf})
 
       for (var charaIndex in service["characteristics"]) {
         var chara = service["characteristics"][charaIndex];
         chara.service_uuid = service.uuid;
         buf = JsonBinaryConverter.createSendBuffer(schema["characteristic"].schema, chara);
-        if (buf.length === 0) {
-          return;
-        }
+        if(buf.length === 0){return;}
         sendBufs.push({command: schema["characteristic"].command, buffer: buf});
 
         for (var descIndex in chara["descriptors"]) {
@@ -11370,86 +12253,67 @@ class WSCommand_Ble extends WSCommand {
           desc.service_uuid = service.uuid;
           desc.characteristic_uuid = chara.uuid;
           buf = JsonBinaryConverter.createSendBuffer(schema["descriptor"].schema, desc);
-          if (buf.length === 0) {
-            return;
-          }
+          if(buf.length === 0){return;}
           sendBufs.push({command: schema["descriptor"].command, buffer: buf});
         }
       }
     }
-    for (var index in sendBufs) {
-      this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
+    if(sendBufs.length > 0){
+      sendBufs.push({command:this._CommandServerStartPeripheral, buffer: new Uint8Array([0]) });
     }
-    for (var index in startServiceBufs) {
-      this.sendCommand(startServiceBufs[index].command, startServiceBufs[index].buffer);
+    for(var index in sendBufs){
+      this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
     }
   }
 
   peripheralServiceStop(params) {
-    var schema = [
-      {path: "peripheral.stop_service.service_uuid", length: 18, type: "uuid", required: true},
-      {path: null, length: 1, type: "char", default: 1},   //const val
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
-    this.sendCommand(this._CommandServerStartStopService, buf);
-  }
-
-  peripheralServiceStopAll(params) {
     this.sendCommand(this._CommandServerStartPeripheral, new Uint8Array([1]));
   }
 
   peripheralCharacteristicRead(params) {
     var schema = [
-      {path: "peripheral.read_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.read_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+      { path : "peripheral.read_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.read_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
 
   }
 
   peripheralCharacteristicWrite(params) {
     var schema = [
-      {path: "peripheral.write_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_characteristic.data", type: "dataArray"},
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    { path : "peripheral.write_characteristic.service_uuid" , length: 18, type: "uuid", required:true },
+    { path : "peripheral.write_characteristic.characteristic_uuid" , length: 18, type: "uuid", required:true },
+    { path : "peripheral.write_characteristic.data" , type: "dataArray" },
+  ];
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
-
-  }
-
-
-  peripheralCharacteristicNotify(params) {
-    var schema = [
-      {path: "peripheral.notify_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
-    ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
-    this.sendCommand(this._CommandServerNofityCharavteristic, buf);
 
   }
 
   peripheralDescriptorRead(params) {
     var schema = [
-      {path: "peripheral.read_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.read_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.read_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
+      { path : "peripheral.read_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.read_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.read_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandServerReadDescriptorValue, buf);
   }
 
   peripheralDescriptorWrite(params) {
     var schema = [
-      {path: "peripheral.write_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_descriptor.data", type: "dataArray"},
+      { path : "peripheral.write_descriptor.service_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_descriptor.characteristic_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_descriptor.descriptor_uuid" , length: 18, type: "uuid", required:true },
+      { path : "peripheral.write_descriptor.data" , type: "dataArray" },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    var buf = JsonBinaryConverter.createSendBuffer(schema,params);
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
   }
+
+
+
 
 
   parseFromJson(json) {
@@ -11458,35 +12322,31 @@ class WSCommand_Ble extends WSCommand {
       return;
     }
     let schemaData = [
-      {uri: "/request/ble/central/scan_start", onValid: this.centralScanStart},
-      {uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop},
-      {uri: "/request/ble/central/connect", onValid: this.centralConnect},
-      {uri: "/request/ble/central/disconnect", onValid: this.centralDisconnect},
-      {uri: "/request/ble/central/service_get", onValid: this.centralServiceGet},
-      {uri: "/request/ble/central/characteristic_get", onValid: this.centralCharacteristicGet},
-      {uri: "/request/ble/central/characteristic_read", onValid: this.centralCharacteristicRead},
-      {uri: "/request/ble/central/characteristic_write", onValid: this.centralCharacteristicWrite},
-      {uri: "/request/ble/central/characteristic_register_notify", onValid: this.centralCharacteristicRegisterNotify},
-      {uri: "/request/ble/central/characteristic_unregister_notify", onValid: this.centralCharacteristicUnregisterNotify},
-      {uri: "/request/ble/central/descriptor_get", onValid: this.centralDescriptorGet},
-      {uri: "/request/ble/central/descriptor_read", onValid: this.centralDescriptorRead},
-      {uri: "/request/ble/central/descriptor_write", onValid: this.centralDescriptorWrite},
-      {uri: "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart},
-      {uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop},
-      {uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart},
-      {uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop},
-      {uri: "/request/ble/peripheral/service_stop_all", onValid: this.peripheralServiceStopAll},
-      {uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
-      {uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite},
-      {uri: "/request/ble/peripheral/characteristic_notify", onValid: this.peripheralCharacteristicNotify},
-      {uri: "/request/ble/peripheral/descriptor_read", onValid: this.peripheralDescriptorRead},
-      {uri: "/request/ble/peripheral/descriptor_write", onValid: this.peripheralDescriptorWrite},
+      {uri : "/request/ble/central/scan_start",             onValid: this.centralScanStart},
+      {uri : "/request/ble/central/scan_stop",              onValid: this.centralScanStop},
+      {uri : "/request/ble/central/connect",                onValid: this.centralConnect},
+      {uri : "/request/ble/central/disconnect",             onValid: this.centralDisconnect},
+      {uri : "/request/ble/central/service_get",            onValid: this.centralServiceGet},
+      {uri : "/request/ble/central/characteristic_get",     onValid: this.centralCharacteristicGet},
+      {uri : "/request/ble/central/characteristic_read",    onValid: this.centralCharacteristicRead},
+      {uri : "/request/ble/central/characteristic_write",   onValid: this.centralCharacteristicWrite},
+      {uri : "/request/ble/central/descriptor_get",         onValid: this.centralDescriptorGet},
+      {uri : "/request/ble/central/descriptor_read",        onValid: this.centralDescriptorRead},
+      {uri : "/request/ble/central/descriptor_write",       onValid: this.centralDescriptorWrite},
+      {uri : "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart},
+      {uri : "/request/ble/peripheral/advertisement_stop",  onValid: this.peripheralAdvertisementStop},
+      {uri : "/request/ble/peripheral/service_start",       onValid: this.peripheralServiceStart},
+      {uri : "/request/ble/peripheral/service_stop",        onValid: this.peripheralServiceStop},
+      {uri : "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
+      {uri : "/request/ble/peripheral/characteristic_write",onValid: this.peripheralCharacteristicWrite},
+      {uri : "/request/ble/peripheral/descriptor_read",     onValid: this.peripheralDescriptorRead},
+      {uri : "/request/ble/peripheral/descriptor_write",    onValid: this.peripheralDescriptorWrite},
     ];
     let res = this.validateCommandSchema(schemaData, module, "ble");
-    if (res.valid === 0) {
-      if (res.invalidButLike.length > 0) {
+    if(res.valid === 0){
+      if(res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      } else {
+      }else{
         throw new this.WSCommandNotFoundError(`[ble]unknown command`);
       }
     }
@@ -11495,18 +12355,15 @@ class WSCommand_Ble extends WSCommand {
   notifyFromBinary(objToSend, func, payload) {
     let funcList = {};
     funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
-    funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
-    funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
-    funcList[this._CommandCharacteristics] = this.notifyFromBinaryChacateristics.bind(this);
-    funcList[this._CommandWriteCharacteristics] = this.notifyFromBinaryWriteChacateristics.bind(this);
-    funcList[this._CommandReadCharacteristics] = this.notifyFromBinaryReadChacateristics.bind(this);
-    funcList[this._CommandRegisterNotifyCharacteristic] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
-    funcList[this._CommandUnregisterNotifyCharacteristic] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
-    funcList[this._CommandNotifyCharacteristic] = this.notifyFromBinaryNotifyChacateristic.bind(this);
-    funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(this);
-    funcList[this._CommandWriteDescriptor] = this.notifyFromBinaryWriteDescriptor.bind(this);
-    funcList[this._CommandReadDescriptor] = this.notifyFromBinaryReadDescriptor.bind(this);
-
+    funcList[this._CommandConnect]=this.notifyFromBinaryConnect.bind(this);
+    funcList[this._CommandServices]   =this.notifyFromBinaryServices.bind(this);
+    funcList[this._CommandCharacteristics]  = this.notifyFromBinaryChacateristics.bind(this);
+    funcList[this._CommandWriteCharacteristics]  = this.notifyFromBinaryWriteChacateristics.bind(this);
+    funcList[this._CommandReadCharacteristics]  = this.notifyFromBinaryReadChacateristics.bind(this);
+    funcList[this._CommandDescriptors]  = this.notifyFromBinaryDescriptors.bind(this);
+    funcList[this._CommandWriteDescriptor]  = this.notifyFromBinaryWriteDescriptor.bind(this);
+    funcList[this._CommandReadDescriptor]  = this.notifyFromBinaryReadDescriptor.bind(this);
+    
     funcList[this._CommandServerNotifyConnect] = this.notifyFromBinaryServerConnectionState.bind(this);
     funcList[this._CommandServerReadCharavteristicValue] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
     funcList[this._CommandServerWriteCharavteristicValue] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
@@ -11516,357 +12373,311 @@ class WSCommand_Ble extends WSCommand {
     funcList[this._CommandServerWriteDescriptorValue] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
     funcList[this._CommandServerNotifyReadDescriptorValue] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
     funcList[this._CommandServerNotifyWriteDescriptorValue] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
-
-    funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(this);
-
-    if (funcList[func]) {
+    
+    funcList[this.COMMAND_FUNC_ID_ERROR]  = this.notifyFromBinaryError.bind(this);
+   
+    if(funcList[func]){
       funcList[func](objToSend, payload);
     }
   }
 
   notifyFromBinaryScanResponse(objToSend, payload) {
     if (payload.byteLength > 1) {
-
-      var schema = [
-        {name: "event_type", type: "enum", length: 1, enum: this._CommandScanResultsEvet},
-        {name: "address", type: "hex", length: 6, endianness: "little"},
-        {name: "device_type", type: "enum", length: 1, enum: this._CommandScanResultsDevice},
-        {name: "address_type", type: "enum", length: 1, enum: this._CommandScanResultsDeviceAddress},
-        {name: "ble_event_type", type: "enum", length: 1, enum: this._CommandScanResultsBleEvent},
-        {name: "rssi", type: "signed number", length: 4},
-        {name: "adv_data", type: "dataArray", length: 31 * 2},
-        {name: "flag", type: "number", length: 4},
-        {name: "num_response", type: "number", length: 4},
-        {name: "advertise_length", type: "number", length: 1},
-        {name: "scan_response_length", type: "number", length: 1}
+      
+      var schema =  [
+        { name:"event_type",           type : "enum",      length: 1, enum:this._CommandScanResultsEvet },
+        { name:"address",              type : "hex",       length: 6 , endianness:"little"},
+        { name:"device_type",          type : "enum",      length: 1, enum:this._CommandScanResultsDevice },
+        { name:"address_type",         type : "enum",      length: 1, enum:this._CommandScanResultsDeviceAddress },
+        { name:"ble_event_type",       type : "enum",      length: 1, enum:this._CommandScanResultsBleEvent },
+        { name:"rssi",                 type : "signed number",    length: 4 },
+        { name:"adv_data",             type : "dataArray", length: 31*2 },
+        { name:"flag",                 type : "number",    length: 4 },
+        { name:"num_response",         type : "number",    length: 4 },
+        { name:"advertise_length",     type : "number",    length: 1 },
+        { name:"scan_response_length", type : "number",    length: 1 }
       ];
-
+    
       var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-
-      results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
-      results.adv_data = results.adv_data.slice(0, results.advertise_length);
-
+      
+      results.scan_resp = results.adv_data.slice(results.advertise_length,results.advertise_length+results.scan_response_length); 
+      results.adv_data = results.adv_data.slice(0,results.advertise_length); 
+      
+//      if(results.scan_response_length === 0){
+//          results.scan_resp = [];
+//      }else{
+//        results.scan_resp = results.adv_data.slice(results.advertise_length);
+//        results.adv_data = results.adv_data.slice(0, results.advertise_length);;
+//      }
       delete results.num_response;
       delete results.advertise_length;
       delete results.scan_response_length;
       delete results.advertise_data;
-
-      if (results.event_type === "inquiry_result") {
-        delete results.event_type;
-        this._addRowForPath(objToSend, "ble.scan_result", results);
-      } else if (results.event_type === "inquiry_complete") {
-        this._addRowForPath(objToSend, "ble.scan_result_finish", true);
-
+      
+      if(results.event_type === "inquiry_complete"){
+          results = {event_type:  "inquiry_complete"};
       }
-
-
+      
+     this._addRowForPath(objToSend, "ble.scan_result", results);
     }
   }
-
+  
   notifyFromBinaryConnect(objToSend, payload) {
-    if (payload.length === 7) {
-      var schema = [
-        {name: "address", type: "hex", length: 6, endianness: "little"},
-        {name: "status", type: "enum", length: 1, enum: {"connected": 0, "disconnected": 1}}
+    if(payload.length === 7){
+      var schema =  [
+        { name:"address",   type : "hex",       length: 6 , endianness:"little"},
+        { name:"status",           type : "enum",      length: 1, enum:{"connected":0,"disconnected":1} }
       ];
-
+      
       var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
       this._addRowForPath(objToSend, "ble.status_update", results);
     }
   }
-
+  
   notifyFromBinaryServices(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength}
+    var schema =  [
+      { name:"address", type : "hex", length: 6 , endianness:"little"},
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
-    if (results.service_uuid !== null) {
+    if(results.service_uuid !== null){
       this._addRowForPath(objToSend, "ble.get_service_result", results);
-    } else {
+    }else{
       delete results.service_uuid;
       this._addRowForPath(objToSend, "ble.get_service_result_finish", results);
     }
 
   }
-
+  
   notifyFromBinaryChacateristics(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "properties", type: "enum", length: 1, enum: this._CommandCharacteristicsProperties, flags: true}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"properties",   type : "enum", length: 1, enum:this._CommandCharacteristicsProperties, flags:true }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
-    if (results.characteristic_uuid !== null) {
+    if(results.characteristic_uuid !== null){
       this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
-    } else {
+    }else{
       delete results.characteristic_uuid;
       delete results.properties;
       this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
     }
   }
-
+  
   notifyFromBinaryReadChacateristics(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"data",   type : "dataArray", length: null }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
+     this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
   }
-
+  
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
+     this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
   }
-
-  notifyFromBinaryRegisterNotifyChacateristic(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-    ];
-
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.register_nofity_characteristic_result", results);
-  }
-
-  notifyFromBinaryUnregisterNotifyChacateristic(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-    ];
-
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.unregister_nofity_characteristic_result", results);
-  }
-  notifyFromBinaryNotifyChacateristic(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "is_notify", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null}
-    ];
-
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.is_notify = results.is_notify === 1;
-    this._addRowForPath(objToSend, "ble.nofity_characteristic", results);
-  }
-
+  
   notifyFromBinaryDescriptors(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
-    if (results.descriptor_uuid !== null) {
+    if(results.descriptor_uuid !== null){
       this._addRowForPath(objToSend, "ble.get_descriptor_result", results);
-    } else {
+    }else{
       delete results.descriptor_uuid;
       this._addRowForPath(objToSend, "ble.get_descriptor_result_finish", results);
     }
   }
-
+  
   notifyFromBinaryReadDescriptor(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"data",   type : "dataArray", length: null }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
+     this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
   }
-
+  
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
+     this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
   }
-
+  
   notifyFromBinaryServerConnectionState(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "status", type: "enum", length: 1, enum: {"connected": 1, "disconnected": 0}}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+     { name:"status",   type : "enum", length: 1 , enum:{"connected":1,"disconnected":0}}
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.connection_status", results);
   }
 
   notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    var schema =  [
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
   }
 
   notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    var schema =  [
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"data",   type : "dataArray", length: null }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.read_characteristic_result", results);
   }
 
   notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_read_characteristic", results);
   }
 
   notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"data",   type : "dataArray", length: null }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_write_characteristic", results);
   }
 
   notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    var schema =  [
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"data",   type : "dataArray", length: null }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.read_descriptor_result", results);
   }
 
   notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    var schema =  [
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"result",   type : "enum", length: 1 , enum:{"success":1,"failed":0}}
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
     this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
   }
 
   notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_read_descriptor", results);
   }
 
   notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    var schema =  [
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"data",   type : "dataArray", length: null }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, "ble.peripheral.notify_write_descriptor", results);
   }
 
   notifyFromBinaryError(objToSend, payload) {
-    var schema = [
-      {name: "esp_error_code", type: "char", length: 1},
-      {name: "error_code", type: "char", length: 1},
-      {name: "function_code", type: "char", length: 1},
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength}
+    var schema =  [
+      { name:"esp_error_code", type : "char", length: 1},
+      { name:"error_code",    type : "char", length: 1 },
+      { name:"function_code",    type : "char", length: 1 },
+      { name:"address", type : "hex", length: 6, endianness:"little" },
+      { name:"service_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"characteristic_uuid",   type : "uuid", length: this.uuidLength },
+      { name:"descriptor_uuid",   type : "uuid", length: this.uuidLength }
     ];
-
+    
     var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-
+    
     var errorMessage = {
-      0x00: "no error",
-      0x01: "device not connected",
-      0x02: "service not found",
-      0x03: "charavteristic not found",
-      0x04: "descriptor not found",
-      0x05: "no permission",
-      0x06: "device not found",
-      0x07: "ble is busy",
-      0x08: "service already running",
-      0xFF: "error",
+      0x00 : "error",
+      0x01 : "device not connected",
+      0x02 : "service not found",
+      0x03 : "charavteristic not found",
+      0x04 : "descriptor not found",
+      0x05 : "no permission",
+      0x06 : "device not found",
+      0x07 : "ble is busy",
+      0x08 : "service already running",
     };
-
+    
     var functionMessage = {
-      0: "on setting advertisement data",
-      1: "on setting scan response data",
-      2: "on starting advertisement",
-      3: "on stopping advertisement",
-      4: "on starting scan",
-      5: "on stoping scan",
-      6: "",
-      7: "on connecting device",
-      8: "on getting services",
-      9: "on getting characteristic",
+      0 : "on setting advertisement data",
+      1 : "on setting scan response data",
+      2 : "on starting advertisement",
+      3 : "on stopping advertisement",
+      4 : "on starting scan",
+      5 : "on stoping scan",
+      6 : "",
+      7 : "on connecting device",
+      8 : "on getting services",
+      9 : "on getting characteristic",
       10: "on writing characteristic",
       11: "on reading characteristic",
       14: "on getting descriptor",
@@ -11886,16 +12697,16 @@ class WSCommand_Ble extends WSCommand {
       31: "on writing descriptor from remote",
       32: "on reading descriptor from remote",
     };
-
+    
     results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
-
+    
     delete results.esp_error_code;
     delete results.function_code;
-
+    
     this.envelopError(objToSend, 'ble', results);
   }
-
-  _addRowForPath(sendObj, path, row) {
+  
+  _addRowForPath(sendObj, path, row){
     var keys = path.split('.');
     var target = sendObj;
     for (var index = 0; index < keys.length - 1; index++) {
@@ -11918,17 +12729,130 @@ module.exports = WSCommand_Ble;
 /***/ (function(module, exports, __webpack_require__) {
 
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js")
 
-class WSCommand_Directive extends WSCommand {
-  
+module.exports = class WSCommand_Directive extends WSCommand {
+
   constructor(delegate) {
     super(delegate);
     this.module = 1;
+
+    this._CommandRegistrate     = 0;
+    this._CommandPause          = 1;
+    this._CommandResume         = 2;
+
+    const CommandIO = __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js");
+    const CommandPWM = __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js");
+
+    this.availableCommands = [
+      new CommandIO(),
+      new CommandPWM()
+    ]
   }
 
-}
+  // Commands
 
-module.exports = WSCommand_Directive;
+  init(params, originalParams) {
+
+    const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+    let frame = new Uint8Array(nameArray.length + 2);
+    frame[0] = nameArray.length+1;
+    frame.set(nameArray, 1);
+    frame[frame.byteLength - 1] = 0; // null string
+    const commandJsonArray = params.animation.states;
+
+    for (let i=0; i<commandJsonArray.length; i++) {
+      const obj = commandJsonArray[i];
+      const duration = parseInt(obj.duration * 1000);
+      const state = obj.state;
+
+      // Dry run commands
+
+      const compressed = WSCommand.compress(this.availableCommands, JSON.parse(JSON.stringify(state)));
+      if (!compressed) {
+        throw new Error("[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.");
+      }
+      const length = compressed.byteLength;
+      
+      var commandHeader = new Uint8Array(8);
+      commandHeader[0] = length >> (8*3);
+      commandHeader[1] = length >> (8*2);
+      commandHeader[2] = length >> (8*1);
+      commandHeader[3] = length;
+      commandHeader[4] = duration >> (8*3);
+      commandHeader[5] = duration >> (8*2);
+      commandHeader[6] = duration >> (8*1);
+      commandHeader[7] = duration;
+
+      const combined =  new Uint8Array(frame.byteLength + commandHeader.byteLength + compressed.byteLength);
+      combined.set(frame, 0);
+      combined.set(commandHeader, frame.byteLength);
+      combined.set(compressed, frame.byteLength + commandHeader.byteLength);
+
+      frame = combined;
+    }
+
+    if (frame.byteLength > 1000) {
+      // 1kbyte over
+      throw new Error("[io.animation]Too big animation datas");
+    }
+
+    this.sendCommand(this._CommandRegistrate, frame);
+  }
+
+  changeState(params){
+    if(params.animation.status === "resume"){
+      const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+      let frame = new Uint8Array(nameArray.length + 2);
+      frame[0] = nameArray.length+1;
+      frame.set(nameArray, 1);
+      frame[frame.byteLength - 1] = 0;
+      this.sendCommand(this._CommandResume, frame);
+
+    } else if(params.animation.status === "pause"){
+      const nameArray = ObnizUtil.string2dataArray(params.animation.name);
+      let frame = new Uint8Array(nameArray.length + 2);
+      frame[0] = nameArray.length+1;
+      frame.set(nameArray, 1);
+      frame[frame.byteLength - 1] = 0;
+      this.sendCommand(this._CommandPause, frame);
+
+    }
+  }
+  
+  parseFromJson(json) {
+    let parentCommandNotFound = false;
+    try {
+      super.parseFromJson(json);
+    }catch(err) {
+      if( err instanceof this.WSCommandNotFoundError){
+        parentCommandNotFound = true;
+      }else {
+        throw err;
+      }
+    }
+
+    const module = json["io"];
+    if (module === undefined) {
+      return;
+    }
+
+    const schemaData = [
+      {uri : "/request/ioAnimation/init",  onValid: this.init},
+      {uri : "/request/ioAnimation/changeState",  onValid: this.changeState}
+    ];
+    const res = this.validateCommandSchema(schemaData, module, "io", module );
+
+    if(res.valid === 0 && parentCommandNotFound){
+      if(res.invalidButLike.length > 0) {
+        throw new Error(res.invalidButLike[0].message);
+      }else{
+        let WSCommandNotFoundError = this.WSCommandNotFoundError;
+        throw new WSCommandNotFoundError( `[io.animation]unknown command`);
+      }
+    }
+  }
+}
 
 /***/ }),
 
@@ -11940,6 +12864,7 @@ module.exports = WSCommand_Directive;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const qrcode = __webpack_require__(/*! ../utils/qr */ "./obniz/libs/utils/qr.js");
 
 let isNode = (typeof window === 'undefined') ;
 
@@ -11981,8 +12906,50 @@ class WSCommand_Display extends WSCommand {
   text(params){
     this.printText(params.text);
   }
+
   raw(params){
     this.drawHorizonally(new Uint8Array(params.raw));
+  }
+
+  qr(params) {
+    const text = params.qr.text
+    const correctionLevel = params.qr.correction || 'M';
+
+    const typeNumber = 0; // auto detect type.
+    const qr = qrcode(typeNumber, correctionLevel);
+    qr.addData(text);
+    qr.make();
+    let size = qr.getModuleCount();
+    if (size) {
+      size *= 2;
+      const modules = qr.getModules();
+      let vram = new Uint8Array(1024);
+      vram.fill(0);
+
+      for (let row=0; row<2; row++){
+        for (let col=0; col<size+4; col++){
+          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+          vram[parseInt((row + size + 2)*16 + col/8)] |= 0x80 >> (col%8);
+        }
+      }
+      for (let row=2; row<size+2; row++){
+        for (let col=0; col<2; col++){
+          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+        }
+        for (let col=size+2; col<size+4; col++){
+          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+        }
+      }
+
+      for (let row=0; row<size; row++){
+        for (let col=0; col<size; col++){
+          if (!modules[parseInt(row/2)][parseInt(col/2)]) {
+            vram[parseInt((row+2)*16 + (col+2)/8)] |= 0x80 >> ((col+2)%8);
+          }
+        }
+      }
+      this.drawHorizonally(vram);
+    }
   }
   
   pinName(params) {
@@ -12040,7 +13007,7 @@ class WSCommand_Display extends WSCommand {
       {uri : "/request/display/clear", onValid: this.clear},
       {uri : "/request/display/raw", onValid: this.raw},
       {uri : "/request/display/pin_assign", onValid: this.pinName},
-      {uri : "/request/display/qr"} // nothing to do 
+      {uri : "/request/display/qr", onValid: this.qr}
     ];
     let res = this.validateCommandSchema(schemaData, module, "display" );
 
@@ -12960,7 +13927,7 @@ module.exports = WSCommand_Switch;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_System extends WSCommand {
 
@@ -12968,14 +13935,15 @@ class WSCommand_System extends WSCommand {
     super(delegate);
     this.module = 0;
 
-    this._CommandReboot         = 0
+    this._CommandReboot            = 0
     
-    this._CommandReset          = 2
-    this._CommandSelfCheck      = 3
-    this._CommandWait           = 4
+    this._CommandReset             = 2
+    this._CommandSelfCheck         = 3
+    this._CommandWait              = 4
     this._CommandResetOnDisconnect = 5
 
-    this._CommandVCC            = 9
+    this._CommandPingPong          = 8
+    this._CommandVCC               = 9
   }
 
   // Commands
@@ -12997,10 +13965,32 @@ class WSCommand_System extends WSCommand {
     var buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
+
   keepWorkingAtOffline(params){
     this.resetOnDisconnect(!params.keep_working_at_offline);
 
   }
+
+  ping(params) {
+    let unixtime = new Date().getTime();
+    let buf = new Uint8Array(params.ping.key.length + 8);
+    let upper = Math.floor( unixtime / Math.pow(2,32));
+    let lower = unixtime - upper*Math.pow(2,32);
+    buf[0] = upper >> 8*3;
+    buf[1] = upper >> 8*2;
+    buf[2] = upper >> 8*1;
+    buf[3] = upper >> 8*0;
+    buf[4] = lower >> 8*3;
+    buf[5] = lower >> 8*2;
+    buf[6] = lower >> 8*1;
+    buf[7] = lower >> 8*0;
+    for(let i = 0; i < params.ping.key.length; i++){
+      buf[8+i] = params.ping.key[i];
+    }
+    
+    this.sendCommand(this._CommandPingPong, buf);
+  }
+
   resetOnDisconnect(mustReset) {
     var buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
@@ -13018,7 +14008,7 @@ class WSCommand_System extends WSCommand {
       {uri : "/request/system/wait",                 onValid: this.wait},
       {uri : "/request/system/selfCheck",            onValid: this.selfCheck},
       {uri : "/request/system/keepWorkingAtOffline", onValid: this.keepWorkingAtOffline},
-      {uri : "/request/system/ping"},
+      {uri : "/request/system/ping",                 onValid: this.ping},
     ];
     let res = this.validateCommandSchema(schemaData, module, "system");
 
@@ -13028,6 +14018,28 @@ class WSCommand_System extends WSCommand {
       }else{
         throw new this.WSCommandNotFoundError(`[system]unknown command`);
       }
+    }
+  }
+
+  pong(objToSend, payload){
+    objToSend["system"] = objToSend["system"] || {};
+    const pongServerTime = new Date().getTime();
+
+    if (payload.length >= 16) {
+      payload = Buffer(payload);
+      let obnizTime = payload.readUIntBE(0, 4) * Math.pow(2,32) + payload.readUIntBE(4, 4) ;
+      let pingServerTime  = (payload.readUIntBE(8, 4) * Math.pow(2,32) )+ payload.readUIntBE(12, 4) ;
+      let key = [];
+      for(let i = 16;i < payload.length; i++){
+        key.push(payload[i] );
+      }
+      objToSend["system"].pong = {
+        key, obnizTime, pingServerTime, pongServerTime
+      };
+    } else {
+      objToSend["system"].pong = {
+        pongServerTime
+      };
     }
   }
 
@@ -13041,6 +14053,11 @@ class WSCommand_System extends WSCommand {
         }
         break;
 
+      case this._CommandPingPong:
+        this.pong(objToSend,payload);
+
+        break;
+
       default:
         super.notifyFromBinary(objToSend, func, payload);
         break;
@@ -13050,6 +14067,7 @@ class WSCommand_System extends WSCommand {
 
 
 module.exports = WSCommand_System;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -13271,99 +14289,99 @@ module.exports = WSCommand;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {class JsonBinaryConverter {
-
-  static convertFromBinaryToJson(schema, binary) {
+  
+  static convertFromBinaryToJson(schema, binary){
     var types = {
-      hex: this.hexFromBinary.bind(this),
-      uuid: this.uuidFromBinary.bind(this),
-      number: this.numberFromBinary.bind(this),
-      "signed number": this.signedNumberFromBinary.bind(this),
-      int: this.numberFromBinary.bind(this),
-      char: this.numberFromBinary.bind(this),
-      enum: this.enumFromBinary.bind(this),
-      dataArray: this.dataArrayFromBinary.bind(this)
+      hex : this.hexFromBinary.bind(this),
+      uuid : this.uuidFromBinary.bind(this),
+      number : this.numberFromBinary.bind(this),
+      "signed number" : this.signedNumberFromBinary.bind(this),
+      int : this.numberFromBinary.bind(this),
+      char : this.numberFromBinary.bind(this),
+      enum : this.enumFromBinary.bind(this),
+      dataArray : this.dataArrayFromBinary.bind(this)
     };
     var json = {};
     var count = 0;
-    for (var i = 0; i < schema.length; i++) {
-      var data = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
-      json[schema[i].name] = types[schema[i].type](data, schema[i]);
-
-      if (schema[i].length) {
+    for(var i = 0; i<schema.length; i++){
+      var data = binary.slice(count, schema[i].length? count+schema[i].length: undefined);
+      json[schema[i].name] = types[schema[i].type](data, schema[i]) ;
+      
+      if(schema[i].length){
         count += schema[i].length;
-      } else {
+      }else{
         break;
       }
     }
     return json;
   }
-
-  static hexFromBinary(data, schema) {
+  
+  static hexFromBinary(data, schema){
     var str = "";
     for (var i = 0; i < data.length; i++) {
-      if (schema.endianness && schema.endianness === "little") {
-        str = ("00" + data[i].toString(16)).slice(-2) + str;
-      } else {
-        str = str + ("00" + data[i].toString(16)).slice(-2);
+      if(schema.endianness && schema.endianness === "little"){
+        str = ("00" + data[i].toString(16)).slice(-2) +  str ;
+      }else{
+        str = str + ("00" + data[i].toString(16)).slice(-2)  ;
       }
     }
     return str;
   }
-
-  static uuidFromBinary(data) {
+  
+  static uuidFromBinary(data){
     var len = data[0] * 16 + data[1];
-    if (len === 0) {
+    if(len === 0){
       return null;
     }
     var uuidData = data.slice(2);
     var str = "";
     for (var i = 0; i < len; i++) {
       str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
-    }
-    return str;
+    }    
+    return str ;
   }
-
-  static signedNumberFromBinary(data, schema) {  //big adian
+  
+  static signedNumberFromBinary(data, schema){  //big adian
     var val = data[0] & 0x7F;
-    for (var i = 1; i < data.length; i++) {
-      val = val * 256 + data[i];
+    for(var i=1; i<data.length;i++){
+      val = val* 256 + data[i];
     }
-    if ((data[0] & 0x80) !== 0) {
-      val = val - Math.pow(2, (data.length * 8 - 1));
+    if((data[0] & 0x80 )!== 0){
+      val = val - Math.pow(2, (data.length*8-1));
     }
     return val;
   }
-
-  static numberFromBinary(data) {  //big adian
+  
+  static numberFromBinary(data){  //big adian
     var val = 0;
-    for (var i = 0; i < data.length; i++) {
-      val = val * 256 + data[i];
+    for(var i=0; i<data.length;i++){
+      val = val* 256 + data[i];
     }
     return val;
   }
-
+  
   static keyForVal(enumvals, val) {
     return Object.keys(enumvals).filter(function (k) {
       return enumvals[k] === val;
     })[0];
     return undefined;
   }
-
+  
   static enumFromBinary(data, schema) {
     let enumVals = schema.enum;
     let val = this.numberFromBinary(data);
 
-    if (schema.flags === true) {
+    if(schema.flags === true){
       let temp = [];
-      for (let key of Object.keys(enumVals)) {
+      for(let key of Object.keys(enumVals)) {
         let flag = (enumVals[key] & val);
-        if (flag) {
+        if(flag) {
           temp.push(key);
         }
       }
       val = temp;
 
-    } else {
+    }else {
       let tmp = this.keyForVal(enumVals, val);
       if (tmp) {
         val = tmp;
@@ -13371,53 +14389,53 @@ module.exports = WSCommand;
     }
     return val;
   }
-
-  static dataArrayFromBinary(data) {
+  
+  static dataArrayFromBinary(data){
     var arr = new Array(data.length);
     for (var i = 0; i < data.length; i++) {
       arr[i] = data[i];
     }
     return arr;
   }
-
-  static createSendBuffer(schema, data) {
+  
+  static createSendBuffer(schema, data){
     var array = [];
-    for (var i = 0; i < schema.length; i++) {
+    for(var i=0; i<schema.length; i++){
       var schemaRow = schema[i];
-
+      
       var row = undefined;
-      if (Array.isArray(schemaRow)) {
-        for (var key in schemaRow) {
-          var customSchemaRow = Object.assign({}, schemaRow[key], {required: true});
+      if(Array.isArray(schemaRow)){
+        for( var key in schemaRow){
+          var customSchemaRow = Object.assign({},schemaRow[key],{required:true});
           row = this.analyzeSchema(data, customSchemaRow);
-          if (row) {
+          if(row){
             break;
           }
         }
-
-      } else {
-        row = this.analyzeSchema(data, schemaRow);
+        
+      }else{
+        row = this.analyzeSchema(data,schemaRow);
       }
 
       Array.prototype.push.apply(array, row);
     }
     return new Uint8Array(array);
-
+    
   }
-
-  static analyzeSchema(allData, schemaRow) {
-    var types = {
-      hex: this.hexToBinary.bind(this),
-      uuid: this.uuidToBinary.bind(this),
-      int: this.intToBinary.bind(this),
-      char: this.charToBinary.bind(this),
-      dataArray: this.dataArrayToBinary.bind(this),
+  
+  static analyzeSchema(allData, schemaRow){
+     var types = {
+      hex : this.hexToBinary.bind(this),
+      uuid : this.uuidToBinary.bind(this),
+      int : this.intToBinary.bind(this),
+      char : this.charToBinary.bind(this),
+      dataArray : this.dataArrayToBinary.bind(this),
       enum: this.enumToBinary.bind(this),
       string: this.stringToBinary.bind(this),
       text: this.stringToBinary.bind(this),
       flag: this.flagToBinary.bind(this)
     };
-
+    
     var val = undefined;
     if (schemaRow.path) {
       val = this.getProperty(allData, schemaRow.path);
@@ -13435,119 +14453,114 @@ module.exports = WSCommand;
     if (schemaRow.length && row.length !== schemaRow.length) {
       console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
     }
-
+    
     return row;
   }
-
-
+  
+  
+  
+  
   static getProperty(object, path) {
-    if (path === "" || path === undefined) {
+    if(path === "" || path === undefined){
       return object;
     }
     if (typeof path === 'string')
       path = path.split('.');
     if (!Array.isArray(path))
       path = [path];
+    
+      var index = 0,
+          length = path.length;
 
-    var index = 0,
-        length = path.length;
-
-    while (index < length) {
-      object = object[path[index++]];
-      if (object === undefined) {
-        return undefined;
+      while (index < length) {
+        object = object[path[index++]];
+        if(object === undefined){
+          return undefined;
+        }
       }
-    }
-    return (index && index === length) ? object : undefined;
-
+      return (index && index === length) ? object : undefined;
+    
   }
-
-  static hexToBinary(data, schema) {
+  
+  static hexToBinary(data,schema){
     var array = [];
     var hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    for (var i = 0; i < hex.length / 2; i++) {
+    for (var i = 0; i < hex.length/2; i++) {
       array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
     }
-    if (schema && schema.endianness && schema.endianness === "little") {
+    if(schema && schema.endianness && schema.endianness === "little"){
       array.reverse();
     }
     return array;
   }
-
-
-  static intToBinary(data) {
+  
+  
+  static intToBinary(data){
     var array = [];
-    array[0] = (data >> 8 * 3) & 0xFF;
-    array[1] = (data >> 8 * 2) & 0xFF;
-    array[2] = (data >> 8 * 1) & 0xFF;
-    array[3] = (data >> 8 * 0) & 0xFF;
+    array[0] = (data >> 8*3) & 0xFF;
+    array[1] = (data >> 8*2) & 0xFF;
+    array[2] = (data >> 8*1) & 0xFF;
+    array[3] = (data >> 8*0) & 0xFF;
     return array;
   }
-
-  static charToBinary(data) {
+  
+  static charToBinary(data){
     var array = [];
-    array[0] = data & 0xFF;
+    array[0] = data  & 0xFF;
     return array;
   }
-
-  static dataArrayToBinary(data) {
-    if (!Array.isArray(data)) {
+  
+  static dataArrayToBinary(data){
+    if(!Array.isArray(data)){
       data = [data];
     }
     return data;
   }
-
-  static uuidToBinary(data) {
-
+  static uuidToBinary(data){
+    
     var uuid = this.hexToBinary(data)
     uuid.reverse();  //big endianness -> little endianness;
     var length = uuid.length;
-
+    
     var array = [];
-
-    array[0] = (length >> 8 * 1) & 0xFF;
-    array[1] = (length >> 8 * 0) & 0xFF;
-
+    
+    array[0] = (length >> 8*1) & 0xFF;
+    array[1] = (length >> 8*0) & 0xFF;
+    
     Array.prototype.push.apply(array, uuid);
-    for (var i = array.length; i < 16 + 2; i++) {
+    for(var i = array.length; i < 16+2;i++){
       array[i] = 0;
     }
-
+    
     return array;
   }
-
-  static enumToBinary(data, schema) {
+  
+  static enumToBinary(data, schema){
     var array = [];
     array.push(schema.enum[data]);
     return array;
   }
-
-
-  static flagToBinary(data, schema) {
-    if (!Array.isArray(data)) {
+  
+  
+  static flagToBinary(data, schema){
+    if(!Array.isArray(data)){
       data = [data];
     }
     var flags = schema.flags;
     var value = 0;
-    for (var key in flags) {
-      if (data.includes(flags[key])) {
+    for( var key in flags){
+      if(data.includes(flags[key])){
         value += parseInt(key);
       }
     }
-    var array = [];
-    let length = schema.length || 1;
-    for (let i = length - 1; i >= 0; i--) {
-      array.push((value >> i) & 0xFF);
-    }
-
-    return array;
+    return [value];
   }
-
-  static stringToBinary(data) {
+  
+  static stringToBinary(data){
     var array = [];
     if (isNode) {
       return new Uint8Array(Buffer(data, 'utf8'));
-    } else if (TextEncoder) {
+    } else if(TextEncoder){
       return new Uint8Array(new TextEncoder("utf-8").encode(data));
     }
   }
@@ -13565,7 +14578,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.74","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","tv4":"^1.3.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.75","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"js-yaml":"^3.11.0","tv4":"^1.3.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
