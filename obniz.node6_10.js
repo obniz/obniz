@@ -964,7 +964,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","description":"available 0 to 5","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/duty"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","description":"available 0 to 5","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
 
 /***/ }),
 
@@ -2287,16 +2287,30 @@ module.exports = class ObnizConnection {
     if (this.isNode) {
       const wsClient = __webpack_require__(/*! ws */ "ws");
       ws = new wsClient(url);
-      // ws.on('open', this.wsOnOpen.bind(this));
-      ws.on('message', event => {
-        this.print_debug("recvd via local");
-        this.wsOnMessage(event.data);
+      ws.on('open', () => {
+        this.print_debug("connected to " + url);
+        if (this._waitForLocalConnectReadyTimer) {
+          clearTimeout(this._waitForLocalConnectReadyTimer);
+          this._waitForLocalConnectReadyTimer = null;
+          this._callOnConnect();
+        }
       });
-      // ws.on('close', this.wsOnClose.bind(this));
+      ws.on('message', data => {
+        this.print_debug("recvd via local");
+        this.wsOnMessage(data);
+      });
+      ws.on('close', event => {
+        console.log('local websocket closed');
+        this._disconnectLocal();
+      });
       ws.on('error', err => {
         console.error("local websocket error.", err);
+        this._disconnectLocal();
       });
-      // ws.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
+      ws.on('unexpected-response', event => {
+        console.log('local websocket closed');
+        this._disconnectLocal();
+      });
     } else {
       ws = new WebSocket(url);
       ws.binaryType = 'arraybuffer';
