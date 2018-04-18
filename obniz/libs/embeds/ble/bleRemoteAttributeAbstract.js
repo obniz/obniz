@@ -1,8 +1,6 @@
-const ObnizUtil = require("../../utils/util");
-const emitter = require("eventemitter3");
 const BleAttributeAbstract = require("./bleAttributeAbstract");
 
-class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
+class BleRemoteAttributeAbstract extends BleAttributeAbstract {
 
   constructor(params) {
     super(params);
@@ -37,7 +35,7 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
 
   discoverChildrenWait() {
     return new Promise(resolve => {
-      this.emitter.once("discoverfinished", (params) => {
+      this.emitter.once("discoverfinished", () => {
         let children = this.children.filter(elm => {
           return elm.discoverdOnRemote;
         });
@@ -80,4 +78,4 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
   }
 }
 
-module.exports = BleRemoteAttributreAbstruct;
+module.exports = BleRemoteAttributeAbstract;

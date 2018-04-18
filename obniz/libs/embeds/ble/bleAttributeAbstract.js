@@ -1,7 +1,7 @@
 const ObnizUtil = require("../../utils/util");
 const emitter = require("eventemitter3");
 
-class BleAttributreAbstruct {
+class BleAttributeAbstract {
 
   constructor(params){
     this.uuid = params.uuid.toLowerCase();
@@ -20,8 +20,8 @@ class BleAttributreAbstruct {
     }
 
     if(params[this.childrenName]){
-      for(var key in params[this.childrenName]){
-        this.addChild(params[this.childrenName][key]);
+      for(let child of params[this.childrenName]){
+        this.addChild(child);
       }
     }
 
@@ -87,7 +87,7 @@ class BleAttributreAbstruct {
 
 
   toJSON (){
-    let obj = {uuid: this.uuid.toLowerCase()}
+    let obj = {uuid: this.uuid.toLowerCase()};
 
     if (this.children.length > 0) {
       let key = this.childrenName;
@@ -105,7 +105,7 @@ class BleAttributreAbstruct {
    */
 
   read() {}
-  write(data){}
+  write(){}
 
   writeNumber(val){
     this.write([val]);
@@ -131,7 +131,7 @@ class BleAttributreAbstruct {
   writeWait(data){
     return new Promise(resolve => {
       this.emitter.once("onwrite",(params)=>{
-        resolve(params.result);
+        resolve(params.result === "success");
       });
       this.write(data);
     })
@@ -141,7 +141,7 @@ class BleAttributreAbstruct {
   writeTextWait(data){
     return new Promise(resolve => {
       this.emitter.once("onwrite",(params)=>{
-        resolve(params.result);
+        resolve(params.result === "success");
       });
       this.writeText(data);
     })
@@ -151,7 +151,7 @@ class BleAttributreAbstruct {
   writeNumberWait(data){
     return new Promise(resolve => {
       this.emitter.once("onwrite",(params)=>{
-        resolve(params.result);
+        resolve(params.result === "success");
       });
       this.writeNumber(data);
     })
@@ -159,7 +159,7 @@ class BleAttributreAbstruct {
 
   readFromRemoteWait(){
     return new Promise(resolve => {
-      this.emitter.once("onreadfromremote",(params)=>{
+      this.emitter.once("onreadfromremote",()=>{
         resolve();
       });
     })
@@ -222,4 +222,4 @@ class BleAttributreAbstruct {
   }
 }
 
-module.exports = BleAttributreAbstruct;
+module.exports = BleAttributeAbstract;

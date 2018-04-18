@@ -66,8 +66,12 @@
       "filename": "switch"
     },
     {
-      "title": "BLE",
-      "filename": "ble"
+      "title": "BLE use as central",
+      "filename": "ble-central"
+    },
+    {
+      "title": "BLE use as peripheral",
+      "filename": "ble-peripheral"
     }
   ]
 }

@@ -17,6 +17,10 @@ describe("7-ble", function () {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         obnizB = config.obnizB;
+        obnizA.debugprint = true;
+        obnizA.debugprintBinary = true;
+        obnizB.debugprint = true;
+        obnizB.debugprintBinary = true;
         resolve();
       })
     });
@@ -34,7 +38,7 @@ describe("7-ble", function () {
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
-    obnizB.ble.onscan = function (peripheral) {
+    obnizB.ble.scan.onfind = function (peripheral) {
       // console.log(peripheral.adv_data.length + ": " + peripheral.localName());
       if (peripheral.adv_data.length === expectedValue.length) {
         // console.log(peripheral.adv_data);
@@ -45,33 +49,33 @@ describe("7-ble", function () {
         }
         found = true;
       }
-    }
+    };
     obnizB.ble.scan.start(null,{duration: 30});
 
     while (!found) {
       await wait(1);
     }
 
-    obnizA.ble.stopAdvertisement();
+    obnizA.ble.advertisement.end();
     obnizA.ble.peripheral.end();
   });
 
   it("ad localname", async function () {
     let service = new obnizA.ble.service({
-      uuid: "0000"
+      uuid: "0001"
     });
     obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
     const localName = "" + (new Date()).getTime();
-    obnizA.ble.setScanRespData({
+    obnizA.ble.advertisement.setScanRespData({
       localName: localName
     });
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
 
     let found = false;
-    let expectedValue = [2, 1, 6, 3, 2, 0, 0];
-    obnizB.ble.onscan = function (peripheral) {
+    let expectedValue = [2, 1, 6, 3, 2, 1, 0];
+    obnizB.ble.scan.onfind = function (peripheral) {
       if (peripheral.localName() === localName) {
         found = true;
       }
@@ -81,7 +85,7 @@ describe("7-ble", function () {
     while (!found) {
       await wait(1);
     }
-    obnizA.ble.stopAdvertisement();
+    obnizA.ble.advertisement.end();
     obnizA.ble.peripheral.end();
   });
 

@@ -1,47 +1,46 @@
-
 const BleService = require("./bleService");
 
 class BlePeripheral {
 
-  constructor(Obniz){
+  constructor(Obniz) {
     this.Obniz = Obniz;
     this.services = [];
   }
 
   addService(obj) {
-    if(! (obj instanceof BleService ) ){
+    if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
     this.services.push(obj);
     obj.peripheral = this;
-    this.Obniz.send({ble:{peripheral:{services:[obj]}}});
+    this.Obniz.send({ble: {peripheral: {services: [obj]}}});
   }
 
   setJson(json) {
-    if(json["services"]){
-      for(var key in json["services"]){
-        this.addService(json["services"][key]);
+    if (json["services"]) {
+      for (let service of json["services"]) {
+        this.addService(service);
       }
     }
   }
 
   getService(uuid) {
     uuid = uuid.toLowerCase();
-    return this.services.filter(function(element){
+    return this.services.filter(function (element) {
       return element.uuid.toLowerCase() === uuid;
     }).shift();
   }
 
-  removeService(uuid){
-    this.services = this.services.filter(function(element){
+  removeService(uuid) {
+    this.services = this.services.filter(function (element) {
       return element.uuid.toLowerCase() !== uuid;
     });
   }
 
-  stopAllService(){
+  stopAllService() {
     this.Obniz.send(
         {
-          ble : {
+          ble: {
             peripheral: null
 
           }
@@ -50,40 +49,41 @@ class BlePeripheral {
     this.services = [];
   }
 
-  toJSON(){
+  toJSON() {
     return {
-      services : this.services
+      services: this.services
     };
   }
 
 
-  findCharacteristic(param){
-    var serviceUuid = param.service_uuid.toLowerCase() ;
-    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
-    var s = this.getService(serviceUuid);
-    if(s){
-      var c = s.getCharacteristic(characteristicUuid);
-      return c;
+  findCharacteristic(param) {
+    let serviceUuid = param.service_uuid.toLowerCase();
+    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let s = this.getService(serviceUuid);
+    if (s) {
+      return s.getCharacteristic(characteristicUuid);
     }
     return null;
   }
 
-  findDescriptor(param){
-    var descriptorUuid = param.descriptor_uuid.toLowerCase() ;
-    var c = this.findCharacteristic(param);
-    if(c){
-      var d = c.getDescriptor(descriptorUuid);
-      return d;
+  findDescriptor(param) {
+    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let c = this.findCharacteristic(param);
+    if (c) {
+      return c.getDescriptor(descriptorUuid);
     }
     return null;
   }
 
-  end(){
-    this.Obniz.send({ble:{peripheral:null}});
+  end() {
+    this.Obniz.send({ble: {peripheral: null}});
   }
 
-  onconnectionupdates(){};
-  onerror(){};
+  onconnectionupdates() {
+  };
+
+  onerror() {
+  };
 }
 
 

@@ -1,5 +1,4 @@
-
-const Builder = require("./bleAdvertisementBuilder")
+const Builder = require("./bleAdvertisementBuilder");
 
 class BleAdvertisement {
   constructor(Obniz) {
@@ -9,50 +8,45 @@ class BleAdvertisement {
   }
 
   start() {
-    var obj = {};
+    let obj = {};
     obj["ble"] = {};
     obj["ble"]["advertisement"] = {
-      adv_data : this.adv_data
+      adv_data: this.adv_data
     };
-    
-    if(this.scan_resp.length > 0){
-       obj["ble"]["advertisement"]["scan_resp"]= this.scan_resp;
+
+    if (this.scan_resp.length > 0) {
+      obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
     }
-    
+
     this.Obniz.send(obj);
-    return;
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj["ble"] = {};
     obj["ble"]["advertisement"] = null;
     this.Obniz.send(obj);
-    return;
   }
 
   setAdvDataRaw(adv_data) {
-    var obj = {};
     this.adv_data = adv_data;
-    return;
   }
 
   setAdvData(json) {
-    var builder = this.advDataBulider(json);
+    let builder = this.advDataBulider(json);
     this.setAdvDataRaw(builder.build());
-    return;
   }
 
-  advDataBulider(jsonVal){
-    return new Builder(this.Obniz,jsonVal);
+  advDataBulider(jsonVal) {
+    return new Builder(this.Obniz, jsonVal);
   }
 
-  scanRespDataBuilder(json){
-    return new Builder(this.Obniz,json);
+  scanRespDataBuilder(json) {
+    return new Builder(this.Obniz, json);
   }
 
   setScanRespDataRaw(scan_resp) {
-    this.scan_resp = scan_resp; 
+    this.scan_resp = scan_resp;
   }
 
   setScanRespData(json) {

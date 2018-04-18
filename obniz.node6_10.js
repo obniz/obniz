@@ -2844,7 +2844,7 @@ class ObnizBLE {
   }
 
   findPeripheral(address) {
-    for (var key in this.remotePeripherals) {
+    for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
         return this.remotePeripherals[key];
       }
@@ -2871,8 +2871,8 @@ class ObnizBLE {
       this.scan.notifyFromServer("onfinish");
     }
 
-    var remotePeripheralcallbackFunc = function (val, func, type) {
-      var obj = null;
+    let remotePeripheralcallbackFunc = function (val, func, type) {
+      let obj = null;
       if (val === undefined) return;
       let p = this.findPeripheral(val.address);
       if (!p) {
@@ -2917,8 +2917,8 @@ class ObnizBLE {
       }.bind(this), paramList[key].obj);
     }
 
-    var callbackFunc = function (val, func, type) {
-      var obj = null;
+    let callbackFunc = function (val, func, type) {
+      let obj = null;
       if (val === undefined) return;
       if (type === "peripheral") {
         obj = this.peripheral;
@@ -2991,9 +2991,9 @@ class ObnizBLE {
     }
   }
 
-  _dataArray2uuidHex(data, reverse) {
+  static _dataArray2uuidHex(data, reverse) {
     let uuid = [];
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       uuid.push(('00' + data[i].toString(16).toLowerCase()).slice(-2));
     }
     if (reverse) {
@@ -3032,7 +3032,7 @@ class BleAdvertisement {
   }
 
   start() {
-    var obj = {};
+    let obj = {};
     obj["ble"] = {};
     obj["ble"]["advertisement"] = {
       adv_data: this.adv_data
@@ -3043,27 +3043,22 @@ class BleAdvertisement {
     }
 
     this.Obniz.send(obj);
-    return;
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj["ble"] = {};
     obj["ble"]["advertisement"] = null;
     this.Obniz.send(obj);
-    return;
   }
 
   setAdvDataRaw(adv_data) {
-    var obj = {};
     this.adv_data = adv_data;
-    return;
   }
 
   setAdvData(json) {
-    var builder = this.advDataBulider(json);
+    let builder = this.advDataBulider(json);
     this.setAdvDataRaw(builder.build());
-    return;
   }
 
   advDataBulider(jsonVal) {
@@ -3112,8 +3107,8 @@ class BleAdvertisementBuilder {
         this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
       }
       if (json.serviceUuids) {
-        for (var key in json.serviceUuids) {
-          this.setUuid(json.serviceUuids[key]);
+        for (let uuid of json.serviceUuids) {
+          this.setUuid(uuid);
         }
       }
     }
@@ -3125,20 +3120,14 @@ class BleAdvertisementBuilder {
   setRow(type, data) {
     this.rows[type] = data;
   }
+
   getRow(type) {
     return this.rows[type] || [];
   }
 
-  check() {
-    return true;
-  }
-
   build() {
-    if (!this.check) {
-      return;
-    }
-    var data = [];
-    for (var key in this.rows) {
+    let data = [];
+    for (let key in this.rows) {
       if (this.rows[key].length === 0) continue;
 
       data.push(this.rows[key].length + 1);
@@ -3153,9 +3142,9 @@ class BleAdvertisementBuilder {
   }
 
   setStringData(type, string) {
-    var data = [];
+    let data = [];
 
-    for (var i = 0; i < string.length; i++) {
+    for (let i = 0; i < string.length; i++) {
       data.push(string.charCodeAt(i));
     }
 
@@ -3165,12 +3154,13 @@ class BleAdvertisementBuilder {
   setShortenedLocalName(name) {
     this.setStringData(0x08, name);
   }
+
   setCompleteLocalName(name) {
     this.setStringData(0x09, name);
   }
 
   setManufacturerSpecificData(campanyCode, data) {
-    var row = [];
+    let row = [];
     row.push(campanyCode & 0xFF);
     row.push(campanyCode >> 8 & 0xFF);
     Array.prototype.push.apply(row, data);
@@ -3178,29 +3168,29 @@ class BleAdvertisementBuilder {
   }
 
   setUuid(uuid) {
-    var uuidData = this.convertUuid(uuid);
-    var type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
+    let uuidData = this.convertUuid(uuid);
+    let type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
     this.setRow(type, uuidData);
   }
 
   convertUuid(uuid) {
-    var uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    let uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
     if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
       this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
     }
 
-    var data = [];
-    for (var i = uuidNumeric.length; i > 1; i -= 2) {
+    let data = [];
+    for (let i = uuidNumeric.length; i > 1; i -= 2) {
       data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
     }
     return data;
   }
 
   setIbeaconData(uuid, major, minor, txPower) {
-    var data = [];
+    let data = [];
     data.push(0x02, 0x15); // fixed data
 
-    var uuidData = this.convertUuid(uuid);
+    let uuidData = this.convertUuid(uuid);
     Array.prototype.push.apply(data, uuidData);
 
     data.push(major >> 8 & 0xFF);
@@ -3226,22 +3216,27 @@ class BleAdvertisementBuilder {
   }
 
   setFlags(flag) {
-    var data = this.getRow(0x01);
+    let data = this.getRow(0x01);
     data[0] = (data[0] || 0) | flag;
     this.setRow(0x01, data);
   }
+
   setLeLimitedDiscoverableModeFlag() {
     this.setFlags(0x01);
   }
+
   setLeGeneralDiscoverableModeFlag() {
     this.setFlags(0x02);
   }
+
   setBrEdrNotSupportedFlag() {
     this.setFlags(0x04);
   }
+
   setLeBrEdrControllerFlag() {
     this.setFlags(0x08);
   }
+
   setLeBrEdrHostFlag() {
     this.setFlags(0x10);
   }
@@ -3264,7 +3259,7 @@ module.exports = BleAdvertisementBuilder;
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
 
-class BleAttributreAbstruct {
+class BleAttributeAbstract {
 
   constructor(params) {
     this.uuid = params.uuid.toLowerCase();
@@ -3283,8 +3278,8 @@ class BleAttributreAbstruct {
     }
 
     if (params[this.childrenName]) {
-      for (var key in params[this.childrenName]) {
-        this.addChild(params[this.childrenName][key]);
+      for (let child of params[this.childrenName]) {
+        this.addChild(child);
       }
     }
 
@@ -3364,7 +3359,7 @@ class BleAttributreAbstruct {
    */
 
   read() {}
-  write(data) {}
+  write() {}
 
   writeNumber(val) {
     this.write([val]);
@@ -3416,7 +3411,7 @@ class BleAttributreAbstruct {
 
   readFromRemoteWait() {
     return new Promise(resolve => {
-      this.emitter.once("onreadfromremote", params => {
+      this.emitter.once("onreadfromremote", () => {
         resolve();
       });
     });
@@ -3474,7 +3469,7 @@ class BleAttributreAbstruct {
   }
 }
 
-module.exports = BleAttributreAbstruct;
+module.exports = BleAttributeAbstract;
 
 /***/ }),
 
@@ -3517,6 +3512,7 @@ class BleCharacteristic extends BleAttributeAbstract {
   get childrenClass() {
     return BleDescriptor;
   }
+
   get childrenName() {
     return "descriptors";
   }
@@ -3539,6 +3535,7 @@ class BleCharacteristic extends BleAttributeAbstract {
       this.properties.push(param);
     }
   }
+
   removeProperty(param) {
     this.properties = this.properties.filter(elm => {
       return elm !== param;
@@ -3550,6 +3547,7 @@ class BleCharacteristic extends BleAttributeAbstract {
       this.permissions.push(param);
     }
   }
+
   removePermission(param) {
     this.permissions = this.permissions.filter(elm => {
       return elm !== param;
@@ -3612,14 +3610,8 @@ module.exports = BleCharacteristic;
 "use strict";
 
 
-const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
-/**
- * 
- * @param {type} rawData
- * @return {BleServiuce}
- */
 class BleDescriptor extends BleAttributeAbstract {
 
   constructor(obj) {
@@ -3640,6 +3632,7 @@ class BleDescriptor extends BleAttributeAbstract {
       this.permissions.push(param);
     }
   }
+
   removePermission(param) {
     this.permissions = this.permissions.filter(elm => {
       return elm !== param;
@@ -3720,8 +3713,8 @@ class BlePeripheral {
 
   setJson(json) {
     if (json["services"]) {
-      for (var key in json["services"]) {
-        this.addService(json["services"][key]);
+      for (let service of json["services"]) {
+        this.addService(service);
       }
     }
   }
@@ -3756,22 +3749,20 @@ class BlePeripheral {
   }
 
   findCharacteristic(param) {
-    var serviceUuid = param.service_uuid.toLowerCase();
-    var characteristicUuid = param.characteristic_uuid.toLowerCase();
-    var s = this.getService(serviceUuid);
+    let serviceUuid = param.service_uuid.toLowerCase();
+    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let s = this.getService(serviceUuid);
     if (s) {
-      var c = s.getCharacteristic(characteristicUuid);
-      return c;
+      return s.getCharacteristic(characteristicUuid);
     }
     return null;
   }
 
   findDescriptor(param) {
-    var descriptorUuid = param.descriptor_uuid.toLowerCase();
-    var c = this.findCharacteristic(param);
+    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let c = this.findCharacteristic(param);
     if (c) {
-      var d = c.getDescriptor(descriptorUuid);
-      return d;
+      return c.getDescriptor(descriptorUuid);
     }
     return null;
   }
@@ -3781,6 +3772,7 @@ class BlePeripheral {
   }
 
   onconnectionupdates() {}
+
   onerror() {}
 }
 
@@ -3798,11 +3790,9 @@ module.exports = BlePeripheral;
 "use strict";
 
 
-const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
-const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
-class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
+class BleRemoteAttributeAbstract extends BleAttributeAbstract {
 
   constructor(params) {
     super(params);
@@ -3832,7 +3822,7 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
 
   discoverChildrenWait() {
     return new Promise(resolve => {
-      this.emitter.once("discoverfinished", params => {
+      this.emitter.once("discoverfinished", () => {
         let children = this.children.filter(elm => {
           return elm.discoverdOnRemote;
         });
@@ -3872,7 +3862,7 @@ class BleRemoteAttributreAbstruct extends BleAttributeAbstract {
   }
 }
 
-module.exports = BleRemoteAttributreAbstruct;
+module.exports = BleRemoteAttributeAbstract;
 
 /***/ }),
 
@@ -3886,7 +3876,6 @@ module.exports = BleRemoteAttributreAbstruct;
 "use strict";
 
 
-const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
@@ -3908,6 +3897,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   get childrenClass() {
     return BleRemoteDescriptor;
   }
+
   get childrenName() {
     return "descriptors";
   }
@@ -3915,6 +3905,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   addDescriptor(params) {
     return this.addChild(params);
   }
+
   //
   // getCharacteristic(params) {
   //   return this.getChild(params)
@@ -3926,14 +3917,14 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     if (obj) {
       return obj;
     }
-    var newCharacteristic = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    let newCharacteristic = new BleRemoteDescriptor(this.Obniz, this, uuid);
     this.addChild(newCharacteristic);
     return newCharacteristic;
   }
 
   registerNotify(callback) {
     this.onnotify = callback;
-    var obj = {
+    const obj = {
       "ble": {
         "register_notify_characteristic": {
           "address": this.service.peripheral.address,
@@ -3947,7 +3938,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   unregisterNotify() {
     this.onnotify = function () {};
-    var obj = {
+    const obj = {
       "ble": {
         "unregister_notify_characteristic": {
           "address": this.service.peripheral.address,
@@ -3959,16 +3950,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     this.service.peripheral.Obniz.send(obj);
   }
 
-  readFromRemoteWait() {
-    return new Promise(resolve => {
-      this.emitter.once("onreadfromremote", params => {
-        resolve();
-      });
-    });
-  }
-
   read() {
-    var obj = {
+    const obj = {
       "ble": {
         "read_characteristic": {
           "address": this.service.peripheral.address,
@@ -3981,7 +3964,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   write(array) {
-    var obj = {
+    const obj = {
       "ble": {
         "write_characteristic": {
           "address": this.service.peripheral.address,
@@ -3995,7 +3978,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    var obj = {
+    const obj = {
       "ble": {
         "get_descriptors": {
           "address": this.service.peripheral.address,
@@ -4027,18 +4010,23 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   canBroadcast() {
     return this.properties.includes("broadcast");
   }
+
   canNotify() {
     return this.properties.includes("notify");
   }
+
   canRead() {
     return this.properties.includes("read");
   }
+
   canWrite() {
     return this.properties.includes("write");
   }
+
   canWriteWithoutResponse() {
     return this.properties.includes("write_without_response");
   }
+
   canIndicate() {
     return this.properties.includes("indicate");
   }
@@ -4046,15 +4034,19 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   ondiscover(descriptor) {
     this.ondiscoverdescriptor(descriptor);
   }
+
   ondiscoverfinished(descriptors) {
     this.ondiscoverdescriptorfinished(descriptors);
   }
 
-  ondiscoverdescriptor(descriptor) {}
-  ondiscoverdescriptorfinished(services) {}
+  ondiscoverdescriptor() {}
+
+  ondiscoverdescriptorfinished() {}
 
   onregisternofity() {}
+
   onunregisternofity() {}
+
   onnotify() {}
 
   notifyFromServer(notifyName, params) {
@@ -4079,6 +4071,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
 }
+
 module.exports = BleRemoteCharacteristic;
 
 /***/ }),
@@ -4105,7 +4098,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    var obj = {
+    const obj = {
       "ble": {
         "read_descriptor": {
           "address": this.characteristic.service.peripheral.address,
@@ -4119,7 +4112,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   write(array) {
-    var obj = {
+    const obj = {
       "ble": {
         "write_descriptor": {
           "address": this.characteristic.service.peripheral.address,
@@ -4151,7 +4144,6 @@ module.exports = BleRemoteDescriptor;
 
 const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleRemotePeripheral {
 
@@ -4160,6 +4152,13 @@ class BleRemotePeripheral {
     this.address = address;
     this.connected = false;
 
+    this.device_type = null;
+    this.address_type = null;
+    this.ble_event_type = null;
+    this.rssi = null;
+    this.adv_data = null;
+    this.scan_resp = null;
+
     this.keys = ["device_type", "address_type", "ble_event_type", "rssi", "adv_data", "scan_resp"];
 
     this.services = [];
@@ -4167,25 +4166,22 @@ class BleRemotePeripheral {
   }
 
   /**
-   * 
+   *
    * @return {String} json value
    */
   toString() {
     return JSON.stringify({
-      id: this.id,
       address: this.address,
-      addressType: this.addressType,
-      connectable: this.connectable,
+      addressType: this.address_type,
       advertisement: this.adv_data,
       scanResponse: this.scan_resp,
-      rssi: this.rssi,
-      state: this.state
+      rssi: this.rssi
     });
   }
 
   setParams(dic) {
-    for (var key in dic) {
-      if (this.keys.includes(key)) {
+    for (let key in dic) {
+      if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
         this[key] = dic[key];
       }
     }
@@ -4195,10 +4191,10 @@ class BleRemotePeripheral {
     if (!this.advertise_data_rows) {
       this.advertise_data_rows = [];
       if (this.adv_data) {
-        for (var i = 0; i < this.adv_data.length; i++) {
-          var length = this.adv_data[i];
-          var arr = new Array(length);
-          for (var j = 0; j < length; j++) {
+        for (let i = 0; i < this.adv_data.length; i++) {
+          let length = this.adv_data[i];
+          let arr = new Array(length);
+          for (let j = 0; j < length; j++) {
             arr[j] = this.adv_data[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -4207,10 +4203,10 @@ class BleRemotePeripheral {
       }
       if (this.scan_resp) {
 
-        for (var i = 0; i < this.scan_resp.length; i++) {
-          var length = this.scan_resp[i];
-          var arr = new Array(length);
-          for (var j = 0; j < length; j++) {
+        for (let i = 0; i < this.scan_resp.length; i++) {
+          let length = this.scan_resp[i];
+          let arr = new Array(length);
+          for (let j = 0; j < length; j++) {
             arr[j] = this.scan_resp[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -4220,11 +4216,11 @@ class BleRemotePeripheral {
     }
   }
 
-  serarchTypeVal(type) {
+  searchTypeVal(type) {
     this.analyseAdvertisement();
-    for (var i = 0; i < this.advertise_data_rows.length; i++) {
+    for (let i = 0; i < this.advertise_data_rows.length; i++) {
       if (this.advertise_data_rows[i][0] === type) {
-        var results = [].concat(this.advertise_data_rows[i]);
+        let results = [].concat(this.advertise_data_rows[i]);
         results.shift();
         return results;
       }
@@ -4232,31 +4228,31 @@ class BleRemotePeripheral {
     return undefined;
   }
 
-  localName() {
-    var data = this.serarchTypeVal(0x09);
+  get localName() {
+    let data = this.searchTypeVal(0x09);
     if (!data) {
-      data = this.serarchTypeVal(0x08);
+      data = this.searchTypeVal(0x08);
     }
     if (!data) return null;
     return String.fromCharCode.apply(null, data);
   }
 
-  iBeacon() {
-    var data = this.serarchTypeVal(0xFF);
+  get iBeacon() {
+    let data = this.searchTypeVal(0xFF);
     if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) return null;
 
-    var uuidData = data.slice(4, 20);
-    var uuid = "";
-    for (var i = 0; i < uuidData.length; i++) {
+    let uuidData = data.slice(4, 20);
+    let uuid = "";
+    for (let i = 0; i < uuidData.length; i++) {
       uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
       if (i === 4 - 1 || i === 4 + 2 - 1 || i === 4 + 2 * 2 - 1 || i === 4 + 2 * 3 - 1) {
         uuid += "-";
       }
     }
 
-    var major = (data[20] << 8) + data[21];
-    var minor = (data[22] << 8) + data[23];
-    var power = data[24];
+    let major = (data[20] << 8) + data[21];
+    let minor = (data[22] << 8) + data[23];
+    let power = data[24];
 
     return {
       uuid: uuid,
@@ -4272,23 +4268,23 @@ class BleRemotePeripheral {
     let uuidLength = bit / 4;
     for (let i = 0; i < data.length; i = i + uuidLength) {
       let one = data.slice(i, i + uuidLength);
-      results.push(this.Obniz.ble._dataArray2uuidHex(one, true));
+      results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
     }
   }
 
   advertisementServiceUuids() {
     let results = [];
-    this._addServiceUuids(results, this.serarchTypeVal(0x02), 16);
-    this._addServiceUuids(results, this.serarchTypeVal(0x03), 16);
-    this._addServiceUuids(results, this.serarchTypeVal(0x04), 32);
-    this._addServiceUuids(results, this.serarchTypeVal(0x05), 32);
-    this._addServiceUuids(results, this.serarchTypeVal(0x06), 64);
-    this._addServiceUuids(results, this.serarchTypeVal(0x07), 64);
+    this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
+    this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
+    this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
+    this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
+    this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
+    this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
     return results;
   }
 
   connect() {
-    var obj = {
+    let obj = {
       "ble": {
         "connect": {
           "address": this.address
@@ -4308,7 +4304,7 @@ class BleRemotePeripheral {
   }
 
   disconnect() {
-    var obj = {
+    let obj = {
       "ble": {
         "disconnect": {
           "address": this.address
@@ -4318,52 +4314,45 @@ class BleRemotePeripheral {
     this.Obniz.send(obj);
   }
 
-  updateRssi() {
-    throw new Error("todo");
-  }
-
   getService(uuid) {
     uuid = uuid.toLowerCase();
-    for (var key in this.services) {
+    for (let key in this.services) {
       if (this.services[key].uuid === uuid) {
         return this.services[key];
       }
     }
-    var newService = new BleRemoteService({ uuid });
+    let newService = new BleRemoteService({ uuid });
     newService.parent = this;
     this.services.push(newService);
     return newService;
   }
 
   findService(param) {
-    var serviceUuid = param.service_uuid.toLowerCase();
-    var s = this.getService(serviceUuid);
-    return s;
+    let serviceUuid = param.service_uuid.toLowerCase();
+    return this.getService(serviceUuid);
   }
 
   findCharacteristic(param) {
-    var serviceUuid = param.service_uuid.toLowerCase();
-    var characteristicUuid = param.characteristic_uuid.toLowerCase();
-    var s = this.getService(serviceUuid);
+    let serviceUuid = param.service_uuid.toLowerCase();
+    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let s = this.getService(serviceUuid);
     if (s) {
-      var c = s.getCharacteristic(characteristicUuid);
-      return c;
+      return s.getCharacteristic(characteristicUuid);
     }
     return null;
   }
 
   findDescriptor(param) {
-    var descriptorUuid = param.descriptor_uuid.toLowerCase();
-    var c = this.findCharacteristic(param);
+    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let c = this.findCharacteristic(param);
     if (c) {
-      var d = c.getDescriptor(descriptorUuid);
-      return d;
+      return c.getDescriptor(descriptorUuid);
     }
     return null;
   }
 
   discoverAllServices() {
-    var obj = {
+    let obj = {
       "ble": {
         "get_services": {
           "address": this.address
@@ -4386,13 +4375,15 @@ class BleRemotePeripheral {
   }
 
   onconnect() {}
+
   ondisconnect() {}
 
-  ondiscoverservice(service) {}
+  ondiscoverservice() {}
 
-  ondiscoverservicefinished(services) {}
+  ondiscoverservicefinished() {}
 
   ondiscover() {}
+
   ondiscoverfinished() {}
 
   notifyFromServer(notifyName, params) {
@@ -4428,7 +4419,7 @@ class BleRemotePeripheral {
     }
   }
 
-  onerror(err) {}
+  onerror() {}
 }
 
 module.exports = BleRemotePeripheral;
@@ -4461,6 +4452,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   get childrenClass() {
     return BleRemoteCharacteristic;
   }
+
   get childrenName() {
     return "characteristics";
   }
@@ -4476,12 +4468,13 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   discoverAllCharacteristics() {
     return this.discoverChildren();
   }
+
   discoverAllCharacteristicsWait() {
     return this.discoverChildrenWait();
   }
 
   discoverChildren() {
-    var obj = {
+    const obj = {
       "ble": {
         "get_characteristics": {
           "address": this.peripheral.address,
@@ -4495,12 +4488,14 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   ondiscover(characteristic) {
     this.ondiscovercharacteristic(characteristic);
   }
+
   ondiscoverfinished(characteristics) {
     this.ondiscovercharacteristicfinished(characteristics);
   }
 
-  ondiscovercharacteristic(characteristic) {}
-  ondiscovercharacteristicfinished(characteristics) {}
+  ondiscovercharacteristic() {}
+
+  ondiscovercharacteristicfinished() {}
 }
 
 module.exports = BleRemoteService;
@@ -4518,6 +4513,7 @@ module.exports = BleRemoteService;
 
 
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+
 class BleScan {
   constructor(Obniz) {
     this.scanTarget = null;
@@ -4528,7 +4524,7 @@ class BleScan {
   }
 
   start(target, settings) {
-    var obj = {};
+    let obj = {};
     obj["ble"] = {};
     obj["ble"]["scan"] = {
       //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
@@ -4545,25 +4541,44 @@ class BleScan {
     }
     this.scanedPeripherals = [];
     this.Obniz.send(obj);
-    return;
   }
 
-  startWait(target, settings) {
-    return new Promise.race([new Promise(resolve => {
+  startOneWait(target, settings) {
+    let state = 0;
+
+    return new Promise(resolve => {
       this.emitter.once("onfind", param => {
-        resolve(param);
+        if (state === 0) {
+          state = 1;
+          this.end();
+          resolve(param);
+        }
       });
-    }), new Promise(resolve => {
-      this.emitter.once("onfinish", param => {
-        resolve(null);
+
+      this.emitter.once("onfinish", () => {
+        if (state === 0) {
+          state = 1;
+          resolve(null);
+        }
       });
 
       this.start(target, settings);
-    })]);
+    });
+  }
+
+  startAllWait(target, settings) {
+
+    return new Promise(resolve => {
+      this.emitter.once("onfinish", () => {
+        resolve(this.scanedPeripherals);
+      });
+
+      this.start(target, settings);
+    });
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj["ble"] = {};
     obj["ble"]["scan"] = null;
     this.Obniz.send(obj);
@@ -4641,6 +4656,7 @@ class BleService extends BleAttributeAbstract {
   get childrenName() {
     return "characteristics";
   }
+
   get childrenClass() {
     return BleCharacteristic;
   }

@@ -53,14 +53,13 @@ describe("7-ble", function () {
     console.log("service created");
     await obnizA.pingWait();
     console.log("scannning");
-    await obnizB.ble.scan.startWait({uuids: ["FFF0"]});
-    let peripheral = await obnizB.ble.scan.startWait({uuids: ["FFF0"]});
+    let peripheral = await obnizB.ble.scan.startOneWait({uuids: ["FFF0"]});
     if (!peripheral) {
       throw new Error("NOT FOUND");
     }
     console.log("FOUND");
 
-    expect(obnizA.ble.adv_data).to.be.deep.equal(peripheral.adv_data);
+    expect(obnizA.ble.advertisement.adv_data).to.be.deep.equal(peripheral.adv_data);
 
     let connected = await peripheral.connectWait();
     if (!connected) {

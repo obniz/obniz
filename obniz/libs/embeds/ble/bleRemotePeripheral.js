@@ -1,15 +1,20 @@
-
 const BleRemoteService = require("./bleRemoteService");
 const emitter = require("eventemitter3");
-const BleAttributeAbstract = require("./bleAttributeAbstract");
 
 class BleRemotePeripheral {
 
-  constructor(Obniz, address){
+  constructor(Obniz, address) {
     this.Obniz = Obniz;
     this.address = address;
     this.connected = false;
-    
+
+    this.device_type = null;
+    this.address_type = null;
+    this.ble_event_type = null;
+    this.rssi = null;
+    this.adv_data = null;
+    this.scan_resp = null;
+
     this.keys = [
       "device_type",
       "address_type",
@@ -18,32 +23,29 @@ class BleRemotePeripheral {
       "adv_data",
       "scan_resp",
     ];
-    
+
     this.services = [];
     this.emitter = new emitter();
   }
 
-/**
- * 
- * @return {String} json value
- */
+  /**
+   *
+   * @return {String} json value
+   */
   toString() {
     return JSON.stringify({
-      id: this.id,
       address: this.address,
-      addressType: this.addressType,
-      connectable: this.connectable,
+      addressType: this.address_type,
       advertisement: this.adv_data,
       scanResponse: this.scan_resp,
-      rssi: this.rssi,
-      state: this.state
+      rssi: this.rssi
     });
   }
 
   setParams(dic) {
-    for(var key in dic){
-      if(this.keys.includes(key)){
-        this[key] = dic[key] ;
+    for (let key in dic) {
+      if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
+        this[key] = dic[key];
       }
     }
   }
@@ -52,10 +54,10 @@ class BleRemotePeripheral {
     if (!this.advertise_data_rows) {
       this.advertise_data_rows = [];
       if (this.adv_data) {
-        for (var i = 0; i < this.adv_data.length; i++) {
-          var length = this.adv_data[i];
-          var arr = new Array(length);
-          for (var j = 0; j < length; j++) {
+        for (let i = 0; i < this.adv_data.length; i++) {
+          let length = this.adv_data[i];
+          let arr = new Array(length);
+          for (let j = 0; j < length; j++) {
             arr[j] = this.adv_data[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -63,11 +65,11 @@ class BleRemotePeripheral {
         }
       }
       if (this.scan_resp) {
-  
-        for (var i = 0; i < this.scan_resp.length; i++) {
-          var length = this.scan_resp[i];
-          var arr = new Array(length);
-          for (var j = 0; j < length; j++) {
+
+        for (let i = 0; i < this.scan_resp.length; i++) {
+          let length = this.scan_resp[i];
+          let arr = new Array(length);
+          for (let j = 0; j < length; j++) {
             arr[j] = this.scan_resp[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -78,11 +80,11 @@ class BleRemotePeripheral {
   }
 
 
-  serarchTypeVal(type){
+  searchTypeVal(type) {
     this.analyseAdvertisement();
-    for(var i = 0;i<this.advertise_data_rows.length;i++){
-      if(this.advertise_data_rows[i][0] === type){
-        var results = [].concat(this.advertise_data_rows[i]);
+    for (let i = 0; i < this.advertise_data_rows.length; i++) {
+      if (this.advertise_data_rows[i][0] === type) {
+        let results = [].concat(this.advertise_data_rows[i]);
         results.shift();
         return results;
       }
@@ -90,160 +92,162 @@ class BleRemotePeripheral {
     return undefined;
   }
 
-  localName(){
-    var data = this.serarchTypeVal(0x09);
-    if(!data){
-       data = this.serarchTypeVal(0x08);
+  get localName() {
+    let data = this.searchTypeVal(0x09);
+    if (!data) {
+      data = this.searchTypeVal(0x08);
     }
-    if(!data)return null;
+    if (!data) return null;
     return String.fromCharCode.apply(null, data);
   }
 
-  iBeacon(){
-    var data = this.serarchTypeVal(0xFF);
-    if(!data 
+  get iBeacon() {
+    let data = this.searchTypeVal(0xFF);
+    if (!data
         || data[0] !== 0x4c
         || data[1] !== 0x00
         || data[2] !== 0x02
-        || data[3] !== 0x15 
-        || data.length !== 25)return null;
-    
-    var uuidData = data.slice(4, 20);
-    var uuid = "";
-    for(var i = 0; i< uuidData.length;i++){
-      uuid = uuid + (( '00' + uuidData[i].toString(16) ).slice( -2 ));
-      if(i === (4-1) ||i === (4+2-1) ||i === (4+2*2-1) ||i === (4+2*3-1) ){
+        || data[3] !== 0x15
+        || data.length !== 25) return null;
+
+    let uuidData = data.slice(4, 20);
+    let uuid = "";
+    for (let i = 0; i < uuidData.length; i++) {
+      uuid = uuid + (('00' + uuidData[i].toString(16)).slice(-2));
+      if (i === (4 - 1) || i === (4 + 2 - 1) || i === (4 + 2 * 2 - 1) || i === (4 + 2 * 3 - 1)) {
         uuid += "-";
       }
     }
-    
-    var major = (data[20]<<8) + data[21];
-    var minor = (data[22]<<8) + data[23];
-    var power = data[24];
-    
+
+    let major = (data[20] << 8) + data[21];
+    let minor = (data[22] << 8) + data[23];
+    let power = data[24];
+
     return {
-      uuid : uuid,
+      uuid: uuid,
       major: major,
-      minor :minor,
-      power :power,
-      rssi :this.rssi
+      minor: minor,
+      power: power,
+      rssi: this.rssi
     };
   }
 
-  _addServiceUuids(results, data, bit){
-    if(!data)return;
+  _addServiceUuids(results, data, bit) {
+    if (!data) return;
     let uuidLength = bit / 4;
-    for(let i =0; i< data.length; i = i + uuidLength){
-      let one = data.slice(i,i+uuidLength);
-      results.push(this.Obniz.ble._dataArray2uuidHex(one,true));
+    for (let i = 0; i < data.length; i = i + uuidLength) {
+      let one = data.slice(i, i + uuidLength);
+      results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
     }
   }
 
-  advertisementServiceUuids(){
+  advertisementServiceUuids() {
     let results = [];
-    this._addServiceUuids(results,this.serarchTypeVal(0x02), 16);
-    this._addServiceUuids(results,this.serarchTypeVal(0x03), 16);
-    this._addServiceUuids(results,this.serarchTypeVal(0x04), 32);
-    this._addServiceUuids(results,this.serarchTypeVal(0x05), 32);
-    this._addServiceUuids(results,this.serarchTypeVal(0x06), 64);
-    this._addServiceUuids(results,this.serarchTypeVal(0x07), 64);
+    this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
+    this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
+    this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
+    this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
+    this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
+    this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
     return results;
   }
 
 
-  connect(){
-    var obj = {
-      "ble" :{
-        "connect" :{
-          "address" : this.address
+  connect() {
+    let obj = {
+      "ble": {
+        "connect": {
+          "address": this.address
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  connectWait(){
-    return new Promise((resolve)=>{
-      this.emitter.once("statusupdate", (params)=>{
+  connectWait() {
+    return new Promise((resolve) => {
+      this.emitter.once("statusupdate", (params) => {
         resolve(params.status === "connected");
       });
       this.connect();
     })
   }
 
-  disconnect(){
-    var obj = {
-      "ble" :{
-        "disconnect" :{
-          "address" : this.address
-        }
-      }
-    };
-    this.Obniz.send(obj); 
-  }
-
-
-
-  updateRssi(){
-    throw new Error("todo");
-  }
-
-  getService(uuid){
-    uuid = uuid.toLowerCase();
-    for(var key in this.services){
-      if(this.services[key].uuid === uuid){
-        return this.services[key];
-      }
-    }
-    var newService = new BleRemoteService({uuid});
-    newService.parent = this;
-    this.services.push(newService);
-    return newService;
-  }
-
-  findService(param){
-    var serviceUuid = param.service_uuid.toLowerCase() ;
-    var s = this.getService(serviceUuid);
-    return s;
-  }
-
-  findCharacteristic(param){
-    var serviceUuid = param.service_uuid.toLowerCase() ;
-    var characteristicUuid = param.characteristic_uuid.toLowerCase() ;
-    var s = this.getService(serviceUuid);
-    if(s){
-      var c = s.getCharacteristic(characteristicUuid);
-      return c;
-    }
-    return null;
-  }
-
-  findDescriptor(param){
-    var descriptorUuid = param.descriptor_uuid.toLowerCase() ;
-    var c = this.findCharacteristic(param);
-    if(c){
-      var d = c.getDescriptor(descriptorUuid);
-      return d;
-    }
-    return null;
-  }
-
-
-  discoverAllServices(){
-    var obj = {
-      "ble" :{
-        "get_services" :{
-          "address" : this.address
+  disconnect() {
+    let obj = {
+      "ble": {
+        "disconnect": {
+          "address": this.address
         }
       }
     };
     this.Obniz.send(obj);
   }
 
-  discoverAllServicesWait(){
-    return new Promise((resolve)=>{
-      this.emitter.once("discoverfinished", ()=>{
-        let children = this.services.filter(elm=>{return elm.discoverdOnRemote;});
+  connectWait() {
+    return new Promise((resolve) => {
+      this.emitter.once("statusupdate", (params) => {
+        resolve(params.status === "disconnected");
+      });
+      this.disconnect();
+    })
+  }
+
+  getService(uuid) {
+    uuid = uuid.toLowerCase();
+    for (let key in this.services) {
+      if (this.services[key].uuid === uuid) {
+        return this.services[key];
+      }
+    }
+    let newService = new BleRemoteService({uuid});
+    newService.parent = this;
+    this.services.push(newService);
+    return newService;
+  }
+
+  findService(param) {
+    let serviceUuid = param.service_uuid.toLowerCase();
+    return this.getService(serviceUuid);
+  }
+
+  findCharacteristic(param) {
+    let serviceUuid = param.service_uuid.toLowerCase();
+    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let s = this.getService(serviceUuid);
+    if (s) {
+      return s.getCharacteristic(characteristicUuid);
+    }
+    return null;
+  }
+
+  findDescriptor(param) {
+    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let c = this.findCharacteristic(param);
+    if (c) {
+      return c.getDescriptor(descriptorUuid);
+    }
+    return null;
+  }
+
+
+  discoverAllServices() {
+    let obj = {
+      "ble": {
+        "get_services": {
+          "address": this.address
+        }
+      }
+    };
+    this.Obniz.send(obj);
+  }
+
+  discoverAllServicesWait() {
+    return new Promise((resolve) => {
+      this.emitter.once("discoverfinished", () => {
+        let children = this.services.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
         resolve(children);
       });
       this.discoverAllServices();
@@ -251,26 +255,32 @@ class BleRemotePeripheral {
     })
   }
 
-  onconnect(){};
-  ondisconnect(){};
-
-
-  ondiscoverservice(service){};
-
-  ondiscoverservicefinished(services){};
-
-
-  ondiscover(){
-
+  onconnect() {
   };
-  ondiscoverfinished(){
 
+  ondisconnect() {
   };
 
 
-  notifyFromServer(notifyName, params){
+  ondiscoverservice() {
+  };
+
+  ondiscoverservicefinished() {
+  };
+
+
+  ondiscover() {
+
+  };
+
+  ondiscoverfinished() {
+
+  };
+
+
+  notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
-    switch(notifyName){
+    switch (notifyName) {
       case "statusupdate" : {
         if (params.status === "connected") {
           this.connected = true;
@@ -289,14 +299,17 @@ class BleRemotePeripheral {
         break;
       }
       case "discoverfinished" : {
-        let children = this.services.filter(elm=>{return elm.discoverdOnRemote;});
+        let children = this.services.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
         this.ondiscoverservicefinished(children);
         break;
       }
     }
   }
 
-  onerror(err){};
+  onerror() {
+  };
 
 }
 

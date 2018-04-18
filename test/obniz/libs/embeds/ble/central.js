@@ -78,8 +78,8 @@ describe("ble", function () {
 
     expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26, 26, 255, 76, 0, 2, 21, 201, 97, 172, 167, 148, 166, 64, 120, 177, 255, 150, 44, 178, 85, 204, 219, 61, 131, 104, 10, 200]);
     expect(peripheral.scan_resp).to.be.deep.equal([22, 9, 83, 83, 83, 83, 83, 83, 83, 101, 114, 118, 105, 99, 101, 55, 56, 58, 70, 54, 58, 69, 53]);
-    expect(peripheral.localName()).to.be.equal("SSSSSSService78:F6:E5");
-    expect(peripheral.iBeacon()).to.be.deep.equal({major: 15747, minor: 26634, power: 200, rssi: -82, uuid: "c961aca7-94a6-4078-b1ff-962cb255ccdb"});
+    expect(peripheral.localName).to.be.equal("SSSSSSService78:F6:E5");
+    expect(peripheral.iBeacon).to.be.deep.equal({major: 15747, minor: 26634, power: 200, rssi: -82, uuid: "c961aca7-94a6-4078-b1ff-962cb255ccdb"});
 
     expect(this.obniz).to.be.finished;
   });
@@ -115,8 +115,8 @@ describe("ble", function () {
 
 
     expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26]);
-    expect(peripheral.localName()).to.be.null;
-    expect(peripheral.iBeacon()).to.be.null;
+    expect(peripheral.localName).to.be.null;
+    expect(peripheral.iBeacon).to.be.null;
 
     expect(this.obniz).to.be.finished;
   });
@@ -205,8 +205,8 @@ describe("ble", function () {
 
 
     expect(peripheral.adv_data).to.be.deep.equal([2, 1, 26]);
-    expect(peripheral.localName()).to.be.null;
-    expect(peripheral.iBeacon()).to.be.null;
+    expect(peripheral.localName).to.be.null;
+    expect(peripheral.iBeacon).to.be.null;
 
     expect(this.obniz).to.be.finished;
   });

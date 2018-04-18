@@ -1,11 +1,10 @@
-
 const BleAttributeAbstract = require("./bleAttributeAbstract");
 const BleCharacteristic = require("./bleCharacteristic");
 
 
-class BleService extends BleAttributeAbstract{
+class BleService extends BleAttributeAbstract {
 
-  constructor(obj){
+  constructor(obj) {
     super(obj);
 
 
@@ -13,14 +12,15 @@ class BleService extends BleAttributeAbstract{
     this.getCharacteristic = this.getChild;
   }
 
-  get parentName(){
+  get parentName() {
     return "peripheral";
   }
 
-  get childrenName(){
+  get childrenName() {
     return "characteristics";
   }
-  get childrenClass(){
+
+  get childrenClass() {
     return BleCharacteristic;
   }
 
@@ -31,13 +31,13 @@ class BleService extends BleAttributeAbstract{
     }
   }
 
-  end(){
+  end() {
     this.peripheral.Obniz.send(
         {
-          ble : {
+          ble: {
             peripheral: {
               stop_service: {
-                service_uuid: this.uuid.toLowerCase() ,
+                service_uuid: this.uuid.toLowerCase(),
               }
             }
           }
@@ -46,7 +46,7 @@ class BleService extends BleAttributeAbstract{
     this.peripheral.removeService(this.uuid);
   }
 
-  notify(notifyName, params){
+  notify(notifyName, params) {
     //nothing
   }
 }

@@ -86,7 +86,7 @@ describe("ble", function () {
 
   it("to string", function () {
     let str = "" + this.peripheral;
-    expect(str).to.be.equal("{\"address\":\"e5f678800700\",\"advertisement\":[2,1,26],\"scanResponse\":[],\"rssi\":-82}");
+    expect(str).to.be.equal("{\"address\":\"e5f678800700\",\"addressType\":\"public\",\"advertisement\":[2,1,26],\"scanResponse\":[],\"rssi\":-82}");
   });
 
   it("disconnect", function () {

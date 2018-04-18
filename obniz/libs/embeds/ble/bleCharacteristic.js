@@ -1,119 +1,119 @@
-
 const BleDescriptor = require("./bleDescriptor");
 const BleAttributeAbstract = require("./bleAttributeAbstract");
 
-class BleCharacteristic extends BleAttributeAbstract{
-  
-  constructor(obj){
+class BleCharacteristic extends BleAttributeAbstract {
+
+  constructor(obj) {
     super(obj);
 
     this.addDescriptor = this.addChild;
     this.getDescriptor = this.getChild;
 
     this.properties = obj.properties || [];
-    if(!Array.isArray(this.properties)){
+    if (!Array.isArray(this.properties)) {
       this.properties = [this.properties];
     }
 
     this.permissions = obj.permissions || [];
-    if(!Array.isArray(this.permissions)){
+    if (!Array.isArray(this.permissions)) {
       this.permissions = [this.permissions];
     }
 
   }
 
-  get parentName(){
+  get parentName() {
     return "service";
   }
 
-  get childrenClass(){
+  get childrenClass() {
     return BleDescriptor;
   }
-  get childrenName(){
+
+  get childrenName() {
     return "descriptors";
   }
 
 
-
-  toJSON (){
+  toJSON() {
     let obj = super.toJSON();
 
-    if (this.properties.length > 0 ) {
-      obj.properties =  this.properties;
+    if (this.properties.length > 0) {
+      obj.properties = this.properties;
     }
 
-    if (this.permissions.length > 0 ) {
-      obj.permissions =  this.permissions;
+    if (this.permissions.length > 0) {
+      obj.permissions = this.permissions;
     }
     return obj;
   }
 
-  addProperty(param){
-    if(!this.properties.includes(param)){
+  addProperty(param) {
+    if (!this.properties.includes(param)) {
       this.properties.push(param);
     }
   }
-  removeProperty(param){
-    this.properties = this.properties.filter(elm=>{
+
+  removeProperty(param) {
+    this.properties = this.properties.filter(elm => {
       return elm !== param;
     })
 
   }
 
-  addPermission(param){
-    if(!this.permissions.includes(param)){
+  addPermission(param) {
+    if (!this.permissions.includes(param)) {
       this.permissions.push(param);
     }
   }
-  removePermission(param){
-    this.permissions = this.permissions.filter(elm=>{
+
+  removePermission(param) {
+    this.permissions = this.permissions.filter(elm => {
       return elm !== param;
     })
 
   }
 
-  write(data){
+  write(data) {
     this.service.peripheral.Obniz.send(
         {
-          ble : {
-          peripheral: {
-            write_characteristic: {
-              service_uuid: this.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.uuid.toLowerCase() ,
-              data: data
-            }
-          }
-        }
-      }
-    );
-  }
-
-
-
-  read(){
-    this.service.peripheral.Obniz.send(
-        {
-          ble : {
-          peripheral: {
-            read_characteristic: {
-              service_uuid: this.service.uuid.toLowerCase() ,
-              characteristic_uuid: this.uuid.toLowerCase() ,
-            }
-          }
-        }
-      }
-    );
-  }
-
-
-  notify(){
-    this.service.peripheral.Obniz.send(
-        {
-          ble : {
+          ble: {
             peripheral: {
-               notify_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase() ,
-                characteristic_uuid: this.uuid.toLowerCase() ,
+              write_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase(),
+                characteristic_uuid: this.uuid.toLowerCase(),
+                data: data
+              }
+            }
+          }
+        }
+    );
+  }
+
+
+  read() {
+    this.service.peripheral.Obniz.send(
+        {
+          ble: {
+            peripheral: {
+              read_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase(),
+                characteristic_uuid: this.uuid.toLowerCase(),
+              }
+            }
+          }
+        }
+    );
+  }
+
+
+  notify() {
+    this.service.peripheral.Obniz.send(
+        {
+          ble: {
+            peripheral: {
+              notify_characteristic: {
+                service_uuid: this.service.uuid.toLowerCase(),
+                characteristic_uuid: this.uuid.toLowerCase(),
               }
             }
           }
