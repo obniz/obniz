@@ -7035,6 +7035,14 @@ module.exports = class ObnizConnection {
     }
   }
 
+  _canConnectToInsecure() {
+    if (this.isNode) {
+      return true;
+    } else {
+      return (location.protocol != 'https:');
+    }
+  }
+
   handleWSCommand(wsObj) {
     // 
     if (wsObj.ready) {
@@ -7042,7 +7050,8 @@ module.exports = class ObnizConnection {
       if (wsObj.local_connect
         && wsObj.local_connect.ip
         && this.wscommand
-        && this.options.local_connect) {
+        && this.options.local_connect
+        && this._canConnectToInsecure()) {
         this._connectLocal(wsObj.local_connect.ip);
         this._waitForLocalConnectReadyTimer = setTimeout(()=>{ this._callOnConnect(); }, 1000);
       }
