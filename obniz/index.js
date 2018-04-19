@@ -1,5 +1,6 @@
 
 const ObnizUIs = require('./ObnizUIs');
+const ObnizApi = require("./ObnizApi");
 
 /* global showObnizDebugError  */
 
@@ -107,7 +108,12 @@ module.exports = class Obniz extends ObnizUIs {
       }
     }
   }
-}
+
+  static get api(){
+    return ObnizApi;
+  }
+};
+
 
 /*===================*/
 /* Utils */

@@ -4211,6 +4211,25 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 /***/ }),
 
+/***/ "./node_modules/node-fetch/browser.js":
+/*!********************************************!*\
+  !*** ./node_modules/node-fetch/browser.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = exports = window.fetch;
+
+// Needed for TypeScript and Webpack.
+exports.default = window.fetch.bind(window);
+
+exports.Headers = window.Headers;
+exports.Request = window.Request;
+exports.Response = window.Response;
+
+
+/***/ }),
+
 /***/ "./node_modules/safe-buffer/index.js":
 /*!*******************************************!*\
   !*** ./node_modules/safe-buffer/index.js ***!
@@ -6305,6 +6324,75 @@ webpackEmptyContext.id = "./obniz sync recursive";
 
 /***/ }),
 
+/***/ "./obniz/ObnizApi.js":
+/*!***************************!*\
+  !*** ./obniz/ObnizApi.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+const fetch = __webpack_require__(/*! node-fetch */ "./node_modules/node-fetch/browser.js");
+
+class ObnizApi{
+  constructor(obnizId, options){
+    this.id = obnizId;
+    this.options = {
+      access_token: options.access_token || null,
+      obniz_server:options.obniz_server || "https://obniz.io"
+    }
+    this.urlBase = this.options.obniz_server + "/obniz/" + this.id ;
+  }
+
+  post(path, params, callback){
+    let url = this.urlBase + path;
+
+    // let query = [];
+    //query.push("XXX");
+    // if(query.length > 0){
+    //   url += "?" + query.join("&");
+    // }
+
+    let headers = {};
+    headers['Content-Type'] = 'application/json';
+    if (this.options.access_token) {
+      headers["authorization"] = "Bearer "+this.options.access_token;
+    }
+
+    let fetchParams =  {
+      method: 'POST',
+      headers,
+    };
+    if(params){
+      fetchParams["body"] = JSON.stringify(params);
+    }
+
+    return fetch(url,fetchParams).then((res)=>{
+      return res.json();
+    }).then((json)=>{
+      if(typeof callback === "function"){
+        callback(json);
+      }
+      return new Promise(resolve=>{resolve(json)});
+    });
+  }
+
+  getState(callback){
+    return this.post("/state",null,callback);
+  };
+
+
+  postJson(json,callback){
+    return this.post("/api/1",json, callback);  // 1 is api version
+  };
+
+}
+
+
+ module.exports = ObnizApi;
+
+/***/ }),
+
 /***/ "./obniz/ObnizComponents.js":
 /*!**********************************!*\
   !*** ./obniz/ObnizComponents.js ***!
@@ -6670,14 +6758,19 @@ module.exports = class ObnizConnection {
     this.close();
 
     let url = server + "/obniz/" + this.id + "/ws/1";
+
+    let query = [];
     if (this.constructor.version) {
-      url += "?obnizjs="+this.constructor.version;
+      query.push("obnizjs="+this.constructor.version);
     }
     if (this.options.access_token) {
-      url += "&access_token="+this.options._access_token;
+      query.push("access_token="+this.options.access_token);
     }
     if (this.wscommand) {
-      url += "&accept_binary=true";
+      query.push("accept_binary=true");
+    }
+    if(query.length > 0){
+      url += "?" + query.join("&");
     }
     this.print_debug("connecting to " + url);
   
@@ -7323,6 +7416,7 @@ function _ReadCookie(name) {
 
 /* WEBPACK VAR INJECTION */(function(__dirname) {
 const ObnizUIs = __webpack_require__(/*! ./ObnizUIs */ "./obniz/ObnizUIs.js");
+const ObnizApi = __webpack_require__(/*! ./ObnizApi */ "./obniz/ObnizApi.js");
 
 /* global showObnizDebugError  */
 
@@ -7430,7 +7524,12 @@ module.exports = class Obniz extends ObnizUIs {
       }
     }
   }
-}
+
+  static get api(){
+    return ObnizApi;
+  }
+};
+
 
 /*===================*/
 /* Utils */
@@ -15850,7 +15949,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.77","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","tv4":"^1.3.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.77","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
