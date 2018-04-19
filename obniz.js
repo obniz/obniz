@@ -142,7 +142,6 @@ var map = {
 	"./request/message/index.yml": "./json_schema/request/message/index.yml",
 	"./request/message/send.yml": "./json_schema/request/message/send.yml",
 	"./request/pwm/deinit.yml": "./json_schema/request/pwm/deinit.yml",
-	"./request/pwm/duty.yml": "./json_schema/request/pwm/duty.yml",
 	"./request/pwm/freq.yml": "./json_schema/request/pwm/freq.yml",
 	"./request/pwm/index.yml": "./json_schema/request/pwm/index.yml",
 	"./request/pwm/init.yml": "./json_schema/request/pwm/init.yml",
@@ -932,17 +931,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
-/***/ "./json_schema/request/pwm/duty.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/pwm/duty.yml ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/duty","type":"object","required":["duty"],"properties":{"duty":{"type":"number","description":"% of duty cycle","minimum":0,"maximum":100}}}
-
-/***/ }),
-
 /***/ "./json_schema/request/pwm/freq.yml":
 /*!******************************************!*\
   !*** ./json_schema/request/pwm/freq.yml ***!
@@ -961,7 +949,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","description":"available 0 to 5","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/duty"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","description":"available 0 to 5","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
 
 /***/ }),
 
@@ -6641,20 +6629,14 @@ module.exports = class ObnizConnection {
 
   wsOnClose(event) {
     this.print_debug("closed");
-    if (this.isNode === false) { this.showOffLine(); }
-  
-    this.clearSocket(this.socket);
-    delete this.socket;
-
+    this.close();
     if(typeof this.onclose === "function"){
       this.onclose(this);
     }
-
     if(this.options.auto_connect) {
-      setTimeout(function () {
-        // always connect to mainserver if ws lost
-        this.wsconnect();
-      }.bind(this), 1000);
+      setTimeout( () => {
+        this.wsconnect(); // always connect to mainserver if ws lost
+      }, 1000);
     }
   }
 
@@ -6667,17 +6649,15 @@ module.exports = class ObnizConnection {
     if (res && res.statusCode == 404) {
       this.print_debug("obniz not online");
     } else {
-      // server error or someting
-      reconnectTime = 5000;
+      reconnectTime = 5000; // server error or someting
       this.print_debug( true ? res.statusCode :  undefined);
     }
     this.clearSocket(this.socket);
     delete this.socket;
     if(this.options.auto_connect) {
-      setTimeout(function () {
-        // always connect to mainserver if ws lost
-        this.wsconnect();
-      }.bind(this), reconnectTime);
+      setTimeout(() => {
+        this.wsconnect();  // always connect to mainserver if ws lost
+      }, reconnectTime);
     }
   }
 
@@ -6730,16 +6710,30 @@ module.exports = class ObnizConnection {
     if (this.isNode) {
       const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
       ws = new wsClient(url);
-      // ws.on('open', this.wsOnOpen.bind(this));
-      ws.on('message', (event) => {
-        this.print_debug("recvd via local");
-        this.wsOnMessage(event.data);
+      ws.on('open', () => {
+        this.print_debug("connected to " + url)
+        if (this._waitForLocalConnectReadyTimer) {
+          clearTimeout(this._waitForLocalConnectReadyTimer);
+          this._waitForLocalConnectReadyTimer = null;
+          this._callOnConnect();
+        }
       });
-      // ws.on('close', this.wsOnClose.bind(this));
+      ws.on('message', (data) => {
+        this.print_debug("recvd via local");
+        this.wsOnMessage(data);
+      });
+      ws.on('close', (event) => {
+        console.log('local websocket closed');
+        this._disconnectLocal();
+      });
       ws.on('error', (err) => {
         console.error("local websocket error.", err);
+        this._disconnectLocal();
       });
-      // ws.on('unexpected-response', this.wsOnUnexpectedResponse.bind(this));
+      ws.on('unexpected-response', (event) => {
+        console.log('local websocket closed');
+        this._disconnectLocal();
+      });
     } else {
       ws = new WebSocket(url);
       ws.binaryType = 'arraybuffer';
@@ -6810,14 +6804,15 @@ module.exports = class ObnizConnection {
     this._drainQueued();
     this._disconnectLocal();
     if (this.socket) {
-      this.socket.close(1000, 'close');
+      if (this.socket.readyState !== 3) {
+        this.socket.close(1000, 'close');
+      }
       this.clearSocket(this.socket);
       delete this.socket;
     }
   }
 
   _callOnConnect() {
-    if (this.isNode === false) { this.showOnLine(); }
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
@@ -6888,13 +6883,23 @@ module.exports = class ObnizConnection {
   }
 
   _sendRouted(data) {
-    let canSendViaLocal = (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string")
-    if (canSendViaLocal) {
+
+    if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
       this.print_debug("send via local");
       this.print_debug(data);
       this.socket_local.send(data);
-    } else {
+      if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
+        this.error('Warning: over ' + this.socket_local.bufferedAmount + ' bytes queued');
+      }
+      return;
+    }
+
+    if (this.socket && this.socket.readyState === 1) {
       this.socket.send(data);
+      if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+        this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+      }
+      return;
     }
   }
 
@@ -6914,10 +6919,6 @@ module.exports = class ObnizConnection {
     delete this._sendQueue;
     clearTimeout(this._sendQueueTimer);
     this._sendQueueTimer = null;
-    
-    if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-      this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
-    }
   }
 
   _prepareComponents() {
@@ -6988,11 +6989,7 @@ module.exports = class ObnizConnection {
     return json;
   }
 
-  showOnLine() {
-
-  }
-
-  showOffLine() {
+  updateOnlineUI() {
 
   }
 
@@ -7195,9 +7192,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   }
 
   wsconnect(desired_server) {
-    if (this.isNode === false) {
-      this.showOffLine();
-    }
+    this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
       if (this.isNode) {
         this.error("invalid obniz id");
@@ -7243,14 +7238,45 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
   }
 
-  showOnLine() {
+  /* online offline */
+
+  _callOnConnect() {
+    this.updateOnlineUI();
+    super._callOnConnect();
+  }
+
+  close() {
+    super.close();
+    this.updateOnlineUI();
+  }
+
+  _disconnectLocal() {
+    super._disconnectLocal();
+    this.updateOnlineUI();
+  }
+
+  updateOnlineUI() {
     if (this.isNode){return;}
-    let doms = this.getDebugDoms();
+
+    const isConnected = (this.socket && this.socket.readyState === 1)
+    const isConnectedLocally = (this.socket_local && this.socket_local.readyState === 1)
+    if (isConnected && isConnectedLocally) {
+      this.showOnLine(true);
+    } else if (isConnected) {
+      this.showOnLine(false);
+    } else {
+      this.showOffLine();
+    }
+  }
+
+  showOnLine(isConnectedLocally) {
+    if (this.isNode){return;}
+    const doms = this.getDebugDoms();
     if(doms.loaderDom){
       doms.loaderDom.style.display="none";
     }
     if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#449d44";
+      doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
       doms.statusDom.style.color =  "#FFF";
       doms.statusDom.innerHTML = this.id ? "online : "+ this.id : "online";
     }
@@ -7259,7 +7285,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   showOffLine() {
     if (this.isNode){return;}
 
-    let doms = this.getDebugDoms();
+    const doms = this.getDebugDoms();
     if(doms.loaderDom){
       doms.loaderDom.style.display="block";
     }
@@ -10198,8 +10224,10 @@ class PeripheralPWM {
     ioObj.drive(this.params.drive || '5v');
     ioObj.pull(this.params.pull || null);
 
-    var obj = {};
-    this.state.io = io;
+    this.state = {
+      io: io,
+      freq: 1000
+    }
     this.sendWS({
       io: io
     });
@@ -10207,26 +10235,56 @@ class PeripheralPWM {
   }
 
   freq(freq) {
+    freq *= 1;
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
+    if (typeof freq !== "number") {
+      throw new Error("please provide freq in number");
+    }
     var obj = {};
     this.state.freq = freq;
     this.sendWS({
       freq: freq
     });
+    if (typeof this.state.duty === "number") {
+      this.duty(this.state.duty);
+    }
   }
 
   pulse(pulse_width) {
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
     var obj = {};
     this.state.pulse = pulse_width;
+    delete this.state.duty;
     this.sendWS({
       pulse: pulse_width
     });
   }
 
   duty(duty) {
-    var obj = {};
+    duty *= 1;
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
+    if (typeof this.state.freq !== "number" || this.state.freq <= 0) {
+      throw new Error("please provide freq first.");
+    }
+    if (typeof duty !== "number") {
+      throw new Error("please provide duty in number");
+    }
+    if (duty < 0) {
+      duty = 0;
+    }
+    if (duty > 100) {
+      duty = 100;
+    }
+    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
-      duty: duty
+      pulse: pulse_width
     });
   }
 
@@ -10242,6 +10300,9 @@ class PeripheralPWM {
   }
 
   modulate(type, symbol_length, data) {
+    if (typeof this.state.io !== "number") {
+      throw new Error("pwm"+this.id+" haven't started");
+    }
     var obj = {};
     this.sendWS({
       modulate: {
@@ -14880,19 +14941,6 @@ class WSCommand_PWM extends WSCommand {
     this.sendCommand(this._CommandSetDuty, buf);
   }
 
-  duty(params, module) {
-    let buf = new Uint8Array(5);
-    let pulseUSec = 1.0 / this.pwms[module].freq * params.duty * 0.01 * 1000000;
-    pulseUSec = parseInt(pulseUSec);
-    buf[0] = module;
-    buf[1] = pulseUSec >> (8*3);
-    buf[2] = pulseUSec >> (8*2);
-    buf[3] = pulseUSec >> (8*1);
-    buf[4] = pulseUSec;
-    this.pwms[module].pulseUSec = pulseUSec;
-    this.sendCommand(this._CommandSetDuty, buf);
-  }
-
   amModulate(params, module) {
     const bitLength = params.modulate.data.length;
     const byteLength = parseInt((bitLength+7)/8);
@@ -14926,7 +14974,6 @@ class WSCommand_PWM extends WSCommand {
         {uri : "/request/pwm/init",           onValid: this.init},
         {uri : "/request/pwm/freq",         onValid: this.freq},
         {uri : "/request/pwm/pulse",        onValid: this.pulse},
-        {uri : "/request/pwm/duty",         onValid: this.duty},
         {uri : "/request/pwm/modulate",     onValid: this.amModulate},
         {uri : "/request/pwm/deinit",         onValid: this.deinit},
       ];
@@ -15803,7 +15850,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.76","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","tv4":"^1.3.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.76","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","tv4":"^1.3.0","node-dir":"^0.1.17","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 

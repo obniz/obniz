@@ -117,7 +117,7 @@ describe("obniz.libs.pwm", function () {
     pwm.freq(500); 
     expect(this.obniz).send([{pwm0:{"freq": 500}}]);
     pwm.duty(0.5); 
-    expect(this.obniz).send([{pwm0:{"duty": 0.5}}]);
+    expect(this.obniz).send([{pwm0:{"pulse": 0.01}}]);
     
     expect(this.obniz).to.be.finished;
     expect(pwm).to.be.equal(this.obniz.pwm0);

@@ -4,7 +4,7 @@
   "description": "Obniz Basic Library",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION  ./test/index.js",
+    "test": "./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js",
     "buildAndtest": "npm run build && npm test",
     "realtest": "./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
     "local": "./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .",

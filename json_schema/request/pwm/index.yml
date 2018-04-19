@@ -9,6 +9,5 @@ description  : "available 0 to 5"
   -  {$ref : "/request/pwm/init"}
   -  {$ref : "/request/pwm/freq"}
   -  {$ref : "/request/pwm/pulse"}
-  -  {$ref : "/request/pwm/duty"}
   -  {$ref : "/request/pwm/modulate"}
   -  {$ref : "/request/pwm/deinit"}
