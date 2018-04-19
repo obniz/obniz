@@ -63,34 +63,20 @@ class ObnizUtil {
   static dataArray2string(data) {
     var string = null;
     try {
-        if(isNode){
           const StringDecoder = require('string_decoder').StringDecoder;
           if(StringDecoder){
              string = new StringDecoder('utf8').write(Buffer.from(data));
           }
-        }else if(TextDecoder){
-          string = new TextDecoder("utf-8").decode(new Uint8Array(data));
-        }
-      }catch(e) {
+       }catch(e) {
         //this.obniz.error(e);
       }
       return string;
   };
 
   static string2dataArray(str){
-    if (isNode) {
       const buf = Buffer(str);
       return [... buf];
-    } else if(TextEncoder){
-      const typedArray = new TextEncoder("utf-8").encode(str);
-      var arr = new Array(typedArray.length);
-      for (var i=0; i<typedArray.length;i++) {
-        arr[i] = typedArray[i];
-      }
-      return arr;
-      
-    }
-    return null;
+
   }
 }
 
