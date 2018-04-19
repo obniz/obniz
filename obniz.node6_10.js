@@ -2196,22 +2196,14 @@ module.exports = class ObnizConnection {
 
   wsOnClose(event) {
     this.print_debug("closed");
-    if (this.isNode === false) {
-      this.showOffLine();
-    }
-
-    this.clearSocket(this.socket);
-    delete this.socket;
-
+    this.close();
     if (typeof this.onclose === "function") {
       this.onclose(this);
     }
-
     if (this.options.auto_connect) {
-      setTimeout(function () {
-        // always connect to mainserver if ws lost
-        this.wsconnect();
-      }.bind(this), 1000);
+      setTimeout(() => {
+        this.wsconnect(); // always connect to mainserver if ws lost
+      }, 1000);
     }
   }
 
@@ -2224,17 +2216,15 @@ module.exports = class ObnizConnection {
     if (res && res.statusCode == 404) {
       this.print_debug("obniz not online");
     } else {
-      // server error or someting
-      reconnectTime = 5000;
+      reconnectTime = 5000; // server error or someting
       this.print_debug( true ? res.statusCode : undefined);
     }
     this.clearSocket(this.socket);
     delete this.socket;
     if (this.options.auto_connect) {
-      setTimeout(function () {
-        // always connect to mainserver if ws lost
-        this.wsconnect();
-      }.bind(this), reconnectTime);
+      setTimeout(() => {
+        this.wsconnect(); // always connect to mainserver if ws lost
+      }, reconnectTime);
     }
   }
 
@@ -2380,16 +2370,15 @@ module.exports = class ObnizConnection {
     this._drainQueued();
     this._disconnectLocal();
     if (this.socket) {
-      this.socket.close(1000, 'close');
+      if (this.socket.readyState !== 3) {
+        this.socket.close(1000, 'close');
+      }
       this.clearSocket(this.socket);
       delete this.socket;
     }
   }
 
   _callOnConnect() {
-    if (this.isNode === false) {
-      this.showOnLine();
-    }
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
@@ -2461,13 +2450,23 @@ module.exports = class ObnizConnection {
   }
 
   _sendRouted(data) {
-    let canSendViaLocal = this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string";
-    if (canSendViaLocal) {
+
+    if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
       this.print_debug("send via local");
       this.print_debug(data);
       this.socket_local.send(data);
-    } else {
+      if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
+        this.error('Warning: over ' + this.socket_local.bufferedAmount + ' bytes queued');
+      }
+      return;
+    }
+
+    if (this.socket && this.socket.readyState === 1) {
       this.socket.send(data);
+      if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
+        this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+      }
+      return;
     }
   }
 
@@ -2487,10 +2486,6 @@ module.exports = class ObnizConnection {
     delete this._sendQueue;
     clearTimeout(this._sendQueueTimer);
     this._sendQueueTimer = null;
-
-    if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-      this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
-    }
   }
 
   _prepareComponents() {}
@@ -2556,9 +2551,7 @@ module.exports = class ObnizConnection {
     return json;
   }
 
-  showOnLine() {}
-
-  showOffLine() {}
+  updateOnlineUI() {}
 
   warning(msg) {
     console.log('warning:' + msg);
@@ -2770,9 +2763,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   }
 
   wsconnect(desired_server) {
-    if (this.isNode === false) {
-      this.showOffLine();
-    }
+    this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
       if (this.isNode) {
         this.error("invalid obniz id");
@@ -2819,16 +2810,44 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     return { loaderDom: loaderDom, debugDom: debugDom, statusDom: statusDom };
   }
 
-  showOnLine() {
+  /* online offline */
+
+  _callOnConnect() {
+    this.updateOnlineUI();
+    super._callOnConnect();
+  }
+
+  close() {
+    super.close();
+    this.updateOnlineUI();
+  }
+
+  updateOnlineUI() {
     if (this.isNode) {
       return;
     }
-    let doms = this.getDebugDoms();
+
+    const isConnected = this.socket && this.socket.readyState === 1;
+    const isConnectedLocally = this.socket_local && this.socket_local.readyState === 1;
+    if (isConnected && isConnectedLocally) {
+      this.showOnLine(true);
+    } else if (isConnected) {
+      this.showOnLine(false);
+    } else {
+      this.showOffLine();
+    }
+  }
+
+  showOnLine(isConnectedLocally) {
+    if (this.isNode) {
+      return;
+    }
+    const doms = this.getDebugDoms();
     if (doms.loaderDom) {
       doms.loaderDom.style.display = "none";
     }
     if (doms.statusDom) {
-      doms.statusDom.style.backgroundColor = "#449d44";
+      doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
       doms.statusDom.style.color = "#FFF";
       doms.statusDom.innerHTML = this.id ? "online : " + this.id : "online";
     }
@@ -2839,7 +2858,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
       return;
     }
 
-    let doms = this.getDebugDoms();
+    const doms = this.getDebugDoms();
     if (doms.loaderDom) {
       doms.loaderDom.style.display = "block";
     }
