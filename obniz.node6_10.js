@@ -1871,6 +1871,7 @@ const fetch = __webpack_require__(/*! node-fetch */ "node-fetch");
 class ObnizApi {
   constructor(obnizId, options) {
     this.id = obnizId;
+    options = options || {};
     this.options = {
       access_token: options.access_token || null,
       obniz_server: options.obniz_server || "https://obniz.io"
@@ -9505,7 +9506,7 @@ class WSCommand_Display extends WSCommand {
       return;
     }
 
-    let schemaData = [{ uri: "/request/display/text", onValid: this.text }, { uri: "/request/display/clear", onValid: this.clear }, { uri: "/request/display/raw", onValid: this.raw }, { uri: "/request/display/pin_assign", onValid: this.pinName }, { uri: "/request/display/qr", onValid: this.qr }];
+    let schemaData = [{ uri: "/request/display/clear", onValid: this.clear }, { uri: "/request/display/text", onValid: this.text }, { uri: "/request/display/raw", onValid: this.raw }, { uri: "/request/display/pin_assign", onValid: this.pinName }, { uri: "/request/display/qr", onValid: this.qr }];
     let res = this.validateCommandSchema(schemaData, module, "display");
 
     if (res.valid === 0) {
