@@ -142,14 +142,19 @@ module.exports = class ObnizConnection {
     this.close();
 
     let url = server + "/obniz/" + this.id + "/ws/1";
+
+    let query = [];
     if (this.constructor.version) {
-      url += "?obnizjs="+this.constructor.version;
+      query.push("obnizjs="+this.constructor.version);
     }
     if (this.options.access_token) {
-      url += "&access_token="+this.options._access_token;
+      query.push("access_token="+this.options.access_token);
     }
     if (this.wscommand) {
-      url += "&accept_binary=true";
+      query.push("accept_binary=true");
+    }
+    if(query.length > 0){
+      url += "?" + query.join("&");
     }
     this.print_debug("connecting to " + url);
   
