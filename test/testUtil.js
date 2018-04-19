@@ -61,6 +61,7 @@ var testUtil = {
     stub.send = sinon.stub();
     stub.close = sinon.stub();
     stub.removeAllListeners = sinon.stub();
+    stub.readyState = 1;
 
     sinon.stub(Obniz.prototype, 'wsconnect');
     obj.obniz = this.createObniz(100, "12345678", options);
