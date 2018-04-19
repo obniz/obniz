@@ -63,16 +63,9 @@ class PeripheralUART {
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof(data) === "string") {
-      if (isNode) {
-        const buf = Buffer(data);
-        send_data = [... buf];
-      } else if(TextEncoder){
-        const typedArray = new TextEncoder("utf-8").encode(data);
-        send_data = new Array(typedArray.length);
-        for (var i=0; i<typedArray.length;i++) {
-          send_data[i] = typedArray[i];
-        }
-      }
+      const buf = Buffer(data);
+      send_data = [... buf];
+
     }
     var obj = {};
     obj["uart"+this.id] = {};

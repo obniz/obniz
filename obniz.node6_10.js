@@ -6120,16 +6120,8 @@ class PeripheralUART {
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === "string") {
-      if (isNode) {
-        const buf = Buffer(data);
-        send_data = [...buf];
-      } else if (TextEncoder) {
-        const typedArray = new TextEncoder("utf-8").encode(data);
-        send_data = new Array(typedArray.length);
-        for (var i = 0; i < typedArray.length; i++) {
-          send_data[i] = typedArray[i];
-        }
-      }
+      const buf = Buffer(data);
+      send_data = [...buf];
     }
     var obj = {};
     obj["uart" + this.id] = {};
@@ -8081,13 +8073,9 @@ class ObnizUtil {
   static dataArray2string(data) {
     var string = null;
     try {
-      if (isNode) {
-        const StringDecoder = __webpack_require__(/*! string_decoder */ "string_decoder").StringDecoder;
-        if (StringDecoder) {
-          string = new StringDecoder('utf8').write(Buffer.from(data));
-        }
-      } else if (TextDecoder) {
-        string = new TextDecoder("utf-8").decode(new Uint8Array(data));
+      const StringDecoder = __webpack_require__(/*! string_decoder */ "string_decoder").StringDecoder;
+      if (StringDecoder) {
+        string = new StringDecoder('utf8').write(Buffer.from(data));
       }
     } catch (e) {
       //this.obniz.error(e);
@@ -8096,18 +8084,8 @@ class ObnizUtil {
   }
 
   static string2dataArray(str) {
-    if (isNode) {
-      const buf = Buffer(str);
-      return [...buf];
-    } else if (TextEncoder) {
-      const typedArray = new TextEncoder("utf-8").encode(str);
-      var arr = new Array(typedArray.length);
-      for (var i = 0; i < typedArray.length; i++) {
-        arr[i] = typedArray[i];
-      }
-      return arr;
-    }
-    return null;
+    const buf = Buffer(str);
+    return [...buf];
   }
 }
 
@@ -9400,12 +9378,8 @@ class WSCommand_Display extends WSCommand {
 
   printText(text) {
     var result;
-    if (isNode) {
-      const buf = Buffer(text, 'utf8');
-      result = new Uint8Array(buf);
-    } else if (TextEncoder) {
-      result = new Uint8Array(new TextEncoder("utf-8").encode(text));
-    }
+    const buf = Buffer(text, 'utf8');
+    result = new Uint8Array(buf);
     this.print(result);
   }
 
@@ -9486,13 +9460,7 @@ class WSCommand_Display extends WSCommand {
     var buf = new Uint8Array(1);
     buf[0] = no;
 
-    var stringarray;
-    if (isNode) {
-      const buf = Buffer(str, 'utf8');
-      stringarray = new Uint8Array(buf);
-    } else if (TextEncoder) {
-      stringarray = new Uint8Array(new TextEncoder("utf-8").encode(str));
-    }
+    var stringarray = new Uint8Array(Buffer(str, 'utf8'));
     var combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);
@@ -11008,11 +10976,7 @@ class JsonBinaryConverter {
 
   static stringToBinary(data) {
     var array = [];
-    if (isNode) {
-      return new Uint8Array(Buffer(data, 'utf8'));
-    } else if (TextEncoder) {
-      return new Uint8Array(new TextEncoder("utf-8").encode(data));
-    }
+    return new Uint8Array(Buffer(data, 'utf8'));
   }
 }
 

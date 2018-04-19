@@ -273,11 +273,8 @@ class JsonBinaryConverter {
 
   static stringToBinary(data) {
     var array = [];
-    if (isNode) {
-      return new Uint8Array(Buffer(data, 'utf8'));
-    } else if (TextEncoder) {
-      return new Uint8Array(new TextEncoder("utf-8").encode(data));
-    }
+    return new Uint8Array(Buffer(data, 'utf8'));
+
   }
 }
 

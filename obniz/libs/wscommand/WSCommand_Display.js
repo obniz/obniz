@@ -29,12 +29,8 @@ class WSCommand_Display extends WSCommand {
   
   printText(text) {
     var result;
-    if (isNode) {
-      const buf = Buffer(text, 'utf8');
-      result = new Uint8Array(buf);
-    } else if(TextEncoder){
-      result = new Uint8Array(new TextEncoder("utf-8").encode(text));
-    }
+    const buf = Buffer(text, 'utf8');
+    result = new Uint8Array(buf);
     this.print(result);
   }
 
@@ -117,13 +113,7 @@ class WSCommand_Display extends WSCommand {
     var buf = new Uint8Array(1);
     buf[0] = no; 
 
-    var stringarray;
-    if (isNode) {
-      const buf = Buffer(str, 'utf8');
-      stringarray = new Uint8Array(buf);
-    } else if(TextEncoder){
-      stringarray = new Uint8Array(new TextEncoder("utf-8").encode(str));
-    }
+    var stringarray = new Uint8Array(Buffer(str, 'utf8'));
     var combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);
