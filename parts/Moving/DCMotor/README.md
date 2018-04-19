@@ -46,7 +46,7 @@ directionに合わせて指定した方向にモーターを回転させます�
 ### Example
 ```javascript
 // Javascript Example
-var motor = obniz.wired("DCMotor", {forward:0, back:1};
+var motor = obniz.wired("DCMotor", {forward:0, back:1});
 
 motor.move(true); // = motor.forward();
 ```
