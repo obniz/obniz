@@ -4,6 +4,7 @@ const fetch = require("node-fetch");
 class ObnizApi{
   constructor(obnizId, options){
     this.id = obnizId;
+    options = options || {};
     this.options = {
       access_token: options.access_token || null,
       obniz_server:options.obniz_server || "https://obniz.io"
