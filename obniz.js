@@ -6337,6 +6337,7 @@ const fetch = __webpack_require__(/*! node-fetch */ "./node_modules/node-fetch/b
 class ObnizApi{
   constructor(obnizId, options){
     this.id = obnizId;
+    options = options || {};
     this.options = {
       access_token: options.access_token || null,
       obniz_server:options.obniz_server || "https://obniz.io"
@@ -14383,8 +14384,8 @@ class WSCommand_Display extends WSCommand {
     }
 
     let schemaData = [
-      {uri : "/request/display/text",  onValid: this.text},
       {uri : "/request/display/clear", onValid: this.clear},
+      {uri : "/request/display/text",  onValid: this.text},
       {uri : "/request/display/raw", onValid: this.raw},
       {uri : "/request/display/pin_assign", onValid: this.pinName},
       {uri : "/request/display/qr", onValid: this.qr}
