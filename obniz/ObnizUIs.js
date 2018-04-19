@@ -7,9 +7,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   }
 
   wsconnect(desired_server) {
-    if (this.isNode === false) {
-      this.showOffLine();
-    }
+    this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
       if (this.isNode) {
         this.error("invalid obniz id");
@@ -55,14 +53,40 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
   }
 
-  showOnLine() {
+  /* online offline */
+
+  _callOnConnect() {
+    this.updateOnlineUI();
+    super._callOnConnect();
+  }
+
+  close() {
+    super.close();
+    this.updateOnlineUI();
+  }
+
+  updateOnlineUI() {
     if (this.isNode){return;}
-    let doms = this.getDebugDoms();
+
+    const isConnected = (this.socket && this.socket.readyState === 1)
+    const isConnectedLocally = (this.socket_local && this.socket_local.readyState === 1)
+    if (isConnected && isConnectedLocally) {
+      this.showOnLine(true);
+    } else if (isConnected) {
+      this.showOnLine(false);
+    } else {
+      this.showOffLine();
+    }
+  }
+
+  showOnLine(isConnectedLocally) {
+    if (this.isNode){return;}
+    const doms = this.getDebugDoms();
     if(doms.loaderDom){
       doms.loaderDom.style.display="none";
     }
     if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#449d44";
+      doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
       doms.statusDom.style.color =  "#FFF";
       doms.statusDom.innerHTML = this.id ? "online : "+ this.id : "online";
     }
@@ -71,7 +95,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   showOffLine() {
     if (this.isNode){return;}
 
-    let doms = this.getDebugDoms();
+    const doms = this.getDebugDoms();
     if(doms.loaderDom){
       doms.loaderDom.style.display="block";
     }
