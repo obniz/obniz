@@ -65,6 +65,11 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     this.updateOnlineUI();
   }
 
+  _disconnectLocal() {
+    super._disconnectLocal();
+    this.updateOnlineUI();
+  }
+
   updateOnlineUI() {
     if (this.isNode){return;}
 
