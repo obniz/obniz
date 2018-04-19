@@ -6856,14 +6856,17 @@ module.exports = class ObnizConnection {
   }
 
   _disconnectLocal() {
+    if (this.socket_local) {
+      if (this.socket.readyState <= 1) {
+        this.socket_local.close();
+      }
+      this.clearSocket(this.socket_local);
+      delete this.socket_local;
+    }
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
-    }
-    if (this.socket_local) {
-      this.socket_local.close();
-      this.clearSocket(this.socket_local);
-      delete this.socket_local;
+      this._callOnConnect();
     }
   }
 
@@ -6898,7 +6901,7 @@ module.exports = class ObnizConnection {
     this._drainQueued();
     this._disconnectLocal();
     if (this.socket) {
-      if (this.socket.readyState !== 3) {
+      if (this.socket.readyState <= 1) { // Connecting & Connected
         this.socket.close(1000, 'close');
       }
       this.clearSocket(this.socket);
