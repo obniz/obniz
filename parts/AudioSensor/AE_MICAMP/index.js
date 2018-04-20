@@ -45,7 +45,6 @@ AE_MICAMP.prototype.wired = async function(obniz) {
 };
 
 /*
-//移動平均を返す
 AE_MICAMP.prototype.Average = function(callback) {
   this.average = callback;
 };

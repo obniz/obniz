@@ -108,6 +108,14 @@
       ]
     },
     {
+      "name": "Audio Sensor",
+      "parts": [
+        {
+          "name": "AE_MICAMP"
+        }
+      ]
+    },
+    {
       "name": "ADConverter",
       "parts": [
         {
