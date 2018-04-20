@@ -1,10 +1,9 @@
 # USB
 
-Simply, Supplying power to usb accesorries.
-Control USB light, etc with your obniz.
+USBアクセサリに電力を供給します。
+USBで光る電気や扇風機などをobnizから操作できます。
 
-We provide a usb module for obniz.
-The pin assign of it is below.
+obniz用のソケットも用意しています。その場合のピンアサインは以下のとおりです。
 
 ![](./usb.jpg)
 
@@ -18,7 +17,7 @@ usb.on();
 
 ## on()
 
-Start supplying power to usb.
+電源をONにします。
 
 ```javascript
 // Javascript Example
@@ -29,7 +28,7 @@ usb.on();
 
 ## off()
 
-Stop supplying power to usb.
+電源をOFFにします。
 
 ```javascript
 // Javascript Example
