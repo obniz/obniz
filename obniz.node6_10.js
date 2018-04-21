@@ -5561,15 +5561,11 @@ class PeripheralI2C {
           }
         }
       }
-      if (obj.warnings) {
-        for (let i = 0; i < obj.warnings.length; i++) {
-          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` });
-        }
+      if (obj.warning) {
+        this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warning.message}` });
       }
-      if (obj.errors) {
-        for (let i = 0; i < obj.errors.length; i++) {
-          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` });
-        }
+      if (obj.error) {
+        this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.error.message}` });
       }
     }
   }
@@ -12807,7 +12803,7 @@ class _24LC256 {
 
   constructor() {
     this.requiredKeys = ["address"];
-    this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
+    this.keys = ["sda", "scl", "clock", "pull", "i2c", "address"];
   }
 
   wired(obniz) {
@@ -13341,8 +13337,8 @@ class SEN0114 {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      _this.temp = yield _this.ad.getWait();
-      return _this.temp;
+      _this.value = yield _this.ad.getWait();
+      return _this.value;
     })();
   }
 }
@@ -13804,7 +13800,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 class SHT31 {
   constructor() {
     this.requiredKeys = ["adr", "addressmode"];
-    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
+    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull"];
     this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
 
     this.commands = {};
@@ -13840,9 +13836,9 @@ class SHT31 {
       this.address = 0x45;
     }
 
-    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.clock = this.params.clock || 100 * 1000; //for i2c
     this.params.mode = this.params.mode || "master"; //for i2c
-    this.params.pullType = this.params.pullType || "float"; //for i2c
+    this.params.pull = this.params.pull || "5v"; //for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
     obniz.i2c0.write(this.address, this.commands.softReset);
   }

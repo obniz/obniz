@@ -1,8 +1,8 @@
 class _24LC256 {
-  
+
   constructor() {
     this.requiredKeys = ["address"];
-    this.keys = ["sda","scl","clock","pullType","i2c","address"];
+    this.keys = ["sda","scl","clock","pull","i2c","address"];
   };
 
   wired(obniz) {
