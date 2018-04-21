@@ -156,15 +156,11 @@ class PeripheralI2C {
           }
         }
       }
-      if (obj.warnings) {
-        for (let i=0; i<obj.warnings.length; i++) {
-          this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warnings[i].message}` })
-        }
+      if (obj.warning) {
+        this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warning.message}` })
       }
-      if (obj.errors) {
-        for (let i=0; i<obj.errors.length; i++) {
-          this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.errors[i].message}` })
-        }
+      if (obj.error) {
+        this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.error.message}` })
       }
     }
   }

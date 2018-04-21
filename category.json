@@ -8,6 +8,9 @@
         },
         {
           "name": "FullcolorLED"
+        },
+        {
+          "name": "WS2811"
         }
       ]
     },{
@@ -92,10 +95,13 @@
           "name": "Potentiometer"
         },
         {
-          "name": "KXSC7-2050"
+          "name": "ENC03R_Module"
         },
         {
-          "name": "JoyStick"
+          "name": "PaPIRsVZ"
+        },
+        {
+          "name": "FSR-40X"
         }
       ]
     },
@@ -104,6 +110,14 @@
       "parts": [
         {
           "name": "HC-SR04"
+        }
+      ]
+    },
+    {
+      "name": "Audio Sensor",
+      "parts": [
+        {
+          "name": "AE_MICAMP"
         }
       ]
     },
@@ -143,14 +157,6 @@
         },
         {
           "name": "SHT31"
-        }
-      ]
-    },
-    {
-      "name": "Memory",
-      "parts": [
-        {
-          "name": "24LC256"
         }
       ]
     }

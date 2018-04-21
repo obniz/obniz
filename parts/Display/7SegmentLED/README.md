@@ -7,20 +7,9 @@ a to g is 7 segment's io.
 dp is deciminal point.
 commonType must be "anode"/"cathode". default is "cathode".
 
-![photo of wired](./wired.png)
-
 ```javascript
 // Javascript Example
 var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
-seg.print(7);
-```
-
-
-io can be null If you don't need to use. like dp.
-
-```javascript
-// Javascript Example
-var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:null, common:6, commonType:"cathode"});
 seg.print(7);
 ```
 
@@ -28,6 +17,7 @@ seg.print(7);
 print a number.
 
 .print(7) => 7
+
 .print(89) => 9
 
 ```javascript
@@ -76,7 +66,7 @@ while(true){
 }
 ```
 
-## dpShow(show)
+## dpState(show)
 turn on/off dp
 ```javascript
 // Javascript Example
@@ -84,9 +74,9 @@ var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0
 
 seg.print(7);
 while(true){
-  seg.dp_show(true);
+  seg.dpState(true);
   await obniz.wait(1000);
-  seg.dp_show(false);
+  seg.dpState(false);
   await obniz.wait(1000);
 }
 ```

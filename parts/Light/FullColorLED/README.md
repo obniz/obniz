@@ -1,5 +1,10 @@
 # FullColorLED
 
+Analog Full Color LED. It's consist of three color LED.
+
+![](./animation.gif)
+
+
 ## wired(obniz, {r, g, b, common, common_type})
 
 r,g,b,common is pin no of obniz io.

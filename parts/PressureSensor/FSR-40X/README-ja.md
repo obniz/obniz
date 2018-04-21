@@ -1,4 +1,4 @@
-# Temperature Sensor - FSR40X
+# Pressure Sensor - FSR40X
 圧力センサFSR40Xです。センサで取得した圧力を知ることができます。
 
 ## wired(obniz, {pin0, pin1})

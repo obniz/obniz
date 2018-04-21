@@ -37,6 +37,13 @@ sensor.start(function (arr) {
 })
 ```
 
+arr is same as ```obniz.LogicAnalyzer```'s result.
+So, It's like below.
+
+```
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0]
+```
+
 monitor options and these default value
 See more details on logicanalyzer document
 

@@ -9,7 +9,7 @@ Ultrasonic Distance Measurement Unit.
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
 hcsr04.measure(function( distance ){
-  $("#print").text("distance " + distance + " mm")
+  console.log("distance " + distance + " mm")
 })
 ```
 
@@ -18,11 +18,10 @@ measure distance.
 default return unit is "mm". change by calling .unit()
 ```javascript
 // Javascript Example
+
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
-$("#do").click(function(){
-  hcsr04.measure(function( distance ){
-    $("#print").text("distance " + distance + " mm")
-  })
+hcsr04.measure(function( distance ){
+  onsole.log("distance " + distance + " mm")
 })
 ```
 
@@ -38,9 +37,7 @@ are available
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
 hcsr04.unit("inch")
-$("#do").click(function(){
-  hcsr04.measure(function( distance ){
-    $("#print").text("distance " + distance + " inch")
-  })
+hcsr04.measure(function( distance ){
+  console.log("distance " + distance + " inch")
 })
 ```

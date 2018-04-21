@@ -1,85 +1,108 @@
-var _7SegmentLED = function() {
-  this.requiredKeys = [ "a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
-  this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+class _7SegmentLED {
+  constructor() {
+    this.requiredKeys = [ "a", "b", "c", "d", "e", "f", "g", "common"];
+    this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
+    
+    this.digits = [
+      0x3F,
+      0x06,
+      0x5b,
+      0x4f,
+      0x66,
+      0x6d,
+      0x7d,
+      0x07,
+      0x7f,
+      0x6f,
+      0x6f
+    ];
   
-  this.digits = [
-    0x3F,
-    0x06,
-    0x5b,
-    0x4f,
-    0x66,
-    0x6d,
-    0x7d,
-    0x07,
-    0x7f,
-    0x6f,
-    0x6f
-  ];
+    this.displayIoNames = {
+      a: "a",
+      b: "b",
+      c: "c",
+      d: "d",
+      e: "e",
+      f: "f",
+      g: "g",
+      dp: "dp",
+      common: "com",
+    };
+  }
 
-};
+  wired(obniz) {
+    this.obniz = obniz;
+    this.ios = [];
+    this.ios.push(obniz.getIO(this.params.a));
+    this.ios.push(obniz.getIO(this.params.b));
+    this.ios.push(obniz.getIO(this.params.c));
+    this.ios.push(obniz.getIO(this.params.d));
+    this.ios.push(obniz.getIO(this.params.e));
+    this.ios.push(obniz.getIO(this.params.f));
+    this.ios.push(obniz.getIO(this.params.g));
 
-_7SegmentLED.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.ios = [];
-  this.ios.push(obniz.getIO(this.params.a));
-  this.ios.push(obniz.getIO(this.params.b));
-  this.ios.push(obniz.getIO(this.params.c));
-  this.ios.push(obniz.getIO(this.params.d));
-  this.ios.push(obniz.getIO(this.params.e));
-  this.ios.push(obniz.getIO(this.params.f));
-  this.ios.push(obniz.getIO(this.params.g));
-
-  this.dp = obniz.getIO(this.params.dp);
-  this.common = obniz.getIO(this.params.common);
-  this.isCathodeCommon = (this.params.commonType === "anode") ? false : true;
-};
-
-_7SegmentLED.prototype.print = function(data) {
-  if (typeof data === "number") {
-    data = parseInt(data);
-    data = data % 10;
-
-    for (let i=0; i<7; i++) {
-      if (this.ios[i]) {
-        var val = (this.digits[data] & (1 << i)) ? true : false;
-        if (!this.isCathodeCommon) {
-          val = ~val;
-        }
-        this.ios[i].output( val );
-      }
+    for (let i=0;i<this.ios.length; i++) {
+      this.ios[i].output(false);
     }
-    this.on();
-  }
-};
 
-_7SegmentLED.prototype.printRaw = function(data) {
-  if (typeof data === "number") {
-    for (let i=0; i<7; i++) {
-      if (this.ios[i]) {
-        var val = (data & (1 << i)) ? true : false;
-        if (!this.isCathodeCommon) {
-          val = !val;
-        }
-        this.ios[i].output( val );
-      }
+    if (typeof this.params.dp === "number") {
+      this.dp = obniz.getIO(this.params.dp);
+      this.dp.output(false);
     }
-    this.on();
+
+    this.common = obniz.getIO(this.params.common);
+    this.common.output(false);
+    this.isCathodeCommon = (this.params.commonType === "anode") ? false : true;
   }
-};
 
-_7SegmentLED.prototype.dpShow = function(show) {
-  if (this.dp) {
-    this.dp.output( this.isCathodeCommon ? show : !show);
+  print(data) {
+    if (typeof data === "number") {
+      data = parseInt(data);
+      data = data % 10;
+  
+      for (let i=0; i<7; i++) {
+        if (this.ios[i]) {
+          var val = (this.digits[data] & (1 << i)) ? true : false;
+          if (!this.isCathodeCommon) {
+            val = ~val;
+          }
+          this.ios[i].output( val );
+        }
+      }
+      this.on();
+    }
   }
-};
 
-_7SegmentLED.prototype.on = function() {
-  this.common.output( this.isCathodeCommon ? false : true);
-};
+  printRaw(data) {
+    if (typeof data === "number") {
+      for (let i=0; i<7; i++) {
+        if (this.ios[i]) {
+          var val = (data & (1 << i)) ? true : false;
+          if (!this.isCathodeCommon) {
+            val = !val;
+          }
+          this.ios[i].output( val );
+        }
+      }
+      this.on();
+    }
+  }
 
-_7SegmentLED.prototype.off = function() {
-  this.common.output( this.isCathodeCommon ? true : false);
-};
+  dpState(show) {
+    if (this.dp) {
+      this.dp.output( this.isCathodeCommon ? show : !show);
+    }
+  }
+
+  on() {
+    this.common.output( this.isCathodeCommon ? false : true);
+  }
+
+  off() {
+    this.common.output( this.isCathodeCommon ? true : false);
+  }
+}
+
 
 let Obniz = require("../../../obniz/index.js");
 Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);

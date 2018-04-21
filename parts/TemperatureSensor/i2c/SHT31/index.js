@@ -1,7 +1,7 @@
 class SHT31 {
   constructor() {
     this.requiredKeys = ["adr", "addressmode"];
-    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
+    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull"];
     this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
 
     this.commands = {};
@@ -36,11 +36,10 @@ class SHT31 {
       this.io_adr.pull(null);
       this.address = 0x45;
     }
-
-
-    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    
+    this.params.clock = this.params.clock || 100 * 1000; //for i2c
     this.params.mode = this.params.mode || "master"; //for i2c
-    this.params.pullType = this.params.pullType || "float"; //for i2c
+    this.params.pull = this.params.pull || "5v"; //for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
     obniz.i2c0.write(this.address, this.commands.softReset);
   };

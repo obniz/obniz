@@ -1,7 +1,8 @@
 class _24LC256 {
+
   constructor() {
     this.requiredKeys = ["address"];
-    this.keys = ["sda","scl","clock","pullType","i2c","address"];
+    this.keys = ["sda","scl","clock","pull","i2c","address"];
   };
 
   wired(obniz) {
@@ -31,4 +32,4 @@ class _24LC256 {
 }
 
 let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("_24LC256", _24LC256);
+Obniz.PartsRegistrate("24LC256", _24LC256);

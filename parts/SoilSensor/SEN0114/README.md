@@ -1,21 +1,26 @@
 # Soil Moisture Sensor - SEN0114
 
-You can measure Soil Moisture.
-The module return value in range 0〜4.2 .
-
-0~1.47: dry soil
-1.47~3.43: humid soil
-3.43~4.20: in water
-
+It detect moisture level in soil.
 
 ## wired(obniz, { vcc, output, gnd} )
+connect vcc,output,gnd to an obniz.
+
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
+sensor.onchange = function(humidity){
+  console.log(humidity)
+};
 ```
 
-## onchange
-Register callback function for value change.
+
+## onchange = function(value)
+callback function called when the value was changed.
+Manufacture data says moisture level increse with moisture like
+
+1. 0~1.47: Dry
+2. 1.47~3.43: Wet
+3. 3.43~4.20: Under walter
 
 ```javascript
 // Javascript Example
@@ -25,7 +30,7 @@ sensor.onchange = function(humidity){
 };
 ```
 ## [await] getHumidityWait()
-Get value once.
+Measure and get current value once.
 
 ```javascript
 // Javascript Example

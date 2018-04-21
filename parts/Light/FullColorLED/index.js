@@ -1,6 +1,6 @@
-class FullColorLed{
+class FullColorLED{
+
   constructor(){
-    
     this.COMMON_TYPE_ANODE = 1;
     this.COMMON_TYPE_CATHODE = 0;
 
@@ -16,7 +16,7 @@ class FullColorLed{
       'cathodeCommon',
       'gnd'
     ];
-    this.animationName = "FullColorLed-" + Math.round(Math.random() *1000);
+    this.animationName = "FullColorLED-" + Math.round(Math.random() *1000);
     
     this.keys = ["r", "g", "b", "common", "commonType"];
     this.requiredKeys = ["r", "g", "b", "common", "commonType"];
@@ -35,24 +35,19 @@ class FullColorLed{
     }else if(this.cathode_keys.includes(commontype)){
        this.commontype = this.COMMON_TYPE_CATHODE;
     }else{
-      this.obniz.error("FullColorLed param need common type [  anode_common or cathode_common ] ");
+      this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
     }
     
     this.common = this.obniz.getIO(common);
-    this.common.drive("3v");
     this.common.output(this.commontype);
     
-    this.obniz.getIO(r).drive("3v");
     this.obniz.getIO(r).output(this.commontype);
-    this.obniz.getIO(g).drive("3v");
     this.obniz.getIO(g).output(this.commontype);
-    this.obniz.getIO(b).drive("3v");
     this.obniz.getIO(b).output(this.commontype);
     this.pwmR = this.obniz.getFreePwm();this.pwmR.start({io: r});this.pwmR.freq(1000);
     this.pwmG = this.obniz.getFreePwm();this.pwmG.start({io: g});this.pwmG.freq(1000);
     this.pwmB = this.obniz.getFreePwm();this.pwmB.start({io: b});this.pwmB.freq(1000);
     this.rgb(0,0,0);
-    
   }
   
   rgb(r,g,b){
@@ -68,9 +63,7 @@ class FullColorLed{
     this.pwmR.duty(r/255*100 );
     this.pwmG.duty(g/255*100 );
     this.pwmB.duty(b/255*100 );
-
   }
-  
   
   hsv(h,s,v){
     var C = v * s ;
@@ -93,11 +86,9 @@ class FullColorLed{
     B = Math.floor(B * 255);
 
     this.rgb(R,G,B);
-
   }
   
   gradation(cycletime_ms){
-
     var frames = [];
     var max = 36/2;
     var duration = Math.round(cycletime_ms / max);
@@ -113,13 +104,11 @@ class FullColorLed{
     }
     this.obniz.io.animation(this.animationName, "loop", frames);
   };
+
   stopgradation(){
     this.obniz.io.animation(this.animationName, "pause");
   };
-  
-  
-
 }
 
 let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("FullColorLed", FullColorLed);
+Obniz.PartsRegistrate("FullColorLED", FullColorLED);

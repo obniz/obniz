@@ -1,7 +1,7 @@
 class ADT7410 {
   constructor() {
     this.keys = [ "vcc", "gnd", "sda", "scl", "addressMode"];
-    this.requiredKey = ["addressMode"];
+    this.requiredKeys = ["addressMode"];
   };
 
   wired(obniz) {

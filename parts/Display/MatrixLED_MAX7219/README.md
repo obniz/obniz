@@ -2,30 +2,10 @@
 Dot matrix LED. driver: MAX7219.
 [http://akizukidenshi.com/catalog/g/gM-09984/](http://akizukidenshi.com/catalog/g/gM-09984/)
 
-
+![](./max7129.jpg)
 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/5teMmFK1_FY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-
-```Javascript
-// Javascript Example
-// initialize
-const matrix = obniz.wired("MatrixLED_MAX7219", {vcc:0, gnd:1, din:2, cs:3, clk:4});
-matrix.init(8*4, 8);
-matrix.brightness(7);
-
-// draw things to Canvas context
-const ctx = obniz.util.createCanvasContext(matrix.width, matrix.height);
-ctx.fillStyle = "black";
-ctx.fillRect(0, 0, matrix.width, matrix.height);
-ctx.fillStyle = "white";
-ctx.font = "9px sans-serif";
-ctx.fillText('Helloこんにちは', 0, 7);
-
-// draw canvas context to matrix
-matrix.draw(ctx);
-```
 
 ## wired(obniz,  { clk, cs, din, gnd, vcc});
 
@@ -33,7 +13,6 @@ matrix.draw(ctx);
 2. gnd: gnd.
 3. din: spi MOSI pin.
 4. cs: chip select
-5. nc: pin for MISO.(not necessary to connect. but spi use this).
  
 ![](./wired.png)
 
@@ -79,7 +58,7 @@ ctx.fillStyle = "black";
 ctx.fillRect(0, 0, matrix.width, matrix.height);
 ctx.fillStyle = "white";
 ctx.font = "9px sans-serif";
-ctx.fillText('Helloこんにちは', 0, 7);
+ctx.fillText('Hello World', 0, 7);
 
 matrix.draw(ctx);
 ```

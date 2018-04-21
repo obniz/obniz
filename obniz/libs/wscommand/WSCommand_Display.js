@@ -89,7 +89,6 @@ class WSCommand_Display extends WSCommand {
         this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
       }
     }
-
   }
   
   drawVertically(buf) {

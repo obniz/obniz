@@ -190,14 +190,17 @@ class Display {
   }
 
   setPinNames(moduleName, data) {
-    var obj = {};
+    let obj = {};
     obj["display"] = {};
     obj["display"]["pin_assign"] = {};
+    let noAssignee = true;
     for(var key in data){
+      noAssignee = false;
       obj["display"]["pin_assign"][key] = {module_name : moduleName, pin_name:data[key]};
     }
-    
-    this.Obniz.send(obj);
+    if (!noAssignee) {
+      this.Obniz.send(obj);
+    }
   }
 
   draw(ctx) {

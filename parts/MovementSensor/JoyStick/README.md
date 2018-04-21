@@ -1,24 +1,52 @@
 # JoyStick
-X軸Y軸とプッシュスイッチをもつジョイスティックです。出力がアナログ値の一般的なものに対して利用できます。
+
+X and Y direction with Push Switch Joystick.
+This class accept only analog output.
+
+![](./joystick.jpg)
 
 ## wired(obniz, {sw, x, y, vcc, gnd})
-obnizと接続します。vccはジョイスティックの5v入力へ。gndはマイナスへ接続します。  
-sw: スイッチ  
-x: x軸のアナログ値出力  
-y: y軸のアナログ値出力  
-へ接続して下さい
+
+connect to an obniz.
+
+1. vcc: power supply
+2. gnd: power supply
+3. sw: push switch
+4. x: X axis analog output
+5. Y: T axis analog output
+
+### Attention! pins assing is diffrerent in each product!
+There are some joystick and these pin assigns are different.
+
+For example, A joystick commonly used with obniz is below.
+
+![](./joystick_pins.jpg)
+
+But another one has a pinassign like
+
 ![photo of wired](./wired.png)
+
+
 ```Javascript
-// Javascript Example
+
+var joystick = obniz.wired("JoyStick", {gnd:4, sw:0, y:1, x:2, vcc:3});
+
+// or
+
 var joystick = obniz.wired("JoyStick", {gnd:0, sw:1, y:2, x:3, vcc:4});
 
+// and mores
 ```
-## onchangex(callback)
-## onchangey(callback)
-それぞれX軸，Y軸方向へ動いた場合に呼ばれる関数を指定できます。
+
+## onchangex = callback(angle)
+## onchangey = callback(angle)
+callback for on change angle.
+
+angle = -1 to 1
+
 ```Javascript
 // Javascript Example
-var joystick = obniz.wired("JoyStick",  {gnd:0, sw:1, y:2, x:3, vcc:4});
+var joystick = obniz.wired("JoyStick", {gnd:4, sw:0, y:1, x:2, vcc:3});
 joystick.onchangex = function(val){
   console.log(val);
 };
@@ -28,11 +56,13 @@ joystick.onchangey = function(val){
 };
 ```
 
-## onchangesw(callback)
-ボタンが押されたり離された時に呼ばれます。
+## onchangesw = function(pressed)
+
+It's called when button pressed/released.
+
 ```Javascript
 // Javascript Example
-var joystick = obniz.wired("JoyStick", {gnd:0, sw:1, y:2, x:3, vcc:4});
+var joystick = obniz.wired("JoyStick", {gnd:4, sw:0, y:1, x:2, vcc:3});
 joystick.onchangesw = function(pressed){
   console.log(pressed);
 };

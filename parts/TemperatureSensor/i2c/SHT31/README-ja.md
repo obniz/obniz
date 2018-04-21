@@ -1,6 +1,8 @@
 # Temperature Sensor - SHT31
 温度センサSHT31です。センサで取得した温度を知ることができます。
 
+![](./sht31.jpg)
+
 ## wired(obniz,  {vcc , sda, scl, adr, gnd, addressmode} )
 Obnizに温度センサをつなぎます。
 0,1,2,3,4はそれぞれ温度センサの電源,SDA,SCL,GND,ADDRピンへ接続してください。
