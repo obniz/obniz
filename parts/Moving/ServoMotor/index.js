@@ -8,6 +8,9 @@ class ServoMotor {
     this.obniz = obniz;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    if(obniz.isValidIO(this.params.vcc)){
+      this.io_power = obniz.getIO(this.params.vcc);
+    }
 
     this.pwm = obniz.getFreePwm();
     this.pwm_io_num = this.params.signal;
