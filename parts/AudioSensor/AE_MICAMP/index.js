@@ -1,23 +1,35 @@
-var AE_MICAMP = function() {
-  this.keys = ["vcc", "gnd", "out"];
-  this.requiredKeys = ["out"];
-};
 
-AE_MICAMP.prototype.wired = async function(obniz) {
-  this.obniz = obniz;
+class AE_MICAMP {
 
-  this.ad = obniz.getAD(this.params.out);
+  constructor() {
+    this.keys = ["vcc", "gnd", "out"];
+    this.requiredKeys = ["out"];
+
+    this.displayIoNames = {
+      vcc: "vcc",
+      gnd: "gnd",
+      out: "out"
+    };
+  }
+
+  async wired(obniz) {
+    this.obniz = obniz;
   
+    this.ad = obniz.getAD(this.params.out);
+    
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
   
-  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    var self = this;
+    this.ad.start(function(value){
+      self.voltage = value;
+      if (self.onchange) {
+        self.onchange(self.voltage);
+      }
+    });
+  }
 
-  var self = this;
-  this.ad.start(function(value){
-    self.voltage = value;
-    if (self.onchange) {
-      self.onchange(self.voltage);
-    }
-  });
+}
+
 
 /*
   var self = this;
@@ -42,7 +54,6 @@ AE_MICAMP.prototype.wired = async function(obniz) {
     self.average(self.voltage_ave);
   }
   */
-};
 
 /*
 AE_MICAMP.prototype.Average = function(callback) {
