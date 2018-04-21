@@ -154,14 +154,6 @@
           "name": "SHT31"
         }
       ]
-    },
-    {
-      "name": "Memory",
-      "parts": [
-        {
-          "name": "24LC256"
-        }
-      ]
     }
   ]
 }
