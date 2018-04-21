@@ -12310,54 +12310,43 @@ Obniz.PartsRegistrate("HC-SR04", HCSR04);
 "use strict";
 
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+class ENC03R_Module {
 
-var ENC03R_Module = function () {
+  constructor() {
+    this.keys = ["vcc", "out1", "out2", "gnd"];
+    this.required = ["out1", "out2"];
+    this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+  }
 
-  this.keys = ["vcc", "out1", "out2", "gnd"];
-  this.required = ["out1", "out2"];
-  this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
-};
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.ad0 = obniz.getAD(this.params.out1);
+    this.ad1 = obniz.getAD(this.params.out2);
 
-ENC03R_Module.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad0 = obniz.getAD(this.params.out1);
-  this.ad1 = obniz.getAD(this.params.out2);
+    this.ad0.start(value => {
+      this.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+      if (this.onchange1) {
+        this.onchange1(this.sens1);
+      }
+    });
 
-  this.io_pwr.output(true);
+    this.ad1.start(value => {
+      this.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+      if (this.onchange2) {
+        this.onchange2(this.sens2);
+      }
+    });
+  }
 
-  var self = this;
-  this.ad0.start(function (value) {
-    self.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-    //console.log('raw='+value);
-    if (self.onchange1) {
-      self.onchange1(self.sens1);
-    }
-  });
+  getValueSens1() {
+    return (this.ad0.value - 1.45) / Sens;
+  }
 
-  this.ad1.start(function (value) {
-    self.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-    if (self.onchange2) {
-      self.onchange2(self.sens2);
-    }
-  });
-};
-
-ENC03R_Module.prototype.onChangeSens1 = function (callback) {
-  this.onchange1 = callback;
-};
-ENC03R_Module.prototype.onChangeSens2 = function (callback) {
-  this.onchange2 = callback;
-};
-
-ENC03R_Module.prototype.getValueSens1 = _asyncToGenerator(function* () {
-  return (this.ad0.value - 1.47) / Sens;
-});
-
-ENC03R_Module.prototype.getValueSens2 = _asyncToGenerator(function* () {
-  return (this.ad1.value - 1.35) / Sens;
-});
+  getValueSens2() {
+    return (this.ad1.value - 1.35) / Sens;
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("ENC03R_Module", ENC03R_Module);

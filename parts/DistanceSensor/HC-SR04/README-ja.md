@@ -1,6 +1,5 @@
 # HC-SR04
-Ultrasonic Distance Measurement Unit.
-
+超音波を利用した距離センサーです。
 
 ## wired(obniz, {vcc, triger, echo, gnd})
 
@@ -14,8 +13,9 @@ hcsr04.measure(function( distance ){
 ```
 
 ## measure(callback(distance))
-measure distance.
-default return unit is "mm". change by calling .unit()
+距離を計測します、計測が完了したらcallback関数が呼ばれます。
+距離の単位はmmで、unit()関数でinchに変えることも出来ます。
+もし、反射してくる超音波を受け取れなかった場合はnullが返ります。
 ```javascript
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, triger:2, vcc:3});
@@ -25,12 +25,12 @@ hcsr04.measure(function( distance ){
 ```
 
 ## unit(unit)
-change unit
+単位を変更します。
 
 1. "mm"(default)
 2. "inch"
 
-are available
+が利用可能です。
 
 ```javascript
 // Javascript Example
