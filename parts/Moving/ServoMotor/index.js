@@ -8,6 +8,9 @@ class ServoMotor {
     this.obniz = obniz;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    if(obniz.isValidIO(this.params.vcc)){
+      this.io_vcc = obniz.getIO(this.params.vcc);
+    }
 
     this.pwm = obniz.getFreePwm();
     this.pwm_io_num = this.params.signal;
@@ -26,14 +29,14 @@ class ServoMotor {
   };
 
   on() {
-    if (this.params.vcc) {
-      this.obniz.getIO(this.params.vcc).output(true);
+    if (this.io_vcc) {
+      this.io_vcc.output(true);
     }
   };
 
   off() {
-    if (this.params.vcc) {
-      this.obniz.getIO(this.params.vcc).output(false);
+    if (this.io_vcc) {
+      this.io_vcc.output(false);
     }
   };
 }

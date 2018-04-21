@@ -1,7 +1,7 @@
 # obniz WebSocket Formats
-All communication on WebSocket is JSON.
-Control obniz by sending JSON and get values by receiving JSON from obniz.
+Javascript以外からも，WebSocketを使うことでobnizを使うことができます．
 
+WebSocketではJSONでデータのやり取りを行います．
 
 
 -  [ws](#ws)
@@ -3357,7 +3357,7 @@ Related item
 ###  <a name="deviceaddress">deviceAddress</a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
-| string | <ul><li>length = 12</li></ul>  |  <ul><li>`"77e754ab8591"`</li></ul> | Bluetooth device id. It&#39;s hexString cannot cointain &#39;0x&#39; or &#39;-&#39;.&nbsp; |
+| string | <ul><li>length = 12</li></ul>  |  <ul><li>`"77e754ab8591"`</li></ul> | Bluetooth device id. It&#39;s hexString cannot contain &#39;0x&#39; or &#39;-&#39;.&nbsp; |
 
 
 

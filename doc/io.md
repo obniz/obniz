@@ -8,26 +8,26 @@ each io can output/input. input will notify only when value was changed.
 ##### Three output drive option
 ###### push-pull5v (default)
 1. up to 1A 
-2. overcurrent/over-temprature protection
-3. overcurrent warning when io.output()
+2. over current and over temperature protection
+3. over current warning when io.output()
 4. up to 250kHz
 
 ###### push-pull3v
 1. up to 1mA
-2. overcurrent error and auto-stop otput when io.output()
+2. over current error and auto-stop output when io.output()
 3. up to 80Mhz
 
 ###### open-drain
 1. up to 1mA
 2. up to 80Mhz
 
-##### Four internal weak pull-updown option
+##### Four internal weak pull-up/pull-down option
 1. floating (default)
 1. pull-up 5v
 1. pull-up 3v
 1. pull-down to gnd
 
-drive method and pull-updown can be selected on each peripheral(PWM/UART/etc).
+drive method and pull-up/pull-down can be selected on each peripheral(PWM/UART/etc).
 
 
 ## output(value)
@@ -59,7 +59,7 @@ obniz.io1.pull("5v");
 obniz.io1.drive("open-drain"); // changed immediately 
 ```
 
-## pull(pulltype)
+## pull(pullType)
 enable/disable internal weak pull up/down resistors.
 
 1. null (default) 
@@ -95,10 +95,10 @@ console.log(value);
 
 ## io.animation(name, status, array of animations)
 io animation is hardware acceleration for serial sequence change of io.
-now "loop" animation is avaiable.
+now "loop" animation is available.
 it loop io changes regarding json array.
 io and pwm json commands only.
-duration is how long does it state consist. It msec. 1 to 429426 msec (around 1 hour).
+duration is how long does it state consist. It ms. 1 to 429426 ms (around 1 hour).
 state is function which has io directives.
 
 ```Javascript

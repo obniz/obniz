@@ -20,7 +20,7 @@ all 12ch ad can be started. It will no affect to sampling rate.
 ##### 30 samples/sec or slower
 Maximum sapling rate is depends on your network speed and also depends on obniz firmware version.(with ver1.0.0 max 30samples/sec)
 ##### 10bit - VDD calibrated
-ad also monitor vdd of obniz itself(normally 5v). Each ad result will be calibrated. And ad accurecy is 10bit.
+ad also monitor vdd of obniz itself(normally 5v). Each ad result will be calibrated. And ad accuracy is 10bit.
 ##### ad can be started even io is used for io-output/uart/spi etc
 ad converter is independent. It will work while IO is used for another function. 
 
@@ -66,11 +66,11 @@ NOT the value when you read this property.
 obniz.ad0.start();
 while(true) {
   console.log("changed to "+obniz.ad0.value+" v")
-  await obniz.wait(10); // 10msec wait
+  await obniz.wait(10); // 10ms wait
 }
 ```
 ## [await] getWait()
-Measure voltage onece. and reutrn it's value.
+Measure voltage once. and return it's value.
 This function will pause until ad result arrive to your js.
 
 ```Javascript

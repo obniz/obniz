@@ -7,7 +7,7 @@ var PluginError = require('gulp-util').PluginError;
 const path = require('path');
 var PLUGIN_NAME = 'wsDocGenerator';
 
-module.exports = function () {
+module.exports = function (docfilePath) {
   /**
    * @this {Transform}
    */
@@ -28,7 +28,7 @@ module.exports = function () {
       var contents = String(file.contents);
       let output;
       try {
-        output = convert(contents);
+        output = convert(contents,docfilePath);
       } catch (error) {
         this.emit('error', new PluginError(PLUGIN_NAME, error));
       }
@@ -48,7 +48,7 @@ module.exports = function () {
   return through.obj(transform);
 };
 
-var convert = function (str) {
+var convert = function (str,docfilePath) {
   let wsSchema;
   eval(str.substring(3)); //let wsSchema = [ [....} ]
   for (let schema of wsSchema) {
@@ -56,7 +56,7 @@ var convert = function (str) {
   }
   let uris = tv4.getSchemaUris(/^\/request|^\/response/);
 
-  var docTemplate = fs.readFileSync(path.resolve(__dirname, "doctemplate/doc.ejs"), 'utf8');
+  var docTemplate = fs.readFileSync(docfilePath, 'utf8');
 
   let isDirectory = function (uri) {
     let targetUris = uris.filter((elm) => {

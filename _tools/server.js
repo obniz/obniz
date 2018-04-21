@@ -61,15 +61,25 @@ if(!tv4Path){
 
 
 gulp.task("jsonSchemaDoc", function jsonSchemaForVar(){
-  return gulp.src(schemaSrcPath)
+  gulp.src(schemaSrcPath)
       .pipe(plumber({errorHandler: reportError}))
       .pipe(gulp_sort())
       .pipe(gulp_yaml({ safe: true }))
       .pipe(concatWith("schema.js",{header:"let wsSchema = [", separator:",", footer:"];" }))
-      .pipe(docGenerator())
+      .pipe(docGenerator(path.resolve(__dirname, "doctemplate/doc.ejs")))
       .pipe(rename("websocket.md"))
       .pipe(gulp.dest(docPath))
-      .on('end', function(){ console.log('jsonSchemaDoc compiled!'); });;
+      .on('end', function(){ console.log('jsonSchemaDoc compiled!'); });
+
+  gulp.src(schemaSrcPath)
+      .pipe(plumber({errorHandler: reportError}))
+      .pipe(gulp_sort())
+      .pipe(gulp_yaml({ safe: true }))
+      .pipe(concatWith("schema.js",{header:"let wsSchema = [", separator:",", footer:"];" }))
+      .pipe(docGenerator(path.resolve(__dirname, "doctemplate/doc-ja.ejs")))
+      .pipe(rename("websocket-ja.md"))
+      .pipe(gulp.dest(docPath))
+      .on('end', function(){ console.log('jsonSchemaDoc(ja) compiled!'); });
 
 });
 

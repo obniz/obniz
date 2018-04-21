@@ -4,7 +4,7 @@ Maximum current is depends on driving mode. see [io](./io).
 
 6 module (pwm0 to pwm5) are available.
 
-PWM generats repeated pulse.
+PWM generates repeated pulse.
 Two parameter define pulse.
 
 1. freq: pattern interval
@@ -17,7 +17,7 @@ pwm is often used for controlling a DC motor by changing it's duty.
 ![](./images/pwm_1.png)
 
 ## obniz.getFreePwm()
-it reutrn pwm module which currently not used.
+it return pwm module which currently not used.
 
 ```Javascript
 // Example
@@ -39,7 +39,7 @@ var pwm6 = obniz.getFreePwm(); // Error
 start a pwm on given io.
 freq=1khz, duty=0% on start.
 
-io drive and pull can be configred. see more dtail on [io](./io)
+io drive and pull can be configured. see more detail on [io](./io)
 
 ```Javascript
 // Javascript Example
@@ -69,7 +69,7 @@ set pulse duty with ms.
 var pwm = obniz.getFreePwm();
 pwm.start({io:0});
 pwm.freq(2000); // set pwm frequency to 2khz
-pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  25% ratio.
+pwm.pulse(0.5) // set pwm pulse 0.5ms.  so this is  25% ratio.
 ```
 ## duty(ratio)
 set duty with ratio.
@@ -79,16 +79,16 @@ set duty with ratio.
 var pwm = obniz.getFreePwm();
 pwm.start({io:0});
 pwm.freq(2000); // set pwm frequency to 2khz
-pwm.duty(50) // set pwm pulse witdh 50%
+pwm.duty(50) // set pwm pulse width 50%
 ```
 
-## modulate(modulation type, interval msec, data)
-modulate pwm with datas
-modulation can be choosed from below.
+## modulate(modulation type, interval ms, data)
+modulate pwm with data
+modulation can be chosen from below.
 
 1. "am"
 
-am modulation: data "1" measn output the pwm with duty 50%. "0" means stop pwm. io will be 0.
+am modulation: data "1" means output the pwm with duty 50%. "0" means stop pwm. io will be 0.
 interval defines symbol baud rate. 
 Duty is 50% fixed.
 
@@ -106,7 +106,7 @@ pwm.freq(38000); // set pwm frequency to 38khz
 // signal for room heater's remote signal
 var arr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1];
 
-pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70usec.
+pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70us.
 ```
 ## end();
 stop pwm. It will release io.

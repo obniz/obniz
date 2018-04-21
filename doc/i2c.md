@@ -2,18 +2,18 @@
 I2C.
 i2c0 is only available. max speed 1Mhz.  
 Master/Slave.  
-But slave mode only works with "written" events. you cant set datas to be read.
+But slave mode only works with "written" events. you cant set data to be read.
 
 OverView
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no internal pullup
+// master mode sda=2 scl=3 400khz no internal pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
+console.log("read "+ret);
 
-// use internal pullups
+// use internal pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000, pull:"5v"}); 
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"}); 
 
@@ -30,7 +30,7 @@ It equals to i2c0 because i2c0 is only available. ( no i2c1 ).
 ```javascript
 (obniz.getFreeI2C() === obniz.i2c0) => true
 ```
-It throws errow if no more i2c available
+It throws error if no more i2c available
 ```javascript
 var i2c0 = obniz.getFreeI2C();
 var i2c1 = obniz.getFreeI2C(); // Error
@@ -42,7 +42,7 @@ internal pull up is optional for io output setting.
 Default it pull:null.
 See more for obniz.ioX.pull(). 
 For using internal-pull-up, you should specify "3v" to connect 3.3v targets. "5v" when 5v targets.
-When you choose internal-pullup, speed is limited up to 100khz. Because internal-pullup is not so tough.
+When you choose internal pull up, speed is limited up to 100khz. Because internal pull up is not so tough.
 Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.
 
 ```Javascript
@@ -50,9 +50,9 @@ Please add external pull-up resistor on scl/sda and choose pull:null when you ne
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
+console.log("read "+ret);
 
-// use internal pullups
+// use internal pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000, pull:"5v"}); 
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"}); 
 
@@ -79,7 +79,7 @@ max length is 1024;
 // Javascript Example
 obniz.i2c0.start({mode: "master",sda:2, scl:3, clock:400000, pull:null}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
+console.log("read "+ret);
 ```
 
 ## i2cX.onwritten = function(data){}

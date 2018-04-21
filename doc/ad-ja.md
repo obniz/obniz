@@ -19,7 +19,7 @@ obniz.ad1.start(function(voltage){
 ##### 12ch 同時に
 同時に12chつかうことができます。サンプリングレートには影響しません。
 ##### 30 samples/sec かそれ以下で
-サンプリングレートはあなたのネットワークの速度と、obnizのファームウェアバージョンに依存します。例えばver1.0.0なら最大30sampoles/secです。
+サンプリングレートはあなたのネットワークの速度と、obnizのファームウェアバージョンに依存します。例えばver1.0.0なら最大30samples/secです。
 ##### 10bit - VDD 補正
 adはobnizの電源電圧も監視していて、電源電圧が変動してもそれぞれのadの結果が正しくなるように補正を行います。また精度は10bitです。
 ##### ad は io-output/uart/spi と同時に利用可能
@@ -65,7 +65,7 @@ obniz.ad0.onchange = function(voltage){
 obniz.ad0.start();
 while(true) {
   console.log("changed to "+obniz.ad0.value+" v")
-  await obniz.wait(1); // 1msec wait
+  await obniz.wait(1); // 1ms wait
 }
 ```
 ## [await] getWait()

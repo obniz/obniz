@@ -53,7 +53,7 @@ class ObnizBLE {
     }
 
 
-    let remotePeripheralcallbackFunc = function (val, func, type) {
+    let remotePeripheralCallbackFunc = function (val, func, type) {
       let obj = null;
       if (val === undefined) return;
       let p = this.findPeripheral(val.address);
@@ -93,7 +93,7 @@ class ObnizBLE {
     };
 
     for (let key in paramList) {
-      remotePeripheralcallbackFunc(obj[key], function (val, bleobj) {
+      remotePeripheralCallbackFunc(obj[key], function (val, bleobj) {
 
         bleobj.notifyFromServer(paramList[key].name, val);
       }.bind(this), paramList[key].obj);

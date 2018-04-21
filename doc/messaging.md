@@ -1,5 +1,5 @@
 # Messaging
-obniz can receive and transfer datas from HTTP request to an obniz.
+obniz can receive and transfer data from HTTP request to an obniz.
 
 
 
@@ -39,7 +39,7 @@ POST https://obniz.io/obniz/message
 ```
 Parameters
 
-- to:  destionation separated "," 
+- to:  destination separated "," 
 - data: message
 
 ## obniz - obniz messaging

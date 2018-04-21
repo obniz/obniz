@@ -119,7 +119,7 @@ obniz.display.qr("https://obniz.io")
 .....................{1024byte}  
 
 ```javascript
-obniz.display.raw([255, 255,,,,,])// msut be 128*64 bits(=1024byte)
+obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
 ```
 
 ## display.draw(context)
@@ -133,7 +133,7 @@ const ctx = $("#canvas")[0].getContext('2d');
 // 2. create new canvas dom and load it.
 const ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
 
-// 3. runnning with node.js
+// 3. running with node.js
 //    npm install canvas. ( version 2.0.0 or later required )
 const { createCanvas } = require('canvas');
 const canvas = createCanvas(128, 64); 

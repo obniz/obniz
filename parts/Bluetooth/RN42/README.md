@@ -44,7 +44,7 @@ rn42.onreceive = function(data, text) {
 ```
 
 ## config(json)
-set configration to rn42 and reboot it.
+set configuration to rn42 and reboot it.
 ```javascript
 // Javascript Example
 var rn42 = obniz.wired("RN42", {tx: 1, rx:2});
@@ -57,7 +57,7 @@ rn42.config({
 })
 ```
 
-available configrations
+available configurations
 
 ### display_name
 Bluetooth devicename.

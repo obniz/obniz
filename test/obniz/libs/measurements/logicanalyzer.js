@@ -24,24 +24,24 @@ describe("obniz.libs.logicanalyser", function () {
     expect(this.obniz).to.be.finished;
 });
   
-  it("startWithTriger",  function () {
-    this.obniz.logicAnalyzer.start({io:1, interval:0.1, duration:100, trigerValue:false,trigerValueSamples: 3}); 
+  it("startWithTrigger",  function () {
+    this.obniz.logicAnalyzer.start({io:1, interval:0.1, duration:100, triggerValue:false,triggerValueSamples: 3});
     
-    expect(this.obniz).send([{logic_analyzer: { interval: 0.1, io:[1] , duration:100, triger : {samples:3, value:false}}}]);
+    expect(this.obniz).send([{logic_analyzer: { interval: 0.1, io:[1] , duration:100, trigger : {samples:3, value:false}}}]);
     expect(this.obniz).to.be.finished;
   });
-  it("startWithTriger2",  function () {
-    this.obniz.logicAnalyzer.start({io:1, interval:0.1, duration:100, trigerValue:1,trigerValueSamples: 3}); 
+  it("startWithTrigger2",  function () {
+    this.obniz.logicAnalyzer.start({io:1, interval:0.1, duration:100, triggerValue:1,triggerValueSamples: 3});
     
-    expect(this.obniz).send([{logic_analyzer: { interval: 0.1, io:[1] , duration:100, triger : {samples:3, value:true}}}]);
+    expect(this.obniz).send([{logic_analyzer: { interval: 0.1, io:[1] , duration:100, trigger : {samples:3, value:true}}}]);
     expect(this.obniz).to.be.finished;
   });
   
   it("onmeasured",  function () {
     var stub = sinon.stub();
-    this.obniz.logicAnalyzer.start({io:1, interval:0.1, duration:100, trigerValue:false,trigerValueSamples: 3}); 
+    this.obniz.logicAnalyzer.start({io:1, interval:0.1, duration:100, triggerValue:false,triggerValueSamples: 3});
     
-    expect(this.obniz).send([{logic_analyzer: { interval: 0.1, io:[1] , duration:100, triger : {samples:3, value:false}}}]);
+    expect(this.obniz).send([{logic_analyzer: { interval: 0.1, io:[1] , duration:100, trigger : {samples:3, value:false}}}]);
     this.obniz.logicAnalyzer.onmeasured = stub;
     var data = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1];
     testUtil.receiveJson(this.obniz, [{"logic_analyzer":{"data":data}}]);

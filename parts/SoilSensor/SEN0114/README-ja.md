@@ -1,4 +1,5 @@
 # Soil Moisture Sensor - SEN0114
+
 土壌湿度センサSEN0114です。土壌の湿度を取得できます。
 返される値は0~4.2の範囲で、湿度の目安は以下の通りです。
 0~1.47:乾いた土壌
@@ -9,6 +10,7 @@
 ## wired(obniz, { vcc, output, gnd} )
 Obnizに土壌湿度センサをつなぎます。
 0,1,2はそれぞれ温度センサのセンサ出力,電源,GNDへ接続してください。
+
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
@@ -26,6 +28,7 @@ sensor.onchange = function(value){
 ```
 ## [await] getHumidityWait()
 土壌湿度センサの値を計測して返します。
+
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("SEN0114",  {vcc:0, output:1, gnd:2});

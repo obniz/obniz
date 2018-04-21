@@ -50,7 +50,7 @@ See more details on logicanalyzer document
 1. dataSymbolLength = 0.07; // data symbold length
 2. duration = 200; // duration of signal. 200msec
 3. dataInverted = true; // output values is inverted(IRSensor will re-invert)
-4. trigerSampleCount = 16; // signal must start with 16 count of signals
+4. triggerSampleCount = 16; // signal must start with 16 count of signals
 5. cutTail = true; // cut tail not necesarry data arrays.
 6. output_pullup = true; // output io must be pull-up to 5v.
 

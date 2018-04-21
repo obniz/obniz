@@ -6,7 +6,7 @@ obnizをプログラムから使う上で便利な関数を用意しています
 
 ```Javascript
 // Example
-obniz = new Obniz("1234-5678", {access_token:"T7tnyWRIx_rxJv6xOsA2hBY3_zrr1AsRqfsy...."});
+obniz = new Obniz("1234-5678", {access_token:"T7tnyWRIx_rxJv6xOsA2hBY3_zrr1Asrqfsy...."});
 obniz.onconnect = function() {
 
 }
@@ -54,7 +54,7 @@ var time = new Date();
 led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
-console.log((new Date()).getTime() - time.getTime()) // 0 or very few msec. not 1000msec.
+console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
 ```
 await を利用することでその時間だけ実際にプログラムを停止させることが可能です。
 ```Javascript
@@ -77,10 +77,10 @@ obniz.keepWorkingAtOffline(true);
 ```
 
 ## resetOnDisconnect(reset)
-obnizはユーザーがobniz cloudへのwebsocketを切断するとリセットするようになっています。
+obnizはユーザーがobniz cloudへのweb socketを切断するとリセットするようになっています。
 通常はリセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
 この関数でそれを無効にし、リセットしないようにできます。
-この設定はユーザーのwebsocketが切断されるまで保持されます。
+この設定はユーザーのweb socketが切断されるまで保持されます。
 ```Javascript
 // Example
 obniz.resetOnDisconnect(false);

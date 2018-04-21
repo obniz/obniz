@@ -68,7 +68,8 @@ class BleAttributeAbstract {
 
   addChild(child){
     if( ! (child instanceof this.childrenClass) ){
-      child = new this.childrenClass(child);
+      let childrenClass = this.childrenClass;
+      child = new childrenClass(child);
     }
     child.parent = this;
 
