@@ -9,6 +9,7 @@ var LED = function() {
 LED.prototype.wired = function(obniz) {
   this.obniz = obniz;
   this.io_anode = obniz.getIO(this.params.anode);
+  this.io_anode.output(false);
   if (this.params.cathode) {
     this.io_cathode = obniz.getIO(this.params.cathode);
     this.io_cathode.output(false);
