@@ -12338,14 +12338,6 @@ class ENC03R_Module {
       }
     });
   }
-
-  getValueSens1() {
-    return (this.ad0.value - 1.45) / Sens;
-  }
-
-  getValueSens2() {
-    return (this.ad1.value - 1.35) / Sens;
-  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");

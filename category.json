@@ -96,6 +96,9 @@
         },
         {
           "name": "JoyStick"
+        },
+        {
+          "name": "ENC03R_Module"
         }
       ]
     },
