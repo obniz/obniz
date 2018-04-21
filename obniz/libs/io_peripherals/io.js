@@ -15,6 +15,7 @@ class PeripheralIO {
   }
 
   output(value) {
+    value = (value == true)
     var obj = {};
     obj["io"+this.id] = value;
     this.value = value;
