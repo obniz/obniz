@@ -13342,7 +13342,7 @@ class SEN0114 {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      return yield _this.ad.getWait;
+      return yield _this.ad.getWait();
     })();
   }
 }

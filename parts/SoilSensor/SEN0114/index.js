@@ -19,7 +19,7 @@ class SEN0114 {
   };
 
   async getHumidityWait() {
-    return await this.ad.getWait;
+    return await this.ad.getWait();
   };
 }
 

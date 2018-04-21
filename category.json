@@ -116,6 +116,14 @@
       ]
     },
     {
+      "name": "Soil Moisture Sensor",
+      "parts": [
+        {
+          "name": "SEN0114"
+        }
+      ]
+    },
+    {
       "name": "Temperature Sensor",
       "parts": [
         {
