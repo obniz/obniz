@@ -17,13 +17,27 @@ describe("obniz.libs.io", function () {
   });
   
   
-  it("output", function () {
+  it("output(true)", function () {
     this.obniz.io0.output(true);
     expect(this.obniz).to.be.obniz;
     expect(this.obniz).send([{io0:true}]);
     expect(this.obniz).to.be.finished;
   });
+
+  it("output(1)", function () {
+    this.obniz.io0.output(1);
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send([{io0:true}]);
+    expect(this.obniz).to.be.finished;
+  });
   
+  it("output(0)", function () {
+    this.obniz.io0.output(0);
+    expect(this.obniz).to.be.obniz;
+    expect(this.obniz).send([{io0:false}]);
+    expect(this.obniz).to.be.finished;
+  });
+
   it("output-over-pin", function () {
     expect(function(){
       this.obniz.io20.output(true);

@@ -10124,6 +10124,7 @@ class PeripheralIO {
   }
 
   output(value) {
+    value = (value == true)
     var obj = {};
     obj["io"+this.id] = value;
     this.value = value;
@@ -15954,7 +15955,6 @@ var map = {
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
-	"./InfraredSensor/PaPIRsVZ/index.js": "./parts/InfraredSensor/PaPIRsVZ/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
 	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
@@ -15963,6 +15963,7 @@ var map = {
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
+	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
@@ -17275,41 +17276,6 @@ Obniz.PartsRegistrate("IRSensor", IRSensor);
 
 /***/ }),
 
-/***/ "./parts/InfraredSensor/PaPIRsVZ/index.js":
-/*!************************************************!*\
-  !*** ./parts/InfraredSensor/PaPIRsVZ/index.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class PaPIRsVZ {
-  constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["signal"];
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.io_signal = obniz.getIO(this.params.signal);
-    this.io_signal.pull("0v");
-    
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-    
-    this.io_signal.input((value) => {
-      this.isPressed = (value === false);
-      if (this.onchange) {
-        this.onchange(value === false);
-      }
-    });
-  }
-  
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
-
-/***/ }),
-
 /***/ "./parts/Light/FullColorLED/index.js":
 /*!*******************************************!*\
   !*** ./parts/Light/FullColorLED/index.js ***!
@@ -17317,9 +17283,9 @@ Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-class FullColorLed{
+class FullColorLED{
+
   constructor(){
-    
     this.COMMON_TYPE_ANODE = 1;
     this.COMMON_TYPE_CATHODE = 0;
 
@@ -17335,7 +17301,7 @@ class FullColorLed{
       'cathodeCommon',
       'gnd'
     ];
-    this.animationName = "FullColorLed-" + Math.round(Math.random() *1000);
+    this.animationName = "FullColorLED-" + Math.round(Math.random() *1000);
     
     this.keys = ["r", "g", "b", "common", "commonType"];
     this.requiredKeys = ["r", "g", "b", "common", "commonType"];
@@ -17354,24 +17320,19 @@ class FullColorLed{
     }else if(this.cathode_keys.includes(commontype)){
        this.commontype = this.COMMON_TYPE_CATHODE;
     }else{
-      this.obniz.error("FullColorLed param need common type [  anode_common or cathode_common ] ");
+      this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
     }
     
     this.common = this.obniz.getIO(common);
-    this.common.drive("3v");
     this.common.output(this.commontype);
     
-    this.obniz.getIO(r).drive("3v");
     this.obniz.getIO(r).output(this.commontype);
-    this.obniz.getIO(g).drive("3v");
     this.obniz.getIO(g).output(this.commontype);
-    this.obniz.getIO(b).drive("3v");
     this.obniz.getIO(b).output(this.commontype);
     this.pwmR = this.obniz.getFreePwm();this.pwmR.start({io: r});this.pwmR.freq(1000);
     this.pwmG = this.obniz.getFreePwm();this.pwmG.start({io: g});this.pwmG.freq(1000);
     this.pwmB = this.obniz.getFreePwm();this.pwmB.start({io: b});this.pwmB.freq(1000);
     this.rgb(0,0,0);
-    
   }
   
   rgb(r,g,b){
@@ -17387,9 +17348,7 @@ class FullColorLed{
     this.pwmR.duty(r/255*100 );
     this.pwmG.duty(g/255*100 );
     this.pwmB.duty(b/255*100 );
-
   }
-  
   
   hsv(h,s,v){
     var C = v * s ;
@@ -17412,11 +17371,9 @@ class FullColorLed{
     B = Math.floor(B * 255);
 
     this.rgb(R,G,B);
-
   }
   
   gradation(cycletime_ms){
-
     var frames = [];
     var max = 36/2;
     var duration = Math.round(cycletime_ms / max);
@@ -17432,16 +17389,14 @@ class FullColorLed{
     }
     this.obniz.io.animation(this.animationName, "loop", frames);
   };
+
   stopgradation(){
     this.obniz.io.animation(this.animationName, "pause");
   };
-  
-  
-
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("FullColorLed", FullColorLed);
+Obniz.PartsRegistrate("FullColorLED", FullColorLED);
 
 /***/ }),
 
@@ -17874,6 +17829,40 @@ KXSC7_2050.prototype.wired = async function(obniz) {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("KXSC7_2050", KXSC7_2050);
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/PaPIRsVZ/index.js":
+/*!************************************************!*\
+  !*** ./parts/MovementSensor/PaPIRsVZ/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class PaPIRsVZ {
+  constructor() {
+    this.keys = ["vcc", "gnd", "signal"];
+    this.requiredKeys = ["signal"];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.io_signal = obniz.getIO(this.params.signal);
+    this.io_signal.pull("0v");
+    
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    
+    this.io_signal.input((value) => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+  
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
 
 /***/ }),
 
