@@ -7,7 +7,7 @@
     "test": "./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js",
     "buildAndtest": "npm run build && npm test",
     "realtest": "./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
-    "local": "./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .",
+    "local": "./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .",
     "build": "./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.node6_10.js"
   },

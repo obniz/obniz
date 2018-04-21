@@ -11007,7 +11007,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"0.1.82","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"0.1.82","description":"Obniz Basic Library","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -12801,41 +12801,42 @@ Obniz.PartsRegistrate("WS2811", WS2811);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _24LC256 = function () {
-  this.requiredKeys = ["address"];
-  this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
-};
+class _24LC256 {
+  constructor() {
+    this.requiredKeys = ["address"];
+    this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
+  }
 
-_24LC256.prototype.wired = function (obniz) {
-  this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.clock = this.params.clock || 400 * 1000; //for i2c
-  this.i2c = obniz.getI2CWithConfig(this.params);
-};
+  wired(obniz) {
+    this.params.mode = this.params.mode || "master"; //for i2c
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
 
-// Module functions
+  // Module functions
 
-_24LC256.prototype.set = function (address, data) {
-  var array = [];
-  array.push(address >> 8 & 0xFF);
-  array.push(address & 0xFF);
-  array.push.apply(array, data);
-  this.i2c.write(0x50, array);
-  this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
-};
-
-_24LC256.prototype.getWait = (() => {
-  var _ref = _asyncToGenerator(function* (address, length) {
+  set(address, data) {
     var array = [];
     array.push(address >> 8 & 0xFF);
     array.push(address & 0xFF);
+    array.push.apply(array, data);
     this.i2c.write(0x50, array);
-    return yield this.i2c.readWait(0x50, length);
-  });
+    this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+  }
 
-  return function (_x, _x2) {
-    return _ref.apply(this, arguments);
-  };
-})();
+  getWait(address, length) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      var array = [];
+      array.push(address >> 8 & 0xFF);
+      array.push(address & 0xFF);
+      _this.i2c.write(0x50, array);
+      return yield _this.i2c.readWait(0x50, length);
+    })();
+  }
+}
+
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("_24LC256", _24LC256);
 
@@ -12853,35 +12854,41 @@ Obniz.PartsRegistrate("_24LC256", _24LC256);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var Button = function () {
-  this.keys = ["signal", "gnd"];
-  this.required = ["signal"];
-};
-
-Button.prototype.wired = function (obniz) {
-  this.io_signal = obniz.getIO(this.params.signal);
-
-  if (obniz.isValidIO(this.params.gnd)) {
-    this.io_supply = obniz.getIO(this.params.gnd);
-    this.io_supply.output(false);
+class Button {
+  constructor() {
+    this.keys = ["signal", "gnd"];
+    this.required = ["signal"];
   }
 
-  // start input
-  this.io_signal.pull("5v");
+  wired(obniz) {
+    this.io_signal = obniz.getIO(this.params.signal);
 
-  var self = this;
-  this.io_signal.input(function (value) {
-    self.isPressed = value === false;
-    if (self.onchange) {
-      self.onchange(value === false);
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_supply = obniz.getIO(this.params.gnd);
+      this.io_supply.output(false);
     }
-  });
-};
 
-Button.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var ret = yield this.io_signal.inputWait();
-  return ret === false;
-});
+    // start input
+    this.io_signal.pull("5v");
+
+    var self = this;
+    this.io_signal.input(function (value) {
+      self.isPressed = value === false;
+      if (self.onchange) {
+        self.onchange(value === false);
+      }
+    });
+  }
+
+  isPressedWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      var ret = yield _this.io_signal.inputWait();
+      return ret === false;
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("Button", Button);
@@ -12900,52 +12907,58 @@ Obniz.PartsRegistrate("Button", Button);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var JoyStick = function () {
-  this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
-  this.requiredKeys = ["sw", "y", "x"];
-  this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
-  this.pinname = { "sw": "sw12" };
-  this.shortName = "joyS";
-};
+class JoyStick {
+  constructor() {
+    this.keys = ["sw", "y", "x", "vcc", "gnd", "i2c"];
+    this.requiredKeys = ["sw", "y", "x"];
+    this.pins = this.keys || ["sw", "y", "x", "vcc", "gnd"];
+    this.pinname = { "sw": "sw12" };
+    this.shortName = "joyS";
+  }
 
-JoyStick.prototype.wired = function (obniz) {
-  this.obniz = obniz;
+  wired(obniz) {
+    this.obniz = obniz;
 
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
-  this.io_sig_sw = obniz.getIO(this.params.sw);
-  this.ad_x = obniz.getAD(this.params.x);
-  this.ad_y = obniz.getAD(this.params.y);
+    this.io_sig_sw = obniz.getIO(this.params.sw);
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
 
-  this.io_sig_sw.pull("5v");
+    this.io_sig_sw.pull("5v");
 
-  var self = this;
-  this.ad_x.start(function (value) {
-    self.positionX = value / 5.0;
-    if (self.onchangex) {
-      self.onchangex(self.positionX * 2 - 1);
-    }
-  });
+    var self = this;
+    this.ad_x.start(function (value) {
+      self.positionX = value / 5.0;
+      if (self.onchangex) {
+        self.onchangex(self.positionX * 2 - 1);
+      }
+    });
 
-  this.ad_y.start(function (value) {
-    self.positionY = value / 5.0;
-    if (self.onchangey) {
-      self.onchangey(self.positionY * 2 - 1);
-    }
-  });
+    this.ad_y.start(function (value) {
+      self.positionY = value / 5.0;
+      if (self.onchangey) {
+        self.onchangey(self.positionY * 2 - 1);
+      }
+    });
 
-  this.io_sig_sw.input(function (value) {
-    self.isPressed = value === false;
-    if (self.onchangesw) {
-      self.onchangesw(value === false);
-    }
-  });
-};
+    this.io_sig_sw.input(function (value) {
+      self.isPressed = value === false;
+      if (self.onchangesw) {
+        self.onchangesw(value === false);
+      }
+    });
+  }
 
-JoyStick.prototype.isPressedWait = _asyncToGenerator(function* () {
-  var ret = yield this.io_sig_sw.inputWait();
-  return ret === false;
-});
+  isPressedWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      var ret = yield _this.io_sig_sw.inputWait();
+      return ret === false;
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("JoyStick", JoyStick);
@@ -12964,54 +12977,54 @@ Obniz.PartsRegistrate("JoyStick", JoyStick);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var KXSC7_2050 = function () {
-  this.keys = ["x", "y", "z", "vcc", "gnd"];
-  this.requiredKeys = ["x", "y", "z"];
-};
+class KXSC7_2050 {
+  constructor() {
+    this.keys = ["x", "y", "z", "vcc", "gnd"];
+    this.requiredKeys = ["x", "y", "z"];
+  }
 
-KXSC7_2050.prototype.wired = (() => {
-  var _ref = _asyncToGenerator(function* (obniz) {
-    this.obniz = obniz;
+  wired(obniz) {
+    var _this = this;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
-    this.ad_x = obniz.getAD(this.params.x);
-    this.ad_y = obniz.getAD(this.params.y);
-    this.ad_z = obniz.getAD(this.params.z);
+    return _asyncToGenerator(function* () {
+      _this.obniz = obniz;
 
-    yield obniz.wait(500);
-    var ad = obniz.getAD(this.params.vcc);
-    var pwrVoltage = yield ad.getWait();
-    var horizontalZ = yield this.ad_z.getWait();
-    var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-    var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+      obniz.setVccGnd(_this.params.vcc, _this.params.gnd, "3v");
+      _this.ad_x = obniz.getAD(_this.params.x);
+      _this.ad_y = obniz.getAD(_this.params.y);
+      _this.ad_z = obniz.getAD(_this.params.z);
 
-    var self = this;
-    this.ad_x.start(function (value) {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangex) {
-        self.onchangex(self.gravity);
-      }
-    });
+      yield obniz.wait(500);
+      var ad = obniz.getAD(_this.params.vcc);
+      var pwrVoltage = yield ad.getWait();
+      var horizontalZ = yield _this.ad_z.getWait();
+      var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+      var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
 
-    this.ad_y.start(function (value) {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangey) {
-        self.onchangey(self.gravity);
-      }
-    });
+      var self = _this;
+      _this.ad_x.start(function (value) {
+        self.gravity = (value - offsetVoltage) / sensitivity;
+        if (self.onchangex) {
+          self.onchangex(self.gravity);
+        }
+      });
 
-    this.ad_z.start(function (value) {
-      self.gravity = (value - offsetVoltage) / sensitivity;
-      if (self.onchangez) {
-        self.onchangez(self.gravity);
-      }
-    });
-  });
+      _this.ad_y.start(function (value) {
+        self.gravity = (value - offsetVoltage) / sensitivity;
+        if (self.onchangey) {
+          self.onchangey(self.gravity);
+        }
+      });
 
-  return function (_x) {
-    return _ref.apply(this, arguments);
-  };
-})();
+      _this.ad_z.start(function (value) {
+        self.gravity = (value - offsetVoltage) / sensitivity;
+        if (self.onchangez) {
+          self.onchangez(self.gravity);
+        }
+      });
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("KXSC7_2050", KXSC7_2050);
@@ -13065,30 +13078,32 @@ Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
 "use strict";
 
 
-var Potentiometer = function () {
-  this.keys = ["pin0", "pin1", "pin2"];
-  this.reuiredKeys = ["pin0", "pin1", "pin2"];
+class Potentiometer {
+  constructor() {
+    this.keys = ["pin0", "pin1", "pin2"];
+    this.reuiredKeys = ["pin0", "pin1", "pin2"];
 
-  this.vcc_voltage = 5.0;
-};
+    this.vcc_voltage = 5.0;
+  }
 
-Potentiometer.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
-  this.ad = obniz.getAD(this.params.pin1);
+  wired(obniz) {
+    this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+    this.ad = obniz.getAD(this.params.pin1);
 
-  var self = this;
+    var self = this;
 
-  obniz.getAD(this.params.pin0).start(function (value) {
-    self.vcc_voltage = value;
-  });
+    obniz.getAD(this.params.pin0).start(function (value) {
+      self.vcc_voltage = value;
+    });
 
-  this.ad.start(function (value) {
-    self.position = value / self.vcc_voltage;
-    if (self.onchange) {
-      self.onchange(self.position);
-    }
-  });
-};
+    this.ad.start(function (value) {
+      self.position = value / self.vcc_voltage;
+      if (self.onchange) {
+        self.onchange(self.position);
+      }
+    });
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("Potentiometer", Potentiometer);
@@ -13105,83 +13120,85 @@ Obniz.PartsRegistrate("Potentiometer", Potentiometer);
 "use strict";
 
 
-var DCMotor = function () {
-  this.keys = ["forward", "back"];
-  this.requiredKeys = ["forward", "back"];
-};
-
-DCMotor.prototype.wired = function (obniz) {
-  this.status = {
-    direction: null,
-    power: null
-  };
-
-  this.pwm1_io_num = this.params.forward;
-  this.pwm2_io_num = this.params.back;
-
-  this.pwm1 = obniz.getFreePwm();
-  this.pwm1.start({ io: this.pwm1_io_num });
-  this.pwm1.freq(100000);
-  this.pwm2 = obniz.getFreePwm();
-  this.pwm2.start({ io: this.pwm2_io_num });
-  this.pwm2.freq(100000);
-  this.power(30);
-};
-
-// Module functions
-
-DCMotor.prototype.forward = function () {
-  this.move(true);
-};
-
-DCMotor.prototype.reverse = function () {
-  this.move(false);
-};
-
-DCMotor.prototype.stop = function () {
-  if (this.status.direction === null) {
-    return;
+class DCMotor {
+  constructor() {
+    this.keys = ["forward", "back"];
+    this.requiredKeys = ["forward", "back"];
   }
-  this.status.direction = null;
-  this.pwm1.duty(0);
-  this.pwm2.duty(0);
-};
 
-DCMotor.prototype.move = function (forward) {
-  if (forward) {
-    if (this.status.direction === true) {
+  wired(obniz) {
+    this.status = {
+      direction: null,
+      power: null
+    };
+
+    this.pwm1_io_num = this.params.forward;
+    this.pwm2_io_num = this.params.back;
+
+    this.pwm1 = obniz.getFreePwm();
+    this.pwm1.start({ io: this.pwm1_io_num });
+    this.pwm1.freq(100000);
+    this.pwm2 = obniz.getFreePwm();
+    this.pwm2.start({ io: this.pwm2_io_num });
+    this.pwm2.freq(100000);
+    this.power(30);
+  }
+
+  // Module functions
+
+  forward() {
+    this.move(true);
+  }
+
+  reverse() {
+    this.move(false);
+  }
+
+  stop() {
+    if (this.status.direction === null) {
       return;
     }
-    this.status.direction = true;
-  } else {
-    if (this.status.direction === false) {
+    this.status.direction = null;
+    this.pwm1.duty(0);
+    this.pwm2.duty(0);
+  }
+
+  move(forward) {
+    if (forward) {
+      if (this.status.direction === true) {
+        return;
+      }
+      this.status.direction = true;
+    } else {
+      if (this.status.direction === false) {
+        return;
+      }
+      this.status.direction = false;
+    }
+    var power = this.power();
+    this.power(0);
+    this.power(power);
+  }
+
+  power(power) {
+    if (power === undefined) {
+      return this.status.power;
+    }
+    this.status.power = power;
+    if (this.status.direction === null) {
+      this.pwm1.duty(0);
+      this.pwm2.duty(0);
       return;
     }
-    this.status.direction = false;
+    if (this.status.direction) {
+      this.pwm1.duty(power);
+      this.pwm2.duty(0);
+    } else {
+      this.pwm1.duty(0);
+      this.pwm2.duty(power);
+    }
   }
-  var power = this.power();
-  this.power(0);
-  this.power(power);
-};
-
-DCMotor.prototype.power = function (power) {
-  if (power === undefined) {
-    return this.status.power;
-  }
-  this.status.power = power;
-  if (this.status.direction === null) {
-    this.pwm1.duty(0);
-    this.pwm2.duty(0);
-    return;
-  }
-  if (this.status.direction) {
-    this.pwm1.duty(power);
-    this.pwm2.duty(0);
-  } else {
-    this.pwm1.duty(0);
-    this.pwm2.duty(power);
-  }
-};
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("DCMotor", DCMotor);
@@ -13198,43 +13215,45 @@ Obniz.PartsRegistrate("DCMotor", DCMotor);
 "use strict";
 
 
-var ServoMotor = function () {
-  this.keys = ["gnd", "vcc", "signal"];
-  this.requiredKeys = ["signal"];
-};
-
-ServoMotor.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  this.pwm = obniz.getFreePwm();
-  this.pwm_io_num = this.params.signal;
-
-  this.pwm.start({ io: this.pwm_io_num });
-  this.pwm.freq(50);
-};
-
-// Module functions
-
-ServoMotor.prototype.angle = function (ratio) {
-  var max = 2.4;
-  var min = 0.5;
-  var val = (max - min) * ratio / 180.0 + min;
-  this.pwm.pulse(val);
-};
-
-ServoMotor.prototype.on = function () {
-  if (this.io_power) {
-    this.io_power.output(true);
+class ServoMotor {
+  constructor() {
+    this.keys = ["gnd", "vcc", "signal"];
+    this.requiredKeys = ["signal"];
   }
-};
 
-ServoMotor.prototype.off = function () {
-  if (this.io_power) {
-    this.io_power.output(false);
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    this.pwm = obniz.getFreePwm();
+    this.pwm_io_num = this.params.signal;
+
+    this.pwm.start({ io: this.pwm_io_num });
+    this.pwm.freq(50);
   }
-};
+
+  // Module functions
+
+  angle(ratio) {
+    var max = 2.4;
+    var min = 0.5;
+    var val = (max - min) * ratio / 180.0 + min;
+    this.pwm.pulse(val);
+  }
+
+  on() {
+    if (this.io_power) {
+      this.io_power.output(true);
+    }
+  }
+
+  off() {
+    if (this.io_power) {
+      this.io_power.output(false);
+    }
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("ServoMotor", ServoMotor);
@@ -13252,32 +13271,32 @@ Obniz.PartsRegistrate("ServoMotor", ServoMotor);
 
 
 //Todo:抵抗を追加して圧力(kg)を求められるように改造する
-var FSR40X = function () {
-  this.keys = ["pin0", "pin1"];
-  this.requiredKeys = ["pin0", "pin1"];
-};
 
-FSR40X.prototype.wired = function (obniz) {
-  this.obniz = obniz;
+class FSR40X {
+  constructor() {
+    this.keys = ["pin0", "pin1"];
+    this.requiredKeys = ["pin0", "pin1"];
+  }
 
-  this.io_pwr = obniz.getIO(this.params.pin0);
-  this.ad = obniz.getAD(this.params.pin1);
+  wired(obniz) {
+    this.obniz = obniz;
 
-  this.io_pwr.drive("5v");
-  this.io_pwr.output(true);
+    this.io_pwr = obniz.getIO(this.params.pin0);
+    this.ad = obniz.getAD(this.params.pin1);
 
-  var self = this;
-  this.ad.start(function (value) {
-    pressure = value * 100;
-    if (pressure >= 49) {
-      pressure = 49;
-    }
-    self.press = pressure;
-    if (self.onchange) {
-      self.onchange(self.press);
-    }
-  });
-};
+    this.io_pwr.drive("5v");
+    this.io_pwr.output(true);
+
+    var self = this;
+    this.ad.start(function (value) {
+      var pressure = value * 100;
+      self.press = pressure;
+      if (self.onchange) {
+        self.onchange(self.press);
+      }
+    });
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("FSR40X", FSR40X);
@@ -13296,27 +13315,34 @@ Obniz.PartsRegistrate("FSR40X", FSR40X);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var SEN0114 = function () {
-  this.keys = ["vcc", "output", "gnd"];
-  this.requiredKeys = ["output"];
-};
+class SEN0114 {
+  constructor() {
+    this.keys = ["vcc", "output", "gnd"];
+    this.requiredKeys = ["output"];
+  }
 
-SEN0114.prototype.wired = function (obniz) {
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.ad = obniz.getAD(this.params.output);
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.ad = obniz.getAD(this.params.output);
 
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
+    var self = this;
+    this.ad.start(function (value) {
+      self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
+      if (self.onchange) {
+        self.onchange(self.temp);
+      }
+    });
+  }
 
-SEN0114.prototype.getHumidityWait = _asyncToGenerator(function* () {
-  return yield this.ad.getWait;
-});
+  getHumidityWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      return yield _this.ad.getWait;
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("SEN0114", SEN0114);
@@ -13438,24 +13464,26 @@ Obniz.PartsRegistrate("LM35DZ", LM35DZ);
 "use strict";
 
 
-var LM60 = function () {
-  this.keys = ["vcc", "gnd", "output"];
-  this.requiredKeys = ["output"];
-};
+class LM60 {
+  constructor() {
+    this.keys = ["vcc", "gnd", "output"];
+    this.requiredKeys = ["output"];
+  }
 
-LM60.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.ad = obniz.getAD(this.params.output);
+  wired(obniz) {
+    this.obniz = obniz;
+    this.ad = obniz.getAD(this.params.output);
 
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  var self = this;
-  this.ad.start(function (value) {
-    self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-    if (self.onchange) {
-      self.onchange(self.temp);
-    }
-  });
-};
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    var self = this;
+    this.ad.start(function (value) {
+      self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+      if (self.onchange) {
+        self.onchange(self.temp);
+      }
+    });
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("LM60", LM60);
@@ -13595,41 +13623,47 @@ Obniz.PartsRegistrate("S8120C", S8120C);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var ADT7410 = function () {
-  this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
-  this.requiredKey = ["addressMode"];
-};
-
-ADT7410.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  if (this.params.addressMode === 8) {
-    this.address = 0x48;
-  } else if (this.params.addressMode === 9) {
-    this.address = 0x49;
+class ADT7410 {
+  constructor() {
+    this.keys = ["vcc", "gnd", "sda", "scl", "addressMode"];
+    this.requiredKey = ["addressMode"];
   }
 
-  this.params.clock = 400000;
-  this.params.pull = "5v";
-  this.params.mode = "master";
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
-  this.i2c = obniz.getI2CWithConfig(this.params);
-};
+    if (this.params.addressMode === 8) {
+      this.address = 0x48;
+    } else if (this.params.addressMode === 9) {
+      this.address = 0x49;
+    }
 
-ADT7410.prototype.getTempWait = _asyncToGenerator(function* () {
-  var ret = yield this.i2c.readWait(this.address, 2);
-  var tempBin = ret[0] << 8;
-  tempBin |= ret[1];
-  tempBin = tempBin >> 3;
+    this.params.clock = 400000;
+    this.params.pull = "5v";
+    this.params.mode = "master";
 
-  if (tempBin & 0x1000) {
-    //0度以下の時の処理
-    tempBin = tempBin - 8192;
+    this.i2c = obniz.getI2CWithConfig(this.params);
   }
 
-  return tempBin / 16;
-});
+  getTempWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      var ret = yield _this.i2c.readWait(_this.address, 2);
+      var tempBin = ret[0] << 8;
+      tempBin |= ret[1];
+      tempBin = tempBin >> 3;
+
+      if (tempBin & 0x1000) {
+        //0度以下の時の処理
+        tempBin = tempBin - 8192;
+      }
+
+      return tempBin / 16;
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("ADT7410", ADT7410);
@@ -13649,93 +13683,103 @@ Obniz.PartsRegistrate("ADT7410", ADT7410);
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 //センサからの反応なし
-var S5851A = function () {
-  this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
-  this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
-};
-
-S5851A.prototype.wired = function (obniz) {
-  //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
-  this.io_adr0 = obniz.getIO(this.params.adr0);
-  this.io_adr1 = obniz.getIO(this.params.adr1);
-
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-  switch (this.params.adr_select) {
-    case 8:
-      this.io_adr0.output(false);
-      this.io_adr1.output(false);
-      this.address = 0x48;
-      break;
-    case 9:
-      this.io_adr0.pull(null);
-      this.io_adr1.output(false);
-      this.address = 0x49;
-      break;
-    case 'A':
-      this.io_adr0.output(true);
-      this.io_adr1.output(false);
-      this.address = 0x4A;
-      break;
-    case 'B':
-      this.io_adr0.output(false);
-      this.io_adr1.output(true);
-      this.address = 0x4B;
-      break;
-    case 'C':
-      this.io_adr0.pull(null);
-      this.io_adr1.output(true);
-      this.address = 0x4C;
-      break;
-    case 'D':
-      this.io_adr0.output(true);
-      this.io_adr1.output(true);
-      this.address = 0x4D;
-      break;
-    case 'E':
-      this.io_adr0.output(false);
-      this.io_adr1.pull(null);
-      this.address = 0x4E;
-      break;
-    case 'F':
-      this.io_adr0.output(true);
-      this.io_adr1.pull(null);
-      this.address = 0x4F;
-      break;
-    default:
-      this.io_adr0.output(false);
-      this.io_adr1.output(false);
-      this.address = 0x48;
-      break;
+class S5851A {
+  constructor() {
+    this.requiredKeys = ["vcc", "gnd", "adr0", "adr1", "adr_select"];
+    this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
   }
-  console.log('i2c address=' + this.address);
 
-  this.params.clock = this.params.clock || 400 * 1000; //for i2c
-  this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.pull = this.params.pull || "5v"; //for i2c
-  this.i2c = obniz.getI2CWithConfig(this.params);
-  //obniz.i2c0.write(address, [0x20, 0x24]);
-};
+  wired(obniz) {
+    //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
+    this.io_adr0 = obniz.getIO(this.params.adr0);
+    this.io_adr1 = obniz.getIO(this.params.adr1);
 
-S5851A.prototype.getTempWait = _asyncToGenerator(function* () {
-  //console.log("gettempwait");
-  //obniz.i2c0.write(address, [0x20, 0x24]);
-  //obniz.i2c0.write(address, [0xE0, 0x00]);
-  var ret = yield this.i2c0.readWait(address, 2);
-  //console.log('ret:' + ret);
-  var tempBin = ret[0].toString(2) + ('00000000' + ret[1].toString(2)).slice(-8);
-  var temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
-  return temperature;
-});
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
-S5851A.prototype.getHumdWait = _asyncToGenerator(function* () {
-  this.i2c.write(address, [0x20, 0x24]);
-  this.i2c.write(address, [0xE0, 0x00]);
-  var ret = yield this.i2c.readWait(address, 4);
-  var humdBin = ret[2].toString(2) + ('00000000' + ret[3].toString(2)).slice(-8);
-  var humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
-  return humidity;
-});
+    switch (this.params.adr_select) {
+      case 8:
+        this.io_adr0.output(false);
+        this.io_adr1.output(false);
+        this.address = 0x48;
+        break;
+      case 9:
+        this.io_adr0.pull(null);
+        this.io_adr1.output(false);
+        this.address = 0x49;
+        break;
+      case 'A':
+        this.io_adr0.output(true);
+        this.io_adr1.output(false);
+        this.address = 0x4A;
+        break;
+      case 'B':
+        this.io_adr0.output(false);
+        this.io_adr1.output(true);
+        this.address = 0x4B;
+        break;
+      case 'C':
+        this.io_adr0.pull(null);
+        this.io_adr1.output(true);
+        this.address = 0x4C;
+        break;
+      case 'D':
+        this.io_adr0.output(true);
+        this.io_adr1.output(true);
+        this.address = 0x4D;
+        break;
+      case 'E':
+        this.io_adr0.output(false);
+        this.io_adr1.pull(null);
+        this.address = 0x4E;
+        break;
+      case 'F':
+        this.io_adr0.output(true);
+        this.io_adr1.pull(null);
+        this.address = 0x4F;
+        break;
+      default:
+        this.io_adr0.output(false);
+        this.io_adr1.output(false);
+        this.address = 0x48;
+        break;
+    }
+    console.log('i2c address=' + this.address);
+
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || "master"; //for i2c
+    this.params.pull = this.params.pull || "5v"; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    //obniz.i2c0.write(address, [0x20, 0x24]);
+  }
+
+  getTempWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      //console.log("gettempwait");
+      //obniz.i2c0.write(address, [0x20, 0x24]);
+      //obniz.i2c0.write(address, [0xE0, 0x00]);
+      var ret = yield _this.i2c0.readWait(address, 2);
+      //console.log('ret:' + ret);
+      var tempBin = ret[0].toString(2) + ('00000000' + ret[1].toString(2)).slice(-8);
+      var temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
+      return temperature;
+    })();
+  }
+
+  getHumdWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      _this2.i2c.write(address, [0x20, 0x24]);
+      _this2.i2c.write(address, [0xE0, 0x00]);
+      var ret = yield _this2.i2c.readWait(address, 4);
+      var humdBin = ret[2].toString(2) + ('00000000' + ret[3].toString(2)).slice(-8);
+      var humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
+      return humidity;
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("S5851A", S5851A);
@@ -13754,75 +13798,93 @@ Obniz.PartsRegistrate("S5851A", S5851A);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var SHT31 = function () {
-  this.requiredKeys = ["adr", "addressmode"];
-  this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
-  this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
+class SHT31 {
+  constructor() {
+    this.requiredKeys = ["adr", "addressmode"];
+    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c"];
+    this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
 
-  this.commands = {};
-  this.commands.softReset = [0x30, 0xA2];
-  this.commands.highRepeatStreach = [0x2C, 0x06];
-  this.commands.middleRepeatStreach = [0x2C, 0x0D];
-  this.commands.lowRepeatStreach = [0x2C, 0x10];
-  this.commands.highRepeat = [0x24, 0x00];
-  this.commands.mediumRepeat = [0x24, 0x0B];
-  this.commands.lowRepeat = [0x24, 0x16];
+    this.commands = {};
+    this.commands.softReset = [0x30, 0xA2];
+    this.commands.highRepeatStreach = [0x2C, 0x06];
+    this.commands.middleRepeatStreach = [0x2C, 0x0D];
+    this.commands.lowRepeatStreach = [0x2C, 0x10];
+    this.commands.highRepeat = [0x24, 0x00];
+    this.commands.mediumRepeat = [0x24, 0x0B];
+    this.commands.lowRepeat = [0x24, 0x16];
 
-  this.waitTime = {};
-  this.waitTime.wakeup = 1;
-  this.waitTime.softReset = 1;
-  this.waitTime.lowRepeat = 4;
-  this.waitTime.mediumRepeat = 6;
-  this.waitTime.highRepeat = 15;
+    this.waitTime = {};
+    this.waitTime.wakeup = 1;
+    this.waitTime.softReset = 1;
+    this.waitTime.lowRepeat = 4;
+    this.waitTime.mediumRepeat = 6;
+    this.waitTime.highRepeat = 15;
 
-  //not tested
-  this.commands.readStatus = [0xF3, 0x2D];
-};
-
-SHT31.prototype.wired = function (obniz) {
-  this.obniz = obniz;
-  this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-  this.io_adr = obniz.getIO(this.params.adr);
-
-  if (this.params.addressmode === 4) {
-    this.io_adr.output(false);
-    this.address = 0x44;
-  } else if (this.params.addressmode === 5) {
-    this.io_adr.pull(null);
-    this.address = 0x45;
+    //not tested
+    this.commands.readStatus = [0xF3, 0x2D];
   }
 
-  this.params.clock = this.params.clock || 400 * 1000; //for i2c
-  this.params.mode = this.params.mode || "master"; //for i2c
-  this.params.pullType = this.params.pullType || "float"; //for i2c
-  this.i2c = obniz.getI2CWithConfig(this.params);
-  obniz.i2c0.write(this.address, this.commands.softReset);
-};
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.io_adr = obniz.getIO(this.params.adr);
 
-SHT31.prototype.getData = _asyncToGenerator(function* () {
-  this.i2c.write(this.address, this.commands.highRepeat);
-  yield obniz.wait(this.waitTime.highRepeat);
-  return yield this.i2c.readWait(this.address, 6);
-});
+    if (this.params.addressmode === 4) {
+      this.io_adr.output(false);
+      this.address = 0x44;
+    } else if (this.params.addressmode === 5) {
+      this.io_adr.pull(null);
+      this.address = 0x45;
+    }
 
-SHT31.prototype.getTempWait = _asyncToGenerator(function* () {
-  return (yield this.getAllWait()).temperature;
-});
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || "master"; //for i2c
+    this.params.pullType = this.params.pullType || "float"; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    obniz.i2c0.write(this.address, this.commands.softReset);
+  }
 
-SHT31.prototype.getHumdWait = _asyncToGenerator(function* () {
-  return (yield this.getAllWait()).humidity;
-});
+  getData() {
+    var _this = this;
 
-SHT31.prototype.getAllWait = _asyncToGenerator(function* () {
-  let ret = yield this.getData();
+    return _asyncToGenerator(function* () {
+      _this.i2c.write(_this.address, _this.commands.highRepeat);
+      yield obniz.wait(_this.waitTime.highRepeat);
+      return yield _this.i2c.readWait(_this.address, 6);
+    })();
+  }
 
-  let tempBin = ret[0] * 256 + ret[1];
-  let temperature = -45 + 175 * (tempBin / (65536 - 1));
+  getTempWait() {
+    var _this2 = this;
 
-  let humdBin = ret[3] * 256 + ret[4];
-  let humidity = 100 * (humdBin / (65536 - 1));
-  return { temperature, humidity };
-});
+    return _asyncToGenerator(function* () {
+      return (yield _this2.getAllWait()).temperature;
+    })();
+  }
+
+  getHumdWait() {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      return (yield _this3.getAllWait()).humidity;
+    })();
+  }
+
+  getAllWait() {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      let ret = yield _this4.getData();
+
+      let tempBin = ret[0] * 256 + ret[1];
+      let temperature = -45 + 175 * (tempBin / (65536 - 1));
+
+      let humdBin = ret[3] * 256 + ret[4];
+      let humidity = 100 * (humdBin / (65536 - 1));
+      return { temperature, humidity };
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("SHT31", SHT31);
@@ -13841,44 +13903,47 @@ Obniz.PartsRegistrate("SHT31", SHT31);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var ADT7310 = function () {
-  this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
-  this.requiredKeys = [];
-};
+class ADT7310 {
+  constructor() {
+    this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+    this.requiredKeys = [];
+  }
+  wired(obniz) {
+    var _this = this;
 
-ADT7310.prototype.wired = (() => {
-  var _ref = _asyncToGenerator(function* (obniz) {
-    this.obniz = obniz;
+    return _asyncToGenerator(function* () {
+      _this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+      obniz.setVccGnd(_this.params.vcc, _this.params.gnd, "5v");
 
-    this.params.mode = this.params.mode || "master";
-    this.params.frequency = this.params.frequency || 500000;
-    this.params.mosi = this.params.din;
-    this.params.miso = this.params.dout;
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  });
-
-  return function (_x) {
-    return _ref.apply(this, arguments);
-  };
-})();
-
-ADT7310.prototype.getTempWait = _asyncToGenerator(function* () {
-  yield this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-  yield this.obniz.wait(200); //適度な値でないと安定しない
-  var ret = yield this.spi.writeWait([0x00, 0x00]);
-  var tempBin = ret[0] << 8;
-  tempBin |= ret[1];
-  tempBin = tempBin >> 3;
-
-  if (tempBin & 0x1000) {
-    //0度以下の時の処理
-    tempBin = tempBin - 8192;
+      _this.params.mode = _this.params.mode || "master";
+      _this.params.frequency = _this.params.frequency || 500000;
+      _this.params.mosi = _this.params.din;
+      _this.params.miso = _this.params.dout;
+      _this.spi = _this.obniz.getSpiWithConfig(_this.params);
+    })();
   }
 
-  return tempBin / 16;
-});
+  getTempWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      yield _this2.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+      yield _this2.obniz.wait(200); //適度な値でないと安定しない
+      var ret = yield _this2.spi.writeWait([0x00, 0x00]);
+      var tempBin = ret[0] << 8;
+      tempBin |= ret[1];
+      tempBin = tempBin >> 3;
+
+      if (tempBin & 0x1000) {
+        //0度以下の時の処理
+        tempBin = tempBin - 8192;
+      }
+
+      return tempBin / 16;
+    })();
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("ADT7310", ADT7310);
