@@ -1,37 +1,49 @@
 # DCMotor
-タミヤモーターやマブチモーターのような、<br>電池を繋いで回すような一般的なモーターです。プラスとマイナスはありませんが逆にすると逆に回転します。
+
+Common Brushed DC Motor which moves when connected to +/- and reverse when connected to other side.
 
 ![photo of DCMotor](./wired.png)
 
-## 接続
-モーターから出ている２本の線をObnizにつなぎます。どちらをどこにつないでもOKですが、プログラムで「前」と書いて後ろに動いたらあとで配線を逆にすると良いです。モーターをObnizの0と1番に繋いだ場合は以下のようにします
+## wire({forward, back})
+
+connect two wire to an obniz and set io number to forward,back.
+If you connect to io 0 and 1, then write a program like a below.
+
 ```javascript
 // Javascript Example
 var motor = obniz.wired("DCMotor",  {forward:0, back:1});
+motor.power(50);
+motor.forward();
 
 ```
-## forward();
-モーターを回転させます。
+## forward()
 
-### Example
+start moving forward.
+
+
 ```javascript
 // Javascript Example
 var motor = obniz.wired("DCMotor", {forward:0, back:1});
 
 motor.forward();
 ```
-## reverse();
-モーターを逆に回転させます。
-### Example
+## reverse()
+
+start moving to back.
+
+
 ```javascript
 // Javascript Example
 var motor = obniz.wired("DCMotor", {forward:0, back:1});
 
 motor.reverse();
 ```
-## stop();
-モーターを停止させます。
-### Example
+
+## stop()
+
+stop a motor.
+
+
 ```javascript
 // Javascript Example
 var motor = obniz.wired("DCMotor", {forward:0, back:1});
@@ -42,8 +54,10 @@ setTimeout(function(){
 }, 1000);
 ```
 ## move(boolean)
-directionに合わせて指定した方向にモーターを回転させます。rotateとreverseを引数を変えるだけでこの関数１つで扱えます。trueであれば正転。falseであれば逆に回転します。
-### Example
+
+move a motor regard provided value.
+
+
 ```javascript
 // Javascript Example
 var motor = obniz.wired("DCMotor", {forward:0, back:1});
@@ -51,12 +65,16 @@ var motor = obniz.wired("DCMotor", {forward:0, back:1});
 motor.move(true); // = motor.forward();
 ```
 ## power(float)
-モーターのパワーを変更します。0~100で指定することが出来ます。
-### Example
+set a motor power.
+
+default is 30.
+
+power must be within 0~100.
+
 ```javascript
 // Javascript Example
 var motor = obniz.wired("DCMotor", {forward:0, back:1});
 
-motor.power(3);
+motor.power(80);
 motor.move(true);
 ```

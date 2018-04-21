@@ -18045,14 +18045,14 @@ class ServoMotor {
   };
 
   on() {
-    if (this.io_power) {
-      this.io_power.output(true);
+    if (this.params.vcc) {
+      this.obniz.getIO(this.params.vcc).output(true);
     }
   };
 
   off() {
-    if (this.io_power) {
-      this.io_power.output(false);
+    if (this.params.vcc) {
+      this.obniz.getIO(this.params.vcc).output(false);
     }
   };
 }
