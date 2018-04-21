@@ -8,6 +8,9 @@
         },
         {
           "name": "FullcolorLED"
+        },
+        {
+          "name": "WS2811"
         }
       ]
     },{

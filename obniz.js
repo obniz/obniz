@@ -17528,7 +17528,7 @@ class WS2811 {
 
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     
     this.params.mode  =  "master";
     this.params.frequency = 2*1000*1000;
@@ -17636,6 +17636,7 @@ Obniz.PartsRegistrate("WS2811", WS2811);
 /***/ (function(module, exports, __webpack_require__) {
 
 class _24LC256 {
+  
   constructor() {
     this.requiredKeys = ["address"];
     this.keys = ["sda","scl","clock","pullType","i2c","address"];
@@ -17668,7 +17669,7 @@ class _24LC256 {
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("_24LC256", _24LC256);
+Obniz.PartsRegistrate("24LC256", _24LC256);
 
 
 /***/ }),

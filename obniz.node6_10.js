@@ -12804,6 +12804,7 @@ Obniz.PartsRegistrate("WS2811", WS2811);
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 class _24LC256 {
+
   constructor() {
     this.requiredKeys = ["address"];
     this.keys = ["sda", "scl", "clock", "pullType", "i2c", "address"];
@@ -12840,7 +12841,7 @@ class _24LC256 {
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("_24LC256", _24LC256);
+Obniz.PartsRegistrate("24LC256", _24LC256);
 
 /***/ }),
 
