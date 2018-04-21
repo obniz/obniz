@@ -1,28 +1,27 @@
 # InfraredLED
 
-This is InfraredLED class. Especially, This has a function to transfer data via Infrared like remote-control.
+赤外線LEDを操作します。特に、リモコンのような赤外線で信号を送るためのクラスです。
 
 ## wired(obniz, {anode, cathode})
 
-anode,cathode is pin no of obniz io.
-cathode is optional.
+anodeとcathodeはそれを繋いだobnizのioを指定して下さい。
+cathodeはオプショナルです。ない場合は他のGNDに繋いでいるとみなします。
 
-This module works with various InfraredLED  
-For Example,
+このクラスはほとんどの赤外線LEDを操作できます。
+例えば
 
 1. OSI5FU5111C
 2. OSI5LA5113A
 3. OSI3CA5111A etc,,,
 
-### Add Resistor
+### 抵抗が必要です。
 
-Normally, An resistor is reuqired to connect LED to obniz.
-Refer your LED's datasheet "Pulse Forward Current" like below. It is maximum value.
-If it is 1000mA, then 5ohm is enough.
+obnizにLEDを繋ぐには抵抗が必要です。(抵抗入りのLEDは別ですが)。
+赤外線LEDは高速に点滅するため、また遠くの電子機器を動かすために抵抗は低めに設定します。
+データシートの "Pulse Forward Current" を参考にしてください。例えば、下の例の場合は最大1000mAなので、5Ωあれば安心です。
 ![](./fvid.png)
 
-Then wire your LED to obniz 
-
+抵抗を介してobnizに接続します。
 
 ![](./wired.jpg)
 
@@ -34,12 +33,11 @@ led.send([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 ```
 
 ## send(array)
-send a array of signal.
-data baud rate is defined in dataBaud(default 70usec)
-
-This function use ```pwm.modulate```. see more dtail on pwm document.
-
-You can record your remote controller's signal by ```IRSensor``` module. Please refer it.
+データを送信します。
+データのボーレートは```dataSymbolLength```で設定します（デフォルトで 70usecです）
+この関数は```pwm.modulate```を使います。データ形式について、詳しくはそちらを参照下さい。
+パーツの ```IRSensor``` を使えば、リモコンから出力される赤外線の信号を取得できます。
+取得した信号はそのまま、この```InfraredLED```より送信可能です。
 
 ```Javascript
 // Javascript Example
@@ -49,9 +47,10 @@ led.send([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 ```
 
 ## dataSymbolLength
-baudrate of signal array.
-default is 70usec(0.07)
-See more dtail on pwm modulate document.
+
+信号のボーレートを設定します。
+設定しない場合は70usec(0.07msec)となっています。
+詳しくは```pwm.modulate```を参考にして下さい。
 
 ```Javascript
 // Javascript Example
