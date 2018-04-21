@@ -15952,9 +15952,9 @@ var map = {
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
-	"./GyroSensor/ENC-03R_Module/index.js": "./parts/GyroSensor/ENC-03R_Module/index.js",
-	"./InfraredSensor/EKMC160XXXX/index.js": "./parts/InfraredSensor/EKMC160XXXX/index.js",
+	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
+	"./InfraredSensor/PaPIRsVZ/index.js": "./parts/InfraredSensor/PaPIRsVZ/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
 	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
@@ -17165,10 +17165,10 @@ Obniz.PartsRegistrate("HC-SR04", HCSR04);
 
 /***/ }),
 
-/***/ "./parts/GyroSensor/ENC-03R_Module/index.js":
-/*!**************************************************!*\
-  !*** ./parts/GyroSensor/ENC-03R_Module/index.js ***!
-  \**************************************************/
+/***/ "./parts/GyroSensor/ENC03R_Module/index.js":
+/*!*************************************************!*\
+  !*** ./parts/GyroSensor/ENC03R_Module/index.js ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17205,49 +17205,6 @@ class ENC03R_Module {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("ENC03R_Module", ENC03R_Module);
-
-/***/ }),
-
-/***/ "./parts/InfraredSensor/EKMC160XXXX/index.js":
-/*!***************************************************!*\
-  !*** ./parts/InfraredSensor/EKMC160XXXX/index.js ***!
-  \***************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var PIR_ekmc= function() {
-    this.keys = ["vcc","gnd","signal"];
-    this.requiredKeys = ["signal"];
-    
-};
-
-PIR_ekmc.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.io_signal = obniz.getIO(this.params.signal);
-  this.io_signal.pull("0v");
-  
-  obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  
-  var self = this;
-  this.io_signal.input(function(value) {
-    self.isPressed = (value === false);
-    if (self.onchange) {
-      self.onchange(value === false);
-    }
-  });
-  
-};
-
-
-
-PIR_ekmc.prototype.isPressedWait = async function() {
-  var self = this;
-  var ret = await this.io_signal.inputWait();
-  return ret == false;
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("PIR_ekmc", PIR_ekmc);
 
 /***/ }),
 
@@ -17315,6 +17272,41 @@ class IRSensor {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("IRSensor", IRSensor);
+
+/***/ }),
+
+/***/ "./parts/InfraredSensor/PaPIRsVZ/index.js":
+/*!************************************************!*\
+  !*** ./parts/InfraredSensor/PaPIRsVZ/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class PaPIRsVZ {
+  constructor() {
+    this.keys = ["vcc", "gnd", "signal"];
+    this.requiredKeys = ["signal"];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.io_signal = obniz.getIO(this.params.signal);
+    this.io_signal.pull("0v");
+    
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    
+    this.io_signal.input((value) => {
+      this.isPressed = (value === false);
+      if (this.onchange) {
+        this.onchange(value === false);
+      }
+    });
+  }
+  
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
 
 /***/ }),
 
