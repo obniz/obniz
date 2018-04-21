@@ -5237,14 +5237,17 @@ class Display {
   }
 
   setPinNames(moduleName, data) {
-    var obj = {};
+    let obj = {};
     obj["display"] = {};
     obj["display"]["pin_assign"] = {};
+    let noAssignee = true;
     for (var key in data) {
+      noAssignee = false;
       obj["display"]["pin_assign"][key] = { module_name: moduleName, pin_name: data[key] };
     }
-
-    this.Obniz.send(obj);
+    if (!noAssignee) {
+      this.Obniz.send(obj);
+    }
   }
 
   draw(ctx) {
@@ -12003,9 +12006,68 @@ Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);
   !*** ./parts/Display/7SegmentLEDArray/index.js ***!
   \*************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed: SyntaxError: Unexpected token (11:8)\n\n\u001b[0m \u001b[90m  9 | \u001b[39m  }\n \u001b[90m 10 | \u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 | \u001b[39m  wired \u001b[33m=\u001b[39m \u001b[36mfunction\u001b[39m(obniz) {\n \u001b[90m    | \u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 | \u001b[39m    \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mobniz \u001b[33m=\u001b[39m obniz\u001b[33m;\u001b[39m\n \u001b[90m 13 | \u001b[39m    \n \u001b[90m 14 | \u001b[39m    \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39msegments \u001b[33m=\u001b[39m []\u001b[33m;\u001b[39m\u001b[0m\n");
+"use strict";
+
+
+class _7SegmentLEDArray {
+  constructor() {
+    this.identifier = "" + new Date().getTime();
+
+    this.keys = ["segments"];
+    this.requiredKeys = this.keys;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.segments = this.params.segments;
+  }
+
+  print(data) {
+    if (typeof data === "number") {
+      data = parseInt(data);
+
+      const print = index => {
+        let val = data;
+
+        for (let i = 0; i < this.segments.length; i++) {
+          if (index === i) {
+            this.segments[i].print(val % 10);
+          } else {
+            this.segments[i].off();
+          }
+          val = val / 10;
+        }
+      };
+
+      let animations = [];
+      for (let i = 0; i < this.segments.length; i++) {
+        animations.push({
+          duration: 3,
+          state: print
+        });
+      }
+
+      this.obniz.io.animation(this.identifier, "loop", animations);
+    };
+  }
+
+  on() {
+    this.obniz.io.animation(this.identifier, "resume");
+  }
+
+  off() {
+    this.obniz.io.animation(this.identifier, "pause");
+    for (let i = 0; i < this.segments.length; i++) {
+      this.segments[i].off();
+    }
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
 
 /***/ }),
 

@@ -9751,14 +9751,17 @@ class Display {
   }
 
   setPinNames(moduleName, data) {
-    var obj = {};
+    let obj = {};
     obj["display"] = {};
     obj["display"]["pin_assign"] = {};
+    let noAssignee = true;
     for(var key in data){
+      noAssignee = false;
       obj["display"]["pin_assign"][key] = {module_name : moduleName, pin_name:data[key]};
     }
-    
-    this.Obniz.send(obj);
+    if (!noAssignee) {
+      this.Obniz.send(obj);
+    }
   }
 
   draw(ctx) {
@@ -14326,7 +14329,6 @@ class WSCommand_Display extends WSCommand {
         this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
       }
     }
-
   }
   
   drawVertically(buf) {
@@ -16881,9 +16883,67 @@ Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);
   !*** ./parts/Display/7SegmentLEDArray/index.js ***!
   \*************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module parse failed: Unexpected token (11:8)\nYou may need an appropriate loader to handle this file type.\n|   }\n| \n|   wired = function(obniz) {\n|     this.obniz = obniz;\n|     ");
+
+class _7SegmentLEDArray {
+  constructor(){
+    this.identifier = ""+(new Date()).getTime();
+    
+    this.keys = ["segments"];
+    this.requiredKeys = this.keys
+    
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    
+    this.segments = this.params.segments;
+  }
+
+  print(data) {
+    if (typeof data === "number") {
+      data = parseInt(data);
+      
+      const print = (index) => {
+        let val = data;
+  
+        for (let i=0; i<this.segments.length; i++) {
+          if(index === i) {
+            this.segments[i].print(val%10);
+          } else {
+            this.segments[i].off();
+          }
+          val = val/10;
+        }
+      };
+  
+      let animations = [];
+      for (let i=0; i<this.segments.length; i++) {
+        animations.push({
+          duration: 3,
+          state: print
+        });
+      } 
+  
+      this.obniz.io.animation(this.identifier, "loop", animations);
+    };
+  }
+
+  on() {
+    this.obniz.io.animation(this.identifier, "resume");
+  }
+
+  off() {
+    this.obniz.io.animation(this.identifier, "pause");
+    for (let i=0; i<this.segments.length; i++) {
+      this.segments[i].off();
+    }
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
 
 /***/ }),
 
