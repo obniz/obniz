@@ -13377,15 +13377,15 @@ Obniz.PartsRegistrate("Speaker", Speaker);
 
 class AnalogTemplatureSensor {
   constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["signal"];
+    this.keys = ["vcc", "gnd", "output"];
+    this.requiredKeys = ["output"];
     this.drive = "5v";
   }
 
   wired(obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-    this.ad = obniz.getAD(this.params.signal);
+    this.ad = obniz.getAD(this.params.output);
 
     this.ad.start(function (voltage) {
       this.temp = this.calc(voltage);
