@@ -48,8 +48,8 @@
               minimum : 0
               maximum : 255
 
-      zerooneArray :
-          id : "zerooneArray"
+      bitArray :
+          id : "bitArray"
           type : array
           default : null
           description : "Binary data array represented in 0 1."
@@ -126,7 +126,7 @@
           pattern: "^([0-9a-fA-F]+)$"
           minLength: 12
           maxLength: 12
-          description : "Bluetooth device id. It's hexString cannot cointain '0x' or '-'."
+          description : "Bluetooth device id. It's hexString cannot contain '0x' or '-'."
           example : "77e754ab8591"
 
       obnizId :

@@ -1,9 +1,9 @@
 # Switch
-Embeded switch on obniz.
+Embedded switch on obniz.
 
 # switch.onchange = function(){}
 When switch state changed, This function will be called.
-If you press and release a switch, callbacked two times("push" and "none").
+If you press and release a switch, callback two times("push" and "none").
 
 The states is below.
 

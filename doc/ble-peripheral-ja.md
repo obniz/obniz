@@ -52,7 +52,7 @@ settingに渡した引数に従って，BLEのAdvertisementで出力するデー
 obniz.ble.advertisement.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
   manufacturerData:{
-    campanyCode : 0x004C,
+    companyCode : 0x004C,
     serviceUuids: ["fff0"],
     data : [0x02,0x15, 0xC2, 0x8f, 0x0a, 0xd5, 0xa7, 0xfd, 0x48, 0xbe, 0x9f, 0xd0, 0xea, 0xe9, 0xff, 0xd3, 0xa8, 0xbb,0x10,0x00,0x00,0x10,0xFF],
   },
@@ -71,7 +71,7 @@ obniz.ble.advertisement.start();
      serviceUuids : [ "<service UUID>", ... ],  
      localName : "<name>",
      manufacturerData:{
-     	campanyCode : <int>,
+     	companyCode : <int>,
         data : [ <int>, ... ],
      },
 }
@@ -115,7 +115,7 @@ obniz.ble.advertisement.start();
      serviceUuids : [ "<service UUID>", ... ],  
      localName : "<name>",
      manufacturerData:{
-     	campanyCode : <int>,
+     	companyCode : <int>,
         data : [ <int>, ... ],
      },
 }
@@ -134,7 +134,7 @@ obniz.ble.peripheral.addService(service);
 /* Service with characteristics/descriptor */
 var service = new obniz.ble.service({"uuid" : "FFF0"});
 var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
-var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello wrold characteristic"});
+var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello world characteristic"});
 
 service.addCharacteristic(characteristic);
 characteristic.addDescriptor(descriptor);
@@ -181,7 +181,7 @@ var service = new obniz.ble.service({
         "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
         "descriptors" : [{
             "uuid" : "2901",   //Characteristic User Description
-            "text" : "hello wrold characteristic", //data for dataArray or  text for string
+            "text" : "hello world characteristic", //data for dataArray or  text for string
         }]
     }]
 });
@@ -211,7 +211,7 @@ var characteristic = new obniz.ble.characteristic({
     "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
     "descriptors" : [{
         "uuid" : "2901",   //Characteristic User Description
-        "text" : "hello wrold characteristic",    //data for dataArray or  text for string
+        "text" : "hello world characteristic",    //data for dataArray or  text for string
     }]
 });
 
@@ -321,7 +321,7 @@ characteristic.onreadfromremote = function(val){
 ```Javascript
 var descriptor = new obniz.ble.characteristic({
                       "uuid" : "2901",   //Characteristic User Description
-                      "text" : "hello wrold characteristic",
+                      "text" : "hello world characteristic",
                   });
 
 var characteristic = new obniz.ble.characteristic({

@@ -17,11 +17,11 @@ var uart2 = obniz.getFreeUart(); // Error
 start uart on io tx, rx.
 tx is used for send data from obniz to parts.
 rx is used for receive data from parts to obniz.
-you can start uart without many configration. Just use like
+you can start uart without many configuration. Just use like
 ```javascript
 obniz.uart0.start({tx:0, rx:1})
 ```
-default configrations are
+default configurations are
 
 Defaults
 - 115200bps
@@ -29,16 +29,16 @@ Defaults
 - Now Flow Control
 - 8bit
 - No Parity
-- 1 Stopbit
+- 1 Stop bit
 - 5v push-pull drive
 - no internal pull-up
 
-available configrations are
+available configurations are
 
 1. baud: number (default 115200)
-2. stop: stopbit length 1(default)/1.5/2
+2. stop: stop bit length 1(default)/1.5/2
 3. bits: data bits 8(default)/5/6/7
-4. parity: paritty check "off"(default)/"odd"/"even"
+4. parity: parity check "off"(default)/"odd"/"even"
 5. flowcontrol: flow control "off"(default)/"rts"/"cts"/"rts-cts"
 6. rts: io for rts
 7. cts: io for cts
@@ -77,7 +77,7 @@ obniz.uart0.send("Hi");
 obniz.uart0.end();
 ```
 ## onreceive(data, text)
-callback function when data recieved.
+callback function when data received.
 data is array of bytes.
 text is same data. but it was text representation.
 
@@ -96,7 +96,7 @@ obniz.uart0.send("Hello");
 ```
 
 ## isDataExists
-check data  which recieved and you don't get yet.
+check data  which received and you don't get yet.
 If it available, return true. 
 
 if you are using onreceive callback, it always false because you get data from callback function.
@@ -115,7 +115,7 @@ while(1){
 ```
 
 ## readBytes
-return received data array which recieved and you don't get yet.
+return received data array which received and you don't get yet.
 
 ```Javascript
 // Javascript Example
@@ -130,7 +130,7 @@ while(1){
 ```
 
 ## readText
-return received data as string which recieved and you don't get yet.
+return received data as string which received and you don't get yet.
 
 
 ```Javascript

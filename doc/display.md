@@ -91,7 +91,7 @@ obniz.display.circle(90, 30, 20, true); // filled circle
 
 ## display.qr(data, correction)
 show QR code with given text and correction level.
-correction level can be choosed from
+correction level can be from
 
 1. L
 2. M(default)
@@ -116,7 +116,7 @@ Order is same like.
 .....................{1024byte}  
 
 ```javascript
-obniz.display.raw([255, 255,,,,,])// msut be 128*64 bits(=1024byte)
+obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
 ```
 
 ![](./images/obniz_display_sphere.gif)
@@ -131,7 +131,7 @@ let ctx = $("#canvas")[0].getContext('2d');
 // 2. create new canvas dom and load it.
 let ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
 
-// 3. runnning with node.js
+// 3. running with node.js
 //    npm install canvas. ( version 2.0.0 or later required )
 const { createCanvas } = require('canvas');
 const canvas = createCanvas(128, 64); 

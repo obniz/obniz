@@ -1,7 +1,7 @@
-# obniz websocket Formats
-Javascript以外からも，Websocketを使うことでobnizを使うことができます．
+# obniz WebSocket Formats
+Javascript以外からも，WebSocketを使うことでobnizを使うことができます．
 
-WebsocketではJSONでデータのやり取りを行います．
+WebSocketではJSONでデータのやり取りを行います．
 
 
 -  [ws](#ws)
@@ -501,7 +501,7 @@ Related item
 ##  <a name="ioAnimation">ioAnimation</a>
 
 
-io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is avaiable. it loop io changes regarding json array.
+io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is available. it loop io changes regarding json array.
 
 ###  request: <a name="-request-ioanimation-init">init</a>
 
@@ -524,7 +524,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
         "io": {
             "animation": {
                 "animation": {
-                    "name": "anim-1",
+                    "name": "animation-1",
                     "status": "loop",
                     "states": [
                         {
@@ -567,7 +567,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
         "io": {
             "animation": {
                 "animation": {
-                    "name": "anim-1",
+                    "name": "animation-1",
                     "status": "pause"
                 }
             }
@@ -743,7 +743,7 @@ available 0 to 5
 |:---- |:---- |:---- |:---- |
 | `pwmX.modulate.type` |  string  | <ul><li>required</li><li>const `"am"`</li></ul> | &nbsp; |
 | `pwmX.modulate.symbol_length` |  number  | <ul><li>required</li><li>0.05 &le; value &le; 1000</li></ul> | symbol width (ms)&nbsp; |
-| `pwmX.modulate.data` | [zerooneArray](#zeroonearray)  | <ul><li>required</li></ul> | &nbsp; |
+| `pwmX.modulate.data` | [bitArray](#bitarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1025,7 +1025,7 @@ Related item
 available only i2c0
 
 ###  request: <a name="-request-i2c-init_master">init_master</a>
-internal pullup is available. But, We recommend use external pull-up resistor.
+internal pull-up is available. But, We recommend use external pull-up resistor.
 
 
 
@@ -1254,11 +1254,11 @@ Monitor io logic level changes by sampling io.
 | `logic_analyzer.io[]` | [pinSetting](#pinsetting)  | <ul><li>required</li></ul> | &nbsp; |
 | `logic_analyzer.interval` |  number  | <ul><li>required</li><li>0 < value</li></ul> | &nbsp; |
 | `logic_analyzer.duration` |  integer  | <ul><li>required</li><li>0 < value</li></ul> | &nbsp; |
-| `logic_analyzer.triger.value` |  boolean  | <ul><li>required</li></ul> | start value&nbsp; |
-| `logic_analyzer.triger.samples` |  integer  | <ul><li>required</li><li>0 &le; value</li></ul> | how that values consists&nbsp; |
+| `logic_analyzer.trigger.value` |  boolean  | <ul><li>required</li></ul> | start value&nbsp; |
+| `logic_analyzer.trigger.samples` |  integer  | <ul><li>required</li><li>0 &le; value</li></ul> | how that values consists&nbsp; |
 
 
-With below sample code, you will receive only datas which start with &#39;false, false, false&#39; 3bit.
+With below sample code, you will receive only data which start with &#39;false, false, false&#39; 3bit.
 ```
 // Json Example
 [
@@ -1267,7 +1267,7 @@ With below sample code, you will receive only datas which start with &#39;false,
             "io": [ 0],
             "interval": 500,
             "duration": 500,
-            "triger": {
+            "trigger": {
                 "value": false,
                 "samples": 3
             }
@@ -1309,7 +1309,7 @@ With below sample code, you will receive only datas which start with &#39;false,
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `logic_analyzer.data` | [zerooneArray](#zeroonearray)  | <ul><li>required</li></ul> | &nbsp; |
+| `logic_analyzer.data` | [bitArray](#bitarray)  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -1384,7 +1384,7 @@ Related item
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `measure.echo[].edge` |  boolean  | <ul><li>required</li></ul> | rising = true&nbsp; |
-| `measure.echo[].timing` |  number  | <ul><li>required</li></ul> | msec from end of pulse&nbsp; |
+| `measure.echo[].timing` |  number  | <ul><li>required</li></ul> | milliseconds from end of pulse&nbsp; |
 
 
 
@@ -3185,7 +3185,7 @@ callback of external device write descriptor
 ##  <a name="message">message</a>
 
 
-send/receive with other obniz or webhook
+send/receive with other obniz or WebHook
 
 ###  request: <a name="-request-message-send">send</a>
 
@@ -3236,7 +3236,7 @@ Related item
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `message.data` |  anyType  | <ul><li>required</li></ul> | All type of data is pass.&nbsp; |
-| `message.from` |  string,null  | &nbsp; | From obniz id. Null is used when webhook message.&nbsp; |
+| `message.from` |  string,null  | &nbsp; | From obniz id. Null is used when WebHook message.&nbsp; |
 
 
 
@@ -3319,6 +3319,13 @@ Related item
 
 
 
+###  <a name="bitarray">bitArray</a>
+| type | conditions | examples | description |
+|:----|:----|:----|:----|
+| array | <ul><li>items<br/><ul><li>0 &le; value &le; 1</li></ul></li></ul>  |  <ul><li>`[0, 1, 1, 0, 0, 1, 1, 0]`</li><li>`[0, 0, 1, 0, 0, 0, 0, 0]`</li></ul> | Binary data array represented in 0 1.&nbsp; |
+
+
+
 ###  <a name="bleadvertisedata">bleAdvertiseData</a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
@@ -3350,7 +3357,7 @@ Related item
 ###  <a name="deviceaddress">deviceAddress</a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
-| string | <ul><li>length = 12</li></ul>  |  <ul><li>`"77e754ab8591"`</li></ul> | Bluetooth device id. It&#39;s hexString cannot cointain &#39;0x&#39; or &#39;-&#39;.&nbsp; |
+| string | <ul><li>length = 12</li></ul>  |  <ul><li>`"77e754ab8591"`</li></ul> | Bluetooth device id. It&#39;s hexString cannot contain &#39;0x&#39; or &#39;-&#39;.&nbsp; |
 
 
 
@@ -3386,13 +3393,6 @@ Related item
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
 | string,null | <ul><li>4 &le; length &le; 36</li></ul>  |  <ul><li>`"e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e"`</li><li>`"8d3591bda71140fd8f9f00535fe57179"`</li><li>`"d822b53c"`</li><li>`"de44"`</li><li>`null`</li></ul> | Bluetooth uuid. If it contain &#39;-&#39;, it ignored.&nbsp; |
-
-
-
-###  <a name="zeroonearray">zerooneArray</a>
-| type | conditions | examples | description |
-|:----|:----|:----|:----|
-| array | <ul><li>items<br/><ul><li>0 &le; value &le; 1</li></ul></li></ul>  |  <ul><li>`[0, 1, 1, 0, 0, 1, 1, 0]`</li><li>`[0, 0, 1, 0, 0, 0, 0, 0]`</li></ul> | Binary data array represented in 0 1.&nbsp; |
 
 
 

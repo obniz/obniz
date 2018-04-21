@@ -36,7 +36,7 @@ await cam.startwait({baud: 115200});
 
 ## setResolusionWait(resolution)
 set image resolution
-This configration consists even after power off.
+This configuration consists even after power off.
 
 1. "640*480" (image size around 40kb)
 2. "320*240" (image size around 12kb)
@@ -53,7 +53,7 @@ await cam.setResolusionWait("640*480");
 
 ## setBaudWait(baud)
 set baudrate of cam.
-This configration consists even after power off.
+This configuration consists even after power off.
 
 1. 9600
 2. 19200

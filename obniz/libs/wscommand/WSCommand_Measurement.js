@@ -13,9 +13,9 @@ class WSCommand_Measurement extends WSCommand {
 
   echo(params) {
     let type = 0;
-    let trigerIO = params.echo.io_pulse;
-    let  trigerPosNeg = params.echo.pulse === "negative" ? false : true;
-    let trigerWidthUs = parseInt(params.echo.pulse_width*1000);
+    let triggerIO = params.echo.io_pulse;
+    let triggerPosNeg = params.echo.pulse === "negative" ? false : true;
+    let triggerWidthUs = parseInt(params.echo.pulse_width*1000);
     let echoIO = params.echo.io_echo;
     let responseCount = params.echo.measure_edges;
     let timeoutUs = params.echo.timeout * 1000;
@@ -23,12 +23,12 @@ class WSCommand_Measurement extends WSCommand {
 
     var buf = new Uint8Array(13);
     buf[0]  = 0;
-    buf[1]  = trigerIO;
-    buf[2]  = trigerPosNeg ? 1 : 0;
-    buf[3]  = trigerWidthUs >> 8*3;
-    buf[4]  = trigerWidthUs >> 8*2;
-    buf[5]  = trigerWidthUs >> 8;
-    buf[6]  = trigerWidthUs;
+    buf[1]  = triggerIO;
+    buf[2]  = triggerPosNeg ? 1 : 0;
+    buf[3]  = triggerWidthUs >> 8*3;
+    buf[4]  = triggerWidthUs >> 8*2;
+    buf[5]  = triggerWidthUs >> 8;
+    buf[6]  = triggerWidthUs;
     buf[7]  = echoIO;
     buf[8]  = responseCount;
     buf[9]  = timeoutUs >> 8*3;

@@ -18,5 +18,5 @@ properties:
             description : "rising = true"
           timing :
             type : number
-            description : "msec from end of pulse"
+            description : "milliseconds from end of pulse"
 

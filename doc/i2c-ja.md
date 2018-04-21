@@ -8,13 +8,13 @@ Slaveモードでは書き込まれたデータを受け取れますが、読み
 OverView
 ```Javascript
 // Example
-// master mode sda=2 scl=3 400khz no internal pullup
+// master mode sda=2 scl=3 400khz no internal pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
+console.log("read "+ret);
 
-// use internal pullups
+// use internal pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000, pull:"5v"}); 
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"}); 
 
@@ -46,7 +46,7 @@ SDA, SCLとして利用するioの番号が必要です。
 内部プルアップを指定するpullは出力設定オプションです.
 何も指定しなければ，pull:nullが設定されます。その場合は外部抵抗でのプルアップが必要です。
 出力設定についてはobniz.ioX.pull() 関数に詳細があります.
-内部プルアップをつかう時に3.3vの相手と通信を行う場合は3vを選びます。これにより3.3vでpullupされます。
+内部プルアップをつかう時に3.3vの相手と通信を行う場合は3vを選びます。これにより3.3vでpull upされます。
 5vの相手と通信を行う場合で速度が遅くても良い場合は 5v を選びます。5vの内部プルアップが有効になります。
 
 通信速度は内部プルアップを使う場合は最大100khz、それ以外の場合は最大1Mhzまで指定できます。
@@ -56,13 +56,13 @@ SDA, SCLとして利用するioの番号が必要です。
 
 ```Javascript
 // Javascript Example
-// master mode sda=2 scl=3 400khz no internal pullup
+// master mode sda=2 scl=3 400khz no internal pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
+console.log("read"+ret);
 
-// use internal pullups
+// use internal pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000, pull:"5v"}); 
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:100000, pull:"3v"}); 
 
@@ -79,7 +79,7 @@ Example
 
 ```Javascript
 // Javascript Example
-// master mode sda=2 scl=3 400khz no pullup
+// master mode sda=2 scl=3 400khz no pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
@@ -92,10 +92,10 @@ lengthの最大は1024バイトです。
 
 ```Javascript
 // Javascript Example
-// master mode sda=2 scl=3 400khz no pullup
+// master mode sda=2 scl=3 400khz no pull up
 obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
 var ret = await obniz.i2c0.readWait(0x50, 1);
-console.log("readed"+ret);
+console.log("read"+ret);
 ```
 
 ## i2cX.onwritten = function(data){}

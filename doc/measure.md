@@ -1,12 +1,12 @@
 # measure
-measure module provide hardware level measrements.
+measure module provide hardware level measurement.
 
 ## measure.echo({})
 
 Some electrical parts or circuits accept "pulse" then responds "pulse" after delay.
 If you want to measure delay, this module is best choice.
 
-This module generate one shot pulse on a io, then measre response time.
+This module generate one shot pulse on a io, then measure response time.
 
 ![](./images/measure.png)
 
@@ -15,21 +15,21 @@ This module generate one shot pulse on a io, then measre response time.
 you can choose belows to generate pulse
 
 1. io_pulse: io for output generated pulse
-2. pulse: "positve" or "negative"
-3. pulse_width: pulse duration in msec. 0.001 to 1000.
+2. pulse: "positive" or "negative"
+3. pulse_width: pulse duration in ms. 0.001 to 1000.
 
 ![](./images/measure_posneg.png)
 
 ### response measurement
-you can choose belows to measre response
+you can choose belows to measure response
 
 1. io_echo: io for measure response
 2. measure_edges: maximum edges to detect. 1 to 4.
-3. timeout: timeout in msec. default is 1000. 0.001 to 1000.
-4. callback: callback function after measred ot timeouted
+3. timeout: timeout in ms. default is 1000. 0.001 to 1000.
+4. callback: callback function after measured or timeout
 
-callback function will be called when edges count == measure_edges or timeouted.
-It has array of edge informations. For example, If you get a response like a below 
+callback function will be called when edges count == measure_edges or timeout.
+It has array of edge information. For example, If you get a response like a below 
 
 ![](./images/measure_response.png)
 
