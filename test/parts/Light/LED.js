@@ -20,6 +20,7 @@ describe("led", function () {
   it("wired",  function () {
 
     this.obniz.wired("LED",{anode:0, cathode:1});
+    expect(this.obniz).send([{ io0: false }]);
     expect(this.obniz).send([{ io1: false }]);
     expect(this.obniz).send([
       {
@@ -57,6 +58,7 @@ describe("led", function () {
   it("wired only anode",  function () {
 
     this.obniz.wired("LED",{anode:10});
+    expect(this.obniz).send([{ io10: false }]);
     expect(this.obniz).send([
       {
         "display": {
@@ -76,6 +78,7 @@ describe("led", function () {
   it("on",  function () {
 
     let led = this.obniz.wired("LED",{anode:0, cathode:1});
+    expect(this.obniz).send([{ io0: false }]);
     expect(this.obniz).send([{ io1: false }]);
     expect(this.obniz).send([
       {
