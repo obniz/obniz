@@ -20,8 +20,8 @@ var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
-sensor.onchange = function(humidity){
-  console.log(humidity)
+sensor.onchange = function(value){
+  console.log(value)
 };
 ```
 ## [await] getHumidityWait()
@@ -29,6 +29,6 @@ sensor.onchange = function(humidity){
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("SEN0114",  {vcc:0, output:1, gnd:2});
-var humid = await sensor.getHumidityWait();
-console.log('Humidity Level:' + humid);
+var value = await sensor.getHumidityWait();
+console.log('Humidity Level:' + value);
 ```

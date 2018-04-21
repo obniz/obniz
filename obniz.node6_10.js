@@ -13329,11 +13329,10 @@ class SEN0114 {
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.ad = obniz.getAD(this.params.output);
 
-    var self = this;
-    this.ad.start(function (value) {
-      self.temp = value; //Temp(Celsius) = [AD Voltage] * 100
-      if (self.onchange) {
-        self.onchange(self.temp);
+    this.ad.start(value => {
+      this.value = value;
+      if (this.onchange) {
+        this.onchange(this.value);
       }
     });
   }
@@ -13342,7 +13341,8 @@ class SEN0114 {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      return yield _this.ad.getWait;
+      _this.temp = yield _this.ad.getWait();
+      return _this.temp;
     })();
   }
 }
