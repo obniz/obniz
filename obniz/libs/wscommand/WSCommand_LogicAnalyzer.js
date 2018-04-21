@@ -18,8 +18,8 @@ class WSCommand_LogicAnalyzer extends WSCommand {
     let intervalUsec = params.interval * 1000;
     let durationUsec = params.duration * 1000;
 
-    let matchValue = parseInt(params.triger.value);
-    let matchCount = params.triger.samples;
+    let matchValue = parseInt(params.trigger.value);
+    let matchCount = params.trigger.samples;
     var buf = new Uint8Array(12);
     buf[0] = 1;
     buf[1] = io;

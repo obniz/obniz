@@ -10,7 +10,7 @@ class LogicAnalyzer {
     
   var err = ObnizUtil._requiredKeys(params,["io", "interval", "duration"]);
   if(err){ throw new Error("LogicAnalyzer start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["io", "interval", "duration", "trigerValue", "trigerValueSamples"]);
+  this.params = ObnizUtil._keyFilter(params,["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
 
   
     var obj = {};
@@ -19,10 +19,10 @@ class LogicAnalyzer {
       interval: this.params.interval,
       duration: this.params.duration
     };
-    if (this.params.trigerValueSamples > 0) {
-      obj.logic_analyzer.triger = {
-        value: !!this.params.trigerValue,
-        samples: this.params.trigerValueSamples
+    if (this.params.triggerValueSamples > 0) {
+      obj.logic_analyzer.trigger = {
+        value: !!this.params.triggerValue,
+        samples: this.params.triggerValueSamples
       }
     }
   

@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/logicAnalyzer/init"
-exampleDescription : "With below sample code, you will receive only datas which start with 'false, false, false' 3bit."
+exampleDescription : "With below sample code, you will receive only data which start with 'false, false, false' 3bit."
 
 type: object
 required : [io, interval, duration]
@@ -23,9 +23,9 @@ properties:
         minimum : 0
         exclusiveMinimum: true
 
-    triger :
+    trigger :
         type : object
-        description : "Without this, logicanalyzer will start with any io level changes. trigger specify start position. "
+        description : "Without this, logic analyzer will start with any io level changes. trigger specify start position. "
 
         additionalProperties: false
         required : [value, samples]

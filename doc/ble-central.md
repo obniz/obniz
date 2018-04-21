@@ -547,7 +547,7 @@ if(connected){
 
 
 ## peripheral.onerror
-Call this func when someting error occurred with erorr messages.
+Call this func when something error occurred with error messages.
 
 ```Javascript
 {

@@ -77,7 +77,7 @@ PWMのパルス幅をミリ秒で指定します。
 var pwm = obniz.getFreePwm();
 pwm.start({io:0});
 pwm.freq(1000); // set pwm frequency to 1khz
-pwm.pulse(0.5) // set pwm pulse 0.5msec.  so this is  50% ratio.
+pwm.pulse(0.5) // set pwm pulse 0.5ms.  so this is  50% ratio.
 ```
 ## duty(ratio)
 
@@ -88,10 +88,10 @@ PWMのパルス幅をデューティー比で指定します。
 var pwm = obniz.getFreePwm();
 pwm.start({io:0});
 pwm.freq(1000); // set pwm frequency to 1khz
-pwm.duty(50) // set pwm pulse witdh 50%
+pwm.duty(50) // set pwm pulse width 50%
 ```
 
-## modulate(modulation type, interval msec, data)
+## modulate(modulation type, interval ms, data)
 
 PWMの出力をarrayのデータにより変調します。
 変調方式は以下より選べます。
@@ -115,7 +115,7 @@ pwm.freq(38000); // set pwm frequency to 38khz
 // signal for room heater's remote signal
 var arr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1];
 
-pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70usec.
+pwm.modulate("am", 0.07, arr); // am modulate. symbol length = 70us.
 ```
 ## end();
 

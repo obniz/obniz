@@ -12,15 +12,15 @@ ioが変化した後のioの変化を指定された時間記録します。
 ![](./images/logiana_0.png)
 
 サンプリングの間隔と欲しいサンプルの時間を指定できます。
-例えばinterval（間隔）が1msecでduration(長さ)を800msecにした場合は800サンプルを受けることになります。
+例えばinterval（間隔）が1msでduration(長さ)を800msにした場合は800サンプルを受けることになります。
 また、サンプル数は必ず8の倍数となります。
 
-### Triger Option
+### Trigger Option
 
-デフォルトトリガーは「ioの変化」ですが、これですとノイズも取得しがちです。信号の開始が決まっているパターンを取りたい場合はtrigerValue/trigerValueSamplesを設定します。
+デフォルトトリガーは「ioの変化」ですが、これですとノイズも取得しがちです。信号の開始が決まっているパターンを取りたい場合はtriggerValue/triggerValueSamplesを設定します。
 
-1. trigerValue - 取得開始したい値
-2. trigerValueSamples - その値が何サンプル続けば記録することにするか
+1. triggerValue - 取得開始したい値
+2. triggerValueSamples - その値が何サンプル続けば記録することにするか
 
 このトリガーはつまり "true/(かfalse)がXだけ続いたら記録を開始する"という意味になります。
 
@@ -37,16 +37,16 @@ ioでのロジックアナライザーをスタートさせます。
 
 ```Javascript
 // Javascript Example
-obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 2msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 2ms interval and 1sec long.
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
 }
 ```
-## logicAnalyzer.start({io, interval, duration, trigerValue, trigerValueSamples});
-trigerを指定することができます。 これなしでは、全てのioの状態変化をトリガーとして動き始めます。 トリガーにより測定を開始したい値とその数を指定できます。 例えば、下の例であればfalseが3回続いたデータのみ計測します。
+## logicAnalyzer.start({io, interval, duration, triggerValue, triggerValueSamples});
+triggerを指定することができます。 これなしでは、全てのioの状態変化をトリガーとして動き始めます。 トリガーにより測定を開始したい値とその数を指定できます。 例えば、下の例であればfalseが3回続いたデータのみ計測します。
 ```Javascript
 // Javascript Example
-obniz.logicAnalyzer.start({io:0, interval:2, duration:1000, trigerValue:false, trigerValueSamples:3});  // start on io0. 2msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000, triggerValue:false, triggerValueSamples:3});  // start on io0. 2ms interval and 1sec long.
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
 }
@@ -60,7 +60,7 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 
 ```Javascript
 // Javascript Example
-obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1ms interval and 1sec long.
 
 obniz.logicAnalyzer.onmeasured = function(array) {
   console.log(array);
@@ -72,6 +72,6 @@ obniz.logicAnalyzer.onmeasured = function(array) {
 
 ```Javascript
 // Javascript Example
-obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1msec interval and 1sec long.
+obniz.logicAnalyzer.start({io:0, interval:2, duration:1000});  // start on io0. 1ms interval and 1sec long.
 obniz.logicAnalyzer.end();
 ```

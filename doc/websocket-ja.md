@@ -1,7 +1,7 @@
 # obniz WebSocket Formats
-All communication on WebSocket is JSON.
-Control obniz by sending JSON and get values by receiving JSON from obniz.
+Javascript以外からも，WebSocketを使うことでobnizを使うことができます．
 
+WebSocketではJSONでデータのやり取りを行います．
 
 
 -  [ws](#ws)

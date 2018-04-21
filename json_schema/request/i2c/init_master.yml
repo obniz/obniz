@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/i2c/init_master"
-description : "internal pullup is available. But, We recommend use external pull-up resistor."
+description : "internal pull-up is available. But, We recommend use external pull-up resistor."
 
 type: object
 required : [mode, sda, scl, clock]

@@ -38,23 +38,23 @@ obniz.repeat(function(){
 })
 ```
 ## [await] wait(ms)
-Pause obniz until givem msec passed.
+Pause obniz until given ms passed.
 ```Javascript
 // Javascript Example
 led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
 ```
-This method pause only obniz, javascript nerver stopped
+This method pause only obniz, javascript never stopped
 ```Javascript
 // Javascript Example
 var time = new Date();
 led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
-console.log((new Date()).getTime() - time.getTime()) // 0 or very few msec. not 1000msec.
+console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
 ```
-But, when you call this method with await, javascript wait processing until given msec passed
+But, when you call this method with await, javascript wait processing until given ms passed
 ```Javascript
 // Javascript Example
 var time = new Date();
@@ -66,20 +66,20 @@ console.log((new Date()).getTime() - time.getTime()) // => about 1000
 
 ## keepWorkingAtOffline(working)
 By default. obniz will reset after disconnect from cloud.
-It measn output value and pwms are all stop at that time.
+It means output value and pwm are all stop at that time.
 this function with argument true can set "do not reset when offline".
-This configration will consist until obniz power down.
+This configuration will consist until obniz power down.
 ```Javascript
 // Example
 obniz.keepWorkingAtOffline(true);
 ```
 
 ## resetOnDisconnect(reset)
-By default. obniz will reset when user disconnect websocket from obniz cloud.
-It measn output value and pwms are all stop at that time.
+By default. obniz will reset when user disconnect web socket from obniz cloud.
+It means output value and pwm are all stop at that time.
 this function can set "do not reset when no one connected to obniz".
-This configration will consist until user websocket disconnected.
-Set false to this function to keepworking without user websocket.
+This configuration will consist until user web socket disconnected.
+Set false to this function to keepworking without user web socket.
 ```Javascript
 // Example
 obniz.resetOnDisconnect(false);

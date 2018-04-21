@@ -145,7 +145,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
-    var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, triger:2, vcc:3});
+    var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
     hcsr04.unit("inch");
     hcsr04.measure(function( distance ){
       console.log("distance " + distance + " inch")

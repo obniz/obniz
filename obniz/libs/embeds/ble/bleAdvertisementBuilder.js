@@ -8,8 +8,8 @@ class BleAdvertisementBuilder {
       if (json.localName) {
         this.setCompleteLocalName(json.localName);
       }
-      if (json.manufacturerData && json.manufacturerData.campanyCode && json.manufacturerData.data) {
-        this.setManufacturerSpecificData(json.manufacturerData.campanyCode, json.manufacturerData.data);
+      if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
+        this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
       }
       if (json.serviceUuids) {
         for (let uuid of json.serviceUuids) {
@@ -66,10 +66,10 @@ class BleAdvertisementBuilder {
     this.setStringData(0x09, name);
   };
 
-  setManufacturerSpecificData(campanyCode, data) {
+  setManufacturerSpecificData(companyCode, data) {
     let row = [];
-    row.push(campanyCode & 0xFF);
-    row.push((campanyCode >> 8) & 0xFF);
+    row.push(companyCode & 0xFF);
+    row.push((companyCode >> 8) & 0xFF);
     Array.prototype.push.apply(row, data);
     this.setRow(0xFF, row);
   };

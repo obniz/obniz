@@ -92,7 +92,7 @@ describe("logicAnalyzer.log", function () {
 
 
     it("request test no.3",  function () {
-        let requestJson  = [{"logic_analyzer":{"io":[0],"interval":2,"duration":1000,"triger":{"value":false,"samples":3}}}];
+        let requestJson  = [{"logic_analyzer":{"io":[0],"interval":2,"duration":1000,"trigger":{"value":false,"samples":3}}}];
         let expecteBinaryStrings = ["0a 00 0c 01 00 00 00 07 d0 00 0f 42 40 00 03"];
 
         expect(requestJson.length).to.be.equal(1);

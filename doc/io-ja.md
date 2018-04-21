@@ -21,13 +21,13 @@ io0からio11まで利用できます。
 1. 最大1mA
 2. 最大80Mhz
 
-##### Four internal weak pull-updown option
+##### Four internal weak pull-up/pull-down option
 1. floating (デフォルト)
 1. pull-up 5v
 1. pull-up 3v
 1. pull-down to gnd
 
-driveとpull-updownはそれぞれのペリフェラル(PWMやUART)使用時にも利用できます。
+driveとpull-up/pull-downはそれぞれのペリフェラル(PWMやUART)使用時にも利用できます。
 
 ## output(value)
 ObnizのX番ピンを出力ピンにして１または０を出力します。
@@ -56,7 +56,7 @@ obniz.io1.pull("5v");
 obniz.io1.drive("open-drain"); // changed immediately 
 ```
 
-## pull(pulltype)
+## pull(pullType)
 IOの内部プルアップ・プルダウンを変更します。
 
 1. null (default) 
@@ -81,7 +81,7 @@ obniz.io0.input(function(value){
 });
 ```
 ## [await] inputWait
-ピンに加わっている電圧を読み結果をture/falseで返します。
+ピンに加わっている電圧を読み結果をtrue/falseで返します。
 この関数を呼ぶことでピンをinputに設定し、値が返ってくるまで関数はwaitします。
 ```Javascript
 // Javascript Example
@@ -132,7 +132,7 @@ io animationの一時停止
 obniz.io.animation("animation-1", "pause")
 ```
 
-io aniomationの再開
+io animationの再開
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "resume")

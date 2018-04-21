@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ioAnimation/init"
-commandExample : {"io":{"animation":{"animation":{"name":"anim-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}}
+commandExample : {"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}}
 
 
 type: object
@@ -16,7 +16,7 @@ properties:
             name :
                 type: string
                 description : "Animation name to use pause/resume"
-                example : "anim-1"
+                example : "animation-1"
                 minLength: 1
                 maxLength: 254
 

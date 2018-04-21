@@ -1,6 +1,6 @@
 var HCSR04 = function() {
-  this.keys  = [ "vcc", "triger", "echo", "gnd"];
-  this.requiredKeys  = [ "vcc", "triger", "echo"];
+  this.keys  = [ "vcc", "trigger", "echo", "gnd"];
+  this.requiredKeys  = [ "vcc", "trigger", "echo"];
 
   this._unit = "mm";
 };
@@ -11,7 +11,7 @@ HCSR04.prototype.wired = function(obniz) {
   obniz.setVccGnd(null, this.params.gnd, "5v");
 
   this.vccIO = obniz.getIO(this.params.vcc);
-  this.triger = this.params.triger;
+  this.trigger = this.params.trigger;
   this.echo = this.params.echo;
 };
 
@@ -23,7 +23,7 @@ HCSR04.prototype.measure = async function(callback) {
 
   var self = this;
   this.obniz.measure.echo({
-    io_pulse: this.triger,
+    io_pulse: this.trigger,
     io_echo: this.echo,
     pulse: "positive",
     pulse_width: 0.011,
@@ -32,7 +32,7 @@ HCSR04.prototype.measure = async function(callback) {
     callback: function(edges){
       self.vccIO.output(false);
       var distance = null;
-      for (var i=0; i<edges.length-1; i++){ // HCSR04's output of io_echo is initially high when triger is finshed
+      for (var i=0; i<edges.length-1; i++){ // HCSR04's output of io_echo is initially high when trigger is finshed
         if (edges[i].edge === true) {
           distance = (edges[i+1].timing - edges[i].timing) * 1000;
           if (self._unit === "mm") {
