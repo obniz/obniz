@@ -1,15 +1,15 @@
 # WS2811
-Full color LED driver.
-Not only one LED. Capable of chaining leds.
+フルカラーLEDのドライバICです。
+１つのLEDだけでなく、チェーン接続にも対応しています。
 
 ![](./ws2811.jpg)
 
-WS2811 is embed in various Full Color LEDs. (In the photo ```PL9823``` is used)
+WS2811 は多くのフルカラーLEDに組み込まれています。(写真は ```PL9823``` です)
 
 
 ## wire({din, [vcc, gnd]})
-connect VDD and GND to obniz and drive it.
-And, wire DIN(Data in) to obniz. and write a code below
+
+vcc,gnd,dinをobnizに接続し、接続したioをプログラムで以下のように記載します。
 
 ```Javascript
 // Javascript Example
@@ -19,7 +19,7 @@ leds.rgbs([
   [0x00, 0x00, 0xFF]  // blue
 ])
 ```
-vcc and gnd is optional
+vccとgndを外に繋いでいる場合は省略可能です。
 
 ```Javascript
 // Javascript Example
@@ -27,8 +27,8 @@ var led = obniz.wired("WS2811", {din: 2});
 ```
 
 ## rgb(red, green, blue)
-change color.
-When you chaining LED, this will change only top of leds.
+RGBで色を指定します。
+チェーン接続している場合はトップの１つの色だけが変わります。
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2811", {gnd:0, vcc: 1, din: 2});
@@ -36,12 +36,13 @@ led.rgb(0xFF, 255, 0); // Yellow
 ```
 
 ## hsv(hue, saturation, value)
-change color from hsv values.
-When you chaining LED, this will change only top of leds.
+HSVで色を指定します。
+チェーン接続している場合はトップの１つの色だけが変わります。
 
-hue : 0 ~ 360
-saturation : 0 ~ 1
-value : 0 ~ 1
+1. hue : 0 ~ 360
+2. saturation : 0 ~ 1
+3. value : 0 ~ 1
+
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2811", {gnd:0, vcc: 1, din: 2});
@@ -49,8 +50,8 @@ led.hsv(180, 0.5, 1);
 ```
 
 ## rgbs([[r,g,b],,,,])
-change colors.
-You can specify colors of chained leds.
+チェーン接続されてるLEDの色をRGBで頭から変更します。
+それぞれの色を指定することが出来ます。
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2811", {gnd:0, vcc: 1, din: 2});
@@ -60,8 +61,8 @@ led.rgbs([
 ])
 ```
 ## hsvs([[r,g,b],,,,])
-change colors.
-You can specify colors of chained leds.
+チェーン接続されてるLEDの色をHSVで頭から変更します。
+それぞれの色を指定することが出来ます。
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2811", {gnd:0, vcc: 1, din: 2});

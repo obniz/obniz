@@ -17520,13 +17520,15 @@ Obniz.PartsRegistrate("LED", LED);
 class WS2811 {
 
   constructor() {
-    this.key = ["din", "vcc", "gnd"];
-    this.requiredKey = ["din"];
+    this.keys = ["din", "vcc", "gnd"];
+    this.requiredKeys = ["din"];
   }
 
   wired(obniz){
 
     this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
     
     this.params.mode  =  "master";
     this.params.frequency = 2*1000*1000;
@@ -18410,7 +18412,7 @@ Obniz.PartsRegistrate("S8120C", S8120C);
 class ADT7410 {
   constructor() {
     this.keys = [ "vcc", "gnd", "sda", "scl", "addressMode"];
-    this.requiredKey = ["addressMode"];
+    this.requiredKeys = ["addressMode"];
   };
 
   wired(obniz) {
