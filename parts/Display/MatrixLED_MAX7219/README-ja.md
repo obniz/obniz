@@ -1,19 +1,24 @@
 # MatrixLED_MAX7219
-Dot matrix LED. driver: MAX7219.
+複数LEDを操作するMAX219チップと連携するクラスです。
+7セグメントやマトリックスLEDとセットで販売されていることが多く、色々な表示が可能です。
+また、連続してつなげることができるのも特徴です。
+
 [http://akizukidenshi.com/catalog/g/gM-09984/](http://akizukidenshi.com/catalog/g/gM-09984/)
 
-![](./max7129.jpg)
+![](./max7219.jpg)
 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/5teMmFK1_FY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## wired(obniz,  { clk, cs, din, gnd, vcc});
 
-1. vcc: power supply
-2. gnd: gnd.
-3. din: spi MOSI pin.
-4. cs: chip select
+1. vcc: 電源のプラスです。
+2. gnd: 電源のマイナスです。
+3. din: SPIの MOSI ピンです。
+4. cs: チップ選択です。
  
+チェーン上に複数繋ぐ場合は１つだけをobnizにつなぎ、残りはこのように接続して下さい。
+
 ![](./wired.png)
 
 ```Javascript
@@ -22,8 +27,12 @@ const matrix = obniz.wired("MatrixLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc
 ```
 
 ## init(width, height)
-initialize module.
-if one module has 8*8 led and two modules are connected then
+
+マトリックスを初期化します。
+1つのMAX7219が8*8のマトリックスを持っている必要があり、
+そのマトリックスが横にどれだけつながっているかを指定します。
+２つであれば width = 16, height=8となります。
+
 ```Javascript
 // Javascript Example
 const matrix = obniz.wired("MatrixLED_MAX7219",  { clk:0, cs:1, din:2, gnd:3, vcc:4});
@@ -31,7 +40,7 @@ matrix.init(8*2, 8);
 ```
 
 ## brightness(value)
-value: 0 to 15;
+明るさで、0~15が指定できます。
 
 ```Javascript
 // Javascript Example
@@ -41,11 +50,12 @@ matrix.brightness(7);
 ```
 
 ## draw(ctx)
-In html5, Canvas is avaiable to draw.
-pass canpas context to this function to show it on matrix
+HTML5のcanvasをそのまま描画します。html上でobnizを使っている場合は
 
-obniz.util.createCanvasContext() will create Canvas DOM to body.
-See more detail on obniz util document's.
+```obniz.util.createCanvasContext()```
+
+を使うことで、canvasを簡単に生成できます。nodejsの場合はnode-canvasを使うことが出来ます。
+あとは、そこに描画し、この関数に渡すと２値化されてディスプレイに表示されます。
 
 ```Javascript
 // Javascript Example
@@ -64,7 +74,7 @@ matrix.draw(ctx);
 ```
 
 ## clear()
-clear all.
+すべてを消去します。
 
 ```Javascript
 // Javascript Example
@@ -74,8 +84,8 @@ matrix.clear();
 ```
 
 ## test()
-test all unit.
-It will show last image.
+MAX7219にあるテストコマンドを利用します。
+最後に表示されていたものが表示されます。
 
 ```Javascript
 // Javascript Example
