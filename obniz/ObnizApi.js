@@ -12,6 +12,12 @@ class ObnizApi{
     this.urlBase = this.options.obniz_server + "/obniz/" + this.id ;
   }
 
+  get apiVersion(){
+    let packageJson = require("../package.json");
+    let versionString =  packageJson.version;
+    return versionString.split(".").shift();
+  }
+
   post(path, params, callback){
     let url = this.urlBase + path;
 
@@ -51,7 +57,7 @@ class ObnizApi{
 
 
   postJson(json,callback){
-    return this.post("/api/1",json, callback);  // 1 is api version
+    return this.post("/api/"+this.apiVersion,json, callback);  // 1 is api version
   };
 
 }

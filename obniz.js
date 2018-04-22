@@ -6345,6 +6345,12 @@ class ObnizApi{
     this.urlBase = this.options.obniz_server + "/obniz/" + this.id ;
   }
 
+  get apiVersion(){
+    let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
+    let versionString =  packageJson.version;
+    return versionString.split(".").shift();
+  }
+
   post(path, params, callback){
     let url = this.urlBase + path;
 
@@ -6384,7 +6390,7 @@ class ObnizApi{
 
 
   postJson(json,callback){
-    return this.post("/api/1",json, callback);  // 1 is api version
+    return this.post("/api/"+this.apiVersion,json, callback);  // 1 is api version
   };
 
 }
@@ -7538,6 +7544,10 @@ module.exports = class Obniz extends ObnizUIs {
     }
   }
 
+  /**
+   *
+   * @returns {ObnizApi}
+   */
   static get api(){
     return ObnizApi;
   }
@@ -15959,6 +15969,7 @@ var map = {
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
+	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
@@ -17780,6 +17791,114 @@ Obniz.PartsRegistrate("JoyStick", JoyStick);
 
 /***/ }),
 
+/***/ "./parts/MovementSensor/KXR94-2050/index.js":
+/*!**************************************************!*\
+  !*** ./parts/MovementSensor/KXR94-2050/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class KXR94_2050 {
+  constructor() {
+    this.keys = [ "x", "y", "z", "vcc", "gnd","enable", "self_test"];
+    this.requiredKeys = [ "x", "y", "z"];
+  };
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
+    this.ad_z = obniz.getAD(this.params.z);
+
+
+    if(obniz.isValidIO(this.params.enable)){
+      obniz.getIO(this.params.enable).drive("5v");
+      obniz.getIO(this.params.enable).output(true);
+    }
+    if(obniz.isValidIO(this.params.self_test)){
+      obniz.getIO(this.params.self_test).drive("5v");
+      obniz.getIO(this.params.self_test).output(false);
+    }
+
+    return (async ()=>{
+
+      if(obniz.isValidIO(this.params.vcc)){
+        let pwrVoltage = await obniz.getAD(this.params.vcc).getWait();
+        this.changeVccVoltage(pwrVoltage);
+      }else{
+        this.changeVccVoltage(5);
+      }
+
+      this.ad_x.start((value)=>{
+        if (this.onchangex) {
+          this.onchangex(this.voltage2gravity(value));
+        }
+      });
+
+      this.ad_y.start((value)=>{
+        if (this.onchangey) {
+          this.onchangey(this.voltage2gravity(value));
+        }
+      });
+
+      this.ad_z.start((value)=>{
+        if (this.onchangez) {
+          this.onchangez(this.voltage2gravity(value));
+        }
+      });
+
+      if(this.obniz.isValidIO(this.params.vcc)){
+        this.obniz.getAD(this.params.vcc).start((value)=>{
+          this.changeVccVoltage(value);
+        });
+      }
+
+      obniz.display.setPinName(this.params.x, "KXR94_2050", "x");
+      obniz.display.setPinName(this.params.y, "KXR94_2050", "y");
+      obniz.display.setPinName(this.params.z, "KXR94_2050", "z");
+
+      if(this.obniz.isValidIO(this.params.vcc)){
+        obniz.display.setPinName(this.params.vcc, "KXR94_2050", "vcc");
+      }
+
+    })();
+
+  };
+
+  changeVccVoltage(pwrVoltage){
+    this.sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+    this.offsetVoltage = pwrVoltage/2; //Set offset voltage (Output voltage at 0g, unit:V)
+  }
+
+  voltage2gravity(volt){
+    return  (volt - this.offsetVoltage) / this.sensitivity ;
+  }
+
+  async getWait(){
+      let result = await Promise.all([
+        this.ad_x.getWait(),
+        this.ad_y.getWait(),
+        this.ad_z.getWait(),
+      ]);
+
+      return {
+        x:this.voltage2gravity(result[0]),
+        y:this.voltage2gravity(result[1]),
+        z:this.voltage2gravity(result[2])
+      };
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("KXR94_2050", KXR94_2050);
+
+
+/***/ }),
+
 /***/ "./parts/MovementSensor/KXSC7-2050/index.js":
 /*!**************************************************!*\
   !*** ./parts/MovementSensor/KXSC7-2050/index.js ***!
@@ -17789,7 +17908,7 @@ Obniz.PartsRegistrate("JoyStick", JoyStick);
 
 class KXSC7_2050 {
   constructor() {
-    this.keys = [ "x", "y", "z", "vcc", "gnd"];
+    this.keys = [ "x", "y", "z", "vcc", "vcc_monitor", "gnd"];
     this.requiredKeys = [ "x", "y", "z"];
   };
 
@@ -17802,14 +17921,21 @@ class KXSC7_2050 {
     this.ad_z = obniz.getAD(this.params.z);
 
     await obniz.wait(500);
-    var ad = obniz.getAD(this.params.vcc);
-    var pwrVoltage = await ad.getWait();
-    var horizontalZ = await this.ad_z.getWait();
-    var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-    var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+    let pwrVoltage = 3.3;
+    let monitor = obniz.isValidIO( this.params.vcc) ?  this.params.vcc : this.params.vcc_monitor;
+    if(obniz.isValidIO(monitor)) {
+      let ad = obniz.getAD(monitor);
+      pwrVoltage = await ad.getWait();
+    }
+    console.log("vcc:"+pwrVoltage);
+    let horizontalZ = await this.ad_z.getWait();
+    let sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+    let offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
 
-    var self = this;
+    let self = this;
     this.ad_x.start(function(value){
+
+      console.log("raw:"+value);
       self.gravity = (value - offsetVoltage) / sensitivity ;
       if (self.onchangex) {
         self.onchangex(self.gravity);

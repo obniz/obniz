@@ -1879,6 +1879,12 @@ class ObnizApi {
     this.urlBase = this.options.obniz_server + "/obniz/" + this.id;
   }
 
+  get apiVersion() {
+    let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
+    let versionString = packageJson.version;
+    return versionString.split(".").shift();
+  }
+
   post(path, params, callback) {
     let url = this.urlBase + path;
 
@@ -1919,7 +1925,7 @@ class ObnizApi {
   }
 
   postJson(json, callback) {
-    return this.post("/api/1", json, callback); // 1 is api version
+    return this.post("/api/" + this.apiVersion, json, callback); // 1 is api version
   }
 }
 
@@ -3109,6 +3115,10 @@ module.exports = class Obniz extends ObnizUIs {
     }
   }
 
+  /**
+   *
+   * @returns {ObnizApi}
+   */
   static get api() {
     return ObnizApi;
   }
@@ -11035,6 +11045,7 @@ var map = {
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
+	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
@@ -12966,6 +12977,117 @@ Obniz.PartsRegistrate("JoyStick", JoyStick);
 
 /***/ }),
 
+/***/ "./parts/MovementSensor/KXR94-2050/index.js":
+/*!**************************************************!*\
+  !*** ./parts/MovementSensor/KXR94-2050/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class KXR94_2050 {
+  constructor() {
+    this.keys = ["x", "y", "z", "vcc", "gnd", "enable", "self_test"];
+    this.requiredKeys = ["x", "y", "z"];
+  }
+
+  wired(obniz) {
+    var _this = this;
+
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
+    this.ad_z = obniz.getAD(this.params.z);
+
+    if (obniz.isValidIO(this.params.enable)) {
+      obniz.getIO(this.params.enable).drive("5v");
+      obniz.getIO(this.params.enable).output(true);
+    }
+    if (obniz.isValidIO(this.params.self_test)) {
+      obniz.getIO(this.params.self_test).drive("5v");
+      obniz.getIO(this.params.self_test).output(false);
+    }
+
+    return _asyncToGenerator(function* () {
+
+      if (obniz.isValidIO(_this.params.vcc)) {
+        let pwrVoltage = yield obniz.getAD(_this.params.vcc).getWait();
+        _this.changeVccVoltage(pwrVoltage);
+      } else {
+        _this.changeVccVoltage(5);
+      }
+
+      _this.ad_x.start(function (value) {
+        if (_this.onchangex) {
+          _this.onchangex(_this.voltage2gravity(value));
+        }
+      });
+
+      _this.ad_y.start(function (value) {
+        if (_this.onchangey) {
+          _this.onchangey(_this.voltage2gravity(value));
+        }
+      });
+
+      _this.ad_z.start(function (value) {
+        if (_this.onchangez) {
+          _this.onchangez(_this.voltage2gravity(value));
+        }
+      });
+
+      if (_this.obniz.isValidIO(_this.params.vcc)) {
+        _this.obniz.getAD(_this.params.vcc).start(function (value) {
+          _this.changeVccVoltage(value);
+        });
+      }
+
+      obniz.display.setPinName(_this.params.x, "KXR94_2050", "x");
+      obniz.display.setPinName(_this.params.y, "KXR94_2050", "y");
+      obniz.display.setPinName(_this.params.z, "KXR94_2050", "z");
+
+      if (_this.obniz.isValidIO(_this.params.vcc)) {
+        obniz.display.setPinName(_this.params.vcc, "KXR94_2050", "vcc");
+      }
+    })();
+  }
+
+  changeVccVoltage(pwrVoltage) {
+    this.sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+    this.offsetVoltage = pwrVoltage / 2; //Set offset voltage (Output voltage at 0g, unit:V)
+  }
+
+  voltage2gravity(volt) {
+    return (volt - this.offsetVoltage) / this.sensitivity;
+  }
+
+  getWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      let result = yield Promise.all([_this2.ad_x.getWait(), _this2.ad_y.getWait(), _this2.ad_z.getWait()]);
+
+      return {
+        x: _this2.voltage2gravity(result[0]),
+        y: _this2.voltage2gravity(result[1]),
+        z: _this2.voltage2gravity(result[2])
+      };
+    })();
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("KXR94_2050", KXR94_2050);
+
+/***/ }),
+
 /***/ "./parts/MovementSensor/KXSC7-2050/index.js":
 /*!**************************************************!*\
   !*** ./parts/MovementSensor/KXSC7-2050/index.js ***!
@@ -12980,7 +13102,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 class KXSC7_2050 {
   constructor() {
-    this.keys = ["x", "y", "z", "vcc", "gnd"];
+    this.keys = ["x", "y", "z", "vcc", "vcc_monitor", "gnd"];
     this.requiredKeys = ["x", "y", "z"];
   }
 
@@ -12996,14 +13118,21 @@ class KXSC7_2050 {
       _this.ad_z = obniz.getAD(_this.params.z);
 
       yield obniz.wait(500);
-      var ad = obniz.getAD(_this.params.vcc);
-      var pwrVoltage = yield ad.getWait();
-      var horizontalZ = yield _this.ad_z.getWait();
-      var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-      var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+      let pwrVoltage = 3.3;
+      let monitor = obniz.isValidIO(_this.params.vcc) ? _this.params.vcc : _this.params.vcc_monitor;
+      if (obniz.isValidIO(monitor)) {
+        let ad = obniz.getAD(monitor);
+        pwrVoltage = yield ad.getWait();
+      }
+      console.log("vcc:" + pwrVoltage);
+      let horizontalZ = yield _this.ad_z.getWait();
+      let sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+      let offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
 
-      var self = _this;
+      let self = _this;
       _this.ad_x.start(function (value) {
+
+        console.log("raw:" + value);
         self.gravity = (value - offsetVoltage) / sensitivity;
         if (self.onchangex) {
           self.onchangex(self.gravity);
