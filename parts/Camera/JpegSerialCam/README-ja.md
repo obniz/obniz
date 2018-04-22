@@ -1,5 +1,6 @@
 # JpegSerialCam
-JpegCamera PTC06
+
+撮影した画像をjpgにして、UARTで送信するカメラです。
 
 ![](./jpegcam.jpg)
 
@@ -14,18 +15,17 @@ var data = await cam.takewait();
 ```
 
 ## wire(obniz, {vcc, cam_tx, cam_rx, gnd})
-connect PowerSupply and UART.
-cam_tx measn transmit from camera.
+電源とUARTを接続します。cam_txはカメラ側のtxと言う意味です。
 
 ```Javascript
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 ```
 
-## startwait({baud:baudrate})
-start camera.
-It takes around 2.5 second.
+## startwait({[.baud]})
+カメラを開始します。リセットが入るので2.5sほどかかります。
 
-Default Baudrate = 38400
+通信速度も指定できます。指定しない場合はカメラのデフォルトである38400となっています。
+
 ```Javascript
 // Javascript Example
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
@@ -34,15 +34,15 @@ var data = await cam.takewait();
 ```
 
 ## setResolusionWait(resolution)
-set image resolution
-This configuration consists even after power off.
+解像度を指定します。
+解像度は電源を消してもカメラ側に保存されます。
 
 1. "640*480" (image size around 40kb)
 2. "320*240" (image size around 12kb)
 3. "160*120" (image size arond 4kb)
 
-are available.
-data size depends on what you take.
+上記が利用できます。小さいほど早く撮影できますが粗いです。
+
 ```Javascript
 // Javascript Example
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
@@ -52,8 +52,8 @@ var data = await cam.takewait();
 ```
 
 ## setBaudWait(baud)
-set baudrate of cam.
-This configuration consists even after power off.
+カメラとの通信速度を決めます。早いほうが早く撮影できます。
+この設定は電源を消してもカメラ側に保存されます。
 
 1. 9600
 2. 19200
@@ -61,8 +61,8 @@ This configuration consists even after power off.
 4. 57600
 5. 115200
 
-are avaiable.
-High-speed is better. But, if the Wifi network speed is slow, then obniz will lost the data when high-speed.
+上記が利用できます。
+早いほうが良いですが、Wifiが遅い場合はデータを転送しきれないことがあります。
 
 ```Javascript
 // Javascript Example
@@ -73,7 +73,7 @@ await cam.takewait(); // baud is already changed to 115200.
 ```
 
 ## takewait()
-take a photo and return a byte array.
+カメラで撮影し、jpegデータを取得します。
 
 ```Javascript
 // Javascript Example
@@ -83,8 +83,9 @@ var imagedata = await cam.takewait();
 ```
 
 ## arrayToBase64(bytearray)
-convert bytearray to base64 string.
-It is useful when you want to print image to image tag
+arrayデータをbase64にエンコードします。
+これによりjpegのbase64データを取得できます。
+htmlでは```<img>```タグにbase64のjpgを渡すと画像としてみることが出来ます。
 
 ```Javascript
 // Javascript Example
