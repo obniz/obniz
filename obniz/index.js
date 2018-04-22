@@ -109,6 +109,10 @@ module.exports = class Obniz extends ObnizUIs {
     }
   }
 
+  /**
+   *
+   * @returns {ObnizApi}
+   */
   static get api(){
     return ObnizApi;
   }
