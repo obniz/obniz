@@ -64,13 +64,13 @@ class PeripheralSPI {
   writeWait(data) {
     var self = this;
     return new Promise(function(resolve, reject){
+      self.addObserver(resolve);
       var obj = {};
       obj["spi"+self.id] = {
         data: data,
         read: true
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 

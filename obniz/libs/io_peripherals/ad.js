@@ -26,12 +26,12 @@ class PeripheralAD {
   getWait() {
     var self = this;
     return new Promise(function(resolve, reject){
+      self.addObserver(resolve);
       var obj = {};
       obj["ad"+self.id] = {
         stream: false
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 
