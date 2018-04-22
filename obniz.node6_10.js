@@ -13102,7 +13102,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 class KXSC7_2050 {
   constructor() {
-    this.keys = ["x", "y", "z", "vcc", "vcc_monitor", "gnd"];
+    this.keys = ["x", "y", "z", "vcc", "gnd"];
     this.requiredKeys = ["x", "y", "z"];
   }
 
@@ -13118,21 +13118,14 @@ class KXSC7_2050 {
       _this.ad_z = obniz.getAD(_this.params.z);
 
       yield obniz.wait(500);
-      let pwrVoltage = 3.3;
-      let monitor = obniz.isValidIO(_this.params.vcc) ? _this.params.vcc : _this.params.vcc_monitor;
-      if (obniz.isValidIO(monitor)) {
-        let ad = obniz.getAD(monitor);
-        pwrVoltage = yield ad.getWait();
-      }
-      console.log("vcc:" + pwrVoltage);
-      let horizontalZ = yield _this.ad_z.getWait();
-      let sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-      let offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+      var ad = obniz.getAD(_this.params.vcc);
+      var pwrVoltage = yield ad.getWait();
+      var horizontalZ = yield _this.ad_z.getWait();
+      var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+      var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
 
-      let self = _this;
+      var self = _this;
       _this.ad_x.start(function (value) {
-
-        console.log("raw:" + value);
         self.gravity = (value - offsetVoltage) / sensitivity;
         if (self.onchangex) {
           self.onchangex(self.gravity);

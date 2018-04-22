@@ -67,7 +67,7 @@ describe("2-io-animation", function () {
 function detectPulse(io, ratioRange) {
   return new Promise((resolve, reject) => {
     var ignores = 0;
-    obnizB.logicAnalyzer.start({io, interval: 1, duration: 100});
+    obnizB.logicAnalyzer.start({io, interval: 1, duration: 300});
     obnizB.logicAnalyzer.onmeasured = async function (array) {
       if (ignores > 0) {
         ignores--;
