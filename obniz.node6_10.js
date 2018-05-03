@@ -2600,6 +2600,7 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     // 
     if (wsObj.ready) {
+      this.firmware_ver = wsObj.obniz.firmware;
       this.resetOnDisconnect(true);
       if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect && this._canConnectToInsecure()) {
         this._connectLocal(wsObj.local_connect.ip);
@@ -5951,6 +5952,7 @@ module.exports = PeripheralPWM;
 
 
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const semver = __webpack_require__(/*! semver */ "semver");
 
 class PeripheralSPI {
   constructor(Obniz, id) {
@@ -6021,6 +6023,10 @@ class PeripheralSPI {
   }
 
   writeWait(data) {
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
+    }
+
     var self = this;
     return new Promise(function (resolve, reject) {
       var obj = {};
@@ -6034,6 +6040,10 @@ class PeripheralSPI {
   }
 
   write(data) {
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
+    }
+
     var self = this;
     var obj = {};
     obj["spi" + self.id] = {
@@ -14277,6 +14287,17 @@ module.exports = require("node-fetch");
 /***/ (function(module, exports) {
 
 module.exports = require("path");
+
+/***/ }),
+
+/***/ "semver":
+/*!*************************!*\
+  !*** external "semver" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("semver");
 
 /***/ }),
 

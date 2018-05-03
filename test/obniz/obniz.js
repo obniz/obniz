@@ -97,7 +97,7 @@ describe("obniz", function () {
   it("ready",  function () {
 
     this.obniz.onconnect = sinon.stub();
-    testUtil.receiveJson(this.obniz, [{ ws: {  "ready": true } }]);
+    testUtil.receiveJson(this.obniz, [{ ws: {  "ready": true, "obniz": {firmware: "1.0.3"} } }]);
 
     expect(this.obniz.onconnect.callCount).to.be.equal(1);
     expect(this.obniz.onconnect.getCall(0).args.length).to.be.equal(1);

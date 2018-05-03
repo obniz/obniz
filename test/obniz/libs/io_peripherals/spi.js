@@ -51,6 +51,54 @@ describe("obniz.libs.spi", function () {
     return r;
   });
 
+  it("write over 32 to <1.0.3",  function () {
+    var firmver_ver = this.obniz.firmware_ver;
+    this.obniz.firmware_ver = '1.0.2';
+    this.obniz.spi0.start({"clk": 0, "frequency": 1000000, "miso": 2, "mode":"master" }); 
+    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master" }}]);
+
+    let data = [];
+    for (let i=0; i<33; i++) {
+      data.push(i);
+    }
+    
+    expect(() => {this.obniz.spi0.writeWait(data)}).to.throw();
+    expect(this.obniz).to.be.finished;
+    this.obniz.firmware_ver = firmver_ver;
+  });
+
+  it("write over 32 to >=1.0.3",  function () {
+    var firmver_ver = this.obniz.firmware_ver;
+    this.obniz.firmware_ver = '1.0.3';
+    this.obniz.spi0.start({"clk": 0, "frequency": 1000000, "miso": 2, "mode":"master" }); 
+    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{spi0:{"clk": 0, "clock": 1000000, "miso": 2, "mode":"master" }}]);
+    
+    let data = [];
+    for (let i=0; i<33; i++) {
+      data.push(i);
+    }
+
+    var r = this.obniz.spi0.writeWait(data).then(function(value){
+      expect(value).to.be.deep.equal(data);
+      expect(this.obniz).to.be.finished;
+    }.bind(this));
+    
+    expect(this.obniz).send([{spi0:{data : data, read: true}}]);
+    setTimeout(function(){
+      testUtil.receiveJson(this.obniz, [{"spi0":{"data":data}}]);
+    }.bind(this),10);
+    this.obniz.firmware_ver = firmver_ver;
+    return r;
+  });
+
 
   it.skip("SPIで2byte送って3byte帰ってきたときの対応？",  function () {
     this.obniz.spi0.start({"clk": 0, "frequency": 1000000, "miso": 2, "mode":"master","mosi":1 }); 
