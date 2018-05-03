@@ -7,7 +7,7 @@ related : "/response/spi/read"
 type: object
 required : [data, read]
 properties:
-    data : {$ref : "/dataArray32"}
+    data : {$ref : "/dataArray1024"}
     read :
        type: boolean
        default : true

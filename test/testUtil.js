@@ -68,6 +68,7 @@ var testUtil = {
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
     obj.obniz.wsOnOpen();
+    obj.obniz.firmware_ver = '1.0.3';
     serverDataCount = 0;
     done();
   },

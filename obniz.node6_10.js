@@ -1041,7 +1041,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray32"},"read":{"type":"boolean","default":true,"description":"If false, write without receive"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray1024"},"read":{"type":"boolean","default":true,"description":"If false, write without receive"}}}
 
 /***/ }),
 
@@ -2600,6 +2600,7 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     // 
     if (wsObj.ready) {
+      this.firmware_ver = wsObj.obniz.firmware;
       this.resetOnDisconnect(true);
       if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect && this._canConnectToInsecure()) {
         this._connectLocal(wsObj.local_connect.ip);
@@ -5951,6 +5952,7 @@ module.exports = PeripheralPWM;
 
 
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const semver = __webpack_require__(/*! semver */ "semver");
 
 class PeripheralSPI {
   constructor(Obniz, id) {
@@ -6021,6 +6023,10 @@ class PeripheralSPI {
   }
 
   writeWait(data) {
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
+    }
+
     var self = this;
     return new Promise(function (resolve, reject) {
       var obj = {};
@@ -6034,6 +6040,10 @@ class PeripheralSPI {
   }
 
   write(data) {
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`);
+    }
+
     var self = this;
     var obj = {};
     obj["spi" + self.id] = {
@@ -11014,7 +11024,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.1.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.0","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.0.5","ejs":"^2.5.8","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.2","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.0.5","mocha-chrome":"^1.0.3","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.6.0","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.4","vinyl":"^2.1.0","webpack":"^4.5.0","webpack-cli":"^2.0.14","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.0.1","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.1.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11042,6 +11052,8 @@ var map = {
 	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
+	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
+	"./Light/WS2812B/index.js": "./parts/Light/WS2812B/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
@@ -12699,6 +12711,10 @@ class WS2811 {
   }
 
   static _generateFromByte(val) {
+    // T0H 0.5us+-0.15us
+    // T1H 1.2us+-0.15us
+    // T0L 2.0us+-0.15us
+    // T1L 1.3us+-0.15us
 
     val = parseInt(val);
     const zero = 0x8;
@@ -12797,6 +12813,276 @@ class WS2811 {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("WS2811", WS2811);
+
+/***/ }),
+
+/***/ "./parts/Light/WS2812/index.js":
+/*!*************************************!*\
+  !*** ./parts/Light/WS2812/index.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class WS2812 {
+
+  constructor() {
+    this.keys = ["din", "vcc", "gnd"];
+    this.requiredKeys = ["din"];
+  }
+
+  wired(obniz) {
+
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    this.params.mode = "master";
+    this.params.frequency = parseInt(3.33 * 1000 * 1000);
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  static _generateFromByte(val) {
+    // T0H 0.35us+-0.15us
+    // T1H 0.7us+-0.15us
+    // T0L 0.8us+-0.15us
+    // T1L 0.6us+-0.15us
+
+    // 0.3-0.9 and 0.6-0.6 at 3.33Mhz
+
+    val = parseInt(val);
+    const zero = 0x8;
+    const one = 0xC;
+    let ret = [];
+    for (var i = 0; i < 8; i += 2) {
+      let byte = 0;
+      if (val & 0x80 >> i) {
+        byte = one << 4;
+      } else {
+        byte = zero << 4;
+      }
+      if (val & 0x80 >> i + 1) {
+        byte |= one;
+      } else {
+        byte |= zero;
+      }
+      ret.push(byte);
+    }
+    return ret;
+  }
+
+  static _generateColor(r, g, b) {
+
+    let array = WS2812._generateFromByte(g);
+    array = array.concat(WS2812._generateFromByte(r));
+    array = array.concat(WS2812._generateFromByte(b));
+    return array;
+  }
+
+  static _generateHsvColor(h, s, v) {
+    var C = v * s;
+    var Hp = h / 60;
+    var X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    var R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    };
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    };
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    };
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    };
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    };
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    };
+
+    var m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    return WS2812._generateColor(R, G, B);
+  }
+
+  rgb(r, g, b) {
+    this.spi.write(WS2812._generateColor(r, g, b));
+  }
+
+  hsv(h, s, v) {
+    this.spi.write(WS2812._generateHsvColor(h, s, v));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (var i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (var i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("WS2812", WS2812);
+
+/***/ }),
+
+/***/ "./parts/Light/WS2812B/index.js":
+/*!**************************************!*\
+  !*** ./parts/Light/WS2812B/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class WS2812B {
+
+  constructor() {
+    this.keys = ["din", "vcc", "gnd"];
+    this.requiredKeys = ["din"];
+  }
+
+  wired(obniz) {
+
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+
+    this.params.mode = "master";
+    this.params.frequency = parseInt(3.33 * 1000 * 1000);
+    this.params.mosi = this.params.din;
+    this.params.drive = "3v";
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  static _generateFromByte(val) {
+    // T0H 0.35us+-0.15us
+    // T1H 0.9us+-0.15us
+    // T0L 0.9us+-0.15us
+    // T1L 0.35us+-0.15us
+
+    // 0.3-0.9 and 0.9-0.3 at 3.33Mhz
+
+    val = parseInt(val);
+    const zero = 0x8;
+    const one = 0xE;
+    let ret = [];
+    for (var i = 0; i < 8; i += 2) {
+      let byte = 0;
+      if (val & 0x80 >> i) {
+        byte = one << 4;
+      } else {
+        byte = zero << 4;
+      }
+      if (val & 0x80 >> i + 1) {
+        byte |= one;
+      } else {
+        byte |= zero;
+      }
+      ret.push(byte);
+    }
+    return ret;
+  }
+
+  static _generateColor(r, g, b) {
+
+    let array = WS2812B._generateFromByte(g);
+    array = array.concat(WS2812B._generateFromByte(r));
+    array = array.concat(WS2812B._generateFromByte(b));
+    return array;
+  }
+
+  static _generateHsvColor(h, s, v) {
+    var C = v * s;
+    var Hp = h / 60;
+    var X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    var R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    };
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    };
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    };
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    };
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    };
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    };
+
+    var m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    return WS2812B._generateColor(R, G, B);
+  }
+
+  rgb(r, g, b) {
+    this.spi.write(WS2812B._generateColor(r, g, b));
+  }
+
+  hsv(h, s, v) {
+    this.spi.write(WS2812B._generateHsvColor(h, s, v));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (var i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (var i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+    }
+    this.spi.write(bytes);
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("WS2812B", WS2812B);
 
 /***/ }),
 
@@ -14139,6 +14425,17 @@ module.exports = require("node-fetch");
 /***/ (function(module, exports) {
 
 module.exports = require("path");
+
+/***/ }),
+
+/***/ "semver":
+/*!*************************!*\
+  !*** external "semver" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("semver");
 
 /***/ }),
 
