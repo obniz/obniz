@@ -32,6 +32,7 @@ obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, driv
 ## [await] writeWait(data);
 send a data to spi and wait until receive the data.
 receive data length is same as sent data.
+max length is 32 bytes.
 
 ```Javascript
 // Javascript Example
@@ -42,6 +43,7 @@ console.log("received: "+ret);
 
 ## write(data);
 just send a data to spi. no receive data arrived after sent.
+max length is 32 bytes.
 
 ```Javascript
 // Javascript Example
