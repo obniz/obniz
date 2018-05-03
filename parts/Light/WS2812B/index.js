@@ -1,4 +1,4 @@
-class WS2812 {
+class WS2812B {
 
   constructor() {
     this.keys = ["din", "vcc", "gnd"];
@@ -20,15 +20,15 @@ class WS2812 {
 
   static _generateFromByte(val) {
     // T0H 0.35us+-0.15us
-    // T1H 0.7us+-0.15us
-    // T0L 0.8us+-0.15us
-    // T1L 0.6us+-0.15us
+    // T1H 0.9us+-0.15us
+    // T0L 0.9us+-0.15us
+    // T1L 0.35us+-0.15us
 
-    // 0.3-0.9 and 0.6-0.6 at 3.33Mhz
+    // 0.3-0.9 and 0.9-0.3 at 3.33Mhz
 
     val = parseInt(val);
     const zero = 0x8;
-    const one  = 0xC;
+    const one  = 0xE;
     let ret = [];
     for (var i=0; i<8;i+=2) {
       let byte = 0;
@@ -49,9 +49,9 @@ class WS2812 {
 
   static _generateColor(r, g, b) {
   
-    let array = WS2812._generateFromByte(g);
-    array = array.concat(WS2812._generateFromByte(r));
-    array = array.concat(WS2812._generateFromByte(b));
+    let array = WS2812B._generateFromByte(g);
+    array = array.concat(WS2812B._generateFromByte(r));
+    array = array.concat(WS2812B._generateFromByte(b));
     return array;
   }
   
@@ -75,22 +75,22 @@ class WS2812 {
     G = Math.floor(G * 255);
     B = Math.floor(B * 255);
     
-    return WS2812._generateColor(R, G, B);
+    return WS2812B._generateColor(R, G, B);
   }
 
   rgb(r, g, b){
-    this.spi.write(WS2812._generateColor(r, g, b));
+    this.spi.write(WS2812B._generateColor(r, g, b));
   }
   
   hsv(h,s,v){
-     this.spi.write(WS2812._generateHsvColor(h, s, v));
+     this.spi.write(WS2812B._generateHsvColor(h, s, v));
   }
 
   rgbs(array) {
     let bytes = [];
     for (var i=0; i<array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }
@@ -99,7 +99,7 @@ class WS2812 {
     let bytes = [];
     for (var i=0; i<array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }
@@ -108,4 +108,4 @@ class WS2812 {
 
 
 let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("WS2812", WS2812);
+Obniz.PartsRegistrate("WS2812B", WS2812B);
