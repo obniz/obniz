@@ -51,6 +51,7 @@ led.hsv(180, 0.5, 1);
 ## rgbs([[r,g,b],,,,])
 change colors.
 You can specify colors of chained leds.
+max chain length is 85(It depends on SPI max length)
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2812", {gnd:0, vcc: 1, din: 2});
@@ -62,6 +63,7 @@ led.rgbs([
 ## hsvs([[r,g,b],,,,])
 change colors.
 You can specify colors of chained leds.
+max chain length is 85(It depends on SPI max length)
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2812", {gnd:0, vcc: 1, din: 2});

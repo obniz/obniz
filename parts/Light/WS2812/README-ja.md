@@ -51,6 +51,7 @@ led.hsv(180, 0.5, 1);
 ## rgbs([[r,g,b],,,,])
 チェーン接続されてるLEDの色をRGBで頭から変更します。
 それぞれの色を指定することが出来ます。
+チェーンの最大は85です。(SPIの最大バイト数に依存しています)
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2812", {gnd:0, vcc: 1, din: 2});
@@ -62,6 +63,7 @@ led.rgbs([
 ## hsvs([[r,g,b],,,,])
 チェーン接続されてるLEDの色をHSVで頭から変更します。
 それぞれの色を指定することが出来ます。
+チェーンの最大は85です。(SPIの最大バイト数に依存しています)
 ```Javascript
 // Javascript Example
 var led = obniz.wired("WS2812", {gnd:0, vcc: 1, din: 2});
