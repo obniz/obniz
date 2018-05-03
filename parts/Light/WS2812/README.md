@@ -2,9 +2,9 @@
 Full color LED driver.
 Not only one LED. Capable of chaining leds.
 
-![](./WS2812.jpg)
+![](./WS2811.jpg)
 
-WS2812 is embed in various Full Color LEDs. (In the photo ```PL9823``` is used)
+WS2812 is embed in various Full Color LEDs. 
 
 
 ## wire({din, [vcc, gnd]})
