@@ -36,7 +36,7 @@ obniz.spi0.start({mode:"master", clk :0, mosi:1, miso:2, frequency:1000000, driv
 
 spiにデータを送信します。
 spiは送信したデータの分だけ受信します。受信したデータは返り値として返ってきます。
-最大32byteです。
+最大1024byteです。
 
 ```Javascript
 // Javascript Example
@@ -47,7 +47,7 @@ console.log("received: "+ret);
 
 ## write(data);
 SPIにデータを送信します。受信は行いません。
-最大32byteです。
+最大1024byteです。
 
 ```Javascript
 // Javascript Example

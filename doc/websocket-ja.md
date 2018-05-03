@@ -972,7 +972,7 @@ Related item
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `spiX.data` | [dataArray32](#dataarray32)  | <ul><li>required</li></ul> | &nbsp; |
+| `spiX.data` | [dataArray1024](#dataarray1024)  | <ul><li>required</li></ul> | &nbsp; |
 | `spiX.read` |  boolean  | <ul><li>required</li></ul> | If false, write without receive&nbsp; |
 
 
@@ -3344,13 +3344,6 @@ Related item
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
 | array | <ul><li>length &le; 1024</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[100, 255, 21, 0, 21]`</li></ul> | &nbsp; |
-
-
-
-###  <a name="dataarray32">dataArray32</a>
-| type | conditions | examples | description |
-|:----|:----|:----|:----|
-| array | <ul><li>length &le; 32</li><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[100, 255, 21, 0, 21]`</li></ul> | &nbsp; |
 
 
 
