@@ -1,4 +1,4 @@
-class WS2811 {
+class WS2812 {
 
   constructor() {
     this.keys = ["din", "vcc", "gnd"];
@@ -12,21 +12,23 @@ class WS2811 {
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     
     this.params.mode  =  "master";
-    this.params.frequency = 2*1000*1000;
+    this.params.frequency = parseInt(3.33*1000*1000);
     this.params.mosi = this.params.din;
     this.params.drive = "3v";
     this.spi = this.obniz.getSpiWithConfig(this.params);
   };
 
   static _generateFromByte(val) {
-    // T0H 0.5us+-0.15us
-    // T1H 1.2us+-0.15us
-    // T0L 2.0us+-0.15us
-    // T1L 1.3us+-0.15us
+    // T0H 0.35us+-0.15us
+    // T1H 0.7us+-0.15us
+    // T0L 0.8us+-0.15us
+    // T1L 0.6us+-0.15us
+
+    // 0.3-0.9 and 0.6-0.6 at 3.33Mhz
 
     val = parseInt(val);
     const zero = 0x8;
-    const one  = 0xE;
+    const one  = 0xC;
     let ret = [];
     for (var i=0; i<8;i+=2) {
       let byte = 0;
@@ -47,9 +49,9 @@ class WS2811 {
 
   static _generateColor(r, g, b) {
   
-    let array = WS2811._generateFromByte(r);
-    array = array.concat(WS2811._generateFromByte(g));
-    array = array.concat(WS2811._generateFromByte(b));
+    let array = WS2812._generateFromByte(g);
+    array = array.concat(WS2812._generateFromByte(r));
+    array = array.concat(WS2812._generateFromByte(b));
     return array;
   }
   
@@ -73,25 +75,22 @@ class WS2811 {
     G = Math.floor(G * 255);
     B = Math.floor(B * 255);
     
-    let array = WS2811._generateFromByte(R);
-    array = array.concat(WS2811._generateFromByte(G));
-    array = array.concat(WS2811._generateFromByte(B));
-    return array;
+    return WS2812._generateColor(R, G, B);
   }
 
   rgb(r, g, b){
-    this.spi.write(WS2811._generateColor(r, g, b));
+    this.spi.write(WS2812._generateColor(r, g, b));
   }
   
   hsv(h,s,v){
-     this.spi.write(WS2811._generateHsvColor(h, s, v));
+     this.spi.write(WS2812._generateHsvColor(h, s, v));
   }
 
   rgbs(array) {
     let bytes = [];
     for (var i=0; i<array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }
@@ -100,7 +99,7 @@ class WS2811 {
     let bytes = [];
     for (var i=0; i<array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
     }
     this.spi.write(bytes);
   }
@@ -109,4 +108,4 @@ class WS2811 {
 
 
 let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("WS2811", WS2811);
+Obniz.PartsRegistrate("WS2812", WS2812);

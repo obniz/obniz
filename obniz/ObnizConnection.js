@@ -421,6 +421,7 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     // 
     if (wsObj.ready) {
+      this.firmware_ver = wsObj.obniz.firmware;
       this.resetOnDisconnect(true);
       if (wsObj.local_connect
         && wsObj.local_connect.ip

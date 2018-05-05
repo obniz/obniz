@@ -11,6 +11,12 @@
         },
         {
           "name": "WS2811"
+        },
+        {
+          "name": "WS2812"
+        },
+        {
+          "name": "WS2812B"
         }
       ]
     },{
@@ -160,6 +166,14 @@
         },
         {
           "name": "SHT31"
+        }
+      ]
+    },
+    {
+      "name": "Grove",
+      "parts": [
+        {
+          "name": "Grove_EarHeartRate"
         }
       ]
     }
