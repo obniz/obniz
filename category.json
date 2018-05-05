@@ -168,6 +168,14 @@
           "name": "SHT31"
         }
       ]
+    },
+    {
+      "name": "Grove",
+      "parts": [
+        {
+          "name": "Grove_EarHeartRate"
+        }
+      ]
     }
   ]
 }

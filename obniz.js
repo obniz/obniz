@@ -17501,6 +17501,7 @@ var map = {
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
+	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
@@ -18714,6 +18715,65 @@ HCSR04.prototype.unit = function(unit) {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate("HC-SR04", HCSR04);
+
+/***/ }),
+
+/***/ "./parts/Grove/Grove_EarHeartRate/index.js":
+/*!*************************************************!*\
+  !*** ./parts/Grove/Grove_EarHeartRate/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_EarHeartRate {
+
+  constructor() {
+
+    this.keys = ["vcc", "gnd", "signal"];
+    this.requiredKeys = ["vcc", "gnd"];
+
+    this.displayIoNames = {
+      vcc: "vcc",
+      gnd: "gnd",
+      signal: "signal"
+    };
+
+    this.interval = 5;
+    this.duration = 2.5 * 1000;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  }
+
+  start(callback) {
+    this.obniz.logicAnalyzer.start({
+      io: this.params.signal,
+      interval: this.interval,
+      duration: this.duration});
+
+    this.obniz.logicAnalyzer.onmeasured = (array) => {
+      let edges = [];
+      for (let i=0; i<array.length - 1; i++) {
+        if (array[i] === 0 && array[i+1] === 1) {
+          edges.push(i);
+        }
+      }
+      if (edges.length >= 2) {
+        let between = 0;
+        let pulseMin = 0;
+        between = (edges[1] - edges[0]) * this.interval / 1000.0;
+        pulseMin = 60 / between;
+        callback(pulseMin);
+      }
+    }
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate("Grove_EarHeartRate", Grove_EarHeartRate);
+
 
 /***/ }),
 
