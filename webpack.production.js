@@ -25,7 +25,8 @@ module.exports = {
           loader: require.resolve('json-loader')
         },
         {
-          loader: require.resolve('yaml-loader')
+          // loader: require.resolve('yaml-loader')
+          loader: require.resolve('./obniz/libs/webpackReplace/yaml-schema-loader')
         }
       ]
     }]
