@@ -64,7 +64,7 @@ describe("5-spi", function () {
       await obnizB.pingWait();
       let data = [];
       let expected = [];
-      for (var i=0; i<32; i++) {
+      for (var i=0; i<1024; i++) {
         data.push(0xcc);
         expected.push(0);
       }
@@ -100,7 +100,7 @@ describe("5-spi", function () {
       let data = [];
       let expected0 = [];
       let expected1 = [];
-      for (var i=0; i<32; i++) {
+      for (var i=0; i<1024; i++) {
         data.push(0xcc);
         expected0.push(0);
         expected1.push(255);

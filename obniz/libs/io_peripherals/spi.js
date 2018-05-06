@@ -1,4 +1,5 @@
 const ObnizUtil = require("../utils/util");
+const semver = require("semver");
 
 class PeripheralSPI {
   constructor(Obniz, id) {
@@ -62,6 +63,10 @@ class PeripheralSPI {
   }
 
   writeWait(data) {
+    if(semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`)
+    }
+
     var self = this;
     return new Promise(function(resolve, reject){
       self.addObserver(resolve);
@@ -75,6 +80,10 @@ class PeripheralSPI {
   }
 
   write(data) {
+    if(semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`)
+    }
+
     var self = this;
     var obj = {};
     obj["spi"+self.id] = {
