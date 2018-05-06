@@ -14,7 +14,7 @@ class WS2811 {
     this.params.mode  =  "master";
     this.params.frequency = 2*1000*1000;
     this.params.mosi = this.params.din;
-    this.params.drive = "3v";
+    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
   };
 
