@@ -133,13 +133,14 @@ class PeripheralI2C {
     }
     var self = this;
     return new Promise(function(resolve, reject){
+
+      self.addObserver(resolve);
       var obj = {};
       obj["i2c"+self.id] = {
         address,
         read: length
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 

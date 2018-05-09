@@ -100,13 +100,13 @@ class PeripheralIO {
   inputWait() {
     var self = this;
     return new Promise(function(resolve, reject){
+      self.addObserver(resolve);
       var obj = {};
       obj["io"+self.id] = {
         direction: "input",
         stream: false
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 

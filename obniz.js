@@ -256,7 +256,7 @@ webpackContext.id = "./json_schema sync recursive \\.yml$";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null,"example":[0,1,2,3,4,5,6]},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"example":[[2,1,26,7,9,83,97,109,112,108,101],[7,9,83,97,109,112,108,101]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"example":[[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"description":"Binary data array represented in 0 1.","example":[[0,1,1,0,0,1,1,0],[0,0,1,0,0,0,0,0]],"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"description":"Binary data array.","example":[[16,34,242],[100,255,21,0,21]],"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","description":"Image data bit array.","minItems":1024,"maxItems":1024,"example":[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,255,240,56,0,0,0,0,0,0,0,0,0,0,0,0,7,255,224,120,0,0,0,0,0,0,0,0,0,0,0,0,63,255,192,240,0,0,0,0,0,0,0,0,0,0,0,0,127,255,129,248,0,0,0,0,0,0,0,0,0,0,0,1,255,255,3,254,0,0,0,0,0,0,0,0,0,0,0,3,255,254,7,255,0,0,0,0,0,0,0,0,0,0,0,15,255,252,15,255,128,0,0,0,0,0,0,0,0,0,0,31,255,248,31,255,192,0,0,0,0,0,0,0,0,0,0,63,255,240,63,255,224,0,0,0,0,0,0,0,0,0,0,63,255,224,127,255,240,0,0,0,0,0,0,0,0,0,0,127,255,192,255,255,248,0,0,0,0,0,0,0,0,0,0,255,255,129,255,255,252,0,0,0,0,0,0,0,0,0,1,255,255,3,255,255,254,0,0,0,0,0,0,0,0,0,1,255,254,7,255,255,254,0,0,0,0,0,0,0,0,0,3,255,252,15,255,255,255,0,0,0,0,0,0,0,0,0,7,255,248,31,255,255,255,0,0,0,0,0,0,0,0,0,7,255,240,63,255,255,255,128,0,0,0,0,0,0,0,0,7,255,224,127,193,255,255,128,0,0,0,0,0,0,0,0,15,252,64,255,128,255,255,128,0,0,0,0,0,0,0,0,15,240,1,255,0,127,255,0,0,0,0,0,0,0,0,0,15,224,3,254,0,127,254,14,0,0,0,0,0,0,0,0,31,224,7,254,0,63,252,30,0,0,0,0,0,0,0,0,31,224,7,254,0,63,248,60,0,0,0,0,0,0,0,0,31,192,7,254,0,63,240,120,0,0,0,0,0,0,0,0,31,192,7,254,0,127,224,240,0,0,0,0,0,0,0,0,31,224,7,252,0,127,193,224,0,0,0,0,0,0,0,0,31,224,15,248,0,255,131,224,0,0,0,0,0,0,0,0,31,240,31,240,39,255,7,224,0,0,0,0,0,0,0,0,31,252,63,224,127,254,15,224,0,0,0,0,0,0,0,0,31,255,255,192,255,252,31,224,0,0,0,0,0,0,0,0,31,255,255,129,255,248,63,224,0,0,0,0,0,0,0,0,31,255,255,3,255,240,127,224,0,0,0,0,0,0,0,0,31,255,254,7,255,224,255,224,0,0,0,0,0,0,0,0,31,255,252,15,255,193,255,192,0,0,0,0,0,0,0,0,15,255,248,31,255,131,255,192,0,0,0,0,0,0,0,0,15,255,240,63,255,7,255,192,0,0,0,0,0,0,0,0,15,255,224,127,254,15,255,192,0,0,0,0,0,0,0,0,15,255,192,255,252,31,255,128,0,0,0,0,0,0,0,0,7,255,129,255,0,63,255,128,0,0,0,0,0,0,0,0,7,255,3,254,0,127,255,0,0,0,0,0,0,0,0,0,3,254,7,252,0,255,255,0,0,0,0,0,0,0,0,0,3,252,15,252,0,255,254,0,0,0,0,0,0,0,0,0,1,248,31,252,0,255,254,0,0,0,0,0,0,0,0,0,0,240,63,252,0,255,252,0,0,0,0,0,0,0,0,0,0,224,127,252,0,255,252,0,0,0,0,0,0,0,0,0,0,64,255,252,0,255,248,0,0,0,0,0,0,0,0,0,0,1,255,254,1,255,240,0,0,0,0,0,0,0,0,0,0,3,255,255,3,255,224,0,0,0,0,0,0,0,0,0,0,7,255,255,255,255,192,0,0,0,0,0,0,0,0,0,0,15,255,255,255,255,128,0,0,0,0,0,0,0,0,0,0,31,255,255,255,254,0,0,0,0,0,0,0,0,0,0,0,12,255,255,255,252,0,0,0,0,0,0,0,0,0,0,0,0,63,255,255,240,0,0,0,0,0,0,0,0,0,0,0,0,15,255,255,192,0,0,0,0,0,0,0,0,0,0,0,0,3,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,63,224,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$","description":"Bluetooth device id.If it contain '-', it ignored.","example":"8d0fd8f9"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44"]},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36,"description":"Bluetooth uuid. If it contain '-', it ignored.","example":["e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e","8d3591bda71140fd8f9f00535fe57179","d822b53c","de44",null]},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12,"description":"Bluetooth device id. It's hexString cannot contain '0x' or '-'.","example":"77e754ab8591"},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999,"description":"Obniz id. It can contain '-' or not.","example":["1234-5678",12345678]}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
 
 /***/ }),
 
@@ -278,7 +278,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","basePath":"ad0","description":"available ad0~ad11","anyOf":[{"$ref":"/request/ad/get"},{"$ref":"/request/ad/deinit"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","basePath":"ad0","anyOf":[{"$ref":"/request/ad/get"},{"$ref":"/request/ad/deinit"}]}
 
 /***/ }),
 
@@ -289,7 +289,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","related":"/response/ad/get","desription":"enable & start ad module at io.","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false,"description":"true to continuous notifying on voltage change."}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","related":"/response/ad/get","desription":"enable & start ad module at io.","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false}}}
 
 /***/ }),
 
@@ -410,7 +410,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","description":"use obniz as central","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"},{"$ref":"/request/ble/central/characteristic_register_notify"},{"$ref":"/request/ble/central/characteristic_unregister_notify"},{"$ref":"/request/ble/central/descriptor_get"},{"$ref":"/request/ble/central/descriptor_read"},{"$ref":"/request/ble/central/descriptor_write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"},{"$ref":"/request/ble/central/characteristic_register_notify"},{"$ref":"/request/ble/central/characteristic_unregister_notify"},{"$ref":"/request/ble/central/descriptor_get"},{"$ref":"/request/ble/central/descriptor_read"},{"$ref":"/request/ble/central/descriptor_write"}]}
 
 /***/ }),
 
@@ -487,7 +487,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_notify","description":"notify characteristic for connected device","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["notify_characteristic"],"properties":{"notify_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_notify","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["notify_characteristic"],"properties":{"notify_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
 
 /***/ }),
 
@@ -498,7 +498,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_read","description":"read characteristic on own service","related":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_read","related":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
 
 /***/ }),
 
@@ -509,7 +509,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_write","description":"write characteristic on own service","related":"/response/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_write","related":"/response/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
 
 /***/ }),
 
@@ -520,7 +520,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_read","related":"/response/ble/peripheral/descriptor_read","description":"read descriptor on own service","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_descriptor"],"properties":{"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_read","related":"/response/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_descriptor"],"properties":{"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
 
 /***/ }),
 
@@ -531,7 +531,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","related":"/response/ble/peripheral/descriptor_write","description":"write descriptor on own service","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_descriptor"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","related":"/response/ble/peripheral/descriptor_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_descriptor"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
 
 /***/ }),
 
@@ -542,7 +542,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","description":"use obniz as peripheral","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/service_stop_all"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/service_stop_all"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
 
 /***/ }),
 
@@ -553,7 +553,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"description":"callback of external device connected","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -608,7 +608,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/pin_assign","type":"object","required":["pin_assign"],"properties":{"pin_assign":{"type":"object","minProperties":1,"patternExample":[0,1,2,3],"patternProperties":{"^[0-9]$":{"type":"object","properties":{"module_name":{"type":"string","example":"io"},"pin_name":{"type":"string","example":"output"}}},"^1[0-1]$":{"type":"object","properties":{"module_name":{"type":"string","example":"io"},"pin_name":{"type":"string","example":"output"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/pin_assign","type":"object","required":["pin_assign"],"properties":{"pin_assign":{"type":"object","minProperties":1,"patternExample":[0,1,2,3],"patternProperties":{"^[0-9]$":{"type":"object","properties":{"module_name":{"type":"string"},"pin_name":{"type":"string"}}},"^1[0-1]$":{"type":"object","properties":{"module_name":{"type":"string"},"pin_name":{"type":"string"}}}}}}}
 
 /***/ }),
 
@@ -619,7 +619,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/qr","type":"object","required":["qr"],"properties":{"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string","example":"Hello, obniz!"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/qr","type":"object","required":["qr"],"properties":{"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}}}}
 
 /***/ }),
 
@@ -630,7 +630,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","description":"1 bit represents 1 dot. 1=white, 0=black. 1 byte is part of one line. Order is same like.<br/> {1byte} {2byte} {3byte}...{16byte}<br/> {17byte} {18byte} {19byte}...<br/> .....<br/> .....................{1024byte}","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
 
 /***/ }),
 
@@ -641,7 +641,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/text","type":"object","required":["text"],"properties":{"text":{"type":"string","example":"Hello, obniz!"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/text","type":"object","required":["text"],"properties":{"text":{"type":"string"}}}
 
 /***/ }),
 
@@ -663,7 +663,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","basePath":"i2c0","description":"available only i2c0","anyOf":[{"$ref":"/request/i2c/init_master"},{"$ref":"/request/i2c/init_slave"},{"$ref":"/request/i2c/write"},{"$ref":"/request/i2c/read"},{"$ref":"/request/i2c/deinit"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","basePath":"i2c0","anyOf":[{"$ref":"/request/i2c/init_master"},{"$ref":"/request/i2c/init_slave"},{"$ref":"/request/i2c/write"},{"$ref":"/request/i2c/read"},{"$ref":"/request/i2c/deinit"}]}
 
 /***/ }),
 
@@ -674,7 +674,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_master","description":"internal pull-up is available. But, We recommend use external pull-up resistor.","type":"object","required":["mode","sda","scl","clock"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"clock":{"type":"integer","description":"frequency (Hz)","minimum":1,"maximum":1000000}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_master","type":"object","required":["mode","sda","scl","clock"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"clock":{"type":"integer","minimum":1,"maximum":1000000}}}
 
 /***/ }),
 
@@ -696,7 +696,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
 
 /***/ }),
 
@@ -707,7 +707,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","description":"if address over 0b01111111; then address treated as 10bit address automatically. or specify address_bits: 10 to force 10bit address mode.","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray1024"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray1024"}}}
 
 /***/ }),
 
@@ -740,7 +740,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","basePath":"io0","description":"General purpose IO available on each io (io0 to io11).","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"},{"$ref":"/request/io/deinit"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","basePath":"io0","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"},{"$ref":"/request/io/deinit"}]}
 
 /***/ }),
 
@@ -762,7 +762,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","related":"/response/io/get","type":"object","required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false,"description":"enable stream callback when value change"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","related":"/response/io/get","type":"object","required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false}}}
 
 /***/ }),
 
@@ -795,7 +795,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"],"description":"drive type"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"]}}}
 
 /***/ }),
 
@@ -817,7 +817,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","example":"animation-1","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}}
 
 /***/ }),
 
@@ -828,7 +828,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","basePath":"io.animation","description":"io animation is hardware acceleration for serial sequence change of io. now 'loop' animation is available. it loop io changes regarding json array.","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","basePath":"io.animation","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]}
 
 /***/ }),
 
@@ -839,7 +839,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","description":"Animation name to use pause/resume","example":"animation-1","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","description":"State duration time(ms)","minimum":0,"maximum":60000,"example":500},"state":{"type":"object","description":"io/pwm commands.","filter":"pass_all","example":[{"io0":true},{"io0":false}]}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":"object","filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
@@ -861,7 +861,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","basePath":"logic_analyzer","description":"Monitor io logic level changes by sampling io.","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]}
 
 /***/ }),
 
@@ -872,7 +872,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","exampleDescription":"With below sample code, you will receive only data which start with 'false, false, false' 3bit.","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":0,"exclusiveMinimum":true},"duration":{"type":"integer","minimum":0,"exclusiveMinimum":true},"trigger":{"type":"object","description":"Without this, logic analyzer will start with any io level changes. trigger specify start position. ","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"description":"start value","type":"boolean","default":false},"samples":{"type":"integer","description":"how that values consists","minimum":0,"default":0,"example":3}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","exampleDescription":"With below sample code, you will receive only data which start with 'false, false, false' 3bit.","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":0,"exclusiveMinimum":true},"duration":{"type":"integer","minimum":0,"exclusiveMinimum":true},"trigger":{"type":"object","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"type":"boolean","default":false},"samples":{"type":"integer","minimum":0,"default":0}}}}}
 
 /***/ }),
 
@@ -883,7 +883,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure/echo","description":"It measures pulse response.","related":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"object","required":["io_pulse","io_echo","pulse_width"],"properties":{"io_pulse":{"$ref":"/pinSetting"},"io_echo":{"$ref":"/pinSetting"},"pulse":{"type":"string","default":"positive","enum":["positive","negative"]},"pulse_width":{"type":"number","minimum":0.001,"maximum":1000},"measure_edges":{"type":"integer","minimum":1,"maximum":4},"timeout":{"type":"number","default":1000,"minimum":0.001,"maximum":1000}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure/echo","related":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"object","required":["io_pulse","io_echo","pulse_width"],"properties":{"io_pulse":{"$ref":"/pinSetting"},"io_echo":{"$ref":"/pinSetting"},"pulse":{"type":"string","default":"positive","enum":["positive","negative"]},"pulse_width":{"type":"number","minimum":0.001,"maximum":1000},"measure_edges":{"type":"integer","minimum":1,"maximum":4},"timeout":{"type":"number","default":1000,"minimum":0.001,"maximum":1000}}}}}
 
 /***/ }),
 
@@ -905,7 +905,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","basePath":"message","description":"send/receive with other obniz or WebHook","anyOf":[{"$ref":"/request/message/send"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","basePath":"message","anyOf":[{"$ref":"/request/message/send"}]}
 
 /***/ }),
 
@@ -916,7 +916,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","related":"/response/message/receive","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{"example":"button pressed","description":"All type of data is pass."},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","related":"/response/message/receive","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}}
 
 /***/ }),
 
@@ -938,7 +938,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/freq","type":"object","required":["freq"],"properties":{"freq":{"type":"integer","description":"frequency (Hz)","minimum":1,"maximum":80000000}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/freq","type":"object","required":["freq"],"properties":{"freq":{"type":"integer","minimum":1,"maximum":80000000}}}
 
 /***/ }),
 
@@ -949,7 +949,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","description":"available 0 to 5","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
 
 /***/ }),
 
@@ -971,7 +971,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000,"description":"symbol width (ms)"},"data":{"$ref":"/bitArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000},"data":{"$ref":"/bitArray"}}}}}
 
 /***/ }),
 
@@ -982,7 +982,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/pulse","type":"object","required":["pulse"],"properties":{"pulse":{"type":"number","minimum":0,"description":"pulse width (ms)"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/pulse","type":"object","required":["pulse"],"properties":{"pulse":{"type":"number","minimum":0}}}
 
 /***/ }),
 
@@ -1004,7 +1004,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","basePath":"spi0","description":"available spi0, spi1","anyOf":[{"$ref":"/request/spi/init_master"},{"$ref":"/request/spi/deinit"},{"$ref":"/request/spi/write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","basePath":"spi0","anyOf":[{"$ref":"/request/spi/init_master"},{"$ref":"/request/spi/deinit"},{"$ref":"/request/spi/write"}]}
 
 /***/ }),
 
@@ -1015,7 +1015,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","description":"clk, miso, mosi are optional, but at least one are required","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":26000000,"desription":"frequency (Hz)"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":26000000,"desription":"frequency (Hz)"}}}
 
 /***/ }),
 
@@ -1026,7 +1026,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray1024"},"read":{"type":"boolean","default":true,"description":"If false, write without receive"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray1024"},"read":{"type":"boolean","default":true}}}
 
 /***/ }),
 
@@ -1048,7 +1048,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","basePath":"switch","description":"the switch embed on obniz itself. If it's state is changed, notification will be fired.","anyOf":[{"$ref":"/request/switch/get"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","basePath":"switch","anyOf":[{"$ref":"/request/switch/get"}]}
 
 /***/ }),
 
@@ -1070,7 +1070,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/keepWorkingAtOffline","description":"reset obniz when obniz gone to offline.","type":"object","required":["keep_working_at_offline"],"properties":{"keep_working_at_offline":{"type":"boolean"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/keepWorkingAtOffline","type":"object","required":["keep_working_at_offline"],"properties":{"keep_working_at_offline":{"type":"boolean"}}}
 
 /***/ }),
 
@@ -1114,7 +1114,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","description":"circuit IO check","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean","enum":[true]}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean","enum":[true]}}}
 
 /***/ }),
 
@@ -1125,7 +1125,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/wait","type":"object","required":["wait"],"properties":{"wait":{"type":"integer","description":"wait time (ms)"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/wait","type":"object","required":["wait"],"properties":{"wait":{"type":"integer"}}}
 
 /***/ }),
 
@@ -1158,7 +1158,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/init","description":"available 0 to 1","type":"object","required":["rx","tx"],"uniqueKeys":["rx","tx","rts","cts"],"properties":{"rx":{"$ref":"/pinSetting"},"tx":{"$ref":"/pinSetting"},"baud":{"type":"integer","default":115200,"minimum":1,"maximum":5000000,"description":"baud rate (bps)"},"stop":{"type":"number","enum":[1,1.5,2],"default":1,"description":"stop bit width"},"bits":{"type":"integer","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref":"/pinSetting"},"cts":{"$ref":"/pinSetting"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/init","type":"object","required":["rx","tx"],"uniqueKeys":["rx","tx","rts","cts"],"properties":{"rx":{"$ref":"/pinSetting"},"tx":{"$ref":"/pinSetting"},"baud":{"type":"integer","default":115200,"minimum":1,"maximum":5000000},"stop":{"type":"number","enum":[1,1.5,2],"default":1},"bits":{"type":"integer","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref":"/pinSetting"},"cts":{"$ref":"/pinSetting"}}}
 
 /***/ }),
 
@@ -1202,7 +1202,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad/get","type":"number","example":3.3,"minimum":0,"maximum":5,"description":"current value (volt)"}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad/get","type":"number","minimum":0,"maximum":5}
 
 /***/ }),
 
@@ -1345,7 +1345,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer","example":0},"message":{"type":"string","example":"ERROR MESSAGE"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
 
 /***/ }),
 
@@ -1433,7 +1433,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_read","description":"callback of external device read characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_characteristic"],"properties":{"notify_read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_characteristic"],"properties":{"notify_read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
 
 /***/ }),
 
@@ -1444,7 +1444,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_write","description":"callback of external device write characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_characteristic"],"properties":{"notify_write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_characteristic"],"properties":{"notify_write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
 
 /***/ }),
 
@@ -1455,7 +1455,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_read","description":"callback of read characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
 
 /***/ }),
 
@@ -1466,7 +1466,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_write","description":"callback of write characteristic","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_characteristic_result"],"properties":{"write_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_characteristic_result"],"properties":{"write_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
 
 /***/ }),
 
@@ -1477,7 +1477,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_read","description":"callback of external device read descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_descriptor"],"properties":{"notify_read_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_descriptor"],"properties":{"notify_read_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
 
 /***/ }),
 
@@ -1488,7 +1488,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_write","description":"callback of external device write descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_descriptor"],"properties":{"notify_write_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_descriptor"],"properties":{"notify_write_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
 
 /***/ }),
 
@@ -1499,7 +1499,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_read","description":"callback of read descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_descriptor_result"],"properties":{"read_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_descriptor_result"],"properties":{"read_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
 
 /***/ }),
 
@@ -1510,7 +1510,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_write","description":"callback of write descriptor","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_descriptor_result"],"properties":{"write_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_descriptor_result"],"properties":{"write_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
 
 /***/ }),
 
@@ -1543,7 +1543,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/error","desccription":"global error","type":"object","required":["error"],"properties":{"error":{"type":"object","additionalProperties":true,"properties":{"message":{"description":"readable message","type":"string","example":"voltage down"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/error","desccription":"global error","type":"object","required":["error"],"properties":{"error":{"type":"object","additionalProperties":true,"properties":{"message":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -1565,7 +1565,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/warning","desccription":"global warnings","type":"object","required":["warning"],"properties":{"warning":{"type":"object","additionalProperties":true,"properties":{"message":{"description":"readable message","type":"string","example":"unknown command"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/warning","desccription":"global warnings","type":"object","required":["warning"],"properties":{"warning":{"type":"object","additionalProperties":true,"properties":{"message":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -1664,7 +1664,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"array","minItesm":1,"items":{"type":"object","required":["edge","timing"],"properties":{"edge":{"type":"boolean","description":"rising = true"},"timing":{"type":"number","description":"milliseconds from end of pulse"}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"array","minItesm":1,"items":{"type":"object","required":["edge","timing"],"properties":{"edge":{"type":"boolean"},"timing":{"type":"number"}}}}}}
 
 /***/ }),
 
@@ -1697,7 +1697,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","related":"/request/message/send","type":"object","required":["data","from"],"properties":{"data":{"example":"button pressed","description":"All type of data is pass."},"from":{"type":["string","null"],"example":"1234-5678","description":"From obniz id. Null is used when WebHook message."}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","related":"/request/message/send","type":"object","required":["data","from"],"properties":{"data":{},"from":{"type":["string","null"]}}}
 
 /***/ }),
 
@@ -1730,7 +1730,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch/change","desccription":"value changes are always notified.","type":"object","required":["state"],"properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"],"description":"this is optional and added when user request"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch/change","desccription":"value changes are always notified.","type":"object","required":["state"],"properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"]}}}
 
 /***/ }),
 
@@ -1807,7 +1807,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/ready","description":"all things ready","type":"object","required":["ready"],"properties":{"ready":{"type":"boolean","enum":[true]}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/ready","type":"object","required":["ready"],"properties":{"ready":{"type":"boolean","enum":[true]}}}
 
 /***/ }),
 
@@ -1818,7 +1818,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/redirect","description":"If the server required you to connect other endpoint to communicate with your obniz. This json will be sent.","type":"object","required":["redirect"],"properties":{"redirect":{"type":"string","example":"wss://ws1.obniz.io","description":"The url you should redirect to."}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/redirect","type":"object","required":["redirect"],"properties":{"redirect":{"type":"string"}}}
 
 /***/ }),
 
@@ -7836,25 +7836,6 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./obniz sync recursive":
-/*!********************!*\
-  !*** ./obniz sync ***!
-  \********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function webpackEmptyContext(req) {
-	var e = new Error('Cannot find module "' + req + '".');
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = "./obniz sync recursive";
-
-/***/ }),
-
 /***/ "./obniz/ObnizApi.js":
 /*!***************************!*\
   !*** ./obniz/ObnizApi.js ***!
@@ -8351,6 +8332,7 @@ module.exports = class ObnizConnection {
       });
       ws.on('message', (data) => {
         this.print_debug("recvd via local");
+        this.print_debug(Array.prototype.slice.call(data));
         this.wsOnMessage(data);
       });
       ws.on('close', (event) => {
@@ -8378,6 +8360,7 @@ module.exports = class ObnizConnection {
       }
       ws.onmessage = (event) => {
         this.print_debug("recvd via local");
+        this.print_debug(Array.prototype.slice.call(data));
         this.wsOnMessage(event.data);
       };
       ws.onclose = (event) => {
@@ -8965,7 +8948,7 @@ function _ReadCookie(name) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__dirname) {
+
 const ObnizUIs = __webpack_require__(/*! ./ObnizUIs */ "./obniz/ObnizUIs.js");
 const ObnizApi = __webpack_require__(/*! ./ObnizApi */ "./obniz/ObnizApi.js");
 
@@ -9104,15 +9087,14 @@ if (!isNode) {
 /*===================*/
 /* ReadParts */
 /*===================*/
-__webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
-if(__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir){__webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);}
-let context = __webpack_require__("./parts sync recursive \\.js$");
-for( let path of context.keys()){
-  context(path);
-}
+// require.context = require('./libs/webpackReplace/require-context');
+// if(require.context && require.context.setBaseDir){require.context.setBaseDir(__dirname);}
+// let context = require.context(  "../parts", true, /\.js$/);
+// for( let path of context.keys()){
+//   context(path);
+// }
 
 
-/* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
 
@@ -11415,12 +11397,12 @@ class PeripheralAD {
   getWait() {
     var self = this;
     return new Promise(function(resolve, reject){
+      self.addObserver(resolve);
       var obj = {};
       obj["ad"+self.id] = {
         stream: false
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 
@@ -11590,13 +11572,14 @@ class PeripheralI2C {
     }
     var self = this;
     return new Promise(function(resolve, reject){
+
+      self.addObserver(resolve);
       var obj = {};
       obj["i2c"+self.id] = {
         address,
         read: length
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 
@@ -11748,13 +11731,13 @@ class PeripheralIO {
   inputWait() {
     var self = this;
     return new Promise(function(resolve, reject){
+      self.addObserver(resolve);
       var obj = {};
       obj["io"+self.id] = {
         direction: "input",
         stream: false
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 
@@ -12050,13 +12033,13 @@ class PeripheralSPI {
 
     var self = this;
     return new Promise(function(resolve, reject){
+      self.addObserver(resolve);
       var obj = {};
       obj["spi"+self.id] = {
         data: data,
         read: true
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 
@@ -17479,3184 +17462,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.2.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
-
-/***/ }),
-
-/***/ "./parts sync recursive \\.js$":
-/*!**************************!*\
-  !*** ./parts sync \.js$ ***!
-  \**************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var map = {
-	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
-	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
-	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
-	"./Bluetooth/RN42/index.js": "./parts/Bluetooth/RN42/index.js",
-	"./Bluetooth/XBee/index.js": "./parts/Bluetooth/XBee/index.js",
-	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
-	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
-	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
-	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
-	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
-	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
-	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
-	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
-	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
-	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
-	"./Light/LED/index.js": "./parts/Light/LED/index.js",
-	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
-	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
-	"./Light/WS2812B/index.js": "./parts/Light/WS2812B/index.js",
-	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
-	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
-	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
-	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
-	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
-	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
-	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
-	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
-	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
-	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
-	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
-	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
-	"./TemperatureSensor/analog/AnalogTempratureSensor.js": "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js",
-	"./TemperatureSensor/analog/LM35DZ/index.js": "./parts/TemperatureSensor/analog/LM35DZ/index.js",
-	"./TemperatureSensor/analog/LM60/index.js": "./parts/TemperatureSensor/analog/LM60/index.js",
-	"./TemperatureSensor/analog/LM61/index.js": "./parts/TemperatureSensor/analog/LM61/index.js",
-	"./TemperatureSensor/analog/MCP9700/index.js": "./parts/TemperatureSensor/analog/MCP9700/index.js",
-	"./TemperatureSensor/analog/MCP9701/index.js": "./parts/TemperatureSensor/analog/MCP9701/index.js",
-	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
-	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
-	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
-	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
-	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
-	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js"
-};
-
-
-function webpackContext(req) {
-	var id = webpackContextResolve(req);
-	var module = __webpack_require__(id);
-	return module;
-}
-function webpackContextResolve(req) {
-	var id = map[req];
-	if(!(id + 1)) { // check for number or string
-		var e = new Error('Cannot find module "' + req + '".');
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	}
-	return id;
-}
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
-};
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = "./parts sync recursive \\.js$";
-
-/***/ }),
-
-/***/ "./parts/ADConverter/hx711/index.js":
-/*!******************************************!*\
-  !*** ./parts/ADConverter/hx711/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class hx711 {
-  constructor() {
-    this.keys = ["vcc", "gnd","sck","dout"];
-    this.requiredKeys = ["sck","dout"];
-    this.offset = 0;
-    this.scale = 1;
-
-  }
-
-  wired(obniz){
-    this.obniz = obniz;
-    this.spi = obniz.getFreeSpi();
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-
-
-    let ioKeys = ["clk", "dout"];
-    for (let key of ioKeys) {
-      if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '"+key+"' are to be valid io no");
-      }
-    }
-    this.sck = obniz.getIO(this.params.sck);
-    this.dout = obniz.getIO(this.params.dout);
-
-
-    this.sck.output(true);
-
-
-  }
-
-
-  async readWait(){
-
-    this.sck.output(false);
-
-    // while(true) {
-    //   let val = await this.dout.inputWait();
-    //   if (val == false) break;
-    // }
-    this.spi.start({mode:"master", clk :this.params.sck, miso:this.params.dout, frequency:66 * 1000});
-
-    let ret = await this.spi.writeWait([0,0,0]);
-    this.spi.end(true);
-    this.sck.output(false);
-    let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-    return flag * (((ret[0] & 0x7F) << 16)+(ret[1] << 8)+(ret[2] << 0)) ;
-  }
-
-
-
-  async readAverageWait(times){
-    let results = [];
-    for(let i = 0; i < times; i++){
-      results.push(await this.readWait());
-    }
-    return results.reduce((prev,current,i)=>{return prev+current},0) / results.length;
-  }
-
-  powerDown(){
-    this.sck.output(true);
-  }
-
-  powerUp(){
-    this.sck.output(false);
-  }
-
-
-  async zeroAdjust(times){
-    times = parseInt(times) || 1;
-    this.offset = await this.readAverageWait(times);
-  }
-
-  async getValueWait(times){
-    times = parseInt(times) || 1;
-    let val = await this.readAverageWait(times);
-    return (val - this.offset) / this.scale;
-  }
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("hx711", hx711);
-
-
-/***/ }),
-
-/***/ "./parts/Accessory/USB/index.js":
-/*!**************************************!*\
-  !*** ./parts/Accessory/USB/index.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class USB {
-
-  constructor() {
-
-    this.keys = ["vcc","gnd"];
-    this.requiredKeys = ["vcc","gnd"];
-
-    this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd"
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.io_vdd = obniz.getIO(this.params.vcc);
-    this.io_gnd = obniz.getIO(this.params.gnd);
-    
-    this.io_gnd.output(false);
-  }
-
-  on() {
-    this.io_vdd.output(true);
-  }
-
-  off() {
-    this.io_vdd.output(false);
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("USB", USB);
-
-
-/***/ }),
-
-/***/ "./parts/AudioSensor/AE_MICAMP/index.js":
-/*!**********************************************!*\
-  !*** ./parts/AudioSensor/AE_MICAMP/index.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-class AE_MICAMP {
-
-  constructor() {
-    this.keys = ["vcc", "gnd", "out"];
-    this.requiredKeys = ["out"];
-
-    this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
-      out: "out"
-    };
-  }
-
-  async wired(obniz) {
-    this.obniz = obniz;
-  
-    this.ad = obniz.getAD(this.params.out);
-    
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  
-    var self = this;
-    this.ad.start(function(value){
-      self.voltage = value;
-      if (self.onchange) {
-        self.onchange(self.voltage);
-      }
-    });
-  }
-
-}
-
-
-/*
-  var self = this;
-  var analogin = [];
-  var cnt = 0;
-  while(true){
-    var sum = 0;
-    if (cnt == 10) {
-      cnt = 0;
-    }
-    analogin[cnt] = this.ad.value;
-    cnt++;
-    for (var i = 0; i < 10; i++) {
-      if (typeof(analogin[i])=="number") {sum += analogin[i];}
-    }
-    var average = sum / 10;
-    //console.log('average='+average);
-    await obniz.wait(1);
-  }
-  self.voltage_ave = average;
-  if (self.average) {
-    self.average(self.voltage_ave);
-  }
-  */
-
-/*
-AE_MICAMP.prototype.Average = function(callback) {
-  this.average = callback;
-};
-*/
-
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("AE_MICAMP", AE_MICAMP);
-
-/***/ }),
-
-/***/ "./parts/Bluetooth/RN42/index.js":
-/*!***************************************!*\
-  !*** ./parts/Bluetooth/RN42/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class RN42 {
-  constructor() {
-    this.keys = ["tx", "rx", "gnd"];
-    this.requiredKeys = ["tx", "rx"];
-
-  }
-
-  wired(obniz) {
-    if(obniz.isValidIO(this.params.gnd)) {
-      obniz.getIO(this.params.gnd).output(false);
-    }
-  
-    this.uart = obniz.getFreeUart();
-  
-    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:115200, drive:"3v"});
-    var self = this;
-    this.uart.onreceive = (data, text) => {
-      // this is not perfect. separation is possible.
-      if (text.indexOf("CONNECT") >= 0) {
-        console.log("connected");
-      } else if(text.indexOf("DISCONNECT") >= 0) {
-        console.log("disconnected");
-      }
-      if (typeof(self.onreceive) === "function") {
-        self.onreceive(data, text);
-      }
-    };
-  }
-
-  send(data) {
-    this.uart.send(data);
-  }
-
-  sendCommand(data) {
-    this.uart.send(data+'\n');
-    this.obniz.wait(100);
-  }
-
-  enterCommandMode() {
-    this.send('$$$');
-    this.obniz.wait(100);
-  }
-
-  config(json) {
-    this.enterCommandMode();
-    if (typeof(json) !== "object") {
-      // TODO: warning
-      return;
-    }
-    // remove noize data
-    this.sendCommand("");
-  
-    if (json.master_slave) {
-      this.config_masterslave(json.master_slave);
-    }
-    if (json.auth) {
-      this.config_auth(json.auth);
-    }
-    if (json.hid_flag) {
-      this.config_HIDflag(json.hid_flag);
-    }
-    if (json.profile) {
-      this.config_profile(json.profile);
-    }
-    if (json.power) {
-      this.config_power(json.power);
-    }
-    if (json.display_name) {
-      this.config_displayName(json.display_name);
-    }
-    this.config_reboot();
-  }
-
-  config_reboot() {
-    this.sendCommand('R,1');
-  }
-
-  config_masterslave(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
-      val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"];
-      for (var i=0; i<modes.length; i++) {
-        if (modes[i] === mode) {
-          val = i;
-          break;
-        }
-      }
-    }
-    if (val === -1) {
-      // TODO: warning
-      return;
-    }
-    this.sendCommand('SM,'+val);
-  }
-
-  config_displayName(name) {
-    this.sendCommand('SN,'+name);
-  }
-
-
-    // // SH,0200 HID Flag register. Descriptor=keyboard
-  config_HIDflag(flag) {
-    this.sendCommand('SH,'+flag);
-  }
-
-  config_profile(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
-      val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
-      for (var i=0; i<modes.length; i++) {
-        if (modes[i] === mode) {
-          val = i;
-          break;
-        }
-      }
-    }
-    if (val === -1) {
-      // TODO: warning
-      return;
-    }
-    this.sendCommand('S~,'+val);
-  }
-
-  config_revert_localecho() {
-    this.sendCommand('+');
-  }
-
-  config_auth(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
-      val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["open", "ssp-keyboard", "just-work", "pincode"];
-      for (var i=0; i<modes.length; i++) {
-        if (modes[i] === mode) {
-          val = i;
-          break;
-        }
-      }
-    }
-    if (val === -1) {
-      // TODO: warning
-      return;
-    }
-    this.sendCommand('SA,'+val);
-  }
-
-  config_power(dbm) {
-    var val = "0010";
-    if (16 > dbm && dbm >= 12) {
-      val = "000C";
-    } else if (12 > dbm && dbm >= 8) {
-      val = "0008";
-    } else if (8 > dbm && dbm >= 4) {
-      val = "0004";
-    } else if (4 > dbm && dbm >= 0) {
-      val = "0000";
-    } else if (0 > dbm && dbm >= -4) {
-      val = "FFFC";
-    } else if (-4 > dbm && dbm >= -8) {
-      val = "FFF8";
-    } else if (-8 > dbm) {
-      val = "FFF4";
-    }
-  
-    this.sendCommand('SY,'+val);
-  }
-
-  config_get_setting() {
-    this.sendCommand('D');
-  }
-
-  config_get_extendSetting() {
-    this.sendCommand('E');
-  }
-}
-
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("RN42", RN42);
-
-/***/ }),
-
-/***/ "./parts/Bluetooth/XBee/index.js":
-/*!***************************************!*\
-  !*** ./parts/Bluetooth/XBee/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-class XBee {
-
-  constructor() {
-    this.keys = ["tx","rx","gnd"];
-    this.requiredKeys = ["tx","rx"];
-    
-    this.displayIoNames = { "tx" : "<tx", "rx":">rx"};
-  }
-
-  wired(obniz) {
-  
-    this.uart = obniz.getFreeUart();
-    this.currentCommand = null;
-    this.commands = [];
-    this.isAtMode = false;
-    this.onFinishAtModeCallback = null;
-    
-    
-  if(typeof(this.params.gnd) === "number") {
-    obniz.getIO(this.params.gnd).output(false);
-  }
-  
-    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:9600, drive:"3v"});
-    
-    this.uart.onreceive = (function(data, text) {
-      if(this.isAtMode){
-        this.onAtResultsRecieve(data, text);
-      }else{
-        if (typeof(this.onreceive) === "function") {
-          this.onreceive(data, text);
-        }
-      }
-    }).bind(this);
-  }
-
-  send( text) {
-    if(this.isAtMode === false){
-      this.uart.send(text);
-      
-    }else{
-      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
-    }
-  }
-
-  onAtResultsRecieve(data, text){
-    if(!this.isAtMode){ return; }
-    
-    var next = function(){
-      this.currentCommand  = null;
-      this.sendCommand();
-    }.bind(this);
-    
-    if(text === "OK\r"){
-      if(this.currentCommand === "ATCN"){
-        this.isAtMode = false;
-        this.currentCommand  = null;
-        if(typeof(this.onFinishAtModeCallback) === "function"){
-          this.onFinishAtModeCallback();
-          this.onFinishAtModeCallback = null;
-        }
-        return;
-      }
-      next();
-    }else if(text === "ERROR\r"){
-      this.obniz.error("XBee config error : " + this.currentCommand);
-    }else{
-      //response of at command.
-      console.log("XBEE : no catch message", data);
-      next();
-    }
-  }
-
-  addCommand(command, value) {
-    var str = command + (value ? " " + value : "");
-    this.commands.push(str);
-    if(this.isAtMode === true 
-        && this.currentCommand === null){
-      this.sendCommand();
-    }
-  }
-
-  sendCommand() {
-    if(this.isAtMode === true 
-        && this.currentCommand === null
-        && this.commands.length > 0){
-      this.currentCommand = "AT" + this.commands.shift();
-      this.uart.send(this.currentCommand + "\r");
-    }
-  }
-
-  enterAtMode() {
-    if(this.currentCommand !== null) return;
-    this.isAtMode = true;
-    this.obniz.wait(1000);
-    var command = "+++";
-    this.currentCommand = command;
-    this.uart.send(this.currentCommand);
-    this.obniz.wait(1000);
-  }
-
-  exitAtMode() {
-    this.addCommand("CN");
-  }
-
-  async configWait(config) {
-    if(this.isAtMode){ throw new Error("Xbee : duplicate config setting"); };
-    return new Promise(function(resolve, reject){
-      var standaloneKeys = {
-        "destination_address_high" : "DH",
-        "destination_address_low" : "DL",
-        "source_address" : "MY"
-      };
-      var highLowKeys = [
-        "destination_address"
-      ];
-      this.enterAtMode();
-      for(var key in config){
-          if(key.length === 2){
-            this.addCommand(key,config[key]);
-          }else if(standaloneKeys[key]){
-            this.addCommand(standaloneKeys[key],config[key]);
-          }else if(highLowKeys.includes(key)){
-            var high = config[key].slice(0,-8); 
-            if(!high){high="0";}
-            var low = config[key].slice(-8);
-  
-            this.addCommand(standaloneKeys[key + "_high"], high);
-            this.addCommand(standaloneKeys[key + "_low"],  low);
-          }
-      }
-      this.exitAtMode();
-      this.onFinishAtModeCallback = function(){
-        resolve();
-      };
-    }.bind(this));
-    
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("XBee", XBee);
-
-/***/ }),
-
-/***/ "./parts/Camera/JpegSerialCam/index.js":
-/*!*********************************************!*\
-  !*** ./parts/Camera/JpegSerialCam/index.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class JpegSerialCam {
-
-  constructor() {
-    this.keys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
-    this.requiredKeys = [ "cam_tx", "cam_rx"];
-    
-    this.ioKeys = this.keys;
-    this.displayName = "Jcam"
-    this.displayIoNames = { "cam_tx" : "camTx", "cam_rx":"camRx"};
-  }
-
-  wired(){
-    this.obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-    this.my_tx = this.params.cam_rx;
-    this.my_rx = this.params.cam_tx;
-
-    this.obniz.getIO(this.my_tx).drive("3v");
-    
-    this.uart = this.obniz.getFreeUart(); 
-  };
-
-  async _drainUntil(uart, search, recv) {
-    if (!recv) recv = [];
-    while(true) {
-      var readed = uart.readBytes();
-      recv = recv.concat(readed);
-      var tail = this._seekTail(search, recv);
-      if (tail >= 0) {
-        recv.splice(0, tail);
-        return recv;
-      }
-      await this.obniz.wait(10);
-    }
-  }
-
-  _seekTail(search, src) {
-    var f=0;
-    for (var i=0;i<src.length; i++) {
-      if (src[i] === search[f]) {
-        f++;
-        if (f === search.length) {
-          return i+1;
-        }
-      } else {
-        f = 0;
-      }
-    }
-    return -1;
-  }
-  
-  arrayToBase64(buf) {
-    if (typeof btoa === "function") {
-      var binstr = Array.prototype.map.call(buf, function (ch) {
-        return String.fromCharCode(ch);
-      }).join('');
-      return btoa(binstr);
-    }
-    // TODO: 
-  }
-
-  async startwait(obj) {
-    if (!obj) obj = {};
-    this.uart.start({tx:this.my_tx, rx:this.my_rx, baud:obj.baud || 38400});
-    this.obniz.display.setPinName(this.my_tx,"JpegSerialCam","camRx");
-    this.obniz.display.setPinName(this.my_rx,"JpegSerialCam","camTx");
-    await this.obniz.wait(2500);
-  }
-
-  async resetwait() {
-    this.uart.send([0x56, 0x00, 0x26, 0x00]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
-    await this.obniz.wait(2500);
-  }
-
-  async setResolusionWait(resolution) {
-    let val;
-    if (resolution === "640*480") {
-      val = 0x00;
-    } else if (resolution === "320*240") {
-      val = 0x11;
-    } else if (resolution === "160*120") {
-      val = 0x22;
-    } else {
-      throw new Error("invalid resolution");
-    }
-    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    await this.resetwait();
-  }
-
-
-  async setCompressibilityWait(compress) {
-    let val = Math.floor(compress / 100 * 0xFF);
-    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    await this.resetwait();
-  }
-
-
-  async setBaudWait(baud) {
-    let val;
-    switch(baud) {
-      case 9600:
-        val = [0xAE, 0xC8];
-        break;
-      case 19200:
-        val = [0x56, 0xE4];
-        break;
-      case 38400:
-        val = [0x2A, 0xF2];
-        break;
-      case 57600:
-        val = [0x1C, 0x4C];
-        break;
-      case 115200:
-        val = [0x0D, 0xA6];
-        break;
-      default:
-        throw new Error("invalid baud rate");
-    }
-    this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
-    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
-    //await this.obniz.wait(1000);
-    await this.startwait({
-      baud
-    });
-  }
-
-  async takewait() {
-    const uart = this.uart;
-    //console.log("stop a photo")
-    uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]); 
-    
-    //console.log("take a photo")
-    uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-    
-    //console.log("read length")
-    uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
-    var XX;
-    var YY;
-    while(true) {
-      var readed = uart.readBytes();
-      //console.log(recv);
-      recv = recv.concat(readed);
-      if (recv.length >= 2) {
-        XX = recv[0];
-        YY = recv[1];
-        break;
-      }
-      await this.obniz.wait(1000);
-    }
-    let databytes = XX * 256 + YY;
-    //console.log("image: " + databytes + " Bytes");
-    const high = (databytes >> 8) & 0xFF;
-    const low = databytes & 0xFF;
-    
-    //console.log("start reading image")
-    uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
-    //console.log("reading...");
-    while(true) {
-      var readed = uart.readBytes();
-      recv = recv.concat(readed);
-      //console.log(readed.length);
-      if (recv.length >= databytes) {
-        break;
-      }
-      await this.obniz.wait(10);
-    }
-    //console.log("done");
-    recv = recv.splice(0, databytes); // remove tail
-    recv = recv.concat([0xFF, 0xD9]);
-    return recv;
-  }
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("JpegSerialCam", JpegSerialCam);
-
-/***/ }),
-
-/***/ "./parts/Display/7SegmentLED/index.js":
-/*!********************************************!*\
-  !*** ./parts/Display/7SegmentLED/index.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class _7SegmentLED {
-  constructor() {
-    this.requiredKeys = [ "a", "b", "c", "d", "e", "f", "g", "common"];
-    this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
-    
-    this.digits = [
-      0x3F,
-      0x06,
-      0x5b,
-      0x4f,
-      0x66,
-      0x6d,
-      0x7d,
-      0x07,
-      0x7f,
-      0x6f,
-      0x6f
-    ];
-  
-    this.displayIoNames = {
-      a: "a",
-      b: "b",
-      c: "c",
-      d: "d",
-      e: "e",
-      f: "f",
-      g: "g",
-      dp: "dp",
-      common: "com",
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.ios = [];
-    this.ios.push(obniz.getIO(this.params.a));
-    this.ios.push(obniz.getIO(this.params.b));
-    this.ios.push(obniz.getIO(this.params.c));
-    this.ios.push(obniz.getIO(this.params.d));
-    this.ios.push(obniz.getIO(this.params.e));
-    this.ios.push(obniz.getIO(this.params.f));
-    this.ios.push(obniz.getIO(this.params.g));
-
-    for (let i=0;i<this.ios.length; i++) {
-      this.ios[i].output(false);
-    }
-
-    if (typeof this.params.dp === "number") {
-      this.dp = obniz.getIO(this.params.dp);
-      this.dp.output(false);
-    }
-
-    this.common = obniz.getIO(this.params.common);
-    this.common.output(false);
-    this.isCathodeCommon = (this.params.commonType === "anode") ? false : true;
-  }
-
-  print(data) {
-    if (typeof data === "number") {
-      data = parseInt(data);
-      data = data % 10;
-  
-      for (let i=0; i<7; i++) {
-        if (this.ios[i]) {
-          var val = (this.digits[data] & (1 << i)) ? true : false;
-          if (!this.isCathodeCommon) {
-            val = ~val;
-          }
-          this.ios[i].output( val );
-        }
-      }
-      this.on();
-    }
-  }
-
-  printRaw(data) {
-    if (typeof data === "number") {
-      for (let i=0; i<7; i++) {
-        if (this.ios[i]) {
-          var val = (data & (1 << i)) ? true : false;
-          if (!this.isCathodeCommon) {
-            val = !val;
-          }
-          this.ios[i].output( val );
-        }
-      }
-      this.on();
-    }
-  }
-
-  dpState(show) {
-    if (this.dp) {
-      this.dp.output( this.isCathodeCommon ? show : !show);
-    }
-  }
-
-  on() {
-    this.common.output( this.isCathodeCommon ? false : true);
-  }
-
-  off() {
-    this.common.output( this.isCathodeCommon ? true : false);
-  }
-}
-
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);
-
-
-
-/***/ }),
-
-/***/ "./parts/Display/7SegmentLEDArray/index.js":
-/*!*************************************************!*\
-  !*** ./parts/Display/7SegmentLEDArray/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-class _7SegmentLEDArray {
-  constructor(){
-    this.identifier = ""+(new Date()).getTime();
-    
-    this.keys = ["segments"];
-    this.requiredKeys = this.keys
-    
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    
-    this.segments = this.params.segments;
-  }
-
-  print(data) {
-    if (typeof data === "number") {
-      data = parseInt(data);
-      
-      const print = (index) => {
-        let val = data;
-  
-        for (let i=0; i<this.segments.length; i++) {
-          if(index === i) {
-            this.segments[i].print(val%10);
-          } else {
-            this.segments[i].off();
-          }
-          val = val/10;
-        }
-      };
-  
-      let animations = [];
-      for (let i=0; i<this.segments.length; i++) {
-        animations.push({
-          duration: 3,
-          state: print
-        });
-      } 
-  
-      this.obniz.io.animation(this.identifier, "loop", animations);
-    };
-  }
-
-  on() {
-    this.obniz.io.animation(this.identifier, "resume");
-  }
-
-  off() {
-    this.obniz.io.animation(this.identifier, "pause");
-    for (let i=0; i<this.segments.length; i++) {
-      this.segments[i].off();
-    }
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
-
-/***/ }),
-
-/***/ "./parts/Display/MatrixLED_MAX7219/index.js":
-/*!**************************************************!*\
-  !*** ./parts/Display/MatrixLED_MAX7219/index.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-class MatrixLED_MAX7219 {
-
-  constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-    this.requiredKeys = ["din", "cs", "clk"];
-  }
-
-  wired(obniz) {
-    this.cs = obniz.getIO(this.params.cs);
-    // logich high must 3.5v <=
-    if(obniz.isValidIO(this.params.vcc)){
-      obniz.getIO(this.params.vcc).output(true);
-    }
-    if(obniz.isValidIO(this.params.gnd)){
-      obniz.getIO(this.params.gnd).output(false);
-    }
-    
-    // max 10Mhz but motor driver can't
-    this.params.frequency = this.params.frequency  ||  10 * 1000*1000;
-    this.params.mode =  "master";
-    this.params.mosi = this.params.din;
-    this.params.drive = "3v";
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-
-    // reset a onece
-    this.cs.output(true);
-    this.cs.output(false);
-    this.cs.output(true);
-  }
-
-  init(width, height) {
-    this.width = width;
-    this.height = height;
-    this.preparevram(width, height);
-    this.initModule();
-  }
-
-  initModule() {
-    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
-    this.write([0x0a, 0x05]); // brightness 9/32 0 to f
-    this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
-    this.write([0x0c, 0x01]); // Shutdown to normal operation
-    this.write([0x0f, 0x00]);
-    this.passingCommands();
-    obniz.wait(10);
-  }
-
-  test() {
-    this.write([0x0f, 0x00]); // test command
-    this.passingCommands();
-  }
-
-  passingCommands() {
-    for (let i=8; i<this.width; i+=8) {  // this needed for number of unit
-      this.write([0x00, 0x00]);
-    }
-  }
-
-  brightness(val) {
-    this.write([0x0a, val]); // 0 to 15;
-    this.passingCommands();
-  }
-
-  preparevram(width, height) {
-    this.vram = [];
-    for (let i=0; i<height; i++) {
-      let dots = new Array(width/8);
-      for (let ii=0;ii<dots.length; ii++) {
-        dots[ii] = 0x00;
-      }
-      this.vram.push(dots);
-    }
-  }
-
-  write(data) {
-    this.cs.output(false);
-    this.spi.write(data);
-    this.cs.output(true);
-  }
-
-  writeVram() {
-    for (let line_num=0; line_num<this.height; line_num++) {
-      let addr = line_num + 1;
-      let line = this.vram[line_num];
-      let data = [];
-      for (let col=0; col<line.length; col++) {
-        data.push(addr);
-        data.push(line[col]);
-      }
-      this.write(data);
-    }
-  }
-
-  clear() {
-    for (let line_num=0; line_num<this.height; line_num++) {
-      let line = this.vram[line_num];
-      for (let col=0; col<line.length; col++) {
-        this.vram[line_num][col] = 0x00;
-      }
-      this.writeVram();
-    }
-  }
-
-  draw(ctx) {
-    let isNode = (typeof window === 'undefined') ;
-    if (isNode) {
-      // TODO:
-      throw new Error("node js mode is under working.");
-    } else {
-      const imageData = ctx.getImageData(0, 0, this.width, this.height);
-      const data = imageData.data;
-      
-      for(let i = 0; i < data.length; i += 4) {
-        let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        let index = parseInt(i/4);
-        let line = parseInt(index/this.width);
-        let col = parseInt((index-line*this.width)/8);
-        let bits = parseInt((index-line*this.width))%8;
-        if (bits === 0)
-          this.vram[line][col] = 0x00;
-        if (brightness > 0x7F)
-          this.vram[line][col] |= 0x80 >> bits;
-      }
-    }
-    this.writeVram();
-  }
-}
-
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
-
-/***/ }),
-
-/***/ "./parts/DistanceSensor/HC-SR04/index.js":
-/*!***********************************************!*\
-  !*** ./parts/DistanceSensor/HC-SR04/index.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var HCSR04 = function() {
-  this.keys  = [ "vcc", "trigger", "echo", "gnd"];
-  this.requiredKeys  = [ "vcc", "trigger", "echo"];
-
-  this._unit = "mm";
-};
-
-HCSR04.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-
-  obniz.setVccGnd(null, this.params.gnd, "5v");
-
-  this.vccIO = obniz.getIO(this.params.vcc);
-  this.trigger = this.params.trigger;
-  this.echo = this.params.echo;
-};
-
-HCSR04.prototype.measure = async function(callback) {
-
-  this.vccIO.drive("5v");
-  this.vccIO.output(true);
-  await this.obniz.wait(10);
-
-  var self = this;
-  this.obniz.measure.echo({
-    io_pulse: this.trigger,
-    io_echo: this.echo,
-    pulse: "positive",
-    pulse_width: 0.011,
-    measure_edges: 3,
-    timeout: 10/340*1000,
-    callback: function(edges){
-      self.vccIO.output(false);
-      var distance = null;
-      for (var i=0; i<edges.length-1; i++){ // HCSR04's output of io_echo is initially high when trigger is finshed
-        if (edges[i].edge === true) {
-          distance = (edges[i+1].timing - edges[i].timing) * 1000;
-          if (self._unit === "mm") {
-            distance = distance / 5.8;
-          } else if (self._unit === "inch") {
-            distance = distance / 148.0;
-          }
-        }
-      }
-      if (typeof(callback) === "function") {
-        callback(distance);
-      }
-    }
-  })
-};
-
-HCSR04.prototype.unit = function(unit) {
-  if (unit === "mm") {
-    this._unit = "mm";
-  } else if (unit === "inch") {
-    this._unit = "inch";
-  } else {
-    throw new Error("HCSR04: unknown unit "+unit);
-  }
-};
-
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("HC-SR04", HCSR04);
-
-/***/ }),
-
-/***/ "./parts/Grove/Grove_EarHeartRate/index.js":
-/*!*************************************************!*\
-  !*** ./parts/Grove/Grove_EarHeartRate/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class Grove_EarHeartRate {
-
-  constructor() {
-
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["vcc", "gnd"];
-
-    this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
-      signal: "signal"
-    };
-
-    this.interval = 5;
-    this.duration = 2.5 * 1000;
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  }
-
-  start(callback) {
-    this.obniz.logicAnalyzer.start({
-      io: this.params.signal,
-      interval: this.interval,
-      duration: this.duration});
-
-    this.obniz.logicAnalyzer.onmeasured = (array) => {
-      let edges = [];
-      for (let i=0; i<array.length - 1; i++) {
-        if (array[i] === 0 && array[i+1] === 1) {
-          edges.push(i);
-        }
-      }
-      if (edges.length >= 2) {
-        let between = 0;
-        let pulseMin = 0;
-        between = (edges[1] - edges[0]) * this.interval / 1000.0;
-        pulseMin = 60 / between;
-        callback(pulseMin);
-      }
-    }
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Grove_EarHeartRate", Grove_EarHeartRate);
-
-
-/***/ }),
-
-/***/ "./parts/GyroSensor/ENC03R_Module/index.js":
-/*!*************************************************!*\
-  !*** ./parts/GyroSensor/ENC03R_Module/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-class ENC03R_Module {
-
-  constructor() {
-    this.keys = ["vcc", "out1", "out2", "gnd"];
-    this.required = ["out1", "out2"];
-    this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-    this.ad0 = obniz.getAD(this.params.out1);
-    this.ad1 = obniz.getAD(this.params.out2);
-  
-    this.ad0.start((value) => {
-      this.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-      if (this.onchange1) {
-        this.onchange1(this.sens1);
-      }
-    });
-  
-    this.ad1.start((value) => {
-      this.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
-      if (this.onchange2) {
-        this.onchange2(this.sens2);
-      }
-    });
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ENC03R_Module", ENC03R_Module);
-
-/***/ }),
-
-/***/ "./parts/InfraredSensor/IRSensor/index.js":
-/*!************************************************!*\
-  !*** ./parts/InfraredSensor/IRSensor/index.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class IRSensor {
-
-  constructor() {
-    this.keys = ["output","vcc", "gnd"];
-    this.requiredKeys = ["output"];
-
-    this.dataSymbolLength = 0.07;
-    this.duration = 200; // 200msec
-    this.dataInverted = true;
-    this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
-    this.cutTail = true;
-    this.output_pullup = true;
-  }
-  
-  wired (obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    if (!obniz.isValidIO(this.params.output)) {
-      throw new Errro('output is not valid io');
-    }
-  }
-
-  start(callback) {
-    this.ondetect = callback;
-    if(this.output_pullup) {
-      obniz.getIO(this.params.output).pull('5v');
-    }
-
-    obniz.logicAnalyzer.start({io:this.params.output, interval:this.dataSymbolLength, duration:this.duration, triggerValue:this.dataInverted ? false : true, triggerValueSamples:this.triggerSampleCount})
-    obniz.logicAnalyzer.onmeasured = (levels) => {
-      if (typeof this.ondetect === "function") {
-        if (this.dataInverted) {
-          let arr = new Uint8Array(levels);
-          for (let i=0; i<arr.length; i++) {
-            arr[i] = arr[i] ? 0 : 1;
-          }
-          levels = Array.from(arr);
-        }
-
-        if (this.cutTail) {
-          for (let i=levels.length-1; i>1; i--) {
-            if(levels[i] === 0 && levels[i-1] === 0) {
-              levels.splice(i, 1);
-            } else {
-              break;
-            }
-          }
-        }
-
-        this.ondetect(levels);
-      }
-    }
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("IRSensor", IRSensor);
-
-/***/ }),
-
-/***/ "./parts/Light/FullColorLED/index.js":
-/*!*******************************************!*\
-  !*** ./parts/Light/FullColorLED/index.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class FullColorLED{
-
-  constructor(){
-    this.COMMON_TYPE_ANODE = 1;
-    this.COMMON_TYPE_CATHODE = 0;
-
-    this.anode_keys = [
-      'anode',
-      'anode_common',
-      'anodeCommon',
-      'vcc'
-    ];
-    this.cathode_keys = [
-      'cathode',
-      'cathode_common',
-      'cathodeCommon',
-      'gnd'
-    ];
-    this.animationName = "FullColorLED-" + Math.round(Math.random() *1000);
-    
-    this.keys = ["r", "g", "b", "common", "commonType"];
-    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
-  }
-  
-  wired (obniz){
-    var r = this.params.r;
-    var g = this.params.g;
-    var b = this.params.b;
-    var common = this.params.common;
-    var commontype = this.params.commonType;
-    
-    this.obniz = obniz;
-    if(this.anode_keys.includes(commontype)){
-      this.commontype = this.COMMON_TYPE_ANODE;
-    }else if(this.cathode_keys.includes(commontype)){
-       this.commontype = this.COMMON_TYPE_CATHODE;
-    }else{
-      this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
-    }
-    
-    this.common = this.obniz.getIO(common);
-    this.common.output(this.commontype);
-    
-    this.obniz.getIO(r).output(this.commontype);
-    this.obniz.getIO(g).output(this.commontype);
-    this.obniz.getIO(b).output(this.commontype);
-    this.pwmR = this.obniz.getFreePwm();this.pwmR.start({io: r});this.pwmR.freq(1000);
-    this.pwmG = this.obniz.getFreePwm();this.pwmG.start({io: g});this.pwmG.freq(1000);
-    this.pwmB = this.obniz.getFreePwm();this.pwmB.start({io: b});this.pwmB.freq(1000);
-    this.rgb(0,0,0);
-  }
-  
-  rgb(r,g,b){
-    r = Math.min(Math.max(parseInt(r),0),255);
-    g = Math.min(Math.max(parseInt(g),0),255);
-    b = Math.min(Math.max(parseInt(b),0),255);
-    
-    if(this.commontype === this.COMMON_TYPE_ANODE){
-      r = (255 - r);
-      g = (255 - g);
-      b = (255 - b);
-    }
-    this.pwmR.duty(r/255*100 );
-    this.pwmG.duty(g/255*100 );
-    this.pwmB.duty(b/255*100 );
-  }
-  
-  hsv(h,s,v){
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
-
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-
-    this.rgb(R,G,B);
-  }
-  
-  gradation(cycletime_ms){
-    var frames = [];
-    var max = 36/2;
-    var duration = Math.round(cycletime_ms / max);
-    for (var i = 0; i < max; i++){
-     var oneFrame = {
-       duration: duration,
-       state : function(index){ // index = 0
-          this.hsv(index*10*2,1,1);
-       }.bind(this)
-     };
-     frames.push(oneFrame);
-
-    }
-    this.obniz.io.animation(this.animationName, "loop", frames);
-  };
-
-  stopgradation(){
-    this.obniz.io.animation(this.animationName, "pause");
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("FullColorLED", FullColorLED);
-
-/***/ }),
-
-/***/ "./parts/Light/InfraredLED/index.js":
-/*!******************************************!*\
-  !*** ./parts/Light/InfraredLED/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class InfraredLED {
-
-  constructor() {
-    this.keys = ["anode","cathode"];
-    this.requiredKeys = ["anode"];
-
-    this.dataSymbolLength = 0.07;
-  }
-  
-  wired (obniz) {
-    this.obniz = obniz;
-    if (!this.obniz.isValidIO(this.params.anode)) {
-      throw new Error("anode is not valid io");
-    }
-    if (this.params.cathode) {
-      if (!this.obniz.isValidIO(this.params.cathode)) {
-        throw new Error("cathode is not valid io");
-      }
-      this.io_cathode = obniz.getIO(this.params.cathode);
-      this.io_cathode.output(false);
-    }
-    this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({io: this.params.anode});
-    this.pwm.freq(38000);
-  }
-
-  send(arr) {
-    this.pwm.modulate("am", this.dataSymbolLength, arr);
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("InfraredLED", InfraredLED);
-
-/***/ }),
-
-/***/ "./parts/Light/LED/index.js":
-/*!**********************************!*\
-  !*** ./parts/Light/LED/index.js ***!
-  \**********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var LED = function() {
-  this.keys = ["anode","cathode"];
-  this.requiredKeys = ["anode"];
-  
-  
-  this.animationName = "Led-" + Math.round(Math.random() *1000);
-};
-
-LED.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.io_anode = obniz.getIO(this.params.anode);
-  this.io_anode.output(false);
-  if (this.params.cathode) {
-    this.io_cathode = obniz.getIO(this.params.cathode);
-    this.io_cathode.output(false);
-  }
-};
-
-// Module functions
-
-LED.prototype.on = function() {
-  this.endBlink();
-  this.io_anode.output(true);
-};
-
-LED.prototype.off = function() {
-  this.endBlink();
-  this.io_anode.output(false);
-};
-
-LED.prototype.endBlink = function() {
-  this.obniz.io.animation(this.animationName, "pause");
-  
-};
-
-LED.prototype.blink = function(interval) {
-  if(!interval) {
-    interval = 100;
-  }
-  var frames = [{
-      duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(true);  // on
-      }.bind(this)
-    }, {
-      duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(false);   //off
-      }.bind(this)
-    }];
-
-  this.obniz.io.animation(this.animationName, "loop", frames);
-
-};
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LED", LED);
-
-
-/***/ }),
-
-/***/ "./parts/Light/WS2811/index.js":
-/*!*************************************!*\
-  !*** ./parts/Light/WS2811/index.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class WS2811 {
-
-  constructor() {
-    this.keys = ["din", "vcc", "gnd"];
-    this.requiredKeys = ["din"];
-  }
-
-  wired(obniz){
-
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    
-    this.params.mode  =  "master";
-    this.params.frequency = 2*1000*1000;
-    this.params.mosi = this.params.din;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
-
-  static _generateFromByte(val) {
-    // T0H 0.5us+-0.15us
-    // T1H 1.2us+-0.15us
-    // T0L 2.0us+-0.15us
-    // T1L 1.3us+-0.15us
-
-    val = parseInt(val);
-    const zero = 0x8;
-    const one  = 0xE;
-    let ret = [];
-    for (var i=0; i<8;i+=2) {
-      let byte = 0;
-      if (val & (0x80 >> i)) {
-        byte = one << 4;
-      } else {
-        byte = zero << 4;
-      }
-      if (val & (0x80 >> (i+1))) {
-        byte |= one
-      } else {
-        byte |= zero
-      }
-      ret.push(byte);
-    }
-    return ret;
-  }
-
-  static _generateColor(r, g, b) {
-  
-    let array = WS2811._generateFromByte(r);
-    array = array.concat(WS2811._generateFromByte(g));
-    array = array.concat(WS2811._generateFromByte(b));
-    return array;
-  }
-  
-  static _generateHsvColor(h, s, v) {
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
-
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-    
-    let array = WS2811._generateFromByte(R);
-    array = array.concat(WS2811._generateFromByte(G));
-    array = array.concat(WS2811._generateFromByte(B));
-    return array;
-  }
-
-  rgb(r, g, b){
-    this.spi.write(WS2811._generateColor(r, g, b));
-  }
-  
-  hsv(h,s,v){
-     this.spi.write(WS2811._generateHsvColor(h, s, v));
-  }
-
-  rgbs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-  hsvs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-}
-
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("WS2811", WS2811);
-
-/***/ }),
-
-/***/ "./parts/Light/WS2812/index.js":
-/*!*************************************!*\
-  !*** ./parts/Light/WS2812/index.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class WS2812 {
-
-  constructor() {
-    this.keys = ["din", "vcc", "gnd"];
-    this.requiredKeys = ["din"];
-  }
-
-  wired(obniz){
-
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    
-    this.params.mode  =  "master";
-    this.params.frequency = parseInt(3.33*1000*1000);
-    this.params.mosi = this.params.din;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
-
-  static _generateFromByte(val) {
-    // T0H 0.35us+-0.15us
-    // T1H 0.7us+-0.15us
-    // T0L 0.8us+-0.15us
-    // T1L 0.6us+-0.15us
-
-    // 0.3-0.9 and 0.6-0.6 at 3.33Mhz
-
-    val = parseInt(val);
-    const zero = 0x8;
-    const one  = 0xC;
-    let ret = [];
-    for (var i=0; i<8;i+=2) {
-      let byte = 0;
-      if (val & (0x80 >> i)) {
-        byte = one << 4;
-      } else {
-        byte = zero << 4;
-      }
-      if (val & (0x80 >> (i+1))) {
-        byte |= one
-      } else {
-        byte |= zero
-      }
-      ret.push(byte);
-    }
-    return ret;
-  }
-
-  static _generateColor(r, g, b) {
-  
-    let array = WS2812._generateFromByte(g);
-    array = array.concat(WS2812._generateFromByte(r));
-    array = array.concat(WS2812._generateFromByte(b));
-    return array;
-  }
-  
-  static _generateHsvColor(h, s, v) {
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
-
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-    
-    return WS2812._generateColor(R, G, B);
-  }
-
-  rgb(r, g, b){
-    this.spi.write(WS2812._generateColor(r, g, b));
-  }
-  
-  hsv(h,s,v){
-     this.spi.write(WS2812._generateHsvColor(h, s, v));
-  }
-
-  rgbs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-  hsvs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-}
-
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("WS2812", WS2812);
-
-/***/ }),
-
-/***/ "./parts/Light/WS2812B/index.js":
-/*!**************************************!*\
-  !*** ./parts/Light/WS2812B/index.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class WS2812B {
-
-  constructor() {
-    this.keys = ["din", "vcc", "gnd"];
-    this.requiredKeys = ["din"];
-  }
-
-  wired(obniz){
-
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    
-    this.params.mode  =  "master";
-    this.params.frequency = parseInt(3.33*1000*1000);
-    this.params.mosi = this.params.din;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
-
-  static _generateFromByte(val) {
-    // T0H 0.35us+-0.15us
-    // T1H 0.9us+-0.15us
-    // T0L 0.9us+-0.15us
-    // T1L 0.35us+-0.15us
-
-    // 0.3-0.9 and 0.9-0.3 at 3.33Mhz
-
-    val = parseInt(val);
-    const zero = 0x8;
-    const one  = 0xE;
-    let ret = [];
-    for (var i=0; i<8;i+=2) {
-      let byte = 0;
-      if (val & (0x80 >> i)) {
-        byte = one << 4;
-      } else {
-        byte = zero << 4;
-      }
-      if (val & (0x80 >> (i+1))) {
-        byte |= one
-      } else {
-        byte |= zero
-      }
-      ret.push(byte);
-    }
-    return ret;
-  }
-
-  static _generateColor(r, g, b) {
-  
-    let array = WS2812B._generateFromByte(g);
-    array = array.concat(WS2812B._generateFromByte(r));
-    array = array.concat(WS2812B._generateFromByte(b));
-    return array;
-  }
-  
-  static _generateHsvColor(h, s, v) {
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
-
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
-
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
-
-    R = Math.floor(R * 255);
-    G = Math.floor(G * 255);
-    B = Math.floor(B * 255);
-    
-    return WS2812B._generateColor(R, G, B);
-  }
-
-  rgb(r, g, b){
-    this.spi.write(WS2812B._generateColor(r, g, b));
-  }
-  
-  hsv(h,s,v){
-     this.spi.write(WS2812B._generateHsvColor(h, s, v));
-  }
-
-  rgbs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-  hsvs(array) {
-    let bytes = [];
-    for (var i=0; i<array.length; i++) {
-      const oneArray = array[i];
-      bytes = bytes.concat(WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
-    }
-    this.spi.write(bytes);
-  }
-
-}
-
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("WS2812B", WS2812B);
-
-/***/ }),
-
-/***/ "./parts/Memory/24LC256/index.js":
-/*!***************************************!*\
-  !*** ./parts/Memory/24LC256/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class _24LC256 {
-
-  constructor() {
-    this.requiredKeys = ["address"];
-    this.keys = ["sda","scl","clock","pull","i2c","address"];
-  };
-
-  wired(obniz) {
-    this.params.mode =  this.params.mode || "master"; //for i2c
-    this.params.clock =  this.params.clock || 400 * 1000; //for i2c
-    this.i2c = obniz.getI2CWithConfig(this.params);
-  };
-
-// Module functions
-
-  set(address, data) {
-    var array = [];
-    array.push((address >> 8) & 0xFF);
-    array.push(address & 0xFF);
-    array.push.apply(array, data);
-    this.i2c.write(0x50, array);
-    this.obniz.wait(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
-  };
-
-  async getWait(address, length) {
-    var array = [];
-    array.push((address >> 8) & 0xFF);
-    array.push(address & 0xFF);
-    this.i2c.write(0x50, array);
-    return await this.i2c.readWait(0x50, length);
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("24LC256", _24LC256);
-
-
-/***/ }),
-
-/***/ "./parts/MovementSensor/Button/index.js":
-/*!**********************************************!*\
-  !*** ./parts/MovementSensor/Button/index.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class Button {
-  constructor() {
-    this.keys = ["signal","gnd"];
-    this.required = ["signal"];
-  };
-
-  wired(obniz) {
-    this.io_signal = obniz.getIO(this.params.signal);
-
-    if (obniz.isValidIO(this.params.gnd)) {
-      this.io_supply = obniz.getIO(this.params.gnd);
-      this.io_supply.output(false);
-    }
-
-    // start input
-    this.io_signal.pull("5v");
-
-    var self = this;
-    this.io_signal.input(function(value) {
-      self.isPressed = (value === false);
-      if (self.onchange) {
-        self.onchange(value === false);
-      }
-    });
-  };
-
-  async isPressedWait() {
-    var ret = await this.io_signal.inputWait();
-    return ret === false;
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Button", Button);
-
-
-/***/ }),
-
-/***/ "./parts/MovementSensor/JoyStick/index.js":
-/*!************************************************!*\
-  !*** ./parts/MovementSensor/JoyStick/index.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class JoyStick {
-  constructor() {
-    this.keys = ["sw", "y", "x", "vcc", "gnd","i2c"];
-    this.requiredKeys = ["sw", "y", "x"];
-    this.pins  =  this.keys || ["sw", "y", "x", "vcc", "gnd"];
-    this.pinname = { "sw": "sw12" };
-    this.shortName = "joyS";
-  };
-
-  wired(obniz) {
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-    this.io_sig_sw = obniz.getIO(this.params.sw);
-    this.ad_x = obniz.getAD(this.params.x);
-    this.ad_y = obniz.getAD(this.params.y);
-
-    this.io_sig_sw.pull("5v");
-
-
-    var self = this;
-    this.ad_x.start(function(value){
-      self.positionX = value/ 5.0;
-      if (self.onchangex) {
-        self.onchangex(self.positionX * 2 - 1);
-      }
-    });
-
-    this.ad_y.start(function(value){
-      self.positionY = value/ 5.0;
-      if (self.onchangey) {
-        self.onchangey(self.positionY * 2 - 1);
-      }
-    });
-
-    this.io_sig_sw.input(function(value) {
-      self.isPressed = (value === false);
-      if (self.onchangesw) {
-        self.onchangesw(value === false);
-      }
-    });
-  };
-
-  async isPressedWait() {
-    var ret = await this.io_sig_sw.inputWait();
-    return ret === false;
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("JoyStick", JoyStick);
-
-
-/***/ }),
-
-/***/ "./parts/MovementSensor/KXR94-2050/index.js":
-/*!**************************************************!*\
-  !*** ./parts/MovementSensor/KXR94-2050/index.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class KXR94_2050 {
-  constructor() {
-    this.keys = [ "x", "y", "z", "vcc", "gnd","enable", "self_test"];
-    this.requiredKeys = [ "x", "y", "z"];
-  };
-
-  wired(obniz) {
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-
-    this.ad_x = obniz.getAD(this.params.x);
-    this.ad_y = obniz.getAD(this.params.y);
-    this.ad_z = obniz.getAD(this.params.z);
-
-
-    if(obniz.isValidIO(this.params.enable)){
-      obniz.getIO(this.params.enable).drive("5v");
-      obniz.getIO(this.params.enable).output(true);
-    }
-    if(obniz.isValidIO(this.params.self_test)){
-      obniz.getIO(this.params.self_test).drive("5v");
-      obniz.getIO(this.params.self_test).output(false);
-    }
-
-    return (async ()=>{
-
-      if(obniz.isValidIO(this.params.vcc)){
-        let pwrVoltage = await obniz.getAD(this.params.vcc).getWait();
-        this.changeVccVoltage(pwrVoltage);
-      }else{
-        this.changeVccVoltage(5);
-      }
-
-      this.ad_x.start((value)=>{
-        if (this.onchangex) {
-          this.onchangex(this.voltage2gravity(value));
-        }
-      });
-
-      this.ad_y.start((value)=>{
-        if (this.onchangey) {
-          this.onchangey(this.voltage2gravity(value));
-        }
-      });
-
-      this.ad_z.start((value)=>{
-        if (this.onchangez) {
-          this.onchangez(this.voltage2gravity(value));
-        }
-      });
-
-      if(this.obniz.isValidIO(this.params.vcc)){
-        this.obniz.getAD(this.params.vcc).start((value)=>{
-          this.changeVccVoltage(value);
-        });
-      }
-
-      obniz.display.setPinName(this.params.x, "KXR94_2050", "x");
-      obniz.display.setPinName(this.params.y, "KXR94_2050", "y");
-      obniz.display.setPinName(this.params.z, "KXR94_2050", "z");
-
-      if(this.obniz.isValidIO(this.params.vcc)){
-        obniz.display.setPinName(this.params.vcc, "KXR94_2050", "vcc");
-      }
-
-    })();
-
-  };
-
-  changeVccVoltage(pwrVoltage){
-    this.sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-    this.offsetVoltage = pwrVoltage/2; //Set offset voltage (Output voltage at 0g, unit:V)
-  }
-
-  voltage2gravity(volt){
-    return  (volt - this.offsetVoltage) / this.sensitivity ;
-  }
-
-  async getWait(){
-      let result = await Promise.all([
-        this.ad_x.getWait(),
-        this.ad_y.getWait(),
-        this.ad_z.getWait(),
-      ]);
-
-      return {
-        x:this.voltage2gravity(result[0]),
-        y:this.voltage2gravity(result[1]),
-        z:this.voltage2gravity(result[2])
-      };
-  }
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("KXR94_2050", KXR94_2050);
-
-
-/***/ }),
-
-/***/ "./parts/MovementSensor/KXSC7-2050/index.js":
-/*!**************************************************!*\
-  !*** ./parts/MovementSensor/KXSC7-2050/index.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class KXSC7_2050 {
-  constructor() {
-    this.keys = [ "x", "y", "z", "vcc", "gnd"];
-    this.requiredKeys = [ "x", "y", "z"];
-  };
-
-  async wired(obniz) {
-    this.obniz = obniz;
-
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "3v");
-    this.ad_x = obniz.getAD(this.params.x);
-    this.ad_y = obniz.getAD(this.params.y);
-    this.ad_z = obniz.getAD(this.params.z);
-
-    await obniz.wait(500);
-    var ad = obniz.getAD(this.params.vcc);
-    var pwrVoltage = await ad.getWait();
-    var horizontalZ = await this.ad_z.getWait();
-    var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-    var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
-
-    var self = this;
-    this.ad_x.start(function(value){
-      self.gravity = (value - offsetVoltage) / sensitivity ;
-      if (self.onchangex) {
-        self.onchangex(self.gravity);
-      }
-    });
-
-    this.ad_y.start(function(value){
-      self.gravity = (value - offsetVoltage) / sensitivity ;
-      if (self.onchangey) {
-        self.onchangey(self.gravity);
-      }
-    });
-
-    this.ad_z.start(function(value){
-      self.gravity = (value - offsetVoltage) / sensitivity ;
-      if (self.onchangez) {
-        self.onchangez(self.gravity);
-      }
-    });
-  };
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("KXSC7_2050", KXSC7_2050);
-
-
-/***/ }),
-
-/***/ "./parts/MovementSensor/PaPIRsVZ/index.js":
-/*!************************************************!*\
-  !*** ./parts/MovementSensor/PaPIRsVZ/index.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class PaPIRsVZ {
-  constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["signal"];
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.io_signal = obniz.getIO(this.params.signal);
-    this.io_signal.pull("0v");
-    
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-    
-    this.io_signal.input((value) => {
-      if (this.onchange) {
-        this.onchange(value);
-      }
-    });
-  }
-  
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
-
-/***/ }),
-
-/***/ "./parts/MovementSensor/Potentiometer/index.js":
-/*!*****************************************************!*\
-  !*** ./parts/MovementSensor/Potentiometer/index.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class Potentiometer {
-  constructor() {
-    this.keys = ["pin0","pin1","pin2"];
-    this.reuiredKeys = ["pin0","pin1","pin2"];
-
-    this.vcc_voltage = 5.0;
-  };
-
-  wired(obniz) {
-    this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
-    this.ad = obniz.getAD(this.params.pin1);
-
-    var self = this;
-
-    obniz.getAD(this.params.pin0).start(function(value){
-      self.vcc_voltage = value;
-    });
-
-    this.ad.start(function(value){
-      self.position = value/ self.vcc_voltage;
-      if (self.onchange) {
-        self.onchange(self.position);
-      }
-    });
-  };
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Potentiometer", Potentiometer);
-
-
-/***/ }),
-
-/***/ "./parts/Moving/DCMotor/index.js":
-/*!***************************************!*\
-  !*** ./parts/Moving/DCMotor/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class DCMotor {
-  constructor() {
-    this.keys = ["forward", "back"];
-    this.requiredKeys = ["forward", "back"];
-  };
-
-  wired(obniz) {
-    this.status = {
-      direction: null,
-      power: null
-    };
-
-    this.pwm1_io_num = this.params.forward;
-    this.pwm2_io_num = this.params.back;
-
-    this.pwm1 = obniz.getFreePwm();
-    this.pwm1.start({io: this.pwm1_io_num});
-    this.pwm1.freq(100000);
-    this.pwm2 = obniz.getFreePwm();
-    this.pwm2.start({io: this.pwm2_io_num});
-    this.pwm2.freq(100000);
-    this.power(30);
-  };
-
-// Module functions
-
-  forward() {
-    this.move(true);
-  };
-
-  reverse() {
-    this.move(false);
-  };
-
-  stop() {
-    if (this.status.direction === null) {
-      return;
-    }
-    this.status.direction = null;
-    this.pwm1.duty(0);
-    this.pwm2.duty(0);
-  };
-
-  move(forward) {
-    if (forward) {
-      if (this.status.direction === true) {
-        return;
-      }
-      this.status.direction = true;
-    } else {
-      if (this.status.direction === false) {
-        return;
-      }
-      this.status.direction = false;
-    }
-    var power = this.power();
-    this.power(0);
-    this.power(power);
-  };
-
-  power(power) {
-    if (power === undefined) {
-      return this.status.power;
-    }
-    this.status.power = power;
-    if (this.status.direction === null) {
-      this.pwm1.duty(0);
-      this.pwm2.duty(0);
-      return;
-    }
-    if (this.status.direction) {
-      this.pwm1.duty(power);
-      this.pwm2.duty(0);
-    } else {
-      this.pwm1.duty(0);
-      this.pwm2.duty(power);
-    }
-  };
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("DCMotor", DCMotor);
-
-
-/***/ }),
-
-/***/ "./parts/Moving/ServoMotor/index.js":
-/*!******************************************!*\
-  !*** ./parts/Moving/ServoMotor/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class ServoMotor {
-  constructor() {
-    this.keys = [ "gnd", "vcc", "signal"];
-    this.requiredKeys = ["signal"];
-  };
-
-  wired(obniz) {
-    this.obniz = obniz;
-
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    if(obniz.isValidIO(this.params.vcc)){
-      this.io_vcc = obniz.getIO(this.params.vcc);
-    }
-
-    this.pwm = obniz.getFreePwm();
-    this.pwm_io_num = this.params.signal;
-
-    this.pwm.start({io: this.pwm_io_num});
-    this.pwm.freq(50);
-  };
-
-// Module functions
-
-  angle(ratio) {
-    var max = 2.4;
-    var min = 0.5;
-    var val = (max-min) * ratio / 180.0 + min;
-    this.pwm.pulse(val);
-  };
-
-  on() {
-    if (this.io_vcc) {
-      this.io_vcc.output(true);
-    }
-  };
-
-  off() {
-    if (this.io_vcc) {
-      this.io_vcc.output(false);
-    }
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ServoMotor", ServoMotor);
-
-
-/***/ }),
-
-/***/ "./parts/PressureSensor/FSR-40X/index.js":
-/*!***********************************************!*\
-  !*** ./parts/PressureSensor/FSR-40X/index.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-//Todo:抵抗を追加して圧力(kg)を求められるように改造する
-
-class FSR40X {
-  constructor() {
-    this.keys = ["pin0", "pin1"];
-    this.requiredKeys = ["pin0", "pin1"];
-  };
-
-  wired(obniz) {
-    this.obniz = obniz;
-
-    this.io_pwr = obniz.getIO(this.params.pin0);
-    this.ad = obniz.getAD(this.params.pin1);
-
-    this.io_pwr.drive("5v");
-    this.io_pwr.output(true);
-
-    var self = this;
-    this.ad.start(function(value){
-      var pressure = value * 100;
-      self.press = pressure;
-      if (self.onchange) {
-        self.onchange(self.press);
-      }
-    });
-  };
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("FSR40X", FSR40X);
-
-
-/***/ }),
-
-/***/ "./parts/SoilSensor/SEN0114/index.js":
-/*!*******************************************!*\
-  !*** ./parts/SoilSensor/SEN0114/index.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class SEN0114 {
-  constructor() {
-    this.keys = ["vcc", "output", "gnd"];
-    this.requiredKeys = [ "output" ];
-  };
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this.ad = obniz.getAD(this.params.output);
-
-    this.ad.start((value) => {
-      this.value = value;
-      if (this.onchange) {
-        this.onchange(this.value);
-      }
-    });
-  };
-
-  async getHumidityWait() {
-    this.value = await this.ad.getWait();
-    return this.value;
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("SEN0114", SEN0114);
-
-
-/***/ }),
-
-/***/ "./parts/Sound/Speaker/index.js":
-/*!**************************************!*\
-  !*** ./parts/Sound/Speaker/index.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class Speaker {
-
-  constructor(obniz) {
-    this.keys = ["signal","gnd"];
-    this.requiredKeys = ["gnd"];
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.obniz.setVccGnd(null, this.params.gnd, "5v");
-    this.pwm = obniz.getFreePwm();
-    this.pwm.start({io: this.params.signal});
-  }
-
-  play(freq) {
-    if (freq > 0) {
-      this.pwm.freq(freq);
-      this.pwm.pulse(1/freq/2*1000);
-    } else {
-      this.pwm.pulse(0);
-    }
-  }
-  
-  stop() {
-    this.play(0);
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Speaker", Speaker);
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js":
-/*!******************************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/AnalogTempratureSensor.js ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-class AnalogTemplatureSensor {
-  constructor() {
-    this.keys = ["vcc","gnd","output"];
-    this.requiredKeys = ["output"];
-    this.drive = "5v";
-    
-  } 
-  
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
-    this.ad = obniz.getAD(this.params.output);
-
-    
-    this.ad.start(function(voltage){
-      this.temp = this.calc(voltage);
-      this.onchange(this.temp);
-    }.bind(this));
-
-  };
-  
-  onchange(temp){
-    
-  }
-  
-  calc(voltage){
-    return 0;
-  }
-  
-}
-
-module.exports = AnalogTemplatureSensor;
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/LM35DZ/index.js":
-/*!********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/LM35DZ/index.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-class LM35DZ extends AnalogTemplatureSensor {
-  calc (voltage){
-    return  voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
-  }
-};
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LM35DZ", LM35DZ);
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/LM60/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/LM60/index.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class LM60 {
-  constructor() {
-    this.keys = ["vcc","gnd","output"];
-    this.requiredKeys = ["output"];
-  };
-
-  wired(obniz){
-    this.obniz = obniz;
-    this.ad = obniz.getAD(this.params.output);
-
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    var self = this;
-    this.ad.start(function(value){
-      self.temp = Math.round(((value-0.424)/0.00625)*10)/10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-      if (self.onchange) {
-        self.onchange(self.temp);
-      }
-    });
-  };
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LM60", LM60);
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/LM61/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/LM61/index.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-
-class LM61 extends AnalogTemplatureSensor {
-  calc (voltage){
-    return  Math.round((voltage-0.6)/0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]  
-  }
-};
-
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LM61", LM61);
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/MCP9700/index.js":
-/*!*********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/MCP9700/index.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-
-class MCP9700 extends AnalogTemplatureSensor {
-  calc (voltage){
-    return  (voltage-0.5)/0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-  }
-};
-
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("MCP9700", MCP9700);
-
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/MCP9701/index.js":
-/*!*********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/MCP9701/index.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-
-class MCP9701 extends AnalogTemplatureSensor {
-  calc (voltage){
-    return   (voltage-0.4)/0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
-  }
-};
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("MCP9701", MCP9701);
-
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/S8100B/index.js":
-/*!********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/S8100B/index.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-
-//センサから出力が無い(出力インピーダンス高すぎ？)
-
-class S8100B extends AnalogTemplatureSensor {
-  calc (voltage){
-    return   30 + ((1.508 - voltage)/(-0.08)); //Temp(Celsius) =
-  }
-};
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("S8100B", S8100B);
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/analog/S8120C/index.js":
-/*!********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/S8120C/index.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-
-//不調, 正しく測れるときもある...
-//原因1:obnizの入力インピーダンスが低すぎる?
-//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
-
-class S8120C extends AnalogTemplatureSensor {
-  calc (voltage){
-    return   (voltage - 1.474)/(-0.0082) + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
-  }
-};
-
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("S8120C", S8120C);
-
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/i2c/ADT7410/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/i2c/ADT7410/index.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class ADT7410 {
-  constructor() {
-    this.keys = [ "vcc", "gnd", "sda", "scl", "addressMode"];
-    this.requiredKeys = ["addressMode"];
-  };
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-
-    if (this.params.addressMode === 8){
-      this.address = 0x48;
-    }else if(this.params.addressMode === 9){
-      this.address = 0x49;
-    }
-
-    this.params.clock = 400000;
-    this.params.pull = "5v";
-    this.params.mode = "master";
-
-    this.i2c = obniz.getI2CWithConfig(this.params);
-  };
-
-  async getTempWait() {
-    var ret = await this.i2c.readWait(this.address, 2);
-    var tempBin = ret[0] << 8;
-    tempBin |= ret[1];
-    tempBin = tempBin >> 3;
-
-    if(tempBin & (0x1000)) { //0度以下の時の処理
-      tempBin = tempBin  - 8192;
-    }
-
-    return (tempBin/16);
-  };
-
-}
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ADT7410", ADT7410);
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/i2c/S-5851A/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/i2c/S-5851A/index.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-//センサからの反応なし
-class S5851A {
-  constructor() {
-    this.requiredKeys = ["vcc","gnd","adr0","adr1","adr_select"];
-    this.keys = ["sda","scl","adr0","adr1","adr_select","i2c"];
-  };
-
-  wired(obniz) {
-    //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
-    this.io_adr0 = obniz.getIO(this.params.adr0);
-    this.io_adr1 = obniz.getIO(this.params.adr1);
-
-
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-    switch (this.params.adr_select){
-      case 8:
-        this.io_adr0.output(false);
-        this.io_adr1.output(false);
-        this.address = 0x48;
-        break;
-      case 9:
-        this.io_adr0.pull(null);
-        this.io_adr1.output(false);
-        this.address = 0x49;
-        break;
-      case 'A':
-        this.io_adr0.output(true);
-        this.io_adr1.output(false);
-        this.address = 0x4A;
-        break;
-      case 'B':
-        this.io_adr0.output(false);
-        this.io_adr1.output(true);
-        this.address = 0x4B;
-        break;
-      case 'C':
-        this.io_adr0.pull(null);
-        this.io_adr1.output(true);
-        this.address = 0x4C;
-        break;
-      case 'D':
-        this.io_adr0.output(true);
-        this.io_adr1.output(true);
-        this.address = 0x4D;
-        break;
-      case 'E':
-        this.io_adr0.output(false);
-        this.io_adr1.pull(null);
-        this.address = 0x4E;
-        break;
-      case 'F':
-        this.io_adr0.output(true);
-        this.io_adr1.pull(null);
-        this.address = 0x4F;
-        break;
-      default:
-        this.io_adr0.output(false);
-        this.io_adr1.output(false);
-        this.address = 0x48;
-        break;
-    }
-    console.log('i2c address='+this.address);
-
-    this.params.clock = this.params.clock || 400*1000; //for i2c
-    this.params.mode = this.params.mode || "master"; //for i2c
-    this.params.pull = this.params.pull || "5v"; //for i2c
-    this.i2c = obniz.getI2CWithConfig(this.params);
-    //obniz.i2c0.write(address, [0x20, 0x24]);
-  };
-
-  async getTempWait() {
-    //console.log("gettempwait");
-    //obniz.i2c0.write(address, [0x20, 0x24]);
-    //obniz.i2c0.write(address, [0xE0, 0x00]);
-    var ret = await this.i2c0.readWait(address, 2);
-    //console.log('ret:' + ret);
-    var tempBin = (ret[0]).toString(2) + ( '00000000' + (ret[1]).toString(2) ).slice( -8 );
-    var temperature = (-45)+(175*(parseInt(tempBin,2)/(65536-1)));
-    return temperature;
-  };
-
-  async getHumdWait() {
-    this.i2c.write(address, [0x20, 0x24]);
-    this.i2c.write(address, [0xE0, 0x00]);
-    var ret = await this.i2c.readWait(address, 4);
-    var humdBin = (ret[2]).toString(2) + ( '00000000' + (ret[3]).toString(2) ).slice( -8 );
-    var humidity = 100 * (parseInt(humdBin,2)/(65536-1));
-    return humidity;
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("S5851A", S5851A);
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/i2c/SHT31/index.js":
-/*!****************************************************!*\
-  !*** ./parts/TemperatureSensor/i2c/SHT31/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class SHT31 {
-  constructor() {
-    this.requiredKeys = ["adr", "addressmode"];
-    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull"];
-    this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
-
-    this.commands = {};
-    this.commands.softReset = [0x30, 0xA2];
-    this.commands.highRepeatStreach = [0x2C, 0x06];
-    this.commands.middleRepeatStreach = [0x2C, 0x0D];
-    this.commands.lowRepeatStreach = [0x2C, 0x10];
-    this.commands.highRepeat = [0x24, 0x00];
-    this.commands.mediumRepeat = [0x24, 0x0B];
-    this.commands.lowRepeat = [0x24, 0x16];
-
-    this.waitTime = {};
-    this.waitTime.wakeup = 1;
-    this.waitTime.softReset = 1;
-    this.waitTime.lowRepeat = 4;
-    this.waitTime.mediumRepeat = 6;
-    this.waitTime.highRepeat = 15;
-
-    //not tested
-    this.commands.readStatus = [0xF3, 0x2D];
-  };
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    this.io_adr = obniz.getIO(this.params.adr);
-
-    if (this.params.addressmode === 4) {
-      this.io_adr.output(false);
-      this.address = 0x44;
-    } else if (this.params.addressmode === 5) {
-      this.io_adr.pull(null);
-      this.address = 0x45;
-    }
-    
-    this.params.clock = this.params.clock || 100 * 1000; //for i2c
-    this.params.mode = this.params.mode || "master"; //for i2c
-    this.params.pull = this.params.pull || "5v"; //for i2c
-    this.i2c = obniz.getI2CWithConfig(this.params);
-    obniz.i2c0.write(this.address, this.commands.softReset);
-  };
-
-  async getData() {
-    this.i2c.write(this.address,  this.commands.highRepeat);
-    await obniz.wait(this.waitTime.highRepeat);
-    return await this.i2c.readWait(this.address, 6);
-  };
-
-  async getTempWait() {
-    return (await this.getAllWait()).temperature;
-  };
-
-  async getHumdWait() {
-    return (await this.getAllWait()).humidity;
-  };
-
-  async getAllWait() {
-    let ret = await this.getData();
-
-    let tempBin = ret[0]*256 + ret[1];
-    let temperature = (-45) + (175 * (tempBin / (65536 - 1)));
-
-    let humdBin = ret[3]*256 + ret[4];
-    let humidity = 100 * (humdBin / (65536 - 1));
-    return {temperature,humidity};
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("SHT31", SHT31);
-
-
-/***/ }),
-
-/***/ "./parts/TemperatureSensor/spi/ADT7310/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/spi/ADT7310/index.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-class ADT7310 {
-  constructor() {
-    this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
-    this.requiredKeys = [];
-  };
-  async wired(obniz) {
-    this.obniz = obniz;
-
-      obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-
-
-    this.params.mode = this.params.mode || "master";
-    this.params.frequency = this.params.frequency || 500000;
-    this.params.mosi = this.params.din;
-    this.params.miso = this.params.dout;
-    this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
-
-  async getTempWait() {
-    await this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-    await this.obniz.wait(200); //適度な値でないと安定しない
-    var ret = await this.spi.writeWait([0x00, 0x00]);
-    var tempBin = ret[0] << 8;
-    tempBin |= ret[1];
-    tempBin = tempBin >> 3;
-
-    if(tempBin & (0x1000)) { //0度以下の時の処理
-      tempBin = tempBin  - 8192;
-    }
-
-    return (tempBin/16);
-  };
-}
-
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ADT7310", ADT7310);
-
+module.exports = {"name":"obniz","version":"1.2.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ })
 
