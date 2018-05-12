@@ -2,7 +2,6 @@ let baseDir = undefined;
 let yaml = require('js-yaml');
 let fs = require('fs');
 
-
 module.exports = function(directory, recursive, regExp) {
   let dir = require('node-dir');
   let path = require('path');
@@ -13,54 +12,49 @@ module.exports = function(directory, recursive, regExp) {
   if (directory[0] === '.') {
     // Relative path
     let dir = __dirname;
-    if(baseDir){
+    if (baseDir) {
       dir = baseDir;
     }
-    basepath = path.join(dir, directory)
+    basepath = path.join(dir, directory);
   } else if (!path.isAbsolute(directory)) {
     // Module path
-    basepath = require.resolve(directory)
+    basepath = require.resolve(directory);
   }
 
   let keys = dir
-      .files(basepath, {
-        sync: true,
-        recursive: recursive || false
-      })
-      .filter(function(file) {
-        return file.match(regExp || /\.(json|js)$/)
-      })
-      .map(function(file) {
-        return path.join('.', file.slice(basepath.length + 1))
-      });
+    .files(basepath, {
+      sync: true,
+      recursive: recursive || false,
+    })
+    .filter(function(file) {
+      return file.match(regExp || /\.(json|js)$/);
+    })
+    .map(function(file) {
+      return path.join('.', file.slice(basepath.length + 1));
+    });
 
   let context = function(key) {
     let path = context.resolve(key);
-    if(/\.(json|js)$/.test(path)) {
+    if (/\.(json|js)$/.test(path)) {
       return require(path);
-
-    }else if(/\.(yaml|yml)$/.test(path)){
-      return yaml.safeLoad(
-          fs.readFileSync(path, 'utf8')
-      );
-
-    }else{
-      throw new Error("unknown type");
+    } else if (/\.(yaml|yml)$/.test(path)) {
+      return yaml.safeLoad(fs.readFileSync(path, 'utf8'));
+    } else {
+      throw new Error('unknown type');
     }
   };
 
   context.resolve = function(key) {
-    return path.join(basepath, key)
+    return path.join(basepath, key);
   };
 
   context.keys = function() {
-    return keys
+    return keys;
   };
 
-  return context
+  return context;
 };
 
-
-module.exports.setBaseDir = function(base){
+module.exports.setBaseDir = function(base) {
   baseDir = base;
 };

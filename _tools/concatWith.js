@@ -6,7 +6,6 @@ var File = require('vinyl');
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = 'concatWith';
 
-
 // file can be a vinyl file object or a string
 // when a string it will construct a new one
 module.exports = function(file, opt) {
@@ -14,7 +13,6 @@ module.exports = function(file, opt) {
     throw new Error('gulp-concat: Missing file option');
   }
   opt = opt || {};
-
 
   if (typeof opt.header !== 'string') {
     opt.header = '';
@@ -49,16 +47,18 @@ module.exports = function(file, opt) {
 
     // we don't do streams (yet)
     if (file.isStream()) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Streams not supported!'));
+      this.emit(
+        'error',
+        new PluginError(PLUGIN_NAME, 'Streams not supported!')
+      );
       cb();
       return;
     }
 
-    if (!latestMod || file.stat && file.stat.mtime > latestMod) {
+    if (!latestMod || (file.stat && file.stat.mtime > latestMod)) {
       latestFile = file;
       latestMod = file.stat && file.stat.mtime;
     }
-
 
     stringList.push(String(file.contents));
     cb();
@@ -66,7 +66,7 @@ module.exports = function(file, opt) {
 
   function endStream(cb) {
     // no files passed in, no file goes out
-    if (stringList.length == 0 || !latestFile ) {
+    if (stringList.length == 0 || !latestFile) {
       cb();
       return;
     }
@@ -74,13 +74,15 @@ module.exports = function(file, opt) {
     var joinedFile;
 
     if (typeof file === 'string') {
-      joinedFile = latestFile.clone({contents: false});
+      joinedFile = latestFile.clone({ contents: false });
       joinedFile.path = path.join(latestFile.base, file);
     } else {
       joinedFile = new File(file);
     }
 
-    joinedFile.contents = new Buffer(opt.header + stringList.join(opt.separator) + opt.footer);
+    joinedFile.contents = new Buffer(
+      opt.header + stringList.join(opt.separator) + opt.footer
+    );
 
     this.push(joinedFile);
 

@@ -1,4 +1,3 @@
-
 class PeripheralAD {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
@@ -8,7 +7,7 @@ class PeripheralAD {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
@@ -16,8 +15,8 @@ class PeripheralAD {
   start(callback) {
     this.onchange = callback;
     var obj = {};
-    obj["ad"+this.id] = {
-      stream: true
+    obj['ad' + this.id] = {
+      stream: true,
     };
     this.Obniz.send(obj);
     return this.value;
@@ -25,11 +24,11 @@ class PeripheralAD {
 
   getWait() {
     var self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
       var obj = {};
-      obj["ad"+self.id] = {
-        stream: false
+      obj['ad' + self.id] = {
+        stream: false,
       };
       self.Obniz.send(obj);
     });
@@ -38,7 +37,7 @@ class PeripheralAD {
   end() {
     this.onchange = null;
     var obj = {};
-    obj["ad"+this.id] = null;
+    obj['ad' + this.id] = null;
     this.Obniz.send(obj);
     return;
   }

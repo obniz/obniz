@@ -13,7 +13,10 @@ module.exports = function() {
     }
 
     if (file.isStream()) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Streams not supported!'));
+      this.emit(
+        'error',
+        new PluginError(PLUGIN_NAME, 'Streams not supported!')
+      );
       return callback();
     }
 
@@ -23,9 +26,9 @@ module.exports = function() {
       var contents = String(file.contents);
 
       let packageJson = JSON.parse(contents);
-      let output = "";
-      if(packageJson.version) {
-        output = `var _obniz_js_version = "${packageJson.version}";\n`
+      let output = '';
+      if (packageJson.version) {
+        output = `var _obniz_js_version = "${packageJson.version}";\n`;
       }
 
       // 編集した内容を出力

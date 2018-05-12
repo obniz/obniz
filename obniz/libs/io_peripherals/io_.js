@@ -8,24 +8,23 @@ class PeripheralIO_ {
     obj.io = {
       animation: {
         name: name,
-        status: status
-      }
+        status: status,
+      },
     };
-    if (!array)
-      array = [];
-  
+    if (!array) array = [];
+
     let states = [];
-    for (var i=0; i<array.length; i++) {
+    for (var i = 0; i < array.length; i++) {
       let state = array[i];
       let duration = state.duration;
       let func = state.state;
-  
+
       // dry run. and get json commands
       this.Obniz.sendPool = [];
       func(i);
       let pooledJsonArray = this.Obniz.sendPool;
       this.Obniz.sendPool = null;
-  
+
       // simply merge objects
       let merged = {};
       for (var index = 0; index < pooledJsonArray.length; index++) {
@@ -35,10 +34,10 @@ class PeripheralIO_ {
       }
       states.push({
         duration: duration,
-        state: merged
+        state: merged,
       });
     }
-    if (status === "loop") {
+    if (status === 'loop') {
       obj.io.animation.states = states;
     }
     this.Obniz.send(obj);

@@ -1,4 +1,4 @@
-const emitter = require("eventemitter3");
+const emitter = require('eventemitter3');
 
 class BleScan {
   constructor(Obniz) {
@@ -9,20 +9,22 @@ class BleScan {
     this.scanedPeripherals = [];
   }
 
-
   start(target, settings) {
     let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = {
+    obj['ble'] = {};
+    obj['ble']['scan'] = {
       //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
       //    "interval" : settings && settings.interval ? settings.interval : 30,
-      "duration": settings && settings.duration ? settings.duration : 30
-
+      duration: settings && settings.duration ? settings.duration : 30,
     };
 
     this.scanTarget = target;
-    if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
+    if (
+      this.scanTarget &&
+      this.scanTarget.uuids &&
+      Array.isArray(this.scanTarget.uuids)
+    ) {
+      this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
         return elm.toLowerCase();
       });
     }
@@ -33,17 +35,16 @@ class BleScan {
   startOneWait(target, settings) {
     let state = 0;
 
-    return new Promise((resolve) => {
-      this.emitter.once("onfind", (param) => {
+    return new Promise(resolve => {
+      this.emitter.once('onfind', param => {
         if (state === 0) {
           state = 1;
           this.end();
           resolve(param);
-
         }
       });
 
-      this.emitter.once("onfinish", () => {
+      this.emitter.once('onfinish', () => {
         if (state === 0) {
           state = 1;
           resolve(null);
@@ -52,31 +53,31 @@ class BleScan {
 
       this.start(target, settings);
     });
-
   }
 
-
   startAllWait(target, settings) {
-
-    return new Promise((resolve) => {
-      this.emitter.once("onfinish", () => {
+    return new Promise(resolve => {
+      this.emitter.once('onfinish', () => {
         resolve(this.scanedPeripherals);
       });
 
       this.start(target, settings);
     });
-
   }
 
   end() {
     let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = null;
+    obj['ble'] = {};
+    obj['ble']['scan'] = null;
     this.Obniz.send(obj);
   }
 
   isTarget(peripheral) {
-    if (this.scanTarget && this.scanTarget.localName && peripheral.localName() !== this.scanTarget.localName) {
+    if (
+      this.scanTarget &&
+      this.scanTarget.localName &&
+      peripheral.localName() !== this.scanTarget.localName
+    ) {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
@@ -90,15 +91,12 @@ class BleScan {
     return true;
   }
 
-
-  onfinish() {
-  } //dummy
-  onfind() {
-  } //dummy
+  onfinish() {} //dummy
+  onfind() {} //dummy
 
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
-      case "onfind" : {
+      case 'onfind': {
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);
           this.emitter.emit(notifyName, params);
@@ -106,16 +104,13 @@ class BleScan {
         }
         break;
       }
-      case "onfinish" : {
+      case 'onfinish': {
         this.emitter.emit(notifyName, this.scanedPeripherals);
         this.onfinish(this.scanedPeripherals);
         break;
       }
     }
-
-
   }
 }
-
 
 module.exports = BleScan;

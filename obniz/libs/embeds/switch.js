@@ -1,22 +1,20 @@
-
 class ObnizSwitch {
-  
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.observers = [];
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   getWait() {
     let self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
       let obj = {};
-      obj["switch"] = "get"
+      obj['switch'] = 'get';
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });

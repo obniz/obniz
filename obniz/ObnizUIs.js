@@ -29,10 +29,6 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
       return;
     }
-    const alerts = {
-      warning: 'alert-warning alert-dismissible',
-      error: 'alert-danger',
-    };
     let dom = `
     <div style="background-color:${
       obj.alert === 'warning' ? '#ffee35' : '#ff7b34'

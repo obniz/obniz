@@ -1,31 +1,38 @@
-const ObnizUtil = require("../utils/util");
+const ObnizUtil = require('../utils/util');
 
 class LogicAnalyzer {
-
   constructor(obniz) {
     this.obniz = obniz;
   }
 
-  start( params ) {
-    
-  var err = ObnizUtil._requiredKeys(params,["io", "interval", "duration"]);
-  if(err){ throw new Error("LogicAnalyzer start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
+  start(params) {
+    var err = ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
+    if (err) {
+      throw new Error(
+        "LogicAnalyzer start param '" + err + "' required, but not found "
+      );
+    }
+    this.params = ObnizUtil._keyFilter(params, [
+      'io',
+      'interval',
+      'duration',
+      'triggerValue',
+      'triggerValueSamples',
+    ]);
 
-  
     var obj = {};
     obj.logic_analyzer = {
       io: [this.params.io],
       interval: this.params.interval,
-      duration: this.params.duration
+      duration: this.params.duration,
     };
     if (this.params.triggerValueSamples > 0) {
       obj.logic_analyzer.trigger = {
         value: !!this.params.triggerValue,
-        samples: this.params.triggerValueSamples
-      }
+        samples: this.params.triggerValueSamples,
+      };
     }
-  
+
     this.obniz.send(obj);
     return;
   }
@@ -47,8 +54,7 @@ class LogicAnalyzer {
       this.measured.push(obj.data);
     }
     return;
-  };
+  }
 }
-
 
 module.exports = LogicAnalyzer;

@@ -1,20 +1,22 @@
 class JsonBinaryConverter {
-
   static convertFromBinaryToJson(schema, binary) {
-    var types = {
+    let types = {
       hex: this.hexFromBinary.bind(this),
       uuid: this.uuidFromBinary.bind(this),
       number: this.numberFromBinary.bind(this),
-      "signed number": this.signedNumberFromBinary.bind(this),
+      'signed number': this.signedNumberFromBinary.bind(this),
       int: this.numberFromBinary.bind(this),
       char: this.numberFromBinary.bind(this),
       enum: this.enumFromBinary.bind(this),
-      dataArray: this.dataArrayFromBinary.bind(this)
+      dataArray: this.dataArrayFromBinary.bind(this),
     };
-    var json = {};
-    var count = 0;
-    for (var i = 0; i < schema.length; i++) {
-      var data = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
+    let json = {};
+    let count = 0;
+    for (let i = 0; i < schema.length; i++) {
+      let data = binary.slice(
+        count,
+        schema[i].length ? count + schema[i].length : undefined
+      );
       json[schema[i].name] = types[schema[i].type](data, schema[i]);
 
       if (schema[i].length) {
@@ -27,54 +29,55 @@ class JsonBinaryConverter {
   }
 
   static hexFromBinary(data, schema) {
-    var str = "";
-    for (var i = 0; i < data.length; i++) {
-      if (schema.endianness && schema.endianness === "little") {
-        str = ("00" + data[i].toString(16)).slice(-2) + str;
+    let str = '';
+    for (let i = 0; i < data.length; i++) {
+      if (schema.endianness && schema.endianness === 'little') {
+        str = ('00' + data[i].toString(16)).slice(-2) + str;
       } else {
-        str = str + ("00" + data[i].toString(16)).slice(-2);
+        str = str + ('00' + data[i].toString(16)).slice(-2);
       }
     }
     return str;
   }
 
   static uuidFromBinary(data) {
-    var len = data[0] * 16 + data[1];
+    let len = data[0] * 16 + data[1];
     if (len === 0) {
       return null;
     }
-    var uuidData = data.slice(2);
-    var str = "";
-    for (var i = 0; i < len; i++) {
-      str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
+    let uuidData = data.slice(2);
+    let str = '';
+    for (let i = 0; i < len; i++) {
+      str = ('00' + uuidData[i].toString(16)).slice(-2) + str;
     }
     return str;
   }
 
-  static signedNumberFromBinary(data, schema) {  //big adian
-    var val = data[0] & 0x7F;
-    for (var i = 1; i < data.length; i++) {
+  static signedNumberFromBinary(data) {
+    //big adian
+    let val = data[0] & 0x7f;
+    for (let i = 1; i < data.length; i++) {
       val = val * 256 + data[i];
     }
     if ((data[0] & 0x80) !== 0) {
-      val = val - Math.pow(2, (data.length * 8 - 1));
+      val = val - Math.pow(2, data.length * 8 - 1);
     }
     return val;
   }
 
-  static numberFromBinary(data) {  //big adian
-    var val = 0;
-    for (var i = 0; i < data.length; i++) {
+  static numberFromBinary(data) {
+    //big adian
+    let val = 0;
+    for (let i = 0; i < data.length; i++) {
       val = val * 256 + data[i];
     }
     return val;
   }
 
   static keyForVal(enumvals, val) {
-    return Object.keys(enumvals).filter(function (k) {
+    return Object.keys(enumvals).filter(function(k) {
       return enumvals[k] === val;
     })[0];
-    return undefined;
   }
 
   static enumFromBinary(data, schema) {
@@ -84,13 +87,12 @@ class JsonBinaryConverter {
     if (schema.flags === true) {
       let temp = [];
       for (let key of Object.keys(enumVals)) {
-        let flag = (enumVals[key] & val);
+        let flag = enumVals[key] & val;
         if (flag) {
           temp.push(key);
         }
       }
       val = temp;
-
     } else {
       let tmp = this.keyForVal(enumVals, val);
       if (tmp) {
@@ -101,28 +103,29 @@ class JsonBinaryConverter {
   }
 
   static dataArrayFromBinary(data) {
-    var arr = new Array(data.length);
-    for (var i = 0; i < data.length; i++) {
+    let arr = new Array(data.length);
+    for (let i = 0; i < data.length; i++) {
       arr[i] = data[i];
     }
     return arr;
   }
 
   static createSendBuffer(schema, data) {
-    var array = [];
-    for (var i = 0; i < schema.length; i++) {
-      var schemaRow = schema[i];
+    let array = [];
+    for (let i = 0; i < schema.length; i++) {
+      let schemaRow = schema[i];
 
-      var row = undefined;
+      let row = undefined;
       if (Array.isArray(schemaRow)) {
-        for (var key in schemaRow) {
-          var customSchemaRow = Object.assign({}, schemaRow[key], {required: true});
+        for (let key in schemaRow) {
+          let customSchemaRow = Object.assign({}, schemaRow[key], {
+            required: true,
+          });
           row = this.analyzeSchema(data, customSchemaRow);
           if (row) {
             break;
           }
         }
-
       } else {
         row = this.analyzeSchema(data, schemaRow);
       }
@@ -130,11 +133,10 @@ class JsonBinaryConverter {
       Array.prototype.push.apply(array, row);
     }
     return new Uint8Array(array);
-
   }
 
   static analyzeSchema(allData, schemaRow) {
-    var types = {
+    let types = {
       hex: this.hexToBinary.bind(this),
       uuid: this.uuidToBinary.bind(this),
       int: this.intToBinary.bind(this),
@@ -143,10 +145,10 @@ class JsonBinaryConverter {
       enum: this.enumToBinary.bind(this),
       string: this.stringToBinary.bind(this),
       text: this.stringToBinary.bind(this),
-      flag: this.flagToBinary.bind(this)
+      flag: this.flagToBinary.bind(this),
     };
 
-    var val = undefined;
+    let val = undefined;
     if (schemaRow.path) {
       val = this.getProperty(allData, schemaRow.path);
     }
@@ -157,28 +159,24 @@ class JsonBinaryConverter {
       val = schemaRow.default;
     }
 
-
-    var row = types[schemaRow.type](val, schemaRow);
+    let row = types[schemaRow.type](val, schemaRow);
 
     if (schemaRow.length && row.length !== schemaRow.length) {
-      console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
+      console.log('JSON->BINARY SCHEMA ERROR: (', val, ')', schemaRow);
     }
 
     return row;
   }
 
-
   static getProperty(object, path) {
-    if (path === "" || path === undefined) {
+    if (path === '' || path === undefined) {
       return object;
     }
-    if (typeof path === 'string')
-      path = path.split('.');
-    if (!Array.isArray(path))
-      path = [path];
+    if (typeof path === 'string') path = path.split('.');
+    if (!Array.isArray(path)) path = [path];
 
-    var index = 0,
-        length = path.length;
+    let index = 0,
+      length = path.length;
 
     while (index < length) {
       object = object[path[index++]];
@@ -186,35 +184,33 @@ class JsonBinaryConverter {
         return undefined;
       }
     }
-    return (index && index === length) ? object : undefined;
-
+    return index && index === length ? object : undefined;
   }
 
   static hexToBinary(data, schema) {
-    var array = [];
-    var hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    for (var i = 0; i < hex.length / 2; i++) {
+    let array = [];
+    let hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    for (let i = 0; i < hex.length / 2; i++) {
       array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
     }
-    if (schema && schema.endianness && schema.endianness === "little") {
+    if (schema && schema.endianness && schema.endianness === 'little') {
       array.reverse();
     }
     return array;
   }
 
-
   static intToBinary(data) {
-    var array = [];
-    array[0] = (data >> 8 * 3) & 0xFF;
-    array[1] = (data >> 8 * 2) & 0xFF;
-    array[2] = (data >> 8 * 1) & 0xFF;
-    array[3] = (data >> 8 * 0) & 0xFF;
+    let array = [];
+    array[0] = (data >> (8 * 3)) & 0xff;
+    array[1] = (data >> (8 * 2)) & 0xff;
+    array[2] = (data >> (8 * 1)) & 0xff;
+    array[3] = (data >> (8 * 0)) & 0xff;
     return array;
   }
 
   static charToBinary(data) {
-    var array = [];
-    array[0] = data & 0xFF;
+    let array = [];
+    array[0] = data & 0xff;
     return array;
   }
 
@@ -226,18 +222,17 @@ class JsonBinaryConverter {
   }
 
   static uuidToBinary(data) {
+    let uuid = this.hexToBinary(data);
+    uuid.reverse(); //big endianness -> little endianness;
+    let length = uuid.length;
 
-    var uuid = this.hexToBinary(data)
-    uuid.reverse();  //big endianness -> little endianness;
-    var length = uuid.length;
+    let array = [];
 
-    var array = [];
-
-    array[0] = (length >> 8 * 1) & 0xFF;
-    array[1] = (length >> 8 * 0) & 0xFF;
+    array[0] = (length >> (8 * 1)) & 0xff;
+    array[1] = (length >> (8 * 0)) & 0xff;
 
     Array.prototype.push.apply(array, uuid);
-    for (var i = array.length; i < 16 + 2; i++) {
+    for (let i = array.length; i < 16 + 2; i++) {
       array[i] = 0;
     }
 
@@ -245,36 +240,33 @@ class JsonBinaryConverter {
   }
 
   static enumToBinary(data, schema) {
-    var array = [];
+    let array = [];
     array.push(schema.enum[data]);
     return array;
   }
-
 
   static flagToBinary(data, schema) {
     if (!Array.isArray(data)) {
       data = [data];
     }
-    var flags = schema.flags;
-    var value = 0;
-    for (var key in flags) {
+    let flags = schema.flags;
+    let value = 0;
+    for (let key in flags) {
       if (data.includes(flags[key])) {
         value += parseInt(key);
       }
     }
-    var array = [];
+    let array = [];
     let length = schema.length || 1;
     for (let i = length - 1; i >= 0; i--) {
-      array.push((value >> i) & 0xFF);
+      array.push((value >> i) & 0xff);
     }
 
     return array;
   }
 
   static stringToBinary(data) {
-    var array = [];
     return new Uint8Array(Buffer(data, 'utf8'));
-
   }
 }
 

@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 var sinon = require('sinon');
 var ws = require('ws');
 var WSServer = ws.Server;
@@ -14,34 +13,41 @@ var fs = require('fs');
 var ejs = require('ejs');
 
 var Obniz;
-if (typeof window === 'undefined' && process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
-  console.log("Loading obniz.js for node 6.10");
-  Obniz = require("../index.js");
+if (
+  typeof window === 'undefined' &&
+  process &&
+  !semver.satisfies(process.versions.node, '>=7.6.0')
+) {
+  console.log('Loading obniz.js for node 6.10');
+  Obniz = require('../index.js');
 } else {
-  console.log("Loading normal obniz.js");
-  Obniz = require("../index.js");
+  console.log('Loading normal obniz.js');
+  Obniz = require('../index.js');
   var MochaChrome = require('mocha-chrome');
 }
 
 sinon.stub(Obniz.prototype, 'wsOnClose');
 
-
 var serverDataCount = 0;
 var errorDataCount = 0;
 var testUtil = {
   log: console.log,
-  isNode: function () {
-    return (typeof window === 'undefined');
+  isNode: function() {
+    return typeof window === 'undefined';
   },
-  createServer: function (port, velify) {
-    var wss = new WSServer({host: "localhost", port: port, clientTracking: true});
+  createServer: function(port, velify) {
+    var wss = new WSServer({
+      host: 'localhost',
+      port: port,
+      clientTracking: true,
+    });
 
     if (velify === null || velify === undefined || velify === true) {
-      wss.verifyClient = function (info, accept) {
+      wss.verifyClient = function(info, accept) {
         accept(true);
       };
     } else {
-      wss.verifyClient = function (info, accept) {
+      wss.verifyClient = function(info, accept) {
         accept(false, velify.statusCode, velify.message);
       };
     }
@@ -49,12 +55,16 @@ var testUtil = {
     return wss;
   },
 
-  createObniz: function (port, obnizId, options) {
-    let binary = options && options.binary !== undefined ? options.binary : false;
-    return new Obniz(obnizId, {obniz_server: "ws://localhost:" + port, binary: binary});
+  createObniz: function(port, obnizId, options) {
+    let binary =
+      options && options.binary !== undefined ? options.binary : false;
+    return new Obniz(obnizId, {
+      obniz_server: 'ws://localhost:' + port,
+      binary: binary,
+    });
   },
 
-  setupObnizPromise: function (obj, done, options) {
+  setupObnizPromise: function(obj, done, options) {
     options = options || {};
     var stub = sinon.stub();
     stub.on = sinon.stub();
@@ -64,7 +74,7 @@ var testUtil = {
     stub.readyState = 1;
 
     sinon.stub(Obniz.prototype, 'wsconnect');
-    obj.obniz = this.createObniz(100, "12345678", options);
+    obj.obniz = this.createObniz(100, '12345678', options);
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
     obj.obniz.wsOnOpen();
@@ -73,7 +83,7 @@ var testUtil = {
     done();
   },
 
-  releaseObnizePromise: function (obj, done) {
+  releaseObnizePromise: function(obj, done) {
     obj.obniz.close();
     obj.obniz = null;
     Obniz.prototype.wsconnect.restore();
@@ -81,127 +91,147 @@ var testUtil = {
     done();
   },
 
-  waitForWebsocketCall: function (obj, n) {
-    return new Promise(function (resolve, reject) {
+  waitForWebsocketCall: function(obj, n) {
+    return new Promise(function(resolve, reject) {
       var count = 100;
-      var wait = function () {
+      var wait = function() {
         if (obj.onServerMessage.callCount >= n) {
           resolve();
         } else {
           count--;
           if (count < 0) {
-            reject("waitForWebsocketCall timeout");
+            reject('waitForWebsocketCall timeout');
             return;
           }
           setTimeout(wait, 10);
-
         }
       };
       setTimeout(wait, 10);
     });
-
   },
-  receiveJson: function (obniz, jsonVal) {
+  receiveJson: function(obniz, jsonVal) {
     if (testUtil.isNode()) {
-      var validator = require("./obnizJsonValidator");
-      var results = validator.responseValidate(jsonVal, "json");
-      require("chai").expect(results.valid, results.errors).to.be.true;
-
+      var validator = require('./obnizJsonValidator');
+      var results = validator.responseValidate(jsonVal, 'json');
+      require('chai').expect(results.valid, results.errors).to.be.true;
     }
 
     obniz.wsOnMessage(JSON.stringify(jsonVal));
   },
 
-
-  isValidCommandRequestJson: function (jsonVal) {
+  isValidCommandRequestJson: function(jsonVal) {
     if (testUtil.isNode()) {
-      var validator = require("./obnizJsonValidator");
-      var results = validator.requestValidate(jsonVal, "wscommand");
-      require("chai").expect(results.valid, results.errors).to.be.true;
+      var validator = require('./obnizJsonValidator');
+      var results = validator.requestValidate(jsonVal, 'wscommand');
+      require('chai').expect(results.valid, results.errors).to.be.true;
       return results;
     }
 
     //browser
-    return {valid: true};
-
+    return { valid: true };
   },
 
-  isValidCommandResponseJson: function (jsonVal) {
+  isValidCommandResponseJson: function(jsonVal) {
     if (testUtil.isNode()) {
-      var validator = require("./obnizJsonValidator");
-      var results = validator.responseValidate(jsonVal, "wscommand");
-      require("chai").expect(results.valid, results.errors).to.be.true;
+      var validator = require('./obnizJsonValidator');
+      var results = validator.responseValidate(jsonVal, 'wscommand');
+      require('chai').expect(results.valid, results.errors).to.be.true;
       return results;
     }
     //browser
-    return {valid: true};
-
+    return { valid: true };
   },
 
-
-  obnizAssert: function (_chai, utils) {
-    _chai.Assertion.addProperty('obniz', function () {
+  obnizAssert: function(_chai, utils) {
+    _chai.Assertion.addProperty('obniz', function() {
       var obj = utils.flag(this, 'object');
       new _chai.Assertion(obj).to.be.instanceof(Obniz);
     });
 
-    _chai.Assertion.addMethod('send', function (expected) {
+    _chai.Assertion.addMethod('send', function(expected) {
       var count = serverDataCount;
       serverDataCount++;
 
       var obniz = utils.flag(this, 'object');
       var stub = obniz.socket.send;
 
-      var message = "[obniz.send] no more send data. (called " + stub.callCount + " times, but you expect " + (count + 1) + " times) ";
+      var message =
+        '[obniz.send] no more send data. (called ' +
+        stub.callCount +
+        ' times, but you expect ' +
+        (count + 1) +
+        ' times) ';
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
-      new _chai.Assertion(stub.args[count][0], "[obniz.send]invalid json").is.json;
+      new _chai.Assertion(
+        stub.args[count][0],
+        '[obniz.send]invalid json'
+      ).is.json;
       var val = JSON.parse(stub.args[count][0]);
       new _chai.Assertion(val).to.deep.equal(expected);
 
       if (testUtil.isNode()) {
-        var validator = require("./obnizJsonValidator");
-        var validateErrors = validator.requestValidate(val, "json");
-        new _chai.Assertion(validateErrors.valid, validateErrors.errors).to.be.true;
+        var validator = require('./obnizJsonValidator');
+        var validateErrors = validator.requestValidate(val, 'json');
+        new _chai.Assertion(validateErrors.valid, validateErrors.errors).to.be
+          .true;
       }
     });
 
-    _chai.Assertion.addMethod('sendBinary', function (expected) {
+    _chai.Assertion.addMethod('sendBinary', function(expected) {
       var count = serverDataCount;
       serverDataCount++;
 
       var obniz = utils.flag(this, 'object');
       var stub = obniz.socket.send;
 
-      var message = "[obniz.send] no more send data. (called " + stub.callCount + " times, but you expect " + (count + 1) + " times) ";
+      var message =
+        '[obniz.send] no more send data. (called ' +
+        stub.callCount +
+        ' times, but you expect ' +
+        (count + 1) +
+        ' times) ';
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       new _chai.Assertion(stub.args[count][0]).to.deep.equal(expected);
     });
 
-
-    _chai.Assertion.addProperty('finished', function (expected) {
+    _chai.Assertion.addProperty('finished', function(expected) {
       var obniz = utils.flag(this, 'object');
       var stub = obniz.socket.send;
-      var message = "[obniz.send] not finished. (send: called " + stub.callCount + " times, but you expect " + (serverDataCount) + " times) ";
+      var message =
+        '[obniz.send] not finished. (send: called ' +
+        stub.callCount +
+        ' times, but you expect ' +
+        serverDataCount +
+        ' times) ';
       new _chai.Assertion(stub.callCount, message).to.be.equal(serverDataCount);
 
-
       var errorStub = obniz.error;
-      var message = "[obniz.send] not finished. (error: called " + errorStub.callCount + " times, but you expect " + (errorDataCount) + " times) ";
-      new _chai.Assertion(errorStub.callCount, message).to.be.equal(errorDataCount);
-
+      var message =
+        '[obniz.send] not finished. (error: called ' +
+        errorStub.callCount +
+        ' times, but you expect ' +
+        errorDataCount +
+        ' times) ';
+      new _chai.Assertion(errorStub.callCount, message).to.be.equal(
+        errorDataCount
+      );
     });
 
-
-    _chai.Assertion.addMethod('error', function (expected) {
+    _chai.Assertion.addMethod('error', function(expected) {
       var count = errorDataCount;
       errorDataCount++;
 
       var obniz = utils.flag(this, 'object');
       var stub = obniz.error;
 
-      var message = "[obniz.error] no more error data. (called " + stub.callCount + " times, but you expect " + (count + 1) + " times) ";
+      var message =
+        '[obniz.error] no more error data. (called ' +
+        stub.callCount +
+        ' times, but you expect ' +
+        (count + 1) +
+        ' times) ';
       new _chai.Assertion(stub.callCount, message).to.be.above(count);
 
       if (expected) {
@@ -209,7 +239,7 @@ var testUtil = {
       }
     });
 
-    _chai.Assertion.addProperty('json', function (expected) {
+    _chai.Assertion.addProperty('json', function(expected) {
       var string = utils.flag(this, 'object');
       new _chai.Assertion(string).is.string;
       var resolve = null;
@@ -221,15 +251,13 @@ var testUtil = {
       }
       new _chai.Assertion(resolve).to.be.true;
     });
-
-
   },
 
-  browser: function (url) {
-    var url = "file://" + url;
+  browser: function(url) {
+    var url = 'file://' + url;
     options = {
       url,
-      ignoreConsole: true
+      ignoreConsole: true,
     };
     const runner = new MochaChrome(options);
     const result = new Promise((resolve, reject) => {
@@ -242,39 +270,44 @@ var testUtil = {
       });
     });
 
-    return runner.connect().then(function () {
-      return runner.run();
-    }).then(function () {
-      return result;
-    });
+    return runner
+      .connect()
+      .then(function() {
+        return runner.run();
+      })
+      .then(function() {
+        return result;
+      });
   },
 
-  ejs: function (url, param) {
+  ejs: function(url, param) {
     var data = fs.readFileSync(url, 'utf8');
     html = ejs.render(data, param);
-    var newFilename = url.replace(".", "_") + ".html";
+    var newFilename = url.replace('.', '_') + '.html';
 
-    return new Promise(function (resolve, reject) {
-      fs.writeFile(newFilename, html, function (err) {
+    return new Promise(function(resolve, reject) {
+      fs.writeFile(newFilename, html, function(err) {
         if (err) {
           reject(err);
         } else {
           resolve();
         }
       });
-    }).then(function () {
+    }).then(function() {
       return testUtil.browser(newFilename);
     });
   },
 
-  needBrowserTest: function () {
-    if (typeof window === 'undefined' && process && !semver.satisfies(process.versions.node, '>=7.6.0')) {
+  needBrowserTest: function() {
+    if (
+      typeof window === 'undefined' &&
+      process &&
+      !semver.satisfies(process.versions.node, '>=7.6.0')
+    ) {
       return false;
     }
     return true;
-  }
-
+  },
 };
 
 module.exports = testUtil;
-

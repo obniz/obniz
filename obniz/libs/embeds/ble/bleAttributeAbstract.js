@@ -1,9 +1,8 @@
-const ObnizUtil = require("../../utils/util");
-const emitter = require("eventemitter3");
+const ObnizUtil = require('../../utils/util');
+const emitter = require('eventemitter3');
 
 class BleAttributeAbstract {
-
-  constructor(params){
+  constructor(params) {
     this.uuid = params.uuid.toLowerCase();
     this.parent = null;
     this.children = [];
@@ -12,62 +11,63 @@ class BleAttributeAbstract {
     this.discoverdOnRemote = false;
 
     this.data = params.data || null;
-    if(! this.data && params.text){
+    if (!this.data && params.text) {
       this.data = ObnizUtil.string2dataArray(params.text);
     }
-    if(! this.data && params.value){
+    if (!this.data && params.value) {
       this.data = [params.value];
     }
 
-    if(params[this.childrenName]){
-      for(let child of params[this.childrenName]){
+    if (params[this.childrenName]) {
+      for (let child of params[this.childrenName]) {
         this.addChild(child);
       }
     }
 
     this.setFunctions();
 
-
-    this.emitter =  new emitter();
-
+    this.emitter = new emitter();
   }
 
   setFunctions() {
     let childrenName = this.childrenName;
-    if(childrenName){
-      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
-      let childName = childrenName.slice(0,-1);
+    if (childrenName) {
+      childrenName =
+        childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      let childName = childrenName.slice(0, -1);
 
-      let funcName = "add" + childName;
+      let funcName = 'add' + childName;
       this[funcName] = this.addChild;
 
-      funcName = "get" + childName;
+      funcName = 'get' + childName;
       this[funcName] = this.getChild;
     }
 
     let parentName = this.parentName;
-    if(parentName){
+    if (parentName) {
       Object.defineProperty(this, parentName, {
-        get() { return this.parent; },
-        set(newValue) { this.parent = newValue; }
+        get() {
+          return this.parent;
+        },
+        set(newValue) {
+          this.parent = newValue;
+        },
       });
     }
-
   }
 
-
-  get childrenClass(){
+  get childrenClass() {
     return Object;
   }
-  get childrenName(){
+  get childrenName() {
     return null;
   }
-  get parentName(){
+  get parentName() {
     return null;
   }
 
-  addChild(child){
-    if( ! (child instanceof this.childrenClass) ){
+  addChild(child) {
+    if (!(child instanceof this.childrenClass)) {
       let childrenClass = this.childrenClass;
       child = new childrenClass(child);
     }
@@ -77,145 +77,130 @@ class BleAttributeAbstract {
     return child;
   }
 
-  getChild(uuid){
-
-    return this.children.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
-
+  getChild(uuid) {
+    return this.children
+      .filter(function(element) {
+        return element.uuid.toLowerCase() === uuid.toLowerCase();
+      })
+      .shift();
   }
 
-
-
-  toJSON (){
-    let obj = {uuid: this.uuid.toLowerCase()};
+  toJSON() {
+    let obj = { uuid: this.uuid.toLowerCase() };
 
     if (this.children.length > 0) {
       let key = this.childrenName;
       obj[key] = this.children;
     }
     if (this.data) {
-      obj.data = this.data
+      obj.data = this.data;
     }
     return obj;
   }
-
 
   /**
    * WS COMMANDS
    */
 
   read() {}
-  write(){}
+  write() {}
 
-  writeNumber(val){
+  writeNumber(val) {
     this.write([val]);
   }
 
-  writeText(str){
+  writeText(str) {
     this.write(ObnizUtil.string2dataArray(str));
   }
 
-  readWait(){
+  readWait() {
     return new Promise(resolve => {
-      this.emitter.once("onread",(params)=>{
-        if(params.result === "success") {
+      this.emitter.once('onread', params => {
+        if (params.result === 'success') {
           resolve(params.data);
-        }else{
+        } else {
           resolve(undefined);
         }
       });
       this.read();
-    })
+    });
   }
 
-  writeWait(data){
+  writeWait(data) {
     return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
       });
       this.write(data);
-    })
+    });
   }
 
-
-  writeTextWait(data){
+  writeTextWait(data) {
     return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
       });
       this.writeText(data);
-    })
+    });
   }
 
-
-  writeNumberWait(data){
+  writeNumberWait(data) {
     return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
       });
       this.writeNumber(data);
-    })
+    });
   }
 
-  readFromRemoteWait(){
+  readFromRemoteWait() {
     return new Promise(resolve => {
-      this.emitter.once("onreadfromremote",()=>{
+      this.emitter.once('onreadfromremote', () => {
         resolve();
       });
-    })
+    });
   }
 
-  writeFromRemoteWait(){
+  writeFromRemoteWait() {
     return new Promise(resolve => {
-      this.emitter.once("onreadfromremote",(params)=>{
+      this.emitter.once('onreadfromremote', params => {
         resolve(params.data);
       });
-    })
+    });
   }
-
-
 
   /**
    * CALLBACKS
    */
-  onwrite(){
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
 
-  };
-  onread(){
-
-  };
-  onwritefromremote(){
-
-  }
-  onreadfromremote(){
-
-  };
-
-  onerror(err){
+  onerror(err) {
     console.error(err.message);
   }
 
-  notifyFromServer(notifyName, params){
+  notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
-    switch(notifyName){
-      case "onerror" : {
+    switch (notifyName) {
+      case 'onerror': {
         this.onerror(params);
         break;
       }
-      case "onwrite" : {
+      case 'onwrite': {
         this.onwrite(params.result);
         break;
       }
-      case "onread" : {
+      case 'onread': {
         this.onread(params.data);
         break;
       }
-      case "onwritefromremote" : {
+      case 'onwritefromremote': {
         this.onwritefromremote(params.address, params.data);
         break;
       }
-      case "onreadfromremote" : {
+      case 'onreadfromremote': {
         this.onreadfromremote(params.address);
         break;
       }
