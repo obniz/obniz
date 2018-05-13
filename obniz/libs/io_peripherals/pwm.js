@@ -1,4 +1,4 @@
-const ObnizUtil = require("../utils/util");
+const ObnizUtil = require('../utils/util');
 
 class PeripheralPWM {
   constructor(Obniz, id) {
@@ -9,15 +9,17 @@ class PeripheralPWM {
   }
 
   sendWS(obj) {
-    var wsObj = {};
-    wsObj["pwm"+this.id] = obj;
+    let wsObj = {};
+    wsObj['pwm' + this.id] = obj;
     this.Obniz.send(wsObj);
   }
 
   start(params) {
-    const err = ObnizUtil._requiredKeys(params,["io"]);
-    if(err){ throw new Error("pwm start param '" + err +"' required, but not found ");}
-    this.params = ObnizUtil._keyFilter(params,["io", "drive", "pull"]);
+    const err = ObnizUtil._requiredKeys(params, ['io']);
+    if (err) {
+      throw new Error("pwm start param '" + err + "' required, but not found ");
+    }
+    this.params = ObnizUtil._keyFilter(params, ['io', 'drive', 'pull']);
 
     const io = this.params.io;
     const ioObj = this.Obniz.getIO(io);
@@ -27,54 +29,53 @@ class PeripheralPWM {
 
     this.state = {
       io: io,
-      freq: 1000
-    }
+      freq: 1000,
+    };
     this.sendWS({
-      io: io
+      io: io,
     });
     this.used = true;
   }
 
   freq(freq) {
     freq *= 1;
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    if (typeof freq !== "number") {
-      throw new Error("please provide freq in number");
+    if (typeof freq !== 'number') {
+      throw new Error('please provide freq in number');
     }
-    var obj = {};
     this.state.freq = freq;
     this.sendWS({
-      freq: freq
+      freq: freq,
     });
-    if (typeof this.state.duty === "number") {
+    if (typeof this.state.duty === 'number') {
       this.duty(this.state.duty);
     }
   }
 
   pulse(pulse_width) {
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
+
     this.state.pulse = pulse_width;
     delete this.state.duty;
     this.sendWS({
-      pulse: pulse_width
+      pulse: pulse_width,
     });
   }
 
   duty(duty) {
     duty *= 1;
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    if (typeof this.state.freq !== "number" || this.state.freq <= 0) {
-      throw new Error("please provide freq first.");
+    if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
+      throw new Error('please provide freq first.');
     }
-    if (typeof duty !== "number") {
-      throw new Error("please provide duty in number");
+    if (typeof duty !== 'number') {
+      throw new Error('please provide duty in number');
     }
     if (duty < 0) {
       duty = 0;
@@ -82,10 +83,10 @@ class PeripheralPWM {
     if (duty > 100) {
       duty = 100;
     }
-    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
+    const pulse_width = 1.0 / this.state.freq * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
-      pulse: pulse_width
+      pulse: pulse_width,
     });
   }
 
@@ -94,23 +95,21 @@ class PeripheralPWM {
   }
 
   end() {
-    var obj = {};
     this.state = {};
     this.sendWS(null);
     this.used = false;
   }
 
   modulate(type, symbol_length, data) {
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
     this.sendWS({
       modulate: {
         type: type,
         symbol_length: symbol_length,
-        data: data
-      }
+        data: data,
+      },
     });
   }
 }

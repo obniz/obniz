@@ -1,27 +1,24 @@
-
-
 class MatrixLED_MAX7219 {
-
   constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-    this.requiredKeys = ["din", "cs", "clk"];
+    this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+    this.requiredKeys = ['din', 'cs', 'clk'];
   }
 
   wired(obniz) {
     this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
-    if(obniz.isValidIO(this.params.vcc)){
+    if (obniz.isValidIO(this.params.vcc)) {
       obniz.getIO(this.params.vcc).output(true);
     }
-    if(obniz.isValidIO(this.params.gnd)){
+    if (obniz.isValidIO(this.params.gnd)) {
       obniz.getIO(this.params.gnd).output(false);
     }
-    
+
     // max 10Mhz but motor driver can't
-    this.params.frequency = this.params.frequency  ||  10 * 1000*1000;
-    this.params.mode =  "master";
+    this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+    this.params.mode = 'master';
     this.params.mosi = this.params.din;
-    this.params.drive = "3v";
+    this.params.drive = '3v';
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
     // reset a onece
@@ -44,7 +41,7 @@ class MatrixLED_MAX7219 {
     this.write([0x0c, 0x01]); // Shutdown to normal operation
     this.write([0x0f, 0x00]);
     this.passingCommands();
-    obniz.wait(10);
+    this.obniz.wait(10);
   }
 
   test() {
@@ -53,7 +50,8 @@ class MatrixLED_MAX7219 {
   }
 
   passingCommands() {
-    for (let i=8; i<this.width; i+=8) {  // this needed for number of unit
+    for (let i = 8; i < this.width; i += 8) {
+      // this needed for number of unit
       this.write([0x00, 0x00]);
     }
   }
@@ -65,9 +63,9 @@ class MatrixLED_MAX7219 {
 
   preparevram(width, height) {
     this.vram = [];
-    for (let i=0; i<height; i++) {
-      let dots = new Array(width/8);
-      for (let ii=0;ii<dots.length; ii++) {
+    for (let i = 0; i < height; i++) {
+      let dots = new Array(width / 8);
+      for (let ii = 0; ii < dots.length; ii++) {
         dots[ii] = 0x00;
       }
       this.vram.push(dots);
@@ -81,11 +79,11 @@ class MatrixLED_MAX7219 {
   }
 
   writeVram() {
-    for (let line_num=0; line_num<this.height; line_num++) {
+    for (let line_num = 0; line_num < this.height; line_num++) {
       let addr = line_num + 1;
       let line = this.vram[line_num];
       let data = [];
-      for (let col=0; col<line.length; col++) {
+      for (let col = 0; col < line.length; col++) {
         data.push(addr);
         data.push(line[col]);
       }
@@ -94,9 +92,9 @@ class MatrixLED_MAX7219 {
   }
 
   clear() {
-    for (let line_num=0; line_num<this.height; line_num++) {
+    for (let line_num = 0; line_num < this.height; line_num++) {
       let line = this.vram[line_num];
-      for (let col=0; col<line.length; col++) {
+      for (let col = 0; col < line.length; col++) {
         this.vram[line_num][col] = 0x00;
       }
       this.writeVram();
@@ -104,30 +102,28 @@ class MatrixLED_MAX7219 {
   }
 
   draw(ctx) {
-    let isNode = (typeof window === 'undefined') ;
+    let isNode = typeof window === 'undefined';
     if (isNode) {
       // TODO:
-      throw new Error("node js mode is under working.");
+      throw new Error('node js mode is under working.');
     } else {
       const imageData = ctx.getImageData(0, 0, this.width, this.height);
       const data = imageData.data;
-      
-      for(let i = 0; i < data.length; i += 4) {
-        let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        let index = parseInt(i/4);
-        let line = parseInt(index/this.width);
-        let col = parseInt((index-line*this.width)/8);
-        let bits = parseInt((index-line*this.width))%8;
-        if (bits === 0)
-          this.vram[line][col] = 0x00;
-        if (brightness > 0x7F)
-          this.vram[line][col] |= 0x80 >> bits;
+
+      for (let i = 0; i < data.length; i += 4) {
+        let brightness =
+          0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        let index = parseInt(i / 4);
+        let line = parseInt(index / this.width);
+        let col = parseInt((index - line * this.width) / 8);
+        let bits = parseInt(index - line * this.width) % 8;
+        if (bits === 0) this.vram[line][col] = 0x00;
+        if (brightness > 0x7f) this.vram[line][col] |= 0x80 >> bits;
       }
     }
     this.writeVram();
   }
 }
 
-
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);

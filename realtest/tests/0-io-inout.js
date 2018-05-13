@@ -1,29 +1,23 @@
 const chai = require('chai');
-const assert = chai.assert;
 const expect = chai.expect;
-const sinon = require('sinon');
-const path = require('path');
-const fs = require('fs');
 
 const config = require('../config.js');
 
 let obnizA;
 let obnizB;
 
-describe("0-io-input", function () {
-
+describe('0-io-input', function() {
   this.timeout(10000);
 
-  before(function () {
-    return new Promise((resolve) => {
+  before(function() {
+    return new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         obnizB = config.obnizB;
         resolve();
-      })
+      });
     });
   });
-
 
   // it("input callback works", async function () {
 
@@ -46,141 +40,143 @@ describe("0-io-input", function () {
   //   expect(record).to.be.equal(true);
   // });
 
-  it("5v low", async function () {
-    await ioAisB(0, false)
-    await ioAisB(11, false)
+  it('5v low', async function() {
+    await ioAisB(0, false);
+    await ioAisB(11, false);
   });
 
-  it("5v low with pull up5", async function () {
-    obnizA.getIO(0).pull("5v");
-    await ioAisB(0, false)
-    obnizA.getIO(11).pull("5v");
-    await ioAisB(11, false)
+  it('5v low with pull up5', async function() {
+    obnizA.getIO(0).pull('5v');
+    await ioAisB(0, false);
+    obnizA.getIO(11).pull('5v');
+    await ioAisB(11, false);
   });
 
-  it("5v low with pull up3", async function () {
-    obnizA.getIO(0).pull("3v");
-    await ioAisB(0, false)
-    obnizA.getIO(11).pull("3v");
-    await ioAisB(11, false)
+  it('5v low with pull up3', async function() {
+    obnizA.getIO(0).pull('3v');
+    await ioAisB(0, false);
+    obnizA.getIO(11).pull('3v');
+    await ioAisB(11, false);
   });
 
-  it("5v low with pull down", async function () {
-    obnizA.getIO(0).pull("0v");
-    await ioAisB(0, false)
-    obnizA.getIO(11).pull("0v");
-    await ioAisB(11, false)
+  it('5v low with pull down', async function() {
+    obnizA.getIO(0).pull('0v');
+    await ioAisB(0, false);
+    obnizA.getIO(11).pull('0v');
+    await ioAisB(11, false);
   });
 
-  it("5v high", async function () {
-    await ioAisB(0, true)
-    await ioAisB(11, true)
+  it('5v high', async function() {
+    await ioAisB(0, true);
+    await ioAisB(11, true);
   });
 
-  it("5v high with pull up5", async function () {
-    obnizA.getIO(0).pull("5v");
-    await ioAisB(0, true)
-    obnizA.getIO(11).pull("5v");
-    await ioAisB(11, true)
+  it('5v high with pull up5', async function() {
+    obnizA.getIO(0).pull('5v');
+    await ioAisB(0, true);
+    obnizA.getIO(11).pull('5v');
+    await ioAisB(11, true);
   });
 
-  it("5v high with pull up3", async function () {
-    obnizA.getIO(0).pull("3v");
-    await ioAisB(0, true)
-    obnizA.getIO(11).pull("3v");
-    await ioAisB(11, true)
+  it('5v high with pull up3', async function() {
+    obnizA.getIO(0).pull('3v');
+    await ioAisB(0, true);
+    obnizA.getIO(11).pull('3v');
+    await ioAisB(11, true);
   });
 
-  it("5v high with pull down", async function () {
-    obnizA.getIO(0).pull("0v");
-    await ioAisB(0, true)
-    obnizA.getIO(11).pull("0v");
-    await ioAisB(11, true)
+  it('5v high with pull down', async function() {
+    obnizA.getIO(0).pull('0v');
+    await ioAisB(0, true);
+    obnizA.getIO(11).pull('0v');
+    await ioAisB(11, true);
   });
 
-  it("3v low", async function () {
+  it('3v low', async function() {
     obnizA.getIO(0).pull(null);
-    obnizA.getIO(0).drive("3v");
-    await ioAisB(0, false)
+    obnizA.getIO(0).drive('3v');
+    await ioAisB(0, false);
     obnizA.getIO(11).pull(null);
-    obnizA.getIO(11).drive("3v");
-    await ioAisB(11, false)
+    obnizA.getIO(11).drive('3v');
+    await ioAisB(11, false);
   });
 
-  it("3v high", async function () {
-    obnizA.getIO(0).drive("3v");
-    await ioAisB(0, true)
-    obnizA.getIO(11).drive("3v");
-    await ioAisB(11, true)
+  it('3v high', async function() {
+    obnizA.getIO(0).drive('3v');
+    await ioAisB(0, true);
+    obnizA.getIO(11).drive('3v');
+    await ioAisB(11, true);
   });
 
-  it("open-drain low is low (floating)", async function () {
+  it('open-drain low is low (floating)', async function() {
     obnizA.getIO(0).pull(null);
-    obnizA.getIO(0).drive("open-drain");
-    await ioAisB(0, false)
+    obnizA.getIO(0).drive('open-drain');
+    await ioAisB(0, false);
 
     obnizA.getIO(11).pull(null);
-    obnizA.getIO(11).drive("open-drain");
-    await ioAisB(11, false)
+    obnizA.getIO(11).drive('open-drain');
+    await ioAisB(11, false);
   });
 
-  it("open-drain low is low (pullup3)", async function () {
-    obnizA.getIO(0).pull("3v");
-    obnizA.getIO(0).drive("open-drain");
-    await ioAisB(0, false)
+  it('open-drain low is low (pullup3)', async function() {
+    obnizA.getIO(0).pull('3v');
+    obnizA.getIO(0).drive('open-drain');
+    await ioAisB(0, false);
 
-    obnizA.getIO(11).pull("3v");
-    obnizA.getIO(11).drive("open-drain");
-    await ioAisB(11, false)
+    obnizA.getIO(11).pull('3v');
+    obnizA.getIO(11).drive('open-drain');
+    await ioAisB(11, false);
   });
 
-  it("open-drain low is low (pullup5v)", async function () {
-    obnizA.getIO(0).pull("5v");
-    obnizA.getIO(0).drive("open-drain");
-    await ioAisB(0, false)
+  it('open-drain low is low (pullup5v)', async function() {
+    obnizA.getIO(0).pull('5v');
+    obnizA.getIO(0).drive('open-drain');
+    await ioAisB(0, false);
 
-    obnizA.getIO(11).pull("5v");
-    obnizA.getIO(11).drive("open-drain");
-    await ioAisB(11, false)
+    obnizA.getIO(11).pull('5v');
+    obnizA.getIO(11).drive('open-drain');
+    await ioAisB(11, false);
   });
 
-  it("open-drain high is low (pulldown)", async function () {
-    obnizA.getIO(0).pull("0v");
-    obnizA.getIO(0).drive("open-drain");
-    await ioAisB(0, true, false)
+  it('open-drain high is low (pulldown)', async function() {
+    obnizA.getIO(0).pull('0v');
+    obnizA.getIO(0).drive('open-drain');
+    await ioAisB(0, true, false);
 
-    obnizA.getIO(11).pull("0v");
-    obnizA.getIO(11).drive("open-drain");
-    await ioAisB(11, true, false)
+    obnizA.getIO(11).pull('0v');
+    obnizA.getIO(11).drive('open-drain');
+    await ioAisB(11, true, false);
   });
 
-  it("open-drain high is high (pullup5)", async function () {
-    obnizA.getIO(0).pull("5v");
-    obnizA.getIO(0).drive("open-drain");
-    await ioAisB(0, true)
+  it('open-drain high is high (pullup5)', async function() {
+    obnizA.getIO(0).pull('5v');
+    obnizA.getIO(0).drive('open-drain');
+    await ioAisB(0, true);
 
-    obnizA.getIO(11).pull("5v");
-    obnizA.getIO(11).drive("open-drain");
-    await ioAisB(11, true)
+    obnizA.getIO(11).pull('5v');
+    obnizA.getIO(11).drive('open-drain');
+    await ioAisB(11, true);
   });
 
-  it("open-drain high is high (pullup3)", async function () {
-    obnizA.getIO(0).pull("3v");
-    obnizA.getIO(0).drive("open-drain");
-    await ioAisB(0, true)
+  it('open-drain high is high (pullup3)', async function() {
+    obnizA.getIO(0).pull('3v');
+    obnizA.getIO(0).drive('open-drain');
+    await ioAisB(0, true);
 
-    obnizA.getIO(11).pull("3v");
-    obnizA.getIO(11).drive("open-drain");
-    await ioAisB(11, true)
+    obnizA.getIO(11).pull('3v');
+    obnizA.getIO(11).drive('open-drain');
+    await ioAisB(11, true);
   });
 });
 
 async function ioAisB(io, val, mustbe) {
   if (mustbe === undefined) {
-    mustbe = val
+    mustbe = val;
   }
   obnizA.getIO(io).output(val);
   await obnizA.pingWait();
-  var valB = await obnizB.getIO(io).inputWait();
-  expect(valB).to.be.equal(mustbe);
+  let valB = await obnizB.getIO(io).inputWait();
+  expect(valB, `expected io${io} ${valB} is must be ${mustbe}`).to.be.equal(
+    mustbe
+  );
 }

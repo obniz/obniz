@@ -1,55 +1,53 @@
-
-const WSSchema = require("./WSSchema");
+const WSSchema = require('./WSSchema');
 
 let commandClasses = {};
 
 module.exports = class WSCommand {
-
   constructor(delegate) {
     this.delegate = delegate;
 
     //constants
-    this.COMMAND_FUNC_ID_ERROR = 0xFF
-    this.ioNotUsed = 0xFF;
+    this.COMMAND_FUNC_ID_ERROR = 0xff;
+    this.ioNotUsed = 0xff;
   }
 
-  static get schema(){
+  static get schema() {
     return WSSchema;
   }
   static get CommandClasses() {
     return commandClasses;
   }
 
-  static addCommandClass(name, classObj){
+  static addCommandClass(name, classObj) {
     commandClasses[name] = classObj;
   }
 
   static framed(module, func, payload) {
-    var payload_length = 0;
+    let payload_length = 0;
     if (payload) {
       payload_length = payload.length;
     }
-    var length_type;
-    if (payload_length <= 0x3F) {
+    let length_type;
+    if (payload_length <= 0x3f) {
       length_type = 0;
-    } else if (payload_length <= 0x3FFF) {
+    } else if (payload_length <= 0x3fff) {
       length_type = 1;
-    } else if (payload_length <= 0x3FFFFFFF) {
+    } else if (payload_length <= 0x3fffffff) {
       length_type = 2;
     } else {
-      throw new Error("too big payload");
-      return null;
+      throw new Error('too big payload');
     }
-    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
-    var header_length = 3 + length_extra_bytse;
-    var result = new Uint8Array(header_length + payload_length);
-    var index = 0;
-    result[index++] = module & 0x7F;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
+    let header_length = 3 + length_extra_bytse;
+    let result = new Uint8Array(header_length + payload_length);
+    let index = 0;
+    result[index++] = module & 0x7f;
     result[index++] = func;
-    result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse*8));
-    while(length_extra_bytse > 0) {
+    result[index++] =
+      (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+    while (length_extra_bytse > 0) {
       length_extra_bytse--;
-      result[index++] = payload_length >> (length_extra_bytse*8);
+      result[index++] = payload_length >> (length_extra_bytse * 8);
     }
     if (payload_length == 0) {
       return result;
@@ -62,41 +60,44 @@ module.exports = class WSCommand {
   static dequeueOne(buf) {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
-      throw new Error("something wrong. buf less than 3");
+      throw new Error('something wrong. buf less than 3');
     }
     if (buf[0] & 0x80) {
-      throw new Error("reserved bit 1");
+      throw new Error('reserved bit 1');
     }
-    var module = 0x7F & buf[0];
-    var func = buf[1];
-    var length_type = (buf[2] >> 6) & 0x3;
-    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
+    let module = 0x7f & buf[0];
+    let func = buf[1];
+    let length_type = (buf[2] >> 6) & 0x3;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     if (length_type == 4) {
-      throw new Error("invalid length");
+      throw new Error('invalid length');
     }
-    var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
-    var index = 3;
-    var shift = length_extra_bytse;
-    while(shift > 0) {
+    let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
+    let index = 3;
+    let shift = length_extra_bytse;
+    while (shift > 0) {
       shift--;
-      length += buf[index] << (shift*8);
+      length += buf[index] << (shift * 8);
       index++;
     }
 
     return {
       module: module,
       func: func,
-      payload: buf.slice(3+length_extra_bytse, 3+length_extra_bytse+length),
-      next: buf.slice(3+length_extra_bytse+length)
+      payload: buf.slice(
+        3 + length_extra_bytse,
+        3 + length_extra_bytse + length
+      ),
+      next: buf.slice(3 + length_extra_bytse + length),
     };
   }
 
   static compress(wscommands, json) {
-    var ret = null;
+    let ret = null;
     function append(module, func, payload) {
-      var frame = WSCommand.framed(module, func, payload);
+      let frame = WSCommand.framed(module, func, payload);
       if (ret) {
-        var combined = new Uint8Array(ret.length + frame.length);
+        let combined = new Uint8Array(ret.length + frame.length);
         combined.set(ret, 0);
         combined.set(frame, ret.length);
         ret = combined;
@@ -104,7 +105,7 @@ module.exports = class WSCommand {
         ret = frame;
       }
     }
-    for (let i=0; i<wscommands.length; i++) {
+    for (let i = 0; i < wscommands.length; i++) {
       const wscommand = wscommands[i];
       wscommand.parsed = append;
       wscommand.parseFromJson(json);
@@ -121,34 +122,29 @@ module.exports = class WSCommand {
     }
   }
 
-  parseFromJson(json) {
-
-  }
+  parseFromJson(json) {}
 
   notifyFromBinary(objToSend, func, payload) {
+    if (func === this.COMMAND_FUNC_ID_ERROR) {
+      if (!objToSend.debug) objToSend.debug = {};
+      let err = {
+        module: this.module,
+        _args: [...payload],
+      };
 
-    switch(func) {
-      case this.COMMAND_FUNC_ID_ERROR:
-        if (!objToSend.debug) objToSend.debug = {};
-        var err = {
-          module: this.module,
-          _args: [... payload]
-        };
-        
-        if (payload.byteLength == 3) {
-          err.err0 = payload[0];
-          err.err1 = payload[1];
-          err.function = payload[2];
-          err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
-        } else {
-          err.message = `Error module=${this.module} with + ${err._args}`;
-        }
-        objToSend.debug.error = err
-        break;
-
-      default:
-        // unknown
-        break;
+      if (payload.byteLength == 3) {
+        err.err0 = payload[0];
+        err.err1 = payload[1];
+        err.function = payload[2];
+        err.message = `Error module=${this.module} func=${err.function} err0=${
+          err.err0
+        } returned=${err.err1}`;
+      } else {
+        err.message = `Error module=${this.module} with + ${err._args}`;
+      }
+      objToSend.debug.error = err;
+    } else {
+      // unknown
     }
   }
 
@@ -163,32 +159,30 @@ module.exports = class WSCommand {
   }
 
   isValidIO(io) {
-    return (typeof(io) === "number" && 0 <= io && io <= 11) 
+    return typeof io === 'number' && 0 <= io && io <= 11;
   }
 
-
-  getSchema(uri){
+  getSchema(uri) {
     //chack isFirst
 
     return WSSchema.getSchema(uri);
   }
 
-
-  validateCommandSchema(uriList, json, rootPath, customArg){
-    let res = {valid : 0 , invalid: 0, results:[], invalidButLike:[]};
-    for(let oneRow of uriList){
+  validateCommandSchema(uriList, json, rootPath, customArg) {
+    let res = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
+    for (let oneRow of uriList) {
       let errors = this.validate(oneRow.uri, json);
       res.results.push(errors);
-      if(errors.valid){
+      if (errors.valid) {
         res.valid++;
-        if(oneRow.onValid){
+        if (oneRow.onValid) {
           oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
         }
-      }else{
+      } else {
         res.invalid++;
-        let message =  this.onlyTypeErrorMessage(errors,rootPath);
-        if(message){
-          res.invalidButLike.push ({uri: oneRow.uri, message});
+        let message = this.onlyTypeErrorMessage(errors, rootPath);
+        if (message) {
+          res.invalidButLike.push({ uri: oneRow.uri, message });
         }
       }
     }
@@ -196,15 +190,19 @@ module.exports = class WSCommand {
     return res;
   }
 
-  validate(commandUri, json){
-    let schema =  this.getSchema(commandUri);
-    let results =  WSSchema.validateMultiple(json, schema);
+  validate(commandUri, json) {
+    let schema = this.getSchema(commandUri);
+    let results = WSSchema.validateMultiple(json, schema);
     return results;
   }
 
-  onlyTypeErrorMessage(validateError, rootPath){
-    if(validateError.valid){return true;}
-    if(validateError.missing && validateError.missing.length > 0){return false;}
+  onlyTypeErrorMessage(validateError, rootPath) {
+    if (validateError.valid) {
+      return true;
+    }
+    if (validateError.missing && validateError.missing.length > 0) {
+      return false;
+    }
 
     let badErrorCodes = [
       WSSchema.errorCodes.ANY_OF_MISSING,
@@ -216,87 +214,87 @@ module.exports = class WSCommand {
       WSSchema.errorCodes.CIRCULAR_REFERENCE,
       WSSchema.errorCodes.FORMAT_CUSTOM,
       WSSchema.errorCodes.KEYWORD_CUSTOM,
-      WSSchema.errorCodes.UNKNOWN_PROPERTY
+      WSSchema.errorCodes.UNKNOWN_PROPERTY,
     ];
     let messages = [];
     for (let error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
-        if (error.params.type === "object"
-         || error.params.expected === "object") {
+        if (
+          error.params.type === 'object' ||
+          error.params.expected === 'object'
+        ) {
           return false;
         }
-      }else if (badErrorCodes.includes(error.code)){
+      } else if (badErrorCodes.includes(error.code)) {
         return false;
       }
 
-      let path  = rootPath + error.dataPath.replace(/\//g,".");
-      messages.push( `[${path}]${error.message}`  );
-
+      let path = rootPath + error.dataPath.replace(/\//g, '.');
+      messages.push(`[${path}]${error.message}`);
     }
-    return messages.join(";");
+    return messages.join(';');
   }
 
-  filter(commandUri, json){
-    let schema =  this.getSchema(commandUri);
-    return this._filterSchema( schema, json)
+  filter(commandUri, json) {
+    let schema = this.getSchema(commandUri);
+    return this._filterSchema(schema, json);
   }
 
-  _filterSchema(schema,json){
-
-
-    if(schema["$ref"]){
-      let refSchema = WSSchema.getSchema(schema["$ref"]);
-      return this._filterSchema(refSchema, json  );
+  _filterSchema(schema, json) {
+    if (schema['$ref']) {
+      let refSchema = WSSchema.getSchema(schema['$ref']);
+      return this._filterSchema(refSchema, json);
     }
 
-    if(json === undefined ){
+    if (json === undefined) {
       return schema.default;
     }
 
-    if(schema.type === "string"
-        || schema.type === "integer"
-        || schema.type === "boolean"
-        || schema.type === "number"
-        || schema.type === "null"
-        || schema.filter === "pass_all"){
+    if (
+      schema.type === 'string' ||
+      schema.type === 'integer' ||
+      schema.type === 'boolean' ||
+      schema.type === 'number' ||
+      schema.type === 'null' ||
+      schema.filter === 'pass_all'
+    ) {
       return json;
-
     }
 
-    if(schema.type === "array"){
+    if (schema.type === 'array') {
       let results = [];
-      for( let key  in json){
-        results[key] = this._filterSchema( schema.items,json[key]);
+      for (let key in json) {
+        results[key] = this._filterSchema(schema.items, json[key]);
       }
       return results;
     }
 
-    if(schema.type === "object"){
+    if (schema.type === 'object') {
       let results = {};
-      for( let key in schema.properties){
-        results[key] = this._filterSchema(schema.properties[key], json[key]  );
+      for (let key in schema.properties) {
+        results[key] = this._filterSchema(schema.properties[key], json[key]);
       }
 
-      for(let pattern in schema.patternProperties){
+      for (let pattern in schema.patternProperties) {
         let reg = new RegExp(pattern);
-        for(let key of Object.keys(json)){
-          if( reg.test(key) ){
-            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]  );
+        for (let key of Object.keys(json)) {
+          if (reg.test(key)) {
+            results[key] = this._filterSchema(
+              schema.patternProperties[pattern],
+              json[key]
+            );
           }
         }
-
       }
       return results;
     }
 
-    throw Error("unknown json schema type");
+    throw Error('unknown json schema type');
   }
 
-  get WSCommandNotFoundError(){
+  get WSCommandNotFoundError() {
     return WSCommandNotFoundError;
   }
-}
+};
 
-class WSCommandNotFoundError extends Error{
-
-}
+class WSCommandNotFoundError extends Error {}

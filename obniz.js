@@ -7836,6 +7836,25 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./obniz sync recursive":
+/*!********************!*\
+  !*** ./obniz sync ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function webpackEmptyContext(req) {
+	var e = new Error('Cannot find module "' + req + '".');
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = "./obniz sync recursive";
+
+/***/ }),
+
 /***/ "./obniz/ObnizApi.js":
 /*!***************************!*\
   !*** ./obniz/ObnizApi.js ***!
@@ -7843,27 +7862,26 @@ module.exports = g;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const fetch = __webpack_require__(/*! node-fetch */ "./node_modules/node-fetch/browser.js");
 
-class ObnizApi{
-  constructor(obnizId, options){
+class ObnizApi {
+  constructor(obnizId, options) {
     this.id = obnizId;
     options = options || {};
     this.options = {
       access_token: options.access_token || null,
-      obniz_server:options.obniz_server || "https://obniz.io"
-    }
-    this.urlBase = this.options.obniz_server + "/obniz/" + this.id ;
+      obniz_server: options.obniz_server || 'https://obniz.io',
+    };
+    this.urlBase = this.options.obniz_server + '/obniz/' + this.id;
   }
 
-  get apiVersion(){
+  get apiVersion() {
     let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
-    let versionString =  packageJson.version;
-    return versionString.split(".").shift();
+    let versionString = packageJson.version;
+    return versionString.split('.').shift();
   }
 
-  post(path, params, callback){
+  post(path, params, callback) {
     let url = this.urlBase + path;
 
     // let query = [];
@@ -7875,40 +7893,42 @@ class ObnizApi{
     let headers = {};
     headers['Content-Type'] = 'application/json';
     if (this.options.access_token) {
-      headers["authorization"] = "Bearer "+this.options.access_token;
+      headers['authorization'] = 'Bearer ' + this.options.access_token;
     }
 
-    let fetchParams =  {
+    let fetchParams = {
       method: 'POST',
       headers,
     };
-    if(params){
-      fetchParams["body"] = JSON.stringify(params);
+    if (params) {
+      fetchParams['body'] = JSON.stringify(params);
     }
 
-    return fetch(url,fetchParams).then((res)=>{
-      return res.json();
-    }).then((json)=>{
-      if(typeof callback === "function"){
-        callback(json);
-      }
-      return new Promise(resolve=>{resolve(json)});
-    });
+    return fetch(url, fetchParams)
+      .then(res => {
+        return res.json();
+      })
+      .then(json => {
+        if (typeof callback === 'function') {
+          callback(json);
+        }
+        return new Promise(resolve => {
+          resolve(json);
+        });
+      });
   }
 
-  getState(callback){
-    return this.post("/state",null,callback);
-  };
+  getState(callback) {
+    return this.post('/state', null, callback);
+  }
 
-
-  postJson(json,callback){
-    return this.post("/api/"+this.apiVersion,json, callback);  // 1 is api version
-  };
-
+  postJson(json, callback) {
+    return this.post('/api/' + this.apiVersion, json, callback); // 1 is api version
+  }
 }
 
+module.exports = ObnizApi;
 
- module.exports = ObnizApi;
 
 /***/ }),
 
@@ -7919,70 +7939,84 @@ class ObnizApi{
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizBLE       = __webpack_require__(/*! ./libs/embeds/ble/ble */ "./obniz/libs/embeds/ble/ble.js");
-const Display        = __webpack_require__(/*! ./libs/embeds/display */ "./obniz/libs/embeds/display.js");
-const ObnizSwitch    = __webpack_require__(/*! ./libs/embeds/switch */ "./obniz/libs/embeds/switch.js");
+const ObnizBLE = __webpack_require__(/*! ./libs/embeds/ble/ble */ "./obniz/libs/embeds/ble/ble.js");
+const Display = __webpack_require__(/*! ./libs/embeds/display */ "./obniz/libs/embeds/display.js");
+const ObnizSwitch = __webpack_require__(/*! ./libs/embeds/switch */ "./obniz/libs/embeds/switch.js");
 
-const LogicAnalyzer  = __webpack_require__(/*! ./libs/measurements/logicanalyzer */ "./obniz/libs/measurements/logicanalyzer.js");
-const ObnizMeasure   = __webpack_require__(/*! ./libs/measurements/measure */ "./obniz/libs/measurements/measure.js");
+const LogicAnalyzer = __webpack_require__(/*! ./libs/measurements/logicanalyzer */ "./obniz/libs/measurements/logicanalyzer.js");
+const ObnizMeasure = __webpack_require__(/*! ./libs/measurements/measure */ "./obniz/libs/measurements/measure.js");
 
-const PeripheralAD   = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
-const PeripheralI2C  = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
-const PeripheralIO   = __webpack_require__(/*! ./libs/io_peripherals/io */ "./obniz/libs/io_peripherals/io.js");
-const PeripheralIO_  = __webpack_require__(/*! ./libs/io_peripherals/io_ */ "./obniz/libs/io_peripherals/io_.js");
-const PeripheralPWM  = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./obniz/libs/io_peripherals/pwm.js");
-const PeripheralSPI  = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
+const PeripheralAD = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
+const PeripheralI2C = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
+const PeripheralIO = __webpack_require__(/*! ./libs/io_peripherals/io */ "./obniz/libs/io_peripherals/io.js");
+const PeripheralIO_ = __webpack_require__(/*! ./libs/io_peripherals/io_ */ "./obniz/libs/io_peripherals/io_.js");
+const PeripheralPWM = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./obniz/libs/io_peripherals/pwm.js");
+const PeripheralSPI = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
 const PeripheralUART = __webpack_require__(/*! ./libs/io_peripherals/uart */ "./obniz/libs/io_peripherals/uart.js");
 
 const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
-const ObnizParts = __webpack_require__(/*! ./ObnizParts */ "./obniz/ObnizParts.js")
+const ObnizParts = __webpack_require__(/*! ./ObnizParts */ "./obniz/ObnizParts.js");
 
 module.exports = class ObnizComponents extends ObnizParts {
-
   constructor(id, options) {
-    super(id, options)
+    super(id, options);
     this.pongObservers = [];
   }
 
   _prepareComponents() {
     this.io = new PeripheralIO_(this);
-    for (let i=0; i<12; i++) { this["io"+i]   = new PeripheralIO(this, i); }
-    for (let i=0; i<12; i++) { this["ad"+i]   = new PeripheralAD(this, i); }
-    for (let i=0; i<2;  i++) { this["uart"+i] = new PeripheralUART(this, i); }
-    for (let i=0; i<2;  i++) { this["spi"+i]  = new PeripheralSPI(this, i); }
-    for (let i=0; i<1;  i++) { this["i2c"+i]  = new PeripheralI2C(this, i); }
-    for (let i=0; i<6;  i++) { this["pwm"+i]  = new PeripheralPWM(this, i); }
-  
+    for (let i = 0; i < 12; i++) {
+      this['io' + i] = new PeripheralIO(this, i);
+    }
+    for (let i = 0; i < 12; i++) {
+      this['ad' + i] = new PeripheralAD(this, i);
+    }
+    for (let i = 0; i < 2; i++) {
+      this['uart' + i] = new PeripheralUART(this, i);
+    }
+    for (let i = 0; i < 2; i++) {
+      this['spi' + i] = new PeripheralSPI(this, i);
+    }
+    for (let i = 0; i < 1; i++) {
+      this['i2c' + i] = new PeripheralI2C(this, i);
+    }
+    for (let i = 0; i < 6; i++) {
+      this['pwm' + i] = new PeripheralPWM(this, i);
+    }
+
     this.display = new Display(this);
     this.switch = new ObnizSwitch(this);
     this.logicAnalyzer = new LogicAnalyzer(this);
     this.ble = new ObnizBLE(this);
     this.measure = new ObnizMeasure(this);
-  
+
     this.util = new ObnizUtil(this);
   }
 
-  notifyToModule(obj){
+  notifyToModule(obj) {
     super.notifyToModule(obj);
-    const notifyHandlers = ["io", "uart", "spi", "i2c", "ad"];
-    for (let handerIndex = 0; handerIndex < notifyHandlers.length; handerIndex++) {
+    const notifyHandlers = ['io', 'uart', 'spi', 'i2c', 'ad'];
+    for (
+      let handerIndex = 0;
+      handerIndex < notifyHandlers.length;
+      handerIndex++
+    ) {
       const peripheral = notifyHandlers[handerIndex];
       let i = -1;
-      while (this[peripheral + "" + (++i)]) {
-        let module_value = obj[peripheral + "" + i];
-        if (module_value === undefined)
-          continue;
-        this[peripheral + "" + i].notified(module_value);
+      while (this[peripheral + '' + ++i]) {
+        let module_value = obj[peripheral + '' + i];
+        if (module_value === undefined) continue;
+        this[peripheral + '' + i].notified(module_value);
       }
     }
-    const names = ["switch", "ble", "measure"];
+    const names = ['switch', 'ble', 'measure'];
     for (let i = 0; i < names.length; i++) {
       if (obj[names[i]]) {
         this[names[i]].notified(obj[names[i]]);
       }
     }
     if (obj.logic_analyzer) {
-      this.logicAnalyzer.notified(obj.logic_analyzer)
+      this.logicAnalyzer.notified(obj.logic_analyzer);
     }
   }
 
@@ -7990,39 +8024,39 @@ module.exports = class ObnizComponents extends ObnizParts {
     super.handleSystemCommand(wsObj);
     // ping pong
     if (wsObj.pong) {
-      for(let callback of this.pongObservers){
+      for (let callback of this.pongObservers) {
         callback(wsObj);
       }
     }
   }
 
   addPongObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.pongObservers.push(callback);
     }
   }
 
   removePongObserver(callback) {
-    if(this.pongObservers.includes(callback)){
-      let index =  this.pongObservers.indexOf(callback);
-      this.pongObservers.splice(index,1);
+    if (this.pongObservers.includes(callback)) {
+      let index = this.pongObservers.indexOf(callback);
+      this.pongObservers.splice(index, 1);
     }
   }
 
   isValidIO(io) {
-    return (typeof io === "number" && io >= 0 && io < 12);
+    return typeof io === 'number' && io >= 0 && io < 12;
   }
 
   setVccGnd(vcc, gnd, drive) {
-    if(this.isValidIO(vcc)){
-      if(drive){
+    if (this.isValidIO(vcc)) {
+      if (drive) {
         this.getIO(vcc).drive(drive);
       }
       this.getIO(vcc).output(true);
     }
-    
-    if(this.isValidIO(gnd)){
-      if(drive){
+
+    if (this.isValidIO(gnd)) {
+      if (drive) {
         this.getIO(gnd).drive(drive);
       }
       this.getIO(gnd).output(false);
@@ -8033,20 +8067,20 @@ module.exports = class ObnizComponents extends ObnizParts {
     if (!this.isValidIO(io)) {
       throw new Error('io ' + io + ' is not valid io');
     }
-    return this["io" + io];
+    return this['io' + io];
   }
 
   getAD(io) {
     if (!this.isValidIO(io)) {
       throw new Error('ad ' + io + ' is not valid io');
     }
-    return this["ad" + io];
+    return this['ad' + io];
   }
 
   getFreePwm() {
     let i = 0;
-    while (true) {
-      let pwm = this["pwm" + i];
+    for (i = 0; i < 6; i++) {
+      let pwm = this['pwm' + i];
       if (!pwm) {
         break;
       }
@@ -8054,15 +8088,14 @@ module.exports = class ObnizComponents extends ObnizParts {
         pwm.used = true;
         return pwm;
       }
-      i++;
     }
-    throw new Error("No More PWM Available. max = " + i);
+    throw new Error('No More PWM Available. max = ' + i);
   }
 
   getFreeI2C() {
     let i = 0;
-    while (true) {
-      let i2c = this["i2c" + i];
+    for (i = 0; i < 1; i++) {
+      let i2c = this['i2c' + i];
       if (!i2c) {
         break;
       }
@@ -8070,16 +8103,15 @@ module.exports = class ObnizComponents extends ObnizParts {
         i2c.used = true;
         return i2c;
       }
-      i++;
     }
-    throw new Error("No More I2C Available. max = " + i);
+    throw new Error('No More I2C Available. max = ' + i);
   }
 
   getI2CWithConfig(config) {
-    if(typeof config !== "object" ){
-      throw new Error("getI2CWithConfig need config arg");
+    if (typeof config !== 'object') {
+      throw new Error('getI2CWithConfig need config arg');
     }
-    if(config.i2c){
+    if (config.i2c) {
       return config.i2c;
     }
     let i2c = this.getFreeI2C();
@@ -8089,8 +8121,8 @@ module.exports = class ObnizComponents extends ObnizParts {
 
   getFreeSpi() {
     let i = 0;
-    while (true) {
-      let spi = this["spi" + i];
+    for (i = 0; i < 2; i++) {
+      let spi = this['spi' + i];
       if (!spi) {
         break;
       }
@@ -8098,16 +8130,15 @@ module.exports = class ObnizComponents extends ObnizParts {
         spi.used = true;
         return spi;
       }
-      i++;
     }
-    throw new Error("No More SPI Available. max = " + i);
+    throw new Error('No More SPI Available. max = ' + i);
   }
 
   getSpiWithConfig(config) {
-    if(typeof config !== "object" ){
-      throw new Error("getSpiWithConfig need config arg");
+    if (typeof config !== 'object') {
+      throw new Error('getSpiWithConfig need config arg');
     }
-    if(config.spi){
+    if (config.spi) {
       return config.spi;
     }
     let spi = this.getFreeSpi();
@@ -8117,8 +8148,8 @@ module.exports = class ObnizComponents extends ObnizParts {
 
   getFreeUart() {
     let i = 0;
-    while (true) {
-      let uart = this["uart" + i];
+    for (i = 0; i < 2; i++) {
+      let uart = this['uart' + i];
       if (!uart) {
         break;
       }
@@ -8126,11 +8157,11 @@ module.exports = class ObnizComponents extends ObnizParts {
         uart.used = true;
         return uart;
       }
-      i++;
     }
-    throw new Error("No More uart Available. max = " + i);
+    throw new Error('No More uart Available. max = ' + i);
   }
-}
+};
+
 
 /***/ }),
 
@@ -8143,10 +8174,9 @@ module.exports = class ObnizComponents extends ObnizParts {
 
 const WSCommand = __webpack_require__(/*! ./libs/wscommand */ "./obniz/libs/wscommand/index.js");
 
-const isNode = (typeof window === 'undefined');
+const isNode = typeof window === 'undefined';
 
 module.exports = class ObnizConnection {
-
   constructor(id, options) {
     this.isNode = isNode;
     this.id = id;
@@ -8163,10 +8193,10 @@ module.exports = class ObnizConnection {
     this.options = {
       binary: options.binary === false ? false : true,
       local_connect: options.local_connect === false ? false : true,
-      debug_dom_id: options.debug_dom_id || "obniz-debug",
+      debug_dom_id: options.debug_dom_id || 'obniz-debug',
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
-      obniz_server: options.obniz_server || "wss://obniz.io"
+      obniz_server: options.obniz_server || 'wss://obniz.io',
     };
     if (this.options.binary) {
       this.wscommand = this.constructor.WSCommand;
@@ -8182,66 +8212,65 @@ module.exports = class ObnizConnection {
   }
 
   isValidObnizId(str) {
-    if (typeof str != "string" || str.length < 8) {
+    if (typeof str != 'string' || str.length < 8) {
       return null;
     }
-    str = str.replace("-", "");
+    str = str.replace('-', '');
     let id = parseInt(str);
-    if (isNaN(id))
-      id = null;
+    if (isNaN(id)) id = null;
     return id != null;
   }
 
   prompt(filled, callback) {
-    var obnizid = prompt("Please enter obniz id", filled);
-    if (!obnizid) {
-    } else {
+    let obnizid = prompt('Please enter obniz id', filled);
+    if (obnizid) {
       callback(obnizid);
     }
   }
 
-  static get version(){
+  static get version() {
     let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
     return packageJson.version;
   }
 
   wsOnOpen() {
-    this.print_debug("ws connected");
+    this.print_debug('ws connected');
     // wait for {ws:{ready:true}} object
-    if(typeof this.onopen === "function"){
+    if (typeof this.onopen === 'function') {
       this.onopen(this);
     }
   }
 
   wsOnMessage(data) {
-    if(this.debugprintBinary && typeof data !== "string" ){
-      this.print_debug("" + new Uint8Array(data).toString());
+    if (this.debugprintBinary && typeof data !== 'string') {
+      this.print_debug('' + new Uint8Array(data).toString());
     }
 
-    let json ;
-    if(typeof data === "string"){
+    let json;
+    if (typeof data === 'string') {
       json = JSON.parse(data);
-    }else if(this.wscommands) { //binary
+    } else if (this.wscommands) {
+      //binary
       json = this.binary2Json(data);
     }
 
-    if(Array.isArray(json)){
-      for(let i in json ) {
+    if (Array.isArray(json)) {
+      for (let i in json) {
         this.notifyToModule(json[i]);
       }
-    }else{
+    } else {
       //invalid json
     }
   }
 
   wsOnClose(event) {
-    this.print_debug("closed");
+    this.print_debug('closed');
     this.close();
-    if(typeof this.onclose === "function"){
+    if (typeof this.onclose === 'function') {
       this.onclose(this);
     }
-    if(this.options.auto_connect) {
-      setTimeout( () => {
+    if (this.options.auto_connect) {
+      setTimeout(() => {
         this.wsconnect(); // always connect to mainserver if ws lost
       }, 1000);
     }
@@ -8254,16 +8283,16 @@ module.exports = class ObnizConnection {
   wsOnUnexpectedResponse(req, res) {
     let reconnectTime = 1000;
     if (res && res.statusCode == 404) {
-      this.print_debug("obniz not online");
+      this.print_debug('obniz not online');
     } else {
       reconnectTime = 5000; // server error or someting
-      this.print_debug( true ? res.statusCode :  undefined);
+      this.print_debug( true ? res.statusCode : undefined);
     }
     this.clearSocket(this.socket);
     delete this.socket;
-    if(this.options.auto_connect) {
+    if (this.options.auto_connect) {
       setTimeout(() => {
-        this.wsconnect();  // always connect to mainserver if ws lost
+        this.wsconnect(); // always connect to mainserver if ws lost
       }, reconnectTime);
     }
   }
@@ -8271,28 +8300,28 @@ module.exports = class ObnizConnection {
   wsconnect(desired_server) {
     let server = this.options.obniz_server;
     if (desired_server) {
-      server = "" + desired_server;
+      server = '' + desired_server;
     }
 
     this.close();
 
-    let url = server + "/obniz/" + this.id + "/ws/1";
+    let url = server + '/obniz/' + this.id + '/ws/1';
 
     let query = [];
     if (this.constructor.version) {
-      query.push("obnizjs="+this.constructor.version);
+      query.push('obnizjs=' + this.constructor.version);
     }
     if (this.options.access_token) {
-      query.push("access_token="+this.options.access_token);
+      query.push('access_token=' + this.options.access_token);
     }
     if (this.wscommand) {
-      query.push("accept_binary=true");
+      query.push('accept_binary=true');
     }
-    if(query.length > 0){
-      url += "?" + query.join("&");
+    if (query.length > 0) {
+      url += '?' + query.join('&');
     }
-    this.print_debug("connecting to " + url);
-  
+    this.print_debug('connecting to ' + url);
+
     let socket;
     if (this.isNode) {
       const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
@@ -8306,7 +8335,7 @@ module.exports = class ObnizConnection {
       socket = new WebSocket(url);
       socket.binaryType = 'arraybuffer';
       socket.onopen = this.wsOnOpen.bind(this);
-      socket.onmessage = function (event) {
+      socket.onmessage = function(event) {
         this.wsOnMessage(event.data);
       }.bind(this);
       socket.onclose = this.wsOnClose.bind(this);
@@ -8316,34 +8345,33 @@ module.exports = class ObnizConnection {
   }
 
   _connectLocal(host) {
-    const url = 'ws://' + host
-    this.print_debug("local connect to " + url)
+    const url = 'ws://' + host;
+    this.print_debug('local connect to ' + url);
     let ws;
     if (this.isNode) {
       const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
       ws = new wsClient(url);
       ws.on('open', () => {
-        this.print_debug("connected to " + url)
+        this.print_debug('connected to ' + url);
         if (this._waitForLocalConnectReadyTimer) {
           clearTimeout(this._waitForLocalConnectReadyTimer);
           this._waitForLocalConnectReadyTimer = null;
           this._callOnConnect();
         }
       });
-      ws.on('message', (data) => {
-        this.print_debug("recvd via local");
-        this.print_debug(Array.prototype.slice.call(data));
+      ws.on('message', data => {
+        this.print_debug('recvd via local');
         this.wsOnMessage(data);
       });
-      ws.on('close', (event) => {
+      ws.on('close', event => {
         console.log('local websocket closed');
         this._disconnectLocal();
       });
-      ws.on('error', (err) => {
-        console.error("local websocket error.", err);
+      ws.on('error', err => {
+        console.error('local websocket error.', err);
         this._disconnectLocal();
       });
-      ws.on('unexpected-response', (event) => {
+      ws.on('unexpected-response', event => {
         console.log('local websocket closed');
         this._disconnectLocal();
       });
@@ -8351,26 +8379,25 @@ module.exports = class ObnizConnection {
       ws = new WebSocket(url);
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
-        this.print_debug("connected to " + url)
+        this.print_debug('connected to ' + url);
         if (this._waitForLocalConnectReadyTimer) {
           clearTimeout(this._waitForLocalConnectReadyTimer);
           this._waitForLocalConnectReadyTimer = null;
           this._callOnConnect();
         }
-      }
-      ws.onmessage = (event) => {
-        this.print_debug("recvd via local");
-        this.print_debug(Array.prototype.slice.call(data));
+      };
+      ws.onmessage = event => {
+        this.print_debug('recvd via local');
         this.wsOnMessage(event.data);
       };
-      ws.onclose = (event) => {
+      ws.onclose = event => {
         console.log('local websocket closed');
         this._disconnectLocal();
-      }
-      ws.onerror = (err) => {
-        console.log("local websocket error.", err);
+      };
+      ws.onerror = err => {
+        console.log('local websocket error.', err);
         this._disconnectLocal();
-      }
+      };
     }
     this.socket_local = ws;
   }
@@ -8391,8 +8418,7 @@ module.exports = class ObnizConnection {
   }
 
   clearSocket(socket) {
-    if (!socket)
-      return
+    if (!socket) return;
     /* send queue */
     if (this._sendQueueTimer) {
       delete this._sendQueue;
@@ -8401,7 +8427,13 @@ module.exports = class ObnizConnection {
     }
     /* unbind */
     if (this.isNode) {
-      let shouldRemoveObservers = ['open', 'message', 'close', 'error', 'unexpected-response'];
+      let shouldRemoveObservers = [
+        'open',
+        'message',
+        'close',
+        'error',
+        'unexpected-response',
+      ];
       for (let i = 0; i < shouldRemoveObservers.length; i++) {
         socket.removeAllListeners(shouldRemoveObservers[i]);
       }
@@ -8413,7 +8445,7 @@ module.exports = class ObnizConnection {
     }
   }
 
-  connect(){
+  connect() {
     this.wsconnect();
   }
 
@@ -8421,7 +8453,8 @@ module.exports = class ObnizConnection {
     this._drainQueued();
     this._disconnectLocal();
     if (this.socket) {
-      if (this.socket.readyState <= 1) { // Connecting & Connected
+      if (this.socket.readyState <= 1) {
+        // Connecting & Connected
         this.socket.close(1000, 'close');
       }
       this.clearSocket(this.socket);
@@ -8434,11 +8467,10 @@ module.exports = class ObnizConnection {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
     }
-    if (typeof this.onconnect !== "function")
-      return;
+    if (typeof this.onconnect !== 'function') return;
     const promise = this.onconnect(this);
-    if(promise instanceof Promise){
-      promise.catch((err) => {
+    if (promise instanceof Promise) {
+      promise.catch(err => {
         console.error(err);
       });
     }
@@ -8446,47 +8478,58 @@ module.exports = class ObnizConnection {
 
   print_debug(str) {
     if (this.debugprint) {
-      console.log("Obniz: " + str);
+      console.log('Obniz: ' + str);
     }
   }
 
   send(obj, options) {
-    if (!obj || (typeof obj !== "object")) {
-      console.log("obnizjs. didnt send ", obj);
+    if (!obj || typeof obj !== 'object') {
+      console.log('obnizjs. didnt send ', obj);
       return;
     }
     if (Array.isArray(obj)) {
-      for (let i=0; i<obj.length; i++) {
+      for (let i = 0; i < obj.length; i++) {
         this.send(obj[i]);
       }
       return;
     }
-    if (this.sendPool) { this.sendPool.push(obj); return; }
+    if (this.sendPool) {
+      this.sendPool.push(obj);
+      return;
+    }
 
     let sendData = JSON.stringify([obj]);
     if (this.debugprint) {
-      this.print_debug("send: " + sendData);
+      this.print_debug('send: ' + sendData);
     }
     /* compress */
-    if (this.wscommand && (typeof options !== "object" || options.local_connect !== false)) {
+    if (
+      this.wscommand &&
+      (typeof options !== 'object' || options.local_connect !== false)
+    ) {
       let compressed;
       try {
-        compressed = this.wscommand.compress(this.wscommands, JSON.parse(sendData)[0]);
+        compressed = this.wscommand.compress(
+          this.wscommands,
+          JSON.parse(sendData)[0]
+        );
         if (compressed) {
           sendData = compressed;
-          if(this.debugprintBinary){
-            this.print_debug("binalized: " + new Uint8Array(compressed).toString());
+          if (this.debugprintBinary) {
+            this.print_debug(
+              'binalized: ' + new Uint8Array(compressed).toString()
+            );
           }
         }
-      } catch(e) {
+      } catch (e) {
         this.error('------ errored json -------');
-        this.error(sendData)
+        this.error(sendData);
         throw e;
       }
     }
-    
+
     /* queue sending */
-    if(typeof sendData === "string") {
+    if (typeof sendData === 'string') {
       this._drainQueued();
       this._sendRouted(sendData);
     } else {
@@ -8500,13 +8543,18 @@ module.exports = class ObnizConnection {
   }
 
   _sendRouted(data) {
-
-    if (this.socket_local && this.socket_local.readyState === 1 && typeof data !== "string") {
-      this.print_debug("send via local");
+    if (
+      this.socket_local &&
+      this.socket_local.readyState === 1 &&
+      typeof data !== 'string'
+    ) {
+      this.print_debug('send via local');
       this.print_debug(data);
       this.socket_local.send(data);
       if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.error('Warning: over ' + this.socket_local.bufferedAmount + ' bytes queued');
+        this.error(
+          'Warning: over ' + this.socket_local.bufferedAmount + ' bytes queued'
+        );
       }
       return;
     }
@@ -8514,7 +8562,9 @@ module.exports = class ObnizConnection {
     if (this.socket && this.socket.readyState === 1) {
       this.socket.send(data);
       if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.error('Warning: over ' + this.socket.bufferedAmount + ' bytes queued');
+        this.error(
+          'Warning: over ' + this.socket.bufferedAmount + ' bytes queued'
+        );
       }
       return;
     }
@@ -8523,12 +8573,12 @@ module.exports = class ObnizConnection {
   _drainQueued() {
     if (!this._sendQueue) return;
     let expectSize = 0;
-    for (let i=0; i<this._sendQueue.length; i++) {
+    for (let i = 0; i < this._sendQueue.length; i++) {
       expectSize += this._sendQueue[i].length;
     }
     let filled = 0;
     let sendData = new Uint8Array(expectSize);
-    for (let i=0; i<this._sendQueue.length; i++) {
+    for (let i = 0; i < this._sendQueue.length; i++) {
       sendData.set(this._sendQueue[i], filled);
       filled += this._sendQueue[i].length;
     }
@@ -8538,19 +8588,17 @@ module.exports = class ObnizConnection {
     this._sendQueueTimer = null;
   }
 
-  _prepareComponents() {
+  _prepareComponents() {}
 
-  }
-
-  notifyToModule(obj){
+  notifyToModule(obj) {
     this.print_debug(JSON.stringify(obj));
-    
-    if (obj["ws"]) {
-      this.handleWSCommand(obj["ws"]);
+
+    if (obj['ws']) {
+      this.handleWSCommand(obj['ws']);
       return;
     }
-    if (obj["system"]) {
-      this.handleSystemCommand(obj["system"]);
+    if (obj['system']) {
+      this.handleSystemCommand(obj['system']);
       return;
     }
   }
@@ -8559,22 +8607,26 @@ module.exports = class ObnizConnection {
     if (this.isNode) {
       return true;
     } else {
-      return (location.protocol != 'https:');
+      return location.protocol != 'https:';
     }
   }
 
   handleWSCommand(wsObj) {
-    // 
+    //
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
       this.resetOnDisconnect(true);
-      if (wsObj.local_connect
-        && wsObj.local_connect.ip
-        && this.wscommand
-        && this.options.local_connect
-        && this._canConnectToInsecure()) {
+      if (
+        wsObj.local_connect &&
+        wsObj.local_connect.ip &&
+        this.wscommand &&
+        this.options.local_connect &&
+        this._canConnectToInsecure()
+      ) {
         this._connectLocal(wsObj.local_connect.ip);
-        this._waitForLocalConnectReadyTimer = setTimeout(()=>{ this._callOnConnect(); }, 1000);
+        this._waitForLocalConnectReadyTimer = setTimeout(() => {
+          this._callOnConnect();
+        }, 1000);
       }
       if (!this._waitForLocalConnectReadyTimer) {
         this._callOnConnect();
@@ -8582,28 +8634,26 @@ module.exports = class ObnizConnection {
     }
     if (wsObj.redirect) {
       let server = wsObj.redirect;
-      this.print_debug("WS connection changed to " + server);
+      this.print_debug('WS connection changed to ' + server);
       this.close();
       this.wsconnect(server);
     }
   }
 
-  handleSystemCommand(wsObj) {
-
-  }
+  handleSystemCommand(wsObj) {}
 
   static get WSCommand() {
     return WSCommand;
   }
 
-  binary2Json(binary){
+  binary2Json(binary) {
     let data = new Uint8Array(binary);
     let json = [];
-    while(true) {
+    while (data !== null) {
       const frame = WSCommand.dequeueOne(data);
       if (!frame) break;
       let obj = {};
-      for (var i=0; i<this.wscommands.length; i++) {
+      for (let i = 0; i < this.wscommands.length; i++) {
         const command = this.wscommands[i];
         if (command.module === frame.module) {
           command.notifyFromBinary(obj, frame.func, frame.payload);
@@ -8616,18 +8666,17 @@ module.exports = class ObnizConnection {
     return json;
   }
 
-  updateOnlineUI() {
-
-  }
+  updateOnlineUI() {}
 
   warning(msg) {
-    console.log('warning:' + msg)
+    console.log('warning:' + msg);
   }
 
   error(msg) {
-    console.error('error:' + msg)
+    console.error('error:' + msg);
   }
-}
+};
+
 
 /***/ }),
 
@@ -8638,24 +8687,21 @@ module.exports = class ObnizConnection {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-
-const ObnizConnection = __webpack_require__(/*! ./ObnizConnection */ "./obniz/ObnizConnection.js")
+const ObnizConnection = __webpack_require__(/*! ./ObnizConnection */ "./obniz/ObnizConnection.js");
 const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
 
 let _parts = {};
 
 module.exports = class ObnizParts extends ObnizConnection {
-
   constructor(id, options) {
-    super(id, options)
+    super(id, options);
   }
 
   static _parts() {
     return _parts;
   }
 
-  static PartsRegistrate (name, obj) {
+  static PartsRegistrate(name, obj) {
     _parts[name] = obj;
   }
 
@@ -8666,43 +8712,44 @@ module.exports = class ObnizParts extends ObnizConnection {
   wired(partsname) {
     let parts = ObnizParts.Parts(partsname);
     if (!parts) {
-      throw new Error("No such a parts [" + partsname + "] found");
-      return;
+      throw new Error('No such a parts [' + partsname + '] found');
     }
     let args = Array.from(arguments);
     args.shift();
-    args.unshift(this); 
-    if(parts.keys){
-      if(parts.requiredKeys){
+    args.unshift(this);
+    if (parts.keys) {
+      if (parts.requiredKeys) {
         let err = ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
         if (err) {
-          throw new Error(partsname + " wired param '" + err + "' required, but not found ");
-          return;
+          throw new Error(
+            partsname + " wired param '" + err + "' required, but not found "
+          );
         }
       }
       parts.params = ObnizUtil._keyFilter(args[1], parts.keys);
     }
     parts.obniz = this;
     parts.wired.apply(parts, args);
-    if(parts.keys || parts.ioKeys){
+    if (parts.keys || parts.ioKeys) {
       let keys = parts.ioKeys || parts.keys;
       let displayPartsName = parts.displayName || partsname;
       let ioNames = {};
-      for( let index in keys){
+      for (let index in keys) {
         let pinName = keys[index];
         let io = args[1][pinName];
-        if(this.isValidIO(io)) {
+        if (this.isValidIO(io)) {
           if (parts.displayIoNames && parts.displayIoNames[pinName]) {
             pinName = parts.displayIoNames[pinName];
           }
           ioNames[io] = pinName;
         }
       }
-      this.display.setPinNames(displayPartsName,ioNames);
+      this.display.setPinNames(displayPartsName, ioNames);
     }
     return parts;
   }
-}
+};
+
 
 /***/ }),
 
@@ -8713,12 +8760,11 @@ module.exports = class ObnizParts extends ObnizConnection {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizComponents = __webpack_require__(/*! ./ObnizComponents */ "./obniz/ObnizComponents.js")
+const ObnizComponents = __webpack_require__(/*! ./ObnizComponents */ "./obniz/ObnizComponents.js");
 
 module.exports = class ObnizSystemMethods extends ObnizComponents {
-
   constructor(id, options) {
-    super(id, options)
+    super(id, options);
   }
 
   wait(msec) {
@@ -8731,66 +8777,81 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     return new Promise(resolve => setTimeout(resolve, msec));
   }
 
-  reset() { this.send({ system: { reset: true } }); this._prepareComponents(); }
-  reboot() { this.send({ system: { reboot: true } }); this._prepareComponents(); }
-  selfCheck() { this.send({ system: { self_check: true } }); }
-  keepWorkingAtOffline(working) { this.send({ system: { keep_working_at_offline: working } }); }
-  resetOnDisconnect(reset) { this.send({ ws: { reset_obniz_on_ws_disconnection: reset } }); }
+  reset() {
+    this.send({ system: { reset: true } });
+    this._prepareComponents();
+  }
+  reboot() {
+    this.send({ system: { reboot: true } });
+    this._prepareComponents();
+  }
+  selfCheck() {
+    this.send({ system: { self_check: true } });
+  }
+  keepWorkingAtOffline(working) {
+    this.send({ system: { keep_working_at_offline: working } });
+  }
+  resetOnDisconnect(reset) {
+    this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
+  }
 
-  pingWait(unixtime, rand, forceGlobalNetwork){
-
+  pingWait(unixtime, rand, forceGlobalNetwork) {
     unixtime = unixtime || new Date().getTime();
-    let upper = Math.floor( unixtime / Math.pow(2,32));
-    let lower = unixtime - upper * Math.pow(2,32);
-    rand = rand || Math.floor(Math.random() * Math.pow(2,4));
+    let upper = Math.floor(unixtime / Math.pow(2, 32));
+    let lower = unixtime - upper * Math.pow(2, 32);
+    rand = rand || Math.floor(Math.random() * Math.pow(2, 4));
     let buf = [];
 
-    buf.push((upper >>> 8*3) & 0xFF);
-    buf.push((upper >>> 8*2) & 0xFF);
-    buf.push((upper >>> 8*1) & 0xFF);
-    buf.push((upper >>> 8*0) & 0xFF);
-    buf.push((lower >>> 8*3) & 0xFF);
-    buf.push((lower >>> 8*2) & 0xFF);
-    buf.push((lower >>> 8*1) & 0xFF);
-    buf.push((lower >>> 8*0) & 0xFF);
-    buf.push((rand >>> 8*3) & 0xFF);
-    buf.push((rand >>> 8*2) & 0xFF);
-    buf.push((rand >>> 8*1) & 0xFF);
-    buf.push((rand >>> 8*0) & 0xFF);
+    buf.push((upper >>> (8 * 3)) & 0xff);
+    buf.push((upper >>> (8 * 2)) & 0xff);
+    buf.push((upper >>> (8 * 1)) & 0xff);
+    buf.push((upper >>> (8 * 0)) & 0xff);
+    buf.push((lower >>> (8 * 3)) & 0xff);
+    buf.push((lower >>> (8 * 2)) & 0xff);
+    buf.push((lower >>> (8 * 1)) & 0xff);
+    buf.push((lower >>> (8 * 0)) & 0xff);
+    buf.push((rand >>> (8 * 3)) & 0xff);
+    buf.push((rand >>> (8 * 2)) & 0xff);
+    buf.push((rand >>> (8 * 1)) & 0xff);
+    buf.push((rand >>> (8 * 0)) & 0xff);
 
     let obj = {
       system: {
         ping: {
-          key: buf
-        }
-      }
-    }
+          key: buf,
+        },
+      },
+    };
 
-    this.send(obj, {local_connect: forceGlobalNetwork ? false : true});
-    
-    return new Promise((resolve)=>{
-      let callback = (systemObj) => {
-        for(let i =0;i<buf.length;i++){
-          if(buf[i] !== systemObj.pong.key[i]){
+    this.send(obj, { local_connect: forceGlobalNetwork ? false : true });
+
+    return new Promise(resolve => {
+      let callback = systemObj => {
+        for (let i = 0; i < buf.length; i++) {
+          if (buf[i] !== systemObj.pong.key[i]) {
             return;
           }
         }
         this.removePongObserver(callback);
-        let upper = ((systemObj.pong.key[0] << 8 * 3) >>> 0)
-            + ((systemObj.pong.key[1] << 8 * 2) >>> 0)
-            + ((systemObj.pong.key[2] << 8 * 1) >>> 0)
-            + ((systemObj.pong.key[3] << 8 * 0) >>> 0);
-        let lower = ((systemObj.pong.key[4] << 8 * 3) >>> 0)
-            + ((systemObj.pong.key[5] << 8 * 2) >>> 0)
-            + ((systemObj.pong.key[6] << 8 * 1) >>> 0)
-            + ((systemObj.pong.key[7] << 8 * 0) >>> 0);
+        let upper =
+          ((systemObj.pong.key[0] << (8 * 3)) >>> 0) +
+          ((systemObj.pong.key[1] << (8 * 2)) >>> 0) +
+          ((systemObj.pong.key[2] << (8 * 1)) >>> 0) +
+          ((systemObj.pong.key[3] << (8 * 0)) >>> 0);
+        let lower =
+          ((systemObj.pong.key[4] << (8 * 3)) >>> 0) +
+          ((systemObj.pong.key[5] << (8 * 2)) >>> 0) +
+          ((systemObj.pong.key[6] << (8 * 1)) >>> 0) +
+          ((systemObj.pong.key[7] << (8 * 0)) >>> 0);
         let obnizJsPingUnixtime = upper * Math.pow(2, 32) + lower;
         let obnizJsPongUnixtime = new Date().getTime();
-        let allTime = obnizJsPongUnixtime- obnizJsPingUnixtime;
+        let allTime = obnizJsPongUnixtime - obnizJsPingUnixtime;
         let timeJs2server = systemObj.pong.pingServerTime - obnizJsPingUnixtime;
-        let timeServer2Obniz = systemObj.pong.obnizTime - systemObj.pong.pingServerTime ;
-        let timeObniz2Server = systemObj.pong.pongServerTime- systemObj.pong.obnizTime ;
-        let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime ;
+        let timeServer2Obniz =
+          systemObj.pong.obnizTime - systemObj.pong.pingServerTime;
+        let timeObniz2Server =
+          systemObj.pong.pongServerTime - systemObj.pong.obnizTime;
+        let timeServer2Js = obnizJsPongUnixtime - systemObj.pong.pongServerTime;
         let str = `ping ${allTime}ms (js --[${timeJs2server}ms]--> server --[${timeServer2Obniz}ms]--> obniz --[${timeObniz2Server}ms]--> server --[${timeServer2Js}ms]--> js)`;
 
         this.print_debug(str);
@@ -8799,7 +8860,8 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
       this.addPongObserver(callback);
     });
   }
-}
+};
+
 
 /***/ }),
 
@@ -8810,26 +8872,27 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizSystemMethods = __webpack_require__(/*! ./ObnizSystemMethods */ "./obniz/ObnizSystemMethods.js")
+const ObnizSystemMethods = __webpack_require__(/*! ./ObnizSystemMethods */ "./obniz/ObnizSystemMethods.js");
 
 module.exports = class ObnizUIs extends ObnizSystemMethods {
-
   constructor(id, options) {
-    super(id, options)
+    super(id, options);
   }
 
   wsconnect(desired_server) {
     this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
       if (this.isNode) {
-        this.error("invalid obniz id");
-      }
-      else {
-        let filled = _ReadCookie("obniz-last-used") || "";
-        this.prompt(filled, function (obnizid) {
-          this.id = obnizid;
-          this.wsconnect(desired_server);
-        }.bind(this));
+        this.error('invalid obniz id');
+      } else {
+        let filled = _ReadCookie('obniz-last-used') || '';
+        this.prompt(
+          filled,
+          function(obnizid) {
+            this.id = obnizid;
+            this.wsconnect(desired_server);
+          }.bind(this)
+        );
       }
       return;
     }
@@ -8840,29 +8903,33 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     if (this.isNode || !document.getElementById(this.options.debug_dom_id)) {
       return;
     }
-    const alerts = {
-      warning: 'alert-warning alert-dismissible',
-      error: 'alert-danger'
-    };
     let dom = `
-    <div style="background-color:${obj.alert === "warning" ? "#ffee35" : "#ff7b34"  }">${obj.message}</div>`;
-    document.getElementById(this.options.debug_dom_id).insertAdjacentHTML('beforeend', dom);
+    <div style="background-color:${
+      obj.alert === 'warning' ? '#ffee35' : '#ff7b34'
+    }">${obj.message}</div>`;
+    document
+      .getElementById(this.options.debug_dom_id)
+      .insertAdjacentHTML('beforeend', dom);
   }
 
-  getDebugDoms(){
-    if (this.isNode){return;}
-    let loaderDom = document.querySelector("#loader");
-    let debugDom = document.querySelector("#" + this.options.debug_dom_id);
-    let statusDom = document.querySelector("#"+this.options.debug_dom_id +" #online-status");
-    if(debugDom && !statusDom){
-      statusDom = document.createElement("div");
+  getDebugDoms() {
+    if (this.isNode) {
+      return;
+    }
+    let loaderDom = document.querySelector('#loader');
+    let debugDom = document.querySelector('#' + this.options.debug_dom_id);
+    let statusDom = document.querySelector(
+      '#' + this.options.debug_dom_id + ' #online-status'
+    );
+    if (debugDom && !statusDom) {
+      statusDom = document.createElement('div');
       statusDom.id = 'online-status';
-      statusDom.style.color =  "#FFF";
-      statusDom.style.padding =  "5px";
-      statusDom.style.textAlign =  "center";
+      statusDom.style.color = '#FFF';
+      statusDom.style.padding = '5px';
+      statusDom.style.textAlign = 'center';
       debugDom.insertBefore(statusDom, debugDom.firstChild);
     }
-    return { loaderDom:loaderDom, debugDom:debugDom, statusDom:statusDom };
+    return { loaderDom: loaderDom, debugDom: debugDom, statusDom: statusDom };
   }
 
   /* online offline */
@@ -8883,10 +8950,13 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   }
 
   updateOnlineUI() {
-    if (this.isNode){return;}
+    if (this.isNode) {
+      return;
+    }
 
-    const isConnected = (this.socket && this.socket.readyState === 1)
-    const isConnectedLocally = (this.socket_local && this.socket_local.readyState === 1)
+    const isConnected = this.socket && this.socket.readyState === 1;
+    const isConnectedLocally =
+      this.socket_local && this.socket_local.readyState === 1;
     if (isConnected && isConnectedLocally) {
       this.showOnLine(true);
     } else if (isConnected) {
@@ -8897,47 +8967,54 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
   }
 
   showOnLine(isConnectedLocally) {
-    if (this.isNode){return;}
-    const doms = this.getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="none";
+    if (this.isNode) {
+      return;
     }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor = isConnectedLocally ? "#0cd362" : "#31965d";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = this.id ? "online : "+ this.id : "online";
+    const doms = this.getDebugDoms();
+    if (doms.loaderDom) {
+      doms.loaderDom.style.display = 'none';
+    }
+    if (doms.statusDom) {
+      doms.statusDom.style.backgroundColor = isConnectedLocally
+        ? '#0cd362'
+        : '#31965d';
+      doms.statusDom.style.color = '#FFF';
+      doms.statusDom.innerHTML = this.id ? 'online : ' + this.id : 'online';
     }
   }
 
   showOffLine() {
-    if (this.isNode){return;}
+    if (this.isNode) {
+      return;
+    }
 
     const doms = this.getDebugDoms();
-    if(doms.loaderDom){
-      doms.loaderDom.style.display="block";
+    if (doms.loaderDom) {
+      doms.loaderDom.style.display = 'block';
     }
-    if(doms.statusDom){
-      doms.statusDom.style.backgroundColor =  "#d9534f";
-      doms.statusDom.style.color =  "#FFF";
-      doms.statusDom.innerHTML = this.id  ? "offline : "+ this.id : "offline";
+    if (doms.statusDom) {
+      doms.statusDom.style.backgroundColor = '#d9534f';
+      doms.statusDom.style.color = '#FFF';
+      doms.statusDom.innerHTML = this.id ? 'offline : ' + this.id : 'offline';
     }
   }
-}
+};
 
 function _ReadCookie(name) {
-  let nameEQ = name + "=";
+  let nameEQ = name + '=';
   let ca = document.cookie.split(';');
-  for(let i=0;i < ca.length;i++) {
+  for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-      while (c.charAt(0) === ' ') {
-          c = c.substring(1,c.length);
-      }
-      if (c.indexOf(nameEQ) === 0) {
-          return c.substring(nameEQ.length,c.length);
-      }
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1, c.length);
+    }
+    if (c.indexOf(nameEQ) === 0) {
+      return c.substring(nameEQ.length, c.length);
+    }
   }
   return null;
 }
+
 
 /***/ }),
 
@@ -8948,16 +9025,14 @@ function _ReadCookie(name) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-const ObnizUIs = __webpack_require__(/*! ./ObnizUIs */ "./obniz/ObnizUIs.js");
+/* WEBPACK VAR INJECTION */(function(__dirname) {const ObnizUIs = __webpack_require__(/*! ./ObnizUIs */ "./obniz/ObnizUIs.js");
 const ObnizApi = __webpack_require__(/*! ./ObnizApi */ "./obniz/ObnizApi.js");
 
 /* global showObnizDebugError  */
 
-const isNode = (typeof window === 'undefined');
+const isNode = typeof window === 'undefined';
 
 module.exports = class Obniz extends ObnizUIs {
-
   constructor(id, options) {
     super(id, options);
   }
@@ -8969,10 +9044,9 @@ module.exports = class Obniz extends ObnizUIs {
     }
     this.looper = callback;
     let self = this;
-    if (!interval)
-      interval = 100;
+    if (!interval) interval = 100;
     async function loop() {
-      if (typeof (self.looper) === "function") {
+      if (typeof self.looper === 'function') {
         await self.looper();
         setTimeout(loop, interval);
       }
@@ -8980,7 +9054,7 @@ module.exports = class Obniz extends ObnizUIs {
     loop();
   }
 
-  wsOnClose(){
+  wsOnClose() {
     super.wsOnClose();
     if (this.looper) {
       this.looper = null;
@@ -8989,7 +9063,7 @@ module.exports = class Obniz extends ObnizUIs {
 
   message(target, message) {
     let targets = [];
-    if (typeof (target) === "string") {
+    if (typeof target === 'string') {
       targets.push(target);
     } else {
       targets = target;
@@ -8997,27 +9071,27 @@ module.exports = class Obniz extends ObnizUIs {
     this.send({
       message: {
         to: targets,
-        data: message
-      }
+        data: message,
+      },
     });
   }
 
-  notifyToModule(obj){
+  notifyToModule(obj) {
     super.notifyToModule(obj);
     // notify messaging
-    if (typeof (obj.message) === "object" && this.onmessage) {
+    if (typeof obj.message === 'object' && this.onmessage) {
       this.onmessage(obj.message.data, obj.message.from);
     }
     // debug
-    if (typeof (obj.debug) === "object") {
+    if (typeof obj.debug === 'object') {
       if (obj.debug.warning) {
-        let msg = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: 'warning', message: msg});
+        let msg = 'Warning: ' + obj.debug.warning.message;
+        this.warning({ alert: 'warning', message: msg });
       }
 
       if (obj.debug.error) {
-        let msg = "Error: " + obj.debug.error.message;
-        this.error({alert: 'error', message: msg});
+        let msg = 'Error: ' + obj.debug.error.message;
+        this.error({ alert: 'error', message: msg });
       }
       if (this.ondebug) {
         this.ondebug(obj.debug);
@@ -9029,12 +9103,12 @@ module.exports = class Obniz extends ObnizUIs {
     if (this.isNode) {
       console.error(msg);
     } else {
-      if (msg && typeof msg === "object" && msg.alert) {
+      if (msg && typeof msg === 'object' && msg.alert) {
         this.showAlertUI(msg);
         console.log(msg.message);
         return;
       }
-      if (typeof (showObnizDebugError) === "function") {
+      if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg));
       } else {
         throw new Error(msg);
@@ -9046,11 +9120,11 @@ module.exports = class Obniz extends ObnizUIs {
     if (this.isNode) {
       console.error(msg);
     } else {
-      if (msg && typeof msg === "object" && msg.alert) {
+      if (msg && typeof msg === 'object' && msg.alert) {
         this.showAlertUI(msg);
         msg = msg.message;
       }
-      if (typeof (showObnizDebugError) === "function") {
+      if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg));
         console.error(new Error(msg));
       } else {
@@ -9063,38 +9137,41 @@ module.exports = class Obniz extends ObnizUIs {
    *
    * @returns {ObnizApi}
    */
-  static get api(){
+  static get api() {
     return ObnizApi;
   }
 };
-
 
 /*===================*/
 /* Utils */
 /*===================*/
 if (!isNode) {
-  if(window && window.parent && window.parent.userAppLoaded){
+  if (window && window.parent && window.parent.userAppLoaded) {
     window.parent.userAppLoaded(window);
   }
 
-  function showObnizDebugError(err) {
-    if(window.parent && window.parent.logger){
+  function showObnizDebugError(err) {//eslint-disable-line
+    if (window.parent && window.parent.logger) {
       window.parent.logger.onObnizError(err);
-    }else{ throw err; }
+    } else {
+      throw err;
+    }
   }
 }
 
 /*===================*/
 /* ReadParts */
 /*===================*/
-// require.context = require('./libs/webpackReplace/require-context');
-// if(require.context && require.context.setBaseDir){require.context.setBaseDir(__dirname);}
-// let context = require.context(  "../parts", true, /\.js$/);
-// for( let path of context.keys()){
-//   context(path);
-// }
+__webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
+if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
+  __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
+}
+let context = __webpack_require__("./parts sync recursive \\.js$");
+for (let path of context.keys()) {
+  context(path);
+}
 
-
+/* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
 
@@ -9113,7 +9190,6 @@ const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./
 const BleAdvertisement = __webpack_require__(/*! ./bleAdvertisement */ "./obniz/libs/embeds/ble/bleAdvertisement.js");
 const BleScan = __webpack_require__(/*! ./bleScan */ "./obniz/libs/embeds/ble/bleScan.js");
 
-
 class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
@@ -9130,7 +9206,6 @@ class ObnizBLE {
     this.scan = new BleScan(Obniz);
   }
 
-
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
@@ -9141,9 +9216,7 @@ class ObnizBLE {
   }
 
   notified(obj) {
-
     if (obj.scan_result) {
-
       let val = this.findPeripheral(obj.scan_result.address);
       if (!val) {
         val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
@@ -9152,28 +9225,27 @@ class ObnizBLE {
       val.discoverdOnRemote = true;
       val.setParams(obj.scan_result);
 
-      this.scan.notifyFromServer("onfind", val);
+      this.scan.notifyFromServer('onfind', val);
     }
 
     if (obj.scan_result_finish) {
-      this.scan.notifyFromServer("onfinish");
+      this.scan.notifyFromServer('onfinish');
     }
 
-
-    let remotePeripheralCallbackFunc = function (val, func, type) {
+    let remotePeripheralCallbackFunc = function(val, func, type) {
       let obj = null;
       if (val === undefined) return;
       let p = this.findPeripheral(val.address);
       if (!p) {
         return;
       }
-      if (type === "peripheral") {
+      if (type === 'peripheral') {
         obj = p;
-      } else if (type === "service") {
+      } else if (type === 'service') {
         obj = p.findService(val);
-      } else if (type === "characteristic") {
+      } else if (type === 'characteristic') {
         obj = p.findCharacteristic(val);
-      } else if (type === "descriptor") {
+      } else if (type === 'descriptor') {
         obj = p.findDescriptor(val);
       }
       if (!obj) {
@@ -9183,40 +9255,57 @@ class ObnizBLE {
     }.bind(this);
 
     const paramList = {
-      status_update: {name: "statusupdate", obj: "peripheral"},
-      get_service_result: {name: "discover", obj: "peripheral"},
-      get_service_result_finish: {name: "discoverfinished", obj: "peripheral"},
-      get_characteristic_result: {name: "discover", obj: "service"},
-      get_characteristic_result_finish: {name: "discoverfinished", obj: "service"},
-      write_characteristic_result: {name: "onwrite", obj: "characteristic"},
-      read_characteristic_result: {name: "onread", obj: "characteristic"},
-      register_notify_characteristic_result: {name: "onregisternotify", obj: "characteristic"},
-      unregister_notify_characteristic_result: {name: "onunregisternotify", obj: "characteristic"},
-      nofity_characteristic: {name: "onnotify", obj: "characteristic"},
-      get_descriptor_result: {name: "discover", obj: "characteristic"},
-      get_descriptor_result_finish: {name: "discoverfinished", obj: "characteristic"},
-      write_descriptor_result: {name: "onwrite", obj: "descriptor"},
-      read_descriptor_result: {name: "onread", obj: "descriptor"},
+      status_update: { name: 'statusupdate', obj: 'peripheral' },
+      get_service_result: { name: 'discover', obj: 'peripheral' },
+      get_service_result_finish: {
+        name: 'discoverfinished',
+        obj: 'peripheral',
+      },
+      get_characteristic_result: { name: 'discover', obj: 'service' },
+      get_characteristic_result_finish: {
+        name: 'discoverfinished',
+        obj: 'service',
+      },
+      write_characteristic_result: { name: 'onwrite', obj: 'characteristic' },
+      read_characteristic_result: { name: 'onread', obj: 'characteristic' },
+      register_notify_characteristic_result: {
+        name: 'onregisternotify',
+        obj: 'characteristic',
+      },
+      unregister_notify_characteristic_result: {
+        name: 'onunregisternotify',
+        obj: 'characteristic',
+      },
+      nofity_characteristic: { name: 'onnotify', obj: 'characteristic' },
+      get_descriptor_result: { name: 'discover', obj: 'characteristic' },
+      get_descriptor_result_finish: {
+        name: 'discoverfinished',
+        obj: 'characteristic',
+      },
+      write_descriptor_result: { name: 'onwrite', obj: 'descriptor' },
+      read_descriptor_result: { name: 'onread', obj: 'descriptor' },
     };
 
     for (let key in paramList) {
-      remotePeripheralCallbackFunc(obj[key], function (val, bleobj) {
-
-        bleobj.notifyFromServer(paramList[key].name, val);
-      }.bind(this), paramList[key].obj);
+      remotePeripheralCallbackFunc(
+        obj[key],
+        function(val, bleobj) {
+          bleobj.notifyFromServer(paramList[key].name, val);
+        }.bind(this),
+        paramList[key].obj
+      );
     }
 
-
-    let callbackFunc = function (val, func, type) {
+    let callbackFunc = function(val, func, type) {
       let obj = null;
       if (val === undefined) return;
-      if (type === "peripheral") {
+      if (type === 'peripheral') {
         obj = this.peripheral;
-      } else if (type === "service") {
+      } else if (type === 'service') {
         obj = this.peripheral.getService(val);
-      } else if (type === "characteristic") {
+      } else if (type === 'characteristic') {
         obj = this.peripheral.findCharacteristic(val);
-      } else if (type === "descriptor") {
+      } else if (type === 'descriptor') {
         obj = this.peripheral.findDescriptor(val);
       }
       if (!obj) {
@@ -9226,25 +9315,42 @@ class ObnizBLE {
     }.bind(this);
 
     if (obj.peripheral) {
-      callbackFunc(obj.peripheral.connection_status, function (val) {
-        this.peripheral.onconnectionupdates(val);
-      }.bind(this), "peripheral");
+      callbackFunc(
+        obj.peripheral.connection_status,
+        function(val) {
+          this.peripheral.onconnectionupdates(val);
+        }.bind(this),
+        'peripheral'
+      );
 
       const paramList = {
-        read_characteristic_result: {name: "onread", obj: "characteristic"},
-        write_characteristic_result: {name: "onwrite", obj: "characteristic"},
-        notify_read_characteristic: {name: "onreadfromremote", obj: "characteristic"},
-        notify_write_characteristic: {name: "onwritefromremote", obj: "characteristic"},
-        read_descriptor_result: {name: "onread", obj: "descriptor"},
-        write_descriptor_result: {name: "onwrite", obj: "descriptor"},
-        notify_read_descriptor: {name: "onreadfromremote", obj: "descriptor"},
-        notify_write_descriptor: {name: "onwritefromremote", obj: "descriptor"},
+        read_characteristic_result: { name: 'onread', obj: 'characteristic' },
+        write_characteristic_result: { name: 'onwrite', obj: 'characteristic' },
+        notify_read_characteristic: {
+          name: 'onreadfromremote',
+          obj: 'characteristic',
+        },
+        notify_write_characteristic: {
+          name: 'onwritefromremote',
+          obj: 'characteristic',
+        },
+        read_descriptor_result: { name: 'onread', obj: 'descriptor' },
+        write_descriptor_result: { name: 'onwrite', obj: 'descriptor' },
+        notify_read_descriptor: { name: 'onreadfromremote', obj: 'descriptor' },
+        notify_write_descriptor: {
+          name: 'onwritefromremote',
+          obj: 'descriptor',
+        },
       };
 
       for (let key in paramList) {
-        callbackFunc(obj.peripheral[key], function (val, bleobj) {
-          bleobj.notifyFromServer(paramList[key].name, val);
-        }.bind(this), paramList[key].obj);
+        callbackFunc(
+          obj.peripheral[key],
+          function(val, bleobj) {
+            bleobj.notifyFromServer(paramList[key].name, val);
+          }.bind(this),
+          paramList[key].obj
+        );
       }
     }
 
@@ -9259,7 +9365,11 @@ class ObnizBLE {
       }
 
       if (peripheral) {
-        if (params.service_uuid && params.characteristic_uuid && params.descriptor_uuid) {
+        if (
+          params.service_uuid &&
+          params.characteristic_uuid &&
+          params.descriptor_uuid
+        ) {
           target = peripheral.findDescriptor(params);
         } else if (params.service_uuid && params.characteristic_uuid) {
           target = peripheral.findCharacteristic(params);
@@ -9267,7 +9377,7 @@ class ObnizBLE {
           target = peripheral.findService(params);
         }
         if (target) {
-          target.notifyFromServer("onerror", params);
+          target.notifyFromServer('onerror', params);
           handled = true;
         } else {
           peripheral.onerror(params);
@@ -9276,7 +9386,13 @@ class ObnizBLE {
       }
 
       if (!handled) {
-        this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
+        this.Obniz.error(
+          `ble ${params.message} service=${
+            params.service_uuid
+          } characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${
+            params.descriptor_uuid
+          }`
+        );
       }
     }
   }
@@ -9289,18 +9405,25 @@ class ObnizBLE {
     if (reverse) {
       uuid = uuid.reverse();
     }
-    let str = uuid.join("");
+    let str = uuid.join('');
     if (uuid.length >= 16) {
-      str = str.slice(0, 8) + "-" + str.slice(8, 12) + "-" + str.slice(12, 16) + "-" + str.slice(16, 20) + "-" + str.slice(20);
+      str =
+        str.slice(0, 8) +
+        '-' +
+        str.slice(8, 12) +
+        '-' +
+        str.slice(12, 16) +
+        '-' +
+        str.slice(16, 20) +
+        '-' +
+        str.slice(20);
     }
     return str;
-
   }
-
 }
 
-
 module.exports = ObnizBLE;
+
 
 /***/ }),
 
@@ -9322,13 +9445,13 @@ class BleAdvertisement {
 
   start() {
     let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["advertisement"] = {
-      adv_data: this.adv_data
+    obj['ble'] = {};
+    obj['ble']['advertisement'] = {
+      adv_data: this.adv_data,
     };
 
     if (this.scan_resp.length > 0) {
-      obj["ble"]["advertisement"]["scan_resp"] = this.scan_resp;
+      obj['ble']['advertisement']['scan_resp'] = this.scan_resp;
     }
 
     this.Obniz.send(obj);
@@ -9336,8 +9459,8 @@ class BleAdvertisement {
 
   end() {
     let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["advertisement"] = null;
+    obj['ble'] = {};
+    obj['ble']['advertisement'] = null;
     this.Obniz.send(obj);
   }
 
@@ -9365,12 +9488,10 @@ class BleAdvertisement {
   setScanRespData(json) {
     this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
   }
-
-
 }
 
-
 module.exports = BleAdvertisement;
+
 
 /***/ }),
 
@@ -9382,7 +9503,6 @@ module.exports = BleAdvertisement;
 /***/ (function(module, exports) {
 
 class BleAdvertisementBuilder {
-
   constructor(Obniz, json) {
     this.Obniz = Obniz;
     this.rows = {};
@@ -9391,8 +9511,15 @@ class BleAdvertisementBuilder {
       if (json.localName) {
         this.setCompleteLocalName(json.localName);
       }
-      if (json.manufacturerData && json.manufacturerData.companyCode && json.manufacturerData.data) {
-        this.setManufacturerSpecificData(json.manufacturerData.companyCode, json.manufacturerData.data);
+      if (
+        json.manufacturerData &&
+        json.manufacturerData.companyCode &&
+        json.manufacturerData.data
+      ) {
+        this.setManufacturerSpecificData(
+          json.manufacturerData.companyCode,
+          json.manufacturerData.data
+        );
       }
       if (json.serviceUuids) {
         for (let uuid of json.serviceUuids) {
@@ -9400,19 +9527,18 @@ class BleAdvertisementBuilder {
         }
       }
     }
-    if (typeof(this.extendEvalJson) === "function") {
+    if (typeof this.extendEvalJson === 'function') {
       this.extendEvalJson(json);
     }
-
-  };
+  }
 
   setRow(type, data) {
     this.rows[type] = data;
-  };
+  }
 
   getRow(type) {
     return this.rows[type] || [];
-  };
+  }
 
   build() {
     let data = [];
@@ -9424,12 +9550,13 @@ class BleAdvertisementBuilder {
       Array.prototype.push.apply(data, this.rows[key]);
     }
     if (data.length > 31) {
-      this.Obniz.error("Too large data. Advertise/ScanResponse data are must be less than 32 byte.");
+      this.Obniz.error(
+        'Too large data. Advertise/ScanResponse data are must be less than 32 byte.'
+      );
     }
 
     return data;
-  };
-
+  }
 
   setStringData(type, string) {
     let data = [];
@@ -9439,36 +9566,40 @@ class BleAdvertisementBuilder {
     }
 
     this.setRow(type, data);
-  };
+  }
 
   setShortenedLocalName(name) {
     this.setStringData(0x08, name);
-  };
+  }
 
   setCompleteLocalName(name) {
     this.setStringData(0x09, name);
-  };
+  }
 
   setManufacturerSpecificData(companyCode, data) {
     let row = [];
-    row.push(companyCode & 0xFF);
-    row.push((companyCode >> 8) & 0xFF);
+    row.push(companyCode & 0xff);
+    row.push((companyCode >> 8) & 0xff);
     Array.prototype.push.apply(row, data);
-    this.setRow(0xFF, row);
-  };
+    this.setRow(0xff, row);
+  }
 
   setUuid(uuid) {
     let uuidData = this.convertUuid(uuid);
-    let type = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length];
+    let type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
     this.setRow(type, uuidData);
-  };
+  }
 
   convertUuid(uuid) {
     let uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    if (uuidNumeric.length !== 32
-        && uuidNumeric.length !== 8
-        && uuidNumeric.length !== 4) {
-      this.Obniz.error("BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)");
+    if (
+      uuidNumeric.length !== 32 &&
+      uuidNumeric.length !== 8 &&
+      uuidNumeric.length !== 4
+    ) {
+      this.Obniz.error(
+        'BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)'
+      );
     }
 
     let data = [];
@@ -9476,7 +9607,7 @@ class BleAdvertisementBuilder {
       data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
     }
     return data;
-  };
+  }
 
   setIbeaconData(uuid, major, minor, txPower) {
     let data = [];
@@ -9485,66 +9616,61 @@ class BleAdvertisementBuilder {
     let uuidData = this.convertUuid(uuid);
     Array.prototype.push.apply(data, uuidData);
 
-
-    data.push((major >> 8) & 0xFF);
-    data.push((major >> 0) & 0xFF);
-    data.push((minor >> 8) & 0xFF);
-    data.push((minor >> 0) & 0xFF);
-    data.push((txPower >> 0) & 0xFF);
+    data.push((major >> 8) & 0xff);
+    data.push((major >> 0) & 0xff);
+    data.push((minor >> 8) & 0xff);
+    data.push((minor >> 0) & 0xff);
+    data.push((txPower >> 0) & 0xff);
 
     this.setManufacturerSpecificData(0x004c, data);
     return;
-  };
-
+  }
 
   extendEvalJson(json) {
     if (json) {
       if (json.flags) {
-        if (json.flags.includes("limited_discoverable_mode"))
+        if (json.flags.includes('limited_discoverable_mode'))
           this.setLeLimitedDiscoverableModeFlag();
-        if (json.flags.includes("general_discoverable_mode"))
+        if (json.flags.includes('general_discoverable_mode'))
           this.setLeGeneralDiscoverableModeFlag();
-        if (json.flags.includes("br_edr_not_supported"))
+        if (json.flags.includes('br_edr_not_supported'))
           this.setBrEdrNotSupportedFlag();
-        if (json.flags.includes("le_br_edr_controller"))
+        if (json.flags.includes('le_br_edr_controller'))
           this.setLeBrEdrControllerFlag();
-        if (json.flags.includes("le_br_edr_host"))
-          this.setLeBrEdrHostFlag();
+        if (json.flags.includes('le_br_edr_host')) this.setLeBrEdrHostFlag();
       }
     }
-  };
+  }
 
   setFlags(flag) {
     let data = this.getRow(0x01);
     data[0] = (data[0] || 0) | flag;
     this.setRow(0x01, data);
-  };
+  }
 
   setLeLimitedDiscoverableModeFlag() {
     this.setFlags(0x01);
-  };
+  }
 
   setLeGeneralDiscoverableModeFlag() {
     this.setFlags(0x02);
-  };
+  }
 
   setBrEdrNotSupportedFlag() {
     this.setFlags(0x04);
-  };
+  }
 
   setLeBrEdrControllerFlag() {
     this.setFlags(0x08);
-  };
+  }
 
   setLeBrEdrHostFlag() {
     this.setFlags(0x10);
-  };
-
-
+  }
 }
 
-
 module.exports = BleAdvertisementBuilder;
+
 
 /***/ }),
 
@@ -9559,8 +9685,7 @@ const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/util
 const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
 
 class BleAttributeAbstract {
-
-  constructor(params){
+  constructor(params) {
     this.uuid = params.uuid.toLowerCase();
     this.parent = null;
     this.children = [];
@@ -9569,62 +9694,63 @@ class BleAttributeAbstract {
     this.discoverdOnRemote = false;
 
     this.data = params.data || null;
-    if(! this.data && params.text){
+    if (!this.data && params.text) {
       this.data = ObnizUtil.string2dataArray(params.text);
     }
-    if(! this.data && params.value){
+    if (!this.data && params.value) {
       this.data = [params.value];
     }
 
-    if(params[this.childrenName]){
-      for(let child of params[this.childrenName]){
+    if (params[this.childrenName]) {
+      for (let child of params[this.childrenName]) {
         this.addChild(child);
       }
     }
 
     this.setFunctions();
 
-
-    this.emitter =  new emitter();
-
+    this.emitter = new emitter();
   }
 
   setFunctions() {
     let childrenName = this.childrenName;
-    if(childrenName){
-      childrenName = childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
-      let childName = childrenName.slice(0,-1);
+    if (childrenName) {
+      childrenName =
+        childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      let childName = childrenName.slice(0, -1);
 
-      let funcName = "add" + childName;
+      let funcName = 'add' + childName;
       this[funcName] = this.addChild;
 
-      funcName = "get" + childName;
+      funcName = 'get' + childName;
       this[funcName] = this.getChild;
     }
 
     let parentName = this.parentName;
-    if(parentName){
+    if (parentName) {
       Object.defineProperty(this, parentName, {
-        get() { return this.parent; },
-        set(newValue) { this.parent = newValue; }
+        get() {
+          return this.parent;
+        },
+        set(newValue) {
+          this.parent = newValue;
+        },
       });
     }
-
   }
 
-
-  get childrenClass(){
+  get childrenClass() {
     return Object;
   }
-  get childrenName(){
+  get childrenName() {
     return null;
   }
-  get parentName(){
+  get parentName() {
     return null;
   }
 
-  addChild(child){
-    if( ! (child instanceof this.childrenClass) ){
+  addChild(child) {
+    if (!(child instanceof this.childrenClass)) {
       let childrenClass = this.childrenClass;
       child = new childrenClass(child);
     }
@@ -9634,145 +9760,130 @@ class BleAttributeAbstract {
     return child;
   }
 
-  getChild(uuid){
-
-    return this.children.filter(function(element){
-      return element.uuid.toLowerCase()  === uuid.toLowerCase() ;
-    }).shift();
-
+  getChild(uuid) {
+    return this.children
+      .filter(function(element) {
+        return element.uuid.toLowerCase() === uuid.toLowerCase();
+      })
+      .shift();
   }
 
-
-
-  toJSON (){
-    let obj = {uuid: this.uuid.toLowerCase()};
+  toJSON() {
+    let obj = { uuid: this.uuid.toLowerCase() };
 
     if (this.children.length > 0) {
       let key = this.childrenName;
       obj[key] = this.children;
     }
     if (this.data) {
-      obj.data = this.data
+      obj.data = this.data;
     }
     return obj;
   }
-
 
   /**
    * WS COMMANDS
    */
 
   read() {}
-  write(){}
+  write() {}
 
-  writeNumber(val){
+  writeNumber(val) {
     this.write([val]);
   }
 
-  writeText(str){
+  writeText(str) {
     this.write(ObnizUtil.string2dataArray(str));
   }
 
-  readWait(){
+  readWait() {
     return new Promise(resolve => {
-      this.emitter.once("onread",(params)=>{
-        if(params.result === "success") {
+      this.emitter.once('onread', params => {
+        if (params.result === 'success') {
           resolve(params.data);
-        }else{
+        } else {
           resolve(undefined);
         }
       });
       this.read();
-    })
+    });
   }
 
-  writeWait(data){
+  writeWait(data) {
     return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
       });
       this.write(data);
-    })
+    });
   }
 
-
-  writeTextWait(data){
+  writeTextWait(data) {
     return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
       });
       this.writeText(data);
-    })
+    });
   }
 
-
-  writeNumberWait(data){
+  writeNumberWait(data) {
     return new Promise(resolve => {
-      this.emitter.once("onwrite",(params)=>{
-        resolve(params.result === "success");
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
       });
       this.writeNumber(data);
-    })
+    });
   }
 
-  readFromRemoteWait(){
+  readFromRemoteWait() {
     return new Promise(resolve => {
-      this.emitter.once("onreadfromremote",()=>{
+      this.emitter.once('onreadfromremote', () => {
         resolve();
       });
-    })
+    });
   }
 
-  writeFromRemoteWait(){
+  writeFromRemoteWait() {
     return new Promise(resolve => {
-      this.emitter.once("onreadfromremote",(params)=>{
+      this.emitter.once('onreadfromremote', params => {
         resolve(params.data);
       });
-    })
+    });
   }
-
-
 
   /**
    * CALLBACKS
    */
-  onwrite(){
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
 
-  };
-  onread(){
-
-  };
-  onwritefromremote(){
-
-  }
-  onreadfromremote(){
-
-  };
-
-  onerror(err){
+  onerror(err) {
     console.error(err.message);
   }
 
-  notifyFromServer(notifyName, params){
+  notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
-    switch(notifyName){
-      case "onerror" : {
+    switch (notifyName) {
+      case 'onerror': {
         this.onerror(params);
         break;
       }
-      case "onwrite" : {
+      case 'onwrite': {
         this.onwrite(params.result);
         break;
       }
-      case "onread" : {
+      case 'onread': {
         this.onread(params.data);
         break;
       }
-      case "onwritefromremote" : {
+      case 'onwritefromremote': {
         this.onwritefromremote(params.address, params.data);
         break;
       }
-      case "onreadfromremote" : {
+      case 'onreadfromremote': {
         this.onreadfromremote(params.address);
         break;
       }
@@ -9781,6 +9892,7 @@ class BleAttributeAbstract {
 }
 
 module.exports = BleAttributeAbstract;
+
 
 /***/ }),
 
@@ -9795,7 +9907,6 @@ const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/e
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleCharacteristic extends BleAttributeAbstract {
-
   constructor(obj) {
     super(obj);
 
@@ -9811,11 +9922,10 @@ class BleCharacteristic extends BleAttributeAbstract {
     if (!Array.isArray(this.permissions)) {
       this.permissions = [this.permissions];
     }
-
   }
 
   get parentName() {
-    return "service";
+    return 'service';
   }
 
   get childrenClass() {
@@ -9823,9 +9933,8 @@ class BleCharacteristic extends BleAttributeAbstract {
   }
 
   get childrenName() {
-    return "descriptors";
+    return 'descriptors';
   }
-
 
   toJSON() {
     let obj = super.toJSON();
@@ -9849,8 +9958,7 @@ class BleCharacteristic extends BleAttributeAbstract {
   removeProperty(param) {
     this.properties = this.properties.filter(elm => {
       return elm !== param;
-    })
-
+    });
   }
 
   addPermission(param) {
@@ -9862,62 +9970,52 @@ class BleCharacteristic extends BleAttributeAbstract {
   removePermission(param) {
     this.permissions = this.permissions.filter(elm => {
       return elm !== param;
-    })
-
+    });
   }
 
   write(data) {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              write_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-                data: data
-              }
-            }
-          }
-        }
-    );
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          write_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+            data: data,
+          },
+        },
+      },
+    });
   }
-
 
   read() {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              read_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          read_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+          },
+        },
+      },
+    });
   }
-
 
   notify() {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              notify_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          notify_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+          },
+        },
+      },
+    });
   }
-
 }
 
-
 module.exports = BleCharacteristic;
+
 
 /***/ }),
 
@@ -9930,9 +10028,7 @@ module.exports = BleCharacteristic;
 
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
-
 class BleDescriptor extends BleAttributeAbstract {
-
   constructor(obj) {
     super(obj);
 
@@ -9940,11 +10036,10 @@ class BleDescriptor extends BleAttributeAbstract {
     if (!Array.isArray(this.permissions)) {
       this.permissions = [this.permissions];
     }
-
   }
 
   get parentName() {
-    return "characteristic";
+    return 'characteristic';
   }
 
   addPermission(param) {
@@ -9956,8 +10051,7 @@ class BleDescriptor extends BleAttributeAbstract {
   removePermission(param) {
     this.permissions = this.permissions.filter(elm => {
       return elm !== param;
-    })
-
+    });
   }
 
   toJSON() {
@@ -9969,45 +10063,38 @@ class BleDescriptor extends BleAttributeAbstract {
     return obj;
   }
 
-
   write(dataArray) {
-    this.characteristic.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              write_descriptor: {
-                service_uuid: this.characteristic.service.uuid.toLowerCase(),
-                characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-                descriptor_uuid: this.uuid,
-                data: dataArray
-              }
-            }
-          }
-        }
-    );
+    this.characteristic.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          write_descriptor: {
+            service_uuid: this.characteristic.service.uuid.toLowerCase(),
+            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            descriptor_uuid: this.uuid,
+            data: dataArray,
+          },
+        },
+      },
+    });
   }
-
 
   read() {
-    this.characteristic.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              read_descriptor: {
-                service_uuid: this.characteristic.service.uuid.toLowerCase(),
-                characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-                descriptor_uuid: this.uuid
-              }
-            }
-          }
-        }
-    );
+    this.characteristic.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          read_descriptor: {
+            service_uuid: this.characteristic.service.uuid.toLowerCase(),
+            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            descriptor_uuid: this.uuid,
+          },
+        },
+      },
+    });
   }
-
-
 }
 
 module.exports = BleDescriptor;
+
 
 /***/ }),
 
@@ -10021,7 +10108,6 @@ module.exports = BleDescriptor;
 const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
 
 class BlePeripheral {
-
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.services = [];
@@ -10033,12 +10119,12 @@ class BlePeripheral {
     }
     this.services.push(obj);
     obj.peripheral = this;
-    this.Obniz.send({ble: {peripheral: {services: [obj]}}});
+    this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
   }
 
   setJson(json) {
-    if (json["services"]) {
-      for (let service of json["services"]) {
+    if (json['services']) {
+      for (let service of json['services']) {
         this.addService(service);
       }
     }
@@ -10046,35 +10132,33 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = uuid.toLowerCase();
-    return this.services.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid;
-    }).shift();
+    return this.services
+      .filter(function(element) {
+        return element.uuid.toLowerCase() === uuid;
+      })
+      .shift();
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function (element) {
+    this.services = this.services.filter(function(element) {
       return element.uuid.toLowerCase() !== uuid;
     });
   }
 
   stopAllService() {
-    this.Obniz.send(
-        {
-          ble: {
-            peripheral: null
-
-          }
-        }
-    );
+    this.Obniz.send({
+      ble: {
+        peripheral: null,
+      },
+    });
     this.services = [];
   }
 
   toJSON() {
     return {
-      services: this.services
+      services: this.services,
     };
   }
-
 
   findCharacteristic(param) {
     let serviceUuid = param.service_uuid.toLowerCase();
@@ -10096,18 +10180,16 @@ class BlePeripheral {
   }
 
   end() {
-    this.Obniz.send({ble: {peripheral: null}});
+    this.Obniz.send({ ble: { peripheral: null } });
   }
 
-  onconnectionupdates() {
-  };
+  onconnectionupdates() {}
 
-  onerror() {
-  };
+  onerror() {}
 }
 
-
 module.exports = BlePeripheral;
+
 
 /***/ }),
 
@@ -10121,73 +10203,62 @@ module.exports = BlePeripheral;
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleRemoteAttributeAbstract extends BleAttributeAbstract {
-
   constructor(params) {
     super(params);
 
     this.isRemote = false;
     this.discoverdOnRemote = false;
-
-
   }
-
 
   get wsChildUuidName() {
     let childrenName = this.childrenName;
     if (!childrenName) {
-      return null
+      return null;
     }
     let childName = childrenName.slice(0, -1);
-    return childName + "_uuid";
+    return childName + '_uuid';
   }
 
   getChild(uuid) {
     let obj = super.getChild(uuid);
     if (!obj) {
-      obj = this.addChild({uuid});
+      obj = this.addChild({ uuid });
     }
     return obj;
   }
 
-  discoverChildren() {
-
-  }
+  discoverChildren() {}
 
   discoverChildrenWait() {
     return new Promise(resolve => {
-      this.emitter.once("discoverfinished", () => {
+      this.emitter.once('discoverfinished', () => {
         let children = this.children.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
       });
       this.discoverChildren();
-    })
+    });
   }
-
 
   /**
    * CALLBACKS
    */
-  ondiscover() {
+  ondiscover() {}
 
-  };
-
-  ondiscoverfinished() {
-
-  };
+  ondiscoverfinished() {}
 
   notifyFromServer(notifyName, params) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case "discover" : {
+      case 'discover': {
         let child = this.getChild(params[this.wsChildUuidName]);
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
         this.ondiscover(child);
         break;
       }
-      case "discoverfinished" : {
+      case 'discoverfinished': {
         let children = this.children.filter(elm => {
           return elm.discoverdOnRemote;
         });
@@ -10199,6 +10270,7 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
 }
 
 module.exports = BleRemoteAttributeAbstract;
+
 
 /***/ }),
 
@@ -10213,7 +10285,6 @@ const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
-
   constructor(params) {
     super(params);
 
@@ -10221,12 +10292,10 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     if (!Array.isArray(this.properties)) {
       this.properties = [this.properties];
     }
-
-
   }
 
   get parentName() {
-    return "service";
+    return 'service';
   }
 
   get childrenClass() {
@@ -10234,12 +10303,11 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   get childrenName() {
-    return "descriptors";
+    return 'descriptors';
   }
 
-
   addDescriptor(params) {
-    return this.addChild(params)
+    return this.addChild(params);
   }
 
   //
@@ -10248,7 +10316,6 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   // }
 
   getDescriptor(uuid) {
-
     let obj = this.getChild(uuid);
     if (obj) {
       return obj;
@@ -10261,70 +10328,67 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   registerNotify(callback) {
     this.onnotify = callback;
     const obj = {
-      "ble": {
-        "register_notify_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        register_notify_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
-
 
   unregisterNotify() {
-    this.onnotify = function () {
-    };
+    this.onnotify = function() {};
     const obj = {
-      "ble": {
-        "unregister_notify_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        unregister_notify_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
-
 
   read() {
     const obj = {
-      "ble": {
-        "read_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        read_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
 
   write(array) {
     const obj = {
-      "ble": {
-        "write_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid,
-          "data": array
-        }
-      }
+      ble: {
+        write_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+          data: array,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
 
   discoverChildren() {
     const obj = {
-      "ble": {
-        "get_descriptors": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        get_descriptors: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
@@ -10337,7 +10401,6 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return this.discoverChildrenWait();
   }
 
-
   toJSON() {
     let obj = super.toJSON();
 
@@ -10348,29 +10411,28 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   canBroadcast() {
-    return this.properties.includes("broadcast");
+    return this.properties.includes('broadcast');
   }
 
   canNotify() {
-    return this.properties.includes("notify");
+    return this.properties.includes('notify');
   }
 
   canRead() {
-    return this.properties.includes("read");
+    return this.properties.includes('read');
   }
 
   canWrite() {
-    return this.properties.includes("write");
+    return this.properties.includes('write');
   }
 
   canWriteWithoutResponse() {
-    return this.properties.includes("write_without_response");
+    return this.properties.includes('write_without_response');
   }
 
   canIndicate() {
-    return this.properties.includes("indicate");
+    return this.properties.includes('indicate');
   }
-
 
   ondiscover(descriptor) {
     this.ondiscoverdescriptor(descriptor);
@@ -10380,42 +10442,37 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     this.ondiscoverdescriptorfinished(descriptors);
   }
 
-  ondiscoverdescriptor() {
-  };
+  ondiscoverdescriptor() {}
 
-  ondiscoverdescriptorfinished() {
-  };
+  ondiscoverdescriptorfinished() {}
 
-  onregisternofity() {
-  };
+  onregisternofity() {}
 
-  onunregisternofity() {
-  };
+  onunregisternofity() {}
 
-  onnotify() {
-  };
+  onnotify() {}
 
   notifyFromServer(notifyName, params) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case "onregisternofity" : {
+      case 'onregisternofity': {
         this.onregisternofity();
         break;
       }
-      case "onunregisternofity" : {
+      case 'onunregisternofity': {
         this.onunregisternofity();
         break;
       }
-      case "onnotify" : {
+      case 'onnotify': {
         this.onnotify();
         break;
       }
     }
   }
-
 }
 
 module.exports = BleRemoteCharacteristic;
+
 
 /***/ }),
 
@@ -10434,39 +10491,37 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   get parentName() {
-    return "characteristic";
+    return 'characteristic';
   }
 
   read() {
     const obj = {
-      "ble": {
-        "read_descriptor": {
-          "address": this.characteristic.service.peripheral.address,
-          "service_uuid": this.characteristic.service.uuid,
-          "characteristic_uuid": this.characteristic.uuid,
-          "descriptor_uuid": this.uuid
-        }
-      }
+      ble: {
+        read_descriptor: {
+          address: this.characteristic.service.peripheral.address,
+          service_uuid: this.characteristic.service.uuid,
+          characteristic_uuid: this.characteristic.uuid,
+          descriptor_uuid: this.uuid,
+        },
+      },
     };
     this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
   write(array) {
     const obj = {
-      "ble": {
-        "write_descriptor": {
-          "address": this.characteristic.service.peripheral.address,
-          "service_uuid": this.characteristic.service.uuid,
-          "characteristic_uuid": this.characteristic.uuid,
-          "descriptor_uuid": this.uuid,
-          "data": array
-        }
-      }
+      ble: {
+        write_descriptor: {
+          address: this.characteristic.service.peripheral.address,
+          service_uuid: this.characteristic.service.uuid,
+          characteristic_uuid: this.characteristic.uuid,
+          descriptor_uuid: this.uuid,
+          data: array,
+        },
+      },
     };
     this.characteristic.service.peripheral.Obniz.send(obj);
   }
-
-
 }
 
 module.exports = BleRemoteDescriptor;
@@ -10485,7 +10540,6 @@ const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/
 const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
 
 class BleRemotePeripheral {
-
   constructor(Obniz, address) {
     this.Obniz = Obniz;
     this.address = address;
@@ -10499,12 +10553,12 @@ class BleRemotePeripheral {
     this.scan_resp = null;
 
     this.keys = [
-      "device_type",
-      "address_type",
-      "ble_event_type",
-      "rssi",
-      "adv_data",
-      "scan_resp",
+      'device_type',
+      'address_type',
+      'ble_event_type',
+      'rssi',
+      'adv_data',
+      'scan_resp',
     ];
 
     this.services = [];
@@ -10521,7 +10575,7 @@ class BleRemotePeripheral {
       addressType: this.address_type,
       advertisement: this.adv_data,
       scanResponse: this.scan_resp,
-      rssi: this.rssi
+      rssi: this.rssi,
     });
   }
 
@@ -10548,7 +10602,6 @@ class BleRemotePeripheral {
         }
       }
       if (this.scan_resp) {
-
         for (let i = 0; i < this.scan_resp.length; i++) {
           let length = this.scan_resp[i];
           let arr = new Array(length);
@@ -10561,7 +10614,6 @@ class BleRemotePeripheral {
       }
     }
   }
-
 
   searchTypeVal(type) {
     this.analyseAdvertisement();
@@ -10585,20 +10637,28 @@ class BleRemotePeripheral {
   }
 
   get iBeacon() {
-    let data = this.searchTypeVal(0xFF);
-    if (!data
-        || data[0] !== 0x4c
-        || data[1] !== 0x00
-        || data[2] !== 0x02
-        || data[3] !== 0x15
-        || data.length !== 25) return null;
+    let data = this.searchTypeVal(0xff);
+    if (
+      !data ||
+      data[0] !== 0x4c ||
+      data[1] !== 0x00 ||
+      data[2] !== 0x02 ||
+      data[3] !== 0x15 ||
+      data.length !== 25
+    )
+      return null;
 
     let uuidData = data.slice(4, 20);
-    let uuid = "";
+    let uuid = '';
     for (let i = 0; i < uuidData.length; i++) {
-      uuid = uuid + (('00' + uuidData[i].toString(16)).slice(-2));
-      if (i === (4 - 1) || i === (4 + 2 - 1) || i === (4 + 2 * 2 - 1) || i === (4 + 2 * 3 - 1)) {
-        uuid += "-";
+      uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+      if (
+        i === 4 - 1 ||
+        i === 4 + 2 - 1 ||
+        i === 4 + 2 * 2 - 1 ||
+        i === 4 + 2 * 3 - 1
+      ) {
+        uuid += '-';
       }
     }
 
@@ -10611,7 +10671,7 @@ class BleRemotePeripheral {
       major: major,
       minor: minor,
       power: power,
-      rssi: this.rssi
+      rssi: this.rssi,
     };
   }
 
@@ -10635,45 +10695,44 @@ class BleRemotePeripheral {
     return results;
   }
 
-
   connect() {
     let obj = {
-      "ble": {
-        "connect": {
-          "address": this.address
-        }
-      }
+      ble: {
+        connect: {
+          address: this.address,
+        },
+      },
     };
     this.Obniz.send(obj);
   }
 
   connectWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("statusupdate", (params) => {
-        resolve(params.status === "connected");
+    return new Promise(resolve => {
+      this.emitter.once('statusupdate', params => {
+        resolve(params.status === 'connected');
       });
       this.connect();
-    })
+    });
   }
 
   disconnect() {
     let obj = {
-      "ble": {
-        "disconnect": {
-          "address": this.address
-        }
-      }
+      ble: {
+        disconnect: {
+          address: this.address,
+        },
+      },
     };
     this.Obniz.send(obj);
   }
 
   disconnectWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("statusupdate", (params) => {
-        resolve(params.status === "disconnected");
+    return new Promise(resolve => {
+      this.emitter.once('statusupdate', params => {
+        resolve(params.status === 'disconnected');
       });
       this.disconnect();
-    })
+    });
   }
 
   getService(uuid) {
@@ -10683,7 +10742,7 @@ class BleRemotePeripheral {
         return this.services[key];
       }
     }
-    let newService = new BleRemoteService({uuid});
+    let newService = new BleRemoteService({ uuid });
     newService.parent = this;
     this.services.push(newService);
     return newService;
@@ -10713,75 +10772,62 @@ class BleRemotePeripheral {
     return null;
   }
 
-
   discoverAllServices() {
     let obj = {
-      "ble": {
-        "get_services": {
-          "address": this.address
-        }
-      }
+      ble: {
+        get_services: {
+          address: this.address,
+        },
+      },
     };
     this.Obniz.send(obj);
   }
 
   discoverAllServicesWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("discoverfinished", () => {
+    return new Promise(resolve => {
+      this.emitter.once('discoverfinished', () => {
         let children = this.services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
       });
       this.discoverAllServices();
-
-    })
+    });
   }
 
-  onconnect() {
-  };
+  onconnect() {}
 
-  ondisconnect() {
-  };
+  ondisconnect() {}
 
+  ondiscoverservice() {}
 
-  ondiscoverservice() {
-  };
+  ondiscoverservicefinished() {}
 
-  ondiscoverservicefinished() {
-  };
+  ondiscover() {}
 
-
-  ondiscover() {
-
-  };
-
-  ondiscoverfinished() {
-
-  };
-
+  ondiscoverfinished() {}
 
   notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
-      case "statusupdate" : {
-        if (params.status === "connected") {
+      case 'statusupdate': {
+        if (params.status === 'connected') {
           this.connected = true;
           this.onconnect();
         }
-        if (params.status === "disconnected") {
+        if (params.status === 'disconnected') {
           this.connected = false;
           this.ondisconnect();
         }
         break;
       }
-      case "discover" : {
+      case 'discover': {
         let child = this.getService(params.service_uuid);
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
       }
-      case "discoverfinished" : {
+      case 'discoverfinished': {
         let children = this.services.filter(elm => {
           return elm.discoverdOnRemote;
         });
@@ -10791,13 +10837,11 @@ class BleRemotePeripheral {
     }
   }
 
-  onerror() {
-  };
-
+  onerror() {}
 }
 
-
 module.exports = BleRemotePeripheral;
+
 
 /***/ }),
 
@@ -10812,13 +10856,12 @@ const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristi
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
-
   constructor(obj) {
     super(obj);
   }
 
   get parentName() {
-    return "peripheral";
+    return 'peripheral';
   }
 
   get childrenClass() {
@@ -10826,18 +10869,16 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   get childrenName() {
-    return "characteristics";
+    return 'characteristics';
   }
 
-
   addCharacteristic(params) {
-    return this.addChild(params)
+    return this.addChild(params);
   }
 
   getCharacteristic(params) {
-    return this.getChild(params)
+    return this.getChild(params);
   }
-
 
   discoverAllCharacteristics() {
     return this.discoverChildren();
@@ -10849,16 +10890,15 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
 
   discoverChildren() {
     const obj = {
-      "ble": {
-        "get_characteristics": {
-          "address": this.peripheral.address,
-          "service_uuid": this.uuid
-        }
-      }
+      ble: {
+        get_characteristics: {
+          address: this.peripheral.address,
+          service_uuid: this.uuid,
+        },
+      },
     };
     this.parent.Obniz.send(obj);
   }
-
 
   ondiscover(characteristic) {
     this.ondiscovercharacteristic(characteristic);
@@ -10868,16 +10908,13 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
     this.ondiscovercharacteristicfinished(characteristics);
   }
 
-  ondiscovercharacteristic() {
-  };
+  ondiscovercharacteristic() {}
 
-  ondiscovercharacteristicfinished() {
-  };
-
+  ondiscovercharacteristicfinished() {}
 }
 
-
 module.exports = BleRemoteService;
+
 
 /***/ }),
 
@@ -10899,20 +10936,22 @@ class BleScan {
     this.scanedPeripherals = [];
   }
 
-
   start(target, settings) {
     let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = {
+    obj['ble'] = {};
+    obj['ble']['scan'] = {
       //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
       //    "interval" : settings && settings.interval ? settings.interval : 30,
-      "duration": settings && settings.duration ? settings.duration : 30
-
+      duration: settings && settings.duration ? settings.duration : 30,
     };
 
     this.scanTarget = target;
-    if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
+    if (
+      this.scanTarget &&
+      this.scanTarget.uuids &&
+      Array.isArray(this.scanTarget.uuids)
+    ) {
+      this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
         return elm.toLowerCase();
       });
     }
@@ -10923,17 +10962,16 @@ class BleScan {
   startOneWait(target, settings) {
     let state = 0;
 
-    return new Promise((resolve) => {
-      this.emitter.once("onfind", (param) => {
+    return new Promise(resolve => {
+      this.emitter.once('onfind', param => {
         if (state === 0) {
           state = 1;
           this.end();
           resolve(param);
-
         }
       });
 
-      this.emitter.once("onfinish", () => {
+      this.emitter.once('onfinish', () => {
         if (state === 0) {
           state = 1;
           resolve(null);
@@ -10942,31 +10980,31 @@ class BleScan {
 
       this.start(target, settings);
     });
-
   }
 
-
   startAllWait(target, settings) {
-
-    return new Promise((resolve) => {
-      this.emitter.once("onfinish", () => {
+    return new Promise(resolve => {
+      this.emitter.once('onfinish', () => {
         resolve(this.scanedPeripherals);
       });
 
       this.start(target, settings);
     });
-
   }
 
   end() {
     let obj = {};
-    obj["ble"] = {};
-    obj["ble"]["scan"] = null;
+    obj['ble'] = {};
+    obj['ble']['scan'] = null;
     this.Obniz.send(obj);
   }
 
   isTarget(peripheral) {
-    if (this.scanTarget && this.scanTarget.localName && peripheral.localName() !== this.scanTarget.localName) {
+    if (
+      this.scanTarget &&
+      this.scanTarget.localName &&
+      peripheral.localName() !== this.scanTarget.localName
+    ) {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
@@ -10980,15 +11018,12 @@ class BleScan {
     return true;
   }
 
-
-  onfinish() {
-  } //dummy
-  onfind() {
-  } //dummy
+  onfinish() {} //dummy
+  onfind() {} //dummy
 
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
-      case "onfind" : {
+      case 'onfind': {
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);
           this.emitter.emit(notifyName, params);
@@ -10996,19 +11031,17 @@ class BleScan {
         }
         break;
       }
-      case "onfinish" : {
+      case 'onfinish': {
         this.emitter.emit(notifyName, this.scanedPeripherals);
         this.onfinish(this.scanedPeripherals);
         break;
       }
     }
-
-
   }
 }
 
-
 module.exports = BleScan;
+
 
 /***/ }),
 
@@ -11022,23 +11055,20 @@ module.exports = BleScan;
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
 
-
 class BleService extends BleAttributeAbstract {
-
   constructor(obj) {
     super(obj);
-
 
     this.addCharacteristic = this.addChild;
     this.getCharacteristic = this.getChild;
   }
 
   get parentName() {
-    return "peripheral";
+    return 'peripheral';
   }
 
   get childrenName() {
-    return "characteristics";
+    return 'characteristics';
   }
 
   get childrenClass() {
@@ -11047,23 +11077,21 @@ class BleService extends BleAttributeAbstract {
 
   get advData() {
     return {
-      flags: ["general_discoverable_mode", "br_edr_not_supported"],
-      serviceUuids: [this.uuid]
-    }
+      flags: ['general_discoverable_mode', 'br_edr_not_supported'],
+      serviceUuids: [this.uuid],
+    };
   }
 
   end() {
-    this.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              stop_service: {
-                service_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
+    this.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          stop_service: {
+            service_uuid: this.uuid.toLowerCase(),
+          },
+        },
+      },
+    });
     this.peripheral.removeService(this.uuid);
   }
 
@@ -11072,8 +11100,8 @@ class BleService extends BleAttributeAbstract {
   }
 }
 
-
 module.exports = BleService;
+
 
 /***/ }),
 
@@ -11084,21 +11112,21 @@ module.exports = BleService;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 class Display {
-
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.width = 128;
     this.height = 64;
 
-    this._pos = {x:0, y:0}
+    this._pos = { x: 0, y: 0 };
     this._canvas = null;
   }
 
   warnCanvasAvailability() {
     if (this.Obniz.isNode) {
-      throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
+      throw new Error(
+        'obniz.js require node-canvas to draw rich contents. see more detail on docs'
+      );
     } else {
       throw new Error('obniz.js cant create canvas element to body');
     }
@@ -11112,72 +11140,71 @@ class Display {
       try {
         const { createCanvas } = __webpack_require__(/*! canvas */ "./obniz/libs/webpackReplace/canvas.js");
         this._canvas = createCanvas(this.width, this.height);
-      } catch(e){
+      } catch (e) {
         // this.warnCanvasAvailability();
         return null;
       }
     } else {
-      const identifier = 'obnizcanvas-'+this.Obniz.id;
+      const identifier = 'obnizcanvas-' + this.Obniz.id;
       let canvas = document.getElementById(identifier);
       if (!canvas) {
         canvas = document.createElement('canvas');
-        canvas.setAttribute("id", identifier);
-        canvas.style.visibility = "hidden";
+        canvas.setAttribute('id', identifier);
+        canvas.style.visibility = 'hidden';
         canvas.width = this.width;
         canvas.height = this.height;
-        canvas.style["-webkit-font-smoothing"] = "none";
-        var body = document.getElementsByTagName("body")[0];
+        canvas.style['-webkit-font-smoothing'] = 'none';
+        let body = document.getElementsByTagName('body')[0];
         body.appendChild(canvas);
       }
       this._canvas = canvas;
     }
-    const ctx = this._canvas.getContext("2d");;
-    ctx.fillStyle='#000'
+    const ctx = this._canvas.getContext('2d');
+    ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, this.width, this.height);
-    ctx.fillStyle='#FFF';
-    ctx.strokeStyle='#FFF';
+    ctx.fillStyle = '#FFF';
+    ctx.strokeStyle = '#FFF';
     this._pos.x = 0;
     this._pos.y = 0;
     this.fontSize = 16;
-    ctx.font = `${this.fontSize}px Arial`
+    ctx.font = `${this.fontSize}px Arial`;
     return this._canvas;
   }
 
   _ctx() {
     const canvas = this._preparedCanvas();
     if (canvas) {
-      return canvas.getContext("2d");
+      return canvas.getContext('2d');
     }
   }
 
-  font(font, size){
+  font(font, size) {
     const ctx = this._ctx();
-    if(typeof size !== "number") {
+    if (typeof size !== 'number') {
       size = 12;
     }
     this.fontSize = size;
-    ctx.font = '' +  + ' ' + size + 'px ' + font;
+    ctx.font = '' + +' ' + size + 'px ' + font;
   }
 
   clear() {
     const ctx = this._ctx();
     if (ctx) {
-      ctx.fillStyle='#000'
+      ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, this.width, this.height);
-      ctx.fillStyle='#FFF';
-      ctx.strokeStyle='#FFF';
+      ctx.fillStyle = '#FFF';
+      ctx.strokeStyle = '#FFF';
     }
     this._pos.x = 0;
     this._pos.y = 0;
-    var obj = {};
-    obj["display"] = {
-      clear: true
+    let obj = {};
+    obj['display'] = {
+      clear: true,
     };
     this.Obniz.send(obj);
   }
 
   pos(x, y) {
-    const ctx = this._ctx(); // load it first.
     if (typeof x == 'number') {
       this._pos.x = x;
     }
@@ -11194,9 +11221,9 @@ class Display {
       this.draw(ctx);
       this._pos.y += this.fontSize;
     } else {
-      var obj = {};
-      obj["display"] = {
-        text: ""+text
+      let obj = {};
+      obj['display'] = {
+        text: '' + text,
       };
       this.Obniz.send(obj);
     }
@@ -11218,7 +11245,7 @@ class Display {
   rect(x, y, width, height, mustFill) {
     const ctx = this._ctx();
     if (ctx) {
-      if(mustFill) {
+      if (mustFill) {
         ctx.fillRect(x, y, width, height);
       } else {
         ctx.strokeRect(x, y, width, height);
@@ -11234,7 +11261,7 @@ class Display {
     if (ctx) {
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
-      if(mustFill) {
+      if (mustFill) {
         ctx.fill();
       } else {
         ctx.stroke();
@@ -11246,43 +11273,49 @@ class Display {
   }
 
   qr(text, correction) {
-    var obj = {};
-    obj["display"] = {
+    let obj = {};
+    obj['display'] = {
       qr: {
-        text
-      }
+        text,
+      },
     };
     if (correction) {
-      obj["display"].qr.correction = correction;
+      obj['display'].qr.correction = correction;
     }
     this.Obniz.send(obj);
   }
 
   raw(data) {
-    var obj = {};
-    obj["display"] = {
-      raw: data
+    let obj = {};
+    obj['display'] = {
+      raw: data,
     };
     this.Obniz.send(obj);
   }
 
   setPinName(io, moduleName, funcName) {
-    var obj = {};
-    obj["display"] = {};
-    obj["display"]["pin_assign"] = {};
-    obj["display"]["pin_assign"][io] = {module_name : moduleName, pin_name:funcName};
-    
+    let obj = {};
+    obj['display'] = {};
+    obj['display']['pin_assign'] = {};
+    obj['display']['pin_assign'][io] = {
+      module_name: moduleName,
+      pin_name: funcName,
+    };
+
     this.Obniz.send(obj);
   }
 
   setPinNames(moduleName, data) {
     let obj = {};
-    obj["display"] = {};
-    obj["display"]["pin_assign"] = {};
+    obj['display'] = {};
+    obj['display']['pin_assign'] = {};
     let noAssignee = true;
-    for(var key in data){
+    for (let key in data) {
       noAssignee = false;
-      obj["display"]["pin_assign"][key] = {module_name : moduleName, pin_name:data[key]};
+      obj['display']['pin_assign'][key] = {
+        module_name: moduleName,
+        pin_name: data[key],
+      };
     }
     if (!noAssignee) {
       this.Obniz.send(obj);
@@ -11290,27 +11323,26 @@ class Display {
   }
 
   draw(ctx) {
-    const stride = this.width/8;
+    const stride = this.width / 8;
     let vram = new Array(stride * 64);
     const imageData = ctx.getImageData(0, 0, this.width, this.height);
     const data = imageData.data;
-    
-    for(let i = 0; i < data.length; i += 4) {
-      var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      var index = parseInt(i/4);
-      var line = parseInt(index/this.width);
-      var col = parseInt((index-line*this.width)/8);
-      var bits = parseInt((index-line*this.width))%8;
-      if (bits == 0)
-        vram[line*stride + col] = 0x00;
-      if (brightness > 0x7F)
-      vram[line*stride + col] |= 0x80 >> bits;
+
+    for (let i = 0; i < data.length; i += 4) {
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let index = parseInt(i / 4);
+      let line = parseInt(index / this.width);
+      let col = parseInt((index - line * this.width) / 8);
+      let bits = parseInt(index - line * this.width) % 8;
+      if (bits == 0) vram[line * stride + col] = 0x00;
+      if (brightness > 0x7f) vram[line * stride + col] |= 0x80 >> bits;
     }
     this.raw(vram);
   }
 }
 
 module.exports = Display;
+
 
 /***/ }),
 
@@ -11321,25 +11353,23 @@ module.exports = Display;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
 class ObnizSwitch {
-  
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.observers = [];
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   getWait() {
     let self = this;
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
       let obj = {};
-      obj["switch"] = "get"
+      obj['switch'] = 'get';
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });
@@ -11369,7 +11399,6 @@ module.exports = ObnizSwitch;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
 class PeripheralAD {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
@@ -11379,28 +11408,28 @@ class PeripheralAD {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   start(callback) {
     this.onchange = callback;
-    var obj = {};
-    obj["ad"+this.id] = {
-      stream: true
+    let obj = {};
+    obj['ad' + this.id] = {
+      stream: true,
     };
     this.Obniz.send(obj);
     return this.value;
   }
 
   getWait() {
-    var self = this;
-    return new Promise(function(resolve, reject){
+    let self = this;
+    return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
-      obj["ad"+self.id] = {
-        stream: false
+      let obj = {};
+      obj['ad' + self.id] = {
+        stream: false,
       };
       self.Obniz.send(obj);
     });
@@ -11408,8 +11437,8 @@ class PeripheralAD {
 
   end() {
     this.onchange = null;
-    var obj = {};
-    obj["ad"+this.id] = null;
+    let obj = {};
+    obj['ad' + this.id] = null;
     this.Obniz.send(obj);
     return;
   }
@@ -11419,7 +11448,7 @@ class PeripheralAD {
     if (this.onchange) {
       this.onchange(obj);
     }
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj);
     }
@@ -11427,6 +11456,7 @@ class PeripheralAD {
 }
 
 module.exports = PeripheralAD;
+
 
 /***/ }),
 
@@ -11440,85 +11470,95 @@ module.exports = PeripheralAD;
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class PeripheralI2C {
-
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
     this.observers = [];
     this.state = {};
     this.used = false;
-  
+
     this.onwritten = undefined;
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
-  
+
   start(arg) {
-    var err = ObnizUtil._requiredKeys(arg,["mode", "sda", "scl"]);
-    if(err){ throw new Error("I2C start param '" + err +"' required, but not found ");return;}
-    this.state = ObnizUtil._keyFilter(arg,["mode", "sda", "scl", "pull"]);
+    let err = ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
+    if (err) {
+      throw new Error("I2C start param '" + err + "' required, but not found ");
+    }
+    this.state = ObnizUtil._keyFilter(arg, ['mode', 'sda', 'scl', 'pull']);
 
-
-    let ioKeys = ["sda", "scl"];
+    let ioKeys = ['sda', 'scl'];
     for (let key of ioKeys) {
       if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
-        throw new Error("i2c start param '"+key+"' are to be valid io no");
+        throw new Error("i2c start param '" + key + "' are to be valid io no");
       }
     }
 
-    var mode = this.state.mode;
-    var clock = (typeof arg.clock === "number") ? parseInt(arg.clock) : null;
-    var slave_address = (typeof arg.slave_address === "number") ? parseInt(arg.slave_address) : null;
-    var slave_address_length = (typeof arg.slave_address_length === "number") ? parseInt(arg.slave_address_length) : null;
-    
-    if (mode !== "master" && mode !== "slave") {
-      throw new Error("i2c: invalid mode "+mode)
+    let mode = this.state.mode;
+    let clock = typeof arg.clock === 'number' ? parseInt(arg.clock) : null;
+    let slave_address =
+      typeof arg.slave_address === 'number'
+        ? parseInt(arg.slave_address)
+        : null;
+    let slave_address_length =
+      typeof arg.slave_address_length === 'number'
+        ? parseInt(arg.slave_address_length)
+        : null;
+
+    if (mode !== 'master' && mode !== 'slave') {
+      throw new Error('i2c: invalid mode ' + mode);
     }
-    if (mode === "master") {
+    if (mode === 'master') {
       if (clock === null) {
-        throw new Error("i2c: please specify clock when master mode");
+        throw new Error('i2c: please specify clock when master mode');
       }
       if (clock <= 0 || clock > 1 * 1000 * 1000) {
-        throw new Error("i2c: invalid clock " + clock);
+        throw new Error('i2c: invalid clock ' + clock);
       }
-      if (typeof arg.pull === "5v" && clock > 400 * 1000) {
-        throw new Error("i2c: please use under 400khz when internal 5v internal pull-up");
+      if (arg.pull === '5v' && clock > 400 * 1000) {
+        throw new Error(
+          'i2c: please use under 400khz when internal 5v internal pull-up'
+        );
       }
-      if (typeof arg.pull === "3v" && clock > 100 * 1000) {
-        throw new Error("i2c: please use under 100khz when internal 3v internal pull-up");
+      if (arg.pull === '3v' && clock > 100 * 1000) {
+        throw new Error(
+          'i2c: please use under 100khz when internal 3v internal pull-up'
+        );
       }
     } else {
       if (slave_address === null) {
-        throw new Error("i2c: please specify slave_address");
+        throw new Error('i2c: please specify slave_address');
       }
-      if (slave_address < 0 || slave_address > 0x7F) {
-        throw new Error("i2c: invalid slave_address");
+      if (slave_address < 0 || slave_address > 0x7f) {
+        throw new Error('i2c: invalid slave_address');
       }
-      if (slave_address < 0 || slave_address > 0x7F) {
-        throw new Error("i2c: invalid slave_address");
+      if (slave_address < 0 || slave_address > 0x7f) {
+        throw new Error('i2c: invalid slave_address');
       }
       if (slave_address_length !== null && slave_address_length !== 7) {
-        throw new Error("i2c: invalid slave_address_length. please specify 7");
+        throw new Error('i2c: invalid slave_address_length. please specify 7');
       }
     }
-  
-    this.Obniz.getIO(this.state.sda).drive("open-drain");
-    this.Obniz.getIO(this.state.scl).drive("open-drain");
-    
-    if(this.state.pull){
-       this.Obniz.getIO(this.state.sda).pull(this.state.pull);
-       this.Obniz.getIO(this.state.scl).pull(this.state.pull);
-    }else{
+
+    this.Obniz.getIO(this.state.sda).drive('open-drain');
+    this.Obniz.getIO(this.state.scl).drive('open-drain');
+
+    if (this.state.pull) {
+      this.Obniz.getIO(this.state.sda).pull(this.state.pull);
+      this.Obniz.getIO(this.state.scl).pull(this.state.pull);
+    } else {
       this.Obniz.getIO(this.state.sda).pull(null);
       this.Obniz.getIO(this.state.scl).pull(null);
     }
-    
-    var startObj = ObnizUtil._keyFilter(this.state,["mode", "sda", "scl"]);
-    if (mode === "master") {
+
+    let startObj = ObnizUtil._keyFilter(this.state, ['mode', 'sda', 'scl']);
+    if (mode === 'master') {
       startObj.clock = clock;
     } else {
       startObj.slave_address = slave_address;
@@ -11526,81 +11566,86 @@ class PeripheralI2C {
         startObj.slave_address_length = slave_address_length;
       }
     }
-  
-    var obj = {}; 
-    obj["i2c"+this.id] = startObj;
+
+    let obj = {};
+    obj['i2c' + this.id] = startObj;
     this.used = true;
     this.Obniz.send(obj);
   }
 
   write(address, data) {
-    address = parseInt(address)
+    address = parseInt(address);
     if (isNaN(address)) {
-      throw new Error("i2c: please specify address")
+      throw new Error('i2c: please specify address');
     }
-    if (address < 0 || address > 0x7F) {
-      throw new Error("i2c: invalid address")
+    if (address < 0 || address > 0x7f) {
+      throw new Error('i2c: invalid address');
     }
     if (!data) {
-      throw new Error("i2c: please provide data");
+      throw new Error('i2c: please provide data');
     }
     if (data.length > 1024) {
-      throw new Error("i2c: data should be under 1024 bytes");
+      throw new Error('i2c: data should be under 1024 bytes');
     }
-    var obj = {};
-    obj["i2c"+this.id] = {
+    let obj = {};
+    obj['i2c' + this.id] = {
       address,
-      data
+      data,
     };
     this.Obniz.send(obj);
   }
 
   readWait(address, length) {
-    address = parseInt(address)
+    address = parseInt(address);
     if (isNaN(address)) {
-      throw new Error("i2c: please specify address")
+      throw new Error('i2c: please specify address');
     }
-    if (address < 0 || address > 0x7F) {
-      throw new Error("i2c: invalid address")
+    if (address < 0 || address > 0x7f) {
+      throw new Error('i2c: invalid address');
     }
     length = parseInt(length);
     if (isNaN(length) || length < 0) {
-      throw new Error("i2c: invalid length to read");
+      throw new Error('i2c: invalid length to read');
     }
     if (length > 1024) {
-      throw new Error("i2c: data length should be under 1024 bytes");
+      throw new Error('i2c: data length should be under 1024 bytes');
     }
-    var self = this;
-    return new Promise(function(resolve, reject){
-
+    let self = this;
+    return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
-      obj["i2c"+self.id] = {
+      let obj = {};
+      obj['i2c' + self.id] = {
         address,
-        read: length
+        read: length,
       };
       self.Obniz.send(obj);
     });
   }
 
   notified(obj) {
-    if (obj && typeof obj === "object") {
+    if (obj && typeof obj === 'object') {
       if (obj.data) {
-        if (obj.mode === "slave" && typeof this.onwritten === "function") {
+        if (obj.mode === 'slave' && typeof this.onwritten === 'function') {
           this.onwritten(obj.data, obj.address);
         } else {
           // TODO: we should compare byte length from sent
-          var callback = this.observers.shift();
+          let callback = this.observers.shift();
           if (callback) {
             callback(obj.data);
           }
         }
       }
       if (obj.warning) {
-        this.Obniz.warning({ alert: 'warning', message: `i2c${this.id}: ${obj.warning.message}` })
+        this.Obniz.warning({
+          alert: 'warning',
+          message: `i2c${this.id}: ${obj.warning.message}`,
+        });
       }
       if (obj.error) {
-        this.Obniz.error({ alert: 'error', message: `i2c${this.id}: ${obj.error.message}` })
+        this.Obniz.error({
+          alert: 'error',
+          message: `i2c${this.id}: ${obj.error.message}`,
+        });
       }
     }
   }
@@ -11611,14 +11656,15 @@ class PeripheralI2C {
 
   end() {
     this.state = {};
-    var obj = {};
-    obj["i2c"+this.id] = null;
+    let obj = {};
+    obj['i2c' + this.id] = null;
     this.Obniz.send(obj);
     this.used = false;
   }
 }
 
 module.exports = PeripheralI2C;
+
 
 /***/ }),
 
@@ -11629,9 +11675,7 @@ module.exports = PeripheralI2C;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
 class PeripheralIO {
-
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
@@ -11640,134 +11684,136 @@ class PeripheralIO {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   output(value) {
-    value = (value == true)
-    var obj = {};
-    obj["io"+this.id] = value;
+    value = value == true;
+    let obj = {};
+    obj['io' + this.id] = value;
     this.value = value;
     this.Obniz.send(obj);
   }
 
   drive(drive) {
-    if (typeof drive !== "string") {
-      throw new Error("please specify drive methods in string")
-      return;
+    if (typeof drive !== 'string') {
+      throw new Error('please specify drive methods in string');
     }
-    let output_type = ""
-    switch(drive) {
-      case "5v":
-        output_type = "push-pull5v";
+    let output_type = '';
+    switch (drive) {
+      case '5v':
+        output_type = 'push-pull5v';
         break;
-      case "3v":
-        output_type = "push-pull3v";
+      case '3v':
+        output_type = 'push-pull3v';
         break;
-      case "open-drain":
-        output_type = "open-drain";
+      case 'open-drain':
+        output_type = 'open-drain';
         break;
       default:
-        throw new Error("unknown drive method")
-        break;
+        throw new Error('unknown drive method');
     }
-  
-    var obj = {};
-    obj["io"+this.id] = {
-      output_type: output_type
+
+    let obj = {};
+    obj['io' + this.id] = {
+      output_type: output_type,
     };
     this.Obniz.send(obj);
   }
 
   pull(updown) {
-
-    if (typeof updown !== "string" && updown !== null) {
-      throw new Error("please specify pull methods in string")
-      return;
+    if (typeof updown !== 'string' && updown !== null) {
+      throw new Error('please specify pull methods in string');
     }
-    let pull_type = ""
-    switch(updown) {
-      case "5v":
-      case "pull-up5v":
-        pull_type = "pull-up5v";
+    let pull_type = '';
+    switch (updown) {
+      case '5v':
+      case 'pull-up5v':
+        pull_type = 'pull-up5v';
         break;
-      case "3v":
-      case "pull-up3v":
-        pull_type = "pull-up3v";
+      case '3v':
+      case 'pull-up3v':
+        pull_type = 'pull-up3v';
         break;
-      case "0v":
-      case "pull-down":
-        pull_type = "pull-down";
+      case '0v':
+      case 'pull-down':
+        pull_type = 'pull-down';
         break;
       case null:
-      case "float":
-        pull_type = "float";
+      case 'float':
+        pull_type = 'float';
         break;
       default:
-        throw new Error("unknown pull_type method")
-        break;
+        throw new Error('unknown pull_type method');
     }
-  
-    var obj = {};
-    obj["io"+this.id] = {
-      pull_type: pull_type
+
+    let obj = {};
+    obj['io' + this.id] = {
+      pull_type: pull_type,
     };
     this.Obniz.send(obj);
   }
 
   input(callback) {
     this.onchange = callback;
-    var obj = {};
-    obj["io"+this.id] = {
-      direction: "input",
-      stream: true
+    let obj = {};
+    obj['io' + this.id] = {
+      direction: 'input',
+      stream: true,
     };
     this.Obniz.send(obj);
     return this.value;
   }
 
   inputWait() {
-    var self = this;
-    return new Promise(function(resolve, reject){
+    let self = this;
+    return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
-      obj["io"+self.id] = {
-        direction: "input",
-        stream: false
+      let obj = {};
+      obj['io' + self.id] = {
+        direction: 'input',
+        stream: false,
       };
       self.Obniz.send(obj);
     });
   }
 
   end() {
-    var obj = {};
-    obj["io"+this.id] = null;
+    let obj = {};
+    obj['io' + this.id] = null;
     this.Obniz.send(obj);
   }
 
   notified(obj) {
-    if (typeof obj === "boolean") {
+    if (typeof obj === 'boolean') {
       this.value = obj;
-      var callback = this.observers.shift();
+      let callback = this.observers.shift();
       if (callback) {
         callback(obj);
       }
-      if (typeof(this.onchange) === "function") {
+      if (typeof this.onchange === 'function') {
         this.onchange(obj);
       }
-    } else if (obj && typeof obj === "object") {
+    } else if (obj && typeof obj === 'object') {
       if (obj.warning) {
-        this.Obniz.warning({ alert: 'warning', message: `io${this.id}: ${obj.warning.message}` })
+        this.Obniz.warning({
+          alert: 'warning',
+          message: `io${this.id}: ${obj.warning.message}`,
+        });
       }
       if (obj.error) {
-        this.Obniz.error({ alert: 'error', message: `io${this.id}: ${obj.error.message}` })
+        this.Obniz.error({
+          alert: 'error',
+          message: `io${this.id}: ${obj.error.message}`,
+        });
       }
     }
   }
 }
 module.exports = PeripheralIO;
+
 
 /***/ }),
 
@@ -11784,47 +11830,47 @@ class PeripheralIO_ {
   }
 
   animation(name, status, array) {
-    var obj = {};
+    let obj = {};
     obj.io = {
       animation: {
         name: name,
-        status: status
-      }
+        status: status,
+      },
     };
-    if (!array)
-      array = [];
-  
+    if (!array) array = [];
+
     let states = [];
-    for (var i=0; i<array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       let state = array[i];
       let duration = state.duration;
       let func = state.state;
-  
+
       // dry run. and get json commands
       this.Obniz.sendPool = [];
       func(i);
       let pooledJsonArray = this.Obniz.sendPool;
       this.Obniz.sendPool = null;
-  
+
       // simply merge objects
       let merged = {};
-      for (var index = 0; index < pooledJsonArray.length; index++) {
+      for (let index = 0; index < pooledJsonArray.length; index++) {
         for (let key in pooledJsonArray[index]) {
           merged[key] = pooledJsonArray[index][key];
         }
       }
       states.push({
         duration: duration,
-        state: merged
+        state: merged,
       });
     }
-    if (status === "loop") {
+    if (status === 'loop') {
       obj.io.animation.states = states;
     }
     this.Obniz.send(obj);
   }
 }
 module.exports = PeripheralIO_;
+
 
 /***/ }),
 
@@ -11846,15 +11892,17 @@ class PeripheralPWM {
   }
 
   sendWS(obj) {
-    var wsObj = {};
-    wsObj["pwm"+this.id] = obj;
+    let wsObj = {};
+    wsObj['pwm' + this.id] = obj;
     this.Obniz.send(wsObj);
   }
 
   start(params) {
-    const err = ObnizUtil._requiredKeys(params,["io"]);
-    if(err){ throw new Error("pwm start param '" + err +"' required, but not found ");}
-    this.params = ObnizUtil._keyFilter(params,["io", "drive", "pull"]);
+    const err = ObnizUtil._requiredKeys(params, ['io']);
+    if (err) {
+      throw new Error("pwm start param '" + err + "' required, but not found ");
+    }
+    this.params = ObnizUtil._keyFilter(params, ['io', 'drive', 'pull']);
 
     const io = this.params.io;
     const ioObj = this.Obniz.getIO(io);
@@ -11864,54 +11912,53 @@ class PeripheralPWM {
 
     this.state = {
       io: io,
-      freq: 1000
-    }
+      freq: 1000,
+    };
     this.sendWS({
-      io: io
+      io: io,
     });
     this.used = true;
   }
 
   freq(freq) {
     freq *= 1;
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    if (typeof freq !== "number") {
-      throw new Error("please provide freq in number");
+    if (typeof freq !== 'number') {
+      throw new Error('please provide freq in number');
     }
-    var obj = {};
     this.state.freq = freq;
     this.sendWS({
-      freq: freq
+      freq: freq,
     });
-    if (typeof this.state.duty === "number") {
+    if (typeof this.state.duty === 'number') {
       this.duty(this.state.duty);
     }
   }
 
   pulse(pulse_width) {
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
+
     this.state.pulse = pulse_width;
     delete this.state.duty;
     this.sendWS({
-      pulse: pulse_width
+      pulse: pulse_width,
     });
   }
 
   duty(duty) {
     duty *= 1;
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    if (typeof this.state.freq !== "number" || this.state.freq <= 0) {
-      throw new Error("please provide freq first.");
+    if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
+      throw new Error('please provide freq first.');
     }
-    if (typeof duty !== "number") {
-      throw new Error("please provide duty in number");
+    if (typeof duty !== 'number') {
+      throw new Error('please provide duty in number');
     }
     if (duty < 0) {
       duty = 0;
@@ -11919,10 +11966,10 @@ class PeripheralPWM {
     if (duty > 100) {
       duty = 100;
     }
-    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
+    const pulse_width = 1.0 / this.state.freq * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
-      pulse: pulse_width
+      pulse: pulse_width,
     });
   }
 
@@ -11931,27 +11978,26 @@ class PeripheralPWM {
   }
 
   end() {
-    var obj = {};
     this.state = {};
     this.sendWS(null);
     this.used = false;
   }
 
   modulate(type, symbol_length, data) {
-    if (typeof this.state.io !== "number") {
-      throw new Error("pwm"+this.id+" haven't started");
+    if (typeof this.state.io !== 'number') {
+      throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
     this.sendWS({
       modulate: {
         type: type,
         symbol_length: symbol_length,
-        data: data
-      }
+        data: data,
+      },
     });
   }
 }
 module.exports = PeripheralPWM;
+
 
 /***/ }),
 
@@ -11974,92 +12020,130 @@ class PeripheralSPI {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   start(params) {
-  
-    var err = ObnizUtil._requiredKeys(params,["mode", "frequency"]);
-    if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
-    this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pull"]);
-    var obj = {};
+    let err = ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
+    if (err) {
+      throw new Error("spi start param '" + err + "' required, but not found ");
+    }
+    this.params = ObnizUtil._keyFilter(params, [
+      'mode',
+      'clk',
+      'mosi',
+      'miso',
+      'frequency',
+      'drive',
+      'pull',
+    ]);
+    let obj = {};
 
-    let ioKeys = ["clk", "mosi", "miso"];
+    let ioKeys = ['clk', 'mosi', 'miso'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '"+key+"' are to be valid io no");
+        throw new Error("spi start param '" + key + "' are to be valid io no");
       }
     }
 
-
-    obj["spi" + this.id]  = {
-        mode : this.params.mode,
-        clock : this.params.frequency   //name different
+    obj['spi' + this.id] = {
+      mode: this.params.mode,
+      clock: this.params.frequency, //name different
     };
-    if(this.params.clk  !==  undefined){obj["spi" + this.id].clk = this.params.clk;}
-    if(this.params.mosi !==  undefined){obj["spi" + this.id].mosi = this.params.mosi;}
-    if(this.params.miso !==  undefined){obj["spi" + this.id].miso = this.params.miso;}
-    
-    if(this.params.drive){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive("5v");
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
+    if (this.params.clk !== undefined) {
+      obj['spi' + this.id].clk = this.params.clk;
     }
-    
-    if(this.params.pull){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
+    if (this.params.mosi !== undefined) {
+      obj['spi' + this.id].mosi = this.params.mosi;
     }
-   
-   this.used = true;
+    if (this.params.miso !== undefined) {
+      obj['spi' + this.id].miso = this.params.miso;
+    }
+
+    if (this.params.drive) {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+    } else {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).drive('5v');
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).drive('5v');
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).drive('5v');
+    }
+
+    if (this.params.pull) {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).pull(this.params.pull);
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).pull(this.params.pull);
+    } else {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).pull(null);
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).pull(null);
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).pull(null);
+    }
+
+    this.used = true;
     this.Obniz.send(obj);
   }
 
   writeWait(data) {
-    if(semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
-      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`)
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(
+        `with your obniz ${
+          this.Obniz.firmware_ver
+        }. spi max length=32byte but yours ${
+          data.length
+        }. Please update obniz firmware`
+      );
     }
 
-    var self = this;
-    return new Promise(function(resolve, reject){
+    let self = this;
+    return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
-      obj["spi"+self.id] = {
+      let obj = {};
+      obj['spi' + self.id] = {
         data: data,
-        read: true
+        read: true,
       };
       self.Obniz.send(obj);
     });
   }
 
   write(data) {
-    if(semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
-      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`)
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(
+        `with your obniz ${
+          this.Obniz.firmware_ver
+        }. spi max length=32byte but yours ${
+          data.length
+        }. Please update obniz firmware`
+      );
     }
 
-    var self = this;
-    var obj = {};
-    obj["spi"+self.id] = {
+    let self = this;
+    let obj = {};
+    obj['spi' + self.id] = {
       data: data,
-      read: false
+      read: false,
     };
     self.Obniz.send(obj);
   }
 
   notified(obj) {
     // TODO: we should compare byte length from sent
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj.data);
     }
@@ -12070,17 +12154,18 @@ class PeripheralSPI {
   }
 
   end(reuse) {
-    var self = this;
-    var obj = {};
-    obj["spi"+self.id] = null;
+    let self = this;
+    let obj = {};
+    obj['spi' + self.id] = null;
     this.params = null;
     self.Obniz.send(obj);
-    if(!reuse){
+    if (!reuse) {
       this.used = false;
     }
   }
 }
 module.exports = PeripheralSPI;
+
 
 /***/ }),
 
@@ -12092,101 +12177,110 @@ module.exports = PeripheralSPI;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
-const isNode = (typeof window === 'undefined');
+const isNode = typeof window === 'undefined';
 
 class PeripheralUART {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
-    this.received = new Uint8Array([]); 
+    this.received = new Uint8Array([]);
     this.used = false;
   }
 
   start(params) {
-
-    var err = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
+    let err = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
     if (err) {
-      throw new Error("uart start param '" + err + "' required, but not found ");
-      return;
+      throw new Error(
+        "uart start param '" + err + "' required, but not found "
+      );
     }
-    this.params = ObnizUtil._keyFilter(params, ["tx", "rx", "baud", "stop", "bits", "parity", "flowcontrol", "rts", "cts", "drive", "pull"]);
+    this.params = ObnizUtil._keyFilter(params, [
+      'tx',
+      'rx',
+      'baud',
+      'stop',
+      'bits',
+      'parity',
+      'flowcontrol',
+      'rts',
+      'cts',
+      'drive',
+      'pull',
+    ]);
 
-    let ioKeys = ["rx", "tx", "rts", "cts"];
+    let ioKeys = ['rx', 'tx', 'rts', 'cts'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
-        throw new Error("uart start param '"+key+"' are to be valid io no");
+        throw new Error("uart start param '" + key + "' are to be valid io no");
       }
     }
 
+    if (this.params.hasOwnProperty('drive')) {
+      this.Obniz.getIO(this.params.rx).drive(this.params.drive);
+      this.Obniz.getIO(this.params.tx).drive(this.params.drive);
+    } else {
+      this.Obniz.getIO(this.params.rx).drive('5v');
+      this.Obniz.getIO(this.params.tx).drive('5v');
+    }
 
-    if( this.params.hasOwnProperty("drive")){
-        this.Obniz.getIO(this.params.rx).drive(this.params.drive);
-        this.Obniz.getIO(this.params.tx).drive(this.params.drive);
-    }else{
-        this.Obniz.getIO(this.params.rx).drive("5v");
-        this.Obniz.getIO(this.params.tx).drive("5v");
-        
+    if (this.params.hasOwnProperty('pull')) {
+      this.Obniz.getIO(this.params.rx).pull(this.params.pull);
+      this.Obniz.getIO(this.params.tx).pull(this.params.pull);
+    } else {
+      this.Obniz.getIO(this.params.rx).pull(null);
+      this.Obniz.getIO(this.params.tx).pull(null);
     }
-    
-    if(this.params.hasOwnProperty("pull") ){
-        this.Obniz.getIO(this.params.rx).pull(this.params.pull);
-        this.Obniz.getIO(this.params.tx).pull(this.params.pull);
-    }else{
-        this.Obniz.getIO(this.params.rx).pull(null);
-        this.Obniz.getIO(this.params.tx).pull(null);
-    }
-    
-    var obj = {};
-    obj["uart"+this.id] = this.params;
+
+    let obj = {};
+    obj['uart' + this.id] = this.params;
     this.Obniz.send(obj);
     this.received = [];
     this.used = true;
   }
 
   send(data) {
-    var send_data = null;
+    let send_data = null;
     if (data === undefined) {
       return;
     }
-    if (typeof(data) === "number") {
+    if (typeof data === 'number') {
       data = [data];
     }
     if (isNode && data instanceof Buffer) {
-      var arr = [... data];
+      send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
-    } else if (typeof(data) === "string") {
+    } else if (typeof data === 'string') {
       const buf = Buffer(data);
-      send_data = [... buf];
-
+      send_data = [...buf];
     }
-    var obj = {};
-    obj["uart"+this.id] = {};
-    obj["uart"+this.id].data = send_data;
-  //  console.log(obj);
+    let obj = {};
+    obj['uart' + this.id] = {};
+    obj['uart' + this.id].data = send_data;
+    //  console.log(obj);
     this.Obniz.send(obj);
   }
 
   isDataExists() {
-    return (this.received && this.received.length > 0);
+    return this.received && this.received.length > 0;
   }
 
   readBytes() {
-    var results = [];
+    let results = [];
     if (this.isDataExists()) {
-        for (var i=0;i<this.received.length; i++) {
-          results.push(this.received[i]);
-        }
+      for (let i = 0; i < this.received.length; i++) {
+        results.push(this.received[i]);
+      }
     }
     this.received = [];
     return results;
   }
 
   readText() {
-    var string = null;
+    let string = null;
     if (this.isDataExists()) {
-        var data = this.readBytes();
-        string = this.tryConvertString(data);
+      let data = this.readBytes();
+      string = this.tryConvertString(data);
     }
     this.received = [];
     return string;
@@ -12198,13 +12292,13 @@ class PeripheralUART {
 
   notified(obj) {
     if (this.onreceive) {
-      var string = this.tryConvertString(obj.data);
+      let string = this.tryConvertString(obj.data);
       this.onreceive(obj.data, string);
     } else {
       if (!this.received) {
         this.received = [];
       }
-      
+
       this.received.push.apply(this.received, obj.data);
     }
   }
@@ -12214,14 +12308,15 @@ class PeripheralUART {
   }
 
   end() {
-    var obj = {};
-    obj["uart"+this.id] = null;
+    let obj = {};
+    obj['uart' + this.id] = null;
     this.params = null;
     this.Obniz.send(obj);
     this.used = false;
   }
 }
 module.exports = PeripheralUART;
+
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -12236,37 +12331,44 @@ module.exports = PeripheralUART;
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class LogicAnalyzer {
-
   constructor(obniz) {
     this.obniz = obniz;
   }
 
-  start( params ) {
-    
-  var err = ObnizUtil._requiredKeys(params,["io", "interval", "duration"]);
-  if(err){ throw new Error("LogicAnalyzer start param '" + err +"' required, but not found ");return;}
-  this.params = ObnizUtil._keyFilter(params,["io", "interval", "duration", "triggerValue", "triggerValueSamples"]);
+  start(params) {
+    let err = ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
+    if (err) {
+      throw new Error(
+        "LogicAnalyzer start param '" + err + "' required, but not found "
+      );
+    }
+    this.params = ObnizUtil._keyFilter(params, [
+      'io',
+      'interval',
+      'duration',
+      'triggerValue',
+      'triggerValueSamples',
+    ]);
 
-  
-    var obj = {};
+    let obj = {};
     obj.logic_analyzer = {
       io: [this.params.io],
       interval: this.params.interval,
-      duration: this.params.duration
+      duration: this.params.duration,
     };
     if (this.params.triggerValueSamples > 0) {
       obj.logic_analyzer.trigger = {
         value: !!this.params.triggerValue,
-        samples: this.params.triggerValueSamples
-      }
+        samples: this.params.triggerValueSamples,
+      };
     }
-  
+
     this.obniz.send(obj);
     return;
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj.logic_analyzer = null;
     this.obniz.send(obj);
     return;
@@ -12282,11 +12384,11 @@ class LogicAnalyzer {
       this.measured.push(obj.data);
     }
     return;
-  };
+  }
 }
 
-
 module.exports = LogicAnalyzer;
+
 
 /***/ }),
 
@@ -12297,50 +12399,67 @@ module.exports = LogicAnalyzer;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 class ObnizMeasure {
-
   constructor(obniz) {
     this.obniz = obniz;
     this.observers = [];
   }
 
   echo(params) {
-    var err = ObnizUtil._requiredKeys(params, ["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges"]);
-    if(err){ throw new Error("Measure start param '" + err +"' required, but not found ");return;}
-    this.params = ObnizUtil._keyFilter(params,["io_pulse", "pulse", "pulse_width", "io_echo", "measure_edges", "timeout", "callback"]);
-  
-    var echo = {};
+    let err = ObnizUtil._requiredKeys(params, [
+      'io_pulse',
+      'pulse',
+      'pulse_width',
+      'io_echo',
+      'measure_edges',
+    ]);
+    if (err) {
+      throw new Error(
+        "Measure start param '" + err + "' required, but not found "
+      );
+    }
+    this.params = ObnizUtil._keyFilter(params, [
+      'io_pulse',
+      'pulse',
+      'pulse_width',
+      'io_echo',
+      'measure_edges',
+      'timeout',
+      'callback',
+    ]);
+
+    let echo = {};
     echo.io_pulse = this.params.io_pulse;
     echo.pulse = this.params.pulse;
     echo.pulse_width = this.params.pulse_width;
     echo.io_echo = this.params.io_echo;
     echo.measure_edges = this.params.measure_edges;
-    if (typeof this.params.timeout === "number") {
+    if (typeof this.params.timeout === 'number') {
       echo.timeout = this.params.timeout;
     }
-  
+
     this.obniz.send({
       measure: {
-        echo: echo
-      }
+        echo: echo,
+      },
     });
-  
-    if(this.params.callback) {
+
+    if (this.params.callback) {
       this.observers.push(this.params.callback);
     }
   }
 
   notified(obj) {
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj.echo);
     }
-  }; 
+  }
 }
 module.exports = ObnizMeasure;
+
 
 /***/ }),
 
@@ -12350,6 +12469,8 @@ module.exports = ObnizMeasure;
   \********************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
+
+/* eslint-disable */
 
 /* Thanks Kazuhiko Arase */
 /* https://github.com/kazuhikoarase/qrcode-generator/tree/master/js */
@@ -12371,8 +12492,7 @@ module.exports = ObnizMeasure;
 //
 //---------------------------------------------------------------------
 
-var qrcode = function() {
-
+var qrcode = (function() {
   //---------------------------------------------------------------------
   // qrcode
   //---------------------------------------------------------------------
@@ -12383,8 +12503,7 @@ var qrcode = function() {
    * @param errorCorrectionLevel 'L','M','Q','H'
    */
   var qrcode = function(typeNumber, errorCorrectionLevel) {
-
-    var PAD0 = 0xEC;
+    var PAD0 = 0xec;
     var PAD1 = 0x11;
 
     var _typeNumber = typeNumber;
@@ -12397,9 +12516,8 @@ var qrcode = function() {
     var _this = {};
 
     var makeImpl = function(test, maskPattern) {
-
       _moduleCount = _typeNumber * 4 + 17;
-      _modules = function(moduleCount) {
+      _modules = (function(moduleCount) {
         var modules = new Array(moduleCount);
         for (var row = 0; row < moduleCount; row += 1) {
           modules[row] = new Array(moduleCount);
@@ -12408,7 +12526,7 @@ var qrcode = function() {
           }
         }
         return modules;
-      }(_moduleCount);
+      })(_moduleCount);
 
       setupPositionProbePattern(0, 0);
       setupPositionProbePattern(_moduleCount - 7, 0);
@@ -12429,18 +12547,17 @@ var qrcode = function() {
     };
 
     var setupPositionProbePattern = function(row, col) {
-
       for (var r = -1; r <= 7; r += 1) {
-
         if (row + r <= -1 || _moduleCount <= row + r) continue;
 
         for (var c = -1; c <= 7; c += 1) {
-
           if (col + c <= -1 || _moduleCount <= col + c) continue;
 
-          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
-              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
-              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+          if (
+            (0 <= r && r <= 6 && (c == 0 || c == 6)) ||
+            (0 <= c && c <= 6 && (r == 0 || r == 6)) ||
+            (2 <= r && r <= 4 && 2 <= c && c <= 4)
+          ) {
             _modules[row + r][col + c] = true;
           } else {
             _modules[row + r][col + c] = false;
@@ -12450,12 +12567,10 @@ var qrcode = function() {
     };
 
     var getBestMaskPattern = function() {
-
       var minLostPoint = 0;
       var pattern = 0;
 
       for (var i = 0; i < 8; i += 1) {
-
         makeImpl(true, i);
 
         var lostPoint = QRUtil.getLostPoint(_this);
@@ -12470,30 +12585,26 @@ var qrcode = function() {
     };
 
     var setupTimingPattern = function() {
-
       for (var r = 8; r < _moduleCount - 8; r += 1) {
         if (_modules[r][6] != null) {
           continue;
         }
-        _modules[r][6] = (r % 2 == 0);
+        _modules[r][6] = r % 2 == 0;
       }
 
       for (var c = 8; c < _moduleCount - 8; c += 1) {
         if (_modules[6][c] != null) {
           continue;
         }
-        _modules[6][c] = (c % 2 == 0);
+        _modules[6][c] = c % 2 == 0;
       }
     };
 
     var setupPositionAdjustPattern = function() {
-
       var pos = QRUtil.getPatternPosition(_typeNumber);
 
       for (var i = 0; i < pos.length; i += 1) {
-
         for (var j = 0; j < pos.length; j += 1) {
-
           var row = pos[i];
           var col = pos[j];
 
@@ -12502,11 +12613,14 @@ var qrcode = function() {
           }
 
           for (var r = -2; r <= 2; r += 1) {
-
             for (var c = -2; c <= 2; c += 1) {
-
-              if (r == -2 || r == 2 || c == -2 || c == 2
-                  || (r == 0 && c == 0) ) {
+              if (
+                r == -2 ||
+                r == 2 ||
+                c == -2 ||
+                c == 2 ||
+                (r == 0 && c == 0)
+              ) {
                 _modules[row + r][col + c] = true;
               } else {
                 _modules[row + r][col + c] = false;
@@ -12518,29 +12632,26 @@ var qrcode = function() {
     };
 
     var setupTypeNumber = function(test) {
-
       var bits = QRUtil.getBCHTypeNumber(_typeNumber);
 
       for (var i = 0; i < 18; i += 1) {
-        var mod = (!test && ( (bits >> i) & 1) == 1);
+        var mod = !test && ((bits >> i) & 1) == 1;
         _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
       }
 
       for (var i = 0; i < 18; i += 1) {
-        var mod = (!test && ( (bits >> i) & 1) == 1);
+        var mod = !test && ((bits >> i) & 1) == 1;
         _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
       }
     };
 
     var setupTypeInfo = function(test, maskPattern) {
-
       var data = (_errorCorrectionLevel << 3) | maskPattern;
       var bits = QRUtil.getBCHTypeInfo(data);
 
       // vertical
       for (var i = 0; i < 15; i += 1) {
-
-        var mod = (!test && ( (bits >> i) & 1) == 1);
+        var mod = !test && ((bits >> i) & 1) == 1;
 
         if (i < 6) {
           _modules[i][8] = mod;
@@ -12553,8 +12664,7 @@ var qrcode = function() {
 
       // horizontal
       for (var i = 0; i < 15; i += 1) {
-
-        var mod = (!test && ( (bits >> i) & 1) == 1);
+        var mod = !test && ((bits >> i) & 1) == 1;
 
         if (i < 8) {
           _modules[8][_moduleCount - i - 1] = mod;
@@ -12566,11 +12676,10 @@ var qrcode = function() {
       }
 
       // fixed module
-      _modules[_moduleCount - 8][8] = (!test);
+      _modules[_moduleCount - 8][8] = !test;
     };
 
     var mapData = function(data, maskPattern) {
-
       var inc = -1;
       var row = _moduleCount - 1;
       var bitIndex = 7;
@@ -12578,19 +12687,15 @@ var qrcode = function() {
       var maskFunc = QRUtil.getMaskFunction(maskPattern);
 
       for (var col = _moduleCount - 1; col > 0; col -= 2) {
-
         if (col == 6) col -= 1;
 
         while (true) {
-
           for (var c = 0; c < 2; c += 1) {
-
             if (_modules[row][col - c] == null) {
-
               var dark = false;
 
               if (byteIndex < data.length) {
-                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+                dark = ((data[byteIndex] >>> bitIndex) & 1) == 1;
               }
 
               var mask = maskFunc(row, col - c);
@@ -12621,7 +12726,6 @@ var qrcode = function() {
     };
 
     var createBytes = function(buffer, rsBlocks) {
-
       var offset = 0;
 
       var maxDcCount = 0;
@@ -12631,7 +12735,6 @@ var qrcode = function() {
       var ecdata = new Array(rsBlocks.length);
 
       for (var r = 0; r < rsBlocks.length; r += 1) {
-
         var dcCount = rsBlocks[r].dataCount;
         var ecCount = rsBlocks[r].totalCount - dcCount;
 
@@ -12652,7 +12755,7 @@ var qrcode = function() {
         ecdata[r] = new Array(rsPoly.getLength() - 1);
         for (var i = 0; i < ecdata[r].length; i += 1) {
           var modIndex = i + modPoly.getLength() - ecdata[r].length;
-          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+          ecdata[r][i] = modIndex >= 0 ? modPoly.getAt(modIndex) : 0;
         }
       }
 
@@ -12686,7 +12789,6 @@ var qrcode = function() {
     };
 
     var createData = function(typeNumber, errorCorrectionLevel, dataList) {
-
       var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
 
       var buffer = qrBitBuffer();
@@ -12694,7 +12796,10 @@ var qrcode = function() {
       for (var i = 0; i < dataList.length; i += 1) {
         var data = dataList[i];
         buffer.put(data.getMode(), 4);
-        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        buffer.put(
+          data.getLength(),
+          QRUtil.getLengthInBits(data.getMode(), typeNumber)
+        );
         data.write(buffer);
       }
 
@@ -12705,11 +12810,11 @@ var qrcode = function() {
       }
 
       if (buffer.getLengthInBits() > totalDataCount * 8) {
-        throw 'code length overflow. ('
-          + buffer.getLengthInBits()
-          + '>'
-          + totalDataCount * 8
-          + ')';
+        throw 'code length overflow. (' +
+          buffer.getLengthInBits() +
+          '>' +
+          totalDataCount * 8 +
+          ')';
       }
 
       // end code
@@ -12724,7 +12829,6 @@ var qrcode = function() {
 
       // padding
       while (true) {
-
         if (buffer.getLengthInBits() >= totalDataCount * 8) {
           break;
         }
@@ -12740,26 +12844,25 @@ var qrcode = function() {
     };
 
     _this.addData = function(data, mode) {
-
       mode = mode || 'Byte';
 
       var newData = null;
 
-      switch(mode) {
-      case 'Numeric' :
-        newData = qrNumber(data);
-        break;
-      case 'Alphanumeric' :
-        newData = qrAlphaNum(data);
-        break;
-      case 'Byte' :
-        newData = qr8BitByte(data);
-        break;
-      case 'Kanji' :
-        newData = qrKanji(data);
-        break;
-      default :
-        throw 'mode:' + mode;
+      switch (mode) {
+        case 'Numeric':
+          newData = qrNumber(data);
+          break;
+        case 'Alphanumeric':
+          newData = qrAlphaNum(data);
+          break;
+        case 'Byte':
+          newData = qr8BitByte(data);
+          break;
+        case 'Kanji':
+          newData = qrKanji(data);
+          break;
+        default:
+          throw 'mode:' + mode;
       }
 
       _dataList.push(newData);
@@ -12768,7 +12871,7 @@ var qrcode = function() {
 
     _this.getModules = function() {
       return _modules;
-    }
+    };
 
     _this.isDark = function(row, col) {
       if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
@@ -12786,13 +12889,19 @@ var qrcode = function() {
         var typeNumber = 1;
 
         for (; typeNumber < 40; typeNumber++) {
-          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var rsBlocks = QRRSBlock.getRSBlocks(
+            typeNumber,
+            _errorCorrectionLevel
+          );
           var buffer = qrBitBuffer();
 
           for (var i = 0; i < _dataList.length; i++) {
             var data = _dataList[i];
             buffer.put(data.getMode(), 4);
-            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            buffer.put(
+              data.getLength(),
+              QRUtil.getLengthInBits(data.getMode(), typeNumber)
+            );
             data.write(buffer);
           }
 
@@ -12809,13 +12918,12 @@ var qrcode = function() {
         _typeNumber = typeNumber;
       }
 
-      makeImpl(false, getBestMaskPattern() );
+      makeImpl(false, getBestMaskPattern());
     };
 
     _this.createTableTag = function(cellSize, margin) {
-
       cellSize = cellSize || 2;
-      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+      margin = typeof margin == 'undefined' ? cellSize * 4 : margin;
 
       var qrHtml = '';
 
@@ -12827,7 +12935,6 @@ var qrcode = function() {
       qrHtml += '<tbody>';
 
       for (var r = 0; r < _this.getModuleCount(); r += 1) {
-
         qrHtml += '<tr>';
 
         for (var c = 0; c < _this.getModuleCount(); c += 1) {
@@ -12838,7 +12945,7 @@ var qrcode = function() {
           qrHtml += ' width: ' + cellSize + 'px;';
           qrHtml += ' height: ' + cellSize + 'px;';
           qrHtml += ' background-color: ';
-          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += _this.isDark(r, c) ? '#000000' : '#ffffff';
           qrHtml += ';';
           qrHtml += '"/>';
         }
@@ -12861,7 +12968,7 @@ var qrcode = function() {
           context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
         }
       }
-    }
+    };
 
     return _this;
   };
@@ -12871,14 +12978,14 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   qrcode.stringToBytesFuncs = {
-    'default' : function(s) {
+    default: function(s) {
       var bytes = [];
       for (var i = 0; i < s.length; i += 1) {
         var c = s.charCodeAt(i);
         bytes.push(c & 0xff);
       }
       return bytes;
-    }
+    },
   };
 
   qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
@@ -12893,11 +13000,9 @@ var qrcode = function() {
    * @param numChars
    */
   qrcode.createStringToBytes = function(unicodeData, numChars) {
-
     // create conversion map.
 
-    var unicodeMap = function() {
-
+    var unicodeMap = (function() {
       var bin = base64DecodeInputStream(unicodeData);
       var read = function() {
         var b = bin.read();
@@ -12913,7 +13018,7 @@ var qrcode = function() {
         var b1 = read();
         var b2 = read();
         var b3 = read();
-        var k = String.fromCharCode( (b0 << 8) | b1);
+        var k = String.fromCharCode((b0 << 8) | b1);
         var v = (b2 << 8) | b3;
         unicodeMap[k] = v;
         count += 1;
@@ -12923,7 +13028,7 @@ var qrcode = function() {
       }
 
       return unicodeMap;
-    }();
+    })();
 
     var unknownChar = '?'.charCodeAt(0);
 
@@ -12936,7 +13041,7 @@ var qrcode = function() {
         } else {
           var b = unicodeMap[s.charAt(i)];
           if (typeof b == 'number') {
-            if ( (b & 0xff) == b) {
+            if ((b & 0xff) == b) {
               // 1byte
               bytes.push(b);
             } else {
@@ -12958,10 +13063,10 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var QRMode = {
-    MODE_NUMBER :    1 << 0,
-    MODE_ALPHA_NUM : 1 << 1,
-    MODE_8BIT_BYTE : 1 << 2,
-    MODE_KANJI :     1 << 3
+    MODE_NUMBER: 1 << 0,
+    MODE_ALPHA_NUM: 1 << 1,
+    MODE_8BIT_BYTE: 1 << 2,
+    MODE_KANJI: 1 << 3,
   };
 
   //---------------------------------------------------------------------
@@ -12969,10 +13074,10 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var QRErrorCorrectionLevel = {
-    L : 1,
-    M : 0,
-    Q : 3,
-    H : 2
+    L: 1,
+    M: 0,
+    Q: 3,
+    H: 2,
   };
 
   //---------------------------------------------------------------------
@@ -12980,22 +13085,21 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var QRMaskPattern = {
-    PATTERN000 : 0,
-    PATTERN001 : 1,
-    PATTERN010 : 2,
-    PATTERN011 : 3,
-    PATTERN100 : 4,
-    PATTERN101 : 5,
-    PATTERN110 : 6,
-    PATTERN111 : 7
+    PATTERN000: 0,
+    PATTERN001: 1,
+    PATTERN010: 2,
+    PATTERN011: 3,
+    PATTERN100: 4,
+    PATTERN101: 5,
+    PATTERN110: 6,
+    PATTERN111: 7,
   };
 
   //---------------------------------------------------------------------
   // QRUtil
   //---------------------------------------------------------------------
 
-  var QRUtil = function() {
-
+  var QRUtil = (function() {
     var PATTERN_POSITION_TABLE = [
       [],
       [6, 18],
@@ -13036,10 +13140,25 @@ var qrcode = function() {
       [6, 28, 54, 80, 106, 132, 158],
       [6, 32, 58, 84, 110, 136, 162],
       [6, 26, 54, 82, 110, 138, 166],
-      [6, 30, 58, 86, 114, 142, 170]
+      [6, 30, 58, 86, 114, 142, 170],
     ];
-    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
-    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15 =
+      (1 << 10) |
+      (1 << 8) |
+      (1 << 5) |
+      (1 << 4) |
+      (1 << 2) |
+      (1 << 1) |
+      (1 << 0);
+    var G18 =
+      (1 << 12) |
+      (1 << 11) |
+      (1 << 10) |
+      (1 << 9) |
+      (1 << 8) |
+      (1 << 5) |
+      (1 << 2) |
+      (1 << 0);
     var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
     var _this = {};
@@ -13056,15 +13175,15 @@ var qrcode = function() {
     _this.getBCHTypeInfo = function(data) {
       var d = data << 10;
       while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
-        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+        d ^= G15 << (getBCHDigit(d) - getBCHDigit(G15));
       }
-      return ( (data << 10) | d) ^ G15_MASK;
+      return ((data << 10) | d) ^ G15_MASK;
     };
 
     _this.getBCHTypeNumber = function(data) {
       var d = data << 12;
       while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
-        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+        d ^= G18 << (getBCHDigit(d) - getBCHDigit(G18));
       }
       return (data << 12) | d;
     };
@@ -13074,87 +13193,105 @@ var qrcode = function() {
     };
 
     _this.getMaskFunction = function(maskPattern) {
-
       switch (maskPattern) {
+        case QRMaskPattern.PATTERN000:
+          return function(i, j) {
+            return (i + j) % 2 == 0;
+          };
+        case QRMaskPattern.PATTERN001:
+          return function(i, j) {
+            return i % 2 == 0;
+          };
+        case QRMaskPattern.PATTERN010:
+          return function(i, j) {
+            return j % 3 == 0;
+          };
+        case QRMaskPattern.PATTERN011:
+          return function(i, j) {
+            return (i + j) % 3 == 0;
+          };
+        case QRMaskPattern.PATTERN100:
+          return function(i, j) {
+            return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0;
+          };
+        case QRMaskPattern.PATTERN101:
+          return function(i, j) {
+            return (i * j) % 2 + (i * j) % 3 == 0;
+          };
+        case QRMaskPattern.PATTERN110:
+          return function(i, j) {
+            return ((i * j) % 2 + (i * j) % 3) % 2 == 0;
+          };
+        case QRMaskPattern.PATTERN111:
+          return function(i, j) {
+            return ((i * j) % 3 + (i + j) % 2) % 2 == 0;
+          };
 
-      case QRMaskPattern.PATTERN000 :
-        return function(i, j) { return (i + j) % 2 == 0; };
-      case QRMaskPattern.PATTERN001 :
-        return function(i, j) { return i % 2 == 0; };
-      case QRMaskPattern.PATTERN010 :
-        return function(i, j) { return j % 3 == 0; };
-      case QRMaskPattern.PATTERN011 :
-        return function(i, j) { return (i + j) % 3 == 0; };
-      case QRMaskPattern.PATTERN100 :
-        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
-      case QRMaskPattern.PATTERN101 :
-        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
-      case QRMaskPattern.PATTERN110 :
-        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
-      case QRMaskPattern.PATTERN111 :
-        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
-
-      default :
-        throw 'bad maskPattern:' + maskPattern;
+        default:
+          throw 'bad maskPattern:' + maskPattern;
       }
     };
 
     _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
       var a = qrPolynomial([1], 0);
       for (var i = 0; i < errorCorrectLength; i += 1) {
-        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0));
       }
       return a;
     };
 
     _this.getLengthInBits = function(mode, type) {
-
       if (1 <= type && type < 10) {
-
         // 1 - 9
 
-        switch(mode) {
-        case QRMode.MODE_NUMBER    : return 10;
-        case QRMode.MODE_ALPHA_NUM : return 9;
-        case QRMode.MODE_8BIT_BYTE : return 8;
-        case QRMode.MODE_KANJI     : return 8;
-        default :
-          throw 'mode:' + mode;
+        switch (mode) {
+          case QRMode.MODE_NUMBER:
+            return 10;
+          case QRMode.MODE_ALPHA_NUM:
+            return 9;
+          case QRMode.MODE_8BIT_BYTE:
+            return 8;
+          case QRMode.MODE_KANJI:
+            return 8;
+          default:
+            throw 'mode:' + mode;
         }
-
       } else if (type < 27) {
-
         // 10 - 26
 
-        switch(mode) {
-        case QRMode.MODE_NUMBER    : return 12;
-        case QRMode.MODE_ALPHA_NUM : return 11;
-        case QRMode.MODE_8BIT_BYTE : return 16;
-        case QRMode.MODE_KANJI     : return 10;
-        default :
-          throw 'mode:' + mode;
+        switch (mode) {
+          case QRMode.MODE_NUMBER:
+            return 12;
+          case QRMode.MODE_ALPHA_NUM:
+            return 11;
+          case QRMode.MODE_8BIT_BYTE:
+            return 16;
+          case QRMode.MODE_KANJI:
+            return 10;
+          default:
+            throw 'mode:' + mode;
         }
-
       } else if (type < 41) {
-
         // 27 - 40
 
-        switch(mode) {
-        case QRMode.MODE_NUMBER    : return 14;
-        case QRMode.MODE_ALPHA_NUM : return 13;
-        case QRMode.MODE_8BIT_BYTE : return 16;
-        case QRMode.MODE_KANJI     : return 12;
-        default :
-          throw 'mode:' + mode;
+        switch (mode) {
+          case QRMode.MODE_NUMBER:
+            return 14;
+          case QRMode.MODE_ALPHA_NUM:
+            return 13;
+          case QRMode.MODE_8BIT_BYTE:
+            return 16;
+          case QRMode.MODE_KANJI:
+            return 12;
+          default:
+            throw 'mode:' + mode;
         }
-
       } else {
         throw 'type:' + type;
       }
     };
 
     _this.getLostPoint = function(qrcode) {
-
       var moduleCount = qrcode.getModuleCount();
 
       var lostPoint = 0;
@@ -13163,18 +13300,15 @@ var qrcode = function() {
 
       for (var row = 0; row < moduleCount; row += 1) {
         for (var col = 0; col < moduleCount; col += 1) {
-
           var sameCount = 0;
           var dark = qrcode.isDark(row, col);
 
           for (var r = -1; r <= 1; r += 1) {
-
             if (row + r < 0 || moduleCount <= row + r) {
               continue;
             }
 
             for (var c = -1; c <= 1; c += 1) {
-
               if (col + c < 0 || moduleCount <= col + c) {
                 continue;
               }
@@ -13183,27 +13317,27 @@ var qrcode = function() {
                 continue;
               }
 
-              if (dark == qrcode.isDark(row + r, col + c) ) {
+              if (dark == qrcode.isDark(row + r, col + c)) {
                 sameCount += 1;
               }
             }
           }
 
           if (sameCount > 5) {
-            lostPoint += (3 + sameCount - 5);
+            lostPoint += 3 + sameCount - 5;
           }
         }
-      };
+      }
 
       // LEVEL2
 
       for (var row = 0; row < moduleCount - 1; row += 1) {
         for (var col = 0; col < moduleCount - 1; col += 1) {
           var count = 0;
-          if (qrcode.isDark(row, col) ) count += 1;
-          if (qrcode.isDark(row + 1, col) ) count += 1;
-          if (qrcode.isDark(row, col + 1) ) count += 1;
-          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (qrcode.isDark(row, col)) count += 1;
+          if (qrcode.isDark(row + 1, col)) count += 1;
+          if (qrcode.isDark(row, col + 1)) count += 1;
+          if (qrcode.isDark(row + 1, col + 1)) count += 1;
           if (count == 0 || count == 4) {
             lostPoint += 3;
           }
@@ -13214,13 +13348,15 @@ var qrcode = function() {
 
       for (var row = 0; row < moduleCount; row += 1) {
         for (var col = 0; col < moduleCount - 6; col += 1) {
-          if (qrcode.isDark(row, col)
-              && !qrcode.isDark(row, col + 1)
-              &&  qrcode.isDark(row, col + 2)
-              &&  qrcode.isDark(row, col + 3)
-              &&  qrcode.isDark(row, col + 4)
-              && !qrcode.isDark(row, col + 5)
-              &&  qrcode.isDark(row, col + 6) ) {
+          if (
+            qrcode.isDark(row, col) &&
+            !qrcode.isDark(row, col + 1) &&
+            qrcode.isDark(row, col + 2) &&
+            qrcode.isDark(row, col + 3) &&
+            qrcode.isDark(row, col + 4) &&
+            !qrcode.isDark(row, col + 5) &&
+            qrcode.isDark(row, col + 6)
+          ) {
             lostPoint += 40;
           }
         }
@@ -13228,13 +13364,15 @@ var qrcode = function() {
 
       for (var col = 0; col < moduleCount; col += 1) {
         for (var row = 0; row < moduleCount - 6; row += 1) {
-          if (qrcode.isDark(row, col)
-              && !qrcode.isDark(row + 1, col)
-              &&  qrcode.isDark(row + 2, col)
-              &&  qrcode.isDark(row + 3, col)
-              &&  qrcode.isDark(row + 4, col)
-              && !qrcode.isDark(row + 5, col)
-              &&  qrcode.isDark(row + 6, col) ) {
+          if (
+            qrcode.isDark(row, col) &&
+            !qrcode.isDark(row + 1, col) &&
+            qrcode.isDark(row + 2, col) &&
+            qrcode.isDark(row + 3, col) &&
+            qrcode.isDark(row + 4, col) &&
+            !qrcode.isDark(row + 5, col) &&
+            qrcode.isDark(row + 6, col)
+          ) {
             lostPoint += 40;
           }
         }
@@ -13246,27 +13384,27 @@ var qrcode = function() {
 
       for (var col = 0; col < moduleCount; col += 1) {
         for (var row = 0; row < moduleCount; row += 1) {
-          if (qrcode.isDark(row, col) ) {
+          if (qrcode.isDark(row, col)) {
             darkCount += 1;
           }
         }
       }
 
-      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      var ratio =
+        Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
       lostPoint += ratio * 10;
 
       return lostPoint;
     };
 
     return _this;
-  }();
+  })();
 
   //---------------------------------------------------------------------
   // QRMath
   //---------------------------------------------------------------------
 
-  var QRMath = function() {
-
+  var QRMath = (function() {
     var EXP_TABLE = new Array(256);
     var LOG_TABLE = new Array(256);
 
@@ -13275,19 +13413,19 @@ var qrcode = function() {
       EXP_TABLE[i] = 1 << i;
     }
     for (var i = 8; i < 256; i += 1) {
-      EXP_TABLE[i] = EXP_TABLE[i - 4]
-        ^ EXP_TABLE[i - 5]
-        ^ EXP_TABLE[i - 6]
-        ^ EXP_TABLE[i - 8];
+      EXP_TABLE[i] =
+        EXP_TABLE[i - 4] ^
+        EXP_TABLE[i - 5] ^
+        EXP_TABLE[i - 6] ^
+        EXP_TABLE[i - 8];
     }
     for (var i = 0; i < 255; i += 1) {
-      LOG_TABLE[EXP_TABLE[i] ] = i;
+      LOG_TABLE[EXP_TABLE[i]] = i;
     }
 
     var _this = {};
 
     _this.glog = function(n) {
-
       if (n < 1) {
         throw 'glog(' + n + ')';
       }
@@ -13296,7 +13434,6 @@ var qrcode = function() {
     };
 
     _this.gexp = function(n) {
-
       while (n < 0) {
         n += 255;
       }
@@ -13309,19 +13446,18 @@ var qrcode = function() {
     };
 
     return _this;
-  }();
+  })();
 
   //---------------------------------------------------------------------
   // qrPolynomial
   //---------------------------------------------------------------------
 
   function qrPolynomial(num, shift) {
-
     if (typeof num.length == 'undefined') {
       throw num.length + '/' + shift;
     }
 
-    var _num = function() {
+    var _num = (function() {
       var offset = 0;
       while (offset < num.length && num[offset] == 0) {
         offset += 1;
@@ -13331,7 +13467,7 @@ var qrcode = function() {
         _num[i] = num[i + offset];
       }
       return _num;
-    }();
+    })();
 
     var _this = {};
 
@@ -13344,12 +13480,13 @@ var qrcode = function() {
     };
 
     _this.multiply = function(e) {
-
       var num = new Array(_this.getLength() + e.getLength() - 1);
 
       for (var i = 0; i < _this.getLength(); i += 1) {
         for (var j = 0; j < e.getLength(); j += 1) {
-          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+          num[i + j] ^= QRMath.gexp(
+            QRMath.glog(_this.getAt(i)) + QRMath.glog(e.getAt(j))
+          );
         }
       }
 
@@ -13357,20 +13494,19 @@ var qrcode = function() {
     };
 
     _this.mod = function(e) {
-
       if (_this.getLength() - e.getLength() < 0) {
         return _this;
       }
 
-      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+      var ratio = QRMath.glog(_this.getAt(0)) - QRMath.glog(e.getAt(0));
 
-      var num = new Array(_this.getLength() );
+      var num = new Array(_this.getLength());
       for (var i = 0; i < _this.getLength(); i += 1) {
         num[i] = _this.getAt(i);
       }
 
       for (var i = 0; i < e.getLength(); i += 1) {
-        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i)) + ratio);
       }
 
       // recursive call
@@ -13378,16 +13514,14 @@ var qrcode = function() {
     };
 
     return _this;
-  };
+  }
 
   //---------------------------------------------------------------------
   // QRRSBlock
   //---------------------------------------------------------------------
 
-  var QRRSBlock = function() {
-
+  var QRRSBlock = (function() {
     var RS_BLOCK_TABLE = [
-
       // L
       // M
       // Q
@@ -13631,7 +13765,7 @@ var qrcode = function() {
       [19, 148, 118, 6, 149, 119],
       [18, 75, 47, 31, 76, 48],
       [34, 54, 24, 34, 55, 25],
-      [20, 45, 15, 61, 46, 16]
+      [20, 45, 15, 61, 46, 16],
     ];
 
     var qrRSBlock = function(totalCount, dataCount) {
@@ -13644,28 +13778,28 @@ var qrcode = function() {
     var _this = {};
 
     var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
-
-      switch(errorCorrectionLevel) {
-      case QRErrorCorrectionLevel.L :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-      case QRErrorCorrectionLevel.M :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-      case QRErrorCorrectionLevel.Q :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-      case QRErrorCorrectionLevel.H :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
-      default :
-        return undefined;
+      switch (errorCorrectionLevel) {
+        case QRErrorCorrectionLevel.L:
+          return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+        case QRErrorCorrectionLevel.M:
+          return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+        case QRErrorCorrectionLevel.Q:
+          return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+        case QRErrorCorrectionLevel.H:
+          return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+        default:
+          return undefined;
       }
     };
 
     _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
-
       var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
 
       if (typeof rsBlock == 'undefined') {
-        throw 'bad rs block @ typeNumber:' + typeNumber +
-            '/errorCorrectionLevel:' + errorCorrectionLevel;
+        throw 'bad rs block @ typeNumber:' +
+          typeNumber +
+          '/errorCorrectionLevel:' +
+          errorCorrectionLevel;
       }
 
       var length = rsBlock.length / 3;
@@ -13673,13 +13807,12 @@ var qrcode = function() {
       var list = [];
 
       for (var i = 0; i < length; i += 1) {
-
         var count = rsBlock[i * 3 + 0];
         var totalCount = rsBlock[i * 3 + 1];
         var dataCount = rsBlock[i * 3 + 2];
 
         for (var j = 0; j < count; j += 1) {
-          list.push(qrRSBlock(totalCount, dataCount) );
+          list.push(qrRSBlock(totalCount, dataCount));
         }
       }
 
@@ -13687,14 +13820,13 @@ var qrcode = function() {
     };
 
     return _this;
-  }();
+  })();
 
   //---------------------------------------------------------------------
   // qrBitBuffer
   //---------------------------------------------------------------------
 
   var qrBitBuffer = function() {
-
     var _buffer = [];
     var _length = 0;
 
@@ -13706,12 +13838,12 @@ var qrcode = function() {
 
     _this.getAt = function(index) {
       var bufIndex = Math.floor(index / 8);
-      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+      return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) == 1;
     };
 
     _this.put = function(num, length) {
       for (var i = 0; i < length; i += 1) {
-        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+        _this.putBit(((num >>> (length - i - 1)) & 1) == 1);
       }
     };
 
@@ -13720,14 +13852,13 @@ var qrcode = function() {
     };
 
     _this.putBit = function(bit) {
-
       var bufIndex = Math.floor(_length / 8);
       if (_buffer.length <= bufIndex) {
         _buffer.push(0);
       }
 
       if (bit) {
-        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+        _buffer[bufIndex] |= 0x80 >>> (_length % 8);
       }
 
       _length += 1;
@@ -13741,7 +13872,6 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var qrNumber = function(data) {
-
     var _mode = QRMode.MODE_NUMBER;
     var _data = data;
 
@@ -13756,21 +13886,20 @@ var qrcode = function() {
     };
 
     _this.write = function(buffer) {
-
       var data = _data;
 
       var i = 0;
 
       while (i + 2 < data.length) {
-        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        buffer.put(strToNum(data.substring(i, i + 3)), 10);
         i += 3;
       }
 
       if (i < data.length) {
         if (data.length - i == 1) {
-          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+          buffer.put(strToNum(data.substring(i, i + 1)), 4);
         } else if (data.length - i == 2) {
-          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+          buffer.put(strToNum(data.substring(i, i + 2)), 7);
         }
       }
     };
@@ -13778,7 +13907,7 @@ var qrcode = function() {
     var strToNum = function(s) {
       var num = 0;
       for (var i = 0; i < s.length; i += 1) {
-        num = num * 10 + chatToNum(s.charAt(i) );
+        num = num * 10 + chatToNum(s.charAt(i));
       }
       return num;
     };
@@ -13798,7 +13927,6 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var qrAlphaNum = function(data) {
-
     var _mode = QRMode.MODE_ALPHA_NUM;
     var _data = data;
 
@@ -13813,42 +13941,47 @@ var qrcode = function() {
     };
 
     _this.write = function(buffer) {
-
       var s = _data;
 
       var i = 0;
 
       while (i + 1 < s.length) {
-        buffer.put(
-          getCode(s.charAt(i) ) * 45 +
-          getCode(s.charAt(i + 1) ), 11);
+        buffer.put(getCode(s.charAt(i)) * 45 + getCode(s.charAt(i + 1)), 11);
         i += 2;
       }
 
       if (i < s.length) {
-        buffer.put(getCode(s.charAt(i) ), 6);
+        buffer.put(getCode(s.charAt(i)), 6);
       }
     };
 
     var getCode = function(c) {
-
       if ('0' <= c && c <= '9') {
         return c.charCodeAt(0) - '0'.charCodeAt(0);
       } else if ('A' <= c && c <= 'Z') {
         return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
       } else {
         switch (c) {
-        case ' ' : return 36;
-        case '$' : return 37;
-        case '%' : return 38;
-        case '*' : return 39;
-        case '+' : return 40;
-        case '-' : return 41;
-        case '.' : return 42;
-        case '/' : return 43;
-        case ':' : return 44;
-        default :
-          throw 'illegal char :' + c;
+          case ' ':
+            return 36;
+          case '$':
+            return 37;
+          case '%':
+            return 38;
+          case '*':
+            return 39;
+          case '+':
+            return 40;
+          case '-':
+            return 41;
+          case '.':
+            return 42;
+          case '/':
+            return 43;
+          case ':':
+            return 44;
+          default:
+            throw 'illegal char :' + c;
         }
       }
     };
@@ -13861,7 +13994,6 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var qr8BitByte = function(data) {
-
     var _mode = QRMode.MODE_8BIT_BYTE;
     var _data = data;
     var _bytes = qrcode.stringToBytes(data);
@@ -13890,7 +14022,6 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var qrKanji = function(data) {
-
     var _mode = QRMode.MODE_KANJI;
     var _data = data;
 
@@ -13898,13 +14029,13 @@ var qrcode = function() {
     if (!stringToBytes) {
       throw 'sjis not supported.';
     }
-    !function(c, code) {
+    !(function(c, code) {
       // self test for sjis support.
       var test = stringToBytes(c);
-      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+      if (test.length != 2 || ((test[0] << 8) | test[1]) != code) {
         throw 'sjis not supported.';
       }
-    }('\u53cb', 0x9746);
+    })('\u53cb', 0x9746);
 
     var _bytes = stringToBytes(data);
 
@@ -13919,24 +14050,22 @@ var qrcode = function() {
     };
 
     _this.write = function(buffer) {
-
       var data = _bytes;
 
       var i = 0;
 
       while (i + 1 < data.length) {
+        var c = ((0xff & data[i]) << 8) | (0xff & data[i + 1]);
 
-        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
-
-        if (0x8140 <= c && c <= 0x9FFC) {
+        if (0x8140 <= c && c <= 0x9ffc) {
           c -= 0x8140;
-        } else if (0xE040 <= c && c <= 0xEBBF) {
-          c -= 0xC140;
+        } else if (0xe040 <= c && c <= 0xebbf) {
+          c -= 0xc140;
         } else {
           throw 'illegal char at ' + (i + 1) + '/' + c;
         }
 
-        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+        c = ((c >>> 8) & 0xff) * 0xc0 + (c & 0xff);
 
         buffer.put(c, 13);
 
@@ -13960,7 +14089,6 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var byteArrayOutputStream = function() {
-
     var _bytes = [];
 
     var _this = {};
@@ -13984,7 +14112,7 @@ var qrcode = function() {
 
     _this.writeString = function(s) {
       for (var i = 0; i < s.length; i += 1) {
-        _this.writeByte(s.charCodeAt(i) );
+        _this.writeByte(s.charCodeAt(i));
       }
     };
 
@@ -14013,7 +14141,6 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var base64EncodeOutputStream = function() {
-
     var _buffer = 0;
     var _buflen = 0;
     var _length = 0;
@@ -14022,7 +14149,7 @@ var qrcode = function() {
     var _this = {};
 
     var writeEncoded = function(b) {
-      _base64 += String.fromCharCode(encode(b & 0x3f) );
+      _base64 += String.fromCharCode(encode(b & 0x3f));
     };
 
     var encode = function(n) {
@@ -14043,21 +14170,19 @@ var qrcode = function() {
     };
 
     _this.writeByte = function(n) {
-
       _buffer = (_buffer << 8) | (n & 0xff);
       _buflen += 8;
       _length += 1;
 
       while (_buflen >= 6) {
-        writeEncoded(_buffer >>> (_buflen - 6) );
+        writeEncoded(_buffer >>> (_buflen - 6));
         _buflen -= 6;
       }
     };
 
     _this.flush = function() {
-
       if (_buflen > 0) {
-        writeEncoded(_buffer << (6 - _buflen) );
+        writeEncoded(_buffer << (6 - _buflen));
         _buffer = 0;
         _buflen = 0;
       }
@@ -14083,7 +14208,6 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var base64DecodeInputStream = function(str) {
-
     var _str = str;
     var _pos = 0;
     var _buffer = 0;
@@ -14092,9 +14216,7 @@ var qrcode = function() {
     var _this = {};
 
     _this.read = function() {
-
       while (_buflen < 8) {
-
         if (_pos >= _str.length) {
           if (_buflen == 0) {
             return -1;
@@ -14108,16 +14230,16 @@ var qrcode = function() {
         if (c == '=') {
           _buflen = 0;
           return -1;
-        } else if (c.match(/^\s$/) ) {
+        } else if (c.match(/^\s$/)) {
           // ignore if whitespace.
           continue;
         }
 
-        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0));
         _buflen += 6;
       }
 
-      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      var n = (_buffer >>> (_buflen - 8)) & 0xff;
       _buflen -= 8;
       return n;
     };
@@ -14145,26 +14267,25 @@ var qrcode = function() {
   // returns qrcode function.
 
   return qrcode;
-}();
+})();
 
 // multibyte support
-!function() {
-
+!(function() {
   qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
     // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
     function toUTF8Array(str) {
       var utf8 = [];
-      for (var i=0; i < str.length; i++) {
+      for (var i = 0; i < str.length; i++) {
         var charcode = str.charCodeAt(i);
         if (charcode < 0x80) utf8.push(charcode);
         else if (charcode < 0x800) {
-          utf8.push(0xc0 | (charcode >> 6),
-              0x80 | (charcode & 0x3f));
-        }
-        else if (charcode < 0xd800 || charcode >= 0xe000) {
-          utf8.push(0xe0 | (charcode >> 12),
-              0x80 | ((charcode>>6) & 0x3f),
-              0x80 | (charcode & 0x3f));
+          utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
+        } else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(
+            0xe0 | (charcode >> 12),
+            0x80 | ((charcode >> 6) & 0x3f),
+            0x80 | (charcode & 0x3f)
+          );
         }
         // surrogate pair
         else {
@@ -14172,22 +14293,25 @@ var qrcode = function() {
           // UTF-16 encodes 0x10000-0x10FFFF by
           // subtracting 0x10000 and splitting the
           // 20 bits of 0x0-0xFFFFF into two halves
-          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
-            | (str.charCodeAt(i) & 0x3ff));
-          utf8.push(0xf0 | (charcode >>18),
-              0x80 | ((charcode>>12) & 0x3f),
-              0x80 | ((charcode>>6) & 0x3f),
-              0x80 | (charcode & 0x3f));
+          charcode =
+            0x10000 +
+            (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(
+            0xf0 | (charcode >> 18),
+            0x80 | ((charcode >> 12) & 0x3f),
+            0x80 | ((charcode >> 6) & 0x3f),
+            0x80 | (charcode & 0x3f)
+          );
         }
       }
       return utf8;
     }
     return toUTF8Array(s);
   };
-
-}();
+})();
 
 module.exports = qrcode;
+
 
 /***/ }),
 
@@ -14198,10 +14322,7 @@ module.exports = qrcode;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {let isNode = (typeof window === 'undefined');
-
-class ObnizUtil {
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {class ObnizUtil {
   constructor(obniz) {
     this.obniz = obniz;
   }
@@ -14211,76 +14332,77 @@ class ObnizUtil {
       try {
         const { createCanvas } = __webpack_require__(/*! canvas */ "./obniz/libs/webpackReplace/canvas.js");
         return createCanvas(this.width, this.height);
-        throw new Error();
-      } catch(e) {
-        throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
+      } catch (e) {
+        throw new Error(
+          'obniz.js require node-canvas to draw rich contents. see more detail on docs'
+        );
       }
     } else {
-      var canvas = document.createElement('canvas');
+      let canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
-      canvas.style["-webkit-font-smoothing"] = "none";
-      var body = document.getElementsByTagName("body")[0];
+      canvas.style['-webkit-font-smoothing'] = 'none';
+      let body = document.getElementsByTagName('body')[0];
       body.appendChild(canvas);
-      
-      var ctx = canvas.getContext("2d");
+
+      let ctx = canvas.getContext('2d');
       return ctx;
-    } 
+    }
   }
-  
-  static _keyFilter(params,keys){
-    var filterdParams = {};
-    if(typeof params !== "object" ){
+
+  static _keyFilter(params, keys) {
+    let filterdParams = {};
+    if (typeof params !== 'object') {
       return filterdParams;
     }
-    filterdParams =  Object.keys(params)
-    .filter(key => keys.includes(key))
-    .reduce((obj, key) => {
-      obj[key] = params[key];
-      return obj;
-    }, {});
-    
+    filterdParams = Object.keys(params)
+      .filter(key => keys.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = params[key];
+        return obj;
+      }, {});
+
     return filterdParams;
   }
-  
+
   /**
    *
-   * @return {String} key name of not found. 
+   * @return {String} key name of not found.
    */
-  static _requiredKeys(params, keys){
-    if(typeof params !== "object" ){
+  static _requiredKeys(params, keys) {
+    if (typeof params !== 'object') {
       return keys[0];
     }
-    
-    for( var index in keys){
-        if(!(keys[index] in params )){
-            return keys[index];
-        }
+
+    for (let index in keys) {
+      if (!(keys[index] in params)) {
+        return keys[index];
+      }
     }
     return null;
   }
-  
+
   static dataArray2string(data) {
-    var string = null;
+    let string = null;
     try {
-          const StringDecoder = __webpack_require__(/*! string_decoder */ "./node_modules/string_decoder/lib/string_decoder.js").StringDecoder;
-          if(StringDecoder){
-             string = new StringDecoder('utf8').write(Buffer.from(data));
-          }
-       }catch(e) {
-        //this.obniz.error(e);
+      const StringDecoder = __webpack_require__(/*! string_decoder */ "./node_modules/string_decoder/lib/string_decoder.js").StringDecoder;
+      if (StringDecoder) {
+        string = new StringDecoder('utf8').write(Buffer.from(data));
       }
-      return string;
-  };
+    } catch (e) {
+      //this.obniz.error(e);
+    }
+    return string;
+  }
 
-  static string2dataArray(str){
-      const buf = Buffer(str);
-      return [... buf];
-
+  static string2dataArray(str) {
+    const buf = Buffer(str);
+    return [...buf];
   }
 }
 
 module.exports = ObnizUtil;
+
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -14292,14 +14414,11 @@ module.exports = ObnizUtil;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
 // load from webpack
 
 let canvas;
 
-
 module.exports = canvas;
-
 
 
 /***/ }),
@@ -14313,6 +14432,7 @@ module.exports = canvas;
 
 module.exports = {};
 
+
 /***/ }),
 
 /***/ "./obniz/libs/webpackReplace/ws.js":
@@ -14322,7 +14442,6 @@ module.exports = {};
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
 // load from webpack
 
 let ws;
@@ -14330,13 +14449,12 @@ let ws;
 if (typeof WebSocket !== 'undefined') {
   ws = WebSocket;
 } else if (typeof MozWebSocket !== 'undefined') {
-  ws = MozWebSocket;
+  ws = MozWebSocket; //eslint-disable-line
 } else {
   ws = window.WebSocket || window.MozWebSocket;
 }
 
 module.exports = ws;
-
 
 
 /***/ }),
@@ -14367,58 +14485,56 @@ webpackEmptyContext.id = "./obniz/libs/wscommand sync recursive";
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/WSSchema.js");
 
 let commandClasses = {};
 
 module.exports = class WSCommand {
-
   constructor(delegate) {
     this.delegate = delegate;
 
     //constants
-    this.COMMAND_FUNC_ID_ERROR = 0xFF
-    this.ioNotUsed = 0xFF;
+    this.COMMAND_FUNC_ID_ERROR = 0xff;
+    this.ioNotUsed = 0xff;
   }
 
-  static get schema(){
+  static get schema() {
     return WSSchema;
   }
   static get CommandClasses() {
     return commandClasses;
   }
 
-  static addCommandClass(name, classObj){
+  static addCommandClass(name, classObj) {
     commandClasses[name] = classObj;
   }
 
   static framed(module, func, payload) {
-    var payload_length = 0;
+    let payload_length = 0;
     if (payload) {
       payload_length = payload.length;
     }
-    var length_type;
-    if (payload_length <= 0x3F) {
+    let length_type;
+    if (payload_length <= 0x3f) {
       length_type = 0;
-    } else if (payload_length <= 0x3FFF) {
+    } else if (payload_length <= 0x3fff) {
       length_type = 1;
-    } else if (payload_length <= 0x3FFFFFFF) {
+    } else if (payload_length <= 0x3fffffff) {
       length_type = 2;
     } else {
-      throw new Error("too big payload");
-      return null;
+      throw new Error('too big payload');
     }
-    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
-    var header_length = 3 + length_extra_bytse;
-    var result = new Uint8Array(header_length + payload_length);
-    var index = 0;
-    result[index++] = module & 0x7F;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
+    let header_length = 3 + length_extra_bytse;
+    let result = new Uint8Array(header_length + payload_length);
+    let index = 0;
+    result[index++] = module & 0x7f;
     result[index++] = func;
-    result[index++] = (length_type << 6) | (payload_length >> (length_extra_bytse*8));
-    while(length_extra_bytse > 0) {
+    result[index++] =
+      (length_type << 6) | (payload_length >> (length_extra_bytse * 8));
+    while (length_extra_bytse > 0) {
       length_extra_bytse--;
-      result[index++] = payload_length >> (length_extra_bytse*8);
+      result[index++] = payload_length >> (length_extra_bytse * 8);
     }
     if (payload_length == 0) {
       return result;
@@ -14431,41 +14547,44 @@ module.exports = class WSCommand {
   static dequeueOne(buf) {
     if (!buf || buf.byteLength == 0) return null;
     if (buf.byteLength < 3) {
-      throw new Error("something wrong. buf less than 3");
+      throw new Error('something wrong. buf less than 3');
     }
     if (buf[0] & 0x80) {
-      throw new Error("reserved bit 1");
+      throw new Error('reserved bit 1');
     }
-    var module = 0x7F & buf[0];
-    var func = buf[1];
-    var length_type = (buf[2] >> 6) & 0x3;
-    var length_extra_bytse = (length_type == 0) ? 0 : ( (length_type == 1) ? 1 : 3 );
+    let module = 0x7f & buf[0];
+    let func = buf[1];
+    let length_type = (buf[2] >> 6) & 0x3;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     if (length_type == 4) {
-      throw new Error("invalid length");
+      throw new Error('invalid length');
     }
-    var length = (buf[2] & 0x3F) << (length_extra_bytse*8);
-    var index = 3;
-    var shift = length_extra_bytse;
-    while(shift > 0) {
+    let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
+    let index = 3;
+    let shift = length_extra_bytse;
+    while (shift > 0) {
       shift--;
-      length += buf[index] << (shift*8);
+      length += buf[index] << (shift * 8);
       index++;
     }
 
     return {
       module: module,
       func: func,
-      payload: buf.slice(3+length_extra_bytse, 3+length_extra_bytse+length),
-      next: buf.slice(3+length_extra_bytse+length)
+      payload: buf.slice(
+        3 + length_extra_bytse,
+        3 + length_extra_bytse + length
+      ),
+      next: buf.slice(3 + length_extra_bytse + length),
     };
   }
 
   static compress(wscommands, json) {
-    var ret = null;
+    let ret = null;
     function append(module, func, payload) {
-      var frame = WSCommand.framed(module, func, payload);
+      let frame = WSCommand.framed(module, func, payload);
       if (ret) {
-        var combined = new Uint8Array(ret.length + frame.length);
+        let combined = new Uint8Array(ret.length + frame.length);
         combined.set(ret, 0);
         combined.set(frame, ret.length);
         ret = combined;
@@ -14473,7 +14592,7 @@ module.exports = class WSCommand {
         ret = frame;
       }
     }
-    for (let i=0; i<wscommands.length; i++) {
+    for (let i = 0; i < wscommands.length; i++) {
       const wscommand = wscommands[i];
       wscommand.parsed = append;
       wscommand.parseFromJson(json);
@@ -14490,34 +14609,29 @@ module.exports = class WSCommand {
     }
   }
 
-  parseFromJson(json) {
-
-  }
+  parseFromJson(json) {}
 
   notifyFromBinary(objToSend, func, payload) {
+    if (func === this.COMMAND_FUNC_ID_ERROR) {
+      if (!objToSend.debug) objToSend.debug = {};
+      let err = {
+        module: this.module,
+        _args: [...payload],
+      };
 
-    switch(func) {
-      case this.COMMAND_FUNC_ID_ERROR:
-        if (!objToSend.debug) objToSend.debug = {};
-        var err = {
-          module: this.module,
-          _args: [... payload]
-        };
-        
-        if (payload.byteLength == 3) {
-          err.err0 = payload[0];
-          err.err1 = payload[1];
-          err.function = payload[2];
-          err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
-        } else {
-          err.message = `Error module=${this.module} with + ${err._args}`;
-        }
-        objToSend.debug.error = err
-        break;
-
-      default:
-        // unknown
-        break;
+      if (payload.byteLength == 3) {
+        err.err0 = payload[0];
+        err.err1 = payload[1];
+        err.function = payload[2];
+        err.message = `Error module=${this.module} func=${err.function} err0=${
+          err.err0
+        } returned=${err.err1}`;
+      } else {
+        err.message = `Error module=${this.module} with + ${err._args}`;
+      }
+      objToSend.debug.error = err;
+    } else {
+      // unknown
     }
   }
 
@@ -14532,32 +14646,30 @@ module.exports = class WSCommand {
   }
 
   isValidIO(io) {
-    return (typeof(io) === "number" && 0 <= io && io <= 11) 
+    return typeof io === 'number' && 0 <= io && io <= 11;
   }
 
-
-  getSchema(uri){
+  getSchema(uri) {
     //chack isFirst
 
     return WSSchema.getSchema(uri);
   }
 
-
-  validateCommandSchema(uriList, json, rootPath, customArg){
-    let res = {valid : 0 , invalid: 0, results:[], invalidButLike:[]};
-    for(let oneRow of uriList){
+  validateCommandSchema(uriList, json, rootPath, customArg) {
+    let res = { valid: 0, invalid: 0, results: [], invalidButLike: [] };
+    for (let oneRow of uriList) {
       let errors = this.validate(oneRow.uri, json);
       res.results.push(errors);
-      if(errors.valid){
+      if (errors.valid) {
         res.valid++;
-        if(oneRow.onValid){
+        if (oneRow.onValid) {
           oneRow.onValid.bind(this)(this.filter(oneRow.uri, json), customArg);
         }
-      }else{
+      } else {
         res.invalid++;
-        let message =  this.onlyTypeErrorMessage(errors,rootPath);
-        if(message){
-          res.invalidButLike.push ({uri: oneRow.uri, message});
+        let message = this.onlyTypeErrorMessage(errors, rootPath);
+        if (message) {
+          res.invalidButLike.push({ uri: oneRow.uri, message });
         }
       }
     }
@@ -14565,15 +14677,19 @@ module.exports = class WSCommand {
     return res;
   }
 
-  validate(commandUri, json){
-    let schema =  this.getSchema(commandUri);
-    let results =  WSSchema.validateMultiple(json, schema);
+  validate(commandUri, json) {
+    let schema = this.getSchema(commandUri);
+    let results = WSSchema.validateMultiple(json, schema);
     return results;
   }
 
-  onlyTypeErrorMessage(validateError, rootPath){
-    if(validateError.valid){return true;}
-    if(validateError.missing && validateError.missing.length > 0){return false;}
+  onlyTypeErrorMessage(validateError, rootPath) {
+    if (validateError.valid) {
+      return true;
+    }
+    if (validateError.missing && validateError.missing.length > 0) {
+      return false;
+    }
 
     let badErrorCodes = [
       WSSchema.errorCodes.ANY_OF_MISSING,
@@ -14585,90 +14701,91 @@ module.exports = class WSCommand {
       WSSchema.errorCodes.CIRCULAR_REFERENCE,
       WSSchema.errorCodes.FORMAT_CUSTOM,
       WSSchema.errorCodes.KEYWORD_CUSTOM,
-      WSSchema.errorCodes.UNKNOWN_PROPERTY
+      WSSchema.errorCodes.UNKNOWN_PROPERTY,
     ];
     let messages = [];
     for (let error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
-        if (error.params.type === "object"
-         || error.params.expected === "object") {
+        if (
+          error.params.type === 'object' ||
+          error.params.expected === 'object'
+        ) {
           return false;
         }
-      }else if (badErrorCodes.includes(error.code)){
+      } else if (badErrorCodes.includes(error.code)) {
         return false;
       }
 
-      let path  = rootPath + error.dataPath.replace(/\//g,".");
-      messages.push( `[${path}]${error.message}`  );
-
+      let path = rootPath + error.dataPath.replace(/\//g, '.');
+      messages.push(`[${path}]${error.message}`);
     }
-    return messages.join(";");
+    return messages.join(';');
   }
 
-  filter(commandUri, json){
-    let schema =  this.getSchema(commandUri);
-    return this._filterSchema( schema, json)
+  filter(commandUri, json) {
+    let schema = this.getSchema(commandUri);
+    return this._filterSchema(schema, json);
   }
 
-  _filterSchema(schema,json){
-
-
-    if(schema["$ref"]){
-      let refSchema = WSSchema.getSchema(schema["$ref"]);
-      return this._filterSchema(refSchema, json  );
+  _filterSchema(schema, json) {
+    if (schema['$ref']) {
+      let refSchema = WSSchema.getSchema(schema['$ref']);
+      return this._filterSchema(refSchema, json);
     }
 
-    if(json === undefined ){
+    if (json === undefined) {
       return schema.default;
     }
 
-    if(schema.type === "string"
-        || schema.type === "integer"
-        || schema.type === "boolean"
-        || schema.type === "number"
-        || schema.type === "null"
-        || schema.filter === "pass_all"){
+    if (
+      schema.type === 'string' ||
+      schema.type === 'integer' ||
+      schema.type === 'boolean' ||
+      schema.type === 'number' ||
+      schema.type === 'null' ||
+      schema.filter === 'pass_all'
+    ) {
       return json;
-
     }
 
-    if(schema.type === "array"){
+    if (schema.type === 'array') {
       let results = [];
-      for( let key  in json){
-        results[key] = this._filterSchema( schema.items,json[key]);
+      for (let key in json) {
+        results[key] = this._filterSchema(schema.items, json[key]);
       }
       return results;
     }
 
-    if(schema.type === "object"){
+    if (schema.type === 'object') {
       let results = {};
-      for( let key in schema.properties){
-        results[key] = this._filterSchema(schema.properties[key], json[key]  );
+      for (let key in schema.properties) {
+        results[key] = this._filterSchema(schema.properties[key], json[key]);
       }
 
-      for(let pattern in schema.patternProperties){
+      for (let pattern in schema.patternProperties) {
         let reg = new RegExp(pattern);
-        for(let key of Object.keys(json)){
-          if( reg.test(key) ){
-            results[key] = this._filterSchema(schema.patternProperties[pattern], json[key]  );
+        for (let key of Object.keys(json)) {
+          if (reg.test(key)) {
+            results[key] = this._filterSchema(
+              schema.patternProperties[pattern],
+              json[key]
+            );
           }
         }
-
       }
       return results;
     }
 
-    throw Error("unknown json schema type");
+    throw Error('unknown json schema type');
   }
 
-  get WSCommandNotFoundError(){
+  get WSCommandNotFoundError() {
     return WSCommandNotFoundError;
   }
-}
+};
 
-class WSCommandNotFoundError extends Error{
+class WSCommandNotFoundError extends Error {}
 
-}
 
 /***/ }),
 
@@ -14682,50 +14799,48 @@ class WSCommandNotFoundError extends Error{
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_AD extends WSCommand {
-  
   constructor(delegate) {
     super(delegate);
     this.module = 7;
 
-    this._CommandInitNormalInterval     = 0
-    this._CommandDeinit       = 1
-    this._CommandNotifyValue  = 2
-    this._CommandDoOnece      = 3
+    this._CommandInitNormalInterval = 0;
+    this._CommandDeinit = 1;
+    this._CommandNotifyValue = 2;
+    this._CommandDoOnece = 3;
   }
 
   // Commands
 
-
-  get(params, no){
-    var buf = new Uint8Array([no]);
-    this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
-
+  get(params, no) {
+    let buf = new Uint8Array([no]);
+    this.sendCommand(
+      params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece,
+      buf
+    );
   }
 
   deinit(params, no) {
-    var buf = new Uint8Array([no]);
+    let buf = new Uint8Array([no]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-
-
   parseFromJson(json) {
-    for (var i=0; i<12;i++) {
-      var module = json["ad"+i];
+    for (let i = 0; i < 12; i++) {
+      let module = json['ad' + i];
       if (module === undefined) {
         continue;
       }
 
       let schemaData = [
-        {uri : "/request/ad/deinit",         onValid: this.deinit},
-        {uri : "/request/ad/get",          onValid: this.get},
+        { uri: '/request/ad/deinit', onValid: this.deinit },
+        { uri: '/request/ad/get', onValid: this.get },
       ];
-      let res = this.validateCommandSchema(schemaData, module, "ad"+i, i);
+      let res = this.validateCommandSchema(schemaData, module, 'ad' + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new this.WSCommandNotFoundError(`[ad${i}]unknown command`);
         }
       }
@@ -14734,18 +14849,19 @@ class WSCommand_AD extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotifyValue) {
-      for (var i=0; i<payload.byteLength; i+=3) {
-        var value = (payload[i+1] << 8) + payload[i+2];
+      for (let i = 0; i < payload.byteLength; i += 3) {
+        let value = (payload[i + 1] << 8) + payload[i + 2];
         value = value / 100.0;
-        objToSend["ad"+payload[i]] = value;
+        objToSend['ad' + payload[i]] = value;
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
 
 module.exports = WSCommand_AD;
+
 
 /***/ }),
 
@@ -14760,7 +14876,6 @@ const JsonBinaryConverter = __webpack_require__(/*! ./jsonBinaryConverter */ "./
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Ble extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 11;
@@ -14806,7 +14921,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandScanResultsDevice = {
       breder: 0x01,
       ble: 0x02,
-      dumo: 0x03
+      dumo: 0x03,
     };
 
     /// BLE device address type
@@ -14814,25 +14929,25 @@ class WSCommand_Ble extends WSCommand {
       public: 0x00,
       random: 0x01,
       rpa_public: 0x02,
-      rpa_random: 0x03
+      rpa_random: 0x03,
     };
 
     this._CommandScanResultsEvet = {
-      inquiry_result: 0, /*!< Inquiry result for a peer device. */
-      inquiry_complete: 1, /*!< Inquiry complete. */
-      discovery_result: 2, /*!< Discovery result for a peer device. */
-      discovery_ble_result: 3, /*!< Discovery result for BLE GATT based service on a peer device. */
-      discovery_cmoplete: 4, /*!< Discovery complete. */
-      discovery_di_cmoplete: 5, /*!< Discovery complete. */
-      cancelled: 6 /*!< Search cancelled */
+      inquiry_result: 0 /*!< Inquiry result for a peer device. */,
+      inquiry_complete: 1 /*!< Inquiry complete. */,
+      discovery_result: 2 /*!< Discovery result for a peer device. */,
+      discovery_ble_result: 3 /*!< Discovery result for BLE GATT based service on a peer device. */,
+      discovery_cmoplete: 4 /*!< Discovery complete. */,
+      discovery_di_cmoplete: 5 /*!< Discovery complete. */,
+      cancelled: 6 /*!< Search cancelled */,
     };
 
     this._CommandScanResultsBleEvent = {
-      connectable_advertisemnt: 0x00, /*!< Connectable undirected advertising (ADV_IND) */
-      connectable_directed_advertisemnt: 0x01, /*!< Connectable directed advertising (ADV_DIRECT_IND) */
-      scannable_advertising: 0x02, /*!< Scannable undirected advertising (ADV_SCAN_IND) */
-      non_connectable_advertising: 0x03, /*!< Non connectable undirected advertising (ADV_NONCONN_IND) */
-      scan_response: 0x04 /*!< Scan Response (SCAN_RSP) */
+      connectable_advertisemnt: 0x00 /*!< Connectable undirected advertising (ADV_IND) */,
+      connectable_directed_advertisemnt: 0x01 /*!< Connectable directed advertising (ADV_DIRECT_IND) */,
+      scannable_advertising: 0x02 /*!< Scannable undirected advertising (ADV_SCAN_IND) */,
+      non_connectable_advertising: 0x03 /*!< Non connectable undirected advertising (ADV_NONCONN_IND) */,
+      scan_response: 0x04 /*!< Scan Response (SCAN_RSP) */,
     };
 
     this._CommandCharacteristicsProperties = {
@@ -14849,15 +14964,14 @@ class WSCommand_Ble extends WSCommand {
     this._commandResults = {
       success: 0,
       failed: 1,
-    }
+    };
   }
-
 
   /* CENTRAL   */
 
   centralScanStart(params) {
     let schema = [
-      {path: "scan.duration", length: 4, type: "int", default: 30}
+      { path: 'scan.duration', length: 4, type: 'int', default: 30 },
     ];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandStartScan, buf);
@@ -14869,8 +14983,14 @@ class WSCommand_Ble extends WSCommand {
 
   centralConnect(params) {
     let schema = [
-      {path: "connect.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: null, length: 1, type: "char", default: false}   //const val
+      {
+        path: 'connect.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      { path: null, length: 1, type: 'char', default: false }, //const val
     ];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandConnect, buf);
@@ -14878,8 +14998,14 @@ class WSCommand_Ble extends WSCommand {
 
   centralDisconnect(params) {
     let schema = [
-      {path: "disconnect.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: null, length: 1, type: "char", default: true}   //const val
+      {
+        path: 'disconnect.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      { path: null, length: 1, type: 'char', default: true }, //const val
     ];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandConnect, buf);
@@ -14887,109 +15013,259 @@ class WSCommand_Ble extends WSCommand {
 
   centralServiceGet(params) {
     let schema = [
-      {path: "get_services.address", length: 6, type: "hex", required: true, endianness: "little"},
+      {
+        path: 'get_services.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
     ];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServices, buf);
   }
 
   centralCharacteristicGet(params) {
-    var schema = [
-      {path: "get_characteristics.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "get_characteristics.service_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'get_characteristics.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'get_characteristics.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandCharacteristics, buf);
   }
 
-
   centralCharacteristicRead(params) {
-    var schema = [
-      {path: "read_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "read_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "read_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'read_characteristic.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'read_characteristic.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'read_characteristic.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandReadCharacteristics, buf);
   }
 
   centralCharacteristicWrite(params) {
-    var schema = [
-      {path: "write_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "write_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_characteristic.needResponse", length: 1, type: "char", default: 1},
-      {path: "write_characteristic.data", length: null, type: "dataArray",}
+    let schema = [
+      {
+        path: 'write_characteristic.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'write_characteristic.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'write_characteristic.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'write_characteristic.needResponse',
+        length: 1,
+        type: 'char',
+        default: 1,
+      },
+      { path: 'write_characteristic.data', length: null, type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteCharacteristics, buf);
-
   }
 
   centralCharacteristicRegisterNotify(params) {
-    var schema = [
-      {path: "register_notify_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "register_notify_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "register_notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'register_notify_characteristic.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'register_notify_characteristic.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'register_notify_characteristic.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandRegisterNotifyCharacteristic, buf);
   }
 
   centralCharacteristicUnregisterNotify(params) {
-    var schema = [
-      {path: "unregister_notify_characteristic.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "unregister_notify_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "unregister_notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'unregister_notify_characteristic.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'unregister_notify_characteristic.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'unregister_notify_characteristic.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandUnregisterNotifyCharacteristic, buf);
   }
 
-
   centralDescriptorGet(params) {
-    var schema = [
-      {path: "get_descriptors.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "get_descriptors.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "get_descriptors.characteristic_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'get_descriptors.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'get_descriptors.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'get_descriptors.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandDescriptors, buf);
   }
 
   centralDescriptorRead(params) {
-    var schema = [
-      {path: "read_descriptor.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "read_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "read_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "read_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'read_descriptor.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'read_descriptor.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'read_descriptor.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'read_descriptor.descriptor_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandReadDescriptor, buf);
-
   }
 
   centralDescriptorWrite(params) {
-    var schema = [
-      {path: "write_descriptor.address", length: 6, type: "hex", required: true, endianness: "little"},
-      {path: "write_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
-      {path: "write_descriptor.needResponse", length: 1, type: "char", default: 1},
-      {path: "write_descriptor.data", length: null, type: "dataArray"}
+    let schema = [
+      {
+        path: 'write_descriptor.address',
+        length: 6,
+        type: 'hex',
+        required: true,
+        endianness: 'little',
+      },
+      {
+        path: 'write_descriptor.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'write_descriptor.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'write_descriptor.descriptor_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'write_descriptor.needResponse',
+        length: 1,
+        type: 'char',
+        default: 1,
+      },
+      { path: 'write_descriptor.data', length: null, type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteDescriptor, buf);
   }
-
 
   /* PERIPHERAL   */
 
   peripheralAdvertisementStart(params) {
-    this.sendCommand(this._CommandSetAdvData, new Uint8Array(params.advertisement.adv_data));
+    this.sendCommand(
+      this._CommandSetAdvData,
+      new Uint8Array(params.advertisement.adv_data)
+    );
 
     if (params.advertisement.scan_resp) {
-      this.sendCommand(this._CommandSetScanRespData, new Uint8Array(params.advertisement.scan_resp));
+      this.sendCommand(
+        this._CommandSetScanRespData,
+        new Uint8Array(params.advertisement.scan_resp)
+      );
     }
 
     this.sendCommand(this._CommandStartAdv, null);
@@ -14999,208 +15275,371 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandStopAdv, null);
   }
 
-
   peripheralServiceStart(params) {
-    let val = params["peripheral"];
-    var propFlags = {
-      0x01: "broadcast",
-      0x02: "read",
-      0x04: "write_without_response",
-      0x08: "write",
-      0x10: "notify",
-      0x20: "indiate",
-      0x40: "auth",
-      0x80: "ext_prop"
+    let val = params['peripheral'];
+    let propFlags = {
+      0x01: 'broadcast',
+      0x02: 'read',
+      0x04: 'write_without_response',
+      0x08: 'write',
+      0x10: 'notify',
+      0x20: 'indiate',
+      0x40: 'auth',
+      0x80: 'ext_prop',
     };
 
-
-    var permissionFlags = {
-      0x001: "read",
-      0x002: "read_encrypted",
-      0x004: "read_enc_mitm",
-      0x010: "write",
-      0x020: "write_encrypted",
-      0x040: "write_enc_mitm",
-      0x080: "write_signed",
-      0x100: "write_signed_mitm"
+    let permissionFlags = {
+      0x001: 'read',
+      0x002: 'read_encrypted',
+      0x004: 'read_enc_mitm',
+      0x010: 'write',
+      0x020: 'write_encrypted',
+      0x040: 'write_enc_mitm',
+      0x080: 'write_signed',
+      0x100: 'write_signed_mitm',
     };
-    var schema = {
+    let schema = {
       service: {
         command: this._CommandServerAddService,
-        schema: [
-          {path: "uuid", length: 18, type: "uuid", required: true}
-        ]
+        schema: [{ path: 'uuid', length: 18, type: 'uuid', required: true }],
       },
       characteristic: {
         command: this._CommandServerAddCharacteristic,
         schema: [
-          {path: "service_uuid", length: 18, type: "uuid", required: true},
-          {path: "uuid", length: 18, type: "uuid", required: true},
-          {path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags},
-          {path: "properties", length: 1, type: "flag", default: ["write", "read"], flags: propFlags},
-          {path: "data", type: "dataArray"}
-        ]
+          { path: 'service_uuid', length: 18, type: 'uuid', required: true },
+          { path: 'uuid', length: 18, type: 'uuid', required: true },
+          {
+            path: 'permissions',
+            length: 2,
+            type: 'flag',
+            default: ['write', 'read'],
+            flags: permissionFlags,
+          },
+          {
+            path: 'properties',
+            length: 1,
+            type: 'flag',
+            default: ['write', 'read'],
+            flags: propFlags,
+          },
+          { path: 'data', type: 'dataArray' },
+        ],
       },
       descriptor: {
         command: this._CommandServerAddDescriptor,
         schema: [
-          {path: "service_uuid", length: 18, type: "uuid", required: true},
-          {path: "characteristic_uuid", length: 18, type: "uuid", required: true},
-          {path: "uuid", length: 18, type: "uuid", required: true},
-          {path: "permissions", length: 2, type: "flag", default: ["write", "read"], flags: permissionFlags},
-          {path: "data", type: "dataArray"}
-        ]
+          { path: 'service_uuid', length: 18, type: 'uuid', required: true },
+          {
+            path: 'characteristic_uuid',
+            length: 18,
+            type: 'uuid',
+            required: true,
+          },
+          { path: 'uuid', length: 18, type: 'uuid', required: true },
+          {
+            path: 'permissions',
+            length: 2,
+            type: 'flag',
+            default: ['write', 'read'],
+            flags: permissionFlags,
+          },
+          { path: 'data', type: 'dataArray' },
+        ],
       },
-      startService : {
+      startService: {
         command: this._CommandServerStartStopService,
         schema: [
-          {path: "uuid", length: 18, type: "uuid", required: true},
-          {path: null, length: 1, type: "char", default: 0},   //const val
-        ]
-      }
+          { path: 'uuid', length: 18, type: 'uuid', required: true },
+          { path: null, length: 1, type: 'char', default: 0 }, //const val
+        ],
+      },
     };
 
-    var sendBufs = [];
-    var startServiceBufs = [];
-    var buf;
-    for (var serviceIndex in val["services"]) {
-      var service = val["services"][serviceIndex];
-      buf = JsonBinaryConverter.createSendBuffer(schema["service"].schema, service);
+    let sendBufs = [];
+    let startServiceBufs = [];
+    let buf;
+    for (let serviceIndex in val['services']) {
+      let service = val['services'][serviceIndex];
+      buf = JsonBinaryConverter.createSendBuffer(
+        schema['service'].schema,
+        service
+      );
       if (buf.length === 0) {
         return;
       }
-      sendBufs.push({command: schema["service"].command, buffer: buf});
+      sendBufs.push({ command: schema['service'].command, buffer: buf });
 
-      buf = JsonBinaryConverter.createSendBuffer(schema["startService"].schema, service);
-      startServiceBufs.push({command: schema["startService"].command, buffer: buf})
+      buf = JsonBinaryConverter.createSendBuffer(
+        schema['startService'].schema,
+        service
+      );
+      startServiceBufs.push({
+        command: schema['startService'].command,
+        buffer: buf,
+      });
 
-      for (var charaIndex in service["characteristics"]) {
-        var chara = service["characteristics"][charaIndex];
+      for (let charaIndex in service['characteristics']) {
+        let chara = service['characteristics'][charaIndex];
         chara.service_uuid = service.uuid;
-        buf = JsonBinaryConverter.createSendBuffer(schema["characteristic"].schema, chara);
+        buf = JsonBinaryConverter.createSendBuffer(
+          schema['characteristic'].schema,
+          chara
+        );
         if (buf.length === 0) {
           return;
         }
-        sendBufs.push({command: schema["characteristic"].command, buffer: buf});
+        sendBufs.push({
+          command: schema['characteristic'].command,
+          buffer: buf,
+        });
 
-        for (var descIndex in chara["descriptors"]) {
-          var desc = chara["descriptors"][descIndex];
+        for (let descIndex in chara['descriptors']) {
+          let desc = chara['descriptors'][descIndex];
           desc.service_uuid = service.uuid;
           desc.characteristic_uuid = chara.uuid;
-          buf = JsonBinaryConverter.createSendBuffer(schema["descriptor"].schema, desc);
+          buf = JsonBinaryConverter.createSendBuffer(
+            schema['descriptor'].schema,
+            desc
+          );
           if (buf.length === 0) {
             return;
           }
-          sendBufs.push({command: schema["descriptor"].command, buffer: buf});
+          sendBufs.push({ command: schema['descriptor'].command, buffer: buf });
         }
       }
     }
-    for (var index in sendBufs) {
+    for (let index in sendBufs) {
       this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
     }
-    for (var index in startServiceBufs) {
-      this.sendCommand(startServiceBufs[index].command, startServiceBufs[index].buffer);
+    for (let index in startServiceBufs) {
+      this.sendCommand(
+        startServiceBufs[index].command,
+        startServiceBufs[index].buffer
+      );
     }
   }
 
   peripheralServiceStop(params) {
-    var schema = [
-      {path: "peripheral.stop_service.service_uuid", length: 18, type: "uuid", required: true},
-      {path: null, length: 1, type: "char", default: 1},   //const val
+    let schema = [
+      {
+        path: 'peripheral.stop_service.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      { path: null, length: 1, type: 'char', default: 1 }, //const val
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerStartStopService, buf);
   }
 
-  peripheralServiceStopAll(params) {
+  peripheralServiceStopAll() {
     this.sendCommand(this._CommandServerStartPeripheral, new Uint8Array([1]));
   }
 
   peripheralCharacteristicRead(params) {
-    var schema = [
-      {path: "peripheral.read_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.read_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'peripheral.read_characteristic.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'peripheral.read_characteristic.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
-
   }
 
   peripheralCharacteristicWrite(params) {
-    var schema = [
-      {path: "peripheral.write_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_characteristic.data", type: "dataArray"},
+    let schema = [
+      {
+        path: 'peripheral.write_characteristic.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'peripheral.write_characteristic.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      { path: 'peripheral.write_characteristic.data', type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
-
   }
 
-
   peripheralCharacteristicNotify(params) {
-    var schema = [
-      {path: "peripheral.notify_characteristic.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.notify_characteristic.characteristic_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'peripheral.notify_characteristic.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'peripheral.notify_characteristic.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerNofityCharavteristic, buf);
-
   }
 
   peripheralDescriptorRead(params) {
-    var schema = [
-      {path: "peripheral.read_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.read_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.read_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
+    let schema = [
+      {
+        path: 'peripheral.read_descriptor.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'peripheral.read_descriptor.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'peripheral.read_descriptor.descriptor_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerReadDescriptorValue, buf);
   }
 
   peripheralDescriptorWrite(params) {
-    var schema = [
-      {path: "peripheral.write_descriptor.service_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_descriptor.characteristic_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_descriptor.descriptor_uuid", length: 18, type: "uuid", required: true},
-      {path: "peripheral.write_descriptor.data", type: "dataArray"},
+    let schema = [
+      {
+        path: 'peripheral.write_descriptor.service_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'peripheral.write_descriptor.characteristic_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      {
+        path: 'peripheral.write_descriptor.descriptor_uuid',
+        length: 18,
+        type: 'uuid',
+        required: true,
+      },
+      { path: 'peripheral.write_descriptor.data', type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
   }
 
-
   parseFromJson(json) {
-    var module = json["ble"];
+    let module = json['ble'];
     if (module === undefined) {
       return;
     }
     let schemaData = [
-      {uri: "/request/ble/central/scan_start", onValid: this.centralScanStart},
-      {uri: "/request/ble/central/scan_stop", onValid: this.centralScanStop},
-      {uri: "/request/ble/central/connect", onValid: this.centralConnect},
-      {uri: "/request/ble/central/disconnect", onValid: this.centralDisconnect},
-      {uri: "/request/ble/central/service_get", onValid: this.centralServiceGet},
-      {uri: "/request/ble/central/characteristic_get", onValid: this.centralCharacteristicGet},
-      {uri: "/request/ble/central/characteristic_read", onValid: this.centralCharacteristicRead},
-      {uri: "/request/ble/central/characteristic_write", onValid: this.centralCharacteristicWrite},
-      {uri: "/request/ble/central/characteristic_register_notify", onValid: this.centralCharacteristicRegisterNotify},
-      {uri: "/request/ble/central/characteristic_unregister_notify", onValid: this.centralCharacteristicUnregisterNotify},
-      {uri: "/request/ble/central/descriptor_get", onValid: this.centralDescriptorGet},
-      {uri: "/request/ble/central/descriptor_read", onValid: this.centralDescriptorRead},
-      {uri: "/request/ble/central/descriptor_write", onValid: this.centralDescriptorWrite},
-      {uri: "/request/ble/peripheral/advertisement_start", onValid: this.peripheralAdvertisementStart},
-      {uri: "/request/ble/peripheral/advertisement_stop", onValid: this.peripheralAdvertisementStop},
-      {uri: "/request/ble/peripheral/service_start", onValid: this.peripheralServiceStart},
-      {uri: "/request/ble/peripheral/service_stop", onValid: this.peripheralServiceStop},
-      {uri: "/request/ble/peripheral/service_stop_all", onValid: this.peripheralServiceStopAll},
-      {uri: "/request/ble/peripheral/characteristic_read", onValid: this.peripheralCharacteristicRead},
-      {uri: "/request/ble/peripheral/characteristic_write", onValid: this.peripheralCharacteristicWrite},
-      {uri: "/request/ble/peripheral/characteristic_notify", onValid: this.peripheralCharacteristicNotify},
-      {uri: "/request/ble/peripheral/descriptor_read", onValid: this.peripheralDescriptorRead},
-      {uri: "/request/ble/peripheral/descriptor_write", onValid: this.peripheralDescriptorWrite},
+      {
+        uri: '/request/ble/central/scan_start',
+        onValid: this.centralScanStart,
+      },
+      { uri: '/request/ble/central/scan_stop', onValid: this.centralScanStop },
+      { uri: '/request/ble/central/connect', onValid: this.centralConnect },
+      {
+        uri: '/request/ble/central/disconnect',
+        onValid: this.centralDisconnect,
+      },
+      {
+        uri: '/request/ble/central/service_get',
+        onValid: this.centralServiceGet,
+      },
+      {
+        uri: '/request/ble/central/characteristic_get',
+        onValid: this.centralCharacteristicGet,
+      },
+      {
+        uri: '/request/ble/central/characteristic_read',
+        onValid: this.centralCharacteristicRead,
+      },
+      {
+        uri: '/request/ble/central/characteristic_write',
+        onValid: this.centralCharacteristicWrite,
+      },
+      {
+        uri: '/request/ble/central/characteristic_register_notify',
+        onValid: this.centralCharacteristicRegisterNotify,
+      },
+      {
+        uri: '/request/ble/central/characteristic_unregister_notify',
+        onValid: this.centralCharacteristicUnregisterNotify,
+      },
+      {
+        uri: '/request/ble/central/descriptor_get',
+        onValid: this.centralDescriptorGet,
+      },
+      {
+        uri: '/request/ble/central/descriptor_read',
+        onValid: this.centralDescriptorRead,
+      },
+      {
+        uri: '/request/ble/central/descriptor_write',
+        onValid: this.centralDescriptorWrite,
+      },
+      {
+        uri: '/request/ble/peripheral/advertisement_start',
+        onValid: this.peripheralAdvertisementStart,
+      },
+      {
+        uri: '/request/ble/peripheral/advertisement_stop',
+        onValid: this.peripheralAdvertisementStop,
+      },
+      {
+        uri: '/request/ble/peripheral/service_start',
+        onValid: this.peripheralServiceStart,
+      },
+      {
+        uri: '/request/ble/peripheral/service_stop',
+        onValid: this.peripheralServiceStop,
+      },
+      {
+        uri: '/request/ble/peripheral/service_stop_all',
+        onValid: this.peripheralServiceStopAll,
+      },
+      {
+        uri: '/request/ble/peripheral/characteristic_read',
+        onValid: this.peripheralCharacteristicRead,
+      },
+      {
+        uri: '/request/ble/peripheral/characteristic_write',
+        onValid: this.peripheralCharacteristicWrite,
+      },
+      {
+        uri: '/request/ble/peripheral/characteristic_notify',
+        onValid: this.peripheralCharacteristicNotify,
+      },
+      {
+        uri: '/request/ble/peripheral/descriptor_read',
+        onValid: this.peripheralDescriptorRead,
+      },
+      {
+        uri: '/request/ble/peripheral/descriptor_write',
+        onValid: this.peripheralDescriptorWrite,
+      },
     ];
-    let res = this.validateCommandSchema(schemaData, module, "ble");
+    let res = this.validateCommandSchema(schemaData, module, 'ble');
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
@@ -15212,30 +15651,70 @@ class WSCommand_Ble extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     let funcList = {};
-    funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
+    funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(
+      this
+    );
     funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
     funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
-    funcList[this._CommandCharacteristics] = this.notifyFromBinaryChacateristics.bind(this);
-    funcList[this._CommandWriteCharacteristics] = this.notifyFromBinaryWriteChacateristics.bind(this);
-    funcList[this._CommandReadCharacteristics] = this.notifyFromBinaryReadChacateristics.bind(this);
-    funcList[this._CommandRegisterNotifyCharacteristic] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
-    funcList[this._CommandUnregisterNotifyCharacteristic] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
-    funcList[this._CommandNotifyCharacteristic] = this.notifyFromBinaryNotifyChacateristic.bind(this);
-    funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(this);
-    funcList[this._CommandWriteDescriptor] = this.notifyFromBinaryWriteDescriptor.bind(this);
-    funcList[this._CommandReadDescriptor] = this.notifyFromBinaryReadDescriptor.bind(this);
+    funcList[
+      this._CommandCharacteristics
+    ] = this.notifyFromBinaryChacateristics.bind(this);
+    funcList[
+      this._CommandWriteCharacteristics
+    ] = this.notifyFromBinaryWriteChacateristics.bind(this);
+    funcList[
+      this._CommandReadCharacteristics
+    ] = this.notifyFromBinaryReadChacateristics.bind(this);
+    funcList[
+      this._CommandRegisterNotifyCharacteristic
+    ] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
+    funcList[
+      this._CommandUnregisterNotifyCharacteristic
+    ] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
+    funcList[
+      this._CommandNotifyCharacteristic
+    ] = this.notifyFromBinaryNotifyChacateristic.bind(this);
+    funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(
+      this
+    );
+    funcList[
+      this._CommandWriteDescriptor
+    ] = this.notifyFromBinaryWriteDescriptor.bind(this);
+    funcList[
+      this._CommandReadDescriptor
+    ] = this.notifyFromBinaryReadDescriptor.bind(this);
 
-    funcList[this._CommandServerNotifyConnect] = this.notifyFromBinaryServerConnectionState.bind(this);
-    funcList[this._CommandServerReadCharavteristicValue] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
-    funcList[this._CommandServerWriteCharavteristicValue] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
-    funcList[this._CommandServerNotifyReadCharavteristicValue] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
-    funcList[this._CommandServerNotifyWriteCharavteristicValue] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
-    funcList[this._CommandServerReadDescriptorValue] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
-    funcList[this._CommandServerWriteDescriptorValue] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
-    funcList[this._CommandServerNotifyReadDescriptorValue] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
-    funcList[this._CommandServerNotifyWriteDescriptorValue] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
+    funcList[
+      this._CommandServerNotifyConnect
+    ] = this.notifyFromBinaryServerConnectionState.bind(this);
+    funcList[
+      this._CommandServerReadCharavteristicValue
+    ] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerWriteCharavteristicValue
+    ] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerNotifyReadCharavteristicValue
+    ] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerNotifyWriteCharavteristicValue
+    ] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerReadDescriptorValue
+    ] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
+    funcList[
+      this._CommandServerWriteDescriptorValue
+    ] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
+    funcList[
+      this._CommandServerNotifyReadDescriptorValue
+    ] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
+    funcList[
+      this._CommandServerNotifyWriteDescriptorValue
+    ] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
 
-    funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(this);
+    funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(
+      this
+    );
 
     if (funcList[func]) {
       funcList[func](objToSend, payload);
@@ -15244,24 +15723,49 @@ class WSCommand_Ble extends WSCommand {
 
   notifyFromBinaryScanResponse(objToSend, payload) {
     if (payload.byteLength > 1) {
-
-      var schema = [
-        {name: "event_type", type: "enum", length: 1, enum: this._CommandScanResultsEvet},
-        {name: "address", type: "hex", length: 6, endianness: "little"},
-        {name: "device_type", type: "enum", length: 1, enum: this._CommandScanResultsDevice},
-        {name: "address_type", type: "enum", length: 1, enum: this._CommandScanResultsDeviceAddress},
-        {name: "ble_event_type", type: "enum", length: 1, enum: this._CommandScanResultsBleEvent},
-        {name: "rssi", type: "signed number", length: 4},
-        {name: "adv_data", type: "dataArray", length: 31 * 2},
-        {name: "flag", type: "number", length: 4},
-        {name: "num_response", type: "number", length: 4},
-        {name: "advertise_length", type: "number", length: 1},
-        {name: "scan_response_length", type: "number", length: 1}
+      let schema = [
+        {
+          name: 'event_type',
+          type: 'enum',
+          length: 1,
+          enum: this._CommandScanResultsEvet,
+        },
+        { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+        {
+          name: 'device_type',
+          type: 'enum',
+          length: 1,
+          enum: this._CommandScanResultsDevice,
+        },
+        {
+          name: 'address_type',
+          type: 'enum',
+          length: 1,
+          enum: this._CommandScanResultsDeviceAddress,
+        },
+        {
+          name: 'ble_event_type',
+          type: 'enum',
+          length: 1,
+          enum: this._CommandScanResultsBleEvent,
+        },
+        { name: 'rssi', type: 'signed number', length: 4 },
+        { name: 'adv_data', type: 'dataArray', length: 31 * 2 },
+        { name: 'flag', type: 'number', length: 4 },
+        { name: 'num_response', type: 'number', length: 4 },
+        { name: 'advertise_length', type: 'number', length: 1 },
+        { name: 'scan_response_length', type: 'number', length: 1 },
       ];
 
-      var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+      let results = JsonBinaryConverter.convertFromBinaryToJson(
+        schema,
+        payload
+      );
 
-      results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
+      results.scan_resp = results.adv_data.slice(
+        results.advertise_length,
+        results.advertise_length + results.scan_response_length
+      );
       results.adv_data = results.adv_data.slice(0, results.advertise_length);
 
       delete results.num_response;
@@ -15269,343 +15773,417 @@ class WSCommand_Ble extends WSCommand {
       delete results.scan_response_length;
       delete results.advertise_data;
 
-      if (results.event_type === "inquiry_result") {
+      if (results.event_type === 'inquiry_result') {
         delete results.event_type;
-        this._addRowForPath(objToSend, "ble.scan_result", results);
-      } else if (results.event_type === "inquiry_complete") {
-        this._addRowForPath(objToSend, "ble.scan_result_finish", true);
-
+        this._addRowForPath(objToSend, 'ble.scan_result', results);
+      } else if (results.event_type === 'inquiry_complete') {
+        this._addRowForPath(objToSend, 'ble.scan_result_finish', true);
       }
-
-
     }
   }
 
   notifyFromBinaryConnect(objToSend, payload) {
     if (payload.length === 7) {
-      var schema = [
-        {name: "address", type: "hex", length: 6, endianness: "little"},
-        {name: "status", type: "enum", length: 1, enum: {"connected": 0, "disconnected": 1}}
+      let schema = [
+        { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+        {
+          name: 'status',
+          type: 'enum',
+          length: 1,
+          enum: { connected: 0, disconnected: 1 },
+        },
       ];
 
-      var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-      this._addRowForPath(objToSend, "ble.status_update", results);
+      let results = JsonBinaryConverter.convertFromBinaryToJson(
+        schema,
+        payload
+      );
+      this._addRowForPath(objToSend, 'ble.status_update', results);
     }
   }
 
   notifyFromBinaryServices(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     if (results.service_uuid !== null) {
-      this._addRowForPath(objToSend, "ble.get_service_result", results);
+      this._addRowForPath(objToSend, 'ble.get_service_result', results);
     } else {
       delete results.service_uuid;
-      this._addRowForPath(objToSend, "ble.get_service_result_finish", results);
+      this._addRowForPath(objToSend, 'ble.get_service_result_finish', results);
     }
-
   }
 
   notifyFromBinaryChacateristics(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "properties", type: "enum", length: 1, enum: this._CommandCharacteristicsProperties, flags: true}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      {
+        name: 'properties',
+        type: 'enum',
+        length: 1,
+        enum: this._CommandCharacteristicsProperties,
+        flags: true,
+      },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     if (results.characteristic_uuid !== null) {
-      this._addRowForPath(objToSend, "ble.get_characteristic_result", results);
+      this._addRowForPath(objToSend, 'ble.get_characteristic_result', results);
     } else {
       delete results.characteristic_uuid;
       delete results.properties;
-      this._addRowForPath(objToSend, "ble.get_characteristic_result_finish", results);
+      this._addRowForPath(
+        objToSend,
+        'ble.get_characteristic_result_finish',
+        results
+      );
     }
   }
 
   notifyFromBinaryReadChacateristics(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
+      { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.read_characteristic_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(objToSend, 'ble.read_characteristic_result', results);
   }
 
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.write_characteristic_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(objToSend, 'ble.write_characteristic_result', results);
   }
 
   notifyFromBinaryRegisterNotifyChacateristic(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.register_nofity_characteristic_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(
+      objToSend,
+      'ble.register_nofity_characteristic_result',
+      results
+    );
   }
 
   notifyFromBinaryUnregisterNotifyChacateristic(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.unregister_nofity_characteristic_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(
+      objToSend,
+      'ble.unregister_nofity_characteristic_result',
+      results
+    );
   }
   notifyFromBinaryNotifyChacateristic(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "is_notify", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'is_notify', type: 'int', length: 1 },
+      { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.is_notify = results.is_notify === 1;
-    this._addRowForPath(objToSend, "ble.nofity_characteristic", results);
+    this._addRowForPath(objToSend, 'ble.nofity_characteristic', results);
   }
 
   notifyFromBinaryDescriptors(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     if (results.descriptor_uuid !== null) {
-      this._addRowForPath(objToSend, "ble.get_descriptor_result", results);
+      this._addRowForPath(objToSend, 'ble.get_descriptor_result', results);
     } else {
       delete results.descriptor_uuid;
-      this._addRowForPath(objToSend, "ble.get_descriptor_result_finish", results);
+      this._addRowForPath(
+        objToSend,
+        'ble.get_descriptor_result_finish',
+        results
+      );
     }
   }
 
   notifyFromBinaryReadDescriptor(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
-      {name: "data", type: "dataArray", length: null}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
+      { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.read_descriptor_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(objToSend, 'ble.read_descriptor_result', results);
   }
 
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.write_descriptor_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(objToSend, 'ble.write_descriptor_result', results);
   }
 
   notifyFromBinaryServerConnectionState(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "status", type: "enum", length: 1, enum: {"connected": 1, "disconnected": 0}}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      {
+        name: 'status',
+        type: 'enum',
+        length: 1,
+        enum: { connected: 1, disconnected: 0 },
+      },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.connection_status", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(objToSend, 'ble.peripheral.connection_status', results);
   }
 
   notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    let schema = [
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.peripheral.write_characteristic_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.write_characteristic_result',
+      results
+    );
   }
 
   notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    let schema = [
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.read_characteristic_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.read_characteristic_result',
+      results
+    );
   }
 
   notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_read_characteristic", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.notify_read_characteristic',
+      results
+    );
   }
 
   notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_write_characteristic", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.notify_write_characteristic',
+      results
+    );
   }
 
   notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    let schema = [
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.read_descriptor_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.read_descriptor_result',
+      results
+    );
   }
 
   notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "result", type: "int", length: 1},
+    let schema = [
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    results.result = results.result === this._commandResults["success"] ? "success" : "failed";
-    this._addRowForPath(objToSend, "ble.peripheral.write_descriptor_result", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result =
+      results.result === this._commandResults['success'] ? 'success' : 'failed';
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.write_descriptor_result',
+      results
+    );
   }
 
   notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_read_descriptor", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.notify_read_descriptor',
+      results
+    );
   }
 
   notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
-    var schema = [
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength},
-      {name: "data", type: "dataArray", length: null}
+    let schema = [
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
-    this._addRowForPath(objToSend, "ble.peripheral.notify_write_descriptor", results);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    this._addRowForPath(
+      objToSend,
+      'ble.peripheral.notify_write_descriptor',
+      results
+    );
   }
 
   notifyFromBinaryError(objToSend, payload) {
-    var schema = [
-      {name: "esp_error_code", type: "char", length: 1},
-      {name: "error_code", type: "char", length: 1},
-      {name: "function_code", type: "char", length: 1},
-      {name: "address", type: "hex", length: 6, endianness: "little"},
-      {name: "service_uuid", type: "uuid", length: this.uuidLength},
-      {name: "characteristic_uuid", type: "uuid", length: this.uuidLength},
-      {name: "descriptor_uuid", type: "uuid", length: this.uuidLength}
+    let schema = [
+      { name: 'esp_error_code', type: 'char', length: 1 },
+      { name: 'error_code', type: 'char', length: 1 },
+      { name: 'function_code', type: 'char', length: 1 },
+      { name: 'address', type: 'hex', length: 6, endianness: 'little' },
+      { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
+      { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
-    var errorMessage = {
-      0x00: "no error",
-      0x01: "device not connected",
-      0x02: "service not found",
-      0x03: "charavteristic not found",
-      0x04: "descriptor not found",
-      0x05: "no permission",
-      0x06: "device not found",
-      0x07: "ble is busy",
-      0x08: "service already running",
-      0xFF: "error",
+    let errorMessage = {
+      0x00: 'no error',
+      0x01: 'device not connected',
+      0x02: 'service not found',
+      0x03: 'charavteristic not found',
+      0x04: 'descriptor not found',
+      0x05: 'no permission',
+      0x06: 'device not found',
+      0x07: 'ble is busy',
+      0x08: 'service already running',
+      0xff: 'error',
     };
 
-    var functionMessage = {
-      0: "on setting advertisement data",
-      1: "on setting scan response data",
-      2: "on starting advertisement",
-      3: "on stopping advertisement",
-      4: "on starting scan",
-      5: "on stoping scan",
-      6: "",
-      7: "on connecting device",
-      8: "on getting services",
-      9: "on getting characteristic",
-      10: "on writing characteristic",
-      11: "on reading characteristic",
-      14: "on getting descriptor",
-      15: "on writing descriptor",
-      16: "on reading descriptor",
-      20: "on start pheripheral",
-      21: "on notify connect",
-      22: "on adding service",
-      23: "on adding characteristic",
-      24: "on adding descriptor",
-      25: "on writing characteristic",
-      26: "on reading characteristic",
-      27: "on writing characteristic from remote",
-      28: "on reading characteristic from remote",
-      29: "on writing descriptor",
-      30: "on reading descriptor",
-      31: "on writing descriptor from remote",
-      32: "on reading descriptor from remote",
+    let functionMessage = {
+      0: 'on setting advertisement data',
+      1: 'on setting scan response data',
+      2: 'on starting advertisement',
+      3: 'on stopping advertisement',
+      4: 'on starting scan',
+      5: 'on stoping scan',
+      6: '',
+      7: 'on connecting device',
+      8: 'on getting services',
+      9: 'on getting characteristic',
+      10: 'on writing characteristic',
+      11: 'on reading characteristic',
+      14: 'on getting descriptor',
+      15: 'on writing descriptor',
+      16: 'on reading descriptor',
+      20: 'on start pheripheral',
+      21: 'on notify connect',
+      22: 'on adding service',
+      23: 'on adding characteristic',
+      24: 'on adding descriptor',
+      25: 'on writing characteristic',
+      26: 'on reading characteristic',
+      27: 'on writing characteristic from remote',
+      28: 'on reading characteristic from remote',
+      29: 'on writing descriptor',
+      30: 'on reading descriptor',
+      31: 'on writing descriptor from remote',
+      32: 'on reading descriptor from remote',
     };
 
-    results.message = errorMessage[results.error_code] + " " + functionMessage[results.function_code];
+    results.message =
+      errorMessage[results.error_code] +
+      ' ' +
+      functionMessage[results.function_code];
 
     delete results.esp_error_code;
     delete results.function_code;
@@ -15614,9 +16192,9 @@ class WSCommand_Ble extends WSCommand {
   }
 
   _addRowForPath(sendObj, path, row) {
-    var keys = path.split('.');
-    var target = sendObj;
-    for (var index = 0; index < keys.length - 1; index++) {
+    let keys = path.split('.');
+    let target = sendObj;
+    for (let index = 0; index < keys.length - 1; index++) {
       target[keys[index]] = target[keys[index]] || {};
       target = target[keys[index]];
     }
@@ -15625,6 +16203,7 @@ class WSCommand_Ble extends WSCommand {
 }
 
 module.exports = WSCommand_Ble;
+
 
 /***/ }),
 
@@ -15636,62 +16215,64 @@ module.exports = WSCommand_Ble;
 /***/ (function(module, exports, __webpack_require__) {
 
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
-const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js")
+const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
 
 module.exports = class WSCommand_Directive extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 1;
 
-    this._CommandRegistrate     = 0;
-    this._CommandPause          = 1;
-    this._CommandResume         = 2;
+    this._CommandRegistrate = 0;
+    this._CommandPause = 1;
+    this._CommandResume = 2;
 
     const CommandIO = __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js");
     const CommandPWM = __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js");
 
-    this.availableCommands = [
-      new CommandIO(),
-      new CommandPWM()
-    ]
+    this.availableCommands = [new CommandIO(), new CommandPWM()];
   }
 
   // Commands
 
   init(params, originalParams) {
-
     const nameArray = ObnizUtil.string2dataArray(params.animation.name);
     let frame = new Uint8Array(nameArray.length + 2);
-    frame[0] = nameArray.length+1;
+    frame[0] = nameArray.length + 1;
     frame.set(nameArray, 1);
     frame[frame.byteLength - 1] = 0; // null string
     const commandJsonArray = params.animation.states;
 
-    for (let i=0; i<commandJsonArray.length; i++) {
+    for (let i = 0; i < commandJsonArray.length; i++) {
       const obj = commandJsonArray[i];
       const duration = parseInt(obj.duration * 1000);
       const state = obj.state;
 
       // Dry run commands
 
-      const compressed = WSCommand.compress(this.availableCommands, JSON.parse(JSON.stringify(state)));
+      const compressed = WSCommand.compress(
+        this.availableCommands,
+        JSON.parse(JSON.stringify(state))
+      );
       if (!compressed) {
-        throw new Error("[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.");
+        throw new Error(
+          '[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.'
+        );
       }
       const length = compressed.byteLength;
-      
-      var commandHeader = new Uint8Array(8);
-      commandHeader[0] = length >> (8*3);
-      commandHeader[1] = length >> (8*2);
-      commandHeader[2] = length >> (8*1);
+
+      let commandHeader = new Uint8Array(8);
+      commandHeader[0] = length >> (8 * 3);
+      commandHeader[1] = length >> (8 * 2);
+      commandHeader[2] = length >> (8 * 1);
       commandHeader[3] = length;
-      commandHeader[4] = duration >> (8*3);
-      commandHeader[5] = duration >> (8*2);
-      commandHeader[6] = duration >> (8*1);
+      commandHeader[4] = duration >> (8 * 3);
+      commandHeader[5] = duration >> (8 * 2);
+      commandHeader[6] = duration >> (8 * 1);
       commandHeader[7] = duration;
 
-      const combined =  new Uint8Array(frame.byteLength + commandHeader.byteLength + compressed.byteLength);
+      const combined = new Uint8Array(
+        frame.byteLength + commandHeader.byteLength + compressed.byteLength
+      );
       combined.set(frame, 0);
       combined.set(commandHeader, frame.byteLength);
       combined.set(compressed, frame.byteLength + commandHeader.byteLength);
@@ -15701,65 +16282,64 @@ module.exports = class WSCommand_Directive extends WSCommand {
 
     if (frame.byteLength > 1000) {
       // 1kbyte over
-      throw new Error("[io.animation]Too big animation datas");
+      throw new Error('[io.animation]Too big animation datas');
     }
 
     this.sendCommand(this._CommandRegistrate, frame);
   }
 
-  changeState(params){
-    if(params.animation.status === "resume"){
+  changeState(params) {
+    if (params.animation.status === 'resume') {
       const nameArray = ObnizUtil.string2dataArray(params.animation.name);
       let frame = new Uint8Array(nameArray.length + 2);
-      frame[0] = nameArray.length+1;
+      frame[0] = nameArray.length + 1;
       frame.set(nameArray, 1);
       frame[frame.byteLength - 1] = 0;
       this.sendCommand(this._CommandResume, frame);
-
-    } else if(params.animation.status === "pause"){
+    } else if (params.animation.status === 'pause') {
       const nameArray = ObnizUtil.string2dataArray(params.animation.name);
       let frame = new Uint8Array(nameArray.length + 2);
-      frame[0] = nameArray.length+1;
+      frame[0] = nameArray.length + 1;
       frame.set(nameArray, 1);
       frame[frame.byteLength - 1] = 0;
       this.sendCommand(this._CommandPause, frame);
-
     }
   }
-  
+
   parseFromJson(json) {
     let parentCommandNotFound = false;
     try {
       super.parseFromJson(json);
-    }catch(err) {
-      if( err instanceof this.WSCommandNotFoundError){
+    } catch (err) {
+      if (err instanceof this.WSCommandNotFoundError) {
         parentCommandNotFound = true;
-      }else {
+      } else {
         throw err;
       }
     }
 
-    const module = json["io"];
+    const module = json['io'];
     if (module === undefined) {
       return;
     }
 
     const schemaData = [
-      {uri : "/request/ioAnimation/init",  onValid: this.init},
-      {uri : "/request/ioAnimation/changeState",  onValid: this.changeState}
+      { uri: '/request/ioAnimation/init', onValid: this.init },
+      { uri: '/request/ioAnimation/changeState', onValid: this.changeState },
     ];
-    const res = this.validateCommandSchema(schemaData, module, "io", module );
+    const res = this.validateCommandSchema(schemaData, module, 'io', module);
 
-    if(res.valid === 0 && parentCommandNotFound){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0 && parentCommandNotFound) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         let WSCommandNotFoundError = this.WSCommandNotFoundError;
-        throw new WSCommandNotFoundError( `[io.animation]unknown command`);
+        throw new WSCommandNotFoundError(`[io.animation]unknown command`);
       }
     }
   }
-}
+};
+
 
 /***/ }),
 
@@ -15773,20 +16353,17 @@ module.exports = class WSCommand_Directive extends WSCommand {
 /* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 const qrcode = __webpack_require__(/*! ../utils/qr */ "./obniz/libs/utils/qr.js");
 
-let isNode = (typeof window === 'undefined') ;
-
 class WSCommand_Display extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 8;
 
-    this._CommandClear                    = 0;
-    this._CommandPrint                    = 1;
-    this._CommandDrawCampusVerticalBytes  = 2;
+    this._CommandClear = 0;
+    this._CommandPrint = 1;
+    this._CommandDrawCampusVerticalBytes = 2;
     this._CommandDrawCampusHorizonalBytes = 3;
-    this._CommandDrawIOState              = 4;
-    this._CommandSetPinName               = 5;
+    this._CommandDrawIOState = 4;
+    this._CommandSetPinName = 5;
   }
 
   // Commands
@@ -15798,24 +16375,24 @@ class WSCommand_Display extends WSCommand {
   print(buf) {
     this.sendCommand(this._CommandPrint, buf);
   }
-  
+
   printText(text) {
-    var result;
+    let result;
     const buf = Buffer(text, 'utf8');
     result = new Uint8Array(buf);
     this.print(result);
   }
 
-  text(params){
+  text(params) {
     this.printText(params.text);
   }
 
-  raw(params){
+  raw(params) {
     this.drawHorizonally(new Uint8Array(params.raw));
   }
 
   qr(params) {
-    const text = params.qr.text
+    const text = params.qr.text;
     const correctionLevel = params.qr.correction || 'M';
 
     const typeNumber = 0; // auto detect type.
@@ -15829,40 +16406,45 @@ class WSCommand_Display extends WSCommand {
       let vram = new Uint8Array(1024);
       vram.fill(0);
 
-      for (let row=0; row<2; row++){
-        for (let col=0; col<size+4; col++){
-          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
-          vram[parseInt((row + size + 2)*16 + col/8)] |= 0x80 >> (col%8);
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < size + 4; col++) {
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
+          vram[parseInt((row + size + 2) * 16 + col / 8)] |= 0x80 >> (col % 8);
         }
       }
-      for (let row=2; row<size+2; row++){
-        for (let col=0; col<2; col++){
-          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+      for (let row = 2; row < size + 2; row++) {
+        for (let col = 0; col < 2; col++) {
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
         }
-        for (let col=size+2; col<size+4; col++){
-          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+        for (let col = size + 2; col < size + 4; col++) {
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
         }
       }
 
-      for (let row=0; row<size; row++){
-        for (let col=0; col<size; col++){
-          if (!modules[parseInt(row/2)][parseInt(col/2)]) {
-            vram[parseInt((row+2)*16 + (col+2)/8)] |= 0x80 >> ((col+2)%8);
+      for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+          if (!modules[parseInt(row / 2)][parseInt(col / 2)]) {
+            vram[parseInt((row + 2) * 16 + (col + 2) / 8)] |=
+              0x80 >> ((col + 2) % 8);
           }
         }
       }
       this.drawHorizonally(vram);
     }
   }
-  
+
   pinName(params) {
-    for (var i = 0; i < 12; i++) {
-      if (typeof (params.pin_assign[i]) === "object") {
-        this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
+    for (let i = 0; i < 12; i++) {
+      if (typeof params.pin_assign[i] === 'object') {
+        this.setPinName(
+          i,
+          params.pin_assign[i].module_name || '?',
+          params.pin_assign[i].pin_name || '?'
+        );
       }
     }
   }
-  
+
   drawVertically(buf) {
     this.sendCommand(this._CommandDrawCampusVerticalBytes, buf);
   }
@@ -15870,47 +16452,46 @@ class WSCommand_Display extends WSCommand {
   drawHorizonally(buf) {
     this.sendCommand(this._CommandDrawCampusHorizonalBytes, buf);
   }
-  
+
   drawIOState(val) {
-    var buf = new Uint8Array([!val])
+    let buf = new Uint8Array([!val]);
     this.sendCommand(this._CommandDrawIOState, buf);
   }
-  
-  
-  setPinName(no, moduleName, pinName ) {
-    var str = moduleName.slice(0,4) + " "+ pinName;
-    str = str.slice(0,9);
 
-    var buf = new Uint8Array(1);
-    buf[0] = no; 
+  setPinName(no, moduleName, pinName) {
+    let str = moduleName.slice(0, 4) + ' ' + pinName;
+    str = str.slice(0, 9);
 
-    var stringarray = new Uint8Array(Buffer(str, 'utf8'));
-    var combined = new Uint8Array(buf.length + stringarray.length);
+    let buf = new Uint8Array(1);
+    buf[0] = no;
+
+    let stringarray = new Uint8Array(Buffer(str, 'utf8'));
+    let combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);
 
     this.sendCommand(this._CommandSetPinName, combined);
   }
-  
+
   parseFromJson(json) {
-    var module = json["display"];
+    let module = json['display'];
     if (module === undefined) {
       return;
     }
 
     let schemaData = [
-      {uri : "/request/display/clear", onValid: this.clear},
-      {uri : "/request/display/text",  onValid: this.text},
-      {uri : "/request/display/raw", onValid: this.raw},
-      {uri : "/request/display/pin_assign", onValid: this.pinName},
-      {uri : "/request/display/qr", onValid: this.qr}
+      { uri: '/request/display/clear', onValid: this.clear },
+      { uri: '/request/display/text', onValid: this.text },
+      { uri: '/request/display/raw', onValid: this.raw },
+      { uri: '/request/display/pin_assign', onValid: this.pinName },
+      { uri: '/request/display/qr', onValid: this.qr },
     ];
-    let res = this.validateCommandSchema(schemaData, module, "display" );
+    let res = this.validateCommandSchema(schemaData, module, 'display');
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new this.WSCommandNotFoundError(`[display]unknown command`);
       }
     }
@@ -15918,6 +16499,7 @@ class WSCommand_Display extends WSCommand {
 }
 
 module.exports = WSCommand_Display;
+
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -15932,61 +16514,58 @@ module.exports = WSCommand_Display;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_I2C extends WSCommand {
-  
   constructor(delegate) {
     super(delegate);
     this.module = 6;
 
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandWrite    = 2
-    this._CommandRead     = 3
-    this._CommandSlvWritten = 4
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandWrite = 2;
+    this._CommandRead = 3;
+    this._CommandSlvWritten = 4;
   }
 
   // Commands
 
   initMaster(params, module) {
+    let mode = 0;
+    let sda = parseInt(params.sda);
+    let scl = parseInt(params.scl);
+    let clock = parseInt(params.clock);
 
-    var mode = 0;
-    var sda = parseInt(params.sda);
-    var scl = parseInt(params.scl);
-    var clock = parseInt(params.clock);
-
-    var buf = new Uint8Array(8 );
+    let buf = new Uint8Array(8);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
     buf[3] = scl;
-    buf[4] = clock >> (3*8);
-    buf[5] = clock >> (2*8);
-    buf[6] = clock >> (1*8);
+    buf[4] = clock >> (3 * 8);
+    buf[5] = clock >> (2 * 8);
+    buf[6] = clock >> (1 * 8);
     buf[7] = clock;
 
     this.sendCommand(this._CommandInit, buf);
   }
 
   initSlave(params, module) {
+    let mode = 1;
+    let sda = parseInt(params.sda);
+    let scl = parseInt(params.scl);
+    let clock = 0;
 
-    var mode = 1;
-    var sda = parseInt(params.sda);
-    var scl = parseInt(params.scl);
-    var clock = 0;
-
-    var addressLength = params.slave_address_length;
-    var address = params.slave_address;
-    if (address > 0x7F) {
+    let addressLength = params.slave_address_length;
+    let address = params.slave_address;
+    if (address > 0x7f) {
       addressLength = 10;
     }
 
-    var buf = new Uint8Array( 11 );
+    let buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
     buf[3] = scl;
-    buf[4] = clock >> (3*8);
-    buf[5] = clock >> (2*8);
-    buf[6] = clock >> (1*8);
+    buf[4] = clock >> (3 * 8);
+    buf[5] = clock >> (2 * 8);
+    buf[6] = clock >> (1 * 8);
     buf[7] = clock;
     buf[8] = addressLength;
     buf[9] = address >> 8;
@@ -15996,17 +16575,17 @@ class WSCommand_I2C extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array([module]);
+    let buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   write(params, module) {
     let address = parseInt(params.address);
 
-    if ( params.address_bits === 10 || address > 0x7F) {
+    if (params.address_bits === 10 || address > 0x7f) {
       address = address | 0x8000; // mark 10bit mode
     }
-    var buf = new Uint8Array(3 + params.data.length);
+    let buf = new Uint8Array(3 + params.data.length);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
@@ -16017,42 +16596,42 @@ class WSCommand_I2C extends WSCommand {
   read(params, module) {
     let address = parseInt(params.address);
 
-    if ( params.address_bits === 10 || address > 0x7F) {
+    if (params.address_bits === 10 || address > 0x7f) {
       address = address | 0x8000; // mark 10bit mode
     }
     let read_length = params.read;
-    var buf = new Uint8Array(7);
+    let buf = new Uint8Array(7);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
-    buf[3] = read_length >> (3*8);
-    buf[4] = read_length >> (2*8);
-    buf[5] = read_length >> (1*8);
+    buf[3] = read_length >> (3 * 8);
+    buf[4] = read_length >> (2 * 8);
+    buf[5] = read_length >> (1 * 8);
     buf[6] = read_length;
     this.sendCommand(this._CommandRead, buf);
   }
 
   parseFromJson(json) {
     // 0
-    for (var i=0; i<1;i++) {
-      var module = json["i2c"+i];
+    for (let i = 0; i < 1; i++) {
+      let module = json['i2c' + i];
       if (module === undefined) {
         continue;
       }
 
       let schemaData = [
-        {uri : "/request/i2c/init_master",  onValid: this.initMaster},
-        {uri : "/request/i2c/init_slave",   onValid: this.initSlave},
-        {uri : "/request/i2c/write",        onValid: this.write},
-        {uri : "/request/i2c/read",         onValid: this.read},
-        {uri : "/request/i2c/deinit",       onValid: this.deinit},
+        { uri: '/request/i2c/init_master', onValid: this.initMaster },
+        { uri: '/request/i2c/init_slave', onValid: this.initSlave },
+        { uri: '/request/i2c/write', onValid: this.write },
+        { uri: '/request/i2c/read', onValid: this.read },
+        { uri: '/request/i2c/deinit', onValid: this.deinit },
       ];
-      let res = this.validateCommandSchema(schemaData, module, "i2c"+i, i);
+      let res = this.validateCommandSchema(schemaData, module, 'i2c' + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new this.WSCommandNotFoundError(`[i2c${i}]unknown command`);
         }
       }
@@ -16061,58 +16640,66 @@ class WSCommand_I2C extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRead && payload.byteLength > 3) {
-      var module_index = payload[0];
-      var address = (payload[1] << 8) + payload[2];
+      let module_index = payload[0];
+      let address = (payload[1] << 8) + payload[2];
 
-      var arr = new Array(payload.byteLength - 3);
-      for (var i=0; i<arr.length;i++) {
+      let arr = new Array(payload.byteLength - 3);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 3];
       }
-      
-      objToSend["i2c"+module_index] = {
-        mode: "master",
+
+      objToSend['i2c' + module_index] = {
+        mode: 'master',
         address: address,
-        data: arr
+        data: arr,
       };
     } else if (func === this._CommandSlvWritten && payload.byteLength > 4) {
-      var module_index = payload[0];
-      var address_bit_length = payload[1]
-      var address = (payload[2] << 8) + payload[3];
+      let module_index = payload[0];
+      // let address_bit_length = payload[1];
+      let address = (payload[2] << 8) + payload[3];
 
-      var arr = new Array(payload.byteLength - 4);
-      for (var i=0; i<arr.length; i++) {
+      let arr = new Array(payload.byteLength - 4);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 4];
       }
 
-      objToSend["i2c"+module_index] = {
-        mode: "slave",
+      objToSend['i2c' + module_index] = {
+        mode: 'slave',
         is_fragmented: true,
         address: address,
-        data: arr
+        data: arr,
       };
-    } else if(func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength > 2){
-      const esperr = payload[0];
+    } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength > 2) {
+      // const _esperr = payload[0];
       const err = payload[1];
       const ref_func_id = payload[2];
 
-      if (ref_func_id === this._CommandWrite || ref_func_id === this._CommandRead) {
-        let reason = '' + ( (ref_func_id === this._CommandWrite) ? 'writing' : 'reading' ) + ' error. ';
-        if (err === 7) { // in fact. it is 0x107. but truncated
-          reason += 'Communication Timeout. Maybe, target is not connected.'
+      if (
+        ref_func_id === this._CommandWrite ||
+        ref_func_id === this._CommandRead
+      ) {
+        let reason =
+          '' +
+          (ref_func_id === this._CommandWrite ? 'writing' : 'reading') +
+          ' error. ';
+        if (err === 7) {
+          // in fact. it is 0x107. but truncated
+          reason += 'Communication Timeout. Maybe, target is not connected.';
         } else if (err === 255) {
-          reason += 'Communication Failed. Maybe, target is not connected.'
+          reason += 'Communication Failed. Maybe, target is not connected.';
         }
-        this.envelopError(objToSend, `i2c0`, { message: reason })
+        this.envelopError(objToSend, `i2c0`, { message: reason });
       } else {
-        super.notifyFromBinary(objToSend, func, payload)
+        super.notifyFromBinary(objToSend, func, payload);
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
 
 module.exports = WSCommand_I2C;
+
 
 /***/ }),
 
@@ -16125,12 +16712,11 @@ module.exports = WSCommand_I2C;
 
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
-
-const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1
-const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2
-const COMMAND_IO_ERRORS_IO_TOO_LOW  = 3
-const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4
-const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xF0
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
+const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
+const COMMAND_IO_ERRORS_IO_TOO_LOW = 3;
+const COMMAND_IO_ERRORS_IO_TOO_HIGH = 4;
+const COMMAND_IO_ERRORS_IO_FORCE_RELEASED = 0xf0;
 
 const COMMAND_IO_ERROR_MESSAGES = {
   0: 'unknown error',
@@ -16138,7 +16724,7 @@ const COMMAND_IO_ERROR_MESSAGES = {
   2: 'heavy output. output voltage is too high when driving low',
   3: 'output voltage is too low when driving high. io state has changed output to input',
   4: 'output voltage is too high when driving low. io state has changed output to input',
-}
+};
 
 const COMMAND_IO_MUTEX_NAMES = {
   1: 'io.input',
@@ -16148,107 +16734,106 @@ const COMMAND_IO_MUTEX_NAMES = {
   5: 'i2c',
   6: 'spi',
   7: 'LogicAnalyzer',
-  8: 'Measure'
-}
+  8: 'Measure',
+};
 
 class WSCommand_IO extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 2;
 
-    this._CommandOutput           = 0;
-    this._CommandInputStream      = 1;
-    this._CommandInputOnece       = 2;
-    this._CommandOutputType       = 3;
+    this._CommandOutput = 0;
+    this._CommandInputStream = 1;
+    this._CommandInputOnece = 2;
+    this._CommandOutputType = 3;
     this._CommandPullResisterType = 4;
-    this._CommandEnd              = 5;
+    this._CommandEnd = 5;
   }
 
   // Commands
 
-
-
   output(value, id) {
-    var buf = new Uint8Array([id, value]);
+    let buf = new Uint8Array([id, value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
   outputDetail(params, id) {
-    var buf = new Uint8Array([id, params.value]);
+    let buf = new Uint8Array([id, params.value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
-
   input(params, id) {
-    var buf = new Uint8Array([id]);
-    this.sendCommand( this._CommandInputOnece, buf);
+    let buf = new Uint8Array([id]);
+    this.sendCommand(this._CommandInputOnece, buf);
   }
 
   inputDetail(params, id) {
-    var buf = new Uint8Array([id]);
-    this.sendCommand( params.stream ? this._CommandInputStream : this._CommandInputOnece, buf);
+    let buf = new Uint8Array([id]);
+    this.sendCommand(
+      params.stream ? this._CommandInputStream : this._CommandInputOnece,
+      buf
+    );
   }
 
   outputType(params, id) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = id;
-    if (params.output_type === "push-pull5v") {
+    if (params.output_type === 'push-pull5v') {
       buf[1] = 0;
-    } else if (params.output_type === "push-pull3v") {
+    } else if (params.output_type === 'push-pull3v') {
       buf[1] = 2;
-    } else if (params.output_type === "open-drain") {
+    } else if (params.output_type === 'open-drain') {
       buf[1] = 3;
     } else {
-      return "io unknown outputtype: "+params.output_type;
+      return 'io unknown outputtype: ' + params.output_type;
     }
     this.sendCommand(this._CommandOutputType, buf);
   }
 
   pullType(params, id) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = id;
-    if (params.pull_type === "float") {
+    if (params.pull_type === 'float') {
       buf[1] = 0;
-    } else if (params.pull_type === "pull-up3v") {
+    } else if (params.pull_type === 'pull-up3v') {
       buf[1] = 1;
-    } else if (params.pull_type === "pull-down") {
+    } else if (params.pull_type === 'pull-down') {
       buf[1] = 2;
-    } else if (params.pull_type === "pull-up5v") {
+    } else if (params.pull_type === 'pull-up5v') {
       buf[1] = 3;
     } else {
-      return "io unknown pull_type: "+params.pull_type;
+      return 'io unknown pull_type: ' + params.pull_type;
     }
     this.sendCommand(this._CommandPullResisterType, buf);
   }
 
   deinit(params, id) {
-    var buf = new Uint8Array([id]);
-    this.sendCommand( this._CommandEnd, buf);
+    let buf = new Uint8Array([id]);
+    this.sendCommand(this._CommandEnd, buf);
   }
 
   parseFromJson(json) {
-    for (var i=0; i<=11;i++) {
-      var module = json["io"+i];
+    for (let i = 0; i <= 11; i++) {
+      let module = json['io' + i];
       if (module === undefined) {
         continue;
       }
 
       let schemaData = [
-        {uri : "/request/io/input",         onValid: this.input},
-        {uri : "/request/io/input_detail",  onValid: this.inputDetail},
-        {uri : "/request/io/output",        onValid: this.output},
-        {uri : "/request/io/output_detail", onValid: this.outputDetail},
-        {uri : "/request/io/output_type",   onValid: this.outputType},
-        {uri : "/request/io/pull_type",     onValid: this.pullType},
-        {uri : "/request/io/deinit",        onValid: this.deinit}
+        { uri: '/request/io/input', onValid: this.input },
+        { uri: '/request/io/input_detail', onValid: this.inputDetail },
+        { uri: '/request/io/output', onValid: this.output },
+        { uri: '/request/io/output_detail', onValid: this.outputDetail },
+        { uri: '/request/io/output_type', onValid: this.outputType },
+        { uri: '/request/io/pull_type', onValid: this.pullType },
+        { uri: '/request/io/deinit', onValid: this.deinit },
       ];
-      let res = this.validateCommandSchema(schemaData, module, "io"+i, i);
+      let res = this.validateCommandSchema(schemaData, module, 'io' + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new this.WSCommandNotFoundError(`[io${i}]unknown command`);
         }
       }
@@ -16256,37 +16841,52 @@ class WSCommand_IO extends WSCommand {
   }
 
   notifyFromBinary(objToSend, func, payload) {
-
     if (func === this._CommandInputStream || func === this._CommandInputOnece) {
-      for (var i=0; i<payload.byteLength; i+=2) {
-        objToSend["io"+payload[i]] = (payload[i+1] > 0);
+      for (let i = 0; i < payload.byteLength; i += 2) {
+        objToSend['io' + payload[i]] = payload[i + 1] > 0;
       }
-
     } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
-      const esperr = payload[0];
+      // const esperr = payload[0];
       const err = payload[1];
-      const ref_func_id = payload[2];
+      // const ref_func_id = payload[2];
       const module_index = payload[3];
 
-      if (err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH || err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW) {
-        this.envelopWarning(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
-
-      } else if (err === COMMAND_IO_ERRORS_IO_TOO_LOW || err === COMMAND_IO_ERRORS_IO_TOO_HIGH)  {
-        this.envelopError(objToSend, `io${module_index}`, { message: COMMAND_IO_ERROR_MESSAGES[err] })
-
-      } else if (err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED && payload.byteLength >= 6){
+      if (
+        err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH ||
+        err === COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW
+      ) {
+        this.envelopWarning(objToSend, `io${module_index}`, {
+          message: COMMAND_IO_ERROR_MESSAGES[err],
+        });
+      } else if (
+        err === COMMAND_IO_ERRORS_IO_TOO_LOW ||
+        err === COMMAND_IO_ERRORS_IO_TOO_HIGH
+      ) {
+        this.envelopError(objToSend, `io${module_index}`, {
+          message: COMMAND_IO_ERROR_MESSAGES[err],
+        });
+      } else if (
+        err === COMMAND_IO_ERRORS_IO_FORCE_RELEASED &&
+        payload.byteLength >= 6
+      ) {
         const oldMutexOwner = payload[4];
         const newMutexOwner = payload[5];
-        this.envelopWarning(objToSend, 'debug', { message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.` })
+        this.envelopWarning(objToSend, 'debug', {
+          message: `io${module_index} binded "${
+            COMMAND_IO_MUTEX_NAMES[oldMutexOwner]
+          }" was stopped. "${
+            COMMAND_IO_MUTEX_NAMES[newMutexOwner]
+          }" have started using this io.`,
+        });
       }
     } else {
       super.notifyFromBinary(objToSend, func, payload);
     }
   }
-};
-
+}
 
 module.exports = WSCommand_IO;
+
 
 /***/ }),
 
@@ -16300,14 +16900,13 @@ module.exports = WSCommand_IO;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_LogicAnalyzer extends WSCommand {
-  
   constructor(delegate) {
     super(delegate);
     this.module = 10;
 
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandRecv     = 2
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandRecv = 2;
   }
 
   // Commands
@@ -16319,16 +16918,16 @@ class WSCommand_LogicAnalyzer extends WSCommand {
 
     let matchValue = parseInt(params.trigger.value);
     let matchCount = params.trigger.samples;
-    var buf = new Uint8Array(12);
+    let buf = new Uint8Array(12);
     buf[0] = 1;
     buf[1] = io;
-    buf[2] = intervalUsec >> (8*3);
-    buf[3] = intervalUsec >> (8*2);
-    buf[4] = intervalUsec >> (8*1);
+    buf[2] = intervalUsec >> (8 * 3);
+    buf[3] = intervalUsec >> (8 * 2);
+    buf[4] = intervalUsec >> (8 * 1);
     buf[5] = intervalUsec;
-    buf[6] = durationUsec >> (8*3);
-    buf[7] = durationUsec >> (8*2);
-    buf[8] = durationUsec >> (8*1);
+    buf[6] = durationUsec >> (8 * 3);
+    buf[7] = durationUsec >> (8 * 2);
+    buf[8] = durationUsec >> (8 * 1);
     buf[9] = durationUsec;
     buf[10] = matchValue;
     buf[11] = matchCount;
@@ -16336,53 +16935,54 @@ class WSCommand_LogicAnalyzer extends WSCommand {
   }
 
   deinit(params) {
-    var buf = new Uint8Array(0);
+    let buf = new Uint8Array(0);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   parseFromJson(json) {
-    var module = json["logic_analyzer"];
+    let module = json['logic_analyzer'];
     if (module === undefined) {
       return;
     }
     let schemaData = [
-      {uri : "/request/logicAnalyzer/init",    onValid: this.init},
-      {uri : "/request/logicAnalyzer/deinit",  onValid: this.deinit},
+      { uri: '/request/logicAnalyzer/init', onValid: this.init },
+      { uri: '/request/logicAnalyzer/deinit', onValid: this.deinit },
     ];
-    let res = this.validateCommandSchema(schemaData, module, "logic_analyzer");
+    let res = this.validateCommandSchema(schemaData, module, 'logic_analyzer');
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
-        throw new this.WSCommandNotFoundError(`[logic_analyzer]unknown command`);
+      } else {
+        throw new this.WSCommandNotFoundError(
+          `[logic_analyzer]unknown command`
+        );
       }
     }
-
   }
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv) {
       let arr = new Array(payload.byteLength * 8);
       let offset = 0;
-      for (let i=0; i<payload.byteLength;i++) {
-        const byte = payload[i]
-        for (let bit = 0; bit<8; bit++) {
-          arr[offset] = (byte & (0x80 >>> bit)) ? 1 : 0
+      for (let i = 0; i < payload.byteLength; i++) {
+        const byte = payload[i];
+        for (let bit = 0; bit < 8; bit++) {
+          arr[offset] = byte & (0x80 >>> bit) ? 1 : 0;
           offset++;
         }
       }
-      objToSend["logic_analyzer"] = {
-        data: arr
+      objToSend['logic_analyzer'] = {
+        data: arr,
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
 
-
 module.exports = WSCommand_LogicAnalyzer;
+
 
 /***/ }),
 
@@ -16396,92 +16996,87 @@ module.exports = WSCommand_LogicAnalyzer;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Measurement extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 12;
 
-    this._CommandMeasurementEcho  = 0
+    this._CommandMeasurementEcho = 0;
   }
 
   // Commands
 
   echo(params) {
-    let type = 0;
     let triggerIO = params.echo.io_pulse;
-    let triggerPosNeg = params.echo.pulse === "negative" ? false : true;
-    let triggerWidthUs = parseInt(params.echo.pulse_width*1000);
+    let triggerPosNeg = params.echo.pulse === 'negative' ? false : true;
+    let triggerWidthUs = parseInt(params.echo.pulse_width * 1000);
     let echoIO = params.echo.io_echo;
     let responseCount = params.echo.measure_edges;
     let timeoutUs = params.echo.timeout * 1000;
     timeoutUs = parseInt(timeoutUs);
 
-    var buf = new Uint8Array(13);
-    buf[0]  = 0;
-    buf[1]  = triggerIO;
-    buf[2]  = triggerPosNeg ? 1 : 0;
-    buf[3]  = triggerWidthUs >> 8*3;
-    buf[4]  = triggerWidthUs >> 8*2;
-    buf[5]  = triggerWidthUs >> 8;
-    buf[6]  = triggerWidthUs;
-    buf[7]  = echoIO;
-    buf[8]  = responseCount;
-    buf[9]  = timeoutUs >> 8*3;
-    buf[10] = timeoutUs >> 8*2;
+    let buf = new Uint8Array(13);
+    buf[0] = 0;
+    buf[1] = triggerIO;
+    buf[2] = triggerPosNeg ? 1 : 0;
+    buf[3] = triggerWidthUs >> (8 * 3);
+    buf[4] = triggerWidthUs >> (8 * 2);
+    buf[5] = triggerWidthUs >> 8;
+    buf[6] = triggerWidthUs;
+    buf[7] = echoIO;
+    buf[8] = responseCount;
+    buf[9] = timeoutUs >> (8 * 3);
+    buf[10] = timeoutUs >> (8 * 2);
     buf[11] = timeoutUs >> 8;
     buf[12] = timeoutUs;
     this.sendCommand(this._CommandMeasurementEcho, buf);
   }
 
   parseFromJson(json) {
-    var module = json["measure"];
+    let module = json['measure'];
     if (module === undefined) {
       return;
     }
-    let schemaData = [
-      {uri : "/request/measure/echo",    onValid: this.echo},
-    ];
-    let res = this.validateCommandSchema(schemaData, module, "measure");
+    let schemaData = [{ uri: '/request/measure/echo', onValid: this.echo }];
+    let res = this.validateCommandSchema(schemaData, module, 'measure');
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new this.WSCommandNotFoundError(`[measure]unknown command`);
       }
     }
-
   }
-  
+
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandMeasurementEcho) {
-      var index = 0;
-      var count = parseInt(payload[index++]);
-      var array = [];
-      for (var i=0; i<count; i++) {
-        var timing;
-        var edge = (payload[index++] > 0) ? true : false;
-        timing  = payload[index++] << (8*3);
-        timing += payload[index++] << (8*2);
+      let index = 0;
+      let count = parseInt(payload[index++]);
+      let array = [];
+      for (let i = 0; i < count; i++) {
+        let timing;
+        let edge = payload[index++] > 0 ? true : false;
+        timing = payload[index++] << (8 * 3);
+        timing += payload[index++] << (8 * 2);
         timing += payload[index++] << 8;
         timing += payload[index++];
         timing = timing / 1000;
         array.push({
           edge,
-          timing
-        })
+          timing,
+        });
       }
-      objToSend["measure"] = {
-        echo: array
+      objToSend['measure'] = {
+        echo: array,
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
 
-
 module.exports = WSCommand_Measurement;
+
 
 /***/ }),
 
@@ -16495,23 +17090,22 @@ module.exports = WSCommand_Measurement;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_PWM extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 3;
     this.ModuleNum = 6;
     this.resetInternalStatus();
 
-    this._CommandInit     = 0
-    this._CommandDeinit   = 1
-    this._CommandSetFreq  = 2
-    this._CommandSetDuty  = 3
-    this._CommandAMModulate = 4
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandSetFreq = 2;
+    this._CommandSetDuty = 3;
+    this._CommandAMModulate = 4;
   }
 
   resetInternalStatus() {
     this.pwms = [];
-    for (var i=0; i<this.ModuleNum; i++) {
+    for (let i = 0; i < this.ModuleNum; i++) {
       this.pwms.push({});
     }
   }
@@ -16519,7 +17113,7 @@ class WSCommand_PWM extends WSCommand {
   // Commands
 
   init(params, module) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = module;
     buf[1] = params.io;
     this.pwms[module].io = params.io;
@@ -16527,30 +17121,30 @@ class WSCommand_PWM extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = module;
     this.pwms[module] = {};
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   freq(params, module) {
-    var buf = new Uint8Array(5);
+    let buf = new Uint8Array(5);
     buf[0] = module;
-    buf[1] = params.freq >> (8*3);
-    buf[2] = params.freq >> (8*2);
-    buf[3] = params.freq >> (8*1);
+    buf[1] = params.freq >> (8 * 3);
+    buf[2] = params.freq >> (8 * 2);
+    buf[3] = params.freq >> (8 * 1);
     buf[4] = params.freq;
     this.pwms[module].freq = params.freq;
     this.sendCommand(this._CommandSetFreq, buf);
   }
 
-  pulse(params, module){
+  pulse(params, module) {
     let buf = new Uint8Array(5);
     let pulseUSec = params.pulse * 1000;
     buf[0] = module;
-    buf[1] = pulseUSec >> (8*3);
-    buf[2] = pulseUSec >> (8*2);
-    buf[3] = pulseUSec >> (8*1);
+    buf[1] = pulseUSec >> (8 * 3);
+    buf[2] = pulseUSec >> (8 * 2);
+    buf[3] = pulseUSec >> (8 * 1);
     buf[4] = pulseUSec;
     this.pwms[module].pulseUSec = pulseUSec;
     this.sendCommand(this._CommandSetDuty, buf);
@@ -16558,20 +17152,20 @@ class WSCommand_PWM extends WSCommand {
 
   amModulate(params, module) {
     const bitLength = params.modulate.data.length;
-    const byteLength = parseInt((bitLength+7)/8);
+    const byteLength = parseInt((bitLength + 7) / 8);
     let buf = new Uint8Array(5 + byteLength);
     let symbol_length_usec = params.modulate.symbol_length * 1000;
     buf[0] = module;
-    buf[1] = symbol_length_usec >> (8*3);
-    buf[2] = symbol_length_usec >> (8*2);
-    buf[3] = symbol_length_usec >> (8*1);
+    buf[1] = symbol_length_usec >> (8 * 3);
+    buf[2] = symbol_length_usec >> (8 * 2);
+    buf[3] = symbol_length_usec >> (8 * 1);
     buf[4] = symbol_length_usec;
     let bitIndex = 0;
-    for (let byte=0; byte<byteLength; byte++) {
+    for (let byte = 0; byte < byteLength; byte++) {
       buf[5 + byte] = 0;
-      for (let bit=0; bit<8; bit++) {
+      for (let bit = 0; bit < 8; bit++) {
         if (params.modulate.data[bitIndex++]) {
-          buf[5 + byte] |= (0x80 >>> bit)
+          buf[5 + byte] |= 0x80 >>> bit;
         }
       }
     }
@@ -16579,25 +17173,25 @@ class WSCommand_PWM extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (var i=0; i<this.ModuleNum;i++) {
-      var module = json["pwm"+i];
+    for (let i = 0; i < this.ModuleNum; i++) {
+      let module = json['pwm' + i];
       if (module === undefined) {
         continue;
       }
 
       let schemaData = [
-        {uri : "/request/pwm/init",           onValid: this.init},
-        {uri : "/request/pwm/freq",         onValid: this.freq},
-        {uri : "/request/pwm/pulse",        onValid: this.pulse},
-        {uri : "/request/pwm/modulate",     onValid: this.amModulate},
-        {uri : "/request/pwm/deinit",         onValid: this.deinit},
+        { uri: '/request/pwm/init', onValid: this.init },
+        { uri: '/request/pwm/freq', onValid: this.freq },
+        { uri: '/request/pwm/pulse', onValid: this.pulse },
+        { uri: '/request/pwm/modulate', onValid: this.amModulate },
+        { uri: '/request/pwm/deinit', onValid: this.deinit },
       ];
-      let res = this.validateCommandSchema(schemaData, module, "pwm"+i, i);
+      let res = this.validateCommandSchema(schemaData, module, 'pwm' + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new this.WSCommandNotFoundError(`[pwm${i}]unknown command`);
         }
       }
@@ -16606,6 +17200,7 @@ class WSCommand_PWM extends WSCommand {
 }
 
 module.exports = WSCommand_PWM;
+
 
 /***/ }),
 
@@ -16619,51 +17214,48 @@ module.exports = WSCommand_PWM;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_SPI extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 5;
 
-    this._CommandInit      = 0
-    this._CommandDeinit    = 1
-    this._CommandWriteRead = 2
-    this._CommandWrite     = 3
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandWriteRead = 2;
+    this._CommandWrite = 3;
   }
 
   // Commands
 
   initMaster(params, module) {
+    let mode = 0; //master mode
 
-    var mode = 0;//master mode
-
-    let clk  = params.clk;
+    let clk = params.clk;
     let mosi = params.mosi;
     let miso = params.miso;
-    let cs   = params.cs;
+    let cs = params.cs;
 
-    var clock = params.clock;
+    let clock = params.clock;
 
     if (clk === null && mosi === null && miso === null) {
-      throw new Error("spi: master mode require one of clk/mosi/miso");
-      return;
+      throw new Error('spi: master mode require one of clk/mosi/miso');
     }
 
-    if (clk  === null) clk  = this.ioNotUsed;
+    if (clk === null) clk = this.ioNotUsed;
     if (mosi === null) mosi = this.ioNotUsed;
     if (miso === null) miso = this.ioNotUsed;
-    if (cs === null)   cs   = this.ioNotUsed;
+    if (cs === null) cs = this.ioNotUsed;
 
-    var buf = new Uint8Array(11 );
-    buf[0]  = module;
-    buf[1]  = mode;
-    buf[2]  = clk;
-    buf[3]  = mosi;
-    buf[4]  = miso;
-    buf[5]  = this.ioNotUsed; //wp
-    buf[6]  = this.ioNotUsed; // hd
-    buf[7]  = clock >> (3*8);
-    buf[8]  = clock >> (2*8);
-    buf[9]  = clock >> (1*8);
+    let buf = new Uint8Array(11);
+    buf[0] = module;
+    buf[1] = mode;
+    buf[2] = clk;
+    buf[3] = mosi;
+    buf[4] = miso;
+    buf[5] = this.ioNotUsed; //wp
+    buf[6] = this.ioNotUsed; // hd
+    buf[7] = clock >> (3 * 8);
+    buf[8] = clock >> (2 * 8);
+    buf[9] = clock >> (1 * 8);
     buf[10] = clock;
     buf[11] = cs;
 
@@ -16671,39 +17263,39 @@ class WSCommand_SPI extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array([module]);
+    let buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   write(params, module) {
-    var buf = new Uint8Array(1 + params.data.length);
+    let buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
-    if(params.read){
+    if (params.read) {
       this.sendCommand(this._CommandWriteRead, buf);
-    }else{
+    } else {
       this.sendCommand(this._CommandWrite, buf);
     }
   }
 
   parseFromJson(json) {
-    for (var i=0; i<2;i++) {
-      var module = json["spi"+i];
+    for (let i = 0; i < 2; i++) {
+      let module = json['spi' + i];
       if (module === undefined) {
         continue;
       }
 
       let schemaData = [
-        {uri : "/request/spi/init_master",    onValid: this.initMaster},
-        {uri : "/request/spi/write",          onValid: this.write},
-        {uri : "/request/spi/deinit",         onValid: this.deinit},
+        { uri: '/request/spi/init_master', onValid: this.initMaster },
+        { uri: '/request/spi/write', onValid: this.write },
+        { uri: '/request/spi/deinit', onValid: this.deinit },
       ];
-      let res = this.validateCommandSchema(schemaData, module, "spi"+i, i);
+      let res = this.validateCommandSchema(schemaData, module, 'spi' + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new this.WSCommandNotFoundError(`[spi${i}]unknown command`);
         }
       }
@@ -16712,23 +17304,24 @@ class WSCommand_SPI extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandWriteRead && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var received = payload.slice(1);
+      let module_index = payload[0];
+      // var received = payload.slice(1);
 
-      var arr = new Array(payload.byteLength - 1);
-      for (var i=0; i<arr.length;i++) {
+      let arr = new Array(payload.byteLength - 1);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
-      objToSend["spi"+module_index] = {
-        data: arr
+      objToSend['spi' + module_index] = {
+        data: arr,
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
 
 module.exports = WSCommand_SPI;
+
 
 /***/ }),
 
@@ -16742,63 +17335,59 @@ module.exports = WSCommand_SPI;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Switch extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 9;
 
-    this._CommandNotifyValue  = 0;
-    this._CommandOnece        = 1;
+    this._CommandNotifyValue = 0;
+    this._CommandOnece = 1;
   }
 
   // Commands
 
   get(params) {
-    var buf = new Uint8Array(0);
+    let buf = new Uint8Array(0);
     this.sendCommand(this._CommandOnece, buf);
   }
 
   parseFromJson(json) {
-    var module = json["switch"];
+    let module = json['switch'];
     if (module === undefined) {
       return;
     }
-    let schemaData = [
-      {uri : "/request/switch/get",       onValid: this.get},
-    ];
-    let res = this.validateCommandSchema(schemaData, module, "switch");
+    let schemaData = [{ uri: '/request/switch/get', onValid: this.get }];
+    let res = this.validateCommandSchema(schemaData, module, 'switch');
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new this.WSCommandNotFoundError(`[switch]unknown command`);
       }
     }
   }
-  
+
   notifyFromBinary(objToSend, func, payload) {
-    if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength == 1) {
-      var state = parseInt(payload[0]);
-      var states = [
-        "none",
-        "push",
-        "left",
-        "right"
-      ]
-      objToSend["switch"] = {
-        state: states[state]
+    if (
+      (func === this._CommandOnece || func === this._CommandNotifyValue) &&
+      payload.byteLength == 1
+    ) {
+      let state = parseInt(payload[0]);
+      let states = ['none', 'push', 'left', 'right'];
+      objToSend['switch'] = {
+        state: states[state],
       };
       if (func === this._CommandOnece) {
-        objToSend["switch"].action = "get"
+        objToSend['switch'].action = 'get';
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }
 
 module.exports = WSCommand_Switch;
+
 
 /***/ }),
 
@@ -16812,20 +17401,19 @@ module.exports = WSCommand_Switch;
 /* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_System extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 0;
 
-    this._CommandReboot            = 0
-    
-    this._CommandReset             = 2
-    this._CommandSelfCheck         = 3
-    this._CommandWait              = 4
-    this._CommandResetOnDisconnect = 5
+    this._CommandReboot = 0;
 
-    this._CommandPingPong          = 8
-    this._CommandVCC               = 9
+    this._CommandReset = 2;
+    this._CommandSelfCheck = 3;
+    this._CommandWait = 4;
+    this._CommandResetOnDisconnect = 5;
+
+    this._CommandPingPong = 8;
+    this._CommandVCC = 9;
   }
 
   // Commands
@@ -16844,99 +17432,108 @@ class WSCommand_System extends WSCommand {
 
   wait(params) {
     let msec = params.wait;
-    var buf = new Uint8Array([msec >> 8, msec]);
+    let buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
 
-  keepWorkingAtOffline(params){
+  keepWorkingAtOffline(params) {
     this.resetOnDisconnect(!params.keep_working_at_offline);
-
   }
 
   ping(params) {
     let unixtime = new Date().getTime();
     let buf = new Uint8Array(params.ping.key.length + 8);
-    let upper = Math.floor( unixtime / Math.pow(2,32));
-    let lower = unixtime - upper*Math.pow(2,32);
-    buf[0] = upper >> 8*3;
-    buf[1] = upper >> 8*2;
-    buf[2] = upper >> 8*1;
-    buf[3] = upper >> 8*0;
-    buf[4] = lower >> 8*3;
-    buf[5] = lower >> 8*2;
-    buf[6] = lower >> 8*1;
-    buf[7] = lower >> 8*0;
-    for(let i = 0; i < params.ping.key.length; i++){
-      buf[8+i] = params.ping.key[i];
+    let upper = Math.floor(unixtime / Math.pow(2, 32));
+    let lower = unixtime - upper * Math.pow(2, 32);
+    buf[0] = upper >> (8 * 3);
+    buf[1] = upper >> (8 * 2);
+    buf[2] = upper >> (8 * 1);
+    buf[3] = upper >> (8 * 0);
+    buf[4] = lower >> (8 * 3);
+    buf[5] = lower >> (8 * 2);
+    buf[6] = lower >> (8 * 1);
+    buf[7] = lower >> (8 * 0);
+    for (let i = 0; i < params.ping.key.length; i++) {
+      buf[8 + i] = params.ping.key[i];
     }
-    
+
     this.sendCommand(this._CommandPingPong, buf);
   }
 
   resetOnDisconnect(mustReset) {
-    var buf = new Uint8Array([mustReset ? 1 : 0]);
+    let buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
   }
 
   parseFromJson(json) {
-    var module = json["system"];
-    if(module === undefined){
+    let module = json['system'];
+    if (module === undefined) {
       return;
     }
 
     let schemaData = [
-      {uri : "/request/system/reboot",               onValid: this.reboot},
-      {uri : "/request/system/reset",                onValid: this.reset},
-      {uri : "/request/system/wait",                 onValid: this.wait},
-      {uri : "/request/system/selfCheck",            onValid: this.selfCheck},
-      {uri : "/request/system/keepWorkingAtOffline", onValid: this.keepWorkingAtOffline},
-      {uri : "/request/system/ping",                 onValid: this.ping},
+      { uri: '/request/system/reboot', onValid: this.reboot },
+      { uri: '/request/system/reset', onValid: this.reset },
+      { uri: '/request/system/wait', onValid: this.wait },
+      { uri: '/request/system/selfCheck', onValid: this.selfCheck },
+      {
+        uri: '/request/system/keepWorkingAtOffline',
+        onValid: this.keepWorkingAtOffline,
+      },
+      { uri: '/request/system/ping', onValid: this.ping },
     ];
-    let res = this.validateCommandSchema(schemaData, module, "system");
+    let res = this.validateCommandSchema(schemaData, module, 'system');
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new this.WSCommandNotFoundError(`[system]unknown command`);
       }
     }
   }
 
-  pong(objToSend, payload){
-    objToSend["system"] = objToSend["system"] || {};
+  pong(objToSend, payload) {
+    objToSend['system'] = objToSend['system'] || {};
     const pongServerTime = new Date().getTime();
 
     if (payload.length >= 16) {
       payload = Buffer(payload);
-      let obnizTime = payload.readUIntBE(0, 4) * Math.pow(2,32) + payload.readUIntBE(4, 4) ;
-      let pingServerTime  = (payload.readUIntBE(8, 4) * Math.pow(2,32) )+ payload.readUIntBE(12, 4) ;
+      let obnizTime =
+        payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
+      let pingServerTime =
+        payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
       let key = [];
-      for(let i = 16;i < payload.length; i++){
-        key.push(payload[i] );
+      for (let i = 16; i < payload.length; i++) {
+        key.push(payload[i]);
       }
-      objToSend["system"].pong = {
-        key, obnizTime, pingServerTime, pongServerTime
+      objToSend['system'].pong = {
+        key,
+        obnizTime,
+        pingServerTime,
+        pongServerTime,
       };
     } else {
-      objToSend["system"].pong = {
-        pongServerTime
+      objToSend['system'].pong = {
+        pongServerTime,
       };
     }
   }
 
   notifyFromBinary(objToSend, func, payload) {
-    switch(func) {
+    switch (func) {
       case this._CommandVCC:
         if (payload.byteLength === 3) {
           let value = (payload[1] << 8) + payload[2];
           value = value / 100.0;
-          this.envelopWarning(objToSend, 'debug', { message: `Low Voltage ${value}v. connect obniz to more powerful USB.` })
+          this.envelopWarning(objToSend, 'debug', {
+            message: `Low Voltage ${value}v. connect obniz to more powerful USB.`,
+          });
         }
         break;
 
       case this._CommandPingPong:
-        this.pong(objToSend,payload);
+        this.pong(objToSend, payload);
 
         break;
 
@@ -16947,8 +17544,8 @@ class WSCommand_System extends WSCommand {
   }
 }
 
-
 module.exports = WSCommand_System;
+
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -16963,28 +17560,27 @@ module.exports = WSCommand_System;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_UART extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 4;
 
-    this._CommandInit     = 0;
-    this._CommandDeinit   = 1;
-    this._CommandSend     = 2;
-    this._CommandRecv     = 3;
+    this._CommandInit = 0;
+    this._CommandDeinit = 1;
+    this._CommandSend = 2;
+    this._CommandRecv = 3;
   }
 
   // Commands
 
   init(params, module) {
-    var buf = new Uint8Array(13);
+    let buf = new Uint8Array(13);
     buf[0] = module;
     buf[1] = parseInt(params.tx);
     buf[2] = parseInt(params.rx);
 
-    buf[3] = params.baud >> (3*8);
-    buf[4] = params.baud >> (2*8);
-    buf[5] = params.baud >> (1*8);
+    buf[3] = params.baud >> (3 * 8);
+    buf[4] = params.baud >> (2 * 8);
+    buf[5] = params.baud >> (1 * 8);
     buf[6] = params.baud;
 
     if (params.stop === 1) {
@@ -16997,39 +17593,39 @@ class WSCommand_UART extends WSCommand {
       buf[7] = 0;
     } else {
       //ここには来ない
-      throw new Error("uart: invalid stop bits")
+      throw new Error('uart: invalid stop bits');
     }
 
     buf[8] = params.bits;
 
-    if (params.parity === "even") {
+    if (params.parity === 'even') {
       buf[9] = 2;
-    } else if (params.parity === "odd") {
+    } else if (params.parity === 'odd') {
       buf[9] = 3;
     }
 
-    if (params.flowcontrol === "rts") {
+    if (params.flowcontrol === 'rts') {
       buf[10] = 2;
-    } else if (params.flowcontrol === "cts") {
+    } else if (params.flowcontrol === 'cts') {
       buf[10] = 3;
-    } else if (params.flowcontrol === "rts-cts") {
+    } else if (params.flowcontrol === 'rts-cts') {
       buf[10] = 4;
     }
 
-    if(params.rts !== null)buf[11] = params.rts;
-    if(params.cts !== null)buf[12] = params.cts;
-    
+    if (params.rts !== null) buf[11] = params.rts;
+    if (params.cts !== null) buf[12] = params.cts;
+
     this.sendCommand(this._CommandInit, buf);
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = module;
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   send(params, module) {
-    var buf = new Uint8Array(1 + params.data.length);
+    let buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
     this.sendCommand(this._CommandSend, buf);
@@ -17037,22 +17633,22 @@ class WSCommand_UART extends WSCommand {
 
   parseFromJson(json) {
     // 0~2
-    for (var i=0; i<3;i++) {
-      var module = json["uart"+i];
+    for (let i = 0; i < 3; i++) {
+      let module = json['uart' + i];
       if (module === undefined) {
         continue;
       }
       let schemaData = [
-        {uri : "/request/uart/init",       onValid: this.init},
-        {uri : "/request/uart/send",       onValid: this.send},
-        {uri : "/request/uart/deinit",     onValid: this.deinit},
+        { uri: '/request/uart/init', onValid: this.init },
+        { uri: '/request/uart/send', onValid: this.send },
+        { uri: '/request/uart/deinit', onValid: this.deinit },
       ];
-      let res = this.validateCommandSchema(schemaData, module, "uart"+i, i);
+      let res = this.validateCommandSchema(schemaData, module, 'uart' + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new this.WSCommandNotFoundError(`[uart${i}]unknown command`);
         }
       }
@@ -17061,23 +17657,23 @@ class WSCommand_UART extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var arr = new Array(payload.byteLength - 1);
-      for (var i=0; i<arr.length;i++) {
+      let module_index = payload[0];
+      let arr = new Array(payload.byteLength - 1);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
 
-      objToSend["uart"+module_index] = {
-        data: arr
+      objToSend['uart' + module_index] = {
+        data: arr,
       };
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
-};
-
+}
 
 module.exports = WSCommand_UART;
+
 
 /***/ }),
 
@@ -17090,9 +17686,9 @@ module.exports = WSCommand_UART;
 
 /* WEBPACK VAR INJECTION */(function(__dirname) {const tv4 = __webpack_require__(/*! tv4 */ "./node_modules/tv4/tv4.js");
 
-tv4.defineError("UNIQUE_KEYS", 10001, "{uniqueKeys} are must be unique value.");
+tv4.defineError('UNIQUE_KEYS', 10001, '{uniqueKeys} are must be unique value.');
 
-tv4.defineKeyword("uniqueKeys", function (data, value, schema) {
+tv4.defineKeyword('uniqueKeys', function(data, value, schema) {
   if (!Array.isArray(value)) {
     return null;
   }
@@ -17102,34 +17698,34 @@ tv4.defineKeyword("uniqueKeys", function (data, value, schema) {
       targets.push(data[key]);
     }
   }
-  let duplicated = targets.filter(function (x, i, self) {
+  let duplicated = targets.filter(function(x, i, self) {
     return self.indexOf(x) !== self.lastIndexOf(x);
   });
   if (duplicated.length > 0) {
-    return {code: tv4.errorCodes.UNIQUE_KEYS, message: {uniqueKeys:value.join(",")}};
+    return {
+      code: tv4.errorCodes.UNIQUE_KEYS,
+      message: { uniqueKeys: value.join(',') },
+    };
   }
   return null;
-
 });
-
 
 //todo
 
 let wsSchema = [];
 __webpack_require__("./obniz/libs/wscommand sync recursive").context = __webpack_require__(/*! ../webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
-if(__webpack_require__("./obniz/libs/wscommand sync recursive").context && __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir){__webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir(__dirname);}
+if (__webpack_require__("./obniz/libs/wscommand sync recursive").context && __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir) {
+  __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir(__dirname);
+}
 let context = __webpack_require__("./json_schema sync recursive \\.yml$");
-for( let path of context.keys()){
+for (let path of context.keys()) {
   let oneSchema = context(path);
-  wsSchema.push( oneSchema );
+  wsSchema.push(oneSchema);
 }
 
-
- wsSchema.map(tv4.addSchema);
-
+wsSchema.map(tv4.addSchema);
 
 module.exports = tv4;
-
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
@@ -17144,22 +17740,23 @@ module.exports = tv4;
 
 const WSCommand = __webpack_require__(/*! ./WSCommand_ */ "./obniz/libs/wscommand/WSCommand_.js");
 
-
-WSCommand.addCommandClass("WSCommand_System",__webpack_require__(/*! ./WSCommand_System */ "./obniz/libs/wscommand/WSCommand_System.js"));
-WSCommand.addCommandClass("WSCommand_Directive",__webpack_require__(/*! ./WSCommand_Directive */ "./obniz/libs/wscommand/WSCommand_Directive.js"));
-WSCommand.addCommandClass("WSCommand_IO",__webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js"));
-WSCommand.addCommandClass("WSCommand_PWM",__webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js"));
-WSCommand.addCommandClass("WSCommand_UART",__webpack_require__(/*! ./WSCommand_UART */ "./obniz/libs/wscommand/WSCommand_UART.js"));
-WSCommand.addCommandClass("WSCommand_AD",__webpack_require__(/*! ./WSCommand_AD */ "./obniz/libs/wscommand/WSCommand_AD.js"));
-WSCommand.addCommandClass("WSCommand_SPI",__webpack_require__(/*! ./WSCommand_SPI */ "./obniz/libs/wscommand/WSCommand_SPI.js"));
-WSCommand.addCommandClass("WSCommand_I2C",__webpack_require__(/*! ./WSCommand_I2C */ "./obniz/libs/wscommand/WSCommand_I2C.js"));
-WSCommand.addCommandClass("WSCommand_LogicAnalyzer",__webpack_require__(/*! ./WSCommand_LogicAnalyzer */ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
-WSCommand.addCommandClass("WSCommand_Display",__webpack_require__(/*! ./WSCommand_Display */ "./obniz/libs/wscommand/WSCommand_Display.js"));
-WSCommand.addCommandClass("WSCommand_Switch",__webpack_require__(/*! ./WSCommand_Switch */ "./obniz/libs/wscommand/WSCommand_Switch.js"));
-WSCommand.addCommandClass("WSCommand_Ble",__webpack_require__(/*! ./WSCommand_Ble */ "./obniz/libs/wscommand/WSCommand_Ble.js"));
-WSCommand.addCommandClass("WSCommand_Measurement",__webpack_require__(/*! ./WSCommand_Measurement */ "./obniz/libs/wscommand/WSCommand_Measurement.js"));
+/* eslint-disable */
+WSCommand.addCommandClass('WSCommand_System', __webpack_require__(/*! ./WSCommand_System */ "./obniz/libs/wscommand/WSCommand_System.js"));
+WSCommand.addCommandClass('WSCommand_Directive',  __webpack_require__(/*! ./WSCommand_Directive */ "./obniz/libs/wscommand/WSCommand_Directive.js"));
+WSCommand.addCommandClass('WSCommand_IO', __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js"));
+WSCommand.addCommandClass('WSCommand_PWM', __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js"));
+WSCommand.addCommandClass('WSCommand_UART', __webpack_require__(/*! ./WSCommand_UART */ "./obniz/libs/wscommand/WSCommand_UART.js"));
+WSCommand.addCommandClass('WSCommand_AD', __webpack_require__(/*! ./WSCommand_AD */ "./obniz/libs/wscommand/WSCommand_AD.js"));
+WSCommand.addCommandClass('WSCommand_SPI', __webpack_require__(/*! ./WSCommand_SPI */ "./obniz/libs/wscommand/WSCommand_SPI.js"));
+WSCommand.addCommandClass('WSCommand_I2C', __webpack_require__(/*! ./WSCommand_I2C */ "./obniz/libs/wscommand/WSCommand_I2C.js"));
+WSCommand.addCommandClass('WSCommand_LogicAnalyzer',  __webpack_require__(/*! ./WSCommand_LogicAnalyzer */ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
+WSCommand.addCommandClass('WSCommand_Display', __webpack_require__(/*! ./WSCommand_Display */ "./obniz/libs/wscommand/WSCommand_Display.js"));
+WSCommand.addCommandClass('WSCommand_Switch', __webpack_require__(/*! ./WSCommand_Switch */ "./obniz/libs/wscommand/WSCommand_Switch.js"));
+WSCommand.addCommandClass('WSCommand_Ble', __webpack_require__(/*! ./WSCommand_Ble */ "./obniz/libs/wscommand/WSCommand_Ble.js"));
+WSCommand.addCommandClass( 'WSCommand_Measurement',  __webpack_require__(/*! ./WSCommand_Measurement */ "./obniz/libs/wscommand/WSCommand_Measurement.js"));
 
 module.exports = WSCommand;
+
 
 /***/ }),
 
@@ -17171,22 +17768,24 @@ module.exports = WSCommand;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {class JsonBinaryConverter {
-
   static convertFromBinaryToJson(schema, binary) {
-    var types = {
+    let types = {
       hex: this.hexFromBinary.bind(this),
       uuid: this.uuidFromBinary.bind(this),
       number: this.numberFromBinary.bind(this),
-      "signed number": this.signedNumberFromBinary.bind(this),
+      'signed number': this.signedNumberFromBinary.bind(this),
       int: this.numberFromBinary.bind(this),
       char: this.numberFromBinary.bind(this),
       enum: this.enumFromBinary.bind(this),
-      dataArray: this.dataArrayFromBinary.bind(this)
+      dataArray: this.dataArrayFromBinary.bind(this),
     };
-    var json = {};
-    var count = 0;
-    for (var i = 0; i < schema.length; i++) {
-      var data = binary.slice(count, schema[i].length ? count + schema[i].length : undefined);
+    let json = {};
+    let count = 0;
+    for (let i = 0; i < schema.length; i++) {
+      let data = binary.slice(
+        count,
+        schema[i].length ? count + schema[i].length : undefined
+      );
       json[schema[i].name] = types[schema[i].type](data, schema[i]);
 
       if (schema[i].length) {
@@ -17199,54 +17798,55 @@ module.exports = WSCommand;
   }
 
   static hexFromBinary(data, schema) {
-    var str = "";
-    for (var i = 0; i < data.length; i++) {
-      if (schema.endianness && schema.endianness === "little") {
-        str = ("00" + data[i].toString(16)).slice(-2) + str;
+    let str = '';
+    for (let i = 0; i < data.length; i++) {
+      if (schema.endianness && schema.endianness === 'little') {
+        str = ('00' + data[i].toString(16)).slice(-2) + str;
       } else {
-        str = str + ("00" + data[i].toString(16)).slice(-2);
+        str = str + ('00' + data[i].toString(16)).slice(-2);
       }
     }
     return str;
   }
 
   static uuidFromBinary(data) {
-    var len = data[0] * 16 + data[1];
+    let len = data[0] * 16 + data[1];
     if (len === 0) {
       return null;
     }
-    var uuidData = data.slice(2);
-    var str = "";
-    for (var i = 0; i < len; i++) {
-      str = ("00" + uuidData[i].toString(16)).slice(-2) + str;
+    let uuidData = data.slice(2);
+    let str = '';
+    for (let i = 0; i < len; i++) {
+      str = ('00' + uuidData[i].toString(16)).slice(-2) + str;
     }
     return str;
   }
 
-  static signedNumberFromBinary(data, schema) {  //big adian
-    var val = data[0] & 0x7F;
-    for (var i = 1; i < data.length; i++) {
+  static signedNumberFromBinary(data) {
+    //big adian
+    let val = data[0] & 0x7f;
+    for (let i = 1; i < data.length; i++) {
       val = val * 256 + data[i];
     }
     if ((data[0] & 0x80) !== 0) {
-      val = val - Math.pow(2, (data.length * 8 - 1));
+      val = val - Math.pow(2, data.length * 8 - 1);
     }
     return val;
   }
 
-  static numberFromBinary(data) {  //big adian
-    var val = 0;
-    for (var i = 0; i < data.length; i++) {
+  static numberFromBinary(data) {
+    //big adian
+    let val = 0;
+    for (let i = 0; i < data.length; i++) {
       val = val * 256 + data[i];
     }
     return val;
   }
 
   static keyForVal(enumvals, val) {
-    return Object.keys(enumvals).filter(function (k) {
+    return Object.keys(enumvals).filter(function(k) {
       return enumvals[k] === val;
     })[0];
-    return undefined;
   }
 
   static enumFromBinary(data, schema) {
@@ -17256,13 +17856,12 @@ module.exports = WSCommand;
     if (schema.flags === true) {
       let temp = [];
       for (let key of Object.keys(enumVals)) {
-        let flag = (enumVals[key] & val);
+        let flag = enumVals[key] & val;
         if (flag) {
           temp.push(key);
         }
       }
       val = temp;
-
     } else {
       let tmp = this.keyForVal(enumVals, val);
       if (tmp) {
@@ -17273,28 +17872,29 @@ module.exports = WSCommand;
   }
 
   static dataArrayFromBinary(data) {
-    var arr = new Array(data.length);
-    for (var i = 0; i < data.length; i++) {
+    let arr = new Array(data.length);
+    for (let i = 0; i < data.length; i++) {
       arr[i] = data[i];
     }
     return arr;
   }
 
   static createSendBuffer(schema, data) {
-    var array = [];
-    for (var i = 0; i < schema.length; i++) {
-      var schemaRow = schema[i];
+    let array = [];
+    for (let i = 0; i < schema.length; i++) {
+      let schemaRow = schema[i];
 
-      var row = undefined;
+      let row = undefined;
       if (Array.isArray(schemaRow)) {
-        for (var key in schemaRow) {
-          var customSchemaRow = Object.assign({}, schemaRow[key], {required: true});
+        for (let key in schemaRow) {
+          let customSchemaRow = Object.assign({}, schemaRow[key], {
+            required: true,
+          });
           row = this.analyzeSchema(data, customSchemaRow);
           if (row) {
             break;
           }
         }
-
       } else {
         row = this.analyzeSchema(data, schemaRow);
       }
@@ -17302,11 +17902,10 @@ module.exports = WSCommand;
       Array.prototype.push.apply(array, row);
     }
     return new Uint8Array(array);
-
   }
 
   static analyzeSchema(allData, schemaRow) {
-    var types = {
+    let types = {
       hex: this.hexToBinary.bind(this),
       uuid: this.uuidToBinary.bind(this),
       int: this.intToBinary.bind(this),
@@ -17315,10 +17914,10 @@ module.exports = WSCommand;
       enum: this.enumToBinary.bind(this),
       string: this.stringToBinary.bind(this),
       text: this.stringToBinary.bind(this),
-      flag: this.flagToBinary.bind(this)
+      flag: this.flagToBinary.bind(this),
     };
 
-    var val = undefined;
+    let val = undefined;
     if (schemaRow.path) {
       val = this.getProperty(allData, schemaRow.path);
     }
@@ -17329,28 +17928,24 @@ module.exports = WSCommand;
       val = schemaRow.default;
     }
 
-
-    var row = types[schemaRow.type](val, schemaRow);
+    let row = types[schemaRow.type](val, schemaRow);
 
     if (schemaRow.length && row.length !== schemaRow.length) {
-      console.log("JSON->BINARY SCHEMA ERROR: (", val, ")", schemaRow);
+      console.log('JSON->BINARY SCHEMA ERROR: (', val, ')', schemaRow);
     }
 
     return row;
   }
 
-
   static getProperty(object, path) {
-    if (path === "" || path === undefined) {
+    if (path === '' || path === undefined) {
       return object;
     }
-    if (typeof path === 'string')
-      path = path.split('.');
-    if (!Array.isArray(path))
-      path = [path];
+    if (typeof path === 'string') path = path.split('.');
+    if (!Array.isArray(path)) path = [path];
 
-    var index = 0,
-        length = path.length;
+    let index = 0,
+      length = path.length;
 
     while (index < length) {
       object = object[path[index++]];
@@ -17358,35 +17953,33 @@ module.exports = WSCommand;
         return undefined;
       }
     }
-    return (index && index === length) ? object : undefined;
-
+    return index && index === length ? object : undefined;
   }
 
   static hexToBinary(data, schema) {
-    var array = [];
-    var hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
-    for (var i = 0; i < hex.length / 2; i++) {
+    let array = [];
+    let hex = data.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    for (let i = 0; i < hex.length / 2; i++) {
       array[i] = parseInt(hex[i * 2] + hex[i * 2 + 1], 16);
     }
-    if (schema && schema.endianness && schema.endianness === "little") {
+    if (schema && schema.endianness && schema.endianness === 'little') {
       array.reverse();
     }
     return array;
   }
 
-
   static intToBinary(data) {
-    var array = [];
-    array[0] = (data >> 8 * 3) & 0xFF;
-    array[1] = (data >> 8 * 2) & 0xFF;
-    array[2] = (data >> 8 * 1) & 0xFF;
-    array[3] = (data >> 8 * 0) & 0xFF;
+    let array = [];
+    array[0] = (data >> (8 * 3)) & 0xff;
+    array[1] = (data >> (8 * 2)) & 0xff;
+    array[2] = (data >> (8 * 1)) & 0xff;
+    array[3] = (data >> (8 * 0)) & 0xff;
     return array;
   }
 
   static charToBinary(data) {
-    var array = [];
-    array[0] = data & 0xFF;
+    let array = [];
+    array[0] = data & 0xff;
     return array;
   }
 
@@ -17398,18 +17991,17 @@ module.exports = WSCommand;
   }
 
   static uuidToBinary(data) {
+    let uuid = this.hexToBinary(data);
+    uuid.reverse(); //big endianness -> little endianness;
+    let length = uuid.length;
 
-    var uuid = this.hexToBinary(data)
-    uuid.reverse();  //big endianness -> little endianness;
-    var length = uuid.length;
+    let array = [];
 
-    var array = [];
-
-    array[0] = (length >> 8 * 1) & 0xFF;
-    array[1] = (length >> 8 * 0) & 0xFF;
+    array[0] = (length >> (8 * 1)) & 0xff;
+    array[1] = (length >> (8 * 0)) & 0xff;
 
     Array.prototype.push.apply(array, uuid);
-    for (var i = array.length; i < 16 + 2; i++) {
+    for (let i = array.length; i < 16 + 2; i++) {
       array[i] = 0;
     }
 
@@ -17417,40 +18009,38 @@ module.exports = WSCommand;
   }
 
   static enumToBinary(data, schema) {
-    var array = [];
+    let array = [];
     array.push(schema.enum[data]);
     return array;
   }
-
 
   static flagToBinary(data, schema) {
     if (!Array.isArray(data)) {
       data = [data];
     }
-    var flags = schema.flags;
-    var value = 0;
-    for (var key in flags) {
+    let flags = schema.flags;
+    let value = 0;
+    for (let key in flags) {
       if (data.includes(flags[key])) {
         value += parseInt(key);
       }
     }
-    var array = [];
+    let array = [];
     let length = schema.length || 1;
     for (let i = length - 1; i >= 0; i--) {
-      array.push((value >> i) & 0xFF);
+      array.push((value >> i) & 0xff);
     }
 
     return array;
   }
 
   static stringToBinary(data) {
-    var array = [];
     return new Uint8Array(Buffer(data, 'utf8'));
-
   }
 }
 
 module.exports = JsonBinaryConverter;
+
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
@@ -17459,10 +18049,3286 @@ module.exports = JsonBinaryConverter;
 /*!**********************!*\
   !*** ./package.json ***!
   \**********************/
-/*! exports provided: name, version, description, main, scripts, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
+/*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.2.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .","build":"./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js"},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","json-loader":"^0.5.7","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.2.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix ./obniz/**/*.js","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+
+/***/ }),
+
+/***/ "./parts sync recursive \\.js$":
+/*!**************************!*\
+  !*** ./parts sync \.js$ ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
+	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
+	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
+	"./Bluetooth/RN42/index.js": "./parts/Bluetooth/RN42/index.js",
+	"./Bluetooth/XBee/index.js": "./parts/Bluetooth/XBee/index.js",
+	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
+	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
+	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
+	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
+	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
+	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
+	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
+	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
+	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
+	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
+	"./Light/LED/index.js": "./parts/Light/LED/index.js",
+	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
+	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
+	"./Light/WS2812B/index.js": "./parts/Light/WS2812B/index.js",
+	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
+	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
+	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
+	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
+	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
+	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
+	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
+	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
+	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
+	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
+	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
+	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
+	"./TemperatureSensor/analog/AnalogTempratureSensor.js": "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js",
+	"./TemperatureSensor/analog/LM35DZ/index.js": "./parts/TemperatureSensor/analog/LM35DZ/index.js",
+	"./TemperatureSensor/analog/LM60/index.js": "./parts/TemperatureSensor/analog/LM60/index.js",
+	"./TemperatureSensor/analog/LM61/index.js": "./parts/TemperatureSensor/analog/LM61/index.js",
+	"./TemperatureSensor/analog/MCP9700/index.js": "./parts/TemperatureSensor/analog/MCP9700/index.js",
+	"./TemperatureSensor/analog/MCP9701/index.js": "./parts/TemperatureSensor/analog/MCP9701/index.js",
+	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
+	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
+	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
+	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
+	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	var module = __webpack_require__(id);
+	return module;
+}
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
+		var e = new Error('Cannot find module "' + req + '".');
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return id;
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./parts sync recursive \\.js$";
+
+/***/ }),
+
+/***/ "./parts/ADConverter/hx711/index.js":
+/*!******************************************!*\
+  !*** ./parts/ADConverter/hx711/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class hx711 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sck', 'dout'];
+    this.requiredKeys = ['sck', 'dout'];
+    this.offset = 0;
+    this.scale = 1;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.spi = obniz.getFreeSpi();
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    let ioKeys = ['clk', 'dout'];
+    for (let key of ioKeys) {
+      if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
+        throw new Error("spi start param '" + key + "' are to be valid io no");
+      }
+    }
+    this.sck = obniz.getIO(this.params.sck);
+    this.dout = obniz.getIO(this.params.dout);
+
+    this.sck.output(true);
+  }
+
+  async readWait() {
+    this.sck.output(false);
+
+    // while(true) {
+    //   let val = await this.dout.inputWait();
+    //   if (val == false) break;
+    // }
+    this.spi.start({
+      mode: 'master',
+      clk: this.params.sck,
+      miso: this.params.dout,
+      frequency: 66 * 1000,
+    });
+
+    let ret = await this.spi.writeWait([0, 0, 0]);
+    this.spi.end(true);
+    this.sck.output(false);
+    let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
+    return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
+  }
+
+  async readAverageWait(times) {
+    let results = [];
+    for (let i = 0; i < times; i++) {
+      results.push(await this.readWait());
+    }
+    return (
+      results.reduce((prev, current, i) => {
+        return prev + current;
+      }, 0) / results.length
+    );
+  }
+
+  powerDown() {
+    this.sck.output(true);
+  }
+
+  powerUp() {
+    this.sck.output(false);
+  }
+
+  async zeroAdjust(times) {
+    times = parseInt(times) || 1;
+    this.offset = await this.readAverageWait(times);
+  }
+
+  async getValueWait(times) {
+    times = parseInt(times) || 1;
+    let val = await this.readAverageWait(times);
+    return (val - this.offset) / this.scale;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('hx711', hx711);
+
+
+/***/ }),
+
+/***/ "./parts/Accessory/USB/index.js":
+/*!**************************************!*\
+  !*** ./parts/Accessory/USB/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class USB {
+  constructor() {
+    this.keys = ['vcc', 'gnd'];
+    this.requiredKeys = ['vcc', 'gnd'];
+
+    this.displayIoNames = {
+      vcc: 'vcc',
+      gnd: 'gnd',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.io_vdd = obniz.getIO(this.params.vcc);
+    this.io_gnd = obniz.getIO(this.params.gnd);
+
+    this.io_gnd.output(false);
+  }
+
+  on() {
+    this.io_vdd.output(true);
+  }
+
+  off() {
+    this.io_vdd.output(false);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('USB', USB);
+
+
+/***/ }),
+
+/***/ "./parts/AudioSensor/AE_MICAMP/index.js":
+/*!**********************************************!*\
+  !*** ./parts/AudioSensor/AE_MICAMP/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class AE_MICAMP {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'out'];
+    this.requiredKeys = ['out'];
+
+    this.displayIoNames = {
+      vcc: 'vcc',
+      gnd: 'gnd',
+      out: 'out',
+    };
+  }
+
+  async wired(obniz) {
+    this.obniz = obniz;
+
+    this.ad = obniz.getAD(this.params.out);
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    let self = this;
+    this.ad.start(function(value) {
+      self.voltage = value;
+      if (self.onchange) {
+        self.onchange(self.voltage);
+      }
+    });
+  }
+}
+
+/*
+  var self = this;
+  var analogin = [];
+  var cnt = 0;
+  while(true){
+    var sum = 0;
+    if (cnt == 10) {
+      cnt = 0;
+    }
+    analogin[cnt] = this.ad.value;
+    cnt++;
+    for (var i = 0; i < 10; i++) {
+      if (typeof(analogin[i])=="number") {sum += analogin[i];}
+    }
+    var average = sum / 10;
+    //console.log('average='+average);
+    await obniz.wait(1);
+  }
+  self.voltage_ave = average;
+  if (self.average) {
+    self.average(self.voltage_ave);
+  }
+  */
+
+/*
+AE_MICAMP.prototype.Average = function(callback) {
+  this.average = callback;
+};
+*/
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);
+
+
+/***/ }),
+
+/***/ "./parts/Bluetooth/RN42/index.js":
+/*!***************************************!*\
+  !*** ./parts/Bluetooth/RN42/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class RN42 {
+  constructor() {
+    this.keys = ['tx', 'rx', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
+  }
+
+  wired(obniz) {
+    if (obniz.isValidIO(this.params.gnd)) {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    this.uart = obniz.getFreeUart();
+
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 115200,
+      drive: '3v',
+    });
+    let self = this;
+    this.uart.onreceive = (data, text) => {
+      // this is not perfect. separation is possible.
+      if (text.indexOf('CONNECT') >= 0) {
+        console.log('connected');
+      } else if (text.indexOf('DISCONNECT') >= 0) {
+        console.log('disconnected');
+      }
+      if (typeof self.onreceive === 'function') {
+        self.onreceive(data, text);
+      }
+    };
+  }
+
+  send(data) {
+    this.uart.send(data);
+  }
+
+  sendCommand(data) {
+    this.uart.send(data + '\n');
+    this.obniz.wait(100);
+  }
+
+  enterCommandMode() {
+    this.send('$$$');
+    this.obniz.wait(100);
+  }
+
+  config(json) {
+    this.enterCommandMode();
+    if (typeof json !== 'object') {
+      // TODO: warning
+      return;
+    }
+    // remove noize data
+    this.sendCommand('');
+
+    if (json.master_slave) {
+      this.config_masterslave(json.master_slave);
+    }
+    if (json.auth) {
+      this.config_auth(json.auth);
+    }
+    if (json.hid_flag) {
+      this.config_HIDflag(json.hid_flag);
+    }
+    if (json.profile) {
+      this.config_profile(json.profile);
+    }
+    if (json.power) {
+      this.config_power(json.power);
+    }
+    if (json.display_name) {
+      this.config_displayName(json.display_name);
+    }
+    this.config_reboot();
+  }
+
+  config_reboot() {
+    this.sendCommand('R,1');
+  }
+
+  config_masterslave(mode) {
+    let val = -1;
+    if (typeof mode === 'number') {
+      val = mode;
+    } else if (typeof mode === 'string') {
+      let modes = [
+        'slave',
+        'master',
+        'trigger',
+        'auto-connect-master',
+        'auto-connect-dtr',
+        'auto-connect-any',
+        'pairing',
+      ];
+      for (let i = 0; i < modes.length; i++) {
+        if (modes[i] === mode) {
+          val = i;
+          break;
+        }
+      }
+    }
+    if (val === -1) {
+      // TODO: warning
+      return;
+    }
+    this.sendCommand('SM,' + val);
+  }
+
+  config_displayName(name) {
+    this.sendCommand('SN,' + name);
+  }
+
+  // // SH,0200 HID Flag register. Descriptor=keyboard
+  config_HIDflag(flag) {
+    this.sendCommand('SH,' + flag);
+  }
+
+  config_profile(mode) {
+    let val = -1;
+    if (typeof mode === 'number') {
+      val = mode;
+    } else if (typeof mode === 'string') {
+      let modes = [
+        'SPP',
+        'DUN-DCE',
+        'DUN-DTE',
+        'MDM-SPP',
+        'SPP-DUN-DCE',
+        'APL',
+        'HID',
+      ];
+      for (let i = 0; i < modes.length; i++) {
+        if (modes[i] === mode) {
+          val = i;
+          break;
+        }
+      }
+    }
+    if (val === -1) {
+      // TODO: warning
+      return;
+    }
+    this.sendCommand('S~,' + val);
+  }
+
+  config_revert_localecho() {
+    this.sendCommand('+');
+  }
+
+  config_auth(mode) {
+    let val = -1;
+    if (typeof mode === 'number') {
+      val = mode;
+    } else if (typeof mode === 'string') {
+      let modes = ['open', 'ssp-keyboard', 'just-work', 'pincode'];
+      for (let i = 0; i < modes.length; i++) {
+        if (modes[i] === mode) {
+          val = i;
+          break;
+        }
+      }
+    }
+    if (val === -1) {
+      // TODO: warning
+      return;
+    }
+    this.sendCommand('SA,' + val);
+  }
+
+  config_power(dbm) {
+    let val = '0010';
+    if (16 > dbm && dbm >= 12) {
+      val = '000C';
+    } else if (12 > dbm && dbm >= 8) {
+      val = '0008';
+    } else if (8 > dbm && dbm >= 4) {
+      val = '0004';
+    } else if (4 > dbm && dbm >= 0) {
+      val = '0000';
+    } else if (0 > dbm && dbm >= -4) {
+      val = 'FFFC';
+    } else if (-4 > dbm && dbm >= -8) {
+      val = 'FFF8';
+    } else if (-8 > dbm) {
+      val = 'FFF4';
+    }
+
+    this.sendCommand('SY,' + val);
+  }
+
+  config_get_setting() {
+    this.sendCommand('D');
+  }
+
+  config_get_extendSetting() {
+    this.sendCommand('E');
+  }
+}
+
+// Module functions
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('RN42', RN42);
+
+
+/***/ }),
+
+/***/ "./parts/Bluetooth/XBee/index.js":
+/*!***************************************!*\
+  !*** ./parts/Bluetooth/XBee/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class XBee {
+  constructor() {
+    this.keys = ['tx', 'rx', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
+
+    this.displayIoNames = { tx: '<tx', rx: '>rx' };
+  }
+
+  wired(obniz) {
+    this.uart = obniz.getFreeUart();
+    this.currentCommand = null;
+    this.commands = [];
+    this.isAtMode = false;
+    this.onFinishAtModeCallback = null;
+
+    if (typeof this.params.gnd === 'number') {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 9600,
+      drive: '3v',
+    });
+
+    this.uart.onreceive = function(data, text) {
+      if (this.isAtMode) {
+        this.onAtResultsRecieve(data, text);
+      } else {
+        if (typeof this.onreceive === 'function') {
+          this.onreceive(data, text);
+        }
+      }
+    }.bind(this);
+  }
+
+  send(text) {
+    if (this.isAtMode === false) {
+      this.uart.send(text);
+    } else {
+      this.obniz.error('XBee is AT Command mode now. Wait for finish config.');
+    }
+  }
+
+  onAtResultsRecieve(data, text) {
+    if (!this.isAtMode) {
+      return;
+    }
+
+    let next = function() {
+      this.currentCommand = null;
+      this.sendCommand();
+    }.bind(this);
+
+    if (text === 'OK\r') {
+      if (this.currentCommand === 'ATCN') {
+        this.isAtMode = false;
+        this.currentCommand = null;
+        if (typeof this.onFinishAtModeCallback === 'function') {
+          this.onFinishAtModeCallback();
+          this.onFinishAtModeCallback = null;
+        }
+        return;
+      }
+      next();
+    } else if (text === 'ERROR\r') {
+      this.obniz.error('XBee config error : ' + this.currentCommand);
+    } else {
+      //response of at command.
+      console.log('XBEE : no catch message', data);
+      next();
+    }
+  }
+
+  addCommand(command, value) {
+    let str = command + (value ? ' ' + value : '');
+    this.commands.push(str);
+    if (this.isAtMode === true && this.currentCommand === null) {
+      this.sendCommand();
+    }
+  }
+
+  sendCommand() {
+    if (
+      this.isAtMode === true &&
+      this.currentCommand === null &&
+      this.commands.length > 0
+    ) {
+      this.currentCommand = 'AT' + this.commands.shift();
+      this.uart.send(this.currentCommand + '\r');
+    }
+  }
+
+  enterAtMode() {
+    if (this.currentCommand !== null) return;
+    this.isAtMode = true;
+    this.obniz.wait(1000);
+    let command = '+++';
+    this.currentCommand = command;
+    this.uart.send(this.currentCommand);
+    this.obniz.wait(1000);
+  }
+
+  exitAtMode() {
+    this.addCommand('CN');
+  }
+
+  async configWait(config) {
+    if (this.isAtMode) {
+      throw new Error('Xbee : duplicate config setting');
+    }
+    return new Promise(
+      function(resolve, reject) {
+        let standaloneKeys = {
+          destination_address_high: 'DH',
+          destination_address_low: 'DL',
+          source_address: 'MY',
+        };
+        let highLowKeys = ['destination_address'];
+        this.enterAtMode();
+        for (let key in config) {
+          if (key.length === 2) {
+            this.addCommand(key, config[key]);
+          } else if (standaloneKeys[key]) {
+            this.addCommand(standaloneKeys[key], config[key]);
+          } else if (highLowKeys.includes(key)) {
+            let high = config[key].slice(0, -8);
+            if (!high) {
+              high = '0';
+            }
+            let low = config[key].slice(-8);
+
+            this.addCommand(standaloneKeys[key + '_high'], high);
+            this.addCommand(standaloneKeys[key + '_low'], low);
+          }
+        }
+        this.exitAtMode();
+        this.onFinishAtModeCallback = function() {
+          resolve();
+        };
+      }.bind(this)
+    );
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('XBee', XBee);
+
+
+/***/ }),
+
+/***/ "./parts/Camera/JpegSerialCam/index.js":
+/*!*********************************************!*\
+  !*** ./parts/Camera/JpegSerialCam/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class JpegSerialCam {
+  constructor() {
+    this.keys = ['vcc', 'cam_tx', 'cam_rx', 'gnd'];
+    this.requiredKeys = ['cam_tx', 'cam_rx'];
+
+    this.ioKeys = this.keys;
+    this.displayName = 'Jcam';
+    this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
+  }
+
+  wired() {
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.my_tx = this.params.cam_rx;
+    this.my_rx = this.params.cam_tx;
+
+    this.obniz.getIO(this.my_tx).drive('3v');
+
+    this.uart = this.obniz.getFreeUart();
+  }
+
+  async _drainUntil(uart, search, recv) {
+    if (!recv) recv = [];
+    while (true) {
+      let readed = uart.readBytes();
+      recv = recv.concat(readed);
+      let tail = this._seekTail(search, recv);
+      if (tail >= 0) {
+        recv.splice(0, tail);
+        return recv;
+      }
+      await this.obniz.wait(10);
+    }
+  }
+
+  _seekTail(search, src) {
+    let f = 0;
+    for (let i = 0; i < src.length; i++) {
+      if (src[i] === search[f]) {
+        f++;
+        if (f === search.length) {
+          return i + 1;
+        }
+      } else {
+        f = 0;
+      }
+    }
+    return -1;
+  }
+
+  arrayToBase64(buf) {
+    if (typeof btoa === 'function') {
+      let binstr = Array.prototype.map
+        .call(buf, function(ch) {
+          return String.fromCharCode(ch);
+        })
+        .join('');
+      return btoa(binstr);
+    }
+    // TODO:
+  }
+
+  async startwait(obj) {
+    if (!obj) obj = {};
+    this.uart.start({
+      tx: this.my_tx,
+      rx: this.my_rx,
+      baud: obj.baud || 38400,
+    });
+    this.obniz.display.setPinName(this.my_tx, 'JpegSerialCam', 'camRx');
+    this.obniz.display.setPinName(this.my_rx, 'JpegSerialCam', 'camTx');
+    await this.obniz.wait(2500);
+  }
+
+  async resetwait() {
+    this.uart.send([0x56, 0x00, 0x26, 0x00]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x26, 0x00]);
+    await this.obniz.wait(2500);
+  }
+
+  async setResolusionWait(resolution) {
+    let val;
+    if (resolution === '640*480') {
+      val = 0x00;
+    } else if (resolution === '320*240') {
+      val = 0x11;
+    } else if (resolution === '160*120') {
+      val = 0x22;
+    } else {
+      throw new Error('invalid resolution');
+    }
+    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this.resetwait();
+  }
+
+  async setCompressibilityWait(compress) {
+    let val = Math.floor(compress / 100 * 0xff);
+    this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    await this.resetwait();
+  }
+
+  async setBaudWait(baud) {
+    let val;
+    switch (baud) {
+      case 9600:
+        val = [0xae, 0xc8];
+        break;
+      case 19200:
+        val = [0x56, 0xe4];
+        break;
+      case 38400:
+        val = [0x2a, 0xf2];
+        break;
+      case 57600:
+        val = [0x1c, 0x4c];
+        break;
+      case 115200:
+        val = [0x0d, 0xa6];
+        break;
+      default:
+        throw new Error('invalid baud rate');
+    }
+    this.uart.send([
+      0x56,
+      0x00,
+      0x31,
+      0x06,
+      0x04,
+      0x02,
+      0x00,
+      0x08,
+      val[0],
+      val[1],
+    ]);
+    await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
+    //await this.obniz.wait(1000);
+    await this.startwait({
+      baud,
+    });
+  }
+
+  async takewait() {
+    const uart = this.uart;
+    //console.log("stop a photo")
+    uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
+    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+
+    //console.log("take a photo")
+    uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
+    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+
+    //console.log("read length")
+    uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
+    let recv = await this._drainUntil(uart, [
+      0x76,
+      0x00,
+      0x34,
+      0x00,
+      0x04,
+      0x00,
+      0x00,
+    ]); // ack
+    let XX;
+    let YY;
+    while (true) {
+      let readed = uart.readBytes();
+      //console.log(recv);
+      recv = recv.concat(readed);
+      if (recv.length >= 2) {
+        XX = recv[0];
+        YY = recv[1];
+        break;
+      }
+      await this.obniz.wait(1000);
+    }
+    let databytes = XX * 256 + YY;
+    //console.log("image: " + databytes + " Bytes");
+    // const high = (databytes >> 8) & 0xff;
+    // const low = databytes & 0xff;
+
+    //console.log("start reading image")
+    uart.send([
+      0x56,
+      0x00,
+      0x32,
+      0x0c,
+      0x00,
+      0x0a,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      XX,
+      YY,
+      0x00,
+      0xff,
+    ]);
+    recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+    //console.log("reading...");
+    while (true) {
+      let readed = uart.readBytes();
+      recv = recv.concat(readed);
+      //console.log(readed.length);
+      if (recv.length >= databytes) {
+        break;
+      }
+      await this.obniz.wait(10);
+    }
+    //console.log("done");
+    recv = recv.splice(0, databytes); // remove tail
+    recv = recv.concat([0xff, 0xd9]);
+    return recv;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);
+
+
+/***/ }),
+
+/***/ "./parts/Display/7SegmentLED/index.js":
+/*!********************************************!*\
+  !*** ./parts/Display/7SegmentLED/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class _7SegmentLED {
+  constructor() {
+    this.requiredKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'common'];
+    this.keys = [
+      'a',
+      'b',
+      'c',
+      'd',
+      'e',
+      'f',
+      'g',
+      'dp',
+      'common',
+      'commonType',
+    ];
+
+    this.digits = [
+      0x3f,
+      0x06,
+      0x5b,
+      0x4f,
+      0x66,
+      0x6d,
+      0x7d,
+      0x07,
+      0x7f,
+      0x6f,
+      0x6f,
+    ];
+
+    this.displayIoNames = {
+      a: 'a',
+      b: 'b',
+      c: 'c',
+      d: 'd',
+      e: 'e',
+      f: 'f',
+      g: 'g',
+      dp: 'dp',
+      common: 'com',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.ios = [];
+    this.ios.push(obniz.getIO(this.params.a));
+    this.ios.push(obniz.getIO(this.params.b));
+    this.ios.push(obniz.getIO(this.params.c));
+    this.ios.push(obniz.getIO(this.params.d));
+    this.ios.push(obniz.getIO(this.params.e));
+    this.ios.push(obniz.getIO(this.params.f));
+    this.ios.push(obniz.getIO(this.params.g));
+
+    for (let i = 0; i < this.ios.length; i++) {
+      this.ios[i].output(false);
+    }
+
+    if (typeof this.params.dp === 'number') {
+      this.dp = obniz.getIO(this.params.dp);
+      this.dp.output(false);
+    }
+
+    this.common = obniz.getIO(this.params.common);
+    this.common.output(false);
+    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
+  }
+
+  print(data) {
+    if (typeof data === 'number') {
+      data = parseInt(data);
+      data = data % 10;
+
+      for (let i = 0; i < 7; i++) {
+        if (this.ios[i]) {
+          let val = this.digits[data] & (1 << i) ? true : false;
+          if (!this.isCathodeCommon) {
+            val = ~val;
+          }
+          this.ios[i].output(val);
+        }
+      }
+      this.on();
+    }
+  }
+
+  printRaw(data) {
+    if (typeof data === 'number') {
+      for (let i = 0; i < 7; i++) {
+        if (this.ios[i]) {
+          let val = data & (1 << i) ? true : false;
+          if (!this.isCathodeCommon) {
+            val = !val;
+          }
+          this.ios[i].output(val);
+        }
+      }
+      this.on();
+    }
+  }
+
+  dpState(show) {
+    if (this.dp) {
+      this.dp.output(this.isCathodeCommon ? show : !show);
+    }
+  }
+
+  on() {
+    this.common.output(this.isCathodeCommon ? false : true);
+  }
+
+  off() {
+    this.common.output(this.isCathodeCommon ? true : false);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('7SegmentLED', _7SegmentLED);
+
+
+/***/ }),
+
+/***/ "./parts/Display/7SegmentLEDArray/index.js":
+/*!*************************************************!*\
+  !*** ./parts/Display/7SegmentLEDArray/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class _7SegmentLEDArray {
+  constructor() {
+    this.identifier = '' + new Date().getTime();
+
+    this.keys = ['segments'];
+    this.requiredKeys = this.keys;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.segments = this.params.segments;
+  }
+
+  print(data) {
+    if (typeof data === 'number') {
+      data = parseInt(data);
+
+      const print = index => {
+        let val = data;
+
+        for (let i = 0; i < this.segments.length; i++) {
+          if (index === i) {
+            this.segments[i].print(val % 10);
+          } else {
+            this.segments[i].off();
+          }
+          val = val / 10;
+        }
+      };
+
+      let animations = [];
+      for (let i = 0; i < this.segments.length; i++) {
+        animations.push({
+          duration: 3,
+          state: print,
+        });
+      }
+
+      this.obniz.io.animation(this.identifier, 'loop', animations);
+    }
+  }
+
+  on() {
+    this.obniz.io.animation(this.identifier, 'resume');
+  }
+
+  off() {
+    this.obniz.io.animation(this.identifier, 'pause');
+    for (let i = 0; i < this.segments.length; i++) {
+      this.segments[i].off();
+    }
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('7SegmentLEDArray', _7SegmentLEDArray);
+
+
+/***/ }),
+
+/***/ "./parts/Display/MatrixLED_MAX7219/index.js":
+/*!**************************************************!*\
+  !*** ./parts/Display/MatrixLED_MAX7219/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class MatrixLED_MAX7219 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+    this.requiredKeys = ['din', 'cs', 'clk'];
+  }
+
+  wired(obniz) {
+    this.cs = obniz.getIO(this.params.cs);
+    // logich high must 3.5v <=
+    if (obniz.isValidIO(this.params.vcc)) {
+      obniz.getIO(this.params.vcc).output(true);
+    }
+    if (obniz.isValidIO(this.params.gnd)) {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    // max 10Mhz but motor driver can't
+    this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+    this.params.mode = 'master';
+    this.params.mosi = this.params.din;
+    this.params.drive = '3v';
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    // reset a onece
+    this.cs.output(true);
+    this.cs.output(false);
+    this.cs.output(true);
+  }
+
+  init(width, height) {
+    this.width = width;
+    this.height = height;
+    this.preparevram(width, height);
+    this.initModule();
+  }
+
+  initModule() {
+    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
+    this.write([0x0a, 0x05]); // brightness 9/32 0 to f
+    this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
+    this.write([0x0c, 0x01]); // Shutdown to normal operation
+    this.write([0x0f, 0x00]);
+    this.passingCommands();
+    this.obniz.wait(10);
+  }
+
+  test() {
+    this.write([0x0f, 0x00]); // test command
+    this.passingCommands();
+  }
+
+  passingCommands() {
+    for (let i = 8; i < this.width; i += 8) {
+      // this needed for number of unit
+      this.write([0x00, 0x00]);
+    }
+  }
+
+  brightness(val) {
+    this.write([0x0a, val]); // 0 to 15;
+    this.passingCommands();
+  }
+
+  preparevram(width, height) {
+    this.vram = [];
+    for (let i = 0; i < height; i++) {
+      let dots = new Array(width / 8);
+      for (let ii = 0; ii < dots.length; ii++) {
+        dots[ii] = 0x00;
+      }
+      this.vram.push(dots);
+    }
+  }
+
+  write(data) {
+    this.cs.output(false);
+    this.spi.write(data);
+    this.cs.output(true);
+  }
+
+  writeVram() {
+    for (let line_num = 0; line_num < this.height; line_num++) {
+      let addr = line_num + 1;
+      let line = this.vram[line_num];
+      let data = [];
+      for (let col = 0; col < line.length; col++) {
+        data.push(addr);
+        data.push(line[col]);
+      }
+      this.write(data);
+    }
+  }
+
+  clear() {
+    for (let line_num = 0; line_num < this.height; line_num++) {
+      let line = this.vram[line_num];
+      for (let col = 0; col < line.length; col++) {
+        this.vram[line_num][col] = 0x00;
+      }
+      this.writeVram();
+    }
+  }
+
+  draw(ctx) {
+    let isNode = typeof window === 'undefined';
+    if (isNode) {
+      // TODO:
+      throw new Error('node js mode is under working.');
+    } else {
+      const imageData = ctx.getImageData(0, 0, this.width, this.height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        let brightness =
+          0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        let index = parseInt(i / 4);
+        let line = parseInt(index / this.width);
+        let col = parseInt((index - line * this.width) / 8);
+        let bits = parseInt(index - line * this.width) % 8;
+        if (bits === 0) this.vram[line][col] = 0x00;
+        if (brightness > 0x7f) this.vram[line][col] |= 0x80 >> bits;
+      }
+    }
+    this.writeVram();
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
+
+
+/***/ }),
+
+/***/ "./parts/DistanceSensor/HC-SR04/index.js":
+/*!***********************************************!*\
+  !*** ./parts/DistanceSensor/HC-SR04/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+let HCSR04 = function() {
+  this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
+  this.requiredKeys = ['vcc', 'trigger', 'echo'];
+
+  this._unit = 'mm';
+};
+
+HCSR04.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+
+  obniz.setVccGnd(null, this.params.gnd, '5v');
+
+  this.vccIO = obniz.getIO(this.params.vcc);
+  this.trigger = this.params.trigger;
+  this.echo = this.params.echo;
+};
+
+HCSR04.prototype.measure = async function(callback) {
+  this.vccIO.drive('5v');
+  this.vccIO.output(true);
+  await this.obniz.wait(10);
+
+  let self = this;
+  this.obniz.measure.echo({
+    io_pulse: this.trigger,
+    io_echo: this.echo,
+    pulse: 'positive',
+    pulse_width: 0.011,
+    measure_edges: 3,
+    timeout: 10 / 340 * 1000,
+    callback: function(edges) {
+      self.vccIO.output(false);
+      let distance = null;
+      for (let i = 0; i < edges.length - 1; i++) {
+        // HCSR04's output of io_echo is initially high when trigger is finshed
+        if (edges[i].edge === true) {
+          distance = (edges[i + 1].timing - edges[i].timing) * 1000;
+          if (self._unit === 'mm') {
+            distance = distance / 5.8;
+          } else if (self._unit === 'inch') {
+            distance = distance / 148.0;
+          }
+        }
+      }
+      if (typeof callback === 'function') {
+        callback(distance);
+      }
+    },
+  });
+};
+
+HCSR04.prototype.unit = function(unit) {
+  if (unit === 'mm') {
+    this._unit = 'mm';
+  } else if (unit === 'inch') {
+    this._unit = 'inch';
+  } else {
+    throw new Error('HCSR04: unknown unit ' + unit);
+  }
+};
+
+// Module functions
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('HC-SR04', HCSR04);
+
+
+/***/ }),
+
+/***/ "./parts/Grove/Grove_EarHeartRate/index.js":
+/*!*************************************************!*\
+  !*** ./parts/Grove/Grove_EarHeartRate/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_EarHeartRate {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['vcc', 'gnd'];
+
+    this.displayIoNames = {
+      vcc: 'vcc',
+      gnd: 'gnd',
+      signal: 'signal',
+    };
+
+    this.interval = 5;
+    this.duration = 2.5 * 1000;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+  }
+
+  start(callback) {
+    this.obniz.logicAnalyzer.start({
+      io: this.params.signal,
+      interval: this.interval,
+      duration: this.duration,
+    });
+
+    this.obniz.logicAnalyzer.onmeasured = array => {
+      let edges = [];
+      for (let i = 0; i < array.length - 1; i++) {
+        if (array[i] === 0 && array[i + 1] === 1) {
+          edges.push(i);
+        }
+      }
+      if (edges.length >= 2) {
+        let between = 0;
+        let pulseMin = 0;
+        between = (edges[1] - edges[0]) * this.interval / 1000.0;
+        pulseMin = 60 / between;
+        callback(pulseMin);
+      }
+    };
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('Grove_EarHeartRate', Grove_EarHeartRate);
+
+
+/***/ }),
+
+/***/ "./parts/GyroSensor/ENC03R_Module/index.js":
+/*!*************************************************!*\
+  !*** ./parts/GyroSensor/ENC03R_Module/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class ENC03R_Module {
+  constructor() {
+    this.keys = ['vcc', 'out1', 'out2', 'gnd'];
+    this.required = ['out1', 'out2'];
+    this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.ad0 = obniz.getAD(this.params.out1);
+    this.ad1 = obniz.getAD(this.params.out2);
+
+    this.ad0.start(value => {
+      this.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+      if (this.onchange1) {
+        this.onchange1(this.sens1);
+      }
+    });
+
+    this.ad1.start(value => {
+      this.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
+      if (this.onchange2) {
+        this.onchange2(this.sens2);
+      }
+    });
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('ENC03R_Module', ENC03R_Module);
+
+
+/***/ }),
+
+/***/ "./parts/InfraredSensor/IRSensor/index.js":
+/*!************************************************!*\
+  !*** ./parts/InfraredSensor/IRSensor/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class IRSensor {
+  constructor() {
+    this.keys = ['output', 'vcc', 'gnd'];
+    this.requiredKeys = ['output'];
+
+    this.dataSymbolLength = 0.07;
+    this.duration = 200; // 200msec
+    this.dataInverted = true;
+    this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
+    this.cutTail = true;
+    this.output_pullup = true;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    if (!obniz.isValidIO(this.params.output)) {
+      throw new Error('output is not valid io');
+    }
+  }
+
+  start(callback) {
+    this.ondetect = callback;
+    if (this.output_pullup) {
+      this.obniz.getIO(this.params.output).pull('5v');
+    }
+
+    this.obniz.logicAnalyzer.start({
+      io: this.params.output,
+      interval: this.dataSymbolLength,
+      duration: this.duration,
+      triggerValue: this.dataInverted ? false : true,
+      triggerValueSamples: this.triggerSampleCount,
+    });
+    this.obniz.logicAnalyzer.onmeasured = levels => {
+      if (typeof this.ondetect === 'function') {
+        if (this.dataInverted) {
+          let arr = new Uint8Array(levels);
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] = arr[i] ? 0 : 1;
+          }
+          levels = Array.from(arr);
+        }
+
+        if (this.cutTail) {
+          for (let i = levels.length - 1; i > 1; i--) {
+            if (levels[i] === 0 && levels[i - 1] === 0) {
+              levels.splice(i, 1);
+            } else {
+              break;
+            }
+          }
+        }
+
+        this.ondetect(levels);
+      }
+    };
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('IRSensor', IRSensor);
+
+
+/***/ }),
+
+/***/ "./parts/Light/FullColorLED/index.js":
+/*!*******************************************!*\
+  !*** ./parts/Light/FullColorLED/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class FullColorLED {
+  constructor() {
+    this.COMMON_TYPE_ANODE = 1;
+    this.COMMON_TYPE_CATHODE = 0;
+
+    this.anode_keys = ['anode', 'anode_common', 'anodeCommon', 'vcc'];
+    this.cathode_keys = ['cathode', 'cathode_common', 'cathodeCommon', 'gnd'];
+    this.animationName = 'FullColorLED-' + Math.round(Math.random() * 1000);
+
+    this.keys = ['r', 'g', 'b', 'common', 'commonType'];
+    this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
+  }
+
+  wired(obniz) {
+    let r = this.params.r;
+    let g = this.params.g;
+    let b = this.params.b;
+    let common = this.params.common;
+    let commontype = this.params.commonType;
+
+    this.obniz = obniz;
+    if (this.anode_keys.includes(commontype)) {
+      this.commontype = this.COMMON_TYPE_ANODE;
+    } else if (this.cathode_keys.includes(commontype)) {
+      this.commontype = this.COMMON_TYPE_CATHODE;
+    } else {
+      this.obniz.error(
+        'FullColorLED param need common type [  anode_common or cathode_common ] '
+      );
+    }
+
+    this.common = this.obniz.getIO(common);
+    this.common.output(this.commontype);
+
+    this.obniz.getIO(r).output(this.commontype);
+    this.obniz.getIO(g).output(this.commontype);
+    this.obniz.getIO(b).output(this.commontype);
+    this.pwmR = this.obniz.getFreePwm();
+    this.pwmR.start({ io: r });
+    this.pwmR.freq(1000);
+    this.pwmG = this.obniz.getFreePwm();
+    this.pwmG.start({ io: g });
+    this.pwmG.freq(1000);
+    this.pwmB = this.obniz.getFreePwm();
+    this.pwmB.start({ io: b });
+    this.pwmB.freq(1000);
+    this.rgb(0, 0, 0);
+  }
+
+  rgb(r, g, b) {
+    r = Math.min(Math.max(parseInt(r), 0), 255);
+    g = Math.min(Math.max(parseInt(g), 0), 255);
+    b = Math.min(Math.max(parseInt(b), 0), 255);
+
+    if (this.commontype === this.COMMON_TYPE_ANODE) {
+      r = 255 - r;
+      g = 255 - g;
+      b = 255 - b;
+    }
+    this.pwmR.duty(r / 255 * 100);
+    this.pwmG.duty(g / 255 * 100);
+    this.pwmB.duty(b / 255 * 100);
+  }
+
+  hsv(h, s, v) {
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
+
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    this.rgb(R, G, B);
+  }
+
+  gradation(cycletime_ms) {
+    let frames = [];
+    let max = 36 / 2;
+    let duration = Math.round(cycletime_ms / max);
+    for (let i = 0; i < max; i++) {
+      let oneFrame = {
+        duration: duration,
+        state: function(index) {
+          // index = 0
+          this.hsv(index * 10 * 2, 1, 1);
+        }.bind(this),
+      };
+      frames.push(oneFrame);
+    }
+    this.obniz.io.animation(this.animationName, 'loop', frames);
+  }
+
+  stopgradation() {
+    this.obniz.io.animation(this.animationName, 'pause');
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('FullColorLED', FullColorLED);
+
+
+/***/ }),
+
+/***/ "./parts/Light/InfraredLED/index.js":
+/*!******************************************!*\
+  !*** ./parts/Light/InfraredLED/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class InfraredLED {
+  constructor() {
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error('anode is not valid io');
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error('cathode is not valid io');
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start({ io: this.params.anode });
+    this.pwm.freq(38000);
+  }
+
+  send(arr) {
+    this.pwm.modulate('am', this.dataSymbolLength, arr);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('InfraredLED', InfraredLED);
+
+
+/***/ }),
+
+/***/ "./parts/Light/LED/index.js":
+/*!**********************************!*\
+  !*** ./parts/Light/LED/index.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+let LED = function() {
+  this.keys = ['anode', 'cathode'];
+  this.requiredKeys = ['anode'];
+
+  this.animationName = 'Led-' + Math.round(Math.random() * 1000);
+};
+
+LED.prototype.wired = function(obniz) {
+  this.obniz = obniz;
+  this.io_anode = obniz.getIO(this.params.anode);
+  this.io_anode.output(false);
+  if (this.params.cathode) {
+    this.io_cathode = obniz.getIO(this.params.cathode);
+    this.io_cathode.output(false);
+  }
+};
+
+// Module functions
+
+LED.prototype.on = function() {
+  this.endBlink();
+  this.io_anode.output(true);
+};
+
+LED.prototype.off = function() {
+  this.endBlink();
+  this.io_anode.output(false);
+};
+
+LED.prototype.endBlink = function() {
+  this.obniz.io.animation(this.animationName, 'pause');
+};
+
+LED.prototype.blink = function(interval) {
+  if (!interval) {
+    interval = 100;
+  }
+  let frames = [
+    {
+      duration: interval,
+      state: function(index) {
+        // index = 0
+        this.io_anode.output(true); // on
+      }.bind(this),
+    },
+    {
+      duration: interval,
+      state: function(index) {
+        // index = 0
+        this.io_anode.output(false); //off
+      }.bind(this),
+    },
+  ];
+
+  this.obniz.io.animation(this.animationName, 'loop', frames);
+};
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('LED', LED);
+
+
+/***/ }),
+
+/***/ "./parts/Light/WS2811/index.js":
+/*!*************************************!*\
+  !*** ./parts/Light/WS2811/index.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class WS2811 {
+  constructor() {
+    this.keys = ['din', 'vcc', 'gnd'];
+    this.requiredKeys = ['din'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = 2 * 1000 * 1000;
+    this.params.mosi = this.params.din;
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  static _generateFromByte(val) {
+    // T0H 0.5us+-0.15us
+    // T1H 1.2us+-0.15us
+    // T0L 2.0us+-0.15us
+    // T1L 1.3us+-0.15us
+
+    val = parseInt(val);
+    const zero = 0x8;
+    const one = 0xe;
+    let ret = [];
+    for (let i = 0; i < 8; i += 2) {
+      let byte = 0;
+      if (val & (0x80 >> i)) {
+        byte = one << 4;
+      } else {
+        byte = zero << 4;
+      }
+      if (val & (0x80 >> (i + 1))) {
+        byte |= one;
+      } else {
+        byte |= zero;
+      }
+      ret.push(byte);
+    }
+    return ret;
+  }
+
+  static _generateColor(r, g, b) {
+    let array = WS2811._generateFromByte(r);
+    array = array.concat(WS2811._generateFromByte(g));
+    array = array.concat(WS2811._generateFromByte(b));
+    return array;
+  }
+
+  static _generateHsvColor(h, s, v) {
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
+
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    let array = WS2811._generateFromByte(R);
+    array = array.concat(WS2811._generateFromByte(G));
+    array = array.concat(WS2811._generateFromByte(B));
+    return array;
+  }
+
+  rgb(r, g, b) {
+    this.spi.write(WS2811._generateColor(r, g, b));
+  }
+
+  hsv(h, s, v) {
+    this.spi.write(WS2811._generateHsvColor(h, s, v));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (let i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(
+        WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2])
+      );
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (let i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(
+        WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2])
+      );
+    }
+    this.spi.write(bytes);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('WS2811', WS2811);
+
+
+/***/ }),
+
+/***/ "./parts/Light/WS2812/index.js":
+/*!*************************************!*\
+  !*** ./parts/Light/WS2812/index.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class WS2812 {
+  constructor() {
+    this.keys = ['din', 'vcc', 'gnd'];
+    this.requiredKeys = ['din'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = parseInt(3.33 * 1000 * 1000);
+    this.params.mosi = this.params.din;
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  static _generateFromByte(val) {
+    // T0H 0.35us+-0.15us
+    // T1H 0.7us+-0.15us
+    // T0L 0.8us+-0.15us
+    // T1L 0.6us+-0.15us
+
+    // 0.3-0.9 and 0.6-0.6 at 3.33Mhz
+
+    val = parseInt(val);
+    const zero = 0x8;
+    const one = 0xc;
+    let ret = [];
+    for (let i = 0; i < 8; i += 2) {
+      let byte = 0;
+      if (val & (0x80 >> i)) {
+        byte = one << 4;
+      } else {
+        byte = zero << 4;
+      }
+      if (val & (0x80 >> (i + 1))) {
+        byte |= one;
+      } else {
+        byte |= zero;
+      }
+      ret.push(byte);
+    }
+    return ret;
+  }
+
+  static _generateColor(r, g, b) {
+    let array = WS2812._generateFromByte(g);
+    array = array.concat(WS2812._generateFromByte(r));
+    array = array.concat(WS2812._generateFromByte(b));
+    return array;
+  }
+
+  static _generateHsvColor(h, s, v) {
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
+
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    return WS2812._generateColor(R, G, B);
+  }
+
+  rgb(r, g, b) {
+    this.spi.write(WS2812._generateColor(r, g, b));
+  }
+
+  hsv(h, s, v) {
+    this.spi.write(WS2812._generateHsvColor(h, s, v));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (let i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(
+        WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2])
+      );
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (let i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(
+        WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2])
+      );
+    }
+    this.spi.write(bytes);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('WS2812', WS2812);
+
+
+/***/ }),
+
+/***/ "./parts/Light/WS2812B/index.js":
+/*!**************************************!*\
+  !*** ./parts/Light/WS2812B/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class WS2812B {
+  constructor() {
+    this.keys = ['din', 'vcc', 'gnd'];
+    this.requiredKeys = ['din'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = parseInt(3.33 * 1000 * 1000);
+    this.params.mosi = this.params.din;
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  static _generateFromByte(val) {
+    // T0H 0.35us+-0.15us
+    // T1H 0.9us+-0.15us
+    // T0L 0.9us+-0.15us
+    // T1L 0.35us+-0.15us
+
+    // 0.3-0.9 and 0.9-0.3 at 3.33Mhz
+
+    val = parseInt(val);
+    const zero = 0x8;
+    const one = 0xe;
+    let ret = [];
+    for (let i = 0; i < 8; i += 2) {
+      let byte = 0;
+      if (val & (0x80 >> i)) {
+        byte = one << 4;
+      } else {
+        byte = zero << 4;
+      }
+      if (val & (0x80 >> (i + 1))) {
+        byte |= one;
+      } else {
+        byte |= zero;
+      }
+      ret.push(byte);
+    }
+    return ret;
+  }
+
+  static _generateColor(r, g, b) {
+    let array = WS2812B._generateFromByte(g);
+    array = array.concat(WS2812B._generateFromByte(r));
+    array = array.concat(WS2812B._generateFromByte(b));
+    return array;
+  }
+
+  static _generateHsvColor(h, s, v) {
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
+
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
+
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
+
+    R = Math.floor(R * 255);
+    G = Math.floor(G * 255);
+    B = Math.floor(B * 255);
+
+    return WS2812B._generateColor(R, G, B);
+  }
+
+  rgb(r, g, b) {
+    this.spi.write(WS2812B._generateColor(r, g, b));
+  }
+
+  hsv(h, s, v) {
+    this.spi.write(WS2812B._generateHsvColor(h, s, v));
+  }
+
+  rgbs(array) {
+    let bytes = [];
+    for (let i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(
+        WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2])
+      );
+    }
+    this.spi.write(bytes);
+  }
+
+  hsvs(array) {
+    let bytes = [];
+    for (let i = 0; i < array.length; i++) {
+      const oneArray = array[i];
+      bytes = bytes.concat(
+        WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2])
+      );
+    }
+    this.spi.write(bytes);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('WS2812B', WS2812B);
+
+
+/***/ }),
+
+/***/ "./parts/Memory/24LC256/index.js":
+/*!***************************************!*\
+  !*** ./parts/Memory/24LC256/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class _24LC256 {
+  constructor() {
+    this.requiredKeys = ['address'];
+    this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
+  }
+
+  wired(obniz) {
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  // Module functions
+
+  set(address, data) {
+    let array = [];
+    array.push((address >> 8) & 0xff);
+    array.push(address & 0xff);
+    array.push.apply(array, data);
+    this.i2c.write(0x50, array);
+    this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+  }
+
+  async getWait(address, length) {
+    let array = [];
+    array.push((address >> 8) & 0xff);
+    array.push(address & 0xff);
+    this.i2c.write(0x50, array);
+    return await this.i2c.readWait(0x50, length);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('24LC256', _24LC256);
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/Button/index.js":
+/*!**********************************************!*\
+  !*** ./parts/MovementSensor/Button/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class Button {
+  constructor() {
+    this.keys = ['signal', 'gnd'];
+    this.required = ['signal'];
+  }
+
+  wired(obniz) {
+    this.io_signal = obniz.getIO(this.params.signal);
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_supply = obniz.getIO(this.params.gnd);
+      this.io_supply.output(false);
+    }
+
+    // start input
+    this.io_signal.pull('5v');
+
+    let self = this;
+    this.io_signal.input(function(value) {
+      self.isPressed = value === false;
+      if (self.onchange) {
+        self.onchange(value === false);
+      }
+    });
+  }
+
+  async isPressedWait() {
+    let ret = await this.io_signal.inputWait();
+    return ret === false;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('Button', Button);
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/JoyStick/index.js":
+/*!************************************************!*\
+  !*** ./parts/MovementSensor/JoyStick/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class JoyStick {
+  constructor() {
+    this.keys = ['sw', 'y', 'x', 'vcc', 'gnd', 'i2c'];
+    this.requiredKeys = ['sw', 'y', 'x'];
+    this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
+    this.pinname = { sw: 'sw12' };
+    this.shortName = 'joyS';
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.io_sig_sw = obniz.getIO(this.params.sw);
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
+
+    this.io_sig_sw.pull('5v');
+
+    let self = this;
+    this.ad_x.start(function(value) {
+      self.positionX = value / 5.0;
+      if (self.onchangex) {
+        self.onchangex(self.positionX * 2 - 1);
+      }
+    });
+
+    this.ad_y.start(function(value) {
+      self.positionY = value / 5.0;
+      if (self.onchangey) {
+        self.onchangey(self.positionY * 2 - 1);
+      }
+    });
+
+    this.io_sig_sw.input(function(value) {
+      self.isPressed = value === false;
+      if (self.onchangesw) {
+        self.onchangesw(value === false);
+      }
+    });
+  }
+
+  async isPressedWait() {
+    let ret = await this.io_sig_sw.inputWait();
+    return ret === false;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('JoyStick', JoyStick);
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/KXR94-2050/index.js":
+/*!**************************************************!*\
+  !*** ./parts/MovementSensor/KXR94-2050/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class KXR94_2050 {
+  constructor() {
+    this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
+    this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
+    this.ad_z = obniz.getAD(this.params.z);
+
+    if (obniz.isValidIO(this.params.enable)) {
+      obniz.getIO(this.params.enable).drive('5v');
+      obniz.getIO(this.params.enable).output(true);
+    }
+    if (obniz.isValidIO(this.params.self_test)) {
+      obniz.getIO(this.params.self_test).drive('5v');
+      obniz.getIO(this.params.self_test).output(false);
+    }
+
+    return (async () => {
+      if (obniz.isValidIO(this.params.vcc)) {
+        let pwrVoltage = await obniz.getAD(this.params.vcc).getWait();
+        this.changeVccVoltage(pwrVoltage);
+      } else {
+        this.changeVccVoltage(5);
+      }
+
+      this.ad_x.start(value => {
+        if (this.onchangex) {
+          this.onchangex(this.voltage2gravity(value));
+        }
+      });
+
+      this.ad_y.start(value => {
+        if (this.onchangey) {
+          this.onchangey(this.voltage2gravity(value));
+        }
+      });
+
+      this.ad_z.start(value => {
+        if (this.onchangez) {
+          this.onchangez(this.voltage2gravity(value));
+        }
+      });
+
+      if (this.obniz.isValidIO(this.params.vcc)) {
+        this.obniz.getAD(this.params.vcc).start(value => {
+          this.changeVccVoltage(value);
+        });
+      }
+
+      obniz.display.setPinName(this.params.x, 'KXR94_2050', 'x');
+      obniz.display.setPinName(this.params.y, 'KXR94_2050', 'y');
+      obniz.display.setPinName(this.params.z, 'KXR94_2050', 'z');
+
+      if (this.obniz.isValidIO(this.params.vcc)) {
+        obniz.display.setPinName(this.params.vcc, 'KXR94_2050', 'vcc');
+      }
+    })();
+  }
+
+  changeVccVoltage(pwrVoltage) {
+    this.sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+    this.offsetVoltage = pwrVoltage / 2; //Set offset voltage (Output voltage at 0g, unit:V)
+  }
+
+  voltage2gravity(volt) {
+    return (volt - this.offsetVoltage) / this.sensitivity;
+  }
+
+  async getWait() {
+    let result = await Promise.all([
+      this.ad_x.getWait(),
+      this.ad_y.getWait(),
+      this.ad_z.getWait(),
+    ]);
+
+    return {
+      x: this.voltage2gravity(result[0]),
+      y: this.voltage2gravity(result[1]),
+      z: this.voltage2gravity(result[2]),
+    };
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('KXR94_2050', KXR94_2050);
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/KXSC7-2050/index.js":
+/*!**************************************************!*\
+  !*** ./parts/MovementSensor/KXSC7-2050/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class KXSC7_2050 {
+  constructor() {
+    this.keys = ['x', 'y', 'z', 'vcc', 'gnd'];
+    this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  async wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
+    this.ad_x = obniz.getAD(this.params.x);
+    this.ad_y = obniz.getAD(this.params.y);
+    this.ad_z = obniz.getAD(this.params.z);
+
+    await obniz.wait(500);
+    let ad = obniz.getAD(this.params.vcc);
+    let pwrVoltage = await ad.getWait();
+    let horizontalZ = await this.ad_z.getWait();
+    let sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+    let offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+
+    let self = this;
+    this.ad_x.start(function(value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
+      if (self.onchangex) {
+        self.onchangex(self.gravity);
+      }
+    });
+
+    this.ad_y.start(function(value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
+      if (self.onchangey) {
+        self.onchangey(self.gravity);
+      }
+    });
+
+    this.ad_z.start(function(value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
+      if (self.onchangez) {
+        self.onchangez(self.gravity);
+      }
+    });
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('KXSC7_2050', KXSC7_2050);
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/PaPIRsVZ/index.js":
+/*!************************************************!*\
+  !*** ./parts/MovementSensor/PaPIRsVZ/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class PaPIRsVZ {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['signal'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.io_signal = obniz.getIO(this.params.signal);
+    this.io_signal.pull('0v');
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.io_signal.input(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('PaPIRsVZ', PaPIRsVZ);
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/Potentiometer/index.js":
+/*!*****************************************************!*\
+  !*** ./parts/MovementSensor/Potentiometer/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class Potentiometer {
+  constructor() {
+    this.keys = ['pin0', 'pin1', 'pin2'];
+    this.reuiredKeys = ['pin0', 'pin1', 'pin2'];
+
+    this.vcc_voltage = 5.0;
+  }
+
+  wired(obniz) {
+    this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
+    this.ad = obniz.getAD(this.params.pin1);
+
+    let self = this;
+
+    obniz.getAD(this.params.pin0).start(function(value) {
+      self.vcc_voltage = value;
+    });
+
+    this.ad.start(function(value) {
+      self.position = value / self.vcc_voltage;
+      if (self.onchange) {
+        self.onchange(self.position);
+      }
+    });
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('Potentiometer', Potentiometer);
+
+
+/***/ }),
+
+/***/ "./parts/Moving/DCMotor/index.js":
+/*!***************************************!*\
+  !*** ./parts/Moving/DCMotor/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class DCMotor {
+  constructor() {
+    this.keys = ['forward', 'back'];
+    this.requiredKeys = ['forward', 'back'];
+  }
+
+  wired(obniz) {
+    this.status = {
+      direction: null,
+      power: null,
+    };
+
+    this.pwm1_io_num = this.params.forward;
+    this.pwm2_io_num = this.params.back;
+
+    this.pwm1 = obniz.getFreePwm();
+    this.pwm1.start({ io: this.pwm1_io_num });
+    this.pwm1.freq(100000);
+    this.pwm2 = obniz.getFreePwm();
+    this.pwm2.start({ io: this.pwm2_io_num });
+    this.pwm2.freq(100000);
+    this.power(30);
+  }
+
+  // Module functions
+
+  forward() {
+    this.move(true);
+  }
+
+  reverse() {
+    this.move(false);
+  }
+
+  stop() {
+    if (this.status.direction === null) {
+      return;
+    }
+    this.status.direction = null;
+    this.pwm1.duty(0);
+    this.pwm2.duty(0);
+  }
+
+  move(forward) {
+    if (forward) {
+      if (this.status.direction === true) {
+        return;
+      }
+      this.status.direction = true;
+    } else {
+      if (this.status.direction === false) {
+        return;
+      }
+      this.status.direction = false;
+    }
+    let power = this.power();
+    this.power(0);
+    this.power(power);
+  }
+
+  power(power) {
+    if (power === undefined) {
+      return this.status.power;
+    }
+    this.status.power = power;
+    if (this.status.direction === null) {
+      this.pwm1.duty(0);
+      this.pwm2.duty(0);
+      return;
+    }
+    if (this.status.direction) {
+      this.pwm1.duty(power);
+      this.pwm2.duty(0);
+    } else {
+      this.pwm1.duty(0);
+      this.pwm2.duty(power);
+    }
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('DCMotor', DCMotor);
+
+
+/***/ }),
+
+/***/ "./parts/Moving/ServoMotor/index.js":
+/*!******************************************!*\
+  !*** ./parts/Moving/ServoMotor/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class ServoMotor {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'signal'];
+    this.requiredKeys = ['signal'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    if (obniz.isValidIO(this.params.vcc)) {
+      this.io_vcc = obniz.getIO(this.params.vcc);
+    }
+
+    this.pwm = obniz.getFreePwm();
+    this.pwm_io_num = this.params.signal;
+
+    this.pwm.start({ io: this.pwm_io_num });
+    this.pwm.freq(50);
+  }
+
+  // Module functions
+
+  angle(ratio) {
+    let max = 2.4;
+    let min = 0.5;
+    let val = (max - min) * ratio / 180.0 + min;
+    this.pwm.pulse(val);
+  }
+
+  on() {
+    if (this.io_vcc) {
+      this.io_vcc.output(true);
+    }
+  }
+
+  off() {
+    if (this.io_vcc) {
+      this.io_vcc.output(false);
+    }
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('ServoMotor', ServoMotor);
+
+
+/***/ }),
+
+/***/ "./parts/PressureSensor/FSR-40X/index.js":
+/*!***********************************************!*\
+  !*** ./parts/PressureSensor/FSR-40X/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+
+class FSR40X {
+  constructor() {
+    this.keys = ['pin0', 'pin1'];
+    this.requiredKeys = ['pin0', 'pin1'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.io_pwr = obniz.getIO(this.params.pin0);
+    this.ad = obniz.getAD(this.params.pin1);
+
+    this.io_pwr.drive('5v');
+    this.io_pwr.output(true);
+
+    let self = this;
+    this.ad.start(function(value) {
+      let pressure = value * 100;
+      self.press = pressure;
+      if (self.onchange) {
+        self.onchange(self.press);
+      }
+    });
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('FSR40X', FSR40X);
+
+
+/***/ }),
+
+/***/ "./parts/SoilSensor/SEN0114/index.js":
+/*!*******************************************!*\
+  !*** ./parts/SoilSensor/SEN0114/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class SEN0114 {
+  constructor() {
+    this.keys = ['vcc', 'output', 'gnd'];
+    this.requiredKeys = ['output'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.ad = obniz.getAD(this.params.output);
+
+    this.ad.start(value => {
+      this.value = value;
+      if (this.onchange) {
+        this.onchange(this.value);
+      }
+    });
+  }
+
+  async getHumidityWait() {
+    this.value = await this.ad.getWait();
+    return this.value;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('SEN0114', SEN0114);
+
+
+/***/ }),
+
+/***/ "./parts/Sound/Speaker/index.js":
+/*!**************************************!*\
+  !*** ./parts/Sound/Speaker/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class Speaker {
+  constructor(obniz) {
+    this.keys = ['signal', 'gnd'];
+    this.requiredKeys = ['gnd'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(null, this.params.gnd, '5v');
+    this.pwm = obniz.getFreePwm();
+    this.pwm.start({ io: this.params.signal });
+  }
+
+  play(freq) {
+    if (freq > 0) {
+      this.pwm.freq(freq);
+      this.pwm.pulse(1 / freq / 2 * 1000);
+    } else {
+      this.pwm.pulse(0);
+    }
+  }
+
+  stop() {
+    this.play(0);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('Speaker', Speaker);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js":
+/*!******************************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/AnalogTempratureSensor.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+class AnalogTemplatureSensor {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'output'];
+    this.requiredKeys = ['output'];
+    this.drive = '5v';
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
+    this.ad = obniz.getAD(this.params.output);
+
+    this.ad.start(
+      function(voltage) {
+        this.temp = this.calc(voltage);
+        this.onchange(this.temp);
+      }.bind(this)
+    );
+  }
+
+  onchange(temp) {}
+
+  calc(voltage) {
+    return 0;
+  }
+}
+
+module.exports = AnalogTemplatureSensor;
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/LM35DZ/index.js":
+/*!********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/LM35DZ/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+class LM35DZ extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('LM35DZ', LM35DZ);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/LM60/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/LM60/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class LM60 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'output'];
+    this.requiredKeys = ['output'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.ad = obniz.getAD(this.params.output);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    let self = this;
+    this.ad.start(function(value) {
+      self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+      if (self.onchange) {
+        self.onchange(self.temp);
+      }
+    });
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('LM60', LM60);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/LM61/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/LM61/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+class LM61 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('LM61', LM61);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/MCP9700/index.js":
+/*!*********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/MCP9700/index.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+class MCP9700 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('MCP9700', MCP9700);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/MCP9701/index.js":
+/*!*********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/MCP9701/index.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+class MCP9701 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('MCP9701', MCP9701);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/S8100B/index.js":
+/*!********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/S8100B/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+//センサから出力が無い(出力インピーダンス高すぎ？)
+
+class S8100B extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('S8100B', S8100B);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/S8120C/index.js":
+/*!********************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/S8120C/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+
+//不調, 正しく測れるときもある...
+//原因1:obnizの入力インピーダンスが低すぎる?
+//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
+
+class S8120C extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('S8120C', S8120C);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/ADT7410/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/ADT7410/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class ADT7410 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'addressMode'];
+    this.requiredKeys = ['addressMode'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (this.params.addressMode === 8) {
+      this.address = 0x48;
+    } else if (this.params.addressMode === 9) {
+      this.address = 0x49;
+    }
+
+    this.params.clock = 400000;
+    this.params.pull = '5v';
+    this.params.mode = 'master';
+
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  async getTempWait() {
+    let ret = await this.i2c.readWait(this.address, 2);
+    let tempBin = ret[0] << 8;
+    tempBin |= ret[1];
+    tempBin = tempBin >> 3;
+
+    if (tempBin & 0x1000) {
+      //0度以下の時の処理
+      tempBin = tempBin - 8192;
+    }
+
+    return tempBin / 16;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('ADT7410', ADT7410);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/S-5851A/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/S-5851A/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+//センサからの反応なし
+class S5851A {
+  constructor() {
+    this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
+    this.keys = ['sda', 'scl', 'adr0', 'adr1', 'adr_select', 'i2c'];
+  }
+
+  wired(obniz) {
+    //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
+    this.io_adr0 = obniz.getIO(this.params.adr0);
+    this.io_adr1 = obniz.getIO(this.params.adr1);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    switch (this.params.adr_select) {
+      case 8:
+        this.io_adr0.output(false);
+        this.io_adr1.output(false);
+        this.address = 0x48;
+        break;
+      case 9:
+        this.io_adr0.pull(null);
+        this.io_adr1.output(false);
+        this.address = 0x49;
+        break;
+      case 'A':
+        this.io_adr0.output(true);
+        this.io_adr1.output(false);
+        this.address = 0x4a;
+        break;
+      case 'B':
+        this.io_adr0.output(false);
+        this.io_adr1.output(true);
+        this.address = 0x4b;
+        break;
+      case 'C':
+        this.io_adr0.pull(null);
+        this.io_adr1.output(true);
+        this.address = 0x4c;
+        break;
+      case 'D':
+        this.io_adr0.output(true);
+        this.io_adr1.output(true);
+        this.address = 0x4d;
+        break;
+      case 'E':
+        this.io_adr0.output(false);
+        this.io_adr1.pull(null);
+        this.address = 0x4e;
+        break;
+      case 'F':
+        this.io_adr0.output(true);
+        this.io_adr1.pull(null);
+        this.address = 0x4f;
+        break;
+      default:
+        this.io_adr0.output(false);
+        this.io_adr1.output(false);
+        this.address = 0x48;
+        break;
+    }
+    console.log('i2c address=' + this.address);
+
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    //obniz.i2c0.write(address, [0x20, 0x24]);
+  }
+
+  async getTempWait() {
+    //console.log("gettempwait");
+    //obniz.i2c0.write(address, [0x20, 0x24]);
+    //obniz.i2c0.write(address, [0xE0, 0x00]);
+    let ret = await this.i2c0.readWait(this.address, 2);
+    //console.log('ret:' + ret);
+    let tempBin =
+      ret[0].toString(2) + ('00000000' + ret[1].toString(2)).slice(-8);
+    let temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
+    return temperature;
+  }
+
+  async getHumdWait() {
+    this.i2c.write(this.address, [0x20, 0x24]);
+    this.i2c.write(this.address, [0xe0, 0x00]);
+    let ret = await this.i2c.readWait(this.address, 4);
+    let humdBin =
+      ret[2].toString(2) + ('00000000' + ret[3].toString(2)).slice(-8);
+    let humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
+    return humidity;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('S5851A', S5851A);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/SHT31/index.js":
+/*!****************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/SHT31/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class SHT31 {
+  constructor() {
+    this.requiredKeys = ['adr', 'addressmode'];
+    this.keys = [
+      'vcc',
+      'sda',
+      'scl',
+      'gnd',
+      'adr',
+      'addressmode',
+      'i2c',
+      'pull',
+    ];
+
+    this.ioKeys = ['vcc', 'sda', 'scl', 'gnd', 'adr'];
+    this.commands = {};
+    this.commands.softReset = [0x30, 0xa2];
+    this.commands.highRepeatStreach = [0x2c, 0x06];
+    this.commands.middleRepeatStreach = [0x2c, 0x0d];
+    this.commands.lowRepeatStreach = [0x2c, 0x10];
+    this.commands.highRepeat = [0x24, 0x00];
+    this.commands.mediumRepeat = [0x24, 0x0b];
+    this.commands.lowRepeat = [0x24, 0x16];
+
+    this.waitTime = {};
+    this.waitTime.wakeup = 1;
+    this.waitTime.softReset = 1;
+    this.waitTime.lowRepeat = 4;
+    this.waitTime.mediumRepeat = 6;
+    this.waitTime.highRepeat = 15;
+
+    //not tested
+    this.commands.readStatus = [0xf3, 0x2d];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.io_adr = obniz.getIO(this.params.adr);
+
+    if (this.params.addressmode === 4) {
+      this.io_adr.output(false);
+      this.address = 0x44;
+    } else if (this.params.addressmode === 5) {
+      this.io_adr.pull(null);
+      this.address = 0x45;
+    }
+
+    this.params.clock = this.params.clock || 100 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    obniz.i2c0.write(this.address, this.commands.softReset);
+  }
+
+  async getData() {
+    this.i2c.write(this.address, this.commands.highRepeat);
+    await this.obniz.wait(this.waitTime.highRepeat);
+    return await this.i2c.readWait(this.address, 6);
+  }
+
+  async getTempWait() {
+    return (await this.getAllWait()).temperature;
+  }
+
+  async getHumdWait() {
+    return (await this.getAllWait()).humidity;
+  }
+
+  async getAllWait() {
+    let ret = await this.getData();
+
+    let tempBin = ret[0] * 256 + ret[1];
+    let temperature = -45 + 175 * (tempBin / (65536 - 1));
+
+    let humdBin = ret[3] * 256 + ret[4];
+    let humidity = 100 * (humdBin / (65536 - 1));
+    return { temperature, humidity };
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('SHT31', SHT31);
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/spi/ADT7310/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/spi/ADT7310/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class ADT7310 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
+    this.requiredKeys = [];
+  }
+  async wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = this.params.mode || 'master';
+    this.params.frequency = this.params.frequency || 500000;
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.dout;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+  }
+
+  async getTempWait() {
+    await this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+    await this.obniz.wait(200); //適度な値でないと安定しない
+    let ret = await this.spi.writeWait([0x00, 0x00]);
+    let tempBin = ret[0] << 8;
+    tempBin |= ret[1];
+    tempBin = tempBin >> 3;
+
+    if (tempBin & 0x1000) {
+      //0度以下の時の処理
+      tempBin = tempBin - 8192;
+    }
+
+    return tempBin / 16;
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('ADT7310', ADT7310);
+
 
 /***/ })
 

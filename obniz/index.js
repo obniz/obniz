@@ -1,13 +1,11 @@
-
 const ObnizUIs = require('./ObnizUIs');
-const ObnizApi = require("./ObnizApi");
+const ObnizApi = require('./ObnizApi');
 
 /* global showObnizDebugError  */
 
-const isNode = (typeof window === 'undefined');
+const isNode = typeof window === 'undefined';
 
 module.exports = class Obniz extends ObnizUIs {
-
   constructor(id, options) {
     super(id, options);
   }
@@ -19,10 +17,9 @@ module.exports = class Obniz extends ObnizUIs {
     }
     this.looper = callback;
     let self = this;
-    if (!interval)
-      interval = 100;
+    if (!interval) interval = 100;
     async function loop() {
-      if (typeof (self.looper) === "function") {
+      if (typeof self.looper === 'function') {
         await self.looper();
         setTimeout(loop, interval);
       }
@@ -30,7 +27,7 @@ module.exports = class Obniz extends ObnizUIs {
     loop();
   }
 
-  wsOnClose(){
+  wsOnClose() {
     super.wsOnClose();
     if (this.looper) {
       this.looper = null;
@@ -39,7 +36,7 @@ module.exports = class Obniz extends ObnizUIs {
 
   message(target, message) {
     let targets = [];
-    if (typeof (target) === "string") {
+    if (typeof target === 'string') {
       targets.push(target);
     } else {
       targets = target;
@@ -47,27 +44,27 @@ module.exports = class Obniz extends ObnizUIs {
     this.send({
       message: {
         to: targets,
-        data: message
-      }
+        data: message,
+      },
     });
   }
 
-  notifyToModule(obj){
+  notifyToModule(obj) {
     super.notifyToModule(obj);
     // notify messaging
-    if (typeof (obj.message) === "object" && this.onmessage) {
+    if (typeof obj.message === 'object' && this.onmessage) {
       this.onmessage(obj.message.data, obj.message.from);
     }
     // debug
-    if (typeof (obj.debug) === "object") {
+    if (typeof obj.debug === 'object') {
       if (obj.debug.warning) {
-        let msg = "Warning: " + obj.debug.warning.message;
-        this.warning({alert: 'warning', message: msg});
+        let msg = 'Warning: ' + obj.debug.warning.message;
+        this.warning({ alert: 'warning', message: msg });
       }
 
       if (obj.debug.error) {
-        let msg = "Error: " + obj.debug.error.message;
-        this.error({alert: 'error', message: msg});
+        let msg = 'Error: ' + obj.debug.error.message;
+        this.error({ alert: 'error', message: msg });
       }
       if (this.ondebug) {
         this.ondebug(obj.debug);
@@ -79,12 +76,12 @@ module.exports = class Obniz extends ObnizUIs {
     if (this.isNode) {
       console.error(msg);
     } else {
-      if (msg && typeof msg === "object" && msg.alert) {
+      if (msg && typeof msg === 'object' && msg.alert) {
         this.showAlertUI(msg);
         console.log(msg.message);
         return;
       }
-      if (typeof (showObnizDebugError) === "function") {
+      if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg));
       } else {
         throw new Error(msg);
@@ -96,11 +93,11 @@ module.exports = class Obniz extends ObnizUIs {
     if (this.isNode) {
       console.error(msg);
     } else {
-      if (msg && typeof msg === "object" && msg.alert) {
+      if (msg && typeof msg === 'object' && msg.alert) {
         this.showAlertUI(msg);
         msg = msg.message;
       }
-      if (typeof (showObnizDebugError) === "function") {
+      if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg));
         console.error(new Error(msg));
       } else {
@@ -113,24 +110,25 @@ module.exports = class Obniz extends ObnizUIs {
    *
    * @returns {ObnizApi}
    */
-  static get api(){
+  static get api() {
     return ObnizApi;
   }
 };
-
 
 /*===================*/
 /* Utils */
 /*===================*/
 if (!isNode) {
-  if(window && window.parent && window.parent.userAppLoaded){
+  if (window && window.parent && window.parent.userAppLoaded) {
     window.parent.userAppLoaded(window);
   }
 
-  function showObnizDebugError(err) {
-    if(window.parent && window.parent.logger){
+  function showObnizDebugError(err) {//eslint-disable-line
+    if (window.parent && window.parent.logger) {
       window.parent.logger.onObnizError(err);
-    }else{ throw err; }
+    } else {
+      throw err;
+    }
   }
 }
 
@@ -138,9 +136,10 @@ if (!isNode) {
 /* ReadParts */
 /*===================*/
 require.context = require('./libs/webpackReplace/require-context');
-if(require.context && require.context.setBaseDir){require.context.setBaseDir(__dirname);}
-let context = require.context(  "../parts", true, /\.js$/);
-for( let path of context.keys()){
+if (require.context && require.context.setBaseDir) {
+  require.context.setBaseDir(__dirname);
+}
+let context = require.context('../parts', true, /\.js$/);
+for (let path of context.keys()) {
   context(path);
 }
-

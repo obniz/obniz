@@ -1,8 +1,7 @@
-const BleRemoteService = require("./bleRemoteService");
-const emitter = require("eventemitter3");
+const BleRemoteService = require('./bleRemoteService');
+const emitter = require('eventemitter3');
 
 class BleRemotePeripheral {
-
   constructor(Obniz, address) {
     this.Obniz = Obniz;
     this.address = address;
@@ -16,12 +15,12 @@ class BleRemotePeripheral {
     this.scan_resp = null;
 
     this.keys = [
-      "device_type",
-      "address_type",
-      "ble_event_type",
-      "rssi",
-      "adv_data",
-      "scan_resp",
+      'device_type',
+      'address_type',
+      'ble_event_type',
+      'rssi',
+      'adv_data',
+      'scan_resp',
     ];
 
     this.services = [];
@@ -38,7 +37,7 @@ class BleRemotePeripheral {
       addressType: this.address_type,
       advertisement: this.adv_data,
       scanResponse: this.scan_resp,
-      rssi: this.rssi
+      rssi: this.rssi,
     });
   }
 
@@ -65,7 +64,6 @@ class BleRemotePeripheral {
         }
       }
       if (this.scan_resp) {
-
         for (let i = 0; i < this.scan_resp.length; i++) {
           let length = this.scan_resp[i];
           let arr = new Array(length);
@@ -78,7 +76,6 @@ class BleRemotePeripheral {
       }
     }
   }
-
 
   searchTypeVal(type) {
     this.analyseAdvertisement();
@@ -102,20 +99,28 @@ class BleRemotePeripheral {
   }
 
   get iBeacon() {
-    let data = this.searchTypeVal(0xFF);
-    if (!data
-        || data[0] !== 0x4c
-        || data[1] !== 0x00
-        || data[2] !== 0x02
-        || data[3] !== 0x15
-        || data.length !== 25) return null;
+    let data = this.searchTypeVal(0xff);
+    if (
+      !data ||
+      data[0] !== 0x4c ||
+      data[1] !== 0x00 ||
+      data[2] !== 0x02 ||
+      data[3] !== 0x15 ||
+      data.length !== 25
+    )
+      return null;
 
     let uuidData = data.slice(4, 20);
-    let uuid = "";
+    let uuid = '';
     for (let i = 0; i < uuidData.length; i++) {
-      uuid = uuid + (('00' + uuidData[i].toString(16)).slice(-2));
-      if (i === (4 - 1) || i === (4 + 2 - 1) || i === (4 + 2 * 2 - 1) || i === (4 + 2 * 3 - 1)) {
-        uuid += "-";
+      uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+      if (
+        i === 4 - 1 ||
+        i === 4 + 2 - 1 ||
+        i === 4 + 2 * 2 - 1 ||
+        i === 4 + 2 * 3 - 1
+      ) {
+        uuid += '-';
       }
     }
 
@@ -128,7 +133,7 @@ class BleRemotePeripheral {
       major: major,
       minor: minor,
       power: power,
-      rssi: this.rssi
+      rssi: this.rssi,
     };
   }
 
@@ -152,45 +157,44 @@ class BleRemotePeripheral {
     return results;
   }
 
-
   connect() {
     let obj = {
-      "ble": {
-        "connect": {
-          "address": this.address
-        }
-      }
+      ble: {
+        connect: {
+          address: this.address,
+        },
+      },
     };
     this.Obniz.send(obj);
   }
 
   connectWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("statusupdate", (params) => {
-        resolve(params.status === "connected");
+    return new Promise(resolve => {
+      this.emitter.once('statusupdate', params => {
+        resolve(params.status === 'connected');
       });
       this.connect();
-    })
+    });
   }
 
   disconnect() {
     let obj = {
-      "ble": {
-        "disconnect": {
-          "address": this.address
-        }
-      }
+      ble: {
+        disconnect: {
+          address: this.address,
+        },
+      },
     };
     this.Obniz.send(obj);
   }
 
   disconnectWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("statusupdate", (params) => {
-        resolve(params.status === "disconnected");
+    return new Promise(resolve => {
+      this.emitter.once('statusupdate', params => {
+        resolve(params.status === 'disconnected');
       });
       this.disconnect();
-    })
+    });
   }
 
   getService(uuid) {
@@ -200,7 +204,7 @@ class BleRemotePeripheral {
         return this.services[key];
       }
     }
-    let newService = new BleRemoteService({uuid});
+    let newService = new BleRemoteService({ uuid });
     newService.parent = this;
     this.services.push(newService);
     return newService;
@@ -230,75 +234,62 @@ class BleRemotePeripheral {
     return null;
   }
 
-
   discoverAllServices() {
     let obj = {
-      "ble": {
-        "get_services": {
-          "address": this.address
-        }
-      }
+      ble: {
+        get_services: {
+          address: this.address,
+        },
+      },
     };
     this.Obniz.send(obj);
   }
 
   discoverAllServicesWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("discoverfinished", () => {
+    return new Promise(resolve => {
+      this.emitter.once('discoverfinished', () => {
         let children = this.services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
       });
       this.discoverAllServices();
-
-    })
+    });
   }
 
-  onconnect() {
-  };
+  onconnect() {}
 
-  ondisconnect() {
-  };
+  ondisconnect() {}
 
+  ondiscoverservice() {}
 
-  ondiscoverservice() {
-  };
+  ondiscoverservicefinished() {}
 
-  ondiscoverservicefinished() {
-  };
+  ondiscover() {}
 
-
-  ondiscover() {
-
-  };
-
-  ondiscoverfinished() {
-
-  };
-
+  ondiscoverfinished() {}
 
   notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
-      case "statusupdate" : {
-        if (params.status === "connected") {
+      case 'statusupdate': {
+        if (params.status === 'connected') {
           this.connected = true;
           this.onconnect();
         }
-        if (params.status === "disconnected") {
+        if (params.status === 'disconnected') {
           this.connected = false;
           this.ondisconnect();
         }
         break;
       }
-      case "discover" : {
+      case 'discover': {
         let child = this.getService(params.service_uuid);
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
       }
-      case "discoverfinished" : {
+      case 'discoverfinished': {
         let children = this.services.filter(elm => {
           return elm.discoverdOnRemote;
         });
@@ -308,10 +299,7 @@ class BleRemotePeripheral {
     }
   }
 
-  onerror() {
-  };
-
+  onerror() {}
 }
-
 
 module.exports = BleRemotePeripheral;

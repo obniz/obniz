@@ -1,58 +1,53 @@
-const WSCommand = require("./WSCommand_.js");
+const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_Switch extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 9;
 
-    this._CommandNotifyValue  = 0;
-    this._CommandOnece        = 1;
+    this._CommandNotifyValue = 0;
+    this._CommandOnece = 1;
   }
 
   // Commands
 
   get(params) {
-    var buf = new Uint8Array(0);
+    let buf = new Uint8Array(0);
     this.sendCommand(this._CommandOnece, buf);
   }
 
   parseFromJson(json) {
-    var module = json["switch"];
+    let module = json['switch'];
     if (module === undefined) {
       return;
     }
-    let schemaData = [
-      {uri : "/request/switch/get",       onValid: this.get},
-    ];
-    let res = this.validateCommandSchema(schemaData, module, "switch");
+    let schemaData = [{ uri: '/request/switch/get', onValid: this.get }];
+    let res = this.validateCommandSchema(schemaData, module, 'switch');
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new this.WSCommandNotFoundError(`[switch]unknown command`);
       }
     }
   }
-  
+
   notifyFromBinary(objToSend, func, payload) {
-    if ((func === this._CommandOnece || func === this._CommandNotifyValue) && payload.byteLength == 1) {
-      var state = parseInt(payload[0]);
-      var states = [
-        "none",
-        "push",
-        "left",
-        "right"
-      ]
-      objToSend["switch"] = {
-        state: states[state]
+    if (
+      (func === this._CommandOnece || func === this._CommandNotifyValue) &&
+      payload.byteLength == 1
+    ) {
+      let state = parseInt(payload[0]);
+      let states = ['none', 'push', 'left', 'right'];
+      objToSend['switch'] = {
+        state: states[state],
       };
       if (func === this._CommandOnece) {
-        objToSend["switch"].action = "get"
+        objToSend['switch'].action = 'get';
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }

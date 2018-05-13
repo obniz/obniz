@@ -1,20 +1,17 @@
-const WSCommand = require("./WSCommand_.js");
-const qrcode = require("../utils/qr");
-
-let isNode = (typeof window === 'undefined') ;
+const WSCommand = require('./WSCommand_.js');
+const qrcode = require('../utils/qr');
 
 class WSCommand_Display extends WSCommand {
-
   constructor(delegate) {
     super(delegate);
     this.module = 8;
 
-    this._CommandClear                    = 0;
-    this._CommandPrint                    = 1;
-    this._CommandDrawCampusVerticalBytes  = 2;
+    this._CommandClear = 0;
+    this._CommandPrint = 1;
+    this._CommandDrawCampusVerticalBytes = 2;
     this._CommandDrawCampusHorizonalBytes = 3;
-    this._CommandDrawIOState              = 4;
-    this._CommandSetPinName               = 5;
+    this._CommandDrawIOState = 4;
+    this._CommandSetPinName = 5;
   }
 
   // Commands
@@ -26,24 +23,24 @@ class WSCommand_Display extends WSCommand {
   print(buf) {
     this.sendCommand(this._CommandPrint, buf);
   }
-  
+
   printText(text) {
-    var result;
+    let result;
     const buf = Buffer(text, 'utf8');
     result = new Uint8Array(buf);
     this.print(result);
   }
 
-  text(params){
+  text(params) {
     this.printText(params.text);
   }
 
-  raw(params){
+  raw(params) {
     this.drawHorizonally(new Uint8Array(params.raw));
   }
 
   qr(params) {
-    const text = params.qr.text
+    const text = params.qr.text;
     const correctionLevel = params.qr.correction || 'M';
 
     const typeNumber = 0; // auto detect type.
@@ -57,40 +54,45 @@ class WSCommand_Display extends WSCommand {
       let vram = new Uint8Array(1024);
       vram.fill(0);
 
-      for (let row=0; row<2; row++){
-        for (let col=0; col<size+4; col++){
-          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
-          vram[parseInt((row + size + 2)*16 + col/8)] |= 0x80 >> (col%8);
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < size + 4; col++) {
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
+          vram[parseInt((row + size + 2) * 16 + col / 8)] |= 0x80 >> (col % 8);
         }
       }
-      for (let row=2; row<size+2; row++){
-        for (let col=0; col<2; col++){
-          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+      for (let row = 2; row < size + 2; row++) {
+        for (let col = 0; col < 2; col++) {
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
         }
-        for (let col=size+2; col<size+4; col++){
-          vram[parseInt(row*16 + col/8)] |= 0x80 >> (col%8);
+        for (let col = size + 2; col < size + 4; col++) {
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
         }
       }
 
-      for (let row=0; row<size; row++){
-        for (let col=0; col<size; col++){
-          if (!modules[parseInt(row/2)][parseInt(col/2)]) {
-            vram[parseInt((row+2)*16 + (col+2)/8)] |= 0x80 >> ((col+2)%8);
+      for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+          if (!modules[parseInt(row / 2)][parseInt(col / 2)]) {
+            vram[parseInt((row + 2) * 16 + (col + 2) / 8)] |=
+              0x80 >> ((col + 2) % 8);
           }
         }
       }
       this.drawHorizonally(vram);
     }
   }
-  
+
   pinName(params) {
-    for (var i = 0; i < 12; i++) {
-      if (typeof (params.pin_assign[i]) === "object") {
-        this.setPinName(i, params.pin_assign[i].module_name || "?", params.pin_assign[i].pin_name || "?");
+    for (let i = 0; i < 12; i++) {
+      if (typeof params.pin_assign[i] === 'object') {
+        this.setPinName(
+          i,
+          params.pin_assign[i].module_name || '?',
+          params.pin_assign[i].pin_name || '?'
+        );
       }
     }
   }
-  
+
   drawVertically(buf) {
     this.sendCommand(this._CommandDrawCampusVerticalBytes, buf);
   }
@@ -98,47 +100,46 @@ class WSCommand_Display extends WSCommand {
   drawHorizonally(buf) {
     this.sendCommand(this._CommandDrawCampusHorizonalBytes, buf);
   }
-  
+
   drawIOState(val) {
-    var buf = new Uint8Array([!val])
+    let buf = new Uint8Array([!val]);
     this.sendCommand(this._CommandDrawIOState, buf);
   }
-  
-  
-  setPinName(no, moduleName, pinName ) {
-    var str = moduleName.slice(0,4) + " "+ pinName;
-    str = str.slice(0,9);
 
-    var buf = new Uint8Array(1);
-    buf[0] = no; 
+  setPinName(no, moduleName, pinName) {
+    let str = moduleName.slice(0, 4) + ' ' + pinName;
+    str = str.slice(0, 9);
 
-    var stringarray = new Uint8Array(Buffer(str, 'utf8'));
-    var combined = new Uint8Array(buf.length + stringarray.length);
+    let buf = new Uint8Array(1);
+    buf[0] = no;
+
+    let stringarray = new Uint8Array(Buffer(str, 'utf8'));
+    let combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);
 
     this.sendCommand(this._CommandSetPinName, combined);
   }
-  
+
   parseFromJson(json) {
-    var module = json["display"];
+    let module = json['display'];
     if (module === undefined) {
       return;
     }
 
     let schemaData = [
-      {uri : "/request/display/clear", onValid: this.clear},
-      {uri : "/request/display/text",  onValid: this.text},
-      {uri : "/request/display/raw", onValid: this.raw},
-      {uri : "/request/display/pin_assign", onValid: this.pinName},
-      {uri : "/request/display/qr", onValid: this.qr}
+      { uri: '/request/display/clear', onValid: this.clear },
+      { uri: '/request/display/text', onValid: this.text },
+      { uri: '/request/display/raw', onValid: this.raw },
+      { uri: '/request/display/pin_assign', onValid: this.pinName },
+      { uri: '/request/display/qr', onValid: this.qr },
     ];
-    let res = this.validateCommandSchema(schemaData, module, "display" );
+    let res = this.validateCommandSchema(schemaData, module, 'display');
 
-    if(res.valid === 0){
-      if(res.invalidButLike.length > 0) {
+    if (res.valid === 0) {
+      if (res.invalidButLike.length > 0) {
         throw new Error(res.invalidButLike[0].message);
-      }else{
+      } else {
         throw new this.WSCommandNotFoundError(`[display]unknown command`);
       }
     }

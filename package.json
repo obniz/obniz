@@ -4,12 +4,20 @@
   "description": "obniz sdk for javascript",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/nyc --reporter=text --reporter=html ./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./test/index.js",
+    "test": "nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js",
     "buildAndtest": "npm run build && npm test",
-    "realtest": "./node_modules/.bin/mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
-    "local": "./node_modules/.bin/gulp --gulpfile ./_tools/server.js --cwd .",
-    "build": "./node_modules/.bin/gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build",
-    "version": "npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js"
+    "realtest": "mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
+    "local": "gulp --gulpfile ./_tools/server.js --cwd .",
+    "build": "npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build",
+    "version": "npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js",
+    "lint": "eslint --fix .",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "keywords": [
     "obniz"
@@ -32,6 +40,10 @@
     "chokidar": "^1.7.0",
     "concat-with-sourcemaps": "^1.1.0",
     "ejs": "^2.5.9",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-jasmine": "^2.10.0",
+    "eslint-plugin-prettier": "^2.6.0",
     "express": "^4.16.2",
     "get-port": "^3.2.0",
     "glob": "^7.1.2",
@@ -45,7 +57,9 @@
     "gulp-sort": "^2.0.0",
     "gulp-util": "^3.0.8",
     "gulp-yaml": "^1.0.1",
+    "husky": "^0.14.3",
     "json-loader": "^0.5.7",
+    "lint-staged": "^7.1.0",
     "mocha": "^5.1.1",
     "mocha-chrome": "^1.1.0",
     "mocha-directory": "^2.3.0",
@@ -54,6 +68,7 @@
     "node-notifier": "^5.2.1",
     "nyc": "^11.7.1",
     "path": "^0.12.7",
+    "prettier": "^1.12.1",
     "semver": "^5.5.0",
     "sinon": "^4.5.0",
     "svg-to-png": "^3.1.2",

@@ -1,27 +1,31 @@
 class RN42 {
   constructor() {
-    this.keys = ["tx", "rx", "gnd"];
-    this.requiredKeys = ["tx", "rx"];
-
+    this.keys = ['tx', 'rx', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
   }
 
   wired(obniz) {
-    if(obniz.isValidIO(this.params.gnd)) {
+    if (obniz.isValidIO(this.params.gnd)) {
       obniz.getIO(this.params.gnd).output(false);
     }
-  
+
     this.uart = obniz.getFreeUart();
-  
-    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:115200, drive:"3v"});
-    var self = this;
+
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 115200,
+      drive: '3v',
+    });
+    let self = this;
     this.uart.onreceive = (data, text) => {
       // this is not perfect. separation is possible.
-      if (text.indexOf("CONNECT") >= 0) {
-        console.log("connected");
-      } else if(text.indexOf("DISCONNECT") >= 0) {
-        console.log("disconnected");
+      if (text.indexOf('CONNECT') >= 0) {
+        console.log('connected');
+      } else if (text.indexOf('DISCONNECT') >= 0) {
+        console.log('disconnected');
       }
-      if (typeof(self.onreceive) === "function") {
+      if (typeof self.onreceive === 'function') {
         self.onreceive(data, text);
       }
     };
@@ -32,7 +36,7 @@ class RN42 {
   }
 
   sendCommand(data) {
-    this.uart.send(data+'\n');
+    this.uart.send(data + '\n');
     this.obniz.wait(100);
   }
 
@@ -43,13 +47,13 @@ class RN42 {
 
   config(json) {
     this.enterCommandMode();
-    if (typeof(json) !== "object") {
+    if (typeof json !== 'object') {
       // TODO: warning
       return;
     }
     // remove noize data
-    this.sendCommand("");
-  
+    this.sendCommand('');
+
     if (json.master_slave) {
       this.config_masterslave(json.master_slave);
     }
@@ -76,12 +80,20 @@ class RN42 {
   }
 
   config_masterslave(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
+    let val = -1;
+    if (typeof mode === 'number') {
       val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"];
-      for (var i=0; i<modes.length; i++) {
+    } else if (typeof mode === 'string') {
+      let modes = [
+        'slave',
+        'master',
+        'trigger',
+        'auto-connect-master',
+        'auto-connect-dtr',
+        'auto-connect-any',
+        'pairing',
+      ];
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -92,26 +104,33 @@ class RN42 {
       // TODO: warning
       return;
     }
-    this.sendCommand('SM,'+val);
+    this.sendCommand('SM,' + val);
   }
 
   config_displayName(name) {
-    this.sendCommand('SN,'+name);
+    this.sendCommand('SN,' + name);
   }
 
-
-    // // SH,0200 HID Flag register. Descriptor=keyboard
+  // // SH,0200 HID Flag register. Descriptor=keyboard
   config_HIDflag(flag) {
-    this.sendCommand('SH,'+flag);
+    this.sendCommand('SH,' + flag);
   }
 
   config_profile(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
+    let val = -1;
+    if (typeof mode === 'number') {
       val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
-      for (var i=0; i<modes.length; i++) {
+    } else if (typeof mode === 'string') {
+      let modes = [
+        'SPP',
+        'DUN-DCE',
+        'DUN-DTE',
+        'MDM-SPP',
+        'SPP-DUN-DCE',
+        'APL',
+        'HID',
+      ];
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -122,7 +141,7 @@ class RN42 {
       // TODO: warning
       return;
     }
-    this.sendCommand('S~,'+val);
+    this.sendCommand('S~,' + val);
   }
 
   config_revert_localecho() {
@@ -130,12 +149,12 @@ class RN42 {
   }
 
   config_auth(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
+    let val = -1;
+    if (typeof mode === 'number') {
       val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["open", "ssp-keyboard", "just-work", "pincode"];
-      for (var i=0; i<modes.length; i++) {
+    } else if (typeof mode === 'string') {
+      let modes = ['open', 'ssp-keyboard', 'just-work', 'pincode'];
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -146,28 +165,28 @@ class RN42 {
       // TODO: warning
       return;
     }
-    this.sendCommand('SA,'+val);
+    this.sendCommand('SA,' + val);
   }
 
   config_power(dbm) {
-    var val = "0010";
+    let val = '0010';
     if (16 > dbm && dbm >= 12) {
-      val = "000C";
+      val = '000C';
     } else if (12 > dbm && dbm >= 8) {
-      val = "0008";
+      val = '0008';
     } else if (8 > dbm && dbm >= 4) {
-      val = "0004";
+      val = '0004';
     } else if (4 > dbm && dbm >= 0) {
-      val = "0000";
+      val = '0000';
     } else if (0 > dbm && dbm >= -4) {
-      val = "FFFC";
+      val = 'FFFC';
     } else if (-4 > dbm && dbm >= -8) {
-      val = "FFF8";
+      val = 'FFF8';
     } else if (-8 > dbm) {
-      val = "FFF4";
+      val = 'FFF4';
     }
-  
-    this.sendCommand('SY,'+val);
+
+    this.sendCommand('SY,' + val);
   }
 
   config_get_setting() {
@@ -181,5 +200,5 @@ class RN42 {
 
 // Module functions
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("RN42", RN42);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('RN42', RN42);
