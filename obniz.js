@@ -8088,7 +8088,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         pwm.used = true;
         return pwm;
       }
-      i++;
     }
     throw new Error('No More PWM Available. max = ' + i);
   }
@@ -8104,7 +8103,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         i2c.used = true;
         return i2c;
       }
-      i++;
     }
     throw new Error('No More I2C Available. max = ' + i);
   }
@@ -8132,7 +8130,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         spi.used = true;
         return spi;
       }
-      i++;
     }
     throw new Error('No More SPI Available. max = ' + i);
   }
@@ -8160,7 +8157,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         uart.used = true;
         return uart;
       }
-      i++;
     }
     throw new Error('No More uart Available. max = ' + i);
   }
@@ -8226,7 +8222,7 @@ module.exports = class ObnizConnection {
   }
 
   prompt(filled, callback) {
-    var obnizid = prompt('Please enter obniz id', filled);
+    let obnizid = prompt('Please enter obniz id', filled);
     if (obnizid) {
       callback(obnizid);
     }
@@ -8657,7 +8653,7 @@ module.exports = class ObnizConnection {
       const frame = WSCommand.dequeueOne(data);
       if (!frame) break;
       let obj = {};
-      for (var i = 0; i < this.wscommands.length; i++) {
+      for (let i = 0; i < this.wscommands.length; i++) {
         const command = this.wscommands[i];
         if (command.module === frame.module) {
           command.notifyFromBinary(obj, frame.func, frame.payload);
@@ -9154,7 +9150,7 @@ if (!isNode) {
     window.parent.userAppLoaded(window);
   }
 
-  function showObnizDebugError(err) {
+  function showObnizDebugError(err) {//eslint-disable-line
     if (window.parent && window.parent.logger) {
       window.parent.logger.onObnizError(err);
     } else {
@@ -11158,7 +11154,7 @@ class Display {
         canvas.width = this.width;
         canvas.height = this.height;
         canvas.style['-webkit-font-smoothing'] = 'none';
-        var body = document.getElementsByTagName('body')[0];
+        let body = document.getElementsByTagName('body')[0];
         body.appendChild(canvas);
       }
       this._canvas = canvas;
@@ -11201,7 +11197,7 @@ class Display {
     }
     this._pos.x = 0;
     this._pos.y = 0;
-    var obj = {};
+    let obj = {};
     obj['display'] = {
       clear: true,
     };
@@ -11209,7 +11205,6 @@ class Display {
   }
 
   pos(x, y) {
-    const ctx = this._ctx(); // load it first.
     if (typeof x == 'number') {
       this._pos.x = x;
     }
@@ -11226,7 +11221,7 @@ class Display {
       this.draw(ctx);
       this._pos.y += this.fontSize;
     } else {
-      var obj = {};
+      let obj = {};
       obj['display'] = {
         text: '' + text,
       };
@@ -11278,7 +11273,7 @@ class Display {
   }
 
   qr(text, correction) {
-    var obj = {};
+    let obj = {};
     obj['display'] = {
       qr: {
         text,
@@ -11291,7 +11286,7 @@ class Display {
   }
 
   raw(data) {
-    var obj = {};
+    let obj = {};
     obj['display'] = {
       raw: data,
     };
@@ -11299,7 +11294,7 @@ class Display {
   }
 
   setPinName(io, moduleName, funcName) {
-    var obj = {};
+    let obj = {};
     obj['display'] = {};
     obj['display']['pin_assign'] = {};
     obj['display']['pin_assign'][io] = {
@@ -11315,7 +11310,7 @@ class Display {
     obj['display'] = {};
     obj['display']['pin_assign'] = {};
     let noAssignee = true;
-    for (var key in data) {
+    for (let key in data) {
       noAssignee = false;
       obj['display']['pin_assign'][key] = {
         module_name: moduleName,
@@ -11334,11 +11329,11 @@ class Display {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      var index = parseInt(i / 4);
-      var line = parseInt(index / this.width);
-      var col = parseInt((index - line * this.width) / 8);
-      var bits = parseInt(index - line * this.width) % 8;
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let index = parseInt(i / 4);
+      let line = parseInt(index / this.width);
+      let col = parseInt((index - line * this.width) / 8);
+      let bits = parseInt(index - line * this.width) % 8;
       if (bits == 0) vram[line * stride + col] = 0x00;
       if (brightness > 0x7f) vram[line * stride + col] |= 0x80 >> bits;
     }
@@ -11420,7 +11415,7 @@ class PeripheralAD {
 
   start(callback) {
     this.onchange = callback;
-    var obj = {};
+    let obj = {};
     obj['ad' + this.id] = {
       stream: true,
     };
@@ -11429,10 +11424,10 @@ class PeripheralAD {
   }
 
   getWait() {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['ad' + self.id] = {
         stream: false,
       };
@@ -11442,7 +11437,7 @@ class PeripheralAD {
 
   end() {
     this.onchange = null;
-    var obj = {};
+    let obj = {};
     obj['ad' + this.id] = null;
     this.Obniz.send(obj);
     return;
@@ -11453,7 +11448,7 @@ class PeripheralAD {
     if (this.onchange) {
       this.onchange(obj);
     }
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj);
     }
@@ -11492,7 +11487,7 @@ class PeripheralI2C {
   }
 
   start(arg) {
-    var err = ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
+    let err = ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
     if (err) {
       throw new Error("I2C start param '" + err + "' required, but not found ");
     }
@@ -11505,13 +11500,13 @@ class PeripheralI2C {
       }
     }
 
-    var mode = this.state.mode;
-    var clock = typeof arg.clock === 'number' ? parseInt(arg.clock) : null;
-    var slave_address =
+    let mode = this.state.mode;
+    let clock = typeof arg.clock === 'number' ? parseInt(arg.clock) : null;
+    let slave_address =
       typeof arg.slave_address === 'number'
         ? parseInt(arg.slave_address)
         : null;
-    var slave_address_length =
+    let slave_address_length =
       typeof arg.slave_address_length === 'number'
         ? parseInt(arg.slave_address_length)
         : null;
@@ -11562,7 +11557,7 @@ class PeripheralI2C {
       this.Obniz.getIO(this.state.scl).pull(null);
     }
 
-    var startObj = ObnizUtil._keyFilter(this.state, ['mode', 'sda', 'scl']);
+    let startObj = ObnizUtil._keyFilter(this.state, ['mode', 'sda', 'scl']);
     if (mode === 'master') {
       startObj.clock = clock;
     } else {
@@ -11572,7 +11567,7 @@ class PeripheralI2C {
       }
     }
 
-    var obj = {};
+    let obj = {};
     obj['i2c' + this.id] = startObj;
     this.used = true;
     this.Obniz.send(obj);
@@ -11592,7 +11587,7 @@ class PeripheralI2C {
     if (data.length > 1024) {
       throw new Error('i2c: data should be under 1024 bytes');
     }
-    var obj = {};
+    let obj = {};
     obj['i2c' + this.id] = {
       address,
       data,
@@ -11615,10 +11610,10 @@ class PeripheralI2C {
     if (length > 1024) {
       throw new Error('i2c: data length should be under 1024 bytes');
     }
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['i2c' + self.id] = {
         address,
         read: length,
@@ -11634,7 +11629,7 @@ class PeripheralI2C {
           this.onwritten(obj.data, obj.address);
         } else {
           // TODO: we should compare byte length from sent
-          var callback = this.observers.shift();
+          let callback = this.observers.shift();
           if (callback) {
             callback(obj.data);
           }
@@ -11661,7 +11656,7 @@ class PeripheralI2C {
 
   end() {
     this.state = {};
-    var obj = {};
+    let obj = {};
     obj['i2c' + this.id] = null;
     this.Obniz.send(obj);
     this.used = false;
@@ -11696,7 +11691,7 @@ class PeripheralIO {
 
   output(value) {
     value = value == true;
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = value;
     this.value = value;
     this.Obniz.send(obj);
@@ -11721,7 +11716,7 @@ class PeripheralIO {
         throw new Error('unknown drive method');
     }
 
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = {
       output_type: output_type,
     };
@@ -11754,7 +11749,7 @@ class PeripheralIO {
         throw new Error('unknown pull_type method');
     }
 
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = {
       pull_type: pull_type,
     };
@@ -11763,7 +11758,7 @@ class PeripheralIO {
 
   input(callback) {
     this.onchange = callback;
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = {
       direction: 'input',
       stream: true,
@@ -11773,10 +11768,10 @@ class PeripheralIO {
   }
 
   inputWait() {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['io' + self.id] = {
         direction: 'input',
         stream: false,
@@ -11786,7 +11781,7 @@ class PeripheralIO {
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = null;
     this.Obniz.send(obj);
   }
@@ -11794,7 +11789,7 @@ class PeripheralIO {
   notified(obj) {
     if (typeof obj === 'boolean') {
       this.value = obj;
-      var callback = this.observers.shift();
+      let callback = this.observers.shift();
       if (callback) {
         callback(obj);
       }
@@ -11835,7 +11830,7 @@ class PeripheralIO_ {
   }
 
   animation(name, status, array) {
-    var obj = {};
+    let obj = {};
     obj.io = {
       animation: {
         name: name,
@@ -11845,7 +11840,7 @@ class PeripheralIO_ {
     if (!array) array = [];
 
     let states = [];
-    for (var i = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       let state = array[i];
       let duration = state.duration;
       let func = state.state;
@@ -11858,7 +11853,7 @@ class PeripheralIO_ {
 
       // simply merge objects
       let merged = {};
-      for (var index = 0; index < pooledJsonArray.length; index++) {
+      for (let index = 0; index < pooledJsonArray.length; index++) {
         for (let key in pooledJsonArray[index]) {
           merged[key] = pooledJsonArray[index][key];
         }
@@ -11897,7 +11892,7 @@ class PeripheralPWM {
   }
 
   sendWS(obj) {
-    var wsObj = {};
+    let wsObj = {};
     wsObj['pwm' + this.id] = obj;
     this.Obniz.send(wsObj);
   }
@@ -11933,7 +11928,6 @@ class PeripheralPWM {
     if (typeof freq !== 'number') {
       throw new Error('please provide freq in number');
     }
-    var obj = {};
     this.state.freq = freq;
     this.sendWS({
       freq: freq,
@@ -11947,7 +11941,7 @@ class PeripheralPWM {
     if (typeof this.state.io !== 'number') {
       throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
+
     this.state.pulse = pulse_width;
     delete this.state.duty;
     this.sendWS({
@@ -11984,7 +11978,6 @@ class PeripheralPWM {
   }
 
   end() {
-    var obj = {};
     this.state = {};
     this.sendWS(null);
     this.used = false;
@@ -11994,7 +11987,6 @@ class PeripheralPWM {
     if (typeof this.state.io !== 'number') {
       throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
     this.sendWS({
       modulate: {
         type: type,
@@ -12034,7 +12026,7 @@ class PeripheralSPI {
   }
 
   start(params) {
-    var err = ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
+    let err = ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
     if (err) {
       throw new Error("spi start param '" + err + "' required, but not found ");
     }
@@ -12047,7 +12039,7 @@ class PeripheralSPI {
       'drive',
       'pull',
     ]);
-    var obj = {};
+    let obj = {};
 
     let ioKeys = ['clk', 'mosi', 'miso'];
     for (let key of ioKeys) {
@@ -12117,10 +12109,10 @@ class PeripheralSPI {
       );
     }
 
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['spi' + self.id] = {
         data: data,
         read: true,
@@ -12140,8 +12132,8 @@ class PeripheralSPI {
       );
     }
 
-    var self = this;
-    var obj = {};
+    let self = this;
+    let obj = {};
     obj['spi' + self.id] = {
       data: data,
       read: false,
@@ -12151,7 +12143,7 @@ class PeripheralSPI {
 
   notified(obj) {
     // TODO: we should compare byte length from sent
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj.data);
     }
@@ -12162,8 +12154,8 @@ class PeripheralSPI {
   }
 
   end(reuse) {
-    var self = this;
-    var obj = {};
+    let self = this;
+    let obj = {};
     obj['spi' + self.id] = null;
     this.params = null;
     self.Obniz.send(obj);
@@ -12196,7 +12188,7 @@ class PeripheralUART {
   }
 
   start(params) {
-    var err = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
+    let err = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
     if (err) {
       throw new Error(
         "uart start param '" + err + "' required, but not found "
@@ -12239,7 +12231,7 @@ class PeripheralUART {
       this.Obniz.getIO(this.params.tx).pull(null);
     }
 
-    var obj = {};
+    let obj = {};
     obj['uart' + this.id] = this.params;
     this.Obniz.send(obj);
     this.received = [];
@@ -12247,7 +12239,7 @@ class PeripheralUART {
   }
 
   send(data) {
-    var send_data = null;
+    let send_data = null;
     if (data === undefined) {
       return;
     }
@@ -12255,14 +12247,14 @@ class PeripheralUART {
       data = [data];
     }
     if (isNode && data instanceof Buffer) {
-      var arr = [...data];
+      send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === 'string') {
       const buf = Buffer(data);
       send_data = [...buf];
     }
-    var obj = {};
+    let obj = {};
     obj['uart' + this.id] = {};
     obj['uart' + this.id].data = send_data;
     //  console.log(obj);
@@ -12274,9 +12266,9 @@ class PeripheralUART {
   }
 
   readBytes() {
-    var results = [];
+    let results = [];
     if (this.isDataExists()) {
-      for (var i = 0; i < this.received.length; i++) {
+      for (let i = 0; i < this.received.length; i++) {
         results.push(this.received[i]);
       }
     }
@@ -12285,9 +12277,9 @@ class PeripheralUART {
   }
 
   readText() {
-    var string = null;
+    let string = null;
     if (this.isDataExists()) {
-      var data = this.readBytes();
+      let data = this.readBytes();
       string = this.tryConvertString(data);
     }
     this.received = [];
@@ -12300,7 +12292,7 @@ class PeripheralUART {
 
   notified(obj) {
     if (this.onreceive) {
-      var string = this.tryConvertString(obj.data);
+      let string = this.tryConvertString(obj.data);
       this.onreceive(obj.data, string);
     } else {
       if (!this.received) {
@@ -12316,7 +12308,7 @@ class PeripheralUART {
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj['uart' + this.id] = null;
     this.params = null;
     this.Obniz.send(obj);
@@ -12344,7 +12336,7 @@ class LogicAnalyzer {
   }
 
   start(params) {
-    var err = ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
+    let err = ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
     if (err) {
       throw new Error(
         "LogicAnalyzer start param '" + err + "' required, but not found "
@@ -12358,7 +12350,7 @@ class LogicAnalyzer {
       'triggerValueSamples',
     ]);
 
-    var obj = {};
+    let obj = {};
     obj.logic_analyzer = {
       io: [this.params.io],
       interval: this.params.interval,
@@ -12376,7 +12368,7 @@ class LogicAnalyzer {
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj.logic_analyzer = null;
     this.obniz.send(obj);
     return;
@@ -12416,7 +12408,7 @@ class ObnizMeasure {
   }
 
   echo(params) {
-    var err = ObnizUtil._requiredKeys(params, [
+    let err = ObnizUtil._requiredKeys(params, [
       'io_pulse',
       'pulse',
       'pulse_width',
@@ -12438,7 +12430,7 @@ class ObnizMeasure {
       'callback',
     ]);
 
-    var echo = {};
+    let echo = {};
     echo.io_pulse = this.params.io_pulse;
     echo.pulse = this.params.pulse;
     echo.pulse_width = this.params.pulse_width;
@@ -12460,7 +12452,7 @@ class ObnizMeasure {
   }
 
   notified(obj) {
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj.echo);
     }
@@ -14330,9 +14322,7 @@ module.exports = qrcode;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {let isNode = typeof window === 'undefined';
-
-class ObnizUtil {
+/* WEBPACK VAR INJECTION */(function(Buffer) {class ObnizUtil {
   constructor(obniz) {
     this.obniz = obniz;
   }
@@ -14348,20 +14338,20 @@ class ObnizUtil {
         );
       }
     } else {
-      var canvas = document.createElement('canvas');
+      let canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
       canvas.style['-webkit-font-smoothing'] = 'none';
-      var body = document.getElementsByTagName('body')[0];
+      let body = document.getElementsByTagName('body')[0];
       body.appendChild(canvas);
 
-      var ctx = canvas.getContext('2d');
+      let ctx = canvas.getContext('2d');
       return ctx;
     }
   }
 
   static _keyFilter(params, keys) {
-    var filterdParams = {};
+    let filterdParams = {};
     if (typeof params !== 'object') {
       return filterdParams;
     }
@@ -14384,7 +14374,7 @@ class ObnizUtil {
       return keys[0];
     }
 
-    for (var index in keys) {
+    for (let index in keys) {
       if (!(keys[index] in params)) {
         return keys[index];
       }
@@ -14393,7 +14383,7 @@ class ObnizUtil {
   }
 
   static dataArray2string(data) {
-    var string = null;
+    let string = null;
     try {
       const StringDecoder = __webpack_require__(/*! string_decoder */ "./node_modules/string_decoder/lib/string_decoder.js").StringDecoder;
       if (StringDecoder) {
@@ -14520,11 +14510,11 @@ module.exports = class WSCommand {
   }
 
   static framed(module, func, payload) {
-    var payload_length = 0;
+    let payload_length = 0;
     if (payload) {
       payload_length = payload.length;
     }
-    var length_type;
+    let length_type;
     if (payload_length <= 0x3f) {
       length_type = 0;
     } else if (payload_length <= 0x3fff) {
@@ -14534,10 +14524,10 @@ module.exports = class WSCommand {
     } else {
       throw new Error('too big payload');
     }
-    var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
-    var header_length = 3 + length_extra_bytse;
-    var result = new Uint8Array(header_length + payload_length);
-    var index = 0;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
+    let header_length = 3 + length_extra_bytse;
+    let result = new Uint8Array(header_length + payload_length);
+    let index = 0;
     result[index++] = module & 0x7f;
     result[index++] = func;
     result[index++] =
@@ -14562,16 +14552,16 @@ module.exports = class WSCommand {
     if (buf[0] & 0x80) {
       throw new Error('reserved bit 1');
     }
-    var module = 0x7f & buf[0];
-    var func = buf[1];
-    var length_type = (buf[2] >> 6) & 0x3;
-    var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
+    let module = 0x7f & buf[0];
+    let func = buf[1];
+    let length_type = (buf[2] >> 6) & 0x3;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     if (length_type == 4) {
       throw new Error('invalid length');
     }
-    var length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
-    var index = 3;
-    var shift = length_extra_bytse;
+    let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
+    let index = 3;
+    let shift = length_extra_bytse;
     while (shift > 0) {
       shift--;
       length += buf[index] << (shift * 8);
@@ -14590,11 +14580,11 @@ module.exports = class WSCommand {
   }
 
   static compress(wscommands, json) {
-    var ret = null;
+    let ret = null;
     function append(module, func, payload) {
-      var frame = WSCommand.framed(module, func, payload);
+      let frame = WSCommand.framed(module, func, payload);
       if (ret) {
-        var combined = new Uint8Array(ret.length + frame.length);
+        let combined = new Uint8Array(ret.length + frame.length);
         combined.set(ret, 0);
         combined.set(frame, ret.length);
         ret = combined;
@@ -14622,30 +14612,26 @@ module.exports = class WSCommand {
   parseFromJson(json) {}
 
   notifyFromBinary(objToSend, func, payload) {
-    switch (func) {
-      case this.COMMAND_FUNC_ID_ERROR:
-        if (!objToSend.debug) objToSend.debug = {};
-        var err = {
-          module: this.module,
-          _args: [...payload],
-        };
+    if (func === this.COMMAND_FUNC_ID_ERROR) {
+      if (!objToSend.debug) objToSend.debug = {};
+      let err = {
+        module: this.module,
+        _args: [...payload],
+      };
 
-        if (payload.byteLength == 3) {
-          err.err0 = payload[0];
-          err.err1 = payload[1];
-          err.function = payload[2];
-          err.message = `Error module=${this.module} func=${
-            err.function
-          } err0=${err.err0} returned=${err.err1}`;
-        } else {
-          err.message = `Error module=${this.module} with + ${err._args}`;
-        }
-        objToSend.debug.error = err;
-        break;
-
-      default:
-        // unknown
-        break;
+      if (payload.byteLength == 3) {
+        err.err0 = payload[0];
+        err.err1 = payload[1];
+        err.function = payload[2];
+        err.message = `Error module=${this.module} func=${err.function} err0=${
+          err.err0
+        } returned=${err.err1}`;
+      } else {
+        err.message = `Error module=${this.module} with + ${err._args}`;
+      }
+      objToSend.debug.error = err;
+    } else {
+      // unknown
     }
   }
 
@@ -14826,7 +14812,7 @@ class WSCommand_AD extends WSCommand {
   // Commands
 
   get(params, no) {
-    var buf = new Uint8Array([no]);
+    let buf = new Uint8Array([no]);
     this.sendCommand(
       params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece,
       buf
@@ -14834,13 +14820,13 @@ class WSCommand_AD extends WSCommand {
   }
 
   deinit(params, no) {
-    var buf = new Uint8Array([no]);
+    let buf = new Uint8Array([no]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   parseFromJson(json) {
-    for (var i = 0; i < 12; i++) {
-      var module = json['ad' + i];
+    for (let i = 0; i < 12; i++) {
+      let module = json['ad' + i];
       if (module === undefined) {
         continue;
       }
@@ -14863,8 +14849,8 @@ class WSCommand_AD extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotifyValue) {
-      for (var i = 0; i < payload.byteLength; i += 3) {
-        var value = (payload[i + 1] << 8) + payload[i + 2];
+      for (let i = 0; i < payload.byteLength; i += 3) {
+        let value = (payload[i + 1] << 8) + payload[i + 2];
         value = value / 100.0;
         objToSend['ad' + payload[i]] = value;
       }
@@ -15040,7 +15026,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   centralCharacteristicGet(params) {
-    var schema = [
+    let schema = [
       {
         path: 'get_characteristics.address',
         length: 6,
@@ -15055,12 +15041,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandCharacteristics, buf);
   }
 
   centralCharacteristicRead(params) {
-    var schema = [
+    let schema = [
       {
         path: 'read_characteristic.address',
         length: 6,
@@ -15081,12 +15067,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandReadCharacteristics, buf);
   }
 
   centralCharacteristicWrite(params) {
-    var schema = [
+    let schema = [
       {
         path: 'write_characteristic.address',
         length: 6,
@@ -15114,12 +15100,12 @@ class WSCommand_Ble extends WSCommand {
       },
       { path: 'write_characteristic.data', length: null, type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteCharacteristics, buf);
   }
 
   centralCharacteristicRegisterNotify(params) {
-    var schema = [
+    let schema = [
       {
         path: 'register_notify_characteristic.address',
         length: 6,
@@ -15140,12 +15126,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandRegisterNotifyCharacteristic, buf);
   }
 
   centralCharacteristicUnregisterNotify(params) {
-    var schema = [
+    let schema = [
       {
         path: 'unregister_notify_characteristic.address',
         length: 6,
@@ -15166,12 +15152,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandUnregisterNotifyCharacteristic, buf);
   }
 
   centralDescriptorGet(params) {
-    var schema = [
+    let schema = [
       {
         path: 'get_descriptors.address',
         length: 6,
@@ -15192,12 +15178,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandDescriptors, buf);
   }
 
   centralDescriptorRead(params) {
-    var schema = [
+    let schema = [
       {
         path: 'read_descriptor.address',
         length: 6,
@@ -15224,12 +15210,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandReadDescriptor, buf);
   }
 
   centralDescriptorWrite(params) {
-    var schema = [
+    let schema = [
       {
         path: 'write_descriptor.address',
         length: 6,
@@ -15263,7 +15249,7 @@ class WSCommand_Ble extends WSCommand {
       },
       { path: 'write_descriptor.data', length: null, type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandWriteDescriptor, buf);
   }
 
@@ -15291,7 +15277,7 @@ class WSCommand_Ble extends WSCommand {
 
   peripheralServiceStart(params) {
     let val = params['peripheral'];
-    var propFlags = {
+    let propFlags = {
       0x01: 'broadcast',
       0x02: 'read',
       0x04: 'write_without_response',
@@ -15302,7 +15288,7 @@ class WSCommand_Ble extends WSCommand {
       0x80: 'ext_prop',
     };
 
-    var permissionFlags = {
+    let permissionFlags = {
       0x001: 'read',
       0x002: 'read_encrypted',
       0x004: 'read_enc_mitm',
@@ -15312,7 +15298,7 @@ class WSCommand_Ble extends WSCommand {
       0x080: 'write_signed',
       0x100: 'write_signed_mitm',
     };
-    var schema = {
+    let schema = {
       service: {
         command: this._CommandServerAddService,
         schema: [{ path: 'uuid', length: 18, type: 'uuid', required: true }],
@@ -15369,11 +15355,11 @@ class WSCommand_Ble extends WSCommand {
       },
     };
 
-    var sendBufs = [];
-    var startServiceBufs = [];
-    var buf;
-    for (var serviceIndex in val['services']) {
-      var service = val['services'][serviceIndex];
+    let sendBufs = [];
+    let startServiceBufs = [];
+    let buf;
+    for (let serviceIndex in val['services']) {
+      let service = val['services'][serviceIndex];
       buf = JsonBinaryConverter.createSendBuffer(
         schema['service'].schema,
         service
@@ -15392,8 +15378,8 @@ class WSCommand_Ble extends WSCommand {
         buffer: buf,
       });
 
-      for (var charaIndex in service['characteristics']) {
-        var chara = service['characteristics'][charaIndex];
+      for (let charaIndex in service['characteristics']) {
+        let chara = service['characteristics'][charaIndex];
         chara.service_uuid = service.uuid;
         buf = JsonBinaryConverter.createSendBuffer(
           schema['characteristic'].schema,
@@ -15407,8 +15393,8 @@ class WSCommand_Ble extends WSCommand {
           buffer: buf,
         });
 
-        for (var descIndex in chara['descriptors']) {
-          var desc = chara['descriptors'][descIndex];
+        for (let descIndex in chara['descriptors']) {
+          let desc = chara['descriptors'][descIndex];
           desc.service_uuid = service.uuid;
           desc.characteristic_uuid = chara.uuid;
           buf = JsonBinaryConverter.createSendBuffer(
@@ -15434,7 +15420,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   peripheralServiceStop(params) {
-    var schema = [
+    let schema = [
       {
         path: 'peripheral.stop_service.service_uuid',
         length: 18,
@@ -15443,7 +15429,7 @@ class WSCommand_Ble extends WSCommand {
       },
       { path: null, length: 1, type: 'char', default: 1 }, //const val
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerStartStopService, buf);
   }
 
@@ -15452,7 +15438,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   peripheralCharacteristicRead(params) {
-    var schema = [
+    let schema = [
       {
         path: 'peripheral.read_characteristic.service_uuid',
         length: 18,
@@ -15466,12 +15452,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
   }
 
   peripheralCharacteristicWrite(params) {
-    var schema = [
+    let schema = [
       {
         path: 'peripheral.write_characteristic.service_uuid',
         length: 18,
@@ -15486,12 +15472,12 @@ class WSCommand_Ble extends WSCommand {
       },
       { path: 'peripheral.write_characteristic.data', type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
   }
 
   peripheralCharacteristicNotify(params) {
-    var schema = [
+    let schema = [
       {
         path: 'peripheral.notify_characteristic.service_uuid',
         length: 18,
@@ -15505,12 +15491,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerNofityCharavteristic, buf);
   }
 
   peripheralDescriptorRead(params) {
-    var schema = [
+    let schema = [
       {
         path: 'peripheral.read_descriptor.service_uuid',
         length: 18,
@@ -15530,12 +15516,12 @@ class WSCommand_Ble extends WSCommand {
         required: true,
       },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerReadDescriptorValue, buf);
   }
 
   peripheralDescriptorWrite(params) {
-    var schema = [
+    let schema = [
       {
         path: 'peripheral.write_descriptor.service_uuid',
         length: 18,
@@ -15556,12 +15542,12 @@ class WSCommand_Ble extends WSCommand {
       },
       { path: 'peripheral.write_descriptor.data', type: 'dataArray' },
     ];
-    var buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
   }
 
   parseFromJson(json) {
-    var module = json['ble'];
+    let module = json['ble'];
     if (module === undefined) {
       return;
     }
@@ -15737,7 +15723,7 @@ class WSCommand_Ble extends WSCommand {
 
   notifyFromBinaryScanResponse(objToSend, payload) {
     if (payload.byteLength > 1) {
-      var schema = [
+      let schema = [
         {
           name: 'event_type',
           type: 'enum',
@@ -15771,7 +15757,7 @@ class WSCommand_Ble extends WSCommand {
         { name: 'scan_response_length', type: 'number', length: 1 },
       ];
 
-      var results = JsonBinaryConverter.convertFromBinaryToJson(
+      let results = JsonBinaryConverter.convertFromBinaryToJson(
         schema,
         payload
       );
@@ -15798,7 +15784,7 @@ class WSCommand_Ble extends WSCommand {
 
   notifyFromBinaryConnect(objToSend, payload) {
     if (payload.length === 7) {
-      var schema = [
+      let schema = [
         { name: 'address', type: 'hex', length: 6, endianness: 'little' },
         {
           name: 'status',
@@ -15808,7 +15794,7 @@ class WSCommand_Ble extends WSCommand {
         },
       ];
 
-      var results = JsonBinaryConverter.convertFromBinaryToJson(
+      let results = JsonBinaryConverter.convertFromBinaryToJson(
         schema,
         payload
       );
@@ -15817,12 +15803,12 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServices(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     if (results.service_uuid !== null) {
       this._addRowForPath(objToSend, 'ble.get_service_result', results);
@@ -15833,7 +15819,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryChacateristics(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
@@ -15846,7 +15832,7 @@ class WSCommand_Ble extends WSCommand {
       },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     if (results.characteristic_uuid !== null) {
       this._addRowForPath(objToSend, 'ble.get_characteristic_result', results);
@@ -15862,7 +15848,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryReadChacateristics(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
@@ -15870,35 +15856,35 @@ class WSCommand_Ble extends WSCommand {
       { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(objToSend, 'ble.read_characteristic_result', results);
   }
 
   notifyFromBinaryWriteChacateristics(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(objToSend, 'ble.write_characteristic_result', results);
   }
 
   notifyFromBinaryRegisterNotifyChacateristic(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(
@@ -15909,14 +15895,14 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryUnregisterNotifyChacateristic(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(
@@ -15926,7 +15912,7 @@ class WSCommand_Ble extends WSCommand {
     );
   }
   notifyFromBinaryNotifyChacateristic(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
@@ -15934,20 +15920,20 @@ class WSCommand_Ble extends WSCommand {
       { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.is_notify = results.is_notify === 1;
     this._addRowForPath(objToSend, 'ble.nofity_characteristic', results);
   }
 
   notifyFromBinaryDescriptors(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
     if (results.descriptor_uuid !== null) {
       this._addRowForPath(objToSend, 'ble.get_descriptor_result', results);
@@ -15962,7 +15948,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryReadDescriptor(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
@@ -15971,14 +15957,14 @@ class WSCommand_Ble extends WSCommand {
       { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(objToSend, 'ble.read_descriptor_result', results);
   }
 
   notifyFromBinaryWriteDescriptor(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
@@ -15986,14 +15972,14 @@ class WSCommand_Ble extends WSCommand {
       { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(objToSend, 'ble.write_descriptor_result', results);
   }
 
   notifyFromBinaryServerConnectionState(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       {
         name: 'status',
@@ -16003,18 +15989,18 @@ class WSCommand_Ble extends WSCommand {
       },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(objToSend, 'ble.peripheral.connection_status', results);
   }
 
   notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(
@@ -16025,13 +16011,13 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerReadCharavteristicValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(
       objToSend,
       'ble.peripheral.read_characteristic_result',
@@ -16040,13 +16026,13 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(
       objToSend,
       'ble.peripheral.notify_read_characteristic',
@@ -16055,14 +16041,14 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(
       objToSend,
       'ble.peripheral.notify_write_characteristic',
@@ -16071,14 +16057,14 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(
       objToSend,
       'ble.peripheral.read_descriptor_result',
@@ -16087,14 +16073,14 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerWriteDescriptorValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'result', type: 'int', length: 1 },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.result =
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(
@@ -16105,14 +16091,14 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerNotifyReadDescriptorValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(
       objToSend,
       'ble.peripheral.notify_read_descriptor',
@@ -16121,7 +16107,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
       { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
       { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
@@ -16129,7 +16115,7 @@ class WSCommand_Ble extends WSCommand {
       { name: 'data', type: 'dataArray', length: null },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     this._addRowForPath(
       objToSend,
       'ble.peripheral.notify_write_descriptor',
@@ -16138,7 +16124,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryError(objToSend, payload) {
-    var schema = [
+    let schema = [
       { name: 'esp_error_code', type: 'char', length: 1 },
       { name: 'error_code', type: 'char', length: 1 },
       { name: 'function_code', type: 'char', length: 1 },
@@ -16148,9 +16134,9 @@ class WSCommand_Ble extends WSCommand {
       { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
     ];
 
-    var results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
-    var errorMessage = {
+    let errorMessage = {
       0x00: 'no error',
       0x01: 'device not connected',
       0x02: 'service not found',
@@ -16163,7 +16149,7 @@ class WSCommand_Ble extends WSCommand {
       0xff: 'error',
     };
 
-    var functionMessage = {
+    let functionMessage = {
       0: 'on setting advertisement data',
       1: 'on setting scan response data',
       2: 'on starting advertisement',
@@ -16206,9 +16192,9 @@ class WSCommand_Ble extends WSCommand {
   }
 
   _addRowForPath(sendObj, path, row) {
-    var keys = path.split('.');
-    var target = sendObj;
-    for (var index = 0; index < keys.length - 1; index++) {
+    let keys = path.split('.');
+    let target = sendObj;
+    for (let index = 0; index < keys.length - 1; index++) {
       target[keys[index]] = target[keys[index]] || {};
       target = target[keys[index]];
     }
@@ -16274,7 +16260,7 @@ module.exports = class WSCommand_Directive extends WSCommand {
       }
       const length = compressed.byteLength;
 
-      var commandHeader = new Uint8Array(8);
+      let commandHeader = new Uint8Array(8);
       commandHeader[0] = length >> (8 * 3);
       commandHeader[1] = length >> (8 * 2);
       commandHeader[2] = length >> (8 * 1);
@@ -16367,8 +16353,6 @@ module.exports = class WSCommand_Directive extends WSCommand {
 /* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 const qrcode = __webpack_require__(/*! ../utils/qr */ "./obniz/libs/utils/qr.js");
 
-let isNode = typeof window === 'undefined';
-
 class WSCommand_Display extends WSCommand {
   constructor(delegate) {
     super(delegate);
@@ -16393,7 +16377,7 @@ class WSCommand_Display extends WSCommand {
   }
 
   printText(text) {
-    var result;
+    let result;
     const buf = Buffer(text, 'utf8');
     result = new Uint8Array(buf);
     this.print(result);
@@ -16450,7 +16434,7 @@ class WSCommand_Display extends WSCommand {
   }
 
   pinName(params) {
-    for (var i = 0; i < 12; i++) {
+    for (let i = 0; i < 12; i++) {
       if (typeof params.pin_assign[i] === 'object') {
         this.setPinName(
           i,
@@ -16470,19 +16454,19 @@ class WSCommand_Display extends WSCommand {
   }
 
   drawIOState(val) {
-    var buf = new Uint8Array([!val]);
+    let buf = new Uint8Array([!val]);
     this.sendCommand(this._CommandDrawIOState, buf);
   }
 
   setPinName(no, moduleName, pinName) {
-    var str = moduleName.slice(0, 4) + ' ' + pinName;
+    let str = moduleName.slice(0, 4) + ' ' + pinName;
     str = str.slice(0, 9);
 
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = no;
 
-    var stringarray = new Uint8Array(Buffer(str, 'utf8'));
-    var combined = new Uint8Array(buf.length + stringarray.length);
+    let stringarray = new Uint8Array(Buffer(str, 'utf8'));
+    let combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);
 
@@ -16490,7 +16474,7 @@ class WSCommand_Display extends WSCommand {
   }
 
   parseFromJson(json) {
-    var module = json['display'];
+    let module = json['display'];
     if (module === undefined) {
       return;
     }
@@ -16544,12 +16528,12 @@ class WSCommand_I2C extends WSCommand {
   // Commands
 
   initMaster(params, module) {
-    var mode = 0;
-    var sda = parseInt(params.sda);
-    var scl = parseInt(params.scl);
-    var clock = parseInt(params.clock);
+    let mode = 0;
+    let sda = parseInt(params.sda);
+    let scl = parseInt(params.scl);
+    let clock = parseInt(params.clock);
 
-    var buf = new Uint8Array(8);
+    let buf = new Uint8Array(8);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
@@ -16563,18 +16547,18 @@ class WSCommand_I2C extends WSCommand {
   }
 
   initSlave(params, module) {
-    var mode = 1;
-    var sda = parseInt(params.sda);
-    var scl = parseInt(params.scl);
-    var clock = 0;
+    let mode = 1;
+    let sda = parseInt(params.sda);
+    let scl = parseInt(params.scl);
+    let clock = 0;
 
-    var addressLength = params.slave_address_length;
-    var address = params.slave_address;
+    let addressLength = params.slave_address_length;
+    let address = params.slave_address;
     if (address > 0x7f) {
       addressLength = 10;
     }
 
-    var buf = new Uint8Array(11);
+    let buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
@@ -16591,7 +16575,7 @@ class WSCommand_I2C extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array([module]);
+    let buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
@@ -16601,7 +16585,7 @@ class WSCommand_I2C extends WSCommand {
     if (params.address_bits === 10 || address > 0x7f) {
       address = address | 0x8000; // mark 10bit mode
     }
-    var buf = new Uint8Array(3 + params.data.length);
+    let buf = new Uint8Array(3 + params.data.length);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
@@ -16616,7 +16600,7 @@ class WSCommand_I2C extends WSCommand {
       address = address | 0x8000; // mark 10bit mode
     }
     let read_length = params.read;
-    var buf = new Uint8Array(7);
+    let buf = new Uint8Array(7);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
@@ -16629,8 +16613,8 @@ class WSCommand_I2C extends WSCommand {
 
   parseFromJson(json) {
     // 0
-    for (var i = 0; i < 1; i++) {
-      var module = json['i2c' + i];
+    for (let i = 0; i < 1; i++) {
+      let module = json['i2c' + i];
       if (module === undefined) {
         continue;
       }
@@ -16769,22 +16753,22 @@ class WSCommand_IO extends WSCommand {
   // Commands
 
   output(value, id) {
-    var buf = new Uint8Array([id, value]);
+    let buf = new Uint8Array([id, value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
   outputDetail(params, id) {
-    var buf = new Uint8Array([id, params.value]);
+    let buf = new Uint8Array([id, params.value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
   input(params, id) {
-    var buf = new Uint8Array([id]);
+    let buf = new Uint8Array([id]);
     this.sendCommand(this._CommandInputOnece, buf);
   }
 
   inputDetail(params, id) {
-    var buf = new Uint8Array([id]);
+    let buf = new Uint8Array([id]);
     this.sendCommand(
       params.stream ? this._CommandInputStream : this._CommandInputOnece,
       buf
@@ -16792,7 +16776,7 @@ class WSCommand_IO extends WSCommand {
   }
 
   outputType(params, id) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = id;
     if (params.output_type === 'push-pull5v') {
       buf[1] = 0;
@@ -16807,7 +16791,7 @@ class WSCommand_IO extends WSCommand {
   }
 
   pullType(params, id) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = id;
     if (params.pull_type === 'float') {
       buf[1] = 0;
@@ -16824,13 +16808,13 @@ class WSCommand_IO extends WSCommand {
   }
 
   deinit(params, id) {
-    var buf = new Uint8Array([id]);
+    let buf = new Uint8Array([id]);
     this.sendCommand(this._CommandEnd, buf);
   }
 
   parseFromJson(json) {
-    for (var i = 0; i <= 11; i++) {
-      var module = json['io' + i];
+    for (let i = 0; i <= 11; i++) {
+      let module = json['io' + i];
       if (module === undefined) {
         continue;
       }
@@ -16858,13 +16842,13 @@ class WSCommand_IO extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandInputStream || func === this._CommandInputOnece) {
-      for (var i = 0; i < payload.byteLength; i += 2) {
+      for (let i = 0; i < payload.byteLength; i += 2) {
         objToSend['io' + payload[i]] = payload[i + 1] > 0;
       }
     } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
-      const esperr = payload[0];
+      // const esperr = payload[0];
       const err = payload[1];
-      const ref_func_id = payload[2];
+      // const ref_func_id = payload[2];
       const module_index = payload[3];
 
       if (
@@ -16934,7 +16918,7 @@ class WSCommand_LogicAnalyzer extends WSCommand {
 
     let matchValue = parseInt(params.trigger.value);
     let matchCount = params.trigger.samples;
-    var buf = new Uint8Array(12);
+    let buf = new Uint8Array(12);
     buf[0] = 1;
     buf[1] = io;
     buf[2] = intervalUsec >> (8 * 3);
@@ -16951,12 +16935,12 @@ class WSCommand_LogicAnalyzer extends WSCommand {
   }
 
   deinit(params) {
-    var buf = new Uint8Array(0);
+    let buf = new Uint8Array(0);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   parseFromJson(json) {
-    var module = json['logic_analyzer'];
+    let module = json['logic_analyzer'];
     if (module === undefined) {
       return;
     }
@@ -17022,7 +17006,6 @@ class WSCommand_Measurement extends WSCommand {
   // Commands
 
   echo(params) {
-    let type = 0;
     let triggerIO = params.echo.io_pulse;
     let triggerPosNeg = params.echo.pulse === 'negative' ? false : true;
     let triggerWidthUs = parseInt(params.echo.pulse_width * 1000);
@@ -17031,7 +17014,7 @@ class WSCommand_Measurement extends WSCommand {
     let timeoutUs = params.echo.timeout * 1000;
     timeoutUs = parseInt(timeoutUs);
 
-    var buf = new Uint8Array(13);
+    let buf = new Uint8Array(13);
     buf[0] = 0;
     buf[1] = triggerIO;
     buf[2] = triggerPosNeg ? 1 : 0;
@@ -17049,7 +17032,7 @@ class WSCommand_Measurement extends WSCommand {
   }
 
   parseFromJson(json) {
-    var module = json['measure'];
+    let module = json['measure'];
     if (module === undefined) {
       return;
     }
@@ -17067,12 +17050,12 @@ class WSCommand_Measurement extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandMeasurementEcho) {
-      var index = 0;
-      var count = parseInt(payload[index++]);
-      var array = [];
-      for (var i = 0; i < count; i++) {
-        var timing;
-        var edge = payload[index++] > 0 ? true : false;
+      let index = 0;
+      let count = parseInt(payload[index++]);
+      let array = [];
+      for (let i = 0; i < count; i++) {
+        let timing;
+        let edge = payload[index++] > 0 ? true : false;
         timing = payload[index++] << (8 * 3);
         timing += payload[index++] << (8 * 2);
         timing += payload[index++] << 8;
@@ -17122,7 +17105,7 @@ class WSCommand_PWM extends WSCommand {
 
   resetInternalStatus() {
     this.pwms = [];
-    for (var i = 0; i < this.ModuleNum; i++) {
+    for (let i = 0; i < this.ModuleNum; i++) {
       this.pwms.push({});
     }
   }
@@ -17130,7 +17113,7 @@ class WSCommand_PWM extends WSCommand {
   // Commands
 
   init(params, module) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = module;
     buf[1] = params.io;
     this.pwms[module].io = params.io;
@@ -17138,14 +17121,14 @@ class WSCommand_PWM extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = module;
     this.pwms[module] = {};
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   freq(params, module) {
-    var buf = new Uint8Array(5);
+    let buf = new Uint8Array(5);
     buf[0] = module;
     buf[1] = params.freq >> (8 * 3);
     buf[2] = params.freq >> (8 * 2);
@@ -17190,8 +17173,8 @@ class WSCommand_PWM extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (var i = 0; i < this.ModuleNum; i++) {
-      var module = json['pwm' + i];
+    for (let i = 0; i < this.ModuleNum; i++) {
+      let module = json['pwm' + i];
       if (module === undefined) {
         continue;
       }
@@ -17244,14 +17227,14 @@ class WSCommand_SPI extends WSCommand {
   // Commands
 
   initMaster(params, module) {
-    var mode = 0; //master mode
+    let mode = 0; //master mode
 
     let clk = params.clk;
     let mosi = params.mosi;
     let miso = params.miso;
     let cs = params.cs;
 
-    var clock = params.clock;
+    let clock = params.clock;
 
     if (clk === null && mosi === null && miso === null) {
       throw new Error('spi: master mode require one of clk/mosi/miso');
@@ -17262,7 +17245,7 @@ class WSCommand_SPI extends WSCommand {
     if (miso === null) miso = this.ioNotUsed;
     if (cs === null) cs = this.ioNotUsed;
 
-    var buf = new Uint8Array(11);
+    let buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = clk;
@@ -17280,12 +17263,12 @@ class WSCommand_SPI extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array([module]);
+    let buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   write(params, module) {
-    var buf = new Uint8Array(1 + params.data.length);
+    let buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
     if (params.read) {
@@ -17296,8 +17279,8 @@ class WSCommand_SPI extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (var i = 0; i < 2; i++) {
-      var module = json['spi' + i];
+    for (let i = 0; i < 2; i++) {
+      let module = json['spi' + i];
       if (module === undefined) {
         continue;
       }
@@ -17321,11 +17304,11 @@ class WSCommand_SPI extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandWriteRead && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var received = payload.slice(1);
+      let module_index = payload[0];
+      // var received = payload.slice(1);
 
-      var arr = new Array(payload.byteLength - 1);
-      for (var i = 0; i < arr.length; i++) {
+      let arr = new Array(payload.byteLength - 1);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
       objToSend['spi' + module_index] = {
@@ -17363,12 +17346,12 @@ class WSCommand_Switch extends WSCommand {
   // Commands
 
   get(params) {
-    var buf = new Uint8Array(0);
+    let buf = new Uint8Array(0);
     this.sendCommand(this._CommandOnece, buf);
   }
 
   parseFromJson(json) {
-    var module = json['switch'];
+    let module = json['switch'];
     if (module === undefined) {
       return;
     }
@@ -17389,8 +17372,8 @@ class WSCommand_Switch extends WSCommand {
       (func === this._CommandOnece || func === this._CommandNotifyValue) &&
       payload.byteLength == 1
     ) {
-      var state = parseInt(payload[0]);
-      var states = ['none', 'push', 'left', 'right'];
+      let state = parseInt(payload[0]);
+      let states = ['none', 'push', 'left', 'right'];
       objToSend['switch'] = {
         state: states[state],
       };
@@ -17449,7 +17432,7 @@ class WSCommand_System extends WSCommand {
 
   wait(params) {
     let msec = params.wait;
-    var buf = new Uint8Array([msec >> 8, msec]);
+    let buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
 
@@ -17478,12 +17461,12 @@ class WSCommand_System extends WSCommand {
   }
 
   resetOnDisconnect(mustReset) {
-    var buf = new Uint8Array([mustReset ? 1 : 0]);
+    let buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
   }
 
   parseFromJson(json) {
-    var module = json['system'];
+    let module = json['system'];
     if (module === undefined) {
       return;
     }
@@ -17590,7 +17573,7 @@ class WSCommand_UART extends WSCommand {
   // Commands
 
   init(params, module) {
-    var buf = new Uint8Array(13);
+    let buf = new Uint8Array(13);
     buf[0] = module;
     buf[1] = parseInt(params.tx);
     buf[2] = parseInt(params.rx);
@@ -17636,13 +17619,13 @@ class WSCommand_UART extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = module;
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   send(params, module) {
-    var buf = new Uint8Array(1 + params.data.length);
+    let buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
     this.sendCommand(this._CommandSend, buf);
@@ -17650,8 +17633,8 @@ class WSCommand_UART extends WSCommand {
 
   parseFromJson(json) {
     // 0~2
-    for (var i = 0; i < 3; i++) {
-      var module = json['uart' + i];
+    for (let i = 0; i < 3; i++) {
+      let module = json['uart' + i];
       if (module === undefined) {
         continue;
       }
@@ -17674,9 +17657,9 @@ class WSCommand_UART extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var arr = new Array(payload.byteLength - 1);
-      for (var i = 0; i < arr.length; i++) {
+      let module_index = payload[0];
+      let arr = new Array(payload.byteLength - 1);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
 
@@ -18069,7 +18052,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.2.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION -b ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix ./obniz/**/*.js","precommit":"lint-staged"},"lint-staged":{"./obniz/*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.2.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix ./obniz/**/*.js","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -18159,86 +18142,84 @@ webpackContext.id = "./parts sync recursive \\.js$";
 
 class hx711 {
   constructor() {
-    this.keys = ["vcc", "gnd","sck","dout"];
-    this.requiredKeys = ["sck","dout"];
+    this.keys = ['vcc', 'gnd', 'sck', 'dout'];
+    this.requiredKeys = ['sck', 'dout'];
     this.offset = 0;
     this.scale = 1;
-
   }
 
-  wired(obniz){
+  wired(obniz) {
     this.obniz = obniz;
     this.spi = obniz.getFreeSpi();
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-
-    let ioKeys = ["clk", "dout"];
+    let ioKeys = ['clk', 'dout'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '"+key+"' are to be valid io no");
+        throw new Error("spi start param '" + key + "' are to be valid io no");
       }
     }
     this.sck = obniz.getIO(this.params.sck);
     this.dout = obniz.getIO(this.params.dout);
 
-
     this.sck.output(true);
-
-
   }
 
-
-  async readWait(){
-
+  async readWait() {
     this.sck.output(false);
 
     // while(true) {
     //   let val = await this.dout.inputWait();
     //   if (val == false) break;
     // }
-    this.spi.start({mode:"master", clk :this.params.sck, miso:this.params.dout, frequency:66 * 1000});
+    this.spi.start({
+      mode: 'master',
+      clk: this.params.sck,
+      miso: this.params.dout,
+      frequency: 66 * 1000,
+    });
 
-    let ret = await this.spi.writeWait([0,0,0]);
+    let ret = await this.spi.writeWait([0, 0, 0]);
     this.spi.end(true);
     this.sck.output(false);
     let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-    return flag * (((ret[0] & 0x7F) << 16)+(ret[1] << 8)+(ret[2] << 0)) ;
+    return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
   }
 
-
-
-  async readAverageWait(times){
+  async readAverageWait(times) {
     let results = [];
-    for(let i = 0; i < times; i++){
+    for (let i = 0; i < times; i++) {
       results.push(await this.readWait());
     }
-    return results.reduce((prev,current,i)=>{return prev+current},0) / results.length;
+    return (
+      results.reduce((prev, current, i) => {
+        return prev + current;
+      }, 0) / results.length
+    );
   }
 
-  powerDown(){
+  powerDown() {
     this.sck.output(true);
   }
 
-  powerUp(){
+  powerUp() {
     this.sck.output(false);
   }
 
-
-  async zeroAdjust(times){
+  async zeroAdjust(times) {
     times = parseInt(times) || 1;
     this.offset = await this.readAverageWait(times);
   }
 
-  async getValueWait(times){
+  async getValueWait(times) {
     times = parseInt(times) || 1;
     let val = await this.readAverageWait(times);
     return (val - this.offset) / this.scale;
   }
-
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("hx711", hx711);
+Obniz.PartsRegistrate('hx711', hx711);
 
 
 /***/ }),
@@ -18251,15 +18232,13 @@ Obniz.PartsRegistrate("hx711", hx711);
 /***/ (function(module, exports, __webpack_require__) {
 
 class USB {
-
   constructor() {
-
-    this.keys = ["vcc","gnd"];
-    this.requiredKeys = ["vcc","gnd"];
+    this.keys = ['vcc', 'gnd'];
+    this.requiredKeys = ['vcc', 'gnd'];
 
     this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd"
+      vcc: 'vcc',
+      gnd: 'gnd',
     };
   }
 
@@ -18267,7 +18246,7 @@ class USB {
     this.obniz = obniz;
     this.io_vdd = obniz.getIO(this.params.vcc);
     this.io_gnd = obniz.getIO(this.params.gnd);
-    
+
     this.io_gnd.output(false);
   }
 
@@ -18281,7 +18260,7 @@ class USB {
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("USB", USB);
+Obniz.PartsRegistrate('USB', USB);
 
 
 /***/ }),
@@ -18293,38 +18272,34 @@ Obniz.PartsRegistrate("USB", USB);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 class AE_MICAMP {
-
   constructor() {
-    this.keys = ["vcc", "gnd", "out"];
-    this.requiredKeys = ["out"];
+    this.keys = ['vcc', 'gnd', 'out'];
+    this.requiredKeys = ['out'];
 
     this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
-      out: "out"
+      vcc: 'vcc',
+      gnd: 'gnd',
+      out: 'out',
     };
   }
 
   async wired(obniz) {
     this.obniz = obniz;
-  
+
     this.ad = obniz.getAD(this.params.out);
-    
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  
-    var self = this;
-    this.ad.start(function(value){
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    let self = this;
+    this.ad.start(function(value) {
       self.voltage = value;
       if (self.onchange) {
         self.onchange(self.voltage);
       }
     });
   }
-
 }
-
 
 /*
   var self = this;
@@ -18356,9 +18331,9 @@ AE_MICAMP.prototype.Average = function(callback) {
 };
 */
 
-
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("AE_MICAMP", AE_MICAMP);
+Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);
+
 
 /***/ }),
 
@@ -18371,28 +18346,32 @@ Obniz.PartsRegistrate("AE_MICAMP", AE_MICAMP);
 
 class RN42 {
   constructor() {
-    this.keys = ["tx", "rx", "gnd"];
-    this.requiredKeys = ["tx", "rx"];
-
+    this.keys = ['tx', 'rx', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
   }
 
   wired(obniz) {
-    if(obniz.isValidIO(this.params.gnd)) {
+    if (obniz.isValidIO(this.params.gnd)) {
       obniz.getIO(this.params.gnd).output(false);
     }
-  
+
     this.uart = obniz.getFreeUart();
-  
-    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:115200, drive:"3v"});
-    var self = this;
+
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 115200,
+      drive: '3v',
+    });
+    let self = this;
     this.uart.onreceive = (data, text) => {
       // this is not perfect. separation is possible.
-      if (text.indexOf("CONNECT") >= 0) {
-        console.log("connected");
-      } else if(text.indexOf("DISCONNECT") >= 0) {
-        console.log("disconnected");
+      if (text.indexOf('CONNECT') >= 0) {
+        console.log('connected');
+      } else if (text.indexOf('DISCONNECT') >= 0) {
+        console.log('disconnected');
       }
-      if (typeof(self.onreceive) === "function") {
+      if (typeof self.onreceive === 'function') {
         self.onreceive(data, text);
       }
     };
@@ -18403,7 +18382,7 @@ class RN42 {
   }
 
   sendCommand(data) {
-    this.uart.send(data+'\n');
+    this.uart.send(data + '\n');
     this.obniz.wait(100);
   }
 
@@ -18414,13 +18393,13 @@ class RN42 {
 
   config(json) {
     this.enterCommandMode();
-    if (typeof(json) !== "object") {
+    if (typeof json !== 'object') {
       // TODO: warning
       return;
     }
     // remove noize data
-    this.sendCommand("");
-  
+    this.sendCommand('');
+
     if (json.master_slave) {
       this.config_masterslave(json.master_slave);
     }
@@ -18447,12 +18426,20 @@ class RN42 {
   }
 
   config_masterslave(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
+    let val = -1;
+    if (typeof mode === 'number') {
       val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["slave", "master", "trigger", "auto-connect-master", "auto-connect-dtr", "auto-connect-any", "pairing"];
-      for (var i=0; i<modes.length; i++) {
+    } else if (typeof mode === 'string') {
+      let modes = [
+        'slave',
+        'master',
+        'trigger',
+        'auto-connect-master',
+        'auto-connect-dtr',
+        'auto-connect-any',
+        'pairing',
+      ];
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -18463,26 +18450,33 @@ class RN42 {
       // TODO: warning
       return;
     }
-    this.sendCommand('SM,'+val);
+    this.sendCommand('SM,' + val);
   }
 
   config_displayName(name) {
-    this.sendCommand('SN,'+name);
+    this.sendCommand('SN,' + name);
   }
 
-
-    // // SH,0200 HID Flag register. Descriptor=keyboard
+  // // SH,0200 HID Flag register. Descriptor=keyboard
   config_HIDflag(flag) {
-    this.sendCommand('SH,'+flag);
+    this.sendCommand('SH,' + flag);
   }
 
   config_profile(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
+    let val = -1;
+    if (typeof mode === 'number') {
       val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["SPP", "DUN-DCE", "DUN-DTE", "MDM-SPP", "SPP-DUN-DCE", "APL", "HID"];
-      for (var i=0; i<modes.length; i++) {
+    } else if (typeof mode === 'string') {
+      let modes = [
+        'SPP',
+        'DUN-DCE',
+        'DUN-DTE',
+        'MDM-SPP',
+        'SPP-DUN-DCE',
+        'APL',
+        'HID',
+      ];
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -18493,7 +18487,7 @@ class RN42 {
       // TODO: warning
       return;
     }
-    this.sendCommand('S~,'+val);
+    this.sendCommand('S~,' + val);
   }
 
   config_revert_localecho() {
@@ -18501,12 +18495,12 @@ class RN42 {
   }
 
   config_auth(mode) {
-    var val = -1;
-    if (typeof(mode) === "number") {
+    let val = -1;
+    if (typeof mode === 'number') {
       val = mode;
-    } else if (typeof(mode) === "string") {
-      var modes = ["open", "ssp-keyboard", "just-work", "pincode"];
-      for (var i=0; i<modes.length; i++) {
+    } else if (typeof mode === 'string') {
+      let modes = ['open', 'ssp-keyboard', 'just-work', 'pincode'];
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -18517,28 +18511,28 @@ class RN42 {
       // TODO: warning
       return;
     }
-    this.sendCommand('SA,'+val);
+    this.sendCommand('SA,' + val);
   }
 
   config_power(dbm) {
-    var val = "0010";
+    let val = '0010';
     if (16 > dbm && dbm >= 12) {
-      val = "000C";
+      val = '000C';
     } else if (12 > dbm && dbm >= 8) {
-      val = "0008";
+      val = '0008';
     } else if (8 > dbm && dbm >= 4) {
-      val = "0004";
+      val = '0004';
     } else if (4 > dbm && dbm >= 0) {
-      val = "0000";
+      val = '0000';
     } else if (0 > dbm && dbm >= -4) {
-      val = "FFFC";
+      val = 'FFFC';
     } else if (-4 > dbm && dbm >= -8) {
-      val = "FFF8";
+      val = 'FFF8';
     } else if (-8 > dbm) {
-      val = "FFF4";
+      val = 'FFF4';
     }
-  
-    this.sendCommand('SY,'+val);
+
+    this.sendCommand('SY,' + val);
   }
 
   config_get_setting() {
@@ -18553,7 +18547,8 @@ class RN42 {
 // Module functions
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("RN42", RN42);
+Obniz.PartsRegistrate('RN42', RN42);
+
 
 /***/ }),
 
@@ -18564,148 +18559,155 @@ Obniz.PartsRegistrate("RN42", RN42);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 class XBee {
-
   constructor() {
-    this.keys = ["tx","rx","gnd"];
-    this.requiredKeys = ["tx","rx"];
-    
-    this.displayIoNames = { "tx" : "<tx", "rx":">rx"};
+    this.keys = ['tx', 'rx', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
+
+    this.displayIoNames = { tx: '<tx', rx: '>rx' };
   }
 
   wired(obniz) {
-  
     this.uart = obniz.getFreeUart();
     this.currentCommand = null;
     this.commands = [];
     this.isAtMode = false;
     this.onFinishAtModeCallback = null;
-    
-    
-  if(typeof(this.params.gnd) === "number") {
-    obniz.getIO(this.params.gnd).output(false);
-  }
-  
-    this.uart.start({tx:this.params.tx, rx:this.params.rx, baud:9600, drive:"3v"});
-    
-    this.uart.onreceive = (function(data, text) {
-      if(this.isAtMode){
+
+    if (typeof this.params.gnd === 'number') {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 9600,
+      drive: '3v',
+    });
+
+    this.uart.onreceive = function(data, text) {
+      if (this.isAtMode) {
         this.onAtResultsRecieve(data, text);
-      }else{
-        if (typeof(this.onreceive) === "function") {
+      } else {
+        if (typeof this.onreceive === 'function') {
           this.onreceive(data, text);
         }
       }
-    }).bind(this);
+    }.bind(this);
   }
 
-  send( text) {
-    if(this.isAtMode === false){
+  send(text) {
+    if (this.isAtMode === false) {
       this.uart.send(text);
-      
-    }else{
-      this.obniz.error("XBee is AT Command mode now. Wait for finish config.");
+    } else {
+      this.obniz.error('XBee is AT Command mode now. Wait for finish config.');
     }
   }
 
-  onAtResultsRecieve(data, text){
-    if(!this.isAtMode){ return; }
-    
-    var next = function(){
-      this.currentCommand  = null;
+  onAtResultsRecieve(data, text) {
+    if (!this.isAtMode) {
+      return;
+    }
+
+    let next = function() {
+      this.currentCommand = null;
       this.sendCommand();
     }.bind(this);
-    
-    if(text === "OK\r"){
-      if(this.currentCommand === "ATCN"){
+
+    if (text === 'OK\r') {
+      if (this.currentCommand === 'ATCN') {
         this.isAtMode = false;
-        this.currentCommand  = null;
-        if(typeof(this.onFinishAtModeCallback) === "function"){
+        this.currentCommand = null;
+        if (typeof this.onFinishAtModeCallback === 'function') {
           this.onFinishAtModeCallback();
           this.onFinishAtModeCallback = null;
         }
         return;
       }
       next();
-    }else if(text === "ERROR\r"){
-      this.obniz.error("XBee config error : " + this.currentCommand);
-    }else{
+    } else if (text === 'ERROR\r') {
+      this.obniz.error('XBee config error : ' + this.currentCommand);
+    } else {
       //response of at command.
-      console.log("XBEE : no catch message", data);
+      console.log('XBEE : no catch message', data);
       next();
     }
   }
 
   addCommand(command, value) {
-    var str = command + (value ? " " + value : "");
+    let str = command + (value ? ' ' + value : '');
     this.commands.push(str);
-    if(this.isAtMode === true 
-        && this.currentCommand === null){
+    if (this.isAtMode === true && this.currentCommand === null) {
       this.sendCommand();
     }
   }
 
   sendCommand() {
-    if(this.isAtMode === true 
-        && this.currentCommand === null
-        && this.commands.length > 0){
-      this.currentCommand = "AT" + this.commands.shift();
-      this.uart.send(this.currentCommand + "\r");
+    if (
+      this.isAtMode === true &&
+      this.currentCommand === null &&
+      this.commands.length > 0
+    ) {
+      this.currentCommand = 'AT' + this.commands.shift();
+      this.uart.send(this.currentCommand + '\r');
     }
   }
 
   enterAtMode() {
-    if(this.currentCommand !== null) return;
+    if (this.currentCommand !== null) return;
     this.isAtMode = true;
     this.obniz.wait(1000);
-    var command = "+++";
+    let command = '+++';
     this.currentCommand = command;
     this.uart.send(this.currentCommand);
     this.obniz.wait(1000);
   }
 
   exitAtMode() {
-    this.addCommand("CN");
+    this.addCommand('CN');
   }
 
   async configWait(config) {
-    if(this.isAtMode){ throw new Error("Xbee : duplicate config setting"); };
-    return new Promise(function(resolve, reject){
-      var standaloneKeys = {
-        "destination_address_high" : "DH",
-        "destination_address_low" : "DL",
-        "source_address" : "MY"
-      };
-      var highLowKeys = [
-        "destination_address"
-      ];
-      this.enterAtMode();
-      for(var key in config){
-          if(key.length === 2){
-            this.addCommand(key,config[key]);
-          }else if(standaloneKeys[key]){
-            this.addCommand(standaloneKeys[key],config[key]);
-          }else if(highLowKeys.includes(key)){
-            var high = config[key].slice(0,-8); 
-            if(!high){high="0";}
-            var low = config[key].slice(-8);
-  
-            this.addCommand(standaloneKeys[key + "_high"], high);
-            this.addCommand(standaloneKeys[key + "_low"],  low);
+    if (this.isAtMode) {
+      throw new Error('Xbee : duplicate config setting');
+    }
+    return new Promise(
+      function(resolve, reject) {
+        let standaloneKeys = {
+          destination_address_high: 'DH',
+          destination_address_low: 'DL',
+          source_address: 'MY',
+        };
+        let highLowKeys = ['destination_address'];
+        this.enterAtMode();
+        for (let key in config) {
+          if (key.length === 2) {
+            this.addCommand(key, config[key]);
+          } else if (standaloneKeys[key]) {
+            this.addCommand(standaloneKeys[key], config[key]);
+          } else if (highLowKeys.includes(key)) {
+            let high = config[key].slice(0, -8);
+            if (!high) {
+              high = '0';
+            }
+            let low = config[key].slice(-8);
+
+            this.addCommand(standaloneKeys[key + '_high'], high);
+            this.addCommand(standaloneKeys[key + '_low'], low);
           }
-      }
-      this.exitAtMode();
-      this.onFinishAtModeCallback = function(){
-        resolve();
-      };
-    }.bind(this));
-    
+        }
+        this.exitAtMode();
+        this.onFinishAtModeCallback = function() {
+          resolve();
+        };
+      }.bind(this)
+    );
   }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("XBee", XBee);
+Obniz.PartsRegistrate('XBee', XBee);
+
 
 /***/ }),
 
@@ -18717,32 +18719,31 @@ Obniz.PartsRegistrate("XBee", XBee);
 /***/ (function(module, exports, __webpack_require__) {
 
 class JpegSerialCam {
-
   constructor() {
-    this.keys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
-    this.requiredKeys = [ "cam_tx", "cam_rx"];
-    
+    this.keys = ['vcc', 'cam_tx', 'cam_rx', 'gnd'];
+    this.requiredKeys = ['cam_tx', 'cam_rx'];
+
     this.ioKeys = this.keys;
-    this.displayName = "Jcam"
-    this.displayIoNames = { "cam_tx" : "camTx", "cam_rx":"camRx"};
+    this.displayName = 'Jcam';
+    this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
   }
 
-  wired(){
-    this.obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  wired() {
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.my_tx = this.params.cam_rx;
     this.my_rx = this.params.cam_tx;
 
-    this.obniz.getIO(this.my_tx).drive("3v");
-    
-    this.uart = this.obniz.getFreeUart(); 
-  };
+    this.obniz.getIO(this.my_tx).drive('3v');
+
+    this.uart = this.obniz.getFreeUart();
+  }
 
   async _drainUntil(uart, search, recv) {
     if (!recv) recv = [];
-    while(true) {
-      var readed = uart.readBytes();
+    while (true) {
+      let readed = uart.readBytes();
       recv = recv.concat(readed);
-      var tail = this._seekTail(search, recv);
+      let tail = this._seekTail(search, recv);
       if (tail >= 0) {
         recv.splice(0, tail);
         return recv;
@@ -18752,12 +18753,12 @@ class JpegSerialCam {
   }
 
   _seekTail(search, src) {
-    var f=0;
-    for (var i=0;i<src.length; i++) {
+    let f = 0;
+    for (let i = 0; i < src.length; i++) {
       if (src[i] === search[f]) {
         f++;
         if (f === search.length) {
-          return i+1;
+          return i + 1;
         }
       } else {
         f = 0;
@@ -18765,22 +18766,28 @@ class JpegSerialCam {
     }
     return -1;
   }
-  
+
   arrayToBase64(buf) {
-    if (typeof btoa === "function") {
-      var binstr = Array.prototype.map.call(buf, function (ch) {
-        return String.fromCharCode(ch);
-      }).join('');
+    if (typeof btoa === 'function') {
+      let binstr = Array.prototype.map
+        .call(buf, function(ch) {
+          return String.fromCharCode(ch);
+        })
+        .join('');
       return btoa(binstr);
     }
-    // TODO: 
+    // TODO:
   }
 
   async startwait(obj) {
     if (!obj) obj = {};
-    this.uart.start({tx:this.my_tx, rx:this.my_rx, baud:obj.baud || 38400});
-    this.obniz.display.setPinName(this.my_tx,"JpegSerialCam","camRx");
-    this.obniz.display.setPinName(this.my_rx,"JpegSerialCam","camTx");
+    this.uart.start({
+      tx: this.my_tx,
+      rx: this.my_rx,
+      baud: obj.baud || 38400,
+    });
+    this.obniz.display.setPinName(this.my_tx, 'JpegSerialCam', 'camRx');
+    this.obniz.display.setPinName(this.my_rx, 'JpegSerialCam', 'camTx');
     await this.obniz.wait(2500);
   }
 
@@ -18792,55 +18799,64 @@ class JpegSerialCam {
 
   async setResolusionWait(resolution) {
     let val;
-    if (resolution === "640*480") {
+    if (resolution === '640*480') {
       val = 0x00;
-    } else if (resolution === "320*240") {
+    } else if (resolution === '320*240') {
       val = 0x11;
-    } else if (resolution === "160*120") {
+    } else if (resolution === '160*120') {
       val = 0x22;
     } else {
-      throw new Error("invalid resolution");
+      throw new Error('invalid resolution');
     }
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     await this.resetwait();
   }
 
-
   async setCompressibilityWait(compress) {
-    let val = Math.floor(compress / 100 * 0xFF);
+    let val = Math.floor(compress / 100 * 0xff);
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     await this.resetwait();
   }
 
-
   async setBaudWait(baud) {
     let val;
-    switch(baud) {
+    switch (baud) {
       case 9600:
-        val = [0xAE, 0xC8];
+        val = [0xae, 0xc8];
         break;
       case 19200:
-        val = [0x56, 0xE4];
+        val = [0x56, 0xe4];
         break;
       case 38400:
-        val = [0x2A, 0xF2];
+        val = [0x2a, 0xf2];
         break;
       case 57600:
-        val = [0x1C, 0x4C];
+        val = [0x1c, 0x4c];
         break;
       case 115200:
-        val = [0x0D, 0xA6];
+        val = [0x0d, 0xa6];
         break;
       default:
-        throw new Error("invalid baud rate");
+        throw new Error('invalid baud rate');
     }
-    this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
+    this.uart.send([
+      0x56,
+      0x00,
+      0x31,
+      0x06,
+      0x04,
+      0x02,
+      0x00,
+      0x08,
+      val[0],
+      val[1],
+    ]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     //await this.obniz.wait(1000);
     await this.startwait({
-      baud
+      baud,
     });
   }
 
@@ -18848,19 +18864,27 @@ class JpegSerialCam {
     const uart = this.uart;
     //console.log("stop a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]); 
-    
+    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+
     //console.log("take a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
     await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-    
+
     //console.log("read length")
     uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
-    var XX;
-    var YY;
-    while(true) {
-      var readed = uart.readBytes();
+    let recv = await this._drainUntil(uart, [
+      0x76,
+      0x00,
+      0x34,
+      0x00,
+      0x04,
+      0x00,
+      0x00,
+    ]); // ack
+    let XX;
+    let YY;
+    while (true) {
+      let readed = uart.readBytes();
       //console.log(recv);
       recv = recv.concat(readed);
       if (recv.length >= 2) {
@@ -18872,15 +18896,32 @@ class JpegSerialCam {
     }
     let databytes = XX * 256 + YY;
     //console.log("image: " + databytes + " Bytes");
-    const high = (databytes >> 8) & 0xFF;
-    const low = databytes & 0xFF;
-    
+    // const high = (databytes >> 8) & 0xff;
+    // const low = databytes & 0xff;
+
     //console.log("start reading image")
-    uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+    uart.send([
+      0x56,
+      0x00,
+      0x32,
+      0x0c,
+      0x00,
+      0x0a,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      XX,
+      YY,
+      0x00,
+      0xff,
+    ]);
+    recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
     //console.log("reading...");
-    while(true) {
-      var readed = uart.readBytes();
+    while (true) {
+      let readed = uart.readBytes();
       recv = recv.concat(readed);
       //console.log(readed.length);
       if (recv.length >= databytes) {
@@ -18890,14 +18931,14 @@ class JpegSerialCam {
     }
     //console.log("done");
     recv = recv.splice(0, databytes); // remove tail
-    recv = recv.concat([0xFF, 0xD9]);
+    recv = recv.concat([0xff, 0xd9]);
     return recv;
   }
-
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("JpegSerialCam", JpegSerialCam);
+Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);
+
 
 /***/ }),
 
@@ -18910,11 +18951,22 @@ Obniz.PartsRegistrate("JpegSerialCam", JpegSerialCam);
 
 class _7SegmentLED {
   constructor() {
-    this.requiredKeys = [ "a", "b", "c", "d", "e", "f", "g", "common"];
-    this.keys = ["a", "b", "c", "d", "e", "f", "g", "dp", "common", "commonType"];
-    
+    this.requiredKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'common'];
+    this.keys = [
+      'a',
+      'b',
+      'c',
+      'd',
+      'e',
+      'f',
+      'g',
+      'dp',
+      'common',
+      'commonType',
+    ];
+
     this.digits = [
-      0x3F,
+      0x3f,
       0x06,
       0x5b,
       0x4f,
@@ -18924,19 +18976,19 @@ class _7SegmentLED {
       0x07,
       0x7f,
       0x6f,
-      0x6f
+      0x6f,
     ];
-  
+
     this.displayIoNames = {
-      a: "a",
-      b: "b",
-      c: "c",
-      d: "d",
-      e: "e",
-      f: "f",
-      g: "g",
-      dp: "dp",
-      common: "com",
+      a: 'a',
+      b: 'b',
+      c: 'c',
+      d: 'd',
+      e: 'e',
+      f: 'f',
+      g: 'g',
+      dp: 'dp',
+      common: 'com',
     };
   }
 
@@ -18951,32 +19003,32 @@ class _7SegmentLED {
     this.ios.push(obniz.getIO(this.params.f));
     this.ios.push(obniz.getIO(this.params.g));
 
-    for (let i=0;i<this.ios.length; i++) {
+    for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(false);
     }
 
-    if (typeof this.params.dp === "number") {
+    if (typeof this.params.dp === 'number') {
       this.dp = obniz.getIO(this.params.dp);
       this.dp.output(false);
     }
 
     this.common = obniz.getIO(this.params.common);
     this.common.output(false);
-    this.isCathodeCommon = (this.params.commonType === "anode") ? false : true;
+    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
   }
 
   print(data) {
-    if (typeof data === "number") {
+    if (typeof data === 'number') {
       data = parseInt(data);
       data = data % 10;
-  
-      for (let i=0; i<7; i++) {
+
+      for (let i = 0; i < 7; i++) {
         if (this.ios[i]) {
-          var val = (this.digits[data] & (1 << i)) ? true : false;
+          let val = this.digits[data] & (1 << i) ? true : false;
           if (!this.isCathodeCommon) {
             val = ~val;
           }
-          this.ios[i].output( val );
+          this.ios[i].output(val);
         }
       }
       this.on();
@@ -18984,14 +19036,14 @@ class _7SegmentLED {
   }
 
   printRaw(data) {
-    if (typeof data === "number") {
-      for (let i=0; i<7; i++) {
+    if (typeof data === 'number') {
+      for (let i = 0; i < 7; i++) {
         if (this.ios[i]) {
-          var val = (data & (1 << i)) ? true : false;
+          let val = data & (1 << i) ? true : false;
           if (!this.isCathodeCommon) {
             val = !val;
           }
-          this.ios[i].output( val );
+          this.ios[i].output(val);
         }
       }
       this.on();
@@ -19000,23 +19052,21 @@ class _7SegmentLED {
 
   dpState(show) {
     if (this.dp) {
-      this.dp.output( this.isCathodeCommon ? show : !show);
+      this.dp.output(this.isCathodeCommon ? show : !show);
     }
   }
 
   on() {
-    this.common.output( this.isCathodeCommon ? false : true);
+    this.common.output(this.isCathodeCommon ? false : true);
   }
 
   off() {
-    this.common.output( this.isCathodeCommon ? true : false);
+    this.common.output(this.isCathodeCommon ? true : false);
   }
 }
 
-
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);
-
+Obniz.PartsRegistrate('7SegmentLED', _7SegmentLED);
 
 
 /***/ }),
@@ -19028,65 +19078,64 @@ Obniz.PartsRegistrate("7SegmentLED", _7SegmentLED);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 class _7SegmentLEDArray {
-  constructor(){
-    this.identifier = ""+(new Date()).getTime();
-    
-    this.keys = ["segments"];
-    this.requiredKeys = this.keys
-    
+  constructor() {
+    this.identifier = '' + new Date().getTime();
+
+    this.keys = ['segments'];
+    this.requiredKeys = this.keys;
   }
 
   wired(obniz) {
     this.obniz = obniz;
-    
+
     this.segments = this.params.segments;
   }
 
   print(data) {
-    if (typeof data === "number") {
+    if (typeof data === 'number') {
       data = parseInt(data);
-      
-      const print = (index) => {
+
+      const print = index => {
         let val = data;
-  
-        for (let i=0; i<this.segments.length; i++) {
-          if(index === i) {
-            this.segments[i].print(val%10);
+
+        for (let i = 0; i < this.segments.length; i++) {
+          if (index === i) {
+            this.segments[i].print(val % 10);
           } else {
             this.segments[i].off();
           }
-          val = val/10;
+          val = val / 10;
         }
       };
-  
+
       let animations = [];
-      for (let i=0; i<this.segments.length; i++) {
+      for (let i = 0; i < this.segments.length; i++) {
         animations.push({
           duration: 3,
-          state: print
+          state: print,
         });
-      } 
-  
-      this.obniz.io.animation(this.identifier, "loop", animations);
-    };
+      }
+
+      this.obniz.io.animation(this.identifier, 'loop', animations);
+    }
   }
 
   on() {
-    this.obniz.io.animation(this.identifier, "resume");
+    this.obniz.io.animation(this.identifier, 'resume');
   }
 
   off() {
-    this.obniz.io.animation(this.identifier, "pause");
-    for (let i=0; i<this.segments.length; i++) {
+    this.obniz.io.animation(this.identifier, 'pause');
+    for (let i = 0; i < this.segments.length; i++) {
       this.segments[i].off();
     }
   }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
+Obniz.PartsRegistrate('7SegmentLEDArray', _7SegmentLEDArray);
+
 
 /***/ }),
 
@@ -19097,30 +19146,27 @@ Obniz.PartsRegistrate("7SegmentLEDArray", _7SegmentLEDArray);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-
 class MatrixLED_MAX7219 {
-
   constructor() {
-    this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-    this.requiredKeys = ["din", "cs", "clk"];
+    this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+    this.requiredKeys = ['din', 'cs', 'clk'];
   }
 
   wired(obniz) {
     this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
-    if(obniz.isValidIO(this.params.vcc)){
+    if (obniz.isValidIO(this.params.vcc)) {
       obniz.getIO(this.params.vcc).output(true);
     }
-    if(obniz.isValidIO(this.params.gnd)){
+    if (obniz.isValidIO(this.params.gnd)) {
       obniz.getIO(this.params.gnd).output(false);
     }
-    
+
     // max 10Mhz but motor driver can't
-    this.params.frequency = this.params.frequency  ||  10 * 1000*1000;
-    this.params.mode =  "master";
+    this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+    this.params.mode = 'master';
     this.params.mosi = this.params.din;
-    this.params.drive = "3v";
+    this.params.drive = '3v';
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
     // reset a onece
@@ -19143,7 +19189,7 @@ class MatrixLED_MAX7219 {
     this.write([0x0c, 0x01]); // Shutdown to normal operation
     this.write([0x0f, 0x00]);
     this.passingCommands();
-    obniz.wait(10);
+    this.obniz.wait(10);
   }
 
   test() {
@@ -19152,7 +19198,8 @@ class MatrixLED_MAX7219 {
   }
 
   passingCommands() {
-    for (let i=8; i<this.width; i+=8) {  // this needed for number of unit
+    for (let i = 8; i < this.width; i += 8) {
+      // this needed for number of unit
       this.write([0x00, 0x00]);
     }
   }
@@ -19164,9 +19211,9 @@ class MatrixLED_MAX7219 {
 
   preparevram(width, height) {
     this.vram = [];
-    for (let i=0; i<height; i++) {
-      let dots = new Array(width/8);
-      for (let ii=0;ii<dots.length; ii++) {
+    for (let i = 0; i < height; i++) {
+      let dots = new Array(width / 8);
+      for (let ii = 0; ii < dots.length; ii++) {
         dots[ii] = 0x00;
       }
       this.vram.push(dots);
@@ -19180,11 +19227,11 @@ class MatrixLED_MAX7219 {
   }
 
   writeVram() {
-    for (let line_num=0; line_num<this.height; line_num++) {
+    for (let line_num = 0; line_num < this.height; line_num++) {
       let addr = line_num + 1;
       let line = this.vram[line_num];
       let data = [];
-      for (let col=0; col<line.length; col++) {
+      for (let col = 0; col < line.length; col++) {
         data.push(addr);
         data.push(line[col]);
       }
@@ -19193,9 +19240,9 @@ class MatrixLED_MAX7219 {
   }
 
   clear() {
-    for (let line_num=0; line_num<this.height; line_num++) {
+    for (let line_num = 0; line_num < this.height; line_num++) {
       let line = this.vram[line_num];
-      for (let col=0; col<line.length; col++) {
+      for (let col = 0; col < line.length; col++) {
         this.vram[line_num][col] = 0x00;
       }
       this.writeVram();
@@ -19203,33 +19250,32 @@ class MatrixLED_MAX7219 {
   }
 
   draw(ctx) {
-    let isNode = (typeof window === 'undefined') ;
+    let isNode = typeof window === 'undefined';
     if (isNode) {
       // TODO:
-      throw new Error("node js mode is under working.");
+      throw new Error('node js mode is under working.');
     } else {
       const imageData = ctx.getImageData(0, 0, this.width, this.height);
       const data = imageData.data;
-      
-      for(let i = 0; i < data.length; i += 4) {
-        let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        let index = parseInt(i/4);
-        let line = parseInt(index/this.width);
-        let col = parseInt((index-line*this.width)/8);
-        let bits = parseInt((index-line*this.width))%8;
-        if (bits === 0)
-          this.vram[line][col] = 0x00;
-        if (brightness > 0x7F)
-          this.vram[line][col] |= 0x80 >> bits;
+
+      for (let i = 0; i < data.length; i += 4) {
+        let brightness =
+          0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        let index = parseInt(i / 4);
+        let line = parseInt(index / this.width);
+        let col = parseInt((index - line * this.width) / 8);
+        let bits = parseInt(index - line * this.width) % 8;
+        if (bits === 0) this.vram[line][col] = 0x00;
+        if (brightness > 0x7f) this.vram[line][col] |= 0x80 >> bits;
       }
     }
     this.writeVram();
   }
 }
 
-
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
+Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
+
 
 /***/ }),
 
@@ -19240,17 +19286,17 @@ Obniz.PartsRegistrate("MatrixLED_MAX7219", MatrixLED_MAX7219);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var HCSR04 = function() {
-  this.keys  = [ "vcc", "trigger", "echo", "gnd"];
-  this.requiredKeys  = [ "vcc", "trigger", "echo"];
+let HCSR04 = function() {
+  this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
+  this.requiredKeys = ['vcc', 'trigger', 'echo'];
 
-  this._unit = "mm";
+  this._unit = 'mm';
 };
 
 HCSR04.prototype.wired = function(obniz) {
   this.obniz = obniz;
 
-  obniz.setVccGnd(null, this.params.gnd, "5v");
+  obniz.setVccGnd(null, this.params.gnd, '5v');
 
   this.vccIO = obniz.getIO(this.params.vcc);
   this.trigger = this.params.trigger;
@@ -19258,53 +19304,54 @@ HCSR04.prototype.wired = function(obniz) {
 };
 
 HCSR04.prototype.measure = async function(callback) {
-
-  this.vccIO.drive("5v");
+  this.vccIO.drive('5v');
   this.vccIO.output(true);
   await this.obniz.wait(10);
 
-  var self = this;
+  let self = this;
   this.obniz.measure.echo({
     io_pulse: this.trigger,
     io_echo: this.echo,
-    pulse: "positive",
+    pulse: 'positive',
     pulse_width: 0.011,
     measure_edges: 3,
-    timeout: 10/340*1000,
-    callback: function(edges){
+    timeout: 10 / 340 * 1000,
+    callback: function(edges) {
       self.vccIO.output(false);
-      var distance = null;
-      for (var i=0; i<edges.length-1; i++){ // HCSR04's output of io_echo is initially high when trigger is finshed
+      let distance = null;
+      for (let i = 0; i < edges.length - 1; i++) {
+        // HCSR04's output of io_echo is initially high when trigger is finshed
         if (edges[i].edge === true) {
-          distance = (edges[i+1].timing - edges[i].timing) * 1000;
-          if (self._unit === "mm") {
+          distance = (edges[i + 1].timing - edges[i].timing) * 1000;
+          if (self._unit === 'mm') {
             distance = distance / 5.8;
-          } else if (self._unit === "inch") {
+          } else if (self._unit === 'inch') {
             distance = distance / 148.0;
           }
         }
       }
-      if (typeof(callback) === "function") {
+      if (typeof callback === 'function') {
         callback(distance);
       }
-    }
-  })
+    },
+  });
 };
 
 HCSR04.prototype.unit = function(unit) {
-  if (unit === "mm") {
-    this._unit = "mm";
-  } else if (unit === "inch") {
-    this._unit = "inch";
+  if (unit === 'mm') {
+    this._unit = 'mm';
+  } else if (unit === 'inch') {
+    this._unit = 'inch';
   } else {
-    throw new Error("HCSR04: unknown unit "+unit);
+    throw new Error('HCSR04: unknown unit ' + unit);
   }
 };
 
 // Module functions
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("HC-SR04", HCSR04);
+Obniz.PartsRegistrate('HC-SR04', HCSR04);
+
 
 /***/ }),
 
@@ -19316,16 +19363,14 @@ Obniz.PartsRegistrate("HC-SR04", HCSR04);
 /***/ (function(module, exports, __webpack_require__) {
 
 class Grove_EarHeartRate {
-
   constructor() {
-
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["vcc", "gnd"];
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['vcc', 'gnd'];
 
     this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
-      signal: "signal"
+      vcc: 'vcc',
+      gnd: 'gnd',
+      signal: 'signal',
     };
 
     this.interval = 5;
@@ -19334,19 +19379,20 @@ class Grove_EarHeartRate {
 
   wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
   }
 
   start(callback) {
     this.obniz.logicAnalyzer.start({
       io: this.params.signal,
       interval: this.interval,
-      duration: this.duration});
+      duration: this.duration,
+    });
 
-    this.obniz.logicAnalyzer.onmeasured = (array) => {
+    this.obniz.logicAnalyzer.onmeasured = array => {
       let edges = [];
-      for (let i=0; i<array.length - 1; i++) {
-        if (array[i] === 0 && array[i+1] === 1) {
+      for (let i = 0; i < array.length - 1; i++) {
+        if (array[i] === 0 && array[i + 1] === 1) {
           edges.push(i);
         }
       }
@@ -19357,12 +19403,12 @@ class Grove_EarHeartRate {
         pulseMin = 60 / between;
         callback(pulseMin);
       }
-    }
+    };
   }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Grove_EarHeartRate", Grove_EarHeartRate);
+Obniz.PartsRegistrate('Grove_EarHeartRate', Grove_EarHeartRate);
 
 
 /***/ }),
@@ -19374,29 +19420,27 @@ Obniz.PartsRegistrate("Grove_EarHeartRate", Grove_EarHeartRate);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 class ENC03R_Module {
-
   constructor() {
-    this.keys = ["vcc", "out1", "out2", "gnd"];
-    this.required = ["out1", "out2"];
+    this.keys = ['vcc', 'out1', 'out2', 'gnd'];
+    this.required = ['out1', 'out2'];
     this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
   }
 
   wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.ad0 = obniz.getAD(this.params.out1);
     this.ad1 = obniz.getAD(this.params.out2);
-  
-    this.ad0.start((value) => {
+
+    this.ad0.start(value => {
       this.sens1 = (value - 1.45) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
       if (this.onchange1) {
         this.onchange1(this.sens1);
       }
     });
-  
-    this.ad1.start((value) => {
+
+    this.ad1.start(value => {
       this.sens2 = (value - 1.35) / this.Sens; //[Angular velocity(deg/sec)] = ( [AD Voltage]-1.35V ) / 0.67mV
       if (this.onchange2) {
         this.onchange2(this.sens2);
@@ -19406,7 +19450,8 @@ class ENC03R_Module {
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ENC03R_Module", ENC03R_Module);
+Obniz.PartsRegistrate('ENC03R_Module', ENC03R_Module);
+
 
 /***/ }),
 
@@ -19418,10 +19463,9 @@ Obniz.PartsRegistrate("ENC03R_Module", ENC03R_Module);
 /***/ (function(module, exports, __webpack_require__) {
 
 class IRSensor {
-
   constructor() {
-    this.keys = ["output","vcc", "gnd"];
-    this.requiredKeys = ["output"];
+    this.keys = ['output', 'vcc', 'gnd'];
+    this.requiredKeys = ['output'];
 
     this.dataSymbolLength = 0.07;
     this.duration = 200; // 200msec
@@ -19430,35 +19474,41 @@ class IRSensor {
     this.cutTail = true;
     this.output_pullup = true;
   }
-  
-  wired (obniz) {
+
+  wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     if (!obniz.isValidIO(this.params.output)) {
-      throw new Errro('output is not valid io');
+      throw new Error('output is not valid io');
     }
   }
 
   start(callback) {
     this.ondetect = callback;
-    if(this.output_pullup) {
-      obniz.getIO(this.params.output).pull('5v');
+    if (this.output_pullup) {
+      this.obniz.getIO(this.params.output).pull('5v');
     }
 
-    obniz.logicAnalyzer.start({io:this.params.output, interval:this.dataSymbolLength, duration:this.duration, triggerValue:this.dataInverted ? false : true, triggerValueSamples:this.triggerSampleCount})
-    obniz.logicAnalyzer.onmeasured = (levels) => {
-      if (typeof this.ondetect === "function") {
+    this.obniz.logicAnalyzer.start({
+      io: this.params.output,
+      interval: this.dataSymbolLength,
+      duration: this.duration,
+      triggerValue: this.dataInverted ? false : true,
+      triggerValueSamples: this.triggerSampleCount,
+    });
+    this.obniz.logicAnalyzer.onmeasured = levels => {
+      if (typeof this.ondetect === 'function') {
         if (this.dataInverted) {
           let arr = new Uint8Array(levels);
-          for (let i=0; i<arr.length; i++) {
+          for (let i = 0; i < arr.length; i++) {
             arr[i] = arr[i] ? 0 : 1;
           }
           levels = Array.from(arr);
         }
 
         if (this.cutTail) {
-          for (let i=levels.length-1; i>1; i--) {
-            if(levels[i] === 0 && levels[i-1] === 0) {
+          for (let i = levels.length - 1; i > 1; i--) {
+            if (levels[i] === 0 && levels[i - 1] === 0) {
               levels.splice(i, 1);
             } else {
               break;
@@ -19468,12 +19518,13 @@ class IRSensor {
 
         this.ondetect(levels);
       }
-    }
+    };
   }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("IRSensor", IRSensor);
+Obniz.PartsRegistrate('IRSensor', IRSensor);
+
 
 /***/ }),
 
@@ -19484,120 +19535,130 @@ Obniz.PartsRegistrate("IRSensor", IRSensor);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-class FullColorLED{
-
-  constructor(){
+class FullColorLED {
+  constructor() {
     this.COMMON_TYPE_ANODE = 1;
     this.COMMON_TYPE_CATHODE = 0;
 
-    this.anode_keys = [
-      'anode',
-      'anode_common',
-      'anodeCommon',
-      'vcc'
-    ];
-    this.cathode_keys = [
-      'cathode',
-      'cathode_common',
-      'cathodeCommon',
-      'gnd'
-    ];
-    this.animationName = "FullColorLED-" + Math.round(Math.random() *1000);
-    
-    this.keys = ["r", "g", "b", "common", "commonType"];
-    this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+    this.anode_keys = ['anode', 'anode_common', 'anodeCommon', 'vcc'];
+    this.cathode_keys = ['cathode', 'cathode_common', 'cathodeCommon', 'gnd'];
+    this.animationName = 'FullColorLED-' + Math.round(Math.random() * 1000);
+
+    this.keys = ['r', 'g', 'b', 'common', 'commonType'];
+    this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
   }
-  
-  wired (obniz){
-    var r = this.params.r;
-    var g = this.params.g;
-    var b = this.params.b;
-    var common = this.params.common;
-    var commontype = this.params.commonType;
-    
+
+  wired(obniz) {
+    let r = this.params.r;
+    let g = this.params.g;
+    let b = this.params.b;
+    let common = this.params.common;
+    let commontype = this.params.commonType;
+
     this.obniz = obniz;
-    if(this.anode_keys.includes(commontype)){
+    if (this.anode_keys.includes(commontype)) {
       this.commontype = this.COMMON_TYPE_ANODE;
-    }else if(this.cathode_keys.includes(commontype)){
-       this.commontype = this.COMMON_TYPE_CATHODE;
-    }else{
-      this.obniz.error("FullColorLED param need common type [  anode_common or cathode_common ] ");
+    } else if (this.cathode_keys.includes(commontype)) {
+      this.commontype = this.COMMON_TYPE_CATHODE;
+    } else {
+      this.obniz.error(
+        'FullColorLED param need common type [  anode_common or cathode_common ] '
+      );
     }
-    
+
     this.common = this.obniz.getIO(common);
     this.common.output(this.commontype);
-    
+
     this.obniz.getIO(r).output(this.commontype);
     this.obniz.getIO(g).output(this.commontype);
     this.obniz.getIO(b).output(this.commontype);
-    this.pwmR = this.obniz.getFreePwm();this.pwmR.start({io: r});this.pwmR.freq(1000);
-    this.pwmG = this.obniz.getFreePwm();this.pwmG.start({io: g});this.pwmG.freq(1000);
-    this.pwmB = this.obniz.getFreePwm();this.pwmB.start({io: b});this.pwmB.freq(1000);
-    this.rgb(0,0,0);
+    this.pwmR = this.obniz.getFreePwm();
+    this.pwmR.start({ io: r });
+    this.pwmR.freq(1000);
+    this.pwmG = this.obniz.getFreePwm();
+    this.pwmG.start({ io: g });
+    this.pwmG.freq(1000);
+    this.pwmB = this.obniz.getFreePwm();
+    this.pwmB.start({ io: b });
+    this.pwmB.freq(1000);
+    this.rgb(0, 0, 0);
   }
-  
-  rgb(r,g,b){
-    r = Math.min(Math.max(parseInt(r),0),255);
-    g = Math.min(Math.max(parseInt(g),0),255);
-    b = Math.min(Math.max(parseInt(b),0),255);
-    
-    if(this.commontype === this.COMMON_TYPE_ANODE){
-      r = (255 - r);
-      g = (255 - g);
-      b = (255 - b);
+
+  rgb(r, g, b) {
+    r = Math.min(Math.max(parseInt(r), 0), 255);
+    g = Math.min(Math.max(parseInt(g), 0), 255);
+    b = Math.min(Math.max(parseInt(b), 0), 255);
+
+    if (this.commontype === this.COMMON_TYPE_ANODE) {
+      r = 255 - r;
+      g = 255 - g;
+      b = 255 - b;
     }
-    this.pwmR.duty(r/255*100 );
-    this.pwmG.duty(g/255*100 );
-    this.pwmB.duty(b/255*100 );
+    this.pwmR.duty(r / 255 * 100);
+    this.pwmG.duty(g / 255 * 100);
+    this.pwmB.duty(b / 255 * 100);
   }
-  
-  hsv(h,s,v){
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
 
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
+  hsv(h, s, v) {
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
 
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
+
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
 
     R = Math.floor(R * 255);
     G = Math.floor(G * 255);
     B = Math.floor(B * 255);
 
-    this.rgb(R,G,B);
+    this.rgb(R, G, B);
   }
-  
-  gradation(cycletime_ms){
-    var frames = [];
-    var max = 36/2;
-    var duration = Math.round(cycletime_ms / max);
-    for (var i = 0; i < max; i++){
-     var oneFrame = {
-       duration: duration,
-       state : function(index){ // index = 0
-          this.hsv(index*10*2,1,1);
-       }.bind(this)
-     };
-     frames.push(oneFrame);
 
+  gradation(cycletime_ms) {
+    let frames = [];
+    let max = 36 / 2;
+    let duration = Math.round(cycletime_ms / max);
+    for (let i = 0; i < max; i++) {
+      let oneFrame = {
+        duration: duration,
+        state: function(index) {
+          // index = 0
+          this.hsv(index * 10 * 2, 1, 1);
+        }.bind(this),
+      };
+      frames.push(oneFrame);
     }
-    this.obniz.io.animation(this.animationName, "loop", frames);
-  };
+    this.obniz.io.animation(this.animationName, 'loop', frames);
+  }
 
-  stopgradation(){
-    this.obniz.io.animation(this.animationName, "pause");
-  };
+  stopgradation() {
+    this.obniz.io.animation(this.animationName, 'pause');
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("FullColorLED", FullColorLED);
+Obniz.PartsRegistrate('FullColorLED', FullColorLED);
+
 
 /***/ }),
 
@@ -19609,38 +19670,38 @@ Obniz.PartsRegistrate("FullColorLED", FullColorLED);
 /***/ (function(module, exports, __webpack_require__) {
 
 class InfraredLED {
-
   constructor() {
-    this.keys = ["anode","cathode"];
-    this.requiredKeys = ["anode"];
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
 
     this.dataSymbolLength = 0.07;
   }
-  
-  wired (obniz) {
+
+  wired(obniz) {
     this.obniz = obniz;
     if (!this.obniz.isValidIO(this.params.anode)) {
-      throw new Error("anode is not valid io");
+      throw new Error('anode is not valid io');
     }
     if (this.params.cathode) {
       if (!this.obniz.isValidIO(this.params.cathode)) {
-        throw new Error("cathode is not valid io");
+        throw new Error('cathode is not valid io');
       }
       this.io_cathode = obniz.getIO(this.params.cathode);
       this.io_cathode.output(false);
     }
     this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({io: this.params.anode});
+    this.pwm.start({ io: this.params.anode });
     this.pwm.freq(38000);
   }
 
   send(arr) {
-    this.pwm.modulate("am", this.dataSymbolLength, arr);
+    this.pwm.modulate('am', this.dataSymbolLength, arr);
   }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("InfraredLED", InfraredLED);
+Obniz.PartsRegistrate('InfraredLED', InfraredLED);
+
 
 /***/ }),
 
@@ -19651,12 +19712,11 @@ Obniz.PartsRegistrate("InfraredLED", InfraredLED);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var LED = function() {
-  this.keys = ["anode","cathode"];
-  this.requiredKeys = ["anode"];
-  
-  
-  this.animationName = "Led-" + Math.round(Math.random() *1000);
+let LED = function() {
+  this.keys = ['anode', 'cathode'];
+  this.requiredKeys = ['anode'];
+
+  this.animationName = 'Led-' + Math.round(Math.random() * 1000);
 };
 
 LED.prototype.wired = function(obniz) {
@@ -19682,32 +19742,35 @@ LED.prototype.off = function() {
 };
 
 LED.prototype.endBlink = function() {
-  this.obniz.io.animation(this.animationName, "pause");
-  
+  this.obniz.io.animation(this.animationName, 'pause');
 };
 
 LED.prototype.blink = function(interval) {
-  if(!interval) {
+  if (!interval) {
     interval = 100;
   }
-  var frames = [{
+  let frames = [
+    {
       duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(true);  // on
-      }.bind(this)
-    }, {
+      state: function(index) {
+        // index = 0
+        this.io_anode.output(true); // on
+      }.bind(this),
+    },
+    {
       duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(false);   //off
-      }.bind(this)
-    }];
+      state: function(index) {
+        // index = 0
+        this.io_anode.output(false); //off
+      }.bind(this),
+    },
+  ];
 
-  this.obniz.io.animation(this.animationName, "loop", frames);
-
+  this.obniz.io.animation(this.animationName, 'loop', frames);
 };
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LED", LED);
+Obniz.PartsRegistrate('LED', LED);
 
 
 /***/ }),
@@ -19720,24 +19783,22 @@ Obniz.PartsRegistrate("LED", LED);
 /***/ (function(module, exports, __webpack_require__) {
 
 class WS2811 {
-
   constructor() {
-    this.keys = ["din", "vcc", "gnd"];
-    this.requiredKeys = ["din"];
+    this.keys = ['din', 'vcc', 'gnd'];
+    this.requiredKeys = ['din'];
   }
 
-  wired(obniz){
-
+  wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    
-    this.params.mode  =  "master";
-    this.params.frequency = 2*1000*1000;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = 2 * 1000 * 1000;
     this.params.mosi = this.params.din;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
+  }
 
   static _generateFromByte(val) {
     // T0H 0.5us+-0.15us
@@ -19747,19 +19808,19 @@ class WS2811 {
 
     val = parseInt(val);
     const zero = 0x8;
-    const one  = 0xE;
+    const one = 0xe;
     let ret = [];
-    for (var i=0; i<8;i+=2) {
+    for (let i = 0; i < 8; i += 2) {
       let byte = 0;
       if (val & (0x80 >> i)) {
         byte = one << 4;
       } else {
         byte = zero << 4;
       }
-      if (val & (0x80 >> (i+1))) {
-        byte |= one
+      if (val & (0x80 >> (i + 1))) {
+        byte |= one;
       } else {
-        byte |= zero
+        byte |= zero;
       }
       ret.push(byte);
     }
@@ -19767,70 +19828,84 @@ class WS2811 {
   }
 
   static _generateColor(r, g, b) {
-  
     let array = WS2811._generateFromByte(r);
     array = array.concat(WS2811._generateFromByte(g));
     array = array.concat(WS2811._generateFromByte(b));
     return array;
   }
-  
+
   static _generateHsvColor(h, s, v) {
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
 
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
 
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
 
     R = Math.floor(R * 255);
     G = Math.floor(G * 255);
     B = Math.floor(B * 255);
-    
+
     let array = WS2811._generateFromByte(R);
     array = array.concat(WS2811._generateFromByte(G));
     array = array.concat(WS2811._generateFromByte(B));
     return array;
   }
 
-  rgb(r, g, b){
+  rgb(r, g, b) {
     this.spi.write(WS2811._generateColor(r, g, b));
   }
-  
-  hsv(h,s,v){
-     this.spi.write(WS2811._generateHsvColor(h, s, v));
+
+  hsv(h, s, v) {
+    this.spi.write(WS2811._generateHsvColor(h, s, v));
   }
 
   rgbs(array) {
     let bytes = [];
-    for (var i=0; i<array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }
 
   hsvs(array) {
     let bytes = [];
-    for (var i=0; i<array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }
-
 }
 
-
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("WS2811", WS2811);
+Obniz.PartsRegistrate('WS2811', WS2811);
+
 
 /***/ }),
 
@@ -19842,24 +19917,22 @@ Obniz.PartsRegistrate("WS2811", WS2811);
 /***/ (function(module, exports, __webpack_require__) {
 
 class WS2812 {
-
   constructor() {
-    this.keys = ["din", "vcc", "gnd"];
-    this.requiredKeys = ["din"];
+    this.keys = ['din', 'vcc', 'gnd'];
+    this.requiredKeys = ['din'];
   }
 
-  wired(obniz){
-
+  wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    
-    this.params.mode  =  "master";
-    this.params.frequency = parseInt(3.33*1000*1000);
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = parseInt(3.33 * 1000 * 1000);
     this.params.mosi = this.params.din;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
+  }
 
   static _generateFromByte(val) {
     // T0H 0.35us+-0.15us
@@ -19871,19 +19944,19 @@ class WS2812 {
 
     val = parseInt(val);
     const zero = 0x8;
-    const one  = 0xC;
+    const one = 0xc;
     let ret = [];
-    for (var i=0; i<8;i+=2) {
+    for (let i = 0; i < 8; i += 2) {
       let byte = 0;
       if (val & (0x80 >> i)) {
         byte = one << 4;
       } else {
         byte = zero << 4;
       }
-      if (val & (0x80 >> (i+1))) {
-        byte |= one
+      if (val & (0x80 >> (i + 1))) {
+        byte |= one;
       } else {
-        byte |= zero
+        byte |= zero;
       }
       ret.push(byte);
     }
@@ -19891,67 +19964,81 @@ class WS2812 {
   }
 
   static _generateColor(r, g, b) {
-  
     let array = WS2812._generateFromByte(g);
     array = array.concat(WS2812._generateFromByte(r));
     array = array.concat(WS2812._generateFromByte(b));
     return array;
   }
-  
+
   static _generateHsvColor(h, s, v) {
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
 
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
 
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
 
     R = Math.floor(R * 255);
     G = Math.floor(G * 255);
     B = Math.floor(B * 255);
-    
+
     return WS2812._generateColor(R, G, B);
   }
 
-  rgb(r, g, b){
+  rgb(r, g, b) {
     this.spi.write(WS2812._generateColor(r, g, b));
   }
-  
-  hsv(h,s,v){
-     this.spi.write(WS2812._generateHsvColor(h, s, v));
+
+  hsv(h, s, v) {
+    this.spi.write(WS2812._generateHsvColor(h, s, v));
   }
 
   rgbs(array) {
     let bytes = [];
-    for (var i=0; i<array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2812._generateColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }
 
   hsvs(array) {
     let bytes = [];
-    for (var i=0; i<array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2812._generateHsvColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }
-
 }
 
-
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("WS2812", WS2812);
+Obniz.PartsRegistrate('WS2812', WS2812);
+
 
 /***/ }),
 
@@ -19963,24 +20050,22 @@ Obniz.PartsRegistrate("WS2812", WS2812);
 /***/ (function(module, exports, __webpack_require__) {
 
 class WS2812B {
-
   constructor() {
-    this.keys = ["din", "vcc", "gnd"];
-    this.requiredKeys = ["din"];
+    this.keys = ['din', 'vcc', 'gnd'];
+    this.requiredKeys = ['din'];
   }
 
-  wired(obniz){
-
+  wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    
-    this.params.mode  =  "master";
-    this.params.frequency = parseInt(3.33*1000*1000);
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = parseInt(3.33 * 1000 * 1000);
     this.params.mosi = this.params.din;
-    this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
+  }
 
   static _generateFromByte(val) {
     // T0H 0.35us+-0.15us
@@ -19992,19 +20077,19 @@ class WS2812B {
 
     val = parseInt(val);
     const zero = 0x8;
-    const one  = 0xE;
+    const one = 0xe;
     let ret = [];
-    for (var i=0; i<8;i+=2) {
+    for (let i = 0; i < 8; i += 2) {
       let byte = 0;
       if (val & (0x80 >> i)) {
         byte = one << 4;
       } else {
         byte = zero << 4;
       }
-      if (val & (0x80 >> (i+1))) {
-        byte |= one
+      if (val & (0x80 >> (i + 1))) {
+        byte |= one;
       } else {
-        byte |= zero
+        byte |= zero;
       }
       ret.push(byte);
     }
@@ -20012,67 +20097,81 @@ class WS2812B {
   }
 
   static _generateColor(r, g, b) {
-  
     let array = WS2812B._generateFromByte(g);
     array = array.concat(WS2812B._generateFromByte(r));
     array = array.concat(WS2812B._generateFromByte(b));
     return array;
   }
-  
+
   static _generateHsvColor(h, s, v) {
-    var C = v * s ;
-    var Hp = h / 60;
-    var X = C * (1 - Math.abs(Hp % 2 - 1));
+    let C = v * s;
+    let Hp = h / 60;
+    let X = C * (1 - Math.abs(Hp % 2 - 1));
 
-    var R, G, B;
-    if (0 <= Hp && Hp < 1) {[R,G,B]=[C,X,0];};
-    if (1 <= Hp && Hp < 2) {[R,G,B]=[X,C,0];};
-    if (2 <= Hp && Hp < 3) {[R,G,B]=[0,C,X];};
-    if (3 <= Hp && Hp < 4) {[R,G,B]=[0,X,C];};
-    if (4 <= Hp && Hp < 5) {[R,G,B]=[X,0,C];};
-    if (5 <= Hp && Hp < 6) {[R,G,B]=[C,0,X];};
+    let R, G, B;
+    if (0 <= Hp && Hp < 1) {
+      [R, G, B] = [C, X, 0];
+    }
+    if (1 <= Hp && Hp < 2) {
+      [R, G, B] = [X, C, 0];
+    }
+    if (2 <= Hp && Hp < 3) {
+      [R, G, B] = [0, C, X];
+    }
+    if (3 <= Hp && Hp < 4) {
+      [R, G, B] = [0, X, C];
+    }
+    if (4 <= Hp && Hp < 5) {
+      [R, G, B] = [X, 0, C];
+    }
+    if (5 <= Hp && Hp < 6) {
+      [R, G, B] = [C, 0, X];
+    }
 
-    var m = v - C;
-    [R, G, B] = [R+m, G+m, B+m];
+    let m = v - C;
+    [R, G, B] = [R + m, G + m, B + m];
 
     R = Math.floor(R * 255);
     G = Math.floor(G * 255);
     B = Math.floor(B * 255);
-    
+
     return WS2812B._generateColor(R, G, B);
   }
 
-  rgb(r, g, b){
+  rgb(r, g, b) {
     this.spi.write(WS2812B._generateColor(r, g, b));
   }
-  
-  hsv(h,s,v){
-     this.spi.write(WS2812B._generateHsvColor(h, s, v));
+
+  hsv(h, s, v) {
+    this.spi.write(WS2812B._generateHsvColor(h, s, v));
   }
 
   rgbs(array) {
     let bytes = [];
-    for (var i=0; i<array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }
 
   hsvs(array) {
     let bytes = [];
-    for (var i=0; i<array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray = array[i];
-      bytes = bytes.concat(WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]));
+      bytes = bytes.concat(
+        WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2])
+      );
     }
     this.spi.write(bytes);
   }
-
 }
 
-
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("WS2812B", WS2812B);
+Obniz.PartsRegistrate('WS2812B', WS2812B);
+
 
 /***/ }),
 
@@ -20084,40 +20183,39 @@ Obniz.PartsRegistrate("WS2812B", WS2812B);
 /***/ (function(module, exports, __webpack_require__) {
 
 class _24LC256 {
-
   constructor() {
-    this.requiredKeys = ["address"];
-    this.keys = ["sda","scl","clock","pull","i2c","address"];
-  };
+    this.requiredKeys = ['address'];
+    this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
+  }
 
   wired(obniz) {
-    this.params.mode =  this.params.mode || "master"; //for i2c
-    this.params.clock =  this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
-  };
+  }
 
-// Module functions
+  // Module functions
 
   set(address, data) {
-    var array = [];
-    array.push((address >> 8) & 0xFF);
-    array.push(address & 0xFF);
+    let array = [];
+    array.push((address >> 8) & 0xff);
+    array.push(address & 0xff);
     array.push.apply(array, data);
     this.i2c.write(0x50, array);
-    this.obniz.wait(4+1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
-  };
+    this.obniz.wait(4 + 1); // write cycle time = 4ms for 24XX00, 1.5ms for 24C01C, 24C02C
+  }
 
   async getWait(address, length) {
-    var array = [];
-    array.push((address >> 8) & 0xFF);
-    array.push(address & 0xFF);
+    let array = [];
+    array.push((address >> 8) & 0xff);
+    array.push(address & 0xff);
     this.i2c.write(0x50, array);
     return await this.i2c.readWait(0x50, length);
-  };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("24LC256", _24LC256);
+Obniz.PartsRegistrate('24LC256', _24LC256);
 
 
 /***/ }),
@@ -20131,9 +20229,9 @@ Obniz.PartsRegistrate("24LC256", _24LC256);
 
 class Button {
   constructor() {
-    this.keys = ["signal","gnd"];
-    this.required = ["signal"];
-  };
+    this.keys = ['signal', 'gnd'];
+    this.required = ['signal'];
+  }
 
   wired(obniz) {
     this.io_signal = obniz.getIO(this.params.signal);
@@ -20144,25 +20242,25 @@ class Button {
     }
 
     // start input
-    this.io_signal.pull("5v");
+    this.io_signal.pull('5v');
 
-    var self = this;
+    let self = this;
     this.io_signal.input(function(value) {
-      self.isPressed = (value === false);
+      self.isPressed = value === false;
       if (self.onchange) {
         self.onchange(value === false);
       }
     });
-  };
+  }
 
   async isPressedWait() {
-    var ret = await this.io_signal.inputWait();
+    let ret = await this.io_signal.inputWait();
     return ret === false;
-  };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Button", Button);
+Obniz.PartsRegistrate('Button', Button);
 
 
 /***/ }),
@@ -20176,56 +20274,55 @@ Obniz.PartsRegistrate("Button", Button);
 
 class JoyStick {
   constructor() {
-    this.keys = ["sw", "y", "x", "vcc", "gnd","i2c"];
-    this.requiredKeys = ["sw", "y", "x"];
-    this.pins  =  this.keys || ["sw", "y", "x", "vcc", "gnd"];
-    this.pinname = { "sw": "sw12" };
-    this.shortName = "joyS";
-  };
+    this.keys = ['sw', 'y', 'x', 'vcc', 'gnd', 'i2c'];
+    this.requiredKeys = ['sw', 'y', 'x'];
+    this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
+    this.pinname = { sw: 'sw12' };
+    this.shortName = 'joyS';
+  }
 
   wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     this.io_sig_sw = obniz.getIO(this.params.sw);
     this.ad_x = obniz.getAD(this.params.x);
     this.ad_y = obniz.getAD(this.params.y);
 
-    this.io_sig_sw.pull("5v");
+    this.io_sig_sw.pull('5v');
 
-
-    var self = this;
-    this.ad_x.start(function(value){
-      self.positionX = value/ 5.0;
+    let self = this;
+    this.ad_x.start(function(value) {
+      self.positionX = value / 5.0;
       if (self.onchangex) {
         self.onchangex(self.positionX * 2 - 1);
       }
     });
 
-    this.ad_y.start(function(value){
-      self.positionY = value/ 5.0;
+    this.ad_y.start(function(value) {
+      self.positionY = value / 5.0;
       if (self.onchangey) {
         self.onchangey(self.positionY * 2 - 1);
       }
     });
 
     this.io_sig_sw.input(function(value) {
-      self.isPressed = (value === false);
+      self.isPressed = value === false;
       if (self.onchangesw) {
         self.onchangesw(value === false);
       }
     });
-  };
+  }
 
   async isPressedWait() {
-    var ret = await this.io_sig_sw.inputWait();
+    let ret = await this.io_sig_sw.inputWait();
     return ret === false;
-  };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("JoyStick", JoyStick);
+Obniz.PartsRegistrate('JoyStick', JoyStick);
 
 
 /***/ }),
@@ -20239,101 +20336,96 @@ Obniz.PartsRegistrate("JoyStick", JoyStick);
 
 class KXR94_2050 {
   constructor() {
-    this.keys = [ "x", "y", "z", "vcc", "gnd","enable", "self_test"];
-    this.requiredKeys = [ "x", "y", "z"];
-  };
+    this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
+    this.requiredKeys = ['x', 'y', 'z'];
+  }
 
   wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     this.ad_x = obniz.getAD(this.params.x);
     this.ad_y = obniz.getAD(this.params.y);
     this.ad_z = obniz.getAD(this.params.z);
 
-
-    if(obniz.isValidIO(this.params.enable)){
-      obniz.getIO(this.params.enable).drive("5v");
+    if (obniz.isValidIO(this.params.enable)) {
+      obniz.getIO(this.params.enable).drive('5v');
       obniz.getIO(this.params.enable).output(true);
     }
-    if(obniz.isValidIO(this.params.self_test)){
-      obniz.getIO(this.params.self_test).drive("5v");
+    if (obniz.isValidIO(this.params.self_test)) {
+      obniz.getIO(this.params.self_test).drive('5v');
       obniz.getIO(this.params.self_test).output(false);
     }
 
-    return (async ()=>{
-
-      if(obniz.isValidIO(this.params.vcc)){
+    return (async () => {
+      if (obniz.isValidIO(this.params.vcc)) {
         let pwrVoltage = await obniz.getAD(this.params.vcc).getWait();
         this.changeVccVoltage(pwrVoltage);
-      }else{
+      } else {
         this.changeVccVoltage(5);
       }
 
-      this.ad_x.start((value)=>{
+      this.ad_x.start(value => {
         if (this.onchangex) {
           this.onchangex(this.voltage2gravity(value));
         }
       });
 
-      this.ad_y.start((value)=>{
+      this.ad_y.start(value => {
         if (this.onchangey) {
           this.onchangey(this.voltage2gravity(value));
         }
       });
 
-      this.ad_z.start((value)=>{
+      this.ad_z.start(value => {
         if (this.onchangez) {
           this.onchangez(this.voltage2gravity(value));
         }
       });
 
-      if(this.obniz.isValidIO(this.params.vcc)){
-        this.obniz.getAD(this.params.vcc).start((value)=>{
+      if (this.obniz.isValidIO(this.params.vcc)) {
+        this.obniz.getAD(this.params.vcc).start(value => {
           this.changeVccVoltage(value);
         });
       }
 
-      obniz.display.setPinName(this.params.x, "KXR94_2050", "x");
-      obniz.display.setPinName(this.params.y, "KXR94_2050", "y");
-      obniz.display.setPinName(this.params.z, "KXR94_2050", "z");
+      obniz.display.setPinName(this.params.x, 'KXR94_2050', 'x');
+      obniz.display.setPinName(this.params.y, 'KXR94_2050', 'y');
+      obniz.display.setPinName(this.params.z, 'KXR94_2050', 'z');
 
-      if(this.obniz.isValidIO(this.params.vcc)){
-        obniz.display.setPinName(this.params.vcc, "KXR94_2050", "vcc");
+      if (this.obniz.isValidIO(this.params.vcc)) {
+        obniz.display.setPinName(this.params.vcc, 'KXR94_2050', 'vcc');
       }
-
     })();
+  }
 
-  };
-
-  changeVccVoltage(pwrVoltage){
+  changeVccVoltage(pwrVoltage) {
     this.sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-    this.offsetVoltage = pwrVoltage/2; //Set offset voltage (Output voltage at 0g, unit:V)
+    this.offsetVoltage = pwrVoltage / 2; //Set offset voltage (Output voltage at 0g, unit:V)
   }
 
-  voltage2gravity(volt){
-    return  (volt - this.offsetVoltage) / this.sensitivity ;
+  voltage2gravity(volt) {
+    return (volt - this.offsetVoltage) / this.sensitivity;
   }
 
-  async getWait(){
-      let result = await Promise.all([
-        this.ad_x.getWait(),
-        this.ad_y.getWait(),
-        this.ad_z.getWait(),
-      ]);
+  async getWait() {
+    let result = await Promise.all([
+      this.ad_x.getWait(),
+      this.ad_y.getWait(),
+      this.ad_z.getWait(),
+    ]);
 
-      return {
-        x:this.voltage2gravity(result[0]),
-        y:this.voltage2gravity(result[1]),
-        z:this.voltage2gravity(result[2])
-      };
+    return {
+      x: this.voltage2gravity(result[0]),
+      y: this.voltage2gravity(result[1]),
+      z: this.voltage2gravity(result[2]),
+    };
   }
-
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("KXR94_2050", KXR94_2050);
+Obniz.PartsRegistrate('KXR94_2050', KXR94_2050);
 
 
 /***/ }),
@@ -20347,52 +20439,51 @@ Obniz.PartsRegistrate("KXR94_2050", KXR94_2050);
 
 class KXSC7_2050 {
   constructor() {
-    this.keys = [ "x", "y", "z", "vcc", "gnd"];
-    this.requiredKeys = [ "x", "y", "z"];
-  };
+    this.keys = ['x', 'y', 'z', 'vcc', 'gnd'];
+    this.requiredKeys = ['x', 'y', 'z'];
+  }
 
   async wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "3v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
     this.ad_x = obniz.getAD(this.params.x);
     this.ad_y = obniz.getAD(this.params.y);
     this.ad_z = obniz.getAD(this.params.z);
 
     await obniz.wait(500);
-    var ad = obniz.getAD(this.params.vcc);
-    var pwrVoltage = await ad.getWait();
-    var horizontalZ = await this.ad_z.getWait();
-    var sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
-    var offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
+    let ad = obniz.getAD(this.params.vcc);
+    let pwrVoltage = await ad.getWait();
+    let horizontalZ = await this.ad_z.getWait();
+    let sensitivity = pwrVoltage / 5; //Set sensitivity (unit:V)
+    let offsetVoltage = horizontalZ - sensitivity; //Set offset voltage (Output voltage at 0g, unit:V)
 
-    var self = this;
-    this.ad_x.start(function(value){
-      self.gravity = (value - offsetVoltage) / sensitivity ;
+    let self = this;
+    this.ad_x.start(function(value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
       if (self.onchangex) {
         self.onchangex(self.gravity);
       }
     });
 
-    this.ad_y.start(function(value){
-      self.gravity = (value - offsetVoltage) / sensitivity ;
+    this.ad_y.start(function(value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
       if (self.onchangey) {
         self.onchangey(self.gravity);
       }
     });
 
-    this.ad_z.start(function(value){
-      self.gravity = (value - offsetVoltage) / sensitivity ;
+    this.ad_z.start(function(value) {
+      self.gravity = (value - offsetVoltage) / sensitivity;
       if (self.onchangez) {
         self.onchangez(self.gravity);
       }
     });
-  };
-
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("KXSC7_2050", KXSC7_2050);
+Obniz.PartsRegistrate('KXSC7_2050', KXSC7_2050);
 
 
 /***/ }),
@@ -20406,28 +20497,28 @@ Obniz.PartsRegistrate("KXSC7_2050", KXSC7_2050);
 
 class PaPIRsVZ {
   constructor() {
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["signal"];
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['signal'];
   }
 
   wired(obniz) {
     this.obniz = obniz;
     this.io_signal = obniz.getIO(this.params.signal);
-    this.io_signal.pull("0v");
-    
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-    
-    this.io_signal.input((value) => {
+    this.io_signal.pull('0v');
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.io_signal.input(value => {
       if (this.onchange) {
         this.onchange(value);
       }
     });
   }
-  
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
+Obniz.PartsRegistrate('PaPIRsVZ', PaPIRsVZ);
+
 
 /***/ }),
 
@@ -20440,34 +20531,33 @@ Obniz.PartsRegistrate("PaPIRsVZ", PaPIRsVZ);
 
 class Potentiometer {
   constructor() {
-    this.keys = ["pin0","pin1","pin2"];
-    this.reuiredKeys = ["pin0","pin1","pin2"];
+    this.keys = ['pin0', 'pin1', 'pin2'];
+    this.reuiredKeys = ['pin0', 'pin1', 'pin2'];
 
     this.vcc_voltage = 5.0;
-  };
+  }
 
   wired(obniz) {
-    this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
+    this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
     this.ad = obniz.getAD(this.params.pin1);
 
-    var self = this;
+    let self = this;
 
-    obniz.getAD(this.params.pin0).start(function(value){
+    obniz.getAD(this.params.pin0).start(function(value) {
       self.vcc_voltage = value;
     });
 
-    this.ad.start(function(value){
-      self.position = value/ self.vcc_voltage;
+    this.ad.start(function(value) {
+      self.position = value / self.vcc_voltage;
       if (self.onchange) {
         self.onchange(self.position);
       }
     });
-  };
-
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Potentiometer", Potentiometer);
+Obniz.PartsRegistrate('Potentiometer', Potentiometer);
 
 
 /***/ }),
@@ -20481,37 +20571,37 @@ Obniz.PartsRegistrate("Potentiometer", Potentiometer);
 
 class DCMotor {
   constructor() {
-    this.keys = ["forward", "back"];
-    this.requiredKeys = ["forward", "back"];
-  };
+    this.keys = ['forward', 'back'];
+    this.requiredKeys = ['forward', 'back'];
+  }
 
   wired(obniz) {
     this.status = {
       direction: null,
-      power: null
+      power: null,
     };
 
     this.pwm1_io_num = this.params.forward;
     this.pwm2_io_num = this.params.back;
 
     this.pwm1 = obniz.getFreePwm();
-    this.pwm1.start({io: this.pwm1_io_num});
+    this.pwm1.start({ io: this.pwm1_io_num });
     this.pwm1.freq(100000);
     this.pwm2 = obniz.getFreePwm();
-    this.pwm2.start({io: this.pwm2_io_num});
+    this.pwm2.start({ io: this.pwm2_io_num });
     this.pwm2.freq(100000);
     this.power(30);
-  };
+  }
 
-// Module functions
+  // Module functions
 
   forward() {
     this.move(true);
-  };
+  }
 
   reverse() {
     this.move(false);
-  };
+  }
 
   stop() {
     if (this.status.direction === null) {
@@ -20520,7 +20610,7 @@ class DCMotor {
     this.status.direction = null;
     this.pwm1.duty(0);
     this.pwm2.duty(0);
-  };
+  }
 
   move(forward) {
     if (forward) {
@@ -20534,10 +20624,10 @@ class DCMotor {
       }
       this.status.direction = false;
     }
-    var power = this.power();
+    let power = this.power();
     this.power(0);
     this.power(power);
-  };
+  }
 
   power(power) {
     if (power === undefined) {
@@ -20556,12 +20646,11 @@ class DCMotor {
       this.pwm1.duty(0);
       this.pwm2.duty(power);
     }
-  };
-
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("DCMotor", DCMotor);
+Obniz.PartsRegistrate('DCMotor', DCMotor);
 
 
 /***/ }),
@@ -20575,49 +20664,49 @@ Obniz.PartsRegistrate("DCMotor", DCMotor);
 
 class ServoMotor {
   constructor() {
-    this.keys = [ "gnd", "vcc", "signal"];
-    this.requiredKeys = ["signal"];
-  };
+    this.keys = ['gnd', 'vcc', 'signal'];
+    this.requiredKeys = ['signal'];
+  }
 
   wired(obniz) {
     this.obniz = obniz;
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    if(obniz.isValidIO(this.params.vcc)){
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    if (obniz.isValidIO(this.params.vcc)) {
       this.io_vcc = obniz.getIO(this.params.vcc);
     }
 
     this.pwm = obniz.getFreePwm();
     this.pwm_io_num = this.params.signal;
 
-    this.pwm.start({io: this.pwm_io_num});
+    this.pwm.start({ io: this.pwm_io_num });
     this.pwm.freq(50);
-  };
+  }
 
-// Module functions
+  // Module functions
 
   angle(ratio) {
-    var max = 2.4;
-    var min = 0.5;
-    var val = (max-min) * ratio / 180.0 + min;
+    let max = 2.4;
+    let min = 0.5;
+    let val = (max - min) * ratio / 180.0 + min;
     this.pwm.pulse(val);
-  };
+  }
 
   on() {
     if (this.io_vcc) {
       this.io_vcc.output(true);
     }
-  };
+  }
 
   off() {
     if (this.io_vcc) {
       this.io_vcc.output(false);
     }
-  };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ServoMotor", ServoMotor);
+Obniz.PartsRegistrate('ServoMotor', ServoMotor);
 
 
 /***/ }),
@@ -20633,9 +20722,9 @@ Obniz.PartsRegistrate("ServoMotor", ServoMotor);
 
 class FSR40X {
   constructor() {
-    this.keys = ["pin0", "pin1"];
-    this.requiredKeys = ["pin0", "pin1"];
-  };
+    this.keys = ['pin0', 'pin1'];
+    this.requiredKeys = ['pin0', 'pin1'];
+  }
 
   wired(obniz) {
     this.obniz = obniz;
@@ -20643,23 +20732,22 @@ class FSR40X {
     this.io_pwr = obniz.getIO(this.params.pin0);
     this.ad = obniz.getAD(this.params.pin1);
 
-    this.io_pwr.drive("5v");
+    this.io_pwr.drive('5v');
     this.io_pwr.output(true);
 
-    var self = this;
-    this.ad.start(function(value){
-      var pressure = value * 100;
+    let self = this;
+    this.ad.start(function(value) {
+      let pressure = value * 100;
       self.press = pressure;
       if (self.onchange) {
         self.onchange(self.press);
       }
     });
-  };
-
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("FSR40X", FSR40X);
+Obniz.PartsRegistrate('FSR40X', FSR40X);
 
 
 /***/ }),
@@ -20673,31 +20761,31 @@ Obniz.PartsRegistrate("FSR40X", FSR40X);
 
 class SEN0114 {
   constructor() {
-    this.keys = ["vcc", "output", "gnd"];
-    this.requiredKeys = [ "output" ];
-  };
+    this.keys = ['vcc', 'output', 'gnd'];
+    this.requiredKeys = ['output'];
+  }
 
   wired(obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.ad = obniz.getAD(this.params.output);
 
-    this.ad.start((value) => {
+    this.ad.start(value => {
       this.value = value;
       if (this.onchange) {
         this.onchange(this.value);
       }
     });
-  };
+  }
 
   async getHumidityWait() {
     this.value = await this.ad.getWait();
     return this.value;
-  };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("SEN0114", SEN0114);
+Obniz.PartsRegistrate('SEN0114', SEN0114);
 
 
 /***/ }),
@@ -20710,35 +20798,35 @@ Obniz.PartsRegistrate("SEN0114", SEN0114);
 /***/ (function(module, exports, __webpack_require__) {
 
 class Speaker {
-
   constructor(obniz) {
-    this.keys = ["signal","gnd"];
-    this.requiredKeys = ["gnd"];
+    this.keys = ['signal', 'gnd'];
+    this.requiredKeys = ['gnd'];
   }
 
   wired(obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(null, this.params.gnd, "5v");
+    this.obniz.setVccGnd(null, this.params.gnd, '5v');
     this.pwm = obniz.getFreePwm();
-    this.pwm.start({io: this.params.signal});
+    this.pwm.start({ io: this.params.signal });
   }
 
   play(freq) {
     if (freq > 0) {
       this.pwm.freq(freq);
-      this.pwm.pulse(1/freq/2*1000);
+      this.pwm.pulse(1 / freq / 2 * 1000);
     } else {
       this.pwm.pulse(0);
     }
   }
-  
+
   stop() {
     this.play(0);
   }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("Speaker", Speaker);
+Obniz.PartsRegistrate('Speaker', Speaker);
+
 
 /***/ }),
 
@@ -20751,36 +20839,33 @@ Obniz.PartsRegistrate("Speaker", Speaker);
 
 class AnalogTemplatureSensor {
   constructor() {
-    this.keys = ["vcc","gnd","output"];
-    this.requiredKeys = ["output"];
-    this.drive = "5v";
-    
-  } 
-  
+    this.keys = ['vcc', 'gnd', 'output'];
+    this.requiredKeys = ['output'];
+    this.drive = '5v';
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
     this.ad = obniz.getAD(this.params.output);
 
-    
-    this.ad.start(function(voltage){
-      this.temp = this.calc(voltage);
-      this.onchange(this.temp);
-    }.bind(this));
-
-  };
-  
-  onchange(temp){
-    
+    this.ad.start(
+      function(voltage) {
+        this.temp = this.calc(voltage);
+        this.onchange(this.temp);
+      }.bind(this)
+    );
   }
-  
-  calc(voltage){
+
+  onchange(temp) {}
+
+  calc(voltage) {
     return 0;
   }
-  
 }
 
 module.exports = AnalogTemplatureSensor;
+
 
 /***/ }),
 
@@ -20791,16 +20876,15 @@ module.exports = AnalogTemplatureSensor;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 class LM35DZ extends AnalogTemplatureSensor {
-  calc (voltage){
-    return  voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
+  calc(voltage) {
+    return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }
-};
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LM35DZ", LM35DZ);
+Obniz.PartsRegistrate('LM35DZ', LM35DZ);
 
 
 /***/ }),
@@ -20814,28 +20898,27 @@ Obniz.PartsRegistrate("LM35DZ", LM35DZ);
 
 class LM60 {
   constructor() {
-    this.keys = ["vcc","gnd","output"];
-    this.requiredKeys = ["output"];
-  };
+    this.keys = ['vcc', 'gnd', 'output'];
+    this.requiredKeys = ['output'];
+  }
 
-  wired(obniz){
+  wired(obniz) {
     this.obniz = obniz;
     this.ad = obniz.getAD(this.params.output);
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    var self = this;
-    this.ad.start(function(value){
-      self.temp = Math.round(((value-0.424)/0.00625)*10)/10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    let self = this;
+    this.ad.start(function(value) {
+      self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
       if (self.onchange) {
         self.onchange(self.temp);
       }
     });
-  };
-
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LM60", LM60);
+Obniz.PartsRegistrate('LM60', LM60);
 
 
 /***/ }),
@@ -20847,18 +20930,16 @@ Obniz.PartsRegistrate("LM60", LM60);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 class LM61 extends AnalogTemplatureSensor {
-  calc (voltage){
-    return  Math.round((voltage-0.6)/0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]  
+  calc(voltage) {
+    return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
-};
-
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("LM61", LM61);
+Obniz.PartsRegistrate('LM61', LM61);
 
 
 /***/ }),
@@ -20870,19 +20951,16 @@ Obniz.PartsRegistrate("LM61", LM61);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 class MCP9700 extends AnalogTemplatureSensor {
-  calc (voltage){
-    return  (voltage-0.5)/0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  calc(voltage) {
+    return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
-};
-
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("MCP9700", MCP9700);
-
+Obniz.PartsRegistrate('MCP9700', MCP9700);
 
 
 /***/ }),
@@ -20894,18 +20972,16 @@ Obniz.PartsRegistrate("MCP9700", MCP9700);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 class MCP9701 extends AnalogTemplatureSensor {
-  calc (voltage){
-    return   (voltage-0.4)/0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
+  calc(voltage) {
+    return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
-};
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("MCP9701", MCP9701);
-
+Obniz.PartsRegistrate('MCP9701', MCP9701);
 
 
 /***/ }),
@@ -20917,19 +20993,18 @@ Obniz.PartsRegistrate("MCP9701", MCP9701);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 //センサから出力が無い(出力インピーダンス高すぎ？)
 
 class S8100B extends AnalogTemplatureSensor {
-  calc (voltage){
-    return   30 + ((1.508 - voltage)/(-0.08)); //Temp(Celsius) =
+  calc(voltage) {
+    return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
   }
-};
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("S8100B", S8100B);
+Obniz.PartsRegistrate('S8100B', S8100B);
 
 
 /***/ }),
@@ -20941,7 +21016,6 @@ Obniz.PartsRegistrate("S8100B", S8100B);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 //不調, 正しく測れるときもある...
@@ -20949,15 +21023,13 @@ const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor
 //原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
 
 class S8120C extends AnalogTemplatureSensor {
-  calc (voltage){
-    return   (voltage - 1.474)/(-0.0082) + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
+  calc(voltage) {
+    return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
-};
-
+}
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("S8120C", S8120C);
-
+Obniz.PartsRegistrate('S8120C', S8120C);
 
 
 /***/ }),
@@ -20971,44 +21043,44 @@ Obniz.PartsRegistrate("S8120C", S8120C);
 
 class ADT7410 {
   constructor() {
-    this.keys = [ "vcc", "gnd", "sda", "scl", "addressMode"];
-    this.requiredKeys = ["addressMode"];
-  };
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'addressMode'];
+    this.requiredKeys = ['addressMode'];
+  }
 
   wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    if (this.params.addressMode === 8){
+    if (this.params.addressMode === 8) {
       this.address = 0x48;
-    }else if(this.params.addressMode === 9){
+    } else if (this.params.addressMode === 9) {
       this.address = 0x49;
     }
 
     this.params.clock = 400000;
-    this.params.pull = "5v";
-    this.params.mode = "master";
+    this.params.pull = '5v';
+    this.params.mode = 'master';
 
     this.i2c = obniz.getI2CWithConfig(this.params);
-  };
+  }
 
   async getTempWait() {
-    var ret = await this.i2c.readWait(this.address, 2);
-    var tempBin = ret[0] << 8;
+    let ret = await this.i2c.readWait(this.address, 2);
+    let tempBin = ret[0] << 8;
     tempBin |= ret[1];
     tempBin = tempBin >> 3;
 
-    if(tempBin & (0x1000)) { //0度以下の時の処理
-      tempBin = tempBin  - 8192;
+    if (tempBin & 0x1000) {
+      //0度以下の時の処理
+      tempBin = tempBin - 8192;
     }
 
-    return (tempBin/16);
-  };
-
+    return tempBin / 16;
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ADT7410", ADT7410);
+Obniz.PartsRegistrate('ADT7410', ADT7410);
 
 
 /***/ }),
@@ -21023,19 +21095,18 @@ Obniz.PartsRegistrate("ADT7410", ADT7410);
 //センサからの反応なし
 class S5851A {
   constructor() {
-    this.requiredKeys = ["vcc","gnd","adr0","adr1","adr_select"];
-    this.keys = ["sda","scl","adr0","adr1","adr_select","i2c"];
-  };
+    this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
+    this.keys = ['sda', 'scl', 'adr0', 'adr1', 'adr_select', 'i2c'];
+  }
 
   wired(obniz) {
     //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
     this.io_adr0 = obniz.getIO(this.params.adr0);
     this.io_adr1 = obniz.getIO(this.params.adr1);
 
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-
-    switch (this.params.adr_select){
+    switch (this.params.adr_select) {
       case 8:
         this.io_adr0.output(false);
         this.io_adr1.output(false);
@@ -21049,32 +21120,32 @@ class S5851A {
       case 'A':
         this.io_adr0.output(true);
         this.io_adr1.output(false);
-        this.address = 0x4A;
+        this.address = 0x4a;
         break;
       case 'B':
         this.io_adr0.output(false);
         this.io_adr1.output(true);
-        this.address = 0x4B;
+        this.address = 0x4b;
         break;
       case 'C':
         this.io_adr0.pull(null);
         this.io_adr1.output(true);
-        this.address = 0x4C;
+        this.address = 0x4c;
         break;
       case 'D':
         this.io_adr0.output(true);
         this.io_adr1.output(true);
-        this.address = 0x4D;
+        this.address = 0x4d;
         break;
       case 'E':
         this.io_adr0.output(false);
         this.io_adr1.pull(null);
-        this.address = 0x4E;
+        this.address = 0x4e;
         break;
       case 'F':
         this.io_adr0.output(true);
         this.io_adr1.pull(null);
-        this.address = 0x4F;
+        this.address = 0x4f;
         break;
       default:
         this.io_adr0.output(false);
@@ -21082,38 +21153,40 @@ class S5851A {
         this.address = 0x48;
         break;
     }
-    console.log('i2c address='+this.address);
+    console.log('i2c address=' + this.address);
 
-    this.params.clock = this.params.clock || 400*1000; //for i2c
-    this.params.mode = this.params.mode || "master"; //for i2c
-    this.params.pull = this.params.pull || "5v"; //for i2c
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
     //obniz.i2c0.write(address, [0x20, 0x24]);
-  };
+  }
 
   async getTempWait() {
     //console.log("gettempwait");
     //obniz.i2c0.write(address, [0x20, 0x24]);
     //obniz.i2c0.write(address, [0xE0, 0x00]);
-    var ret = await this.i2c0.readWait(address, 2);
+    let ret = await this.i2c0.readWait(this.address, 2);
     //console.log('ret:' + ret);
-    var tempBin = (ret[0]).toString(2) + ( '00000000' + (ret[1]).toString(2) ).slice( -8 );
-    var temperature = (-45)+(175*(parseInt(tempBin,2)/(65536-1)));
+    let tempBin =
+      ret[0].toString(2) + ('00000000' + ret[1].toString(2)).slice(-8);
+    let temperature = -45 + 175 * (parseInt(tempBin, 2) / (65536 - 1));
     return temperature;
-  };
+  }
 
   async getHumdWait() {
-    this.i2c.write(address, [0x20, 0x24]);
-    this.i2c.write(address, [0xE0, 0x00]);
-    var ret = await this.i2c.readWait(address, 4);
-    var humdBin = (ret[2]).toString(2) + ( '00000000' + (ret[3]).toString(2) ).slice( -8 );
-    var humidity = 100 * (parseInt(humdBin,2)/(65536-1));
+    this.i2c.write(this.address, [0x20, 0x24]);
+    this.i2c.write(this.address, [0xe0, 0x00]);
+    let ret = await this.i2c.readWait(this.address, 4);
+    let humdBin =
+      ret[2].toString(2) + ('00000000' + ret[3].toString(2)).slice(-8);
+    let humidity = 100 * (parseInt(humdBin, 2) / (65536 - 1));
     return humidity;
-  };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("S5851A", S5851A);
+Obniz.PartsRegistrate('S5851A', S5851A);
 
 
 /***/ }),
@@ -21127,17 +21200,26 @@ Obniz.PartsRegistrate("S5851A", S5851A);
 
 class SHT31 {
   constructor() {
-    this.requiredKeys = ["adr", "addressmode"];
-    this.keys = ["vcc", "sda", "scl", "gnd", "adr", "addressmode", "i2c", "pull"];
-    this.ioKeys = ["vcc", "sda", "scl", "gnd", "adr"];
+    this.requiredKeys = ['adr', 'addressmode'];
+    this.keys = [
+      'vcc',
+      'sda',
+      'scl',
+      'gnd',
+      'adr',
+      'addressmode',
+      'i2c',
+      'pull',
+    ];
 
+    this.ioKeys = ['vcc', 'sda', 'scl', 'gnd', 'adr'];
     this.commands = {};
-    this.commands.softReset = [0x30, 0xA2];
-    this.commands.highRepeatStreach = [0x2C, 0x06];
-    this.commands.middleRepeatStreach = [0x2C, 0x0D];
-    this.commands.lowRepeatStreach = [0x2C, 0x10];
+    this.commands.softReset = [0x30, 0xa2];
+    this.commands.highRepeatStreach = [0x2c, 0x06];
+    this.commands.middleRepeatStreach = [0x2c, 0x0d];
+    this.commands.lowRepeatStreach = [0x2c, 0x10];
     this.commands.highRepeat = [0x24, 0x00];
-    this.commands.mediumRepeat = [0x24, 0x0B];
+    this.commands.mediumRepeat = [0x24, 0x0b];
     this.commands.lowRepeat = [0x24, 0x16];
 
     this.waitTime = {};
@@ -21148,12 +21230,12 @@ class SHT31 {
     this.waitTime.highRepeat = 15;
 
     //not tested
-    this.commands.readStatus = [0xF3, 0x2D];
-  };
+    this.commands.readStatus = [0xf3, 0x2d];
+  }
 
   wired(obniz) {
     this.obniz = obniz;
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.io_adr = obniz.getIO(this.params.adr);
 
     if (this.params.addressmode === 4) {
@@ -21163,42 +21245,42 @@ class SHT31 {
       this.io_adr.pull(null);
       this.address = 0x45;
     }
-    
+
     this.params.clock = this.params.clock || 100 * 1000; //for i2c
-    this.params.mode = this.params.mode || "master"; //for i2c
-    this.params.pull = this.params.pull || "5v"; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
     obniz.i2c0.write(this.address, this.commands.softReset);
-  };
+  }
 
   async getData() {
-    this.i2c.write(this.address,  this.commands.highRepeat);
-    await obniz.wait(this.waitTime.highRepeat);
+    this.i2c.write(this.address, this.commands.highRepeat);
+    await this.obniz.wait(this.waitTime.highRepeat);
     return await this.i2c.readWait(this.address, 6);
-  };
+  }
 
   async getTempWait() {
     return (await this.getAllWait()).temperature;
-  };
+  }
 
   async getHumdWait() {
     return (await this.getAllWait()).humidity;
-  };
+  }
 
   async getAllWait() {
     let ret = await this.getData();
 
-    let tempBin = ret[0]*256 + ret[1];
-    let temperature = (-45) + (175 * (tempBin / (65536 - 1)));
+    let tempBin = ret[0] * 256 + ret[1];
+    let temperature = -45 + 175 * (tempBin / (65536 - 1));
 
-    let humdBin = ret[3]*256 + ret[4];
+    let humdBin = ret[3] * 256 + ret[4];
     let humidity = 100 * (humdBin / (65536 - 1));
-    return {temperature,humidity};
-  };
+    return { temperature, humidity };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("SHT31", SHT31);
+Obniz.PartsRegistrate('SHT31', SHT31);
 
 
 /***/ }),
@@ -21212,40 +21294,40 @@ Obniz.PartsRegistrate("SHT31", SHT31);
 
 class ADT7310 {
   constructor() {
-    this.keys = ["vcc", "gnd", "frequency", "din", "dout", "clk", "spi"];
+    this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
     this.requiredKeys = [];
-  };
+  }
   async wired(obniz) {
     this.obniz = obniz;
 
-      obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-
-    this.params.mode = this.params.mode || "master";
+    this.params.mode = this.params.mode || 'master';
     this.params.frequency = this.params.frequency || 500000;
     this.params.mosi = this.params.din;
     this.params.miso = this.params.dout;
     this.spi = this.obniz.getSpiWithConfig(this.params);
-  };
+  }
 
   async getTempWait() {
     await this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
     await this.obniz.wait(200); //適度な値でないと安定しない
-    var ret = await this.spi.writeWait([0x00, 0x00]);
-    var tempBin = ret[0] << 8;
+    let ret = await this.spi.writeWait([0x00, 0x00]);
+    let tempBin = ret[0] << 8;
     tempBin |= ret[1];
     tempBin = tempBin >> 3;
 
-    if(tempBin & (0x1000)) { //0度以下の時の処理
-      tempBin = tempBin  - 8192;
+    if (tempBin & 0x1000) {
+      //0度以下の時の処理
+      tempBin = tempBin - 8192;
     }
 
-    return (tempBin/16);
-  };
+    return tempBin / 16;
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate("ADT7310", ADT7310);
+Obniz.PartsRegistrate('ADT7310', ADT7310);
 
 
 /***/ })

@@ -15,12 +15,12 @@ class WSCommand_I2C extends WSCommand {
   // Commands
 
   initMaster(params, module) {
-    var mode = 0;
-    var sda = parseInt(params.sda);
-    var scl = parseInt(params.scl);
-    var clock = parseInt(params.clock);
+    let mode = 0;
+    let sda = parseInt(params.sda);
+    let scl = parseInt(params.scl);
+    let clock = parseInt(params.clock);
 
-    var buf = new Uint8Array(8);
+    let buf = new Uint8Array(8);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
@@ -34,18 +34,18 @@ class WSCommand_I2C extends WSCommand {
   }
 
   initSlave(params, module) {
-    var mode = 1;
-    var sda = parseInt(params.sda);
-    var scl = parseInt(params.scl);
-    var clock = 0;
+    let mode = 1;
+    let sda = parseInt(params.sda);
+    let scl = parseInt(params.scl);
+    let clock = 0;
 
-    var addressLength = params.slave_address_length;
-    var address = params.slave_address;
+    let addressLength = params.slave_address_length;
+    let address = params.slave_address;
     if (address > 0x7f) {
       addressLength = 10;
     }
 
-    var buf = new Uint8Array(11);
+    let buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = sda;
@@ -62,7 +62,7 @@ class WSCommand_I2C extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array([module]);
+    let buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
@@ -72,7 +72,7 @@ class WSCommand_I2C extends WSCommand {
     if (params.address_bits === 10 || address > 0x7f) {
       address = address | 0x8000; // mark 10bit mode
     }
-    var buf = new Uint8Array(3 + params.data.length);
+    let buf = new Uint8Array(3 + params.data.length);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
@@ -87,7 +87,7 @@ class WSCommand_I2C extends WSCommand {
       address = address | 0x8000; // mark 10bit mode
     }
     let read_length = params.read;
-    var buf = new Uint8Array(7);
+    let buf = new Uint8Array(7);
     buf[0] = module;
     buf[1] = address >> 8;
     buf[2] = address;
@@ -100,8 +100,8 @@ class WSCommand_I2C extends WSCommand {
 
   parseFromJson(json) {
     // 0
-    for (var i = 0; i < 1; i++) {
-      var module = json['i2c' + i];
+    for (let i = 0; i < 1; i++) {
+      let module = json['i2c' + i];
       if (module === undefined) {
         continue;
       }

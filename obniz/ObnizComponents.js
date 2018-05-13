@@ -147,7 +147,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         pwm.used = true;
         return pwm;
       }
-      i++;
     }
     throw new Error('No More PWM Available. max = ' + i);
   }
@@ -163,7 +162,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         i2c.used = true;
         return i2c;
       }
-      i++;
     }
     throw new Error('No More I2C Available. max = ' + i);
   }
@@ -191,7 +189,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         spi.used = true;
         return spi;
       }
-      i++;
     }
     throw new Error('No More SPI Available. max = ' + i);
   }
@@ -219,7 +216,6 @@ module.exports = class ObnizComponents extends ObnizParts {
         uart.used = true;
         return uart;
       }
-      i++;
     }
     throw new Error('No More uart Available. max = ' + i);
   }

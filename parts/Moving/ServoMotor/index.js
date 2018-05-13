@@ -1,45 +1,45 @@
 class ServoMotor {
   constructor() {
-    this.keys = [ "gnd", "vcc", "signal"];
-    this.requiredKeys = ["signal"];
-  };
+    this.keys = ['gnd', 'vcc', 'signal'];
+    this.requiredKeys = ['signal'];
+  }
 
   wired(obniz) {
     this.obniz = obniz;
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
-    if(obniz.isValidIO(this.params.vcc)){
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    if (obniz.isValidIO(this.params.vcc)) {
       this.io_vcc = obniz.getIO(this.params.vcc);
     }
 
     this.pwm = obniz.getFreePwm();
     this.pwm_io_num = this.params.signal;
 
-    this.pwm.start({io: this.pwm_io_num});
+    this.pwm.start({ io: this.pwm_io_num });
     this.pwm.freq(50);
-  };
+  }
 
-// Module functions
+  // Module functions
 
   angle(ratio) {
-    var max = 2.4;
-    var min = 0.5;
-    var val = (max-min) * ratio / 180.0 + min;
+    let max = 2.4;
+    let min = 0.5;
+    let val = (max - min) * ratio / 180.0 + min;
     this.pwm.pulse(val);
-  };
+  }
 
   on() {
     if (this.io_vcc) {
       this.io_vcc.output(true);
     }
-  };
+  }
 
   off() {
     if (this.io_vcc) {
       this.io_vcc.output(false);
     }
-  };
+  }
 }
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("ServoMotor", ServoMotor);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('ServoMotor', ServoMotor);

@@ -1,12 +1,12 @@
-var through = require('through2');
-var PluginError = require('gulp-util').PluginError;
-var PLUGIN_NAME = 'obnizVersion';
+let through = require('through2');
+let PluginError = require('gulp-util').PluginError;
+let PLUGIN_NAME = 'obnizVersion';
 
 module.exports = function() {
   /**
    * @this {Transform}
    */
-  var transform = function(file, encoding, callback) {
+  let transform = function(file, encoding, callback) {
     if (file.isNull()) {
       this.push(file);
       return callback(null, file);
@@ -23,7 +23,7 @@ module.exports = function() {
     // プラグインの処理本体
     if (file.isBuffer()) {
       // ファイルの内容をcontentsに読み込み
-      var contents = String(file.contents);
+      let contents = String(file.contents);
 
       let packageJson = JSON.parse(contents);
       let output = '';

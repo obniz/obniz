@@ -11,7 +11,6 @@ class WSCommand_Measurement extends WSCommand {
   // Commands
 
   echo(params) {
-    let type = 0;
     let triggerIO = params.echo.io_pulse;
     let triggerPosNeg = params.echo.pulse === 'negative' ? false : true;
     let triggerWidthUs = parseInt(params.echo.pulse_width * 1000);
@@ -20,7 +19,7 @@ class WSCommand_Measurement extends WSCommand {
     let timeoutUs = params.echo.timeout * 1000;
     timeoutUs = parseInt(timeoutUs);
 
-    var buf = new Uint8Array(13);
+    let buf = new Uint8Array(13);
     buf[0] = 0;
     buf[1] = triggerIO;
     buf[2] = triggerPosNeg ? 1 : 0;
@@ -38,7 +37,7 @@ class WSCommand_Measurement extends WSCommand {
   }
 
   parseFromJson(json) {
-    var module = json['measure'];
+    let module = json['measure'];
     if (module === undefined) {
       return;
     }
@@ -56,12 +55,12 @@ class WSCommand_Measurement extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandMeasurementEcho) {
-      var index = 0;
-      var count = parseInt(payload[index++]);
-      var array = [];
-      for (var i = 0; i < count; i++) {
-        var timing;
-        var edge = payload[index++] > 0 ? true : false;
+      let index = 0;
+      let count = parseInt(payload[index++]);
+      let array = [];
+      for (let i = 0; i < count; i++) {
+        let timing;
+        let edge = payload[index++] > 0 ? true : false;
         timing = payload[index++] << (8 * 3);
         timing += payload[index++] << (8 * 2);
         timing += payload[index++] << 8;

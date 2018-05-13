@@ -10,7 +10,7 @@ class PeripheralUART {
   }
 
   start(params) {
-    var err = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
+    let err = ObnizUtil._requiredKeys(params, ['tx', 'rx']);
     if (err) {
       throw new Error(
         "uart start param '" + err + "' required, but not found "
@@ -53,7 +53,7 @@ class PeripheralUART {
       this.Obniz.getIO(this.params.tx).pull(null);
     }
 
-    var obj = {};
+    let obj = {};
     obj['uart' + this.id] = this.params;
     this.Obniz.send(obj);
     this.received = [];
@@ -61,7 +61,7 @@ class PeripheralUART {
   }
 
   send(data) {
-    var send_data = null;
+    let send_data = null;
     if (data === undefined) {
       return;
     }
@@ -69,14 +69,14 @@ class PeripheralUART {
       data = [data];
     }
     if (isNode && data instanceof Buffer) {
-      var arr = [...data];
+      send_data = [...data];
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === 'string') {
       const buf = Buffer(data);
       send_data = [...buf];
     }
-    var obj = {};
+    let obj = {};
     obj['uart' + this.id] = {};
     obj['uart' + this.id].data = send_data;
     //  console.log(obj);
@@ -88,9 +88,9 @@ class PeripheralUART {
   }
 
   readBytes() {
-    var results = [];
+    let results = [];
     if (this.isDataExists()) {
-      for (var i = 0; i < this.received.length; i++) {
+      for (let i = 0; i < this.received.length; i++) {
         results.push(this.received[i]);
       }
     }
@@ -99,9 +99,9 @@ class PeripheralUART {
   }
 
   readText() {
-    var string = null;
+    let string = null;
     if (this.isDataExists()) {
-      var data = this.readBytes();
+      let data = this.readBytes();
       string = this.tryConvertString(data);
     }
     this.received = [];
@@ -114,7 +114,7 @@ class PeripheralUART {
 
   notified(obj) {
     if (this.onreceive) {
-      var string = this.tryConvertString(obj.data);
+      let string = this.tryConvertString(obj.data);
       this.onreceive(obj.data, string);
     } else {
       if (!this.received) {
@@ -130,7 +130,7 @@ class PeripheralUART {
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj['uart' + this.id] = null;
     this.params = null;
     this.Obniz.send(obj);

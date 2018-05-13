@@ -4,7 +4,7 @@ class PeripheralIO_ {
   }
 
   animation(name, status, array) {
-    var obj = {};
+    let obj = {};
     obj.io = {
       animation: {
         name: name,
@@ -14,7 +14,7 @@ class PeripheralIO_ {
     if (!array) array = [];
 
     let states = [];
-    for (var i = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       let state = array[i];
       let duration = state.duration;
       let func = state.state;
@@ -27,7 +27,7 @@ class PeripheralIO_ {
 
       // simply merge objects
       let merged = {};
-      for (var index = 0; index < pooledJsonArray.length; index++) {
+      for (let index = 0; index < pooledJsonArray.length; index++) {
         for (let key in pooledJsonArray[index]) {
           merged[key] = pooledJsonArray[index][key];
         }

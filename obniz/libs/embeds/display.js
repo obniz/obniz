@@ -40,7 +40,7 @@ class Display {
         canvas.width = this.width;
         canvas.height = this.height;
         canvas.style['-webkit-font-smoothing'] = 'none';
-        var body = document.getElementsByTagName('body')[0];
+        let body = document.getElementsByTagName('body')[0];
         body.appendChild(canvas);
       }
       this._canvas = canvas;
@@ -83,7 +83,7 @@ class Display {
     }
     this._pos.x = 0;
     this._pos.y = 0;
-    var obj = {};
+    let obj = {};
     obj['display'] = {
       clear: true,
     };
@@ -91,7 +91,6 @@ class Display {
   }
 
   pos(x, y) {
-    const ctx = this._ctx(); // load it first.
     if (typeof x == 'number') {
       this._pos.x = x;
     }
@@ -108,7 +107,7 @@ class Display {
       this.draw(ctx);
       this._pos.y += this.fontSize;
     } else {
-      var obj = {};
+      let obj = {};
       obj['display'] = {
         text: '' + text,
       };
@@ -160,7 +159,7 @@ class Display {
   }
 
   qr(text, correction) {
-    var obj = {};
+    let obj = {};
     obj['display'] = {
       qr: {
         text,
@@ -173,7 +172,7 @@ class Display {
   }
 
   raw(data) {
-    var obj = {};
+    let obj = {};
     obj['display'] = {
       raw: data,
     };
@@ -181,7 +180,7 @@ class Display {
   }
 
   setPinName(io, moduleName, funcName) {
-    var obj = {};
+    let obj = {};
     obj['display'] = {};
     obj['display']['pin_assign'] = {};
     obj['display']['pin_assign'][io] = {
@@ -197,7 +196,7 @@ class Display {
     obj['display'] = {};
     obj['display']['pin_assign'] = {};
     let noAssignee = true;
-    for (var key in data) {
+    for (let key in data) {
       noAssignee = false;
       obj['display']['pin_assign'][key] = {
         module_name: moduleName,
@@ -216,11 +215,11 @@ class Display {
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      var index = parseInt(i / 4);
-      var line = parseInt(index / this.width);
-      var col = parseInt((index - line * this.width) / 8);
-      var bits = parseInt(index - line * this.width) % 8;
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let index = parseInt(i / 4);
+      let line = parseInt(index / this.width);
+      let col = parseInt((index - line * this.width) / 8);
+      let bits = parseInt(index - line * this.width) % 8;
       if (bits == 0) vram[line * stride + col] = 0x00;
       if (brightness > 0x7f) vram[line * stride + col] |= 0x80 >> bits;
     }

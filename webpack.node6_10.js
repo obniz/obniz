@@ -31,7 +31,7 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
   // モードの設定、v4系以降はmodeを指定しないと、webpack実行時に警告が出る
   mode: 'development',
-  target : "node",
+  target: 'node',
   // エントリーポイントの設定
   entry: './obniz/index.js',
   // entry: './test.js',
@@ -43,36 +43,41 @@ module.exports = {
     path: path.join(__dirname),
 
     library: 'Obniz',
-    libraryTarget: "umd"
+    libraryTarget: 'umd',
   },
-  devtool: "none",
+  devtool: 'none',
   module: {
-    rules: [{
-      test: /\.(yml|yaml)$/,
-      use: [
-        {
-          loader: require.resolve('json-loader')
+    rules: [
+      {
+        test: /\.(yml|yaml)$/,
+        use: [
+          {
+            loader: require.resolve('json-loader'),
+          },
+          {
+            // loader: require.resolve('yaml-loader')
+            loader: require.resolve(
+              './obniz/libs/webpackReplace/yaml-schema-loader'
+            ),
+          },
+        ],
+      },
+      {
+        test: /\.js$/,
+        // exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [['env', { targets: { node: '6.10' } }]],
+          },
         },
-        {
-          // loader: require.resolve('yaml-loader')
-          loader: require.resolve('./obniz/libs/webpackReplace/yaml-schema-loader')
-        }
-      ]
-    },{
-      test: /\.js$/,
-      // exclude: /(node_modules|bower_components)/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          "presets": [
-            ["env", {"targets": {"node": "6.10"}}]
-          ]
-        }
-      }
-    }]
+      },
+    ],
   },
   externals: [nodeExternals()],
-  stats:{
-    warningsFilter:[ /(?!require function is used in a way in which dependencies cannot be statically extracted)/]
+  stats: {
+    warningsFilter: [
+      /(?!require function is used in a way in which dependencies cannot be statically extracted)/,
+    ],
   },
 };

@@ -4,15 +4,16 @@
  * and open the template in the editor.
  */
 
-var sinon = require('sinon');
-var ws = require('ws');
-var WSServer = ws.Server;
-var semver = require('semver');
+let sinon = require('sinon');
+let ws = require('ws');
+let WSServer = ws.Server;
+let semver = require('semver');
 
-var fs = require('fs');
-var ejs = require('ejs');
+let fs = require('fs');
+let ejs = require('ejs');
 
-var Obniz;
+let Obniz;
+let MochaChrome;
 if (
   typeof window === 'undefined' &&
   process &&
@@ -23,20 +24,20 @@ if (
 } else {
   console.log('Loading normal obniz.js');
   Obniz = require('../index.js');
-  var MochaChrome = require('mocha-chrome');
+  MochaChrome = require('mocha-chrome');
 }
 
 sinon.stub(Obniz.prototype, 'wsOnClose');
 
-var serverDataCount = 0;
-var errorDataCount = 0;
-var testUtil = {
+let serverDataCount = 0;
+let errorDataCount = 0;
+let testUtil = {
   log: console.log,
   isNode: function() {
     return typeof window === 'undefined';
   },
   createServer: function(port, velify) {
-    var wss = new WSServer({
+    let wss = new WSServer({
       host: 'localhost',
       port: port,
       clientTracking: true,
@@ -66,7 +67,7 @@ var testUtil = {
 
   setupObnizPromise: function(obj, done, options) {
     options = options || {};
-    var stub = sinon.stub();
+    let stub = sinon.stub();
     stub.on = sinon.stub();
     stub.send = sinon.stub();
     stub.close = sinon.stub();
@@ -93,8 +94,8 @@ var testUtil = {
 
   waitForWebsocketCall: function(obj, n) {
     return new Promise(function(resolve, reject) {
-      var count = 100;
-      var wait = function() {
+      let count = 100;
+      let wait = function() {
         if (obj.onServerMessage.callCount >= n) {
           resolve();
         } else {
@@ -111,8 +112,8 @@ var testUtil = {
   },
   receiveJson: function(obniz, jsonVal) {
     if (testUtil.isNode()) {
-      var validator = require('./obnizJsonValidator');
-      var results = validator.responseValidate(jsonVal, 'json');
+      let validator = require('./obnizJsonValidator');
+      let results = validator.responseValidate(jsonVal, 'json');
       require('chai').expect(results.valid, results.errors).to.be.true;
     }
 
@@ -121,8 +122,8 @@ var testUtil = {
 
   isValidCommandRequestJson: function(jsonVal) {
     if (testUtil.isNode()) {
-      var validator = require('./obnizJsonValidator');
-      var results = validator.requestValidate(jsonVal, 'wscommand');
+      let validator = require('./obnizJsonValidator');
+      let results = validator.requestValidate(jsonVal, 'wscommand');
       require('chai').expect(results.valid, results.errors).to.be.true;
       return results;
     }
@@ -133,8 +134,8 @@ var testUtil = {
 
   isValidCommandResponseJson: function(jsonVal) {
     if (testUtil.isNode()) {
-      var validator = require('./obnizJsonValidator');
-      var results = validator.responseValidate(jsonVal, 'wscommand');
+      let validator = require('./obnizJsonValidator');
+      let results = validator.responseValidate(jsonVal, 'wscommand');
       require('chai').expect(results.valid, results.errors).to.be.true;
       return results;
     }
@@ -144,18 +145,18 @@ var testUtil = {
 
   obnizAssert: function(_chai, utils) {
     _chai.Assertion.addProperty('obniz', function() {
-      var obj = utils.flag(this, 'object');
+      let obj = utils.flag(this, 'object');
       new _chai.Assertion(obj).to.be.instanceof(Obniz);
     });
 
     _chai.Assertion.addMethod('send', function(expected) {
-      var count = serverDataCount;
+      let count = serverDataCount;
       serverDataCount++;
 
-      var obniz = utils.flag(this, 'object');
-      var stub = obniz.socket.send;
+      let obniz = utils.flag(this, 'object');
+      let stub = obniz.socket.send;
 
-      var message =
+      let message =
         '[obniz.send] no more send data. (called ' +
         stub.callCount +
         ' times, but you expect ' +
@@ -167,25 +168,25 @@ var testUtil = {
         stub.args[count][0],
         '[obniz.send]invalid json'
       ).is.json;
-      var val = JSON.parse(stub.args[count][0]);
+      let val = JSON.parse(stub.args[count][0]);
       new _chai.Assertion(val).to.deep.equal(expected);
 
       if (testUtil.isNode()) {
-        var validator = require('./obnizJsonValidator');
-        var validateErrors = validator.requestValidate(val, 'json');
+        let validator = require('./obnizJsonValidator');
+        let validateErrors = validator.requestValidate(val, 'json');
         new _chai.Assertion(validateErrors.valid, validateErrors.errors).to.be
           .true;
       }
     });
 
     _chai.Assertion.addMethod('sendBinary', function(expected) {
-      var count = serverDataCount;
+      let count = serverDataCount;
       serverDataCount++;
 
-      var obniz = utils.flag(this, 'object');
-      var stub = obniz.socket.send;
+      let obniz = utils.flag(this, 'object');
+      let stub = obniz.socket.send;
 
-      var message =
+      let message =
         '[obniz.send] no more send data. (called ' +
         stub.callCount +
         ' times, but you expect ' +
@@ -197,9 +198,9 @@ var testUtil = {
     });
 
     _chai.Assertion.addProperty('finished', function(expected) {
-      var obniz = utils.flag(this, 'object');
-      var stub = obniz.socket.send;
-      var message =
+      let obniz = utils.flag(this, 'object');
+      let stub = obniz.socket.send;
+      let message =
         '[obniz.send] not finished. (send: called ' +
         stub.callCount +
         ' times, but you expect ' +
@@ -207,8 +208,8 @@ var testUtil = {
         ' times) ';
       new _chai.Assertion(stub.callCount, message).to.be.equal(serverDataCount);
 
-      var errorStub = obniz.error;
-      var message =
+      let errorStub = obniz.error;
+      message =
         '[obniz.send] not finished. (error: called ' +
         errorStub.callCount +
         ' times, but you expect ' +
@@ -220,13 +221,13 @@ var testUtil = {
     });
 
     _chai.Assertion.addMethod('error', function(expected) {
-      var count = errorDataCount;
+      let count = errorDataCount;
       errorDataCount++;
 
-      var obniz = utils.flag(this, 'object');
-      var stub = obniz.error;
+      let obniz = utils.flag(this, 'object');
+      let stub = obniz.error;
 
-      var message =
+      let message =
         '[obniz.error] no more error data. (called ' +
         stub.callCount +
         ' times, but you expect ' +
@@ -240,9 +241,9 @@ var testUtil = {
     });
 
     _chai.Assertion.addProperty('json', function(expected) {
-      var string = utils.flag(this, 'object');
+      let string = utils.flag(this, 'object');
       new _chai.Assertion(string).is.string;
-      var resolve = null;
+      let resolve = null;
       try {
         JSON.parse(string);
         resolve = true;
@@ -254,8 +255,8 @@ var testUtil = {
   },
 
   browser: function(url) {
-    var url = 'file://' + url;
-    options = {
+    url = 'file://' + url;
+    let options = {
       url,
       ignoreConsole: true,
     };
@@ -281,9 +282,9 @@ var testUtil = {
   },
 
   ejs: function(url, param) {
-    var data = fs.readFileSync(url, 'utf8');
-    html = ejs.render(data, param);
-    var newFilename = url.replace('.', '_') + '.html';
+    let data = fs.readFileSync(url, 'utf8');
+    let html = ejs.render(data, param);
+    let newFilename = url.replace('.', '_') + '.html';
 
     return new Promise(function(resolve, reject) {
       fs.writeFile(newFilename, html, function(err) {

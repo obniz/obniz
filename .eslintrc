@@ -1,4 +1,5 @@
 {
+  "root":true,
   "env": {
     "browser": true,
     "es6": true,
@@ -21,6 +22,8 @@
     ],
     "no-console": "off",
     "no-inner-declarations": "warn",
-    "no-unused-vars": "warn"
+    "no-constant-condition": ["error", {"checkLoops": false}],
+    "no-unused-vars": ["error", { "args": "none" }],
+    "no-var": "error"
   }
 }

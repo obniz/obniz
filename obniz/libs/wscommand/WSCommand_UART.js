@@ -14,7 +14,7 @@ class WSCommand_UART extends WSCommand {
   // Commands
 
   init(params, module) {
-    var buf = new Uint8Array(13);
+    let buf = new Uint8Array(13);
     buf[0] = module;
     buf[1] = parseInt(params.tx);
     buf[2] = parseInt(params.rx);
@@ -60,13 +60,13 @@ class WSCommand_UART extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = module;
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   send(params, module) {
-    var buf = new Uint8Array(1 + params.data.length);
+    let buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
     this.sendCommand(this._CommandSend, buf);
@@ -74,8 +74,8 @@ class WSCommand_UART extends WSCommand {
 
   parseFromJson(json) {
     // 0~2
-    for (var i = 0; i < 3; i++) {
-      var module = json['uart' + i];
+    for (let i = 0; i < 3; i++) {
+      let module = json['uart' + i];
       if (module === undefined) {
         continue;
       }
@@ -98,9 +98,9 @@ class WSCommand_UART extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandRecv && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var arr = new Array(payload.byteLength - 1);
-      for (var i = 0; i < arr.length; i++) {
+      let module_index = payload[0];
+      let arr = new Array(payload.byteLength - 1);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
 

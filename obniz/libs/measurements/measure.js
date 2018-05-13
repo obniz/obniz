@@ -7,7 +7,7 @@ class ObnizMeasure {
   }
 
   echo(params) {
-    var err = ObnizUtil._requiredKeys(params, [
+    let err = ObnizUtil._requiredKeys(params, [
       'io_pulse',
       'pulse',
       'pulse_width',
@@ -29,7 +29,7 @@ class ObnizMeasure {
       'callback',
     ]);
 
-    var echo = {};
+    let echo = {};
     echo.io_pulse = this.params.io_pulse;
     echo.pulse = this.params.pulse;
     echo.pulse_width = this.params.pulse_width;
@@ -51,7 +51,7 @@ class ObnizMeasure {
   }
 
   notified(obj) {
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj.echo);
     }

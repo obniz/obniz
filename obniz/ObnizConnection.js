@@ -48,7 +48,7 @@ module.exports = class ObnizConnection {
   }
 
   prompt(filled, callback) {
-    var obnizid = prompt('Please enter obniz id', filled);
+    let obnizid = prompt('Please enter obniz id', filled);
     if (obnizid) {
       callback(obnizid);
     }
@@ -479,7 +479,7 @@ module.exports = class ObnizConnection {
       const frame = WSCommand.dequeueOne(data);
       if (!frame) break;
       let obj = {};
-      for (var i = 0; i < this.wscommands.length; i++) {
+      for (let i = 0; i < this.wscommands.length; i++) {
         const command = this.wscommands[i];
         if (command.module === frame.module) {
           command.notifyFromBinary(obj, frame.func, frame.payload);

@@ -19,7 +19,7 @@ class WSCommand_LogicAnalyzer extends WSCommand {
 
     let matchValue = parseInt(params.trigger.value);
     let matchCount = params.trigger.samples;
-    var buf = new Uint8Array(12);
+    let buf = new Uint8Array(12);
     buf[0] = 1;
     buf[1] = io;
     buf[2] = intervalUsec >> (8 * 3);
@@ -36,12 +36,12 @@ class WSCommand_LogicAnalyzer extends WSCommand {
   }
 
   deinit(params) {
-    var buf = new Uint8Array(0);
+    let buf = new Uint8Array(0);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   parseFromJson(json) {
-    var module = json['logic_analyzer'];
+    let module = json['logic_analyzer'];
     if (module === undefined) {
       return;
     }

@@ -44,7 +44,7 @@ module.exports = class WSCommand_Directive extends WSCommand {
       }
       const length = compressed.byteLength;
 
-      var commandHeader = new Uint8Array(8);
+      let commandHeader = new Uint8Array(8);
       commandHeader[0] = length >> (8 * 3);
       commandHeader[1] = length >> (8 * 2);
       commandHeader[2] = length >> (8 * 1);

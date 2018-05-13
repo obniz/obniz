@@ -14,7 +14,7 @@ class WSCommand_AD extends WSCommand {
   // Commands
 
   get(params, no) {
-    var buf = new Uint8Array([no]);
+    let buf = new Uint8Array([no]);
     this.sendCommand(
       params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece,
       buf
@@ -22,13 +22,13 @@ class WSCommand_AD extends WSCommand {
   }
 
   deinit(params, no) {
-    var buf = new Uint8Array([no]);
+    let buf = new Uint8Array([no]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   parseFromJson(json) {
-    for (var i = 0; i < 12; i++) {
-      var module = json['ad' + i];
+    for (let i = 0; i < 12; i++) {
+      let module = json['ad' + i];
       if (module === undefined) {
         continue;
       }
@@ -51,8 +51,8 @@ class WSCommand_AD extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotifyValue) {
-      for (var i = 0; i < payload.byteLength; i += 3) {
-        var value = (payload[i + 1] << 8) + payload[i + 2];
+      for (let i = 0; i < payload.byteLength; i += 3) {
+        let value = (payload[i + 1] << 8) + payload[i + 2];
         value = value / 100.0;
         objToSend['ad' + payload[i]] = value;
       }

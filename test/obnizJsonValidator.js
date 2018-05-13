@@ -1,11 +1,6 @@
 let Obniz = require('../index');
 let tv4 = Obniz.WSCommand.schema;
 
-var fs = require('fs');
-var path = require('path');
-var yaml = require('js-yaml');
-var glob = require('glob');
-
 class obnizJsonValidator {
   constructor() {
     this.useCommands = {};

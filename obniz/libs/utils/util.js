@@ -1,5 +1,3 @@
-let isNode = typeof window === 'undefined';
-
 class ObnizUtil {
   constructor(obniz) {
     this.obniz = obniz;
@@ -16,20 +14,20 @@ class ObnizUtil {
         );
       }
     } else {
-      var canvas = document.createElement('canvas');
+      let canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
       canvas.style['-webkit-font-smoothing'] = 'none';
-      var body = document.getElementsByTagName('body')[0];
+      let body = document.getElementsByTagName('body')[0];
       body.appendChild(canvas);
 
-      var ctx = canvas.getContext('2d');
+      let ctx = canvas.getContext('2d');
       return ctx;
     }
   }
 
   static _keyFilter(params, keys) {
-    var filterdParams = {};
+    let filterdParams = {};
     if (typeof params !== 'object') {
       return filterdParams;
     }
@@ -52,7 +50,7 @@ class ObnizUtil {
       return keys[0];
     }
 
-    for (var index in keys) {
+    for (let index in keys) {
       if (!(keys[index] in params)) {
         return keys[index];
       }
@@ -61,7 +59,7 @@ class ObnizUtil {
   }
 
   static dataArray2string(data) {
-    var string = null;
+    let string = null;
     try {
       const StringDecoder = require('string_decoder').StringDecoder;
       if (StringDecoder) {

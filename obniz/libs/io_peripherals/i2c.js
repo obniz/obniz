@@ -18,7 +18,7 @@ class PeripheralI2C {
   }
 
   start(arg) {
-    var err = ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
+    let err = ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
     if (err) {
       throw new Error("I2C start param '" + err + "' required, but not found ");
     }
@@ -31,13 +31,13 @@ class PeripheralI2C {
       }
     }
 
-    var mode = this.state.mode;
-    var clock = typeof arg.clock === 'number' ? parseInt(arg.clock) : null;
-    var slave_address =
+    let mode = this.state.mode;
+    let clock = typeof arg.clock === 'number' ? parseInt(arg.clock) : null;
+    let slave_address =
       typeof arg.slave_address === 'number'
         ? parseInt(arg.slave_address)
         : null;
-    var slave_address_length =
+    let slave_address_length =
       typeof arg.slave_address_length === 'number'
         ? parseInt(arg.slave_address_length)
         : null;
@@ -88,7 +88,7 @@ class PeripheralI2C {
       this.Obniz.getIO(this.state.scl).pull(null);
     }
 
-    var startObj = ObnizUtil._keyFilter(this.state, ['mode', 'sda', 'scl']);
+    let startObj = ObnizUtil._keyFilter(this.state, ['mode', 'sda', 'scl']);
     if (mode === 'master') {
       startObj.clock = clock;
     } else {
@@ -98,7 +98,7 @@ class PeripheralI2C {
       }
     }
 
-    var obj = {};
+    let obj = {};
     obj['i2c' + this.id] = startObj;
     this.used = true;
     this.Obniz.send(obj);
@@ -118,7 +118,7 @@ class PeripheralI2C {
     if (data.length > 1024) {
       throw new Error('i2c: data should be under 1024 bytes');
     }
-    var obj = {};
+    let obj = {};
     obj['i2c' + this.id] = {
       address,
       data,
@@ -141,10 +141,10 @@ class PeripheralI2C {
     if (length > 1024) {
       throw new Error('i2c: data length should be under 1024 bytes');
     }
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['i2c' + self.id] = {
         address,
         read: length,
@@ -160,7 +160,7 @@ class PeripheralI2C {
           this.onwritten(obj.data, obj.address);
         } else {
           // TODO: we should compare byte length from sent
-          var callback = this.observers.shift();
+          let callback = this.observers.shift();
           if (callback) {
             callback(obj.data);
           }
@@ -187,7 +187,7 @@ class PeripheralI2C {
 
   end() {
     this.state = {};
-    var obj = {};
+    let obj = {};
     obj['i2c' + this.id] = null;
     this.Obniz.send(obj);
     this.used = false;

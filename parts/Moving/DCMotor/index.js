@@ -1,36 +1,36 @@
 class DCMotor {
   constructor() {
-    this.keys = ["forward", "back"];
-    this.requiredKeys = ["forward", "back"];
-  };
+    this.keys = ['forward', 'back'];
+    this.requiredKeys = ['forward', 'back'];
+  }
 
   wired(obniz) {
     this.status = {
       direction: null,
-      power: null
+      power: null,
     };
 
     this.pwm1_io_num = this.params.forward;
     this.pwm2_io_num = this.params.back;
 
     this.pwm1 = obniz.getFreePwm();
-    this.pwm1.start({io: this.pwm1_io_num});
+    this.pwm1.start({ io: this.pwm1_io_num });
     this.pwm1.freq(100000);
     this.pwm2 = obniz.getFreePwm();
-    this.pwm2.start({io: this.pwm2_io_num});
+    this.pwm2.start({ io: this.pwm2_io_num });
     this.pwm2.freq(100000);
     this.power(30);
-  };
+  }
 
-// Module functions
+  // Module functions
 
   forward() {
     this.move(true);
-  };
+  }
 
   reverse() {
     this.move(false);
-  };
+  }
 
   stop() {
     if (this.status.direction === null) {
@@ -39,7 +39,7 @@ class DCMotor {
     this.status.direction = null;
     this.pwm1.duty(0);
     this.pwm2.duty(0);
-  };
+  }
 
   move(forward) {
     if (forward) {
@@ -53,10 +53,10 @@ class DCMotor {
       }
       this.status.direction = false;
     }
-    var power = this.power();
+    let power = this.power();
     this.power(0);
     this.power(power);
-  };
+  }
 
   power(power) {
     if (power === undefined) {
@@ -75,9 +75,8 @@ class DCMotor {
       this.pwm1.duty(0);
       this.pwm2.duty(power);
     }
-  };
-
+  }
 }
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("DCMotor", DCMotor);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('DCMotor', DCMotor);

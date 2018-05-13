@@ -23,11 +23,11 @@ module.exports = class WSCommand {
   }
 
   static framed(module, func, payload) {
-    var payload_length = 0;
+    let payload_length = 0;
     if (payload) {
       payload_length = payload.length;
     }
-    var length_type;
+    let length_type;
     if (payload_length <= 0x3f) {
       length_type = 0;
     } else if (payload_length <= 0x3fff) {
@@ -37,10 +37,10 @@ module.exports = class WSCommand {
     } else {
       throw new Error('too big payload');
     }
-    var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
-    var header_length = 3 + length_extra_bytse;
-    var result = new Uint8Array(header_length + payload_length);
-    var index = 0;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
+    let header_length = 3 + length_extra_bytse;
+    let result = new Uint8Array(header_length + payload_length);
+    let index = 0;
     result[index++] = module & 0x7f;
     result[index++] = func;
     result[index++] =
@@ -65,16 +65,16 @@ module.exports = class WSCommand {
     if (buf[0] & 0x80) {
       throw new Error('reserved bit 1');
     }
-    var module = 0x7f & buf[0];
-    var func = buf[1];
-    var length_type = (buf[2] >> 6) & 0x3;
-    var length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
+    let module = 0x7f & buf[0];
+    let func = buf[1];
+    let length_type = (buf[2] >> 6) & 0x3;
+    let length_extra_bytse = length_type == 0 ? 0 : length_type == 1 ? 1 : 3;
     if (length_type == 4) {
       throw new Error('invalid length');
     }
-    var length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
-    var index = 3;
-    var shift = length_extra_bytse;
+    let length = (buf[2] & 0x3f) << (length_extra_bytse * 8);
+    let index = 3;
+    let shift = length_extra_bytse;
     while (shift > 0) {
       shift--;
       length += buf[index] << (shift * 8);
@@ -93,11 +93,11 @@ module.exports = class WSCommand {
   }
 
   static compress(wscommands, json) {
-    var ret = null;
+    let ret = null;
     function append(module, func, payload) {
-      var frame = WSCommand.framed(module, func, payload);
+      let frame = WSCommand.framed(module, func, payload);
       if (ret) {
-        var combined = new Uint8Array(ret.length + frame.length);
+        let combined = new Uint8Array(ret.length + frame.length);
         combined.set(ret, 0);
         combined.set(frame, ret.length);
         ret = combined;
@@ -125,30 +125,26 @@ module.exports = class WSCommand {
   parseFromJson(json) {}
 
   notifyFromBinary(objToSend, func, payload) {
-    switch (func) {
-      case this.COMMAND_FUNC_ID_ERROR:
-        if (!objToSend.debug) objToSend.debug = {};
-        var err = {
-          module: this.module,
-          _args: [...payload],
-        };
+    if (func === this.COMMAND_FUNC_ID_ERROR) {
+      if (!objToSend.debug) objToSend.debug = {};
+      let err = {
+        module: this.module,
+        _args: [...payload],
+      };
 
-        if (payload.byteLength == 3) {
-          err.err0 = payload[0];
-          err.err1 = payload[1];
-          err.function = payload[2];
-          err.message = `Error module=${this.module} func=${
-            err.function
-          } err0=${err.err0} returned=${err.err1}`;
-        } else {
-          err.message = `Error module=${this.module} with + ${err._args}`;
-        }
-        objToSend.debug.error = err;
-        break;
-
-      default:
-        // unknown
-        break;
+      if (payload.byteLength == 3) {
+        err.err0 = payload[0];
+        err.err1 = payload[1];
+        err.function = payload[2];
+        err.message = `Error module=${this.module} func=${err.function} err0=${
+          err.err0
+        } returned=${err.err1}`;
+      } else {
+        err.message = `Error module=${this.module} with + ${err._args}`;
+      }
+      objToSend.debug.error = err;
+    } else {
+      // unknown
     }
   }
 

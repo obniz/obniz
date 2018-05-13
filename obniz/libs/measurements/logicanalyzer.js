@@ -6,7 +6,7 @@ class LogicAnalyzer {
   }
 
   start(params) {
-    var err = ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
+    let err = ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
     if (err) {
       throw new Error(
         "LogicAnalyzer start param '" + err + "' required, but not found "
@@ -20,7 +20,7 @@ class LogicAnalyzer {
       'triggerValueSamples',
     ]);
 
-    var obj = {};
+    let obj = {};
     obj.logic_analyzer = {
       io: [this.params.io],
       interval: this.params.interval,
@@ -38,7 +38,7 @@ class LogicAnalyzer {
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj.logic_analyzer = null;
     this.obniz.send(obj);
     return;

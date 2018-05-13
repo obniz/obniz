@@ -1,8 +1,6 @@
 const WSCommand = require('./WSCommand_.js');
 const qrcode = require('../utils/qr');
 
-let isNode = typeof window === 'undefined';
-
 class WSCommand_Display extends WSCommand {
   constructor(delegate) {
     super(delegate);
@@ -27,7 +25,7 @@ class WSCommand_Display extends WSCommand {
   }
 
   printText(text) {
-    var result;
+    let result;
     const buf = Buffer(text, 'utf8');
     result = new Uint8Array(buf);
     this.print(result);
@@ -84,7 +82,7 @@ class WSCommand_Display extends WSCommand {
   }
 
   pinName(params) {
-    for (var i = 0; i < 12; i++) {
+    for (let i = 0; i < 12; i++) {
       if (typeof params.pin_assign[i] === 'object') {
         this.setPinName(
           i,
@@ -104,19 +102,19 @@ class WSCommand_Display extends WSCommand {
   }
 
   drawIOState(val) {
-    var buf = new Uint8Array([!val]);
+    let buf = new Uint8Array([!val]);
     this.sendCommand(this._CommandDrawIOState, buf);
   }
 
   setPinName(no, moduleName, pinName) {
-    var str = moduleName.slice(0, 4) + ' ' + pinName;
+    let str = moduleName.slice(0, 4) + ' ' + pinName;
     str = str.slice(0, 9);
 
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = no;
 
-    var stringarray = new Uint8Array(Buffer(str, 'utf8'));
-    var combined = new Uint8Array(buf.length + stringarray.length);
+    let stringarray = new Uint8Array(Buffer(str, 'utf8'));
+    let combined = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);
 
@@ -124,7 +122,7 @@ class WSCommand_Display extends WSCommand {
   }
 
   parseFromJson(json) {
-    var module = json['display'];
+    let module = json['display'];
     if (module === undefined) {
       return;
     }

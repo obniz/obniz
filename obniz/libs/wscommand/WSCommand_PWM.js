@@ -16,7 +16,7 @@ class WSCommand_PWM extends WSCommand {
 
   resetInternalStatus() {
     this.pwms = [];
-    for (var i = 0; i < this.ModuleNum; i++) {
+    for (let i = 0; i < this.ModuleNum; i++) {
       this.pwms.push({});
     }
   }
@@ -24,7 +24,7 @@ class WSCommand_PWM extends WSCommand {
   // Commands
 
   init(params, module) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = module;
     buf[1] = params.io;
     this.pwms[module].io = params.io;
@@ -32,14 +32,14 @@ class WSCommand_PWM extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array(1);
+    let buf = new Uint8Array(1);
     buf[0] = module;
     this.pwms[module] = {};
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   freq(params, module) {
-    var buf = new Uint8Array(5);
+    let buf = new Uint8Array(5);
     buf[0] = module;
     buf[1] = params.freq >> (8 * 3);
     buf[2] = params.freq >> (8 * 2);
@@ -84,8 +84,8 @@ class WSCommand_PWM extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (var i = 0; i < this.ModuleNum; i++) {
-      var module = json['pwm' + i];
+    for (let i = 0; i < this.ModuleNum; i++) {
+      let module = json['pwm' + i];
       if (module === undefined) {
         continue;
       }

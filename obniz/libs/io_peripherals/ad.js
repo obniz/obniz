@@ -14,7 +14,7 @@ class PeripheralAD {
 
   start(callback) {
     this.onchange = callback;
-    var obj = {};
+    let obj = {};
     obj['ad' + this.id] = {
       stream: true,
     };
@@ -23,10 +23,10 @@ class PeripheralAD {
   }
 
   getWait() {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['ad' + self.id] = {
         stream: false,
       };
@@ -36,7 +36,7 @@ class PeripheralAD {
 
   end() {
     this.onchange = null;
-    var obj = {};
+    let obj = {};
     obj['ad' + this.id] = null;
     this.Obniz.send(obj);
     return;
@@ -47,7 +47,7 @@ class PeripheralAD {
     if (this.onchange) {
       this.onchange(obj);
     }
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj);
     }

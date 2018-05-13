@@ -41,22 +41,22 @@ class WSCommand_IO extends WSCommand {
   // Commands
 
   output(value, id) {
-    var buf = new Uint8Array([id, value]);
+    let buf = new Uint8Array([id, value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
   outputDetail(params, id) {
-    var buf = new Uint8Array([id, params.value]);
+    let buf = new Uint8Array([id, params.value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
   input(params, id) {
-    var buf = new Uint8Array([id]);
+    let buf = new Uint8Array([id]);
     this.sendCommand(this._CommandInputOnece, buf);
   }
 
   inputDetail(params, id) {
-    var buf = new Uint8Array([id]);
+    let buf = new Uint8Array([id]);
     this.sendCommand(
       params.stream ? this._CommandInputStream : this._CommandInputOnece,
       buf
@@ -64,7 +64,7 @@ class WSCommand_IO extends WSCommand {
   }
 
   outputType(params, id) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = id;
     if (params.output_type === 'push-pull5v') {
       buf[1] = 0;
@@ -79,7 +79,7 @@ class WSCommand_IO extends WSCommand {
   }
 
   pullType(params, id) {
-    var buf = new Uint8Array(2);
+    let buf = new Uint8Array(2);
     buf[0] = id;
     if (params.pull_type === 'float') {
       buf[1] = 0;
@@ -96,13 +96,13 @@ class WSCommand_IO extends WSCommand {
   }
 
   deinit(params, id) {
-    var buf = new Uint8Array([id]);
+    let buf = new Uint8Array([id]);
     this.sendCommand(this._CommandEnd, buf);
   }
 
   parseFromJson(json) {
-    for (var i = 0; i <= 11; i++) {
-      var module = json['io' + i];
+    for (let i = 0; i <= 11; i++) {
+      let module = json['io' + i];
       if (module === undefined) {
         continue;
       }
@@ -130,13 +130,13 @@ class WSCommand_IO extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandInputStream || func === this._CommandInputOnece) {
-      for (var i = 0; i < payload.byteLength; i += 2) {
+      for (let i = 0; i < payload.byteLength; i += 2) {
         objToSend['io' + payload[i]] = payload[i + 1] > 0;
       }
     } else if (func === this.COMMAND_FUNC_ID_ERROR && payload.byteLength >= 4) {
-      const esperr = payload[0];
+      // const esperr = payload[0];
       const err = payload[1];
-      const ref_func_id = payload[2];
+      // const ref_func_id = payload[2];
       const module_index = payload[3];
 
       if (

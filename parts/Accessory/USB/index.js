@@ -1,13 +1,11 @@
 class USB {
-
   constructor() {
-
-    this.keys = ["vcc","gnd"];
-    this.requiredKeys = ["vcc","gnd"];
+    this.keys = ['vcc', 'gnd'];
+    this.requiredKeys = ['vcc', 'gnd'];
 
     this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd"
+      vcc: 'vcc',
+      gnd: 'gnd',
     };
   }
 
@@ -15,7 +13,7 @@ class USB {
     this.obniz = obniz;
     this.io_vdd = obniz.getIO(this.params.vcc);
     this.io_gnd = obniz.getIO(this.params.gnd);
-    
+
     this.io_gnd.output(false);
   }
 
@@ -28,5 +26,5 @@ class USB {
   }
 }
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("USB", USB);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('USB', USB);

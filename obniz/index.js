@@ -123,7 +123,7 @@ if (!isNode) {
     window.parent.userAppLoaded(window);
   }
 
-  function showObnizDebugError(err) {
+  function showObnizDebugError(err) {//eslint-disable-line
     if (window.parent && window.parent.logger) {
       window.parent.logger.onObnizError(err);
     } else {

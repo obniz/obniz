@@ -4,17 +4,17 @@
   "description": "obniz sdk for javascript",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION -b ./test/index.js",
+    "test": "nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js",
     "buildAndtest": "npm run build && npm test",
     "realtest": "mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
     "local": "gulp --gulpfile ./_tools/server.js --cwd .",
-    "build": "gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build",
+    "build": "npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js",
-    "lint": "eslint --fix ./obniz/**/*.js",
+    "lint": "eslint --fix .",
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "./obniz/*.js": [
+    "*.js": [
       "eslint --fix",
       "git add"
     ]
@@ -42,6 +42,7 @@
     "ejs": "^2.5.9",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-jasmine": "^2.10.0",
     "eslint-plugin-prettier": "^2.6.0",
     "express": "^4.16.2",
     "get-port": "^3.2.0",

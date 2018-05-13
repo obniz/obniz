@@ -14,14 +14,14 @@ class WSCommand_SPI extends WSCommand {
   // Commands
 
   initMaster(params, module) {
-    var mode = 0; //master mode
+    let mode = 0; //master mode
 
     let clk = params.clk;
     let mosi = params.mosi;
     let miso = params.miso;
     let cs = params.cs;
 
-    var clock = params.clock;
+    let clock = params.clock;
 
     if (clk === null && mosi === null && miso === null) {
       throw new Error('spi: master mode require one of clk/mosi/miso');
@@ -32,7 +32,7 @@ class WSCommand_SPI extends WSCommand {
     if (miso === null) miso = this.ioNotUsed;
     if (cs === null) cs = this.ioNotUsed;
 
-    var buf = new Uint8Array(11);
+    let buf = new Uint8Array(11);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = clk;
@@ -50,12 +50,12 @@ class WSCommand_SPI extends WSCommand {
   }
 
   deinit(params, module) {
-    var buf = new Uint8Array([module]);
+    let buf = new Uint8Array([module]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
   write(params, module) {
-    var buf = new Uint8Array(1 + params.data.length);
+    let buf = new Uint8Array(1 + params.data.length);
     buf[0] = module;
     buf.set(params.data, 1);
     if (params.read) {
@@ -66,8 +66,8 @@ class WSCommand_SPI extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (var i = 0; i < 2; i++) {
-      var module = json['spi' + i];
+    for (let i = 0; i < 2; i++) {
+      let module = json['spi' + i];
       if (module === undefined) {
         continue;
       }
@@ -91,11 +91,11 @@ class WSCommand_SPI extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandWriteRead && payload.byteLength > 1) {
-      var module_index = payload[0];
-      var received = payload.slice(1);
+      let module_index = payload[0];
+      // var received = payload.slice(1);
 
-      var arr = new Array(payload.byteLength - 1);
-      for (var i = 0; i < arr.length; i++) {
+      let arr = new Array(payload.byteLength - 1);
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
       objToSend['spi' + module_index] = {

@@ -1,16 +1,11 @@
-const chai = require('chai');
-const assert = chai.assert;
-const expect = chai.expect;
-const sinon = require('sinon');
 const path = require('path');
 const fs = require('fs');
 
 const config = require('./config.js');
 
 console.log(
-  `obniz ${config.obnizA_ID} ${
-    config.obnizB_ID
-  }つかうよ!\n２つを"同じ"電源に繋いでね。`
+  `obniz ${config.obnizA_ID} ${config.obnizB_ID}を` +
+    `つかうよ!\n２つを"同じ"電源に繋いでね。`
 );
 
 describe('obniz', async function() {

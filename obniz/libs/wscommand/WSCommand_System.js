@@ -32,7 +32,7 @@ class WSCommand_System extends WSCommand {
 
   wait(params) {
     let msec = params.wait;
-    var buf = new Uint8Array([msec >> 8, msec]);
+    let buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
 
@@ -61,12 +61,12 @@ class WSCommand_System extends WSCommand {
   }
 
   resetOnDisconnect(mustReset) {
-    var buf = new Uint8Array([mustReset ? 1 : 0]);
+    let buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
   }
 
   parseFromJson(json) {
-    var module = json['system'];
+    let module = json['system'];
     if (module === undefined) {
       return;
     }

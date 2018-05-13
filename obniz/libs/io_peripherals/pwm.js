@@ -9,7 +9,7 @@ class PeripheralPWM {
   }
 
   sendWS(obj) {
-    var wsObj = {};
+    let wsObj = {};
     wsObj['pwm' + this.id] = obj;
     this.Obniz.send(wsObj);
   }
@@ -45,7 +45,6 @@ class PeripheralPWM {
     if (typeof freq !== 'number') {
       throw new Error('please provide freq in number');
     }
-    var obj = {};
     this.state.freq = freq;
     this.sendWS({
       freq: freq,
@@ -59,7 +58,7 @@ class PeripheralPWM {
     if (typeof this.state.io !== 'number') {
       throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
+
     this.state.pulse = pulse_width;
     delete this.state.duty;
     this.sendWS({
@@ -96,7 +95,6 @@ class PeripheralPWM {
   }
 
   end() {
-    var obj = {};
     this.state = {};
     this.sendWS(null);
     this.used = false;
@@ -106,7 +104,6 @@ class PeripheralPWM {
     if (typeof this.state.io !== 'number') {
       throw new Error('pwm' + this.id + " haven't started");
     }
-    var obj = {};
     this.sendWS({
       modulate: {
         type: type,

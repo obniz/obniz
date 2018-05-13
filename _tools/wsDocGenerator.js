@@ -1,17 +1,16 @@
 'use strict';
-var tv4 = require('tv4');
-var fs = require('fs');
+let tv4 = require('tv4');
+let fs = require('fs');
 const ejs = require('ejs');
-var through = require('through2');
-var PluginError = require('gulp-util').PluginError;
-const path = require('path');
-var PLUGIN_NAME = 'wsDocGenerator';
+let through = require('through2');
+let PluginError = require('gulp-util').PluginError;
+let PLUGIN_NAME = 'wsDocGenerator';
 
 module.exports = function(docfilePath) {
   /**
    * @this {Transform}
    */
-  var transform = function(file, encoding, callback) {
+  let transform = function(file, encoding, callback) {
     if (file.isNull()) {
       this.push(file);
       return callback(null, file);
@@ -28,7 +27,7 @@ module.exports = function(docfilePath) {
     // プラグインの処理本体
     if (file.isBuffer()) {
       // ファイルの内容をcontentsに読み込み
-      var contents = String(file.contents);
+      let contents = String(file.contents);
       let output;
       try {
         output = convert(contents, docfilePath);
@@ -50,22 +49,14 @@ module.exports = function(docfilePath) {
   return through.obj(transform);
 };
 
-var convert = function(str, docfilePath) {
+let convert = function(str, docfilePath) {
   let wsSchema;
   eval(str.substring(3)); //let wsSchema = [ [....} ]
   for (let schema of wsSchema) {
     tv4.addSchema(schema);
   }
-  let uris = tv4.getSchemaUris(/^\/request|^\/response/);
 
-  var docTemplate = fs.readFileSync(docfilePath, 'utf8');
-
-  let isDirectory = function(uri) {
-    let targetUris = uris.filter(elm => {
-      return elm.startsWith(uri + '/');
-    });
-    return targetUris.length > 0;
-  };
+  let docTemplate = fs.readFileSync(docfilePath, 'utf8');
 
   let list = [
     'ws',
@@ -88,7 +79,7 @@ var convert = function(str, docfilePath) {
   ];
   let md = [];
 
-  var param = { moduleNames: list, formatter, conditions, jsonExample };
+  let param = { moduleNames: list, formatter, conditions, jsonExample };
   param.modules = [];
   param.defines = {};
 
@@ -126,14 +117,14 @@ var convert = function(str, docfilePath) {
   }
 
   function sortOnKeys(dict) {
-    var sorted = [];
-    for (var key in dict) {
+    let sorted = [];
+    for (let key in dict) {
       sorted[sorted.length] = key;
     }
     sorted.sort();
 
-    var tempDict = {};
-    for (var i = 0; i < sorted.length; i++) {
+    let tempDict = {};
+    for (let i = 0; i < sorted.length; i++) {
       tempDict[sorted[i]] = dict[sorted[i]];
     }
 
@@ -212,8 +203,7 @@ function rangeString(min, max, val, exclusiveMin, exclusiveMax) {
 
   val = val || 'value';
   let left = '',
-    right = '',
-    last = '';
+    right = '';
   if (min !== undefined) {
     left = min;
     if (exclusiveMin) {

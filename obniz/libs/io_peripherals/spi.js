@@ -16,7 +16,7 @@ class PeripheralSPI {
   }
 
   start(params) {
-    var err = ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
+    let err = ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
     if (err) {
       throw new Error("spi start param '" + err + "' required, but not found ");
     }
@@ -29,7 +29,7 @@ class PeripheralSPI {
       'drive',
       'pull',
     ]);
-    var obj = {};
+    let obj = {};
 
     let ioKeys = ['clk', 'mosi', 'miso'];
     for (let key of ioKeys) {
@@ -99,10 +99,10 @@ class PeripheralSPI {
       );
     }
 
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['spi' + self.id] = {
         data: data,
         read: true,
@@ -122,8 +122,8 @@ class PeripheralSPI {
       );
     }
 
-    var self = this;
-    var obj = {};
+    let self = this;
+    let obj = {};
     obj['spi' + self.id] = {
       data: data,
       read: false,
@@ -133,7 +133,7 @@ class PeripheralSPI {
 
   notified(obj) {
     // TODO: we should compare byte length from sent
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj.data);
     }
@@ -144,8 +144,8 @@ class PeripheralSPI {
   }
 
   end(reuse) {
-    var self = this;
-    var obj = {};
+    let self = this;
+    let obj = {};
     obj['spi' + self.id] = null;
     this.params = null;
     self.Obniz.send(obj);

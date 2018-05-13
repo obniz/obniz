@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 const webpackStream = require('webpack-stream');
 const webpack = require('webpack');
 
@@ -9,10 +8,6 @@ const plumber = require('gulp-plumber');
 const gulp_ejs = require('gulp-ejs');
 const rename = require('gulp-rename');
 const gulp_notify = require('gulp-notify');
-const gulp_filter = require('gulp-filter');
-const gulp_concat = require('gulp-concat');
-const gulp_babel = require('gulp-babel');
-const obnizVersion = require('./obnizVersion');
 const gulp_yaml = require('gulp-yaml');
 const concatWith = require('./concatWith');
 const gulp_sort = require('gulp-sort');

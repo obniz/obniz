@@ -14,7 +14,7 @@ class PeripheralIO {
 
   output(value) {
     value = value == true;
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = value;
     this.value = value;
     this.Obniz.send(obj);
@@ -39,7 +39,7 @@ class PeripheralIO {
         throw new Error('unknown drive method');
     }
 
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = {
       output_type: output_type,
     };
@@ -72,7 +72,7 @@ class PeripheralIO {
         throw new Error('unknown pull_type method');
     }
 
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = {
       pull_type: pull_type,
     };
@@ -81,7 +81,7 @@ class PeripheralIO {
 
   input(callback) {
     this.onchange = callback;
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = {
       direction: 'input',
       stream: true,
@@ -91,10 +91,10 @@ class PeripheralIO {
   }
 
   inputWait() {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addObserver(resolve);
-      var obj = {};
+      let obj = {};
       obj['io' + self.id] = {
         direction: 'input',
         stream: false,
@@ -104,7 +104,7 @@ class PeripheralIO {
   }
 
   end() {
-    var obj = {};
+    let obj = {};
     obj['io' + this.id] = null;
     this.Obniz.send(obj);
   }
@@ -112,7 +112,7 @@ class PeripheralIO {
   notified(obj) {
     if (typeof obj === 'boolean') {
       this.value = obj;
-      var callback = this.observers.shift();
+      let callback = this.observers.shift();
       if (callback) {
         callback(obj);
       }
