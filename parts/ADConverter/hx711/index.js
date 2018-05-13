@@ -1,82 +1,80 @@
 class hx711 {
   constructor() {
-    this.keys = ["vcc", "gnd","sck","dout"];
-    this.requiredKeys = ["sck","dout"];
+    this.keys = ['vcc', 'gnd', 'sck', 'dout'];
+    this.requiredKeys = ['sck', 'dout'];
     this.offset = 0;
     this.scale = 1;
-
   }
 
-  wired(obniz){
+  wired(obniz) {
     this.obniz = obniz;
     this.spi = obniz.getFreeSpi();
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-
-    let ioKeys = ["clk", "dout"];
+    let ioKeys = ['clk', 'dout'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '"+key+"' are to be valid io no");
+        throw new Error("spi start param '" + key + "' are to be valid io no");
       }
     }
     this.sck = obniz.getIO(this.params.sck);
     this.dout = obniz.getIO(this.params.dout);
 
-
     this.sck.output(true);
-
-
   }
 
-
-  async readWait(){
-
+  async readWait() {
     this.sck.output(false);
 
     // while(true) {
     //   let val = await this.dout.inputWait();
     //   if (val == false) break;
     // }
-    this.spi.start({mode:"master", clk :this.params.sck, miso:this.params.dout, frequency:66 * 1000});
+    this.spi.start({
+      mode: 'master',
+      clk: this.params.sck,
+      miso: this.params.dout,
+      frequency: 66 * 1000,
+    });
 
-    let ret = await this.spi.writeWait([0,0,0]);
+    let ret = await this.spi.writeWait([0, 0, 0]);
     this.spi.end(true);
     this.sck.output(false);
     let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
-    return flag * (((ret[0] & 0x7F) << 16)+(ret[1] << 8)+(ret[2] << 0)) ;
+    return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
   }
 
-
-
-  async readAverageWait(times){
+  async readAverageWait(times) {
     let results = [];
-    for(let i = 0; i < times; i++){
+    for (let i = 0; i < times; i++) {
       results.push(await this.readWait());
     }
-    return results.reduce((prev,current,i)=>{return prev+current},0) / results.length;
+    return (
+      results.reduce((prev, current, i) => {
+        return prev + current;
+      }, 0) / results.length
+    );
   }
 
-  powerDown(){
+  powerDown() {
     this.sck.output(true);
   }
 
-  powerUp(){
+  powerUp() {
     this.sck.output(false);
   }
 
-
-  async zeroAdjust(times){
+  async zeroAdjust(times) {
     times = parseInt(times) || 1;
     this.offset = await this.readAverageWait(times);
   }
 
-  async getValueWait(times){
+  async getValueWait(times) {
     times = parseInt(times) || 1;
     let val = await this.readAverageWait(times);
     return (val - this.offset) / this.scale;
   }
-
 }
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("hx711", hx711);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('hx711', hx711);

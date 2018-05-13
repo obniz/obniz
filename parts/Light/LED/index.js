@@ -1,9 +1,8 @@
-var LED = function() {
-  this.keys = ["anode","cathode"];
-  this.requiredKeys = ["anode"];
-  
-  
-  this.animationName = "Led-" + Math.round(Math.random() *1000);
+let LED = function() {
+  this.keys = ['anode', 'cathode'];
+  this.requiredKeys = ['anode'];
+
+  this.animationName = 'Led-' + Math.round(Math.random() * 1000);
 };
 
 LED.prototype.wired = function(obniz) {
@@ -29,29 +28,32 @@ LED.prototype.off = function() {
 };
 
 LED.prototype.endBlink = function() {
-  this.obniz.io.animation(this.animationName, "pause");
-  
+  this.obniz.io.animation(this.animationName, 'pause');
 };
 
 LED.prototype.blink = function(interval) {
-  if(!interval) {
+  if (!interval) {
     interval = 100;
   }
-  var frames = [{
+  let frames = [
+    {
       duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(true);  // on
-      }.bind(this)
-    }, {
+      state: function(index) {
+        // index = 0
+        this.io_anode.output(true); // on
+      }.bind(this),
+    },
+    {
       duration: interval,
-      state: function (index) { // index = 0
-        this.io_anode.output(false);   //off
-      }.bind(this)
-    }];
+      state: function(index) {
+        // index = 0
+        this.io_anode.output(false); //off
+      }.bind(this),
+    },
+  ];
 
-  this.obniz.io.animation(this.animationName, "loop", frames);
-
+  this.obniz.io.animation(this.animationName, 'loop', frames);
 };
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("LED", LED);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('LED', LED);

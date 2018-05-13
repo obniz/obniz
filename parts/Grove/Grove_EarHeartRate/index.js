@@ -1,14 +1,12 @@
 class Grove_EarHeartRate {
-
   constructor() {
-
-    this.keys = ["vcc", "gnd", "signal"];
-    this.requiredKeys = ["vcc", "gnd"];
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['vcc', 'gnd'];
 
     this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
-      signal: "signal"
+      vcc: 'vcc',
+      gnd: 'gnd',
+      signal: 'signal',
     };
 
     this.interval = 5;
@@ -17,19 +15,20 @@ class Grove_EarHeartRate {
 
   wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
   }
 
   start(callback) {
     this.obniz.logicAnalyzer.start({
       io: this.params.signal,
       interval: this.interval,
-      duration: this.duration});
+      duration: this.duration,
+    });
 
-    this.obniz.logicAnalyzer.onmeasured = (array) => {
+    this.obniz.logicAnalyzer.onmeasured = array => {
       let edges = [];
-      for (let i=0; i<array.length - 1; i++) {
-        if (array[i] === 0 && array[i+1] === 1) {
+      for (let i = 0; i < array.length - 1; i++) {
+        if (array[i] === 0 && array[i + 1] === 1) {
           edges.push(i);
         }
       }
@@ -40,9 +39,9 @@ class Grove_EarHeartRate {
         pulseMin = 60 / between;
         callback(pulseMin);
       }
-    }
+    };
   }
 }
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("Grove_EarHeartRate", Grove_EarHeartRate);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('Grove_EarHeartRate', Grove_EarHeartRate);

@@ -1,5 +1,5 @@
-const ObnizUtil = require("../utils/util");
-const semver = require("semver");
+const ObnizUtil = require('../utils/util');
+const semver = require('semver');
 
 class PeripheralSPI {
   constructor(Obniz, id) {
@@ -10,92 +10,130 @@ class PeripheralSPI {
   }
 
   addObserver(callback) {
-    if(callback) {
+    if (callback) {
       this.observers.push(callback);
     }
   }
 
   start(params) {
-  
-    var err = ObnizUtil._requiredKeys(params,["mode", "frequency"]);
-    if(err){ throw new Error("spi start param '" + err +"' required, but not found ");return;}
-    this.params = ObnizUtil._keyFilter(params,["mode", "clk", "mosi", "miso", "frequency","drive","pull"]);
-    var obj = {};
+    let err = ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
+    if (err) {
+      throw new Error("spi start param '" + err + "' required, but not found ");
+    }
+    this.params = ObnizUtil._keyFilter(params, [
+      'mode',
+      'clk',
+      'mosi',
+      'miso',
+      'frequency',
+      'drive',
+      'pull',
+    ]);
+    let obj = {};
 
-    let ioKeys = ["clk", "mosi", "miso"];
+    let ioKeys = ['clk', 'mosi', 'miso'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
-        throw new Error("spi start param '"+key+"' are to be valid io no");
+        throw new Error("spi start param '" + key + "' are to be valid io no");
       }
     }
 
-
-    obj["spi" + this.id]  = {
-        mode : this.params.mode,
-        clock : this.params.frequency   //name different
+    obj['spi' + this.id] = {
+      mode: this.params.mode,
+      clock: this.params.frequency, //name different
     };
-    if(this.params.clk  !==  undefined){obj["spi" + this.id].clk = this.params.clk;}
-    if(this.params.mosi !==  undefined){obj["spi" + this.id].mosi = this.params.mosi;}
-    if(this.params.miso !==  undefined){obj["spi" + this.id].miso = this.params.miso;}
-    
-    if(this.params.drive){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive(this.params.drive);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).drive("5v");
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).drive("5v");
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).drive("5v"); 
+    if (this.params.clk !== undefined) {
+      obj['spi' + this.id].clk = this.params.clk;
     }
-    
-    if(this.params.pull){
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(this.params.pull);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(this.params.pull);
-    }else{
-        if(this.params.clk  !==  undefined) this.Obniz.getIO(this.params.clk).pull(null);
-        if(this.params.mosi !==  undefined) this.Obniz.getIO(this.params.mosi).pull(null);
-        if(this.params.miso !==  undefined) this.Obniz.getIO(this.params.miso).pull(null);
+    if (this.params.mosi !== undefined) {
+      obj['spi' + this.id].mosi = this.params.mosi;
     }
-   
-   this.used = true;
+    if (this.params.miso !== undefined) {
+      obj['spi' + this.id].miso = this.params.miso;
+    }
+
+    if (this.params.drive) {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).drive(this.params.drive);
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+    } else {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).drive('5v');
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).drive('5v');
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).drive('5v');
+    }
+
+    if (this.params.pull) {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).pull(this.params.pull);
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).pull(this.params.pull);
+    } else {
+      if (this.params.clk !== undefined)
+        this.Obniz.getIO(this.params.clk).pull(null);
+      if (this.params.mosi !== undefined)
+        this.Obniz.getIO(this.params.mosi).pull(null);
+      if (this.params.miso !== undefined)
+        this.Obniz.getIO(this.params.miso).pull(null);
+    }
+
+    this.used = true;
     this.Obniz.send(obj);
   }
 
   writeWait(data) {
-    if(semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
-      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`)
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(
+        `with your obniz ${
+          this.Obniz.firmware_ver
+        }. spi max length=32byte but yours ${
+          data.length
+        }. Please update obniz firmware`
+      );
     }
 
-    var self = this;
-    return new Promise(function(resolve, reject){
-      var obj = {};
-      obj["spi"+self.id] = {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.addObserver(resolve);
+      let obj = {};
+      obj['spi' + self.id] = {
         data: data,
-        read: true
+        read: true,
       };
       self.Obniz.send(obj);
-      self.addObserver(resolve);
     });
   }
 
   write(data) {
-    if(semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
-      throw new Error(`with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`)
+    if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
+      throw new Error(
+        `with your obniz ${
+          this.Obniz.firmware_ver
+        }. spi max length=32byte but yours ${
+          data.length
+        }. Please update obniz firmware`
+      );
     }
 
-    var self = this;
-    var obj = {};
-    obj["spi"+self.id] = {
+    let self = this;
+    let obj = {};
+    obj['spi' + self.id] = {
       data: data,
-      read: false
+      read: false,
     };
     self.Obniz.send(obj);
   }
 
   notified(obj) {
     // TODO: we should compare byte length from sent
-    var callback = this.observers.shift();
+    let callback = this.observers.shift();
     if (callback) {
       callback(obj.data);
     }
@@ -106,12 +144,12 @@ class PeripheralSPI {
   }
 
   end(reuse) {
-    var self = this;
-    var obj = {};
-    obj["spi"+self.id] = null;
+    let self = this;
+    let obj = {};
+    obj['spi' + self.id] = null;
     this.params = null;
     self.Obniz.send(obj);
-    if(!reuse){
+    if (!reuse) {
       this.used = false;
     }
   }

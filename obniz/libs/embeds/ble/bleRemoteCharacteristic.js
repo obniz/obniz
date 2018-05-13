@@ -1,8 +1,7 @@
-const BleRemoteDescriptor = require("./bleRemoteDescriptor");
-const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
+const BleRemoteDescriptor = require('./bleRemoteDescriptor');
+const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
-
   constructor(params) {
     super(params);
 
@@ -10,12 +9,10 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     if (!Array.isArray(this.properties)) {
       this.properties = [this.properties];
     }
-
-
   }
 
   get parentName() {
-    return "service";
+    return 'service';
   }
 
   get childrenClass() {
@@ -23,12 +20,11 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   get childrenName() {
-    return "descriptors";
+    return 'descriptors';
   }
 
-
   addDescriptor(params) {
-    return this.addChild(params)
+    return this.addChild(params);
   }
 
   //
@@ -37,7 +33,6 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   // }
 
   getDescriptor(uuid) {
-
     let obj = this.getChild(uuid);
     if (obj) {
       return obj;
@@ -50,70 +45,67 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   registerNotify(callback) {
     this.onnotify = callback;
     const obj = {
-      "ble": {
-        "register_notify_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        register_notify_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
-
 
   unregisterNotify() {
-    this.onnotify = function () {
-    };
+    this.onnotify = function() {};
     const obj = {
-      "ble": {
-        "unregister_notify_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        unregister_notify_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
-
 
   read() {
     const obj = {
-      "ble": {
-        "read_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        read_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
 
   write(array) {
     const obj = {
-      "ble": {
-        "write_characteristic": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid,
-          "data": array
-        }
-      }
+      ble: {
+        write_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+          data: array,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
 
   discoverChildren() {
     const obj = {
-      "ble": {
-        "get_descriptors": {
-          "address": this.service.peripheral.address,
-          "service_uuid": this.service.uuid,
-          "characteristic_uuid": this.uuid
-        }
-      }
+      ble: {
+        get_descriptors: {
+          address: this.service.peripheral.address,
+          service_uuid: this.service.uuid,
+          characteristic_uuid: this.uuid,
+        },
+      },
     };
     this.service.peripheral.Obniz.send(obj);
   }
@@ -126,7 +118,6 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return this.discoverChildrenWait();
   }
 
-
   toJSON() {
     let obj = super.toJSON();
 
@@ -137,29 +128,28 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   canBroadcast() {
-    return this.properties.includes("broadcast");
+    return this.properties.includes('broadcast');
   }
 
   canNotify() {
-    return this.properties.includes("notify");
+    return this.properties.includes('notify');
   }
 
   canRead() {
-    return this.properties.includes("read");
+    return this.properties.includes('read');
   }
 
   canWrite() {
-    return this.properties.includes("write");
+    return this.properties.includes('write');
   }
 
   canWriteWithoutResponse() {
-    return this.properties.includes("write_without_response");
+    return this.properties.includes('write_without_response');
   }
 
   canIndicate() {
-    return this.properties.includes("indicate");
+    return this.properties.includes('indicate');
   }
-
 
   ondiscover(descriptor) {
     this.ondiscoverdescriptor(descriptor);
@@ -169,39 +159,33 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     this.ondiscoverdescriptorfinished(descriptors);
   }
 
-  ondiscoverdescriptor() {
-  };
+  ondiscoverdescriptor() {}
 
-  ondiscoverdescriptorfinished() {
-  };
+  ondiscoverdescriptorfinished() {}
 
-  onregisternofity() {
-  };
+  onregisternofity() {}
 
-  onunregisternofity() {
-  };
+  onunregisternofity() {}
 
-  onnotify() {
-  };
+  onnotify() {}
 
   notifyFromServer(notifyName, params) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case "onregisternofity" : {
+      case 'onregisternofity': {
         this.onregisternofity();
         break;
       }
-      case "onunregisternofity" : {
+      case 'onunregisternofity': {
         this.onunregisternofity();
         break;
       }
-      case "onnotify" : {
+      case 'onnotify': {
         this.onnotify();
         break;
       }
     }
   }
-
 }
 
 module.exports = BleRemoteCharacteristic;

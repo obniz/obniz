@@ -1,50 +1,48 @@
-const WSCommand = require("./WSCommand_.js");
+const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_AD extends WSCommand {
-  
   constructor(delegate) {
     super(delegate);
     this.module = 7;
 
-    this._CommandInitNormalInterval     = 0
-    this._CommandDeinit       = 1
-    this._CommandNotifyValue  = 2
-    this._CommandDoOnece      = 3
+    this._CommandInitNormalInterval = 0;
+    this._CommandDeinit = 1;
+    this._CommandNotifyValue = 2;
+    this._CommandDoOnece = 3;
   }
 
   // Commands
 
-
-  get(params, no){
-    var buf = new Uint8Array([no]);
-    this.sendCommand(params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece, buf);
-
+  get(params, no) {
+    let buf = new Uint8Array([no]);
+    this.sendCommand(
+      params.stream ? this._CommandInitNormalInterval : this._CommandDoOnece,
+      buf
+    );
   }
 
   deinit(params, no) {
-    var buf = new Uint8Array([no]);
+    let buf = new Uint8Array([no]);
     this.sendCommand(this._CommandDeinit, buf);
   }
 
-
-
   parseFromJson(json) {
-    for (var i=0; i<12;i++) {
-      var module = json["ad"+i];
+    for (let i = 0; i < 12; i++) {
+      let module = json['ad' + i];
       if (module === undefined) {
         continue;
       }
 
       let schemaData = [
-        {uri : "/request/ad/deinit",         onValid: this.deinit},
-        {uri : "/request/ad/get",          onValid: this.get},
+        { uri: '/request/ad/deinit', onValid: this.deinit },
+        { uri: '/request/ad/get', onValid: this.get },
       ];
-      let res = this.validateCommandSchema(schemaData, module, "ad"+i, i);
+      let res = this.validateCommandSchema(schemaData, module, 'ad' + i, i);
 
-      if(res.valid === 0){
-        if(res.invalidButLike.length > 0) {
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
           throw new Error(res.invalidButLike[0].message);
-        }else{
+        } else {
           throw new this.WSCommandNotFoundError(`[ad${i}]unknown command`);
         }
       }
@@ -53,13 +51,13 @@ class WSCommand_AD extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotifyValue) {
-      for (var i=0; i<payload.byteLength; i+=3) {
-        var value = (payload[i+1] << 8) + payload[i+2];
+      for (let i = 0; i < payload.byteLength; i += 3) {
+        let value = (payload[i + 1] << 8) + payload[i + 2];
         value = value / 100.0;
-        objToSend["ad"+payload[i]] = value;
+        objToSend['ad' + payload[i]] = value;
       }
     } else {
-      super.notifyFromBinary(objToSend, func, payload)
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 }

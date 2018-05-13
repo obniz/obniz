@@ -1,35 +1,31 @@
-
 class AE_MICAMP {
-
   constructor() {
-    this.keys = ["vcc", "gnd", "out"];
-    this.requiredKeys = ["out"];
+    this.keys = ['vcc', 'gnd', 'out'];
+    this.requiredKeys = ['out'];
 
     this.displayIoNames = {
-      vcc: "vcc",
-      gnd: "gnd",
-      out: "out"
+      vcc: 'vcc',
+      gnd: 'gnd',
+      out: 'out',
     };
   }
 
   async wired(obniz) {
     this.obniz = obniz;
-  
+
     this.ad = obniz.getAD(this.params.out);
-    
-    obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
-  
-    var self = this;
-    this.ad.start(function(value){
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    let self = this;
+    this.ad.start(function(value) {
       self.voltage = value;
       if (self.onchange) {
         self.onchange(self.voltage);
       }
     });
   }
-
 }
-
 
 /*
   var self = this;
@@ -61,6 +57,5 @@ AE_MICAMP.prototype.Average = function(callback) {
 };
 */
 
-
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("AE_MICAMP", AE_MICAMP);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);

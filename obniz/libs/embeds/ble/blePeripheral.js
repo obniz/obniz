@@ -1,7 +1,6 @@
-const BleService = require("./bleService");
+const BleService = require('./bleService');
 
 class BlePeripheral {
-
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.services = [];
@@ -13,12 +12,12 @@ class BlePeripheral {
     }
     this.services.push(obj);
     obj.peripheral = this;
-    this.Obniz.send({ble: {peripheral: {services: [obj]}}});
+    this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
   }
 
   setJson(json) {
-    if (json["services"]) {
-      for (let service of json["services"]) {
+    if (json['services']) {
+      for (let service of json['services']) {
         this.addService(service);
       }
     }
@@ -26,35 +25,33 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = uuid.toLowerCase();
-    return this.services.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid;
-    }).shift();
+    return this.services
+      .filter(function(element) {
+        return element.uuid.toLowerCase() === uuid;
+      })
+      .shift();
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function (element) {
+    this.services = this.services.filter(function(element) {
       return element.uuid.toLowerCase() !== uuid;
     });
   }
 
   stopAllService() {
-    this.Obniz.send(
-        {
-          ble: {
-            peripheral: null
-
-          }
-        }
-    );
+    this.Obniz.send({
+      ble: {
+        peripheral: null,
+      },
+    });
     this.services = [];
   }
 
   toJSON() {
     return {
-      services: this.services
+      services: this.services,
     };
   }
-
 
   findCharacteristic(param) {
     let serviceUuid = param.service_uuid.toLowerCase();
@@ -76,15 +73,12 @@ class BlePeripheral {
   }
 
   end() {
-    this.Obniz.send({ble: {peripheral: null}});
+    this.Obniz.send({ ble: { peripheral: null } });
   }
 
-  onconnectionupdates() {
-  };
+  onconnectionupdates() {}
 
-  onerror() {
-  };
+  onerror() {}
 }
-
 
 module.exports = BlePeripheral;

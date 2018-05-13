@@ -1,30 +1,29 @@
 class JpegSerialCam {
-
   constructor() {
-    this.keys = [ "vcc", "cam_tx", "cam_rx", "gnd"];
-    this.requiredKeys = [ "cam_tx", "cam_rx"];
-    
+    this.keys = ['vcc', 'cam_tx', 'cam_rx', 'gnd'];
+    this.requiredKeys = ['cam_tx', 'cam_rx'];
+
     this.ioKeys = this.keys;
-    this.displayName = "Jcam"
-    this.displayIoNames = { "cam_tx" : "camTx", "cam_rx":"camRx"};
+    this.displayName = 'Jcam';
+    this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
   }
 
-  wired(){
-    this.obniz.setVccGnd(this.params.vcc,this.params.gnd, "5v");
+  wired() {
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.my_tx = this.params.cam_rx;
     this.my_rx = this.params.cam_tx;
 
-    this.obniz.getIO(this.my_tx).drive("3v");
-    
-    this.uart = this.obniz.getFreeUart(); 
-  };
+    this.obniz.getIO(this.my_tx).drive('3v');
+
+    this.uart = this.obniz.getFreeUart();
+  }
 
   async _drainUntil(uart, search, recv) {
     if (!recv) recv = [];
-    while(true) {
-      var readed = uart.readBytes();
+    while (true) {
+      let readed = uart.readBytes();
       recv = recv.concat(readed);
-      var tail = this._seekTail(search, recv);
+      let tail = this._seekTail(search, recv);
       if (tail >= 0) {
         recv.splice(0, tail);
         return recv;
@@ -34,12 +33,12 @@ class JpegSerialCam {
   }
 
   _seekTail(search, src) {
-    var f=0;
-    for (var i=0;i<src.length; i++) {
+    let f = 0;
+    for (let i = 0; i < src.length; i++) {
       if (src[i] === search[f]) {
         f++;
         if (f === search.length) {
-          return i+1;
+          return i + 1;
         }
       } else {
         f = 0;
@@ -47,22 +46,28 @@ class JpegSerialCam {
     }
     return -1;
   }
-  
+
   arrayToBase64(buf) {
-    if (typeof btoa === "function") {
-      var binstr = Array.prototype.map.call(buf, function (ch) {
-        return String.fromCharCode(ch);
-      }).join('');
+    if (typeof btoa === 'function') {
+      let binstr = Array.prototype.map
+        .call(buf, function(ch) {
+          return String.fromCharCode(ch);
+        })
+        .join('');
       return btoa(binstr);
     }
-    // TODO: 
+    // TODO:
   }
 
   async startwait(obj) {
     if (!obj) obj = {};
-    this.uart.start({tx:this.my_tx, rx:this.my_rx, baud:obj.baud || 38400});
-    this.obniz.display.setPinName(this.my_tx,"JpegSerialCam","camRx");
-    this.obniz.display.setPinName(this.my_rx,"JpegSerialCam","camTx");
+    this.uart.start({
+      tx: this.my_tx,
+      rx: this.my_rx,
+      baud: obj.baud || 38400,
+    });
+    this.obniz.display.setPinName(this.my_tx, 'JpegSerialCam', 'camRx');
+    this.obniz.display.setPinName(this.my_rx, 'JpegSerialCam', 'camTx');
     await this.obniz.wait(2500);
   }
 
@@ -74,55 +79,64 @@ class JpegSerialCam {
 
   async setResolusionWait(resolution) {
     let val;
-    if (resolution === "640*480") {
+    if (resolution === '640*480') {
       val = 0x00;
-    } else if (resolution === "320*240") {
+    } else if (resolution === '320*240') {
       val = 0x11;
-    } else if (resolution === "160*120") {
+    } else if (resolution === '160*120') {
       val = 0x22;
     } else {
-      throw new Error("invalid resolution");
+      throw new Error('invalid resolution');
     }
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     await this.resetwait();
   }
 
-
   async setCompressibilityWait(compress) {
-    let val = Math.floor(compress / 100 * 0xFF);
+    let val = Math.floor(compress / 100 * 0xff);
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     await this.resetwait();
   }
 
-
   async setBaudWait(baud) {
     let val;
-    switch(baud) {
+    switch (baud) {
       case 9600:
-        val = [0xAE, 0xC8];
+        val = [0xae, 0xc8];
         break;
       case 19200:
-        val = [0x56, 0xE4];
+        val = [0x56, 0xe4];
         break;
       case 38400:
-        val = [0x2A, 0xF2];
+        val = [0x2a, 0xf2];
         break;
       case 57600:
-        val = [0x1C, 0x4C];
+        val = [0x1c, 0x4c];
         break;
       case 115200:
-        val = [0x0D, 0xA6];
+        val = [0x0d, 0xa6];
         break;
       default:
-        throw new Error("invalid baud rate");
+        throw new Error('invalid baud rate');
     }
-    this.uart.send([0x56, 0x00, 0x31, 0x06, 0x04, 0x02, 0x00, 0x08, val[0], val[1]]);
+    this.uart.send([
+      0x56,
+      0x00,
+      0x31,
+      0x06,
+      0x04,
+      0x02,
+      0x00,
+      0x08,
+      val[0],
+      val[1],
+    ]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     //await this.obniz.wait(1000);
     await this.startwait({
-      baud
+      baud,
     });
   }
 
@@ -130,19 +144,27 @@ class JpegSerialCam {
     const uart = this.uart;
     //console.log("stop a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
-    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]); 
-    
+    await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
+
     //console.log("take a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x00]);
     await this._drainUntil(uart, [0x76, 0x00, 0x36, 0x00, 0x00]);
-    
+
     //console.log("read length")
     uart.send([0x56, 0x00, 0x34, 0x01, 0x00]); // read length of image data
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00]); // ack
-    var XX;
-    var YY;
-    while(true) {
-      var readed = uart.readBytes();
+    let recv = await this._drainUntil(uart, [
+      0x76,
+      0x00,
+      0x34,
+      0x00,
+      0x04,
+      0x00,
+      0x00,
+    ]); // ack
+    let XX;
+    let YY;
+    while (true) {
+      let readed = uart.readBytes();
       //console.log(recv);
       recv = recv.concat(readed);
       if (recv.length >= 2) {
@@ -154,15 +176,32 @@ class JpegSerialCam {
     }
     let databytes = XX * 256 + YY;
     //console.log("image: " + databytes + " Bytes");
-    const high = (databytes >> 8) & 0xFF;
-    const low = databytes & 0xFF;
-    
+    // const high = (databytes >> 8) & 0xff;
+    // const low = databytes & 0xff;
+
     //console.log("start reading image")
-    uart.send([0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, XX, YY, 0x00, 0xFF]);
-    var recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
+    uart.send([
+      0x56,
+      0x00,
+      0x32,
+      0x0c,
+      0x00,
+      0x0a,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      XX,
+      YY,
+      0x00,
+      0xff,
+    ]);
+    recv = await this._drainUntil(uart, [0x76, 0x00, 0x32, 0x00, 0x00]);
     //console.log("reading...");
-    while(true) {
-      var readed = uart.readBytes();
+    while (true) {
+      let readed = uart.readBytes();
       recv = recv.concat(readed);
       //console.log(readed.length);
       if (recv.length >= databytes) {
@@ -172,11 +211,10 @@ class JpegSerialCam {
     }
     //console.log("done");
     recv = recv.splice(0, databytes); // remove tail
-    recv = recv.concat([0xFF, 0xD9]);
+    recv = recv.concat([0xff, 0xd9]);
     return recv;
   }
-
 }
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("JpegSerialCam", JpegSerialCam);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);

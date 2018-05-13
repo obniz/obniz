@@ -1,14 +1,13 @@
-const BleRemoteCharacteristic = require("./bleRemoteCharacteristic");
-const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
+const BleRemoteCharacteristic = require('./bleRemoteCharacteristic');
+const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
-
   constructor(obj) {
     super(obj);
   }
 
   get parentName() {
-    return "peripheral";
+    return 'peripheral';
   }
 
   get childrenClass() {
@@ -16,18 +15,16 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   get childrenName() {
-    return "characteristics";
+    return 'characteristics';
   }
 
-
   addCharacteristic(params) {
-    return this.addChild(params)
+    return this.addChild(params);
   }
 
   getCharacteristic(params) {
-    return this.getChild(params)
+    return this.getChild(params);
   }
-
 
   discoverAllCharacteristics() {
     return this.discoverChildren();
@@ -39,16 +36,15 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
 
   discoverChildren() {
     const obj = {
-      "ble": {
-        "get_characteristics": {
-          "address": this.peripheral.address,
-          "service_uuid": this.uuid
-        }
-      }
+      ble: {
+        get_characteristics: {
+          address: this.peripheral.address,
+          service_uuid: this.uuid,
+        },
+      },
     };
     this.parent.Obniz.send(obj);
   }
-
 
   ondiscover(characteristic) {
     this.ondiscovercharacteristic(characteristic);
@@ -58,13 +54,9 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
     this.ondiscovercharacteristicfinished(characteristics);
   }
 
-  ondiscovercharacteristic() {
-  };
+  ondiscovercharacteristic() {}
 
-  ondiscovercharacteristicfinished() {
-  };
-
+  ondiscovercharacteristicfinished() {}
 }
-
 
 module.exports = BleRemoteService;

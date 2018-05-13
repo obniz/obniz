@@ -1,8 +1,7 @@
-const BleDescriptor = require("./bleDescriptor");
-const BleAttributeAbstract = require("./bleAttributeAbstract");
+const BleDescriptor = require('./bleDescriptor');
+const BleAttributeAbstract = require('./bleAttributeAbstract');
 
 class BleCharacteristic extends BleAttributeAbstract {
-
   constructor(obj) {
     super(obj);
 
@@ -18,11 +17,10 @@ class BleCharacteristic extends BleAttributeAbstract {
     if (!Array.isArray(this.permissions)) {
       this.permissions = [this.permissions];
     }
-
   }
 
   get parentName() {
-    return "service";
+    return 'service';
   }
 
   get childrenClass() {
@@ -30,9 +28,8 @@ class BleCharacteristic extends BleAttributeAbstract {
   }
 
   get childrenName() {
-    return "descriptors";
+    return 'descriptors';
   }
-
 
   toJSON() {
     let obj = super.toJSON();
@@ -56,8 +53,7 @@ class BleCharacteristic extends BleAttributeAbstract {
   removeProperty(param) {
     this.properties = this.properties.filter(elm => {
       return elm !== param;
-    })
-
+    });
   }
 
   addPermission(param) {
@@ -69,59 +65,48 @@ class BleCharacteristic extends BleAttributeAbstract {
   removePermission(param) {
     this.permissions = this.permissions.filter(elm => {
       return elm !== param;
-    })
-
+    });
   }
 
   write(data) {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              write_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-                data: data
-              }
-            }
-          }
-        }
-    );
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          write_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+            data: data,
+          },
+        },
+      },
+    });
   }
-
 
   read() {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              read_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          read_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+          },
+        },
+      },
+    });
   }
-
 
   notify() {
-    this.service.peripheral.Obniz.send(
-        {
-          ble: {
-            peripheral: {
-              notify_characteristic: {
-                service_uuid: this.service.uuid.toLowerCase(),
-                characteristic_uuid: this.uuid.toLowerCase(),
-              }
-            }
-          }
-        }
-    );
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          notify_characteristic: {
+            service_uuid: this.service.uuid.toLowerCase(),
+            characteristic_uuid: this.uuid.toLowerCase(),
+          },
+        },
+      },
+    });
   }
-
 }
-
 
 module.exports = BleCharacteristic;

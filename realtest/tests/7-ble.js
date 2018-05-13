@@ -1,31 +1,23 @@
-const chai = require('chai');
-const assert = chai.assert;
-const expect = chai.expect;
-const sinon = require('sinon');
-const path = require('path');
-const fs = require('fs');
 const config = require('../config.js');
 
-let obnizA, obnizB ;
+let obnizA, obnizB;
 
-describe("7-ble", function () {
-
+describe('7-ble', function() {
   this.timeout(30000);
 
-  before(function () {
-    return new Promise((resolve) => {
+  before(function() {
+    return new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         obnizB = config.obnizB;
         resolve();
-      })
+      });
     });
   });
 
-
-  it("simple ad", async function () {
+  it('simple ad', async function() {
     let service = new obnizA.ble.service({
-      uuid: "0000"
+      uuid: '0000',
     });
     obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
@@ -34,7 +26,7 @@ describe("7-ble", function () {
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
-    obnizB.ble.scan.onfind = function (peripheral) {
+    obnizB.ble.scan.onfind = function(peripheral) {
       // console.log(peripheral.adv_data.length + ": " + peripheral.localName());
       if (peripheral.adv_data.length === expectedValue.length) {
         // console.log(peripheral.adv_data);
@@ -46,7 +38,7 @@ describe("7-ble", function () {
         found = true;
       }
     };
-    obnizB.ble.scan.start(null,{duration: 30});
+    obnizB.ble.scan.start(null, { duration: 30 });
 
     while (!found) {
       await wait(1);
@@ -56,27 +48,27 @@ describe("7-ble", function () {
     obnizA.ble.peripheral.end();
   });
 
-  it("ad localname", async function () {
+  it('ad localname', async function() {
     let service = new obnizA.ble.service({
-      uuid: "0001"
+      uuid: '0001',
     });
     obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
-    const localName = "" + (new Date()).getTime();
+    const localName = '' + new Date().getTime();
     obnizA.ble.advertisement.setScanRespData({
-      localName: localName
+      localName: localName,
     });
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
 
     let found = false;
-    let expectedValue = [2, 1, 6, 3, 2, 1, 0];
-    obnizB.ble.scan.onfind = function (peripheral) {
+    // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
+    obnizB.ble.scan.onfind = function(peripheral) {
       if (peripheral.localName === localName) {
         found = true;
       }
     };
-    obnizB.ble.scan.start(null, {duration: 30});
+    obnizB.ble.scan.start(null, { duration: 30 });
 
     while (!found) {
       await wait(1);
@@ -84,12 +76,10 @@ describe("7-ble", function () {
     obnizA.ble.advertisement.end();
     obnizA.ble.peripheral.end();
   });
-
-
 });
 
 function wait(ms) {
   return new Promise(resolve => {
-    setTimeout(resolve, ms)
-  })
+    setTimeout(resolve, ms);
+  });
 }

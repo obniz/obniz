@@ -1,8 +1,8 @@
 class Button {
   constructor() {
-    this.keys = ["signal","gnd"];
-    this.required = ["signal"];
-  };
+    this.keys = ['signal', 'gnd'];
+    this.required = ['signal'];
+  }
 
   wired(obniz) {
     this.io_signal = obniz.getIO(this.params.signal);
@@ -13,22 +13,22 @@ class Button {
     }
 
     // start input
-    this.io_signal.pull("5v");
+    this.io_signal.pull('5v');
 
-    var self = this;
+    let self = this;
     this.io_signal.input(function(value) {
-      self.isPressed = (value === false);
+      self.isPressed = value === false;
       if (self.onchange) {
         self.onchange(value === false);
       }
     });
-  };
+  }
 
   async isPressedWait() {
-    var ret = await this.io_signal.inputWait();
+    let ret = await this.io_signal.inputWait();
     return ret === false;
-  };
+  }
 }
 
-let Obniz = require("../../../obniz/index.js");
-Obniz.PartsRegistrate("Button", Button);
+let Obniz = require('../../../obniz/index.js');
+Obniz.PartsRegistrate('Button', Button);

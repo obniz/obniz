@@ -1,11 +1,10 @@
 'use strict';
 
-var through = require('through2');
-var path = require('path');
-var File = require('vinyl');
-var PluginError = require('gulp-util').PluginError;
-var PLUGIN_NAME = 'concatWith';
-
+let through = require('through2');
+let path = require('path');
+let File = require('vinyl');
+let PluginError = require('gulp-util').PluginError;
+let PLUGIN_NAME = 'concatWith';
 
 // file can be a vinyl file object or a string
 // when a string it will construct a new one
@@ -14,7 +13,6 @@ module.exports = function(file, opt) {
     throw new Error('gulp-concat: Missing file option');
   }
   opt = opt || {};
-
 
   if (typeof opt.header !== 'string') {
     opt.header = '';
@@ -27,18 +25,18 @@ module.exports = function(file, opt) {
     opt.footer = '';
   }
 
-  var fileName;
-  var latestFile;
-  var latestMod;
-  var stringList = [];
+  let latestFile;
+  let latestMod;
+  let stringList = [];
 
-  if (typeof file === 'string') {
-    fileName = file;
-  } else if (typeof file.path === 'string') {
-    fileName = path.basename(file.path);
-  } else {
-    throw new Error('gulp-concat: Missing path in file options');
-  }
+  // let fileName;
+  // if (typeof file === 'string') {
+  //   fileName = file;
+  // } else if (typeof file.path === 'string') {
+  //   fileName = path.basename(file.path);
+  // } else {
+  //   throw new Error('gulp-concat: Missing path in file options');
+  // }
 
   function bufferContents(file, enc, cb) {
     // ignore empty files
@@ -49,16 +47,18 @@ module.exports = function(file, opt) {
 
     // we don't do streams (yet)
     if (file.isStream()) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Streams not supported!'));
+      this.emit(
+        'error',
+        new PluginError(PLUGIN_NAME, 'Streams not supported!')
+      );
       cb();
       return;
     }
 
-    if (!latestMod || file.stat && file.stat.mtime > latestMod) {
+    if (!latestMod || (file.stat && file.stat.mtime > latestMod)) {
       latestFile = file;
       latestMod = file.stat && file.stat.mtime;
     }
-
 
     stringList.push(String(file.contents));
     cb();
@@ -66,21 +66,23 @@ module.exports = function(file, opt) {
 
   function endStream(cb) {
     // no files passed in, no file goes out
-    if (stringList.length == 0 || !latestFile ) {
+    if (stringList.length == 0 || !latestFile) {
       cb();
       return;
     }
 
-    var joinedFile;
+    let joinedFile;
 
     if (typeof file === 'string') {
-      joinedFile = latestFile.clone({contents: false});
+      joinedFile = latestFile.clone({ contents: false });
       joinedFile.path = path.join(latestFile.base, file);
     } else {
       joinedFile = new File(file);
     }
 
-    joinedFile.contents = new Buffer(opt.header + stringList.join(opt.separator) + opt.footer);
+    joinedFile.contents = new Buffer(
+      opt.header + stringList.join(opt.separator) + opt.footer
+    );
 
     this.push(joinedFile);
 
