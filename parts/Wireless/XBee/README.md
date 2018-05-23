@@ -1,6 +1,6 @@
 # XBee
-Zigbee network Module.
-P2P or broadcasting communicaion with some Xbee modules are you can use.
+Wireless network Module.
+P2P or broadcasting communication with some Xbee modules are you can use.
 
 ## obniz.wired(obniz, {tx, rx})
 
