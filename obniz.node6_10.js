@@ -11268,7 +11268,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.2.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","semver":"^5.5.0","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.2.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1","semver":"^5.5.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11283,8 +11283,6 @@ var map = {
 	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
 	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
-	"./Bluetooth/RN42/index.js": "./parts/Bluetooth/RN42/index.js",
-	"./Bluetooth/XBee/index.js": "./parts/Bluetooth/XBee/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
@@ -11322,7 +11320,9 @@ var map = {
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
-	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js"
+	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js",
+	"./Wireless/RN42/index.js": "./parts/Wireless/RN42/index.js",
+	"./Wireless/XBee/index.js": "./parts/Wireless/XBee/index.js"
 };
 
 
@@ -11578,368 +11578,6 @@ AE_MICAMP.prototype.Average = function(callback) {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);
-
-/***/ }),
-
-/***/ "./parts/Bluetooth/RN42/index.js":
-/*!***************************************!*\
-  !*** ./parts/Bluetooth/RN42/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-class RN42 {
-  constructor() {
-    this.keys = ['tx', 'rx', 'gnd'];
-    this.requiredKeys = ['tx', 'rx'];
-  }
-
-  wired(obniz) {
-    if (obniz.isValidIO(this.params.gnd)) {
-      obniz.getIO(this.params.gnd).output(false);
-    }
-
-    this.uart = obniz.getFreeUart();
-
-    this.uart.start({
-      tx: this.params.tx,
-      rx: this.params.rx,
-      baud: 115200,
-      drive: '3v'
-    });
-    let self = this;
-    this.uart.onreceive = (data, text) => {
-      // this is not perfect. separation is possible.
-      if (text.indexOf('CONNECT') >= 0) {
-        console.log('connected');
-      } else if (text.indexOf('DISCONNECT') >= 0) {
-        console.log('disconnected');
-      }
-      if (typeof self.onreceive === 'function') {
-        self.onreceive(data, text);
-      }
-    };
-  }
-
-  send(data) {
-    this.uart.send(data);
-  }
-
-  sendCommand(data) {
-    this.uart.send(data + '\n');
-    this.obniz.wait(100);
-  }
-
-  enterCommandMode() {
-    this.send('$$$');
-    this.obniz.wait(100);
-  }
-
-  config(json) {
-    this.enterCommandMode();
-    if (typeof json !== 'object') {
-      // TODO: warning
-      return;
-    }
-    // remove noize data
-    this.sendCommand('');
-
-    if (json.master_slave) {
-      this.config_masterslave(json.master_slave);
-    }
-    if (json.auth) {
-      this.config_auth(json.auth);
-    }
-    if (json.hid_flag) {
-      this.config_HIDflag(json.hid_flag);
-    }
-    if (json.profile) {
-      this.config_profile(json.profile);
-    }
-    if (json.power) {
-      this.config_power(json.power);
-    }
-    if (json.display_name) {
-      this.config_displayName(json.display_name);
-    }
-    this.config_reboot();
-  }
-
-  config_reboot() {
-    this.sendCommand('R,1');
-  }
-
-  config_masterslave(mode) {
-    let val = -1;
-    if (typeof mode === 'number') {
-      val = mode;
-    } else if (typeof mode === 'string') {
-      let modes = ['slave', 'master', 'trigger', 'auto-connect-master', 'auto-connect-dtr', 'auto-connect-any', 'pairing'];
-      for (let i = 0; i < modes.length; i++) {
-        if (modes[i] === mode) {
-          val = i;
-          break;
-        }
-      }
-    }
-    if (val === -1) {
-      // TODO: warning
-      return;
-    }
-    this.sendCommand('SM,' + val);
-  }
-
-  config_displayName(name) {
-    this.sendCommand('SN,' + name);
-  }
-
-  // // SH,0200 HID Flag register. Descriptor=keyboard
-  config_HIDflag(flag) {
-    this.sendCommand('SH,' + flag);
-  }
-
-  config_profile(mode) {
-    let val = -1;
-    if (typeof mode === 'number') {
-      val = mode;
-    } else if (typeof mode === 'string') {
-      let modes = ['SPP', 'DUN-DCE', 'DUN-DTE', 'MDM-SPP', 'SPP-DUN-DCE', 'APL', 'HID'];
-      for (let i = 0; i < modes.length; i++) {
-        if (modes[i] === mode) {
-          val = i;
-          break;
-        }
-      }
-    }
-    if (val === -1) {
-      // TODO: warning
-      return;
-    }
-    this.sendCommand('S~,' + val);
-  }
-
-  config_revert_localecho() {
-    this.sendCommand('+');
-  }
-
-  config_auth(mode) {
-    let val = -1;
-    if (typeof mode === 'number') {
-      val = mode;
-    } else if (typeof mode === 'string') {
-      let modes = ['open', 'ssp-keyboard', 'just-work', 'pincode'];
-      for (let i = 0; i < modes.length; i++) {
-        if (modes[i] === mode) {
-          val = i;
-          break;
-        }
-      }
-    }
-    if (val === -1) {
-      // TODO: warning
-      return;
-    }
-    this.sendCommand('SA,' + val);
-  }
-
-  config_power(dbm) {
-    let val = '0010';
-    if (16 > dbm && dbm >= 12) {
-      val = '000C';
-    } else if (12 > dbm && dbm >= 8) {
-      val = '0008';
-    } else if (8 > dbm && dbm >= 4) {
-      val = '0004';
-    } else if (4 > dbm && dbm >= 0) {
-      val = '0000';
-    } else if (0 > dbm && dbm >= -4) {
-      val = 'FFFC';
-    } else if (-4 > dbm && dbm >= -8) {
-      val = 'FFF8';
-    } else if (-8 > dbm) {
-      val = 'FFF4';
-    }
-
-    this.sendCommand('SY,' + val);
-  }
-
-  config_get_setting() {
-    this.sendCommand('D');
-  }
-
-  config_get_extendSetting() {
-    this.sendCommand('E');
-  }
-}
-
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('RN42', RN42);
-
-/***/ }),
-
-/***/ "./parts/Bluetooth/XBee/index.js":
-/*!***************************************!*\
-  !*** ./parts/Bluetooth/XBee/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
-class XBee {
-  constructor() {
-    this.keys = ['tx', 'rx', 'gnd'];
-    this.requiredKeys = ['tx', 'rx'];
-
-    this.displayIoNames = { tx: '<tx', rx: '>rx' };
-  }
-
-  wired(obniz) {
-    this.uart = obniz.getFreeUart();
-    this.currentCommand = null;
-    this.commands = [];
-    this.isAtMode = false;
-    this.onFinishAtModeCallback = null;
-
-    if (typeof this.params.gnd === 'number') {
-      obniz.getIO(this.params.gnd).output(false);
-    }
-
-    this.uart.start({
-      tx: this.params.tx,
-      rx: this.params.rx,
-      baud: 9600,
-      drive: '3v'
-    });
-
-    this.uart.onreceive = function (data, text) {
-      if (this.isAtMode) {
-        this.onAtResultsRecieve(data, text);
-      } else {
-        if (typeof this.onreceive === 'function') {
-          this.onreceive(data, text);
-        }
-      }
-    }.bind(this);
-  }
-
-  send(text) {
-    if (this.isAtMode === false) {
-      this.uart.send(text);
-    } else {
-      this.obniz.error('XBee is AT Command mode now. Wait for finish config.');
-    }
-  }
-
-  onAtResultsRecieve(data, text) {
-    if (!this.isAtMode) {
-      return;
-    }
-
-    let next = function () {
-      this.currentCommand = null;
-      this.sendCommand();
-    }.bind(this);
-
-    if (text === 'OK\r') {
-      if (this.currentCommand === 'ATCN') {
-        this.isAtMode = false;
-        this.currentCommand = null;
-        if (typeof this.onFinishAtModeCallback === 'function') {
-          this.onFinishAtModeCallback();
-          this.onFinishAtModeCallback = null;
-        }
-        return;
-      }
-      next();
-    } else if (text === 'ERROR\r') {
-      this.obniz.error('XBee config error : ' + this.currentCommand);
-    } else {
-      //response of at command.
-      console.log('XBEE : no catch message', data);
-      next();
-    }
-  }
-
-  addCommand(command, value) {
-    let str = command + (value ? ' ' + value : '');
-    this.commands.push(str);
-    if (this.isAtMode === true && this.currentCommand === null) {
-      this.sendCommand();
-    }
-  }
-
-  sendCommand() {
-    if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
-      this.currentCommand = 'AT' + this.commands.shift();
-      this.uart.send(this.currentCommand + '\r');
-    }
-  }
-
-  enterAtMode() {
-    if (this.currentCommand !== null) return;
-    this.isAtMode = true;
-    this.obniz.wait(1000);
-    let command = '+++';
-    this.currentCommand = command;
-    this.uart.send(this.currentCommand);
-    this.obniz.wait(1000);
-  }
-
-  exitAtMode() {
-    this.addCommand('CN');
-  }
-
-  configWait(config) {
-    var _this = this;
-
-    return _asyncToGenerator(function* () {
-      if (_this.isAtMode) {
-        throw new Error('Xbee : duplicate config setting');
-      }
-      return new Promise(function (resolve, reject) {
-        let standaloneKeys = {
-          destination_address_high: 'DH',
-          destination_address_low: 'DL',
-          source_address: 'MY'
-        };
-        let highLowKeys = ['destination_address'];
-        this.enterAtMode();
-        for (let key in config) {
-          if (key.length === 2) {
-            this.addCommand(key, config[key]);
-          } else if (standaloneKeys[key]) {
-            this.addCommand(standaloneKeys[key], config[key]);
-          } else if (highLowKeys.includes(key)) {
-            let high = config[key].slice(0, -8);
-            if (!high) {
-              high = '0';
-            }
-            let low = config[key].slice(-8);
-
-            this.addCommand(standaloneKeys[key + '_high'], high);
-            this.addCommand(standaloneKeys[key + '_low'], low);
-          }
-        }
-        this.exitAtMode();
-        this.onFinishAtModeCallback = function () {
-          resolve();
-        };
-      }.bind(_this));
-    })();
-  }
-}
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('XBee', XBee);
 
 /***/ }),
 
@@ -14661,6 +14299,368 @@ class ADT7310 {
 
 let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate('ADT7310', ADT7310);
+
+/***/ }),
+
+/***/ "./parts/Wireless/RN42/index.js":
+/*!**************************************!*\
+  !*** ./parts/Wireless/RN42/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class RN42 {
+  constructor() {
+    this.keys = ['tx', 'rx', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
+  }
+
+  wired(obniz) {
+    if (obniz.isValidIO(this.params.gnd)) {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    this.uart = obniz.getFreeUart();
+
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 115200,
+      drive: '3v'
+    });
+    let self = this;
+    this.uart.onreceive = (data, text) => {
+      // this is not perfect. separation is possible.
+      if (text.indexOf('CONNECT') >= 0) {
+        console.log('connected');
+      } else if (text.indexOf('DISCONNECT') >= 0) {
+        console.log('disconnected');
+      }
+      if (typeof self.onreceive === 'function') {
+        self.onreceive(data, text);
+      }
+    };
+  }
+
+  send(data) {
+    this.uart.send(data);
+  }
+
+  sendCommand(data) {
+    this.uart.send(data + '\n');
+    this.obniz.wait(100);
+  }
+
+  enterCommandMode() {
+    this.send('$$$');
+    this.obniz.wait(100);
+  }
+
+  config(json) {
+    this.enterCommandMode();
+    if (typeof json !== 'object') {
+      // TODO: warning
+      return;
+    }
+    // remove noize data
+    this.sendCommand('');
+
+    if (json.master_slave) {
+      this.config_masterslave(json.master_slave);
+    }
+    if (json.auth) {
+      this.config_auth(json.auth);
+    }
+    if (json.hid_flag) {
+      this.config_HIDflag(json.hid_flag);
+    }
+    if (json.profile) {
+      this.config_profile(json.profile);
+    }
+    if (json.power) {
+      this.config_power(json.power);
+    }
+    if (json.display_name) {
+      this.config_displayName(json.display_name);
+    }
+    this.config_reboot();
+  }
+
+  config_reboot() {
+    this.sendCommand('R,1');
+  }
+
+  config_masterslave(mode) {
+    let val = -1;
+    if (typeof mode === 'number') {
+      val = mode;
+    } else if (typeof mode === 'string') {
+      let modes = ['slave', 'master', 'trigger', 'auto-connect-master', 'auto-connect-dtr', 'auto-connect-any', 'pairing'];
+      for (let i = 0; i < modes.length; i++) {
+        if (modes[i] === mode) {
+          val = i;
+          break;
+        }
+      }
+    }
+    if (val === -1) {
+      // TODO: warning
+      return;
+    }
+    this.sendCommand('SM,' + val);
+  }
+
+  config_displayName(name) {
+    this.sendCommand('SN,' + name);
+  }
+
+  // // SH,0200 HID Flag register. Descriptor=keyboard
+  config_HIDflag(flag) {
+    this.sendCommand('SH,' + flag);
+  }
+
+  config_profile(mode) {
+    let val = -1;
+    if (typeof mode === 'number') {
+      val = mode;
+    } else if (typeof mode === 'string') {
+      let modes = ['SPP', 'DUN-DCE', 'DUN-DTE', 'MDM-SPP', 'SPP-DUN-DCE', 'APL', 'HID'];
+      for (let i = 0; i < modes.length; i++) {
+        if (modes[i] === mode) {
+          val = i;
+          break;
+        }
+      }
+    }
+    if (val === -1) {
+      // TODO: warning
+      return;
+    }
+    this.sendCommand('S~,' + val);
+  }
+
+  config_revert_localecho() {
+    this.sendCommand('+');
+  }
+
+  config_auth(mode) {
+    let val = -1;
+    if (typeof mode === 'number') {
+      val = mode;
+    } else if (typeof mode === 'string') {
+      let modes = ['open', 'ssp-keyboard', 'just-work', 'pincode'];
+      for (let i = 0; i < modes.length; i++) {
+        if (modes[i] === mode) {
+          val = i;
+          break;
+        }
+      }
+    }
+    if (val === -1) {
+      // TODO: warning
+      return;
+    }
+    this.sendCommand('SA,' + val);
+  }
+
+  config_power(dbm) {
+    let val = '0010';
+    if (16 > dbm && dbm >= 12) {
+      val = '000C';
+    } else if (12 > dbm && dbm >= 8) {
+      val = '0008';
+    } else if (8 > dbm && dbm >= 4) {
+      val = '0004';
+    } else if (4 > dbm && dbm >= 0) {
+      val = '0000';
+    } else if (0 > dbm && dbm >= -4) {
+      val = 'FFFC';
+    } else if (-4 > dbm && dbm >= -8) {
+      val = 'FFF8';
+    } else if (-8 > dbm) {
+      val = 'FFF4';
+    }
+
+    this.sendCommand('SY,' + val);
+  }
+
+  config_get_setting() {
+    this.sendCommand('D');
+  }
+
+  config_get_extendSetting() {
+    this.sendCommand('E');
+  }
+}
+
+// Module functions
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('RN42', RN42);
+
+/***/ }),
+
+/***/ "./parts/Wireless/XBee/index.js":
+/*!**************************************!*\
+  !*** ./parts/Wireless/XBee/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class XBee {
+  constructor() {
+    this.keys = ['tx', 'rx', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
+
+    this.displayIoNames = { tx: '<tx', rx: '>rx' };
+  }
+
+  wired(obniz) {
+    this.uart = obniz.getFreeUart();
+    this.currentCommand = null;
+    this.commands = [];
+    this.isAtMode = false;
+    this.onFinishAtModeCallback = null;
+
+    if (typeof this.params.gnd === 'number') {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 9600,
+      drive: '3v'
+    });
+
+    this.uart.onreceive = function (data, text) {
+      if (this.isAtMode) {
+        this.onAtResultsRecieve(data, text);
+      } else {
+        if (typeof this.onreceive === 'function') {
+          this.onreceive(data, text);
+        }
+      }
+    }.bind(this);
+  }
+
+  send(text) {
+    if (this.isAtMode === false) {
+      this.uart.send(text);
+    } else {
+      this.obniz.error('XBee is AT Command mode now. Wait for finish config.');
+    }
+  }
+
+  onAtResultsRecieve(data, text) {
+    if (!this.isAtMode) {
+      return;
+    }
+
+    let next = function () {
+      this.currentCommand = null;
+      this.sendCommand();
+    }.bind(this);
+
+    if (text === 'OK\r') {
+      if (this.currentCommand === 'ATCN') {
+        this.isAtMode = false;
+        this.currentCommand = null;
+        if (typeof this.onFinishAtModeCallback === 'function') {
+          this.onFinishAtModeCallback();
+          this.onFinishAtModeCallback = null;
+        }
+        return;
+      }
+      next();
+    } else if (text === 'ERROR\r') {
+      this.obniz.error('XBee config error : ' + this.currentCommand);
+    } else {
+      //response of at command.
+      console.log('XBEE : no catch message', data);
+      next();
+    }
+  }
+
+  addCommand(command, value) {
+    let str = command + (value ? ' ' + value : '');
+    this.commands.push(str);
+    if (this.isAtMode === true && this.currentCommand === null) {
+      this.sendCommand();
+    }
+  }
+
+  sendCommand() {
+    if (this.isAtMode === true && this.currentCommand === null && this.commands.length > 0) {
+      this.currentCommand = 'AT' + this.commands.shift();
+      this.uart.send(this.currentCommand + '\r');
+    }
+  }
+
+  enterAtMode() {
+    if (this.currentCommand !== null) return;
+    this.isAtMode = true;
+    this.obniz.wait(1000);
+    let command = '+++';
+    this.currentCommand = command;
+    this.uart.send(this.currentCommand);
+    this.obniz.wait(1000);
+  }
+
+  exitAtMode() {
+    this.addCommand('CN');
+  }
+
+  configWait(config) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      if (_this.isAtMode) {
+        throw new Error('Xbee : duplicate config setting');
+      }
+      return new Promise(function (resolve, reject) {
+        let standaloneKeys = {
+          destination_address_high: 'DH',
+          destination_address_low: 'DL',
+          source_address: 'MY'
+        };
+        let highLowKeys = ['destination_address'];
+        this.enterAtMode();
+        for (let key in config) {
+          if (key.length === 2) {
+            this.addCommand(key, config[key]);
+          } else if (standaloneKeys[key]) {
+            this.addCommand(standaloneKeys[key], config[key]);
+          } else if (highLowKeys.includes(key)) {
+            let high = config[key].slice(0, -8);
+            if (!high) {
+              high = '0';
+            }
+            let low = config[key].slice(-8);
+
+            this.addCommand(standaloneKeys[key + '_high'], high);
+            this.addCommand(standaloneKeys[key + '_low'], low);
+          }
+        }
+        this.exitAtMode();
+        this.onFinishAtModeCallback = function () {
+          resolve();
+        };
+      }.bind(_this));
+    })();
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('XBee', XBee);
 
 /***/ }),
 
