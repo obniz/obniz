@@ -1,6 +1,7 @@
 // output.pathに絶対パスを指定する必要があるため、pathモジュールを読み込んでおく
 const path = require('path');
 
+const nodeExternals = require('webpack-node-externals');
 module.exports = {
   // モードの設定、v4系以降はmodeを指定しないと、webpack実行時に警告が出る
   mode: 'development',
@@ -35,6 +36,13 @@ module.exports = {
       },
     ],
   },
+  externals: [
+    nodeExternals({
+      modulesFromFile: {
+        include: ['devDependencies'],
+      },
+    }),
+  ],
   stats: {
     warningsFilter: [
       /(?!require function is used in a way in which dependencies cannot be statically extracted)/,
