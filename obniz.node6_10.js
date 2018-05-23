@@ -12137,7 +12137,6 @@ Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
 
 
 class GP2Y0A21YK0F {
-
   constructor() {
     this.keys = ['vcc', 'gnd', 'signal'];
     this.requiredKeys = ['signal'];
@@ -12147,7 +12146,7 @@ class GP2Y0A21YK0F {
       gnd: 'gnd',
       signal: 'signal'
     };
-    this._unit = "mm";
+    this._unit = 'mm';
   }
 
   wired(obniz) {
@@ -12164,15 +12163,15 @@ class GP2Y0A21YK0F {
       if (val <= 0) {
         val = 0.001;
       }
-      let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.252140) * 10;
-      if (this._unit === "mm") {
+      let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.25214) * 10;
+      if (this._unit === 'mm') {
         distance = parseInt(distance * 10) / 10;
       } else {
         distance *= 0.0393701;
         distance = parseInt(distance * 1000) / 1000;
       }
 
-      if (typeof callback == "function") {
+      if (typeof callback == 'function') {
         callback(distance);
       }
     });

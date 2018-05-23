@@ -18914,7 +18914,6 @@ Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
 /***/ (function(module, exports, __webpack_require__) {
 
 class GP2Y0A21YK0F {
-
   constructor() {
     this.keys = ['vcc', 'gnd', 'signal'];
     this.requiredKeys = ['signal'];
@@ -18922,9 +18921,9 @@ class GP2Y0A21YK0F {
     this.displayIoNames = {
       vcc: 'vcc',
       gnd: 'gnd',
-      signal: 'signal'
+      signal: 'signal',
     };
-    this._unit = "mm";
+    this._unit = 'mm';
   }
 
   wired(obniz) {
@@ -18937,22 +18936,22 @@ class GP2Y0A21YK0F {
   }
 
   start(callback) {
-    this.ad_signal.start((val)=>{
+    this.ad_signal.start(val => {
       if (val <= 0) {
         val = 0.001;
       }
-      let distance = 19988.34 * Math.pow(val/5.0*1024, -1.252140) * 10;
-      if (this._unit === "mm") {
+      let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.25214) * 10;
+      if (this._unit === 'mm') {
         distance = parseInt(distance * 10) / 10;
       } else {
         distance *= 0.0393701;
         distance = parseInt(distance * 1000) / 1000;
       }
 
-      if (typeof callback == "function") {
+      if (typeof callback == 'function') {
         callback(distance);
       }
-    })
+    });
   }
 
   unit(unit) {
@@ -18963,7 +18962,7 @@ class GP2Y0A21YK0F {
     } else {
       throw new Error('unknown unit ' + unit);
     }
-  };
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
