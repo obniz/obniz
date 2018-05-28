@@ -18052,7 +18052,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.2.3","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1","semver":"^5.5.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.3.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1","semver":"^5.5.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -18978,66 +18978,83 @@ Obniz.PartsRegistrate('GP2Y0A21YK0F', GP2Y0A21YK0F);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-let HCSR04 = function() {
-  this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
-  this.requiredKeys = ['vcc', 'trigger', 'echo'];
+class HCSR04 {
+  constructor() {
+    this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
+    this.requiredKeys = ['vcc', 'trigger', 'echo'];
 
-  this._unit = 'mm';
-};
+    this._unit = 'mm';
+    this.reset_alltime = false;
 
-HCSR04.prototype.wired = function(obniz) {
-  this.obniz = obniz;
+    this.temp = 15;
+  }
 
-  obniz.setVccGnd(null, this.params.gnd, '5v');
+  wired(obniz) {
+    this.obniz = obniz;
 
-  this.vccIO = obniz.getIO(this.params.vcc);
-  this.trigger = this.params.trigger;
-  this.echo = this.params.echo;
-};
+    obniz.setVccGnd(null, this.params.gnd, '5v');
 
-HCSR04.prototype.measure = async function(callback) {
-  this.vccIO.drive('5v');
-  this.vccIO.output(true);
-  await this.obniz.wait(10);
+    this.vccIO = obniz.getIO(this.params.vcc);
+    this.trigger = this.params.trigger;
+    this.echo = this.params.echo;
 
-  let self = this;
-  this.obniz.measure.echo({
-    io_pulse: this.trigger,
-    io_echo: this.echo,
-    pulse: 'positive',
-    pulse_width: 0.011,
-    measure_edges: 3,
-    timeout: 10 / 340 * 1000,
-    callback: function(edges) {
-      self.vccIO.output(false);
-      let distance = null;
-      for (let i = 0; i < edges.length - 1; i++) {
-        // HCSR04's output of io_echo is initially high when trigger is finshed
-        if (edges[i].edge === true) {
-          distance = (edges[i + 1].timing - edges[i].timing) * 1000;
-          if (self._unit === 'mm') {
-            distance = distance / 5.8;
-          } else if (self._unit === 'inch') {
-            distance = distance / 148.0;
+    this.vccIO.drive('5v');
+    this.vccIO.output(true);
+    this.obniz.wait(100);
+  }
+
+  measure(callback) {
+    let self = this;
+    this.obniz.measure.echo({
+      io_pulse: this.trigger,
+      io_echo: this.echo,
+      pulse: 'positive',
+      pulse_width: 0.011,
+      measure_edges: 3,
+      timeout: 10 / 340 * 1000,
+      callback: async edges => {
+        if (this.reset_alltime) {
+          this.vccIO.output(false);
+          this.obniz.wait(100);
+          this.vccIO.output(true);
+          this.obniz.wait(100);
+        }
+        let distance = undefined;
+        for (let i = 0; i < edges.length - 1; i++) {
+          // HCSR04's output of io_echo is initially high when trigger is finshed
+          if (edges[i].edge === true) {
+            const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
+            distance = time / 2 * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
+            if (self._unit === 'inch') {
+              distance = distance * 0.0393701;
+            }
           }
         }
-      }
-      if (typeof callback === 'function') {
-        callback(distance);
-      }
-    },
-  });
-};
-
-HCSR04.prototype.unit = function(unit) {
-  if (unit === 'mm') {
-    this._unit = 'mm';
-  } else if (unit === 'inch') {
-    this._unit = 'inch';
-  } else {
-    throw new Error('HCSR04: unknown unit ' + unit);
+        if (typeof callback === 'function') {
+          callback(distance);
+        }
+      },
+    });
   }
-};
+
+  async measureWait() {
+    return new Promise(resolve => {
+      this.measure(distance => {
+        resolve(distance);
+      });
+    });
+  }
+
+  unit(unit) {
+    if (unit === 'mm') {
+      this._unit = 'mm';
+    } else if (unit === 'inch') {
+      this._unit = 'inch';
+    } else {
+      throw new Error('HCSR04: unknown unit ' + unit);
+    }
+  }
+}
 
 // Module functions
 
