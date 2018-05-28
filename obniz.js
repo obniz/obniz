@@ -18978,13 +18978,11 @@ Obniz.PartsRegistrate('GP2Y0A21YK0F', GP2Y0A21YK0F);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 class HCSR04 {
-
   constructor() {
     this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
     this.requiredKeys = ['vcc', 'trigger', 'echo'];
-  
+
     this._unit = 'mm';
     this.reset_alltime = false;
 
@@ -18993,9 +18991,9 @@ class HCSR04 {
 
   wired(obniz) {
     this.obniz = obniz;
-  
+
     obniz.setVccGnd(null, this.params.gnd, '5v');
-  
+
     this.vccIO = obniz.getIO(this.params.vcc);
     this.trigger = this.params.trigger;
     this.echo = this.params.echo;
@@ -19006,7 +19004,6 @@ class HCSR04 {
   }
 
   measure(callback) {
-  
     let self = this;
     this.obniz.measure.echo({
       io_pulse: this.trigger,
@@ -19015,8 +19012,8 @@ class HCSR04 {
       pulse_width: 0.011,
       measure_edges: 3,
       timeout: 10 / 340 * 1000,
-      callback: async (edges) => {
-        if(this.reset_alltime) {
+      callback: async edges => {
+        if (this.reset_alltime) {
           this.vccIO.output(false);
           this.obniz.wait(100);
           this.vccIO.output(true);
@@ -19026,8 +19023,8 @@ class HCSR04 {
         for (let i = 0; i < edges.length - 1; i++) {
           // HCSR04's output of io_echo is initially high when trigger is finshed
           if (edges[i].edge === true) {
-            const time = ((edges[i + 1].timing - edges[i].timing) / 1000); // (1/4000 * 8) + is needed??
-            distance = time/2 * 20.055 * Math.sqrt( (this.temp + 273.15 )) * 1000;
+            const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
+            distance = time / 2 * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
             if (self._unit === 'inch') {
               distance = distance * 0.0393701;
             }
@@ -19042,9 +19039,9 @@ class HCSR04 {
 
   async measureWait() {
     return new Promise(resolve => {
-      this.measure((distance)=>{
+      this.measure(distance => {
         resolve(distance);
-      })
+      });
     });
   }
 
