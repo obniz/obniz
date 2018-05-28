@@ -12205,28 +12205,34 @@ Obniz.PartsRegistrate('GP2Y0A21YK0F', GP2Y0A21YK0F);
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-let HCSR04 = function () {
-  this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
-  this.requiredKeys = ['vcc', 'trigger', 'echo'];
+class HCSR04 {
 
-  this._unit = 'mm';
-};
+  constructor() {
+    this.keys = ['vcc', 'trigger', 'echo', 'gnd'];
+    this.requiredKeys = ['vcc', 'trigger', 'echo'];
 
-HCSR04.prototype.wired = function (obniz) {
-  this.obniz = obniz;
+    this._unit = 'mm';
+    this.reset_alltime = false;
 
-  obniz.setVccGnd(null, this.params.gnd, '5v');
+    this.temp = 15;
+  }
 
-  this.vccIO = obniz.getIO(this.params.vcc);
-  this.trigger = this.params.trigger;
-  this.echo = this.params.echo;
-};
+  wired(obniz) {
+    this.obniz = obniz;
 
-HCSR04.prototype.measure = (() => {
-  var _ref = _asyncToGenerator(function* (callback) {
+    obniz.setVccGnd(null, this.params.gnd, '5v');
+
+    this.vccIO = obniz.getIO(this.params.vcc);
+    this.trigger = this.params.trigger;
+    this.echo = this.params.echo;
+
     this.vccIO.drive('5v');
     this.vccIO.output(true);
-    yield this.obniz.wait(10);
+    this.obniz.wait(100);
+  }
+
+  measure(callback) {
+    var _this = this;
 
     let self = this;
     this.obniz.measure.echo({
@@ -12236,41 +12242,59 @@ HCSR04.prototype.measure = (() => {
       pulse_width: 0.011,
       measure_edges: 3,
       timeout: 10 / 340 * 1000,
-      callback: function (edges) {
-        self.vccIO.output(false);
-        let distance = null;
-        for (let i = 0; i < edges.length - 1; i++) {
-          // HCSR04's output of io_echo is initially high when trigger is finshed
-          if (edges[i].edge === true) {
-            distance = (edges[i + 1].timing - edges[i].timing) * 1000;
-            if (self._unit === 'mm') {
-              distance = distance / 5.8;
-            } else if (self._unit === 'inch') {
-              distance = distance / 148.0;
+      callback: (() => {
+        var _ref = _asyncToGenerator(function* (edges) {
+          if (_this.reset_alltime) {
+            _this.vccIO.output(false);
+            _this.obniz.wait(100);
+            _this.vccIO.output(true);
+            _this.obniz.wait(100);
+          }
+          let distance = undefined;
+          for (let i = 0; i < edges.length - 1; i++) {
+            // HCSR04's output of io_echo is initially high when trigger is finshed
+            if (edges[i].edge === true) {
+              const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
+              distance = time / 2 * 20.055 * Math.sqrt(_this.temp + 273.15) * 1000;
+              if (self._unit === 'inch') {
+                distance = distance * 0.0393701;
+              }
             }
           }
-        }
-        if (typeof callback === 'function') {
-          callback(distance);
-        }
-      }
+          if (typeof callback === 'function') {
+            callback(distance);
+          }
+        });
+
+        return function callback(_x) {
+          return _ref.apply(this, arguments);
+        };
+      })()
     });
-  });
-
-  return function (_x) {
-    return _ref.apply(this, arguments);
-  };
-})();
-
-HCSR04.prototype.unit = function (unit) {
-  if (unit === 'mm') {
-    this._unit = 'mm';
-  } else if (unit === 'inch') {
-    this._unit = 'inch';
-  } else {
-    throw new Error('HCSR04: unknown unit ' + unit);
   }
-};
+
+  measureWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      return new Promise(function (resolve) {
+        _this2.measure(function (distance) {
+          resolve(distance);
+        });
+      });
+    })();
+  }
+
+  unit(unit) {
+    if (unit === 'mm') {
+      this._unit = 'mm';
+    } else if (unit === 'inch') {
+      this._unit = 'inch';
+    } else {
+      throw new Error('HCSR04: unknown unit ' + unit);
+    }
+  }
+}
 
 // Module functions
 
