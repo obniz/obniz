@@ -18091,6 +18091,7 @@ var map = {
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
+	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
@@ -20416,6 +20417,65 @@ class ServoMotor {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate('ServoMotor', ServoMotor);
+
+
+/***/ }),
+
+/***/ "./parts/Moving/Solenoid/index.js":
+/*!****************************************!*\
+  !*** ./parts/Moving/Solenoid/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+class Solenoid {
+
+  constructor() {
+    this.keys = ['gnd', 'signal'];
+    this.requiredKeys = ['signal'];
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_gnd = obniz.getIO(this.params.gnd);
+      this.io_gnd.output(false);
+    }
+
+    this.io_signal = obniz.getIO(this.params.signal);
+    this.io_signal.output(false);
+  }
+
+  on() {
+    this.io_signal.output(true);
+  }
+
+  off() {
+    this.io_signal.output(false);
+  }
+
+  click(time_msec) {
+    this.on();
+    if (typeof time_msec !== 'number') {
+      time_msec = 100;
+    }
+    this.obniz.wait(time_msec);
+    this.off();
+  }
+
+  doubleClick(time_msec) {
+    if (typeof time_msec !== 'number') {
+      time_msec = 100;
+    }
+    this.click(time_msec);
+    this.obniz.wait(time_msec);
+    this.click(time_msec);
+  }
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('Solenoid', Solenoid);
 
 
 /***/ }),
