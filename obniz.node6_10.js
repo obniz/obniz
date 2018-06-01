@@ -13717,7 +13717,6 @@ Obniz.PartsRegistrate('ServoMotor', ServoMotor);
 
 
 class Solenoid {
-
   constructor() {
     this.keys = ['gnd', 'signal'];
     this.requiredKeys = ['signal'];

@@ -20429,7 +20429,6 @@ Obniz.PartsRegistrate('ServoMotor', ServoMotor);
 /***/ (function(module, exports, __webpack_require__) {
 
 class Solenoid {
-
   constructor() {
     this.keys = ['gnd', 'signal'];
     this.requiredKeys = ['signal'];
