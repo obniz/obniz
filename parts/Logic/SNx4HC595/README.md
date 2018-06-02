@@ -42,7 +42,7 @@ ioext.output(0, true)  // first chip's io
 ioext.output(15, true) // next chip's io
 ```
 
-# ioNum(num)
+## ioNum(num)
 
 This is equal to io_num on wired().
 After calling this. all number of output will be changed to false.
@@ -100,6 +100,6 @@ var seg = obniz.wired("7SegmentLED", {a:io3, b: io4, c: 5, d:6, e:7, f:8, g:9, c
 seg.print(0);
 ```
 
-##setEnable(enabled)
+## setEnable(enabled)
 This function available only when oe was specified.
 Changing Normal-operation/Hi-Z on all of it's chip output.

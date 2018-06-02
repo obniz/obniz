@@ -41,7 +41,7 @@ ioext.output(0, true)  // first chip's io
 ioext.output(15, true) // next chip's io
 ```
 
-# ioNum(num)
+## ioNum(num)
 
 使用するioの数を指定します。wired()関数でio_numを指定するのと同じです。
 指定した時にその数だけ出力はfalseに設定されます。
@@ -98,6 +98,6 @@ var seg = obniz.wired("7SegmentLED", {a:io3, b: io4, c: 5, d:6, e:7, f:8, g:9, c
 seg.print(0);
 ```
 
-##setEnable(enabled)
+## setEnable(enabled)
 oe端子をobnizにつないでいる場合にのみ使えます。
 出力ピンをすべてハイインピーダンスにします。
