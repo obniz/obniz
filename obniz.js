@@ -839,7 +839,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":"object","filter":"pass_all"}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
@@ -11843,24 +11843,16 @@ class PeripheralIO_ {
     for (let i = 0; i < array.length; i++) {
       let state = array[i];
       let duration = state.duration;
-      let func = state.state;
+      let operation = state.state;
 
       // dry run. and get json commands
       this.Obniz.sendPool = [];
-      func(i);
+      operation(i);
       let pooledJsonArray = this.Obniz.sendPool;
       this.Obniz.sendPool = null;
-
-      // simply merge objects
-      let merged = {};
-      for (let index = 0; index < pooledJsonArray.length; index++) {
-        for (let key in pooledJsonArray[index]) {
-          merged[key] = pooledJsonArray[index][key];
-        }
-      }
       states.push({
         duration: duration,
-        state: merged,
+        state: pooledJsonArray,
       });
     }
     if (status === 'loop') {
@@ -16248,11 +16240,34 @@ module.exports = class WSCommand_Directive extends WSCommand {
       const state = obj.state;
 
       // Dry run commands
-
-      const compressed = WSCommand.compress(
-        this.availableCommands,
-        JSON.parse(JSON.stringify(state))
-      );
+      let parsedCommands = JSON.parse(JSON.stringify(state));
+      if (!Array.isArray(parsedCommands)) {
+        parsedCommands = [parsedCommands];
+      }
+      let compressed = null;
+      for (
+        let commandIndex = 0;
+        commandIndex < parsedCommands.length;
+        commandIndex++
+      ) {
+        const frame = WSCommand.compress(
+          this.availableCommands,
+          parsedCommands[commandIndex]
+        );
+        if (!frame) {
+          throw new Error(
+            '[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.'
+          );
+        }
+        if (compressed) {
+          let combined = new Uint8Array(compressed.length + frame.length);
+          combined.set(compressed, 0);
+          combined.set(frame, compressed.length);
+          compressed = combined;
+        } else {
+          compressed = frame;
+        }
+      }
       if (!compressed) {
         throw new Error(
           '[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.'
@@ -18580,7 +18595,6 @@ Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);
 
 class _7SegmentLED {
   constructor() {
-    this.requiredKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'common'];
     this.keys = [
       'a',
       'b',
@@ -18593,6 +18607,7 @@ class _7SegmentLED {
       'common',
       'commonType',
     ];
+    this.requiredKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 
     this.digits = [
       0x3f,
@@ -18622,27 +18637,46 @@ class _7SegmentLED {
   }
 
   wired(obniz) {
+    function getIO(io) {
+      if (io && typeof io === 'object') {
+        if (typeof io['output'] === 'function') {
+          return io;
+        }
+      }
+      return obniz.getIO(io);
+    }
+    function isValidIO(io) {
+      if (io && typeof io === 'object') {
+        if (typeof io['output'] === 'function') {
+          return true;
+        }
+      }
+      return obniz.isValidIO(io);
+    }
+
     this.obniz = obniz;
     this.ios = [];
-    this.ios.push(obniz.getIO(this.params.a));
-    this.ios.push(obniz.getIO(this.params.b));
-    this.ios.push(obniz.getIO(this.params.c));
-    this.ios.push(obniz.getIO(this.params.d));
-    this.ios.push(obniz.getIO(this.params.e));
-    this.ios.push(obniz.getIO(this.params.f));
-    this.ios.push(obniz.getIO(this.params.g));
+    this.ios.push(getIO(this.params.a));
+    this.ios.push(getIO(this.params.b));
+    this.ios.push(getIO(this.params.c));
+    this.ios.push(getIO(this.params.d));
+    this.ios.push(getIO(this.params.e));
+    this.ios.push(getIO(this.params.f));
+    this.ios.push(getIO(this.params.g));
 
     for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(false);
     }
 
-    if (typeof this.params.dp === 'number') {
-      this.dp = obniz.getIO(this.params.dp);
+    if (isValidIO(this.params.dp)) {
+      this.dp = getIO(this.params.dp);
       this.dp.output(false);
     }
+    if (isValidIO(this.params.common)) {
+      this.common = getIO(this.params.common);
+      this.on();
+    }
 
-    this.common = obniz.getIO(this.params.common);
-    this.common.output(false);
     this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
   }
 
@@ -19423,62 +19457,71 @@ Obniz.PartsRegistrate('InfraredLED', InfraredLED);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-let LED = function() {
-  this.keys = ['anode', 'cathode'];
-  this.requiredKeys = ['anode'];
+class LED {
+  constructor() {
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
 
-  this.animationName = 'Led-' + Math.round(Math.random() * 1000);
-};
-
-LED.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.io_anode = obniz.getIO(this.params.anode);
-  this.io_anode.output(false);
-  if (this.params.cathode) {
-    this.io_cathode = obniz.getIO(this.params.cathode);
-    this.io_cathode.output(false);
+    this.animationName = 'Led-' + Math.round(Math.random() * 1000);
   }
-};
 
-// Module functions
+  wired(obniz) {
+    function getIO(io) {
+      if (io && typeof io === 'object') {
+        if (typeof io['output'] === 'function') {
+          return io;
+        }
+      }
+      return obniz.getIO(io);
+    }
 
-LED.prototype.on = function() {
-  this.endBlink();
-  this.io_anode.output(true);
-};
-
-LED.prototype.off = function() {
-  this.endBlink();
-  this.io_anode.output(false);
-};
-
-LED.prototype.endBlink = function() {
-  this.obniz.io.animation(this.animationName, 'pause');
-};
-
-LED.prototype.blink = function(interval) {
-  if (!interval) {
-    interval = 100;
+    this.obniz = obniz;
+    this.io_anode = getIO(this.params.anode);
+    this.io_anode.output(false);
+    if (this.params.cathode) {
+      this.io_cathode = getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
   }
-  let frames = [
-    {
-      duration: interval,
-      state: function(index) {
-        // index = 0
-        this.io_anode.output(true); // on
-      }.bind(this),
-    },
-    {
-      duration: interval,
-      state: function(index) {
-        // index = 0
-        this.io_anode.output(false); //off
-      }.bind(this),
-    },
-  ];
 
-  this.obniz.io.animation(this.animationName, 'loop', frames);
-};
+  on() {
+    this.endBlink();
+    this.io_anode.output(true);
+  }
+
+  off() {
+    this.endBlink();
+    this.io_anode.output(false);
+  }
+
+  endBlink() {
+    this.obniz.io.animation(this.animationName, 'pause');
+  }
+
+  blink(interval) {
+    if (!interval) {
+      interval = 100;
+    }
+    let frames = [
+      {
+        duration: interval,
+        state: function(index) {
+          // index = 0
+          this.io_anode.output(true); // on
+        }.bind(this),
+      },
+      {
+        duration: interval,
+        state: function(index) {
+          // index = 0
+          this.io_anode.output(false); //off
+        }.bind(this),
+      },
+    ];
+
+    this.obniz.io.animation(this.animationName, 'loop', frames);
+  }
+}
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate('LED', LED);
@@ -19893,17 +19936,7 @@ Obniz.PartsRegistrate('WS2812B', WS2812B);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-class SNx4HC595_IO {
-  constructor(chip, id) {
-    this.chip = chip;
-    this.id = id;
-    this.value = 0;
-  }
 
-  output(value) {
-    this.chip.output(this.id, value);
-  }
-}
 
 class SNx4HC595 {
   constructor() {
@@ -19911,10 +19944,11 @@ class SNx4HC595 {
     this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num'];
     this.requiredKeys = ['ser', 'srclk', 'rclk'];
 
-    this.ioNum(8);
+    this.autoFlash = true;
   }
 
   wired(obniz) {
+    
     this.obniz = obniz;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -19936,19 +19970,34 @@ class SNx4HC595 {
     this.io_srclk.output(false);
     this.io_rclk.output(false);
 
-    if (this.obniz.isValidIO(this.params.vcc)) {
+    if (this.obniz.isValidIO(this.params.vcc) || this.obniz.isValidIO(this.params.gnd)) {
       this.obniz.wait(100);
     }
 
-    if (typeof this.params.io_num === 'number') {
-      this.ioNum(this.params.io_num);
+    if (typeof this.params.io_num !== 'number') {
+      this.params.io_num = 8;
     }
+    this.ioNum(this.params.io_num);
+    
     if (this.io_oe) {
       this.io_oe.output(false);
     }
   }
 
   ioNum(num) {
+
+    class SNx4HC595_IO {
+      constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = 0;
+      }
+    
+      output(value) {
+        this.chip.output(this.id, value);
+      }
+    }
+
     if (typeof num === 'number' && this._io_num !== num) {
       this._io_num = num;
       this.io = [];
@@ -19975,7 +20024,20 @@ class SNx4HC595 {
   output(id, value) {
     value = value == true;
     this.io[id].value = value;
+    if (this.autoFlash) {
+      this.flush();
+    }
+  }
+
+  onece(operation) {
+    if (typeof operation !== "function") {
+      throw new Error('please provide function');
+    }
+    const lastValue = this.autoFlash;
+    this.autoFlash = false;
+    operation();
     this.flush();
+    this.autoFlash = lastValue;
   }
 
   setEnable(enable) {
@@ -19985,7 +20047,18 @@ class SNx4HC595 {
     this.io_oe.output(!enable);
   }
 
-  flush() {}
+  flush() {
+    /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
+    this.io_rclk.output(false);
+    let array = [];
+    for (let i=this.io.length-1; i>=0;i--) {
+      this.io_srclk.output(false);
+      array.push(this.io[i].value);
+      this.io_ser.output(this.io[i].value);
+      this.io_srclk.output(true);
+    }
+    this.io_rclk.output(true);
+  }
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");

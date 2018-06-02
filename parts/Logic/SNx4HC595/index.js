@@ -1,22 +1,10 @@
-class SNx4HC595_IO {
-  constructor(chip, id) {
-    this.chip = chip;
-    this.id = id;
-    this.value = 0;
-  }
-
-  output(value) {
-    this.chip.output(this.id, value);
-  }
-}
-
 class SNx4HC595 {
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
     this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num'];
     this.requiredKeys = ['ser', 'srclk', 'rclk'];
 
-    this.ioNum(8);
+    this.autoFlash = true;
   }
 
   wired(obniz) {
@@ -41,19 +29,36 @@ class SNx4HC595 {
     this.io_srclk.output(false);
     this.io_rclk.output(false);
 
-    if (this.obniz.isValidIO(this.params.vcc)) {
+    if (
+      this.obniz.isValidIO(this.params.vcc) ||
+      this.obniz.isValidIO(this.params.gnd)
+    ) {
       this.obniz.wait(100);
     }
 
-    if (typeof this.params.io_num === 'number') {
-      this.ioNum(this.params.io_num);
+    if (typeof this.params.io_num !== 'number') {
+      this.params.io_num = 8;
     }
+    this.ioNum(this.params.io_num);
+
     if (this.io_oe) {
       this.io_oe.output(false);
     }
   }
 
   ioNum(num) {
+    class SNx4HC595_IO {
+      constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = 0;
+      }
+
+      output(value) {
+        this.chip.output(this.id, value);
+      }
+    }
+
     if (typeof num === 'number' && this._io_num !== num) {
       this._io_num = num;
       this.io = [];
@@ -80,7 +85,20 @@ class SNx4HC595 {
   output(id, value) {
     value = value == true;
     this.io[id].value = value;
+    if (this.autoFlash) {
+      this.flush();
+    }
+  }
+
+  onece(operation) {
+    if (typeof operation !== 'function') {
+      throw new Error('please provide function');
+    }
+    const lastValue = this.autoFlash;
+    this.autoFlash = false;
+    operation();
     this.flush();
+    this.autoFlash = lastValue;
   }
 
   setEnable(enable) {
@@ -90,7 +108,18 @@ class SNx4HC595 {
     this.io_oe.output(!enable);
   }
 
-  flush() {}
+  flush() {
+    /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
+    this.io_rclk.output(false);
+    let array = [];
+    for (let i = this.io.length - 1; i >= 0; i--) {
+      this.io_srclk.output(false);
+      array.push(this.io[i].value);
+      this.io_ser.output(this.io[i].value);
+      this.io_srclk.output(true);
+    }
+    this.io_rclk.output(true);
+  }
 }
 
 let Obniz = require('../../../obniz/index.js');

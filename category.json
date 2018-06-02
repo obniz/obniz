@@ -73,6 +73,14 @@
       ]
     },
     {
+      "name": "Logic",
+      "parts": [
+        {
+          "name": "SNx4HC595"
+        }
+      ]
+    },
+    {
       "name": "Accessory",
       "parts": [
         {
