@@ -32,11 +32,34 @@ module.exports = class WSCommand_Directive extends WSCommand {
       const state = obj.state;
 
       // Dry run commands
-
-      const compressed = WSCommand.compress(
-        this.availableCommands,
-        JSON.parse(JSON.stringify(state))
-      );
+      let parsedCommands = JSON.parse(JSON.stringify(state));
+      if (!Array.isArray(parsedCommands)) {
+        parsedCommands = [parsedCommands];
+      }
+      let compressed = null;
+      for (
+        let commandIndex = 0;
+        commandIndex < parsedCommands.length;
+        commandIndex++
+      ) {
+        const frame = WSCommand.compress(
+          this.availableCommands,
+          parsedCommands[commandIndex]
+        );
+        if (!frame) {
+          throw new Error(
+            '[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.'
+          );
+        }
+        if (compressed) {
+          let combined = new Uint8Array(compressed.length + frame.length);
+          combined.set(compressed, 0);
+          combined.set(frame, compressed.length);
+          compressed = combined;
+        } else {
+          compressed = frame;
+        }
+      }
       if (!compressed) {
         throw new Error(
           '[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.'

@@ -17,24 +17,16 @@ class PeripheralIO_ {
     for (let i = 0; i < array.length; i++) {
       let state = array[i];
       let duration = state.duration;
-      let func = state.state;
+      let operation = state.state;
 
       // dry run. and get json commands
       this.Obniz.sendPool = [];
-      func(i);
+      operation(i);
       let pooledJsonArray = this.Obniz.sendPool;
       this.Obniz.sendPool = null;
-
-      // simply merge objects
-      let merged = {};
-      for (let index = 0; index < pooledJsonArray.length; index++) {
-        for (let key in pooledJsonArray[index]) {
-          merged[key] = pooledJsonArray[index][key];
-        }
-      }
       states.push({
         duration: duration,
-        state: merged,
+        state: pooledJsonArray,
       });
     }
     if (status === 'loop') {
