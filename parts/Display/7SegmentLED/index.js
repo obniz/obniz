@@ -1,6 +1,5 @@
 class _7SegmentLED {
   constructor() {
-    this.requiredKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'common'];
     this.keys = [
       'a',
       'b',
@@ -13,6 +12,7 @@ class _7SegmentLED {
       'common',
       'commonType',
     ];
+    this.requiredKeys = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 
     this.digits = [
       0x3f,
@@ -42,27 +42,46 @@ class _7SegmentLED {
   }
 
   wired(obniz) {
+    function getIO(io) {
+      if (io && typeof io === 'object') {
+        if (typeof io['output'] === 'function') {
+          return io;
+        }
+      }
+      return obniz.getIO(io);
+    }
+    function isValidIO(io) {
+      if (io && typeof io === 'object') {
+        if (typeof io['output'] === 'function') {
+          return true;
+        }
+      }
+      return obniz.isValidIO(io);
+    }
+
     this.obniz = obniz;
     this.ios = [];
-    this.ios.push(obniz.getIO(this.params.a));
-    this.ios.push(obniz.getIO(this.params.b));
-    this.ios.push(obniz.getIO(this.params.c));
-    this.ios.push(obniz.getIO(this.params.d));
-    this.ios.push(obniz.getIO(this.params.e));
-    this.ios.push(obniz.getIO(this.params.f));
-    this.ios.push(obniz.getIO(this.params.g));
+    this.ios.push(getIO(this.params.a));
+    this.ios.push(getIO(this.params.b));
+    this.ios.push(getIO(this.params.c));
+    this.ios.push(getIO(this.params.d));
+    this.ios.push(getIO(this.params.e));
+    this.ios.push(getIO(this.params.f));
+    this.ios.push(getIO(this.params.g));
 
     for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(false);
     }
 
-    if (typeof this.params.dp === 'number') {
-      this.dp = obniz.getIO(this.params.dp);
+    if (isValidIO(this.params.dp)) {
+      this.dp = getIO(this.params.dp);
       this.dp.output(false);
     }
+    if (isValidIO(this.params.common)) {
+      this.common = getIO(this.params.common);
+      this.on();
+    }
 
-    this.common = obniz.getIO(this.params.common);
-    this.common.output(false);
     this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
   }
 
