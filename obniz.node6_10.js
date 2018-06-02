@@ -11295,6 +11295,7 @@ var map = {
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
+	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
@@ -12012,6 +12013,139 @@ class _7SegmentLEDArray {
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
 Obniz.PartsRegistrate('7SegmentLEDArray', _7SegmentLEDArray);
+
+/***/ }),
+
+/***/ "./parts/Display/7SegmentLED_MAX7219/index.js":
+/*!****************************************************!*\
+  !*** ./parts/Display/7SegmentLED_MAX7219/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class _7SegmentLED_MAX7219 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
+    this.requiredKeys = ['din', 'cs', 'clk'];
+  }
+
+  wired(obniz) {
+    this.cs = obniz.getIO(this.params.cs);
+    // logich high must 3.5v <=
+    if (obniz.isValidIO(this.params.vcc)) {
+      obniz.getIO(this.params.vcc).output(true);
+    }
+    if (obniz.isValidIO(this.params.gnd)) {
+      obniz.getIO(this.params.gnd).output(false);
+    }
+
+    // max 10Mhz but motor driver can't
+    this.params.frequency = this.params.frequency || 10 * 1000 * 1000;
+    this.params.mode = 'master';
+    this.params.mosi = this.params.din;
+    this.params.drive = '3v';
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    // reset a onece
+    this.cs.output(true);
+    this.cs.output(false);
+    this.cs.output(true);
+  }
+
+  init(numOfDisplay, digits) {
+    this.numOfDisp = numOfDisplay;
+    this.digits = digits;
+    this.writeAllDisp([0x0b, digits - 1]);
+    this.initModule();
+  }
+
+  initModule() {
+    this.writeAllDisp([0x09, 0xff]); // Code B decode for digits 7-0
+    this.writeAllDisp([0x0a, 0x05]); // brightness 11/32 0 to f
+    this.writeAllDisp([0x0c, 0x01]); // Shutdown to normal operation
+    this.writeAllDisp([0x0f, 0x00]);
+    this.obniz.wait(10);
+  }
+
+  clearall() {
+    for (let i = 0; i < this.numOfDisp; i++) {
+      for (let j = 0; j < this.digits; j++) {
+        this.writeAllDisp([j + 1, 0x0f]);
+      }
+    }
+  }
+
+  test() {
+    this.writeAllDisp([0x0f, 0x00]); // test command
+  }
+
+  brightness(disp, val) {
+    this.writeOneDisp(disp, [0x0a, val]); // 0 to 15;
+  }
+
+  brightnessAll(val) {
+    this.writeAllDisp([0x0a, val]); // 0 to 15;
+  }
+
+  writeAllDisp(data) {
+    for (let i = 0; i < this.numOfDisp; i++) {
+      this.writeOneDisp(i, data);
+    }
+  }
+
+  writeOneDisp(disp, data) {
+    this.cs.output(false);
+    for (let i = 0; i < disp; i++) {
+      this.spi.write([0x00, 0x00]);
+    }
+    this.spi.write(data);
+    for (let i = 0; i < this.numOfDisp - (disp + 1); i++) {
+      this.spi.write([0x00, 0x00]);
+    }
+    this.cs.output(true);
+  }
+
+  setNumber(number, dp, disp, digit) {
+    if (digit >= 0 && digit <= this.digits - 1) {
+      this.writeOneDisp(disp, [digit + 1, this.encodeBCD(number, dp)]);
+    }
+  }
+
+  encodeBCD(decimal, dp) {
+    var dpreg;
+    if (dp == true) {
+      dpreg = 0x80;
+    } else {
+      dpreg = 0x00;
+    }
+    if (decimal >= 0 && decimal <= 9) {
+      return decimal | dpreg;
+    } else if (decimal == '-') {
+      return 0x0a | dpreg;
+    } else if (decimal == 'e') {
+      return 0x0b | dpreg;
+    } else if (decimal == 'h') {
+      return 0x0c | dpreg;
+    } else if (decimal == 'l') {
+      return 0x0d | dpreg;
+    } else if (decimal == 'p') {
+      return 0x0e | dpreg;
+    } else if (decimal == 'on') {
+      return 0x88;
+    } else if (decimal == 'off') {
+      return 0x0f | dpreg;
+    } else {
+      return 0x0f | dpreg;
+    }
+  }
+
+}
+
+let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
+Obniz.PartsRegistrate('7SegmentLED_MAX7219', _7SegmentLED_MAX7219);
 
 /***/ }),
 
