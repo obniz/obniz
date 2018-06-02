@@ -513,7 +513,7 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 | `io.animation.animation.name` |  string  | <ul><li>required</li><li>1 &le; length &le; 254</li></ul> | Animation name to use pause/resume&nbsp; |
 | `io.animation.animation.status` |  string  | <ul><li>required</li><li>const `"loop"`</li></ul> | &nbsp; |
 | `io.animation.animation.states[].duration` |  integer  | <ul><li>required</li><li>0 &le; value &le; 60000</li></ul> | State duration time(ms)&nbsp; |
-| `io.animation.animation.states[].state` |  object  | <ul><li>required</li></ul> | io/pwm commands.&nbsp; |
+| `io.animation.animation.states[].state` |  object,array  | &nbsp; | io/pwm commands.&nbsp; |
 
 
 

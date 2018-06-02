@@ -37,6 +37,52 @@ describe('io.animation', function() {
     );
   });
 
+  it('request ioAnimation single array format', function() {
+    compressTest(
+      this.obniz,
+      [
+        {
+          io: {
+            animation: {
+              name: 'animation-1',
+              states: [
+                { duration: 10, state: [{ io0: false, io1: true }] },
+                { duration: 10, state: [{ io0: true, io1: false }] },
+              ],
+              status: 'loop',
+            },
+          },
+        },
+      ],
+      [
+        '01 00 31 0c 61 6e 69 6d 61 74 69 6f 6e 2d 31 00 00 00 00 0a 00 00 27 10 02 00 02 00 00 02 00 02 01 01 00 00 00 0a 00 00 27 10 02 00 02 00 01 02 00 02 01 00',
+      ]
+    );
+  });
+
+  it('request ioAnimation multiple array format', function() {
+    compressTest(
+      this.obniz,
+      [
+        {
+          io: {
+            animation: {
+              name: 'animation-1',
+              states: [
+                { duration: 10, state: [{ io0: false }, { io1: true }] },
+                { duration: 10, state: [{ io0: true }, { io1: false }] },
+              ],
+              status: 'loop',
+            },
+          },
+        },
+      ],
+      [
+        '01 00 31 0c 61 6e 69 6d 61 74 69 6f 6e 2d 31 00 00 00 00 0a 00 00 27 10 02 00 02 00 00 02 00 02 01 01 00 00 00 0a 00 00 27 10 02 00 02 00 01 02 00 02 01 00',
+      ]
+    );
+  });
+
   it('request ioAnimation-pause', function() {
     compressTest(
       this.obniz,

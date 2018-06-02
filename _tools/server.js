@@ -22,6 +22,9 @@ gulp.task('server', function jsonSchemaForVar() {
   });
 
   app.get('/obniz.js', (request, response) => {
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.header('Expires', '0');
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
     response.header('Access-Control-Allow-Origin', '*');
     response.sendFile(path.join(__dirname, '../obniz.js'));
   });

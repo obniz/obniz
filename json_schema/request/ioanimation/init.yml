@@ -41,12 +41,12 @@ properties:
                             maximum : 60000
                             example : 500
                         state :
-                            type: object
+                            type: [object, array]
                             description : "io/pwm commands."
                             filter : pass_all
                             example :
                               - {io0: true}
-                              - {io0: false}
+                              - [{io0: false}, {io0: true}]
 #                       エラーがわかりにくくなるのでソースコードで実施
 #                            additionalProperties: false
 #                            patternProperties :

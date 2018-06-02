@@ -221,17 +221,11 @@ describe('obniz.libs.io', function() {
             states: [
               {
                 duration: 10,
-                state: {
-                  io0: false,
-                  io1: true,
-                },
+                state: [{ io0: false }, { io1: true }],
               },
               {
                 duration: 10,
-                state: {
-                  io0: true,
-                  io1: false,
-                },
+                state: [{ io0: true }, { io1: false }],
               },
             ],
             status: 'loop',
