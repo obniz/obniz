@@ -19936,8 +19936,6 @@ Obniz.PartsRegistrate('WS2812B', WS2812B);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-
 class SNx4HC595 {
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
@@ -19948,7 +19946,6 @@ class SNx4HC595 {
   }
 
   wired(obniz) {
-    
     this.obniz = obniz;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -19970,7 +19967,10 @@ class SNx4HC595 {
     this.io_srclk.output(false);
     this.io_rclk.output(false);
 
-    if (this.obniz.isValidIO(this.params.vcc) || this.obniz.isValidIO(this.params.gnd)) {
+    if (
+      this.obniz.isValidIO(this.params.vcc) ||
+      this.obniz.isValidIO(this.params.gnd)
+    ) {
       this.obniz.wait(100);
     }
 
@@ -19978,21 +19978,20 @@ class SNx4HC595 {
       this.params.io_num = 8;
     }
     this.ioNum(this.params.io_num);
-    
+
     if (this.io_oe) {
       this.io_oe.output(false);
     }
   }
 
   ioNum(num) {
-
     class SNx4HC595_IO {
       constructor(chip, id) {
         this.chip = chip;
         this.id = id;
         this.value = 0;
       }
-    
+
       output(value) {
         this.chip.output(this.id, value);
       }
@@ -20030,7 +20029,7 @@ class SNx4HC595 {
   }
 
   onece(operation) {
-    if (typeof operation !== "function") {
+    if (typeof operation !== 'function') {
       throw new Error('please provide function');
     }
     const lastValue = this.autoFlash;
@@ -20051,7 +20050,7 @@ class SNx4HC595 {
     /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
     this.io_rclk.output(false);
     let array = [];
-    for (let i=this.io.length-1; i>=0;i--) {
+    for (let i = this.io.length - 1; i >= 0; i--) {
       this.io_srclk.output(false);
       array.push(this.io[i].value);
       this.io_ser.output(this.io[i].value);

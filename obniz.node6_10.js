@@ -13182,7 +13182,6 @@ class SNx4HC595 {
   }
 
   wired(obniz) {
-
     this.obniz = obniz;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -13219,7 +13218,6 @@ class SNx4HC595 {
   }
 
   ioNum(num) {
-
     class SNx4HC595_IO {
       constructor(chip, id) {
         this.chip = chip;
@@ -13264,7 +13262,7 @@ class SNx4HC595 {
   }
 
   onece(operation) {
-    if (typeof operation !== "function") {
+    if (typeof operation !== 'function') {
       throw new Error('please provide function');
     }
     const lastValue = this.autoFlash;
