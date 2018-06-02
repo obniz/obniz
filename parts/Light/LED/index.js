@@ -1,59 +1,68 @@
-let LED = function() {
-  this.keys = ['anode', 'cathode'];
-  this.requiredKeys = ['anode'];
+class LED {
+  constructor() {
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
 
-  this.animationName = 'Led-' + Math.round(Math.random() * 1000);
-};
-
-LED.prototype.wired = function(obniz) {
-  this.obniz = obniz;
-  this.io_anode = obniz.getIO(this.params.anode);
-  this.io_anode.output(false);
-  if (this.params.cathode) {
-    this.io_cathode = obniz.getIO(this.params.cathode);
-    this.io_cathode.output(false);
+    this.animationName = 'Led-' + Math.round(Math.random() * 1000);
   }
-};
 
-// Module functions
+  wired(obniz) {
+    function getIO(io) {
+      if (io && typeof io === 'object') {
+        if (typeof io['output'] === 'function') {
+          return io;
+        }
+      }
+      return obniz.getIO(io);
+    }
 
-LED.prototype.on = function() {
-  this.endBlink();
-  this.io_anode.output(true);
-};
-
-LED.prototype.off = function() {
-  this.endBlink();
-  this.io_anode.output(false);
-};
-
-LED.prototype.endBlink = function() {
-  this.obniz.io.animation(this.animationName, 'pause');
-};
-
-LED.prototype.blink = function(interval) {
-  if (!interval) {
-    interval = 100;
+    this.obniz = obniz;
+    this.io_anode = getIO(this.params.anode);
+    this.io_anode.output(false);
+    if (this.params.cathode) {
+      this.io_cathode = getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
   }
-  let frames = [
-    {
-      duration: interval,
-      state: function(index) {
-        // index = 0
-        this.io_anode.output(true); // on
-      }.bind(this),
-    },
-    {
-      duration: interval,
-      state: function(index) {
-        // index = 0
-        this.io_anode.output(false); //off
-      }.bind(this),
-    },
-  ];
 
-  this.obniz.io.animation(this.animationName, 'loop', frames);
-};
+  on() {
+    this.endBlink();
+    this.io_anode.output(true);
+  }
+
+  off() {
+    this.endBlink();
+    this.io_anode.output(false);
+  }
+
+  endBlink() {
+    this.obniz.io.animation(this.animationName, 'pause');
+  }
+
+  blink(interval) {
+    if (!interval) {
+      interval = 100;
+    }
+    let frames = [
+      {
+        duration: interval,
+        state: function(index) {
+          // index = 0
+          this.io_anode.output(true); // on
+        }.bind(this),
+      },
+      {
+        duration: interval,
+        state: function(index) {
+          // index = 0
+          this.io_anode.output(false); //off
+        }.bind(this),
+      },
+    ];
+
+    this.obniz.io.animation(this.animationName, 'loop', frames);
+  }
+}
 
 let Obniz = require('../../../obniz/index.js');
 Obniz.PartsRegistrate('LED', LED);
