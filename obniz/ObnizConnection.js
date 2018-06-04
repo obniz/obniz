@@ -182,8 +182,8 @@ module.exports = class ObnizConnection {
         if (this._waitForLocalConnectReadyTimer) {
           clearTimeout(this._waitForLocalConnectReadyTimer);
           this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
         }
+        this._callOnConnect();
       });
       ws.on('message', data => {
         this.print_debug('recvd via local');
@@ -209,8 +209,8 @@ module.exports = class ObnizConnection {
         if (this._waitForLocalConnectReadyTimer) {
           clearTimeout(this._waitForLocalConnectReadyTimer);
           this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
         }
+        this._callOnConnect();
       };
       ws.onmessage = event => {
         this.print_debug('recvd via local');
@@ -452,7 +452,7 @@ module.exports = class ObnizConnection {
         this._connectLocal(wsObj.local_connect.ip);
         this._waitForLocalConnectReadyTimer = setTimeout(() => {
           this._callOnConnect();
-        }, 1000);
+        }, 3000);
       }
       if (!this._waitForLocalConnectReadyTimer) {
         this._callOnConnect();
