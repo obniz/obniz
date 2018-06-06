@@ -2355,11 +2355,7 @@ module.exports = class ObnizConnection {
       ws = new wsClient(url);
       ws.on('open', () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
-        }
+        this._callOnConnect();
       });
       ws.on('message', data => {
         this.print_debug('recvd via local');
@@ -2382,11 +2378,7 @@ module.exports = class ObnizConnection {
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
-        }
+        this._callOnConnect();
       };
       ws.onmessage = event => {
         this.print_debug('recvd via local');
@@ -2415,7 +2407,7 @@ module.exports = class ObnizConnection {
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
-      this._callOnConnect();
+      this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
     }
   }
 
@@ -2459,16 +2451,29 @@ module.exports = class ObnizConnection {
   }
 
   _callOnConnect() {
+    let shouldCall = true;
     if (this._waitForLocalConnectReadyTimer) {
+      /* obniz.js has wait local_connect */
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
+    } else {
+      /* obniz.js hasn't wait local_connect */
+      if (this.socket_local && this.socket_local.readyState === 1) {
+        /* delayed connect */
+        shouldCall = false;
+      } else {
+        /* local_connect is not used */
+      }
     }
-    if (typeof this.onconnect !== 'function') return;
-    const promise = this.onconnect(this);
-    if (promise instanceof Promise) {
-      promise.catch(err => {
-        console.error(err);
-      });
+
+    if (shouldCall) {
+      if (typeof this.onconnect !== 'function') return;
+      const promise = this.onconnect(this);
+      if (promise instanceof Promise) {
+        promise.catch(err => {
+          console.error(err);
+        });
+      }
     }
   }
 
@@ -2592,7 +2597,6 @@ module.exports = class ObnizConnection {
   }
 
   handleWSCommand(wsObj) {
-    //
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
       this.resetOnDisconnect(true);
@@ -2600,9 +2604,8 @@ module.exports = class ObnizConnection {
         this._connectLocal(wsObj.local_connect.ip);
         this._waitForLocalConnectReadyTimer = setTimeout(() => {
           this._callOnConnect();
-        }, 1000);
-      }
-      if (!this._waitForLocalConnectReadyTimer) {
+        }, 3000);
+      } else {
         this._callOnConnect();
       }
     }
@@ -2935,7 +2938,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     if (doms.statusDom) {
       doms.statusDom.style.backgroundColor = isConnectedLocally ? '#0cd362' : '#31965d';
       doms.statusDom.style.color = '#FFF';
-      doms.statusDom.innerHTML = this.id ? 'online : ' + this.id : 'online';
+      doms.statusDom.innerHTML = (this.id ? 'online : ' + this.id : 'online') + (isConnectedLocally ? ' via local_connect' : ' via internet');
     }
   }
 

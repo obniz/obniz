@@ -179,10 +179,6 @@ module.exports = class ObnizConnection {
       ws = new wsClient(url);
       ws.on('open', () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-        }
         this._callOnConnect();
       });
       ws.on('message', data => {
@@ -206,10 +202,6 @@ module.exports = class ObnizConnection {
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-        }
         this._callOnConnect();
       };
       ws.onmessage = event => {
@@ -239,7 +231,7 @@ module.exports = class ObnizConnection {
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
-      this._callOnConnect();
+      this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
     }
   }
 
@@ -289,16 +281,29 @@ module.exports = class ObnizConnection {
   }
 
   _callOnConnect() {
+    let shouldCall = true;
     if (this._waitForLocalConnectReadyTimer) {
+      /* obniz.js has wait local_connect */
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
+    } else {
+      /* obniz.js hasn't wait local_connect */
+      if (this.socket_local && this.socket_local.readyState === 1) {
+        /* delayed connect */
+        shouldCall = false;
+      } else {
+        /* local_connect is not used */
+      }
     }
-    if (typeof this.onconnect !== 'function') return;
-    const promise = this.onconnect(this);
-    if (promise instanceof Promise) {
-      promise.catch(err => {
-        console.error(err);
-      });
+
+    if (shouldCall) {
+      if (typeof this.onconnect !== 'function') return;
+      const promise = this.onconnect(this);
+      if (promise instanceof Promise) {
+        promise.catch(err => {
+          console.error(err);
+        });
+      }
     }
   }
 
@@ -438,7 +443,6 @@ module.exports = class ObnizConnection {
   }
 
   handleWSCommand(wsObj) {
-    //
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
       this.resetOnDisconnect(true);
@@ -453,8 +457,7 @@ module.exports = class ObnizConnection {
         this._waitForLocalConnectReadyTimer = setTimeout(() => {
           this._callOnConnect();
         }, 3000);
-      }
-      if (!this._waitForLocalConnectReadyTimer) {
+      } else {
         this._callOnConnect();
       }
     }
