@@ -8405,7 +8405,7 @@ module.exports = class ObnizConnection {
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
-      this._callOnConnect();/* should call. onlyl local connect was lost. and waiting. */
+      this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
     }
   }
 
@@ -8461,7 +8461,7 @@ module.exports = class ObnizConnection {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
     } else {
-       /* obniz.js hasn't wait local_connect */
+      /* obniz.js hasn't wait local_connect */
       if (this.socket_local && this.socket_local.readyState === 1) {
         /* delayed connect */
         shouldCall = false;
@@ -8978,9 +8978,13 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
       doms.loaderDom.style.display = 'none';
     }
     if (doms.statusDom) {
-      doms.statusDom.style.backgroundColor = isConnectedLocally ? '#0cd362' : '#31965d';
+      doms.statusDom.style.backgroundColor = isConnectedLocally
+        ? '#0cd362'
+        : '#31965d';
       doms.statusDom.style.color = '#FFF';
-      doms.statusDom.innerHTML = (this.id ? ('online : ' + this.id) : 'online') + (isConnectedLocally ? ' via local_connect' : ' via internet');
+      doms.statusDom.innerHTML =
+        (this.id ? 'online : ' + this.id : 'online') +
+        (isConnectedLocally ? ' via local_connect' : ' via internet');
     }
   }
 
