@@ -8232,7 +8232,8 @@ module.exports = class ObnizConnection {
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
       obniz_server: options.obniz_server || 'wss://obniz.io',
-      reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true
+      reset_obniz_on_ws_disconnection:
+        options.reset_obniz_on_ws_disconnection === false ? false : true,
     };
     if (this.options.binary) {
       this.wscommand = this.constructor.WSCommand;
@@ -8668,7 +8669,7 @@ module.exports = class ObnizConnection {
     if (wsObj.redirect) {
       let server = wsObj.redirect;
       this.print_debug('WS connection changed to ' + server);
-      
+
       /* close current ws immidiately */
       /*  */
       this.socket.close(1000, 'close');
@@ -9257,9 +9258,7 @@ class ObnizBLE {
     this._reset();
   }
 
-  _reset() {
-
-  }
+  _reset() {}
 
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
