@@ -3,12 +3,12 @@
 [![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
 [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
+[obniz](https://obniz.io/) sdk for javascript.
 
-This is [obniz](https://obniz.io/) sdk for javascript.
-
-Control obniz from javascript. obniz.js works with browser and nodejs.
+Control obniz from javascript. works on both browser / nodejs.
 
 This sdk works with [obniz api](https://obniz.io/doc/about_obniz_api).
+
 
 ## Usage
 ```html
@@ -74,6 +74,9 @@ and import it on js file.
 ```
 
 ## Connect
+
+Details on [doc/connection](./doc/connection.md) ([ja](./doc/connection-ja.md))
+
 To use obniz, instantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
 ```javascript
   var obniz = new Obniz("0000-0000");

@@ -22,6 +22,13 @@ module.exports = class ObnizComponents extends ObnizParts {
     this.pongObservers = [];
   }
 
+  close() {
+    super.close();
+    if (this.options.reset_obniz_on_ws_disconnection) {
+      this._resetComponents();
+    }
+  }
+
   _prepareComponents() {
     this.io = new PeripheralIO_(this);
     for (let i = 0; i < 12; i++) {
@@ -50,6 +57,34 @@ module.exports = class ObnizComponents extends ObnizParts {
     this.measure = new ObnizMeasure(this);
 
     this.util = new ObnizUtil(this);
+  }
+
+  _resetComponents() {
+    this.print_debug('components state resets');
+    for (let i = 0; i < 12; i++) {
+      this['io' + i]._reset();
+    }
+    for (let i = 0; i < 12; i++) {
+      this['ad' + i]._reset();
+    }
+    for (let i = 0; i < 2; i++) {
+      this['uart' + i]._reset();
+    }
+    for (let i = 0; i < 2; i++) {
+      this['spi' + i]._reset();
+    }
+    for (let i = 0; i < 1; i++) {
+      this['i2c' + i]._reset();
+    }
+    for (let i = 0; i < 6; i++) {
+      this['pwm' + i]._reset();
+    }
+
+    this.display._reset();
+    this.switch._reset();
+    this.logicAnalyzer._reset();
+    this.ble._reset();
+    this.measure._reset();
   }
 
   notifyToModule(obj) {

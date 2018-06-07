@@ -4,8 +4,12 @@ class Display {
     this.width = 128;
     this.height = 64;
 
-    this._pos = { x: 0, y: 0 };
     this._canvas = null;
+    this._reset();
+  }
+
+  _reset() {
+    this._pos = { x: 0, y: 0 };
   }
 
   warnCanvasAvailability() {

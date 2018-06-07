@@ -5,6 +5,16 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     super(id, options);
   }
 
+  isValidObnizId(str) {
+    if (typeof str != 'string' || str.length < 8) {
+      return null;
+    }
+    str = str.replace('-', '');
+    let id = parseInt(str);
+    if (isNaN(id)) id = null;
+    return id != null;
+  }
+
   wsconnect(desired_server) {
     this.showOffLine();
     if (!this.isValidObnizId(this.id)) {

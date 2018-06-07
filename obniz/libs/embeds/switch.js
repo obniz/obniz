@@ -1,6 +1,10 @@
 class ObnizSwitch {
   constructor(Obniz) {
     this.Obniz = Obniz;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
   }
 

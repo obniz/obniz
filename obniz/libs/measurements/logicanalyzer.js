@@ -3,6 +3,11 @@ const ObnizUtil = require('../utils/util');
 class LogicAnalyzer {
   constructor(obniz) {
     this.obniz = obniz;
+    this._reset();
+  }
+
+  _reset() {
+    this.onmeasured = undefined;
   }
 
   start(params) {

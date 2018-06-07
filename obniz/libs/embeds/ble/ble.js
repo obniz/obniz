@@ -20,7 +20,10 @@ class ObnizBLE {
 
     this.advertisement = new BleAdvertisement(Obniz);
     this.scan = new BleScan(Obniz);
+    this._reset();
   }
+
+  _reset() {}
 
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {

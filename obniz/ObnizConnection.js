@@ -23,6 +23,8 @@ module.exports = class ObnizConnection {
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
       obniz_server: options.obniz_server || 'wss://obniz.io',
+      reset_obniz_on_ws_disconnection:
+        options.reset_obniz_on_ws_disconnection === false ? false : true,
     };
     if (this.options.binary) {
       this.wscommand = this.constructor.WSCommand;
@@ -35,16 +37,6 @@ module.exports = class ObnizConnection {
     if (this.options.auto_connect) {
       this.wsconnect();
     }
-  }
-
-  isValidObnizId(str) {
-    if (typeof str != 'string' || str.length < 8) {
-      return null;
-    }
-    str = str.replace('-', '');
-    let id = parseInt(str);
-    if (isNaN(id)) id = null;
-    return id != null;
   }
 
   prompt(filled, callback) {
@@ -129,7 +121,9 @@ module.exports = class ObnizConnection {
       server = '' + desired_server;
     }
 
-    this.close();
+    if (this.socket && this.socket.readyState <= 1) {
+      this.close();
+    }
 
     let url = server + '/obniz/' + this.id + '/ws/1';
 
@@ -445,7 +439,9 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
-      this.resetOnDisconnect(true);
+      if (this.options.reset_obniz_on_ws_disconnection) {
+        this.resetOnDisconnect(true);
+      }
       if (
         wsObj.local_connect &&
         wsObj.local_connect.ip &&
@@ -464,7 +460,14 @@ module.exports = class ObnizConnection {
     if (wsObj.redirect) {
       let server = wsObj.redirect;
       this.print_debug('WS connection changed to ' + server);
-      this.close();
+
+      /* close current ws immidiately */
+      /*  */
+      this.socket.close(1000, 'close');
+      this.clearSocket(this.socket);
+      delete this.socket;
+
+      /* connect to new server */
       this.wsconnect(server);
     }
   }
@@ -494,8 +497,6 @@ module.exports = class ObnizConnection {
     }
     return json;
   }
-
-  updateOnlineUI() {}
 
   warning(msg) {
     console.log('warning:' + msg);
