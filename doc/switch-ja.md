@@ -1,7 +1,7 @@
 # Switch
 obniz組み込みスイッチの使い方です
 
-# switch.onchange = function(){}
+### switch.onchange = function(){}
 スイッチの状態が変更されたときのコールバックです．
 もしスイッチを押して，離した場合，"push" と "none"の２回呼ばれます.
 
@@ -24,7 +24,7 @@ obniz.switch.onchange = function(state) {
 }
 ```
 
-# [await] switch.getWait()
+## [await] switch.getWait()
 現在のスイッチの状態を取得します
 
 ```Javascript

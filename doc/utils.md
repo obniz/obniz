@@ -1,17 +1,6 @@
 # Utils
 Useful functions on obniz
 
-## connection with access_key
-Connect access controlled obniz
-
-```Javascript
-// Example
-obniz = new Obniz("1234-5678", {access_token:"T7tnyWRIx_rxJv6xOsA2hBY3_zrr1AsRqfsy...."});
-obniz.onconnect = function() {
-
-}
-```
-
 ## reset()
 force set obniz the state same as power on.
 
@@ -74,17 +63,6 @@ This configuration will consist until obniz power down.
 obniz.keepWorkingAtOffline(true);
 ```
 
-## resetOnDisconnect(reset)
-By default. obniz will reset when user disconnect web socket from obniz cloud.
-It means output value and pwm are all stop at that time.
-this function can set "do not reset when no one connected to obniz".
-This configuration will consist until user web socket disconnected.
-Set false to this function to keepworking without user web socket.
-```Javascript
-// Example
-obniz.resetOnDisconnect(false);
-```
-
 ## util.createCanvasContext(width, height);
 create a Canvas context.
 It will add a canvas dom to body(in html).
@@ -94,16 +72,4 @@ It will add a canvas dom to body(in html).
 const ctx = obniz.util.createCanvasContext(128, 64);
 ctx.font = "9px sans-serif";
 ctx.fillText('Hello', 0, 7);
-```
-
-## debugprint
-show logs or not inside of obniz.js. default is false.
-
-```Javascript
-// Example
-obniz = new Obniz("1234-5678");
-obniz.debugprint = true;
-obniz.onconnect = function() {
-  obniz.reset();
-}
 ```
