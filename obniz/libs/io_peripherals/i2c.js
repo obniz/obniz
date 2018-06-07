@@ -4,10 +4,13 @@ class PeripheralI2C {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
     this.state = {};
     this.used = false;
-
     this.onwritten = undefined;
   }
 

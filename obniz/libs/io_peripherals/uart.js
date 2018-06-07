@@ -5,6 +5,10 @@ class PeripheralUART {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.received = new Uint8Array([]);
     this.used = false;
   }

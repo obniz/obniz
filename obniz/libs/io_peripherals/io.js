@@ -2,6 +2,10 @@ class PeripheralIO {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.value = 0;
     this.observers = [];
   }

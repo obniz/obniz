@@ -1,17 +1,6 @@
 # Utils
 obnizをプログラムから使う上で便利な関数を用意しています。
 
-## connection with access_key
-アクセス制限付きのobnizに接続するための方法です。
-
-```Javascript
-// Example
-obniz = new Obniz("1234-5678", {access_token:"T7tnyWRIx_rxJv6xOsA2hBY3_zrr1Asrqfsy...."});
-obniz.onconnect = function() {
-
-}
-```
-
 ## reset()
 強制的にobnizを電源を入れた時と同じ状態に出来ます。
 
@@ -76,16 +65,6 @@ obnizがWifiから切断した時に、ioの状態などをリセットするか
 obniz.keepWorkingAtOffline(true);
 ```
 
-## resetOnDisconnect(reset)
-obnizはユーザーがobniz cloudへのweb socketを切断するとリセットするようになっています。
-通常はリセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
-この関数でそれを無効にし、リセットしないようにできます。
-この設定はユーザーのweb socketが切断されるまで保持されます。
-```Javascript
-// Example
-obniz.resetOnDisconnect(false);
-```
-
 ## util.createCanvasContext(width, height);
 CanvasContextを作成します。
 Canvas DOMをbodyに追加してcontextを返却します(htmlにおいて)
@@ -95,16 +74,4 @@ Canvas DOMをbodyに追加してcontextを返却します(htmlにおいて)
 const ctx = obniz.util.createCanvasContext(128, 64);
 ctx.font = "9px sans-serif";
 ctx.fillText('Hello', 0, 7);
-```
-
-## debugprint
-obniz.jsの内部のログを出力するかどうかを設定できます。デフォルトでfalseです。
-
-```Javascript
-// Example
-obniz = new Obniz("1234-5678");
-obniz.debugprint = true;
-obniz.onconnect = function() {
-  obniz.reset();
-}
 ```

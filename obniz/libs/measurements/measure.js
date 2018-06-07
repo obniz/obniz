@@ -3,6 +3,10 @@ const ObnizUtil = require('../utils/util');
 class ObnizMeasure {
   constructor(obniz) {
     this.obniz = obniz;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
   }
 

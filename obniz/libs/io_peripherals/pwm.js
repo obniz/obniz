@@ -4,6 +4,10 @@ class PeripheralPWM {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.state = {};
     this.used = false;
   }

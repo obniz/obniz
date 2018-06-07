@@ -1967,6 +1967,13 @@ module.exports = class ObnizComponents extends ObnizParts {
     this.pongObservers = [];
   }
 
+  close() {
+    super.close();
+    if (this.options.reset_obniz_on_ws_disconnection) {
+      this._resetComponents();
+    }
+  }
+
   _prepareComponents() {
     this.io = new PeripheralIO_(this);
     for (let i = 0; i < 12; i++) {
@@ -1995,6 +2002,34 @@ module.exports = class ObnizComponents extends ObnizParts {
     this.measure = new ObnizMeasure(this);
 
     this.util = new ObnizUtil(this);
+  }
+
+  _resetComponents() {
+    this.print_debug('components state resets');
+    for (let i = 0; i < 12; i++) {
+      this['io' + i]._reset();
+    }
+    for (let i = 0; i < 12; i++) {
+      this['ad' + i]._reset();
+    }
+    for (let i = 0; i < 2; i++) {
+      this['uart' + i]._reset();
+    }
+    for (let i = 0; i < 2; i++) {
+      this['spi' + i]._reset();
+    }
+    for (let i = 0; i < 1; i++) {
+      this['i2c' + i]._reset();
+    }
+    for (let i = 0; i < 6; i++) {
+      this['pwm' + i]._reset();
+    }
+
+    this.display._reset();
+    this.switch._reset();
+    this.logicAnalyzer._reset();
+    this.ble._reset();
+    this.measure._reset();
   }
 
   notifyToModule(obj) {
@@ -2198,7 +2233,8 @@ module.exports = class ObnizConnection {
       debug_dom_id: options.debug_dom_id || 'obniz-debug',
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
-      obniz_server: options.obniz_server || 'wss://obniz.io'
+      obniz_server: options.obniz_server || 'wss://obniz.io',
+      reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true
     };
     if (this.options.binary) {
       this.wscommand = this.constructor.WSCommand;
@@ -2211,16 +2247,6 @@ module.exports = class ObnizConnection {
     if (this.options.auto_connect) {
       this.wsconnect();
     }
-  }
-
-  isValidObnizId(str) {
-    if (typeof str != 'string' || str.length < 8) {
-      return null;
-    }
-    str = str.replace('-', '');
-    let id = parseInt(str);
-    if (isNaN(id)) id = null;
-    return id != null;
   }
 
   prompt(filled, callback) {
@@ -2305,7 +2331,9 @@ module.exports = class ObnizConnection {
       server = '' + desired_server;
     }
 
-    this.close();
+    if (this.socket && this.socket.readyState <= 1) {
+      this.close();
+    }
 
     let url = server + '/obniz/' + this.id + '/ws/1';
 
@@ -2355,11 +2383,7 @@ module.exports = class ObnizConnection {
       ws = new wsClient(url);
       ws.on('open', () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
-        }
+        this._callOnConnect();
       });
       ws.on('message', data => {
         this.print_debug('recvd via local');
@@ -2382,11 +2406,7 @@ module.exports = class ObnizConnection {
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
-        }
+        this._callOnConnect();
       };
       ws.onmessage = event => {
         this.print_debug('recvd via local');
@@ -2415,7 +2435,7 @@ module.exports = class ObnizConnection {
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
-      this._callOnConnect();
+      this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
     }
   }
 
@@ -2459,16 +2479,29 @@ module.exports = class ObnizConnection {
   }
 
   _callOnConnect() {
+    let shouldCall = true;
     if (this._waitForLocalConnectReadyTimer) {
+      /* obniz.js has wait local_connect */
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
+    } else {
+      /* obniz.js hasn't wait local_connect */
+      if (this.socket_local && this.socket_local.readyState === 1) {
+        /* delayed connect */
+        shouldCall = false;
+      } else {
+        /* local_connect is not used */
+      }
     }
-    if (typeof this.onconnect !== 'function') return;
-    const promise = this.onconnect(this);
-    if (promise instanceof Promise) {
-      promise.catch(err => {
-        console.error(err);
-      });
+
+    if (shouldCall) {
+      if (typeof this.onconnect !== 'function') return;
+      const promise = this.onconnect(this);
+      if (promise instanceof Promise) {
+        promise.catch(err => {
+          console.error(err);
+        });
+      }
     }
   }
 
@@ -2592,24 +2625,31 @@ module.exports = class ObnizConnection {
   }
 
   handleWSCommand(wsObj) {
-    //
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
-      this.resetOnDisconnect(true);
+      if (this.options.reset_obniz_on_ws_disconnection) {
+        this.resetOnDisconnect(true);
+      }
       if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect && this._canConnectToInsecure()) {
         this._connectLocal(wsObj.local_connect.ip);
         this._waitForLocalConnectReadyTimer = setTimeout(() => {
           this._callOnConnect();
-        }, 1000);
-      }
-      if (!this._waitForLocalConnectReadyTimer) {
+        }, 3000);
+      } else {
         this._callOnConnect();
       }
     }
     if (wsObj.redirect) {
       let server = wsObj.redirect;
       this.print_debug('WS connection changed to ' + server);
-      this.close();
+
+      /* close current ws immidiately */
+      /*  */
+      this.socket.close(1000, 'close');
+      this.clearSocket(this.socket);
+      delete this.socket;
+
+      /* connect to new server */
       this.wsconnect(server);
     }
   }
@@ -2639,8 +2679,6 @@ module.exports = class ObnizConnection {
     }
     return json;
   }
-
-  updateOnlineUI() {}
 
   warning(msg) {
     console.log('warning:' + msg);
@@ -2847,6 +2885,16 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     super(id, options);
   }
 
+  isValidObnizId(str) {
+    if (typeof str != 'string' || str.length < 8) {
+      return null;
+    }
+    str = str.replace('-', '');
+    let id = parseInt(str);
+    if (isNaN(id)) id = null;
+    return id != null;
+  }
+
   wsconnect(desired_server) {
     this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
@@ -2935,7 +2983,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     if (doms.statusDom) {
       doms.statusDom.style.backgroundColor = isConnectedLocally ? '#0cd362' : '#31965d';
       doms.statusDom.style.color = '#FFF';
-      doms.statusDom.innerHTML = this.id ? 'online : ' + this.id : 'online';
+      doms.statusDom.innerHTML = (this.id ? 'online : ' + this.id : 'online') + (isConnectedLocally ? ' via local_connect' : ' via internet');
     }
   }
 
@@ -3175,7 +3223,10 @@ class ObnizBLE {
 
     this.advertisement = new BleAdvertisement(Obniz);
     this.scan = new BleScan(Obniz);
+    this._reset();
   }
+
+  _reset() {}
 
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
@@ -5049,8 +5100,12 @@ class Display {
     this.width = 128;
     this.height = 64;
 
-    this._pos = { x: 0, y: 0 };
     this._canvas = null;
+    this._reset();
+  }
+
+  _reset() {
+    this._pos = { x: 0, y: 0 };
   }
 
   warnCanvasAvailability() {
@@ -5287,6 +5342,10 @@ module.exports = Display;
 class ObnizSwitch {
   constructor(Obniz) {
     this.Obniz = Obniz;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
   }
 
@@ -5336,6 +5395,10 @@ class PeripheralAD {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.value = 0.0;
     this.observers = [];
   }
@@ -5408,10 +5471,13 @@ class PeripheralI2C {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
     this.state = {};
     this.used = false;
-
     this.onwritten = undefined;
   }
 
@@ -5606,6 +5672,10 @@ class PeripheralIO {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.value = 0;
     this.observers = [];
   }
@@ -5810,6 +5880,10 @@ class PeripheralPWM {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.state = {};
     this.used = false;
   }
@@ -5940,6 +6014,10 @@ class PeripheralSPI {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
     this.used = false;
   }
@@ -6078,6 +6156,10 @@ class PeripheralUART {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.received = new Uint8Array([]);
     this.used = false;
   }
@@ -6215,6 +6297,11 @@ const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/u
 class LogicAnalyzer {
   constructor(obniz) {
     this.obniz = obniz;
+    this._reset();
+  }
+
+  _reset() {
+    this.onmeasured = undefined;
   }
 
   start(params) {
@@ -6280,6 +6367,10 @@ const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/u
 class ObnizMeasure {
   constructor(obniz) {
     this.obniz = obniz;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
   }
 

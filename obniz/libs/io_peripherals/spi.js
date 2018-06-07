@@ -5,6 +5,10 @@ class PeripheralSPI {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
     this.used = false;
   }
