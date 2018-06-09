@@ -2,32 +2,44 @@
 General purpose IO
 available on each io (io0 to io11)
 
-#### Features
-##### input/output
-each io can output/input. input will notify only when value was changed.
-##### Three output drive option
-###### push-pull5v (default)
-1. up to 1A 
-2. over current and over temperature protection
-3. over current warning when io.output()
-4. up to 250kHz
+#### Feature
+##### output
+Each IO can output digital value.
 
-###### push-pull3v
-1. up to 1mA
-2. over current error and auto-stop output when io.output()
-3. up to 80Mhz
+Drive methods are below.
 
-###### open-drain
-1. up to 1mA
-2. up to 80Mhz
+Type | Voltage | max A | max Freq | Details
+:---: | :---: | :---: | :---: | ---
+push-pull | `5v` | <=1A | <=250khz(recommend) | Default. Overcurrent protection
+push-pull | `3v` | <=1mA(recommend) | <=80Mhz | over current detection when using io.output().
+open-drain | `<=5v` | <=1mA(recommend) | <=80Mhz | 
 
-##### Four internal weak pull-up/pull-down option
-1. floating (default)
-1. pull-up 5v
-1. pull-up 3v
-1. pull-down to gnd
+Each methods can be configured independently.
+Not only for io.output(), but also UART SPI can choose methods.
 
-drive method and pull-up/pull-down can be selected on each peripheral(PWM/UART/etc).
+##### input
+
+Only one input method.
+
+3v input with 5v tolerant. So, CMOS level.
+
+
+Type | Level | max Freq | Detail
+:---: | :---: | :---: | :---: | ---
+digital-in | `3v(5v tolerant)` | <=80Mhz | 
+
+##### internal weak pull-up/pull-dow
+
+Pull up down can bec configured independently.
+
+Type is one of four state.
+
+Type | Pull to | Detail
+:---: | :---: | :---:
+floating |  | Default
+pull-up | `5v` | 
+pull-up | `3v` | 
+pull-down | `gnd` | 
 
 
 ## output(value)

@@ -4,6 +4,12 @@ class KXSC7_2050 {
     this.requiredKeys = ['x', 'y', 'z'];
   }
 
+  static info() {
+    return {
+      name: 'KXSC7_2050',
+    };
+  }
+
   async wired(obniz) {
     this.obniz = obniz;
 
@@ -43,5 +49,6 @@ class KXSC7_2050 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('KXSC7_2050', KXSC7_2050);
+if (typeof module === 'object') {
+  module.exports = KXSC7_2050;
+}

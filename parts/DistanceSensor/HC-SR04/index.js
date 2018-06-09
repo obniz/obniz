@@ -9,6 +9,12 @@ class HCSR04 {
     this.temp = 15;
   }
 
+  static info() {
+    return {
+      name: 'HC-SR04',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -76,7 +82,6 @@ class HCSR04 {
   }
 }
 
-// Module functions
-
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('HC-SR04', HCSR04);
+if (typeof window === 'undefined') {
+  module.exports = HCSR04;
+}

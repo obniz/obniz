@@ -4,6 +4,12 @@ class LM60 {
     this.requiredKeys = ['output'];
   }
 
+  static info() {
+    return {
+      name: 'LM60',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.ad = obniz.getAD(this.params.output);
@@ -19,5 +25,6 @@ class LM60 {
   }
 }
 
-let Obniz = require('../../../../obniz/index.js');
-Obniz.PartsRegistrate('LM60', LM60);
+if (typeof module === 'object') {
+  module.exports = LM60;
+}

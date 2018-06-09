@@ -4,6 +4,12 @@ class ServoMotor {
     this.requiredKeys = ['signal'];
   }
 
+  static info() {
+    return {
+      name: 'ServoMotor',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -41,5 +47,6 @@ class ServoMotor {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('ServoMotor', ServoMotor);
+if (typeof module === 'object') {
+  module.exports = ServoMotor;
+}

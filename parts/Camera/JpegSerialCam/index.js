@@ -8,6 +8,12 @@ class JpegSerialCam {
     this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
   }
 
+  static info() {
+    return {
+      name: 'JpegSerialCam',
+    };
+  }
+
   wired() {
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.my_tx = this.params.cam_rx;
@@ -216,5 +222,6 @@ class JpegSerialCam {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);
+if (typeof window === 'undefined') {
+  module.exports = JpegSerialCam;
+}

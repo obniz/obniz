@@ -6,6 +6,12 @@ class InfraredLED {
     this.dataSymbolLength = 0.07;
   }
 
+  static info() {
+    return {
+      name: 'InfraredLED',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     if (!this.obniz.isValidIO(this.params.anode)) {
@@ -28,5 +34,6 @@ class InfraredLED {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('InfraredLED', InfraredLED);
+if (typeof module === 'object') {
+  module.exports = InfraredLED;
+}

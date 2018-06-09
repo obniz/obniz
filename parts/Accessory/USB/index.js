@@ -9,6 +9,12 @@ class USB {
     };
   }
 
+  static info() {
+    return {
+      name: 'USB',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.io_vdd = obniz.getIO(this.params.vcc);
@@ -26,5 +32,6 @@ class USB {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('USB', USB);
+if (typeof module === 'object') {
+  module.exports = USB;
+}

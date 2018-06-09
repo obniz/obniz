@@ -7,8 +7,19 @@ class SNx4HC595 {
     this.autoFlash = true;
   }
 
+  static info() {
+    return {
+      name: 'SNx4HC595',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
+
+    if (this.obniz.isValidIO(this.params.oe)) {
+      this.io_oe = this.obniz.getIO(this.params.oe);
+      this.io_oe.output(true);
+    }
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
@@ -16,10 +27,6 @@ class SNx4HC595 {
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
 
-    if (this.obniz.isValidIO(this.params.oe)) {
-      this.io_oe = this.obniz.getIO(this.params.oe);
-      this.io_oe.output(true);
-    }
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);
       this.io_srclr.output(true);
@@ -111,16 +118,15 @@ class SNx4HC595 {
   flush() {
     /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
     this.io_rclk.output(false);
-    let array = [];
     for (let i = this.io.length - 1; i >= 0; i--) {
-      this.io_srclk.output(false);
-      array.push(this.io[i].value);
       this.io_ser.output(this.io[i].value);
       this.io_srclk.output(true);
+      this.io_srclk.output(false);
     }
     this.io_rclk.output(true);
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('SNx4HC595', SNx4HC595);
+if (typeof module === 'object') {
+  module.exports = SNx4HC595;
+}

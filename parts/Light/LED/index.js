@@ -6,6 +6,12 @@ class LED {
     this.animationName = 'Led-' + Math.round(Math.random() * 1000);
   }
 
+  static info() {
+    return {
+      name: 'LED',
+    };
+  }
+
   wired(obniz) {
     function getIO(io) {
       if (io && typeof io === 'object') {
@@ -64,5 +70,6 @@ class LED {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('LED', LED);
+if (typeof module === 'object') {
+  module.exports = LED;
+}

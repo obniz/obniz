@@ -4,6 +4,12 @@ class ADT7410 {
     this.requiredKeys = ['addressMode'];
   }
 
+  static info() {
+    return {
+      name: 'ADT7410',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -36,5 +42,6 @@ class ADT7410 {
   }
 }
 
-let Obniz = require('../../../../obniz/index.js');
-Obniz.PartsRegistrate('ADT7410', ADT7410);
+if (typeof module === 'object') {
+  module.exports = ADT7410;
+}

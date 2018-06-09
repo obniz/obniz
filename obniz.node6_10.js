@@ -2715,8 +2715,12 @@ module.exports = class ObnizParts extends ObnizConnection {
     return _parts;
   }
 
-  static PartsRegistrate(name, obj) {
-    _parts[name] = obj;
+  static PartsRegistrate(arg0, arg1) {
+    if (arg0 && typeof arg0.info === 'function' && typeof arg0.info().name === 'string') {
+      _parts[arg0.info().name] = arg0;
+    } else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
+      _parts[arg0] = arg1;
+    }
   }
 
   static Parts(name) {
@@ -3040,7 +3044,7 @@ const ObnizApi = __webpack_require__(/*! ./ObnizApi */ "./obniz/ObnizApi.js");
 
 const isNode = typeof window === 'undefined';
 
-module.exports = class Obniz extends ObnizUIs {
+class Obniz extends ObnizUIs {
   constructor(id, options) {
     super(id, options);
   }
@@ -3156,7 +3160,9 @@ module.exports = class Obniz extends ObnizUIs {
   static get api() {
     return ObnizApi;
   }
-};
+}
+
+module.exports = Obniz;
 
 /*===================*/
 /* Utils */
@@ -3179,13 +3185,18 @@ if (!isNode) {
 /*===================*/
 /* ReadParts */
 /*===================*/
+
 __webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context.js");
 if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
-let context = __webpack_require__("./parts sync recursive \\.js$");
+
+let context = __webpack_require__("./parts sync recursive \\.js$"); /* webpack loader */
 for (let path of context.keys()) {
-  context(path);
+  const anParts = context(path);
+  if (anParts.info) {
+    Obniz.PartsRegistrate(anParts);
+  }
 }
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
@@ -11472,6 +11483,12 @@ class hx711 {
     this.scale = 1;
   }
 
+  static info() {
+    return {
+      name: 'hx711'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.spi = obniz.getFreeSpi();
@@ -11556,8 +11573,9 @@ class hx711 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('hx711', hx711);
+if (typeof window === 'undefined') {
+  module.exports = hx711;
+}
 
 /***/ }),
 
@@ -11582,6 +11600,12 @@ class USB {
     };
   }
 
+  static info() {
+    return {
+      name: 'USB'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.io_vdd = obniz.getIO(this.params.vcc);
@@ -11599,8 +11623,9 @@ class USB {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('USB', USB);
+if (true) {
+  module.exports = USB;
+}
 
 /***/ }),
 
@@ -11628,6 +11653,12 @@ class AE_MICAMP {
     };
   }
 
+  static info() {
+    return {
+      name: 'AE_MICAMP'
+    };
+  }
+
   wired(obniz) {
     var _this = this;
 
@@ -11647,6 +11678,10 @@ class AE_MICAMP {
       });
     })();
   }
+}
+
+if (typeof window === 'undefined') {
+  module.exports = AE_MICAMP;
 }
 
 /*
@@ -11679,9 +11714,6 @@ AE_MICAMP.prototype.Average = function(callback) {
 };
 */
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);
-
 /***/ }),
 
 /***/ "./parts/Camera/JpegSerialCam/index.js":
@@ -11704,6 +11736,12 @@ class JpegSerialCam {
     this.ioKeys = this.keys;
     this.displayName = 'Jcam';
     this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
+  }
+
+  static info() {
+    return {
+      name: 'JpegSerialCam'
+    };
   }
 
   wired() {
@@ -11904,8 +11942,9 @@ class JpegSerialCam {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);
+if (typeof window === 'undefined') {
+  module.exports = JpegSerialCam;
+}
 
 /***/ }),
 
@@ -11936,6 +11975,12 @@ class _7SegmentLED {
       g: 'g',
       dp: 'dp',
       common: 'com'
+    };
+  }
+
+  static info() {
+    return {
+      name: '7SegmentLED'
     };
   }
 
@@ -12031,8 +12076,9 @@ class _7SegmentLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('7SegmentLED', _7SegmentLED);
+if (typeof window === 'undefined') {
+  module.exports = _7SegmentLED;
+}
 
 /***/ }),
 
@@ -12052,6 +12098,12 @@ class _7SegmentLEDArray {
 
     this.keys = ['segments'];
     this.requiredKeys = this.keys;
+  }
+
+  static info() {
+    return {
+      name: '7SegmentLEDArray'
+    };
   }
 
   wired(obniz) {
@@ -12101,8 +12153,9 @@ class _7SegmentLEDArray {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('7SegmentLEDArray', _7SegmentLEDArray);
+if (typeof window === 'undefined') {
+  module.exports = _7SegmentLEDArray;
+}
 
 /***/ }),
 
@@ -12120,6 +12173,12 @@ class MatrixLED_MAX7219 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
     this.requiredKeys = ['din', 'cs', 'clk'];
+  }
+
+  static info() {
+    return {
+      name: 'MatrixLED_MAX7219'
+    };
   }
 
   wired(obniz) {
@@ -12242,8 +12301,9 @@ class MatrixLED_MAX7219 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
+if (typeof window === 'undefined') {
+  module.exports = MatrixLED_MAX7219;
+}
 
 /***/ }),
 
@@ -12268,6 +12328,12 @@ class GP2Y0A21YK0F {
       signal: 'signal'
     };
     this._unit = 'mm';
+  }
+
+  static info() {
+    return {
+      name: 'GP2Y0A21YK0F'
+    };
   }
 
   wired(obniz) {
@@ -12309,8 +12375,9 @@ class GP2Y0A21YK0F {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('GP2Y0A21YK0F', GP2Y0A21YK0F);
+if (typeof window === 'undefined') {
+  module.exports = GP2Y0A21YK0F;
+}
 
 /***/ }),
 
@@ -12335,6 +12402,12 @@ class HCSR04 {
     this.reset_alltime = false;
 
     this.temp = 15;
+  }
+
+  static info() {
+    return {
+      name: 'HC-SR04'
+    };
   }
 
   wired(obniz) {
@@ -12416,10 +12489,9 @@ class HCSR04 {
   }
 }
 
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('HC-SR04', HCSR04);
+if (typeof window === 'undefined') {
+  module.exports = HCSR04;
+}
 
 /***/ }),
 
@@ -12446,6 +12518,12 @@ class Grove_EarHeartRate {
 
     this.interval = 5;
     this.duration = 2.5 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'Grove_EarHeartRate'
+    };
   }
 
   wired(obniz) {
@@ -12478,8 +12556,9 @@ class Grove_EarHeartRate {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Grove_EarHeartRate', Grove_EarHeartRate);
+if (typeof window === 'undefined') {
+  module.exports = Grove_EarHeartRate;
+}
 
 /***/ }),
 
@@ -12498,6 +12577,12 @@ class ENC03R_Module {
     this.keys = ['vcc', 'out1', 'out2', 'gnd'];
     this.required = ['out1', 'out2'];
     this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+  }
+
+  static info() {
+    return {
+      name: 'ENC03R_Module'
+    };
   }
 
   wired(obniz) {
@@ -12522,8 +12607,9 @@ class ENC03R_Module {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ENC03R_Module', ENC03R_Module);
+if (typeof window === 'undefined') {
+  module.exports = ENC03R_Module;
+}
 
 /***/ }),
 
@@ -12548,6 +12634,12 @@ class IRSensor {
     this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
     this.cutTail = true;
     this.output_pullup = true;
+  }
+
+  static info() {
+    return {
+      name: 'IRSensor'
+    };
   }
 
   wired(obniz) {
@@ -12597,8 +12689,9 @@ class IRSensor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('IRSensor', IRSensor);
+if (typeof window === 'undefined') {
+  module.exports = IRSensor;
+}
 
 /***/ }),
 
@@ -12623,6 +12716,12 @@ class FullColorLED {
 
     this.keys = ['r', 'g', 'b', 'common', 'commonType'];
     this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
+  }
+
+  static info() {
+    return {
+      name: 'FullColorLED'
+    };
   }
 
   wired(obniz) {
@@ -12731,8 +12830,9 @@ class FullColorLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('FullColorLED', FullColorLED);
+if (typeof window === 'undefined') {
+  module.exports = FullColorLED;
+}
 
 /***/ }),
 
@@ -12752,6 +12852,12 @@ class InfraredLED {
     this.requiredKeys = ['anode'];
 
     this.dataSymbolLength = 0.07;
+  }
+
+  static info() {
+    return {
+      name: 'InfraredLED'
+    };
   }
 
   wired(obniz) {
@@ -12776,8 +12882,9 @@ class InfraredLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('InfraredLED', InfraredLED);
+if (true) {
+  module.exports = InfraredLED;
+}
 
 /***/ }),
 
@@ -12797,6 +12904,12 @@ class LED {
     this.requiredKeys = ['anode'];
 
     this.animationName = 'Led-' + Math.round(Math.random() * 1000);
+  }
+
+  static info() {
+    return {
+      name: 'LED'
+    };
   }
 
   wired(obniz) {
@@ -12854,8 +12967,9 @@ class LED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LED', LED);
+if (true) {
+  module.exports = LED;
+}
 
 /***/ }),
 
@@ -12873,6 +12987,12 @@ class WS2811 {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'WS2811'
+    };
   }
 
   wired(obniz) {
@@ -12986,8 +13106,9 @@ class WS2811 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2811', WS2811);
+if (true) {
+  module.exports = WS2811;
+}
 
 /***/ }),
 
@@ -13005,6 +13126,12 @@ class WS2812 {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'USB'
+    };
   }
 
   wired(obniz) {
@@ -13117,8 +13244,9 @@ class WS2812 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2812', WS2812);
+if (true) {
+  module.exports = WS2812;
+}
 
 /***/ }),
 
@@ -13136,6 +13264,12 @@ class WS2812B {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'WS2812B'
+    };
   }
 
   wired(obniz) {
@@ -13248,8 +13382,9 @@ class WS2812B {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2812B', WS2812B);
+if (true) {
+  module.exports = WS2812B;
+}
 
 /***/ }),
 
@@ -13272,8 +13407,19 @@ class SNx4HC595 {
     this.autoFlash = true;
   }
 
+  static info() {
+    return {
+      name: 'SNx4HC595'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
+
+    if (this.obniz.isValidIO(this.params.oe)) {
+      this.io_oe = this.obniz.getIO(this.params.oe);
+      this.io_oe.output(true);
+    }
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
@@ -13281,10 +13427,6 @@ class SNx4HC595 {
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
 
-    if (this.obniz.isValidIO(this.params.oe)) {
-      this.io_oe = this.obniz.getIO(this.params.oe);
-      this.io_oe.output(true);
-    }
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);
       this.io_srclr.output(true);
@@ -13373,19 +13515,18 @@ class SNx4HC595 {
   flush() {
     /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
     this.io_rclk.output(false);
-    let array = [];
     for (let i = this.io.length - 1; i >= 0; i--) {
-      this.io_srclk.output(false);
-      array.push(this.io[i].value);
       this.io_ser.output(this.io[i].value);
       this.io_srclk.output(true);
+      this.io_srclk.output(false);
     }
     this.io_rclk.output(true);
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SNx4HC595', SNx4HC595);
+if (true) {
+  module.exports = SNx4HC595;
+}
 
 /***/ }),
 
@@ -13405,6 +13546,12 @@ class _24LC256 {
   constructor() {
     this.requiredKeys = ['address'];
     this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
+  }
+
+  static info() {
+    return {
+      name: '24LC256'
+    };
   }
 
   wired(obniz) {
@@ -13437,8 +13584,9 @@ class _24LC256 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('24LC256', _24LC256);
+if (true) {
+  module.exports = _24LC256;
+}
 
 /***/ }),
 
@@ -13458,6 +13606,12 @@ class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
     this.required = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'Button'
+    };
   }
 
   wired(obniz) {
@@ -13490,8 +13644,9 @@ class Button {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Button', Button);
+if (true) {
+  module.exports = Button;
+}
 
 /***/ }),
 
@@ -13514,6 +13669,12 @@ class JoyStick {
     this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
     this.pinname = { sw: 'sw12' };
     this.shortName = 'joyS';
+  }
+
+  static info() {
+    return {
+      name: 'JoyStick'
+    };
   }
 
   wired(obniz) {
@@ -13560,8 +13721,9 @@ class JoyStick {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('JoyStick', JoyStick);
+if (true) {
+  module.exports = JoyStick;
+}
 
 /***/ }),
 
@@ -13581,6 +13743,12 @@ class KXR94_2050 {
   constructor() {
     this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
     this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  static info() {
+    return {
+      name: 'KXR94_2050'
+    };
   }
 
   wired(obniz) {
@@ -13669,8 +13837,9 @@ class KXR94_2050 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('KXR94_2050', KXR94_2050);
+if (true) {
+  module.exports = KXR94_2050;
+}
 
 /***/ }),
 
@@ -13690,6 +13859,12 @@ class KXSC7_2050 {
   constructor() {
     this.keys = ['x', 'y', 'z', 'vcc', 'gnd'];
     this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  static info() {
+    return {
+      name: 'KXSC7_2050'
+    };
   }
 
   wired(obniz) {
@@ -13735,8 +13910,9 @@ class KXSC7_2050 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('KXSC7_2050', KXSC7_2050);
+if (true) {
+  module.exports = KXSC7_2050;
+}
 
 /***/ }),
 
@@ -13756,6 +13932,12 @@ class PaPIRsVZ {
     this.requiredKeys = ['signal'];
   }
 
+  static info() {
+    return {
+      name: 'PaPIRsVZ'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.io_signal = obniz.getIO(this.params.signal);
@@ -13771,8 +13953,9 @@ class PaPIRsVZ {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('PaPIRsVZ', PaPIRsVZ);
+if (true) {
+  module.exports = PaPIRsVZ;
+}
 
 /***/ }),
 
@@ -13794,6 +13977,12 @@ class Potentiometer {
     this.vcc_voltage = 5.0;
   }
 
+  static info() {
+    return {
+      name: 'Potentiometer'
+    };
+  }
+
   wired(obniz) {
     this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
     this.ad = obniz.getAD(this.params.pin1);
@@ -13813,8 +14002,9 @@ class Potentiometer {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Potentiometer', Potentiometer);
+if (true) {
+  module.exports = Potentiometer;
+}
 
 /***/ }),
 
@@ -13832,6 +14022,12 @@ class DCMotor {
   constructor() {
     this.keys = ['forward', 'back'];
     this.requiredKeys = ['forward', 'back'];
+  }
+
+  static info() {
+    return {
+      name: 'DCMotor'
+    };
   }
 
   wired(obniz) {
@@ -13908,8 +14104,9 @@ class DCMotor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('DCMotor', DCMotor);
+if (true) {
+  module.exports = DCMotor;
+}
 
 /***/ }),
 
@@ -13927,6 +14124,12 @@ class ServoMotor {
   constructor() {
     this.keys = ['gnd', 'vcc', 'signal'];
     this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'ServoMotor'
+    };
   }
 
   wired(obniz) {
@@ -13966,8 +14169,9 @@ class ServoMotor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ServoMotor', ServoMotor);
+if (true) {
+  module.exports = ServoMotor;
+}
 
 /***/ }),
 
@@ -13985,6 +14189,12 @@ class Solenoid {
   constructor() {
     this.keys = ['gnd', 'signal'];
     this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'Solenoid'
+    };
   }
 
   wired(obniz) {
@@ -14026,8 +14236,9 @@ class Solenoid {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Solenoid', Solenoid);
+if (true) {
+  module.exports = Solenoid;
+}
 
 /***/ }),
 
@@ -14047,6 +14258,12 @@ class FSR40X {
   constructor() {
     this.keys = ['pin0', 'pin1'];
     this.requiredKeys = ['pin0', 'pin1'];
+  }
+
+  static info() {
+    return {
+      name: 'FSR40X'
+    };
   }
 
   wired(obniz) {
@@ -14069,8 +14286,9 @@ class FSR40X {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('FSR40X', FSR40X);
+if (true) {
+  module.exports = FSR40X;
+}
 
 /***/ }),
 
@@ -14090,6 +14308,12 @@ class SEN0114 {
   constructor() {
     this.keys = ['vcc', 'output', 'gnd'];
     this.requiredKeys = ['output'];
+  }
+
+  static info() {
+    return {
+      name: 'SEN0114'
+    };
   }
 
   wired(obniz) {
@@ -14115,8 +14339,9 @@ class SEN0114 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SEN0114', SEN0114);
+if (true) {
+  module.exports = SEN0114;
+}
 
 /***/ }),
 
@@ -14134,6 +14359,12 @@ class Speaker {
   constructor(obniz) {
     this.keys = ['signal', 'gnd'];
     this.requiredKeys = ['gnd'];
+  }
+
+  static info() {
+    return {
+      name: 'Speaker'
+    };
   }
 
   wired(obniz) {
@@ -14157,8 +14388,9 @@ class Speaker {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Speaker', Speaker);
+if (true) {
+  module.exports = Speaker;
+}
 
 /***/ }),
 
@@ -14216,10 +14448,16 @@ class LM35DZ extends AnalogTemplatureSensor {
   calc(voltage) {
     return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }
+  static info() {
+    return {
+      name: 'LM35DZ'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM35DZ', LM35DZ);
+if (true) {
+  module.exports = LM35DZ;
+}
 
 /***/ }),
 
@@ -14239,6 +14477,12 @@ class LM60 {
     this.requiredKeys = ['output'];
   }
 
+  static info() {
+    return {
+      name: 'LM60'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.ad = obniz.getAD(this.params.output);
@@ -14254,8 +14498,9 @@ class LM60 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM60', LM60);
+if (true) {
+  module.exports = LM60;
+}
 
 /***/ }),
 
@@ -14275,10 +14520,16 @@ class LM61 extends AnalogTemplatureSensor {
   calc(voltage) {
     return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
+  static info() {
+    return {
+      name: 'LM61'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM61', LM61);
+if (true) {
+  module.exports = LM61;
+}
 
 /***/ }),
 
@@ -14298,10 +14549,17 @@ class MCP9700 extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
+
+  static info() {
+    return {
+      name: 'MCP9700'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MCP9700', MCP9700);
+if (true) {
+  module.exports = MCP9700;
+}
 
 /***/ }),
 
@@ -14321,10 +14579,16 @@ class MCP9701 extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
+  static info() {
+    return {
+      name: 'MCP9701'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MCP9701', MCP9701);
+if (true) {
+  module.exports = MCP9701;
+}
 
 /***/ }),
 
@@ -14346,10 +14610,16 @@ class S8100B extends AnalogTemplatureSensor {
   calc(voltage) {
     return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
   }
+  static info() {
+    return {
+      name: 'S8100B'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S8100B', S8100B);
+if (true) {
+  module.exports = S8100B;
+}
 
 /***/ }),
 
@@ -14373,10 +14643,16 @@ class S8120C extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
+  static info() {
+    return {
+      name: 'S8120C'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S8120C', S8120C);
+if (true) {
+  module.exports = S8120C;
+}
 
 /***/ }),
 
@@ -14396,6 +14672,12 @@ class ADT7410 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sda', 'scl', 'addressMode'];
     this.requiredKeys = ['addressMode'];
+  }
+
+  static info() {
+    return {
+      name: 'ADT7410'
+    };
   }
 
   wired(obniz) {
@@ -14434,8 +14716,9 @@ class ADT7410 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ADT7410', ADT7410);
+if (true) {
+  module.exports = ADT7410;
+}
 
 /***/ }),
 
@@ -14456,6 +14739,12 @@ class S5851A {
   constructor() {
     this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
     this.keys = ['sda', 'scl', 'adr0', 'adr1', 'adr_select', 'i2c'];
+  }
+
+  static info() {
+    return {
+      name: 'S5851A'
+    };
   }
 
   wired(obniz) {
@@ -14550,8 +14839,9 @@ class S5851A {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S5851A', S5851A);
+if (true) {
+  module.exports = S5851A;
+}
 
 /***/ }),
 
@@ -14591,6 +14881,12 @@ class SHT31 {
 
     //not tested
     this.commands.readStatus = [0xf3, 0x2d];
+  }
+
+  static info() {
+    return {
+      name: 'SHT31'
+    };
   }
 
   wired(obniz) {
@@ -14655,8 +14951,9 @@ class SHT31 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SHT31', SHT31);
+if (true) {
+  module.exports = SHT31;
+}
 
 /***/ }),
 
@@ -14677,29 +14974,32 @@ class ADT7310 {
     this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
     this.requiredKeys = [];
   }
+
+  static info() {
+    return {
+      name: 'ADT7310'
+    };
+  }
+
   wired(obniz) {
-    var _this = this;
+    this.obniz = obniz;
 
-    return _asyncToGenerator(function* () {
-      _this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-      obniz.setVccGnd(_this.params.vcc, _this.params.gnd, '5v');
-
-      _this.params.mode = _this.params.mode || 'master';
-      _this.params.frequency = _this.params.frequency || 500000;
-      _this.params.mosi = _this.params.din;
-      _this.params.miso = _this.params.dout;
-      _this.spi = _this.obniz.getSpiWithConfig(_this.params);
-    })();
+    this.params.mode = this.params.mode || 'master';
+    this.params.frequency = this.params.frequency || 500000;
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.dout;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
   getTempWait() {
-    var _this2 = this;
+    var _this = this;
 
     return _asyncToGenerator(function* () {
-      yield _this2.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-      yield _this2.obniz.wait(200); //適度な値でないと安定しない
-      let ret = yield _this2.spi.writeWait([0x00, 0x00]);
+      yield _this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+      yield _this.obniz.wait(200); //適度な値でないと安定しない
+      let ret = yield _this.spi.writeWait([0x00, 0x00]);
       let tempBin = ret[0] << 8;
       tempBin |= ret[1];
       tempBin = tempBin >> 3;
@@ -14714,8 +15014,9 @@ class ADT7310 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ADT7310', ADT7310);
+if (true) {
+  module.exports = ADT7310;
+}
 
 /***/ }),
 
@@ -14733,6 +15034,12 @@ class RN42 {
   constructor() {
     this.keys = ['tx', 'rx', 'gnd'];
     this.requiredKeys = ['tx', 'rx'];
+  }
+
+  static info() {
+    return {
+      name: 'RN42'
+    };
   }
 
   wired(obniz) {
@@ -14913,10 +15220,9 @@ class RN42 {
   }
 }
 
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('RN42', RN42);
+if (true) {
+  module.exports = RN42;
+}
 
 /***/ }),
 
@@ -14938,6 +15244,12 @@ class XBee {
     this.requiredKeys = ['tx', 'rx'];
 
     this.displayIoNames = { tx: '<tx', rx: '>rx' };
+  }
+
+  static info() {
+    return {
+      name: 'XBee'
+    };
   }
 
   wired(obniz) {
@@ -15076,8 +15388,9 @@ class XBee {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('XBee', XBee);
+if (true) {
+  module.exports = XBee;
+}
 
 /***/ }),
 

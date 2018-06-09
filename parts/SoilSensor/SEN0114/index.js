@@ -4,6 +4,12 @@ class SEN0114 {
     this.requiredKeys = ['output'];
   }
 
+  static info() {
+    return {
+      name: 'SEN0114',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -23,5 +29,6 @@ class SEN0114 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('SEN0114', SEN0114);
+if (typeof module === 'object') {
+  module.exports = SEN0114;
+}

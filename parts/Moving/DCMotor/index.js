@@ -4,6 +4,12 @@ class DCMotor {
     this.requiredKeys = ['forward', 'back'];
   }
 
+  static info() {
+    return {
+      name: 'DCMotor',
+    };
+  }
+
   wired(obniz) {
     this.status = {
       direction: null,
@@ -78,5 +84,6 @@ class DCMotor {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('DCMotor', DCMotor);
+if (typeof module === 'object') {
+  module.exports = DCMotor;
+}
