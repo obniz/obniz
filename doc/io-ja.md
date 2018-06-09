@@ -3,31 +3,41 @@ General purpose IO
 io0からio11まで利用できます。
 
 #### 特徴
-##### input/output
-それぞれのioで入力/出力ができます。入力では値の変更時のみ通知が来ます。
-##### ３つの出力方法
-###### push-pull5v (デフォルト)
-1. 最大1A
-2. 過電流/ドライバーの高温 保護
-3. io.output()使用時の過電流警告
-4. 最大250kHz(推奨値)
+##### output
+それぞれのioでデジタル出力が可能です。
 
-###### push-pull3v
-1. 最大1mA
-2. io.output()使用時の過電流自動停止と警告
-3. 最大80Mhz
+出力のドライブ方法は下の３つから選べます。
 
-###### open-drain
-1. 最大1mA
-2. 最大80Mhz
+タイプ | 電圧 | 最大電流 | 最大周波数 | 詳細
+:---: | :---: | :---: | :---: | ---
+push-pull | `5v` | <=1A | <=250khz(推奨) | 標準。過電流/ドライバ高温保護付き
+push-pull | `3v` | <=1mA(推奨) | <=80Mhz | io.output()使用時の過電流自動停止と警告
+open-drain | `<=5v` | <=1mA(推奨) | <=80Mhz | 
 
-##### Four internal weak pull-up/pull-down option
-1. floating (デフォルト)
-1. pull-up 5v
-1. pull-up 3v
-1. pull-down to gnd
+上記出力方法はIOごとに設定できます。
+また、io.output()のだけでなく、UARTやSPIなどの出力時にも好きなドライブ方法を選択できます。
 
-driveとpull-up/pull-downはそれぞれのペリフェラル(PWMやUART)使用時にも利用できます。
+##### input
+
+デジタル入力タイプは１つのみとなります。
+5V入力が可能な3v入力となっています。つまり、しきい値はCMOSレベルです。
+
+
+タイプ | レベル | 最大周波数 | 詳細
+:---: | :---: | :---: | :---: | ---
+digital-in | `3v(5vトレラント)` | <=80Mhz | 
+
+##### internal weak pull-up/pull-dow
+
+プルアップ・ダウンは各IOごとに設定でき、以下の４タイプから選べます。
+また、
+
+タイプ | プル先 | 詳細
+:---: | :---: | :---:
+floating |  | 標準設定
+pull-up | `5v` | 
+pull-up | `3v` | 
+pull-down | `gnd` | 
 
 ## output(value)
 ObnizのX番ピンを出力ピンにして１または０を出力します。
@@ -73,6 +83,9 @@ obniz.io1.drive("open-drain"); // output open-drain
 
 ## input(callback)
 ピンに加わっている電圧を読みtrue/falseを読み取ります。
+信号レベルは5vトレラントの3v入力です。
+出力タイプはinputには関係ないためdrive()の指定とは関係ありません。
+
 true/falseの値が変わるたびにcallbackを呼び出します。
 ```Javascript
 // Javascript Example

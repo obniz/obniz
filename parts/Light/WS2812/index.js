@@ -4,6 +4,12 @@ class WS2812 {
     this.requiredKeys = ['din'];
   }
 
+  static info() {
+    return {
+      name: 'USB',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -118,5 +124,6 @@ class WS2812 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('WS2812', WS2812);
+if (typeof module === 'object') {
+  module.exports = WS2812;
+}

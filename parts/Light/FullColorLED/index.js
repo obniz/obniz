@@ -11,6 +11,12 @@ class FullColorLED {
     this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
   }
 
+  static info() {
+    return {
+      name: 'FullColorLED',
+    };
+  }
+
   wired(obniz) {
     let r = this.params.r;
     let g = this.params.g;
@@ -119,5 +125,6 @@ class FullColorLED {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('FullColorLED', FullColorLED);
+if (typeof window === 'undefined') {
+  module.exports = FullColorLED;
+}

@@ -73,10 +73,6 @@ var Obniz =
 /******/ ({
 
 /***/ "./json_schema sync recursive \\.yml$":
-/*!*********************************!*\
-  !*** ./json_schema sync \.yml$ ***!
-  \*********************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -250,10 +246,6 @@ webpackContext.id = "./json_schema sync recursive \\.yml$";
 /***/ }),
 
 /***/ "./json_schema/index.yml":
-/*!*******************************!*\
-  !*** ./json_schema/index.yml ***!
-  \*******************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","definitions":{"pinSetting":{"id":"pinSetting","type":"integer","minimum":0,"maximum":11,"default":null},"bleAdvertiseData":{"id":"bleAdvertiseData","type":"array","default":null,"maxItems":31,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray32":{"id":"dataArray32","type":"array","default":null,"maxItems":32,"items":{"type":"integer","minimum":0,"maximum":255}},"dataArray1024":{"id":"dataArray1024","type":"array","default":null,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"bitArray":{"id":"bitArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":1}},"dataArray":{"id":"dataArray","type":"array","default":null,"items":{"type":"integer","minimum":0,"maximum":255}},"imageData128x64":{"id":"imageData128x64","type":"array","minItems":1024,"maxItems":1024,"items":{"type":"integer","minimum":0,"maximum":255}},"hexString":{"id":"hexString","type":"string","default":null,"pattern":"^([0-9a-fA-F]+)$"},"uuid":{"id":"uuid","type":"string","pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"uuidOrNull":{"id":"uuidOrNull","type":["string","null"],"pattern":"^([-0-9a-fA-F]+)$","minLength":4,"maxLength":36},"deviceAddress":{"id":"deviceAddress","type":"string","pattern":"^([0-9a-fA-F]+)$","minLength":12,"maxLength":12},"obnizId":{"id":"obnizId","type":["string","integer"],"pattern":"^[0-9]{4}-?[0-9]{4}$","minimum":0,"maximum":99999999}}}
@@ -261,10 +253,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/","
 /***/ }),
 
 /***/ "./json_schema/request/ad/deinit.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/ad/deinit.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/deinit","type":"null"}
@@ -272,10 +260,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ad/index.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/ad/index.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad","basePath":"ad0","anyOf":[{"$ref":"/request/ad/get"},{"$ref":"/request/ad/deinit"}]}
@@ -283,10 +267,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ad/input.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/ad/input.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ad/get","related":"/response/ad/get","desription":"enable & start ad module at io.","type":"object","required":["stream"],"properties":{"stream":{"type":"boolean","default":false}}}
@@ -294,10 +274,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/characteristic_get.yml":
-/*!****************************************************************!*\
-  !*** ./json_schema/request/ble/central/characteristic_get.yml ***!
-  \****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_get","related":"/response/ble/central/characteristic_get","type":"object","required":["get_characteristics"],"properties":{"get_characteristics":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}}
@@ -305,10 +281,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/characteristic_read.yml":
-/*!*****************************************************************!*\
-  !*** ./json_schema/request/ble/central/characteristic_read.yml ***!
-  \*****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_read","related":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
@@ -316,10 +288,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/characteristic_register_notify.yml":
-/*!****************************************************************************!*\
-  !*** ./json_schema/request/ble/central/characteristic_register_notify.yml ***!
-  \****************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_register_notify","related":"/response/ble/central/characteristic_register_notify","type":"object","required":["register_notify_characteristic"],"properties":{"register_notify_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
@@ -327,10 +295,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/characteristic_unregister_notify.yml":
-/*!******************************************************************************!*\
-  !*** ./json_schema/request/ble/central/characteristic_unregister_notify.yml ***!
-  \******************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_unregister_notify","related":"/response/ble/central/characteristic_unregister_notify","type":"object","required":["unregister_notify_characteristic"],"properties":{"unregister_notify_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
@@ -338,10 +302,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/characteristic_write.yml":
-/*!******************************************************************!*\
-  !*** ./json_schema/request/ble/central/characteristic_write.yml ***!
-  \******************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/characteristic_write","related":"/response/ble/central/characteristic_write","type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}}
@@ -349,10 +309,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/connect.yml":
-/*!*****************************************************!*\
-  !*** ./json_schema/request/ble/central/connect.yml ***!
-  \*****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/connect","related":"/response/ble/central/status_update","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}}
@@ -360,10 +316,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/descriptor_get.yml":
-/*!************************************************************!*\
-  !*** ./json_schema/request/ble/central/descriptor_get.yml ***!
-  \************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_get","related":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptors"],"properties":{"get_descriptors":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
@@ -371,10 +323,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/descriptor_read.yml":
-/*!*************************************************************!*\
-  !*** ./json_schema/request/ble/central/descriptor_read.yml ***!
-  \*************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_read","related":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor"],"properties":{"read_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}
@@ -382,10 +330,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/descriptor_write.yml":
-/*!**************************************************************!*\
-  !*** ./json_schema/request/ble/central/descriptor_write.yml ***!
-  \**************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/descriptor_write","related":"/response/ble/central/descriptor_write","type":"object","required":["write_descriptor"],"properties":{"write_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"needResponse":{"type":"boolean","default":true}}}}}
@@ -393,10 +337,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/disconnect.yml":
-/*!********************************************************!*\
-  !*** ./json_schema/request/ble/central/disconnect.yml ***!
-  \********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}}
@@ -404,10 +344,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/index.yml":
-/*!***************************************************!*\
-  !*** ./json_schema/request/ble/central/index.yml ***!
-  \***************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central","basePath":"ble","anyOf":[{"$ref":"/request/ble/central/scan_start"},{"$ref":"/request/ble/central/scan_stop"},{"$ref":"/request/ble/central/connect"},{"$ref":"/request/ble/central/disconnect"},{"$ref":"/request/ble/central/service_get"},{"$ref":"/request/ble/central/characteristic_get"},{"$ref":"/request/ble/central/characteristic_read"},{"$ref":"/request/ble/central/characteristic_write"},{"$ref":"/request/ble/central/characteristic_register_notify"},{"$ref":"/request/ble/central/characteristic_unregister_notify"},{"$ref":"/request/ble/central/descriptor_get"},{"$ref":"/request/ble/central/descriptor_read"},{"$ref":"/request/ble/central/descriptor_write"}]}
@@ -415,10 +351,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/scan_start.yml":
-/*!********************************************************!*\
-  !*** ./json_schema/request/ble/central/scan_start.yml ***!
-  \********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_start","related":["/response/ble/central/scan","/response/ble/central/scan_finish"],"type":"object","required":["scan"],"properties":{"scan":{"type":"object","additionalProperties":false,"properties":{"duration":{"type":"integer","default":30}}}}}
@@ -426,10 +358,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/scan_stop.yml":
-/*!*******************************************************!*\
-  !*** ./json_schema/request/ble/central/scan_stop.yml ***!
-  \*******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/scan_stop","type":"object","required":["scan"],"properties":{"scan":{"type":"null"}}}
@@ -437,10 +365,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/central/service_get.yml":
-/*!*********************************************************!*\
-  !*** ./json_schema/request/ble/central/service_get.yml ***!
-  \*********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/central/service_get","related":"/response/ble/central/service_get","type":"object","required":["get_services"],"properties":{"get_services":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}}
@@ -448,10 +372,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/index.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/ble/index.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"}]}
@@ -459,10 +379,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/advertisement_start.yml":
-/*!********************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/advertisement_start.yml ***!
-  \********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_start","related":"/response/ble/peripheral/status","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"object","required":["adv_data"],"additionalProperties":false,"properties":{"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
@@ -470,10 +386,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/advertisement_stop.yml":
-/*!*******************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/advertisement_stop.yml ***!
-  \*******************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/advertisement_stop","type":"object","required":["advertisement"],"properties":{"advertisement":{"type":"null"}}}
@@ -481,10 +393,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/characteristic_notify.yml":
-/*!**********************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/characteristic_notify.yml ***!
-  \**********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_notify","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["notify_characteristic"],"properties":{"notify_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
@@ -492,10 +400,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/characteristic_read.yml":
-/*!********************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/characteristic_read.yml ***!
-  \********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_read","related":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_characteristic"],"properties":{"read_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
@@ -503,10 +407,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/characteristic_write.yml":
-/*!*********************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/characteristic_write.yml ***!
-  \*********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/characteristic_write","related":"/response/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_characteristic"],"properties":{"write_characteristic":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
@@ -514,10 +414,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/descriptor_read.yml":
-/*!****************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/descriptor_read.yml ***!
-  \****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_read","related":"/response/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["read_descriptor"],"properties":{"read_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
@@ -525,10 +421,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/descriptor_write.yml":
-/*!*****************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/descriptor_write.yml ***!
-  \*****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/descriptor_write","related":"/response/ble/peripheral/descriptor_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["write_descriptor"],"properties":{"write_descriptor":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
@@ -536,10 +428,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/index.yml":
-/*!******************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/index.yml ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral/advertisement_start"},{"$ref":"/request/ble/peripheral/advertisement_stop"},{"$ref":"/request/ble/peripheral/service_start"},{"$ref":"/request/ble/peripheral/service_stop"},{"$ref":"/request/ble/peripheral/service_stop_all"},{"$ref":"/request/ble/peripheral/characteristic_read"},{"$ref":"/request/ble/peripheral/characteristic_write"},{"$ref":"/request/ble/peripheral/descriptor_read"},{"$ref":"/request/ble/peripheral/descriptor_write"}]}
@@ -547,10 +435,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/servie_start.yml":
-/*!*************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/servie_start.yml ***!
-  \*************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}}}}}}}}}}}}}}}
@@ -558,10 +442,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/servie_stop.yml":
-/*!************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/servie_stop.yml ***!
-  \************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["stop_service"],"properties":{"stop_service":{"type":"object","required":["service_uuid"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"}}}}}}}
@@ -569,10 +449,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ble/peripheral/servie_stop_all.yml":
-/*!****************************************************************!*\
-  !*** ./json_schema/request/ble/peripheral/servie_stop_all.yml ***!
-  \****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop_all","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
@@ -580,10 +456,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/display/clear.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/request/display/clear.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/clear","type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}
@@ -591,10 +463,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/display/index.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/request/display/index.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display","basePath":"display","anyOf":[{"$ref":"/request/display/text"},{"$ref":"/request/display/clear"},{"$ref":"/request/display/qr"},{"$ref":"/request/display/raw"},{"$ref":"/request/display/pin_assign"}]}
@@ -602,10 +470,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/display/pin_assign.yml":
-/*!****************************************************!*\
-  !*** ./json_schema/request/display/pin_assign.yml ***!
-  \****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/pin_assign","type":"object","required":["pin_assign"],"properties":{"pin_assign":{"type":"object","minProperties":1,"patternExample":[0,1,2,3],"patternProperties":{"^[0-9]$":{"type":"object","properties":{"module_name":{"type":"string"},"pin_name":{"type":"string"}}},"^1[0-1]$":{"type":"object","properties":{"module_name":{"type":"string"},"pin_name":{"type":"string"}}}}}}}
@@ -613,10 +477,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/display/qr.yml":
-/*!********************************************!*\
-  !*** ./json_schema/request/display/qr.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/qr","type":"object","required":["qr"],"properties":{"qr":{"type":"object","required":["text"],"additionalProperties":false,"properties":{"text":{"type":"string"},"correction":{"type":"string","enum":["L","M","Q","H"],"default":"M"}}}}}
@@ -624,10 +484,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/display/raw.yml":
-/*!*********************************************!*\
-  !*** ./json_schema/request/display/raw.yml ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/raw","type":"object","required":["raw"],"properties":{"raw":{"$ref":"/imageData128x64"}}}
@@ -635,10 +491,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/display/text.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/display/text.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/display/text","type":"object","required":["text"],"properties":{"text":{"type":"string"}}}
@@ -646,10 +498,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/i2c/deinit.yml":
-/*!********************************************!*\
-  !*** ./json_schema/request/i2c/deinit.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/deinit","type":"null"}
@@ -657,10 +505,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/i2c/index.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/i2c/index.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c","basePath":"i2c0","anyOf":[{"$ref":"/request/i2c/init_master"},{"$ref":"/request/i2c/init_slave"},{"$ref":"/request/i2c/write"},{"$ref":"/request/i2c/read"},{"$ref":"/request/i2c/deinit"}]}
@@ -668,10 +512,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/i2c/init_master.yml":
-/*!*************************************************!*\
-  !*** ./json_schema/request/i2c/init_master.yml ***!
-  \*************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_master","type":"object","required":["mode","sda","scl","clock"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"clock":{"type":"integer","minimum":1,"maximum":1000000}}}
@@ -679,10 +519,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/i2c/init_slave.yml":
-/*!************************************************!*\
-  !*** ./json_schema/request/i2c/init_slave.yml ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/init_slave","related":"/response/i2c/slave","type":"object","required":["mode","sda","scl","slave_address"],"uniqueKeys":["sda","scl"],"properties":{"mode":{"type":"string","enum":["master","slave"]},"sda":{"$ref":"/pinSetting"},"scl":{"$ref":"/pinSetting"},"slave_address":{"type":"integer","minimum":0,"maximum":1023},"slave_address_length":{"type":"integer","enum":[7],"default":7},"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray"},"read":{"type":"integer","minimum":0}}}
@@ -690,10 +526,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/i2c/read.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/i2c/read.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/read","related":"/response/i2c/master","type":"object","required":["address","read"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"read":{"type":"integer","minimum":0,"maximum":1024}}}
@@ -701,10 +533,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/i2c/write.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/i2c/write.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/i2c/write","type":"object","required":["address","data"],"properties":{"address":{"type":"integer","minimum":0,"maximum":1023},"address_bits":{"type":"integer","enum":[7],"default":7},"data":{"$ref":"/dataArray1024"}}}
@@ -712,10 +540,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/index.yml":
-/*!***************************************!*\
-  !*** ./json_schema/request/index.yml ***!
-  \***************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
@@ -723,10 +547,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/deinit.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/io/deinit.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/deinit","type":"null"}
@@ -734,10 +554,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/index.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/io/index.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io","basePath":"io0","anyOf":[{"$ref":"/request/io/input"},{"$ref":"/request/io/input_detail"},{"$ref":"/request/io/output"},{"$ref":"/request/io/output_detail"},{"$ref":"/request/io/output_type"},{"$ref":"/request/io/pull_type"},{"$ref":"/request/io/deinit"}]}
@@ -745,10 +561,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/input.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/io/input.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input","related":"/response/io/get","type":"string","enum":["get"]}
@@ -756,10 +568,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/input_detail.yml":
-/*!*************************************************!*\
-  !*** ./json_schema/request/io/input_detail.yml ***!
-  \*************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/input_detail","related":"/response/io/get","type":"object","required":["direction"],"properties":{"direction":{"type":"string","enum":["input"]},"stream":{"type":"boolean","default":false}}}
@@ -767,10 +575,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/output.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/io/output.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output","type":"boolean"}
@@ -778,10 +582,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/output_detail.yml":
-/*!**************************************************!*\
-  !*** ./json_schema/request/io/output_detail.yml ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_detail","type":"object","required":["direction","value"],"properties":{"direction":{"type":"string","enum":["output"]},"value":{"type":"boolean"}}}
@@ -789,10 +589,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/output_type.yml":
-/*!************************************************!*\
-  !*** ./json_schema/request/io/output_type.yml ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/output_type","type":"object","required":["output_type"],"properties":{"output_type":{"type":"string","enum":["push-pull5v","push-pull3v","open-drain"]}}}
@@ -800,10 +596,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/io/pull_type.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/io/pull_type.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/io/pull_type","type":"object","required":["pull_type"],"properties":{"pull_type":{"type":"string","enum":["pull-up5v","pull-up3v","pull-down","float"]}}}
@@ -811,10 +603,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ioanimation/changeState.yml":
-/*!*********************************************************!*\
-  !*** ./json_schema/request/ioanimation/changeState.yml ***!
-  \*********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/changeState","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["pause","resume"]}}}}}
@@ -822,10 +610,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ioanimation/index.yml":
-/*!***************************************************!*\
-  !*** ./json_schema/request/ioanimation/index.yml ***!
-  \***************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation","basePath":"io.animation","anyOf":[{"$ref":"/request/ioAnimation/init"},{"$ref":"/request/ioAnimation/changeState"}]}
@@ -833,10 +617,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ioanimation/init.yml":
-/*!**************************************************!*\
-  !*** ./json_schema/request/ioanimation/init.yml ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
@@ -844,10 +624,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/logicanalyzer/deinit.yml":
-/*!******************************************************!*\
-  !*** ./json_schema/request/logicanalyzer/deinit.yml ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/deinit","type":"null"}
@@ -855,10 +631,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/logicanalyzer/index.yml":
-/*!*****************************************************!*\
-  !*** ./json_schema/request/logicanalyzer/index.yml ***!
-  \*****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/request/logicAnalyzer/init"},{"$ref":"/request/logicAnalyzer/deinit"}]}
@@ -866,10 +638,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/logicanalyzer/init.yml":
-/*!****************************************************!*\
-  !*** ./json_schema/request/logicanalyzer/init.yml ***!
-  \****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/logicAnalyzer/init","exampleDescription":"With below sample code, you will receive only data which start with 'false, false, false' 3bit.","type":"object","required":["io","interval","duration"],"properties":{"io":{"type":"array","minItems":1,"maxItems":1,"items":{"$ref":"/pinSetting"}},"interval":{"type":"number","minimum":0,"exclusiveMinimum":true},"duration":{"type":"integer","minimum":0,"exclusiveMinimum":true},"trigger":{"type":"object","additionalProperties":false,"required":["value","samples"],"default":{"value":false,"samples":0},"properties":{"value":{"type":"boolean","default":false},"samples":{"type":"integer","minimum":0,"default":0}}}}}
@@ -877,10 +645,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/measure/echo.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/measure/echo.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure/echo","related":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"object","required":["io_pulse","io_echo","pulse_width"],"properties":{"io_pulse":{"$ref":"/pinSetting"},"io_echo":{"$ref":"/pinSetting"},"pulse":{"type":"string","default":"positive","enum":["positive","negative"]},"pulse_width":{"type":"number","minimum":0.001,"maximum":1000},"measure_edges":{"type":"integer","minimum":1,"maximum":4},"timeout":{"type":"number","default":1000,"minimum":0.001,"maximum":1000}}}}}
@@ -888,10 +652,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/measure/index.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/request/measure/index.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/measure","basePath":"measure","anyOf":[{"$ref":"/request/measure/echo"}]}
@@ -899,10 +659,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/message/index.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/request/message/index.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message","basePath":"message","anyOf":[{"$ref":"/request/message/send"}]}
@@ -910,10 +666,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/message/send.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/message/send.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/message/send","related":"/response/message/receive","type":"object","additionalProperties":false,"required":["data","to"],"properties":{"data":{},"to":{"type":"array","minItems":1,"items":{"$ref":"/obnizId"}}}}
@@ -921,10 +673,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/pwm/deinit.yml":
-/*!********************************************!*\
-  !*** ./json_schema/request/pwm/deinit.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/deinit","type":"null"}
@@ -932,10 +680,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/pwm/freq.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/pwm/freq.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/freq","type":"object","required":["freq"],"properties":{"freq":{"type":"integer","minimum":1,"maximum":80000000}}}
@@ -943,10 +687,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/pwm/index.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/pwm/index.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm","basePath":"pwm0","anyOf":[{"$ref":"/request/pwm/init"},{"$ref":"/request/pwm/freq"},{"$ref":"/request/pwm/pulse"},{"$ref":"/request/pwm/modulate"},{"$ref":"/request/pwm/deinit"}]}
@@ -954,10 +694,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/pwm/init.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/pwm/init.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/init","type":"object","required":["io"],"properties":{"io":{"$ref":"/pinSetting"}}}
@@ -965,10 +701,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/pwm/modulate.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/pwm/modulate.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/modulate","type":"object","required":["modulate"],"properties":{"modulate":{"type":"object","required":["type","symbol_length","data"],"additionalProperties":false,"properties":{"type":{"type":"string","enum":["am"]},"symbol_length":{"type":"number","minimum":0.05,"maximum":1000},"data":{"$ref":"/bitArray"}}}}}
@@ -976,10 +708,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/pwm/pulse.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/pwm/pulse.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/pwm/pulse","type":"object","required":["pulse"],"properties":{"pulse":{"type":"number","minimum":0}}}
@@ -987,10 +715,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/spi/deinit.yml":
-/*!********************************************!*\
-  !*** ./json_schema/request/spi/deinit.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/deinit","type":"null"}
@@ -998,10 +722,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/spi/index.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/spi/index.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi","basePath":"spi0","anyOf":[{"$ref":"/request/spi/init_master"},{"$ref":"/request/spi/deinit"},{"$ref":"/request/spi/write"}]}
@@ -1009,10 +729,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/spi/init_master.yml":
-/*!*************************************************!*\
-  !*** ./json_schema/request/spi/init_master.yml ***!
-  \*************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":26000000,"desription":"frequency (Hz)"}}}
@@ -1020,10 +736,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/spi/write.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/spi/write.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray1024"},"read":{"type":"boolean","default":true}}}
@@ -1031,10 +743,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/switch/get.yml":
-/*!********************************************!*\
-  !*** ./json_schema/request/switch/get.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch/get","related":"/response/switch/change","type":"string","enum":["get"]}
@@ -1042,10 +750,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/switch/index.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/switch/index.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/switch","basePath":"switch","anyOf":[{"$ref":"/request/switch/get"}]}
@@ -1053,10 +757,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/system/index.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/system/index.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"}]}
@@ -1064,10 +764,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/system/keep_working_at_offline.yml":
-/*!****************************************************************!*\
-  !*** ./json_schema/request/system/keep_working_at_offline.yml ***!
-  \****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/keepWorkingAtOffline","type":"object","required":["keep_working_at_offline"],"properties":{"keep_working_at_offline":{"type":"boolean"}}}
@@ -1075,10 +771,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/system/ping.yml":
-/*!*********************************************!*\
-  !*** ./json_schema/request/system/ping.yml ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/ping","response":"/response/system/pong","type":"object","required":["ping"],"properties":{"ping":{"type":"object","required":["key"],"properties":{"key":{"$ref":"/dataArray"}}}}}
@@ -1086,10 +778,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/system/reboot.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/request/system/reboot.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reboot","type":"object","required":["reboot"],"properties":{"reboot":{"type":"boolean","enum":[true]}}}
@@ -1097,10 +785,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/system/reset.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/request/system/reset.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/reset","type":"object","required":["reset"],"properties":{"reset":{"type":"boolean","enum":[true]}}}
@@ -1108,10 +792,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/system/self_check.yml":
-/*!***************************************************!*\
-  !*** ./json_schema/request/system/self_check.yml ***!
-  \***************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean","enum":[true]}}}
@@ -1119,10 +799,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/system/wait.yml":
-/*!*********************************************!*\
-  !*** ./json_schema/request/system/wait.yml ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/wait","type":"object","required":["wait"],"properties":{"wait":{"type":"integer"}}}
@@ -1130,10 +806,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/uart/deinit.yml":
-/*!*********************************************!*\
-  !*** ./json_schema/request/uart/deinit.yml ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/deinit","type":"null"}
@@ -1141,10 +813,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/uart/index.yml":
-/*!********************************************!*\
-  !*** ./json_schema/request/uart/index.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart","basePath":"uart0","anyOf":[{"$ref":"/request/uart/init"},{"$ref":"/request/uart/send"},{"$ref":"/request/uart/deinit"}]}
@@ -1152,10 +820,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/uart/init.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/uart/init.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/init","type":"object","required":["rx","tx"],"uniqueKeys":["rx","tx","rts","cts"],"properties":{"rx":{"$ref":"/pinSetting"},"tx":{"$ref":"/pinSetting"},"baud":{"type":"integer","default":115200,"minimum":1,"maximum":5000000},"stop":{"type":"number","enum":[1,1.5,2],"default":1},"bits":{"type":"integer","enum":[5,6,7,8],"default":8},"parity":{"type":"string","enum":["off","odd","even"],"default":"off"},"flowcontrol":{"type":"string","enum":["off","rts","cts","rts-cts"],"default":"off"},"rts":{"$ref":"/pinSetting"},"cts":{"$ref":"/pinSetting"}}}
@@ -1163,10 +827,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/uart/send.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/request/uart/send.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/send","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
@@ -1174,10 +834,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ws/index.yml":
-/*!******************************************!*\
-  !*** ./json_schema/request/ws/index.yml ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ws","basePath":"ws","anyOf":[{"$ref":"/request/ws/reset_obniz_on_ws_disconnection"}]}
@@ -1185,10 +841,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/request/ws/reset_obniz_on_ws_disconnection.yml":
-/*!********************************************************************!*\
-  !*** ./json_schema/request/ws/reset_obniz_on_ws_disconnection.yml ***!
-  \********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ws/reset_obniz_on_ws_disconnection","type":"object","required":["reset_obniz_on_ws_disconnection"],"properties":{"reset_obniz_on_ws_disconnection":{"type":"boolean","default":false}}}
@@ -1196,10 +848,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ }),
 
 /***/ "./json_schema/response/ad/get.yml":
-/*!*****************************************!*\
-  !*** ./json_schema/response/ad/get.yml ***!
-  \*****************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad/get","type":"number","minimum":0,"maximum":5}
@@ -1207,10 +855,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ad/index.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/response/ad/index.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ad","basePath":"ad0","anyOf":[{"$ref":"/response/ad/get"}]}
@@ -1218,10 +862,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/characteristic_get.yml":
-/*!*****************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_get.yml ***!
-  \*****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_get","type":"object","required":["get_characteristic_result"],"properties":{"get_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","properties"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"properties":{"type":"array","items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}}}}}}
@@ -1229,10 +869,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/characteristic_get_finish.yml":
-/*!************************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_get_finish.yml ***!
-  \************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_get_finish","type":"object","required":["get_characteristic_result_finish"],"properties":{"get_characteristic_result_finish":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}}
@@ -1240,10 +876,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/characteristic_notify.yml":
-/*!********************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_notify.yml ***!
-  \********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_notify","type":"object","required":["nofity_characteristic"],"properties":{"nofity_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}
@@ -1251,10 +883,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/characteristic_read.yml":
-/*!******************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_read.yml ***!
-  \******************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_read","type":"object","required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
@@ -1262,10 +890,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/characteristic_register_notify.yml":
-/*!*****************************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_register_notify.yml ***!
-  \*****************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_register_notify","related":"/request/ble/central/characteristic_register_notify","type":"object","required":["characteristic_register_notify_result"],"properties":{"characteristic_register_notify_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"boolean"}}}}}
@@ -1273,10 +897,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/characteristic_unregister_notify.yml":
-/*!*******************************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_unregister_notify.yml ***!
-  \*******************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_unregister_notify","related":"/request/ble/central/characteristic_unregister_notify","type":"object","required":["unregister_notify_characteristic_result"],"properties":{"unregister_notify_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"boolean"}}}}}
@@ -1284,10 +904,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/characteristic_write.yml":
-/*!*******************************************************************!*\
-  !*** ./json_schema/response/ble/central/characteristic_write.yml ***!
-  \*******************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/characteristic_write","type":"object","required":["write_characteristic_result"],"properties":{"write_characteristic_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}
@@ -1295,10 +911,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/descriptor_get.yml":
-/*!*************************************************************!*\
-  !*** ./json_schema/response/ble/central/descriptor_get.yml ***!
-  \*************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_get","type":"object","required":["get_descriptor_result"],"properties":{"get_descriptor_result":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}
@@ -1306,10 +918,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/descriptor_get_finish.yml":
-/*!********************************************************************!*\
-  !*** ./json_schema/response/ble/central/descriptor_get_finish.yml ***!
-  \********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_get_finish","type":"object","required":["get_descriptor_result_finish"],"properties":{"get_descriptor_result_finish":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}
@@ -1317,10 +925,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/descriptor_read.yml":
-/*!**************************************************************!*\
-  !*** ./json_schema/response/ble/central/descriptor_read.yml ***!
-  \**************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_read","type":"object","required":["read_descriptor_result"],"properties":{"read_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","result","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]},"data":{"$ref":"/dataArray"}}}}}
@@ -1328,10 +932,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/descriptor_write.yml":
-/*!***************************************************************!*\
-  !*** ./json_schema/response/ble/central/descriptor_write.yml ***!
-  \***************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/descriptor_write","type":"object","required":["write_descriptor_result"],"properties":{"write_descriptor_results":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}
@@ -1339,10 +939,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/error.yml":
-/*!****************************************************!*\
-  !*** ./json_schema/response/ble/central/error.yml ***!
-  \****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
@@ -1350,10 +946,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/index.yml":
-/*!****************************************************!*\
-  !*** ./json_schema/response/ble/central/index.yml ***!
-  \****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central","basePath":"ble","anyOf":[{"$ref":"/response/ble/central/scan"},{"$ref":"/response/ble/central/scan_finish"},{"$ref":"/response/ble/central/status_update"},{"$ref":"/response/ble/central/service_get"},{"$ref":"/response/ble/central/service_get_finish"},{"$ref":"/response/ble/central/characteristic_get"},{"$ref":"/response/ble/central/characteristic_get_finish"},{"$ref":"/response/ble/central/characteristic_write"},{"$ref":"/response/ble/central/characteristic_read"},{"$ref":"/response/ble/central/characteristic_register_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/characteristic_notify"},{"$ref":"/response/ble/central/descriptor_get"},{"$ref":"/response/ble/central/descriptor_get_finish"},{"$ref":"/response/ble/central/descriptor_write"},{"$ref":"/response/ble/central/descriptor_read"},{"$ref":"/response/ble/central/error"}]}
@@ -1361,10 +953,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/scan.yml":
-/*!***************************************************!*\
-  !*** ./json_schema/response/ble/central/scan.yml ***!
-  \***************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan","type":"object","required":["scan_result"],"properties":{"scan_result":{"type":"object","required":["address","ble_event_type","device_type","address_type","flag","rssi"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"ble_event_type":{"type":"string","enum":["connectable_advertisemnt","connectable_directed_advertisemnt","scannable_advertising","non_connectable_advertising","scan_response"]},"device_type":{"type":"string","enum":["ble","dumo","breder"]},"address_type":{"type":"string","enum":["public","random","rpa_public","rpa_random"]},"flag":{"type":"integer","minimum":0},"rssi":{"type":"integer","maximum":0},"adv_data":{"$ref":"/bleAdvertiseData"},"scan_resp":{"$ref":"/bleAdvertiseData"}}}}}
@@ -1372,10 +960,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/scan_finish.yml":
-/*!**********************************************************!*\
-  !*** ./json_schema/response/ble/central/scan_finish.yml ***!
-  \**********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/scan_finish","type":"object","required":["scan_result_finish"],"properties":{"scan_result_finish":{"type":"boolean","enum":[true]}}}
@@ -1383,10 +967,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/service_get.yml":
-/*!**********************************************************!*\
-  !*** ./json_schema/response/ble/central/service_get.yml ***!
-  \**********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/service_get","type":"object","required":["get_service_result"],"properties":{"get_service_result":{"type":"object","required":["address","service_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"}}}}}
@@ -1394,10 +974,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/service_get_finish.yml":
-/*!*****************************************************************!*\
-  !*** ./json_schema/response/ble/central/service_get_finish.yml ***!
-  \*****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/service_get_finish","type":"object","required":["get_service_result_finish"],"properties":{"get_service_result_finish":{"type":"object","required":["address"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"}}}}}
@@ -1405,10 +981,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/central/status_update.yml":
-/*!************************************************************!*\
-  !*** ./json_schema/response/ble/central/status_update.yml ***!
-  \************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/status_update","type":"object","required":["status_update"],"properties":{"status_update":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"status":{"type":"string","enum":["connected","disconnected"]}}}}}
@@ -1416,10 +988,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/index.yml":
-/*!********************************************!*\
-  !*** ./json_schema/response/ble/index.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","basePath":"ble","anyOf":[{"$ref":"/response/ble/central"},{"$ref":"/response/ble/peripheral"}]}
@@ -1427,10 +995,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/characteristic_notify_read.yml":
-/*!****************************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/characteristic_notify_read.yml ***!
-  \****************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_characteristic"],"properties":{"notify_read_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"}}}}}}}
@@ -1438,10 +1002,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/characteristic_notify_write.yml":
-/*!*****************************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/characteristic_notify_write.yml ***!
-  \*****************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_notify_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_characteristic"],"properties":{"notify_write_characteristic":{"type":"object","required":["address","service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
@@ -1449,10 +1009,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/characteristic_read.yml":
-/*!*********************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/characteristic_read.yml ***!
-  \*********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
@@ -1460,10 +1016,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/characteristic_write.yml":
-/*!**********************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/characteristic_write.yml ***!
-  \**********************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_characteristic_result"],"properties":{"write_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
@@ -1471,10 +1023,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/descriptor_notify_read.yml":
-/*!************************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/descriptor_notify_read.yml ***!
-  \************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_read_descriptor"],"properties":{"notify_read_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"}}}}}}}
@@ -1482,10 +1030,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/descriptor_notify_write.yml":
-/*!*************************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/descriptor_notify_write.yml ***!
-  \*************************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_notify_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["notify_write_descriptor"],"properties":{"notify_write_descriptor":{"type":"object","required":["address","service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
@@ -1493,10 +1037,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/descriptor_read.yml":
-/*!*****************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/descriptor_read.yml ***!
-  \*****************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_descriptor_result"],"properties":{"read_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
@@ -1504,10 +1044,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/descriptor_write.yml":
-/*!******************************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/descriptor_write.yml ***!
-  \******************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_write","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["write_descriptor_result"],"properties":{"write_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
@@ -1515,10 +1051,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/index.yml":
-/*!*******************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/index.yml ***!
-  \*******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral","basePath":"ble","anyOf":[{"$ref":"/response/ble/peripheral/status"},{"$ref":"/response/ble/peripheral/characteristic_read"},{"$ref":"/response/ble/peripheral/characteristic_write"},{"$ref":"/response/ble/peripheral/characteristic_notify_read"},{"$ref":"/response/ble/peripheral/characteristic_notify_write"},{"$ref":"/response/ble/peripheral/descriptor_read"},{"$ref":"/response/ble/peripheral/descriptor_write"},{"$ref":"/response/ble/peripheral/descriptor_notify_read"},{"$ref":"/response/ble/peripheral/descriptor_notify_write"}]}
@@ -1526,10 +1058,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ble/peripheral/status.yml":
-/*!********************************************************!*\
-  !*** ./json_schema/response/ble/peripheral/status.yml ***!
-  \********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/status","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["connection_status"],"properties":{"connection_status":{"type":"object","required":["address","status"],"additionalProperties":false,"properties":{"address":{"$ref":"/deviceAddress"},"status":{"type":"string","enum":["connected","disconnected"]}}}}}}}
@@ -1537,10 +1065,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/debug/error.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/response/debug/error.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/error","desccription":"global error","type":"object","required":["error"],"properties":{"error":{"type":"object","additionalProperties":true,"properties":{"message":{"type":"string"}}}}}
@@ -1548,10 +1072,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/debug/index.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/response/debug/index.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug","basePath":"debug","anyOf":[{"$ref":"/response/debug/warning"},{"$ref":"/response/debug/error"}]}
@@ -1559,10 +1079,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/debug/warning.yml":
-/*!************************************************!*\
-  !*** ./json_schema/response/debug/warning.yml ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/debug/warning","desccription":"global warnings","type":"object","required":["warning"],"properties":{"warning":{"type":"object","additionalProperties":true,"properties":{"message":{"type":"string"}}}}}
@@ -1570,10 +1086,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/i2c/index.yml":
-/*!********************************************!*\
-  !*** ./json_schema/response/i2c/index.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c","basePath":"i2c0","anyOf":[{"$ref":"/response/i2c/master"},{"$ref":"/response/i2c/slave"}]}
@@ -1581,10 +1093,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/i2c/master.yml":
-/*!*********************************************!*\
-  !*** ./json_schema/response/i2c/master.yml ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/master","type":"object","required":["mode","address","data"],"properties":{"mode":{"type":"string","enum":["master"]},"address":{"type":"integer","minimum":0,"maximum":1023},"data":{"$ref":"/dataArray"}}}
@@ -1592,10 +1100,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/i2c/slave.yml":
-/*!********************************************!*\
-  !*** ./json_schema/response/i2c/slave.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/i2c/slave","type":"object","required":["mode","address","is_fragmented","data"],"properties":{"mode":{"type":"string","enum":["slave"]},"address":{"type":"integer","minimum":0,"maximum":1023},"is_fragmented":{"type":"boolean"},"data":{"$ref":"/dataArray"}}}
@@ -1603,10 +1107,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/index.yml":
-/*!****************************************!*\
-  !*** ./json_schema/response/index.yml ***!
-  \****************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
@@ -1614,10 +1114,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/io/get.yml":
-/*!*****************************************!*\
-  !*** ./json_schema/response/io/get.yml ***!
-  \*****************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io/get","type":"boolean"}
@@ -1625,10 +1121,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/io/index.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/response/io/index.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","basePath":"io0","anyOf":[{"$ref":"/response/io/get"}]}
@@ -1636,10 +1128,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/logicanalyzer/data.yml":
-/*!*****************************************************!*\
-  !*** ./json_schema/response/logicanalyzer/data.yml ***!
-  \*****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer/data","type":"object","required":["data"],"properties":{"data":{"$ref":"/bitArray"}}}
@@ -1647,10 +1135,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/logicanalyzer/index.yml":
-/*!******************************************************!*\
-  !*** ./json_schema/response/logicanalyzer/index.yml ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/logicAnalyzer","basePath":"logic_analyzer","anyOf":[{"$ref":"/response/logicAnalyzer/data"}]}
@@ -1658,10 +1142,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/measure/echo.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/response/measure/echo.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure/echo","type":"object","required":["echo"],"properties":{"echo":{"type":"array","minItesm":1,"items":{"type":"object","required":["edge","timing"],"properties":{"edge":{"type":"boolean"},"timing":{"type":"number"}}}}}}
@@ -1669,10 +1149,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/measure/index.yml":
-/*!************************************************!*\
-  !*** ./json_schema/response/measure/index.yml ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/measure","basePath":"measure","anyOf":[{"$ref":"/response/measure/echo"}]}
@@ -1680,10 +1156,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/message/index.yml":
-/*!************************************************!*\
-  !*** ./json_schema/response/message/index.yml ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message","basePath":"message","anyOf":[{"$ref":"/response/message/receive"}]}
@@ -1691,10 +1163,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/message/receive.yml":
-/*!**************************************************!*\
-  !*** ./json_schema/response/message/receive.yml ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/message/receive","related":"/request/message/send","type":"object","required":["data","from"],"properties":{"data":{},"from":{"type":["string","null"]}}}
@@ -1702,10 +1170,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/spi/index.yml":
-/*!********************************************!*\
-  !*** ./json_schema/response/spi/index.yml ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi","basePath":"spi0","anyOf":[{"$ref":"/response/spi/read"}]}
@@ -1713,10 +1177,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/spi/read.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/response/spi/read.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi/read","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
@@ -1724,10 +1184,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/switch/change.yml":
-/*!************************************************!*\
-  !*** ./json_schema/response/switch/change.yml ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch/change","desccription":"value changes are always notified.","type":"object","required":["state"],"properties":{"state":{"type":"string","enum":["none","push","left","right"]},"action":{"type":"string","enum":["get"]}}}
@@ -1735,10 +1191,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/switch/index.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/response/switch/index.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/switch","basePath":"switch","anyOf":[{"$ref":"/response/switch/change"}]}
@@ -1746,10 +1198,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/system/index.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/response/system/index.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system","basePath":"system","anyOf":[{"$ref":"/response/system/pong"}]}
@@ -1757,10 +1205,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/system/pong.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/response/system/pong.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system/pong","desccription":"pong response with same key of ping request","type":"object","required":["pong"],"properties":{"pong":{"type":"object","required":["key"],"properties":{"key":{"$ref":"/dataArray"}}}}}
@@ -1768,10 +1212,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/uart/index.yml":
-/*!*********************************************!*\
-  !*** ./json_schema/response/uart/index.yml ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart","basePath":"uart0","anyOf":[{"$ref":"/response/uart/receive"}]}
@@ -1779,10 +1219,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/uart/receive.yml":
-/*!***********************************************!*\
-  !*** ./json_schema/response/uart/receive.yml ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/uart/receive","type":"object","properties":{"data":{"$ref":"/dataArray"}}}
@@ -1790,10 +1226,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ws/index.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/response/ws/index.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","basePath":"ws","anyOf":[{"$ref":"/response/ws/ready"},{"$ref":"/response/ws/redirect"}]}
@@ -1801,10 +1233,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ws/ready.yml":
-/*!*******************************************!*\
-  !*** ./json_schema/response/ws/ready.yml ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/ready","type":"object","required":["ready"],"properties":{"ready":{"type":"boolean","enum":[true]}}}
@@ -1812,10 +1240,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./json_schema/response/ws/redirect.yml":
-/*!**********************************************!*\
-  !*** ./json_schema/response/ws/redirect.yml ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/redirect","type":"object","required":["redirect"],"properties":{"redirect":{"type":"string"}}}
@@ -1823,10 +1247,6 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ }),
 
 /***/ "./node_modules/base64-js/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/base64-js/index.js ***!
-  \*****************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1951,10 +1371,6 @@ function fromByteArray (uint8) {
 /***/ }),
 
 /***/ "./node_modules/buffer/index.js":
-/*!**************************************!*\
-  !*** ./node_modules/buffer/index.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1968,9 +1384,9 @@ function fromByteArray (uint8) {
 
 
 
-var base64 = __webpack_require__(/*! base64-js */ "./node_modules/base64-js/index.js")
-var ieee754 = __webpack_require__(/*! ieee754 */ "./node_modules/ieee754/index.js")
-var isArray = __webpack_require__(/*! isarray */ "./node_modules/buffer/node_modules/isarray/index.js")
+var base64 = __webpack_require__("./node_modules/base64-js/index.js")
+var ieee754 = __webpack_require__("./node_modules/ieee754/index.js")
+var isArray = __webpack_require__("./node_modules/buffer/node_modules/isarray/index.js")
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -3748,15 +3164,11 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
 /***/ "./node_modules/buffer/node_modules/isarray/index.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/buffer/node_modules/isarray/index.js ***!
-  \***********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -3769,10 +3181,6 @@ module.exports = Array.isArray || function (arr) {
 /***/ }),
 
 /***/ "./node_modules/eventemitter3/index.js":
-/*!*********************************************!*\
-  !*** ./node_modules/eventemitter3/index.js ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4117,10 +3525,6 @@ if (true) {
 /***/ }),
 
 /***/ "./node_modules/ieee754/index.js":
-/*!***************************************!*\
-  !*** ./node_modules/ieee754/index.js ***!
-  \***************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -4212,10 +3616,6 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 /***/ }),
 
 /***/ "./node_modules/node-fetch/browser.js":
-/*!********************************************!*\
-  !*** ./node_modules/node-fetch/browser.js ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = exports = window.fetch;
@@ -4231,10 +3631,6 @@ exports.Response = window.Response;
 /***/ }),
 
 /***/ "./node_modules/process/browser.js":
-/*!*****************************************!*\
-  !*** ./node_modules/process/browser.js ***!
-  \*****************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -4426,14 +3822,10 @@ process.umask = function() { return 0; };
 /***/ }),
 
 /***/ "./node_modules/safe-buffer/index.js":
-/*!*******************************************!*\
-  !*** ./node_modules/safe-buffer/index.js ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable node/no-deprecated-api */
-var buffer = __webpack_require__(/*! buffer */ "./node_modules/buffer/index.js")
+var buffer = __webpack_require__("./node_modules/buffer/index.js")
 var Buffer = buffer.Buffer
 
 // alternative to using Object.keys for old browsers
@@ -4499,10 +3891,6 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 /***/ }),
 
 /***/ "./node_modules/semver/semver.js":
-/*!***************************************!*\
-  !*** ./node_modules/semver/semver.js ***!
-  \***************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {exports = module.exports = SemVer;
@@ -5830,21 +5218,17 @@ function coerce(version) {
   return parse((match[1] || '0') + '.' + (match[2] || '0') + '.' + (match[3] || '0')); 
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
 
 /***/ }),
 
 /***/ "./node_modules/string_decoder/lib/string_decoder.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/string_decoder/lib/string_decoder.js ***!
-  \***********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Buffer = __webpack_require__(/*! safe-buffer */ "./node_modules/safe-buffer/index.js").Buffer;
+var Buffer = __webpack_require__("./node_modules/safe-buffer/index.js").Buffer;
 
 var isEncoding = Buffer.isEncoding || function (encoding) {
   encoding = '' + encoding;
@@ -6118,10 +5502,6 @@ function simpleEnd(buf) {
 /***/ }),
 
 /***/ "./node_modules/tv4/tv4.js":
-/*!*********************************!*\
-  !*** ./node_modules/tv4/tv4.js ***!
-  \*********************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -7806,10 +7186,6 @@ return tv4; // used by _header.js to globalise.
 /***/ }),
 
 /***/ "./node_modules/webpack/buildin/global.js":
-/*!***********************************!*\
-  !*** (webpack)/buildin/global.js ***!
-  \***********************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 var g;
@@ -7837,10 +7213,6 @@ module.exports = g;
 /***/ }),
 
 /***/ "./obniz sync recursive":
-/*!********************!*\
-  !*** ./obniz sync ***!
-  \********************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -7856,13 +7228,9 @@ webpackEmptyContext.id = "./obniz sync recursive";
 /***/ }),
 
 /***/ "./obniz/ObnizApi.js":
-/*!***************************!*\
-  !*** ./obniz/ObnizApi.js ***!
-  \***************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const fetch = __webpack_require__(/*! node-fetch */ "./node_modules/node-fetch/browser.js");
+const fetch = __webpack_require__("./node_modules/node-fetch/browser.js");
 
 class ObnizApi {
   constructor(obnizId, options) {
@@ -7876,7 +7244,7 @@ class ObnizApi {
   }
 
   get apiVersion() {
-    let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
+    let packageJson = __webpack_require__("./package.json");
     let versionString = packageJson.version;
     return versionString.split('.').shift();
   }
@@ -7933,29 +7301,25 @@ module.exports = ObnizApi;
 /***/ }),
 
 /***/ "./obniz/ObnizComponents.js":
-/*!**********************************!*\
-  !*** ./obniz/ObnizComponents.js ***!
-  \**********************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizBLE = __webpack_require__(/*! ./libs/embeds/ble/ble */ "./obniz/libs/embeds/ble/ble.js");
-const Display = __webpack_require__(/*! ./libs/embeds/display */ "./obniz/libs/embeds/display.js");
-const ObnizSwitch = __webpack_require__(/*! ./libs/embeds/switch */ "./obniz/libs/embeds/switch.js");
+const ObnizBLE = __webpack_require__("./obniz/libs/embeds/ble/ble.js");
+const Display = __webpack_require__("./obniz/libs/embeds/display.js");
+const ObnizSwitch = __webpack_require__("./obniz/libs/embeds/switch.js");
 
-const LogicAnalyzer = __webpack_require__(/*! ./libs/measurements/logicanalyzer */ "./obniz/libs/measurements/logicanalyzer.js");
-const ObnizMeasure = __webpack_require__(/*! ./libs/measurements/measure */ "./obniz/libs/measurements/measure.js");
+const LogicAnalyzer = __webpack_require__("./obniz/libs/measurements/logicanalyzer.js");
+const ObnizMeasure = __webpack_require__("./obniz/libs/measurements/measure.js");
 
-const PeripheralAD = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
-const PeripheralI2C = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
-const PeripheralIO = __webpack_require__(/*! ./libs/io_peripherals/io */ "./obniz/libs/io_peripherals/io.js");
-const PeripheralIO_ = __webpack_require__(/*! ./libs/io_peripherals/io_ */ "./obniz/libs/io_peripherals/io_.js");
-const PeripheralPWM = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./obniz/libs/io_peripherals/pwm.js");
-const PeripheralSPI = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
-const PeripheralUART = __webpack_require__(/*! ./libs/io_peripherals/uart */ "./obniz/libs/io_peripherals/uart.js");
+const PeripheralAD = __webpack_require__("./obniz/libs/io_peripherals/ad.js");
+const PeripheralI2C = __webpack_require__("./obniz/libs/io_peripherals/i2c.js");
+const PeripheralIO = __webpack_require__("./obniz/libs/io_peripherals/io.js");
+const PeripheralIO_ = __webpack_require__("./obniz/libs/io_peripherals/io_.js");
+const PeripheralPWM = __webpack_require__("./obniz/libs/io_peripherals/pwm.js");
+const PeripheralSPI = __webpack_require__("./obniz/libs/io_peripherals/spi.js");
+const PeripheralUART = __webpack_require__("./obniz/libs/io_peripherals/uart.js");
 
-const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
-const ObnizParts = __webpack_require__(/*! ./ObnizParts */ "./obniz/ObnizParts.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
+const ObnizParts = __webpack_require__("./obniz/ObnizParts.js");
 
 module.exports = class ObnizComponents extends ObnizParts {
   constructor(id, options) {
@@ -8201,13 +7565,9 @@ module.exports = class ObnizComponents extends ObnizParts {
 /***/ }),
 
 /***/ "./obniz/ObnizConnection.js":
-/*!**********************************!*\
-  !*** ./obniz/ObnizConnection.js ***!
-  \**********************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./libs/wscommand */ "./obniz/libs/wscommand/index.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/index.js");
 
 const isNode = typeof window === 'undefined';
 
@@ -8256,7 +7616,7 @@ module.exports = class ObnizConnection {
   }
 
   static get version() {
-    let packageJson = __webpack_require__(/*! ../package.json */ "./package.json");
+    let packageJson = __webpack_require__("./package.json");
     return packageJson.version;
   }
 
@@ -8353,7 +7713,7 @@ module.exports = class ObnizConnection {
 
     let socket;
     if (this.isNode) {
-      const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
+      const wsClient = __webpack_require__("./obniz/libs/webpackReplace/ws.js");
       socket = new wsClient(url);
       socket.on('open', this.wsOnOpen.bind(this));
       socket.on('message', this.wsOnMessage.bind(this));
@@ -8378,7 +7738,7 @@ module.exports = class ObnizConnection {
     this.print_debug('local connect to ' + url);
     let ws;
     if (this.isNode) {
-      const wsClient = __webpack_require__(/*! ws */ "./obniz/libs/webpackReplace/ws.js");
+      const wsClient = __webpack_require__("./obniz/libs/webpackReplace/ws.js");
       ws = new wsClient(url);
       ws.on('open', () => {
         this.print_debug('connected to ' + url);
@@ -8720,14 +8080,10 @@ module.exports = class ObnizConnection {
 /***/ }),
 
 /***/ "./obniz/ObnizParts.js":
-/*!*****************************!*\
-  !*** ./obniz/ObnizParts.js ***!
-  \*****************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizConnection = __webpack_require__(/*! ./ObnizConnection */ "./obniz/ObnizConnection.js");
-const ObnizUtil = __webpack_require__(/*! ./libs/utils/util */ "./obniz/libs/utils/util.js");
+const ObnizConnection = __webpack_require__("./obniz/ObnizConnection.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 let _parts = {};
 
@@ -8740,8 +8096,16 @@ module.exports = class ObnizParts extends ObnizConnection {
     return _parts;
   }
 
-  static PartsRegistrate(name, obj) {
-    _parts[name] = obj;
+  static PartsRegistrate(arg0, arg1) {
+    if (
+      arg0 &&
+      typeof arg0.info === 'function' &&
+      typeof arg0.info().name === 'string'
+    ) {
+      _parts[arg0.info().name] = arg0;
+    } else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
+      _parts[arg0] = arg1;
+    }
   }
 
   static Parts(name) {
@@ -8793,13 +8157,9 @@ module.exports = class ObnizParts extends ObnizConnection {
 /***/ }),
 
 /***/ "./obniz/ObnizSystemMethods.js":
-/*!*************************************!*\
-  !*** ./obniz/ObnizSystemMethods.js ***!
-  \*************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizComponents = __webpack_require__(/*! ./ObnizComponents */ "./obniz/ObnizComponents.js");
+const ObnizComponents = __webpack_require__("./obniz/ObnizComponents.js");
 
 module.exports = class ObnizSystemMethods extends ObnizComponents {
   constructor(id, options) {
@@ -8905,13 +8265,9 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
 /***/ }),
 
 /***/ "./obniz/ObnizUIs.js":
-/*!***************************!*\
-  !*** ./obniz/ObnizUIs.js ***!
-  \***************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizSystemMethods = __webpack_require__(/*! ./ObnizSystemMethods */ "./obniz/ObnizSystemMethods.js");
+const ObnizSystemMethods = __webpack_require__("./obniz/ObnizSystemMethods.js");
 
 module.exports = class ObnizUIs extends ObnizSystemMethods {
   constructor(id, options) {
@@ -9070,20 +8426,16 @@ function _ReadCookie(name) {
 /***/ }),
 
 /***/ "./obniz/index.js":
-/*!************************!*\
-  !*** ./obniz/index.js ***!
-  \************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__dirname) {const ObnizUIs = __webpack_require__(/*! ./ObnizUIs */ "./obniz/ObnizUIs.js");
-const ObnizApi = __webpack_require__(/*! ./ObnizApi */ "./obniz/ObnizApi.js");
+/* WEBPACK VAR INJECTION */(function(__dirname) {const ObnizUIs = __webpack_require__("./obniz/ObnizUIs.js");
+const ObnizApi = __webpack_require__("./obniz/ObnizApi.js");
 
 /* global showObnizDebugError  */
 
 const isNode = typeof window === 'undefined';
 
-module.exports = class Obniz extends ObnizUIs {
+class Obniz extends ObnizUIs {
   constructor(id, options) {
     super(id, options);
   }
@@ -9191,7 +8543,9 @@ module.exports = class Obniz extends ObnizUIs {
   static get api() {
     return ObnizApi;
   }
-};
+}
+
+module.exports = Obniz;
 
 /*===================*/
 /* Utils */
@@ -9213,13 +8567,18 @@ if (!isNode) {
 /*===================*/
 /* ReadParts */
 /*===================*/
-__webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
+
+__webpack_require__("./obniz sync recursive").context = __webpack_require__("./obniz/libs/webpackReplace/require-context-browser.js");
 if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
-let context = __webpack_require__("./parts sync recursive \\.js$");
+
+let context = __webpack_require__("./parts sync recursive \\.js$"); /* webpack loader */
 for (let path of context.keys()) {
-  context(path);
+  const anParts = context(path);
+  if (anParts.info) {
+    Obniz.PartsRegistrate(anParts);
+  }
 }
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
@@ -9227,19 +8586,15 @@ for (let path of context.keys()) {
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/ble.js":
-/*!**************************************!*\
-  !*** ./obniz/libs/embeds/ble/ble.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BlePeripheral = __webpack_require__(/*! ./blePeripheral */ "./obniz/libs/embeds/ble/blePeripheral.js");
-const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
-const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
-const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
-const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./obniz/libs/embeds/ble/bleRemotePeripheral.js");
-const BleAdvertisement = __webpack_require__(/*! ./bleAdvertisement */ "./obniz/libs/embeds/ble/bleAdvertisement.js");
-const BleScan = __webpack_require__(/*! ./bleScan */ "./obniz/libs/embeds/ble/bleScan.js");
+const BlePeripheral = __webpack_require__("./obniz/libs/embeds/ble/blePeripheral.js");
+const BleService = __webpack_require__("./obniz/libs/embeds/ble/bleService.js");
+const BleCharacteristic = __webpack_require__("./obniz/libs/embeds/ble/bleCharacteristic.js");
+const BleDescriptor = __webpack_require__("./obniz/libs/embeds/ble/bleDescriptor.js");
+const BleRemotePeripheral = __webpack_require__("./obniz/libs/embeds/ble/bleRemotePeripheral.js");
+const BleAdvertisement = __webpack_require__("./obniz/libs/embeds/ble/bleAdvertisement.js");
+const BleScan = __webpack_require__("./obniz/libs/embeds/ble/bleScan.js");
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -9482,13 +8837,9 @@ module.exports = ObnizBLE;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleAdvertisement.js":
-/*!***************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleAdvertisement.js ***!
-  \***************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Builder = __webpack_require__(/*! ./bleAdvertisementBuilder */ "./obniz/libs/embeds/ble/bleAdvertisementBuilder.js");
+const Builder = __webpack_require__("./obniz/libs/embeds/ble/bleAdvertisementBuilder.js");
 
 class BleAdvertisement {
   constructor(Obniz) {
@@ -9550,10 +8901,6 @@ module.exports = BleAdvertisement;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleAdvertisementBuilder.js":
-/*!**********************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleAdvertisementBuilder.js ***!
-  \**********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 class BleAdvertisementBuilder {
@@ -9729,14 +9076,10 @@ module.exports = BleAdvertisementBuilder;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleAttributeAbstract.js":
-/*!*******************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleAttributeAbstract.js ***!
-  \*******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
-const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 
 class BleAttributeAbstract {
   constructor(params) {
@@ -9951,14 +9294,10 @@ module.exports = BleAttributeAbstract;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleCharacteristic.js":
-/*!****************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleCharacteristic.js ***!
-  \****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleDescriptor = __webpack_require__("./obniz/libs/embeds/ble/bleDescriptor.js");
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleCharacteristic extends BleAttributeAbstract {
   constructor(obj) {
@@ -10074,13 +9413,9 @@ module.exports = BleCharacteristic;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleDescriptor.js":
-/*!************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleDescriptor.js ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleDescriptor extends BleAttributeAbstract {
   constructor(obj) {
@@ -10153,13 +9488,9 @@ module.exports = BleDescriptor;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/blePeripheral.js":
-/*!************************************************!*\
-  !*** ./obniz/libs/embeds/ble/blePeripheral.js ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
+const BleService = __webpack_require__("./obniz/libs/embeds/ble/bleService.js");
 
 class BlePeripheral {
   constructor(Obniz) {
@@ -10248,13 +9579,9 @@ module.exports = BlePeripheral;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js":
-/*!*************************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js ***!
-  \*************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 
 class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   constructor(params) {
@@ -10329,14 +9656,10 @@ module.exports = BleRemoteAttributeAbstract;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js":
-/*!**********************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleRemoteCharacteristic.js ***!
-  \**********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
-const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleRemoteDescriptor = __webpack_require__("./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
+const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -10531,13 +9854,9 @@ module.exports = BleRemoteCharacteristic;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js":
-/*!******************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleRemoteDescriptor.js ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
 class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -10584,14 +9903,10 @@ module.exports = BleRemoteDescriptor;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleRemotePeripheral.js":
-/*!******************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleRemotePeripheral.js ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
-const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
+const BleRemoteService = __webpack_require__("./obniz/libs/embeds/ble/bleRemoteService.js");
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 
 class BleRemotePeripheral {
   constructor(Obniz, address) {
@@ -10900,14 +10215,10 @@ module.exports = BleRemotePeripheral;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleRemoteService.js":
-/*!***************************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleRemoteService.js ***!
-  \***************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
-const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleRemoteCharacteristic = __webpack_require__("./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
+const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -10973,13 +10284,9 @@ module.exports = BleRemoteService;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleScan.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleScan.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const emitter = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.js");
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 
 class BleScan {
   constructor(Obniz) {
@@ -11100,14 +10407,10 @@ module.exports = BleScan;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/ble/bleService.js":
-/*!*********************************************!*\
-  !*** ./obniz/libs/embeds/ble/bleService.js ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
-const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleCharacteristic = __webpack_require__("./obniz/libs/embeds/ble/bleCharacteristic.js");
 
 class BleService extends BleAttributeAbstract {
   constructor(obj) {
@@ -11160,10 +10463,6 @@ module.exports = BleService;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/display.js":
-/*!**************************************!*\
-  !*** ./obniz/libs/embeds/display.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class Display {
@@ -11196,7 +10495,7 @@ class Display {
     }
     if (this.Obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(/*! canvas */ "./obniz/libs/webpackReplace/canvas.js");
+        const { createCanvas } = __webpack_require__("./obniz/libs/webpackReplace/canvas.js");
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
@@ -11405,10 +10704,6 @@ module.exports = Display;
 /***/ }),
 
 /***/ "./obniz/libs/embeds/switch.js":
-/*!*************************************!*\
-  !*** ./obniz/libs/embeds/switch.js ***!
-  \*************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 class ObnizSwitch {
@@ -11455,10 +10750,6 @@ module.exports = ObnizSwitch;
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/ad.js":
-/*!*****************************************!*\
-  !*** ./obniz/libs/io_peripherals/ad.js ***!
-  \*****************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 class PeripheralAD {
@@ -11527,13 +10818,9 @@ module.exports = PeripheralAD;
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/i2c.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/io_peripherals/i2c.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 class PeripheralI2C {
   constructor(Obniz, id) {
@@ -11738,10 +11025,6 @@ module.exports = PeripheralI2C;
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/io.js":
-/*!*****************************************!*\
-  !*** ./obniz/libs/io_peripherals/io.js ***!
-  \*****************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 class PeripheralIO {
@@ -11891,10 +11174,6 @@ module.exports = PeripheralIO;
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/io_.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/io_peripherals/io_.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 class PeripheralIO_ {
@@ -11940,13 +11219,9 @@ module.exports = PeripheralIO_;
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/pwm.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/io_peripherals/pwm.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 class PeripheralPWM {
   constructor(Obniz, id) {
@@ -12071,14 +11346,10 @@ module.exports = PeripheralPWM;
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/spi.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/io_peripherals/spi.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
-const semver = __webpack_require__(/*! semver */ "./node_modules/semver/semver.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
+const semver = __webpack_require__("./node_modules/semver/semver.js");
 
 class PeripheralSPI {
   constructor(Obniz, id) {
@@ -12243,13 +11514,9 @@ module.exports = PeripheralSPI;
 /***/ }),
 
 /***/ "./obniz/libs/io_peripherals/uart.js":
-/*!*******************************************!*\
-  !*** ./obniz/libs/io_peripherals/uart.js ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 const isNode = typeof window === 'undefined';
 
 class PeripheralUART {
@@ -12394,18 +11661,14 @@ class PeripheralUART {
 }
 module.exports = PeripheralUART;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
 /***/ "./obniz/libs/measurements/logicanalyzer.js":
-/*!**************************************************!*\
-  !*** ./obniz/libs/measurements/logicanalyzer.js ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 class LogicAnalyzer {
   constructor(obniz) {
@@ -12475,13 +11738,9 @@ module.exports = LogicAnalyzer;
 /***/ }),
 
 /***/ "./obniz/libs/measurements/measure.js":
-/*!********************************************!*\
-  !*** ./obniz/libs/measurements/measure.js ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 class ObnizMeasure {
   constructor(obniz) {
@@ -12550,10 +11809,6 @@ module.exports = ObnizMeasure;
 /***/ }),
 
 /***/ "./obniz/libs/utils/qr.js":
-/*!********************************!*\
-  !*** ./obniz/libs/utils/qr.js ***!
-  \********************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 /* eslint-disable */
@@ -14402,10 +13657,6 @@ module.exports = qrcode;
 /***/ }),
 
 /***/ "./obniz/libs/utils/util.js":
-/*!**********************************!*\
-  !*** ./obniz/libs/utils/util.js ***!
-  \**********************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {class ObnizUtil {
@@ -14416,7 +13667,7 @@ module.exports = qrcode;
   createCanvasContext(width, height) {
     if (this.obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(/*! canvas */ "./obniz/libs/webpackReplace/canvas.js");
+        const { createCanvas } = __webpack_require__("./obniz/libs/webpackReplace/canvas.js");
         return createCanvas(this.width, this.height);
       } catch (e) {
         throw new Error(
@@ -14471,7 +13722,7 @@ module.exports = qrcode;
   static dataArray2string(data) {
     let string = null;
     try {
-      const StringDecoder = __webpack_require__(/*! string_decoder */ "./node_modules/string_decoder/lib/string_decoder.js").StringDecoder;
+      const StringDecoder = __webpack_require__("./node_modules/string_decoder/lib/string_decoder.js").StringDecoder;
       if (StringDecoder) {
         string = new StringDecoder('utf8').write(Buffer.from(data));
       }
@@ -14489,15 +13740,11 @@ module.exports = qrcode;
 
 module.exports = ObnizUtil;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
 /***/ "./obniz/libs/webpackReplace/canvas.js":
-/*!*********************************************!*\
-  !*** ./obniz/libs/webpackReplace/canvas.js ***!
-  \*********************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 // load from webpack
@@ -14510,10 +13757,6 @@ module.exports = canvas;
 /***/ }),
 
 /***/ "./obniz/libs/webpackReplace/require-context-browser.js":
-/*!**************************************************************!*\
-  !*** ./obniz/libs/webpackReplace/require-context-browser.js ***!
-  \**************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 module.exports = {};
@@ -14522,10 +13765,6 @@ module.exports = {};
 /***/ }),
 
 /***/ "./obniz/libs/webpackReplace/ws.js":
-/*!*****************************************!*\
-  !*** ./obniz/libs/webpackReplace/ws.js ***!
-  \*****************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 // load from webpack
@@ -14546,10 +13785,6 @@ module.exports = ws;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand sync recursive":
-/*!***********************************!*\
-  !*** ./obniz/libs/wscommand sync ***!
-  \***********************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -14565,13 +13800,9 @@ webpackEmptyContext.id = "./obniz/libs/wscommand sync recursive";
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_.js":
-/*!********************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_.js ***!
-  \********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/WSSchema.js");
+const WSSchema = __webpack_require__("./obniz/libs/wscommand/WSSchema.js");
 
 let commandClasses = {};
 
@@ -14876,13 +14107,9 @@ class WSCommandNotFoundError extends Error {}
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_AD.js":
-/*!**********************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_AD.js ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_AD extends WSCommand {
   constructor(delegate) {
@@ -14952,14 +14179,10 @@ module.exports = WSCommand_AD;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_Ble.js":
-/*!***********************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_Ble.js ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const JsonBinaryConverter = __webpack_require__(/*! ./jsonBinaryConverter */ "./obniz/libs/wscommand/jsonBinaryConverter.js");
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const JsonBinaryConverter = __webpack_require__("./obniz/libs/wscommand/jsonBinaryConverter.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Ble extends WSCommand {
   constructor(delegate) {
@@ -16294,14 +15517,10 @@ module.exports = WSCommand_Ble;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_Directive.js":
-/*!*****************************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_Directive.js ***!
-  \*****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
-const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 module.exports = class WSCommand_Directive extends WSCommand {
   constructor(delegate) {
@@ -16312,8 +15531,8 @@ module.exports = class WSCommand_Directive extends WSCommand {
     this._CommandPause = 1;
     this._CommandResume = 2;
 
-    const CommandIO = __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js");
-    const CommandPWM = __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js");
+    const CommandIO = __webpack_require__("./obniz/libs/wscommand/WSCommand_IO.js");
+    const CommandPWM = __webpack_require__("./obniz/libs/wscommand/WSCommand_PWM.js");
 
     this.availableCommands = [new CommandIO(), new CommandPWM()];
   }
@@ -16453,14 +15672,10 @@ module.exports = class WSCommand_Directive extends WSCommand {
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_Display.js":
-/*!***************************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_Display.js ***!
-  \***************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
-const qrcode = __webpack_require__(/*! ../utils/qr */ "./obniz/libs/utils/qr.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
+const qrcode = __webpack_require__("./obniz/libs/utils/qr.js");
 
 class WSCommand_Display extends WSCommand {
   constructor(delegate) {
@@ -16609,18 +15824,14 @@ class WSCommand_Display extends WSCommand {
 
 module.exports = WSCommand_Display;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_I2C.js":
-/*!***********************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_I2C.js ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_I2C extends WSCommand {
   constructor(delegate) {
@@ -16813,13 +16024,9 @@ module.exports = WSCommand_I2C;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_IO.js":
-/*!**********************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_IO.js ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
@@ -17000,13 +16207,9 @@ module.exports = WSCommand_IO;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js":
-/*!*********************************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js ***!
-  \*********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_LogicAnalyzer extends WSCommand {
   constructor(delegate) {
@@ -17096,13 +16299,9 @@ module.exports = WSCommand_LogicAnalyzer;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_Measurement.js":
-/*!*******************************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_Measurement.js ***!
-  \*******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Measurement extends WSCommand {
   constructor(delegate) {
@@ -17190,13 +16389,9 @@ module.exports = WSCommand_Measurement;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_PWM.js":
-/*!***********************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_PWM.js ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_PWM extends WSCommand {
   constructor(delegate) {
@@ -17314,13 +16509,9 @@ module.exports = WSCommand_PWM;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_SPI.js":
-/*!***********************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_SPI.js ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_SPI extends WSCommand {
   constructor(delegate) {
@@ -17435,13 +16626,9 @@ module.exports = WSCommand_SPI;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_Switch.js":
-/*!**************************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_Switch.js ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Switch extends WSCommand {
   constructor(delegate) {
@@ -17501,13 +16688,9 @@ module.exports = WSCommand_Switch;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_System.js":
-/*!**************************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_System.js ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_System extends WSCommand {
   constructor(delegate) {
@@ -17655,18 +16838,14 @@ class WSCommand_System extends WSCommand {
 
 module.exports = WSCommand_System;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSCommand_UART.js":
-/*!************************************************!*\
-  !*** ./obniz/libs/wscommand/WSCommand_UART.js ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_UART extends WSCommand {
   constructor(delegate) {
@@ -17787,13 +16966,9 @@ module.exports = WSCommand_UART;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/WSSchema.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/wscommand/WSSchema.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__dirname) {const tv4 = __webpack_require__(/*! tv4 */ "./node_modules/tv4/tv4.js");
+/* WEBPACK VAR INJECTION */(function(__dirname) {const tv4 = __webpack_require__("./node_modules/tv4/tv4.js");
 
 tv4.defineError('UNIQUE_KEYS', 10001, '{uniqueKeys} are must be unique value.');
 
@@ -17822,7 +16997,7 @@ tv4.defineKeyword('uniqueKeys', function(data, value, schema) {
 //todo
 
 let wsSchema = [];
-__webpack_require__("./obniz/libs/wscommand sync recursive").context = __webpack_require__(/*! ../webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context-browser.js");
+__webpack_require__("./obniz/libs/wscommand sync recursive").context = __webpack_require__("./obniz/libs/webpackReplace/require-context-browser.js");
 if (__webpack_require__("./obniz/libs/wscommand sync recursive").context && __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir) {
   __webpack_require__("./obniz/libs/wscommand sync recursive").context.setBaseDir(__dirname);
 }
@@ -17841,28 +17016,24 @@ module.exports = tv4;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/index.js":
-/*!***************************************!*\
-  !*** ./obniz/libs/wscommand/index.js ***!
-  \***************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const WSCommand = __webpack_require__(/*! ./WSCommand_ */ "./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 /* eslint-disable */
-WSCommand.addCommandClass('WSCommand_System', __webpack_require__(/*! ./WSCommand_System */ "./obniz/libs/wscommand/WSCommand_System.js"));
-WSCommand.addCommandClass('WSCommand_Directive',  __webpack_require__(/*! ./WSCommand_Directive */ "./obniz/libs/wscommand/WSCommand_Directive.js"));
-WSCommand.addCommandClass('WSCommand_IO', __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js"));
-WSCommand.addCommandClass('WSCommand_PWM', __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js"));
-WSCommand.addCommandClass('WSCommand_UART', __webpack_require__(/*! ./WSCommand_UART */ "./obniz/libs/wscommand/WSCommand_UART.js"));
-WSCommand.addCommandClass('WSCommand_AD', __webpack_require__(/*! ./WSCommand_AD */ "./obniz/libs/wscommand/WSCommand_AD.js"));
-WSCommand.addCommandClass('WSCommand_SPI', __webpack_require__(/*! ./WSCommand_SPI */ "./obniz/libs/wscommand/WSCommand_SPI.js"));
-WSCommand.addCommandClass('WSCommand_I2C', __webpack_require__(/*! ./WSCommand_I2C */ "./obniz/libs/wscommand/WSCommand_I2C.js"));
-WSCommand.addCommandClass('WSCommand_LogicAnalyzer',  __webpack_require__(/*! ./WSCommand_LogicAnalyzer */ "./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
-WSCommand.addCommandClass('WSCommand_Display', __webpack_require__(/*! ./WSCommand_Display */ "./obniz/libs/wscommand/WSCommand_Display.js"));
-WSCommand.addCommandClass('WSCommand_Switch', __webpack_require__(/*! ./WSCommand_Switch */ "./obniz/libs/wscommand/WSCommand_Switch.js"));
-WSCommand.addCommandClass('WSCommand_Ble', __webpack_require__(/*! ./WSCommand_Ble */ "./obniz/libs/wscommand/WSCommand_Ble.js"));
-WSCommand.addCommandClass( 'WSCommand_Measurement',  __webpack_require__(/*! ./WSCommand_Measurement */ "./obniz/libs/wscommand/WSCommand_Measurement.js"));
+WSCommand.addCommandClass('WSCommand_System', __webpack_require__("./obniz/libs/wscommand/WSCommand_System.js"));
+WSCommand.addCommandClass('WSCommand_Directive',  __webpack_require__("./obniz/libs/wscommand/WSCommand_Directive.js"));
+WSCommand.addCommandClass('WSCommand_IO', __webpack_require__("./obniz/libs/wscommand/WSCommand_IO.js"));
+WSCommand.addCommandClass('WSCommand_PWM', __webpack_require__("./obniz/libs/wscommand/WSCommand_PWM.js"));
+WSCommand.addCommandClass('WSCommand_UART', __webpack_require__("./obniz/libs/wscommand/WSCommand_UART.js"));
+WSCommand.addCommandClass('WSCommand_AD', __webpack_require__("./obniz/libs/wscommand/WSCommand_AD.js"));
+WSCommand.addCommandClass('WSCommand_SPI', __webpack_require__("./obniz/libs/wscommand/WSCommand_SPI.js"));
+WSCommand.addCommandClass('WSCommand_I2C', __webpack_require__("./obniz/libs/wscommand/WSCommand_I2C.js"));
+WSCommand.addCommandClass('WSCommand_LogicAnalyzer',  __webpack_require__("./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
+WSCommand.addCommandClass('WSCommand_Display', __webpack_require__("./obniz/libs/wscommand/WSCommand_Display.js"));
+WSCommand.addCommandClass('WSCommand_Switch', __webpack_require__("./obniz/libs/wscommand/WSCommand_Switch.js"));
+WSCommand.addCommandClass('WSCommand_Ble', __webpack_require__("./obniz/libs/wscommand/WSCommand_Ble.js"));
+WSCommand.addCommandClass( 'WSCommand_Measurement',  __webpack_require__("./obniz/libs/wscommand/WSCommand_Measurement.js"));
 
 module.exports = WSCommand;
 
@@ -17870,10 +17041,6 @@ module.exports = WSCommand;
 /***/ }),
 
 /***/ "./obniz/libs/wscommand/jsonBinaryConverter.js":
-/*!*****************************************************!*\
-  !*** ./obniz/libs/wscommand/jsonBinaryConverter.js ***!
-  \*****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {class JsonBinaryConverter {
@@ -18150,26 +17317,18 @@ module.exports = WSCommand;
 
 module.exports = JsonBinaryConverter;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
 /***/ "./package.json":
-/*!**********************!*\
-  !*** ./package.json ***!
-  \**********************/
-/*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.4.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1","semver":"^5.5.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.4.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1","semver":"^5.5.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
 /***/ "./parts sync recursive \\.js$":
-/*!**************************!*\
-  !*** ./parts sync \.js$ ***!
-  \**************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -18246,11 +17405,7 @@ webpackContext.id = "./parts sync recursive \\.js$";
 /***/ }),
 
 /***/ "./parts/ADConverter/hx711/index.js":
-/*!******************************************!*\
-  !*** ./parts/ADConverter/hx711/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class hx711 {
   constructor() {
@@ -18258,6 +17413,12 @@ class hx711 {
     this.requiredKeys = ['sck', 'dout'];
     this.offset = 0;
     this.scale = 1;
+  }
+
+  static info() {
+    return {
+      name: 'hx711',
+    };
   }
 
   wired(obniz) {
@@ -18330,17 +17491,14 @@ class hx711 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('hx711', hx711);
+if (typeof window === 'undefined') {
+  module.exports = hx711;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Accessory/USB/index.js":
-/*!**************************************!*\
-  !*** ./parts/Accessory/USB/index.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class USB {
@@ -18351,6 +17509,12 @@ class USB {
     this.displayIoNames = {
       vcc: 'vcc',
       gnd: 'gnd',
+    };
+  }
+
+  static info() {
+    return {
+      name: 'USB',
     };
   }
 
@@ -18371,18 +17535,15 @@ class USB {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('USB', USB);
+if (true) {
+  module.exports = USB;
+}
 
 
 /***/ }),
 
 /***/ "./parts/AudioSensor/AE_MICAMP/index.js":
-/*!**********************************************!*\
-  !*** ./parts/AudioSensor/AE_MICAMP/index.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class AE_MICAMP {
   constructor() {
@@ -18393,6 +17554,12 @@ class AE_MICAMP {
       vcc: 'vcc',
       gnd: 'gnd',
       out: 'out',
+    };
+  }
+
+  static info() {
+    return {
+      name: 'AE_MICAMP',
     };
   }
 
@@ -18411,6 +17578,10 @@ class AE_MICAMP {
       }
     });
   }
+}
+
+if (typeof window === 'undefined') {
+  module.exports = AE_MICAMP;
 }
 
 /*
@@ -18443,18 +17614,11 @@ AE_MICAMP.prototype.Average = function(callback) {
 };
 */
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);
-
 
 /***/ }),
 
 /***/ "./parts/Camera/JpegSerialCam/index.js":
-/*!*********************************************!*\
-  !*** ./parts/Camera/JpegSerialCam/index.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class JpegSerialCam {
   constructor() {
@@ -18464,6 +17628,12 @@ class JpegSerialCam {
     this.ioKeys = this.keys;
     this.displayName = 'Jcam';
     this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
+  }
+
+  static info() {
+    return {
+      name: 'JpegSerialCam',
+    };
   }
 
   wired() {
@@ -18674,18 +17844,15 @@ class JpegSerialCam {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);
+if (typeof window === 'undefined') {
+  module.exports = JpegSerialCam;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Display/7SegmentLED/index.js":
-/*!********************************************!*\
-  !*** ./parts/Display/7SegmentLED/index.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class _7SegmentLED {
   constructor() {
@@ -18727,6 +17894,12 @@ class _7SegmentLED {
       g: 'g',
       dp: 'dp',
       common: 'com',
+    };
+  }
+
+  static info() {
+    return {
+      name: '7SegmentLED',
     };
   }
 
@@ -18822,18 +17995,15 @@ class _7SegmentLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('7SegmentLED', _7SegmentLED);
+if (typeof window === 'undefined') {
+  module.exports = _7SegmentLED;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Display/7SegmentLEDArray/index.js":
-/*!*************************************************!*\
-  !*** ./parts/Display/7SegmentLEDArray/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class _7SegmentLEDArray {
   constructor() {
@@ -18841,6 +18011,12 @@ class _7SegmentLEDArray {
 
     this.keys = ['segments'];
     this.requiredKeys = this.keys;
+  }
+
+  static info() {
+    return {
+      name: '7SegmentLEDArray',
+    };
   }
 
   wired(obniz) {
@@ -18890,23 +18066,26 @@ class _7SegmentLEDArray {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('7SegmentLEDArray', _7SegmentLEDArray);
+if (typeof window === 'undefined') {
+  module.exports = _7SegmentLEDArray;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Display/MatrixLED_MAX7219/index.js":
-/*!**************************************************!*\
-  !*** ./parts/Display/MatrixLED_MAX7219/index.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class MatrixLED_MAX7219 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
     this.requiredKeys = ['din', 'cs', 'clk'];
+  }
+
+  static info() {
+    return {
+      name: 'MatrixLED_MAX7219',
+    };
   }
 
   wired(obniz) {
@@ -19030,18 +18209,15 @@ class MatrixLED_MAX7219 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
+if (typeof window === 'undefined') {
+  module.exports = MatrixLED_MAX7219;
+}
 
 
 /***/ }),
 
 /***/ "./parts/DistanceSensor/GP2Y0A21YK0F/index.js":
-/*!****************************************************!*\
-  !*** ./parts/DistanceSensor/GP2Y0A21YK0F/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class GP2Y0A21YK0F {
   constructor() {
@@ -19054,6 +18230,12 @@ class GP2Y0A21YK0F {
       signal: 'signal',
     };
     this._unit = 'mm';
+  }
+
+  static info() {
+    return {
+      name: 'GP2Y0A21YK0F',
+    };
   }
 
   wired(obniz) {
@@ -19095,18 +18277,15 @@ class GP2Y0A21YK0F {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('GP2Y0A21YK0F', GP2Y0A21YK0F);
+if (typeof window === 'undefined') {
+  module.exports = GP2Y0A21YK0F;
+}
 
 
 /***/ }),
 
 /***/ "./parts/DistanceSensor/HC-SR04/index.js":
-/*!***********************************************!*\
-  !*** ./parts/DistanceSensor/HC-SR04/index.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class HCSR04 {
   constructor() {
@@ -19117,6 +18296,12 @@ class HCSR04 {
     this.reset_alltime = false;
 
     this.temp = 15;
+  }
+
+  static info() {
+    return {
+      name: 'HC-SR04',
+    };
   }
 
   wired(obniz) {
@@ -19186,20 +18371,15 @@ class HCSR04 {
   }
 }
 
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('HC-SR04', HCSR04);
+if (typeof window === 'undefined') {
+  module.exports = HCSR04;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
-/*!*************************************************!*\
-  !*** ./parts/Grove/Grove_EarHeartRate/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class Grove_EarHeartRate {
   constructor() {
@@ -19214,6 +18394,12 @@ class Grove_EarHeartRate {
 
     this.interval = 5;
     this.duration = 2.5 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'Grove_EarHeartRate',
+    };
   }
 
   wired(obniz) {
@@ -19246,24 +18432,27 @@ class Grove_EarHeartRate {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Grove_EarHeartRate', Grove_EarHeartRate);
+if (typeof window === 'undefined') {
+  module.exports = Grove_EarHeartRate;
+}
 
 
 /***/ }),
 
 /***/ "./parts/GyroSensor/ENC03R_Module/index.js":
-/*!*************************************************!*\
-  !*** ./parts/GyroSensor/ENC03R_Module/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class ENC03R_Module {
   constructor() {
     this.keys = ['vcc', 'out1', 'out2', 'gnd'];
     this.required = ['out1', 'out2'];
     this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+  }
+
+  static info() {
+    return {
+      name: 'ENC03R_Module',
+    };
   }
 
   wired(obniz) {
@@ -19288,18 +18477,15 @@ class ENC03R_Module {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ENC03R_Module', ENC03R_Module);
+if (typeof window === 'undefined') {
+  module.exports = ENC03R_Module;
+}
 
 
 /***/ }),
 
 /***/ "./parts/InfraredSensor/IRSensor/index.js":
-/*!************************************************!*\
-  !*** ./parts/InfraredSensor/IRSensor/index.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class IRSensor {
   constructor() {
@@ -19312,6 +18498,12 @@ class IRSensor {
     this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
     this.cutTail = true;
     this.output_pullup = true;
+  }
+
+  static info() {
+    return {
+      name: 'IRSensor',
+    };
   }
 
   wired(obniz) {
@@ -19361,18 +18553,15 @@ class IRSensor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('IRSensor', IRSensor);
+if (typeof window === 'undefined') {
+  module.exports = IRSensor;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Light/FullColorLED/index.js":
-/*!*******************************************!*\
-  !*** ./parts/Light/FullColorLED/index.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 class FullColorLED {
   constructor() {
@@ -19385,6 +18574,12 @@ class FullColorLED {
 
     this.keys = ['r', 'g', 'b', 'common', 'commonType'];
     this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
+  }
+
+  static info() {
+    return {
+      name: 'FullColorLED',
+    };
   }
 
   wired(obniz) {
@@ -19495,17 +18690,14 @@ class FullColorLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('FullColorLED', FullColorLED);
+if (typeof window === 'undefined') {
+  module.exports = FullColorLED;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Light/InfraredLED/index.js":
-/*!******************************************!*\
-  !*** ./parts/Light/InfraredLED/index.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class InfraredLED {
@@ -19514,6 +18706,12 @@ class InfraredLED {
     this.requiredKeys = ['anode'];
 
     this.dataSymbolLength = 0.07;
+  }
+
+  static info() {
+    return {
+      name: 'InfraredLED',
+    };
   }
 
   wired(obniz) {
@@ -19538,17 +18736,14 @@ class InfraredLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('InfraredLED', InfraredLED);
+if (true) {
+  module.exports = InfraredLED;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Light/LED/index.js":
-/*!**********************************!*\
-  !*** ./parts/Light/LED/index.js ***!
-  \**********************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class LED {
@@ -19557,6 +18752,12 @@ class LED {
     this.requiredKeys = ['anode'];
 
     this.animationName = 'Led-' + Math.round(Math.random() * 1000);
+  }
+
+  static info() {
+    return {
+      name: 'LED',
+    };
   }
 
   wired(obniz) {
@@ -19617,23 +18818,26 @@ class LED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LED', LED);
+if (true) {
+  module.exports = LED;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Light/WS2811/index.js":
-/*!*************************************!*\
-  !*** ./parts/Light/WS2811/index.js ***!
-  \*************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class WS2811 {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'WS2811',
+    };
   }
 
   wired(obniz) {
@@ -19751,23 +18955,26 @@ class WS2811 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2811', WS2811);
+if (true) {
+  module.exports = WS2811;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Light/WS2812/index.js":
-/*!*************************************!*\
-  !*** ./parts/Light/WS2812/index.js ***!
-  \*************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class WS2812 {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'USB',
+    };
   }
 
   wired(obniz) {
@@ -19884,23 +19091,26 @@ class WS2812 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2812', WS2812);
+if (true) {
+  module.exports = WS2812;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Light/WS2812B/index.js":
-/*!**************************************!*\
-  !*** ./parts/Light/WS2812B/index.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class WS2812B {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'WS2812B',
+    };
   }
 
   wired(obniz) {
@@ -20017,17 +19227,14 @@ class WS2812B {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2812B', WS2812B);
+if (true) {
+  module.exports = WS2812B;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Logic/SNx4HC595/index.js":
-/*!****************************************!*\
-  !*** ./parts/Logic/SNx4HC595/index.js ***!
-  \****************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class SNx4HC595 {
@@ -20039,8 +19246,19 @@ class SNx4HC595 {
     this.autoFlash = true;
   }
 
+  static info() {
+    return {
+      name: 'SNx4HC595',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
+
+    if (this.obniz.isValidIO(this.params.oe)) {
+      this.io_oe = this.obniz.getIO(this.params.oe);
+      this.io_oe.output(true);
+    }
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
@@ -20048,10 +19266,6 @@ class SNx4HC595 {
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
 
-    if (this.obniz.isValidIO(this.params.oe)) {
-      this.io_oe = this.obniz.getIO(this.params.oe);
-      this.io_oe.output(true);
-    }
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);
       this.io_srclr.output(true);
@@ -20143,34 +19357,35 @@ class SNx4HC595 {
   flush() {
     /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
     this.io_rclk.output(false);
-    let array = [];
     for (let i = this.io.length - 1; i >= 0; i--) {
-      this.io_srclk.output(false);
-      array.push(this.io[i].value);
       this.io_ser.output(this.io[i].value);
       this.io_srclk.output(true);
+      this.io_srclk.output(false);
     }
     this.io_rclk.output(true);
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SNx4HC595', SNx4HC595);
+if (true) {
+  module.exports = SNx4HC595;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Memory/24LC256/index.js":
-/*!***************************************!*\
-  !*** ./parts/Memory/24LC256/index.js ***!
-  \***************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class _24LC256 {
   constructor() {
     this.requiredKeys = ['address'];
     this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
+  }
+
+  static info() {
+    return {
+      name: '24LC256',
+    };
   }
 
   wired(obniz) {
@@ -20199,23 +19414,26 @@ class _24LC256 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('24LC256', _24LC256);
+if (true) {
+  module.exports = _24LC256;
+}
 
 
 /***/ }),
 
 /***/ "./parts/MovementSensor/Button/index.js":
-/*!**********************************************!*\
-  !*** ./parts/MovementSensor/Button/index.js ***!
-  \**********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
     this.required = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'Button',
+    };
   }
 
   wired(obniz) {
@@ -20244,17 +19462,14 @@ class Button {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Button', Button);
+if (true) {
+  module.exports = Button;
+}
 
 
 /***/ }),
 
 /***/ "./parts/MovementSensor/JoyStick/index.js":
-/*!************************************************!*\
-  !*** ./parts/MovementSensor/JoyStick/index.js ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class JoyStick {
@@ -20264,6 +19479,12 @@ class JoyStick {
     this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
     this.pinname = { sw: 'sw12' };
     this.shortName = 'joyS';
+  }
+
+  static info() {
+    return {
+      name: 'JoyStick',
+    };
   }
 
   wired(obniz) {
@@ -20306,23 +19527,26 @@ class JoyStick {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('JoyStick', JoyStick);
+if (true) {
+  module.exports = JoyStick;
+}
 
 
 /***/ }),
 
 /***/ "./parts/MovementSensor/KXR94-2050/index.js":
-/*!**************************************************!*\
-  !*** ./parts/MovementSensor/KXR94-2050/index.js ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class KXR94_2050 {
   constructor() {
     this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
     this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  static info() {
+    return {
+      name: 'KXR94_2050',
+    };
   }
 
   wired(obniz) {
@@ -20409,23 +19633,26 @@ class KXR94_2050 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('KXR94_2050', KXR94_2050);
+if (true) {
+  module.exports = KXR94_2050;
+}
 
 
 /***/ }),
 
 /***/ "./parts/MovementSensor/KXSC7-2050/index.js":
-/*!**************************************************!*\
-  !*** ./parts/MovementSensor/KXSC7-2050/index.js ***!
-  \**************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class KXSC7_2050 {
   constructor() {
     this.keys = ['x', 'y', 'z', 'vcc', 'gnd'];
     this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  static info() {
+    return {
+      name: 'KXSC7_2050',
+    };
   }
 
   async wired(obniz) {
@@ -20467,23 +19694,26 @@ class KXSC7_2050 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('KXSC7_2050', KXSC7_2050);
+if (true) {
+  module.exports = KXSC7_2050;
+}
 
 
 /***/ }),
 
 /***/ "./parts/MovementSensor/PaPIRsVZ/index.js":
-/*!************************************************!*\
-  !*** ./parts/MovementSensor/PaPIRsVZ/index.js ***!
-  \************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class PaPIRsVZ {
   constructor() {
     this.keys = ['vcc', 'gnd', 'signal'];
     this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'PaPIRsVZ',
+    };
   }
 
   wired(obniz) {
@@ -20501,17 +19731,14 @@ class PaPIRsVZ {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('PaPIRsVZ', PaPIRsVZ);
+if (true) {
+  module.exports = PaPIRsVZ;
+}
 
 
 /***/ }),
 
 /***/ "./parts/MovementSensor/Potentiometer/index.js":
-/*!*****************************************************!*\
-  !*** ./parts/MovementSensor/Potentiometer/index.js ***!
-  \*****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class Potentiometer {
@@ -20520,6 +19747,12 @@ class Potentiometer {
     this.reuiredKeys = ['pin0', 'pin1', 'pin2'];
 
     this.vcc_voltage = 5.0;
+  }
+
+  static info() {
+    return {
+      name: 'Potentiometer',
+    };
   }
 
   wired(obniz) {
@@ -20541,23 +19774,26 @@ class Potentiometer {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Potentiometer', Potentiometer);
+if (true) {
+  module.exports = Potentiometer;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Moving/DCMotor/index.js":
-/*!***************************************!*\
-  !*** ./parts/Moving/DCMotor/index.js ***!
-  \***************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class DCMotor {
   constructor() {
     this.keys = ['forward', 'back'];
     this.requiredKeys = ['forward', 'back'];
+  }
+
+  static info() {
+    return {
+      name: 'DCMotor',
+    };
   }
 
   wired(obniz) {
@@ -20634,23 +19870,26 @@ class DCMotor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('DCMotor', DCMotor);
+if (true) {
+  module.exports = DCMotor;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Moving/ServoMotor/index.js":
-/*!******************************************!*\
-  !*** ./parts/Moving/ServoMotor/index.js ***!
-  \******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class ServoMotor {
   constructor() {
     this.keys = ['gnd', 'vcc', 'signal'];
     this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'ServoMotor',
+    };
   }
 
   wired(obniz) {
@@ -20690,23 +19929,26 @@ class ServoMotor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ServoMotor', ServoMotor);
+if (true) {
+  module.exports = ServoMotor;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Moving/Solenoid/index.js":
-/*!****************************************!*\
-  !*** ./parts/Moving/Solenoid/index.js ***!
-  \****************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class Solenoid {
   constructor() {
     this.keys = ['gnd', 'signal'];
     this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'Solenoid',
+    };
   }
 
   wired(obniz) {
@@ -20748,17 +19990,14 @@ class Solenoid {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Solenoid', Solenoid);
+if (true) {
+  module.exports = Solenoid;
+}
 
 
 /***/ }),
 
 /***/ "./parts/PressureSensor/FSR-40X/index.js":
-/*!***********************************************!*\
-  !*** ./parts/PressureSensor/FSR-40X/index.js ***!
-  \***********************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 //Todo:抵抗を追加して圧力(kg)を求められるように改造する
@@ -20767,6 +20006,12 @@ class FSR40X {
   constructor() {
     this.keys = ['pin0', 'pin1'];
     this.requiredKeys = ['pin0', 'pin1'];
+  }
+
+  static info() {
+    return {
+      name: 'FSR40X',
+    };
   }
 
   wired(obniz) {
@@ -20789,23 +20034,26 @@ class FSR40X {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('FSR40X', FSR40X);
+if (true) {
+  module.exports = FSR40X;
+}
 
 
 /***/ }),
 
 /***/ "./parts/SoilSensor/SEN0114/index.js":
-/*!*******************************************!*\
-  !*** ./parts/SoilSensor/SEN0114/index.js ***!
-  \*******************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class SEN0114 {
   constructor() {
     this.keys = ['vcc', 'output', 'gnd'];
     this.requiredKeys = ['output'];
+  }
+
+  static info() {
+    return {
+      name: 'SEN0114',
+    };
   }
 
   wired(obniz) {
@@ -20827,23 +20075,26 @@ class SEN0114 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SEN0114', SEN0114);
+if (true) {
+  module.exports = SEN0114;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Sound/Speaker/index.js":
-/*!**************************************!*\
-  !*** ./parts/Sound/Speaker/index.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class Speaker {
   constructor(obniz) {
     this.keys = ['signal', 'gnd'];
     this.requiredKeys = ['gnd'];
+  }
+
+  static info() {
+    return {
+      name: 'Speaker',
+    };
   }
 
   wired(obniz) {
@@ -20867,17 +20118,14 @@ class Speaker {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Speaker', Speaker);
+if (true) {
+  module.exports = Speaker;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js":
-/*!******************************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/AnalogTempratureSensor.js ***!
-  \******************************************************************/
-/*! no static exports found */
 /***/ (function(module, exports) {
 
 class AnalogTemplatureSensor {
@@ -20913,36 +20161,40 @@ module.exports = AnalogTemplatureSensor;
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/LM35DZ/index.js":
-/*!********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/LM35DZ/index.js ***!
-  \********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 class LM35DZ extends AnalogTemplatureSensor {
   calc(voltage) {
     return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }
+  static info() {
+    return {
+      name: 'LM35DZ',
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM35DZ', LM35DZ);
+if (true) {
+  module.exports = LM35DZ;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/LM60/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/LM60/index.js ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class LM60 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'output'];
     this.requiredKeys = ['output'];
+  }
+
+  static info() {
+    return {
+      name: 'LM60',
+    };
   }
 
   wired(obniz) {
@@ -20960,83 +20212,87 @@ class LM60 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM60', LM60);
+if (true) {
+  module.exports = LM60;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/LM61/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/LM61/index.js ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 class LM61 extends AnalogTemplatureSensor {
   calc(voltage) {
     return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
+  static info() {
+    return {
+      name: 'LM61',
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM61', LM61);
+if (true) {
+  module.exports = LM61;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/MCP9700/index.js":
-/*!*********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/MCP9700/index.js ***!
-  \*********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 class MCP9700 extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
+
+  static info() {
+    return {
+      name: 'MCP9700',
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MCP9700', MCP9700);
+if (true) {
+  module.exports = MCP9700;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/MCP9701/index.js":
-/*!*********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/MCP9701/index.js ***!
-  \*********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 class MCP9701 extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
+  static info() {
+    return {
+      name: 'MCP9701',
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MCP9701', MCP9701);
+if (true) {
+  module.exports = MCP9701;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/S8100B/index.js":
-/*!********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/S8100B/index.js ***!
-  \********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 //センサから出力が無い(出力インピーダンス高すぎ？)
 
@@ -21044,22 +20300,24 @@ class S8100B extends AnalogTemplatureSensor {
   calc(voltage) {
     return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
   }
+  static info() {
+    return {
+      name: 'S8100B',
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S8100B', S8100B);
+if (true) {
+  module.exports = S8100B;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/analog/S8120C/index.js":
-/*!********************************************************!*\
-  !*** ./parts/TemperatureSensor/analog/S8120C/index.js ***!
-  \********************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
 //不調, 正しく測れるときもある...
 //原因1:obnizの入力インピーダンスが低すぎる?
@@ -21069,25 +20327,33 @@ class S8120C extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
+  static info() {
+    return {
+      name: 'S8120C',
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S8120C', S8120C);
+if (true) {
+  module.exports = S8120C;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/i2c/ADT7410/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/i2c/ADT7410/index.js ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class ADT7410 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sda', 'scl', 'addressMode'];
     this.requiredKeys = ['addressMode'];
+  }
+
+  static info() {
+    return {
+      name: 'ADT7410',
+    };
   }
 
   wired(obniz) {
@@ -21122,17 +20388,14 @@ class ADT7410 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ADT7410', ADT7410);
+if (true) {
+  module.exports = ADT7410;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/i2c/S-5851A/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/i2c/S-5851A/index.js ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 //センサからの反応なし
@@ -21140,6 +20403,12 @@ class S5851A {
   constructor() {
     this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
     this.keys = ['sda', 'scl', 'adr0', 'adr1', 'adr_select', 'i2c'];
+  }
+
+  static info() {
+    return {
+      name: 'S5851A',
+    };
   }
 
   wired(obniz) {
@@ -21228,17 +20497,14 @@ class S5851A {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S5851A', S5851A);
+if (true) {
+  module.exports = S5851A;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/i2c/SHT31/index.js":
-/*!****************************************************!*\
-  !*** ./parts/TemperatureSensor/i2c/SHT31/index.js ***!
-  \****************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class SHT31 {
@@ -21274,6 +20540,12 @@ class SHT31 {
 
     //not tested
     this.commands.readStatus = [0xf3, 0x2d];
+  }
+
+  static info() {
+    return {
+      name: 'SHT31',
+    };
   }
 
   wired(obniz) {
@@ -21322,17 +20594,14 @@ class SHT31 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SHT31', SHT31);
+if (true) {
+  module.exports = SHT31;
+}
 
 
 /***/ }),
 
 /***/ "./parts/TemperatureSensor/spi/ADT7310/index.js":
-/*!******************************************************!*\
-  !*** ./parts/TemperatureSensor/spi/ADT7310/index.js ***!
-  \******************************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class ADT7310 {
@@ -21340,7 +20609,14 @@ class ADT7310 {
     this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
     this.requiredKeys = [];
   }
-  async wired(obniz) {
+
+  static info() {
+    return {
+      name: 'ADT7310',
+    };
+  }
+
+  wired(obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -21369,23 +20645,26 @@ class ADT7310 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ADT7310', ADT7310);
+if (true) {
+  module.exports = ADT7310;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Wireless/RN42/index.js":
-/*!**************************************!*\
-  !*** ./parts/Wireless/RN42/index.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class RN42 {
   constructor() {
     this.keys = ['tx', 'rx', 'gnd'];
     this.requiredKeys = ['tx', 'rx'];
+  }
+
+  static info() {
+    return {
+      name: 'RN42',
+    };
   }
 
   wired(obniz) {
@@ -21582,19 +20861,14 @@ class RN42 {
   }
 }
 
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('RN42', RN42);
+if (true) {
+  module.exports = RN42;
+}
 
 
 /***/ }),
 
 /***/ "./parts/Wireless/XBee/index.js":
-/*!**************************************!*\
-  !*** ./parts/Wireless/XBee/index.js ***!
-  \**************************************/
-/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 class XBee {
@@ -21603,6 +20877,12 @@ class XBee {
     this.requiredKeys = ['tx', 'rx'];
 
     this.displayIoNames = { tx: '<tx', rx: '>rx' };
+  }
+
+  static info() {
+    return {
+      name: 'XBee',
+    };
   }
 
   wired(obniz) {
@@ -21743,8 +21023,9 @@ class XBee {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('XBee', XBee);
+if (true) {
+  module.exports = XBee;
+}
 
 
 /***/ })

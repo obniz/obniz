@@ -4,6 +4,12 @@ class RN42 {
     this.requiredKeys = ['tx', 'rx'];
   }
 
+  static info() {
+    return {
+      name: 'RN42',
+    };
+  }
+
   wired(obniz) {
     if (obniz.isValidIO(this.params.gnd)) {
       obniz.getIO(this.params.gnd).output(false);
@@ -198,7 +204,6 @@ class RN42 {
   }
 }
 
-// Module functions
-
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('RN42', RN42);
+if (typeof module === 'object') {
+  module.exports = RN42;
+}

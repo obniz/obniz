@@ -10,6 +10,12 @@ class AE_MICAMP {
     };
   }
 
+  static info() {
+    return {
+      name: 'AE_MICAMP',
+    };
+  }
+
   async wired(obniz) {
     this.obniz = obniz;
 
@@ -25,6 +31,10 @@ class AE_MICAMP {
       }
     });
   }
+}
+
+if (typeof window === 'undefined') {
+  module.exports = AE_MICAMP;
 }
 
 /*
@@ -56,6 +66,3 @@ AE_MICAMP.prototype.Average = function(callback) {
   this.average = callback;
 };
 */
-
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);

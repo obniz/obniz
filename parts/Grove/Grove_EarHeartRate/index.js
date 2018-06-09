@@ -13,6 +13,12 @@ class Grove_EarHeartRate {
     this.duration = 2.5 * 1000;
   }
 
+  static info() {
+    return {
+      name: 'Grove_EarHeartRate',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -43,5 +49,6 @@ class Grove_EarHeartRate {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('Grove_EarHeartRate', Grove_EarHeartRate);
+if (typeof window === 'undefined') {
+  module.exports = Grove_EarHeartRate;
+}

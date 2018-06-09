@@ -8,7 +8,13 @@ class S8120C extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
+  static info() {
+    return {
+      name: 'S8120C',
+    };
+  }
 }
 
-let Obniz = require('../../../../obniz/index.js');
-Obniz.PartsRegistrate('S8120C', S8120C);
+if (typeof module === 'object') {
+  module.exports = S8120C;
+}
