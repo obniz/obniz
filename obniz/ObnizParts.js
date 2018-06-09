@@ -15,7 +15,6 @@ module.exports = class ObnizParts extends ObnizConnection {
   static PartsRegistrate(arg0, arg1) {
     if (
       arg0 &&
-      typeof arg0 === 'object' &&
       typeof arg0.info === 'function' &&
       typeof arg0.info().name === 'string'
     ) {

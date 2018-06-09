@@ -12,6 +12,6 @@ class MCP9700 extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = MCP9700;
 }

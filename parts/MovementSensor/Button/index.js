@@ -36,6 +36,6 @@ class Button {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = Button;
 }

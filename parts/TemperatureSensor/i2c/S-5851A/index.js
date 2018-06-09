@@ -97,6 +97,6 @@ class S5851A {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = S5851A;
 }

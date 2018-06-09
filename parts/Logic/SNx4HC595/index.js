@@ -127,6 +127,6 @@ class SNx4HC595 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = SNx4HC595;
 }

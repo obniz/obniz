@@ -13,6 +13,6 @@ class S8100B extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = S8100B;
 }

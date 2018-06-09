@@ -124,6 +124,6 @@ class WS2812 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = WS2812;
 }

@@ -10,6 +10,6 @@ class LM35DZ extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = LM35DZ;
 }

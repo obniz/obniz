@@ -32,6 +32,6 @@ class FSR40X {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = FSR40X;
 }

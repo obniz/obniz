@@ -32,6 +32,6 @@ class USB {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = USB;
 }

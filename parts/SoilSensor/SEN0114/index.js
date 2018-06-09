@@ -29,6 +29,6 @@ class SEN0114 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = SEN0114;
 }

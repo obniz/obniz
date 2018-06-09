@@ -15,6 +15,6 @@ class S8120C extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = S8120C;
 }

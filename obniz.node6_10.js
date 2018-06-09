@@ -2716,7 +2716,7 @@ module.exports = class ObnizParts extends ObnizConnection {
   }
 
   static PartsRegistrate(arg0, arg1) {
-    if (arg0 && typeof arg0 === 'object' && typeof arg0.info === 'function' && typeof arg0.info().name === 'string') {
+    if (arg0 && typeof arg0.info === 'function' && typeof arg0.info().name === 'string') {
       _parts[arg0.info().name] = arg0;
     } else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
       _parts[arg0] = arg1;
@@ -3190,6 +3190,7 @@ __webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! 
 if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
+
 let context = __webpack_require__("./parts sync recursive \\.js$"); /* webpack loader */
 for (let path of context.keys()) {
   const anParts = context(path);
@@ -11622,7 +11623,7 @@ class USB {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = USB;
 }
 
@@ -12881,7 +12882,7 @@ class InfraredLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = InfraredLED;
 }
 
@@ -12966,7 +12967,7 @@ class LED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = LED;
 }
 
@@ -13105,7 +13106,7 @@ class WS2811 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = WS2811;
 }
 
@@ -13243,7 +13244,7 @@ class WS2812 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = WS2812;
 }
 
@@ -13381,7 +13382,7 @@ class WS2812B {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = WS2812B;
 }
 
@@ -13523,7 +13524,7 @@ class SNx4HC595 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = SNx4HC595;
 }
 
@@ -13583,7 +13584,7 @@ class _24LC256 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _24LC256;
 }
 
@@ -13643,7 +13644,7 @@ class Button {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Button;
 }
 
@@ -13720,7 +13721,7 @@ class JoyStick {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = JoyStick;
 }
 
@@ -13836,7 +13837,7 @@ class KXR94_2050 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = KXR94_2050;
 }
 
@@ -13909,7 +13910,7 @@ class KXSC7_2050 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = KXSC7_2050;
 }
 
@@ -13952,7 +13953,7 @@ class PaPIRsVZ {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = PaPIRsVZ;
 }
 
@@ -14001,7 +14002,7 @@ class Potentiometer {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Potentiometer;
 }
 
@@ -14103,7 +14104,7 @@ class DCMotor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = DCMotor;
 }
 
@@ -14168,7 +14169,7 @@ class ServoMotor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = ServoMotor;
 }
 
@@ -14235,7 +14236,7 @@ class Solenoid {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Solenoid;
 }
 
@@ -14285,7 +14286,7 @@ class FSR40X {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = FSR40X;
 }
 
@@ -14338,7 +14339,7 @@ class SEN0114 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = SEN0114;
 }
 
@@ -14387,7 +14388,7 @@ class Speaker {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Speaker;
 }
 
@@ -14454,7 +14455,7 @@ class LM35DZ extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = LM35DZ;
 }
 
@@ -14497,7 +14498,7 @@ class LM60 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = LM60;
 }
 
@@ -14526,7 +14527,7 @@ class LM61 extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = LM61;
 }
 
@@ -14556,7 +14557,7 @@ class MCP9700 extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = MCP9700;
 }
 
@@ -14585,7 +14586,7 @@ class MCP9701 extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = MCP9701;
 }
 
@@ -14616,7 +14617,7 @@ class S8100B extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = S8100B;
 }
 
@@ -14649,7 +14650,7 @@ class S8120C extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = S8120C;
 }
 
@@ -14715,7 +14716,7 @@ class ADT7410 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = ADT7410;
 }
 
@@ -14838,7 +14839,7 @@ class S5851A {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = S5851A;
 }
 
@@ -14950,7 +14951,7 @@ class SHT31 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = SHT31;
 }
 
@@ -15013,7 +15014,7 @@ class ADT7310 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = ADT7310;
 }
 
@@ -15219,7 +15220,7 @@ class RN42 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = RN42;
 }
 
@@ -15387,7 +15388,7 @@ class XBee {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = XBee;
 }
 

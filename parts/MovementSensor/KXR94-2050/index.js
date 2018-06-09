@@ -94,6 +94,6 @@ class KXR94_2050 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = KXR94_2050;
 }

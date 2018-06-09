@@ -49,6 +49,6 @@ class KXSC7_2050 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = KXSC7_2050;
 }

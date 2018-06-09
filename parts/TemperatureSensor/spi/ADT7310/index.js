@@ -39,6 +39,6 @@ class ADT7310 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = ADT7310;
 }

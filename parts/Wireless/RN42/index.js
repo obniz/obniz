@@ -204,6 +204,6 @@ class RN42 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = RN42;
 }

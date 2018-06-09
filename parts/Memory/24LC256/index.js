@@ -36,6 +36,6 @@ class _24LC256 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = _24LC256;
 }

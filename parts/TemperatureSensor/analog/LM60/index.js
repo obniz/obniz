@@ -25,6 +25,6 @@ class LM60 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = LM60;
 }

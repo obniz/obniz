@@ -85,6 +85,6 @@ class SHT31 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = SHT31;
 }

@@ -11,6 +11,6 @@ class LM61 extends AnalogTemplatureSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = LM61;
 }

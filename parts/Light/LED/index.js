@@ -70,6 +70,6 @@ class LED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = LED;
 }

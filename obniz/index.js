@@ -142,6 +142,7 @@ require.context = require('./libs/webpackReplace/require-context');
 if (require.context && require.context.setBaseDir) {
   require.context.setBaseDir(__dirname);
 }
+
 let context = require.context('../parts', true, /\.js$/); /* webpack loader */
 for (let path of context.keys()) {
   const anParts = context(path);
