@@ -5,7 +5,7 @@ const ObnizApi = require('./ObnizApi');
 
 const isNode = typeof window === 'undefined';
 
-module.exports = class Obniz extends ObnizUIs {
+class Obniz extends ObnizUIs {
   constructor(id, options) {
     super(id, options);
   }
@@ -113,7 +113,9 @@ module.exports = class Obniz extends ObnizUIs {
   static get api() {
     return ObnizApi;
   }
-};
+}
+
+module.exports = Obniz;
 
 /*===================*/
 /* Utils */
@@ -135,11 +137,15 @@ if (!isNode) {
 /*===================*/
 /* ReadParts */
 /*===================*/
+
 require.context = require('./libs/webpackReplace/require-context');
 if (require.context && require.context.setBaseDir) {
   require.context.setBaseDir(__dirname);
 }
-let context = require.context('../parts', true, /\.js$/);
+let context = require.context('../parts', true, /\.js$/); /* webpack loader */
 for (let path of context.keys()) {
-  context(path);
+  const anParts = context(path);
+  if (anParts.info) {
+    Obniz.PartsRegistrate(anParts);
+  }
 }

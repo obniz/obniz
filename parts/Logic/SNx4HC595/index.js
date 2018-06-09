@@ -7,6 +7,12 @@ class SNx4HC595 {
     this.autoFlash = true;
   }
 
+  static info() {
+    return {
+      name: 'SNx4HC595',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -121,5 +127,6 @@ class SNx4HC595 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('SNx4HC595', SNx4HC595);
+if (typeof window === 'undefined') {
+  module.exports = SNx4HC595;
+}

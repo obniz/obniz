@@ -6,6 +6,12 @@ class FSR40X {
     this.requiredKeys = ['pin0', 'pin1'];
   }
 
+  static info() {
+    return {
+      name: 'FSR40X',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -26,5 +32,6 @@ class FSR40X {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('FSR40X', FSR40X);
+if (typeof window === 'undefined') {
+  module.exports = FSR40X;
+}

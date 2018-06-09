@@ -4,6 +4,12 @@ class KXR94_2050 {
     this.requiredKeys = ['x', 'y', 'z'];
   }
 
+  static info() {
+    return {
+      name: 'KXR94_2050',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -88,5 +94,6 @@ class KXR94_2050 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('KXR94_2050', KXR94_2050);
+if (typeof window === 'undefined') {
+  module.exports = KXR94_2050;
+}

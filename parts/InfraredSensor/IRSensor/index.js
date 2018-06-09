@@ -11,6 +11,12 @@ class IRSensor {
     this.output_pullup = true;
   }
 
+  static info() {
+    return {
+      name: 'IRSensor',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -58,5 +64,6 @@ class IRSensor {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('IRSensor', IRSensor);
+if (typeof window === 'undefined') {
+  module.exports = IRSensor;
+}

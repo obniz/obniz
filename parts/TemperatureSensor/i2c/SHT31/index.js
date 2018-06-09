@@ -33,6 +33,12 @@ class SHT31 {
     this.commands.readStatus = [0xf3, 0x2d];
   }
 
+  static info() {
+    return {
+      name: 'SHT31',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -79,5 +85,6 @@ class SHT31 {
   }
 }
 
-let Obniz = require('../../../../obniz/index.js');
-Obniz.PartsRegistrate('SHT31', SHT31);
+if (typeof window === 'undefined') {
+  module.exports = SHT31;
+}

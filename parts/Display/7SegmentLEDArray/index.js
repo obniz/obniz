@@ -6,6 +6,12 @@ class _7SegmentLEDArray {
     this.requiredKeys = this.keys;
   }
 
+  static info() {
+    return {
+      name: '7SegmentLEDArray',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -53,5 +59,6 @@ class _7SegmentLEDArray {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('7SegmentLEDArray', _7SegmentLEDArray);
+if (typeof window === 'undefined') {
+  module.exports = _7SegmentLEDArray;
+}

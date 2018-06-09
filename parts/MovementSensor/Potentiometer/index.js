@@ -6,6 +6,12 @@ class Potentiometer {
     this.vcc_voltage = 5.0;
   }
 
+  static info() {
+    return {
+      name: 'Potentiometer',
+    };
+  }
+
   wired(obniz) {
     this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
     this.ad = obniz.getAD(this.params.pin1);
@@ -25,5 +31,6 @@ class Potentiometer {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('Potentiometer', Potentiometer);
+if (typeof window === 'undefined') {
+  module.exports = Potentiometer;
+}

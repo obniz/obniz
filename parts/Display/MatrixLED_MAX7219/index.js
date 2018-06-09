@@ -4,6 +4,12 @@ class MatrixLED_MAX7219 {
     this.requiredKeys = ['din', 'cs', 'clk'];
   }
 
+  static info() {
+    return {
+      name: 'MatrixLED_MAX7219',
+    };
+  }
+
   wired(obniz) {
     this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
@@ -125,5 +131,6 @@ class MatrixLED_MAX7219 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
+if (typeof window === 'undefined') {
+  module.exports = MatrixLED_MAX7219;
+}

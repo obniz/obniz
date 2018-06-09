@@ -4,6 +4,12 @@ class _24LC256 {
     this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
   }
 
+  static info() {
+    return {
+      name: '24LC256',
+    };
+  }
+
   wired(obniz) {
     this.params.mode = this.params.mode || 'master'; //for i2c
     this.params.clock = this.params.clock || 400 * 1000; //for i2c
@@ -30,5 +36,6 @@ class _24LC256 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('24LC256', _24LC256);
+if (typeof window === 'undefined') {
+  module.exports = _24LC256;
+}

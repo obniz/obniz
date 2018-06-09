@@ -41,6 +41,12 @@ class _7SegmentLED {
     };
   }
 
+  static info() {
+    return {
+      name: '7SegmentLED',
+    };
+  }
+
   wired(obniz) {
     function getIO(io) {
       if (io && typeof io === 'object') {
@@ -133,5 +139,6 @@ class _7SegmentLED {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('7SegmentLED', _7SegmentLED);
+if (typeof window === 'undefined') {
+  module.exports = _7SegmentLED;
+}

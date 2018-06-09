@@ -11,6 +11,12 @@ class GP2Y0A21YK0F {
     this._unit = 'mm';
   }
 
+  static info() {
+    return {
+      name: 'GP2Y0A21YK0F',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -50,5 +56,6 @@ class GP2Y0A21YK0F {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('GP2Y0A21YK0F', GP2Y0A21YK0F);
+if (typeof window === 'undefined') {
+  module.exports = GP2Y0A21YK0F;
+}

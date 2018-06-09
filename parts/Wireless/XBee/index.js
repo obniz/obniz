@@ -6,6 +6,12 @@ class XBee {
     this.displayIoNames = { tx: '<tx', rx: '>rx' };
   }
 
+  static info() {
+    return {
+      name: 'XBee',
+    };
+  }
+
   wired(obniz) {
     this.uart = obniz.getFreeUart();
     this.currentCommand = null;
@@ -144,5 +150,6 @@ class XBee {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('XBee', XBee);
+if (typeof window === 'undefined') {
+  module.exports = XBee;
+}

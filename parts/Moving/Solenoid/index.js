@@ -4,6 +4,12 @@ class Solenoid {
     this.requiredKeys = ['signal'];
   }
 
+  static info() {
+    return {
+      name: 'Solenoid',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -43,5 +49,6 @@ class Solenoid {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('Solenoid', Solenoid);
+if (typeof window === 'undefined') {
+  module.exports = Solenoid;
+}

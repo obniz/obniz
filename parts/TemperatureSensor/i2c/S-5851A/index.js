@@ -5,6 +5,12 @@ class S5851A {
     this.keys = ['sda', 'scl', 'adr0', 'adr1', 'adr_select', 'i2c'];
   }
 
+  static info() {
+    return {
+      name: 'S5851A',
+    };
+  }
+
   wired(obniz) {
     //params: pwr, gnd, sda, scl, adr0, adr1, adr_select
     this.io_adr0 = obniz.getIO(this.params.adr0);
@@ -91,5 +97,6 @@ class S5851A {
   }
 }
 
-let Obniz = require('../../../../obniz/index.js');
-Obniz.PartsRegistrate('S5851A', S5851A);
+if (typeof window === 'undefined') {
+  module.exports = S5851A;
+}

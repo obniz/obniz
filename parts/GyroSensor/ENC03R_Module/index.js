@@ -5,6 +5,12 @@ class ENC03R_Module {
     this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
   }
 
+  static info() {
+    return {
+      name: 'ENC03R_Module',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -27,5 +33,6 @@ class ENC03R_Module {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('ENC03R_Module', ENC03R_Module);
+if (typeof window === 'undefined') {
+  module.exports = ENC03R_Module;
+}

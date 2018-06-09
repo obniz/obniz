@@ -3,7 +3,14 @@ class ADT7310 {
     this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
     this.requiredKeys = [];
   }
-  async wired(obniz) {
+
+  static info() {
+    return {
+      name: 'ADT7310',
+    };
+  }
+
+  wired(obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -32,5 +39,6 @@ class ADT7310 {
   }
 }
 
-let Obniz = require('../../../../obniz/index.js');
-Obniz.PartsRegistrate('ADT7310', ADT7310);
+if (typeof window === 'undefined') {
+  module.exports = ADT7310;
+}

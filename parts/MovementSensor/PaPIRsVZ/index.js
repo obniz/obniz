@@ -4,6 +4,12 @@ class PaPIRsVZ {
     this.requiredKeys = ['signal'];
   }
 
+  static info() {
+    return {
+      name: 'PaPIRsVZ',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.io_signal = obniz.getIO(this.params.signal);
@@ -19,5 +25,6 @@ class PaPIRsVZ {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('PaPIRsVZ', PaPIRsVZ);
+if (typeof window === 'undefined') {
+  module.exports = PaPIRsVZ;
+}

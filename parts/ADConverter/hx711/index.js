@@ -6,6 +6,12 @@ class hx711 {
     this.scale = 1;
   }
 
+  static info() {
+    return {
+      name: 'hx711',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.spi = obniz.getFreeSpi();
@@ -76,5 +82,6 @@ class hx711 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('hx711', hx711);
+if (typeof window === 'undefined') {
+  module.exports = hx711;
+}

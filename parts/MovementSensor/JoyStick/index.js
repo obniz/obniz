@@ -7,6 +7,12 @@ class JoyStick {
     this.shortName = 'joyS';
   }
 
+  static info() {
+    return {
+      name: 'JoyStick',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
 
@@ -47,5 +53,6 @@ class JoyStick {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('JoyStick', JoyStick);
+if (typeof window === 'undefined') {
+  module.exports = JoyStick;
+}

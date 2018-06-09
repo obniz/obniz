@@ -4,6 +4,12 @@ class Speaker {
     this.requiredKeys = ['gnd'];
   }
 
+  static info() {
+    return {
+      name: 'Speaker',
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(null, this.params.gnd, '5v');
@@ -25,5 +31,6 @@ class Speaker {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('Speaker', Speaker);
+if (typeof window === 'undefined') {
+  module.exports = Speaker;
+}

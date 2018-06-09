@@ -4,6 +4,12 @@ class Button {
     this.required = ['signal'];
   }
 
+  static info() {
+    return {
+      name: 'Button',
+    };
+  }
+
   wired(obniz) {
     this.io_signal = obniz.getIO(this.params.signal);
 
@@ -30,5 +36,6 @@ class Button {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('Button', Button);
+if (typeof window === 'undefined') {
+  module.exports = Button;
+}
