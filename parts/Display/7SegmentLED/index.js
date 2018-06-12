@@ -139,6 +139,6 @@ class _7SegmentLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = _7SegmentLED;
 }

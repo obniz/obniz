@@ -3053,7 +3053,10 @@ class Obniz extends ObnizUIs {
     let loop = (() => {
       var _ref = _asyncToGenerator(function* () {
         if (typeof self.looper === 'function') {
-          yield self.looper();
+          let prom = self.looper();
+          if (prom instanceof Promise) {
+            yield prom;
+          }
           setTimeout(loop, interval);
         }
       });
@@ -3191,7 +3194,8 @@ if (__webpack_require__("./obniz sync recursive").context && __webpack_require__
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
 
-let context = __webpack_require__("./parts sync recursive \\.js$"); /* webpack loader */
+let context = __webpack_require__("./parts sync recursive \\.js$");
+/* webpack loader */
 for (let path of context.keys()) {
   const anParts = context(path);
   if (anParts.info) {
@@ -5176,7 +5180,10 @@ class Display {
   font(font, size) {
     const ctx = this._ctx();
     if (typeof size !== 'number') {
-      size = 12;
+      size = 16;
+    }
+    if (typeof font !== 'string') {
+      font = 'Arial';
     }
     this.fontSize = size;
     ctx.font = '' + +' ' + size + 'px ' + font;
@@ -11573,7 +11580,7 @@ class hx711 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = hx711;
 }
 
@@ -11680,7 +11687,7 @@ class AE_MICAMP {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = AE_MICAMP;
 }
 
@@ -11942,7 +11949,7 @@ class JpegSerialCam {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = JpegSerialCam;
 }
 
@@ -12076,7 +12083,7 @@ class _7SegmentLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLED;
 }
 
@@ -12153,7 +12160,7 @@ class _7SegmentLEDArray {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLEDArray;
 }
 
@@ -12301,7 +12308,7 @@ class MatrixLED_MAX7219 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = MatrixLED_MAX7219;
 }
 
@@ -12375,7 +12382,7 @@ class GP2Y0A21YK0F {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = GP2Y0A21YK0F;
 }
 
@@ -12489,7 +12496,7 @@ class HCSR04 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = HCSR04;
 }
 
@@ -12556,7 +12563,7 @@ class Grove_EarHeartRate {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Grove_EarHeartRate;
 }
 
@@ -12607,7 +12614,7 @@ class ENC03R_Module {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = ENC03R_Module;
 }
 
@@ -12689,7 +12696,7 @@ class IRSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = IRSensor;
 }
 
@@ -12830,7 +12837,7 @@ class FullColorLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = FullColorLED;
 }
 
@@ -13421,11 +13428,11 @@ class SNx4HC595 {
       this.io_oe.output(true);
     }
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-
     this.io_ser = this.obniz.getIO(this.params.ser);
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);

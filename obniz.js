@@ -8448,12 +8448,17 @@ class Obniz extends ObnizUIs {
     this.looper = callback;
     let self = this;
     if (!interval) interval = 100;
+
     async function loop() {
       if (typeof self.looper === 'function') {
-        await self.looper();
+        let prom = self.looper();
+        if (prom instanceof Promise) {
+          await prom;
+        }
         setTimeout(loop, interval);
       }
     }
+
     loop();
   }
 
@@ -8573,7 +8578,8 @@ if (__webpack_require__("./obniz sync recursive").context && __webpack_require__
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
 
-let context = __webpack_require__("./parts sync recursive \\.js$"); /* webpack loader */
+let context = __webpack_require__("./parts sync recursive \\.js$");
+/* webpack loader */
 for (let path of context.keys()) {
   const anParts = context(path);
   if (anParts.info) {
@@ -10538,7 +10544,10 @@ class Display {
   font(font, size) {
     const ctx = this._ctx();
     if (typeof size !== 'number') {
-      size = 12;
+      size = 16;
+    }
+    if (typeof font !== 'string') {
+      font = 'Arial';
     }
     this.fontSize = size;
     ctx.font = '' + +' ' + size + 'px ' + font;
@@ -17405,7 +17414,7 @@ webpackContext.id = "./parts sync recursive \\.js$";
 /***/ }),
 
 /***/ "./parts/ADConverter/hx711/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class hx711 {
   constructor() {
@@ -17491,7 +17500,7 @@ class hx711 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = hx711;
 }
 
@@ -17543,7 +17552,7 @@ if (true) {
 /***/ }),
 
 /***/ "./parts/AudioSensor/AE_MICAMP/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class AE_MICAMP {
   constructor() {
@@ -17580,7 +17589,7 @@ class AE_MICAMP {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = AE_MICAMP;
 }
 
@@ -17618,7 +17627,7 @@ AE_MICAMP.prototype.Average = function(callback) {
 /***/ }),
 
 /***/ "./parts/Camera/JpegSerialCam/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class JpegSerialCam {
   constructor() {
@@ -17844,7 +17853,7 @@ class JpegSerialCam {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = JpegSerialCam;
 }
 
@@ -17852,7 +17861,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/Display/7SegmentLED/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class _7SegmentLED {
   constructor() {
@@ -17995,7 +18004,7 @@ class _7SegmentLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLED;
 }
 
@@ -18003,7 +18012,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/Display/7SegmentLEDArray/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class _7SegmentLEDArray {
   constructor() {
@@ -18066,7 +18075,7 @@ class _7SegmentLEDArray {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLEDArray;
 }
 
@@ -18074,7 +18083,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/Display/MatrixLED_MAX7219/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class MatrixLED_MAX7219 {
   constructor() {
@@ -18209,7 +18218,7 @@ class MatrixLED_MAX7219 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = MatrixLED_MAX7219;
 }
 
@@ -18217,7 +18226,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/DistanceSensor/GP2Y0A21YK0F/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class GP2Y0A21YK0F {
   constructor() {
@@ -18277,7 +18286,7 @@ class GP2Y0A21YK0F {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = GP2Y0A21YK0F;
 }
 
@@ -18285,7 +18294,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/DistanceSensor/HC-SR04/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class HCSR04 {
   constructor() {
@@ -18371,7 +18380,7 @@ class HCSR04 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = HCSR04;
 }
 
@@ -18379,7 +18388,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class Grove_EarHeartRate {
   constructor() {
@@ -18432,7 +18441,7 @@ class Grove_EarHeartRate {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Grove_EarHeartRate;
 }
 
@@ -18440,7 +18449,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/GyroSensor/ENC03R_Module/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class ENC03R_Module {
   constructor() {
@@ -18477,7 +18486,7 @@ class ENC03R_Module {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = ENC03R_Module;
 }
 
@@ -18485,7 +18494,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/InfraredSensor/IRSensor/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class IRSensor {
   constructor() {
@@ -18553,7 +18562,7 @@ class IRSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = IRSensor;
 }
 
@@ -18561,7 +18570,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/Light/FullColorLED/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class FullColorLED {
   constructor() {
@@ -18690,7 +18699,7 @@ class FullColorLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = FullColorLED;
 }
 
@@ -19260,11 +19269,11 @@ class SNx4HC595 {
       this.io_oe.output(true);
     }
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-
     this.io_ser = this.obniz.getIO(this.params.ser);
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);

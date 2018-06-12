@@ -49,6 +49,6 @@ class Grove_EarHeartRate {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = Grove_EarHeartRate;
 }

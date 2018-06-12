@@ -82,6 +82,6 @@ class hx711 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = hx711;
 }

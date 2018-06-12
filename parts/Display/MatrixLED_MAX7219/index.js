@@ -131,6 +131,6 @@ class MatrixLED_MAX7219 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = MatrixLED_MAX7219;
 }

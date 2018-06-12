@@ -82,6 +82,6 @@ class HCSR04 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = HCSR04;
 }

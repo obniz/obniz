@@ -56,6 +56,6 @@ class GP2Y0A21YK0F {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = GP2Y0A21YK0F;
 }

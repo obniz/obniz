@@ -18,12 +18,17 @@ class Obniz extends ObnizUIs {
     this.looper = callback;
     let self = this;
     if (!interval) interval = 100;
+
     async function loop() {
       if (typeof self.looper === 'function') {
-        await self.looper();
+        let prom = self.looper();
+        if (prom instanceof Promise) {
+          await prom;
+        }
         setTimeout(loop, interval);
       }
     }
+
     loop();
   }
 
@@ -143,7 +148,8 @@ if (require.context && require.context.setBaseDir) {
   require.context.setBaseDir(__dirname);
 }
 
-let context = require.context('../parts', true, /\.js$/); /* webpack loader */
+let context = require.context('../parts', true, /\.js$/);
+/* webpack loader */
 for (let path of context.keys()) {
   const anParts = context(path);
   if (anParts.info) {
