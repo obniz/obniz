@@ -125,6 +125,6 @@ class FullColorLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = FullColorLED;
 }

@@ -21,11 +21,11 @@ class SNx4HC595 {
       this.io_oe.output(true);
     }
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-
     this.io_ser = this.obniz.getIO(this.params.ser);
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);

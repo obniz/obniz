@@ -222,6 +222,6 @@ class JpegSerialCam {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = JpegSerialCam;
 }

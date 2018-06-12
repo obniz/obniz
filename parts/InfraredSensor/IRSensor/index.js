@@ -64,6 +64,6 @@ class IRSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = IRSensor;
 }
