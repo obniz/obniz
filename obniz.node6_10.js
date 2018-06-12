@@ -11576,7 +11576,7 @@ class hx711 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = hx711;
 }
 
@@ -11683,7 +11683,7 @@ class AE_MICAMP {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = AE_MICAMP;
 }
 
@@ -11945,7 +11945,7 @@ class JpegSerialCam {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = JpegSerialCam;
 }
 
@@ -12079,7 +12079,7 @@ class _7SegmentLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLED;
 }
 
@@ -12156,7 +12156,7 @@ class _7SegmentLEDArray {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLEDArray;
 }
 
@@ -12304,7 +12304,7 @@ class MatrixLED_MAX7219 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = MatrixLED_MAX7219;
 }
 
@@ -12378,7 +12378,7 @@ class GP2Y0A21YK0F {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = GP2Y0A21YK0F;
 }
 
@@ -12492,7 +12492,7 @@ class HCSR04 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = HCSR04;
 }
 
@@ -12559,7 +12559,7 @@ class Grove_EarHeartRate {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Grove_EarHeartRate;
 }
 
@@ -12610,7 +12610,7 @@ class ENC03R_Module {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = ENC03R_Module;
 }
 
@@ -12692,7 +12692,7 @@ class IRSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = IRSensor;
 }
 
@@ -12833,7 +12833,7 @@ class FullColorLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = FullColorLED;
 }
 
@@ -13424,11 +13424,11 @@ class SNx4HC595 {
       this.io_oe.output(true);
     }
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-
     this.io_ser = this.obniz.getIO(this.params.ser);
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);

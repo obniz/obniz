@@ -33,6 +33,6 @@ class ENC03R_Module {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = ENC03R_Module;
 }

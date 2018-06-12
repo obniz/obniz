@@ -17408,7 +17408,7 @@ webpackContext.id = "./parts sync recursive \\.js$";
 /***/ }),
 
 /***/ "./parts/ADConverter/hx711/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class hx711 {
   constructor() {
@@ -17420,8 +17420,8 @@ class hx711 {
 
   static info() {
     return {
-      name: 'hx711',
-    };
+      name: 'hx711'
+    }
   }
 
   wired(obniz) {
@@ -17494,7 +17494,7 @@ class hx711 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = hx711;
 }
 
@@ -17546,7 +17546,7 @@ if (true) {
 /***/ }),
 
 /***/ "./parts/AudioSensor/AE_MICAMP/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class AE_MICAMP {
   constructor() {
@@ -17562,8 +17562,8 @@ class AE_MICAMP {
 
   static info() {
     return {
-      name: 'AE_MICAMP',
-    };
+      name: 'AE_MICAMP'
+    }
   }
 
   async wired(obniz) {
@@ -17583,7 +17583,7 @@ class AE_MICAMP {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = AE_MICAMP;
 }
 
@@ -17621,7 +17621,7 @@ AE_MICAMP.prototype.Average = function(callback) {
 /***/ }),
 
 /***/ "./parts/Camera/JpegSerialCam/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class JpegSerialCam {
   constructor() {
@@ -17635,8 +17635,8 @@ class JpegSerialCam {
 
   static info() {
     return {
-      name: 'JpegSerialCam',
-    };
+      name: 'JpegSerialCam'
+    }
   }
 
   wired() {
@@ -17847,15 +17847,14 @@ class JpegSerialCam {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = JpegSerialCam;
 }
-
 
 /***/ }),
 
 /***/ "./parts/Display/7SegmentLED/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class _7SegmentLED {
   constructor() {
@@ -17902,8 +17901,8 @@ class _7SegmentLED {
 
   static info() {
     return {
-      name: '7SegmentLED',
-    };
+      name: '7SegmentLED'
+    }
   }
 
   wired(obniz) {
@@ -17998,7 +17997,7 @@ class _7SegmentLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLED;
 }
 
@@ -18006,7 +18005,7 @@ if (typeof window === 'undefined') {
 /***/ }),
 
 /***/ "./parts/Display/7SegmentLEDArray/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class _7SegmentLEDArray {
   constructor() {
@@ -18018,8 +18017,8 @@ class _7SegmentLEDArray {
 
   static info() {
     return {
-      name: '7SegmentLEDArray',
-    };
+      name: '7SegmentLEDArray'
+    }
   }
 
   wired(obniz) {
@@ -18069,15 +18068,14 @@ class _7SegmentLEDArray {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = _7SegmentLEDArray;
 }
-
 
 /***/ }),
 
 /***/ "./parts/Display/MatrixLED_MAX7219/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class MatrixLED_MAX7219 {
   constructor() {
@@ -18087,8 +18085,8 @@ class MatrixLED_MAX7219 {
 
   static info() {
     return {
-      name: 'MatrixLED_MAX7219',
-    };
+      name: 'MatrixLED_MAX7219'
+    }
   }
 
   wired(obniz) {
@@ -18212,15 +18210,14 @@ class MatrixLED_MAX7219 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = MatrixLED_MAX7219;
 }
-
 
 /***/ }),
 
 /***/ "./parts/DistanceSensor/GP2Y0A21YK0F/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class GP2Y0A21YK0F {
   constructor() {
@@ -18237,8 +18234,8 @@ class GP2Y0A21YK0F {
 
   static info() {
     return {
-      name: 'GP2Y0A21YK0F',
-    };
+      name: 'GP2Y0A21YK0F'
+    }
   }
 
   wired(obniz) {
@@ -18280,15 +18277,14 @@ class GP2Y0A21YK0F {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = GP2Y0A21YK0F;
 }
-
 
 /***/ }),
 
 /***/ "./parts/DistanceSensor/HC-SR04/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class HCSR04 {
   constructor() {
@@ -18303,8 +18299,8 @@ class HCSR04 {
 
   static info() {
     return {
-      name: 'HC-SR04',
-    };
+      name: 'HC-SR04'
+    }
   }
 
   wired(obniz) {
@@ -18374,15 +18370,14 @@ class HCSR04 {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = HCSR04;
 }
-
 
 /***/ }),
 
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class Grove_EarHeartRate {
   constructor() {
@@ -18401,8 +18396,8 @@ class Grove_EarHeartRate {
 
   static info() {
     return {
-      name: 'Grove_EarHeartRate',
-    };
+      name: 'Grove_EarHeartRate'
+    }
   }
 
   wired(obniz) {
@@ -18435,15 +18430,14 @@ class Grove_EarHeartRate {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = Grove_EarHeartRate;
 }
-
 
 /***/ }),
 
 /***/ "./parts/GyroSensor/ENC03R_Module/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class ENC03R_Module {
   constructor() {
@@ -18454,8 +18448,8 @@ class ENC03R_Module {
 
   static info() {
     return {
-      name: 'ENC03R_Module',
-    };
+      name: 'ENC03R_Module'
+    }
   }
 
   wired(obniz) {
@@ -18480,15 +18474,14 @@ class ENC03R_Module {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = ENC03R_Module;
 }
-
 
 /***/ }),
 
 /***/ "./parts/InfraredSensor/IRSensor/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class IRSensor {
   constructor() {
@@ -18505,8 +18498,8 @@ class IRSensor {
 
   static info() {
     return {
-      name: 'IRSensor',
-    };
+      name: 'IRSensor'
+    }
   }
 
   wired(obniz) {
@@ -18556,15 +18549,14 @@ class IRSensor {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = IRSensor;
 }
-
 
 /***/ }),
 
 /***/ "./parts/Light/FullColorLED/index.js":
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 class FullColorLED {
   constructor() {
@@ -18581,8 +18573,8 @@ class FullColorLED {
 
   static info() {
     return {
-      name: 'FullColorLED',
-    };
+      name: 'FullColorLED'
+    }
   }
 
   wired(obniz) {
@@ -18693,10 +18685,9 @@ class FullColorLED {
   }
 }
 
-if (typeof window === 'undefined') {
+if (true) {
   module.exports = FullColorLED;
 }
-
 
 /***/ }),
 
@@ -19263,11 +19254,12 @@ class SNx4HC595 {
       this.io_oe.output(true);
     }
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     this.io_ser = this.obniz.getIO(this.params.ser);
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);

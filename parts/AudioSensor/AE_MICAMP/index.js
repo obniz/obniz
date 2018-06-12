@@ -33,7 +33,7 @@ class AE_MICAMP {
   }
 }
 
-if (typeof window === 'undefined') {
+if (typeof module === 'object') {
   module.exports = AE_MICAMP;
 }
 
