@@ -42,10 +42,17 @@ obniz.display.print("YES. こんにちは");
  
 changing font.
 Options for fontFamily and fontSize depends on your browser.
+
+Default font is Arial 16px.
+If you set parameter null, using default font.
 ```javascript
 // Javascript Example
 obniz.display.font('Avenir',30)
 obniz.display.print("Avenir")
+
+
+obniz.display.font(null,30) //default font(Arial) 30px
+obniz.display.font('Avenir') //Avenir with default size(16px)
 ```
 ![](./images/obniz_display_samples3.jpg)
 ![](./images/obniz_display_samples2.jpg)
