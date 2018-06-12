@@ -5176,7 +5176,10 @@ class Display {
   font(font, size) {
     const ctx = this._ctx();
     if (typeof size !== 'number') {
-      size = 12;
+      size = 16;
+    }
+    if (typeof font !== 'string') {
+      font = 'Arial';
     }
     this.fontSize = size;
     ctx.font = '' + +' ' + size + 'px ' + font;
