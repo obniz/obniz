@@ -17420,8 +17420,8 @@ class hx711 {
 
   static info() {
     return {
-      name: 'hx711'
-    }
+      name: 'hx711',
+    };
   }
 
   wired(obniz) {
@@ -17562,8 +17562,8 @@ class AE_MICAMP {
 
   static info() {
     return {
-      name: 'AE_MICAMP'
-    }
+      name: 'AE_MICAMP',
+    };
   }
 
   async wired(obniz) {
@@ -17635,8 +17635,8 @@ class JpegSerialCam {
 
   static info() {
     return {
-      name: 'JpegSerialCam'
-    }
+      name: 'JpegSerialCam',
+    };
   }
 
   wired() {
@@ -17851,6 +17851,7 @@ if (true) {
   module.exports = JpegSerialCam;
 }
 
+
 /***/ }),
 
 /***/ "./parts/Display/7SegmentLED/index.js":
@@ -17901,8 +17902,8 @@ class _7SegmentLED {
 
   static info() {
     return {
-      name: '7SegmentLED'
-    }
+      name: '7SegmentLED',
+    };
   }
 
   wired(obniz) {
@@ -18017,8 +18018,8 @@ class _7SegmentLEDArray {
 
   static info() {
     return {
-      name: '7SegmentLEDArray'
-    }
+      name: '7SegmentLEDArray',
+    };
   }
 
   wired(obniz) {
@@ -18072,6 +18073,7 @@ if (true) {
   module.exports = _7SegmentLEDArray;
 }
 
+
 /***/ }),
 
 /***/ "./parts/Display/MatrixLED_MAX7219/index.js":
@@ -18085,8 +18087,8 @@ class MatrixLED_MAX7219 {
 
   static info() {
     return {
-      name: 'MatrixLED_MAX7219'
-    }
+      name: 'MatrixLED_MAX7219',
+    };
   }
 
   wired(obniz) {
@@ -18214,6 +18216,7 @@ if (true) {
   module.exports = MatrixLED_MAX7219;
 }
 
+
 /***/ }),
 
 /***/ "./parts/DistanceSensor/GP2Y0A21YK0F/index.js":
@@ -18234,8 +18237,8 @@ class GP2Y0A21YK0F {
 
   static info() {
     return {
-      name: 'GP2Y0A21YK0F'
-    }
+      name: 'GP2Y0A21YK0F',
+    };
   }
 
   wired(obniz) {
@@ -18281,6 +18284,7 @@ if (true) {
   module.exports = GP2Y0A21YK0F;
 }
 
+
 /***/ }),
 
 /***/ "./parts/DistanceSensor/HC-SR04/index.js":
@@ -18299,8 +18303,8 @@ class HCSR04 {
 
   static info() {
     return {
-      name: 'HC-SR04'
-    }
+      name: 'HC-SR04',
+    };
   }
 
   wired(obniz) {
@@ -18374,6 +18378,7 @@ if (true) {
   module.exports = HCSR04;
 }
 
+
 /***/ }),
 
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
@@ -18396,8 +18401,8 @@ class Grove_EarHeartRate {
 
   static info() {
     return {
-      name: 'Grove_EarHeartRate'
-    }
+      name: 'Grove_EarHeartRate',
+    };
   }
 
   wired(obniz) {
@@ -18434,6 +18439,7 @@ if (true) {
   module.exports = Grove_EarHeartRate;
 }
 
+
 /***/ }),
 
 /***/ "./parts/GyroSensor/ENC03R_Module/index.js":
@@ -18448,8 +18454,8 @@ class ENC03R_Module {
 
   static info() {
     return {
-      name: 'ENC03R_Module'
-    }
+      name: 'ENC03R_Module',
+    };
   }
 
   wired(obniz) {
@@ -18478,6 +18484,7 @@ if (true) {
   module.exports = ENC03R_Module;
 }
 
+
 /***/ }),
 
 /***/ "./parts/InfraredSensor/IRSensor/index.js":
@@ -18498,8 +18505,8 @@ class IRSensor {
 
   static info() {
     return {
-      name: 'IRSensor'
-    }
+      name: 'IRSensor',
+    };
   }
 
   wired(obniz) {
@@ -18553,6 +18560,7 @@ if (true) {
   module.exports = IRSensor;
 }
 
+
 /***/ }),
 
 /***/ "./parts/Light/FullColorLED/index.js":
@@ -18573,8 +18581,8 @@ class FullColorLED {
 
   static info() {
     return {
-      name: 'FullColorLED'
-    }
+      name: 'FullColorLED',
+    };
   }
 
   wired(obniz) {
@@ -18688,6 +18696,7 @@ class FullColorLED {
 if (true) {
   module.exports = FullColorLED;
 }
+
 
 /***/ }),
 
@@ -19253,7 +19262,6 @@ class SNx4HC595 {
       this.io_oe = this.obniz.getIO(this.params.oe);
       this.io_oe.output(true);
     }
-
 
     this.io_ser = this.obniz.getIO(this.params.ser);
     this.io_srclk = this.obniz.getIO(this.params.srclk);
