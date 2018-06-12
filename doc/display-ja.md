@@ -44,10 +44,16 @@ obniz.display.print("YES. こんにちは");
  
 フォントを変更します。
 利用できるフォントはプログラムを動かしているブラウザに依存します。
+
+デフォルトのフォントはArial 16pxです．
+nullを指定することで，デフォルトのフォントを使用します.
 ```javascript
 // Javascript Example
 obniz.display.font('Avenir',30)
 obniz.display.print("Avenir")
+
+obniz.display.font(null,30) //デフォルトフォント(Arial)の30px
+obniz.display.font('Avenir') //Avenirのデフォルトサイズ(16px)
 ```
 ![](./images/obniz_display_samples3.jpg)
 ![](./images/obniz_display_samples2.jpg)
