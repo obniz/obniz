@@ -3053,7 +3053,10 @@ class Obniz extends ObnizUIs {
     let loop = (() => {
       var _ref = _asyncToGenerator(function* () {
         if (typeof self.looper === 'function') {
-          yield self.looper();
+          let prom = self.looper();
+          if (prom instanceof Promise) {
+            yield prom;
+          }
           setTimeout(loop, interval);
         }
       });
@@ -3191,7 +3194,8 @@ if (__webpack_require__("./obniz sync recursive").context && __webpack_require__
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
 
-let context = __webpack_require__("./parts sync recursive \\.js$"); /* webpack loader */
+let context = __webpack_require__("./parts sync recursive \\.js$");
+/* webpack loader */
 for (let path of context.keys()) {
   const anParts = context(path);
   if (anParts.info) {
