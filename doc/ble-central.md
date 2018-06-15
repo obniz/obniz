@@ -57,6 +57,7 @@ Call this func when obniz find new peripheral.
 
 
 ```Javascript
+// Javascript Example
 
 obniz.ble.scan.onfind = function(peripheral){
    console.log(peripheral)
