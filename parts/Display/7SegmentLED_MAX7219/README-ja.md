@@ -6,23 +6,31 @@ MAX7219一つにつき最大8桁の7セグメントLEDを制御することが�
 
 ## wired(obniz,  { clk, cs, din, gnd, vcc});
 
-1. vcc: 電源のプラスです。
-2. gnd: 電源のマイナスです。
-3. din: SPIの MOSI ピンです。
-4. cs: チップ選択です。
+clk: SPIのCLKピンです。MAX7219のCLKピンへ接続してください。
+cs: チップ選択です。MAX7219のLOAD(CK)ピンへ接続してください。
+din: SPIの MOSI ピンです。MAX7219のDINピンへ接続してください。
+gnd: 電源のマイナスです。
+vcc: 電源のプラスです。
 
-チェーン状に複数繋ぐ場合は１つだけをobnizにつなぎ、残りはこのように接続して下さい。
+DIPタイプのMAX7219であれば、以下のような接続になります。
+<画像>
+一例として、下記のページで販売されている4桁7セグメントLEDの接続例を示します。
+http://akizukidenshi.com/catalog/goods/search.aspx?keyword=&maker=&goods=i&number=osl40391&name=%83J%83%5C%81%5B%83h&min_price=&max_price=&last_sdt=&sort=&style=T&search.x=0&search.y=0
+<画像>
+
+チェーン状につなぐ場合は最初の1つをObnizにつなぎ、2つ目以降はDINを前のDOUTにつないでください。
+obniz-DIN[1つ目のディスプレイ]DOUT-DIN[2つ目のディスプレイ]DOUT-~
 <画像>
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("7SegmentLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
+const segment = obniz.wired("7SegmentLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
 ```
 
-## init(numberOfDisplay, digits)
+## init(numberOfDisplays, digits)
 
 7セグメントLEDを初期化します。
-numberOfDisplayにディスプレイの個数(=MAX7219の個数)、
+numberOfDisplaysにディスプレイの個数(すなわちMAX7219の個数)、
 digitsにディスプレイ一つあたりの7セグメントLEDの桁数を指定します。
 4桁表示のディスプレイを1つ繋いだ場合はinit(1,4)となります。
 
@@ -41,73 +49,30 @@ valueに0~15の範囲で明るさを指定します。
 接続されているすべてのディスプレイの明るさを変更します。
 valueに0~15の範囲で明るさを指定します。
 
-## setNumber(number,dp,display,digit)
+## setNumber(display,digit,number,dp)
 7セグメントLEDを任意の数字に点灯します。
 display : 表示するディスプレイ番号を指定(0から始まります)
 digit : 表示する桁を指定します。(0から始まります)
 number :
-表示する数字を0~9で指定します。
-次の文字も指定できます:-(ハイフン),E,H,L,P
-消灯はoffを指定します。
+表示する数字を0~9で指定します。次の文字も指定できます:-(ハイフン),E,H,L,P
+何も指定しないか、offを指定すると消灯します。
 dp : ドット表示がある7セグメントLEDのドットの点灯/消灯を指定します。(点灯:true,消灯:false)
 
-ディスプレイ0の1桁目に5を表示,ドット消灯
-setNumber(5,false,0,0);
-ディスプレイ0の2桁目にEを表示,ドット消灯
-setNumber("e",false,0,1);
-ディスプレイ0の3桁目を消灯,ドットは点灯
-setNumber("off",true,0,3);
-
-//---------------編集中------------------------
 
 ```Javascript
 // Javascript Example
-const matrix = obniz.wired("7SegmentLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
-matrix.init(8*2, 8);
-matrix.brightness(7);
+const segment = obniz.wired("7SegmentLED_MAX7219",  { clk:0, cs:1, din:2, gnd:3, vcc:4});
+segment.init(1, 4); // 4桁のディスプレイを一つ接続
+segment.setNumber(0,0,5,false); // ディスプレイ0の1桁目に5を表示,ドット消灯
+segment.setNumber(0,1,"e",false); // ディスプレイ0の2桁目にEを表示,ドット消灯
+segment.setNumber(0,2,"off",true); // ディスプレイ0の3桁目を消灯,ドットは点灯
 ```
 
-## draw(ctx)
-HTML5のcanvasをそのまま描画します。html上でobnizを使っている場合は
+## clear(display)
+displayで指定したディスプレイの表示内容を消去します。
 
-```obniz.util.createCanvasContext()```
-
-を使うことで、canvasを簡単に生成できます。nodejsの場合はnode-canvasを使うことが出来ます。
-あとは、そこに描画し、この関数に渡すと２値化されてディスプレイに表示されます。
-
-```Javascript
-// Javascript Example
-const matrix = obniz.wired("MatrixLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
-matrix.init(8*4, 8);
-matrix.brightness(7);
-
-const ctx = obniz.util.createCanvasContext(matrix.width, matrix.height);
-ctx.fillStyle = "black";
-ctx.fillRect(0, 0, matrix.width, matrix.height);
-ctx.fillStyle = "white";
-ctx.font = "9px sans-serif";
-ctx.fillText('Hello World', 0, 7);
-
-matrix.draw(ctx);
-```
-
-## clear()
-すべてを消去します。
-
-```Javascript
-// Javascript Example
-const matrix = obniz.wired("7SegmentLED_MAX7219",  { clk:0, cs:1, din:2, gnd:3, vcc:4});
-matrix.init(8*4, 8);
-matrix.clear();
-```
+## clearall()
+接続されているすべてのディスプレイの表示内容を消去します。
 
 ## test()
-MAX7219にあるテストコマンドを利用します。
-最後に表示されていたものが表示されます。
-
-```Javascript
-// Javascript Example
-const matrix = obniz.wired("7SegmentLED_MAX7219", { clk:0, cs:1, din:2, gnd:3, vcc:4});
-matrix.init(8*4, 8);
-matrix.test();
-```
+MAX7219のテストコマンドを実行します。

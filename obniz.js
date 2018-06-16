@@ -37,17 +37,32 @@ var Obniz =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -228,13 +243,12 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	var module = __webpack_require__(id);
-	return module;
+	return __webpack_require__(id);
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error('Cannot find module "' + req + '".');
+		var e = new Error("Cannot find module '" + req + "'");
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -7844,7 +7858,7 @@ module.exports = g;
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error('Cannot find module "' + req + '".');
+	var e = new Error("Cannot find module '" + req + "'");
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -14459,7 +14473,7 @@ module.exports = ws;
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error('Cannot find module "' + req + '".');
+	var e = new Error("Cannot find module '" + req + "'");
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -18067,7 +18081,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.4.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.6.1","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.5.9","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.0","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.1.0","mocha":"^5.1.1","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.0.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.7.1","path":"^0.12.7","prettier":"^1.12.1","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.6.0","webpack-cli":"^2.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.11.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","tv4":"^1.3.0","ws":"^5.1.1","semver":"^5.5.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.4.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -18131,13 +18145,12 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	var module = __webpack_require__(id);
-	return module;
+	return __webpack_require__(id);
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error('Cannot find module "' + req + '".');
+		var e = new Error("Cannot find module '" + req + "'");
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -18839,25 +18852,27 @@ class _7SegmentLED_MAX7219 {
     this.cs.output(true);
   }
 
-  init(numOfDisplay,digits){
+  init(numOfDisplay, digits) {
     this.numOfDisp = numOfDisplay;
     this.digits = digits;
-    this.writeAllDisp([0x0b, digits-1]);
-    this.initModule();
-  }
-
-  initModule() {
-    this.writeAllDisp([0x09, 0xff]);// Code B decode for digits 7-0
-    this.writeAllDisp([0x0a, 0x05]);// brightness 11/32 0 to f
-    this.writeAllDisp([0x0c, 0x01]);// Shutdown to normal operation
+    this.writeAllDisp([0x09, 0xff]); // Code B decode for digits 7-0
+    this.writeAllDisp([0x0a, 0x05]); // brightness 11/32 0 to f
+    this.writeAllDisp([0x0b, digits - 1]);
+    this.writeAllDisp([0x0c, 0x01]); // Shutdown to normal operation
     this.writeAllDisp([0x0f, 0x00]);
     this.obniz.wait(10);
   }
 
-  clearall(){
-    for (let i = 0; i < this.numOfDisp; i++){
-      for (let j = 0; j < this.digits; j++){
-        this.writeAllDisp([ j + 1 , 0x0f]);
+  clear(disp) {
+    for (let i = 0; i < this.digits; i++){
+      this.writeOneDisp(disp, [i + 1, 0x0f]);
+    }
+  }
+
+  clearall() {
+    for (let i = 0; i < this.numOfDisp; i++) {
+      for (let j = 0; j < this.digits; j++) {
+        this.writeAllDisp([j + 1, 0x0f]);
       }
     }
   }
@@ -18866,66 +18881,65 @@ class _7SegmentLED_MAX7219 {
     this.writeAllDisp([0x0f, 0x00]); // test command
   }
 
-  brightness(disp,val) {
-    this.writeOneDisp(disp,[0x0a, val]); // 0 to 15;
+  brightness(disp, val) {
+    this.writeOneDisp(disp, [0x0a, val]); // 0 to 15;
   }
 
   brightnessAll(val) {
     this.writeAllDisp([0x0a, val]); // 0 to 15;
   }
 
-  writeAllDisp(data){
-    for (let i = 0; i < this.numOfDisp; i++){
-      this.writeOneDisp(i,data);
+  writeAllDisp(data) {
+    for (let i = 0; i < this.numOfDisp; i++) {
+      this.writeOneDisp(i, data);
     }
   }
 
-  writeOneDisp(disp,data) {
+  writeOneDisp(disp, data) {
     this.cs.output(false);
-    for(let i = 0; i < disp; i++){
+    for (let i = 0; i < disp; i++) {
       this.spi.write([0x00, 0x00]);
     }
     this.spi.write(data);
-    for(let i = 0; i < (this.numOfDisp - (disp+1)); i++){
+    for (let i = 0; i < this.numOfDisp - (disp + 1); i++) {
       this.spi.write([0x00, 0x00]);
     }
     this.cs.output(true);
   }
 
-  setNumber(number,dp,disp,digit){
-    if (digit >= 0 && digit <= this.digits-1){
-      this.writeOneDisp(disp,[digit+1, this.encodeBCD(number,dp)]);
+  setNumber(disp, digit, number, dp) {
+    if (digit >= 0 && digit <= this.digits - 1) {
+      this.writeOneDisp(disp, [digit + 1, this.encodeBCD(number, dp)]);
     }
   }
 
-  encodeBCD(decimal,dp){
-    var dpreg;
-    if (dp == true){
+  encodeBCD(decimal, dp) {
+    let dpreg;
+    if (dp == true) {
       dpreg = 0x80;
     } else {
       dpreg = 0x00;
     }
-    if (decimal >= 0 && decimal <= 9){
+    if (decimal >= 0 && decimal <= 9) {
       return decimal | dpreg;
-    } else if(decimal == '-'){
+    } else if (decimal == '-' || decimal == 10) {
       return 0x0a | dpreg;
-    } else if(decimal == 'e'){
+    } else if (decimal == 'e' || decimal == 11) {
       return 0x0b | dpreg;
-    } else if(decimal == 'h'){
+    } else if (decimal == 'h' || decimal == 12) {
       return 0x0c | dpreg;
-    } else if(decimal == 'l'){
+    } else if (decimal == 'l' || decimal == 13) {
       return 0x0d | dpreg;
-    }else if(decimal == 'p'){
+    } else if (decimal == 'p'  || decimal == 14) {
       return 0x0e | dpreg;
-    } else if(decimal == 'on'){
+    } else if (decimal == 'on') { // light all segments
       return 0x88;
-    } else if(decimal == 'off'){
+    } else if (decimal == 'off') {
       return 0x0f | dpreg;
     } else {
       return 0x0f | dpreg;
     }
   }
-
 }
 
 let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");

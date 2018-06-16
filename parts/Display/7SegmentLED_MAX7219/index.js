@@ -30,16 +30,18 @@ class _7SegmentLED_MAX7219 {
   init(numOfDisplay, digits) {
     this.numOfDisp = numOfDisplay;
     this.digits = digits;
-    this.writeAllDisp([0x0b, digits - 1]);
-    this.initModule();
-  }
-
-  initModule() {
     this.writeAllDisp([0x09, 0xff]); // Code B decode for digits 7-0
     this.writeAllDisp([0x0a, 0x05]); // brightness 11/32 0 to f
+    this.writeAllDisp([0x0b, digits - 1]);
     this.writeAllDisp([0x0c, 0x01]); // Shutdown to normal operation
     this.writeAllDisp([0x0f, 0x00]);
     this.obniz.wait(10);
+  }
+
+  clear(disp) {
+    for (let i = 0; i < this.digits; i++) {
+      this.writeOneDisp(disp, [i + 1, 0x0f]);
+    }
   }
 
   clearall() {
@@ -80,7 +82,7 @@ class _7SegmentLED_MAX7219 {
     this.cs.output(true);
   }
 
-  setNumber(number, dp, disp, digit) {
+  setNumber(disp, digit, number, dp) {
     if (digit >= 0 && digit <= this.digits - 1) {
       this.writeOneDisp(disp, [digit + 1, this.encodeBCD(number, dp)]);
     }
@@ -95,17 +97,18 @@ class _7SegmentLED_MAX7219 {
     }
     if (decimal >= 0 && decimal <= 9) {
       return decimal | dpreg;
-    } else if (decimal == '-') {
+    } else if (decimal == '-' || decimal == 10) {
       return 0x0a | dpreg;
-    } else if (decimal == 'e') {
+    } else if (decimal == 'e' || decimal == 11) {
       return 0x0b | dpreg;
-    } else if (decimal == 'h') {
+    } else if (decimal == 'h' || decimal == 12) {
       return 0x0c | dpreg;
-    } else if (decimal == 'l') {
+    } else if (decimal == 'l' || decimal == 13) {
       return 0x0d | dpreg;
-    } else if (decimal == 'p') {
+    } else if (decimal == 'p' || decimal == 14) {
       return 0x0e | dpreg;
     } else if (decimal == 'on') {
+      // light all segments
       return 0x88;
     } else if (decimal == 'off') {
       return 0x0f | dpreg;
