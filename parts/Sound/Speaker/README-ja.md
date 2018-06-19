@@ -25,6 +25,6 @@ speaker.play(1000); //1000hz
 // Javascript Example
 var speaker = obniz.wired("Speaker", {signal:0, gnd:1});
 speaker.play(1000); //1000hz
-obniz.wait(1000);
+await obniz.wait(1000);
 speaker.stop();
 ```
