@@ -200,11 +200,12 @@ Call  this func when obniz connect success
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
             console.log("success");
         }
+        obniz.ble.scan.end();
         peripheral.connect();
     }
 }
