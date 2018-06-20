@@ -76,7 +76,7 @@ class BleScan {
     if (
       this.scanTarget &&
       this.scanTarget.localName &&
-      peripheral.localName() !== this.scanTarget.localName
+      peripheral.localName !== this.scanTarget.localName
     ) {
       return false;
     }

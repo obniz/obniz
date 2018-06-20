@@ -4995,7 +4995,7 @@ class BleScan {
   }
 
   isTarget(peripheral) {
-    if (this.scanTarget && this.scanTarget.localName && peripheral.localName() !== this.scanTarget.localName) {
+    if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {

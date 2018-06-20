@@ -51,7 +51,7 @@ BLEのscanを停止します
 // Javascript Example
 obniz.ble.scan.start();
 await obniz.wait(5000);
-obniz.ble.scan.stop();
+obniz.ble.scan.end();
 ```
 
 
@@ -257,7 +257,7 @@ if(connected){
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
             console.log("success");
         }
@@ -356,7 +356,7 @@ characteristicに書き込みが完了したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
@@ -401,7 +401,7 @@ characteristicからデータを読み込出したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
@@ -505,7 +505,7 @@ characteristicに書き込みが完了したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
@@ -549,7 +549,7 @@ descriptorからデータを読み込出したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");

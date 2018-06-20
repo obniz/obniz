@@ -236,6 +236,110 @@ describe('ble', function() {
     expect(this.obniz).to.be.finished;
   });
 
+  it('on scan with target', function() {
+    let stub = sinon.stub();
+
+    this.obniz.ble.scan.onfind = stub;
+    let target = {
+      uuids: ['FFF0'], //scan only has uuids "FFF0" and "FFF1"
+      localName: 'obniz-BLE', //scan only has localName "obniz-BLE"
+    };
+
+    let setting = {
+      duration: 10,
+    };
+
+    this.obniz.ble.scan.start(target, setting);
+
+    expect(this.obniz).send([{ ble: { scan: { duration: 10 } } }]);
+    let results = [
+      {
+        ble: {
+          scan_result: {
+            address: '05e41890858c',
+            device_type: 'ble',
+            address_type: 'public',
+            ble_event_type: 'connectable_advertisemnt',
+            rssi: -48,
+            adv_data: [2, 1, 6, 7, 255, 76, 0, 16, 2, 11, 0],
+            flag: 6,
+            scan_resp: [],
+          },
+        },
+      },
+    ];
+
+    testUtil.receiveJson(this.obniz, results);
+    sinon.assert.callCount(stub, 0);
+
+    let results2 = [
+      {
+        ble: {
+          scan_result: {
+            address: 'e5f678800700',
+            device_type: 'ble',
+            address_type: 'public',
+            ble_event_type: 'connectable_advertisemnt',
+            rssi: -48,
+            adv_data: [
+              2,
+              1,
+              6,
+              10,
+              9,
+              111,
+              98,
+              110,
+              105,
+              122,
+              45,
+              66,
+              76,
+              69,
+              3,
+              2,
+              0xf0,
+              0xff,
+            ],
+            flag: 6,
+            scan_resp: [],
+          },
+        },
+      },
+    ];
+
+    testUtil.receiveJson(this.obniz, results2);
+    sinon.assert.callCount(stub, 1);
+
+    let peripheral = stub.getCall(0).args[0];
+    expect(typeof peripheral === 'object').to.be.true;
+
+    expect(peripheral.adv_data).to.be.deep.equal([
+      2,
+      1,
+      6,
+      10,
+      9,
+      111,
+      98,
+      110,
+      105,
+      122,
+      45,
+      66,
+      76,
+      69,
+      3,
+      2,
+      0xf0,
+      0xff,
+    ]);
+    expect(peripheral.localName).to.be.equal('obniz-BLE');
+    expect(peripheral.iBeacon).to.be.null;
+
+    expect(this.obniz).to.be.finished;
+  });
+
   it('on scan finished', function() {
     let stub1 = sinon.stub();
     let stub2 = sinon.stub();
