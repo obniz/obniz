@@ -33,7 +33,7 @@ obniz.ble.scan.start();  // 引数なしも可能
 // Javascript Example
 
 var target = {
-    uuids: ["FFF0"],  
+    uuids: ["FFF0"],
 };
 
 obniz.ble.scan.start(target);
@@ -105,7 +105,7 @@ for(var peripheral of peripherals){
 ```
 
 
-## peripheral.advertise_data
+## peripheral.adv_data
 Return raw advertise data.
 
 ```Javascript
