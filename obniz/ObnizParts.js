@@ -25,6 +25,9 @@ module.exports = class ObnizParts extends ObnizConnection {
   }
 
   static Parts(name) {
+    if (!_parts[name]) {
+      throw new Error(`unknown parts [${name}]`);
+    }
     return new _parts[name]();
   }
 
