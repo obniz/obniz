@@ -39,6 +39,9 @@
           "name": "7SegmentLEDArray"
         },
         {
+          "name": "7SegmentLED_MAX7219"
+        },
+        {
           "name": "MatrixLED_MAX7219"
         }
       ]
