@@ -9963,6 +9963,7 @@ class BleRemotePeripheral {
         this[key] = dic[key];
       }
     }
+    this.analyseAdvertisement();
   }
 
   analyseAdvertisement() {
@@ -9990,6 +9991,8 @@ class BleRemotePeripheral {
           i = i + length;
         }
       }
+      this.setLocalName();
+      this.setIBeacon();
     }
   }
 
@@ -10005,16 +10008,19 @@ class BleRemotePeripheral {
     return undefined;
   }
 
-  get localName() {
+  setLocalName() {
     let data = this.searchTypeVal(0x09);
     if (!data) {
       data = this.searchTypeVal(0x08);
     }
-    if (!data) return null;
-    return String.fromCharCode.apply(null, data);
+    if (!data) {
+      this.localName = null;
+    } else {
+      this.localName = String.fromCharCode.apply(null, data);
+    }
   }
 
-  get iBeacon() {
+  setIBeacon() {
     let data = this.searchTypeVal(0xff);
     if (
       !data ||
@@ -10023,9 +10029,10 @@ class BleRemotePeripheral {
       data[2] !== 0x02 ||
       data[3] !== 0x15 ||
       data.length !== 25
-    )
-      return null;
-
+    ) {
+      this.iBeacon = null;
+      return;
+    }
     let uuidData = data.slice(4, 20);
     let uuid = '';
     for (let i = 0; i < uuidData.length; i++) {
@@ -10044,7 +10051,7 @@ class BleRemotePeripheral {
     let minor = (data[22] << 8) + data[23];
     let power = data[24];
 
-    return {
+    this.iBeacon = {
       uuid: uuid,
       major: major,
       minor: minor,
