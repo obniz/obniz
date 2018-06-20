@@ -269,8 +269,7 @@ Call this func when obniz close connection.
 
 ```Javascript
 // Javascript Example
-obniz.ble.scan.onfind
- = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
             console.log("success");
@@ -297,16 +296,18 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var dataArray = [0x02, 0xFF];
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
+        if(result){
+            console.log("write success");
+        }
     }
 }
 
@@ -322,16 +323,17 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeNumberWait(dataArray);
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);c
+    
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeNumberWait(100);
+        if(result){
+            console.log("write success");
+        }
     }
 }
 ```
@@ -354,7 +356,6 @@ if(peripheral){
         console.log("connected");
         await obniz.wait(1000);
     
-        var dataArray = [0x02, 0xFF];
         var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeTextWait("My Name");
         if(result){
             console.log("write success");
@@ -502,8 +503,7 @@ if(peripheral){
         console.log("connected");
         await obniz.wait(1000);
     
-        var dataArray = [0x02, 0xFF];
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(dataArray);
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(100);
         if(result){
             console.log("write success");
         }
@@ -532,7 +532,6 @@ if(peripheral){
         console.log("connected");
         await obniz.wait(1000);
     
-        var dataArray = [0x02, 0xFF];
         var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeTextWait("My Name");
         if(result){
             console.log("write success");
