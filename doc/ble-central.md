@@ -166,7 +166,7 @@ Connet to peripheral
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.connect();
     }
@@ -220,7 +220,7 @@ Close connection.
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.connect();
         await obniz.wait(1000);
@@ -269,7 +269,8 @@ Call this func when obniz close connection.
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind
+ = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
             console.log("success");
@@ -368,7 +369,7 @@ Call this func when write to the characteristic success.
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
@@ -416,7 +417,7 @@ Call this func when read from the characteristic success.
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
@@ -467,7 +468,7 @@ Callback function of write descriptor results.
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
@@ -583,7 +584,7 @@ Call this func when something error occurred with error messages.
 
 ```Javascript
 // Javascript Example
-obniz.ble.onscan = function(peripheral){
+obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
