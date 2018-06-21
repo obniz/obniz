@@ -4958,7 +4958,7 @@ class BleScan {
     this.scanTarget = target;
     if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
       this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
-        return elm.toLowerCase();
+        return elm.replace(/-/g, '').toLowerCase();
       });
     }
     this.scanedPeripherals = [];
@@ -5010,7 +5010,9 @@ class BleScan {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
-      let uuids = peripheral.advertisementServiceUuids();
+      let uuids = peripheral.advertisementServiceUuids().map(e => {
+        return e.replace(/-/g, '').toLowerCase();
+      });
       for (let uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {
           return false;

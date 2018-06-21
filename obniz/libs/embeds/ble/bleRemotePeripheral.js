@@ -42,6 +42,7 @@ class BleRemotePeripheral {
   }
 
   setParams(dic) {
+    this.advertise_data_rows = null;
     for (let key in dic) {
       if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
         this[key] = dic[key];
