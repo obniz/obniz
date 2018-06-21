@@ -1,8 +1,8 @@
 # 7SegmentLED_MAX7219
 MAX7219に接続された7セグメントLEDを制御するクラスです。
 MAX7219一つにつき最大8桁の7セグメントLEDを制御することができます。
-また、連続してつなげることができるのも特徴です。
-
+接続できる7セグメントLEDはカソードコモンタイプです。
+MAX7219を連続してつなげ、8桁以上のディスプレイを作ることもできます。
 
 ## wired(obniz,  { clk, cs, din, gnd, vcc});
 
@@ -13,14 +13,38 @@ gnd: 電源のマイナスです。
 vcc: 電源のプラスです。
 
 DIPタイプのMAX7219であれば、以下のような接続になります。
-<画像>
-一例として、下記のページで販売されている4桁7セグメントLEDの接続例を示します。
-http://akizukidenshi.com/catalog/goods/search.aspx?keyword=&maker=&goods=i&number=osl40391&name=%83J%83%5C%81%5B%83h&min_price=&max_price=&last_sdt=&sort=&style=T&search.x=0&search.y=0
-<画像>
+![](./obniz-max7219_single.png)
 
 チェーン状につなぐ場合は最初の1つをObnizにつなぎ、2つ目以降はDINを前のDOUTにつないでください。
 obniz-DIN[1つ目のディスプレイ]DOUT-DIN[2つ目のディスプレイ]DOUT-~
-<画像>
+![](./obniz-max7219_multi.png)
+
+7セグメントLEDとMAX7219は以下のように接続します。
+|MAX7219<br>ピン名(ピン番号)|7セグメントLED|
+|:--:|:--:|
+|SEG A(14)|A|
+|SEG B(16)|B|
+|SEG C(20)|C|
+|SEG D(23)|D|
+|SEG E(21)|E|
+|SEG F(15)|F|
+|SEG G(17)|G|
+|SEG DP(22)|DP|
+|DIG 0(2)|COM0|
+|DIG 1(11)|COM1|
+|DIG 2(6)|COM2|
+|DIG 3(7)|COM3|
+|DIG 4(3)|COM4|
+|DIG 5(10)|COM5|
+|DIG 6(5)|COM6|
+|DIG 7(8)|COM7|
+
+*補足
+  *7セグメントLEDのピン番号は製品によって異なるので、データシートで確認してください。
+  *7セグメントLEDはA~DPはANODE,COM0~COM7はCATHODEと併記されている場合があります。
+  *DIGは桁なので、1桁の7セグメントLEDを接続した場合はDIG 0のみを使い、DIG 1以降は使いません。
+  *DPはドット用です。ドットの無い7セグメントLEDの場合は接続しません。
+
 
 ```Javascript
 // Javascript Example
