@@ -4,6 +4,12 @@ class _7SegmentLED_MAX7219 {
     this.requiredKeys = ['din', 'cs', 'clk'];
   }
 
+  static info() {
+    return {
+      name: '7SegmentLED_MAX7219',
+    };
+  }
+
   wired(obniz) {
     this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
@@ -44,7 +50,7 @@ class _7SegmentLED_MAX7219 {
     }
   }
 
-  clearall() {
+  clearAll() {
     for (let i = 0; i < this.numOfDisp; i++) {
       for (let j = 0; j < this.digits; j++) {
         this.writeAllDisp([j + 1, 0x0f]);
@@ -118,5 +124,6 @@ class _7SegmentLED_MAX7219 {
   }
 }
 
-let Obniz = require('../../../obniz/index.js');
-Obniz.PartsRegistrate('7SegmentLED_MAX7219', _7SegmentLED_MAX7219);
+if (typeof module === 'object') {
+  module.exports = _7SegmentLED_MAX7219;
+}
