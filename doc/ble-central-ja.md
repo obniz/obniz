@@ -51,7 +51,7 @@ BLEのscanを停止します
 // Javascript Example
 obniz.ble.scan.start();
 await obniz.wait(5000);
-obniz.ble.scan.stop();
+obniz.ble.scan.end();
 ```
 
 
@@ -66,7 +66,7 @@ scanでperipheralを発見すると呼ばれます
 
 obniz.ble.scan.onfind = function(peripheral){
    console.log(peripheral)
-}
+};
 
 obniz.ble.scan.start();
 ```
@@ -101,7 +101,7 @@ var target = {
     uuids: ["FFF0"],
 };
 var setting = {
-    duration : 10   //scanをする期間を秒で指定．指定なしではデフォルト30秒
+    duration : 10  
 }
 
 var peripherals = await obniz.ble.scan.startAllWait(target,setting);
@@ -111,21 +111,19 @@ for(var peripheral of peripherals){
 }
 ```
 
-
 ## peripheral.adv_data
 advertise dataの生データを返します
 
 ```Javascript
 // Javascript Example
-
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
 console.log(peripheral.adv_data)
-
 ```
+
 
 ## peripheral.localName
 advertise dataの中にlocal Name情報があればそれを返します
@@ -140,6 +138,7 @@ var peripheral = await obniz.ble.scan.startOneWait(target);
 
 console.log(peripheral.localName)
 ```
+
 
 
 ## peripheral.iBeacon
@@ -158,7 +157,6 @@ advertise dataの中にiBeacon情報があればそれを返します．なけ�
 
 ```Javascript
 // Javascript Example
-
 var target = {
     uuids: ["FFF0"],
 };
@@ -166,6 +164,7 @@ var peripheral = await obniz.ble.scan.startOneWait(target);
 
 console.log(peripheral.iBeacon)
 ```
+
 
 
 <!-- ## peripheral.connect() -->
@@ -205,23 +204,23 @@ if(connected){
 }
 ```
 
+
 ## peripheral.onconnect
 接続が成功したときに呼ばれます
 
 ```Javascript
 // Javascript Example
-
- obniz.ble.scan.onfind = function(peripheral){ 
-    if(peripheral.localName === "my peripheral"){ 
-        peripheral.onconnect = function(){ 
-            console.log("success"); 
-        } 
-        peripheral.connect(); 
-    } 
-} 
-obniz.ble.scan.start(); 
- ``` 
-
+obniz.ble.scan.onfind = function(peripheral){
+    if(peripheral.localName == "my peripheral"){
+        peripheral.onconnect = function(){
+            console.log("success");
+        }
+        obniz.ble.scan.end();
+        peripheral.connect();
+    }
+}
+obniz.ble.scan.start();
+```
 
 
 ## \[await] peripheral.disconnectWait()
@@ -235,16 +234,19 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
 
-if(connected){
-    await obniz.wait(1000);
-    var disconnected = await peripheral.disconnectWait();
-
-    if(disconnected){
-        console.log("disconnected");
-    }else{
-        console.log("disconnect failed");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        await obniz.wait(1000);
+        var disconnected = await peripheral.disconnectWait();
+    
+        if(disconnected){
+            console.log("disconnected");
+        }else{
+            console.log("disconnect failed");
+        }
     }
 }
 ```
@@ -257,12 +259,12 @@ if(connected){
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
             console.log("success");
         }
         peripheral.ondisconnect = function(){
-          console.log("closed");
+            console.log("closed");
         }
         peripheral.connect();
     }
@@ -270,27 +272,30 @@ obniz.ble.scan.onfind = function(peripheral){
 obniz.ble.scan.start();
 ```
 
+
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).writeWait(dataArray)
 characteristicにdataArrayを書き込みます
 成功すればtrue，失敗したらfalseが返ります
 
-```javascript
+```Javascript
 // Javascript Example
 
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var dataArray = [0x02, 0xFF];
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
+        if(result){
+            console.log("write success");
+        }
     }
 }
 
@@ -308,19 +313,21 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeNumberWait(dataArray);
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);c
+    
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeNumberWait(100);
+        if(result){
+            console.log("write success");
+        }
     }
 }
 ```
+
 
 
 
@@ -330,21 +337,21 @@ characteristicに文字列を書き込みます
 
 ```Javascript
 // Javascript Example
-
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeTextWait("My Name");
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeTextWait("My Name");
+        if(result){
+            console.log("write success");
+        }
     }
 }
 ```
@@ -356,7 +363,7 @@ characteristicに書き込みが完了したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
@@ -379,19 +386,22 @@ characteristicからデータを読み込みます
 
 ```Javascript
 // Javascript Example
+// Javascript Example
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
-    console.log(dataArray);
+if(peripheral){
+    var connected = await peripheral.connectWait();
     
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+        console.log(dataArray);
+        
+    }
 }
 ```
 <!--
@@ -401,7 +411,7 @@ characteristicからデータを読み込出したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
@@ -423,23 +433,25 @@ obniz.ble.scan.start();
 descriptorにdataArrayを書き込みます
 成功すればtrue，失敗したらfalseが返ります
 
-```javascript
+```Javascript
 // Javascript Example
 
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var dataArray = [0x02, 0xFF];
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
+        if(result){
+            console.log("write success");
+        }
     }
 }
 
@@ -457,16 +469,17 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(dataArray);
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(100);
+        if(result){
+            console.log("write success");
+        }
     }
 }
 ```
@@ -477,6 +490,7 @@ if(connected){
 descriptorに文字列を書き込みます
 成功すればtrue，失敗したらfalseが返ります
 
+
 ```Javascript
 // Javascript Example
 
@@ -484,16 +498,17 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = [0x02, 0xFF];
-    var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeTextWait("My Name");
-    if(result){
-        console.log("write success");
+if(peripheral){
+    var connected = await peripheral.connectWait();
+    
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeTextWait("My Name");
+        if(result){
+            console.log("write success");
+        }
     }
 }
 ```
@@ -505,7 +520,7 @@ characteristicに書き込みが完了したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
@@ -531,17 +546,21 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
-    console.log(dataArray);
+if(peripheral){
+    var connected = await peripheral.connectWait();
     
+    if(connected){
+        console.log("connected");
+        await obniz.wait(1000);
+    
+        var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+        console.log(dataArray);
+        
+    }
 }
 ```
+
+
 <!--
 ## descriptor.onread
 descriptorからデータを読み込出したときに呼ばれます
@@ -549,7 +568,7 @@ descriptorからデータを読み込出したときに呼ばれます
 ```Javascript
 // Javascript Example
 obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName() == "my peripheral"){
+    if(peripheral.localName == "my peripheral"){
 
         peripheral.onconnect = function(){
             var characteristic = peripheral.getService("FF00").getCharacteristic("FF01");
