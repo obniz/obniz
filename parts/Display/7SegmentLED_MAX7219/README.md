@@ -14,10 +14,14 @@ And chaining connections of MAX7219 is available.
 4. gnd: GND
 5. vcc: Power supply +5V
 
+This is a example.
+![](./obniz-max7219_single.png)
+
 For example, 7segments are
 [LED](http://akizukidenshi.com/catalog/goods/search.aspx?keyword=&maker=&goods=i&number=osl40391&name=%83J%83%5C%81%5B%83h&min_price=&max_price=&last_sdt=&sort=&style=T&search.x=0&search.y=0)
 
 If you want to chain connection, connect DIN of next to DOUT of before.
+![](./obniz-max7219_multi.png)
 
 ```Javascript
 // Javascript Example
