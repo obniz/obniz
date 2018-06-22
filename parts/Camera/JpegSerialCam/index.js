@@ -100,7 +100,7 @@ class JpegSerialCam {
   }
 
   async setCompressibilityWait(compress) {
-    let val = Math.floor(compress / 100 * 0xff);
+    let val = Math.floor((compress / 100) * 0xff);
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     await this.resetwait();

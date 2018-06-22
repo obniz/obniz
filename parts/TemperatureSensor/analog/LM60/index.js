@@ -17,7 +17,7 @@ class LM60 {
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     let self = this;
     this.ad.start(function(value) {
-      self.temp = Math.round((value - 0.424) / 0.00625 * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
+      self.temp = Math.round(((value - 0.424) / 0.00625) * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
       if (self.onchange) {
         self.onchange(self.temp);
       }

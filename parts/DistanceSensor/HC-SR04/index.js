@@ -37,7 +37,7 @@ class HCSR04 {
       pulse: 'positive',
       pulse_width: 0.011,
       measure_edges: 3,
-      timeout: 10 / 340 * 1000,
+      timeout: (10 / 340) * 1000,
       callback: async edges => {
         if (this.reset_alltime) {
           this.vccIO.output(false);
@@ -50,7 +50,8 @@ class HCSR04 {
           // HCSR04's output of io_echo is initially high when trigger is finshed
           if (edges[i].edge === true) {
             const time = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
-            distance = time / 2 * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
+            distance =
+              (time / 2) * 20.055 * Math.sqrt(this.temp + 273.15) * 1000;
             if (self._unit === 'inch') {
               distance = distance * 0.0393701;
             }

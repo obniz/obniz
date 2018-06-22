@@ -87,7 +87,7 @@ class PeripheralPWM {
     if (duty > 100) {
       duty = 100;
     }
-    const pulse_width = 1.0 / this.state.freq * 1000 * duty * 0.01;
+    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
       pulse: pulse_width,
