@@ -30,7 +30,7 @@ class ServoMotor {
   angle(ratio) {
     let max = 2.4;
     let min = 0.5;
-    let val = (max - min) * ratio / 180.0 + min;
+    let val = ((max - min) * ratio) / 180.0 + min;
     this.pwm.pulse(val);
   }
 

@@ -41,7 +41,7 @@ class Grove_EarHeartRate {
       if (edges.length >= 2) {
         let between = 0;
         let pulseMin = 0;
-        between = (edges[1] - edges[0]) * this.interval / 1000.0;
+        between = ((edges[1] - edges[0]) * this.interval) / 1000.0;
         pulseMin = 60 / between;
         callback(pulseMin);
       }

@@ -56,16 +56,16 @@ class WSCommand_Display extends WSCommand {
 
       for (let row = 0; row < 2; row++) {
         for (let col = 0; col < size + 4; col++) {
-          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
-          vram[parseInt((row + size + 2) * 16 + col / 8)] |= 0x80 >> (col % 8);
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
+          vram[parseInt((row + size + 2) * 16 + col / 8)] |= 0x80 >> col % 8;
         }
       }
       for (let row = 2; row < size + 2; row++) {
         for (let col = 0; col < 2; col++) {
-          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
         }
         for (let col = size + 2; col < size + 4; col++) {
-          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> (col % 8);
+          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
         }
       }
 
@@ -73,7 +73,7 @@ class WSCommand_Display extends WSCommand {
         for (let col = 0; col < size; col++) {
           if (!modules[parseInt(row / 2)][parseInt(col / 2)]) {
             vram[parseInt((row + 2) * 16 + (col + 2) / 8)] |=
-              0x80 >> ((col + 2) % 8);
+              0x80 >> (col + 2) % 8;
           }
         }
       }

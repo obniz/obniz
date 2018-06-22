@@ -31,7 +31,7 @@ class GP2Y0A21YK0F {
       if (val <= 0) {
         val = 0.001;
       }
-      let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.25214) * 10;
+      let distance = 19988.34 * Math.pow((val / 5.0) * 1024, -1.25214) * 10;
       if (this._unit === 'mm') {
         distance = parseInt(distance * 10) / 10;
       } else {

@@ -1975,6 +1975,13 @@ module.exports = class ObnizComponents extends ObnizParts {
     this.pongObservers = [];
   }
 
+  close() {
+    super.close();
+    if (this.options.reset_obniz_on_ws_disconnection) {
+      this._resetComponents();
+    }
+  }
+
   _prepareComponents() {
     this.io = new PeripheralIO_(this);
     for (let i = 0; i < 12; i++) {
@@ -2003,6 +2010,34 @@ module.exports = class ObnizComponents extends ObnizParts {
     this.measure = new ObnizMeasure(this);
 
     this.util = new ObnizUtil(this);
+  }
+
+  _resetComponents() {
+    this.print_debug('components state resets');
+    for (let i = 0; i < 12; i++) {
+      this['io' + i]._reset();
+    }
+    for (let i = 0; i < 12; i++) {
+      this['ad' + i]._reset();
+    }
+    for (let i = 0; i < 2; i++) {
+      this['uart' + i]._reset();
+    }
+    for (let i = 0; i < 2; i++) {
+      this['spi' + i]._reset();
+    }
+    for (let i = 0; i < 1; i++) {
+      this['i2c' + i]._reset();
+    }
+    for (let i = 0; i < 6; i++) {
+      this['pwm' + i]._reset();
+    }
+
+    this.display._reset();
+    this.switch._reset();
+    this.logicAnalyzer._reset();
+    this.ble._reset();
+    this.measure._reset();
   }
 
   notifyToModule(obj) {
@@ -2206,7 +2241,8 @@ module.exports = class ObnizConnection {
       debug_dom_id: options.debug_dom_id || 'obniz-debug',
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
-      obniz_server: options.obniz_server || 'wss://obniz.io'
+      obniz_server: options.obniz_server || 'wss://obniz.io',
+      reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true
     };
     if (this.options.binary) {
       this.wscommand = this.constructor.WSCommand;
@@ -2219,16 +2255,6 @@ module.exports = class ObnizConnection {
     if (this.options.auto_connect) {
       this.wsconnect();
     }
-  }
-
-  isValidObnizId(str) {
-    if (typeof str != 'string' || str.length < 8) {
-      return null;
-    }
-    str = str.replace('-', '');
-    let id = parseInt(str);
-    if (isNaN(id)) id = null;
-    return id != null;
   }
 
   prompt(filled, callback) {
@@ -2313,7 +2339,9 @@ module.exports = class ObnizConnection {
       server = '' + desired_server;
     }
 
-    this.close();
+    if (this.socket && this.socket.readyState <= 1) {
+      this.close();
+    }
 
     let url = server + '/obniz/' + this.id + '/ws/1';
 
@@ -2363,11 +2391,7 @@ module.exports = class ObnizConnection {
       ws = new wsClient(url);
       ws.on('open', () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
-        }
+        this._callOnConnect();
       });
       ws.on('message', data => {
         this.print_debug('recvd via local');
@@ -2390,11 +2414,7 @@ module.exports = class ObnizConnection {
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
         this.print_debug('connected to ' + url);
-        if (this._waitForLocalConnectReadyTimer) {
-          clearTimeout(this._waitForLocalConnectReadyTimer);
-          this._waitForLocalConnectReadyTimer = null;
-          this._callOnConnect();
-        }
+        this._callOnConnect();
       };
       ws.onmessage = event => {
         this.print_debug('recvd via local');
@@ -2423,7 +2443,7 @@ module.exports = class ObnizConnection {
     if (this._waitForLocalConnectReadyTimer) {
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
-      this._callOnConnect();
+      this._callOnConnect(); /* should call. onlyl local connect was lost. and waiting. */
     }
   }
 
@@ -2467,16 +2487,29 @@ module.exports = class ObnizConnection {
   }
 
   _callOnConnect() {
+    let shouldCall = true;
     if (this._waitForLocalConnectReadyTimer) {
+      /* obniz.js has wait local_connect */
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
+    } else {
+      /* obniz.js hasn't wait local_connect */
+      if (this.socket_local && this.socket_local.readyState === 1) {
+        /* delayed connect */
+        shouldCall = false;
+      } else {
+        /* local_connect is not used */
+      }
     }
-    if (typeof this.onconnect !== 'function') return;
-    const promise = this.onconnect(this);
-    if (promise instanceof Promise) {
-      promise.catch(err => {
-        console.error(err);
-      });
+
+    if (shouldCall) {
+      if (typeof this.onconnect !== 'function') return;
+      const promise = this.onconnect(this);
+      if (promise instanceof Promise) {
+        promise.catch(err => {
+          console.error(err);
+        });
+      }
     }
   }
 
@@ -2600,24 +2633,31 @@ module.exports = class ObnizConnection {
   }
 
   handleWSCommand(wsObj) {
-    //
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
-      this.resetOnDisconnect(true);
+      if (this.options.reset_obniz_on_ws_disconnection) {
+        this.resetOnDisconnect(true);
+      }
       if (wsObj.local_connect && wsObj.local_connect.ip && this.wscommand && this.options.local_connect && this._canConnectToInsecure()) {
         this._connectLocal(wsObj.local_connect.ip);
         this._waitForLocalConnectReadyTimer = setTimeout(() => {
           this._callOnConnect();
-        }, 1000);
-      }
-      if (!this._waitForLocalConnectReadyTimer) {
+        }, 3000);
+      } else {
         this._callOnConnect();
       }
     }
     if (wsObj.redirect) {
       let server = wsObj.redirect;
       this.print_debug('WS connection changed to ' + server);
-      this.close();
+
+      /* close current ws immidiately */
+      /*  */
+      this.socket.close(1000, 'close');
+      this.clearSocket(this.socket);
+      delete this.socket;
+
+      /* connect to new server */
       this.wsconnect(server);
     }
   }
@@ -2647,8 +2687,6 @@ module.exports = class ObnizConnection {
     }
     return json;
   }
-
-  updateOnlineUI() {}
 
   warning(msg) {
     console.log('warning:' + msg);
@@ -2685,11 +2723,18 @@ module.exports = class ObnizParts extends ObnizConnection {
     return _parts;
   }
 
-  static PartsRegistrate(name, obj) {
-    _parts[name] = obj;
+  static PartsRegistrate(arg0, arg1) {
+    if (arg0 && typeof arg0.info === 'function' && typeof arg0.info().name === 'string') {
+      _parts[arg0.info().name] = arg0;
+    } else if (typeof arg0 === 'string' && typeof arg1 === 'object') {
+      _parts[arg0] = arg1;
+    }
   }
 
   static Parts(name) {
+    if (!_parts[name]) {
+      throw new Error(`unknown parts [${name}]`);
+    }
     return new _parts[name]();
   }
 
@@ -2855,6 +2900,16 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     super(id, options);
   }
 
+  isValidObnizId(str) {
+    if (typeof str != 'string' || str.length < 8) {
+      return null;
+    }
+    str = str.replace('-', '');
+    let id = parseInt(str);
+    if (isNaN(id)) id = null;
+    return id != null;
+  }
+
   wsconnect(desired_server) {
     this.showOffLine();
     if (!this.isValidObnizId(this.id)) {
@@ -2943,7 +2998,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     if (doms.statusDom) {
       doms.statusDom.style.backgroundColor = isConnectedLocally ? '#0cd362' : '#31965d';
       doms.statusDom.style.color = '#FFF';
-      doms.statusDom.innerHTML = this.id ? 'online : ' + this.id : 'online';
+      doms.statusDom.innerHTML = (this.id ? 'online : ' + this.id : 'online') + (isConnectedLocally ? ' via local_connect' : ' via internet');
     }
   }
 
@@ -3000,7 +3055,7 @@ const ObnizApi = __webpack_require__(/*! ./ObnizApi */ "./obniz/ObnizApi.js");
 
 const isNode = typeof window === 'undefined';
 
-module.exports = class Obniz extends ObnizUIs {
+class Obniz extends ObnizUIs {
   constructor(id, options) {
     super(id, options);
   }
@@ -3009,7 +3064,10 @@ module.exports = class Obniz extends ObnizUIs {
     let loop = (() => {
       var _ref = _asyncToGenerator(function* () {
         if (typeof self.looper === 'function') {
-          yield self.looper();
+          let prom = self.looper();
+          if (prom instanceof Promise) {
+            yield prom;
+          }
           setTimeout(loop, interval);
         }
       });
@@ -3116,7 +3174,9 @@ module.exports = class Obniz extends ObnizUIs {
   static get api() {
     return ObnizApi;
   }
-};
+}
+
+module.exports = Obniz;
 
 /*===================*/
 /* Utils */
@@ -3139,13 +3199,19 @@ if (!isNode) {
 /*===================*/
 /* ReadParts */
 /*===================*/
+
 __webpack_require__("./obniz sync recursive").context = __webpack_require__(/*! ./libs/webpackReplace/require-context */ "./obniz/libs/webpackReplace/require-context.js");
 if (__webpack_require__("./obniz sync recursive").context && __webpack_require__("./obniz sync recursive").context.setBaseDir) {
   __webpack_require__("./obniz sync recursive").context.setBaseDir(__dirname);
 }
+
 let context = __webpack_require__("./parts sync recursive \\.js$");
+/* webpack loader */
 for (let path of context.keys()) {
-  context(path);
+  const anParts = context(path);
+  if (anParts.info) {
+    Obniz.PartsRegistrate(anParts);
+  }
 }
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
@@ -3183,7 +3249,10 @@ class ObnizBLE {
 
     this.advertisement = new BleAdvertisement(Obniz);
     this.scan = new BleScan(Obniz);
+    this._reset();
   }
+
+  _reset() {}
 
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
@@ -4527,11 +4596,13 @@ class BleRemotePeripheral {
   }
 
   setParams(dic) {
+    this.advertise_data_rows = null;
     for (let key in dic) {
       if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
         this[key] = dic[key];
       }
     }
+    this.analyseAdvertisement();
   }
 
   analyseAdvertisement() {
@@ -4559,6 +4630,8 @@ class BleRemotePeripheral {
           i = i + length;
         }
       }
+      this.setLocalName();
+      this.setIBeacon();
     }
   }
 
@@ -4574,19 +4647,24 @@ class BleRemotePeripheral {
     return undefined;
   }
 
-  get localName() {
+  setLocalName() {
     let data = this.searchTypeVal(0x09);
     if (!data) {
       data = this.searchTypeVal(0x08);
     }
-    if (!data) return null;
-    return String.fromCharCode.apply(null, data);
+    if (!data) {
+      this.localName = null;
+    } else {
+      this.localName = String.fromCharCode.apply(null, data);
+    }
   }
 
-  get iBeacon() {
+  setIBeacon() {
     let data = this.searchTypeVal(0xff);
-    if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) return null;
-
+    if (!data || data[0] !== 0x4c || data[1] !== 0x00 || data[2] !== 0x02 || data[3] !== 0x15 || data.length !== 25) {
+      this.iBeacon = null;
+      return;
+    }
     let uuidData = data.slice(4, 20);
     let uuid = '';
     for (let i = 0; i < uuidData.length; i++) {
@@ -4600,7 +4678,7 @@ class BleRemotePeripheral {
     let minor = (data[22] << 8) + data[23];
     let power = data[24];
 
-    return {
+    this.iBeacon = {
       uuid: uuid,
       major: major,
       minor: minor,
@@ -4889,7 +4967,7 @@ class BleScan {
     this.scanTarget = target;
     if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
       this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
-        return elm.toLowerCase();
+        return elm.replace(/-/g, '').toLowerCase();
       });
     }
     this.scanedPeripherals = [];
@@ -4937,11 +5015,13 @@ class BleScan {
   }
 
   isTarget(peripheral) {
-    if (this.scanTarget && this.scanTarget.localName && peripheral.localName() !== this.scanTarget.localName) {
+    if (this.scanTarget && this.scanTarget.localName && peripheral.localName !== this.scanTarget.localName) {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
-      let uuids = peripheral.advertisementServiceUuids();
+      let uuids = peripheral.advertisementServiceUuids().map(e => {
+        return e.replace(/-/g, '').toLowerCase();
+      });
       for (let uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {
           return false;
@@ -5057,8 +5137,12 @@ class Display {
     this.width = 128;
     this.height = 64;
 
-    this._pos = { x: 0, y: 0 };
     this._canvas = null;
+    this._reset();
+  }
+
+  _reset() {
+    this._pos = { x: 0, y: 0 };
   }
 
   warnCanvasAvailability() {
@@ -5118,7 +5202,10 @@ class Display {
   font(font, size) {
     const ctx = this._ctx();
     if (typeof size !== 'number') {
-      size = 12;
+      size = 16;
+    }
+    if (typeof font !== 'string') {
+      font = 'Arial';
     }
     this.fontSize = size;
     ctx.font = '' + +' ' + size + 'px ' + font;
@@ -5295,6 +5382,10 @@ module.exports = Display;
 class ObnizSwitch {
   constructor(Obniz) {
     this.Obniz = Obniz;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
   }
 
@@ -5344,6 +5435,10 @@ class PeripheralAD {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.value = 0.0;
     this.observers = [];
   }
@@ -5416,10 +5511,13 @@ class PeripheralI2C {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
     this.state = {};
     this.used = false;
-
     this.onwritten = undefined;
   }
 
@@ -5614,6 +5712,10 @@ class PeripheralIO {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.value = 0;
     this.observers = [];
   }
@@ -5818,6 +5920,10 @@ class PeripheralPWM {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.state = {};
     this.used = false;
   }
@@ -5948,6 +6054,10 @@ class PeripheralSPI {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
     this.used = false;
   }
@@ -6086,6 +6196,10 @@ class PeripheralUART {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
     this.id = id;
+    this._reset();
+  }
+
+  _reset() {
     this.received = new Uint8Array([]);
     this.used = false;
   }
@@ -6223,6 +6337,11 @@ const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/u
 class LogicAnalyzer {
   constructor(obniz) {
     this.obniz = obniz;
+    this._reset();
+  }
+
+  _reset() {
+    this.onmeasured = undefined;
   }
 
   start(params) {
@@ -6288,6 +6407,10 @@ const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/u
 class ObnizMeasure {
   constructor(obniz) {
     this.obniz = obniz;
+    this._reset();
+  }
+
+  _reset() {
     this.observers = [];
   }
 
@@ -11285,7 +11408,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.4.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.5.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11389,6 +11512,12 @@ class hx711 {
     this.scale = 1;
   }
 
+  static info() {
+    return {
+      name: 'hx711'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.spi = obniz.getFreeSpi();
@@ -11473,8 +11602,9 @@ class hx711 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('hx711', hx711);
+if (true) {
+  module.exports = hx711;
+}
 
 /***/ }),
 
@@ -11499,6 +11629,12 @@ class USB {
     };
   }
 
+  static info() {
+    return {
+      name: 'USB'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.io_vdd = obniz.getIO(this.params.vcc);
@@ -11516,8 +11652,9 @@ class USB {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('USB', USB);
+if (true) {
+  module.exports = USB;
+}
 
 /***/ }),
 
@@ -11545,6 +11682,12 @@ class AE_MICAMP {
     };
   }
 
+  static info() {
+    return {
+      name: 'AE_MICAMP'
+    };
+  }
+
   wired(obniz) {
     var _this = this;
 
@@ -11564,6 +11707,10 @@ class AE_MICAMP {
       });
     })();
   }
+}
+
+if (true) {
+  module.exports = AE_MICAMP;
 }
 
 /*
@@ -11596,9 +11743,6 @@ AE_MICAMP.prototype.Average = function(callback) {
 };
 */
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('AE_MICAMP', AE_MICAMP);
-
 /***/ }),
 
 /***/ "./parts/Camera/JpegSerialCam/index.js":
@@ -11621,6 +11765,12 @@ class JpegSerialCam {
     this.ioKeys = this.keys;
     this.displayName = 'Jcam';
     this.displayIoNames = { cam_tx: 'camTx', cam_rx: 'camRx' };
+  }
+
+  static info() {
+    return {
+      name: 'JpegSerialCam'
+    };
   }
 
   wired() {
@@ -11821,8 +11971,9 @@ class JpegSerialCam {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('JpegSerialCam', JpegSerialCam);
+if (true) {
+  module.exports = JpegSerialCam;
+}
 
 /***/ }),
 
@@ -11853,6 +12004,12 @@ class _7SegmentLED {
       g: 'g',
       dp: 'dp',
       common: 'com'
+    };
+  }
+
+  static info() {
+    return {
+      name: '7SegmentLED'
     };
   }
 
@@ -11948,8 +12105,9 @@ class _7SegmentLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('7SegmentLED', _7SegmentLED);
+if (true) {
+  module.exports = _7SegmentLED;
+}
 
 /***/ }),
 
@@ -11969,6 +12127,12 @@ class _7SegmentLEDArray {
 
     this.keys = ['segments'];
     this.requiredKeys = this.keys;
+  }
+
+  static info() {
+    return {
+      name: '7SegmentLEDArray'
+    };
   }
 
   wired(obniz) {
@@ -12018,8 +12182,9 @@ class _7SegmentLEDArray {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('7SegmentLEDArray', _7SegmentLEDArray);
+if (true) {
+  module.exports = _7SegmentLEDArray;
+}
 
 /***/ }),
 
@@ -12037,6 +12202,12 @@ class _7SegmentLED_MAX7219 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
     this.requiredKeys = ['din', 'cs', 'clk'];
+  }
+
+  static info() {
+    return {
+      name: '7SegmentLED_MAX7219'
+    };
   }
 
   wired(obniz) {
@@ -12079,7 +12250,7 @@ class _7SegmentLED_MAX7219 {
     }
   }
 
-  clearall() {
+  clearAll() {
     for (let i = 0; i < this.numOfDisp; i++) {
       for (let j = 0; j < this.digits; j++) {
         this.writeAllDisp([j + 1, 0x0f]);
@@ -12153,8 +12324,9 @@ class _7SegmentLED_MAX7219 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('7SegmentLED_MAX7219', _7SegmentLED_MAX7219);
+if (true) {
+  module.exports = _7SegmentLED_MAX7219;
+}
 
 /***/ }),
 
@@ -12172,6 +12344,12 @@ class MatrixLED_MAX7219 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'din', 'cs', 'clk'];
     this.requiredKeys = ['din', 'cs', 'clk'];
+  }
+
+  static info() {
+    return {
+      name: 'MatrixLED_MAX7219'
+    };
   }
 
   wired(obniz) {
@@ -12294,8 +12472,9 @@ class MatrixLED_MAX7219 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MatrixLED_MAX7219', MatrixLED_MAX7219);
+if (true) {
+  module.exports = MatrixLED_MAX7219;
+}
 
 /***/ }),
 
@@ -12320,6 +12499,12 @@ class GP2Y0A21YK0F {
       signal: 'signal'
     };
     this._unit = 'mm';
+  }
+
+  static info() {
+    return {
+      name: 'GP2Y0A21YK0F'
+    };
   }
 
   wired(obniz) {
@@ -12361,8 +12546,9 @@ class GP2Y0A21YK0F {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('GP2Y0A21YK0F', GP2Y0A21YK0F);
+if (true) {
+  module.exports = GP2Y0A21YK0F;
+}
 
 /***/ }),
 
@@ -12387,6 +12573,12 @@ class HCSR04 {
     this.reset_alltime = false;
 
     this.temp = 15;
+  }
+
+  static info() {
+    return {
+      name: 'HC-SR04'
+    };
   }
 
   wired(obniz) {
@@ -12468,10 +12660,9 @@ class HCSR04 {
   }
 }
 
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('HC-SR04', HCSR04);
+if (true) {
+  module.exports = HCSR04;
+}
 
 /***/ }),
 
@@ -12498,6 +12689,12 @@ class Grove_EarHeartRate {
 
     this.interval = 5;
     this.duration = 2.5 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'Grove_EarHeartRate'
+    };
   }
 
   wired(obniz) {
@@ -12530,8 +12727,9 @@ class Grove_EarHeartRate {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Grove_EarHeartRate', Grove_EarHeartRate);
+if (true) {
+  module.exports = Grove_EarHeartRate;
+}
 
 /***/ }),
 
@@ -12550,6 +12748,12 @@ class ENC03R_Module {
     this.keys = ['vcc', 'out1', 'out2', 'gnd'];
     this.required = ['out1', 'out2'];
     this.Sens = 0.00067; //Sensitivity, 0.67mV / deg/sec
+  }
+
+  static info() {
+    return {
+      name: 'ENC03R_Module'
+    };
   }
 
   wired(obniz) {
@@ -12574,8 +12778,9 @@ class ENC03R_Module {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ENC03R_Module', ENC03R_Module);
+if (true) {
+  module.exports = ENC03R_Module;
+}
 
 /***/ }),
 
@@ -12600,6 +12805,12 @@ class IRSensor {
     this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
     this.cutTail = true;
     this.output_pullup = true;
+  }
+
+  static info() {
+    return {
+      name: 'IRSensor'
+    };
   }
 
   wired(obniz) {
@@ -12649,8 +12860,9 @@ class IRSensor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('IRSensor', IRSensor);
+if (true) {
+  module.exports = IRSensor;
+}
 
 /***/ }),
 
@@ -12675,6 +12887,12 @@ class FullColorLED {
 
     this.keys = ['r', 'g', 'b', 'common', 'commonType'];
     this.requiredKeys = ['r', 'g', 'b', 'common', 'commonType'];
+  }
+
+  static info() {
+    return {
+      name: 'FullColorLED'
+    };
   }
 
   wired(obniz) {
@@ -12783,8 +13001,9 @@ class FullColorLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('FullColorLED', FullColorLED);
+if (true) {
+  module.exports = FullColorLED;
+}
 
 /***/ }),
 
@@ -12804,6 +13023,12 @@ class InfraredLED {
     this.requiredKeys = ['anode'];
 
     this.dataSymbolLength = 0.07;
+  }
+
+  static info() {
+    return {
+      name: 'InfraredLED'
+    };
   }
 
   wired(obniz) {
@@ -12828,8 +13053,9 @@ class InfraredLED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('InfraredLED', InfraredLED);
+if (true) {
+  module.exports = InfraredLED;
+}
 
 /***/ }),
 
@@ -12849,6 +13075,12 @@ class LED {
     this.requiredKeys = ['anode'];
 
     this.animationName = 'Led-' + Math.round(Math.random() * 1000);
+  }
+
+  static info() {
+    return {
+      name: 'LED'
+    };
   }
 
   wired(obniz) {
@@ -12906,8 +13138,9 @@ class LED {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LED', LED);
+if (true) {
+  module.exports = LED;
+}
 
 /***/ }),
 
@@ -12925,6 +13158,12 @@ class WS2811 {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'WS2811'
+    };
   }
 
   wired(obniz) {
@@ -13038,8 +13277,9 @@ class WS2811 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2811', WS2811);
+if (true) {
+  module.exports = WS2811;
+}
 
 /***/ }),
 
@@ -13057,6 +13297,12 @@ class WS2812 {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'USB'
+    };
   }
 
   wired(obniz) {
@@ -13169,8 +13415,9 @@ class WS2812 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2812', WS2812);
+if (true) {
+  module.exports = WS2812;
+}
 
 /***/ }),
 
@@ -13188,6 +13435,12 @@ class WS2812B {
   constructor() {
     this.keys = ['din', 'vcc', 'gnd'];
     this.requiredKeys = ['din'];
+  }
+
+  static info() {
+    return {
+      name: 'WS2812B'
+    };
   }
 
   wired(obniz) {
@@ -13300,8 +13553,9 @@ class WS2812B {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('WS2812B', WS2812B);
+if (true) {
+  module.exports = WS2812B;
+}
 
 /***/ }),
 
@@ -13324,19 +13578,26 @@ class SNx4HC595 {
     this.autoFlash = true;
   }
 
+  static info() {
+    return {
+      name: 'SNx4HC595'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
-
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-
-    this.io_ser = this.obniz.getIO(this.params.ser);
-    this.io_srclk = this.obniz.getIO(this.params.srclk);
-    this.io_rclk = this.obniz.getIO(this.params.rclk);
 
     if (this.obniz.isValidIO(this.params.oe)) {
       this.io_oe = this.obniz.getIO(this.params.oe);
       this.io_oe.output(true);
     }
+
+    this.io_ser = this.obniz.getIO(this.params.ser);
+    this.io_srclk = this.obniz.getIO(this.params.srclk);
+    this.io_rclk = this.obniz.getIO(this.params.rclk);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);
       this.io_srclr.output(true);
@@ -13425,19 +13686,18 @@ class SNx4HC595 {
   flush() {
     /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
     this.io_rclk.output(false);
-    let array = [];
     for (let i = this.io.length - 1; i >= 0; i--) {
-      this.io_srclk.output(false);
-      array.push(this.io[i].value);
       this.io_ser.output(this.io[i].value);
       this.io_srclk.output(true);
+      this.io_srclk.output(false);
     }
     this.io_rclk.output(true);
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SNx4HC595', SNx4HC595);
+if (true) {
+  module.exports = SNx4HC595;
+}
 
 /***/ }),
 
@@ -13457,6 +13717,12 @@ class _24LC256 {
   constructor() {
     this.requiredKeys = ['address'];
     this.keys = ['sda', 'scl', 'clock', 'pull', 'i2c', 'address'];
+  }
+
+  static info() {
+    return {
+      name: '24LC256'
+    };
   }
 
   wired(obniz) {
@@ -13489,8 +13755,9 @@ class _24LC256 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('24LC256', _24LC256);
+if (true) {
+  module.exports = _24LC256;
+}
 
 /***/ }),
 
@@ -13510,6 +13777,12 @@ class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
     this.required = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'Button'
+    };
   }
 
   wired(obniz) {
@@ -13542,8 +13815,9 @@ class Button {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Button', Button);
+if (true) {
+  module.exports = Button;
+}
 
 /***/ }),
 
@@ -13566,6 +13840,12 @@ class JoyStick {
     this.pins = this.keys || ['sw', 'y', 'x', 'vcc', 'gnd'];
     this.pinname = { sw: 'sw12' };
     this.shortName = 'joyS';
+  }
+
+  static info() {
+    return {
+      name: 'JoyStick'
+    };
   }
 
   wired(obniz) {
@@ -13612,8 +13892,9 @@ class JoyStick {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('JoyStick', JoyStick);
+if (true) {
+  module.exports = JoyStick;
+}
 
 /***/ }),
 
@@ -13633,6 +13914,12 @@ class KXR94_2050 {
   constructor() {
     this.keys = ['x', 'y', 'z', 'vcc', 'gnd', 'enable', 'self_test'];
     this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  static info() {
+    return {
+      name: 'KXR94_2050'
+    };
   }
 
   wired(obniz) {
@@ -13721,8 +14008,9 @@ class KXR94_2050 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('KXR94_2050', KXR94_2050);
+if (true) {
+  module.exports = KXR94_2050;
+}
 
 /***/ }),
 
@@ -13742,6 +14030,12 @@ class KXSC7_2050 {
   constructor() {
     this.keys = ['x', 'y', 'z', 'vcc', 'gnd'];
     this.requiredKeys = ['x', 'y', 'z'];
+  }
+
+  static info() {
+    return {
+      name: 'KXSC7_2050'
+    };
   }
 
   wired(obniz) {
@@ -13787,8 +14081,9 @@ class KXSC7_2050 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('KXSC7_2050', KXSC7_2050);
+if (true) {
+  module.exports = KXSC7_2050;
+}
 
 /***/ }),
 
@@ -13808,6 +14103,12 @@ class PaPIRsVZ {
     this.requiredKeys = ['signal'];
   }
 
+  static info() {
+    return {
+      name: 'PaPIRsVZ'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.io_signal = obniz.getIO(this.params.signal);
@@ -13823,8 +14124,9 @@ class PaPIRsVZ {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('PaPIRsVZ', PaPIRsVZ);
+if (true) {
+  module.exports = PaPIRsVZ;
+}
 
 /***/ }),
 
@@ -13846,6 +14148,12 @@ class Potentiometer {
     this.vcc_voltage = 5.0;
   }
 
+  static info() {
+    return {
+      name: 'Potentiometer'
+    };
+  }
+
   wired(obniz) {
     this.obniz.setVccGnd(this.params.pin0, this.params.pin2, '5v');
     this.ad = obniz.getAD(this.params.pin1);
@@ -13865,8 +14173,9 @@ class Potentiometer {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Potentiometer', Potentiometer);
+if (true) {
+  module.exports = Potentiometer;
+}
 
 /***/ }),
 
@@ -13884,6 +14193,12 @@ class DCMotor {
   constructor() {
     this.keys = ['forward', 'back'];
     this.requiredKeys = ['forward', 'back'];
+  }
+
+  static info() {
+    return {
+      name: 'DCMotor'
+    };
   }
 
   wired(obniz) {
@@ -13960,8 +14275,9 @@ class DCMotor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('DCMotor', DCMotor);
+if (true) {
+  module.exports = DCMotor;
+}
 
 /***/ }),
 
@@ -13979,6 +14295,12 @@ class ServoMotor {
   constructor() {
     this.keys = ['gnd', 'vcc', 'signal'];
     this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'ServoMotor'
+    };
   }
 
   wired(obniz) {
@@ -14018,8 +14340,9 @@ class ServoMotor {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ServoMotor', ServoMotor);
+if (true) {
+  module.exports = ServoMotor;
+}
 
 /***/ }),
 
@@ -14037,6 +14360,12 @@ class Solenoid {
   constructor() {
     this.keys = ['gnd', 'signal'];
     this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'Solenoid'
+    };
   }
 
   wired(obniz) {
@@ -14078,8 +14407,9 @@ class Solenoid {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Solenoid', Solenoid);
+if (true) {
+  module.exports = Solenoid;
+}
 
 /***/ }),
 
@@ -14099,6 +14429,12 @@ class FSR40X {
   constructor() {
     this.keys = ['pin0', 'pin1'];
     this.requiredKeys = ['pin0', 'pin1'];
+  }
+
+  static info() {
+    return {
+      name: 'FSR40X'
+    };
   }
 
   wired(obniz) {
@@ -14121,8 +14457,9 @@ class FSR40X {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('FSR40X', FSR40X);
+if (true) {
+  module.exports = FSR40X;
+}
 
 /***/ }),
 
@@ -14142,6 +14479,12 @@ class SEN0114 {
   constructor() {
     this.keys = ['vcc', 'output', 'gnd'];
     this.requiredKeys = ['output'];
+  }
+
+  static info() {
+    return {
+      name: 'SEN0114'
+    };
   }
 
   wired(obniz) {
@@ -14167,8 +14510,9 @@ class SEN0114 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SEN0114', SEN0114);
+if (true) {
+  module.exports = SEN0114;
+}
 
 /***/ }),
 
@@ -14186,6 +14530,12 @@ class Speaker {
   constructor(obniz) {
     this.keys = ['signal', 'gnd'];
     this.requiredKeys = ['gnd'];
+  }
+
+  static info() {
+    return {
+      name: 'Speaker'
+    };
   }
 
   wired(obniz) {
@@ -14209,8 +14559,9 @@ class Speaker {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('Speaker', Speaker);
+if (true) {
+  module.exports = Speaker;
+}
 
 /***/ }),
 
@@ -14268,10 +14619,16 @@ class LM35DZ extends AnalogTemplatureSensor {
   calc(voltage) {
     return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }
+  static info() {
+    return {
+      name: 'LM35DZ'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM35DZ', LM35DZ);
+if (true) {
+  module.exports = LM35DZ;
+}
 
 /***/ }),
 
@@ -14291,6 +14648,12 @@ class LM60 {
     this.requiredKeys = ['output'];
   }
 
+  static info() {
+    return {
+      name: 'LM60'
+    };
+  }
+
   wired(obniz) {
     this.obniz = obniz;
     this.ad = obniz.getAD(this.params.output);
@@ -14306,8 +14669,9 @@ class LM60 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM60', LM60);
+if (true) {
+  module.exports = LM60;
+}
 
 /***/ }),
 
@@ -14327,10 +14691,16 @@ class LM61 extends AnalogTemplatureSensor {
   calc(voltage) {
     return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
+  static info() {
+    return {
+      name: 'LM61'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('LM61', LM61);
+if (true) {
+  module.exports = LM61;
+}
 
 /***/ }),
 
@@ -14350,10 +14720,17 @@ class MCP9700 extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
+
+  static info() {
+    return {
+      name: 'MCP9700'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MCP9700', MCP9700);
+if (true) {
+  module.exports = MCP9700;
+}
 
 /***/ }),
 
@@ -14373,10 +14750,16 @@ class MCP9701 extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
+  static info() {
+    return {
+      name: 'MCP9701'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('MCP9701', MCP9701);
+if (true) {
+  module.exports = MCP9701;
+}
 
 /***/ }),
 
@@ -14398,10 +14781,16 @@ class S8100B extends AnalogTemplatureSensor {
   calc(voltage) {
     return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
   }
+  static info() {
+    return {
+      name: 'S8100B'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S8100B', S8100B);
+if (true) {
+  module.exports = S8100B;
+}
 
 /***/ }),
 
@@ -14425,10 +14814,16 @@ class S8120C extends AnalogTemplatureSensor {
   calc(voltage) {
     return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
+  static info() {
+    return {
+      name: 'S8120C'
+    };
+  }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S8120C', S8120C);
+if (true) {
+  module.exports = S8120C;
+}
 
 /***/ }),
 
@@ -14448,6 +14843,12 @@ class ADT7410 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sda', 'scl', 'addressMode'];
     this.requiredKeys = ['addressMode'];
+  }
+
+  static info() {
+    return {
+      name: 'ADT7410'
+    };
   }
 
   wired(obniz) {
@@ -14486,8 +14887,9 @@ class ADT7410 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ADT7410', ADT7410);
+if (true) {
+  module.exports = ADT7410;
+}
 
 /***/ }),
 
@@ -14508,6 +14910,12 @@ class S5851A {
   constructor() {
     this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
     this.keys = ['sda', 'scl', 'adr0', 'adr1', 'adr_select', 'i2c'];
+  }
+
+  static info() {
+    return {
+      name: 'S5851A'
+    };
   }
 
   wired(obniz) {
@@ -14602,8 +15010,9 @@ class S5851A {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('S5851A', S5851A);
+if (true) {
+  module.exports = S5851A;
+}
 
 /***/ }),
 
@@ -14643,6 +15052,12 @@ class SHT31 {
 
     //not tested
     this.commands.readStatus = [0xf3, 0x2d];
+  }
+
+  static info() {
+    return {
+      name: 'SHT31'
+    };
   }
 
   wired(obniz) {
@@ -14707,8 +15122,9 @@ class SHT31 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('SHT31', SHT31);
+if (true) {
+  module.exports = SHT31;
+}
 
 /***/ }),
 
@@ -14729,29 +15145,32 @@ class ADT7310 {
     this.keys = ['vcc', 'gnd', 'frequency', 'din', 'dout', 'clk', 'spi'];
     this.requiredKeys = [];
   }
+
+  static info() {
+    return {
+      name: 'ADT7310'
+    };
+  }
+
   wired(obniz) {
-    var _this = this;
+    this.obniz = obniz;
 
-    return _asyncToGenerator(function* () {
-      _this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-      obniz.setVccGnd(_this.params.vcc, _this.params.gnd, '5v');
-
-      _this.params.mode = _this.params.mode || 'master';
-      _this.params.frequency = _this.params.frequency || 500000;
-      _this.params.mosi = _this.params.din;
-      _this.params.miso = _this.params.dout;
-      _this.spi = _this.obniz.getSpiWithConfig(_this.params);
-    })();
+    this.params.mode = this.params.mode || 'master';
+    this.params.frequency = this.params.frequency || 500000;
+    this.params.mosi = this.params.din;
+    this.params.miso = this.params.dout;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
   }
 
   getTempWait() {
-    var _this2 = this;
+    var _this = this;
 
     return _asyncToGenerator(function* () {
-      yield _this2.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-      yield _this2.obniz.wait(200); //適度な値でないと安定しない
-      let ret = yield _this2.spi.writeWait([0x00, 0x00]);
+      yield _this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
+      yield _this.obniz.wait(200); //適度な値でないと安定しない
+      let ret = yield _this.spi.writeWait([0x00, 0x00]);
       let tempBin = ret[0] << 8;
       tempBin |= ret[1];
       tempBin = tempBin >> 3;
@@ -14766,8 +15185,9 @@ class ADT7310 {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('ADT7310', ADT7310);
+if (true) {
+  module.exports = ADT7310;
+}
 
 /***/ }),
 
@@ -14785,6 +15205,12 @@ class RN42 {
   constructor() {
     this.keys = ['tx', 'rx', 'gnd'];
     this.requiredKeys = ['tx', 'rx'];
+  }
+
+  static info() {
+    return {
+      name: 'RN42'
+    };
   }
 
   wired(obniz) {
@@ -14965,10 +15391,9 @@ class RN42 {
   }
 }
 
-// Module functions
-
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('RN42', RN42);
+if (true) {
+  module.exports = RN42;
+}
 
 /***/ }),
 
@@ -14990,6 +15415,12 @@ class XBee {
     this.requiredKeys = ['tx', 'rx'];
 
     this.displayIoNames = { tx: '<tx', rx: '>rx' };
+  }
+
+  static info() {
+    return {
+      name: 'XBee'
+    };
   }
 
   wired(obniz) {
@@ -15128,8 +15559,9 @@ class XBee {
   }
 }
 
-let Obniz = __webpack_require__(/*! ../../../obniz/index.js */ "./obniz/index.js");
-Obniz.PartsRegistrate('XBee', XBee);
+if (true) {
+  module.exports = XBee;
+}
 
 /***/ }),
 

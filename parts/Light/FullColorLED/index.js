@@ -63,15 +63,15 @@ class FullColorLED {
       g = 255 - g;
       b = 255 - b;
     }
-    this.pwmR.duty(r / 255 * 100);
-    this.pwmG.duty(g / 255 * 100);
-    this.pwmB.duty(b / 255 * 100);
+    this.pwmR.duty((r / 255) * 100);
+    this.pwmG.duty((g / 255) * 100);
+    this.pwmB.duty((b / 255) * 100);
   }
 
   hsv(h, s, v) {
     let C = v * s;
     let Hp = h / 60;
-    let X = C * (1 - Math.abs(Hp % 2 - 1));
+    let X = C * (1 - Math.abs((Hp % 2) - 1));
 
     let R, G, B;
     if (0 <= Hp && Hp < 1) {

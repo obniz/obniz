@@ -20,7 +20,7 @@ class Speaker {
   play(freq) {
     if (freq > 0) {
       this.pwm.freq(freq);
-      this.pwm.pulse(1 / freq / 2 * 1000);
+      this.pwm.pulse((1 / freq / 2) * 1000);
     } else {
       this.pwm.pulse(0);
     }
