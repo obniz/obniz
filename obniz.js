@@ -17372,6 +17372,7 @@ var map = {
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
 	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
+	"./ColorSensor/S11059-02DT/index.js": "./parts/ColorSensor/S11059-02DT/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -17398,6 +17399,7 @@ var map = {
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
+	"./Moving/SteppingMotor/test.js": "./parts/Moving/SteppingMotor/test.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
@@ -17882,6 +17884,64 @@ class JpegSerialCam {
 
 if (true) {
   module.exports = JpegSerialCam;
+}
+
+
+/***/ }),
+
+/***/ "./parts/ColorSensor/S11059-02DT/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class S11059 {
+  constructor() {
+    this.keys = ['vcc', 'sda', 'scl', 'gnd'];
+    //this.requiredKeys = [];
+
+    this.address = 0x2a;
+    this.regAdrs = {};
+    this.regAdrs.ctrl = 0x00;
+    this.regAdrs.manualTiming = 0x01;
+    this.regAdrs.sensorRed = 0x03;
+  }
+
+  static info() {
+    return {
+      name: 'S11059',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, 'open-drain');
+    this.obniz.wait(100);
+
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(100);
+  }
+
+  init(gain, intTime) {
+    this.i2c.write(this.address, [this.regAdrs.ctrl, 0x80]); // Reset
+    let val = (gain << 3) | intTime;
+    this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
+  }
+
+  async getVal() {
+    this.i2c.write(this.address, [this.regAdrs.sensorRed]);
+    let ret = await this.i2c.readWait(this.address, 8);
+    let level = [0, 0, 0, 0];
+    level[0] = (ret[0] << 8) | ret[1];
+    level[1] = (ret[2] << 8) | ret[3];
+    level[2] = (ret[4] << 8) | ret[5];
+    level[3] = (ret[6] << 8) | ret[7];
+    return level;
+  }
+}
+
+if (true) {
+  module.exports = S11059;
 }
 
 
@@ -20165,6 +20225,67 @@ class Solenoid {
 
 if (true) {
   module.exports = Solenoid;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Moving/SteppingMotor/test.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class SteppingMotor {
+  constructor() {
+    this.keys = ['com', 'x1', 'x2', 'y1', 'y2'];
+    this.requiredKeys = ['x1', 'x2', 'y1', 'y2'];
+  }
+
+  static info() {
+    return {
+      name: 'SteppingMotor',
+    };
+  }
+
+  wired(obniz) {
+    if (obniz.isValidIO(this.params.com)) {
+      obniz.getIO(this.params.com).output(true);
+    }
+    this.io_x1 = obniz.getIO(this.params.x1);
+    this.io_x2 = obniz.getIO(this.params.x2);
+    this.io_y1 = obniz.getIO(this.params.y1);
+    this.io_y2 = obniz.getIO(this.params.y2);
+  }
+
+  // Module functions
+
+  forward(steps, waitTime) {
+    let step = [[1, 1, 0, 0], [0, 1, 1, 0], [0, 0, 1, 1], [1, 0, 0, 1]];
+    for (let j = 0; j < steps; j++) {
+      for (let i = 0; i < 4; i++) {
+        this.io_x1.output(step[i][0]);
+        this.io_y1.output(step[i][1]);
+        this.io_x2.output(step[i][2]);
+        this.io_y2.output(step[i][3]);
+        obniz.wait(waitTime);
+      }
+    }
+  }
+
+  reverse(steps, waitTime) {
+    let step = [[1, 1, 0, 0], [0, 1, 1, 0], [0, 0, 1, 1], [1, 0, 0, 1]];
+    for (let j = 0; j < steps; j++) {
+      for (let i = 0; i < 4; i++) {
+        this.io_x1.output(step[i][3]);
+        this.io_y1.output(step[i][2]);
+        this.io_x2.output(step[i][1]);
+        this.io_y2.output(step[i][0]);
+        obniz.wait(waitTime);
+      }
+    }
+  }
+}
+
+if (true) {
+  module.exports = SteppingMotor;
 }
 
 
