@@ -4,7 +4,7 @@ const config = require('../config.js');
 
 let obnizA, obnizB;
 
-describe('7-ble', function() {
+describe('8-ble', function() {
   this.timeout(120000);
 
   before(async () => {
@@ -230,5 +230,51 @@ describe('7-ble', function() {
     await obnizA.pingWait();
     await obnizB.wait(10000);
     expect(notifyed).to.be.equal(true);
+  });
+
+  it('unknown service error', async () => {
+    let results = await this.peripheral
+      .getService('FF00')
+      .getCharacteristic('FF00')
+      .writeWait([10]);
+    await obnizA.pingWait();
+    expect(results).to.be.false;
+  });
+  it('unknown char error read', async () => {
+    let val = await this.peripheral
+      .getService('FFF0')
+      .getCharacteristic('FF00')
+      .readWait();
+    await obnizA.pingWait();
+    expect(val).to.be.undefined;
+  });
+
+  it('unknown char error', async () => {
+    let results = await this.peripheral
+      .getService('FFF0')
+      .getCharacteristic('FF00')
+      .writeWait([10]);
+    await obnizA.pingWait();
+    expect(results).to.be.false;
+  });
+
+  it('unknown desc error', async () => {
+    let results = await this.peripheral
+      .getService('fff0')
+      .getCharacteristic('fff1')
+      .getDescriptor('2902')
+      .writeWait([10]);
+    await obnizA.pingWait();
+    expect(results).to.be.false;
+  });
+
+  it('unknown desc error read', async () => {
+    let results = await this.peripheral
+      .getService('fff0')
+      .getCharacteristic('fff1')
+      .getDescriptor('2902')
+      .readWait();
+    await obnizA.pingWait();
+    expect(results).to.be.undefined;
   });
 });
