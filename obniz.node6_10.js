@@ -13591,7 +13591,7 @@ class SNx4HC595 {
 
     if (!this.params.power_delay) {
       this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-      console.log("before");
+      console.log('before');
     }
 
     if (this.obniz.isValidIO(this.params.srclr)) {
@@ -13605,7 +13605,7 @@ class SNx4HC595 {
 
     if (this.params.power_delay) {
       this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-      console.log("after");
+      console.log('after');
     }
 
     if (this.obniz.isValidIO(this.params.vcc) || this.obniz.isValidIO(this.params.gnd)) {
