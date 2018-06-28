@@ -15,9 +15,14 @@ var colorSens = obniz.wired("S11059", {vcc:0, sda:1, scl:2, gnd:3});
 
 ## init(Gain, IntergerTime)
 デバイスを初期化します。
-Gain : センサのゲインを指定します。1でHigh(高感度)、 0でLow(低感度)になります。
-IntergerTime: 積分時間を0~3で指定します。積分時間が長いほど高感度になります。具体的な時間は以下に示す通りです。
-0:87.5uS, 1:1.4ms, 2:22.4ms, 3:179.2ms
+
+1. Gain : センサのゲインを指定します。1でHigh(高感度)、 0でLow(低感度)になります。
+2. IntergerTime: 積分時間を0~3で指定します。積分時間が長いほど高感度になります。具体的な時間は以下に示す通りです。
+
+ - 0:87.5uS
+ - 1:1.4ms
+ - 2:22.4ms
+ - 3:179.2ms
 
 ```Javascript
 // Javascript Example
@@ -26,7 +31,11 @@ colorSens.init(1,2); // ゲイン高感度, 積分時間22.4msで初期化
 ```
 
 ## [async] getVal()
-センサから値を取得します。各色の値が配列で返されます。
+センサから値を取得します。各色の強さが数値の配列として返されます。
+
+[赤, 緑, 青, 赤外線]
+
+という配列になります。各値は0~0xFFFFの間となります。
 
 ```Javascript
 // Javascript Example

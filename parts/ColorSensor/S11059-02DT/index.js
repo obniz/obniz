@@ -1,7 +1,7 @@
 class S11059 {
   constructor() {
-    this.keys = ['vcc', 'sda', 'scl', 'gnd'];
-    //this.requiredKeys = [];
+    this.keys = ['vcc', 'sda', 'scl', 'i2c', 'gnd'];
+    this.requiredKeys = [];
 
     this.address = 0x2a;
     this.regAdrs = {};
@@ -18,7 +18,7 @@ class S11059 {
 
   wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, 'open-drain');
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
     this.obniz.wait(100);
 
     this.params.clock = 100000;
