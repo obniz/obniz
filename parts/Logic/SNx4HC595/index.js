@@ -1,7 +1,17 @@
 class SNx4HC595 {
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-    this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num'];
+    this.keys = [
+      'gnd',
+      'vcc',
+      'ser',
+      'srclk',
+      'rclk',
+      'oe',
+      'srclr',
+      'io_num',
+      'power_delay',
+    ];
     this.requiredKeys = ['ser', 'srclk', 'rclk'];
 
     this.autoFlash = true;
@@ -25,7 +35,10 @@ class SNx4HC595 {
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
 
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    if (!this.params.power_delay) {
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+      console.log('before');
+    }
 
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);
@@ -35,6 +48,11 @@ class SNx4HC595 {
     this.io_ser.output(false);
     this.io_srclk.output(false);
     this.io_rclk.output(false);
+
+    if (this.params.power_delay) {
+      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+      console.log('after');
+    }
 
     if (
       this.obniz.isValidIO(this.params.vcc) ||
