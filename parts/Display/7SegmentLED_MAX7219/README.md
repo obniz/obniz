@@ -75,16 +75,17 @@ change the digit of LED showing.
 4. dp: dot to show.
 
 value accept 
-| Type        | description   | 
+
+| Value        | description   | 
 | ------------- |-------------| 
 | 0 to 9      | number | 
 | 'on'      | all on (=8) | 
 | 'off'      | all off | 
-| '-'      |  | 
-| 'e'      |  | 
-| 'h'      |  | 
-| 'l'      |  | 
-| 'p'      |  | 
+| '-'      |  show "-" | 
+| 'e'      |  show "E" | 
+| 'h'      |  show "H" | 
+| 'l'      |  show "L" | 
+| 'p'      |  show "P" | 
 
 ```Javascript
 // Javascript Example
