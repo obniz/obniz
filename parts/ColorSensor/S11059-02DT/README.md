@@ -1,6 +1,8 @@
 # S11059
 Color Sensor S11059-02DT.
 
+![](./demo.gif)
+
 ## wired(obniz,  { vcc, sda, scl, gnd});
 
 1. vcc: Power supply(3v)
