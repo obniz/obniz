@@ -11416,6 +11416,7 @@ var map = {
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
 	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
+	"./ColorSensor/S11059-02DT/index.js": "./parts/ColorSensor/S11059-02DT/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -11966,6 +11967,76 @@ class JpegSerialCam {
 
 if (true) {
   module.exports = JpegSerialCam;
+}
+
+/***/ }),
+
+/***/ "./parts/ColorSensor/S11059-02DT/index.js":
+/*!************************************************!*\
+  !*** ./parts/ColorSensor/S11059-02DT/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class S11059 {
+  constructor() {
+    this.keys = ['vcc', 'sda', 'scl', 'gnd'];
+    //this.requiredKeys = [];
+
+    this.address = 0x2a;
+    this.regAdrs = {};
+    this.regAdrs.ctrl = 0x00;
+    this.regAdrs.manualTiming = 0x01;
+    this.regAdrs.sensorRed = 0x03;
+  }
+
+  static info() {
+    return {
+      name: 'S11059'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, 'open-drain');
+    this.obniz.wait(100);
+
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(100);
+  }
+
+  init(gain, intTime) {
+    this.i2c.write(this.address, [this.regAdrs.ctrl, 0x80]); // Reset
+    let val = gain << 3 | intTime;
+    this.i2c.write(this.address, [this.regAdrs.ctrl, val]); // Set gain,interger time
+  }
+
+  getVal() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      _this.i2c.write(_this.address, [_this.regAdrs.sensorRed]);
+      let ret = yield _this.i2c.readWait(_this.address, 8);
+      let level = [0, 0, 0, 0];
+      level[0] = ret[0] << 8 | ret[1];
+      level[1] = ret[2] << 8 | ret[3];
+      level[2] = ret[4] << 8 | ret[5];
+      level[3] = ret[6] << 8 | ret[7];
+      return level;
+    })();
+  }
+}
+
+if (true) {
+  module.exports = S11059;
 }
 
 /***/ }),
