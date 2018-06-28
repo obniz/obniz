@@ -13042,6 +13042,9 @@ class InfraredLED {
   }
 
   send(arr) {
+    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
+      arr.push(0);
+    }
     this.pwm.modulate('am', this.dataSymbolLength, arr);
   }
 }
