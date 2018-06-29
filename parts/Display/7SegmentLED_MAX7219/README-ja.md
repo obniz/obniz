@@ -30,8 +30,9 @@ obniz-DIN[1つ目のディスプレイ]DOUT-DIN[2つ目のディスプレイ]DOU
 ![](./obniz-max7219_multi.png)
 
 7セグメントLEDとMAX7219は以下のように接続します。
+
 |MAX7219<br>ピン名(ピン番号)|7セグメントLED|
-|:--:|:--:|
+|:---:|:---:|
 |SEG A(14)|A|
 |SEG B(16)|B|
 |SEG C(20)|C|
@@ -112,16 +113,17 @@ number :
 dp : ドット表示がある7セグメントLEDのドットの点灯/消灯を指定します。(点灯:true,消灯:false)
 
 number accept 
+
 | Value        | description   | 
 | ------------- |-------------| 
 | 0 to 9      | number | 
 | 'on'      | all on (=8) | 
 | 'off'      | all off | 
-| '-'      |  | 
-| 'e'      |  | 
-| 'h'      |  | 
-| 'l'      |  | 
-| 'p'      |  | 
+| '-'      |  show "-" | 
+| 'e'      |  show "E" | 
+| 'h'      |  show "H" | 
+| 'l'      |  show "L" | 
+| 'p'      |  show "P" | 
 
 ```Javascript
 // Javascript Example
