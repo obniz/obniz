@@ -6,7 +6,7 @@ class WS2812 {
 
   static info() {
     return {
-      name: 'USB',
+      name: 'WS2812',
     };
   }
 
