@@ -24,7 +24,6 @@ vcc | `number(obniz io)` | no |   | If you specify either vcc/gnd, wire() will 
 gnd | `number(obniz io)` | no |   | If you specify either vcc/gnd, wire() will wait a moment after power up.
 oe | `number(obniz io)` | no |   | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe.
 srclr | `number(obniz io)` | no |   | srclr clear shift resistor values. You don't need to specify srclr when srclr is connected directly to 5v.
-power_delay | `boolean` | no | false  | Configure timing of power supply before/after each configure io output. default is 'power first'.
 io_num | `number` | no | 8  | io_num is number of io. You can set under 8. If you specify over 8 like 16, then obniz will treat chained chip.
 
 ```Javascript
