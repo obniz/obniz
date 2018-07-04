@@ -32,9 +32,10 @@ class PeripheralUART {
       'cts',
       'drive',
       'pull',
+      'gnd',
     ]);
 
-    let ioKeys = ['rx', 'tx', 'rts', 'cts'];
+    let ioKeys = ['rx', 'tx', 'rts', 'cts', 'gnd'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("uart start param '" + key + "' are to be valid io no");
@@ -57,8 +58,23 @@ class PeripheralUART {
       this.Obniz.getIO(this.params.tx).pull(null);
     }
 
+    if (this.params.hasOwnProperty('gnd')) {
+      this.Obniz.getIO(this.params.gnd).output(false);
+    }
+
     let obj = {};
-    obj['uart' + this.id] = this.params;
+    let sendParams = ObnizUtil._keyFilter(this.params, [
+      'tx',
+      'rx',
+      'baud',
+      'stop',
+      'bits',
+      'parity',
+      'flowcontrol',
+      'rts',
+      'cts',
+    ]);
+    obj['uart' + this.id] = sendParams;
     this.Obniz.send(obj);
     this.received = [];
     this.used = true;

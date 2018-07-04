@@ -35,6 +35,29 @@ describe('obniz.libs.spi', function() {
     expect(this.obniz).to.be.finished;
   });
 
+  it('startWithGnd', function() {
+    this.obniz.spi0.start({
+      clk: 0,
+      frequency: 1000000,
+      miso: 2,
+      mode: 'master',
+      mosi: 1,
+      gnd: 7,
+    });
+
+    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io7: false }]);
+    expect(this.obniz).send([
+      { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master', mosi: 1 } },
+    ]);
+    expect(this.obniz).to.be.finished;
+  });
+
   it('write', function() {
     this.obniz.spi0.start({
       clk: 0,

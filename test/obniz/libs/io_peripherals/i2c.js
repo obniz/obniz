@@ -33,6 +33,26 @@ describe('obniz.libs.i2c', function() {
     expect(this.obniz).to.be.finished;
   });
 
+  it('startWithGnd', function() {
+    this.obniz.i2c0.start({
+      mode: 'master',
+      sda: 2,
+      scl: 3,
+      clock: 400000,
+      pull: null,
+      gnd: 0,
+    });
+    expect(this.obniz).send([{ io2: { output_type: 'open-drain' } }]);
+    expect(this.obniz).send([{ io3: { output_type: 'open-drain' } }]);
+    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io3: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io0: false }]);
+    expect(this.obniz).send([
+      { i2c0: { clock: 400000, sda: 2, scl: 3, mode: 'master' } },
+    ]);
+    expect(this.obniz).to.be.finished;
+  });
+
   it('end', function() {
     this.obniz.i2c0.start({
       mode: 'master',

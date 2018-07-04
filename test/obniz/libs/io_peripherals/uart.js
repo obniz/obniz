@@ -2,7 +2,7 @@ let chai = require('chai');
 let expect = chai.expect;
 let sinon = require('sinon');
 
-let testUtil = require(global.appRoot + '/test/testUtil.js');
+let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -21,6 +21,22 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
     expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
+
+    expect(this.obniz).send([{ uart0: { tx: 1, rx: 2, baud: 9600, bits: 7 } }]);
+
+    this.obniz.uart0.send('Hi');
+
+    expect(this.obniz).send([{ uart0: { data: [72, 105] } }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+  it('startWithGnd', function() {
+    this.obniz.uart0.start({ tx: 1, rx: 2, baud: 9600, bits: 7, gnd: 3 });
+    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
+    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
+    expect(this.obniz).send([{ io3: false }]);
 
     expect(this.obniz).send([{ uart0: { tx: 1, rx: 2, baud: 9600, bits: 7 } }]);
 

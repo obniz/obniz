@@ -13,7 +13,7 @@ var uart1 = obniz.getFreeUart();
 var uart2 = obniz.getFreeUart(); // Error
 ```
 
-## start({tx, rx[, baud, stop, bits, parity, flow control, rts, cts, drive, pull ]})
+## start({tx, rx[, gnd, baud, stop, bits, parity, flow control, rts, cts, drive, pull]})
 start uart on io tx, rx.
 tx is used for send data from obniz to parts.
 rx is used for receive data from parts to obniz.

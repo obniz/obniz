@@ -15,7 +15,7 @@ var uart1 = obniz.getFreeUart();
 var uart2 = obniz.getFreeUart(); // Error
 ```
 
-## start({tx, rx[, baud, stop, bits, parity, flow control, rts, cts, drive, pull ]})
+## start({tx, rx[, gnd, baud, stop, bits, parity, flow control, rts, cts, drive, pull ]})
 uartを開始します。
 txで指定したピンが送信でそこからデータがobnizから送信され、rxで指定したピンで受信します。
 tx とrx以外は設定されて無くても動作します。その場合のデフォルト通信設定は以下のとおりです。

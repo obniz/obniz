@@ -37,7 +37,7 @@ var i2c0 = obniz.getFreeI2C();
 var i2c1 = obniz.getFreeI2C(); // Error
 ```
 
-## start({mode, sda, scl, clock[, pull]})
+## start({mode, sda, scl, clock[, pull, gnd]})
 
 i2cを有効化します。
 SDA, SCLとして利用するioの番号が必要です。
