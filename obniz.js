@@ -17346,7 +17346,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.5.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.6.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17358,7 +17358,7 @@ var map = {
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
 	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
-	"./ColorSensor/S11059-02DT/index.js": "./parts/ColorSensor/S11059-02DT/index.js",
+	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -17377,6 +17377,7 @@ var map = {
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
+	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
@@ -17875,7 +17876,7 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/ColorSensor/S11059-02DT/index.js":
+/***/ "./parts/ColorSensor/S11059/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 class S11059 {
@@ -19195,7 +19196,7 @@ class WS2812 {
 
   static info() {
     return {
-      name: 'USB',
+      name: 'WS2812',
     };
   }
 
@@ -19462,17 +19463,7 @@ if (true) {
 class SNx4HC595 {
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-    this.keys = [
-      'gnd',
-      'vcc',
-      'ser',
-      'srclk',
-      'rclk',
-      'oe',
-      'srclr',
-      'io_num',
-      'power_delay',
-    ];
+    this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num'];
     this.requiredKeys = ['ser', 'srclk', 'rclk'];
 
     this.autoFlash = true;
@@ -19487,32 +19478,24 @@ class SNx4HC595 {
   wired(obniz) {
     this.obniz = obniz;
 
-    if (this.obniz.isValidIO(this.params.oe)) {
-      this.io_oe = this.obniz.getIO(this.params.oe);
-      this.io_oe.output(true);
-    }
-
     this.io_ser = this.obniz.getIO(this.params.ser);
     this.io_srclk = this.obniz.getIO(this.params.srclk);
     this.io_rclk = this.obniz.getIO(this.params.rclk);
 
-    if (!this.params.power_delay) {
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-      console.log('before');
-    }
+    this.io_ser.output(false);
+    this.io_srclk.output(false);
+    this.io_rclk.output(false);
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
     if (this.obniz.isValidIO(this.params.srclr)) {
       this.io_srclr = this.obniz.getIO(this.params.srclr);
       this.io_srclr.output(true);
     }
 
-    this.io_ser.output(false);
-    this.io_srclk.output(false);
-    this.io_rclk.output(false);
-
-    if (this.params.power_delay) {
-      this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-      console.log('after');
+    if (this.obniz.isValidIO(this.params.oe)) {
+      this.io_oe = this.obniz.getIO(this.params.oe);
+      this.io_oe.output(true);
     }
 
     if (
@@ -19704,6 +19687,42 @@ class Button {
 
 if (true) {
   module.exports = Button;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/HC-SR505/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class HCSR505 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'signal'];
+    this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'HC-SR505',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.io_signal = obniz.getIO(this.params.signal);
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.io_signal.input(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+}
+
+if (true) {
+  module.exports = HCSR505;
 }
 
 

@@ -1,20 +1,17 @@
-# PaPIRsVZ
+# HC-SR505
 
-Panasonic's PIR sensor. It is used tot detects humans/animals.
-This sensor include filters. So Easy to separate signal from noises.
+It is used for detects humans/animals.
 
-![](./papirsvzwire.jpg)
+![](image.jpg)
 
 
-## wired(obniz, [signal [,vcc, gnd]])
+## wired(obniz, {signal [,vcc, gnd]})
 
 It has three pins. Connect them to an obniz directly.
 
-![](./papirsvzpins.jpg)
-
 ```Javascript
 // Javascript Example
-var sensor = obniz.wired("PaPIRsVZ", {gnd:0, signal:1, vcc:2});
+var sensor = obniz.wired("HC-SR505", {vcc:0, signal:1, gnd:2});
 sensor.onchange = function(val){
   console.log(val ? 'Moving Something!' : 'Nothing moving');
 }
@@ -29,7 +26,7 @@ It's fileter works. So called with false after soon called with true.
 
 ```Javascript
 // Javascript Example
-var sensor = obniz.wired("PaPIRsVZ", {gnd:0, signal:1, vcc:2});
+var sensor = obniz.wired("HC-SR505", {vcc:0, signal:1, gnd:2});
 sensor.onchange = function(val){
   console.log(val ? 'Moving Something!' : 'Nothing moving');
 }
