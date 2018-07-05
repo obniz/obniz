@@ -53,6 +53,18 @@ describe('obniz.libs.spi', function() {
     expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io7: false }]);
     expect(this.obniz).send([
+      {
+        display: {
+          pin_assign: {
+            '7': {
+              module_name: 'spi0',
+              pin_name: 'gnd',
+            },
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master', mosi: 1 } },
     ]);
     expect(this.obniz).to.be.finished;

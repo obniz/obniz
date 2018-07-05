@@ -37,6 +37,18 @@ describe('obniz.libs.uart', function() {
     expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io3: false }]);
+    expect(this.obniz).send([
+      {
+        display: {
+          pin_assign: {
+            '3': {
+              module_name: 'uart0',
+              pin_name: 'gnd',
+            },
+          },
+        },
+      },
+    ]);
 
     expect(this.obniz).send([{ uart0: { tx: 1, rx: 2, baud: 9600, bits: 7 } }]);
 

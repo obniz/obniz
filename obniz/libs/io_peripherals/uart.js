@@ -60,6 +60,9 @@ class PeripheralUART {
 
     if (this.params.hasOwnProperty('gnd')) {
       this.Obniz.getIO(this.params.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.params.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('uart' + this.id, ioNames);
     }
 
     let obj = {};

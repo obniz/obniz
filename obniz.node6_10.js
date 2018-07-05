@@ -5605,6 +5605,9 @@ class PeripheralI2C {
 
     if (this.state.gnd !== undefined) {
       this.Obniz.getIO(this.state.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.state.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('i2c' + this.id, ioNames);
     }
 
     let startObj = ObnizUtil._keyFilter(this.state, ['mode', 'sda', 'scl']);
@@ -6138,6 +6141,9 @@ class PeripheralSPI {
 
     if (this.params.gnd !== undefined) {
       this.Obniz.getIO(this.params.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.params.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('spi' + this.id, ioNames);
     }
     this.used = true;
     this.Obniz.send(obj);
@@ -6258,6 +6264,9 @@ class PeripheralUART {
 
     if (this.params.hasOwnProperty('gnd')) {
       this.Obniz.getIO(this.params.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.params.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('uart' + this.id, ioNames);
     }
 
     let obj = {};

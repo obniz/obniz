@@ -91,6 +91,9 @@ class PeripheralSPI {
 
     if (this.params.gnd !== undefined) {
       this.Obniz.getIO(this.params.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.params.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('spi' + this.id, ioNames);
     }
     this.used = true;
     this.Obniz.send(obj);

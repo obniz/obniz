@@ -48,6 +48,18 @@ describe('obniz.libs.i2c', function() {
     expect(this.obniz).send([{ io3: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io0: false }]);
     expect(this.obniz).send([
+      {
+        display: {
+          pin_assign: {
+            '0': {
+              module_name: 'i2c0',
+              pin_name: 'gnd',
+            },
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
       { i2c0: { clock: 400000, sda: 2, scl: 3, mode: 'master' } },
     ]);
     expect(this.obniz).to.be.finished;
