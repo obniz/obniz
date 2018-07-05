@@ -78,7 +78,7 @@ value accept
 
 | Value        | description   | 
 | ------------- |-------------| 
-| 0 to 9      | number | ``
+| 0 to 9      | number | 
 | 'on'      | all on (=8) | 
 | 'off'      | all off | 
 | '-'      |  show "-" | 
