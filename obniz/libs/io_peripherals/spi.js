@@ -32,10 +32,11 @@ class PeripheralSPI {
       'frequency',
       'drive',
       'pull',
+      'gnd',
     ]);
     let obj = {};
 
-    let ioKeys = ['clk', 'mosi', 'miso'];
+    let ioKeys = ['clk', 'mosi', 'miso', 'gnd'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -88,6 +89,12 @@ class PeripheralSPI {
         this.Obniz.getIO(this.params.miso).pull(null);
     }
 
+    if (this.params.gnd !== undefined) {
+      this.Obniz.getIO(this.params.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.params.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('spi' + this.id, ioNames);
+    }
     this.used = true;
     this.Obniz.send(obj);
   }

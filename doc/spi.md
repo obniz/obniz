@@ -14,7 +14,7 @@ var spi1 = obniz.getFreeSpi();
 var spi2 = obniz.getFreeSpi(); // Error
 ```
 
-## start({mode, clk, mosi, miso, frequency, [, drive, pull] } );
+## start({mode, clk, mosi, miso, frequency, [, drive, pull, gnd] } );
 start spi. now mode is only "master"
 drive and pull is optional for io output setting. 
 Default it drive:5v, pull:null.

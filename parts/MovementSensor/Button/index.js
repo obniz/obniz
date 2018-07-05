@@ -2,6 +2,8 @@ class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
     this.required = ['signal'];
+
+    this.onChangeForStateWait = function() {};
   }
 
   static info() {
@@ -27,12 +29,25 @@ class Button {
       if (self.onchange) {
         self.onchange(value === false);
       }
+      self.onChangeForStateWait(value === false);
     });
   }
 
   async isPressedWait() {
     let ret = await this.io_signal.inputWait();
     return ret === false;
+  }
+
+  stateWait(isPressed) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.onChangeForStateWait = function(pressed) {
+        if (isPressed == pressed) {
+          self.onChangeForStateWait = function() {};
+          resolve();
+        }
+      };
+    });
   }
 }
 

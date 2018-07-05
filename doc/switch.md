@@ -35,3 +35,24 @@ if (state === "push") {
   obniz.display.print("Now Pressed");
 }
 ```
+
+
+
+## [async] switch.stateWait(state)
+Wait until change to state switch.
+
+```Javascript
+// Javascript Example
+await obniz.switch.stateWait("push"); 
+console.log("switch pushed");
+
+await obniz.switch.stateWait("left"); 
+console.log("switch left");
+
+await obniz.switch.stateWait("right"); 
+console.log("switch right");
+
+await obniz.switch.stateWait("none"); 
+console.log("switch none");
+
+```

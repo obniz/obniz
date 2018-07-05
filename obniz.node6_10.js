@@ -12,9 +12,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
-/******/ 	// object to store loaded and loading wasm modules
-/******/ 	var installedWasmModules = {};
-/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/
@@ -49,17 +46,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -76,9 +88,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// object with all compiled WebAssembly.Modules
-/******/ 	__webpack_require__.w = {};
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -243,13 +252,12 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	var module = __webpack_require__(id);
-	return module;
+	return __webpack_require__(id);
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error('Cannot find module "' + req + '".');
+		var e = new Error("Cannot find module '" + req + "'");
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -1845,7 +1853,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error('Cannot find module "' + req + '".');
+	var e = new Error("Cannot find module '" + req + "'");
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -5151,7 +5159,7 @@ class Display {
     }
     if (this.Obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"canvas\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+        const { createCanvas } = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'canvas'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
         this._canvas = createCanvas(this.width, this.height);
       } catch (e) {
         // this.warnCanvasAvailability();
@@ -5379,6 +5387,7 @@ class ObnizSwitch {
 
   _reset() {
     this.observers = [];
+    this.onChangeForStateWait = function () {};
   }
 
   addObserver(callback) {
@@ -5397,11 +5406,25 @@ class ObnizSwitch {
     });
   }
 
+  stateWait(isPressed) {
+    let self = this;
+    return new Promise(function (resolve, reject) {
+      self.onChangeForStateWait = function (pressed) {
+        if (isPressed == pressed) {
+          self.onChangeForStateWait = function () {};
+          resolve();
+        }
+      };
+    });
+  }
+
   notified(obj) {
     this.state = obj.state;
     if (this.onchange) {
       this.onchange(this.state);
     }
+    this.onChangeForStateWait(this.state);
+
     const callback = this.observers.shift();
     if (callback) {
       callback(this.state);
@@ -5524,9 +5547,9 @@ class PeripheralI2C {
     if (err) {
       throw new Error("I2C start param '" + err + "' required, but not found ");
     }
-    this.state = ObnizUtil._keyFilter(arg, ['mode', 'sda', 'scl', 'pull']);
+    this.state = ObnizUtil._keyFilter(arg, ['mode', 'sda', 'scl', 'pull', 'gnd']);
 
-    let ioKeys = ['sda', 'scl'];
+    let ioKeys = ['sda', 'scl', 'gnd'];
     for (let key of ioKeys) {
       if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
         throw new Error("i2c start param '" + key + "' are to be valid io no");
@@ -5578,6 +5601,13 @@ class PeripheralI2C {
     } else {
       this.Obniz.getIO(this.state.sda).pull(null);
       this.Obniz.getIO(this.state.scl).pull(null);
+    }
+
+    if (this.state.gnd !== undefined) {
+      this.Obniz.getIO(this.state.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.state.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('i2c' + this.id, ioNames);
     }
 
     let startObj = ObnizUtil._keyFilter(this.state, ['mode', 'sda', 'scl']);
@@ -6065,10 +6095,10 @@ class PeripheralSPI {
     if (err) {
       throw new Error("spi start param '" + err + "' required, but not found ");
     }
-    this.params = ObnizUtil._keyFilter(params, ['mode', 'clk', 'mosi', 'miso', 'frequency', 'drive', 'pull']);
+    this.params = ObnizUtil._keyFilter(params, ['mode', 'clk', 'mosi', 'miso', 'frequency', 'drive', 'pull', 'gnd']);
     let obj = {};
 
-    let ioKeys = ['clk', 'mosi', 'miso'];
+    let ioKeys = ['clk', 'mosi', 'miso', 'gnd'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -6109,6 +6139,12 @@ class PeripheralSPI {
       if (this.params.miso !== undefined) this.Obniz.getIO(this.params.miso).pull(null);
     }
 
+    if (this.params.gnd !== undefined) {
+      this.Obniz.getIO(this.params.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.params.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('spi' + this.id, ioNames);
+    }
     this.used = true;
     this.Obniz.send(obj);
   }
@@ -6201,9 +6237,9 @@ class PeripheralUART {
     if (err) {
       throw new Error("uart start param '" + err + "' required, but not found ");
     }
-    this.params = ObnizUtil._keyFilter(params, ['tx', 'rx', 'baud', 'stop', 'bits', 'parity', 'flowcontrol', 'rts', 'cts', 'drive', 'pull']);
+    this.params = ObnizUtil._keyFilter(params, ['tx', 'rx', 'baud', 'stop', 'bits', 'parity', 'flowcontrol', 'rts', 'cts', 'drive', 'pull', 'gnd']);
 
-    let ioKeys = ['rx', 'tx', 'rts', 'cts'];
+    let ioKeys = ['rx', 'tx', 'rts', 'cts', 'gnd'];
     for (let key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("uart start param '" + key + "' are to be valid io no");
@@ -6226,8 +6262,16 @@ class PeripheralUART {
       this.Obniz.getIO(this.params.tx).pull(null);
     }
 
+    if (this.params.hasOwnProperty('gnd')) {
+      this.Obniz.getIO(this.params.gnd).output(false);
+      let ioNames = {};
+      ioNames[this.params.gnd] = 'gnd';
+      this.Obniz.display.setPinNames('uart' + this.id, ioNames);
+    }
+
     let obj = {};
-    obj['uart' + this.id] = this.params;
+    let sendParams = ObnizUtil._keyFilter(this.params, ['tx', 'rx', 'baud', 'stop', 'bits', 'parity', 'flowcontrol', 'rts', 'cts']);
+    obj['uart' + this.id] = sendParams;
     this.Obniz.send(obj);
     this.received = [];
     this.used = true;
@@ -8079,7 +8123,7 @@ class ObnizUtil {
   createCanvasContext(width, height) {
     if (this.obniz.isNode) {
       try {
-        const { createCanvas } = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"canvas\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+        const { createCanvas } = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'canvas'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
         return createCanvas(this.width, this.height);
       } catch (e) {
         throw new Error('obniz.js require node-canvas to draw rich contents. see more detail on docs');
@@ -8158,7 +8202,7 @@ module.exports = ObnizUtil;
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error('Cannot find module "' + req + '".');
+	var e = new Error("Cannot find module '" + req + "'");
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -8248,7 +8292,7 @@ module.exports.setBaseDir = function (base) {
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error('Cannot find module "' + req + '".');
+	var e = new Error("Cannot find module '" + req + "'");
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -11466,13 +11510,12 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	var module = __webpack_require__(id);
-	return module;
+	return __webpack_require__(id);
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error('Cannot find module "' + req + '".');
+		var e = new Error("Cannot find module '" + req + "'");
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -13845,6 +13888,8 @@ class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
     this.required = ['signal'];
+
+    this.onChangeForStateWait = function () {};
   }
 
   static info() {
@@ -13870,6 +13915,7 @@ class Button {
       if (self.onchange) {
         self.onchange(value === false);
       }
+      self.onChangeForStateWait(value === false);
     });
   }
 
@@ -13880,6 +13926,18 @@ class Button {
       let ret = yield _this.io_signal.inputWait();
       return ret === false;
     })();
+  }
+
+  stateWait(isPressed) {
+    let self = this;
+    return new Promise(function (resolve, reject) {
+      self.onChangeForStateWait = function (pressed) {
+        if (isPressed == pressed) {
+          self.onChangeForStateWait = function () {};
+          resolve();
+        }
+      };
+    });
   }
 }
 
