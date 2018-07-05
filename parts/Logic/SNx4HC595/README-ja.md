@@ -9,7 +9,7 @@ SNx4HC595はSN54HC595やSN74HC595を扱うためのライブラリです。
 Reference
 [http://www.ti.com/lit/ds/symlink/sn74hc595.pdf](http://www.ti.com/lit/ds/symlink/sn74hc595.pdf)
 
-## obniz.wired('SNx4HC595', {ser, rclk, srclk [, gnd, vcc, oe, srclr, io_num, power_delayed]});
+## obniz.wired('SNx4HC595', {ser, rclk, srclk [, gnd, vcc, oe, srclr, io_num]});
 
 チップの各ピンをどのobnizのioに接続したか設定します。
 
@@ -22,7 +22,6 @@ vcc | `number(obniz io)` | no |   | 別の電源につないでいる場合は�
 gnd | `number(obniz io)` | no |   | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
 oe | `number(obniz io)` | no |   | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。gndにつなぐことで、通常使用となります。obnizにつながずにgndにつないでいる場合はwired関数で指定しなくても良いです。指定した場合はsetEnable()関数が使えるようになります。
 srclr | `number(obniz io)` | no |   | シフトレジスタの値をすべてクリアするためのピンです。low->highでクリアされます。5vなどに接続し、obnizから操作しない場合は指定する必要はありません。
-power_delay | `boolean` | no | false  | 電源投入を他のすべての設定ピンの出力を行った前にするのか後にするのかを変更できます。指定なしで前に行います。
 io_num | `number` | no | 8  | ioの数を指定します。1つのチップに8個までioがありますが、5などを指定すると、そのうちの5本のみ使用されます。また、連続でチップが繋がれている場合は、ここの数字を増えたIOの数だけ指定します。
 例えば2チップつないでいて、16ある場合はio_num:16とすることで操作できます。
 

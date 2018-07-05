@@ -6,7 +6,7 @@
 ![](./papirsvzwire.jpg)
 
 
-## wire
+## wired(obniz, [signal [,vcc, gnd]])
 
 ３つのピンがあります。直接obnizに接続して下さい。
 
@@ -26,10 +26,6 @@ sensor.onchange = function(val){
 人が近づいてきたときに関数が呼ばれ、値```true```が引数に入っています。
 もし、人がいなくなったり、人の動きが止まると再度呼ばれ```false```が引数に入ります。
 フィルターが有効ですので、trueのあと、基本的にはすぐにfalseになります。
-
-It called when something changed.
-It humans is closing to a sensor, this function will called with value ```true```.
-If a humans leaves or if a human stops moving, this function will called with value ```false```.
 
 ```Javascript
 // Javascript Example
