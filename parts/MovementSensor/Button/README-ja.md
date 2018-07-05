@@ -35,3 +35,15 @@ var button = obniz.wired("Button",  {signal:0, gnd:1});
 var pressed = await button.isPressedWait();
 console.log("Pressed = " + pressed);
 ```
+
+
+## [async] stateWait
+ボタンが押される／離されるまで待ちます
+```Javascript
+// Javascript Example
+var button = obniz.wired("Button",  {signal:0, gnd:1});
+await button.stateWait(false); 
+console.log("button released");
+await button.stateWait(true); 
+console.log("button pushed");
+```

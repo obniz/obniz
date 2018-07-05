@@ -2,7 +2,7 @@ let chai = require('chai');
 let expect = chai.expect;
 let sinon = require('sinon');
 
-let testUtil = require(global.appRoot + '/test/testUtil.js');
+let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -61,6 +61,33 @@ describe('obniz.libs.switch', function() {
             testUtil.receiveJson(this.obniz, [
               { switch: { state: 'left', action: 'get' } },
             ]);
+          }.bind(this),
+          10
+        );
+      }.bind(this)
+    );
+  });
+
+  it('stateWait', function() {
+    let before = true;
+    return new Promise(
+      function(resolve, reject) {
+        this.obniz.switch.stateWait('push').then(function(result) {
+          expect(before).to.be.false;
+          resolve();
+        });
+
+        expect(this.obniz).to.be.obniz;
+        testUtil.receiveJson(this.obniz, [{ switch: { state: 'left' } }]);
+        expect(this.obniz).to.be.finished;
+
+        testUtil.receiveJson(this.obniz, [{ switch: { state: 'right' } }]);
+        expect(this.obniz).to.be.finished;
+
+        setTimeout(
+          function() {
+            before = false;
+            testUtil.receiveJson(this.obniz, [{ switch: { state: 'push' } }]);
           }.bind(this),
           10
         );

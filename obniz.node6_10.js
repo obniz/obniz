@@ -5387,6 +5387,7 @@ class ObnizSwitch {
 
   _reset() {
     this.observers = [];
+    this.onChangeForStateWait = function () {};
   }
 
   addObserver(callback) {
@@ -5405,11 +5406,25 @@ class ObnizSwitch {
     });
   }
 
+  stateWait(isPressed) {
+    let self = this;
+    return new Promise(function (resolve, reject) {
+      this.onChangeForStateWait = function (pressed) {
+        if (isPressed == pressed) {
+          self.onChangeForStateWait = function () {};
+          resolve();
+        }
+      };
+    });
+  }
+
   notified(obj) {
     this.state = obj.state;
     if (this.onchange) {
       this.onchange(this.state);
     }
+    this.onChangeForStateWait(this.state);
+
     const callback = this.observers.shift();
     if (callback) {
       callback(this.state);
