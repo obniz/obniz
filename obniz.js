@@ -37,32 +37,17 @@ var Obniz =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -239,12 +224,13 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
+	var module = __webpack_require__(id);
+	return module;
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error("Cannot find module '" + req + "'");
+		var e = new Error('Cannot find module "' + req + '".');
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -7230,7 +7216,7 @@ module.exports = g;
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
+	var e = new Error('Cannot find module "' + req + '".');
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -13878,7 +13864,7 @@ module.exports = ws;
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
+	var e = new Error('Cannot find module "' + req + '".');
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -17414,7 +17400,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.6.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.7.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.4","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.0","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.5","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17476,12 +17462,13 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
+	var module = __webpack_require__(id);
+	return module;
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error("Cannot find module '" + req + "'");
+		var e = new Error('Cannot find module "' + req + '".');
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -18472,25 +18459,19 @@ class MatrixLED_MAX7219 {
   }
 
   draw(ctx) {
-    let isNode = typeof window === 'undefined';
-    if (isNode) {
-      // TODO:
-      throw new Error('node js mode is under working.');
-    } else {
-      const imageData = ctx.getImageData(0, 0, this.width, this.height);
-      const data = imageData.data;
+    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+    const data = imageData.data;
 
-      for (let i = 0; i < data.length; i += 4) {
-        let brightness =
-          0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        let index = parseInt(i / 4);
-        let line = parseInt(index / this.width);
-        let col = parseInt((index - line * this.width) / 8);
-        let bits = parseInt(index - line * this.width) % 8;
-        if (bits === 0) this.vram[line][col] = 0x00;
-        if (brightness > 0x7f) this.vram[line][col] |= 0x80 >> bits;
-      }
+    for (let i = 0; i < data.length; i += 4) {
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let index = parseInt(i / 4);
+      let line = parseInt(index / this.width);
+      let col = parseInt((index - line * this.width) / 8);
+      let bits = parseInt(index - line * this.width) % 8;
+      if (bits === 0) this.vram[line][col] = 0x00;
+      if (brightness > 0x7f) this.vram[line][col] |= 0x80 >> bits;
     }
+
     this.writeVram();
   }
 }
@@ -19530,7 +19511,17 @@ if (true) {
 class SNx4HC595 {
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-    this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num'];
+    this.keys = [
+      'gnd',
+      'vcc',
+      'ser',
+      'srclk',
+      'rclk',
+      'oe',
+      'srclr',
+      'io_num',
+      'enabled',
+    ];
     this.requiredKeys = ['ser', 'srclk', 'rclk'];
 
     this.autoFlash = true;
@@ -19577,7 +19568,12 @@ class SNx4HC595 {
     }
     this.ioNum(this.params.io_num);
 
-    if (this.io_oe) {
+    if (typeof this.params.enabled !== 'boolean') {
+      this.params.enabled = true;
+    }
+    console.log(this.params.enabled);
+    if (this.io_oe && this.params.enabled) {
+      console.log('here');
       this.io_oe.output(false);
     }
   }

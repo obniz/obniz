@@ -20,10 +20,10 @@ rclk | `number(obniz io)` | yes |   | つないだobnizのioを指定してく�
 srclk | `number(obniz io)` | yes |   | つないだobnizのioを指定してください。
 vcc | `number(obniz io)` | no |   | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
 gnd | `number(obniz io)` | no |   | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-oe | `number(obniz io)` | no |   | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。gndにつなぐことで、通常使用となります。obnizにつながずにgndにつないでいる場合はwired関数で指定しなくても良いです。指定した場合はsetEnable()関数が使えるようになります。
+oe | `number(obniz io)` | no |   | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。gndにつなぐことで、通常使用となります。obnizにつながずにgndにつないでいる場合はwired関数で指定しなくても良いです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
 srclr | `number(obniz io)` | no |   | シフトレジスタの値をすべてクリアするためのピンです。low->highでクリアされます。5vなどに接続し、obnizから操作しない場合は指定する必要はありません。
-io_num | `number` | no | 8  | ioの数を指定します。1つのチップに8個までioがありますが、5などを指定すると、そのうちの5本のみ使用されます。また、連続でチップが繋がれている場合は、ここの数字を増えたIOの数だけ指定します。
-例えば2チップつないでいて、16ある場合はio_num:16とすることで操作できます。
+io_num | `number` | no | 8  | ioの数を指定します。1つのチップに8個までioがありますが、5などを指定すると、そのうちの5本のみ使用されます。また、連続でチップが繋がれている場合は、ここの数字を増えたIOの数だけ指定します。例えば2チップつないでいて、16ある場合はio_num:16とすることで操作できます。
+enabled | `boolean` | no | true  | oeが指定されていた場合、初期状態をどちらにするか指定できます。
 
 
 ```Javascript
@@ -99,3 +99,10 @@ seg.print(0);
 ## setEnable(enabled)
 oe端子をobnizにつないでいる場合にのみ使えます。
 出力ピンをすべてハイインピーダンスにします。
+
+```Javascript
+// Javascript Example
+var ioext = obniz.wired('SNx4HC595', {gnd:0, vcc:1, ser:2, rclk:3, srclk:4, oe:5, enabled: false});
+ioext.output(0, true); // no affect
+ioext.setEnable(true); // 0 is true
+```
