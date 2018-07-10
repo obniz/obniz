@@ -108,25 +108,19 @@ class MatrixLED_MAX7219 {
   }
 
   draw(ctx) {
-    let isNode = typeof window === 'undefined';
-    if (isNode) {
-      // TODO:
-      throw new Error('node js mode is under working.');
-    } else {
-      const imageData = ctx.getImageData(0, 0, this.width, this.height);
-      const data = imageData.data;
+    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+    const data = imageData.data;
 
-      for (let i = 0; i < data.length; i += 4) {
-        let brightness =
-          0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-        let index = parseInt(i / 4);
-        let line = parseInt(index / this.width);
-        let col = parseInt((index - line * this.width) / 8);
-        let bits = parseInt(index - line * this.width) % 8;
-        if (bits === 0) this.vram[line][col] = 0x00;
-        if (brightness > 0x7f) this.vram[line][col] |= 0x80 >> bits;
-      }
+    for (let i = 0; i < data.length; i += 4) {
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let index = parseInt(i / 4);
+      let line = parseInt(index / this.width);
+      let col = parseInt((index - line * this.width) / 8);
+      let bits = parseInt(index - line * this.width) % 8;
+      if (bits === 0) this.vram[line][col] = 0x00;
+      if (brightness > 0x7f) this.vram[line][col] |= 0x80 >> bits;
     }
+
     this.writeVram();
   }
 }

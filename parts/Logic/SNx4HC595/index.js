@@ -1,7 +1,17 @@
 class SNx4HC595 {
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-    this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num'];
+    this.keys = [
+      'gnd',
+      'vcc',
+      'ser',
+      'srclk',
+      'rclk',
+      'oe',
+      'srclr',
+      'io_num',
+      'enabled',
+    ];
     this.requiredKeys = ['ser', 'srclk', 'rclk'];
 
     this.autoFlash = true;
@@ -48,7 +58,12 @@ class SNx4HC595 {
     }
     this.ioNum(this.params.io_num);
 
-    if (this.io_oe) {
+    if (typeof this.params.enabled !== 'boolean') {
+      this.params.enabled = true;
+    }
+    console.log(this.params.enabled);
+    if (this.io_oe && this.params.enabled) {
+      console.log('here');
       this.io_oe.output(false);
     }
   }

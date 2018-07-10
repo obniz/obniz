@@ -22,9 +22,10 @@ rclk | `number(obniz io)` | yes |   | connected obniz io
 srclk | `number(obniz io)` | yes |   | connected obniz io
 vcc | `number(obniz io)` | no |   | If you specify either vcc/gnd, wire() will wait a moment after power up.
 gnd | `number(obniz io)` | no |   | If you specify either vcc/gnd, wire() will wait a moment after power up.
-oe | `number(obniz io)` | no |   | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe.
+oe | `number(obniz io)` | no |   | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
 srclr | `number(obniz io)` | no |   | srclr clear shift resistor values. You don't need to specify srclr when srclr is connected directly to 5v.
 io_num | `number` | no | 8  | io_num is number of io. You can set under 8. If you specify over 8 like 16, then obniz will treat chained chip.
+enabled | `boolean` | no | true  | If oe was specified, you can set initial enable/disable with this parameter.
 
 ```Javascript
 // Javascript Example
@@ -100,3 +101,10 @@ seg.print(0);
 ## setEnable(enabled)
 This function available only when oe was specified.
 Changing Normal-operation/Hi-Z on all of it's chip output.
+
+```Javascript
+// Javascript Example
+var ioext = obniz.wired('SNx4HC595', {gnd:0, vcc:1, ser:2, rclk:3, srclk:4, oe:5, enabled: false});
+ioext.output(0, true); // no affect
+ioext.setEnable(true); // 0 is true
+```
