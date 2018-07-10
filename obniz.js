@@ -18459,13 +18459,11 @@ class MatrixLED_MAX7219 {
   }
 
   draw(ctx) {
-
     const imageData = ctx.getImageData(0, 0, this.width, this.height);
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      let brightness =
-        0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
       let index = parseInt(i / 4);
       let line = parseInt(index / this.width);
       let col = parseInt((index - line * this.width) / 8);
@@ -19513,7 +19511,7 @@ if (true) {
 class SNx4HC595 {
   constructor() {
     /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
-    this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num'];
+    this.keys = ['gnd', 'vcc', 'ser', 'srclk', 'rclk', 'oe', 'srclr', 'io_num', 'enabled'];
     this.requiredKeys = ['ser', 'srclk', 'rclk'];
 
     this.autoFlash = true;
@@ -19560,7 +19558,13 @@ class SNx4HC595 {
     }
     this.ioNum(this.params.io_num);
 
-    if (this.io_oe) {
+    if (typeof this.params.enabled !== "boolean") {
+      this.params.enabled = true;
+      
+    }
+    console.log(this.params.enabled)
+    if (this.io_oe && this.params.enabled) {
+      console.log("here");
       this.io_oe.output(false);
     }
   }
