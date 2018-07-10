@@ -13715,12 +13715,12 @@ class SNx4HC595 {
     }
     this.ioNum(this.params.io_num);
 
-    if (typeof this.params.enabled !== "boolean") {
+    if (typeof this.params.enabled !== 'boolean') {
       this.params.enabled = true;
     }
     console.log(this.params.enabled);
     if (this.io_oe && this.params.enabled) {
-      console.log("here");
+      console.log('here');
       this.io_oe.output(false);
     }
   }
