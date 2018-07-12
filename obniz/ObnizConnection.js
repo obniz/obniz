@@ -11,6 +11,7 @@ module.exports = class ObnizConnection {
     this.debugprint = false;
     this.debugprintBinary = false;
     this.debugs = [];
+    this.onConnectCalled = false;
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this._prepareComponents();
     if (!options) {
@@ -298,6 +299,7 @@ module.exports = class ObnizConnection {
           console.error(err);
         });
       }
+      this.onConnectCalled = true;
     }
   }
 

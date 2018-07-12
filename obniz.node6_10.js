@@ -2230,6 +2230,7 @@ module.exports = class ObnizConnection {
     this.debugprint = false;
     this.debugprintBinary = false;
     this.debugs = [];
+    this.onConnectCalled = false;
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this._prepareComponents();
     if (!options) {
@@ -2510,6 +2511,7 @@ module.exports = class ObnizConnection {
           console.error(err);
         });
       }
+      this.onConnectCalled = true;
     }
   }
 
@@ -3061,31 +3063,36 @@ class Obniz extends ObnizUIs {
   }
 
   repeat(callback, interval) {
-    let loop = (() => {
-      var _ref = _asyncToGenerator(function* () {
-        if (typeof self.looper === 'function') {
-          let prom = self.looper();
-          if (prom instanceof Promise) {
-            yield prom;
-          }
-          setTimeout(loop, interval);
-        }
-      });
-
-      return function loop() {
-        return _ref.apply(this, arguments);
-      };
-    })();
-
     if (this.looper) {
       this.looper = callback;
       return;
     }
     this.looper = callback;
-    let self = this;
-    if (!interval) interval = 100;
+    this.repeatInterval = interval || 100;
 
-    loop();
+    if (this.onConnectCalled) {
+      this.loop();
+    }
+    this.showOffLine();
+  }
+
+  _callOnConnect() {
+    super._callOnConnect();
+    this.loop();
+  }
+
+  loop() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      if (typeof _this.looper === 'function') {
+        let prom = _this.looper();
+        if (prom instanceof Promise) {
+          yield prom;
+        }
+        setTimeout(_this.loop.bind(_this), _this.repeatInterval || 100);
+      }
+    })();
   }
 
   wsOnClose() {
