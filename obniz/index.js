@@ -16,20 +16,27 @@ class Obniz extends ObnizUIs {
       return;
     }
     this.looper = callback;
-    let self = this;
-    if (!interval) interval = 100;
+    this.repeatInterval = interval || 100;
 
-    async function loop() {
-      if (typeof self.looper === 'function') {
-        let prom = self.looper();
-        if (prom instanceof Promise) {
-          await prom;
-        }
-        setTimeout(loop, interval);
-      }
+    if (this.onConnectCalled) {
+      this.loop();
     }
+    this.showOffLine();
+  }
 
-    loop();
+  _callOnConnect() {
+    super._callOnConnect();
+    this.loop();
+  }
+
+  async loop() {
+    if (typeof this.looper === 'function') {
+      let prom = this.looper();
+      if (prom instanceof Promise) {
+        await prom;
+      }
+      setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+    }
   }
 
   wsOnClose() {

@@ -199,6 +199,127 @@ describe('obniz.index', function() {
       });
   });
 
+  it('onconnect', function() {
+    let called = false;
+    return new Promise(resolve => {
+      testUtil.setupObnizPromise(this, resolve);
+    })
+      .then(() => {
+        expect(this.obniz).to.be.obniz;
+        expect(this.obniz).to.be.finished; // input queue
+
+        this.obniz.onconnect = function() {
+          called = true;
+        };
+        testUtil.receiveJson(this.obniz, [
+          {
+            ws: {
+              ready: true,
+              obniz: {
+                firmware: '1.0.3',
+              },
+            },
+          },
+        ]);
+
+        return new Promise(resolve => {
+          setTimeout(resolve, 500);
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          testUtil.releaseObnizePromise(this, resolve);
+        });
+      })
+      .then(() => {
+        expect(called).to.be.true;
+      });
+  });
+
+  it('repeat', function() {
+    let called = false;
+    return new Promise(resolve => {
+      testUtil.setupObnizPromise(this, resolve);
+    })
+      .then(() => {
+        expect(this.obniz).to.be.obniz;
+        expect(this.obniz).to.be.finished; // input queue
+
+        this.obniz.repeat(function() {
+          called = true;
+        });
+        testUtil.receiveJson(this.obniz, [
+          {
+            ws: {
+              ready: true,
+              obniz: {
+                firmware: '1.0.3',
+              },
+            },
+          },
+        ]);
+
+        return new Promise(resolve => {
+          setTimeout(resolve, 500);
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          this.obniz.looper = null;
+          testUtil.releaseObnizePromise(this, resolve);
+        });
+      })
+      .then(() => {
+        expect(called).to.be.true;
+      });
+  });
+
+  it('connect_repeat', function() {
+    let results = true;
+    return new Promise(resolve => {
+      testUtil.setupObnizPromise(this, resolve);
+    })
+      .then(() => {
+        expect(this.obniz).to.be.obniz;
+        expect(this.obniz).to.be.finished; // input queue
+
+        let called = false;
+
+        this.obniz.onconnect = function() {
+          results = results && called === false;
+          called = true;
+        };
+
+        this.obniz.repeat(function() {
+          results = results && called === true;
+          called = true;
+        });
+        testUtil.receiveJson(this.obniz, [
+          {
+            ws: {
+              ready: true,
+              obniz: {
+                firmware: '1.0.3',
+              },
+            },
+          },
+        ]);
+
+        return new Promise(resolve => {
+          setTimeout(resolve, 500);
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          this.obniz.looper = null;
+          testUtil.releaseObnizePromise(this, resolve);
+        });
+      })
+      .then(() => {
+        expect(results).to.be.true;
+      });
+  });
+
   function wait(ms) {
     return new Promise(resolve => {
       setTimeout(resolve, ms);
