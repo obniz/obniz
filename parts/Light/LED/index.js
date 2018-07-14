@@ -41,6 +41,14 @@ class LED {
     this.io_anode.output(false);
   }
 
+  output(value) {
+    if (value) {
+      this.on();
+    } else {
+      this.off();
+    }
+  }
+
   endBlink() {
     this.obniz.io.animation(this.animationName, 'pause');
   }
