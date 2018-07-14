@@ -121,6 +121,9 @@ class PeripheralI2C {
   }
 
   write(address, data) {
+    if (!this.used) {
+      throw new Error(`i2c${this.id} is not started`);
+    }
     address = parseInt(address);
     if (isNaN(address)) {
       throw new Error('i2c: please specify address');
@@ -143,6 +146,9 @@ class PeripheralI2C {
   }
 
   readWait(address, length) {
+    if (!this.used) {
+      throw new Error(`i2c${this.id} is not started`);
+    }
     address = parseInt(address);
     if (isNaN(address)) {
       throw new Error('i2c: please specify address');
