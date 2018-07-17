@@ -84,6 +84,9 @@ class PeripheralUART {
   }
 
   send(data) {
+    if (!this.used) {
+      throw new Error(`uart${this.id} is not started`);
+    }
     let send_data = null;
     if (data === undefined) {
       return;

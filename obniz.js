@@ -37,32 +37,17 @@ var Obniz =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -239,12 +224,13 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
+	var module = __webpack_require__(id);
+	return module;
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error("Cannot find module '" + req + "'");
+		var e = new Error('Cannot find module "' + req + '".');
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -7230,7 +7216,7 @@ module.exports = g;
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
+	var e = new Error('Cannot find module "' + req + '".');
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -7594,6 +7580,7 @@ module.exports = class ObnizConnection {
     this.debugprint = false;
     this.debugprintBinary = false;
     this.debugs = [];
+    this.onConnectCalled = false;
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this._prepareComponents();
     if (!options) {
@@ -7881,6 +7868,7 @@ module.exports = class ObnizConnection {
           console.error(err);
         });
       }
+      this.onConnectCalled = true;
     }
   }
 
@@ -8463,20 +8451,27 @@ class Obniz extends ObnizUIs {
       return;
     }
     this.looper = callback;
-    let self = this;
-    if (!interval) interval = 100;
+    this.repeatInterval = interval || 100;
 
-    async function loop() {
-      if (typeof self.looper === 'function') {
-        let prom = self.looper();
-        if (prom instanceof Promise) {
-          await prom;
-        }
-        setTimeout(loop, interval);
-      }
+    if (this.onConnectCalled) {
+      this.loop();
     }
+    this.showOffLine();
+  }
 
-    loop();
+  _callOnConnect() {
+    super._callOnConnect();
+    this.loop();
+  }
+
+  async loop() {
+    if (typeof this.looper === 'function') {
+      let prom = this.looper();
+      if (prom instanceof Promise) {
+        await prom;
+      }
+      setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+    }
   }
 
   wsOnClose() {
@@ -10994,6 +10989,9 @@ class PeripheralI2C {
   }
 
   write(address, data) {
+    if (!this.used) {
+      throw new Error(`i2c${this.id} is not started`);
+    }
     address = parseInt(address);
     if (isNaN(address)) {
       throw new Error('i2c: please specify address');
@@ -11016,6 +11014,9 @@ class PeripheralI2C {
   }
 
   readWait(address, length) {
+    if (!this.used) {
+      throw new Error(`i2c${this.id} is not started`);
+    }
     address = parseInt(address);
     if (isNaN(address)) {
       throw new Error('i2c: please specify address');
@@ -11329,10 +11330,10 @@ class PeripheralPWM {
   }
 
   freq(freq) {
-    freq *= 1;
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
+    freq *= 1;
     if (typeof freq !== 'number') {
       throw new Error('please provide freq in number');
     }
@@ -11346,8 +11347,8 @@ class PeripheralPWM {
   }
 
   pulse(pulse_width) {
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
 
     this.state.pulse = pulse_width;
@@ -11358,10 +11359,10 @@ class PeripheralPWM {
   }
 
   duty(duty) {
-    duty *= 1;
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
+    duty *= 1;
     if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
       throw new Error('please provide freq first.');
     }
@@ -11374,7 +11375,7 @@ class PeripheralPWM {
     if (duty > 100) {
       duty = 100;
     }
-    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
+    const pulse_width = 1.0 / this.state.freq * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
       pulse: pulse_width,
@@ -11392,8 +11393,8 @@ class PeripheralPWM {
   }
 
   modulate(type, symbol_length, data) {
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
     this.sendWS({
       modulate: {
@@ -11514,6 +11515,9 @@ class PeripheralSPI {
   }
 
   writeWait(data) {
+    if (!this.used) {
+      throw new Error(`spi${this.id} is not started`);
+    }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
         `with your obniz ${
@@ -11537,6 +11541,9 @@ class PeripheralSPI {
   }
 
   write(data) {
+    if (!this.used) {
+      throw new Error(`spi${this.id} is not started`);
+    }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
         `with your obniz ${
@@ -11673,6 +11680,9 @@ class PeripheralUART {
   }
 
   send(data) {
+    if (!this.used) {
+      throw new Error(`uart${this.id} is not started`);
+    }
     let send_data = null;
     if (data === undefined) {
       return;
@@ -13878,7 +13888,7 @@ module.exports = ws;
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
+	var e = new Error('Cannot find module "' + req + '".');
 	e.code = 'MODULE_NOT_FOUND';
 	throw e;
 }
@@ -17476,12 +17486,13 @@ var map = {
 
 function webpackContext(req) {
 	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
+	var module = __webpack_require__(id);
+	return module;
 }
 function webpackContextResolve(req) {
 	var id = map[req];
 	if(!(id + 1)) { // check for number or string
-		var e = new Error("Cannot find module '" + req + "'");
+		var e = new Error('Cannot find module "' + req + '".');
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
@@ -19034,8 +19045,6 @@ class LED {
   constructor() {
     this.keys = ['anode', 'cathode'];
     this.requiredKeys = ['anode'];
-
-    this.animationName = 'Led-' + Math.round(Math.random() * 1000);
   }
 
   static info() {
@@ -19061,6 +19070,7 @@ class LED {
       this.io_cathode = getIO(this.params.cathode);
       this.io_cathode.output(false);
     }
+    this.animationName = 'Led-' + this.params.anode;
   }
 
   on() {
@@ -19071,6 +19081,14 @@ class LED {
   off() {
     this.endBlink();
     this.io_anode.output(false);
+  }
+
+  output(value) {
+    if (value) {
+      this.on();
+    } else {
+      this.off();
+    }
   }
 
   endBlink() {
