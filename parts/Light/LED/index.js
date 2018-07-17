@@ -2,8 +2,6 @@ class LED {
   constructor() {
     this.keys = ['anode', 'cathode'];
     this.requiredKeys = ['anode'];
-
-    this.animationName = 'Led-' + Math.round(Math.random() * 1000);
   }
 
   static info() {
@@ -29,6 +27,7 @@ class LED {
       this.io_cathode = getIO(this.params.cathode);
       this.io_cathode.output(false);
     }
+    this.animationName = 'Led-' + this.params.anode;
   }
 
   on() {
@@ -39,6 +38,14 @@ class LED {
   off() {
     this.endBlink();
     this.io_anode.output(false);
+  }
+
+  output(value) {
+    if (value) {
+      this.on();
+    } else {
+      this.off();
+    }
   }
 
   endBlink() {

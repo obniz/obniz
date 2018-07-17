@@ -42,10 +42,10 @@ class PeripheralPWM {
   }
 
   freq(freq) {
-    freq *= 1;
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
+    freq *= 1;
     if (typeof freq !== 'number') {
       throw new Error('please provide freq in number');
     }
@@ -59,8 +59,8 @@ class PeripheralPWM {
   }
 
   pulse(pulse_width) {
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
 
     this.state.pulse = pulse_width;
@@ -71,10 +71,10 @@ class PeripheralPWM {
   }
 
   duty(duty) {
-    duty *= 1;
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
+    duty *= 1;
     if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
       throw new Error('please provide freq first.');
     }
@@ -87,7 +87,7 @@ class PeripheralPWM {
     if (duty > 100) {
       duty = 100;
     }
-    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
+    const pulse_width = 1.0 / this.state.freq * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
       pulse: pulse_width,
@@ -105,8 +105,8 @@ class PeripheralPWM {
   }
 
   modulate(type, symbol_length, data) {
-    if (typeof this.state.io !== 'number') {
-      throw new Error('pwm' + this.id + " haven't started");
+    if (!this.used) {
+      throw new Error(`pwm${this.id} is not started`);
     }
     this.sendWS({
       modulate: {
