@@ -56,6 +56,42 @@ describe('2-io-animation', function() {
     await ioAisB(0, false); // ioanimationが動いている場合は、outputしても上書きされてしまい値が一致しないというのが起こる。
     await ioAisB(0, true);
   });
+
+  it('two animation', async function() {
+    obnizA.io.animation('animation-1', 'loop', [
+      {
+        duration: 10,
+        state: function() {
+          obnizA.io0.output(false);
+        },
+      },
+      {
+        duration: 10,
+        state: function() {
+          obnizA.io0.output(true);
+        },
+      },
+    ]);
+    obnizA.io.animation('animation-2', 'loop', [
+      {
+        duration: 10,
+        state: function() {
+          obnizA.io1.output(false);
+        },
+      },
+      {
+        duration: 10,
+        state: function() {
+          obnizA.io1.output(true);
+        },
+      },
+    ]);
+    await obnizA.pingWait();
+    await detectPulse(0, [40, 60]);
+    await detectPulse(1, [40, 60]);
+    obnizA.io.animation('animation-1', 'loop');
+    obnizA.io.animation('animation-2', 'loop');
+  });
 });
 
 function detectPulse(io, ratioRange) {
@@ -74,7 +110,7 @@ function detectPulse(io, ratioRange) {
         ret[array[i]]++;
       }
       try {
-        expect((ret[1] / (ret[0] + ret[1])) * 100).to.be.within(
+        expect(ret[1] / (ret[0] + ret[1]) * 100).to.be.within(
           ratioRange[0],
           ratioRange[1]
         ); // 割合だけ見る。パターンは間違っているかもしれない。
