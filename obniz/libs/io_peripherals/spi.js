@@ -100,6 +100,9 @@ class PeripheralSPI {
   }
 
   writeWait(data) {
+    if (!this.used) {
+      throw new Error(`spi${this.id} is not started`);
+    }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
         `with your obniz ${
@@ -123,6 +126,9 @@ class PeripheralSPI {
   }
 
   write(data) {
+    if (!this.used) {
+      throw new Error(`spi${this.id} is not started`);
+    }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
         `with your obniz ${
