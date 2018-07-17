@@ -10990,7 +10990,7 @@ class PeripheralI2C {
 
   write(address, data) {
     if (!this.used) {
-      throw new Error(`i2c${this.id} is not started`)
+      throw new Error(`i2c${this.id} is not started`);
     }
     address = parseInt(address);
     if (isNaN(address)) {
@@ -11015,7 +11015,7 @@ class PeripheralI2C {
 
   readWait(address, length) {
     if (!this.used) {
-      throw new Error(`i2c${this.id} is not started`)
+      throw new Error(`i2c${this.id} is not started`);
     }
     address = parseInt(address);
     if (isNaN(address)) {
@@ -11331,7 +11331,7 @@ class PeripheralPWM {
 
   freq(freq) {
     if (!this.used) {
-      throw new Error(`pwm${this.id} is not started`)
+      throw new Error(`pwm${this.id} is not started`);
     }
     freq *= 1;
     if (typeof freq !== 'number') {
@@ -11348,7 +11348,7 @@ class PeripheralPWM {
 
   pulse(pulse_width) {
     if (!this.used) {
-      throw new Error(`pwm${this.id} is not started`)
+      throw new Error(`pwm${this.id} is not started`);
     }
 
     this.state.pulse = pulse_width;
@@ -11360,7 +11360,7 @@ class PeripheralPWM {
 
   duty(duty) {
     if (!this.used) {
-      throw new Error(`pwm${this.id} is not started`)
+      throw new Error(`pwm${this.id} is not started`);
     }
     duty *= 1;
     if (typeof this.state.freq !== 'number' || this.state.freq <= 0) {
@@ -11375,7 +11375,7 @@ class PeripheralPWM {
     if (duty > 100) {
       duty = 100;
     }
-    const pulse_width = (1.0 / this.state.freq) * 1000 * duty * 0.01;
+    const pulse_width = 1.0 / this.state.freq * 1000 * duty * 0.01;
     this.state.duty = duty;
     this.sendWS({
       pulse: pulse_width,
@@ -11394,7 +11394,7 @@ class PeripheralPWM {
 
   modulate(type, symbol_length, data) {
     if (!this.used) {
-      throw new Error(`pwm${this.id} is not started`)
+      throw new Error(`pwm${this.id} is not started`);
     }
     this.sendWS({
       modulate: {
@@ -11516,7 +11516,7 @@ class PeripheralSPI {
 
   writeWait(data) {
     if (!this.used) {
-      throw new Error(`spi${this.id} is not started`)
+      throw new Error(`spi${this.id} is not started`);
     }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
@@ -11542,7 +11542,7 @@ class PeripheralSPI {
 
   write(data) {
     if (!this.used) {
-      throw new Error(`spi${this.id} is not started`)
+      throw new Error(`spi${this.id} is not started`);
     }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
@@ -11681,7 +11681,7 @@ class PeripheralUART {
 
   send(data) {
     if (!this.used) {
-      throw new Error(`uart${this.id} is not started`)
+      throw new Error(`uart${this.id} is not started`);
     }
     let send_data = null;
     if (data === undefined) {
@@ -19045,8 +19045,6 @@ class LED {
   constructor() {
     this.keys = ['anode', 'cathode'];
     this.requiredKeys = ['anode'];
-
-    this.animationName = 'Led-' + Math.round(Math.random() * 1000);
   }
 
   static info() {
@@ -19072,6 +19070,7 @@ class LED {
       this.io_cathode = getIO(this.params.cathode);
       this.io_cathode.output(false);
     }
+    this.animationName = 'Led-' + this.params.anode;
   }
 
   on() {
