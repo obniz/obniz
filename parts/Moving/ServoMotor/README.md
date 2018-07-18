@@ -16,7 +16,7 @@ If it occure, our recommendations are
 - (Recommended) connect power supply to other resource. (J1 pin on obniz can be use. It's USB direct)
 - Connect throught the bread board. (It's resistance is not so low. So, it can prevent over current detection)
 
-## obniz.wired("ServoMotor", {signal, [, vcc, gnd]})
+## obniz.wired("ServoMotor", {signal [, vcc, gnd]})
 
 Connect three feet to obniz. gnd, vcc and signal, respectively, and the placement is different depending on the manufacturere of motor. 
 
