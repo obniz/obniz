@@ -118,7 +118,9 @@ get all values.
 var bme280 = obniz.wired("BME280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
 await bme280.applyCalibration();
 const obj = await bme280.getAllWait();
-console.log(obj);
+console.log('temp: ' + obj.temperature + ' degree');
+console.log('humidity: ' + obj.humidity + ' %');
+console.log('pressure: ' + obj.pressure + ' hPa');
 ```
 
 ## calcAltitude(pressure, seaPressure)

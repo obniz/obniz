@@ -15123,16 +15123,16 @@ class BME280 {
     this.commands = {};
 
     this.commands.addresses = {
-      config: 0xF5,
-      ctrl_meas: 0xF4,
-      ctrl_hum: 0xF2
+      config: 0xf5,
+      ctrl_meas: 0xf4,
+      ctrl_hum: 0xf2
     };
   }
 
   static info() {
     return {
       name: 'BME280',
-      datasheet: "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf"
+      datasheet: 'https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf'
     };
   }
 
@@ -15142,7 +15142,7 @@ class BME280 {
     if (obniz.isValidIO(this.params.csb)) {
       // selecting I2C mode before powerup
       this.io_csb = obniz.getIO(this.params.csb);
-      this.io_csb.drive("3v");
+      this.io_csb.drive('3v');
       this.io_csb.output(true);
     }
 
@@ -15162,7 +15162,7 @@ class BME280 {
 
     if (obniz.isValidIO(this.params.sdo)) {
       this.io_sdo = obniz.getIO(this.params.sdo);
-      this.io_sdo.drive("3v");
+      this.io_sdo.drive('3v');
       this.io_sdo.output(this.address === 0x76 ? false : true);
     }
 
@@ -15205,10 +15205,10 @@ class BME280 {
     return _asyncToGenerator(function* () {
       _this3.i2c.write(_this3.address, [0x88]);
       let data = yield _this3.i2c.readWait(_this3.address, 24);
-      _this3.i2c.write(_this3.address, [0xA1]);
+      _this3.i2c.write(_this3.address, [0xa1]);
       let data_next = yield _this3.i2c.readWait(_this3.address, 1);
       data.push(...data_next);
-      _this3.i2c.write(_this3.address, [0xE1]);
+      _this3.i2c.write(_this3.address, [0xe1]);
       data_next = yield _this3.i2c.readWait(_this3.address, 7);
       data.push(...data_next);
       _this3._calibrated = {
@@ -15227,8 +15227,8 @@ class BME280 {
         dig_H1: _this3._readSigned8(data[24]),
         dig_H2: _this3._readSigned16(data[26] << 8 | data[25]),
         dig_H3: _this3._readSigned8(data[27]),
-        dig_H4: _this3._readSigned16(data[28] << 4 | 0x0F & data[29]),
-        dig_H5: _this3._readSigned16(data[30] << 4 | data[29] >> 4 & 0x0F),
+        dig_H4: _this3._readSigned16(data[28] << 4 | 0x0f & data[29]),
+        dig_H5: _this3._readSigned16(data[30] << 4 | data[29] >> 4 & 0x0f),
         dig_H6: _this3._readSigned8(data[31])
       };
       _this3._t_fine = 0;
@@ -15256,7 +15256,7 @@ class BME280 {
     var _this4 = this;
 
     return _asyncToGenerator(function* () {
-      _this4.i2c.write(_this4.address, [0xF7]);
+      _this4.i2c.write(_this4.address, [0xf7]);
       return yield _this4.i2c.readWait(_this4.address, 8);
     })();
   }
