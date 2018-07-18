@@ -95,6 +95,7 @@ obniz.io0.input(function(value){
   console.log("changed to " + value);
 });
 ```
+
 ## [await] inputWait
 Make ioX to input mode.
 And This will return current input value.
@@ -103,6 +104,18 @@ It will pause process.
 // Javascript Example
 var value = await obniz.io0.inputWait();
 console.log(value);
+```
+
+## end()
+End output/input on ioX.
+This function only affect when using ioX.output(), ioX.input().
+AD/UART/etc are not stopped by calling this.
+pull-up down are also not changed.
+
+```Javascript
+// Javascript Example
+obniz.io0.output(true)
+obniz.io0.end();
 ```
 
 ## io.animation(name, status, array of animations)

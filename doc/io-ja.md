@@ -102,6 +102,18 @@ var value = await obniz.io0.inputWait();
 console.log(value);
 ```
 
+## end()
+ioXにおけるoutputとinputを停止します。
+output()かinput()を使っているときのみ効果があります。
+ADやUARTをioXで使っている場合はこれでは停止しません。
+また、pull-up downも影響を受けません。
+
+```Javascript
+// Javascript Example
+obniz.io0.output(true)
+obniz.io0.end();
+```
+
 ## io.animation(name, status, array of animations)
 io animationは高速にioを変化させたいたい時に使います。
 "loop"アニメーションが利用できます。
