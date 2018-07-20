@@ -4,52 +4,91 @@
       "name": "Light",
       "parts": [
         {
-          "name": "LED"
+          "name": "LED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12519/"
+          }
         },
         {
-          "name": "FullcolorLED"
+          "name": "FullcolorLED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12167"
+          }
         },
         {
-          "name": "WS2811"
+          "name": "WS2811",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08412/"
+          }
         },
         {
-          "name": "WS2812"
+          "name": "WS2812",
+          "store": {
+          }
         },
         {
-          "name": "WS2812B"
+          "name": "WS2812B",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/1643"
+          }
         }
       ]
-    },{
+    },
+    {
       "name": "Infrared",
       "parts": [
         {
-          "name": "InfraredLED"
+          "name": "InfraredLED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-03261/",
+            "adafruit": "https://www.adafruit.com/product/387"
+          }
         },
         {
-          "name": "IRSensor"
+          "name": "IRSensor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-04659/",
+            "adafruit": "https://learn.adafruit.com/ir-sensor"
+          }
         }
       ]
-    },{
+    },
+    {
       "name": "Display",
       "parts": [
         {
-          "name": "7SegmentLED"
+          "name": "7SegmentLED",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-00640/"
+          }
         },
         {
-          "name": "7SegmentLEDArray"
+          "name": "7SegmentLEDArray",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/c/c7seg5/"
+          }
         },
         {
-          "name": "7SegmentLED_MAX7219"
+          "name": "7SegmentLED_MAX7219",
+          "store": {
+          }
         },
         {
-          "name": "MatrixLED_MAX7219"
+          "name": "MatrixLED_MAX7219",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-09984/"
+          }
         }
       ]
-    },{
+    },
+    {
       "name": "Camera",
       "parts": [
         {
-          "name": "JpegSerialCam"
+          "name": "JpegSerialCam",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07746/"
+          }
         }
       ]
     },
@@ -57,13 +96,24 @@
       "name": "Moving",
       "parts": [
         {
-          "name": "DCMotor"
+          "name": "DCMotor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-09169/",
+            "adafruit": "https://www.adafruit.com/product/711"
+          }
         },
         {
-          "name": "ServoMotor"
+          "name": "ServoMotor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-08913/",
+            "adafruit": "https://www.adafruit.com/product/155"
+          }
         },
         {
-          "name": "Solenoid"
+          "name": "Solenoid",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-10761/"
+          }
         }
       ]
     },
@@ -71,7 +121,11 @@
       "name": "Sound",
       "parts": [
         {
-          "name": "Speaker"
+          "name": "Speaker",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-04118/",
+            "adafruit": "https://www.adafruit.com/product/1739"
+          }
         }
       ]
     },
@@ -79,7 +133,10 @@
       "name": "Logic",
       "parts": [
         {
-          "name": "SNx4HC595"
+          "name": "SNx4HC595",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08605/"
+          }
         }
       ]
     },
@@ -87,7 +144,9 @@
       "name": "Accessory",
       "parts": [
         {
-          "name": "USB"
+          "name": "USB",
+          "store": {
+          }
         }
       ]
     },
@@ -95,10 +154,17 @@
       "name": "Wireless",
       "parts": [
         {
-          "name": "RN42"
+          "name": "RN42",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07735/"
+          }
         },
         {
-          "name": "XBee"
+          "name": "XBee",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05793/",
+            "adafruit": "https://www.adafruit.com/product/967"
+          }
         }
       ]
     },
@@ -106,28 +172,56 @@
       "name": "Movement Sensor",
       "parts": [
         {
-          "name": "Button"
+          "name": "Button",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-09827/",
+            "adafruit": "https://www.adafruit.com/product/1009"
+          }
         },
         {
-          "name": "JoyStick"
+          "name": "JoyStick",
+          "store": {
+            "amazon.co.jp" : "https://www.amazon.co.jp/EasyWordMall-Dual-axis-Joystick-ジョイスティック-モジュールArduino用/dp/B016PXVH66/ref=sr_1_fkmr1_3?ie=UTF8&qid=1531998812&sr=8-3-fkmr1&keywords=hiletgo+joystick",
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-08763/",
+            "adafruit": "https://www.adafruit.com/product/512"
+          }
         },
         {
-          "name": "Potentiometer"
+          "name": "Potentiometer",
+          "store": {
+            "amazon.co.jp" : "https://www.amazon.co.jp/alpha-RV16シリーズ-Aカーブ-Potentiometer-可変抵抗器各種/dp/B01ARIWY5S/ref=sr_1_5?ie=UTF8&qid=1531998874&sr=8-5&keywords=Potentiometer",
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-00246/"
+          }
         },
         {
-          "name": "ENC03R_Module"
+          "name": "ENC03R_Module",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-04912/"
+          }
         },
         {
-          "name": "HC-SR505"
+          "name": "HC-SR505",
+          "store": {
+            "amazon.co.jp": "https://www.amazon.co.jp/Refaxi-Refaxi-HC-SR505ミニ赤外線PIRモーション-センサーモーションセンサーモジュール-ミニパッシブ-赤外線センサー人の動きを感知/dp/B01LS6NU9C"
+          }
         },
         {
-          "name": "PaPIRsVZ"
+          "name": "PaPIRsVZ",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-09750/"
+          }
         },
         {
-          "name": "FSR-40X"
+          "name": "FSR-40X",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-04002/"
+          }
         },
         {
-          "name": "KXR94-2050"
+          "name": "KXR94-2050",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/"
+          }
         }
       ]
     },
@@ -135,10 +229,17 @@
       "name": "Distance Sensor",
       "parts": [
         {
-          "name": "HC-SR04"
+          "name": "HC-SR04",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-11009/"
+          }
         },
         {
-          "name": "GP2Y0A21YK0F"
+          "name": "GP2Y0A21YK0F",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-02551/",
+            "adafruit": "https://www.adafruit.com/product/164"
+          }
         }
       ]
     },
@@ -146,7 +247,10 @@
       "name": "Audio Sensor",
       "parts": [
         {
-          "name": "AE_MICAMP"
+          "name": "AE_MICAMP",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-05757/"
+          }
         }
       ]
     },
@@ -154,7 +258,10 @@
       "name": "ADConverter",
       "parts": [
         {
-          "name": "hx711"
+          "name": "hx711",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-12370/"
+          }
         }
       ]
     },
@@ -162,7 +269,10 @@
       "name": "Soil Moisture Sensor",
       "parts": [
         {
-          "name": "SEN0114"
+          "name": "SEN0114",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07047/"
+          }
         }
       ]
     },
@@ -170,25 +280,51 @@
       "name": "Temperature Sensor",
       "parts": [
         {
-          "name": "LM35DZ"
+          "name": "LM35DZ",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-00116/"
+          }
         },
         {
-          "name": "LM60"
+          "name": "LM60",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-02490/"
+          }
         },
         {
-          "name": "LM61"
+          "name": "LM61",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-11160/",
+            "adafruit": ""
+          }
         },
         {
-          "name": "MCP9700"
+          "name": "MCP9700",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-09692/",
+            "adafruit": ""
+          }
         },
         {
-          "name": "MCP9701"
+          "name": "MCP9701",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-03199/",
+            "adafruit": ""
+          }
         },
         {
-          "name": "SHT31"
+          "name": "SHT31",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-12125/",
+            "adafruit": "https://www.adafruit.com/product/2857"
+          }
         },
         {
-          "name": "BME280"
+          "name": "BME280",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-09421/",
+            "adafruit": "https://www.adafruit.com/product/2652"
+          }
         }
       ]
     },
@@ -196,7 +332,10 @@
       "name": "Light/Color Sensor",
       "parts": [
         {
-          "name": "S11059"
+          "name": "S11059",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-08316/"
+          }
         }
       ]
     },
@@ -204,9 +343,30 @@
       "name": "Grove",
       "parts": [
         {
-          "name": "Grove_EarHeartRate"
+          "name": "Grove_EarHeartRate",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/2526/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Ear-clip-Heart-Rate-Sensor-p-1116.html"
+          }
         }
       ]
     }
-  ]
+  ],
+  "store": {
+    "amazon.co.jp": {
+      "logo": "/images/shop/amazoncojp.png"
+    },
+    "akizuki": {
+      "logo": "/images/shop/akizuki.jpg"
+    },
+    "switchscience": {
+      "logo": "/images/shop/switchscience.png"
+    },
+    "adafruit": {
+      "logo": "/images/shop/adafruit.png"
+    },
+    "seedstudio": {
+      "logo": "/images/shop/seedstudio.png"
+    }
+  }
 }

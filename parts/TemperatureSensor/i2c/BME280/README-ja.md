@@ -102,6 +102,7 @@ IIRフィルタは計測結果を安定させてより高い精度にします�
 // Please pullup sdi and sck.
 var bme280 = obniz.wired("BME280", {vio:0, vcore:1, gnd:2, csb:3, sdi: 4, sck: 5, sdo:6 });
 await bme280.applyCalibration();
+await bme280.setIIRStrength(1); // start using minimum IIR 
 ```
 
 ## [await] getAllWait()

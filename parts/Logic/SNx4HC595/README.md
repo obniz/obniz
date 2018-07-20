@@ -17,13 +17,13 @@ Specify which obniz io is connected to each pin.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-ser | `number(obniz io)` | yes |  | connected obniz io
-rclk | `number(obniz io)` | yes |   | connected obniz io
-srclk | `number(obniz io)` | yes |   | connected obniz io
-vcc | `number(obniz io)` | no |   | If you specify either vcc/gnd, wire() will wait a moment after power up.
-gnd | `number(obniz io)` | no |   | If you specify either vcc/gnd, wire() will wait a moment after power up.
-oe | `number(obniz io)` | no |   | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
-srclr | `number(obniz io)` | no |   | srclr clear shift resistor values. You don't need to specify srclr when srclr is connected directly to 5v.
+ser | `number(obniz io)` | yes | &nbsp; | connected obniz io
+rclk | `number(obniz io)` | yes | &nbsp;  | connected obniz io
+srclk | `number(obniz io)` | yes | &nbsp;  | connected obniz io
+vcc | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
+gnd | `number(obniz io)` | no | &nbsp;  | If you specify either vcc/gnd, wire() will wait a moment after power up.
+oe | `number(obniz io)` | no |  &nbsp; | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
+srclr | `number(obniz io)` | no | &nbsp;  | srclr clear shift resistor values. You don't need to specify srclr when srclr is connected directly to 5v.
 io_num | `number` | no | 8  | io_num is number of io. You can set under 8. If you specify over 8 like 16, then obniz will treat chained chip.
 enabled | `boolean` | no | true  | If oe was specified, you can set initial enable/disable with this parameter.
 
