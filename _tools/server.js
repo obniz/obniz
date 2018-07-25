@@ -39,7 +39,7 @@ gulp.task('server', function jsonSchemaForVar() {
 
 const obnizMain = path.join(__dirname, '../obniz/index.js');
 const obnizPath = path.join(__dirname, '../obniz/**/*.js');
-const partsPath = path.join(__dirname, '../parts/**/*.js');
+const partsPath = path.join(__dirname, '../parts/');
 const packageJsonPath = path.join(__dirname, '../package.json');
 const schemaSrcPath = path.join(__dirname, '../json_schema/**/*.yml');
 const docPath = path.join(__dirname, '../doc');
@@ -132,7 +132,7 @@ gulp.task('obniz.node6_10.js', [], function obnizNodeBuild() {
 
 gulp.task('readMe', [], function readMeBuild() {
   return gulp
-    .src(path.join(partsPath, '/**/README.ejs'))
+    .src(path.join(partsPath, '/**/README*.ejs'))
     .pipe(plumber({ errorHandler: reportError }))
     .pipe(gulp_ejs())
     .pipe(rename({ extname: '.md' }))
@@ -165,9 +165,14 @@ function reportError(error) {
 
 gulp.task('watch', () => {
   gulp.watch([schemaSrcPath], ['jsonSchemaDoc']);
-  gulp.watch(path.join(partsPath, '/**/README.ejs'), ['readMe']);
+  gulp.watch(path.join(partsPath, '/**/README*.ejs'), ['readMe']);
   gulp.watch(
-    [obnizPath, partsPath, packageJsonPath, schemaSrcPath],
+    [
+      obnizPath,
+      path.join(partsPath, '/**/*.js'),
+      packageJsonPath,
+      schemaSrcPath,
+    ],
     ['obniz.js', 'obniz.min.js', 'obniz.node6_10.js']
   );
 });
