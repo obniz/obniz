@@ -11517,6 +11517,7 @@ var map = {
 	"./TemperatureSensor/analog/LM35DZ/index.js": "./parts/TemperatureSensor/analog/LM35DZ/index.js",
 	"./TemperatureSensor/analog/LM60/index.js": "./parts/TemperatureSensor/analog/LM60/index.js",
 	"./TemperatureSensor/analog/LM61/index.js": "./parts/TemperatureSensor/analog/LM61/index.js",
+	"./TemperatureSensor/analog/LMT87/index.js": "./parts/TemperatureSensor/analog/LMT87/index.js",
 	"./TemperatureSensor/analog/MCP9700/index.js": "./parts/TemperatureSensor/analog/MCP9700/index.js",
 	"./TemperatureSensor/analog/MCP9701/index.js": "./parts/TemperatureSensor/analog/MCP9701/index.js",
 	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
@@ -14898,6 +14899,34 @@ class LM61 extends AnalogTemplatureSensor {
 
 if (true) {
   module.exports = LM61;
+}
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/analog/LMT87/index.js":
+/*!*******************************************************!*\
+  !*** ./parts/TemperatureSensor/analog/LMT87/index.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+class LMT87 extends AnalogTemplatureSensor {
+  calc(voltage) {
+    return (voltage * 1000 - 2365) / -13.6 + 20; //20-50dc;
+  }
+  static info() {
+    return {
+      name: 'LMT87'
+    };
+  }
+}
+
+if (true) {
+  module.exports = LMT87;
 }
 
 /***/ }),
