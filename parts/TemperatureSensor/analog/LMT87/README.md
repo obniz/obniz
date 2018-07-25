@@ -1,5 +1,6 @@
-# Temperature Sensor - LM60
-Temperature sensor LM60BIZ/LM60CIM
+# Temperature Sensor - LMT87
+Temperature and Humidity sensor LMT87
+
 
 
 
@@ -11,7 +12,7 @@ Temperature sensor LM60BIZ/LM60CIM
 ## wired(obniz, {vcc, gnd, output})
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("LM60", { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("LMT87", { gnd:0 , output:1, vcc:2});
 ```
 
 ## onchange
@@ -20,7 +21,7 @@ Unit of temp is Celsius
 
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("LM60",   { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("LMT87",   { gnd:0 , output:1, vcc:2});
 tempsens.onchange = function(temp){
 console.log(temp)
 };

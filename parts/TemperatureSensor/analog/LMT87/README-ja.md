@@ -1,5 +1,5 @@
-# Temperature Sensor - LM35DZ
-温度センサLM35DZです。センサで取得した温度を知ることができます。
+# Temperature Sensor - LMT87
+温度センサLMT87です。センサで取得した温度を知ることができます。
 
 
 
@@ -13,7 +13,7 @@
 Obnizに温度センサをつなぎます。
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("LM35DZ",  { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("LMT87",  { gnd:0 , output:1, vcc:2});
 ```
 
 ## onchange
@@ -21,7 +21,7 @@ var tempsens = obniz.wired("LM35DZ",  { gnd:0 , output:1, vcc:2});
 温度は摂氏で返されます。
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("LM35DZ",  { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("LMT87",  { gnd:0 , output:1, vcc:2});
 tempsens.onchange = function(temp){
   console.log(temp);
 };
