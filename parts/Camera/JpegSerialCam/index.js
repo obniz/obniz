@@ -53,16 +53,8 @@ class JpegSerialCam {
     return -1;
   }
 
-  arrayToBase64(buf) {
-    if (typeof btoa === 'function') {
-      let binstr = Array.prototype.map
-        .call(buf, function(ch) {
-          return String.fromCharCode(ch);
-        })
-        .join('');
-      return btoa(binstr);
-    }
-    // TODO:
+  arrayToBase64(array) {
+    return Buffer.from(array).toString('base64');
   }
 
   async startwait(obj) {
