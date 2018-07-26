@@ -21,7 +21,7 @@ cam_tx measn transmit from camera.
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 ```
 
-## startwait({baud:baudrate})
+## [await] startwait({baud:baudrate})
 start camera.
 It takes around 2.5 second.
 
@@ -33,7 +33,7 @@ await cam.startwait({baud: 38400});
 var data = await cam.takewait();
 ```
 
-## setResolusionWait(resolution)
+## [await] setResolusionWait(resolution)
 set image resolution
 This configuration consists even after power off.
 
@@ -51,7 +51,7 @@ await cam.setResolusionWait("640*480");
 var data = await cam.takewait();
 ```
 
-## setBaudWait(baud)
+## [await] setBaudWait(baud)
 set baudrate of cam.
 This configuration consists even after power off.
 
@@ -72,7 +72,7 @@ await cam.setBaudWait(115200);
 await cam.takewait(); // baud is already changed to 115200.
 ```
 
-## takewait()
+## [await] takewait()
 take a photo and return a byte array.
 
 ```Javascript

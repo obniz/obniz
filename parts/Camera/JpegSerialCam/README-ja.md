@@ -21,7 +21,7 @@ var data = await cam.takewait();
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 ```
 
-## startwait({[.baud]})
+## [await] startwait({[.baud]})
 カメラを開始します。リセットが入るので2.5sほどかかります。
 
 通信速度も指定できます。指定しない場合はカメラのデフォルトである38400となっています。
@@ -33,7 +33,7 @@ await cam.startwait({baud: 38400});
 var data = await cam.takewait();
 ```
 
-## setResolusionWait(resolution)
+## [await] setResolusionWait(resolution)
 解像度を指定します。
 解像度は電源を消してもカメラ側に保存されます。
 
@@ -51,7 +51,7 @@ await cam.setResolusionWait("640*480");
 var data = await cam.takewait();
 ```
 
-## setBaudWait(baud)
+## [await] setBaudWait(baud)
 カメラとの通信速度を決めます。早いほうが早く撮影できます。
 この設定は電源を消してもカメラ側に保存されます。
 
@@ -72,7 +72,7 @@ await cam.setBaudWait(115200);
 await cam.takewait(); // baud is already changed to 115200.
 ```
 
-## takewait()
+## [await] takewait()
 カメラで撮影し、jpegデータを取得します。
 
 ```Javascript
