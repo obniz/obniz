@@ -85,6 +85,12 @@
       "name": "Camera",
       "parts": [
         {
+          "name": "ArduCAMMini",
+          "store": {
+            "akizuki": "https://www.switch-science.com/catalog/3780/"
+          }
+        },
+        {
           "name": "JpegSerialCam",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-07746/"
