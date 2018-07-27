@@ -18638,7 +18638,8 @@ if (true) {
     };
   }
 
-  wired() {
+  wired(obniz) {
+    this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.my_tx = this.params.cam_rx;
     this.my_rx = this.params.cam_tx;
@@ -18681,7 +18682,7 @@ if (true) {
     return Buffer.from(array).toString('base64');
   }
 
-  async startwait(obj) {
+  async startWait(obj) {
     if (!obj) obj = {};
     this.uart.start({
       tx: this.my_tx,
@@ -18699,16 +18700,16 @@ if (true) {
     await this.obniz.wait(2500);
   }
 
-  async setResolusionWait(resolution) {
+  async setSizeWait(resolution) {
     let val;
-    if (resolution === '640*480') {
+    if (resolution === '640x480') {
       val = 0x00;
-    } else if (resolution === '320*240') {
+    } else if (resolution === '320x240') {
       val = 0x11;
-    } else if (resolution === '160*120') {
+    } else if (resolution === '160x120') {
       val = 0x22;
     } else {
-      throw new Error('invalid resolution');
+      throw new Error('unsupported size');
     }
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
@@ -18762,7 +18763,7 @@ if (true) {
     });
   }
 
-  async takewait() {
+  async takeWait() {
     const uart = this.uart;
     //console.log("stop a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);

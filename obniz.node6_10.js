@@ -12196,7 +12196,8 @@ class JpegSerialCam {
     };
   }
 
-  wired() {
+  wired(obniz) {
+    this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.my_tx = this.params.cam_rx;
     this.my_rx = this.params.cam_tx;
@@ -12243,7 +12244,7 @@ class JpegSerialCam {
     return Buffer.from(array).toString('base64');
   }
 
-  startwait(obj) {
+  startWait(obj) {
     var _this2 = this;
 
     return _asyncToGenerator(function* () {
@@ -12269,19 +12270,19 @@ class JpegSerialCam {
     })();
   }
 
-  setResolusionWait(resolution) {
+  setSizeWait(resolution) {
     var _this4 = this;
 
     return _asyncToGenerator(function* () {
       let val;
-      if (resolution === '640*480') {
+      if (resolution === '640x480') {
         val = 0x00;
-      } else if (resolution === '320*240') {
+      } else if (resolution === '320x240') {
         val = 0x11;
-      } else if (resolution === '160*120') {
+      } else if (resolution === '160x120') {
         val = 0x22;
       } else {
-        throw new Error('invalid resolution');
+        throw new Error('unsupported size');
       }
       _this4.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
       yield _this4._drainUntil(_this4.uart, [0x76, 0x00, 0x31, 0x00]);
@@ -12333,7 +12334,7 @@ class JpegSerialCam {
     })();
   }
 
-  takewait() {
+  takeWait() {
     var _this7 = this;
 
     return _asyncToGenerator(function* () {
