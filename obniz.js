@@ -18520,7 +18520,9 @@ AE_MICAMP.prototype.Average = function(callback) {
     this.flushFIFO();
     this.startCapture();
     while (true) {
-      if ((await this.isCaptureDoneWait())) { break; }
+      if (await this.isCaptureDoneWait()) {
+        break;
+      }
     }
     return await this.readFIFOWait();
   }
