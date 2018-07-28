@@ -41,7 +41,10 @@ var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 start camera.
 It takes around 2.5 second.
 
-Default Baudrate = 38400
+Factory setted default Baudrate = 38400
+So, maybe, yours is 38400.
+But onece baud was changed to different value, The values consist even after power down. You should specify new correct baudrate to startWait() after changing.
+
 ```Javascript
 // Javascript Example
 obniz.io6.output(true);
@@ -74,6 +77,7 @@ var data = await cam.takeWait();
 ## [await] setBaudWait(baud)
 set baudrate of cam.
 This configuration consists even after power off.
+So you should specify new baud value to startWait() function next time.
 
 1. 9600
 2. 19200
