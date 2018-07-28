@@ -42,7 +42,6 @@ spi | `spi object` | no |  | configured spi object
 ピンだけを指定して以下のように設定することが出来ます。
 
 ```javascript
-// Javascript Example
 obniz.io11.output(true);
 var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
 await cam.startupWait();
@@ -124,7 +123,6 @@ arrayデータをbase64にエンコードします。
 htmlでは```<img>```タグにbase64のjpgを渡すと画像として見ることが出来ます。
 
 ```Javascript
-// Javascript Example
 obniz.io11.output(true);
 var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
 await cam.startupWait();

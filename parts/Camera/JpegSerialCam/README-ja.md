@@ -112,7 +112,6 @@ arrayデータをbase64にエンコードします。
 htmlでは```<img>```タグにbase64のjpgを渡すと画像としてみることが出来ます。
 
 ```Javascript
-// Javascript Example
 obniz.io6.output(true);
 obniz.io9.output(false);
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});

@@ -111,7 +111,6 @@ convert bytearray to base64 string.
 It is useful when you want to print image to image tag
 
 ```Javascript
-// Javascript Example
 obniz.io6.output(true);
 obniz.io9.output(false);
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});

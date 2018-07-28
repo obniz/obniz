@@ -43,7 +43,6 @@ spi | `spi object` | no |  | configured spi object
 Just specify connected io to configure.
 
 ```javascript
-// Javascript Example
 obniz.io11.output(true);
 var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
 await cam.startupWait();
@@ -122,7 +121,6 @@ It is useful when you want to print image to image tag
 In html, you can see the image by setting base64 datat to ```<img>```tag.
 
 ```Javascript
-// Javascript Example
 obniz.io11.output(true);
 var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
 await cam.startupWait();
