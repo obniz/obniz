@@ -13283,10 +13283,10 @@ class IRSensor {
     this.requiredKeys = ['output'];
 
     this.dataSymbolLength = 0.07;
-    this.duration = 200; // 200msec
+    this.duration = 500; // 500msec
     this.dataInverted = true;
     this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
-    this.cutTail = true;
+    this.cutTail = false;
     this.output_pullup = true;
   }
 

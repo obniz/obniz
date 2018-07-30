@@ -52,12 +52,13 @@ sensor.start(function (arr) {
 
 設定可能なのは以下のとおりです。
 
-1. dataSymbolLength = 0.07; // data symbold length
-2. duration = 200; // duration of signal. 200msec
-3. dataInverted = true; // output values is inverted(IRSensor will re-invert)
-4. triggerSampleCount = 16; // signal must start with 16 count of signals
-5. cutTail = true; // cut tail not necesarry data arrays.
-6. output_pullup = true; // output io must be pull-up to 5v.
+property | type | default | description
+--- | --- | --- | --- 
+dataSymbolLength | `number` | 0.07 (msec) | LogicAnalyzerのサンプリング間隔
+duration | `number` | 500 (msec) | 取得データの長さ
+dataInverted | `number` | true | 取得データの0,1を反転するかどうか
+cutTail | `number` | false | 信号の最後の無駄な0を除去します。除去することでうまく通信できないこともあります。
+output_pullup | `number` | true | センサーの出力端子を5vで内部プルアップします。
 
 どれも```start()```で開始する前に設定して下さい。
 
