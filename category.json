@@ -305,6 +305,13 @@
           }
         },
         {
+          "name": "LMT87",
+          "store": {
+            "marutsu": "https://www.marutsu.co.jp/pc/i/15344336/",
+            "digikey": "https://www.digikey.com/product-detail/en/texas-instruments/LMT87LPM/296-43927-1-ND/5962168"
+          }
+        },
+        {
           "name": "MCP9700",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gI-09692/",
@@ -373,6 +380,12 @@
     },
     "seedstudio": {
       "logo": "/images/shop/seedstudio.png"
+    },
+    "digikey": {
+      "logo": "/images/shop/digikey.png"
+    },
+    "marutsu": {
+      "logo": "/images/shop/marutsu.png"
     }
   }
 }
