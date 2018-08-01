@@ -66,9 +66,14 @@ By default, it is push-pull 5v with motor driver(up to 1A).
 
 ```Javascript
 // Javascript Example
-obniz.io1.output(true); // output push-pull 5v
-obniz.io1.pull("5v");
-obniz.io1.drive("open-drain"); // changed immediately 
+obniz.io0.output(true); // output push-pull 5v
+
+obniz.io1.drive("3v");
+obniz.io1.output(true); // output push-pull 3v
+
+obniz.io2.pull("5v");
+obniz.io2.drive("open-drain");
+obniz.io2.output(true); // output open-drain with 5v pull-up
 ```
 
 ## pull(pullType)
@@ -81,9 +86,9 @@ enable/disable internal weak pull up/down resistors.
 
 ```Javascript
 // Javascript Example
-obniz.io0.pull(null);
-obniz.io1.pull("3v");
-obniz.io1.drive("open-drain"); // output open-drain
+obniz.io0.pull("3v");
+obniz.io0.drive("open-drain"); // output open-drain
+obniz.io0.output(false);
 ```
 
 ## input(callback)

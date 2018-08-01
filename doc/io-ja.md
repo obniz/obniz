@@ -46,6 +46,7 @@ ObnizのX番ピンを出力ピンにして１または０を出力します。
 // Javascript Example
 obniz.io1.output(true); // io1 is 5V
 ```
+
 ## drive(type)
 出力するときのドライブ方法を変更します。
 デフォルトでは"5v"となっていて、モータードライバを使った5vのプッシュプルで、最大電流が1Aのモードとなっています。
@@ -61,9 +62,14 @@ obniz.io1.output(true); // io1 is 5V
 
 ```Javascript
 // Javascript Example
-obniz.io1.output(true); // output push-pull 5v
-obniz.io1.pull("5v");
-obniz.io1.drive("open-drain"); // changed immediately 
+obniz.io0.output(true); // output push-pull 5v
+
+obniz.io1.drive("3v");
+obniz.io1.output(true); // output push-pull 3v
+
+obniz.io2.pull("5v");
+obniz.io2.drive("open-drain");
+obniz.io2.output(true); // output open-drain with 5v pull-up
 ```
 
 ## pull(pullType)
@@ -76,9 +82,9 @@ IOの内部プルアップ・プルダウンを変更します。
 
 ```Javascript
 // Javascript Example
-obniz.io0.pull(null);
-obniz.io1.pull("3v");
-obniz.io1.drive("open-drain"); // output open-drain
+obniz.io0.pull("3v");
+obniz.io0.drive("open-drain"); // output open-drain
+obniz.io0.output(false);
 ```
 
 ## input(callback)
@@ -93,6 +99,7 @@ obniz.io0.input(function(value){
   console.log("changed to " + value);
 });
 ```
+
 ## [await] inputWait
 ピンに加わっている電圧を読み結果をtrue/falseで返します。
 この関数を呼ぶことでピンをinputに設定し、値が返ってくるまで関数はwaitします。
