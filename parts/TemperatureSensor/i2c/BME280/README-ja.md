@@ -17,14 +17,14 @@ obnizには内部プルアップがありますが、安定した通信のため
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-vio | `number(obniz io)` | no |  | connected obniz io. power supply for interface
-vcore | `number(obniz io)` | no |  | connected obniz io. power supply for core
-gnd | `number(obniz io)` | no |  | connected obniz io. power supply
-csb | `number(obniz io)` | no |  | connected obniz io. I2C/SPI 選択.
-sdi | `number(obniz io)` | no |  | connected obniz io. データ端子
-sck | `number(obniz io)` | no |  | connected obniz io. クロック
-sdo | `number(obniz io)` | no |  | connected obniz io. データ通信かアドレス選択
-i2c | `i2c object` | no |  | configured i2c object
+vio | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for interface
+vcore | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for core
+gnd | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply
+csb | `number(obniz io)` | no | &nbsp; | connected obniz io. I2C/SPI 選択.
+sdi | `number(obniz io)` | no | &nbsp; | connected obniz io. データ端子
+sck | `number(obniz io)` | no | &nbsp; | connected obniz io. クロック
+sdo | `number(obniz io)` | no | &nbsp; | connected obniz io. データ通信かアドレス選択
+i2c | `i2c object` | no | &nbsp; | configured i2c object
 address | `number` | no | 0x76  | 0x76 or 0x77
 
 このライブラリではI2Cで部品と通信します。

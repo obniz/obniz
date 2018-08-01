@@ -36,7 +36,7 @@ Type is one of four state.
 
 Type | Pull to | Detail
 :---: | :---: | :---:
-floating |  | Default
+floating | &nbsp; | Default
 pull-up | `5v` | 
 pull-up | `3v` | 
 pull-down | `gnd` | 

@@ -17,14 +17,14 @@ obniz has internal pull up. But for communication stability, please add pull-up 
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-vio | `number(obniz io)` | no |  | connected obniz io. power supply for interface
-vcore | `number(obniz io)` | no |  | connected obniz io. power supply for core
-gnd | `number(obniz io)` | no |  | connected obniz io. power supply
-csb | `number(obniz io)` | no |  | connected obniz io. I2C/SPI selection.
-sdi | `number(obniz io)` | no |  | connected obniz io. data port
-sck | `number(obniz io)` | no |  | connected obniz io. clock
-sdo | `number(obniz io)` | no |  | connected obniz io. data port or address selection
-i2c | `i2c object` | no |  | configured i2c object
+vio | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for interface
+vcore | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for core
+gnd | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply
+csb | `number(obniz io)` | no | &nbsp; | connected obniz io. I2C/SPI selection.
+sdi | `number(obniz io)` | no | &nbsp; | connected obniz io. data port
+sck | `number(obniz io)` | no | &nbsp; | connected obniz io. clock
+sdo | `number(obniz io)` | no | &nbsp; | connected obniz io. data port or address selection
+i2c | `i2c object` | no | &nbsp; | configured i2c object
 address | `number` | no | 0x76  | 0x76 or 0x77
 
 This library use I2C to communicate.

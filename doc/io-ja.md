@@ -34,7 +34,7 @@ digital-in | `3v(5vトレラント)` | <=80Mhz |
 
 タイプ | プル先 | 詳細
 :---: | :---: | :---:
-floating |  | 標準設定
+floating | &nbsp; | 標準設定
 pull-up | `5v` | 
 pull-up | `3v` | 
 pull-down | `gnd` | 

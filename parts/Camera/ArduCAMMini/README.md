@@ -29,16 +29,16 @@ Arducam require each SPI and I2C.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-cs | `number(obniz io)` | yes |  | obniz io. チップ選択
-vcc | `number(obniz io)` | no |  | obniz io. 電源 +5V
-gnd | `number(obniz io)` | no |  | obniz io. 電源 0v
-mosi | `number(obniz io)` | no |  | obniz io. SPI mosi 端子
-miso | `number(obniz io)` | no |  | obniz io. SPI miso 端子
-sclk | `number(obniz io)` | no |  | obniz io. SPI clk 端子
-sda | `number(obniz io)` | no |  | obniz io. I2C sda 端子
-scl | `number(obniz io)` | no |  | obniz io. I2C scl 端子
-i2c | `i2c object` | no |  | configured i2c object
-spi | `spi object` | no |  | configured spi object
+cs | `number(obniz io)` | yes | &nbsp; | obniz io. チップ選択
+vcc | `number(obniz io)` | no | &nbsp; | obniz io. 電源 +5V
+gnd | `number(obniz io)` | no | &nbsp; | obniz io. 電源 0v
+mosi | `number(obniz io)` | no | &nbsp; | obniz io. SPI mosi 端子
+miso | `number(obniz io)` | no | &nbsp; | obniz io. SPI miso 端子
+sclk | `number(obniz io)` | no | &nbsp; | obniz io. SPI clk 端子
+sda | `number(obniz io)` | no | &nbsp; | obniz io. I2C sda 端子
+scl | `number(obniz io)` | no | &nbsp; | obniz io. I2C scl 端子
+i2c | `i2c object` | no | &nbsp; | configured i2c object
+spi | `spi object` | no | &nbsp; | configured spi object
 
 Just specify connected io to configure.
 
