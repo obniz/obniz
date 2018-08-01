@@ -12,7 +12,7 @@ PWMは繰り返しパルスを生成します。
 
 ![](./images/pwm_0.png)
 
-PWMはDCモーターの制御によく使われます。DUTY比を変えることで電圧を変えたようにモーターの強弱を変えられます。
+PWMはDCモーターの制御によく使われます。DUTY比を変えることで電圧を変えたようにモーターの強弱を変えられます。
 
 ![](./images/pwm_1.png)
 
@@ -44,7 +44,7 @@ var pwm6 = obniz.getFreePwm(); // Error
 pwmをnumberで指定したピンで開始します。
 開始直後はfreq=1khz, duty=0%となっています。
 
-ioのdriveとpullも設定可能です。詳しくは[io](./io)を御覧ください。
+ioのdriveとpullも設定可能です。詳しくは[io](./io)を御覧ください。
 
 ```Javascript
 // Javascript Example

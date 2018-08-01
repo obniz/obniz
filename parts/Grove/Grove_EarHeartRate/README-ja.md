@@ -24,7 +24,7 @@ heartrate.start(function(rate){
 ```
 
 ## start(callback(heartrate))
-心拍数を計測し、計測値をcallback関数に渡します。
+心拍数を計測し、計測値をcallback関数に渡します。
 およそ３秒ごと（ネットワークに依存）に計測します。計測できなかった場合はcallback関数は呼ばれません。
 ```javascript
 // Javascript Example

@@ -4,8 +4,8 @@
 
 ## wired(obniz,{ a, b, c, d, e, f, g, dp, common, commonType})
 a~gは7セグメントのそれぞれに対応しています。
-つないだobnizのioを指定します。dpは小数点で、使わない場合は不要です。
-commonType は "anode"/"cathode" のどちらかで、カソードコモンなら"cathode"と指定して下さい。指定しない場合は "cathode"となります。
+つないだobnizのioを指定します。dpは小数点で、使わない場合は不要です。
+commonType は "anode"/"cathode" のどちらかで、カソードコモンなら"cathode"と指定して下さい。指定しない場合は "cathode"となります。
 
 ```javascript
 // Javascript Example

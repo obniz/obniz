@@ -17437,7 +17437,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.8.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.2"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.9.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^1.7.0","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^4.19.1","eslint-config-prettier":"^2.9.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^3.2.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^1.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^11.9.0","path":"^0.12.7","prettier":"^1.13.5","sinon":"^4.5.0","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.1.0","webpack":"^4.12.0","webpack-cli":"^2.1.5","webpack-node-externals":"^1.7.2","webpack-stream":"^4.0.3","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.1.2","semver":"^5.5.0","tv4":"^1.3.0","ws":"^5.2.2"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17448,6 +17448,7 @@ var map = {
 	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
 	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
+	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
@@ -17734,10 +17735,893 @@ AE_MICAMP.prototype.Average = function(callback) {
 
 /***/ }),
 
+/***/ "./parts/Camera/ArduCAMMini/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {class ArduCAMMini {
+  constructor() {
+    this.keys = [
+      'cs',
+      'mosi',
+      'miso',
+      'sclk',
+      'gnd',
+      'vcc',
+      'sda',
+      'scl',
+      'spi',
+      'i2c',
+    ];
+    this.requiredKeys = ['cs'];
+
+    this.ioKeys = this.keys;
+    this.displayName = 'Cam';
+
+    this.regs = {
+      ARDUCHIP_TEST1: 0x00,
+      ARDUCHIP_MODE: 0x02,
+      ARDUCHIP_FIFO: 0x04,
+      BURST_FIFO_READ: 0x3c,
+      ARDUCHIP_TRIG: 0x41,
+      FIFO_SIZE1: 0x42,
+      FIFO_SIZE2: 0x43,
+      FIFO_SIZE3: 0x44,
+    };
+
+    this.configs = {
+      OV2640_JPEG_INIT: [
+        [0xff, 0x00],
+        [0x2c, 0xff],
+        [0x2e, 0xdf],
+        [0xff, 0x01],
+        [0x3c, 0x32],
+        [0x11, 0x04],
+        [0x09, 0x02],
+        [0x04, 0x28],
+        [0x13, 0xe5],
+        [0x14, 0x48],
+        [0x2c, 0x0c],
+        [0x33, 0x78],
+        [0x3a, 0x33],
+        [0x3b, 0xfb],
+        [0x3e, 0x00],
+        [0x43, 0x11],
+        [0x16, 0x10],
+        [0x39, 0x92],
+        [0x35, 0xda],
+        [0x22, 0x1a],
+        [0x37, 0xc3],
+        [0x23, 0x00],
+        [0x34, 0xc0],
+        [0x36, 0x1a],
+        [0x06, 0x88],
+        [0x07, 0xc0],
+        [0x0d, 0x87],
+        [0x0e, 0x41],
+        [0x4c, 0x00],
+        [0x48, 0x00],
+        [0x5b, 0x00],
+        [0x42, 0x03],
+        [0x4a, 0x81],
+        [0x21, 0x99],
+        [0x24, 0x40],
+        [0x25, 0x38],
+        [0x26, 0x82],
+        [0x5c, 0x00],
+        [0x63, 0x00],
+        [0x61, 0x70],
+        [0x62, 0x80],
+        [0x7c, 0x05],
+        [0x20, 0x80],
+        [0x28, 0x30],
+        [0x6c, 0x00],
+        [0x6d, 0x80],
+        [0x6e, 0x00],
+        [0x70, 0x02],
+        [0x71, 0x94],
+        [0x73, 0xc1],
+        [0x12, 0x40],
+        [0x17, 0x11],
+        [0x18, 0x43],
+        [0x19, 0x00],
+        [0x1a, 0x4b],
+        [0x32, 0x09],
+        [0x37, 0xc0],
+        [0x4f, 0x60],
+        [0x50, 0xa8],
+        [0x6d, 0x00],
+        [0x3d, 0x38],
+        [0x46, 0x3f],
+        [0x4f, 0x60],
+        [0x0c, 0x3c],
+        [0xff, 0x00],
+        [0xe5, 0x7f],
+        [0xf9, 0xc0],
+        [0x41, 0x24],
+        [0xe0, 0x14],
+        [0x76, 0xff],
+        [0x33, 0xa0],
+        [0x42, 0x20],
+        [0x43, 0x18],
+        [0x4c, 0x00],
+        [0x87, 0xd5],
+        [0x88, 0x3f],
+        [0xd7, 0x03],
+        [0xd9, 0x10],
+        [0xd3, 0x82],
+        [0xc8, 0x08],
+        [0xc9, 0x80],
+        [0x7c, 0x00],
+        [0x7d, 0x00],
+        [0x7c, 0x03],
+        [0x7d, 0x48],
+        [0x7d, 0x48],
+        [0x7c, 0x08],
+        [0x7d, 0x20],
+        [0x7d, 0x10],
+        [0x7d, 0x0e],
+        [0x90, 0x00],
+        [0x91, 0x0e],
+        [0x91, 0x1a],
+        [0x91, 0x31],
+        [0x91, 0x5a],
+        [0x91, 0x69],
+        [0x91, 0x75],
+        [0x91, 0x7e],
+        [0x91, 0x88],
+        [0x91, 0x8f],
+        [0x91, 0x96],
+        [0x91, 0xa3],
+        [0x91, 0xaf],
+        [0x91, 0xc4],
+        [0x91, 0xd7],
+        [0x91, 0xe8],
+        [0x91, 0x20],
+        [0x92, 0x00],
+        [0x93, 0x06],
+        [0x93, 0xe3],
+        [0x93, 0x05],
+        [0x93, 0x05],
+        [0x93, 0x00],
+        [0x93, 0x04],
+        [0x93, 0x00],
+        [0x93, 0x00],
+        [0x93, 0x00],
+        [0x93, 0x00],
+        [0x93, 0x00],
+        [0x93, 0x00],
+        [0x93, 0x00],
+        [0x96, 0x00],
+        [0x97, 0x08],
+        [0x97, 0x19],
+        [0x97, 0x02],
+        [0x97, 0x0c],
+        [0x97, 0x24],
+        [0x97, 0x30],
+        [0x97, 0x28],
+        [0x97, 0x26],
+        [0x97, 0x02],
+        [0x97, 0x98],
+        [0x97, 0x80],
+        [0x97, 0x00],
+        [0x97, 0x00],
+        [0xc3, 0xed],
+        [0xa4, 0x00],
+        [0xa8, 0x00],
+        [0xc5, 0x11],
+        [0xc6, 0x51],
+        [0xbf, 0x80],
+        [0xc7, 0x10],
+        [0xb6, 0x66],
+        [0xb8, 0xa5],
+        [0xb7, 0x64],
+        [0xb9, 0x7c],
+        [0xb3, 0xaf],
+        [0xb4, 0x97],
+        [0xb5, 0xff],
+        [0xb0, 0xc5],
+        [0xb1, 0x94],
+        [0xb2, 0x0f],
+        [0xc4, 0x5c],
+        [0xc0, 0x64],
+        [0xc1, 0x4b],
+        [0x8c, 0x00],
+        [0x86, 0x3d],
+        [0x50, 0x00],
+        [0x51, 0xc8],
+        [0x52, 0x96],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x00],
+        [0x5a, 0xc8],
+        [0x5b, 0x96],
+        [0x5c, 0x00],
+        [0xd3, 0x00], //[ 0xd3, 0x7f ],
+        [0xc3, 0xed],
+        [0x7f, 0x00],
+        [0xda, 0x00],
+        [0xe5, 0x1f],
+        [0xe1, 0x67],
+        [0xe0, 0x00],
+        [0xdd, 0x7f],
+        [0x05, 0x00],
+        //
+        [0x12, 0x40],
+        [0xd3, 0x04], //[ 0xd3, 0x7f ],
+        [0xc0, 0x16],
+        [0xc1, 0x12],
+        [0x8c, 0x00],
+        [0x86, 0x3d],
+        [0x50, 0x00],
+        [0x51, 0x2c],
+        [0x52, 0x24],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x00],
+        [0x5a, 0x2c],
+        [0x5b, 0x24],
+        [0x5c, 0x00],
+        [0xff, 0xff],
+      ],
+
+      OV2640_YUV422: [
+        [0xff, 0x00],
+        [0x05, 0x00],
+        [0xda, 0x10],
+        [0xd7, 0x03],
+        [0xdf, 0x00],
+        [0x33, 0x80],
+        [0x3c, 0x40],
+        [0xe1, 0x77],
+        [0x00, 0x00],
+        [0xff, 0xff],
+      ],
+
+      OV2640_JPEG: [
+        [0xe0, 0x14],
+        [0xe1, 0x77],
+        [0xe5, 0x1f],
+        [0xd7, 0x03],
+        [0xda, 0x10],
+        [0xe0, 0x00],
+        [0xff, 0x01],
+        [0x04, 0x08],
+        [0xff, 0xff],
+      ],
+
+      OV2640_160x120_JPEG: [
+        [0xff, 0x01],
+        [0x12, 0x40],
+        [0x17, 0x11],
+        [0x18, 0x43],
+        [0x19, 0x00],
+        [0x1a, 0x4b],
+        [0x32, 0x09],
+        [0x4f, 0xca],
+        [0x50, 0xa8],
+        [0x5a, 0x23],
+        [0x6d, 0x00],
+        [0x39, 0x12],
+        [0x35, 0xda],
+        [0x22, 0x1a],
+        [0x37, 0xc3],
+        [0x23, 0x00],
+        [0x34, 0xc0],
+        [0x36, 0x1a],
+        [0x06, 0x88],
+        [0x07, 0xc0],
+        [0x0d, 0x87],
+        [0x0e, 0x41],
+        [0x4c, 0x00],
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0x64],
+        [0xc1, 0x4b],
+        [0x86, 0x35],
+        [0x50, 0x92],
+        [0x51, 0xc8],
+        [0x52, 0x96],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x00],
+        [0x57, 0x00],
+        [0x5a, 0x28],
+        [0x5b, 0x1e],
+        [0x5c, 0x00],
+        [0xe0, 0x00],
+        [0xff, 0xff],
+      ],
+
+      OV2640_176x144_JPEG: [
+        [0xff, 0x01],
+        [0x12, 0x40],
+        [0x17, 0x11],
+        [0x18, 0x43],
+        [0x19, 0x00],
+        [0x1a, 0x4b],
+        [0x32, 0x09],
+        [0x4f, 0xca],
+        [0x50, 0xa8],
+        [0x5a, 0x23],
+        [0x6d, 0x00],
+        [0x39, 0x12],
+        [0x35, 0xda],
+        [0x22, 0x1a],
+        [0x37, 0xc3],
+        [0x23, 0x00],
+        [0x34, 0xc0],
+        [0x36, 0x1a],
+        [0x06, 0x88],
+        [0x07, 0xc0],
+        [0x0d, 0x87],
+        [0x0e, 0x41],
+        [0x4c, 0x00],
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0x64],
+        [0xc1, 0x4b],
+        [0x86, 0x35],
+        [0x50, 0x92],
+        [0x51, 0xc8],
+        [0x52, 0x96],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x00],
+        [0x57, 0x00],
+        [0x5a, 0x2c],
+        [0x5b, 0x24],
+        [0x5c, 0x00],
+        [0xe0, 0x00],
+        [0xff, 0xff],
+      ],
+
+      OV2640_320x240_JPEG: [
+        [0xff, 0x01],
+        [0x12, 0x40],
+        [0x17, 0x11],
+        [0x18, 0x43],
+        [0x19, 0x00],
+        [0x1a, 0x4b],
+        [0x32, 0x09],
+        [0x4f, 0xca],
+        [0x50, 0xa8],
+        [0x5a, 0x23],
+        [0x6d, 0x00],
+        [0x39, 0x12],
+        [0x35, 0xda],
+        [0x22, 0x1a],
+        [0x37, 0xc3],
+        [0x23, 0x00],
+        [0x34, 0xc0],
+        [0x36, 0x1a],
+        [0x06, 0x88],
+        [0x07, 0xc0],
+        [0x0d, 0x87],
+        [0x0e, 0x41],
+        [0x4c, 0x00],
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0x64],
+        [0xc1, 0x4b],
+        [0x86, 0x35],
+        [0x50, 0x89],
+        [0x51, 0xc8],
+        [0x52, 0x96],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x00],
+        [0x57, 0x00],
+        [0x5a, 0x50],
+        [0x5b, 0x3c],
+        [0x5c, 0x00],
+        [0xe0, 0x00],
+        [0xff, 0xff],
+      ],
+
+      OV2640_352x288_JPEG: [
+        [0xff, 0x01],
+        [0x12, 0x40],
+        [0x17, 0x11],
+        [0x18, 0x43],
+        [0x19, 0x00],
+        [0x1a, 0x4b],
+        [0x32, 0x09],
+        [0x4f, 0xca],
+        [0x50, 0xa8],
+        [0x5a, 0x23],
+        [0x6d, 0x00],
+        [0x39, 0x12],
+        [0x35, 0xda],
+        [0x22, 0x1a],
+        [0x37, 0xc3],
+        [0x23, 0x00],
+        [0x34, 0xc0],
+        [0x36, 0x1a],
+        [0x06, 0x88],
+        [0x07, 0xc0],
+        [0x0d, 0x87],
+        [0x0e, 0x41],
+        [0x4c, 0x00],
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0x64],
+        [0xc1, 0x4b],
+        [0x86, 0x35],
+        [0x50, 0x89],
+        [0x51, 0xc8],
+        [0x52, 0x96],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x00],
+        [0x57, 0x00],
+        [0x5a, 0x58],
+        [0x5b, 0x48],
+        [0x5c, 0x00],
+        [0xe0, 0x00],
+        [0xff, 0xff],
+      ],
+
+      OV2640_640x480_JPEG: [
+        [0xff, 0x01],
+        [0x11, 0x01],
+        [0x12, 0x00], // Bit[6:4]: Resolution selection//
+        [0x17, 0x11], // HREFST[10:3]
+        [0x18, 0x75], // HREFEND[10:3]
+        [0x32, 0x36], // Bit[5:3]: HREFEND[2:0]; Bit[2:0]: HREFST[2:0]
+        [0x19, 0x01], // VSTRT[9:2]
+        [0x1a, 0x97], // VEND[9:2]
+        [0x03, 0x0f], // Bit[3:2]: VEND[1:0]; Bit[1:0]: VSTRT[1:0]
+        [0x37, 0x40],
+        [0x4f, 0xbb],
+        [0x50, 0x9c],
+        [0x5a, 0x57],
+        [0x6d, 0x80],
+        [0x3d, 0x34],
+        [0x39, 0x02],
+        [0x35, 0x88],
+        [0x22, 0x0a],
+        [0x37, 0x40],
+        [0x34, 0xa0],
+        [0x06, 0x02],
+        [0x0d, 0xb7],
+        [0x0e, 0x01],
+
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0xc8],
+        [0xc1, 0x96],
+        [0x86, 0x3d],
+        [0x50, 0x89],
+        [0x51, 0x90],
+        [0x52, 0x2c],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x88],
+        [0x57, 0x00],
+        [0x5a, 0xa0],
+        [0x5b, 0x78],
+        [0x5c, 0x00],
+        [0xd3, 0x04],
+        [0xe0, 0x00],
+        [0xff, 0xff],
+      ],
+
+      OV2640_800x600_JPEG: [
+        [0xff, 0x01],
+        [0x11, 0x01],
+        [0x12, 0x00], // Bit[6:4]: Resolution selection//0x02Ϊ����
+        [0x17, 0x11], // HREFST[10:3]
+        [0x18, 0x75], // HREFEND[10:3]
+        [0x32, 0x36], // Bit[5:3]: HREFEND[2:0]; Bit[2:0]: HREFST[2:0]
+        [0x19, 0x01], // VSTRT[9:2]
+        [0x1a, 0x97], // VEND[9:2]
+        [0x03, 0x0f], // Bit[3:2]: VEND[1:0]; Bit[1:0]: VSTRT[1:0]
+        [0x37, 0x40],
+        [0x4f, 0xbb],
+        [0x50, 0x9c],
+        [0x5a, 0x57],
+        [0x6d, 0x80],
+        [0x3d, 0x34],
+        [0x39, 0x02],
+        [0x35, 0x88],
+        [0x22, 0x0a],
+        [0x37, 0x40],
+        [0x34, 0xa0],
+        [0x06, 0x02],
+        [0x0d, 0xb7],
+        [0x0e, 0x01],
+
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0xc8],
+        [0xc1, 0x96],
+        [0x86, 0x35],
+        [0x50, 0x89],
+        [0x51, 0x90],
+        [0x52, 0x2c],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x88],
+        [0x57, 0x00],
+        [0x5a, 0xc8],
+        [0x5b, 0x96],
+        [0x5c, 0x00],
+        [0xd3, 0x02],
+        [0xe0, 0x00],
+
+        [0xff, 0xff],
+      ],
+
+      OV2640_1024x768_JPEG: [
+        [0xff, 0x01],
+        [0x11, 0x01],
+        [0x12, 0x00], // Bit[6:4]: Resolution selection//0x02
+        [0x17, 0x11], // HREFST[10:3]
+        [0x18, 0x75], // HREFEND[10:3]
+        [0x32, 0x36], // Bit[5:3]: HREFEND[2:0]; Bit[2:0]: HREFST[2:0]
+        [0x19, 0x01], // VSTRT[9:2]
+        [0x1a, 0x97], // VEND[9:2]
+        [0x03, 0x0f], // Bit[3:2]: VEND[1:0]; Bit[1:0]: VSTRT[1:0]
+        [0x37, 0x40],
+        [0x4f, 0xbb],
+        [0x50, 0x9c],
+        [0x5a, 0x57],
+        [0x6d, 0x80],
+        [0x3d, 0x34],
+        [0x39, 0x02],
+        [0x35, 0x88],
+        [0x22, 0x0a],
+        [0x37, 0x40],
+        [0x34, 0xa0],
+        [0x06, 0x02],
+        [0x0d, 0xb7],
+        [0x0e, 0x01],
+
+        [0xff, 0x00],
+        [0xc0, 0xc8],
+        [0xc1, 0x96],
+        [0x8c, 0x00],
+        [0x86, 0x3d],
+        [0x50, 0x00],
+        [0x51, 0x90],
+        [0x52, 0x2c],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x88],
+        [0x5a, 0x00],
+        [0x5b, 0xc0],
+        [0x5c, 0x01],
+        [0xd3, 0x02],
+
+        [0xff, 0xff],
+      ],
+
+      OV2640_1280x960_JPEG: [
+        [0xff, 0x01],
+        [0x11, 0x01],
+        [0x12, 0x00], // Bit[6:4]: Resolution selection//0x02
+        [0x17, 0x11], // HREFST[10:3]
+        [0x18, 0x75], // HREFEND[10:3]
+        [0x32, 0x36], // Bit[5:3]: HREFEND[2:0]; Bit[2:0]: HREFST[2:0]
+        [0x19, 0x01], // VSTRT[9:2]
+        [0x1a, 0x97], // VEND[9:2]
+        [0x03, 0x0f], // Bit[3:2]: VEND[1:0]; Bit[1:0]: VSTRT[1:0]
+        [0x37, 0x40],
+        [0x4f, 0xbb],
+        [0x50, 0x9c],
+        [0x5a, 0x57],
+        [0x6d, 0x80],
+        [0x3d, 0x34],
+        [0x39, 0x02],
+        [0x35, 0x88],
+        [0x22, 0x0a],
+        [0x37, 0x40],
+        [0x34, 0xa0],
+        [0x06, 0x02],
+        [0x0d, 0xb7],
+        [0x0e, 0x01],
+
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0xc8],
+        [0xc1, 0x96],
+        [0x86, 0x3d],
+        [0x50, 0x00],
+        [0x51, 0x90],
+        [0x52, 0x2c],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x88],
+        [0x57, 0x00],
+        [0x5a, 0x40],
+        [0x5b, 0xf0],
+        [0x5c, 0x01],
+        [0xd3, 0x02],
+        [0xe0, 0x00],
+
+        [0xff, 0xff],
+      ],
+
+      OV2640_1600x1200_JPEG: [
+        [0xff, 0x01],
+        [0x11, 0x01],
+        [0x12, 0x00], // Bit[6:4]: Resolution selection//0x02
+        [0x17, 0x11], // HREFST[10:3]
+        [0x18, 0x75], // HREFEND[10:3]
+        [0x32, 0x36], // Bit[5:3]: HREFEND[2:0]; Bit[2:0]: HREFST[2:0]
+        [0x19, 0x01], // VSTRT[9:2]
+        [0x1a, 0x97], // VEND[9:2]
+        [0x03, 0x0f], // Bit[3:2]: VEND[1:0]; Bit[1:0]: VSTRT[1:0]
+        [0x37, 0x40],
+        [0x4f, 0xbb],
+        [0x50, 0x9c],
+        [0x5a, 0x57],
+        [0x6d, 0x80],
+        [0x3d, 0x34],
+        [0x39, 0x02],
+        [0x35, 0x88],
+        [0x22, 0x0a],
+        [0x37, 0x40],
+        [0x34, 0xa0],
+        [0x06, 0x02],
+        [0x0d, 0xb7],
+        [0x0e, 0x01],
+
+        [0xff, 0x00],
+        [0xe0, 0x04],
+        [0xc0, 0xc8],
+        [0xc1, 0x96],
+        [0x86, 0x3d],
+        [0x50, 0x00],
+        [0x51, 0x90],
+        [0x52, 0x2c],
+        [0x53, 0x00],
+        [0x54, 0x00],
+        [0x55, 0x88],
+        [0x57, 0x00],
+        [0x5a, 0x90],
+        [0x5b, 0x2c],
+        [0x5c, 0x05], //bit2->1;bit[1:0]->1
+        [0xd3, 0x02],
+        [0xe0, 0x00],
+
+        [0xff, 0xff],
+      ],
+    };
+  }
+
+  static info() {
+    return {
+      name: 'ArduCAMMini',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.io_cs = obniz.getIO(this.params.cs);
+    this.io_cs.output(true);
+
+    obniz.wait(100);
+
+    this.sensor_addr = 0x30; // i2c
+
+    this.params.mode = this.params.mode || 'master';
+    this.params.drive = '3v';
+    this.params.frequency = this.params.frequency || 4 * 1000 * 1000;
+    this.params.clk = this.params.sclk;
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    this.params.sda = this.params.sda;
+    this.params.scl = this.params.scl;
+    this.params.clock = this.params.clock || 100 * 1000;
+    this.params.mode = 'master';
+    this.params.pull = '5v';
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  spi_write(addr, byteData) {
+    let data = [];
+    data.push(addr);
+    data.push(byteData);
+    this.io_cs.output(false);
+    this.spi.write(data);
+    this.io_cs.output(true);
+  }
+
+  async spi_readWait(addr) {
+    let data = [];
+    data.push(addr);
+    data.push(0x00);
+    this.io_cs.output(false);
+    const recv = await this.spi.writeWait(data);
+    this.io_cs.output(true);
+    return recv[1];
+  }
+
+  i2c_byte_write(addr, byteData) {
+    this.i2c.write(this.sensor_addr, [addr, byteData]);
+  }
+
+  i2c_regs_write(regs) {
+    for (let i = 0; i < regs.length; i++) {
+      this.i2c.write(this.sensor_addr, regs[i]);
+    }
+  }
+
+  spi_write_reg(addr, byteData) {
+    this.spi_write(addr | 0x80, byteData);
+  }
+
+  async spi_read_regWait(addr) {
+    return await this.spi_readWait(addr & 0x7f);
+  }
+
+  async spi_pingpongWait() {
+    const testVal = 0x55;
+    this.spi_write_reg(this.regs.ARDUCHIP_TEST1, testVal);
+    const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TEST1);
+    if (val !== testVal) {
+      throw new Error('spi bus fail');
+    }
+  }
+
+  setMode(mode) {
+    const modes = {
+      MCU2LCD: 0x00,
+      CAM2LCD: 0x01,
+      LCD2MCU: 0x02,
+    };
+    if (typeof modes[mode] !== 'number') {
+      throw new Error('unknown mode. options are ' + modes);
+    }
+    this.spi_write_reg(this.regs.ARDUCHIP_MODE, modes[mode]);
+  }
+
+  async getChipIdWait() {
+    this.i2c.write(this.sensor_addr, [0x0a]);
+    const val0 = await this.i2c.readWait(this.sensor_addr, 1);
+    this.i2c.write(this.sensor_addr, [0x0b]);
+    const val1 = await this.i2c.readWait(this.sensor_addr, 1);
+    return (val0[0] << 8) + val1[0];
+  }
+
+  init() {
+    this.i2c_byte_write(0xff, 0x01);
+    this.i2c_byte_write(0x12, 0x80);
+    this.obniz.wait(100);
+
+    this.i2c_regs_write(this.configs.OV2640_JPEG_INIT);
+    this.i2c_regs_write(this.configs.OV2640_YUV422);
+    this.i2c_regs_write(this.configs.OV2640_JPEG);
+    this.i2c_byte_write(0xff, 0x01);
+    this.i2c_byte_write(0x15, 0x00);
+    this.setSize('320x240');
+  }
+
+  async startupWait() {
+    await this.spi_pingpongWait();
+    this.setMode('MCU2LCD');
+    const chipid = await this.getChipIdWait();
+    if (chipid != 0x2642) {
+      throw new Error('unknown chip ' + chipid);
+    }
+    this.init();
+  }
+
+  async takeWait(size) {
+    if (typeof size === 'string' && this._size !== size) {
+      this.setSize(size);
+      this.obniz.wait(1000);
+    }
+
+    this.flushFIFO();
+    this.flushFIFO();
+    this.startCapture();
+    while (true) {
+      if (await this.isCaptureDoneWait()) {
+        break;
+      }
+    }
+    return await this.readFIFOWait();
+  }
+
+  setSize(string) {
+    if (this._size === string) {
+      return;
+    }
+    const map = {
+      '160x120': this.configs.OV2640_160x120_JPEG,
+      '176x144': this.configs.OV2640_176x144_JPEG,
+      '320x240': this.configs.OV2640_320x240_JPEG,
+      '352x288': this.configs.OV2640_352x288_JPEG,
+      '640x480': this.configs.OV2640_640x480_JPEG,
+      '800x600': this.configs.OV2640_800x600_JPEG,
+      '1024x768': this.configs.OV2640_1024x768_JPEG,
+      '1280x960': this.configs.OV2640_1280x960_JPEG,
+      '1600x1200': this.configs.OV2640_1600x1200_JPEG,
+    };
+    if (map[string]) {
+      this._size = string;
+      this.i2c_regs_write(map[string]);
+    } else {
+      throw new Error('unsupported size options are ' + Object.keys(map));
+    }
+  }
+
+  updateFIFO(data) {
+    //  FIFO_CLEAR_MASK    		0x01
+    //  FIFO_START_MASK    		0x02
+    //  FIFO_RDPTR_RST_MASK     0x10
+    //  FIFO_WRPTR_RST_MASK     0x20
+    this.spi_write_reg(this.regs.ARDUCHIP_FIFO, data);
+  }
+
+  flushFIFO() {
+    this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x01);
+  }
+
+  async readFIFOLengthWait() {
+    const len1 = await this.spi_read_regWait(this.regs.FIFO_SIZE1);
+    const len2 = await this.spi_read_regWait(this.regs.FIFO_SIZE2);
+    const len3 = (await this.spi_read_regWait(this.regs.FIFO_SIZE3)) & 0x07;
+    return ((len3 << 16) | (len2 << 8) | len1) & 0x07ffff;
+  }
+
+  startCapture() {
+    this.spi_write_reg(this.regs.ARDUCHIP_FIFO, 0x02);
+  }
+
+  async isCaptureDoneWait() {
+    const CAP_DONE_MASK = 0x08;
+    const val = await this.spi_read_regWait(this.regs.ARDUCHIP_TRIG);
+    return val & CAP_DONE_MASK ? true : false;
+  }
+
+  async readFIFOWait() {
+    // get length of image data
+    let length = await this.readFIFOLengthWait();
+
+    // start bust
+    this.io_cs.output(false);
+    this.spi.write([this.regs.BURST_FIFO_READ]);
+    this.spi.write([0xff]); // dummy read
+
+    let buf = [];
+
+    while (buf.length < length) {
+      let mustRead = length - buf.length;
+      if (mustRead > 1024) {
+        mustRead = 1024;
+      }
+      let arr = new Array(mustRead);
+      arr.fill(0);
+      const sliced = await this.spi.writeWait(arr);
+      buf.push(...sliced);
+    }
+    // end burst
+    this.io_cs.output(true);
+
+    return buf;
+  }
+
+  arrayToBase64(array) {
+    return Buffer.from(array).toString('base64');
+  }
+}
+
+if (true) {
+  module.exports = ArduCAMMini;
+}
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./parts/Camera/JpegSerialCam/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-class JpegSerialCam {
+/* WEBPACK VAR INJECTION */(function(Buffer) {class JpegSerialCam {
   constructor() {
     this.keys = ['vcc', 'cam_tx', 'cam_rx', 'gnd'];
     this.requiredKeys = ['cam_tx', 'cam_rx'];
@@ -17753,7 +18637,8 @@ class JpegSerialCam {
     };
   }
 
-  wired() {
+  wired(obniz) {
+    this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.my_tx = this.params.cam_rx;
     this.my_rx = this.params.cam_tx;
@@ -17792,19 +18677,11 @@ class JpegSerialCam {
     return -1;
   }
 
-  arrayToBase64(buf) {
-    if (typeof btoa === 'function') {
-      let binstr = Array.prototype.map
-        .call(buf, function(ch) {
-          return String.fromCharCode(ch);
-        })
-        .join('');
-      return btoa(binstr);
-    }
-    // TODO:
+  arrayToBase64(array) {
+    return Buffer.from(array).toString('base64');
   }
 
-  async startwait(obj) {
+  async startWait(obj) {
     if (!obj) obj = {};
     this.uart.start({
       tx: this.my_tx,
@@ -17822,16 +18699,16 @@ class JpegSerialCam {
     await this.obniz.wait(2500);
   }
 
-  async setResolusionWait(resolution) {
+  async setSizeWait(resolution) {
     let val;
-    if (resolution === '640*480') {
+    if (resolution === '640x480') {
       val = 0x00;
-    } else if (resolution === '320*240') {
+    } else if (resolution === '320x240') {
       val = 0x11;
-    } else if (resolution === '160*120') {
+    } else if (resolution === '160x120') {
       val = 0x22;
     } else {
-      throw new Error('invalid resolution');
+      throw new Error('unsupported size');
     }
     this.uart.send([0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, val]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
@@ -17885,7 +18762,7 @@ class JpegSerialCam {
     });
   }
 
-  async takewait() {
+  async takeWait() {
     const uart = this.uart;
     //console.log("stop a photo")
     uart.send([0x56, 0x00, 0x36, 0x01, 0x02]);
@@ -17965,6 +18842,7 @@ if (true) {
   module.exports = JpegSerialCam;
 }
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -18799,10 +19677,10 @@ class IRSensor {
     this.requiredKeys = ['output'];
 
     this.dataSymbolLength = 0.07;
-    this.duration = 200; // 200msec
+    this.duration = 500; // 500msec
     this.dataInverted = true;
     this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
-    this.cutTail = true;
+    this.cutTail = false;
     this.output_pullup = true;
   }
 

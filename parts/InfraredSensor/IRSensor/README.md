@@ -47,12 +47,13 @@ So, It's like below.
 monitor options and these default value
 See more details on logicanalyzer document
 
-1. dataSymbolLength = 0.07; // data symbold length
-2. duration = 200; // duration of signal. 200msec
-3. dataInverted = true; // output values is inverted(IRSensor will re-invert)
-4. triggerSampleCount = 16; // signal must start with 16 count of signals
-5. cutTail = true; // cut tail not necesarry data arrays.
-6. output_pullup = true; // output io must be pull-up to 5v.
+property | type | default | description
+--- | --- | --- | --- 
+dataSymbolLength | `number` | 0.07 (msec) | sampling interval of logicanalyzer
+duration | `number` | 500 (msec) | data length
+dataInverted | `number` | true | 0,1 of data should be inverted
+cutTail | `number` | false | cutting of tail 0. It may affect communication.
+output_pullup | `number` | true | pullup to 5v or not of sensor output.
 
 You can chenge these before start.
 

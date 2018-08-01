@@ -3,19 +3,19 @@ General purpose IO
 io0からio11まで利用できます。
 
 #### 特徴
-##### output
+##### output
 それぞれのioでデジタル出力が可能です。
 
 出力のドライブ方法は下の３つから選べます。
 
 タイプ | 電圧 | 最大電流 | 最大周波数 | 詳細
 :---: | :---: | :---: | :---: | ---
-push-pull | `5v` | <=1A | <=250khz(推奨) | 標準。過電流/ドライバ高温保護付き
-push-pull | `3v` | <=1mA(推奨) | <=80Mhz | io.output()使用時の過電流自動停止と警告
-open-drain | `<=5v` | <=1mA(推奨) | <=80Mhz | 
+push-pull | `5v` | <=1A | <=250khz(推奨) | 標準。過電流/ドライバ高温保護付き
+push-pull | `3v` | <=1mA(推奨) | <=80Mhz | io.output()使用時の過電流自動停止と警告
+open-drain | `<=5v` | <=1mA(推奨) | <=80Mhz | 
 
 上記出力方法はIOごとに設定できます。
-また、io.output()のだけでなく、UARTやSPIなどの出力時にも好きなドライブ方法を選択できます。
+また、io.output()のだけでなく、UARTやSPIなどの出力時にも好きなドライブ方法を選択できます。
 
 ##### input
 
@@ -34,7 +34,7 @@ digital-in | `3v(5vトレラント)` | <=80Mhz |
 
 タイプ | プル先 | 詳細
 :---: | :---: | :---:
-floating |  | 標準設定
+floating | &nbsp; | 標準設定
 pull-up | `5v` | 
 pull-up | `3v` | 
 pull-down | `gnd` | 
@@ -46,6 +46,7 @@ ObnizのX番ピンを出力ピンにして１または０を出力します。
 // Javascript Example
 obniz.io1.output(true); // io1 is 5V
 ```
+
 ## drive(type)
 出力するときのドライブ方法を変更します。
 デフォルトでは"5v"となっていて、モータードライバを使った5vのプッシュプルで、最大電流が1Aのモードとなっています。
@@ -61,9 +62,14 @@ obniz.io1.output(true); // io1 is 5V
 
 ```Javascript
 // Javascript Example
-obniz.io1.output(true); // output push-pull 5v
-obniz.io1.pull("5v");
-obniz.io1.drive("open-drain"); // changed immediately 
+obniz.io0.output(true); // output push-pull 5v
+
+obniz.io1.drive("3v");
+obniz.io1.output(true); // output push-pull 3v
+
+obniz.io2.pull("5v");
+obniz.io2.drive("open-drain");
+obniz.io2.output(true); // output open-drain with 5v pull-up
 ```
 
 ## pull(pullType)
@@ -76,15 +82,15 @@ IOの内部プルアップ・プルダウンを変更します。
 
 ```Javascript
 // Javascript Example
-obniz.io0.pull(null);
-obniz.io1.pull("3v");
-obniz.io1.drive("open-drain"); // output open-drain
+obniz.io0.pull("3v");
+obniz.io0.drive("open-drain"); // output open-drain
+obniz.io0.output(false);
 ```
 
 ## input(callback)
 ピンに加わっている電圧を読みtrue/falseを読み取ります。
 信号レベルは5vトレラントの3v入力です。
-出力タイプはinputには関係ないためdrive()の指定とは関係ありません。
+出力タイプはinputには関係ないためdrive()の指定とは関係ありません。
 
 true/falseの値が変わるたびにcallbackを呼び出します。
 ```Javascript
@@ -93,6 +99,7 @@ obniz.io0.input(function(value){
   console.log("changed to " + value);
 });
 ```
+
 ## [await] inputWait
 ピンに加わっている電圧を読み結果をtrue/falseで返します。
 この関数を呼ぶことでピンをinputに設定し、値が返ってくるまで関数はwaitします。
@@ -106,7 +113,7 @@ console.log(value);
 ioXにおけるoutputとinputを停止します。
 output()かinput()を使っているときのみ効果があります。
 ADやUARTをioXで使っている場合はこれでは停止しません。
-また、pull-up downも影響を受けません。
+また、pull-up downも影響を受けません。
 
 ```Javascript
 // Javascript Example

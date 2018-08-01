@@ -1,28 +1,28 @@
 # SNx4HC595
 
 SNx4HC595はSN54HC595やSN74HC595を扱うためのライブラリです。
-1つのチップにある8個の出力できるIOを最低3本の信号線で制御できます。マイコンのIOを増やす時に使うことが多く、「IO拡張(IOエクステンダー)」と呼ばれています。
+1つのチップにある8個の出力できるIOを最低3本の信号線で制御できます。マイコンのIOを増やす時に使うことが多く、「IO拡張(IOエクステンダー)」と呼ばれています。
 また、このチップは連続でつなぐことができるので、つなぐごとに使えるIOの数を8,16,24,,,と増やしていくことが出来ます。
 
 ![](./image.jpg)
 
 Reference
-[http://www.ti.com/lit/ds/symlink/sn74hc595.pdf](http://www.ti.com/lit/ds/symlink/sn74hc595.pdf)
+[http://www.ti.com/lit/ds/symlink/sn74hc595.pdf](http://www.ti.com/lit/ds/symlink/sn74hc595.pdf)
 
 ## obniz.wired('SNx4HC595', {ser, rclk, srclk [, gnd, vcc, oe, srclr, io_num]});
 
-チップの各ピンをどのobnizのioに接続したか設定します。
+チップの各ピンをどのobnizのioに接続したか設定します。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-ser | `number(obniz io)` | yes | &nbsp; | つないだobnizのioを指定してください。
+ser | `number(obniz io)` | yes | &nbsp; | つないだobnizのioを指定してください。
 rclk | `number(obniz io)` | yes |  &nbsp; | つないだobnizのioを指定してください。
-srclk | `number(obniz io)` | yes | &nbsp;  | つないだobnizのioを指定してください。
-vcc | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-gnd | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-oe | `number(obniz io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。gndにつなぐことで、通常使用となります。obnizにつながずにgndにつないでいる場合はwired関数で指定しなくても良いです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
+srclk | `number(obniz io)` | yes | &nbsp;  | つないだobnizのioを指定してください。
+vcc | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
+gnd | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
+oe | `number(obniz io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。gndにつなぐことで、通常使用となります。obnizにつながずにgndにつないでいる場合はwired関数で指定しなくても良いです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
 srclr | `number(obniz io)` | no | &nbsp; | シフトレジスタの値をすべてクリアするためのピンです。low->highでクリアされます。5vなどに接続し、obnizから操作しない場合は指定する必要はありません。
-io_num | `number` | no | 8  | ioの数を指定します。1つのチップに8個までioがありますが、5などを指定すると、そのうちの5本のみ使用されます。また、連続でチップが繋がれている場合は、ここの数字を増えたIOの数だけ指定します。例えば2チップつないでいて、16ある場合はio_num:16とすることで操作できます。
+io_num | `number` | no | 8  | ioの数を指定します。1つのチップに8個までioがありますが、5などを指定すると、そのうちの5本のみ使用されます。また、連続でチップが繋がれている場合は、ここの数字を増えたIOの数だけ指定します。例えば2チップつないでいて、16ある場合はio_num:16とすることで操作できます。
 enabled | `boolean` | no | true  | oeが指定されていた場合、初期状態をどちらにするか指定できます。
 
 
@@ -41,7 +41,7 @@ ioext.output(15, true) // next chip's io
 
 ## ioNum(num)
 
-使用するioの数を指定します。wired()関数でio_numを指定するのと同じです。
+使用するioの数を指定します。wired()関数でio_numを指定するのと同じです。
 指定した時にその数だけ出力はfalseに設定されます。
 ```Javascript
 // Javascript Example
@@ -63,8 +63,8 @@ ioext.output(5, true)
 
 ## onece(function)
 このチップは出力を一斉に変更することが出来ます。
-チップに繋がれている出力0と出力1を同じタイミングで変更したい時にこの関数を使うことが出来ます。
-以下のように指定すると関数の中で行われるチップのio変更が同じタイミングになります。
+チップに繋がれている出力0と出力1を同じタイミングで変更したい時にこの関数を使うことが出来ます。
+以下のように指定すると関数の中で行われるチップのio変更が同じタイミングになります。
 
 ```Javascript
 // Javascript Example
@@ -76,7 +76,7 @@ ioext.onece(function(){ // io 4 and 5 will be changed to false state at same tim
 ```
 
 ## getIO(io)
-それぞれの出力端子のioオブジェクトを取得します。ioオブジェクトはobnizのioのようにoutput()関数を呼ぶことができます。
+それぞれの出力端子のioオブジェクトを取得します。ioオブジェクトはobnizのioのようにoutput()関数を呼ぶことができます。
 また、obnizパーツライブラリの[LED](./LED)や[7SegmentLED](./7SegmentLED)のioとしても使用することが出来ます。
 
 ```Javascript
