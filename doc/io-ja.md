@@ -3,19 +3,19 @@ General purpose IO
 io0からio11まで利用できます。
 
 #### 特徴
-##### output
+##### output
 それぞれのioでデジタル出力が可能です。
 
 出力のドライブ方法は下の３つから選べます。
 
 タイプ | 電圧 | 最大電流 | 最大周波数 | 詳細
 :---: | :---: | :---: | :---: | ---
-push-pull | `5v` | <=1A | <=250khz(推奨) | 標準。過電流/ドライバ高温保護付き
-push-pull | `3v` | <=1mA(推奨) | <=80Mhz | io.output()使用時の過電流自動停止と警告
-open-drain | `<=5v` | <=1mA(推奨) | <=80Mhz | 
+push-pull | `5v` | <=1A | <=250khz(推奨) | 標準。過電流/ドライバ高温保護付き
+push-pull | `3v` | <=1mA(推奨) | <=80Mhz | io.output()使用時の過電流自動停止と警告
+open-drain | `<=5v` | <=1mA(推奨) | <=80Mhz | 
 
 上記出力方法はIOごとに設定できます。
-また、io.output()のだけでなく、UARTやSPIなどの出力時にも好きなドライブ方法を選択できます。
+また、io.output()のだけでなく、UARTやSPIなどの出力時にも好きなドライブ方法を選択できます。
 
 ##### input
 
@@ -34,7 +34,7 @@ digital-in | `3v(5vトレラント)` | <=80Mhz |
 
 タイプ | プル先 | 詳細
 :---: | :---: | :---:
-floating |  | 標準設定
+floating |  | 標準設定
 pull-up | `5v` | 
 pull-up | `3v` | 
 pull-down | `gnd` | 
@@ -84,7 +84,7 @@ obniz.io1.drive("open-drain"); // output open-drain
 ## input(callback)
 ピンに加わっている電圧を読みtrue/falseを読み取ります。
 信号レベルは5vトレラントの3v入力です。
-出力タイプはinputには関係ないためdrive()の指定とは関係ありません。
+出力タイプはinputには関係ないためdrive()の指定とは関係ありません。
 
 true/falseの値が変わるたびにcallbackを呼び出します。
 ```Javascript
@@ -106,7 +106,7 @@ console.log(value);
 ioXにおけるoutputとinputを停止します。
 output()かinput()を使っているときのみ効果があります。
 ADやUARTをioXで使っている場合はこれでは停止しません。
-また、pull-up downも影響を受けません。
+また、pull-up downも影響を受けません。
 
 ```Javascript
 // Javascript Example

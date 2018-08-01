@@ -18,7 +18,7 @@ enc03r.onchange1 = function(val){
 
 ## onchange1, onchange2
 
-角速度の変化を受け取ります。
+角速度の変化を受け取ります。
 値は deg/sec です。
 
 ```javascript

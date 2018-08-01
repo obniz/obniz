@@ -38,9 +38,9 @@ const val = await bme280.getAllWait();
 console.log(val);
 ```
 
-vioとvcoreは直接繋げられます。
+vioとvcoreは直接繋げられます。
 csbはhighに単純に繋げられ、sdoもgndに単純に繋げられます。
-なので、そのように繋いだものをobnizにつなぐときの最小構成は以下になります。
+なので、そのように繋いだものをobnizにつなぐときの最小構成は以下になります。
 
 
 ```javascript
@@ -67,7 +67,7 @@ i2c.start({mode:"master", sda:2, scl:3, clock:100000});
 var bme280 = obniz.wired("BME280", {vio:0, gnd:1, i2c: i2c });
 ```
 
-もしチップをsdoをプルアップすることでアドレスを 0x77にしている場合は
+もしチップをsdoをプルアップすることでアドレスを 0x77にしている場合は
 
 ```javascript
 // Javascript Example
@@ -77,7 +77,7 @@ var bme280 = obniz.wired("BME280", {vio:0, gnd:1, sdi: 2, sck: 3, address: 0x77}
 
 ## [await] applyCalibration()
 
-チップに保存されている工場で設定されているキャリブレーションデータを取り出します。
+チップに保存されている工場で設定されているキャリブレーションデータを取り出します。
 これをしないで使うことも出来ますが、これを一度呼び出すことで精度がかなり上がります。
 
 ```javascript
@@ -93,7 +93,7 @@ await bme280.applyCalibration();
 
 0 で使わない設定となります（デフォルト）
 
-IIRフィルタは計測結果を安定させてより高い精度にします。
+IIRフィルタは計測結果を安定させてより高い精度にします。
 ただし、そのためには結果が出るのをしばらく待つ必要があります。
 
 

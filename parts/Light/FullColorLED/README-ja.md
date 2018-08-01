@@ -26,7 +26,7 @@ led.rgb(0xFF, 255, 0); // Yellow
 ```
 
 ## hsv(hue, saturation, value)
-HSVにより色を変更します。
+HSVにより色を変更します。
 
 1. hue : 0 ~ 360
 2. saturation : 0 ~ 1

@@ -3,7 +3,7 @@
 少ないピン数で利用できるカメラモジュールです。
 たくさんの解像度を選べる上に、jpegで画像を取り出すことが出来ます。
 
-同じArduCAMMiniでも種類がありますが、OV2640の2Mピクセルのカメラに対応しています。
+同じArduCAMMiniでも種類がありますが、OV2640の2Mピクセルのカメラに対応しています。
 
 ![](./image.jpg)
 
@@ -12,7 +12,7 @@
 
 つながっているioを指定してオブジェクト化します。
 
-このカメラの電源はobniz以外から供給する方法がおすすめです。
+このカメラの電源はobniz以外から供給する方法がおすすめです。
 obnizから電源を供給する場合は過電流に気をつける必要があります。
 電源は以下のように供給して下さい
 
@@ -24,7 +24,7 @@ obnizから電源を供給する場合は過電流に気をつける必要があ
 
 ![](./wire.jpg)
 
-このモジュールはSPIとI2Cがそれぞれ１つずつ必要です。
+このモジュールはSPIとI2Cがそれぞれ１つずつ必要です。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
@@ -77,7 +77,7 @@ var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:
 await cam.startupWait();
 ```
 
-startupWait()を使わないで初期化する場合は以下のような手順となります。
+startupWait()を使わないで初期化する場合は以下のような手順となります。
 
 ```javascript
 // Javascript Example
@@ -97,7 +97,7 @@ cam.init();
 ## [await] takeWait(size);
 
 撮影を行い、jpegのデータを取得します。
-撮影の前にはstartupWait()関数でカメラが初期化されている必要があります。
+撮影の前にはstartupWait()関数でカメラが初期化されている必要があります。
 
 sizeを指定すると、カメラの解像度設定を変更します。
 何も指定されていないか、すでに設定済みの解像度と同じだった場合は何もしません。
@@ -115,7 +115,7 @@ await cam.startupWait();
 const jpegData = await cam.takeWait('1024x768');
 ```
 
-takeWait()を使わずにstartCapture()やFIFO操作などを自分で使って撮影する場合のやり方についてはstartCapture()関数のexampleを御覧ください。
+takeWait()を使わずにstartCapture()やFIFO操作などを自分で使って撮影する場合のやり方についてはstartCapture()関数のexampleを御覧ください。
 
 ## arrayToBase64(bytearray)
 arrayデータをbase64にエンコードします。
@@ -215,7 +215,7 @@ cam.init()
 
 のうちのいずれかです。
 
-解像度を変更したあとには1秒ほどの待ち時間を設定するのが良いようです。
+解像度を変更したあとには1秒ほどの待ち時間を設定するのが良いようです。
 
 
 ```javascript

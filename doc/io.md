@@ -3,16 +3,16 @@ General purpose IO
 available on each io (io0 to io11)
 
 #### Feature
-##### output
+##### output
 Each IO can output digital value.
 
 Drive methods are below.
 
 Type | Voltage | max A | max Freq | Details
 :---: | :---: | :---: | :---: | ---
-push-pull | `5v` | <=1A | <=250khz(recommend) | Default. Overcurrent protection
-push-pull | `3v` | <=1mA(recommend) | <=80Mhz | over current detection when using io.output().
-open-drain | `<=5v` | <=1mA(recommend) | <=80Mhz | 
+push-pull | `5v` | <=1A | <=250khz(recommend) | Default. Overcurrent protection
+push-pull | `3v` | <=1mA(recommend) | <=80Mhz | over current detection when using io.output().
+open-drain | `<=5v` | <=1mA(recommend) | <=80Mhz | 
 
 Each methods can be configured independently.
 Not only for io.output(), but also UART SPI can choose methods.
