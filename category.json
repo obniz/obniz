@@ -322,7 +322,7 @@
         {
           "name": "BME280",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gK-09421/",
+            "switchscience" : "https://www.switch-science.com/catalog/2236/",
             "adafruit": "https://www.adafruit.com/product/2652"
           }
         }
