@@ -140,7 +140,7 @@ obniz.onconnect = async function() {
 
 ## resetOnDisconnect(reset)
 
-This let you set ```reset_obniz_on_ws_disconnection``` after connection established.
+This let you set `reset_obniz_on_ws_disconnection` after connection established.
 By default. obniz will reset when user disconnect web socket from obniz cloud.
 It means output value and pwm are all stop at that time.
 this function can set "do not reset when no one connected to obniz".

@@ -56,7 +56,7 @@ obniz.ad0.onchange = function(voltage){
 ```
 
 Get voltage without callback.
-The value will be stored ```value``` variable.
+The value will be stored `value` variable.
 
 notice: This property stores last received value.
 NOT the value when you read this property.

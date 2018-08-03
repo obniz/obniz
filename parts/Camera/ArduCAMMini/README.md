@@ -118,7 +118,7 @@ You can take a photo manually without using takeWait(). Please refer startCaptur
 ## arrayToBase64(bytearray)f
 convert bytearray to base64 string.
 It is useful when you want to print image to image tag
-In html, you can see the image by setting base64 datat to ```<img>```tag.
+In html, you can see the image by setting base64 datat to `<img>`tag.
 
 ```Javascript
 obniz.io11.output(true);

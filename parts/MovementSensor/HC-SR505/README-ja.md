@@ -20,8 +20,8 @@ sensor.onchange = function(val){
 ## onchange = function(value)
 
 何かが変化した時に呼ばれる関数を設定します。
-人が近づいてきたときに関数が呼ばれ、値```true```が引数に入っています。
-もし、人がいなくなったりすると```false```が引数に入ります。
+人が近づいてきたときに関数が呼ばれ、値`true`が引数に入っています。
+もし、人がいなくなったりすると`false`が引数に入ります。
 
 ```Javascript
 // Javascript Example
