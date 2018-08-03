@@ -32,7 +32,7 @@ solenoid.on();
 ```
 
 ## off()
-ソレノイドをオフにします。
+ソレノイドをオフにします。
 
 ```Javascript
 // Javascript Example

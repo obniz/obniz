@@ -9,7 +9,7 @@ Additionally, this chip can be connected like chain. You can extend io by chaini
 ![](./image.jpg)
 
 Reference
-[http://www.ti.com/lit/ds/symlink/sn74hc595.pdf](http://www.ti.com/lit/ds/symlink/sn74hc595.pdf)
+[http://www.ti.com/lit/ds/symlink/sn74hc595.pdf](http://www.ti.com/lit/ds/symlink/sn74hc595.pdf)
 
 ## obniz.wired('SNx4HC595', {ser, rclk, srclk [, gnd, vcc, oe, srclr, io_num]});
 
@@ -17,11 +17,11 @@ Specify which obniz io is connected to each pin.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-ser | `number(obniz io)` | yes | &nbsp; | connected obniz io
+ser | `number(obniz io)` | yes | &nbsp; | connected obniz io
 rclk | `number(obniz io)` | yes | &nbsp;  | connected obniz io
-srclk | `number(obniz io)` | yes | &nbsp;  | connected obniz io
-vcc | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
-gnd | `number(obniz io)` | no | &nbsp;  | If you specify either vcc/gnd, wire() will wait a moment after power up.
+srclk | `number(obniz io)` | yes | &nbsp;  | connected obniz io
+vcc | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
+gnd | `number(obniz io)` | no | &nbsp;  | If you specify either vcc/gnd, wire() will wait a moment after power up.
 oe | `number(obniz io)` | no |  &nbsp; | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
 srclr | `number(obniz io)` | no | &nbsp;  | srclr clear shift resistor values. You don't need to specify srclr when srclr is connected directly to 5v.
 io_num | `number` | no | 8  | io_num is number of io. You can set under 8. If you specify over 8 like 16, then obniz will treat chained chip.

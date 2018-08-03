@@ -8,7 +8,7 @@
 ## wired(obniz, {r, g, b, common, common_type})
 
 r,g,b,common は繋いだobnizのioを指定してください。
-common_type はLEDがアノードコモンであれば```anode_common```カソードコモンであれば```cathode_common```を指定してください。
+common_type はLEDがアノードコモンであれば`anode_common`カソードコモンであれば`cathode_common`を指定してください。
 
 ![](./wired.png)
 
@@ -26,7 +26,7 @@ led.rgb(0xFF, 255, 0); // Yellow
 ```
 
 ## hsv(hue, saturation, value)
-HSVにより色を変更します。
+HSVにより色を変更します。
 
 1. hue : 0 ~ 360
 2. saturation : 0 ~ 1

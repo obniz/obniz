@@ -20,8 +20,8 @@ sensor.onchange = function(val){
 ## onchange = function(value)
 
 It called when something changed.
-It humans is closing to a sensor, this function will called with value ```true```.
-If a humans leaves or if a human stops moving, this function will called with value ```false```.
+It humans is closing to a sensor, this function will called with value `true`.
+If a humans leaves or if a human stops moving, this function will called with value `false`.
 It's fileter works. So called with false after soon called with true.
 
 ```Javascript

@@ -66,6 +66,25 @@ obniz.ble.scan.onfind = function(peripheral){
 obniz.ble.scan.start();
 ```
 
+## scan.onfinish
+
+Call this func when obniz have finish scan.
+
+
+```Javascript
+// Javascript Example
+
+obniz.ble.scan.onfind = function(peripheral){
+   console.log(peripheral)
+};
+
+obniz.ble.scan.onfinish = function(peripheral){
+   console.log("scan timeout!")
+};
+
+obniz.ble.scan.start();
+```
+
 
 ## \[await] scan.startOneWait( \[target, \[setting]])
 Scan and return first find peripheral.

@@ -2303,9 +2303,10 @@ module.exports = class ObnizConnection {
   wsOnClose(event) {
     this.print_debug('closed');
     this.close();
-    if (typeof this.onclose === 'function') {
+    if (typeof this.onclose === 'function' && this.onConnectCalled == true) {
       this.onclose(this);
     }
+    this.onConnectCalled = false;
     if (this.options.auto_connect) {
       setTimeout(() => {
         this.wsconnect(); // always connect to mainserver if ws lost
@@ -3073,7 +3074,6 @@ class Obniz extends ObnizUIs {
     if (this.onConnectCalled) {
       this.loop();
     }
-    this.showOffLine();
   }
 
   _callOnConnect() {

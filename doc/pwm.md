@@ -4,7 +4,7 @@ Maximum current is depends on driving mode. see [io](./io).
 
 6 module (pwm0 to pwm5) are available.
 
-PWM generates repeated pulse.
+PWM generates repeated pulse.
 Two parameter define pulse.
 
 1. freq: pattern interval

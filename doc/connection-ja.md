@@ -13,7 +13,7 @@ var Obniz = require('obniz');
 ```
 このようにクラスを取得できます。
 
-そして、接続して利用したいobnizのidを与えてインスタンス化します。
+そして、接続して利用したいobnizのidを与えてインスタンス化します。
 ```javascript
 var obniz = new Obniz('1234-5678');
 ```
@@ -25,7 +25,7 @@ var obnizB = new Obniz('0000-0000');
 のように記載することになります。
 
 インスタンス化した段階で[obniz Websocket API](https://obniz.io/doc/about_obniz_api)を使いobnizとの接続を行います。
-接続が完了するとonconnectが呼ばれます。また、oncloseは切断時に呼ばれます。
+接続が完了するとonconnectが呼ばれます。また、oncloseは切断時に呼ばれます。
 標準で自動接続が行われますので、切断が起きても、継続的に接続を試みます。
 
 ```javascript
@@ -38,7 +38,7 @@ obniz.onclose = async function() {
 }
 ```
 
-ioのon,offなどは接続することで操作できるようになりますので、onconnectの中でobnizに対して行いたいことを記載します。
+ioのon,offなどは接続することで操作できるようになりますので、onconnectの中でobnizに対して行いたいことを記載します。
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -52,7 +52,7 @@ obniz.onconnect = async function() {
 ## new Obniz('obniz id', { options })
 
 obnizインスタンス化します。
-obniz idに半角文字列でobnizの番号を入力します。ハイフン(-)はあってもなくても大丈夫です。数値では認識できません。
+obniz idに半角文字列でobnizの番号を入力します。ハイフン(-)はあってもなくても大丈夫です。数値では認識できません。
 
 ```javascript
 new Obniz('1234-5678') // OK
@@ -66,7 +66,7 @@ new Obniz(12345678) // Can't accept
 new Obniz('1234-5678', {access_token: 'your token here'})
 ```
 
-obniz idとして正しくないと判断された場合は接続は行われません。nodejsの場合はエラーとなります。
+obniz idとして正しくないと判断された場合は接続は行われません。nodejsの場合はエラーとなります。
 ブラウザ上で実行している場合はpromptが表示されます。そこでidを入れることでそのobnizに接続することが可能です。
 これは正しくない形式の場合にのみ表示されます。正しくても存在しないobniz idを入れた場合には表示されません。
 
@@ -75,12 +75,12 @@ obniz idとして正しくないと判断された場合は接続は行われま
 idが正しければ、クラウドに接続を行い、接続が完了するとonconnectが呼ばれます。
 
 ただし、obnizとobniz.jsを利用している端末が同一LAN内にある可能性が高い場合、obniz.jsは同時にobnizと直接Websocket接続を行おうとします。これをlocal connectといいます。
-local connectできた場合はほとんどのコマンドで、クラウドを経由せずにobnizを操作可能です。ただし、local connectしていてもクラウドとの接続は切断されません。
+local connectできた場合はほとんどのコマンドで、クラウドを経由せずにobnizを操作可能です。ただし、local connectしていてもクラウドとの接続は切断されません。
 また、クラウドとの接続が切断されるとlocal connectも切断されます。
 
 ![](images/local_connect.png)
 
-onconnectが呼ばれるタイミングは、クラウドにつながったとしてもlocal_connectが利用できるかどうかによって変わってきます。できるだけlocal_connect経由になるように接続を少しまちます。
+onconnectが呼ばれるタイミングは、クラウドにつながったとしてもlocal_connectが利用できるかどうかによって変わってきます。できるだけlocal_connect経由になるように接続を少しまちます。
 以下のような流れとなります。
 
 ![](images/onconnect_flow.png)
@@ -139,7 +139,7 @@ obniz.onconnect = async function() {
 ```
 
 ## resetOnDisconnect(reset)
-オプションである ```reset_obniz_on_ws_disconnection``` の設定をあとから変更する場合に使う関数です。
+オプションである `reset_obniz_on_ws_disconnection` の設定をあとから変更する場合に使う関数です。
 obniz.jsでは標準でtrueなので、obniz.jsはユーザーがobniz cloudへのweb socketを切断するとリセットするようになっています。
 リセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
 この関数でそれを無効にし、リセットしないようにできます。

@@ -21,7 +21,6 @@ class Obniz extends ObnizUIs {
     if (this.onConnectCalled) {
       this.loop();
     }
-    this.showOffLine();
   }
 
   _callOnConnect() {

@@ -74,7 +74,7 @@ It shows only when invalid format. If you specify obniz id which doesn't exist, 
 
 When id is correct, obniz.js will try to connect cloud api and onconnect will be called after established.
 
-When obniz and the device obniz.js runnning are expected in same Network, obniz.js will try to establish Websocket connection to obniz directly. This is called "local connect". When local connect is avaiable almost commands throught it's connection. not cloud. But Connection to the cloud is never closed.
+When obniz and the device obniz.js runnning are expected in same Network, obniz.js will try to establish Websocket connection to obniz directly. This is called "local connect". When local connect is avaiable almost commands throught it's connection. not cloud. But Connection to the cloud is never closed.
 And local connect is closed when cloud connection was closed.
 
 ![](images/local_connect.png)
@@ -140,7 +140,7 @@ obniz.onconnect = async function() {
 
 ## resetOnDisconnect(reset)
 
-This let you set ```reset_obniz_on_ws_disconnection``` after connection established.
+This let you set `reset_obniz_on_ws_disconnection` after connection established.
 By default. obniz will reset when user disconnect web socket from obniz cloud.
 It means output value and pwm are all stop at that time.
 this function can set "do not reset when no one connected to obniz".
