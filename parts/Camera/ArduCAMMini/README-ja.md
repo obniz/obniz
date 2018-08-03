@@ -120,7 +120,7 @@ takeWait()を使わずにstartCapture()やFIFO操作などを自分で使って�
 ## arrayToBase64(bytearray)
 arrayデータをbase64にエンコードします。
 これによりjpegのbase64データを取得できます。
-htmlでは```<img>```タグにbase64のjpgを渡すと画像として見ることが出来ます。
+htmlでは`<img>`タグにbase64のjpgを渡すと画像として見ることが出来ます。
 
 ```Javascript
 obniz.io11.output(true);

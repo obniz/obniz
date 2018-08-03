@@ -40,7 +40,7 @@ sensor.start(function (arr) {
 })
 ```
 
-結果であるarrには ```obniz.LogicAnalyzer```で得られのと同じ配列が入っています。
+結果であるarrには `obniz.LogicAnalyzer`で得られのと同じ配列が入っています。
 なので、こんなフォーマットです。
 
 ```javascript
@@ -48,8 +48,8 @@ sensor.start(function (arr) {
 ```
 
 
-いくつかの検出オプションは```start()```で開始する前に設定することが出来ます。
-どれも```obniz.LogicAnalyzer```のオプションと共通ですので、詳しくはそちらをご覧ください。
+いくつかの検出オプションは`start()`で開始する前に設定することが出来ます。
+どれも`obniz.LogicAnalyzer`のオプションと共通ですので、詳しくはそちらをご覧ください。
 
 設定可能なのは以下のとおりです。
 
@@ -61,7 +61,7 @@ dataInverted | `number` | true | 取得データの0,1を反転するかどう�
 cutTail | `number` | false | 信号の最後の無駄な0を除去します。除去することでうまく通信できないこともあります。
 output_pullup | `number` | true | センサーの出力端子を5vで内部プルアップします。
 
-どれも```start()```で開始する前に設定して下さい。
+どれも`start()`で開始する前に設定して下さい。
 
 ```javascript
 // Javascript Example

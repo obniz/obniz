@@ -35,7 +35,7 @@ segment.setNumber(0,0,5,false); // show '5' on first digit. without dot.
 Initialize LEDs.
 numberOfDisplays is number of MAX7219.
 digits is number of digits each MAX7219 has.
-So, If 4 digits per MAX7219 and only one MAX7219 then ```init(1,4)```
+So, If 4 digits per MAX7219 and only one MAX7219 then `init(1,4)`
 
 ```Javascript
 // Javascript Example

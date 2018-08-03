@@ -139,7 +139,7 @@ obniz.onconnect = async function() {
 ```
 
 ## resetOnDisconnect(reset)
-オプションである ```reset_obniz_on_ws_disconnection``` の設定をあとから変更する場合に使う関数です。
+オプションである `reset_obniz_on_ws_disconnection` の設定をあとから変更する場合に使う関数です。
 obniz.jsでは標準でtrueなので、obniz.jsはユーザーがobniz cloudへのweb socketを切断するとリセットするようになっています。
 リセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
 この関数でそれを無効にし、リセットしないようにできます。

@@ -37,7 +37,7 @@ sensor.start(function (arr) {
 })
 ```
 
-arr is same as ```obniz.LogicAnalyzer```'s result.
+arr is same as `obniz.LogicAnalyzer`'s result.
 So, It's like below.
 
 ```

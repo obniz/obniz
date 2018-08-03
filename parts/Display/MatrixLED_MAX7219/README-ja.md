@@ -52,7 +52,7 @@ matrix.brightness(7);
 ## draw(ctx)
 HTML5のcanvasをそのまま描画します。html上でobnizを使っている場合は
 
-```obniz.util.createCanvasContext()```
+`obniz.util.createCanvasContext()`
 
 を使うことで、canvasを簡単に生成できます。nodejsの場合はnode-canvasを使うことが出来ます。
 あとは、そこに描画し、この関数に渡すと２値化されてディスプレイに表示されます。

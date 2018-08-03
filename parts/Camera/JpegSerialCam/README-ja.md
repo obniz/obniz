@@ -111,7 +111,7 @@ var jpegData = await cam.takeWait();
 ## arrayToBase64(bytearray)
 arrayデータをbase64にエンコードします。
 これによりjpegのbase64データを取得できます。
-htmlでは```<img>```タグにbase64のjpgを渡すと画像としてみることが出来ます。
+htmlでは`<img>`タグにbase64のjpgを渡すと画像としてみることが出来ます。
 
 ```Javascript
 obniz.io6.output(true);
