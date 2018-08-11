@@ -287,25 +287,25 @@ console.log("data: " , data );
 
 ```
 
-## characteristic.onwritefromremote(data)
+## characteristic.onwritefromremote(address, newvalue)
 characteristicが外部から変更されたときのコールバックです
 
 ```Javascript 
 
-characteristic.onwritefromremote = function(val){
-    console.log("remote address :",val.address);
-    console.log("remote data :",val.data);
+characteristic.onwritefromremote = function(address, newvalue){
+    console.log("remote address :",address);
+    console.log("remote data :",newvalue);
 }
 
 ```
 
-## characteristic.onreadfromremote(data)
+## characteristic.onreadfromremote(address)
 characteristicが外部からよまれたときのコールバックです
 
 ```Javascript 
 
-characteristic.onreadfromremote = function(val){
-    console.log("remote address :",val.address);	
+characteristic.onreadfromremote = function(address){
+    console.log("remote address :",address);	
 }
 
 ```
