@@ -1144,6 +1144,7 @@ class WSCommand_Ble extends WSCommand {
     ];
 
     let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = 'success'; //always success
     this._addRowForPath(
       objToSend,
       'ble.peripheral.read_characteristic_result',
@@ -1191,6 +1192,7 @@ class WSCommand_Ble extends WSCommand {
     ];
 
     let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = 'success'; //always success
     this._addRowForPath(
       objToSend,
       'ble.peripheral.read_descriptor_result',
