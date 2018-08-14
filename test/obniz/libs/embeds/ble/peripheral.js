@@ -222,7 +222,7 @@ describe('ble', function() {
           descriptors: [
             {
               uuid: '2901', //Characteristic User Description
-              text: 'hello wrold characteristic', //data for dataArray or  text for string
+              text: 'hello world characteristic', //data for dataArray or  text for string
             },
           ],
         },
@@ -249,8 +249,8 @@ describe('ble', function() {
                           111,
                           32,
                           119,
-                          114,
                           111,
+                          114,
                           108,
                           100,
                           32,
@@ -293,7 +293,7 @@ describe('ble', function() {
     });
     let descriptor = new this.obniz.ble.descriptor({
       uuid: '2901',
-      text: 'hello wrold characteristic',
+      text: 'hello world characteristic',
     });
 
     service.addCharacteristic(characteristic);
@@ -320,8 +320,8 @@ describe('ble', function() {
                           111,
                           32,
                           119,
-                          114,
                           111,
+                          114,
                           108,
                           100,
                           32,
@@ -368,7 +368,7 @@ describe('ble', function() {
               descriptors: [
                 {
                   uuid: '2901', //Characteristic User Description
-                  text: 'hello wrold characteristic', //data for dataArray or  text for string
+                  text: 'hello world characteristic', //data for dataArray or  text for string
                 },
               ],
             },
@@ -397,8 +397,8 @@ describe('ble', function() {
                           111,
                           32,
                           119,
-                          114,
                           111,
+                          114,
                           108,
                           100,
                           32,
@@ -441,7 +441,7 @@ describe('ble', function() {
     });
     let descriptor = new this.obniz.ble.descriptor({
       uuid: '2901',
-      text: 'hello wrold characteristic',
+      text: 'hello world characteristic',
     });
 
     service.addCharacteristic(characteristic);
@@ -467,8 +467,8 @@ describe('ble', function() {
                           111,
                           32,
                           119,
-                          114,
                           111,
+                          114,
                           108,
                           100,
                           32,
@@ -523,8 +523,8 @@ describe('ble', function() {
                       111,
                       32,
                       119,
-                      114,
                       111,
+                      114,
                       108,
                       100,
                       32,
@@ -552,5 +552,154 @@ describe('ble', function() {
         ],
       })
     );
+  });
+
+  it('read char', function() {
+    let service = new this.obniz.ble.service({ uuid: '1234' });
+    let characteristic = new this.obniz.ble.characteristic({
+      uuid: '7777',
+      data: [1, 2, 3],
+    });
+    service.addCharacteristic(characteristic);
+    this.obniz.ble.peripheral.addService(service);
+
+    expect(this.obniz).send([
+      {
+        ble: {
+          peripheral: {
+            services: [
+              {
+                characteristics: [
+                  {
+                    data: [1, 2, 3],
+                    uuid: '7777',
+                  },
+                ],
+                uuid: '1234',
+              },
+            ],
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).to.be.finished;
+
+    return new Promise(resolve => {
+      characteristic.readWait().then(data => {
+        expect(data).to.deep.equal([1, 2, 3]);
+        resolve();
+      });
+      expect(this.obniz).send([
+        {
+          ble: {
+            peripheral: {
+              read_characteristic: {
+                service_uuid: '1234',
+                characteristic_uuid: '7777',
+              },
+            },
+          },
+        },
+      ]);
+
+      expect(this.obniz).to.be.finished;
+
+      testUtil.receiveJson(this.obniz, [
+        {
+          ble: {
+            peripheral: {
+              read_characteristic_result: {
+                service_uuid: '1234',
+                characteristic_uuid: '7777',
+                data: [1, 2, 3],
+                result: 'success',
+              },
+            },
+          },
+        },
+      ]);
+    });
+  });
+
+  it('read descriptor', function() {
+    this.obniz.debugpring = true;
+    let service = new this.obniz.ble.service({ uuid: '1234' });
+    let characteristic = new this.obniz.ble.characteristic({
+      uuid: '7777',
+      data: [1, 2, 3],
+    });
+    let descriptor = new this.obniz.ble.descriptor({
+      uuid: '2901', //Characteristic User Description
+      text: 'sample',
+    });
+    service.addCharacteristic(characteristic);
+    characteristic.addDescriptor(descriptor);
+
+    this.obniz.ble.peripheral.addService(service);
+
+    expect(this.obniz).send([
+      {
+        ble: {
+          peripheral: {
+            services: [
+              {
+                characteristics: [
+                  {
+                    data: [1, 2, 3],
+                    descriptors: [
+                      {
+                        data: [115, 97, 109, 112, 108, 101],
+                        uuid: '2901',
+                      },
+                    ],
+                    uuid: '7777',
+                  },
+                ],
+                uuid: '1234',
+              },
+            ],
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).to.be.finished;
+
+    return new Promise(resolve => {
+      descriptor.readWait().then(data => {
+        expect(data).to.deep.equal([115, 97, 109, 112, 108, 101]);
+        resolve();
+      });
+      expect(this.obniz).send([
+        {
+          ble: {
+            peripheral: {
+              read_descriptor: {
+                characteristic_uuid: '7777',
+                descriptor_uuid: '2901',
+                service_uuid: '1234',
+              },
+            },
+          },
+        },
+      ]);
+
+      expect(this.obniz).to.be.finished;
+
+      testUtil.receiveJson(this.obniz, [
+        {
+          ble: {
+            peripheral: {
+              read_descriptor_result: {
+                service_uuid: '1234',
+                characteristic_uuid: '7777',
+                descriptor_uuid: '2901',
+                data: [115, 97, 109, 112, 108, 101],
+                result: 'success',
+              },
+            },
+          },
+        },
+      ]);
+    });
   });
 });

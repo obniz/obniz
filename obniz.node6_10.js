@@ -1478,7 +1478,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/characteristic_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_characteristic_result"],"properties":{"read_characteristic_result":{"type":"object","required":["service_uuid","characteristic_uuid","data","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
 
 /***/ }),
 
@@ -1522,7 +1522,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_descriptor_result"],"properties":{"read_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/peripheral/descriptor_read","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","additionalProperties":false,"required":["read_descriptor_result"],"properties":{"read_descriptor_result":{"type":"object","required":["service_uuid","characteristic_uuid","descriptor_uuid","data","result"],"additionalProperties":false,"properties":{"service_uuid":{"$ref":"/uuid"},"characteristic_uuid":{"$ref":"/uuid"},"descriptor_uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"result":{"type":"string","enum":["success","failed"]}}}}}}}
 
 /***/ }),
 
@@ -9552,6 +9552,7 @@ class WSCommand_Ble extends WSCommand {
     let schema = [{ name: 'service_uuid', type: 'uuid', length: this.uuidLength }, { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength }, { name: 'data', type: 'dataArray', length: null }];
 
     let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = 'success'; //always success
     this._addRowForPath(objToSend, 'ble.peripheral.read_characteristic_result', results);
   }
 
@@ -9573,6 +9574,7 @@ class WSCommand_Ble extends WSCommand {
     let schema = [{ name: 'service_uuid', type: 'uuid', length: this.uuidLength }, { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength }, { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength }, { name: 'data', type: 'dataArray', length: null }];
 
     let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
+    results.result = 'success'; //always success
     this._addRowForPath(objToSend, 'ble.peripheral.read_descriptor_result', results);
   }
 

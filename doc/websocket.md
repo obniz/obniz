@@ -2930,6 +2930,7 @@ callback of read characteristic
 | `ble.peripheral.read_characteristic_result.service_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.read_characteristic_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.read_characteristic_result.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_characteristic_result.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -2942,7 +2943,8 @@ callback of read characteristic
                 "read_characteristic_result": {
                     "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
                     "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
-                    "data": [16, 34, 242]
+                    "data": [16, 34, 242],
+                    "result": "success"
                 }
             }
         }
@@ -3057,6 +3059,7 @@ callback of read descriptor
 | `ble.peripheral.read_descriptor_result.characteristic_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.read_descriptor_result.descriptor_uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.read_descriptor_result.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.peripheral.read_descriptor_result.result` |  string  | <ul><li>required</li><li>enum <ul><li>`"success"`</li><li>`"failed"`</li></ul></li></ul> | &nbsp; |
 
 
 
@@ -3070,7 +3073,8 @@ callback of read descriptor
                     "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",
                     "characteristic_uuid": "8d3591bda71140fd8f9f00535fe57179",
                     "descriptor_uuid": "d822b53c",
-                    "data": [16, 34, 242]
+                    "data": [16, 34, 242],
+                    "result": "success"
                 }
             }
         }
