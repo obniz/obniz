@@ -8,7 +8,7 @@
 ## wired(obniz, {r, g, b, common, common_type})
 
 r,g,b,common は繋いだobnizのioを指定してください。
-common_type はLEDがアノードコモンであればanode_common`カソードコモンであれば`cathode_common`を指定してください。
+common_type はLEDがアノードコモンであれば`anode_common`カソードコモンであれば`cathode_common`を指定してください。
 
 ![](./wired.png)
 
