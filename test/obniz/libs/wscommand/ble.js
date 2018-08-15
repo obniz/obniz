@@ -2050,6 +2050,7 @@ describe('ble.log', function() {
               service_uuid: 'fff0',
               characteristic_uuid: 'fff1',
               data: [2, 89],
+              result: 'success',
             },
           },
         },
@@ -3987,6 +3988,7 @@ describe('ble.log', function() {
               service_uuid: 'fff0',
               characteristic_uuid: 'fff1',
               descriptor_uuid: '2901',
+              result: 'success',
               data: [
                 104,
                 101,
