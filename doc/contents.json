@@ -1,12 +1,15 @@
 {
-  "title": "obniz sdk for javascript",
+  "title": "obniz.js API Reference",
+  "title-ja": "obniz.js API リファレンス",
   "contents": [
     {
       "title": "Overview",
+      "title-ja": "概要",
       "filename": "../README"
     },
     {
       "title": "Connection",
+      "title-ja": "接続",
       "filename": "connection"
     },
     {
@@ -18,6 +21,7 @@
     },
     {
       "title": "Messaging",
+      "title-ja": "メッセージング",
       "filename": "messaging"
     },
     {
@@ -63,18 +67,22 @@
     },
     {
       "title": "Display",
+      "title-ja": "ディスプレイ",
       "filename": "display"
     },
     {
       "title": "Switch",
+      "title-ja": "スイッチ",
       "filename": "switch"
     },
     {
       "title": "BLE use as central",
+      "title-ja": "BLEセントラル",
       "filename": "ble-central"
     },
     {
       "title": "BLE use as peripheral",
+      "title-ja": "BLEペリフェラル",
       "filename": "ble-peripheral"
     }
   ]
