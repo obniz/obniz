@@ -21414,6 +21414,12 @@ class AnalogTemplatureSensor {
     );
   }
 
+  async getWait() {
+    let voltage = await this.ad.getWait();
+    this.temp = this.calc(voltage);
+    return this.temp;
+  }
+
   onchange(temp) {}
 
   calc(voltage) {
