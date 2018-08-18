@@ -24,5 +24,16 @@ tempsens.onchange = function(temp){
 console.log(temp)
 };
 ```
+
+## getWait
+get temperature change.
+Unit of temp is Celsius
+
+```javascript
+// Javascript Example
+var tempsens = obniz.wired("S8100B",   { gnd:1 , output:2, vcc:0});
+var temp = tempsens.getWait();
+console.log(temp);
+```
  
 

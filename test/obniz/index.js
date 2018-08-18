@@ -320,6 +320,82 @@ describe('obniz.index', function() {
       });
   });
 
+  it('connectWait', function() {
+    let called = false;
+    return new Promise(resolve => {
+      testUtil.setupObnizPromise(this, resolve);
+    })
+      .then(() => {
+        expect(this.obniz).to.be.obniz;
+        expect(this.obniz).to.be.finished; // input queue
+
+        this.obniz.connectWait().then(connected => {
+          called = connected === true;
+        });
+        testUtil.receiveJson(this.obniz, [
+          {
+            ws: {
+              ready: true,
+              obniz: {
+                firmware: '1.0.3',
+              },
+            },
+          },
+        ]);
+
+        return new Promise(resolve => {
+          setTimeout(resolve, 500);
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          testUtil.releaseObnizePromise(this, resolve);
+        });
+      })
+      .then(() => {
+        expect(called).to.be.true;
+      });
+  });
+
+  it('connectWaitTimeout', function() {
+    let called = false;
+    return new Promise(resolve => {
+      testUtil.setupObnizPromise(this, resolve);
+    })
+      .then(() => {
+        expect(this.obniz).to.be.obniz;
+        expect(this.obniz).to.be.finished; // input queue
+
+        this.obniz.connectWait({ timeout: 1 }).then(connected => {
+          called = connected === false;
+        });
+
+        return new Promise(resolve => {
+          setTimeout(() => {
+            testUtil.receiveJson(this.obniz, [
+              {
+                ws: {
+                  ready: true,
+                  obniz: {
+                    firmware: '1.0.3',
+                  },
+                },
+              },
+            ]);
+            resolve();
+          }, 1500);
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          testUtil.releaseObnizePromise(this, resolve);
+        });
+      })
+      .then(() => {
+        expect(called).to.be.true;
+      });
+  });
+
   function wait(ms) {
     return new Promise(resolve => {
       setTimeout(resolve, ms);
