@@ -7585,6 +7585,7 @@ module.exports = class ObnizComponents extends ObnizParts {
 /***/ (function(module, exports, __webpack_require__) {
 
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/index.js");
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 
 const isNode = typeof window === 'undefined';
 
@@ -7599,7 +7600,9 @@ module.exports = class ObnizConnection {
     this.debugs = [];
     this.onConnectCalled = false;
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
+    this.emitter = new emitter();
     this._prepareComponents();
+
     if (!options) {
       options = {};
     }
@@ -7671,6 +7674,7 @@ module.exports = class ObnizConnection {
   wsOnClose(event) {
     this.print_debug('closed');
     this.close();
+    this.emitter.emit('closed');
     if (typeof this.onclose === 'function' && this.onConnectCalled == true) {
       this.onclose(this);
     }
@@ -7680,6 +7684,30 @@ module.exports = class ObnizConnection {
         this.wsconnect(); // always connect to mainserver if ws lost
       }, 1000);
     }
+  }
+
+  connectWait(option) {
+    option = option || {};
+    let timeout = option.timeout || null;
+
+    return new Promise((resolve, reject) => {
+      if (this.onConnectCalled) {
+        resolve(true);
+        return;
+      }
+      this.emitter.once('connected', () => {
+        resolve(true);
+      });
+      this.emitter.once('closed', () => {
+        resolve(false);
+      });
+      if (timeout) {
+        setTimeout(() => {
+          resolve(false);
+        }, timeout * 1000);
+      }
+      this.connect();
+    });
   }
 
   wsOnError(event) {
@@ -7846,6 +7874,9 @@ module.exports = class ObnizConnection {
   }
 
   connect() {
+    if (this.socket && this.socket.readyState <= 1) {
+      return;
+    }
     this.wsconnect();
   }
 
@@ -7877,6 +7908,8 @@ module.exports = class ObnizConnection {
         /* local_connect is not used */
       }
     }
+
+    this.emitter.emit('connected');
 
     if (shouldCall) {
       if (typeof this.onconnect !== 'function') return;
