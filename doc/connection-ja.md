@@ -110,6 +110,36 @@ obniz.onconnect = async function() {
 }
 ```
 
+
+## [await]connectWait({timeout})
+接続を試し，接続するまで待ちます．
+
+```javascript
+var obniz = new Obniz('1234-5678');
+
+var connected = await obniz.connectWait();
+
+if(connected){
+    obniz.io0.output(true);
+    obniz.close();
+}
+
+```
+
+timeout[秒]を指定すれば，時間内に接続できなかった場合はfalseが返ります
+
+```javascript
+var obniz = new Obniz('1234-5678');
+
+var connected = await obniz.connectWait({timeout:10});  //timeout 10sec
+
+if(connected){
+    obniz.io0.output(true);
+    obniz.close();
+}
+
+```
+
 ## close()
 現在の接続を切断します。
 auto_connectがfalseになっていないと、また自動的に再接続されます。

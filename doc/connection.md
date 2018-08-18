@@ -127,6 +127,37 @@ obniz.onconnect = async function() {
 }
 ```
 
+
+## [await]connectWait({timeout})
+Waiting finish to connect to obniz.
+
+```javascript
+var obniz = new Obniz('1234-5678');
+
+var connected = await obniz.connectWait();
+
+if(connected){
+    obniz.io0.output(true);
+    obniz.close();
+}
+
+```
+
+You can set timeout(sec) param.
+
+```javascript
+var obniz = new Obniz('1234-5678');
+
+var connected = await obniz.connectWait({timeout:10});  //timeout 10sec
+
+if(connected){
+    obniz.io0.output(true);
+    obniz.close();
+}
+
+```
+
+
 ## debugprint
 This let obniz.js to show logs like communicated jsons and connections logs to console.log.
 
