@@ -134,12 +134,11 @@ Waiting finish to connect to obniz.
 ```javascript
 var obniz = new Obniz('1234-5678');
 
-var connected = await obniz.connectWait();
+await obniz.connectWait();
 
-if(connected){
-    obniz.io0.output(true);
-    obniz.close();
-}
+obniz.io0.output(true);
+obniz.close();
+
 
 ```
 
@@ -157,6 +156,18 @@ if(connected){
 
 ```
 
+If the param `auto_connect` is false, it try only once. 
+
+```javascript
+var obniz = new Obniz('1234-5678',{auto_connect: false});
+
+var connected = await obniz.connectWait();  //try once
+
+if(connected){
+    obniz.io0.output(true);
+    obniz.close();
+}
+```
 
 ## debugprint
 This let obniz.js to show logs like communicated jsons and connections logs to console.log.

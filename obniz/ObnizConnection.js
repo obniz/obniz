@@ -112,9 +112,11 @@ module.exports = class ObnizConnection {
       this.emitter.once('connected', () => {
         resolve(true);
       });
-      this.emitter.once('closed', () => {
-        resolve(false);
-      });
+      if (!this.options.auto_connect) {
+        this.emitter.once('closed', () => {
+          resolve(false);
+        });
+      }
       if (timeout) {
         setTimeout(() => {
           resolve(false);
