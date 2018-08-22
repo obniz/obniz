@@ -117,12 +117,11 @@ obniz.onconnect = async function() {
 ```javascript
 var obniz = new Obniz('1234-5678');
 
-var connected = await obniz.connectWait();
+await obniz.connectWait();  //waiting for connection
 
-if(connected){
-    obniz.io0.output(true);
-    obniz.close();
-}
+obniz.io0.output(true);
+obniz.close();
+
 
 ```
 
@@ -138,6 +137,20 @@ if(connected){
     obniz.close();
 }
 
+```
+
+
+`auto_connect`オプションがfalseの場合，一度だけ接続を試みて，つながらなかったらfalseを返します
+
+```javascript
+var obniz = new Obniz('1234-5678',{auto_connect: false});
+
+var connected = await obniz.connectWait();  //try once
+
+if(connected){
+    obniz.io0.output(true);
+    obniz.close();
+}
 ```
 
 ## close()
