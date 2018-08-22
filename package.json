@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "description": "obniz sdk for javascript",
   "main": "index.js",
   "scripts": {
