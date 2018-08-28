@@ -208,6 +208,7 @@ service.end();
 ```Javascript
 var characteristic = new obniz.ble.characteristic({
     "uuid" : "FFF1",
+    "properties" : ["read","write"],  // read, write, notify
     "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
     "descriptors" : [{
         "uuid" : "2901",   //Characteristic User Description
@@ -310,6 +311,34 @@ characteristic.onreadfromremote = function(address){
 
 ```
 
+## characteristic.notify()
+接続済みのcentralに対してnotifyを出します．
+BLEの仕様上，CCCDのdescriptor(0x2901)が必要です．
+
+```javascript
+var characteristic = new obniz.ble.characteristic({
+  uuid: 'FFF1',
+  data: [0x0e, 0x00],
+  properties : ["read","write","notify"],  // add notify properties
+  descriptors: [
+    {
+      uuid: '2902', //CCCD
+      data: [0x00, 0x00],  //2byte
+    }, 
+  ],
+});
+
+var service = new obniz.ble.service({
+  uuid: 'FFF0',
+  characteristics: [characteristic],
+});
+obniz.ble.peripheral.addService(service);
+
+
+// after central connected
+characteristic.notify();
+
+```
 
 
 

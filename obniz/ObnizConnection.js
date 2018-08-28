@@ -328,12 +328,13 @@ module.exports = class ObnizConnection {
     this.emitter.emit('connected');
 
     if (shouldCall) {
-      if (typeof this.onconnect !== 'function') return;
-      const promise = this.onconnect(this);
-      if (promise instanceof Promise) {
-        promise.catch(err => {
-          console.error(err);
-        });
+      if (typeof this.onconnect === 'function') {
+        const promise = this.onconnect(this);
+        if (promise instanceof Promise) {
+          promise.catch(err => {
+            console.error(err);
+          });
+        }
       }
       this.onConnectCalled = true;
     }

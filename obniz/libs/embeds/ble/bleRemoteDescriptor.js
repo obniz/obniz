@@ -14,9 +14,9 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
       ble: {
         read_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid,
-          characteristic_uuid: this.characteristic.uuid,
-          descriptor_uuid: this.uuid,
+          service_uuid: this.characteristic.service.uuid.toLowerCase(),
+          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+          descriptor_uuid: this.uuid.toLowerCase(),
         },
       },
     };
@@ -28,9 +28,9 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
       ble: {
         write_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid,
-          characteristic_uuid: this.characteristic.uuid,
-          descriptor_uuid: this.uuid,
+          service_uuid: this.characteristic.service.uuid.toLowerCase(),
+          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+          descriptor_uuid: this.uuid.toLowerCase(),
           data: array,
         },
       },

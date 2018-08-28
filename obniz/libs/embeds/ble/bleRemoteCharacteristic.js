@@ -48,8 +48,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         register_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid,
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase(),
         },
       },
     };
@@ -62,8 +62,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         unregister_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid,
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase(),
         },
       },
     };
@@ -75,8 +75,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         read_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid,
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase(),
         },
       },
     };
@@ -88,8 +88,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         write_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid,
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase(),
           data: array,
         },
       },
@@ -102,8 +102,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         get_descriptors: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid,
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase(),
         },
       },
     };
