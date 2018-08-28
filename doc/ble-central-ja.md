@@ -447,6 +447,39 @@ obniz.ble.scan.start();
 ```
 -->
 
+## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).registerNotify(func)
+
+peripheralからnotifyがきたときに受け取る関数を設定します．
+notifyを受け取るためには，BLEの仕様上，CCCD Descriptor(0x2902)を書き込む必要があります
+
+```javascript
+var target = {
+  localName: "obniz-notify"
+};
+
+var peripheral = await obniz.ble.scan.startOneWait(target);
+var connected = await peripheral.connectWait();
+if(connected){
+  let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+  let cccd = char.getDescriptor("2902");
+  let result = await cccd.writeWait([0x00, 0x01]); // register cccd for remote peripheral 
+
+  console.log(await cccd.readWait()); // check cccd 
+
+  char.registerNotify( function(){
+    console.log("notify");
+  });
+
+
+}else{
+  console.log("cannnot connected");
+
+}
+    
+```
+
+
+
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).writeWait(dataArray)
 descriptorにdataArrayを書き込みます

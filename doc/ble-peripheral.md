@@ -188,13 +188,14 @@ obniz.ble.peripheral.addService(service);
 
 ```Javascript
 var characteristic = new obniz.ble.characteristic({
-                "uuid" : "FFF1",
-                "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
-                "descriptors" : [{
-                    "uuid" : "2901",   //Characteristic User Description
-                    "text" : "hello world characteristic",    //data for dataArray or  text for string
-                }]
-                });
+        "uuid" : "FFF1",
+        "properties" : ["read","write"],  // read, write, notify
+        "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
+        "descriptors" : [{
+            "uuid" : "2901",   //Characteristic User Description
+            "text" : "hello world characteristic",    //data for dataArray or  text for string
+        }]
+});
 
 var service = new obniz.ble.service({
                   "uuid" : "FFF0",
@@ -289,6 +290,34 @@ characteristic.onreadfromremote = function(address){
 ```
 
 
+## characteristic.notify()
+send notify to connected central.
+It needs CCCD descriptor(0x2901).
+
+```javascript
+var characteristic = new obniz.ble.characteristic({
+  uuid: 'FFF1',
+  data: [0x0e, 0x00],
+  properties : ["read","write","notify"],  // add notify properties
+  descriptors: [
+    {
+      uuid: '2902', //CCCD
+      data: [0x00, 0x00],  //2byte
+    }, 
+  ],
+});
+
+var service = new obniz.ble.service({
+  uuid: 'FFF0',
+  characteristics: [characteristic],
+});
+obniz.ble.peripheral.addService(service);
+
+
+// after central connected
+characteristic.notify();
+
+```
 
 
 ## new descriptor(json)

@@ -2330,9 +2330,11 @@ module.exports = class ObnizConnection {
       this.emitter.once('connected', () => {
         resolve(true);
       });
-      this.emitter.once('closed', () => {
-        resolve(false);
-      });
+      if (!this.options.auto_connect) {
+        this.emitter.once('closed', () => {
+          resolve(false);
+        });
+      }
       if (timeout) {
         setTimeout(() => {
           resolve(false);
@@ -2538,12 +2540,13 @@ module.exports = class ObnizConnection {
     this.emitter.emit('connected');
 
     if (shouldCall) {
-      if (typeof this.onconnect !== 'function') return;
-      const promise = this.onconnect(this);
-      if (promise instanceof Promise) {
-        promise.catch(err => {
-          console.error(err);
-        });
+      if (typeof this.onconnect === 'function') {
+        const promise = this.onconnect(this);
+        if (promise instanceof Promise) {
+          promise.catch(err => {
+            console.error(err);
+          });
+        }
       }
       this.onConnectCalled = true;
     }
@@ -4387,8 +4390,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         register_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase()
         }
       }
     };
@@ -4401,8 +4404,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         unregister_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase()
         }
       }
     };
@@ -4414,8 +4417,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         read_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase()
         }
       }
     };
@@ -4427,8 +4430,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         write_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid,
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase(),
           data: array
         }
       }
@@ -4441,8 +4444,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         get_descriptors: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid,
-          characteristic_uuid: this.uuid
+          service_uuid: this.service.uuid.toLowerCase(),
+          characteristic_uuid: this.uuid.toLowerCase()
         }
       }
     };
@@ -4560,9 +4563,9 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
       ble: {
         read_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid,
-          characteristic_uuid: this.characteristic.uuid,
-          descriptor_uuid: this.uuid
+          service_uuid: this.characteristic.service.uuid.toLowerCase(),
+          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+          descriptor_uuid: this.uuid.toLowerCase()
         }
       }
     };
@@ -4574,9 +4577,9 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
       ble: {
         write_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid,
-          characteristic_uuid: this.characteristic.uuid,
-          descriptor_uuid: this.uuid,
+          service_uuid: this.characteristic.service.uuid.toLowerCase(),
+          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+          descriptor_uuid: this.uuid.toLowerCase(),
           data: array
         }
       }
@@ -4950,7 +4953,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
       ble: {
         get_characteristics: {
           address: this.peripheral.address,
-          service_uuid: this.uuid
+          service_uuid: this.uuid.toLowerCase()
         }
       }
     };
