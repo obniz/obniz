@@ -39,7 +39,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
       ble: {
         get_characteristics: {
           address: this.peripheral.address,
-          service_uuid: this.uuid,
+          service_uuid: this.uuid.toLowerCase(),
         },
       },
     };

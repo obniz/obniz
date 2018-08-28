@@ -454,6 +454,39 @@ obniz.ble.scan.onfind = function(peripheral){
 obniz.ble.startScan({duration : 10});
 ```
 -->
+
+## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).registerNotify(func)
+
+Set callback function of notify.
+To receive notify, you need to register on CCCD Descriptor(0x2902).
+
+```javascript
+var target = {
+  localName: "obniz-notify"
+};
+
+var peripheral = await obniz.ble.scan.startOneWait(target);
+var connected = await peripheral.connectWait();
+if(connected){
+  let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+  let cccd = char.getDescriptor("2902");
+  let result = await cccd.writeWait([0x00, 0x01]); // register cccd for remote peripheral 
+
+  console.log(await cccd.readWait()); // check cccd 
+
+  char.registerNotify( function(){
+    console.log("notify");
+  });
+
+
+}else{
+  console.log("cannnot connected");
+
+}
+    
+```
+
+
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).writeWait(dataArray)
 write descriptor with dataArray
 

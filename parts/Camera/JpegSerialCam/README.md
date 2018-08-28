@@ -5,14 +5,34 @@ JpegCamera PTC06
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CYoMmMoa3ao" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
-```Javascript
-// Javascript Example
-obniz.io6.output(true);
-obniz.io9.output(false);
-var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
-await cam.startWait({baud: 38400});
-await cam.setSizeWait("640x480");
-var data = await cam.takeWait();
+```html
+<!-- HTML Example -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+<script src="https://unpkg.com/obniz@latest/obniz.js"></script>
+</head>
+<body>
+
+<div id="obniz-debug"></div>
+<img id="image">
+
+<script>
+var obniz = new Obniz("OBNIZ_ID_HERE");
+obniz.onconnect = async function () {
+  obniz.io6.output(true);
+  obniz.io9.output(false);
+  var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
+  await cam.startWait({baud: 38400});
+  await cam.setSizeWait("640x480");
+  const jpegData = await cam.takeWait();
+  document.getElementById("image").src = "data:image/jpeg;base64," + cam.arrayToBase64(jpegData);
+}
+</script>
+</body>
+</html>
 ```
 
 ## wire(obniz, {vcc, cam_tx, cam_rx, gnd})
@@ -120,5 +140,5 @@ obniz.io9.output(false);
 var cam = obniz.wired("JpegSerialCam", {vcc:0, cam_tx:1, cam_rx:2, gnd:3});
 await cam.startWait({baud: 38400});
 const jpegData = await cam.takeWait();
-document.getElementById("ItemPreview").src = "data:image/png;base64," + cam.arrayToBase64(jpegData);
+document.getElementById("image").src = "data:image/png;base64," + cam.arrayToBase64(jpegData);
 ```
