@@ -41,15 +41,36 @@ spi | `spi object` | no | &nbsp; | configured spi object
 
 ピンだけを指定して以下のように設定することが出来ます。
 
-```javascript
-obniz.io11.output(true);
-var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
-await cam.startupWait();
-const data = await cam.takeWait('1024x768');
-console.log("image size = " + data.length + " bytes");
 
-const base64 = cam.arrayToBase64(data);
-document.getElementById("image").src = "data:image/jpeg;base64, " + base64;
+```html
+<!-- HTML Example -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+<script src="https://unpkg.com/obniz@latest/obniz.js"></script>
+</head>
+<body>
+
+<div id="obniz-debug"></div>
+<img id="image">
+
+<script>
+var obniz = new Obniz("OBNIZ_ID_HERE");
+obniz.onconnect = async function () {
+  obniz.io11.output(true);
+  var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
+  await cam.startupWait();
+  const data = await cam.takeWait('1024x768');
+  console.log("image size = " + data.length + " bytes");
+
+  const base64 = cam.arrayToBase64(data);
+  document.getElementById("image").src = "data:image/jpeg;base64, " + base64;
+}
+</script>
+</body>
+</html>
 ```
 
 または、設定済みのi2cやspiオブジェクトがあれば、それを利用することも可能です。
