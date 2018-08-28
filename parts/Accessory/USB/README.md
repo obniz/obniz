@@ -3,10 +3,9 @@
 Simply, Supplying power to usb accesorries.
 Control USB light, etc with your obniz.
 
-We provide a usb module for obniz.
-The pin assign of it is below.
-
 ![](./usb.jpg)
+
+![](./usb2.jpg)
 
 ## wired(obniz, {vcc, gnd})
 
