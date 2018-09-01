@@ -28,6 +28,8 @@ class HMC5883L {
     this.params.mode = 'master';
 
     this.i2c = obniz.getI2CWithConfig(this.params);
+
+    this.obniz.wait(500);
   }
 
   init() {

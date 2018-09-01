@@ -18981,9 +18981,11 @@ class HMC5883L {
     this.params.mode = 'master';
 
     this.i2c = obniz.getI2CWithConfig(this.params);
+
+    this.obniz.wait(500);
   }
 
-  init() {
+ init() {
     this.i2c.write(this.address.device, this.address.reset);
     this.obniz.wait(500);
   }
