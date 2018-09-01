@@ -11504,7 +11504,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.9.5","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.0","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.9.5","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11522,6 +11522,7 @@ var map = {
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
+	"./CompassSensor/HMC5883L/index.js": "./parts/CompassSensor/HMC5883L/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -11549,6 +11550,7 @@ var map = {
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
+	"./Moving/SteppingMotor/test.js": "./parts/Moving/SteppingMotor/test.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
@@ -12499,6 +12501,92 @@ class S11059 {
 
 if (true) {
   module.exports = S11059;
+}
+
+/***/ }),
+
+/***/ "./parts/CompassSensor/HMC5883L/index.js":
+/*!***********************************************!*\
+  !*** ./parts/CompassSensor/HMC5883L/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class HMC5883L {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sda', 'scl'];
+
+    this.address = {};
+    this.address.device = 0x1e;
+    this.address.reset = [0x02, 0x00];
+    this.address.xMSB = [0x03];
+    this.address.xLSB = [0x04];
+    this.address.yMSB = [0x05];
+    this.address.yLSB = [0x06];
+    this.address.zMSB = [0x07];
+    this.address.zLSB = [0x08];
+  }
+
+  static info() {
+    return {
+      name: 'HMC5883L'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
+
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  init() {
+    this.i2c.write(this.address.device, this.address.reset);
+    this.obniz.wait(500);
+  }
+
+  get(axis) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      let axisAddrMSB;
+      let axisAddrLSB;
+      if (axis == 'x') {
+        axisAddrMSB = _this.address.xMSB;
+        axisAddrLSB = _this.address.xLSB;
+      } else if (axis == 'y') {
+        axisAddrMSB = _this.address.yMSB;
+        axisAddrLSB = _this.address.yLSB;
+      } else if (axis == 'z') {
+        axisAddrMSB = _this.address.zMSB;
+        axisAddrLSB = _this.address.zLSB;
+      }
+      _this.i2c.write(_this.address.device, axisAddrMSB);
+      let msb = yield _this.i2c.readWait(_this.address.device, 1);
+      _this.i2c.write(_this.address.device, axisAddrLSB);
+      let lsb = yield _this.i2c.readWait(_this.address.device, 1);
+
+      let val = msb << 8 | lsb;
+
+      if (val & 0x8000) {
+        val = val - 65536;
+      }
+      return val;
+    })();
+  }
+}
+
+if (true) {
+  module.exports = HMC5883L;
 }
 
 /***/ }),
@@ -15002,6 +15090,73 @@ class Solenoid {
 
 if (true) {
   module.exports = Solenoid;
+}
+
+/***/ }),
+
+/***/ "./parts/Moving/SteppingMotor/test.js":
+/*!********************************************!*\
+  !*** ./parts/Moving/SteppingMotor/test.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class SteppingMotor {
+  constructor() {
+    this.keys = ['com', 'x1', 'x2', 'y1', 'y2'];
+    this.requiredKeys = ['x1', 'x2', 'y1', 'y2'];
+  }
+
+  static info() {
+    return {
+      name: 'SteppingMotor'
+    };
+  }
+
+  wired(obniz) {
+    if (obniz.isValidIO(this.params.com)) {
+      obniz.getIO(this.params.com).output(true);
+    }
+    this.io_x1 = obniz.getIO(this.params.x1);
+    this.io_x2 = obniz.getIO(this.params.x2);
+    this.io_y1 = obniz.getIO(this.params.y1);
+    this.io_y2 = obniz.getIO(this.params.y2);
+  }
+
+  // Module functions
+
+  forward(steps, waitTime) {
+    let step = [[1, 1, 0, 0], [0, 1, 1, 0], [0, 0, 1, 1], [1, 0, 0, 1]];
+    for (let j = 0; j < steps; j++) {
+      for (let i = 0; i < 4; i++) {
+        this.io_x1.output(step[i][0]);
+        this.io_y1.output(step[i][1]);
+        this.io_x2.output(step[i][2]);
+        this.io_y2.output(step[i][3]);
+        obniz.wait(waitTime);
+      }
+    }
+  }
+
+  reverse(steps, waitTime) {
+    let step = [[1, 1, 0, 0], [0, 1, 1, 0], [0, 0, 1, 1], [1, 0, 0, 1]];
+    for (let j = 0; j < steps; j++) {
+      for (let i = 0; i < 4; i++) {
+        this.io_x1.output(step[i][3]);
+        this.io_y1.output(step[i][2]);
+        this.io_x2.output(step[i][1]);
+        this.io_y2.output(step[i][0]);
+        obniz.wait(waitTime);
+      }
+    }
+  }
+}
+
+if (true) {
+  module.exports = SteppingMotor;
 }
 
 /***/ }),
