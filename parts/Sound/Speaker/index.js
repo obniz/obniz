@@ -18,6 +18,10 @@ class Speaker {
   }
 
   play(freq) {
+    if (typeof freq !== 'number') {
+      throw new Error('freq must be a number');
+    }
+    freq = parseInt(freq); // temporary
     if (freq > 0) {
       this.pwm.freq(freq);
       this.pwm.pulse((1 / freq / 2) * 1000);
