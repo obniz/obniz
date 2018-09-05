@@ -7,6 +7,8 @@
 ## wired(obniz, {vcc, gnd, signal})
 
 ![photo of wired](./image.jpg)
+
+![photo of wired](./wired.png)
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("GP2Y0A21YK0F", {vcc:0, gnd:1, signal:2})
