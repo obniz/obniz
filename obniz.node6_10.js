@@ -13295,7 +13295,12 @@ class GYSFDMAXB {
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.uart = obniz.getFreeUart();
-    this.uart.start({ tx: this.params.txd, rx: this.params.rxd, baud: 9600, drive: "3v" });
+    this.uart.start({
+      tx: this.params.txd,
+      rx: this.params.rxd,
+      baud: 9600,
+      drive: '3v'
+    });
 
     this.editedData = {};
     this.editedData.enable = false;
@@ -13327,39 +13332,40 @@ class GYSFDMAXB {
   readSentence() {
     let results = [];
     if (this.uart.isDataExists()) {
-      let pos = this.uart.received.indexOf(0x0A);
+      let pos = this.uart.received.indexOf(0x0a);
       if (pos >= 0) {
         results = this.uart.received.slice(0, pos - 1);
         this.uart.received.splice(0, pos + 1);
         return this.uart.tryConvertString(results);
       }
     }
-    return "";
+    return '';
   }
 
   getEditedData() {
-    var sentence = this.readSentence();
+    let n, utc, format;
+    let sentence = this.readSentence();
     this.editedData.enable = false;
     while (sentence.length > 0) {
-      let part = sentence.split(",");
-      if (sentence.slice(-4, -3) != ",") {
+      let part = sentence.split(',');
+      if (sentence.slice(-4, -3) != ',') {
         let st = part[part.length - 1].slice(0, -3);
         part.push(part[part.length - 1].slice(-3));
         part[part.length - 2] = st;
       }
-      this.editedData.sentence = part.join(",");
+      this.editedData.sentence = part.join(',');
       switch (part[0]) {
-        case "$GPGGA":
+        case '$GPGGA':
           this.editedData.GPGGA = part;
           break;
-        case "$GPGLL":
+        case '$GPGLL':
           this.editedData.GPGLL = part;
           break;
-        case "$GPGSA":
+        case '$GPGSA':
           this.editedData.GPGSA = part;
           break;
-        case "$GPGSV":
-          let n = Number(part[2]);
+        case '$GPGSV':
+          n = Number(part[2]);
           if (n > this.editedData.GPGSV.length) {
             while (n > this.editedData.GPGSV.length) {
               this.editedData.GPGSV.push([]);
@@ -13367,19 +13373,19 @@ class GYSFDMAXB {
           }
           this.editedData.GPGSV[n - 1] = part;
           break;
-        case "$GPRMC":
+        case '$GPRMC':
           this.editedData.GPRMC = part;
           break;
-        case "$GPVTG":
+        case '$GPVTG':
           this.editedData.GPVTG = part;
           break;
-        case "$GPZDA":
+        case '$GPZDA':
           this.editedData.GPZDA = part;
-          let utc = part[4] + "/" + part[3] + "/" + part[2] + " " + part[1].substring(0, 2) + ":" + part[1].substring(2, 4) + ":" + part[1].substring(4, 6) + " +00:00";
+          utc = part[4] + '/' + part[3] + '/' + part[2] + ' ' + part[1].substring(0, 2) + ':' + part[1].substring(2, 4) + ':' + part[1].substring(4, 6) + ' +00:00';
           this.editedData.timestamp = new Date(utc);
           break;
         default:
-          let format = part[0].substr(1);
+          format = part[0].substr(1);
           this.editedData[format] = part;
       }
 
@@ -13395,7 +13401,7 @@ class GYSFDMAXB {
     let d = Math.floor(val / 100);
     let m = Math.floor((val / 100.0 - d) * 100.0);
     let s = ((val / 100.0 - d) * 100.0 - m) * 60;
-    return d + "°" + m + "'" + s.toFixed(1) + '"';
+    return d + '°' + m + "'" + s.toFixed(1) + '"';
   }
 
   // NMEAの緯度経度を「度分(DM)」の文字列に変換
@@ -13403,7 +13409,7 @@ class GYSFDMAXB {
     let val = Number(v);
     let d = Math.floor(val / 100.0);
     let m = (val / 100.0 - d) * 100.0;
-    return d + "°" + m.toFixed(4) + "'";
+    return d + '°' + m.toFixed(4) + "'";
   }
 
   // NMEAの緯度経度を「度(DD)」の文字列に変換
@@ -13423,7 +13429,6 @@ class GYSFDMAXB {
     let s = ((val / 100.0 - d) * 100.0 - m) * 60 / (60 * 60);
     return (d + m + s) / (1.0 / 60.0 / 60.0);
   }
-
 }
 
 if (true) {
