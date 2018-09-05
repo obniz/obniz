@@ -9,6 +9,8 @@ anode is a little bit longer than cathode.
 anode is loger leg.
 specify obniz io numbers you connected LED.
 
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1}); // io0 is connected to anode, io1 is cathode

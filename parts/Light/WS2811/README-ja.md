@@ -11,6 +11,8 @@ WS2811 は多くのフルカラーLEDに組み込まれています。(写真は
 
 vcc,gnd,dinをobnizに接続し、接続したioをプログラムで以下のように記載します。
 
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 var leds = obniz.wired("WS2811", {gnd:0, vcc: 1, din: 2});
