@@ -7964,7 +7964,9 @@ module.exports = class ObnizConnection {
         if (compressed) {
           sendData = compressed;
           if (this.debugprintBinary) {
-            this.print_debug('binalized: ' + new Uint8Array(compressed).toString());
+            this.print_debug(
+              'binalized: ' + new Uint8Array(compressed).toString()
+            );
           }
         }
       } catch (e) {
