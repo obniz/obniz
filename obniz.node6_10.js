@@ -15133,8 +15133,8 @@ class Speaker {
   }
 
   play(freq) {
-    if (typeof freq !== "number") {
-      throw new Error("freq must be a number");
+    if (typeof freq !== 'number') {
+      throw new Error('freq must be a number');
     }
     freq = parseInt(freq); // temporary
     if (freq > 0) {
