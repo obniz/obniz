@@ -250,6 +250,17 @@
       ]
     },
     {
+      "name": "GPS",
+      "parts": [
+        {
+          "name": "GYSFDMAXB",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-09991/"
+          }
+        }
+      ]
+    },
+    {
       "name": "Audio Sensor",
       "parts": [
         {
