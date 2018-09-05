@@ -2531,6 +2531,8 @@ Related item
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
 | `ble.error.error_code` |  integer  | <ul><li>required</li></ul> | &nbsp; |
+| `ble.error.module_error_code` |  integer  | &nbsp; | &nbsp; |
+| `ble.error.function_code` |  integer  | &nbsp; | &nbsp; |
 | `ble.error.message` |  string  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.error.address` | [deviceAddress](#deviceaddress)  | &nbsp; | &nbsp; |
 | `ble.error.service_uuid` | [uuidOrNull](#uuidornull)  | &nbsp; | &nbsp; |
@@ -2546,6 +2548,8 @@ Related item
         "ble": {
             "error": {
                 "error_code": 0,
+                "module_error_code": 0,
+                "function_code": 0,
                 "message": "ERROR MESSAGE",
                 "address": "77e754ab8591",
                 "service_uuid": "e1cfb0d1-ae63-4d6f-b3b6-de2054f87e5e",

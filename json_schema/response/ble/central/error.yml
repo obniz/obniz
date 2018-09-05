@@ -15,6 +15,12 @@ properties:
                 error_code : 
                     type: integer
                     example : 0
+                module_error_code :
+                    type: integer
+                    example : 0
+                function_code :
+                    type: integer
+                    example : 0
                 message : 
                     type: string
                     example : "ERROR MESSAGE"

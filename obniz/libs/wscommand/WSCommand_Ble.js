@@ -1253,7 +1253,7 @@ class WSCommand_Ble extends WSCommand {
 
   notifyFromBinaryError(objToSend, payload) {
     let schema = [
-      { name: 'esp_error_code', type: 'char', length: 1 },
+      { name: 'module_error_code', type: 'char', length: 1 },
       { name: 'error_code', type: 'char', length: 1 },
       { name: 'function_code', type: 'char', length: 1 },
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
@@ -1312,9 +1312,6 @@ class WSCommand_Ble extends WSCommand {
       errorMessage[results.error_code] +
       ' ' +
       functionMessage[results.function_code];
-
-    delete results.esp_error_code;
-    delete results.function_code;
 
     this.envelopError(objToSend, 'ble', results);
   }
