@@ -24,8 +24,8 @@ open-drain | `<=5v` | <=1mA(推奨) | <=80Mhz |
 
 
 タイプ | レベル | 最大周波数 | 詳細
-:---: | :---: | :---: | :---: | ---
-digital-in | `3v(5vトレラント)` | <=80Mhz | 
+:---: | :---: | :---: | :---:
+digital-in | `3v(5vトレラント)` | <=80Mhz |  
 
 ##### internal weak pull-up/pull-dow
 

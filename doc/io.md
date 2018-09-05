@@ -25,8 +25,8 @@ Only one input method.
 
 
 Type | Level | max Freq | Detail
-:---: | :---: | :---: | :---: | ---
-digital-in | `3v(5v tolerant)` | <=80Mhz | 
+:---: | :---: | :---: | :---:
+digital-in | `3v(5v tolerant)` | <=80Mhz |  
 
 ##### internal weak pull-up/pull-dow
 
