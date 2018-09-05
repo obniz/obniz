@@ -51,6 +51,10 @@ This document use io5 and io11 to supply a vcc.
 
 ![](./wire.jpg)
 
+
+![](./wired.png)
+**Please note that the arrangement depends on the product**
+
 ```Javascript
 obniz.io6.output(true);
 obniz.io9.output(false);
