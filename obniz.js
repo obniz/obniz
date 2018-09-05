@@ -955,7 +955,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./json_schema/response/ble/central/error.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"module_error_code":{"type":"integer"},"function_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
 
 /***/ }),
 
@@ -7650,15 +7650,13 @@ module.exports = class ObnizConnection {
   }
 
   wsOnMessage(data) {
-    if (this.debugprintBinary && typeof data !== 'string') {
-      this.print_debug('' + new Uint8Array(data).toString());
-    }
-
     let json;
     if (typeof data === 'string') {
       json = JSON.parse(data);
     } else if (this.wscommands) {
-      //binary
+      if (this.debugprintBinary) {
+        this.print_debug('' + new Uint8Array(data).toString());
+      }
       json = this.binary2Json(data);
     }
 
@@ -7927,7 +7925,7 @@ module.exports = class ObnizConnection {
   }
 
   print_debug(str) {
-    if (this.debugprint) {
+    if (this.debugprint || this.debugprintBinary) {
       console.log('Obniz: ' + str);
     }
   }
@@ -7966,9 +7964,7 @@ module.exports = class ObnizConnection {
         if (compressed) {
           sendData = compressed;
           if (this.debugprintBinary) {
-            this.print_debug(
-              'binalized: ' + new Uint8Array(compressed).toString()
-            );
+            this.print_debug('binalized: ' + new Uint8Array(compressed).toString());
           }
         }
       } catch (e) {
@@ -7999,7 +7995,6 @@ module.exports = class ObnizConnection {
       typeof data !== 'string'
     ) {
       this.print_debug('send via local');
-      this.print_debug(data);
       this.socket_local.send(data);
       if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
         this.error(
@@ -8041,7 +8036,9 @@ module.exports = class ObnizConnection {
   _prepareComponents() {}
 
   notifyToModule(obj) {
-    this.print_debug(JSON.stringify(obj));
+    if (this.debugprint) {
+      this.print_debug(JSON.stringify(obj));
+    }
 
     if (obj['ws']) {
       this.handleWSCommand(obj['ws']);
@@ -15589,7 +15586,7 @@ class WSCommand_Ble extends WSCommand {
 
   notifyFromBinaryError(objToSend, payload) {
     let schema = [
-      { name: 'esp_error_code', type: 'char', length: 1 },
+      { name: 'module_error_code', type: 'char', length: 1 },
       { name: 'error_code', type: 'char', length: 1 },
       { name: 'function_code', type: 'char', length: 1 },
       { name: 'address', type: 'hex', length: 6, endianness: 'little' },
@@ -15648,9 +15645,6 @@ class WSCommand_Ble extends WSCommand {
       errorMessage[results.error_code] +
       ' ' +
       functionMessage[results.function_code];
-
-    delete results.esp_error_code;
-    delete results.function_code;
 
     this.envelopError(objToSend, 'ble', results);
   }
@@ -20536,9 +20530,7 @@ class SNx4HC595 {
     if (typeof this.params.enabled !== 'boolean') {
       this.params.enabled = true;
     }
-    console.log(this.params.enabled);
     if (this.io_oe && this.params.enabled) {
-      console.log('here');
       this.io_oe.output(false);
     }
   }
