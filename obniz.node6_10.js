@@ -1368,7 +1368,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/central/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["error_code","message"],"additionalProperties":false,"properties":{"error_code":{"type":"integer"},"module_error_code":{"type":"integer"},"function_code":{"type":"integer"},"message":{"type":"string"},"address":{"$ref":"/deviceAddress"},"service_uuid":{"$ref":"/uuidOrNull"},"characteristic_uuid":{"$ref":"/uuidOrNull"},"descriptor_uuid":{"$ref":"/uuidOrNull"}}}}}
 
 /***/ }),
 
@@ -9637,7 +9637,7 @@ class WSCommand_Ble extends WSCommand {
   }
 
   notifyFromBinaryError(objToSend, payload) {
-    let schema = [{ name: 'esp_error_code', type: 'char', length: 1 }, { name: 'error_code', type: 'char', length: 1 }, { name: 'function_code', type: 'char', length: 1 }, { name: 'address', type: 'hex', length: 6, endianness: 'little' }, { name: 'service_uuid', type: 'uuid', length: this.uuidLength }, { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength }, { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength }];
+    let schema = [{ name: 'module_error_code', type: 'char', length: 1 }, { name: 'error_code', type: 'char', length: 1 }, { name: 'function_code', type: 'char', length: 1 }, { name: 'address', type: 'hex', length: 6, endianness: 'little' }, { name: 'service_uuid', type: 'uuid', length: this.uuidLength }, { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength }, { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength }];
 
     let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
 
@@ -9686,9 +9686,6 @@ class WSCommand_Ble extends WSCommand {
     };
 
     results.message = errorMessage[results.error_code] + ' ' + functionMessage[results.function_code];
-
-    delete results.esp_error_code;
-    delete results.function_code;
 
     this.envelopError(objToSend, 'ble', results);
   }
@@ -11530,9 +11527,10 @@ var map = {
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
-	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
+	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
+	"./Infrared/IRSensor/index.js": "./parts/Infrared/IRSensor/index.js",
+	"./Infrared/InfraredLED/index.js": "./parts/Infrared/InfraredLED/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
-	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
 	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
@@ -13305,10 +13303,96 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/InfraredSensor/IRSensor/index.js":
-/*!************************************************!*\
-  !*** ./parts/InfraredSensor/IRSensor/index.js ***!
-  \************************************************/
+/***/ "./parts/Infrared/IRModule/index.js":
+/*!******************************************!*\
+  !*** ./parts/Infrared/IRModule/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class IRModule {
+  constructor() {
+    this.keys = ['sens_out', 'vcc', 'led_anode', 'gnd'];
+    this.requiredKeys = ['sens_out', 'led_anode'];
+  }
+
+  static info() {
+    return {
+      name: 'IRModule'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (!obniz.isValidIO(this.params.sens_out)) {
+      throw new Error('sens_out is not valid io');
+    }
+
+    if (!obniz.isValidIO(this.params.led_anode)) {
+      throw new Error('led_anode is not valid io');
+    }
+
+    this.sensor = obniz.wired('IRSensor', {
+      output: this.params.sens_out
+    });
+    this.setGetterSetter('sensor', 'duration');
+    this.setGetterSetter('sensor', 'dataInverted');
+    this.setGetterSetter('sensor', 'cutTail');
+    this.setGetterSetter('sensor', 'output_pullup');
+    this.setGetterSetter('sensor', 'ondetect');
+
+    // LEDと同じプロパティのため別枠で設定
+    // this.setGetterSetter('sensor', 'dataSymbolLength');
+
+    this.led = obniz.wired('InfraredLED', {
+      anode: this.params.led_anode
+    });
+    // IRSensorと同じプロパティのため別枠で設定
+    // this.setGetterSetter('led', 'dataSymbolLength');
+  }
+
+  //link
+  send(arr) {
+    this.led.send(arr);
+  }
+  start(callback) {
+    this.sensor.start(callback);
+  }
+
+  get dataSymbolLength() {
+    return this.sensor.dataSymbolLength;
+  }
+  set dataSymbolLength(x) {
+    this.sensor.dataSymbolLength = x;
+    this.led.dataSymbolLength = x;
+  }
+  setGetterSetter(partsName, varName) {
+    Object.defineProperty(this, varName, {
+      get() {
+        return this[partsName][varName];
+      },
+      set(x) {
+        this[partsName][varName] = x;
+      }
+    });
+  }
+}
+
+if (true) {
+  module.exports = IRModule;
+}
+
+/***/ }),
+
+/***/ "./parts/Infrared/IRSensor/index.js":
+/*!******************************************!*\
+  !*** ./parts/Infrared/IRSensor/index.js ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13383,6 +13467,61 @@ class IRSensor {
 
 if (true) {
   module.exports = IRSensor;
+}
+
+/***/ }),
+
+/***/ "./parts/Infrared/InfraredLED/index.js":
+/*!*********************************************!*\
+  !*** ./parts/Infrared/InfraredLED/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class InfraredLED {
+  constructor() {
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  static info() {
+    return {
+      name: 'InfraredLED'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error('anode is not valid io');
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error('cathode is not valid io');
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start({ io: this.params.anode });
+    this.pwm.freq(38000);
+  }
+
+  send(arr) {
+    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
+      arr.push(0);
+    }
+    this.pwm.modulate('am', this.dataSymbolLength, arr);
+  }
+}
+
+if (true) {
+  module.exports = InfraredLED;
 }
 
 /***/ }),
@@ -13524,61 +13663,6 @@ class FullColorLED {
 
 if (true) {
   module.exports = FullColorLED;
-}
-
-/***/ }),
-
-/***/ "./parts/Light/InfraredLED/index.js":
-/*!******************************************!*\
-  !*** ./parts/Light/InfraredLED/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-class InfraredLED {
-  constructor() {
-    this.keys = ['anode', 'cathode'];
-    this.requiredKeys = ['anode'];
-
-    this.dataSymbolLength = 0.07;
-  }
-
-  static info() {
-    return {
-      name: 'InfraredLED'
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    if (!this.obniz.isValidIO(this.params.anode)) {
-      throw new Error('anode is not valid io');
-    }
-    if (this.params.cathode) {
-      if (!this.obniz.isValidIO(this.params.cathode)) {
-        throw new Error('cathode is not valid io');
-      }
-      this.io_cathode = obniz.getIO(this.params.cathode);
-      this.io_cathode.output(false);
-    }
-    this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({ io: this.params.anode });
-    this.pwm.freq(38000);
-  }
-
-  send(arr) {
-    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
-      arr.push(0);
-    }
-    this.pwm.modulate('am', this.dataSymbolLength, arr);
-  }
-}
-
-if (true) {
-  module.exports = InfraredLED;
 }
 
 /***/ }),
