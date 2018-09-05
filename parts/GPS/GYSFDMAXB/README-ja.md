@@ -3,7 +3,7 @@
 
 GPSモジュール[(GYSFDMAXB(太陽誘電))](http://akizukidenshi.com/catalog/g/gK-09991/)から情報を取得するライブラリです。
 
-![](http://akizukidenshi.com/img/goods/L/K-09991.jpg) 
+![](./image.jpg) 
 
 
 
@@ -13,7 +13,7 @@ GPSモジュール[(GYSFDMAXB(太陽誘電))](http://akizukidenshi.com/catalog/g
 vcc(5v), gnd, txd, rxd, Oppsをobnizに接続し、接続したioをプログラムで以下のように記述します。
 
 ```javascript
-//Javascript Example
+// Javascript Example
 let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
 let sentence = gps.readSentence();
 ```
@@ -28,7 +28,7 @@ let sentence = gps.readSentence();
 1PPSピンの信号に連動してコールバック関数を呼び出します。
 
 ```javascript
-//Javascript Example
+// Javascript Example
 let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
 gps.start1pps(function() {
   console.log("1pps received.");
@@ -43,7 +43,7 @@ NMEAフォーマットのデータを直接使いたい場合にこのAPIを使�
 
 
 ```javascript
-//Javascript Example
+// Javascript Example
 let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
 let sentence = gps.readSentence();
 ```
@@ -64,7 +64,7 @@ let sentence = gps.readSentence();
 - editedData.timestamp : GPZDAセンテンスの日付時刻情報（Date型）
 
 ```javascript
-//Javascript Example
+// Javascript Example
 let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
 
 function mainLoop() {
@@ -108,7 +108,7 @@ NMEAの緯度経度を「秒(S)」の数値に変換（0.999999999）
 
 
 ```javascript
-//Javascript Example
+// Javascript Example
 
   let d = gps.getEditedData();
   if (d.enable) {
@@ -130,4 +130,8 @@ NMEAの緯度経度を「秒(S)」の数値に変換（0.999999999）
 
 [参考サイト](https://www.petitmonte.com/robot/howto_gysfdmaxb.html)
 
+---
 
+Merged Pull Request
+
+[https://github.com/obniz/obniz/pull/127](https://github.com/obniz/obniz/pull/127)
