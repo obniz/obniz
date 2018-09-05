@@ -1525,6 +1525,8 @@ describe('ble.log', function() {
         ble: {
           error: {
             error_code: 8,
+            module_error_code: 0,
+            function_code: 22,
             address: '000000000000',
             service_uuid: 'fff0',
             characteristic_uuid: null,

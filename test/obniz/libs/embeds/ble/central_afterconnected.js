@@ -775,6 +775,8 @@ describe('ble', function() {
         ble: {
           error: {
             error_code: 1,
+            module_error_code: 1,
+            function_code: 1,
             message: 'ERROR MESSAGE',
             address: 'e5f678800700', //hex string or null
             service_uuid: 'ff00', //hex string or null
