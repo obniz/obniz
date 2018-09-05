@@ -15,10 +15,6 @@ describe('8-ble', function() {
         resolve();
       });
     });
-    obnizA.debugprint = true;
-    obnizA.debugprintBinary = true;
-    obnizB.debugprint = true;
-    obnizB.debugprintBinary = true;
     let service = new obnizA.ble.service({ uuid: 'FFF0' });
     let characteristic = new obnizA.ble.characteristic({
       uuid: 'FFF1',
