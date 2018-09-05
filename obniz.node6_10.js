@@ -12515,7 +12515,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 class HMC5883L {
   constructor() {
-    this.keys = ['vcc', 'gnd', 'sda', 'scl'];
+    this.keys = ['gnd', 'sda', 'scl', 'i2c'];
 
     this.address = {};
     this.address.device = 0x1e;
@@ -12531,7 +12531,7 @@ class HMC5883L {
 
   wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
+    obniz.setVccGnd(null, this.params.gnd, '3v');
 
     this.params.clock = 100000;
     this.params.pull = '3v';
@@ -12551,7 +12551,6 @@ class HMC5883L {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-
       _this.i2c.write(_this.address.device, _this.address.xMSB);
       let readed = yield _this.i2c.readWait(_this.address.device, 2 * 3);
 

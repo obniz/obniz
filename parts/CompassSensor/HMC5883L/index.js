@@ -1,6 +1,6 @@
 class HMC5883L {
   constructor() {
-    this.keys = ['vcc', 'gnd', 'sda', 'scl'];
+    this.keys = ['gnd', 'sda', 'scl', 'i2c'];
 
     this.address = {};
     this.address.device = 0x1e;
@@ -16,7 +16,7 @@ class HMC5883L {
 
   wired(obniz) {
     this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, '3v');
+    obniz.setVccGnd(null, this.params.gnd, '3v');
 
     this.params.clock = 100000;
     this.params.pull = '3v';
