@@ -13,6 +13,9 @@ var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0,
 seg.print(7);
 ```
 
+![](./wired.png)
+
+
 ## print(number)
 数字を表示します
 
