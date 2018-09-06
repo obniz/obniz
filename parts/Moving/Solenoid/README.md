@@ -15,6 +15,8 @@ It's resistance should be more than 5 Ohm.
 Connect two wires to an obniz.
 Most solenoids has no polarity.
 
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 var solenoid = obniz.wired('Solenoid', {gnd:0, signal:1});
