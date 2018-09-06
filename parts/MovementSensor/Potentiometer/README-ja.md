@@ -13,6 +13,9 @@
 
 ![](./c_pm.jpg)
 
+
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});

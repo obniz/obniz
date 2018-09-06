@@ -51,6 +51,10 @@ obnizから電源を供給する場合は過電流に気をつける必要があ
 
 ![](./wire.jpg)
 
+
+![](./wired.png)
+**製品によってピンの配置が異なる場合がありますのでご注意ください**
+
 ```Javascript
 obniz.io6.output(true);
 obniz.io9.output(false);

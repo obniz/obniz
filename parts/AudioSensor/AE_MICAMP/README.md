@@ -4,6 +4,9 @@ It detect sounds as voltage changes.
 
 ![](./ae_micap.jpg)
 
+
+![](./wired.png)
+
 ## wired(obniz, {vcc, out, gnd})
 
 ```javascript

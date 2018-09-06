@@ -5,9 +5,12 @@ It detect moisture level in soil.
 ## wired(obniz, { vcc, output, gnd} )
 connect vcc,output,gnd to an obniz.
 
+![](./wired.png)
+
+
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
+var sensor = obniz.wired("SEN0114", {vcc:0,  gnd:1, output:2});
 sensor.onchange = function(humidity){
   console.log(humidity)
 };
@@ -24,7 +27,7 @@ Manufacture data says moisture level increse with moisture like
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
+var sensor = obniz.wired("SEN0114", {vcc:0,  gnd:1, output:2});
 sensor.onchange = function(humidity){
   console.log(humidity)
 };
@@ -34,7 +37,7 @@ Measure and get current value once.
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("SEN0114",  {vcc:0, output:1, gnd:2});
+var sensor = obniz.wired("SEN0114",  {vcc:0,  gnd:1, output:2});
 var humid = await sensor.getHumidityWait();
 console.log('Humidity Level:' + humid);
 ```

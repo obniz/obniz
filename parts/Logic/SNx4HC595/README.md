@@ -27,6 +27,11 @@ srclr | `number(obniz io)` | no | &nbsp;  | srclr clear shift resistor values. Y
 io_num | `number` | no | 8  | io_num is number of io. You can set under 8. If you specify over 8 like 16, then obniz will treat chained chip.
 enabled | `boolean` | no | true  | If oe was specified, you can set initial enable/disable with this parameter.
 
+
+![](./wired.png)
+
+**Please note that the arrangement depends on the product**
+
 ```Javascript
 // Javascript Example
 var ioext = obniz.wired('SNx4HC595', {gnd:0, vcc:1, ser:2, rclk:3, srclk:4});

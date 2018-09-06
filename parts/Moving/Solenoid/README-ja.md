@@ -15,6 +15,9 @@ obnizに直接繋げられるのは小さなものだけです。
 ソレノイドからでている2本の線をobnizにつなぎます。
 通常極性はありません。
 
+
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 var solenoid = obniz.wired('Solenoid', {gnd:0, signal:1});
