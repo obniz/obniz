@@ -17475,7 +17475,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.9.4","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.2","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.1.3","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.0","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.10.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17489,6 +17489,7 @@ var map = {
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
+	"./CompassSensor/HMC5883L/index.js": "./parts/CompassSensor/HMC5883L/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -18943,6 +18944,68 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/CompassSensor/HMC5883L/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class HMC5883L {
+  constructor() {
+    this.keys = ['gnd', 'sda', 'scl', 'i2c'];
+
+    this.address = {};
+    this.address.device = 0x1e;
+    this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
+    this.address.xMSB = [0x03];
+  }
+
+  static info() {
+    return {
+      name: 'HMC5883L',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(null, this.params.gnd, '3v');
+
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    this.obniz.wait(500);
+  }
+
+  init() {
+    this.i2c.write(this.address.device, this.address.reset);
+    this.obniz.wait(500);
+  }
+
+  async get() {
+    this.i2c.write(this.address.device, this.address.xMSB);
+    let readed = await this.i2c.readWait(this.address.device, 2 * 3);
+
+    let obj = {};
+    let keys = ['x', 'y', 'z'];
+    for (let i = 0; i < 3; i++) {
+      let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
+      if (val & 0x8000) {
+        val = val - 65536;
+      }
+      obj[keys[i]] = val;
+    }
+
+    return obj;
+  }
+}
+
+if (true) {
+  module.exports = HMC5883L;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Display/7SegmentLED/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19611,7 +19674,7 @@ class GYSFDMAXB {
 
     this.ioKeys = this.keys;
     this.displayName = 'gps';
-    this.displayIoNames = { txd:'txd', rxd:'rxd', Opps:'1pps' };
+    this.displayIoNames = { txd: 'txd', rxd: 'rxd', Opps: '1pps' };
   }
 
   static info() {
@@ -19630,16 +19693,21 @@ class GYSFDMAXB {
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.uart = obniz.getFreeUart();
-    this.uart.start({tx: this.params.txd, rx: this.params.rxd, baud:9600, drive:"3v"});
+    this.uart.start({
+      tx: this.params.txd,
+      rx: this.params.rxd,
+      baud: 9600,
+      drive: '3v',
+    });
 
     this.editedData = {};
     this.editedData.enable = false;
     this.editedData.GPGSV = new Array(4);
-    
+
     this.on1pps = null;
-    this.last1pps = 0; 
+    this.last1pps = 0;
   }
-  
+
   start1pps(callback) {
     this.on1pps = callback;
     if (callback) {
@@ -19649,7 +19717,9 @@ class GYSFDMAXB {
         let vol = Math.round(voltage);
         if (vol != this.self.last1pps) {
           this.self.last1pps = vol;
-          if ((vol == 0) && this.self.on1pps) { this.self.on1pps(); }
+          if (vol == 0 && this.self.on1pps) {
+            this.self.on1pps();
+          }
         }
       });
     } else {
@@ -19660,61 +19730,73 @@ class GYSFDMAXB {
   readSentence() {
     let results = [];
     if (this.uart.isDataExists()) {
-      let pos = this.uart.received.indexOf(0x0A);
+      let pos = this.uart.received.indexOf(0x0a);
       if (pos >= 0) {
-        results = this.uart.received.slice(0, pos-1);
-        this.uart.received.splice(0, pos+1);
+        results = this.uart.received.slice(0, pos - 1);
+        this.uart.received.splice(0, pos + 1);
         return this.uart.tryConvertString(results);
       }
     }
-    return "";
+    return '';
   }
 
   getEditedData() {
-    var sentence = this.readSentence();
+    let n, utc, format;
+    let sentence = this.readSentence();
     this.editedData.enable = false;
     while (sentence.length > 0) {
-      let part = sentence.split(",");
-      if (sentence.slice(-4, -3) != ",") {
-        let st = part[part.length-1].slice(0, -3);
-        part.push(part[part.length-1].slice(-3));
-        part[part.length-2] = st;
+      let part = sentence.split(',');
+      if (sentence.slice(-4, -3) != ',') {
+        let st = part[part.length - 1].slice(0, -3);
+        part.push(part[part.length - 1].slice(-3));
+        part[part.length - 2] = st;
       }
-      this.editedData.sentence = part.join(",");
+      this.editedData.sentence = part.join(',');
       switch (part[0]) {
-      case "$GPGGA":
-        this.editedData.GPGGA = part;
-        break;
-      case "$GPGLL":
-        this.editedData.GPGLL = part;
-        break;
-      case "$GPGSA":
-        this.editedData.GPGSA = part;
-        break;
-      case "$GPGSV":
-        let n = Number(part[2]);
-        if (n > this.editedData.GPGSV.length) {
-          while (n > this.editedData.GPGSV.length) {
-            this.editedData.GPGSV.push([]);
+        case '$GPGGA':
+          this.editedData.GPGGA = part;
+          break;
+        case '$GPGLL':
+          this.editedData.GPGLL = part;
+          break;
+        case '$GPGSA':
+          this.editedData.GPGSA = part;
+          break;
+        case '$GPGSV':
+          n = Number(part[2]);
+          if (n > this.editedData.GPGSV.length) {
+            while (n > this.editedData.GPGSV.length) {
+              this.editedData.GPGSV.push([]);
+            }
           }
-        }
-        this.editedData.GPGSV[n-1] = part;
-        break;
-      case "$GPRMC":
-        this.editedData.GPRMC = part;
-        break;
-      case "$GPVTG":
-        this.editedData.GPVTG = part;
-        break;
-      case "$GPZDA":
-        this.editedData.GPZDA = part;
-        let utc = part[4] + "/" + part[3] + "/" + part[2] + " "
-          + part[1].substring(0, 2) + ":" + part[1].substring(2, 4) + ":" + part[1].substring(4, 6) + " +00:00";
-        this.editedData.timestamp = new Date(utc);
-        break;
-      default:
-        let format = part[0].substr(1);
-        this.editedData[format] = part;
+          this.editedData.GPGSV[n - 1] = part;
+          break;
+        case '$GPRMC':
+          this.editedData.GPRMC = part;
+          break;
+        case '$GPVTG':
+          this.editedData.GPVTG = part;
+          break;
+        case '$GPZDA':
+          this.editedData.GPZDA = part;
+          utc =
+            part[4] +
+            '/' +
+            part[3] +
+            '/' +
+            part[2] +
+            ' ' +
+            part[1].substring(0, 2) +
+            ':' +
+            part[1].substring(2, 4) +
+            ':' +
+            part[1].substring(4, 6) +
+            ' +00:00';
+          this.editedData.timestamp = new Date(utc);
+          break;
+        default:
+          format = part[0].substr(1);
+          this.editedData[format] = part;
       }
 
       this.editedData.enable = true;
@@ -19727,25 +19809,25 @@ class GYSFDMAXB {
   static nmea2dms(v) {
     let val = Number(v);
     let d = Math.floor(val / 100);
-    let m = Math.floor(((val / 100.0) - d) * 100.0);
-    let s = ((((val / 100.0) - d) * 100.0) - m) * 60;
-    return d + "°" + m + "'" + s.toFixed(1) + '"';
+    let m = Math.floor((val / 100.0 - d) * 100.0);
+    let s = ((val / 100.0 - d) * 100.0 - m) * 60;
+    return d + '°' + m + "'" + s.toFixed(1) + '"';
   }
 
   // NMEAの緯度経度を「度分(DM)」の文字列に変換
   static nmea2dm(v) {
     let val = Number(v);
     let d = Math.floor(val / 100.0);
-    let m = ((val / 100.0) - d) * 100.0;
-    return d + "°" + m.toFixed(4) + "'";
+    let m = (val / 100.0 - d) * 100.0;
+    return d + '°' + m.toFixed(4) + "'";
   }
 
   // NMEAの緯度経度を「度(DD)」の文字列に変換
   static nmea2dd(v) {
     let val = Number(v);
     let d = Math.floor(val / 100.0);
-    let m = Math.floor((((val / 100.0) - d) * 100.0) / 60);
-    let s = (((((val / 100.0) - d) * 100.0) - m) * 60) / (60 * 60);
+    let m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+    let s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
     return (d + m + s).toFixed(6);
   }
 
@@ -19753,11 +19835,10 @@ class GYSFDMAXB {
   static nmea2s(v) {
     let val = Number(v);
     let d = Math.floor(val / 100.0);
-    let m = Math.floor((((val / 100.0) - d) * 100.0) / 60);
-    let s = (((((val / 100.0) - d) * 100.0) - m) * 60) / (60 * 60);
+    let m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+    let s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
     return (d + m + s) / (1.0 / 60.0 / 60.0);
   }
-
 }
 
 if (true) {

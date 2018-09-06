@@ -261,6 +261,17 @@
       ]
     },
     {
+      "name": "Magnet",
+      "parts": [
+        {
+          "name": "HMC5883L",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/1746"
+          }
+        }
+      ]
+    },
+    {
       "name": "Audio Sensor",
       "parts": [
         {
