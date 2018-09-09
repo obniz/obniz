@@ -82,10 +82,8 @@ obniz.onconnect = async function () {
 
   var logging = false;
   var showMap = true;
-  Obniz.PartsRegistrate(GYSFDMAXB_2);
-  var gps = obniz.wired("GYSFDMAXB_2", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
-
-  var gpsInfo;
+//Obniz.PartsRegistrate(GYSFDMAXB);
+  var gps = obniz.wired("GYSFDMAXB", { vcc: 7, gnd: 8, txd: 9, rxd: 10, Opps: 11 });
 
   gps.start1pps(function() {
  // console.log("1pps received.");
