@@ -100,7 +100,7 @@ class _7SegmentLED {
         if (this.ios[i]) {
           let val = this.digits[data] & (1 << i) ? true : false;
           if (!this.isCathodeCommon) {
-            val = ~val;
+            val = !val;
           }
           this.ios[i].output(val);
         }
