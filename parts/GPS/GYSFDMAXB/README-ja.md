@@ -195,3 +195,4 @@ Merged Pull Request
 
 [https://github.com/obniz/obniz/pull/127](https://github.com/obniz/obniz/pull/127)
 
+[https://github.com/obniz/obniz/pull/132](https://github.com/obniz/obniz/pull/132)

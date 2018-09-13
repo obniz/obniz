@@ -19,7 +19,6 @@ This module start blinking LED and output pulse at 1PPS while receiving GPS sign
 
 Opps is optional.
 
-
 ## start1pps(callback)
 
 callback will be called every 1pps regarding Opps.
@@ -33,13 +32,66 @@ gps.start1pps(function() {
 ```
 
 
+## getGpsInfo({editedData})
+
+Retriving infomation from received NMEA sentences.
+Same information will be set to gpsInfo property.
+
+`editedData` is optional.
+
+```javascript
+// Javascript Example
+let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gpsInfo = getGpsInfo();
+console.log(gpsInfo);
+
+// 出力結果
+gpsInfo: Object
+  utc: Sat Sep 08 2018 22:42:14 GMT+0900 (JST)
+  status: A [Active]	// Active or Void
+  fixMode: 3 [3D]	// 1:Fix not available, 2:2D, 3:3D
+  gpsQuality: 2 [DGPS fix]	// 0:Invalid, 1:GPS fix, 2:DGPS fix
+  latitude: 35.999999
+  longitude: 139.999999
+  pdop: 1.24	// PDOP: Position Dilution of Precision
+  hdop: 0.97	// HDOP: Horizontal Dilution of Precision
+  vdop: 0.77	// VDOP: Vertical Dilution of Position
+  altitude: 57.4[M]
+  declination: NaN	// Magnetic declination
+  direction: 236.34
+  speed: 0.02[km/h]
+  satelliteInfo: Object
+    inUse: 11
+    inView: 15
+    satellites: Array (15)
+      [0]: {id: 194,	elevation: 87,	azimuth: 261,	snr: 31[dB],	inUse: true, }
+      [1]: {id: 25,	elevation: 63,	azimuth: 179,	snr: 34[dB],	inUse: true, }
+      [2]: {id: 12,	elevation: 59,	azimuth: 67,	snr: 20[dB],	inUse: true, }
+      [3]: {id: 193,	elevation: 59,	azimuth: 210,	snr: 37[dB],	inUse: true, }
+      [4]: {id: 10,	elevation: 55,	azimuth: 256,	snr: 40[dB],	inUse: true, }
+      [5]: {id: 42,	elevation: 48,	azimuth: 170,	snr: 31[dB],	inUse: false, }
+      [6]: {id: 20,	elevation: 43,	azimuth: 211,	snr: 35[dB],	inUse: true, }
+      [7]: {id: 32,	elevation: 41,	azimuth: 315,	snr: 46[dB],	inUse: true, }
+      [8]: {id: 24,	elevation: 35,	azimuth: 57,	snr: NaN[dB],	inUse: false, }
+      [9]: {id: 15,	elevation: 25,	azimuth: 120,	snr: 23[dB],	inUse: true, }
+      [10]: {id: 14,	elevation: 19,	azimuth: 307,	snr: 30[dB],	inUse: true, }
+      [11]: {id: 195,	elevation: 18,	azimuth: 168,	snr: 28[dB],	inUse: true, }
+      [12]: {id: 31,	elevation: 12,	azimuth: 260,	snr: 24[dB],	inUse: true, }
+      [13]: {id: 19,	elevation: 5,	azimuth: 46,	snr: NaN[dB],	inUse: false, }
+      [14]: {id: 29,	elevation: 1,	azimuth: 160,	snr: NaN[dB],	inUse: false, }
+  sentences: Set {GPGGA, GPGSA, GPGSV, GPRMC, GPVTG, GPZDA, }
+
+```
+
 ## readSentence()
 
 Read and analyze one sentence (one line) from received ([NMEA Format](https://ja.wikipedia.org/wiki/NMEA_0183)).
 Empty string will be returned when no data received.
 
 This method is useful only when NMEA direct use.
-Recommended for almost user is `getEditedData()`.
+
+One sentence will appear in one string.
+**Example:** "$GPGGA,134214.000,3599.9999,N,13999.9999,E,2,11,0.97,57.4,M,39.5,M,,\*5C"
 
 ```javascript
 // Javascript Example
@@ -62,6 +114,10 @@ Same data is set to editedData property.
 - editedData.GPZDA : GPZDA sentence data
 - editedData.xxx : otherxxx sentence data
 - editedData.timestamp : GPZDA sentence data's date(Date object)
+
+**Example:** $GPGGA,134214.000,3599.9999,N,13999.9999,E,2,11,0.97,57.4,M,39.5,M,,\*5C
+<br>
+["$GPGGA","134214.000","3599.9999","N","13999.9999","E","2","11","0.97","57.4","M","39.5","M","","*5C"]
 
 ```javascript
 // Javascript Example
@@ -90,7 +146,7 @@ setTimeout(mainLoop, 10);
 ```
 
 
-## static methods
+## unit conversion methods
 
 Data conversion methods for NMEA format.
 
@@ -115,10 +171,10 @@ Latitude/Longitude of NMEA to S format string (0.999999999)
     if (d.GPGGA) { 
       let p = d.GPGGA;
       if (p[6] != "0") {
-        // Longitude
-        let longitude = GYSFDMAXB.nmea2s(p[2]);
-        // Latitude
-        let latitude = GYSFDMAXB.nmea2s(p[4]);
+        //経度
+        let longitude = gps.nmea2dd(p[2]);
+        //緯度
+        let latitude = gps.nmea2dd(p[4]);
         
         ・・・
         
@@ -135,3 +191,5 @@ Latitude/Longitude of NMEA to S format string (0.999999999)
 Merged Pull Request
 
 [https://github.com/obniz/obniz/pull/127](https://github.com/obniz/obniz/pull/127)
+
+[https://github.com/obniz/obniz/pull/132](https://github.com/obniz/obniz/pull/132)
