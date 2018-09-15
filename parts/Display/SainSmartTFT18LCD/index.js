@@ -559,7 +559,7 @@ class SainSmartTFT18LCD {
         rgb.push(gs);
       }
     }
-    this.setAddrWindow(x1, y1, width - 1, height - 1);
+    this.setAddrWindow(x1, y1, x1 + width - 1, y1 + height - 1);
     this._writeBuffer(rgb);
     this._writeBuffer(); //for flush
     this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
@@ -575,8 +575,7 @@ class SainSmartTFT18LCD {
       rgb.push((v & 0xFF00) >> 8);
       rgb.push(v & 0xFF);
     });
-    this.write(ST7735_COLMOD, [ST7735_18bit]); //18bit/pixel
-    this.setAddrWindow(x, y, width - 1, height - 1);
+    this.setAddrWindow(x, y, x + width - 1, y + height - 1);
     this._writeBuffer(rgb);
     this._writeBuffer(); //for flush
     this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
