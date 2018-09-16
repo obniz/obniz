@@ -512,9 +512,9 @@ class SainSmartTFT18LCD {
     }
   }
   drawString(x, y, str, color, bg, size, wrap) {
-    bg = bg || color;
+//  bg = bg || color;
     size = size || 1;
-    wrap = wrap || true;
+//  wrap = wrap || true;
     for (let n=0; n < str.length; n++) {
       let c = str.charAt(n);
       if (c == '\n') {
