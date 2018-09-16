@@ -482,7 +482,7 @@ class SainSmartTFT18LCD {
     this.writeData([color >> 8, color & 0xFF]);
   }
   drawChar(x, y, ch, color, bg, size) {
-    bg = bg || color;
+//  bg = bg || color;
     size = size || 1;
     if ((x >= this.width)		|| // Clip right
       (y >= this.height)		|| // Clip bottom
