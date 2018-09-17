@@ -24,17 +24,11 @@ get accelerometer values.
 ```javascript
 // Javascript Example
 let sensor = obniz.wired("KXR94_2050", {x: 2, y: 1, z: 0, gnd:3, vcc:11 });
-   
-let values = sensor.getWait();
 
-console.log(values);
-/*
-  { 
-    x : 0.0,
-    y : 0.1,
-    z : 1.0
-  } 
- */
+let values = await sensor.getWait();
 
+console.log(values.x);
+console.log(values.y);
+console.log(values.z);
 
 ```
