@@ -17475,7 +17475,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.10.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.11.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -19516,9 +19516,9 @@ class SainSmartTFT18LCD {
       gnd: 'gnd',
       scl: 'scl',
       sda: 'sda',
-      dc:  'dc',
+      dc: 'dc',
       res: 'res',
-      cs:  'cs',
+      cs: 'cs',
     };
   }
 
@@ -19557,7 +19557,9 @@ class SainSmartTFT18LCD {
 
   print_debug(v) {
     if (this.debugprint) {
-      console.log('SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join(''));
+      console.log(
+        'SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join('')
+      );
     }
   }
   _deadSleep(waitMsec) {
@@ -19612,27 +19614,62 @@ class SainSmartTFT18LCD {
   }
 
   color16(r, g, b) {
-//  1st byte  (r & 0xF8 | g >> 5)
-//  2nd byte  (g & 0xFC << 3 | b >> 3)
-    return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+    //  1st byte  (r & 0xF8 | g >> 5)
+    //  2nd byte  (g & 0xFC << 3 | b >> 3)
+    return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
   }
 
-  _initG() { // initialize for Green Tab
-    this.writeCommand(ST7735_SLPOUT);    //Sleep out & booster on
+  _initG() {
+    // initialize for Green Tab
+    this.writeCommand(ST7735_SLPOUT); //Sleep out & booster on
     this.obniz.wait(120);
-    this.write(ST7735_FRMCTR1, [0x01, 0x2C, 0x2D]);
-    this.write(ST7735_FRMCTR2, [0x01, 0x2C, 0x2D]);
-    this.write(ST7735_FRMCTR3, [0x01, 0x2C, 0x2D, 0x01, 0x2C, 0x2D]);
+    this.write(ST7735_FRMCTR1, [0x01, 0x2c, 0x2d]);
+    this.write(ST7735_FRMCTR2, [0x01, 0x2c, 0x2d]);
+    this.write(ST7735_FRMCTR3, [0x01, 0x2c, 0x2d, 0x01, 0x2c, 0x2d]);
     this.write(ST7735_INVCTR, [0x07]);
-    this.write(ST7735_PWCTR1, [0xA2, 0x02, 0x84]);
-    this.write(ST7735_PWCTR2, [0xC5]);
-    this.write(ST7735_PWCTR3, [0x0A, 0x00]);
-    this.write(ST7735_PWCTR4, [0x8A, 0x2A]);
-    this.write(ST7735_PWCTR5, [0x8A, 0xEE]);
-    this.write(ST7735_VMCTR1, [0x0E]);
-    this.write(ST7735_GMCTRP1, [0x02, 0x1C, 0x07, 0x12, 0x37, 0x32, 0x29, 0x2D, 0x29, 0x25, 0x2B, 0x39, 0x00, 0x01, 0x03, 0x10]);
-    this.write(ST7735_GMCTRN1, [0x03, 0x1D, 0x07, 0x06, 0x2E, 0x2C, 0x29, 0x2D, 0x2E, 0x2E, 0x37, 0x3F, 0x00, 0x00, 0x02, 0x10]);
-    this.write(ST7735_COLMOD, [ST7735_16bit]);   // color format: 16bit/pixel
+    this.write(ST7735_PWCTR1, [0xa2, 0x02, 0x84]);
+    this.write(ST7735_PWCTR2, [0xc5]);
+    this.write(ST7735_PWCTR3, [0x0a, 0x00]);
+    this.write(ST7735_PWCTR4, [0x8a, 0x2a]);
+    this.write(ST7735_PWCTR5, [0x8a, 0xee]);
+    this.write(ST7735_VMCTR1, [0x0e]);
+    this.write(ST7735_GMCTRP1, [
+      0x02,
+      0x1c,
+      0x07,
+      0x12,
+      0x37,
+      0x32,
+      0x29,
+      0x2d,
+      0x29,
+      0x25,
+      0x2b,
+      0x39,
+      0x00,
+      0x01,
+      0x03,
+      0x10,
+    ]);
+    this.write(ST7735_GMCTRN1, [
+      0x03,
+      0x1d,
+      0x07,
+      0x06,
+      0x2e,
+      0x2c,
+      0x29,
+      0x2d,
+      0x2e,
+      0x2e,
+      0x37,
+      0x3f,
+      0x00,
+      0x00,
+      0x02,
+      0x10,
+    ]);
+    this.write(ST7735_COLMOD, [ST7735_16bit]); // color format: 16bit/pixel
   }
 
   init() {
@@ -19649,7 +19686,8 @@ class SainSmartTFT18LCD {
     this.writeCommand(ST7735_DISPOFF);
   }
   setDisplay(on) {
-    if (on == true) this.setDisplayOn(); else this.setDisplayOff();
+    if (on == true) this.setDisplayOn();
+    else this.setDisplayOff();
   }
 
   setInversionOn() {
@@ -19659,79 +19697,83 @@ class SainSmartTFT18LCD {
     this.writeCommand(ST7735_INVOFF);
   }
   setInversion(inversion) {
-    if (inversion == true) this.setInversionOn(); else this.setInversionOff();
+    if (inversion == true) this.setInversionOn();
+    else this.setInversionOff();
   }
 
   setRotation(m) {
-    const MADCTL_MY  = 0x80;
-    const MADCTL_MX  = 0x40;
-    const MADCTL_MV  = 0x20;
-    const MADCTL_ML  = 0x10;
+    const MADCTL_MY = 0x80;
+    const MADCTL_MX = 0x40;
+    const MADCTL_MV = 0x20;
+    // const MADCTL_ML = 0x10;
     const MADCTL_RGB = 0x00; //always RGB, never BGR
-    const MADCTL_MH  = 0x04;
+    // const MADCTL_MH = 0x04;
 
     let data;
     let rotation = m % 4; // can't be higher than 3
     switch (rotation) {
-     case 0:
-      data = [MADCTL_MX | MADCTL_MY | MADCTL_RGB];
-      this.width  = ST7735_TFTWIDTH;
-      this.height = ST7735_TFTHEIGHT;
-      break;
-     case 1:
-      data = [MADCTL_MY | MADCTL_MV | MADCTL_RGB];
-      this.width  = ST7735_TFTHEIGHT;
-      this.height = ST7735_TFTWIDTH;
-      break;
-     case 2:
-      data = [MADCTL_RGB];
-      this.width  = ST7735_TFTWIDTH;
-      this.height = ST7735_TFTHEIGHT;
-      break;
-     case 3:
-      data = [MADCTL_MX | MADCTL_MV | MADCTL_RGB];
-      this.width  = ST7735_TFTHEIGHT;
-      this.height = ST7735_TFTWIDTH;
-      break;
+      case 0:
+        data = [MADCTL_MX | MADCTL_MY | MADCTL_RGB];
+        this.width = ST7735_TFTWIDTH;
+        this.height = ST7735_TFTHEIGHT;
+        break;
+      case 1:
+        data = [MADCTL_MY | MADCTL_MV | MADCTL_RGB];
+        this.width = ST7735_TFTHEIGHT;
+        this.height = ST7735_TFTWIDTH;
+        break;
+      case 2:
+        data = [MADCTL_RGB];
+        this.width = ST7735_TFTWIDTH;
+        this.height = ST7735_TFTHEIGHT;
+        break;
+      case 3:
+        data = [MADCTL_MX | MADCTL_MV | MADCTL_RGB];
+        this.width = ST7735_TFTHEIGHT;
+        this.height = ST7735_TFTWIDTH;
+        break;
     }
     this.write(ST7735_MADCTL, data);
     this.setAddrWindow(0, 0, this.width - 1, this.height - 1);
   }
 
   setAddrWindow(x0, y0, x1, y1) {
-    this.print_debug(`setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`);
+    this.print_debug(
+      `setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`
+    );
 
     if (x0 < 0) x0 = 0;
     if (y0 < 0) y0 = 0;
     if (x1 < 0) x1 = 0;
     if (y1 < 0) y1 = 0;
 
-  // column addr set
+    // column addr set
     this.write(ST7735_CASET, [0x00, x0, 0x00, x1]); // XSTART-XEND
-  // row addr set
-    this.write(ST7735_RASET, [0x00, y0, 0x00, y1]);  // YSTART-YEND
-  // write to RAM
+    // row addr set
+    this.write(ST7735_RASET, [0x00, y0, 0x00, y1]); // YSTART-YEND
+    // write to RAM
     this.writeCommand(ST7735_RAMWR);
     this.writeBuffer = [];
   }
 
-//__swap(a, b) { let t = a; a = b; b = t; }
+  //__swap(a, b) { let t = a; a = b; b = t; }
 
   fillScreen(color) {
     this.fillRect(0, 0, this.width, this.height, color);
   }
   fillRect(x, y, w, h, color) {
-    if ((x >= this.width) || (y >= this.height)) return;
-    if ((x + w - 1) >= this.width)  w = this.width  - x;
-    if ((y + h - 1) >= this.height) h = this.height - y;
+    if (x >= this.width || y >= this.height) return;
+    if (x + w - 1 >= this.width) w = this.width - x;
+    if (y + h - 1 >= this.height) h = this.height - y;
 
     this.setAddrWindow(x, y, x + w - 1, y + h - 1);
 
-    let hi = color >> 8, lo = color & 0xFF;
-    var data = [];
+    let hi = color >> 8,
+      lo = color & 0xff;
+    let data = [];
 
-    for(y = h; y > 0; y--) {
-      for(x = w; x > 0; x--) {
+    for (y = h; y > 0; y--) {
+      for (x = w; x > 0; x--) {
         data.push(hi);
         data.push(lo);
       }
@@ -19746,11 +19788,11 @@ class SainSmartTFT18LCD {
     this.drawVLine(x + w - 1, y, h, color);
   }
   drawCircle(x0, y0, r, color) {
-    var f = 1 - r;
-    var ddF_x = 1;
-    var ddF_y = -2 * r;
-    var x = 0;
-    var y = r;
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
 
     this.drawPixel(x0, y0 + r, color);
     this.drawPixel(x0, y0 - r, color);
@@ -19778,21 +19820,21 @@ class SainSmartTFT18LCD {
     }
   }
   _drawCircleHelper(x0, y0, r, cornername, color) {
-    var f = 1 - r;
-    var ddF_x = 1;
-    var ddF_y = -2 * r;
-    var x = 0;
-    var y = r;
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
 
     while (x < y) {
       if (f >= 0) {
         y--;
         ddF_y += 2;
-        f     += ddF_y;
+        f += ddF_y;
       }
       x++;
       ddF_x += 2;
-      f     += ddF_x;
+      f += ddF_x;
       if (cornername & 0x4) {
         this.drawPixel(x0 + x, y0 + y, color);
         this.drawPixel(x0 + y, y0 + x, color);
@@ -19816,21 +19858,21 @@ class SainSmartTFT18LCD {
     this._fillCircleHelper(x0, y0, r, 3, 0, color);
   }
   _fillCircleHelper(x0, y0, r, cornername, delta, color) {
-    var f = 1 - r;
-    var ddF_x = 1;
-    var ddF_y = -2 * r;
-    var x = 0;
-    var y = r;
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
 
     while (x < y) {
       if (f >= 0) {
         y--;
         ddF_y += 2;
-        f     += ddF_y;
+        f += ddF_y;
       }
       x++;
       ddF_x += 2;
-      f     += ddF_x;
+      f += ddF_x;
 
       if (cornername & 0x1) {
         this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
@@ -19843,95 +19885,97 @@ class SainSmartTFT18LCD {
     }
   }
   drawRoundRect(x, y, w, h, r, color) {
-    this.drawHLine(x + r    , y        , w - 2 * r, color); // Top
-    this.drawHLine(x + r    , y + h - 1, w - 2 * r, color); // Bottom
-    this.drawVLine(x        , y + r    , h - 2 * r, color); // Left
-    this.drawVLine(x + w - 1, y + r    , h - 2 * r, color); // Right
+    this.drawHLine(x + r, y, w - 2 * r, color); // Top
+    this.drawHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
+    this.drawVLine(x, y + r, h - 2 * r, color); // Left
+    this.drawVLine(x + w - 1, y + r, h - 2 * r, color); // Right
 
-    this._drawCircleHelper(x + r        , y + r        , r, 1, color);
-    this._drawCircleHelper(x + w - r - 1, y + r        , r, 2, color);
+    this._drawCircleHelper(x + r, y + r, r, 1, color);
+    this._drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
     this._drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
-    this._drawCircleHelper(x + r        , y + h - r - 1, r, 8, color);
+    this._drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
   }
   fillRoundRect(x, y, w, h, r, color) {
     this.fillRect(x + r, y, w - 2 * r, h, color);
 
     this._fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
-    this._fillCircleHelper(x + r        , y + r, r, 2, h - 2 * r - 1, color);
+    this._fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
   }
   drawTriangle(x0, y0, x1, y1, x2, y2, color) {
     this.drawLine(x0, y0, x1, y1, color);
     this.drawLine(x1, y1, x2, y2, color);
     this.drawLine(x2, y2, x0, y0, color);
   }
-  fillTriangle (x0, y0, x1, y1, x2, y2, color) {
-    var a, b, y, last;
+  fillTriangle(x0, y0, x1, y1, x2, y2, color) {
+    let a, b, y, last;
 
     // Sort coordinates by Y order (y2 >= y1 >= y0)
     if (y0 > y1) {
-      y1 = [y0, y0 = y1][0]; //this._swap(y0, y1);
-      x1 = [x0, x0 = x1][0]; //this._swap(x0, x1);
+      y1 = [y0, (y0 = y1)][0]; //this._swap(y0, y1);
+      x1 = [x0, (x0 = x1)][0]; //this._swap(x0, x1);
     }
     if (y1 > y2) {
-      y2 = [y1, y1 = y2][0]; //this._swap(y2, y1);
-      x2 = [x1, x1 = x2][0]; //this._swap(x2, x1);
+      y2 = [y1, (y1 = y2)][0]; //this._swap(y2, y1);
+      x2 = [x1, (x1 = x2)][0]; //this._swap(x2, x1);
     }
     if (y0 > y1) {
-      y1 = [y0, y0 = y1][0]; //this._swap(y0, y1);
-      x1 = [x0, x0 = x1][0]; //this._swap(x0, x1);
+      y1 = [y0, (y0 = y1)][0]; //this._swap(y0, y1);
+      x1 = [x0, (x0 = x1)][0]; //this._swap(x0, x1);
     }
 
-    if (y0 == y2) { // Handle awkward all-on-same-line case as its own thing
+    if (y0 == y2) {
+      // Handle awkward all-on-same-line case as its own thing
       a = b = x0;
-      if (x1 < a)      a = x1;
+      if (x1 < a) a = x1;
       else if (x1 > b) b = x1;
-      if (x2 < a)      a = x2;
+      if (x2 < a) a = x2;
       else if (x2 > b) b = x2;
       this.drawHLine(a, y0, b - a + 1, color);
       return;
     }
 
-    var
-      dx01 = x1 - x0,
+    let dx01 = x1 - x0,
       dy01 = y1 - y0,
       dx02 = x2 - x0,
       dy02 = y2 - y0,
       dx12 = x2 - x1,
       dy12 = y2 - y1,
-      sa   = 0,
-      sb   = 0;
+      sa = 0,
+      sb = 0;
 
-    if (y1 == y2) last = y1;     // include y1 scanline
-    else          last = y1 - 1; // skip it
+    if (y1 == y2) last = y1;
+    // include y1 scanline
+    else last = y1 - 1; // skip it
 
     for (y = y0; y <= last; y++) {
-      a   = x0 + Math.floor(sa / dy01);
-      b   = x0 + Math.floor(sb / dy02);
+      a = x0 + Math.floor(sa / dy01);
+      b = x0 + Math.floor(sb / dy02);
       sa += dx01;
       sb += dx02;
-      if (a > b) b = [a, a = b][0]; //this._swap(a,b);
+      if (a > b) b = [a, (a = b)][0]; //this._swap(a,b);
       this.drawHLine(a, y, b - a + 1, color);
     }
 
     sa = dx12 * (y - y1);
     sb = dx02 * (y - y0);
     for (; y <= y2; y++) {
-      a   = x1 + Math.floor(sa / dy12);
-      b   = x0 + Math.floor(sb / dy02);
+      a = x1 + Math.floor(sa / dy12);
+      b = x0 + Math.floor(sb / dy02);
       sa += dx12;
       sb += dx02;
-      if (a > b) b = [a, a = b][0]; //this._swap(a,b);
+      if (a > b) b = [a, (a = b)][0]; //this._swap(a,b);
       this.drawHLine(a, y, b - a + 1, color);
     }
   }
   drawVLine(x, y, h, color) {
-    if ((x >= this.width) || (y >= this.height)) return;
-    if ((y + h - 1) >= this.height) h = this.height - y;
+    if (x >= this.width || y >= this.height) return;
+    if (y + h - 1 >= this.height) h = this.height - y;
 
     this.setAddrWindow(x, y, x, y + h - 1);
 
-    let hi = color >> 8, lo = color & 0xFF;
-    var data = [];
+    let hi = color >> 8,
+      lo = color & 0xff;
+    let data = [];
     while (h--) {
       data.push(hi);
       data.push(lo);
@@ -19939,13 +19983,14 @@ class SainSmartTFT18LCD {
     this.writeData(data);
   }
   drawHLine(x, y, w, color) {
-    if ((x >= this.width) || (y >= this.height)) return;
-    if ((x + w - 1) >= this.width)  w = this.width - x;
+    if (x >= this.width || y >= this.height) return;
+    if (x + w - 1 >= this.width) w = this.width - x;
 
     this.setAddrWindow(x, y, x + w - 1, y);
 
-    let hi = color >> 8, lo = color & 0xFF;
-    var data = [];
+    let hi = color >> 8,
+      lo = color & 0xff;
+    let data = [];
     while (w--) {
       data.push(hi);
       data.push(lo);
@@ -19955,19 +20000,19 @@ class SainSmartTFT18LCD {
   drawLine(x0, y0, x1, y1, color) {
     let step = Math.abs(y1 - y0) > Math.abs(x1 - x0);
     if (step) {
-      y0 = [x0, x0 = y0][0]; //this._swap(x0, y0);
-      y1 = [x1, x1 = y1][0]; //this._swap(x1, y1);
+      y0 = [x0, (x0 = y0)][0]; //this._swap(x0, y0);
+      y1 = [x1, (x1 = y1)][0]; //this._swap(x1, y1);
     }
     if (x0 > x1) {
-      x1 = [x0, x0 = x1][0]; //this._swap(x0, x1);
-      y1 = [y0, y0 = y1][0]; //this._swap(y0, y1);
+      x1 = [x0, (x0 = x1)][0]; //this._swap(x0, x1);
+      y1 = [y0, (y0 = y1)][0]; //this._swap(y0, y1);
     }
 
     let dx = x1 - x0;
     let dy = Math.abs(y1 - y0);
 
     let err = dx / 2;
-    let ystep = (y0 < y1) ? 1 : -1;
+    let ystep = y0 < y1 ? 1 : -1;
 
     for (; x0 <= x1; x0++) {
       if (step) {
@@ -19983,46 +20028,53 @@ class SainSmartTFT18LCD {
     }
   }
   drawPixel(x, y, color) {
-    if ((x < 0) || (x >= this.width) || (y < 0) || (y >= this.height)) return;
+    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
 
     this.setAddrWindow(x, y, x + 1, y + 1);
-    this.writeData([color >> 8, color & 0xFF]);
+    this.writeData([color >> 8, color & 0xff]);
   }
   drawChar(x, y, ch, color, bg, size) {
-//  bg = bg || color;
+    //  bg = bg || color;
     size = size || 1;
-    if ((x >= this.width)		|| // Clip right
-      (y >= this.height)		|| // Clip bottom
-     ((x + 6 * size - 1) < 0)	|| // Clip left
-     ((y + 8 * size - 1) < 0))     // Clip top
-    return;
+    if (
+      x >= this.width || // Clip right
+      y >= this.height || // Clip bottom
+      x + 6 * size - 1 < 0 || // Clip left
+      y + 8 * size - 1 < 0
+    )
+      // Clip top
+      return;
 
     let c = ch.charCodeAt(0);
     for (let i = 0; i < 6; i++) {
-      var line = (i == 5) ? 0 : font[(c * 5) + i];
+      let line = i == 5 ? 0 : font[c * 5 + i];
       for (let j = 0; j < 8; j++) {
         if (line & 0x1) {
-          if (size == 1) // default size
+          if (size == 1)
+            // default size
             this.drawPixel(x + i, y + j, color);
-          else {  // big size
-            this.fillRect(x + (i * size), y + ( j * size), size, size, color);
+          else {
+            // big size
+            this.fillRect(x + i * size, y + j * size, size, size, color);
           }
         } else if (bg != color) {
-          if (size == 1) // default size
+          if (size == 1)
+            // default size
             this.drawPixel(x + i, y + j, bg);
-          else {  // big size
+          else {
+            // big size
             this.fillRect(x + i * size, y + j * size, size, size, bg);
-          } 	
+          }
         }
         line >>= 1;
       }
     }
   }
   drawString(x, y, str, color, bg, size, wrap) {
-//  bg = bg || color;
+    //  bg = bg || color;
     size = size || 1;
-//  wrap = wrap || true;
-    for (let n=0; n < str.length; n++) {
+    //  wrap = wrap || true;
+    for (let n = 0; n < str.length; n++) {
       let c = str.charAt(n);
       if (c == '\n') {
         y += size * 8;
@@ -20031,9 +20083,9 @@ class SainSmartTFT18LCD {
         // skip em
       } else {
         this.drawChar(x, y, c, color, bg, size);
-        x += size*6;
-        if (wrap && (x > (this.width - size * 6))) {
-          y += (size * 8);
+        x += size * 6;
+        if (wrap && x > this.width - size * 6) {
+          y += size * 8;
           x = 0;
         }
       }
@@ -20050,7 +20102,7 @@ class SainSmartTFT18LCD {
     gray = gray || false;
     this.write(ST7735_COLMOD, [ST7735_18bit]); //18bit/pixel
     let imageData = context.getImageData(x0, y0, width, height).data;
-    var rgb = [];
+    let rgb = [];
     for (let n = 0; n < imageData.length; n += 4) {
       let r = imageData[n + 0];
       let g = imageData[n + 1];
@@ -20060,7 +20112,7 @@ class SainSmartTFT18LCD {
         rgb.push(g);
         rgb.push(b);
       } else {
-        let gs = Math.round(0.299 * r + 0.587 * g + 0.114 * b)
+        let gs = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
         rgb.push(gs);
         rgb.push(gs);
         rgb.push(gs);
@@ -20074,14 +20126,14 @@ class SainSmartTFT18LCD {
   }
   drawContext(context, gray) {
     gray = gray || false;
-    this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray)
+    this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
   }
   rawBound(x, y, width, height, pixels) {
     let rgb = [];
-    pixels.forEach(function (v) {
-      rgb.push((v & 0xFF0000) >> 16);
-      rgb.push((v & 0xFF00) >> 8);
-      rgb.push(v & 0xFF);
+    pixels.forEach(function(v) {
+      rgb.push((v & 0xff0000) >> 16);
+      rgb.push((v & 0xff00) >> 8);
+      rgb.push(v & 0xff);
     });
     this.write(ST7735_COLMOD, [ST7735_18bit]); //18bit/pixel
     this.setAddrWindow(x, y, x + width - 1, y + height - 1);
@@ -20095,151 +20147,149 @@ class SainSmartTFT18LCD {
 
   _setPresetColor() {
     this.color = {
-      AliceBlue            : 0xf7df,
-      AntiqueWhite         : 0xff5a,
-      Aqua                 : 0x07ff,
-      Aquamarine           : 0x7ffa,
-      Azure                : 0xf7ff,
-      Beige                : 0xf7bb,
-      Bisque               : 0xff38,
-      Black                : 0x0000,
-      BlanchedAlmond       : 0xff59,
-      Blue                 : 0x001f,
-      BlueViolet           : 0x895c,
-      Brown                : 0xa145,
-      BurlyWood            : 0xddd0,
-      CadetBlue            : 0x5cf4,
-      Chartreuse           : 0x7fe0,
-      Chocolate            : 0xd343,
-      Coral                : 0xfbea,
-      CornflowerBlue       : 0x64bd,
-      Cornsilk             : 0xffdb,
-      Crimson              : 0xd8a7,
-      Cyan                 : 0x07ff,
-      DarkBlue             : 0x0011,
-      DarkCyan             : 0x0451,
-      DarkGoldenRod        : 0xbc21,
-      DarkGray             : 0xad55,
-      DarkGreen            : 0x0320,
-      DarkKhaki            : 0xbdad,
-      DarkMagenta          : 0x8811,
-      DarkOliveGreen       : 0x5345,
-      DarkOrange           : 0xfc60,
-      DarkOrchid           : 0x9999,
-      DarkRed              : 0x8800,
-      DarkSalmon           : 0xecaf,
-      DarkSeaGreen         : 0x8df1,
-      DarkSlateBlue        : 0x49f1,
-      DarkSlateGray        : 0x2a69,
-      DarkTurquoise        : 0x067a,
-      DarkViolet           : 0x901a,
-      DeepPink             : 0xf8b2,
-      DeepSkyBlue          : 0x05ff,
-      DimGray              : 0x6b4d,
-      DodgerBlue           : 0x1c9f,
-      FireBrick            : 0xb104,
-      FloralWhite          : 0xffde,
-      ForestGreen          : 0x2444,
-      Fuchsia              : 0xf81f,
-      Gainsboro            : 0xdefb,
-      GhostWhite           : 0xffdf,
-      Gold                 : 0xfea0,
-      GoldenRod            : 0xdd24,
-      Gray                 : 0x8410,
-      Green                : 0x0400,
-      GreenYellow          : 0xafe5,
-      HoneyDew             : 0xf7fe,
-      HotPink              : 0xfb56,
-      IndianRed            : 0xcaeb,
-      Indigo               : 0x4810,
-      Ivory                : 0xfffe,
-      Khaki                : 0xf731,
-      Lavender             : 0xe73f,
-      LavenderBlush        : 0xff9e,
-      LawnGreen            : 0x7fe0,
-      LemonChiffon         : 0xffd9,
-      LightBlue            : 0xaedc,
-      LightCoral           : 0xf410,
-      LightCyan            : 0xe7ff,
-      LightGoldenRodYellow : 0xffda,
-      LightGray            : 0xd69a,
-      LightGreen           : 0x9772,
-      LightPink            : 0xfdb8,
-      LightSalmon          : 0xfd0f,
-      LightSeaGreen        : 0x2595,
-      LightSkyBlue         : 0x867f,
-      LightSlateGray       : 0x7453,
-      LightSteelBlue       : 0xb63b,
-      LightYellow          : 0xfffc,
-      Lime                 : 0x07e0,
-      LimeGreen            : 0x3666,
-      Linen                : 0xff9c,
-      Magenta              : 0xf81f,
-      Maroon               : 0x8000,
-      MediumAquaMarine     : 0x6675,
-      MediumBlue           : 0x0019,
-      MediumOrchid         : 0xbaba,
-      MediumPurple         : 0x939b,
-      MediumSeaGreen       : 0x3d8e,
-      MediumSlateBlue      : 0x7b5d,
-      MediumSpringGreen    : 0x07d3,
-      MediumTurquoise      : 0x4e99,
-      MediumVioletRed      : 0xc0b0,
-      MidnightBlue         : 0x18ce,
-      MintCream            : 0xf7ff,
-      MistyRose            : 0xff3c,
-      Moccasin             : 0xff36,
-      NavajoWhite          : 0xfef5,
-      Navy                 : 0x0010,
-      OldLace              : 0xffbc,
-      Olive                : 0x8400,
-      OliveDrab            : 0x6c64,
-      Orange               : 0xfd20,
-      OrangeRed            : 0xfa20,
-      Orchid               : 0xdb9a,
-      PaleGoldenRod        : 0xef55,
-      PaleGreen            : 0x9fd3,
-      PaleTurquoise        : 0xaf7d,
-      PaleVioletRed        : 0xdb92,
-      PapayaWhip           : 0xff7a,
-      PeachPuff            : 0xfed7,
-      Peru                 : 0xcc27,
-      Pink                 : 0xfe19,
-      Plum                 : 0xdd1b,
-      PowderBlue           : 0xb71c,
-      Purple               : 0x8010,
-      RebeccaPurple        : 0x6193,
-      Red                  : 0xf800,
-      RosyBrown            : 0xbc71,
-      RoyalBlue            : 0x435c,
-      SaddleBrown          : 0x8a22,
-      Salmon               : 0xfc0e,
-      SandyBrown           : 0xf52c,
-      SeaGreen             : 0x2c4a,
-      SeaShell             : 0xffbd,
-      Sienna               : 0xa285,
-      Silver               : 0xc618,
-      SkyBlue              : 0x867d,
-      SlateBlue            : 0x6ad9,
-      SlateGray            : 0x7412,
-      Snow                 : 0xffdf,
-      SpringGreen          : 0x07ef,
-      SteelBlue            : 0x4416,
-      Tan                  : 0xd5b1,
-      Teal                 : 0x0410,
-      Thistle              : 0xddfb,
-      Tomato               : 0xfb08,
-      Turquoise            : 0x471a,
-      Violet               : 0xec1d,
-      Wheat                : 0xf6f6,
-      White                : 0xffff,
-      WhiteSmoke           : 0xf7be,
-      Yellow               : 0xffe0,
-      YellowGreen          : 0x9e66,
+      AliceBlue: 0xf7df,
+      AntiqueWhite: 0xff5a,
+      Aqua: 0x07ff,
+      Aquamarine: 0x7ffa,
+      Azure: 0xf7ff,
+      Beige: 0xf7bb,
+      Bisque: 0xff38,
+      Black: 0x0000,
+      BlanchedAlmond: 0xff59,
+      Blue: 0x001f,
+      BlueViolet: 0x895c,
+      Brown: 0xa145,
+      BurlyWood: 0xddd0,
+      CadetBlue: 0x5cf4,
+      Chartreuse: 0x7fe0,
+      Chocolate: 0xd343,
+      Coral: 0xfbea,
+      CornflowerBlue: 0x64bd,
+      Cornsilk: 0xffdb,
+      Crimson: 0xd8a7,
+      Cyan: 0x07ff,
+      DarkBlue: 0x0011,
+      DarkCyan: 0x0451,
+      DarkGoldenRod: 0xbc21,
+      DarkGray: 0xad55,
+      DarkGreen: 0x0320,
+      DarkKhaki: 0xbdad,
+      DarkMagenta: 0x8811,
+      DarkOliveGreen: 0x5345,
+      DarkOrange: 0xfc60,
+      DarkOrchid: 0x9999,
+      DarkRed: 0x8800,
+      DarkSalmon: 0xecaf,
+      DarkSeaGreen: 0x8df1,
+      DarkSlateBlue: 0x49f1,
+      DarkSlateGray: 0x2a69,
+      DarkTurquoise: 0x067a,
+      DarkViolet: 0x901a,
+      DeepPink: 0xf8b2,
+      DeepSkyBlue: 0x05ff,
+      DimGray: 0x6b4d,
+      DodgerBlue: 0x1c9f,
+      FireBrick: 0xb104,
+      FloralWhite: 0xffde,
+      ForestGreen: 0x2444,
+      Fuchsia: 0xf81f,
+      Gainsboro: 0xdefb,
+      GhostWhite: 0xffdf,
+      Gold: 0xfea0,
+      GoldenRod: 0xdd24,
+      Gray: 0x8410,
+      Green: 0x0400,
+      GreenYellow: 0xafe5,
+      HoneyDew: 0xf7fe,
+      HotPink: 0xfb56,
+      IndianRed: 0xcaeb,
+      Indigo: 0x4810,
+      Ivory: 0xfffe,
+      Khaki: 0xf731,
+      Lavender: 0xe73f,
+      LavenderBlush: 0xff9e,
+      LawnGreen: 0x7fe0,
+      LemonChiffon: 0xffd9,
+      LightBlue: 0xaedc,
+      LightCoral: 0xf410,
+      LightCyan: 0xe7ff,
+      LightGoldenRodYellow: 0xffda,
+      LightGray: 0xd69a,
+      LightGreen: 0x9772,
+      LightPink: 0xfdb8,
+      LightSalmon: 0xfd0f,
+      LightSeaGreen: 0x2595,
+      LightSkyBlue: 0x867f,
+      LightSlateGray: 0x7453,
+      LightSteelBlue: 0xb63b,
+      LightYellow: 0xfffc,
+      Lime: 0x07e0,
+      LimeGreen: 0x3666,
+      Linen: 0xff9c,
+      Magenta: 0xf81f,
+      Maroon: 0x8000,
+      MediumAquaMarine: 0x6675,
+      MediumBlue: 0x0019,
+      MediumOrchid: 0xbaba,
+      MediumPurple: 0x939b,
+      MediumSeaGreen: 0x3d8e,
+      MediumSlateBlue: 0x7b5d,
+      MediumSpringGreen: 0x07d3,
+      MediumTurquoise: 0x4e99,
+      MediumVioletRed: 0xc0b0,
+      MidnightBlue: 0x18ce,
+      MintCream: 0xf7ff,
+      MistyRose: 0xff3c,
+      Moccasin: 0xff36,
+      NavajoWhite: 0xfef5,
+      Navy: 0x0010,
+      OldLace: 0xffbc,
+      Olive: 0x8400,
+      OliveDrab: 0x6c64,
+      Orange: 0xfd20,
+      OrangeRed: 0xfa20,
+      Orchid: 0xdb9a,
+      PaleGoldenRod: 0xef55,
+      PaleGreen: 0x9fd3,
+      PaleTurquoise: 0xaf7d,
+      PaleVioletRed: 0xdb92,
+      PapayaWhip: 0xff7a,
+      PeachPuff: 0xfed7,
+      Peru: 0xcc27,
+      Pink: 0xfe19,
+      Plum: 0xdd1b,
+      PowderBlue: 0xb71c,
+      Purple: 0x8010,
+      RebeccaPurple: 0x6193,
+      Red: 0xf800,
+      RosyBrown: 0xbc71,
+      RoyalBlue: 0x435c,
+      SaddleBrown: 0x8a22,
+      Salmon: 0xfc0e,
+      SandyBrown: 0xf52c,
+      SeaGreen: 0x2c4a,
+      SeaShell: 0xffbd,
+      Sienna: 0xa285,
+      Silver: 0xc618,
+      SkyBlue: 0x867d,
+      SlateBlue: 0x6ad9,
+      SlateGray: 0x7412,
+      Snow: 0xffdf,
+      SpringGreen: 0x07ef,
+      SteelBlue: 0x4416,
+      Tan: 0xd5b1,
+      Teal: 0x0410,
+      Thistle: 0xddfb,
+      Tomato: 0xfb08,
+      Turquoise: 0x471a,
+      Violet: 0xec1d,
+      Wheat: 0xf6f6,
+      White: 0xffff,
+      WhiteSmoke: 0xf7be,
+      Yellow: 0xffe0,
+      YellowGreen: 0x9e66,
     };
   }
-
-
 }
 
 if (true) {
@@ -20249,330 +20299,1350 @@ if (true) {
 //----------------------------------------------------------
 
 // commands
-const INITR_GREENTAB = 0x0;
-const INITR_REDTAB   = 0x1;
-const INITR_BLACKTAB = 0x2;
+// const INITR_GREENTAB = 0x0;
+// const INITR_REDTAB = 0x1;
+// const INITR_BLACKTAB = 0x2;
 
-const ST7735_TFTWIDTH  = 128;
+const ST7735_TFTWIDTH = 128;
 const ST7735_TFTHEIGHT = 160;
 
-const ST7735_NOP     = 0x00;
-const ST7735_SWRESET = 0x01;
-const ST7735_RDDID   = 0x04;
-const ST7735_RDDST   = 0x09;
-const ST7735_RDDPM   = 0x0A;
+// const ST7735_NOP = 0x00;
+// const ST7735_SWRESET = 0x01;
+// const ST7735_RDDID = 0x04;
+// const ST7735_RDDST = 0x09;
+// const ST7735_RDDPM = 0x0a;
 
-const ST7735_SLPIN   = 0x10;
-const ST7735_SLPOUT  = 0x11;
-const ST7735_PTLON   = 0x12;
-const ST7735_NORON   = 0x13;
+// const ST7735_SLPIN = 0x10;
+const ST7735_SLPOUT = 0x11;
+// const ST7735_PTLON = 0x12;
+// const ST7735_NORON = 0x13;
 
-const ST7735_INVOFF  = 0x20;
-const ST7735_INVON   = 0x21;
+const ST7735_INVOFF = 0x20;
+const ST7735_INVON = 0x21;
 const ST7735_DISPOFF = 0x28;
-const ST7735_DISPON  = 0x29;
-const ST7735_CASET   = 0x2A;
-const ST7735_RASET   = 0x2B;
-const ST7735_RAMWR   = 0x2C;
-const ST7735_RAMRD   = 0x2E;
+const ST7735_DISPON = 0x29;
+const ST7735_CASET = 0x2a;
+const ST7735_RASET = 0x2b;
+const ST7735_RAMWR = 0x2c;
+// const ST7735_RAMRD = 0x2e;
 
-const ST7735_PTLAR   = 0x30;
-const ST7735_COLMOD  = 0x3A;
-const ST7735_MADCTL  = 0x36;
+// const ST7735_PTLAR = 0x30;
+const ST7735_COLMOD = 0x3a;
+const ST7735_MADCTL = 0x36;
 
-const ST7735_FRMCTR1 = 0xB1;
-const ST7735_FRMCTR2 = 0xB2;
-const ST7735_FRMCTR3 = 0xB3;
-const ST7735_INVCTR  = 0xB4;
-const ST7735_DISSET5 = 0xB6;
+const ST7735_FRMCTR1 = 0xb1;
+const ST7735_FRMCTR2 = 0xb2;
+const ST7735_FRMCTR3 = 0xb3;
+const ST7735_INVCTR = 0xb4;
+// const ST7735_DISSET5 = 0xb6;
 
-const ST7735_PWCTR1  = 0xC0;
-const ST7735_PWCTR2  = 0xC1;
-const ST7735_PWCTR3  = 0xC2;
-const ST7735_PWCTR4  = 0xC3;
-const ST7735_PWCTR5  = 0xC4;
-const ST7735_VMCTR1  = 0xC5;
+const ST7735_PWCTR1 = 0xc0;
+const ST7735_PWCTR2 = 0xc1;
+const ST7735_PWCTR3 = 0xc2;
+const ST7735_PWCTR4 = 0xc3;
+const ST7735_PWCTR5 = 0xc4;
+const ST7735_VMCTR1 = 0xc5;
 
-const ST7735_RDID1   = 0xDA;
-const ST7735_RDID2   = 0xDB;
-const ST7735_RDID3   = 0xDC;
-const ST7735_RDID4   = 0xDD;
+// const ST7735_RDID1 = 0xda;
+// const ST7735_RDID2 = 0xdb;
+// const ST7735_RDID3 = 0xdc;
+// const ST7735_RDID4 = 0xdd;
 
-const ST7735_PWCTR6  = 0xFC;
+// const ST7735_PWCTR6 = 0xfc;
 
-const ST7735_GMCTRP1 = 0xE0;
-const ST7735_GMCTRN1 = 0xE1;
+const ST7735_GMCTRP1 = 0xe0;
+const ST7735_GMCTRN1 = 0xe1;
 
 // Color definitions
-const ST7735_BLACK   = 0x0000;
-const ST7735_BLUE    = 0x001F;
-const ST7735_RED     = 0xF800;
-const ST7735_GREEN   = 0x07E0;
-const ST7735_CYAN    = 0x07FF;
-const ST7735_MAGENTA = 0xF81F;
-const ST7735_YELLOW  = 0xFFE0;
-const ST7735_WHITE   = 0xFFFF;
+// const ST7735_BLACK = 0x0000;
+// const ST7735_BLUE = 0x001f;
+// const ST7735_RED = 0xf800;
+// const ST7735_GREEN = 0x07e0;
+// const ST7735_CYAN = 0x07ff;
+// const ST7735_MAGENTA = 0xf81f;
+// const ST7735_YELLOW = 0xffe0;
+// const ST7735_WHITE = 0xffff;
 
-const ST7735_18bit   = 0x06; // 18bit/pixel
-const ST7735_16bit   = 0x05; // 16bit/pixel
+const ST7735_18bit = 0x06; // 18bit/pixel
+const ST7735_16bit = 0x05; // 16bit/pixel
 
 // standard ascii 5x7 font
 const font = [
-  0x00, 0x00, 0x00, 0x00, 0x00,
-  0x3E, 0x5B, 0x4F, 0x5B, 0x3E, 	
-  0x3E, 0x6B, 0x4F, 0x6B, 0x3E, 	
-  0x1C, 0x3E, 0x7C, 0x3E, 0x1C,
-  0x18, 0x3C, 0x7E, 0x3C, 0x18,
-  0x1C, 0x57, 0x7D, 0x57, 0x1C,
-  0x1C, 0x5E, 0x7F, 0x5E, 0x1C,
-  0x00, 0x18, 0x3C, 0x18, 0x00,
-  0xFF, 0xE7, 0xC3, 0xE7, 0xFF,
-  0x00, 0x18, 0x24, 0x18, 0x00,
-  0xFF, 0xE7, 0xDB, 0xE7, 0xFF,
-  0x30, 0x48, 0x3A, 0x06, 0x0E,
-  0x26, 0x29, 0x79, 0x29, 0x26,
-  0x40, 0x7F, 0x05, 0x05, 0x07,
-  0x40, 0x7F, 0x05, 0x25, 0x3F,
-  0x5A, 0x3C, 0xE7, 0x3C, 0x5A,
-  0x7F, 0x3E, 0x1C, 0x1C, 0x08,
-  0x08, 0x1C, 0x1C, 0x3E, 0x7F,
-  0x14, 0x22, 0x7F, 0x22, 0x14,
-  0x5F, 0x5F, 0x00, 0x5F, 0x5F,
-  0x06, 0x09, 0x7F, 0x01, 0x7F,
-  0x00, 0x66, 0x89, 0x95, 0x6A,
-  0x60, 0x60, 0x60, 0x60, 0x60,
-  0x94, 0xA2, 0xFF, 0xA2, 0x94,
-  0x08, 0x04, 0x7E, 0x04, 0x08,
-  0x10, 0x20, 0x7E, 0x20, 0x10,
-  0x08, 0x08, 0x2A, 0x1C, 0x08,
-  0x08, 0x1C, 0x2A, 0x08, 0x08,
-  0x1E, 0x10, 0x10, 0x10, 0x10,
-  0x0C, 0x1E, 0x0C, 0x1E, 0x0C,
-  0x30, 0x38, 0x3E, 0x38, 0x30,
-  0x06, 0x0E, 0x3E, 0x0E, 0x06,
-  0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x5F, 0x00, 0x00,
-  0x00, 0x07, 0x00, 0x07, 0x00,
-  0x14, 0x7F, 0x14, 0x7F, 0x14,
-  0x24, 0x2A, 0x7F, 0x2A, 0x12,
-  0x23, 0x13, 0x08, 0x64, 0x62,
-  0x36, 0x49, 0x56, 0x20, 0x50,
-  0x00, 0x08, 0x07, 0x03, 0x00,
-  0x00, 0x1C, 0x22, 0x41, 0x00,
-  0x00, 0x41, 0x22, 0x1C, 0x00,
-  0x2A, 0x1C, 0x7F, 0x1C, 0x2A,
-  0x08, 0x08, 0x3E, 0x08, 0x08,
-  0x00, 0x80, 0x70, 0x30, 0x00,
-  0x08, 0x08, 0x08, 0x08, 0x08,
-  0x00, 0x00, 0x60, 0x60, 0x00,
-  0x20, 0x10, 0x08, 0x04, 0x02,
-  0x3E, 0x51, 0x49, 0x45, 0x3E,
-  0x00, 0x42, 0x7F, 0x40, 0x00,
-  0x72, 0x49, 0x49, 0x49, 0x46,
-  0x21, 0x41, 0x49, 0x4D, 0x33,
-  0x18, 0x14, 0x12, 0x7F, 0x10,
-  0x27, 0x45, 0x45, 0x45, 0x39,
-  0x3C, 0x4A, 0x49, 0x49, 0x31,
-  0x41, 0x21, 0x11, 0x09, 0x07,
-  0x36, 0x49, 0x49, 0x49, 0x36,
-  0x46, 0x49, 0x49, 0x29, 0x1E,
-  0x00, 0x00, 0x14, 0x00, 0x00,
-  0x00, 0x40, 0x34, 0x00, 0x00,
-  0x00, 0x08, 0x14, 0x22, 0x41,
-  0x14, 0x14, 0x14, 0x14, 0x14,
-  0x00, 0x41, 0x22, 0x14, 0x08,
-  0x02, 0x01, 0x59, 0x09, 0x06,
-  0x3E, 0x41, 0x5D, 0x59, 0x4E,
-  0x7C, 0x12, 0x11, 0x12, 0x7C,
-  0x7F, 0x49, 0x49, 0x49, 0x36,
-  0x3E, 0x41, 0x41, 0x41, 0x22,
-  0x7F, 0x41, 0x41, 0x41, 0x3E,
-  0x7F, 0x49, 0x49, 0x49, 0x41,
-  0x7F, 0x09, 0x09, 0x09, 0x01,
-  0x3E, 0x41, 0x41, 0x51, 0x73,
-  0x7F, 0x08, 0x08, 0x08, 0x7F,
-  0x00, 0x41, 0x7F, 0x41, 0x00,
-  0x20, 0x40, 0x41, 0x3F, 0x01,
-  0x7F, 0x08, 0x14, 0x22, 0x41,
-  0x7F, 0x40, 0x40, 0x40, 0x40,
-  0x7F, 0x02, 0x1C, 0x02, 0x7F,
-  0x7F, 0x04, 0x08, 0x10, 0x7F,
-  0x3E, 0x41, 0x41, 0x41, 0x3E,
-  0x7F, 0x09, 0x09, 0x09, 0x06,
-  0x3E, 0x41, 0x51, 0x21, 0x5E,
-  0x7F, 0x09, 0x19, 0x29, 0x46,
-  0x26, 0x49, 0x49, 0x49, 0x32,
-  0x03, 0x01, 0x7F, 0x01, 0x03,
-  0x3F, 0x40, 0x40, 0x40, 0x3F,
-  0x1F, 0x20, 0x40, 0x20, 0x1F,
-  0x3F, 0x40, 0x38, 0x40, 0x3F,
-  0x63, 0x14, 0x08, 0x14, 0x63,
-  0x03, 0x04, 0x78, 0x04, 0x03,
-  0x61, 0x59, 0x49, 0x4D, 0x43,
-  0x00, 0x7F, 0x41, 0x41, 0x41,
-  0x02, 0x04, 0x08, 0x10, 0x20,
-  0x00, 0x41, 0x41, 0x41, 0x7F,
-  0x04, 0x02, 0x01, 0x02, 0x04,
-  0x40, 0x40, 0x40, 0x40, 0x40,
-  0x00, 0x03, 0x07, 0x08, 0x00,
-  0x20, 0x54, 0x54, 0x78, 0x40,
-  0x7F, 0x28, 0x44, 0x44, 0x38,
-  0x38, 0x44, 0x44, 0x44, 0x28,
-  0x38, 0x44, 0x44, 0x28, 0x7F,
-  0x38, 0x54, 0x54, 0x54, 0x18,
-  0x00, 0x08, 0x7E, 0x09, 0x02,
-  0x18, 0xA4, 0xA4, 0x9C, 0x78,
-  0x7F, 0x08, 0x04, 0x04, 0x78,
-  0x00, 0x44, 0x7D, 0x40, 0x00,
-  0x20, 0x40, 0x40, 0x3D, 0x00,
-  0x7F, 0x10, 0x28, 0x44, 0x00,
-  0x00, 0x41, 0x7F, 0x40, 0x00,
-  0x7C, 0x04, 0x78, 0x04, 0x78,
-  0x7C, 0x08, 0x04, 0x04, 0x78,
-  0x38, 0x44, 0x44, 0x44, 0x38,
-  0xFC, 0x18, 0x24, 0x24, 0x18,
-  0x18, 0x24, 0x24, 0x18, 0xFC,
-  0x7C, 0x08, 0x04, 0x04, 0x08,
-  0x48, 0x54, 0x54, 0x54, 0x24,
-  0x04, 0x04, 0x3F, 0x44, 0x24,
-  0x3C, 0x40, 0x40, 0x20, 0x7C,
-  0x1C, 0x20, 0x40, 0x20, 0x1C,
-  0x3C, 0x40, 0x30, 0x40, 0x3C,
-  0x44, 0x28, 0x10, 0x28, 0x44,
-  0x4C, 0x90, 0x90, 0x90, 0x7C,
-  0x44, 0x64, 0x54, 0x4C, 0x44,
-  0x00, 0x08, 0x36, 0x41, 0x00,
-  0x00, 0x00, 0x77, 0x00, 0x00,
-  0x00, 0x41, 0x36, 0x08, 0x00,
-  0x02, 0x01, 0x02, 0x04, 0x02,
-  0x3C, 0x26, 0x23, 0x26, 0x3C,
-  0x1E, 0xA1, 0xA1, 0x61, 0x12,
-  0x3A, 0x40, 0x40, 0x20, 0x7A,
-  0x38, 0x54, 0x54, 0x55, 0x59,
-  0x21, 0x55, 0x55, 0x79, 0x41,
-  0x21, 0x54, 0x54, 0x78, 0x41,
-  0x21, 0x55, 0x54, 0x78, 0x40,
-  0x20, 0x54, 0x55, 0x79, 0x40,
-  0x0C, 0x1E, 0x52, 0x72, 0x12,
-  0x39, 0x55, 0x55, 0x55, 0x59,
-  0x39, 0x54, 0x54, 0x54, 0x59,
-  0x39, 0x55, 0x54, 0x54, 0x58,
-  0x00, 0x00, 0x45, 0x7C, 0x41,
-  0x00, 0x02, 0x45, 0x7D, 0x42,
-  0x00, 0x01, 0x45, 0x7C, 0x40,
-  0xF0, 0x29, 0x24, 0x29, 0xF0,
-  0xF0, 0x28, 0x25, 0x28, 0xF0,
-  0x7C, 0x54, 0x55, 0x45, 0x00,
-  0x20, 0x54, 0x54, 0x7C, 0x54,
-  0x7C, 0x0A, 0x09, 0x7F, 0x49,
-  0x32, 0x49, 0x49, 0x49, 0x32,
-  0x32, 0x48, 0x48, 0x48, 0x32,
-  0x32, 0x4A, 0x48, 0x48, 0x30,
-  0x3A, 0x41, 0x41, 0x21, 0x7A,
-  0x3A, 0x42, 0x40, 0x20, 0x78,
-  0x00, 0x9D, 0xA0, 0xA0, 0x7D,
-  0x39, 0x44, 0x44, 0x44, 0x39,
-  0x3D, 0x40, 0x40, 0x40, 0x3D,
-  0x3C, 0x24, 0xFF, 0x24, 0x24,
-  0x48, 0x7E, 0x49, 0x43, 0x66,
-  0x2B, 0x2F, 0xFC, 0x2F, 0x2B,
-  0xFF, 0x09, 0x29, 0xF6, 0x20,
-  0xC0, 0x88, 0x7E, 0x09, 0x03,
-  0x20, 0x54, 0x54, 0x79, 0x41,
-  0x00, 0x00, 0x44, 0x7D, 0x41,
-  0x30, 0x48, 0x48, 0x4A, 0x32,
-  0x38, 0x40, 0x40, 0x22, 0x7A,
-  0x00, 0x7A, 0x0A, 0x0A, 0x72,
-  0x7D, 0x0D, 0x19, 0x31, 0x7D,
-  0x26, 0x29, 0x29, 0x2F, 0x28,
-  0x26, 0x29, 0x29, 0x29, 0x26,
-  0x30, 0x48, 0x4D, 0x40, 0x20,
-  0x38, 0x08, 0x08, 0x08, 0x08,
-  0x08, 0x08, 0x08, 0x08, 0x38,
-  0x2F, 0x10, 0xC8, 0xAC, 0xBA,
-  0x2F, 0x10, 0x28, 0x34, 0xFA,
-  0x00, 0x00, 0x7B, 0x00, 0x00,
-  0x08, 0x14, 0x2A, 0x14, 0x22,
-  0x22, 0x14, 0x2A, 0x14, 0x08,
-  0xAA, 0x00, 0x55, 0x00, 0xAA,
-  0xAA, 0x55, 0xAA, 0x55, 0xAA,
-  0x00, 0x00, 0x00, 0xFF, 0x00,
-  0x10, 0x10, 0x10, 0xFF, 0x00,
-  0x14, 0x14, 0x14, 0xFF, 0x00,
-  0x10, 0x10, 0xFF, 0x00, 0xFF,
-  0x10, 0x10, 0xF0, 0x10, 0xF0,
-  0x14, 0x14, 0x14, 0xFC, 0x00,
-  0x14, 0x14, 0xF7, 0x00, 0xFF,
-  0x00, 0x00, 0xFF, 0x00, 0xFF,
-  0x14, 0x14, 0xF4, 0x04, 0xFC,
-  0x14, 0x14, 0x17, 0x10, 0x1F,
-  0x10, 0x10, 0x1F, 0x10, 0x1F,
-  0x14, 0x14, 0x14, 0x1F, 0x00,
-  0x10, 0x10, 0x10, 0xF0, 0x00,
-  0x00, 0x00, 0x00, 0x1F, 0x10,
-  0x10, 0x10, 0x10, 0x1F, 0x10,
-  0x10, 0x10, 0x10, 0xF0, 0x10,
-  0x00, 0x00, 0x00, 0xFF, 0x10,
-  0x10, 0x10, 0x10, 0x10, 0x10,
-  0x10, 0x10, 0x10, 0xFF, 0x10,
-  0x00, 0x00, 0x00, 0xFF, 0x14,
-  0x00, 0x00, 0xFF, 0x00, 0xFF,
-  0x00, 0x00, 0x1F, 0x10, 0x17,
-  0x00, 0x00, 0xFC, 0x04, 0xF4,
-  0x14, 0x14, 0x17, 0x10, 0x17,
-  0x14, 0x14, 0xF4, 0x04, 0xF4,
-  0x00, 0x00, 0xFF, 0x00, 0xF7,
-  0x14, 0x14, 0x14, 0x14, 0x14,
-  0x14, 0x14, 0xF7, 0x00, 0xF7,
-  0x14, 0x14, 0x14, 0x17, 0x14,
-  0x10, 0x10, 0x1F, 0x10, 0x1F,
-  0x14, 0x14, 0x14, 0xF4, 0x14,
-  0x10, 0x10, 0xF0, 0x10, 0xF0,
-  0x00, 0x00, 0x1F, 0x10, 0x1F,
-  0x00, 0x00, 0x00, 0x1F, 0x14,
-  0x00, 0x00, 0x00, 0xFC, 0x14,
-  0x00, 0x00, 0xF0, 0x10, 0xF0,
-  0x10, 0x10, 0xFF, 0x10, 0xFF,
-  0x14, 0x14, 0x14, 0xFF, 0x14,
-  0x10, 0x10, 0x10, 0x1F, 0x00,
-  0x00, 0x00, 0x00, 0xF0, 0x10,
-  0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-  0xF0, 0xF0, 0xF0, 0xF0, 0xF0,
-  0xFF, 0xFF, 0xFF, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0xFF, 0xFF,
-  0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
-  0x38, 0x44, 0x44, 0x38, 0x44,
-  0x7C, 0x2A, 0x2A, 0x3E, 0x14,
-  0x7E, 0x02, 0x02, 0x06, 0x06,
-  0x02, 0x7E, 0x02, 0x7E, 0x02,
-  0x63, 0x55, 0x49, 0x41, 0x63,
-  0x38, 0x44, 0x44, 0x3C, 0x04,
-  0x40, 0x7E, 0x20, 0x1E, 0x20,
-  0x06, 0x02, 0x7E, 0x02, 0x02,
-  0x99, 0xA5, 0xE7, 0xA5, 0x99,
-  0x1C, 0x2A, 0x49, 0x2A, 0x1C,
-  0x4C, 0x72, 0x01, 0x72, 0x4C,
-  0x30, 0x4A, 0x4D, 0x4D, 0x30,
-  0x30, 0x48, 0x78, 0x48, 0x30,
-  0xBC, 0x62, 0x5A, 0x46, 0x3D,
-  0x3E, 0x49, 0x49, 0x49, 0x00,
-  0x7E, 0x01, 0x01, 0x01, 0x7E,
-  0x2A, 0x2A, 0x2A, 0x2A, 0x2A,
-  0x44, 0x44, 0x5F, 0x44, 0x44,
-  0x40, 0x51, 0x4A, 0x44, 0x40,
-  0x40, 0x44, 0x4A, 0x51, 0x40,
-  0x00, 0x00, 0xFF, 0x01, 0x03,
-  0xE0, 0x80, 0xFF, 0x00, 0x00,
-  0x08, 0x08, 0x6B, 0x6B, 0x08,
-  0x36, 0x12, 0x36, 0x24, 0x36,
-  0x06, 0x0F, 0x09, 0x0F, 0x06,
-  0x00, 0x00, 0x18, 0x18, 0x00,
-  0x00, 0x00, 0x10, 0x10, 0x00,
-  0x30, 0x40, 0xFF, 0x01, 0x01,
-  0x00, 0x1F, 0x01, 0x01, 0x1E,
-  0x00, 0x19, 0x1D, 0x17, 0x12,
-  0x00, 0x3C, 0x3C, 0x3C, 0x3C,
-  0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x3e,
+  0x5b,
+  0x4f,
+  0x5b,
+  0x3e,
+  0x3e,
+  0x6b,
+  0x4f,
+  0x6b,
+  0x3e,
+  0x1c,
+  0x3e,
+  0x7c,
+  0x3e,
+  0x1c,
+  0x18,
+  0x3c,
+  0x7e,
+  0x3c,
+  0x18,
+  0x1c,
+  0x57,
+  0x7d,
+  0x57,
+  0x1c,
+  0x1c,
+  0x5e,
+  0x7f,
+  0x5e,
+  0x1c,
+  0x00,
+  0x18,
+  0x3c,
+  0x18,
+  0x00,
+  0xff,
+  0xe7,
+  0xc3,
+  0xe7,
+  0xff,
+  0x00,
+  0x18,
+  0x24,
+  0x18,
+  0x00,
+  0xff,
+  0xe7,
+  0xdb,
+  0xe7,
+  0xff,
+  0x30,
+  0x48,
+  0x3a,
+  0x06,
+  0x0e,
+  0x26,
+  0x29,
+  0x79,
+  0x29,
+  0x26,
+  0x40,
+  0x7f,
+  0x05,
+  0x05,
+  0x07,
+  0x40,
+  0x7f,
+  0x05,
+  0x25,
+  0x3f,
+  0x5a,
+  0x3c,
+  0xe7,
+  0x3c,
+  0x5a,
+  0x7f,
+  0x3e,
+  0x1c,
+  0x1c,
+  0x08,
+  0x08,
+  0x1c,
+  0x1c,
+  0x3e,
+  0x7f,
+  0x14,
+  0x22,
+  0x7f,
+  0x22,
+  0x14,
+  0x5f,
+  0x5f,
+  0x00,
+  0x5f,
+  0x5f,
+  0x06,
+  0x09,
+  0x7f,
+  0x01,
+  0x7f,
+  0x00,
+  0x66,
+  0x89,
+  0x95,
+  0x6a,
+  0x60,
+  0x60,
+  0x60,
+  0x60,
+  0x60,
+  0x94,
+  0xa2,
+  0xff,
+  0xa2,
+  0x94,
+  0x08,
+  0x04,
+  0x7e,
+  0x04,
+  0x08,
+  0x10,
+  0x20,
+  0x7e,
+  0x20,
+  0x10,
+  0x08,
+  0x08,
+  0x2a,
+  0x1c,
+  0x08,
+  0x08,
+  0x1c,
+  0x2a,
+  0x08,
+  0x08,
+  0x1e,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x0c,
+  0x1e,
+  0x0c,
+  0x1e,
+  0x0c,
+  0x30,
+  0x38,
+  0x3e,
+  0x38,
+  0x30,
+  0x06,
+  0x0e,
+  0x3e,
+  0x0e,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x5f,
+  0x00,
+  0x00,
+  0x00,
+  0x07,
+  0x00,
+  0x07,
+  0x00,
+  0x14,
+  0x7f,
+  0x14,
+  0x7f,
+  0x14,
+  0x24,
+  0x2a,
+  0x7f,
+  0x2a,
+  0x12,
+  0x23,
+  0x13,
+  0x08,
+  0x64,
+  0x62,
+  0x36,
+  0x49,
+  0x56,
+  0x20,
+  0x50,
+  0x00,
+  0x08,
+  0x07,
+  0x03,
+  0x00,
+  0x00,
+  0x1c,
+  0x22,
+  0x41,
+  0x00,
+  0x00,
+  0x41,
+  0x22,
+  0x1c,
+  0x00,
+  0x2a,
+  0x1c,
+  0x7f,
+  0x1c,
+  0x2a,
+  0x08,
+  0x08,
+  0x3e,
+  0x08,
+  0x08,
+  0x00,
+  0x80,
+  0x70,
+  0x30,
+  0x00,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x00,
+  0x00,
+  0x60,
+  0x60,
+  0x00,
+  0x20,
+  0x10,
+  0x08,
+  0x04,
+  0x02,
+  0x3e,
+  0x51,
+  0x49,
+  0x45,
+  0x3e,
+  0x00,
+  0x42,
+  0x7f,
+  0x40,
+  0x00,
+  0x72,
+  0x49,
+  0x49,
+  0x49,
+  0x46,
+  0x21,
+  0x41,
+  0x49,
+  0x4d,
+  0x33,
+  0x18,
+  0x14,
+  0x12,
+  0x7f,
+  0x10,
+  0x27,
+  0x45,
+  0x45,
+  0x45,
+  0x39,
+  0x3c,
+  0x4a,
+  0x49,
+  0x49,
+  0x31,
+  0x41,
+  0x21,
+  0x11,
+  0x09,
+  0x07,
+  0x36,
+  0x49,
+  0x49,
+  0x49,
+  0x36,
+  0x46,
+  0x49,
+  0x49,
+  0x29,
+  0x1e,
+  0x00,
+  0x00,
+  0x14,
+  0x00,
+  0x00,
+  0x00,
+  0x40,
+  0x34,
+  0x00,
+  0x00,
+  0x00,
+  0x08,
+  0x14,
+  0x22,
+  0x41,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x00,
+  0x41,
+  0x22,
+  0x14,
+  0x08,
+  0x02,
+  0x01,
+  0x59,
+  0x09,
+  0x06,
+  0x3e,
+  0x41,
+  0x5d,
+  0x59,
+  0x4e,
+  0x7c,
+  0x12,
+  0x11,
+  0x12,
+  0x7c,
+  0x7f,
+  0x49,
+  0x49,
+  0x49,
+  0x36,
+  0x3e,
+  0x41,
+  0x41,
+  0x41,
+  0x22,
+  0x7f,
+  0x41,
+  0x41,
+  0x41,
+  0x3e,
+  0x7f,
+  0x49,
+  0x49,
+  0x49,
+  0x41,
+  0x7f,
+  0x09,
+  0x09,
+  0x09,
+  0x01,
+  0x3e,
+  0x41,
+  0x41,
+  0x51,
+  0x73,
+  0x7f,
+  0x08,
+  0x08,
+  0x08,
+  0x7f,
+  0x00,
+  0x41,
+  0x7f,
+  0x41,
+  0x00,
+  0x20,
+  0x40,
+  0x41,
+  0x3f,
+  0x01,
+  0x7f,
+  0x08,
+  0x14,
+  0x22,
+  0x41,
+  0x7f,
+  0x40,
+  0x40,
+  0x40,
+  0x40,
+  0x7f,
+  0x02,
+  0x1c,
+  0x02,
+  0x7f,
+  0x7f,
+  0x04,
+  0x08,
+  0x10,
+  0x7f,
+  0x3e,
+  0x41,
+  0x41,
+  0x41,
+  0x3e,
+  0x7f,
+  0x09,
+  0x09,
+  0x09,
+  0x06,
+  0x3e,
+  0x41,
+  0x51,
+  0x21,
+  0x5e,
+  0x7f,
+  0x09,
+  0x19,
+  0x29,
+  0x46,
+  0x26,
+  0x49,
+  0x49,
+  0x49,
+  0x32,
+  0x03,
+  0x01,
+  0x7f,
+  0x01,
+  0x03,
+  0x3f,
+  0x40,
+  0x40,
+  0x40,
+  0x3f,
+  0x1f,
+  0x20,
+  0x40,
+  0x20,
+  0x1f,
+  0x3f,
+  0x40,
+  0x38,
+  0x40,
+  0x3f,
+  0x63,
+  0x14,
+  0x08,
+  0x14,
+  0x63,
+  0x03,
+  0x04,
+  0x78,
+  0x04,
+  0x03,
+  0x61,
+  0x59,
+  0x49,
+  0x4d,
+  0x43,
+  0x00,
+  0x7f,
+  0x41,
+  0x41,
+  0x41,
+  0x02,
+  0x04,
+  0x08,
+  0x10,
+  0x20,
+  0x00,
+  0x41,
+  0x41,
+  0x41,
+  0x7f,
+  0x04,
+  0x02,
+  0x01,
+  0x02,
+  0x04,
+  0x40,
+  0x40,
+  0x40,
+  0x40,
+  0x40,
+  0x00,
+  0x03,
+  0x07,
+  0x08,
+  0x00,
+  0x20,
+  0x54,
+  0x54,
+  0x78,
+  0x40,
+  0x7f,
+  0x28,
+  0x44,
+  0x44,
+  0x38,
+  0x38,
+  0x44,
+  0x44,
+  0x44,
+  0x28,
+  0x38,
+  0x44,
+  0x44,
+  0x28,
+  0x7f,
+  0x38,
+  0x54,
+  0x54,
+  0x54,
+  0x18,
+  0x00,
+  0x08,
+  0x7e,
+  0x09,
+  0x02,
+  0x18,
+  0xa4,
+  0xa4,
+  0x9c,
+  0x78,
+  0x7f,
+  0x08,
+  0x04,
+  0x04,
+  0x78,
+  0x00,
+  0x44,
+  0x7d,
+  0x40,
+  0x00,
+  0x20,
+  0x40,
+  0x40,
+  0x3d,
+  0x00,
+  0x7f,
+  0x10,
+  0x28,
+  0x44,
+  0x00,
+  0x00,
+  0x41,
+  0x7f,
+  0x40,
+  0x00,
+  0x7c,
+  0x04,
+  0x78,
+  0x04,
+  0x78,
+  0x7c,
+  0x08,
+  0x04,
+  0x04,
+  0x78,
+  0x38,
+  0x44,
+  0x44,
+  0x44,
+  0x38,
+  0xfc,
+  0x18,
+  0x24,
+  0x24,
+  0x18,
+  0x18,
+  0x24,
+  0x24,
+  0x18,
+  0xfc,
+  0x7c,
+  0x08,
+  0x04,
+  0x04,
+  0x08,
+  0x48,
+  0x54,
+  0x54,
+  0x54,
+  0x24,
+  0x04,
+  0x04,
+  0x3f,
+  0x44,
+  0x24,
+  0x3c,
+  0x40,
+  0x40,
+  0x20,
+  0x7c,
+  0x1c,
+  0x20,
+  0x40,
+  0x20,
+  0x1c,
+  0x3c,
+  0x40,
+  0x30,
+  0x40,
+  0x3c,
+  0x44,
+  0x28,
+  0x10,
+  0x28,
+  0x44,
+  0x4c,
+  0x90,
+  0x90,
+  0x90,
+  0x7c,
+  0x44,
+  0x64,
+  0x54,
+  0x4c,
+  0x44,
+  0x00,
+  0x08,
+  0x36,
+  0x41,
+  0x00,
+  0x00,
+  0x00,
+  0x77,
+  0x00,
+  0x00,
+  0x00,
+  0x41,
+  0x36,
+  0x08,
+  0x00,
+  0x02,
+  0x01,
+  0x02,
+  0x04,
+  0x02,
+  0x3c,
+  0x26,
+  0x23,
+  0x26,
+  0x3c,
+  0x1e,
+  0xa1,
+  0xa1,
+  0x61,
+  0x12,
+  0x3a,
+  0x40,
+  0x40,
+  0x20,
+  0x7a,
+  0x38,
+  0x54,
+  0x54,
+  0x55,
+  0x59,
+  0x21,
+  0x55,
+  0x55,
+  0x79,
+  0x41,
+  0x21,
+  0x54,
+  0x54,
+  0x78,
+  0x41,
+  0x21,
+  0x55,
+  0x54,
+  0x78,
+  0x40,
+  0x20,
+  0x54,
+  0x55,
+  0x79,
+  0x40,
+  0x0c,
+  0x1e,
+  0x52,
+  0x72,
+  0x12,
+  0x39,
+  0x55,
+  0x55,
+  0x55,
+  0x59,
+  0x39,
+  0x54,
+  0x54,
+  0x54,
+  0x59,
+  0x39,
+  0x55,
+  0x54,
+  0x54,
+  0x58,
+  0x00,
+  0x00,
+  0x45,
+  0x7c,
+  0x41,
+  0x00,
+  0x02,
+  0x45,
+  0x7d,
+  0x42,
+  0x00,
+  0x01,
+  0x45,
+  0x7c,
+  0x40,
+  0xf0,
+  0x29,
+  0x24,
+  0x29,
+  0xf0,
+  0xf0,
+  0x28,
+  0x25,
+  0x28,
+  0xf0,
+  0x7c,
+  0x54,
+  0x55,
+  0x45,
+  0x00,
+  0x20,
+  0x54,
+  0x54,
+  0x7c,
+  0x54,
+  0x7c,
+  0x0a,
+  0x09,
+  0x7f,
+  0x49,
+  0x32,
+  0x49,
+  0x49,
+  0x49,
+  0x32,
+  0x32,
+  0x48,
+  0x48,
+  0x48,
+  0x32,
+  0x32,
+  0x4a,
+  0x48,
+  0x48,
+  0x30,
+  0x3a,
+  0x41,
+  0x41,
+  0x21,
+  0x7a,
+  0x3a,
+  0x42,
+  0x40,
+  0x20,
+  0x78,
+  0x00,
+  0x9d,
+  0xa0,
+  0xa0,
+  0x7d,
+  0x39,
+  0x44,
+  0x44,
+  0x44,
+  0x39,
+  0x3d,
+  0x40,
+  0x40,
+  0x40,
+  0x3d,
+  0x3c,
+  0x24,
+  0xff,
+  0x24,
+  0x24,
+  0x48,
+  0x7e,
+  0x49,
+  0x43,
+  0x66,
+  0x2b,
+  0x2f,
+  0xfc,
+  0x2f,
+  0x2b,
+  0xff,
+  0x09,
+  0x29,
+  0xf6,
+  0x20,
+  0xc0,
+  0x88,
+  0x7e,
+  0x09,
+  0x03,
+  0x20,
+  0x54,
+  0x54,
+  0x79,
+  0x41,
+  0x00,
+  0x00,
+  0x44,
+  0x7d,
+  0x41,
+  0x30,
+  0x48,
+  0x48,
+  0x4a,
+  0x32,
+  0x38,
+  0x40,
+  0x40,
+  0x22,
+  0x7a,
+  0x00,
+  0x7a,
+  0x0a,
+  0x0a,
+  0x72,
+  0x7d,
+  0x0d,
+  0x19,
+  0x31,
+  0x7d,
+  0x26,
+  0x29,
+  0x29,
+  0x2f,
+  0x28,
+  0x26,
+  0x29,
+  0x29,
+  0x29,
+  0x26,
+  0x30,
+  0x48,
+  0x4d,
+  0x40,
+  0x20,
+  0x38,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x38,
+  0x2f,
+  0x10,
+  0xc8,
+  0xac,
+  0xba,
+  0x2f,
+  0x10,
+  0x28,
+  0x34,
+  0xfa,
+  0x00,
+  0x00,
+  0x7b,
+  0x00,
+  0x00,
+  0x08,
+  0x14,
+  0x2a,
+  0x14,
+  0x22,
+  0x22,
+  0x14,
+  0x2a,
+  0x14,
+  0x08,
+  0xaa,
+  0x00,
+  0x55,
+  0x00,
+  0xaa,
+  0xaa,
+  0x55,
+  0xaa,
+  0x55,
+  0xaa,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0x10,
+  0x10,
+  0x10,
+  0xff,
+  0x00,
+  0x14,
+  0x14,
+  0x14,
+  0xff,
+  0x00,
+  0x10,
+  0x10,
+  0xff,
+  0x00,
+  0xff,
+  0x10,
+  0x10,
+  0xf0,
+  0x10,
+  0xf0,
+  0x14,
+  0x14,
+  0x14,
+  0xfc,
+  0x00,
+  0x14,
+  0x14,
+  0xf7,
+  0x00,
+  0xff,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0xff,
+  0x14,
+  0x14,
+  0xf4,
+  0x04,
+  0xfc,
+  0x14,
+  0x14,
+  0x17,
+  0x10,
+  0x1f,
+  0x10,
+  0x10,
+  0x1f,
+  0x10,
+  0x1f,
+  0x14,
+  0x14,
+  0x14,
+  0x1f,
+  0x00,
+  0x10,
+  0x10,
+  0x10,
+  0xf0,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x1f,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x1f,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0xf0,
+  0x10,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0xff,
+  0x10,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0x14,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0xff,
+  0x00,
+  0x00,
+  0x1f,
+  0x10,
+  0x17,
+  0x00,
+  0x00,
+  0xfc,
+  0x04,
+  0xf4,
+  0x14,
+  0x14,
+  0x17,
+  0x10,
+  0x17,
+  0x14,
+  0x14,
+  0xf4,
+  0x04,
+  0xf4,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0xf7,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0xf7,
+  0x00,
+  0xf7,
+  0x14,
+  0x14,
+  0x14,
+  0x17,
+  0x14,
+  0x10,
+  0x10,
+  0x1f,
+  0x10,
+  0x1f,
+  0x14,
+  0x14,
+  0x14,
+  0xf4,
+  0x14,
+  0x10,
+  0x10,
+  0xf0,
+  0x10,
+  0xf0,
+  0x00,
+  0x00,
+  0x1f,
+  0x10,
+  0x1f,
+  0x00,
+  0x00,
+  0x00,
+  0x1f,
+  0x14,
+  0x00,
+  0x00,
+  0x00,
+  0xfc,
+  0x14,
+  0x00,
+  0x00,
+  0xf0,
+  0x10,
+  0xf0,
+  0x10,
+  0x10,
+  0xff,
+  0x10,
+  0xff,
+  0x14,
+  0x14,
+  0x14,
+  0xff,
+  0x14,
+  0x10,
+  0x10,
+  0x10,
+  0x1f,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0xf0,
+  0x10,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xf0,
+  0xf0,
+  0xf0,
+  0xf0,
+  0xf0,
+  0xff,
+  0xff,
+  0xff,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0xff,
+  0x0f,
+  0x0f,
+  0x0f,
+  0x0f,
+  0x0f,
+  0x38,
+  0x44,
+  0x44,
+  0x38,
+  0x44,
+  0x7c,
+  0x2a,
+  0x2a,
+  0x3e,
+  0x14,
+  0x7e,
+  0x02,
+  0x02,
+  0x06,
+  0x06,
+  0x02,
+  0x7e,
+  0x02,
+  0x7e,
+  0x02,
+  0x63,
+  0x55,
+  0x49,
+  0x41,
+  0x63,
+  0x38,
+  0x44,
+  0x44,
+  0x3c,
+  0x04,
+  0x40,
+  0x7e,
+  0x20,
+  0x1e,
+  0x20,
+  0x06,
+  0x02,
+  0x7e,
+  0x02,
+  0x02,
+  0x99,
+  0xa5,
+  0xe7,
+  0xa5,
+  0x99,
+  0x1c,
+  0x2a,
+  0x49,
+  0x2a,
+  0x1c,
+  0x4c,
+  0x72,
+  0x01,
+  0x72,
+  0x4c,
+  0x30,
+  0x4a,
+  0x4d,
+  0x4d,
+  0x30,
+  0x30,
+  0x48,
+  0x78,
+  0x48,
+  0x30,
+  0xbc,
+  0x62,
+  0x5a,
+  0x46,
+  0x3d,
+  0x3e,
+  0x49,
+  0x49,
+  0x49,
+  0x00,
+  0x7e,
+  0x01,
+  0x01,
+  0x01,
+  0x7e,
+  0x2a,
+  0x2a,
+  0x2a,
+  0x2a,
+  0x2a,
+  0x44,
+  0x44,
+  0x5f,
+  0x44,
+  0x44,
+  0x40,
+  0x51,
+  0x4a,
+  0x44,
+  0x40,
+  0x40,
+  0x44,
+  0x4a,
+  0x51,
+  0x40,
+  0x00,
+  0x00,
+  0xff,
+  0x01,
+  0x03,
+  0xe0,
+  0x80,
+  0xff,
+  0x00,
+  0x00,
+  0x08,
+  0x08,
+  0x6b,
+  0x6b,
+  0x08,
+  0x36,
+  0x12,
+  0x36,
+  0x24,
+  0x36,
+  0x06,
+  0x0f,
+  0x09,
+  0x0f,
+  0x06,
+  0x00,
+  0x00,
+  0x18,
+  0x18,
+  0x00,
+  0x00,
+  0x00,
+  0x10,
+  0x10,
+  0x00,
+  0x30,
+  0x40,
+  0xff,
+  0x01,
+  0x01,
+  0x00,
+  0x1f,
+  0x01,
+  0x01,
+  0x1e,
+  0x00,
+  0x19,
+  0x1d,
+  0x17,
+  0x12,
+  0x00,
+  0x3c,
+  0x3c,
+  0x3c,
+  0x3c,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
 ];
 
 
@@ -20786,12 +21856,12 @@ class GYSFDMAXB {
 
     this.gpsInfo = {};
     this.gpsInfo._sentenceType = {
-      GPGGA: 0x0001,   // GGA - Global Positioning System Fix Data
-      GPGSA: 0x0002,   // GSA - GNSS DOP and active satellites
-      GPGSV: 0x0004,   // GSV - Satellites in view
-      GPRMC: 0x0008,   // RMC - Recommended minimum specific GNSS data
-      GPVTG: 0x0010,   // VTG - Track made good and ground speed
-      GPZDA: 0x0020,   // ZDA - Date & Time
+      GPGGA: 0x0001, // GGA - Global Positioning System Fix Data
+      GPGSA: 0x0002, // GSA - GNSS DOP and active satellites
+      GPGSV: 0x0004, // GSV - Satellites in view
+      GPRMC: 0x0008, // RMC - Recommended minimum specific GNSS data
+      GPVTG: 0x0010, // VTG - Track made good and ground speed
+      GPZDA: 0x0020, // ZDA - Date & Time
     };
     this.gpsInfo.status = 'V';
     this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
@@ -20900,7 +21970,8 @@ class GYSFDMAXB {
   }
 
   getGpsInfo(editedData) {
-    const NMEA_SATINSENTENCE = 4, NMEA_MAXSAT = 12;
+    const NMEA_SATINSENTENCE = 4,
+      NMEA_MAXSAT = 12;
     editedData = editedData || this.getEditedData();
     this.gpsInfo.status = 'V';
     if (editedData.enable) {
@@ -20910,53 +21981,61 @@ class GYSFDMAXB {
         this.gpsInfo.hdop = parseFloat(gga[8]); //Horizontal Dilution of Precision (HDOP)
         this.gpsInfo.altitude = parseFloat(gga[9]); //Antenna Altitude meters above mean sea level
         const latitude = this.nmea2dd(parseFloat(gga[2]));
-        this.gpsInfo.latitude = ((gga[3] == 'N') ? latitude : -latitude);
+        this.gpsInfo.latitude = gga[3] == 'N' ? latitude : -latitude;
         const longitude = this.nmea2dd(parseFloat(gga[4]));
-        this.gpsInfo.longitude = ((gga[5] == 'E') ? longitude : -longitude);
+        this.gpsInfo.longitude = gga[5] == 'E' ? longitude : -longitude;
         this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
       }
       if (editedData.GPGSV) {
-        for (let n=0; n<editedData.GPGSV.length; n++)
-        if (editedData.GPGSV[n]) {
-          const gsv = editedData.GPGSV[n].map(v => parseFloat(v));
-          const pack_count = gsv[1], pack_index = gsv[2], sat_count = gsv[3];
-          if (pack_index > pack_count) continue;
+        for (let n = 0; n < editedData.GPGSV.length; n++)
+          if (editedData.GPGSV[n]) {
+            const gsv = editedData.GPGSV[n].map(v => parseFloat(v));
+            const pack_count = gsv[1],
+              pack_index = gsv[2],
+              sat_count = gsv[3];
+            if (pack_index > pack_count) continue;
 
-          this.gpsInfo.satelliteInfo.inView = sat_count;
-          var nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
-          nsat = (nsat + NMEA_SATINSENTENCE > sat_count) ? sat_count - nsat : NMEA_SATINSENTENCE;
+            this.gpsInfo.satelliteInfo.inView = sat_count;
+            let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
+            nsat =
+              nsat + NMEA_SATINSENTENCE > sat_count
+                ? sat_count - nsat
+                : NMEA_SATINSENTENCE;
 
-          for (let isat = 0; isat < nsat; ++isat) {
-            const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
-            if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
-              this.gpsInfo.satelliteInfo.satellites.push({});
+            for (let isat = 0; isat < nsat; ++isat) {
+              const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
+              if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
+                this.gpsInfo.satelliteInfo.satellites.push({});
+              }
+              const isatn = isat * NMEA_SATINSENTENCE;
+              this.gpsInfo.satelliteInfo.satellites[isi] = {
+                id: gsv[isatn + 4], // SV PRN number
+                elevation: gsv[isatn + 5], // Elevation in degrees, 90 maximum
+                azimuth: gsv[isatn + 6], // Azimuth, degrees from true north, 000 to 359
+                snr: gsv[isatn + 7], // SNR, 00-99 dB (null when not tracking)
+                inUse: false,
+              };
             }
-            const isatn = isat * NMEA_SATINSENTENCE;
-            this.gpsInfo.satelliteInfo.satellites[isi] = {
-              id: gsv[isatn + 4],       // SV PRN number
-              elevation: gsv[isatn + 5],// Elevation in degrees, 90 maximum
-              azimuth: gsv[isatn + 6],  // Azimuth, degrees from true north, 000 to 359
-              snr: gsv[isatn + 7],      // SNR, 00-99 dB (null when not tracking)
-              inUse: false,
-            };
+            this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSV);
           }
-        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSV);
-        }
       }
       if (editedData.GPGSA) {
         const gsa = editedData.GPGSA;
-        var nuse = 0;
-        this.gpsInfo.fixMode = parseFloat(gsa[2]);  // Fix Mode: 1=Fix not available, 2=2D, 3=3D
-        this.gpsInfo.pdop = parseFloat(gsa[15]);    // PDOP: Position Dilution of Precision
-        this.gpsInfo.hdop = parseFloat(gsa[16]);    // HDOP: Horizontal Dilution of Precision
-        this.gpsInfo.vdop = parseFloat(gsa[17]);    // VDOP: Vertical Dilution of Position
+        let nuse = 0;
+        this.gpsInfo.fixMode = parseFloat(gsa[2]); // Fix Mode: 1=Fix not available, 2=2D, 3=3D
+        this.gpsInfo.pdop = parseFloat(gsa[15]); // PDOP: Position Dilution of Precision
+        this.gpsInfo.hdop = parseFloat(gsa[16]); // HDOP: Horizontal Dilution of Precision
+        this.gpsInfo.vdop = parseFloat(gsa[17]); // VDOP: Vertical Dilution of Position
         for (let i = 0; i < NMEA_MAXSAT; ++i) {
-            for(let j = 0; j < this.gpsInfo.satelliteInfo.inView; ++j) {
-                if(this.gpsInfo.satelliteInfo.satellites[j] && (gsa[i + 3] == this.gpsInfo.satelliteInfo.satellites[j].id)) {
-                  this.gpsInfo.satelliteInfo.satellites[j].inUse = true;
-                  nuse++;
-                }
+          for (let j = 0; j < this.gpsInfo.satelliteInfo.inView; ++j) {
+            if (
+              this.gpsInfo.satelliteInfo.satellites[j] &&
+              gsa[i + 3] == this.gpsInfo.satelliteInfo.satellites[j].id
+            ) {
+              this.gpsInfo.satelliteInfo.satellites[j].inUse = true;
+              nuse++;
             }
+          }
         }
         this.gpsInfo.satelliteInfo.inUse = nuse;
         this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSA);
@@ -20965,9 +22044,9 @@ class GYSFDMAXB {
         const rmc = editedData.GPRMC;
         this.gpsInfo.status = rmc[2]; // Status Active or Void
         const latitude = this.nmea2dd(parseFloat(rmc[3]));
-        this.gpsInfo.latitude = ((rmc[4] == 'N') ? latitude : -latitude);
+        this.gpsInfo.latitude = rmc[4] == 'N' ? latitude : -latitude;
         const longitude = this.nmea2dd(parseFloat(rmc[5]));
-        this.gpsInfo.longitude = ((rmc[6] == 'E') ? longitude : -longitude);
+        this.gpsInfo.longitude = rmc[6] == 'E' ? longitude : -longitude;
         const NMEA_TUD_KNOTS = 1.852; // 1knot=1.852km/h
         this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; //unit: km/h
         this.gpsInfo.direction = rmc[8];
@@ -20987,7 +22066,7 @@ class GYSFDMAXB {
     }
     return this.gpsInfo;
   }
-//-------------------
+  //-------------------
   get latitude() {
     return this.nmea2dd(this._latitude);
   }
@@ -20995,7 +22074,7 @@ class GYSFDMAXB {
     return this.nmea2dd(this._longitude);
   }
   _mneaTo(format, value) {
-    var result = this.nmea2dd(value);
+    let result = this.nmea2dd(value);
     if (typeof format == 'string') {
       switch (format.toUpperCase()) {
         case 'DMS':
@@ -21039,35 +22118,38 @@ class GYSFDMAXB {
     return gpsQuality;
   }
 
-//--- latitude/longitude MNEA format change to each unit
-  nmea2dms(val) {//NMEA format to DMS format string (999°99'99.9")
+  //--- latitude/longitude MNEA format change to each unit
+  nmea2dms(val) {
+    //NMEA format to DMS format string (999°99'99.9")
     val = parseFloat(val);
     let d = Math.floor(val / 100);
     let m = Math.floor((val / 100.0 - d) * 100.0);
     let s = ((val / 100.0 - d) * 100.0 - m) * 60;
     return d + '°' + m + "'" + s.toFixed(1) + '"';
   }
-  nmea2dm(val) {//NMEA format to DM format string (999°99.9999')
+  nmea2dm(val) {
+    //NMEA format to DM format string (999°99.9999')
     val = parseFloat(val);
     let d = Math.floor(val / 100.0);
     let m = (val / 100.0 - d) * 100.0;
     return d + '°' + m.toFixed(4) + "'";
   }
-  nmea2dd(val) {//NMEA format to DD format decimal (999.999999)
+  nmea2dd(val) {
+    //NMEA format to DD format decimal (999.999999)
     val = parseFloat(val);
     let d = Math.floor(val / 100.0);
     let m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
     let s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
     return parseFloat((d + m + s).toFixed(6));
   }
-  nmea2s(val) {//NMEA format to S format decimal (99999.9999)
+  nmea2s(val) {
+    //NMEA format to S format decimal (99999.9999)
     val = parseFloat(val);
     let d = Math.floor(val / 100.0);
     let m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
     let s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
     return (d + m + s) / (1.0 / 60.0 / 60.0);
   }
-
 }
 
 if (true) {
