@@ -78,6 +78,12 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-09984/"
           }
+        },
+        {
+          "name": "SainSmartTFT18LCD",
+          "store": {
+            "amazon": "https://www.amazon.co.jp/dp/B008HWTVQ2/"
+          }
         }
       ]
     },

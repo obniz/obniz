@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
-  <script src="https://unpkg.com/obniz@1.10.0/obniz.js" crossorigin="anonymous"></script>
+  <script src="http://localhost:3100/obniz.js" crossorigin="anonymous"></script>
 
   <script src="https://obniz.io/users/340/repo/private_SainSmartTFT18LCD.js"></script>
 <style>
@@ -44,7 +44,7 @@ console.time("start");
 var dir = 1;
 var date = 0;
 var cancelTimer = false;
-var obniz = new Obniz("obniz-id");
+var obniz = new Obniz("OBNIZ_ID_HERE");
 // obniz.debugprint = true;
 obniz.onconnect = async function () {
 

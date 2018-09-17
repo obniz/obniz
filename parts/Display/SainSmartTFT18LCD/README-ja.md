@@ -8,9 +8,16 @@ Obnizから[サインスマート 1.8インチ TFTカラーディスプレイ](h
 
 このLCDはSPIインターフェースでアクセスしますが、ObnizではArduinoやRaspberry Piの様に高速に描画することはできません。また、LCDからデータを読み出すこともできません。  
 
+
+[example.html](./example.html)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/lfdfvs3ldmE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## wired(scl, sda, dc, res, cs {, vcc, gnd })
 
 scl, sda, dc, res, cs, vcc, gndをobnizに接続し、接続したioをプログラムで以下のように記述します。SD-CARDのアクセスに必要なピンは接続しません。
+
+![](./connect.jpg)
 
 ```javascript
 // Javascript Example
@@ -45,7 +52,6 @@ console.log(lcd.height); //160
 
 ```javascript
 // Javascript Example
-:  :
 let red = lcd.color16(255, 0, 0); //16bitRGB for red
 lcd.drawRect(0, 0, lcd.width, lcd.height, red);
 ```
