@@ -17,7 +17,7 @@ let sensor = obniz.wired("KXR94_2050", {x: 2, y: 1, z: 0, gnd:3, vcc:11 });
 ```
 
 
-## \[await] getWait
+## [await] getWait
 
 ３軸の加速度情報を取得します
 
