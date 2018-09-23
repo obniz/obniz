@@ -7999,8 +7999,8 @@ module.exports = class ObnizConnection {
       this.print_debug('send via local');
       this.socket_local.send(data);
       if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.error(
-          'Warning: over ' + this.socket_local.bufferedAmount + ' bytes queued'
+        this.warning(
+          'over ' + this.socket_local.bufferedAmount + ' bytes queued'
         );
       }
       return;
@@ -8009,8 +8009,8 @@ module.exports = class ObnizConnection {
     if (this.socket && this.socket.readyState === 1) {
       this.socket.send(data);
       if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.error(
-          'Warning: over ' + this.socket.bufferedAmount + ' bytes queued'
+        this.warning(
+          'over ' + this.socket.bufferedAmount + ' bytes queued'
         );
       }
       return;
@@ -8582,9 +8582,8 @@ class Obniz extends ObnizUIs {
       }
       if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg));
-      } else {
-        throw new Error(msg);
       }
+      console.log(`Warning: ${msg}`);
     }
   }
 
@@ -8627,8 +8626,6 @@ if (!isNode) {
   function showObnizDebugError(err) {//eslint-disable-line
     if (window.parent && window.parent.logger) {
       window.parent.logger.onObnizError(err);
-    } else {
-      throw err;
     }
   }
 }
