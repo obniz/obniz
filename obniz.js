@@ -8009,9 +8009,7 @@ module.exports = class ObnizConnection {
     if (this.socket && this.socket.readyState === 1) {
       this.socket.send(data);
       if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.warning(
-          'over ' + this.socket.bufferedAmount + ' bytes queued'
-        );
+        this.warning('over ' + this.socket.bufferedAmount + ' bytes queued');
       }
       return;
     }
