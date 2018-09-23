@@ -581,13 +581,15 @@ class SainSmartTFT18LCD {
 
     let pixels = new Array(6 * 8 * size * size);
     let c = ch.charCodeAt(0);
-    for (let i = 0; i < 6; i++) 
+    for (let i = 0; i < 6; i++) {
       let line = i == 5 ? 0 : font[c * 5 + i];
       for (let j = 0; j < 8; j++) {
-        let cl = (line & 0x1) ? color : bg;
+        let cl = line & 0x1 ? color : bg;
         for (let w = 0; w < size; w++) {
           for (let h = 0; h < size; h++) {
-            pixels[(i * (1 * size) + w) + (j * (6 * size * size) + h * (6 * size))] = cl;
+            pixels[
+              i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))
+            ] = cl;
           }
         }
         line >>= 1;
