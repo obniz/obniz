@@ -11528,6 +11528,7 @@ var map = {
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
+	"./Grove/Grove_MP3v2.0/index.js": "./parts/Grove/Grove_MP3v2.0/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
@@ -14494,6 +14495,131 @@ class Grove_EarHeartRate {
 
 if (true) {
   module.exports = Grove_EarHeartRate;
+}
+
+/***/ }),
+
+/***/ "./parts/Grove/Grove_MP3v2.0/index.js":
+/*!********************************************!*\
+  !*** ./parts/Grove/Grove_MP3v2.0/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class Grove_MP3 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'mp3_rx', 'mp3_tx'];
+    this.requiredKeys = ['mp3_rx', 'mp3_tx'];
+
+    this.ioKeys = this.keys;
+    this.displayName = 'MP3';
+    this.displayIoNames = { mp3_rx: 'MP3Rx', mp3_tx: 'MP3Tx' };
+  }
+
+  static info() {
+    return {
+      name: 'Grove_MP3'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.my_tx = this.params.mp3_rx;
+    this.my_rx = this.params.mp3_tx;
+
+    this.uart = this.obniz.getFreeUart();
+  }
+
+  init(strage) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      _this.uart.start({
+        tx: _this.my_tx,
+        rx: _this.my_rx,
+        baud: 9600
+      });
+      yield _this.obniz.wait(100);
+      _this.uartSend(0x0C, 0);
+      yield _this.obniz.wait(500);
+      _this.uartSend(0x0B, 0);
+      yield _this.obniz.wait(100);
+
+      if (strage) {
+        if (strage == "usb") {
+          _this.uartSend(0x09, 1);
+        } else if (strage == "sd") {
+          _this.uartSend(0x09, 2);
+        }
+      } else {
+        _this.uartSend(0x09, 2);
+      }
+      yield _this.obniz.wait(200);
+    })();
+  }
+
+  setVolume(vol) {
+    if (vol >= 0 && vol <= 31) {
+      this.uartSend(0x06, vol);
+    }
+  }
+
+  volUp() {
+    this.uartSend(0x04, 0);
+  }
+
+  volDown() {
+    this.uartSend(0x05, 0);
+  }
+
+  play(track, folder) {
+    //if (!folder) folder = {};
+    if (folder) {
+      this.uart.send([0x7E, 0xFF, 0x06, 0x0F, 0x00, folder, track, 0xEF]);
+    } else {
+      // Play 'MP3' folder
+      this.uartSend(0x12, track);
+    }
+  }
+
+  stop() {
+    this.uartSend(0x16, 0);
+  }
+
+  pause() {
+    this.uartSend(0x0E, 0);
+  }
+
+  resume() {
+    this.uartSend(0x0D, 0);
+  }
+
+  next() {
+    this.uartSend(0x01, 0);
+  }
+
+  prev() {
+    this.uartSend(0x02, 0);
+  }
+
+  uartSend(command, param) {
+    let paramM = param >> 8;
+    let paramL = param & 0xFF;
+    this.uart.send([0x7E, 0xFF, 0x06, command, 0x01, paramM, paramL, 0xEF]);
+    let response = this.uart.readBytes();
+    return response;
+    //return response;
+  }
+}
+if (true) {
+  module.exports = Grove_MP3;
 }
 
 /***/ }),
