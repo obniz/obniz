@@ -11500,7 +11500,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.11.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.11.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.1","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11540,6 +11540,7 @@ var map = {
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
+	"./MovementSensor/CircularSoftPotentiometer/index.js": "./parts/MovementSensor/CircularSoftPotentiometer/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
@@ -14547,15 +14548,15 @@ class Grove_MP3 {
         baud: 9600
       });
       yield _this.obniz.wait(100);
-      _this.uartSend(0x0C, 0);
+      _this.uartSend(0x0c, 0);
       yield _this.obniz.wait(500);
-      _this.uartSend(0x0B, 0);
+      _this.uartSend(0x0b, 0);
       yield _this.obniz.wait(100);
 
       if (strage) {
-        if (strage == "usb") {
+        if (strage == 'usb') {
           _this.uartSend(0x09, 1);
-        } else if (strage == "sd") {
+        } else if (strage == 'sd') {
           _this.uartSend(0x09, 2);
         }
       } else {
@@ -14582,7 +14583,7 @@ class Grove_MP3 {
   play(track, folder) {
     //if (!folder) folder = {};
     if (folder) {
-      this.uart.send([0x7E, 0xFF, 0x06, 0x0F, 0x00, folder, track, 0xEF]);
+      this.uart.send([0x7e, 0xff, 0x06, 0x0f, 0x00, folder, track, 0xef]);
     } else {
       // Play 'MP3' folder
       this.uartSend(0x12, track);
@@ -14594,11 +14595,11 @@ class Grove_MP3 {
   }
 
   pause() {
-    this.uartSend(0x0E, 0);
+    this.uartSend(0x0e, 0);
   }
 
   resume() {
-    this.uartSend(0x0D, 0);
+    this.uartSend(0x0d, 0);
   }
 
   next() {
@@ -14611,8 +14612,8 @@ class Grove_MP3 {
 
   uartSend(command, param) {
     let paramM = param >> 8;
-    let paramL = param & 0xFF;
-    this.uart.send([0x7E, 0xFF, 0x06, command, 0x01, paramM, paramL, 0xEF]);
+    let paramL = param & 0xff;
+    this.uart.send([0x7e, 0xff, 0x06, command, 0x01, paramM, paramL, 0xef]);
     let response = this.uart.readBytes();
     return response;
     //return response;
@@ -15736,6 +15737,55 @@ class Button {
 
 if (true) {
   module.exports = Button;
+}
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/CircularSoftPotentiometer/index.js":
+/*!*****************************************************************!*\
+  !*** ./parts/MovementSensor/CircularSoftPotentiometer/index.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class CircularSoftPot {
+  constructor() {
+    this.keys = ['outer', 'middle'];
+    this.requiredKeys = ['outer', 'middle'];
+  }
+
+  static info() {
+    return {
+      name: 'CircularSoftPot'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.io_pwr = obniz.getIO(this.params.outer);
+    this.ad = obniz.getAD(this.params.middle);
+
+    this.io_pwr.drive('5v');
+    this.io_pwr.output(true);
+
+    let self = this;
+
+    this.ad.start(function (value) {
+      let pressure = value;
+      self.press = pressure;
+      if (self.onchange) {
+        self.onchange(self.press);
+      }
+    });
+  }
+}
+
+if (true) {
+  module.exports = CircularSoftPot;
 }
 
 /***/ }),
