@@ -1,5 +1,6 @@
 const BleDescriptor = require('./bleDescriptor');
 const BleAttributeAbstract = require('./bleAttributeAbstract');
+const BleHelper = require('./bleHelper');
 
 class BleCharacteristic extends BleAttributeAbstract {
   constructor(obj) {
@@ -73,8 +74,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           write_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid),
             data: data,
           },
         },
@@ -87,8 +88,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           read_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid),
           },
         },
       },
@@ -100,8 +101,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           notify_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid),
           },
         },
       },

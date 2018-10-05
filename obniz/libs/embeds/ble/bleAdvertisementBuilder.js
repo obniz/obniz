@@ -1,3 +1,5 @@
+const BleHelper = require('./bleHelper');
+
 class BleAdvertisementBuilder {
   constructor(Obniz, json) {
     this.Obniz = Obniz;
@@ -87,7 +89,7 @@ class BleAdvertisementBuilder {
   }
 
   convertUuid(uuid) {
-    let uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    let uuidNumeric = BleHelper.uuidFilter(uuid);
     if (
       uuidNumeric.length !== 32 &&
       uuidNumeric.length !== 8 &&

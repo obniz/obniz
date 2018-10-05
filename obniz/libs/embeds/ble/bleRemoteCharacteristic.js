@@ -1,5 +1,6 @@
 const BleRemoteDescriptor = require('./bleRemoteDescriptor');
 const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
+const BleHelper = require('./bleHelper');
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -48,8 +49,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         register_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
         },
       },
     };
@@ -62,8 +63,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         unregister_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
         },
       },
     };
@@ -75,22 +76,26 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         read_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
         },
       },
     };
     this.service.peripheral.Obniz.send(obj);
   }
 
-  write(array) {
+  write(array, needResponse) {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
     const obj = {
       ble: {
         write_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
           data: array,
+          needResponse,
         },
       },
     };
@@ -102,8 +107,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         get_descriptors: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
         },
       },
     };
