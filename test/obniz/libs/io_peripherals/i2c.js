@@ -107,7 +107,7 @@ describe('obniz.libs.i2c', function() {
     ]);
   });
 
-  it.skip('write10bit フォーマット変更すべき', function() {
+  it.skip('write10bit', function() {
     this.obniz.i2c0.start({
       mode: 'master',
       sda: 2,

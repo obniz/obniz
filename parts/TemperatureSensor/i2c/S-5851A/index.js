@@ -1,4 +1,4 @@
-//センサからの反応なし
+//sensor response not found
 class S5851A {
   constructor() {
     this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];

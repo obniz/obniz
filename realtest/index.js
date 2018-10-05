@@ -4,8 +4,8 @@ const fs = require('fs');
 const config = require('./config.js');
 
 console.log(
-  `obniz ${config.obnizA_ID} ${config.obnizB_ID}を` +
-    `つかうよ!\n２つを"同じ"電源に繋いでね。`
+  `obniz ${config.obnizA_ID} ${config.obnizB_ID}を` + //eslint-disable-line non-ascii
+    `つかうよ!\n２つを"同じ"電源に繋いでね。` //eslint-disable-line non-ascii
 );
 
 describe('obniz', async function() {

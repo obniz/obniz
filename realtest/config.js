@@ -1,7 +1,7 @@
 const Obniz = require('../index.js');
 
-const obnizA_ID = '25800064';
-const obnizB_ID = '88948524';
+const obnizA_ID = '88948524';
+const obnizB_ID = '59762157';
 
 let obnizA, obnizB;
 

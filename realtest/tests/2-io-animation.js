@@ -39,7 +39,7 @@ describe('2-io-animation', function() {
     obnizA.io.animation('animation-1', 'pause');
     await obnizA.pingWait();
 
-    await ioAisB(0, false); // ioanimationが動いている場合は、outputしても上書きされてしまい値が一致しないというのが起こる。
+    await ioAisB(0, false);
     await ioAisB(0, true);
   });
 
@@ -53,7 +53,7 @@ describe('2-io-animation', function() {
     obnizA.io.animation('animation-1', 'loop');
     await obnizA.pingWait();
 
-    await ioAisB(0, false); // ioanimationが動いている場合は、outputしても上書きされてしまい値が一致しないというのが起こる。
+    await ioAisB(0, false);
     await ioAisB(0, true);
   });
 
@@ -113,7 +113,7 @@ function detectPulse(io, ratioRange) {
         expect((ret[1] / (ret[0] + ret[1])) * 100).to.be.within(
           ratioRange[0],
           ratioRange[1]
-        ); // 割合だけ見る。パターンは間違っているかもしれない。
+        ); // check only rate
       } catch (e) {
         reject(e);
       }

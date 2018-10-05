@@ -31,14 +31,9 @@ class IRModule {
     this.setGetterSetter('sensor', 'output_pullup');
     this.setGetterSetter('sensor', 'ondetect');
 
-    // LEDと同じプロパティのため別枠で設定
-    // this.setGetterSetter('sensor', 'dataSymbolLength');
-
     this.led = obniz.wired('InfraredLED', {
       anode: this.params.led_anode,
     });
-    // IRSensorと同じプロパティのため別枠で設定
-    // this.setGetterSetter('led', 'dataSymbolLength');
   }
 
   //link

@@ -50,6 +50,6 @@ async function ioBisInRange(io, range) {
   let voltage = await obnizB.getAD(io).getWait();
   expect(
     voltage,
-    `expected io${io} ${voltage} is  ${range[0]}〜${range[1]}`
+    `expected io${io} ${voltage} is  ${range[0]} ~ ${range[1]}`
   ).to.be.within(range[0], range[1]);
 }

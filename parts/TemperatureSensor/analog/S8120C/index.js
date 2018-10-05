@@ -1,8 +1,8 @@
 const AnalogTemplatureSensor = require('../AnalogTempratureSensor');
 
-//不調, 正しく測れるときもある...
-//原因1:obnizの入力インピーダンスが低すぎる?
-//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
+//this not work, but sometimes good
+//resason1:too low of obniz input Impedance ?
+//resoson2:Is the sensor oscillating?
 
 class S8120C extends AnalogTemplatureSensor {
   calc(voltage) {

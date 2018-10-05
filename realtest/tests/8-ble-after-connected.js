@@ -52,8 +52,7 @@ describe('8-ble', function() {
     service.addCharacteristic(characteristic2);
     service.addCharacteristic(characteristic3);
 
-    obnizA.ble.peripheral.addService(service); // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
-
+    obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
