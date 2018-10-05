@@ -39,11 +39,10 @@ class Button {
   }
 
   stateWait(isPressed) {
-    let self = this;
-    return new Promise(function(resolve, reject) {
-      self.onChangeForStateWait = function(pressed) {
+    return new Promise((resolve, reject) => {
+      this.onChangeForStateWait = pressed => {
         if (isPressed == pressed) {
-          self.onChangeForStateWait = function() {};
+          this.onChangeForStateWait = function() {};
           resolve();
         }
       };
