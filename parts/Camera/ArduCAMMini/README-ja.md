@@ -173,7 +173,7 @@ var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:
 cam.setMode('MCU2LCD')
 ```
 
-## [async] spi_pingpongWait()
+## [await] spi_pingpongWait()
 
 obnizとカメラとの間のspi通信をテストします。
 カメラの電源が入っているか、配線が正しいかの確認ができます。
@@ -187,7 +187,7 @@ var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:
 await cam.spi_pingpongWait()
 ```
 
-## [async] getChipIdWait()
+## [await] getChipIdWait()
 
 カメラのチップ番号をI2C通信で取得します。
 I2Cに問題があるかや、チップがサポートされているものかどうかを確認するのに使用します。

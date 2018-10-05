@@ -27,7 +27,7 @@ button.onchange = function(pressed){
 };
 ```
 
-## [async] isPressedWait
+## [await] isPressedWait
 ボタンが押されているかを確認します。
 ```Javascript
 // Javascript Example
@@ -37,7 +37,7 @@ console.log("Pressed = " + pressed);
 ```
 
 
-## [async] stateWait
+## [await] stateWait
 ボタンが押される／離されるまで待ちます
 ```Javascript
 // Javascript Example

@@ -28,7 +28,7 @@ button.onchange = function(pressed){
 };
 ```
 
-## [async] isPressedWait
+## [await] isPressedWait
 Check current button with waiting result.
 ```Javascript
 // Javascript Example
@@ -38,7 +38,7 @@ console.log("Pressed = " + pressed);
 ```
 
 
-## [async] stateWait
+## [await] stateWait
 Wait until push/release button.
 ```Javascript
 // Javascript Example
