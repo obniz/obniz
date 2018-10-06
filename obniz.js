@@ -17484,7 +17484,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.11.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.11.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.6.1","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17508,6 +17508,7 @@ var map = {
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
+	"./Grove/Grove_MP3v2.0/index.js": "./parts/Grove/Grove_MP3v2.0/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
@@ -17519,6 +17520,7 @@ var map = {
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
+	"./MovementSensor/CircularSoftPotentiometer/index.js": "./parts/MovementSensor/CircularSoftPotentiometer/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
@@ -17541,6 +17543,7 @@ var map = {
 	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
 	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
@@ -22273,6 +22276,119 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Grove/Grove_MP3v2.0/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_MP3 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'mp3_rx', 'mp3_tx'];
+    this.requiredKeys = ['mp3_rx', 'mp3_tx'];
+
+    this.ioKeys = this.keys;
+    this.displayName = 'MP3';
+    this.displayIoNames = { mp3_rx: 'MP3Rx', mp3_tx: 'MP3Tx' };
+  }
+
+  static info() {
+    return {
+      name: 'Grove_MP3',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.my_tx = this.params.mp3_rx;
+    this.my_rx = this.params.mp3_tx;
+
+    this.uart = this.obniz.getFreeUart();
+  }
+
+  async init(strage) {
+    this.uart.start({
+      tx: this.my_tx,
+      rx: this.my_rx,
+      baud: 9600,
+    });
+    await this.obniz.wait(100);
+    this.uartSend(0x0c, 0);
+    await this.obniz.wait(500);
+    this.uartSend(0x0b, 0);
+    await this.obniz.wait(100);
+
+    if (strage) {
+      if (strage == 'usb') {
+        this.uartSend(0x09, 1);
+      } else if (strage == 'sd') {
+        this.uartSend(0x09, 2);
+      }
+    } else {
+      this.uartSend(0x09, 2);
+    }
+    await this.obniz.wait(200);
+  }
+
+  setVolume(vol) {
+    if (vol >= 0 && vol <= 31) {
+      this.uartSend(0x06, vol);
+    }
+  }
+
+  volUp() {
+    this.uartSend(0x04, 0);
+  }
+
+  volDown() {
+    this.uartSend(0x05, 0);
+  }
+
+  play(track, folder) {
+    //if (!folder) folder = {};
+    if (folder) {
+      this.uart.send([0x7e, 0xff, 0x06, 0x0f, 0x00, folder, track, 0xef]);
+    } else {
+      // Play 'MP3' folder
+      this.uartSend(0x12, track);
+    }
+  }
+
+  stop() {
+    this.uartSend(0x16, 0);
+  }
+
+  pause() {
+    this.uartSend(0x0e, 0);
+  }
+
+  resume() {
+    this.uartSend(0x0d, 0);
+  }
+
+  next() {
+    this.uartSend(0x01, 0);
+  }
+
+  prev() {
+    this.uartSend(0x02, 0);
+  }
+
+  uartSend(command, param) {
+    let paramM = param >> 8;
+    let paramL = param & 0xff;
+    this.uart.send([0x7e, 0xff, 0x06, command, 0x01, paramM, paramL, 0xef]);
+    let response = this.uart.readBytes();
+    return response;
+    //return response;
+  }
+}
+if (true) {
+  module.exports = Grove_MP3;
+}
+
+
+/***/ }),
+
 /***/ "./parts/GyroSensor/ENC03R_Module/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23340,6 +23456,49 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/MovementSensor/CircularSoftPotentiometer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class CircularSoftPot {
+  constructor() {
+    this.keys = ['outer', 'middle'];
+    this.requiredKeys = ['outer', 'middle'];
+  }
+
+  static info() {
+    return {
+      name: 'CircularSoftPot',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.io_pwr = obniz.getIO(this.params.outer);
+    this.ad = obniz.getAD(this.params.middle);
+
+    this.io_pwr.drive('5v');
+    this.io_pwr.output(true);
+
+    let self = this;
+
+    this.ad.start(function(value) {
+      let pressure = value;
+      self.press = pressure;
+      if (self.onchange) {
+        self.onchange(self.press);
+      }
+    });
+  }
+}
+
+if (true) {
+  module.exports = CircularSoftPot;
+}
+
+
+/***/ }),
+
 /***/ "./parts/MovementSensor/HC-SR505/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24329,6 +24488,122 @@ class ADT7410 {
 
 if (true) {
   module.exports = ADT7410;
+}
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/AMG8833/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class AMG8833 {
+  constructor() {
+    this.requiredKeys = [];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'address'];
+
+    this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
+    this.commands = {};
+    this.commands.mode_normal = [0x00, 0x00];
+    this.commands.reset_flag = [0x01, 0x30];
+    this.commands.reset_initial = [0x01, 0x3f];
+    this.commands.frameRate_10fps = [0x02, 0x00];
+    this.commands.frameRate_1fps = [0x02, 0x01];
+    this.commands.int_disable = [0x03, 0x00];
+    this.commands.int_absVal = [0x03, 0x03];
+    this.commands.int_diff = [0x03, 0x01];
+    this.commands.stat = [0x04];
+    this.commands.statClr_ovs = [0x05, 0x04];
+    this.commands.statClr_int = [0x05, 0x02];
+    this.commands.average_disable = [0x07, 0x00];
+    this.commands.average_enable = [0x07, 0x10];
+  }
+
+  static info() {
+    return {
+      name: 'AMG8833',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.address = 0x69;
+    if (this.params.address === 0x69) {
+      this.address = 0x69;
+    } else if (this.params.addressmode === 0x68) {
+      this.address = 0x68;
+    } else if (this.params.address !== undefined) {
+      throw new Error('address must be 0x68 or 0x69');
+    }
+
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(50);
+
+    obniz.i2c0.write(this.address, this.commands.mode_normal);
+    obniz.i2c0.write(this.address, this.commands.reset_flag);
+    obniz.i2c0.write(this.address, this.commands.frameRate_10fps);
+    obniz.i2c0.write(this.address, this.commands.int_disable);
+  }
+
+  async getOnePix(pixel) {
+    let pixelAddrL = 0x80;
+    let pixelAddrH = 0x81;
+    if (pixel >= 0 && pixel <= 63) {
+      pixelAddrL = 0x80 + pixel * 2;
+      pixelAddrH = 0x81 + pixel * 2;
+    } else {
+      throw new Error('pixel number must be range of 0 to 63');
+    }
+    this.i2c.write(this.address, [pixelAddrL]);
+    let dataL = await this.i2c.readWait(this.address, 1);
+    this.i2c.write(this.address, [pixelAddrH]);
+    let dataH = await this.i2c.readWait(this.address, 1);
+    let temp12bit = (dataH << 8) | dataL;
+    if (dataH & 0x08) {
+      // negative temperature
+      temp12bit = temp12bit - 1;
+      temp12bit = 0xfff - temp12bit; // bit inverting
+      return temp12bit * -0.25;
+    } else {
+      // positive temperature
+      return temp12bit * 0.25;
+    }
+  }
+
+  async getAllPix() {
+    let tempArray = new Array(64);
+    let arrFlag = 0;
+    for (let i = 0; i < 128; i = i + 2) {
+      let pixelAddrL = 0x80 + i;
+      let pixelAddrH = 0x81 + i;
+      this.i2c.write(this.address, [pixelAddrL]);
+      let dataL = await this.i2c.readWait(this.address, 1);
+      this.i2c.write(this.address, [pixelAddrH]);
+      let dataH = await this.i2c.readWait(this.address, 1);
+      let temp12bit = (dataH << 8) | dataL;
+      let temp = 0;
+      if (dataH & 0x08) {
+        // negative temperature
+        temp12bit = temp12bit - 1;
+        temp12bit = 0xfff - temp12bit; // bit inverting
+        temp = temp12bit * -0.25;
+      } else {
+        // positive temperature
+        temp = temp12bit * 0.25;
+      }
+      tempArray[arrFlag] = temp;
+      arrFlag++;
+    }
+    return tempArray;
+  }
+}
+
+if (true) {
+  module.exports = AMG8833;
 }
 
 
