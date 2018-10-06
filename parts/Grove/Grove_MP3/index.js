@@ -24,7 +24,7 @@ class Grove_MP3 {
     this.uart = this.obniz.getFreeUart();
   }
 
-  async init(strage) {
+  async initWait(strage) {
     this.uart.start({
       tx: this.my_tx,
       rx: this.my_rx,

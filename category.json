@@ -74,14 +74,14 @@
           "name": "7SegmentLED",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gI-00640/",
-            "amazon.com": "http://a.co/d/h6WaBBc",
+            "amazon.com": "http://a.co/d/h6WaBBc"
           }
         },
         {
           "name": "7SegmentLEDArray",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/c/c7seg5/",
-            "amazon.com": "http://a.co/d/6oG6kV0",
+            "amazon.com": "http://a.co/d/6oG6kV0"
           }
         },
         {
@@ -116,7 +116,7 @@
           "name": "ArduCAMMini",
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/3780/",
-            "amazon.com": "http://a.co/d/b8sozEq",
+            "amazon.com": "http://a.co/d/b8sozEq"
           }
         },
         {
@@ -206,7 +206,7 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-07735/",
             "switchscience": "https://www.switch-science.com/catalog/2275/",
-            "amazon.com": "http://a.co/d/45bGHpk",
+            "amazon.com": "http://a.co/d/45bGHpk"
           }
         },
         {
@@ -215,7 +215,7 @@
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-05793/",
             "adafruit": "https://www.adafruit.com/product/967",
             "switchscience": "https://www.switch-science.com/catalog/394/",
-            "amazon.com": "http://a.co/d/gyjg40I",
+            "amazon.com": "http://a.co/d/gyjg40I"
           }
         }
       ]
@@ -432,6 +432,12 @@
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/2526/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Ear-clip-Heart-Rate-Sensor-p-1116.html"
+          }
+        },{
+          "name": "Grove_MP3",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-10450/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-MP3-v2.0-p-2597.html"
           }
         }
       ]

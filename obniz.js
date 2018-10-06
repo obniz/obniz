@@ -17508,7 +17508,7 @@ var map = {
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
-	"./Grove/Grove_MP3v2.0/index.js": "./parts/Grove/Grove_MP3v2.0/index.js",
+	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
@@ -22276,7 +22276,7 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/Grove/Grove_MP3v2.0/index.js":
+/***/ "./parts/Grove/Grove_MP3/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 class Grove_MP3 {
@@ -22305,7 +22305,7 @@ class Grove_MP3 {
     this.uart = this.obniz.getFreeUart();
   }
 
-  async init(strage) {
+  async initWait(strage) {
     this.uart.start({
       tx: this.my_tx,
       rx: this.my_rx,
