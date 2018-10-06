@@ -7715,8 +7715,8 @@ module.exports = class ObnizConnection {
     this._connectionRetryCount++;
     let tryAfter = 1000;
     if (this._connectionRetryCount > 15) {
-      tryAfter = (this._connectionRetryCount-15) * 1000;
-      const Limit = isNode ? (60*1000) : (10*1000);
+      tryAfter = (this._connectionRetryCount - 15) * 1000;
+      const Limit = isNode ? 60 * 1000 : 10 * 1000;
       if (tryAfter > Limit) {
         tryAfter = Limit;
       }
