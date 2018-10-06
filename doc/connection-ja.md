@@ -93,7 +93,7 @@ name | type | default | description
 binary | `boolean` | true | APIの通信ではjsonでなく圧縮形式が使えますが、それのon-offとなります。falseにした場合local_connectは利用できません。
 local_connect | `boolean` | true | obniz.js はクラウドAPI経由でobnizとつないだあとに可能であればobnizと直接接続しようとします。falseにすることでそれを使わない設定にできます。binaryがfalseの場合はlocal_connectは自動的にfalseになります。
 debug_dom_id | `string` | 'obniz-debug' | HTMLではここで指定されたidを持つDOMにオンラインステータスなど各種情報が出力されます
-auto_connect | `boolean` | true | 標準でobniz.jsは自動的に接続を行い、切れても再接続を自動で行いますが、これによりoffにできます。
+auto_connect | `boolean` | true | 標準でobniz.jsは自動的に接続を行い、切れても再接続を自動で行いますが、これによりoffにできます。自動接続は1秒間隔ではじまり、徐々に間隔が伸びるようになっています。
 access_token | `string` | null | access_tokenが発行されているobnizに接続する場合は指定してください。
 reset_obniz_on_ws_disconnection | `boolean` | true | obniz.jsとクラウドとの接続が切れた時にクラウドがobnizをリセットするかどうかを決められます。
 
