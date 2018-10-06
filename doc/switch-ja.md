@@ -5,7 +5,7 @@ obniz組み込みスイッチの使い方です
 スイッチの状態が変更されたときのコールバックです．
 もしスイッチを押して，離した場合，"push" と "none"の２回呼ばれます.
 
-状態は書き４つです
+状態は下記４つです
 
 1. none
 2. push
@@ -38,7 +38,7 @@ if (state === "push") {
 
 
 
-## [async] switch.stateWait(state)
+## [await] switch.stateWait(state)
 スイッチがstateの状態になるまで待ちます．
 
 ```Javascript

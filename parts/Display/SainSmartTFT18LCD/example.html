@@ -104,7 +104,7 @@ obniz.onconnect = async function () {
   const msg = 'SainSmart TFT 1.8" LCD\n' + 'collaboration with Obniz.';
   var x = 1, y = 1;
   for (let ch of msg) {
-    [x, y] = lcd.drawString(x, y, ch, lcd.color.White, lcd.color.White);
+    [x, y] = lcd.drawString(x, y, ch, lcd.color.White, bg);
     await obniz.wait(1);
   }
   await obniz.wait(1000);
@@ -113,6 +113,7 @@ obniz.onconnect = async function () {
   lcd.rawBound(0, 31, 160, 85, obniz_image);
   await obniz.wait(1000);
   lcd.fillRect(37, 31 + 27, 54, 29, lcd.color.Black);
+  await obniz.wait(10);
 
   function dig2(v) {
     return ('0' + v).slice(-2);

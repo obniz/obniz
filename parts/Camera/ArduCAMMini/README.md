@@ -170,7 +170,7 @@ var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:
 cam.setMode('MCU2LCD')
 ```
 
-## [async] spi_pingpongWait()
+## [await] spi_pingpongWait()
 
 Testing a cam and obniz spi communication.
 Use this to check cam power supply correction and wiring check.
@@ -184,7 +184,7 @@ var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:
 await cam.spi_pingpongWait()
 ```
 
-## [async] getChipIdWait()
+## [await] getChipIdWait()
 
 Retriving a chip id by using I2C communication
 Use this to check I2C communication and validation of chip id.

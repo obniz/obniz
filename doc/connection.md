@@ -93,7 +93,7 @@ name | type | default | description
 binary | `boolean` | true | compressed format. not json. It set to false, then local_connect can't be used
 local_connect | `boolean` | true | obniz.js try to connect locally after cloud api established if possible. true will be ignored when binary was set to false
 debug_dom_id | `string` | 'obniz-debug' | In HTML, online status and debug info will be showed in DOM which has this id.
-auto_connect | `boolean` | true | obniz.js automatically connect to cloud API after instantiate soon. falset to disable it.
+auto_connect | `boolean` | true | obniz.js automatically connect to cloud API after instantiate soon. falset to disable it. The interval of auto connect become longer.
 access_token | `string` | null | If you specified access_token to your obniz. set it's key to this parameter.
 reset_obniz_on_ws_disconnection | `boolean` | true | With 'true', obniz cloud will reset your obniz after websocket from obniz.js connection was closed.
 

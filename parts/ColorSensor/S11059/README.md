@@ -37,7 +37,7 @@ var colorSens = obniz.wired("S11059", {vcc:0, sda:1, scl:2, gnd:3});
 colorSens.init(1,2);
 ```
 
-## [async] getVal()
+## [await] getVal()
 measure/get sensor value.
 return is an array of mumbers.
 
