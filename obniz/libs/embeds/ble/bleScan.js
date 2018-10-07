@@ -1,4 +1,5 @@
 const emitter = require('eventemitter3');
+const BleHelper = require('./bleHelper');
 
 class BleScan {
   constructor(Obniz) {
@@ -25,7 +26,7 @@ class BleScan {
       Array.isArray(this.scanTarget.uuids)
     ) {
       this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
-        return elm.replace(/-/g, '').toLowerCase();
+        return BleHelper.uuidFilter(elm);
       });
     }
     this.scanedPeripherals = [];
@@ -82,7 +83,7 @@ class BleScan {
     }
     if (this.scanTarget && this.scanTarget.uuids) {
       let uuids = peripheral.advertisementServiceUuids().map(e => {
-        return e.replace(/-/g, '').toLowerCase();
+        return BleHelper.uuidFilter(e);
       });
       for (let uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {

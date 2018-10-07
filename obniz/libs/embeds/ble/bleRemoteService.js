@@ -1,5 +1,6 @@
 const BleRemoteCharacteristic = require('./bleRemoteCharacteristic');
 const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
+const BleHelper = require('./bleHelper');
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -39,7 +40,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
       ble: {
         get_characteristics: {
           address: this.peripheral.address,
-          service_uuid: this.uuid.toLowerCase(),
+          service_uuid: BleHelper.uuidFilter(this.uuid),
         },
       },
     };
