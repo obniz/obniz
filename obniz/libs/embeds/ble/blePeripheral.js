@@ -1,4 +1,5 @@
 const BleService = require('./bleService');
+const BleHelper = require('./bleHelper');
 
 class BlePeripheral {
   constructor(Obniz) {
@@ -24,17 +25,17 @@ class BlePeripheral {
   }
 
   getService(uuid) {
-    uuid = uuid.toLowerCase();
+    uuid = BleHelper.uuidFilter(uuid);
     return this.services
       .filter(function(element) {
-        return element.uuid.toLowerCase() === uuid;
+        return BleHelper.uuidFilter(element.uuid) === uuid;
       })
       .shift();
   }
 
   removeService(uuid) {
     this.services = this.services.filter(function(element) {
-      return element.uuid.toLowerCase() !== uuid;
+      return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }
 
@@ -54,8 +55,8 @@ class BlePeripheral {
   }
 
   findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
     let s = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -64,7 +65,7 @@ class BlePeripheral {
   }
 
   findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
     let c = this.findCharacteristic(param);
     if (c) {
       return c.getDescriptor(descriptorUuid);

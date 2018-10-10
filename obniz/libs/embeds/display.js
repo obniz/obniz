@@ -98,6 +98,7 @@ class Display {
   }
 
   pos(x, y) {
+    this._ctx(); //crete first
     if (typeof x == 'number') {
       this._pos.x = x;
     }
