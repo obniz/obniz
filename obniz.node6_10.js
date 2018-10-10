@@ -2234,6 +2234,9 @@ module.exports = class ObnizConnection {
     this.onConnectCalled = false;
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this.emitter = new emitter();
+
+    this._connectionRetryCount = 0;
+
     this._prepareComponents();
 
     if (!options) {
@@ -2275,6 +2278,7 @@ module.exports = class ObnizConnection {
 
   wsOnOpen() {
     this.print_debug('ws connected');
+    this._connectionRetryCount = 0;
     // wait for {ws:{ready:true}} object
     if (typeof this.onopen === 'function') {
       this.onopen(this);
@@ -2309,11 +2313,8 @@ module.exports = class ObnizConnection {
       this.onclose(this);
     }
     this.onConnectCalled = false;
-    if (this.options.auto_connect) {
-      setTimeout(() => {
-        this.wsconnect(); // always connect to mainserver if ws lost
-      }, 1000);
-    }
+
+    this._reconnect();
   }
 
   connectWait(option) {
@@ -2342,25 +2343,38 @@ module.exports = class ObnizConnection {
     });
   }
 
+  _reconnect() {
+    this._connectionRetryCount++;
+    let tryAfter = 1000;
+    if (this._connectionRetryCount > 15) {
+      tryAfter = (this._connectionRetryCount - 15) * 1000;
+      const Limit = isNode ? 60 * 1000 : 10 * 1000;
+      if (tryAfter > Limit) {
+        tryAfter = Limit;
+      }
+    }
+    if (this.options.auto_connect) {
+      setTimeout(() => {
+        this.wsconnect(); // always connect to mainserver if ws lost
+      }, tryAfter);
+    }
+  }
+
   wsOnError(event) {
     // console.error(event);
   }
 
   wsOnUnexpectedResponse(req, res) {
-    let reconnectTime = 1000;
     if (res && res.statusCode == 404) {
       this.print_debug('obniz not online');
     } else {
-      reconnectTime = 5000; // server error or someting
       this.print_debug( true ? res.statusCode : undefined);
     }
+
     this.clearSocket(this.socket);
     delete this.socket;
-    if (this.options.auto_connect) {
-      setTimeout(() => {
-        this.wsconnect(); // always connect to mainserver if ws lost
-      }, reconnectTime);
-    }
+
+    this._reconnect();
   }
 
   wsconnect(desired_server) {
@@ -3562,6 +3576,8 @@ module.exports = BleAdvertisement;
 "use strict";
 
 
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
+
 class BleAdvertisementBuilder {
   constructor(Obniz, json) {
     this.Obniz = Obniz;
@@ -3642,7 +3658,7 @@ class BleAdvertisementBuilder {
   }
 
   convertUuid(uuid) {
-    let uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    let uuidNumeric = BleHelper.uuidFilter(uuid);
     if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
       this.Obniz.error('BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)');
     }
@@ -3726,10 +3742,11 @@ module.exports = BleAdvertisementBuilder;
 
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleAttributeAbstract {
   constructor(params) {
-    this.uuid = params.uuid.toLowerCase();
+    this.uuid = BleHelper.uuidFilter(params.uuid);
     this.parent = null;
     this.children = [];
 
@@ -3803,13 +3820,16 @@ class BleAttributeAbstract {
   }
 
   getChild(uuid) {
+    uuid = BleHelper.uuidFilter(uuid);
     return this.children.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
+      return BleHelper.uuidFilter(element.uuid) === uuid;
     }).shift();
   }
 
   toJSON() {
-    let obj = { uuid: this.uuid.toLowerCase() };
+    let obj = {
+      uuid: BleHelper.uuidFilter(this.uuid)
+    };
 
     if (this.children.length > 0) {
       let key = this.childrenName;
@@ -3828,12 +3848,12 @@ class BleAttributeAbstract {
   read() {}
   write() {}
 
-  writeNumber(val) {
-    this.write([val]);
+  writeNumber(val, needResponse) {
+    this.write([val], needResponse);
   }
 
-  writeText(str) {
-    this.write(ObnizUtil.string2dataArray(str));
+  writeText(str, needResponse) {
+    this.write(ObnizUtil.string2dataArray(str), needResponse);
   }
 
   readWait() {
@@ -3849,12 +3869,12 @@ class BleAttributeAbstract {
     });
   }
 
-  writeWait(data) {
+  writeWait(data, needResponse) {
     return new Promise(resolve => {
       this.emitter.once('onwrite', params => {
         resolve(params.result === 'success');
       });
-      this.write(data);
+      this.write(data, needResponse);
     });
   }
 
@@ -3952,6 +3972,7 @@ module.exports = BleAttributeAbstract;
 
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleCharacteristic extends BleAttributeAbstract {
   constructor(obj) {
@@ -4025,8 +4046,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           write_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid),
             data: data
           }
         }
@@ -4039,8 +4060,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           read_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase()
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid)
           }
         }
       }
@@ -4052,8 +4073,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           notify_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase()
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid)
           }
         }
       }
@@ -4076,6 +4097,7 @@ module.exports = BleCharacteristic;
 
 
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleDescriptor extends BleAttributeAbstract {
   constructor(obj) {
@@ -4117,8 +4139,8 @@ class BleDescriptor extends BleAttributeAbstract {
       ble: {
         peripheral: {
           write_descriptor: {
-            service_uuid: this.characteristic.service.uuid.toLowerCase(),
-            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid,
             data: dataArray
           }
@@ -4132,8 +4154,8 @@ class BleDescriptor extends BleAttributeAbstract {
       ble: {
         peripheral: {
           read_descriptor: {
-            service_uuid: this.characteristic.service.uuid.toLowerCase(),
-            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid
           }
         }
@@ -4143,6 +4165,26 @@ class BleDescriptor extends BleAttributeAbstract {
 }
 
 module.exports = BleDescriptor;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleHelper.js":
+/*!********************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleHelper.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const BleHelper = {
+  uuidFilter: function (uuid) {
+    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+  }
+};
+
+module.exports = BleHelper;
 
 /***/ }),
 
@@ -4157,6 +4199,7 @@ module.exports = BleDescriptor;
 
 
 const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BlePeripheral {
   constructor(Obniz) {
@@ -4182,15 +4225,15 @@ class BlePeripheral {
   }
 
   getService(uuid) {
-    uuid = uuid.toLowerCase();
+    uuid = BleHelper.uuidFilter(uuid);
     return this.services.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid;
+      return BleHelper.uuidFilter(element.uuid) === uuid;
     }).shift();
   }
 
   removeService(uuid) {
     this.services = this.services.filter(function (element) {
-      return element.uuid.toLowerCase() !== uuid;
+      return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }
 
@@ -4210,8 +4253,8 @@ class BlePeripheral {
   }
 
   findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
     let s = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -4220,7 +4263,7 @@ class BlePeripheral {
   }
 
   findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
     let c = this.findCharacteristic(param);
     if (c) {
       return c.getDescriptor(descriptorUuid);
@@ -4338,6 +4381,7 @@ module.exports = BleRemoteAttributeAbstract;
 
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -4386,8 +4430,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         register_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4400,8 +4444,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         unregister_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4413,22 +4457,26 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         read_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
     this.service.peripheral.Obniz.send(obj);
   }
 
-  write(array) {
+  write(array, needResponse) {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
     const obj = {
       ble: {
         write_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
-          data: array
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+          data: array,
+          needResponse
         }
       }
     };
@@ -4440,8 +4488,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         get_descriptors: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4544,6 +4592,7 @@ module.exports = BleRemoteCharacteristic;
 
 
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -4559,24 +4608,28 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
       ble: {
         read_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid.toLowerCase(),
-          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-          descriptor_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
+          descriptor_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
     this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
-  write(array) {
+  write(array, needResponse) {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
     const obj = {
       ble: {
         write_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid.toLowerCase(),
-          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-          descriptor_uuid: this.uuid.toLowerCase(),
-          data: array
+          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
+          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
+          data: array,
+          needResponse
         }
       }
     };
@@ -4600,6 +4653,7 @@ module.exports = BleRemoteDescriptor;
 
 const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemotePeripheral {
   constructor(Obniz, address) {
@@ -4787,7 +4841,7 @@ class BleRemotePeripheral {
   }
 
   getService(uuid) {
-    uuid = uuid.toLowerCase();
+    uuid = BleHelper.uuidFilter(uuid);
     for (let key in this.services) {
       if (this.services[key].uuid === uuid) {
         return this.services[key];
@@ -4800,13 +4854,13 @@ class BleRemotePeripheral {
   }
 
   findService(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
     return this.getService(serviceUuid);
   }
 
   findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
     let s = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -4815,7 +4869,7 @@ class BleRemotePeripheral {
   }
 
   findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
     let c = this.findCharacteristic(param);
     if (c) {
       return c.getDescriptor(descriptorUuid);
@@ -4910,6 +4964,7 @@ module.exports = BleRemotePeripheral;
 
 const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -4949,7 +5004,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
       ble: {
         get_characteristics: {
           address: this.peripheral.address,
-          service_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4984,6 +5039,7 @@ module.exports = BleRemoteService;
 
 
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleScan {
   constructor(Obniz) {
@@ -5006,7 +5062,7 @@ class BleScan {
     this.scanTarget = target;
     if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
       this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
-        return elm.replace(/-/g, '').toLowerCase();
+        return BleHelper.uuidFilter(elm);
       });
     }
     this.scanedPeripherals = [];
@@ -5059,7 +5115,7 @@ class BleScan {
     }
     if (this.scanTarget && this.scanTarget.uuids) {
       let uuids = peripheral.advertisementServiceUuids().map(e => {
-        return e.replace(/-/g, '').toLowerCase();
+        return BleHelper.uuidFilter(e);
       });
       for (let uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {
@@ -5110,6 +5166,7 @@ module.exports = BleScan;
 
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleService extends BleAttributeAbstract {
   constructor(obj) {
@@ -5143,7 +5200,7 @@ class BleService extends BleAttributeAbstract {
       ble: {
         peripheral: {
           stop_service: {
-            service_uuid: this.uuid.toLowerCase()
+            service_uuid: BleHelper.uuidFilter(this.uuid)
           }
         }
       }
@@ -5268,6 +5325,7 @@ class Display {
   }
 
   pos(x, y) {
+    this._ctx(); //crete first
     if (typeof x == 'number') {
       this._pos.x = x;
     }
@@ -11497,7 +11555,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.11.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.1.2","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.3.0","eslint-config-prettier":"^3.0.1","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.6.2","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.1","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.2.2","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.2","sinon":"^6.1.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.2.7","vinyl":"^2.2.0","webpack":"^4.16.5","webpack-cli":"^3.1.0","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.0.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.12.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.6.1","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11525,6 +11583,7 @@ var map = {
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
+	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
@@ -11536,6 +11595,7 @@ var map = {
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
+	"./MovementSensor/CircularSoftPotentiometer/index.js": "./parts/MovementSensor/CircularSoftPotentiometer/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
@@ -11558,6 +11618,7 @@ var map = {
 	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
 	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
@@ -14535,6 +14596,131 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Grove/Grove_MP3/index.js":
+/*!****************************************!*\
+  !*** ./parts/Grove/Grove_MP3/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class Grove_MP3 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'mp3_rx', 'mp3_tx'];
+    this.requiredKeys = ['mp3_rx', 'mp3_tx'];
+
+    this.ioKeys = this.keys;
+    this.displayName = 'MP3';
+    this.displayIoNames = { mp3_rx: 'MP3Rx', mp3_tx: 'MP3Tx' };
+  }
+
+  static info() {
+    return {
+      name: 'Grove_MP3'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.my_tx = this.params.mp3_rx;
+    this.my_rx = this.params.mp3_tx;
+
+    this.uart = this.obniz.getFreeUart();
+  }
+
+  initWait(strage) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      _this.uart.start({
+        tx: _this.my_tx,
+        rx: _this.my_rx,
+        baud: 9600
+      });
+      yield _this.obniz.wait(100);
+      _this.uartSend(0x0c, 0);
+      yield _this.obniz.wait(500);
+      _this.uartSend(0x0b, 0);
+      yield _this.obniz.wait(100);
+
+      if (strage) {
+        if (strage == 'usb') {
+          _this.uartSend(0x09, 1);
+        } else if (strage == 'sd') {
+          _this.uartSend(0x09, 2);
+        }
+      } else {
+        _this.uartSend(0x09, 2);
+      }
+      yield _this.obniz.wait(200);
+    })();
+  }
+
+  setVolume(vol) {
+    if (vol >= 0 && vol <= 31) {
+      this.uartSend(0x06, vol);
+    }
+  }
+
+  volUp() {
+    this.uartSend(0x04, 0);
+  }
+
+  volDown() {
+    this.uartSend(0x05, 0);
+  }
+
+  play(track, folder) {
+    //if (!folder) folder = {};
+    if (folder) {
+      this.uart.send([0x7e, 0xff, 0x06, 0x0f, 0x00, folder, track, 0xef]);
+    } else {
+      // Play 'MP3' folder
+      this.uartSend(0x12, track);
+    }
+  }
+
+  stop() {
+    this.uartSend(0x16, 0);
+  }
+
+  pause() {
+    this.uartSend(0x0e, 0);
+  }
+
+  resume() {
+    this.uartSend(0x0d, 0);
+  }
+
+  next() {
+    this.uartSend(0x01, 0);
+  }
+
+  prev() {
+    this.uartSend(0x02, 0);
+  }
+
+  uartSend(command, param) {
+    let paramM = param >> 8;
+    let paramL = param & 0xff;
+    this.uart.send([0x7e, 0xff, 0x06, command, 0x01, paramM, paramL, 0xef]);
+    let response = this.uart.readBytes();
+    return response;
+    //return response;
+  }
+}
+if (true) {
+  module.exports = Grove_MP3;
+}
+
+/***/ }),
+
 /***/ "./parts/GyroSensor/ENC03R_Module/index.js":
 /*!*************************************************!*\
   !*** ./parts/GyroSensor/ENC03R_Module/index.js ***!
@@ -14848,6 +15034,7 @@ class InfraredLED {
     this.pwm = this.obniz.getFreePwm();
     this.pwm.start({ io: this.params.anode });
     this.pwm.freq(38000);
+    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
   }
 
   send(arr) {
@@ -15633,11 +15820,10 @@ class Button {
   }
 
   stateWait(isPressed) {
-    let self = this;
-    return new Promise(function (resolve, reject) {
-      self.onChangeForStateWait = function (pressed) {
+    return new Promise((resolve, reject) => {
+      this.onChangeForStateWait = pressed => {
         if (isPressed == pressed) {
-          self.onChangeForStateWait = function () {};
+          this.onChangeForStateWait = function () {};
           resolve();
         }
       };
@@ -15647,6 +15833,55 @@ class Button {
 
 if (true) {
   module.exports = Button;
+}
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/CircularSoftPotentiometer/index.js":
+/*!*****************************************************************!*\
+  !*** ./parts/MovementSensor/CircularSoftPotentiometer/index.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class CircularSoftPot {
+  constructor() {
+    this.keys = ['outer', 'middle'];
+    this.requiredKeys = ['outer', 'middle'];
+  }
+
+  static info() {
+    return {
+      name: 'CircularSoftPot'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.io_pwr = obniz.getIO(this.params.outer);
+    this.ad = obniz.getAD(this.params.middle);
+
+    this.io_pwr.drive('5v');
+    this.io_pwr.output(true);
+
+    let self = this;
+
+    this.ad.start(function (value) {
+      let pressure = value;
+      self.press = pressure;
+      if (self.onchange) {
+        self.onchange(self.press);
+      }
+    });
+  }
+}
+
+if (true) {
+  module.exports = CircularSoftPot;
 }
 
 /***/ }),
@@ -16805,6 +17040,134 @@ class ADT7410 {
 
 if (true) {
   module.exports = ADT7410;
+}
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/AMG8833/index.js":
+/*!******************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/AMG8833/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class AMG8833 {
+  constructor() {
+    this.requiredKeys = [];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'address'];
+
+    this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
+    this.commands = {};
+    this.commands.mode_normal = [0x00, 0x00];
+    this.commands.reset_flag = [0x01, 0x30];
+    this.commands.reset_initial = [0x01, 0x3f];
+    this.commands.frameRate_10fps = [0x02, 0x00];
+    this.commands.frameRate_1fps = [0x02, 0x01];
+    this.commands.int_disable = [0x03, 0x00];
+    this.commands.int_absVal = [0x03, 0x03];
+    this.commands.int_diff = [0x03, 0x01];
+    this.commands.stat = [0x04];
+    this.commands.statClr_ovs = [0x05, 0x04];
+    this.commands.statClr_int = [0x05, 0x02];
+    this.commands.average_disable = [0x07, 0x00];
+    this.commands.average_enable = [0x07, 0x10];
+  }
+
+  static info() {
+    return {
+      name: 'AMG8833'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.address = 0x69;
+    if (this.params.address === 0x69) {
+      this.address = 0x69;
+    } else if (this.params.addressmode === 0x68) {
+      this.address = 0x68;
+    } else if (this.params.address !== undefined) {
+      throw new Error('address must be 0x68 or 0x69');
+    }
+
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || null; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(50);
+
+    obniz.i2c0.write(this.address, this.commands.mode_normal);
+    obniz.i2c0.write(this.address, this.commands.reset_flag);
+    obniz.i2c0.write(this.address, this.commands.frameRate_10fps);
+    obniz.i2c0.write(this.address, this.commands.int_disable);
+  }
+
+  getOnePixWait(pixel) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      let pixelAddrL = 0x80;
+      let pixelAddrH = 0x81;
+      if (pixel >= 0 && pixel <= 63) {
+        pixelAddrL = 0x80 + pixel * 2;
+        pixelAddrH = 0x81 + pixel * 2;
+      } else {
+        throw new Error('pixel number must be range of 0 to 63');
+      }
+      _this.i2c.write(_this.address, [pixelAddrL]);
+      let dataL = yield _this.i2c.readWait(_this.address, 1);
+      _this.i2c.write(_this.address, [pixelAddrH]);
+      let dataH = yield _this.i2c.readWait(_this.address, 1);
+      let temp12bit = dataH << 8 | dataL;
+      if (dataH & 0x08) {
+        // negative temperature
+        temp12bit = temp12bit - 1;
+        temp12bit = 0xfff - temp12bit; // bit inverting
+        return temp12bit * -0.25;
+      } else {
+        // positive temperature
+        return temp12bit * 0.25;
+      }
+    })();
+  }
+
+  getAllPixWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      let tempArray = new Array(64);
+      _this2.i2c.write(_this2.address, [0x80]);
+      const datas = yield _this2.i2c.readWait(_this2.address, 64 * 2);
+
+      for (let i = 0; i < 64; i++) {
+        let temp12bit = datas[i * 2 + 1] << 8 | datas[i * 2];
+        let temp = 0;
+        if (datas[i * 2 + 1] & 0x08) {
+          // negative temperature
+          temp12bit = temp12bit - 1;
+          temp12bit = 0xfff - temp12bit; // bit inverting
+          temp = temp12bit * -0.25;
+        } else {
+          // positive temperature
+          temp = temp12bit * 0.25;
+        }
+        tempArray[i] = temp;
+      }
+
+      return tempArray;
+    })();
+  }
+}
+
+if (true) {
+  module.exports = AMG8833;
 }
 
 /***/ }),

@@ -38,7 +38,7 @@ if (state === "push") {
 
 
 
-## [async] switch.stateWait(state)
+## [await] switch.stateWait(state)
 スイッチがstateの状態になるまで待ちます．
 
 ```Javascript

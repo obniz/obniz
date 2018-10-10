@@ -1,5 +1,6 @@
 const BleRemoteService = require('./bleRemoteService');
 const emitter = require('eventemitter3');
+const BleHelper = require('./bleHelper');
 
 class BleRemotePeripheral {
   constructor(Obniz, address) {
@@ -206,7 +207,7 @@ class BleRemotePeripheral {
   }
 
   getService(uuid) {
-    uuid = uuid.toLowerCase();
+    uuid = BleHelper.uuidFilter(uuid);
     for (let key in this.services) {
       if (this.services[key].uuid === uuid) {
         return this.services[key];
@@ -219,13 +220,13 @@ class BleRemotePeripheral {
   }
 
   findService(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
     return this.getService(serviceUuid);
   }
 
   findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
     let s = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -234,7 +235,7 @@ class BleRemotePeripheral {
   }
 
   findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
     let c = this.findCharacteristic(param);
     if (c) {
       return c.getDescriptor(descriptorUuid);
