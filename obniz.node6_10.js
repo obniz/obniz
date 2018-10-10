@@ -3576,6 +3576,8 @@ module.exports = BleAdvertisement;
 "use strict";
 
 
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
+
 class BleAdvertisementBuilder {
   constructor(Obniz, json) {
     this.Obniz = Obniz;
@@ -3656,7 +3658,7 @@ class BleAdvertisementBuilder {
   }
 
   convertUuid(uuid) {
-    let uuidNumeric = uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    let uuidNumeric = BleHelper.uuidFilter(uuid);
     if (uuidNumeric.length !== 32 && uuidNumeric.length !== 8 && uuidNumeric.length !== 4) {
       this.Obniz.error('BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)');
     }
@@ -3740,10 +3742,11 @@ module.exports = BleAdvertisementBuilder;
 
 const ObnizUtil = __webpack_require__(/*! ../../utils/util */ "./obniz/libs/utils/util.js");
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleAttributeAbstract {
   constructor(params) {
-    this.uuid = params.uuid.toLowerCase();
+    this.uuid = BleHelper.uuidFilter(params.uuid);
     this.parent = null;
     this.children = [];
 
@@ -3817,13 +3820,16 @@ class BleAttributeAbstract {
   }
 
   getChild(uuid) {
+    uuid = BleHelper.uuidFilter(uuid);
     return this.children.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid.toLowerCase();
+      return BleHelper.uuidFilter(element.uuid) === uuid;
     }).shift();
   }
 
   toJSON() {
-    let obj = { uuid: this.uuid.toLowerCase() };
+    let obj = {
+      uuid: BleHelper.uuidFilter(this.uuid)
+    };
 
     if (this.children.length > 0) {
       let key = this.childrenName;
@@ -3842,12 +3848,12 @@ class BleAttributeAbstract {
   read() {}
   write() {}
 
-  writeNumber(val) {
-    this.write([val]);
+  writeNumber(val, needResponse) {
+    this.write([val], needResponse);
   }
 
-  writeText(str) {
-    this.write(ObnizUtil.string2dataArray(str));
+  writeText(str, needResponse) {
+    this.write(ObnizUtil.string2dataArray(str), needResponse);
   }
 
   readWait() {
@@ -3863,12 +3869,12 @@ class BleAttributeAbstract {
     });
   }
 
-  writeWait(data) {
+  writeWait(data, needResponse) {
     return new Promise(resolve => {
       this.emitter.once('onwrite', params => {
         resolve(params.result === 'success');
       });
-      this.write(data);
+      this.write(data, needResponse);
     });
   }
 
@@ -3966,6 +3972,7 @@ module.exports = BleAttributeAbstract;
 
 const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/embeds/ble/bleDescriptor.js");
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleCharacteristic extends BleAttributeAbstract {
   constructor(obj) {
@@ -4039,8 +4046,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           write_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid),
             data: data
           }
         }
@@ -4053,8 +4060,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           read_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase()
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid)
           }
         }
       }
@@ -4066,8 +4073,8 @@ class BleCharacteristic extends BleAttributeAbstract {
       ble: {
         peripheral: {
           notify_characteristic: {
-            service_uuid: this.service.uuid.toLowerCase(),
-            characteristic_uuid: this.uuid.toLowerCase()
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid)
           }
         }
       }
@@ -4090,6 +4097,7 @@ module.exports = BleCharacteristic;
 
 
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleDescriptor extends BleAttributeAbstract {
   constructor(obj) {
@@ -4131,8 +4139,8 @@ class BleDescriptor extends BleAttributeAbstract {
       ble: {
         peripheral: {
           write_descriptor: {
-            service_uuid: this.characteristic.service.uuid.toLowerCase(),
-            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid,
             data: dataArray
           }
@@ -4146,8 +4154,8 @@ class BleDescriptor extends BleAttributeAbstract {
       ble: {
         peripheral: {
           read_descriptor: {
-            service_uuid: this.characteristic.service.uuid.toLowerCase(),
-            characteristic_uuid: this.characteristic.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid
           }
         }
@@ -4157,6 +4165,26 @@ class BleDescriptor extends BleAttributeAbstract {
 }
 
 module.exports = BleDescriptor;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleHelper.js":
+/*!********************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleHelper.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const BleHelper = {
+  uuidFilter: function (uuid) {
+    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+  }
+};
+
+module.exports = BleHelper;
 
 /***/ }),
 
@@ -4171,6 +4199,7 @@ module.exports = BleDescriptor;
 
 
 const BleService = __webpack_require__(/*! ./bleService */ "./obniz/libs/embeds/ble/bleService.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BlePeripheral {
   constructor(Obniz) {
@@ -4196,15 +4225,15 @@ class BlePeripheral {
   }
 
   getService(uuid) {
-    uuid = uuid.toLowerCase();
+    uuid = BleHelper.uuidFilter(uuid);
     return this.services.filter(function (element) {
-      return element.uuid.toLowerCase() === uuid;
+      return BleHelper.uuidFilter(element.uuid) === uuid;
     }).shift();
   }
 
   removeService(uuid) {
     this.services = this.services.filter(function (element) {
-      return element.uuid.toLowerCase() !== uuid;
+      return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }
 
@@ -4224,8 +4253,8 @@ class BlePeripheral {
   }
 
   findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
     let s = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -4234,7 +4263,7 @@ class BlePeripheral {
   }
 
   findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
     let c = this.findCharacteristic(param);
     if (c) {
       return c.getDescriptor(descriptorUuid);
@@ -4352,6 +4381,7 @@ module.exports = BleRemoteAttributeAbstract;
 
 const BleRemoteDescriptor = __webpack_require__(/*! ./bleRemoteDescriptor */ "./obniz/libs/embeds/ble/bleRemoteDescriptor.js");
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -4400,8 +4430,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         register_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4414,8 +4444,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         unregister_notify_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4427,22 +4457,26 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         read_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
     this.service.peripheral.Obniz.send(obj);
   }
 
-  write(array) {
+  write(array, needResponse) {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
     const obj = {
       ble: {
         write_characteristic: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase(),
-          data: array
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+          data: array,
+          needResponse
         }
       }
     };
@@ -4454,8 +4488,8 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       ble: {
         get_descriptors: {
           address: this.service.peripheral.address,
-          service_uuid: this.service.uuid.toLowerCase(),
-          characteristic_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4558,6 +4592,7 @@ module.exports = BleRemoteCharacteristic;
 
 
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -4573,24 +4608,28 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
       ble: {
         read_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid.toLowerCase(),
-          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-          descriptor_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
+          descriptor_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
     this.characteristic.service.peripheral.Obniz.send(obj);
   }
 
-  write(array) {
+  write(array, needResponse) {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
     const obj = {
       ble: {
         write_descriptor: {
           address: this.characteristic.service.peripheral.address,
-          service_uuid: this.characteristic.service.uuid.toLowerCase(),
-          characteristic_uuid: this.characteristic.uuid.toLowerCase(),
-          descriptor_uuid: this.uuid.toLowerCase(),
-          data: array
+          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
+          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
+          data: array,
+          needResponse
         }
       }
     };
@@ -4614,6 +4653,7 @@ module.exports = BleRemoteDescriptor;
 
 const BleRemoteService = __webpack_require__(/*! ./bleRemoteService */ "./obniz/libs/embeds/ble/bleRemoteService.js");
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemotePeripheral {
   constructor(Obniz, address) {
@@ -4801,7 +4841,7 @@ class BleRemotePeripheral {
   }
 
   getService(uuid) {
-    uuid = uuid.toLowerCase();
+    uuid = BleHelper.uuidFilter(uuid);
     for (let key in this.services) {
       if (this.services[key].uuid === uuid) {
         return this.services[key];
@@ -4814,13 +4854,13 @@ class BleRemotePeripheral {
   }
 
   findService(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
     return this.getService(serviceUuid);
   }
 
   findCharacteristic(param) {
-    let serviceUuid = param.service_uuid.toLowerCase();
-    let characteristicUuid = param.characteristic_uuid.toLowerCase();
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
     let s = this.getService(serviceUuid);
     if (s) {
       return s.getCharacteristic(characteristicUuid);
@@ -4829,7 +4869,7 @@ class BleRemotePeripheral {
   }
 
   findDescriptor(param) {
-    let descriptorUuid = param.descriptor_uuid.toLowerCase();
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
     let c = this.findCharacteristic(param);
     if (c) {
       return c.getDescriptor(descriptorUuid);
@@ -4924,6 +4964,7 @@ module.exports = BleRemotePeripheral;
 
 const BleRemoteCharacteristic = __webpack_require__(/*! ./bleRemoteCharacteristic */ "./obniz/libs/embeds/ble/bleRemoteCharacteristic.js");
 const BleRemoteAttributeAbstract = __webpack_require__(/*! ./bleRemoteAttributeAbstract */ "./obniz/libs/embeds/ble/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -4963,7 +5004,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
       ble: {
         get_characteristics: {
           address: this.peripheral.address,
-          service_uuid: this.uuid.toLowerCase()
+          service_uuid: BleHelper.uuidFilter(this.uuid)
         }
       }
     };
@@ -4998,6 +5039,7 @@ module.exports = BleRemoteService;
 
 
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleScan {
   constructor(Obniz) {
@@ -5020,7 +5062,7 @@ class BleScan {
     this.scanTarget = target;
     if (this.scanTarget && this.scanTarget.uuids && Array.isArray(this.scanTarget.uuids)) {
       this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
-        return elm.replace(/-/g, '').toLowerCase();
+        return BleHelper.uuidFilter(elm);
       });
     }
     this.scanedPeripherals = [];
@@ -5073,7 +5115,7 @@ class BleScan {
     }
     if (this.scanTarget && this.scanTarget.uuids) {
       let uuids = peripheral.advertisementServiceUuids().map(e => {
-        return e.replace(/-/g, '').toLowerCase();
+        return BleHelper.uuidFilter(e);
       });
       for (let uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {
@@ -5124,6 +5166,7 @@ module.exports = BleScan;
 
 const BleAttributeAbstract = __webpack_require__(/*! ./bleAttributeAbstract */ "./obniz/libs/embeds/ble/bleAttributeAbstract.js");
 const BleCharacteristic = __webpack_require__(/*! ./bleCharacteristic */ "./obniz/libs/embeds/ble/bleCharacteristic.js");
+const BleHelper = __webpack_require__(/*! ./bleHelper */ "./obniz/libs/embeds/ble/bleHelper.js");
 
 class BleService extends BleAttributeAbstract {
   constructor(obj) {
@@ -5157,7 +5200,7 @@ class BleService extends BleAttributeAbstract {
       ble: {
         peripheral: {
           stop_service: {
-            service_uuid: this.uuid.toLowerCase()
+            service_uuid: BleHelper.uuidFilter(this.uuid)
           }
         }
       }
@@ -5282,6 +5325,7 @@ class Display {
   }
 
   pos(x, y) {
+    this._ctx(); //crete first
     if (typeof x == 'number') {
       this._pos.x = x;
     }
@@ -14990,6 +15034,7 @@ class InfraredLED {
     this.pwm = this.obniz.getFreePwm();
     this.pwm.start({ io: this.params.anode });
     this.pwm.freq(38000);
+    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
   }
 
   send(arr) {

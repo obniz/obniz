@@ -27,6 +27,7 @@ class InfraredLED {
     this.pwm = this.obniz.getFreePwm();
     this.pwm.start({ io: this.params.anode });
     this.pwm.freq(38000);
+    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
   }
 
   send(arr) {
