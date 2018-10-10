@@ -1,23 +1,23 @@
 # Thermal Camera Sensor - AMG8833
-赤外線アレイセンサAMG8833を使用しています。
-測定範囲は0~80℃です。
-8x8画素で温度分布を測定することができます。
+Infrared Arraied sensor AMG833 Library.
+It has 8x8 (0 to 80 degree in celsius) temperature sensors.
 
 ![](./gif.gif)
 
-いくつかのメーカーからAMG8833を使ったモジュールが発売されています。
-以下はAdafruitの出しているモジュールの写真です。
+Some maker produce AMG833 moduels.
+Below is Adafruit's one.
 
 ![](./image.jpg)
 
 
 ## wired(obniz,  {[vin, gnd, sda, scl, address]} )
-obnizにセンサをつなぎます。
-AMG8833は3.3V駆動です。このライブラリでのvinは5V出力になりますので、Adafruit社製以外のモジュールを使用する場合は注意してください。
+connect a sensor.
+AMG833 is 3.3v. This library `vin` supply 5v. Pay attention when you are using not Adafruit module.
 
-Adafruitのモジュールを使う場合は、電源を安定供給するためにobnizの２箇所以上のIOから電源を供給してください。
+If you are using Adafruit module, Please supply vin from two or more io. See below example. io0 and io4 is used for supplying vin.
 
-addressは未指定の場合は0x69になります。モジュール裏面のジャンパを接続した場合は、0x68を指定してください。
+address is optional. Default is 0x69. If your module is configred to 0x68, please specify 0x68.
+
 ```javascript
 // Javascript Example
 obniz.io4.output(true);
@@ -26,9 +26,8 @@ var grideye = obniz.wired("AMG8833", {vcc:0, gnd:1, sda:2, scl:3, address:0x69})
 
 
 ## [await] getAllPixWait()
-64個すべての画素の温度を取得します。
-温度はセルシウス温度で0~80度です。
-戻り値は64個の要素を持つ配列です。
+Getting all of output as numeric array.
+Value is celcius degree within 0 to 80.
 ```javascript
 // Javascript Example
 var grideye = obniz.wired("AMG8833", {vcc:0, gnd:1, sda:2, scl:3});
@@ -36,7 +35,7 @@ var temp = await grideye.getAllPixWait();
 console.log('temperature:' + temp);
 ```
 
-canvasなどを使うと簡単に描画することが出来ます。
+Drawing with canvas is easy.
 
 ```javascript
 <canvas id="canvas" width="300" height="300"></canvas>
@@ -60,7 +59,7 @@ for(let x=0;x<8;x++) {
 
 ![](./normalresl.png)
 
-OpenCVなどの解像度のアップコンバートを利用すると、擬似的に高解像度化することが出来ます。
+By using opencv resolution up convert, You can get high-resolution image.
 
 ```javascript
 <canvas id="canvas" width="8" height="8"></canvas>
@@ -90,11 +89,9 @@ cv.imshow('canvas_highr', dst);
 src.delete(); dst.delete();
 ```
 
-
-
-
 ## [await] getOnePixWait(pixel)
-pixelで指定した1画素の温度を出力します。画素は0~63の範囲で指定してください。
+Getting only one pixel. Specify pixel as a number 0 to 63.
+
 ```javascript
 // Javascript Example
 var grideye = obniz.wired("AMG8833", {vcc:0, gnd:1, sda:2, scl:3});
