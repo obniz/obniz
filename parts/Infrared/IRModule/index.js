@@ -1,7 +1,7 @@
 class IRModule {
   constructor() {
-    this.keys = ['sens_out', 'vcc', 'led_anode', 'gnd'];
-    this.requiredKeys = ['sens_out', 'led_anode'];
+    this.keys = ['recv', 'vcc', 'send', 'gnd'];
+    this.requiredKeys = ['recv', 'send'];
   }
 
   static info() {
@@ -14,16 +14,16 @@ class IRModule {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
 
-    if (!obniz.isValidIO(this.params.sens_out)) {
-      throw new Error('sens_out is not valid io');
+    if (!obniz.isValidIO(this.params.recv)) {
+      throw new Error('recv is not valid io');
     }
 
-    if (!obniz.isValidIO(this.params.led_anode)) {
-      throw new Error('led_anode is not valid io');
+    if (!obniz.isValidIO(this.params.send)) {
+      throw new Error('send is not valid io');
     }
 
     this.sensor = obniz.wired('IRSensor', {
-      output: this.params.sens_out,
+      output: this.params.recv,
     });
     this.setGetterSetter('sensor', 'duration');
     this.setGetterSetter('sensor', 'dataInverted');
@@ -32,7 +32,7 @@ class IRModule {
     this.setGetterSetter('sensor', 'ondetect');
 
     this.led = obniz.wired('InfraredLED', {
-      anode: this.params.led_anode,
+      anode: this.params.send,
     });
   }
 
@@ -40,6 +40,7 @@ class IRModule {
   send(arr) {
     this.led.send(arr);
   }
+
   start(callback) {
     this.sensor.start(callback);
   }
@@ -47,10 +48,12 @@ class IRModule {
   get dataSymbolLength() {
     return this.sensor.dataSymbolLength;
   }
+
   set dataSymbolLength(x) {
     this.sensor.dataSymbolLength = x;
     this.led.dataSymbolLength = x;
   }
+
   setGetterSetter(partsName, varName) {
     Object.defineProperty(this, varName, {
       get() {
