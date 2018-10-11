@@ -25,6 +25,6 @@
     "no-constant-condition": ["error", {"checkLoops": false}],
     "no-unused-vars": ["error", { "args": "none" }],
     "no-var": "error",
-    "non-ascii": "error"
+    "non-ascii": ["error",{"allowedChars":"°"}]
   }
 }

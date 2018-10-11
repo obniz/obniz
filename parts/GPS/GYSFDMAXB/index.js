@@ -304,21 +304,19 @@ class GYSFDMAXB {
 
   //--- latitude/longitude MNEA format change to each unit
   nmea2dms(val) {
-    //eslint-disable-next-line non-ascii
     //NMEA format to DMS format string (999° 99'99.9")
     val = parseFloat(val);
     let d = Math.floor(val / 100);
     let m = Math.floor((val / 100.0 - d) * 100.0);
     let s = ((val / 100.0 - d) * 100.0 - m) * 60;
-    return d + '°' + m + "'" + s.toFixed(1) + '"'; //eslint-disable-line non-ascii
+    return d + '°' + m + "'" + s.toFixed(1) + '"';
   }
   nmea2dm(val) {
-    //eslint-disable-next-line non-ascii
     //NMEA format to DM format string (999° 99.9999')
     val = parseFloat(val);
     let d = Math.floor(val / 100.0);
     let m = (val / 100.0 - d) * 100.0;
-    return d + '°' + m.toFixed(4) + "'"; //eslint-disable-line non-ascii
+    return d + '°' + m.toFixed(4) + "'";
   }
   nmea2dd(val) {
     //NMEA format to DD format decimal (999.999999)
