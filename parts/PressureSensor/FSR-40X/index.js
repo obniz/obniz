@@ -1,4 +1,4 @@
-//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+//Todo: add weight and calc pressure(kg)
 
 class FSR40X {
   constructor() {

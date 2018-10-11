@@ -34,7 +34,6 @@ class ADT7410 {
     tempBin = tempBin >> 3;
 
     if (tempBin & 0x1000) {
-      //0度以下の時の処理
       tempBin = tempBin - 8192;
     }
 

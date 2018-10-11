@@ -64,6 +64,12 @@
             "amazon.com": "http://a.co/d/9ALVGNW",
             "aliexpress": "https://www.aliexpress.com/wholesale?initiative_id=SC_20181005232108&SearchText=infrared+receiver+38khz&g=y&spellcheckPrompt=&misspellText=infrared+reciever+38khz"
           }
+        },
+        {
+          "name": "IRModule",
+          "store": {
+            "obniz": "https://obniz.myshopify.com/products/ir-module-cbr-ir001?variant=15937533771834"
+          }
         }
       ]
     },
@@ -464,6 +470,9 @@
     },
     "marutsu": {
       "logo": "/images/shop/marutsu.png"
+    },
+    "obniz" : {
+      "logo": "/images/shop/obniz.png"
     }
   }
 }

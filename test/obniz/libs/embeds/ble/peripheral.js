@@ -299,8 +299,7 @@ describe('ble', function() {
     service.addCharacteristic(characteristic);
     characteristic.addDescriptor(descriptor);
 
-    this.obniz.ble.peripheral.addService(service); // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
-
+    this.obniz.ble.peripheral.addService(service);
     expect(this.obniz).send([
       {
         ble: {
@@ -447,7 +446,7 @@ describe('ble', function() {
     service.addCharacteristic(characteristic);
     characteristic.addDescriptor(descriptor);
 
-    this.obniz.ble.peripheral.addService(service); // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
+    this.obniz.ble.peripheral.addService(service);
 
     expect(this.obniz).send([
       {

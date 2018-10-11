@@ -41,7 +41,7 @@ class MatrixLED_MAX7219 {
   }
 
   initModule() {
-    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
+    this.write([0x09, 0x00]); // Code B decode for digits 3-0 No decode for digits 7-4
     this.write([0x0a, 0x05]); // brightness 9/32 0 to f
     this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
     this.write([0x0c, 0x01]); // Shutdown to normal operation

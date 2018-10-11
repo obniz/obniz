@@ -33,7 +33,6 @@ class WSCommand_UART extends WSCommand {
     } else if (params.stop === 0) {
       buf[7] = 0;
     } else {
-      //ここには来ない
       throw new Error('uart: invalid stop bits');
     }
 

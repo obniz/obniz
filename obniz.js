@@ -17082,7 +17082,6 @@ class WSCommand_UART extends WSCommand {
     } else if (params.stop === 0) {
       buf[7] = 0;
     } else {
-      //ここには来ない
       throw new Error('uart: invalid stop bits');
     }
 
@@ -17526,7 +17525,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.12.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.6.1","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.12.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.6.1","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17552,9 +17551,12 @@ var map = {
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
-	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
+	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
+	"./Infrared/IRSensor/index.js": "./parts/Infrared/IRSensor/index.js",
+	"./Infrared/InfraredLED/index.js": "./parts/Infrared/InfraredLED/index.js",
+	"./InfraredSensor/IRModule/index.js": "./parts/InfraredSensor/IRModule/index.js",
+	"./InfraredSensor/InfraredLED/index.js": "./parts/InfraredSensor/InfraredLED/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
-	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
 	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
@@ -18304,7 +18306,7 @@ AE_MICAMP.prototype.Average = function(callback) {
       OV2640_800x600_JPEG: [
         [0xff, 0x01],
         [0x11, 0x01],
-        [0x12, 0x00], // Bit[6:4]: Resolution selection//0x02Ϊ����
+        [0x12, 0x00], // Bit[6:4]: Resolution selection
         [0x17, 0x11], // HREFST[10:3]
         [0x18, 0x75], // HREFEND[10:3]
         [0x32, 0x36], // Bit[5:3]: HREFEND[2:0]; Bit[2:0]: HREFST[2:0]
@@ -19465,7 +19467,7 @@ class MatrixLED_MAX7219 {
   }
 
   initModule() {
-    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
+    this.write([0x09, 0x00]); // Code B decode for digits 3-0 No decode for digits 7-4
     this.write([0x0a, 0x05]); // brightness 9/32 0 to f
     this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
     this.write([0x0c, 0x01]); // Shutdown to normal operation
@@ -22218,19 +22220,21 @@ class GYSFDMAXB {
 
   //--- latitude/longitude MNEA format change to each unit
   nmea2dms(val) {
-    //NMEA format to DMS format string (999°99'99.9")
+    //eslint-disable-next-line non-ascii
+    //NMEA format to DMS format string (999° 99'99.9")
     val = parseFloat(val);
     let d = Math.floor(val / 100);
     let m = Math.floor((val / 100.0 - d) * 100.0);
     let s = ((val / 100.0 - d) * 100.0 - m) * 60;
-    return d + '°' + m + "'" + s.toFixed(1) + '"';
+    return d + '°' + m + "'" + s.toFixed(1) + '"'; //eslint-disable-line non-ascii
   }
   nmea2dm(val) {
-    //NMEA format to DM format string (999°99.9999')
+    //eslint-disable-next-line non-ascii
+    //NMEA format to DM format string (999° 99.9999')
     val = parseFloat(val);
     let d = Math.floor(val / 100.0);
     let m = (val / 100.0 - d) * 100.0;
-    return d + '°' + m.toFixed(4) + "'";
+    return d + '°' + m.toFixed(4) + "'"; //eslint-disable-line non-ascii
   }
   nmea2dd(val) {
     //NMEA format to DD format decimal (999.999999)
@@ -22476,7 +22480,85 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/InfraredSensor/IRSensor/index.js":
+/***/ "./parts/Infrared/IRModule/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class IRModule {
+  constructor() {
+    this.keys = ['recv', 'vcc', 'send', 'gnd'];
+    this.requiredKeys = ['recv', 'send'];
+  }
+
+  static info() {
+    return {
+      name: 'IRModule',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (!obniz.isValidIO(this.params.recv)) {
+      throw new Error('recv is not valid io');
+    }
+
+    if (!obniz.isValidIO(this.params.send)) {
+      throw new Error('send is not valid io');
+    }
+
+    this.sensor = obniz.wired('IRSensor', {
+      output: this.params.recv,
+    });
+    this.setGetterSetter('sensor', 'duration');
+    this.setGetterSetter('sensor', 'dataInverted');
+    this.setGetterSetter('sensor', 'cutTail');
+    this.setGetterSetter('sensor', 'output_pullup');
+    this.setGetterSetter('sensor', 'ondetect');
+
+    this.led = obniz.wired('InfraredLED', {
+      anode: this.params.send,
+    });
+  }
+
+  //link
+  send(arr) {
+    this.led.send(arr);
+  }
+
+  start(callback) {
+    this.sensor.start(callback);
+  }
+
+  get dataSymbolLength() {
+    return this.sensor.dataSymbolLength;
+  }
+
+  set dataSymbolLength(x) {
+    this.sensor.dataSymbolLength = x;
+    this.led.dataSymbolLength = x;
+  }
+
+  setGetterSetter(partsName, varName) {
+    Object.defineProperty(this, varName, {
+      get() {
+        return this[partsName][varName];
+      },
+      set(x) {
+        this[partsName][varName] = x;
+      },
+    });
+  }
+}
+
+if (true) {
+  module.exports = IRModule;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Infrared/IRSensor/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 class IRSensor {
@@ -22547,6 +22629,184 @@ class IRSensor {
 
 if (true) {
   module.exports = IRSensor;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Infrared/InfraredLED/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class InfraredLED {
+  constructor() {
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  static info() {
+    return {
+      name: 'InfraredLED',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error('anode is not valid io');
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error('cathode is not valid io');
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start({ io: this.params.anode });
+    this.pwm.freq(38000);
+    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
+  }
+
+  send(arr) {
+    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
+      arr.push(0);
+    }
+    this.pwm.modulate('am', this.dataSymbolLength, arr);
+  }
+}
+
+if (true) {
+  module.exports = InfraredLED;
+}
+
+
+/***/ }),
+
+/***/ "./parts/InfraredSensor/IRModule/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class IRModule {
+  constructor() {
+    this.keys = ['recv', 'vcc', 'send', 'gnd'];
+    this.requiredKeys = ['recv', 'send'];
+  }
+
+  static info() {
+    return {
+      name: 'IRModule',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (!obniz.isValidIO(this.params.recv)) {
+      throw new Error('recv is not valid io');
+    }
+
+    if (!obniz.isValidIO(this.params.send)) {
+      throw new Error('send is not valid io');
+    }
+
+    this.sensor = obniz.wired('IRSensor', {
+      output: this.params.recv,
+    });
+    this.setGetterSetter('sensor', 'duration');
+    this.setGetterSetter('sensor', 'dataInverted');
+    this.setGetterSetter('sensor', 'cutTail');
+    this.setGetterSetter('sensor', 'output_pullup');
+    this.setGetterSetter('sensor', 'ondetect');
+
+    this.led = obniz.wired('InfraredLED', {
+      anode: this.params.send,
+    });
+  }
+
+  //link
+  send(arr) {
+    this.led.send(arr);
+  }
+
+  start(callback) {
+    this.sensor.start(callback);
+  }
+
+  get dataSymbolLength() {
+    return this.sensor.dataSymbolLength;
+  }
+
+  set dataSymbolLength(x) {
+    this.sensor.dataSymbolLength = x;
+    this.led.dataSymbolLength = x;
+  }
+
+  setGetterSetter(partsName, varName) {
+    Object.defineProperty(this, varName, {
+      get() {
+        return this[partsName][varName];
+      },
+      set(x) {
+        this[partsName][varName] = x;
+      },
+    });
+  }
+}
+
+if (true) {
+  module.exports = IRModule;
+}
+
+
+/***/ }),
+
+/***/ "./parts/InfraredSensor/InfraredLED/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class InfraredLED {
+  constructor() {
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  static info() {
+    return {
+      name: 'InfraredLED',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error('anode is not valid io');
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error('cathode is not valid io');
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start({ io: this.params.anode });
+    this.pwm.freq(38000);
+    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
+  }
+
+  send(arr) {
+    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
+      arr.push(0);
+    }
+    this.pwm.modulate('am', this.dataSymbolLength, arr);
+  }
+}
+
+if (true) {
+  module.exports = InfraredLED;
 }
 
 
@@ -22684,56 +22944,6 @@ class FullColorLED {
 
 if (true) {
   module.exports = FullColorLED;
-}
-
-
-/***/ }),
-
-/***/ "./parts/Light/InfraredLED/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-class InfraredLED {
-  constructor() {
-    this.keys = ['anode', 'cathode'];
-    this.requiredKeys = ['anode'];
-
-    this.dataSymbolLength = 0.07;
-  }
-
-  static info() {
-    return {
-      name: 'InfraredLED',
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    if (!this.obniz.isValidIO(this.params.anode)) {
-      throw new Error('anode is not valid io');
-    }
-    if (this.params.cathode) {
-      if (!this.obniz.isValidIO(this.params.cathode)) {
-        throw new Error('cathode is not valid io');
-      }
-      this.io_cathode = obniz.getIO(this.params.cathode);
-      this.io_cathode.output(false);
-    }
-    this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({ io: this.params.anode });
-    this.pwm.freq(38000);
-    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
-  }
-
-  send(arr) {
-    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
-      arr.push(0);
-    }
-    this.pwm.modulate('am', this.dataSymbolLength, arr);
-  }
-}
-
-if (true) {
-  module.exports = InfraredLED;
 }
 
 
@@ -24109,7 +24319,7 @@ if (true) {
 /***/ "./parts/PressureSensor/FSR-40X/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+//Todo: add weight and calc pressure(kg)
 
 class FSR40X {
   constructor() {
@@ -24435,7 +24645,7 @@ if (true) {
 
 const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
-//センサから出力が無い(出力インピーダンス高すぎ？)
+//sensor resopnse not found
 
 class S8100B extends AnalogTemplatureSensor {
   calc(voltage) {
@@ -24460,9 +24670,9 @@ if (true) {
 
 const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
-//不調, 正しく測れるときもある...
-//原因1:obnizの入力インピーダンスが低すぎる?
-//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
+//this not work, but sometimes good
+//resason1:too low of obniz input Impedance ?
+//resoson2:Is the sensor oscillating?
 
 class S8120C extends AnalogTemplatureSensor {
   calc(voltage) {
@@ -24521,7 +24731,6 @@ class ADT7410 {
     tempBin = tempBin >> 3;
 
     if (tempBin & 0x1000) {
-      //0度以下の時の処理
       tempBin = tempBin - 8192;
     }
 
@@ -24931,7 +25140,7 @@ if (true) {
 /***/ "./parts/TemperatureSensor/i2c/S-5851A/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-//センサからの反応なし
+//sensor response not found
 class S5851A {
   constructor() {
     this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
@@ -25162,15 +25371,14 @@ class ADT7310 {
   }
 
   async getTempWait() {
-    await this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-    await this.obniz.wait(200); //適度な値でないと安定しない
+    await this.spi.writeWait([0x54]); //send before each commands for stable
+    await this.obniz.wait(200);
     let ret = await this.spi.writeWait([0x00, 0x00]);
     let tempBin = ret[0] << 8;
     tempBin |= ret[1];
     tempBin = tempBin >> 3;
 
     if (tempBin & 0x1000) {
-      //0度以下の時の処理
       tempBin = tempBin - 8192;
     }
 

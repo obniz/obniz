@@ -23,15 +23,14 @@ class ADT7310 {
   }
 
   async getTempWait() {
-    await this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-    await this.obniz.wait(200); //適度な値でないと安定しない
+    await this.spi.writeWait([0x54]); //send before each commands for stable
+    await this.obniz.wait(200);
     let ret = await this.spi.writeWait([0x00, 0x00]);
     let tempBin = ret[0] << 8;
     tempBin |= ret[1];
     tempBin = tempBin >> 3;
 
     if (tempBin & 0x1000) {
-      //0度以下の時の処理
       tempBin = tempBin - 8192;
     }
 

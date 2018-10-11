@@ -45,7 +45,7 @@ describe('4-uart', function() {
     const sender = obnizA.getFreeUart();
     sender.start({ tx: 0, rx: 1 });
 
-    const text = 'こんにちは';
+    const text = 'こんにちは'; //eslint-disable-line non-ascii
     let received = '';
     sender.send(text);
     while (1) {

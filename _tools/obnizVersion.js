@@ -20,9 +20,7 @@ module.exports = function() {
       return callback();
     }
 
-    // プラグインの処理本体
     if (file.isBuffer()) {
-      // ファイルの内容をcontentsに読み込み
       let contents = String(file.contents);
 
       let packageJson = JSON.parse(contents);
@@ -31,10 +29,8 @@ module.exports = function() {
         output = `var _obniz_js_version = "${packageJson.version}";\n`;
       }
 
-      // 編集した内容を出力
       file.contents = new Buffer(output);
 
-      // 処理の完了を通知
       return callback(null, file);
     }
 
