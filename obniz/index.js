@@ -94,9 +94,8 @@ class Obniz extends ObnizUIs {
       }
       if (typeof showObnizDebugError === 'function') {
         showObnizDebugError(new Error(msg));
-      } else {
-        throw new Error(msg);
       }
+      console.log(`Warning: ${msg}`);
     }
   }
 
@@ -139,8 +138,6 @@ if (!isNode) {
   function showObnizDebugError(err) {//eslint-disable-line
     if (window.parent && window.parent.logger) {
       window.parent.logger.onObnizError(err);
-    } else {
-      throw err;
     }
   }
 }

@@ -11,6 +11,8 @@ WS2812 is embed in various Full Color LEDs.
 connect VDD and GND to obniz and drive it.
 And, wire DIN(Data in) to obniz. and write a code below
 
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 var leds = obniz.wired("WS2812", {gnd:0, vcc: 1, din: 2});

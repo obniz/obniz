@@ -6,6 +6,8 @@ LEDは電流を流すことで光る半導体です。電球よりもずっと�
 ## obniz.wired("LED", {anode, cathode})
 ２本の足をObnizのピンにそれぞれ繋ぎます。LEDのプラス（足の長い方。アノードといいます）をObnizの0ピンに。マイナスをObnizの1ピンに繋いだ場合、プログラムでは以下のように設定します
 
+![](./wired.png)
+
 
 ```Javascript
 // Javascript Example

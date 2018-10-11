@@ -25,6 +25,9 @@ obnizにLEDを繋ぐには抵抗が必要です。(抵抗入りのLEDは別で�
 
 ![](wired.jpg)
 
+
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 

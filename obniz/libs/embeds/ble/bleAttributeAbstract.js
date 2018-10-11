@@ -1,9 +1,10 @@
 const ObnizUtil = require('../../utils/util');
 const emitter = require('eventemitter3');
+const BleHelper = require('./bleHelper');
 
 class BleAttributeAbstract {
   constructor(params) {
-    this.uuid = params.uuid.toLowerCase();
+    this.uuid = BleHelper.uuidFilter(params.uuid);
     this.parent = null;
     this.children = [];
 
@@ -78,15 +79,18 @@ class BleAttributeAbstract {
   }
 
   getChild(uuid) {
+    uuid = BleHelper.uuidFilter(uuid);
     return this.children
       .filter(function(element) {
-        return element.uuid.toLowerCase() === uuid.toLowerCase();
+        return BleHelper.uuidFilter(element.uuid) === uuid;
       })
       .shift();
   }
 
   toJSON() {
-    let obj = { uuid: this.uuid.toLowerCase() };
+    let obj = {
+      uuid: BleHelper.uuidFilter(this.uuid),
+    };
 
     if (this.children.length > 0) {
       let key = this.childrenName;
@@ -105,12 +109,12 @@ class BleAttributeAbstract {
   read() {}
   write() {}
 
-  writeNumber(val) {
-    this.write([val]);
+  writeNumber(val, needResponse) {
+    this.write([val], needResponse);
   }
 
-  writeText(str) {
-    this.write(ObnizUtil.string2dataArray(str));
+  writeText(str, needResponse) {
+    this.write(ObnizUtil.string2dataArray(str), needResponse);
   }
 
   readWait() {
@@ -126,12 +130,12 @@ class BleAttributeAbstract {
     });
   }
 
-  writeWait(data) {
+  writeWait(data, needResponse) {
     return new Promise(resolve => {
       this.emitter.once('onwrite', params => {
         resolve(params.result === 'success');
       });
-      this.write(data);
+      this.write(data, needResponse);
     });
   }
 

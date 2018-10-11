@@ -8,6 +8,9 @@ XBeeはVCCとGNDが必要なので，それは別で用意する必要があり�
 
 この画像のように配線したのであれば，下のように書きます．
 ![photo of wired XBee](./xbee.png)
+
+![](./wired.png)
+
 ```javascript
 // Javascript Example
 obniz.io11.output(true);

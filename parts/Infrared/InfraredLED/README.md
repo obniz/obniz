@@ -26,6 +26,9 @@ Then wire your LED to obniz
 
 ![](wired.jpg)
 
+
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 

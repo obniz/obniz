@@ -3,6 +3,10 @@
 
 ![](./ae_micap.jpg)
 
+
+
+![](./wired.png)
+
 ## wired(obniz, {vcc, out, gnd})
 obnizにマイクセンサをつなぎます。
 0,1,2はそれぞれマイクセンサの電源,GND,センサ出力へ接続してください。

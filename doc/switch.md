@@ -38,7 +38,7 @@ if (state === "push") {
 
 
 
-## [async] switch.stateWait(state)
+## [await] switch.stateWait(state)
 Wait until change to state switch.
 
 ```Javascript

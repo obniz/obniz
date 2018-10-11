@@ -9,11 +9,14 @@
 
 ## wired(obniz, { vcc, output, gnd} )
 Obnizに土壌湿度センサをつなぎます。
-0,1,2はそれぞれ温度センサのセンサ出力,電源,GNDへ接続してください。
+0,1,2はそれぞれ温度センサの電源,GND,センサ出力へ接続してください。
+
+
+![](./wired.png)
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
+var sensor = obniz.wired("SEN0114", {vcc:0,  gnd:1, output:2});
 ```
 
 ## onchange
@@ -21,7 +24,7 @@ var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("SEN0114", {vcc:0, output:1, gnd:2});
+var sensor = obniz.wired("SEN0114", {vcc:0,  gnd:1, output:2});
 sensor.onchange = function(value){
   console.log(value)
 };
@@ -31,7 +34,7 @@ sensor.onchange = function(value){
 
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("SEN0114",  {vcc:0, output:1, gnd:2});
+var sensor = obniz.wired("SEN0114",  {vcc:0,  gnd:1, output:2});
 var value = await sensor.getHumidityWait();
 console.log('Humidity Level:' + value);
 ```

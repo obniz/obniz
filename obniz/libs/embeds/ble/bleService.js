@@ -1,5 +1,6 @@
 const BleAttributeAbstract = require('./bleAttributeAbstract');
 const BleCharacteristic = require('./bleCharacteristic');
+const BleHelper = require('./bleHelper');
 
 class BleService extends BleAttributeAbstract {
   constructor(obj) {
@@ -33,7 +34,7 @@ class BleService extends BleAttributeAbstract {
       ble: {
         peripheral: {
           stop_service: {
-            service_uuid: this.uuid.toLowerCase(),
+            service_uuid: BleHelper.uuidFilter(this.uuid),
           },
         },
       },

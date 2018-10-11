@@ -6,19 +6,24 @@
         {
           "name": "LED",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12519/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12519/",
+            "switchscience": "https://www.switch-science.com/catalog/3846/"
           }
         },
         {
           "name": "FullcolorLED",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12167"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-12167",
+            "amazon.com": "http://a.co/d/3UPMR4D",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005214929&SearchText=led+rgb+5mm+4pin"
           }
         },
         {
           "name": "WS2811",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08412/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08412/",
+            "switchscience": "https://www.switch-science.com/catalog/1802/",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=200002296&initiative_id=AS_20181005215827&SearchText=ws2811+8mm+chipset"
           }
         },
         {
@@ -29,7 +34,10 @@
         {
           "name": "WS2812B",
           "store": {
-            "adafruit": "https://www.adafruit.com/product/1643"
+            "adafruit": "https://www.adafruit.com/product/1643",
+            "switchscience": "https://www.switch-science.com/catalog/1593/",
+            "amazon.com": "http://a.co/d/64zki38",
+            "aliexpress": "https://ja.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005221059&SearchText=ws2812b+ring"
           }
         }
       ]
@@ -41,14 +49,20 @@
           "name": "InfraredLED",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gI-03261/",
-            "adafruit": "https://www.adafruit.com/product/387"
+            "adafruit": "https://www.adafruit.com/product/387",
+            "switchscience": "https://www.switch-science.com/catalog/1484/",
+            "amazon.com": "http://a.co/d/iuj6RdO",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005221626&SearchText=led+ir+5mm+940nm"
           }
         },
         {
           "name": "IRSensor",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gI-04659/",
-            "adafruit": "https://learn.adafruit.com/ir-sensor"
+            "adafruit": "https://learn.adafruit.com/ir-sensor",
+            "switchscience": "https://www.switch-science.com/catalog/1485/",
+            "amazon.com": "http://a.co/d/9ALVGNW",
+            "aliexpress": "https://www.aliexpress.com/wholesale?initiative_id=SC_20181005232108&SearchText=infrared+receiver+38khz&g=y&spellcheckPrompt=&misspellText=infrared+reciever+38khz"
           }
         }
       ]
@@ -59,24 +73,38 @@
         {
           "name": "7SegmentLED",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gI-00640/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-00640/",
+            "amazon.com": "http://a.co/d/h6WaBBc"
           }
         },
         {
           "name": "7SegmentLEDArray",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/c/c7seg5/"
+            "akizuki": "http://akizukidenshi.com/catalog/c/c7seg5/",
+            "amazon.com": "http://a.co/d/6oG6kV0"
           }
         },
         {
           "name": "7SegmentLED_MAX7219",
           "store": {
+            "adafruit": "https://www.adafruit.com/product/881",
+            "amazon.com": "http://a.co/d/hxB6AnJ"
           }
         },
         {
           "name": "MatrixLED_MAX7219",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gM-09984/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-09984/",
+            "amazon.com": "http://a.co/d/hAS1cgI",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005222123&SearchText=max7219+dot+matrix+module"
+          }
+        },
+        {
+          "name": "SainSmartTFT18LCD",
+          "store": {
+            "amazon": "https://www.amazon.co.jp/dp/B008HWTVQ2/",
+            "amazon.com": "http://a.co/d/ceGfsNN",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005223948&SearchText=1.8%22+tft"
           }
         }
       ]
@@ -87,13 +115,15 @@
         {
           "name": "ArduCAMMini",
           "store": {
-            "akizuki": "https://www.switch-science.com/catalog/3780/"
+            "switchscience": "https://www.switch-science.com/catalog/3780/",
+            "amazon.com": "http://a.co/d/b8sozEq"
           }
         },
         {
           "name": "JpegSerialCam",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07746/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07746/",
+            "adafruit": "https://www.adafruit.com/product/1386"
           }
         }
       ]
@@ -105,14 +135,20 @@
           "name": "DCMotor",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-09169/",
-            "adafruit": "https://www.adafruit.com/product/711"
+            "adafruit": "https://www.adafruit.com/product/711",
+            "switchscience": "https://www.switch-science.com/catalog/2736/",
+            "amazon.com": "http://a.co/d/deQ8c6Q",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005225517&SearchText=motor+130"
           }
         },
         {
           "name": "ServoMotor",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-08913/",
-            "adafruit": "https://www.adafruit.com/product/155"
+            "adafruit": "https://www.adafruit.com/product/155",
+            "switchscience": "https://www.switch-science.com/catalog/3595/",
+            "amazon.com": "http://a.co/d/bF5FBA0",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005230005&SearchText=servo+motor+arduino"
           }
         },
         {
@@ -130,7 +166,10 @@
           "name": "Speaker",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-04118/",
-            "adafruit": "https://www.adafruit.com/product/1739"
+            "adafruit": "https://www.adafruit.com/product/1739",
+            "switchscience": "https://www.switch-science.com/catalog/472/",
+            "amazon.com": "http://a.co/d/gIoj5KN",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005230006&SearchText=piezo+buzzer"
           }
         }
       ]
@@ -141,7 +180,10 @@
         {
           "name": "SNx4HC595",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08605/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gI-08605/",
+            "switchscience": "https://www.switch-science.com/catalog/674/",
+            "amazon.com": "http://a.co/d/bD1LVz4",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005230625&SearchText=74hc595+dip"
           }
         }
       ]
@@ -162,14 +204,18 @@
         {
           "name": "RN42",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07735/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07735/",
+            "switchscience": "https://www.switch-science.com/catalog/2275/",
+            "amazon.com": "http://a.co/d/45bGHpk"
           }
         },
         {
           "name": "XBee",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-05793/",
-            "adafruit": "https://www.adafruit.com/product/967"
+            "adafruit": "https://www.adafruit.com/product/967",
+            "switchscience": "https://www.switch-science.com/catalog/394/",
+            "amazon.com": "http://a.co/d/gyjg40I"
           }
         }
       ]
@@ -181,7 +227,11 @@
           "name": "Button",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-09827/",
-            "adafruit": "https://www.adafruit.com/product/1009"
+            "adafruit": "https://www.adafruit.com/product/1009",
+            "switchscience": "https://www.switch-science.com/catalog/293/",
+            "amazon.com": "http://a.co/d/cgC9cZ5",
+            "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005231521&SearchText=tactile+switch+12x12"
+
           }
         },
         {
@@ -245,6 +295,28 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gI-02551/",
             "adafruit": "https://www.adafruit.com/product/164"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GPS",
+      "parts": [
+        {
+          "name": "GYSFDMAXB",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-09991/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Magnet",
+      "parts": [
+        {
+          "name": "HMC5883L",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/1746"
           }
         }
       ]
@@ -360,6 +432,12 @@
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/2526/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Ear-clip-Heart-Rate-Sensor-p-1116.html"
+          }
+        },{
+          "name": "Grove_MP3",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-10450/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-MP3-v2.0-p-2597.html"
           }
         }
       ]

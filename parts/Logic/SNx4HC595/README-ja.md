@@ -26,6 +26,11 @@ io_num | `number` | no | 8  | ioの数を指定します。1つのチップに8�
 enabled | `boolean` | no | true  | oeが指定されていた場合、初期状態をどちらにするか指定できます。
 
 
+
+![](./wired.png)
+
+**製品によってピンの配置が異なる場合がありますのでご注意ください**
+
 ```Javascript
 // Javascript Example
 var ioext = obniz.wired('SNx4HC595', {gnd:0, vcc:1, ser:2, rclk:3, srclk:4});
@@ -38,6 +43,8 @@ var ioext = obniz.wired('SNx4HC595', {gnd:0, vcc:1, ser:2, rclk:3, srclk:4, io_n
 ioext.output(0, true)  // first chip's io
 ioext.output(15, true) // next chip's io
 ```
+
+
 
 ## ioNum(num)
 

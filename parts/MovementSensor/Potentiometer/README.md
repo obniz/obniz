@@ -16,6 +16,9 @@ pin0 and pin2 is side pins. It can be swapped. But position will be reversed.
 
 ![](./c_pm.jpg)
 
+
+![](./wired.png)
+
 ```Javascript
 // Javascript Example
 var meter = obniz.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});

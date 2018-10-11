@@ -15,6 +15,9 @@ module.exports = class ObnizConnection {
     this.onConnectCalled = false;
     this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
     this.emitter = new emitter();
+
+    this._connectionRetryCount = 0;
+
     this._prepareComponents();
 
     if (!options) {
@@ -57,6 +60,7 @@ module.exports = class ObnizConnection {
 
   wsOnOpen() {
     this.print_debug('ws connected');
+    this._connectionRetryCount = 0;
     // wait for {ws:{ready:true}} object
     if (typeof this.onopen === 'function') {
       this.onopen(this);
@@ -64,15 +68,13 @@ module.exports = class ObnizConnection {
   }
 
   wsOnMessage(data) {
-    if (this.debugprintBinary && typeof data !== 'string') {
-      this.print_debug('' + new Uint8Array(data).toString());
-    }
-
     let json;
     if (typeof data === 'string') {
       json = JSON.parse(data);
     } else if (this.wscommands) {
-      //binary
+      if (this.debugprintBinary) {
+        this.print_debug('' + new Uint8Array(data).toString());
+      }
       json = this.binary2Json(data);
     }
 
@@ -93,11 +95,8 @@ module.exports = class ObnizConnection {
       this.onclose(this);
     }
     this.onConnectCalled = false;
-    if (this.options.auto_connect) {
-      setTimeout(() => {
-        this.wsconnect(); // always connect to mainserver if ws lost
-      }, 1000);
-    }
+
+    this._reconnect();
   }
 
   connectWait(option) {
@@ -126,25 +125,38 @@ module.exports = class ObnizConnection {
     });
   }
 
+  _reconnect() {
+    this._connectionRetryCount++;
+    let tryAfter = 1000;
+    if (this._connectionRetryCount > 15) {
+      tryAfter = (this._connectionRetryCount - 15) * 1000;
+      const Limit = isNode ? 60 * 1000 : 10 * 1000;
+      if (tryAfter > Limit) {
+        tryAfter = Limit;
+      }
+    }
+    if (this.options.auto_connect) {
+      setTimeout(() => {
+        this.wsconnect(); // always connect to mainserver if ws lost
+      }, tryAfter);
+    }
+  }
+
   wsOnError(event) {
     // console.error(event);
   }
 
   wsOnUnexpectedResponse(req, res) {
-    let reconnectTime = 1000;
     if (res && res.statusCode == 404) {
       this.print_debug('obniz not online');
     } else {
-      reconnectTime = 5000; // server error or someting
       this.print_debug('invalid server response ' + res ? res.statusCode : '');
     }
+
     this.clearSocket(this.socket);
     delete this.socket;
-    if (this.options.auto_connect) {
-      setTimeout(() => {
-        this.wsconnect(); // always connect to mainserver if ws lost
-      }, reconnectTime);
-    }
+
+    this._reconnect();
   }
 
   wsconnect(desired_server) {
@@ -341,7 +353,7 @@ module.exports = class ObnizConnection {
   }
 
   print_debug(str) {
-    if (this.debugprint) {
+    if (this.debugprint || this.debugprintBinary) {
       console.log('Obniz: ' + str);
     }
   }
@@ -413,11 +425,10 @@ module.exports = class ObnizConnection {
       typeof data !== 'string'
     ) {
       this.print_debug('send via local');
-      this.print_debug(data);
       this.socket_local.send(data);
       if (this.socket_local.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.error(
-          'Warning: over ' + this.socket_local.bufferedAmount + ' bytes queued'
+        this.warning(
+          'over ' + this.socket_local.bufferedAmount + ' bytes queued'
         );
       }
       return;
@@ -426,9 +437,7 @@ module.exports = class ObnizConnection {
     if (this.socket && this.socket.readyState === 1) {
       this.socket.send(data);
       if (this.socket.bufferedAmount > this.bufferdAmoundWarnBytes) {
-        this.error(
-          'Warning: over ' + this.socket.bufferedAmount + ' bytes queued'
-        );
+        this.warning('over ' + this.socket.bufferedAmount + ' bytes queued');
       }
       return;
     }
@@ -455,7 +464,9 @@ module.exports = class ObnizConnection {
   _prepareComponents() {}
 
   notifyToModule(obj) {
-    this.print_debug(JSON.stringify(obj));
+    if (this.debugprint) {
+      this.print_debug(JSON.stringify(obj));
+    }
 
     if (obj['ws']) {
       this.handleWSCommand(obj['ws']);
