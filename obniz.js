@@ -23955,7 +23955,6 @@ class KXR94_2050 {
   }
 
   async getWait() {
-
     this._x_val = await this.ad_x.getWait();
     this._y_val = await this.ad_y.getWait();
     this._z_val = await this.ad_z.getWait();

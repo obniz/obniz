@@ -16347,7 +16347,6 @@ class KXR94_2050 {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-
       _this._x_val = yield _this.ad_x.getWait();
       _this._y_val = yield _this.ad_y.getWait();
       _this._z_val = yield _this.ad_z.getWait();
