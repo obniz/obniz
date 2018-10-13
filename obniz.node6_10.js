@@ -14493,21 +14493,19 @@ class GYSFDMAXB {
 
   //--- latitude/longitude MNEA format change to each unit
   nmea2dms(val) {
-    //eslint-disable-next-line non-ascii
     //NMEA format to DMS format string (999° 99'99.9")
     val = parseFloat(val);
     let d = Math.floor(val / 100);
     let m = Math.floor((val / 100.0 - d) * 100.0);
     let s = ((val / 100.0 - d) * 100.0 - m) * 60;
-    return d + '°' + m + "'" + s.toFixed(1) + '"'; //eslint-disable-line non-ascii
+    return d + '°' + m + "'" + s.toFixed(1) + '"';
   }
   nmea2dm(val) {
-    //eslint-disable-next-line non-ascii
     //NMEA format to DM format string (999° 99.9999')
     val = parseFloat(val);
     let d = Math.floor(val / 100.0);
     let m = (val / 100.0 - d) * 100.0;
-    return d + '°' + m.toFixed(4) + "'"; //eslint-disable-line non-ascii
+    return d + '°' + m.toFixed(4) + "'";
   }
   nmea2dd(val) {
     //NMEA format to DD format decimal (999.999999)
@@ -16253,13 +16251,11 @@ class KXR94_2050 {
 
   static info() {
     return {
-      name: 'KXR94_2050'
+      name: 'KXR94-2050'
     };
   }
 
   wired(obniz) {
-    var _this = this;
-
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -16271,52 +16267,59 @@ class KXR94_2050 {
     if (obniz.isValidIO(this.params.enable)) {
       obniz.getIO(this.params.enable).drive('5v');
       obniz.getIO(this.params.enable).output(true);
+      obniz.display.setPinName(this.params.enable, 'KXR94_2050', 'E');
     }
     if (obniz.isValidIO(this.params.self_test)) {
       obniz.getIO(this.params.self_test).drive('5v');
       obniz.getIO(this.params.self_test).output(false);
+      obniz.display.setPinName(this.params.self_test, 'KXR94_2050', 'T');
     }
 
-    return _asyncToGenerator(function* () {
-      if (obniz.isValidIO(_this.params.vcc)) {
-        let pwrVoltage = yield obniz.getAD(_this.params.vcc).getWait();
-        _this.changeVccVoltage(pwrVoltage);
-      } else {
-        _this.changeVccVoltage(5);
+    this.changeVccVoltage(5);
+
+    this.ad_x.start(value => {
+      this._x_val = value;
+      if (this.onChangeX) {
+        this.onChangeX(this.voltage2gravity(value));
       }
-
-      _this.ad_x.start(function (value) {
-        if (_this.onchangex) {
-          _this.onchangex(_this.voltage2gravity(value));
-        }
-      });
-
-      _this.ad_y.start(function (value) {
-        if (_this.onchangey) {
-          _this.onchangey(_this.voltage2gravity(value));
-        }
-      });
-
-      _this.ad_z.start(function (value) {
-        if (_this.onchangez) {
-          _this.onchangez(_this.voltage2gravity(value));
-        }
-      });
-
-      if (_this.obniz.isValidIO(_this.params.vcc)) {
-        _this.obniz.getAD(_this.params.vcc).start(function (value) {
-          _this.changeVccVoltage(value);
-        });
+      if (this.onChange) {
+        this.onChange(this._get());
       }
+    });
 
-      obniz.display.setPinName(_this.params.x, 'KXR94_2050', 'x');
-      obniz.display.setPinName(_this.params.y, 'KXR94_2050', 'y');
-      obniz.display.setPinName(_this.params.z, 'KXR94_2050', 'z');
-
-      if (_this.obniz.isValidIO(_this.params.vcc)) {
-        obniz.display.setPinName(_this.params.vcc, 'KXR94_2050', 'vcc');
+    this.ad_y.start(value => {
+      this._y_val = value;
+      if (this.onChangeY) {
+        this.onChangeY(this.voltage2gravity(value));
       }
-    })();
+      if (this.onChange) {
+        this.onChange(this._get());
+      }
+    });
+
+    this.ad_z.start(value => {
+      this._z_val = value;
+      if (this.onChangeZ) {
+        this.onChangeZ(this.voltage2gravity(value));
+      }
+      if (this.onChange) {
+        this.onChange(this._get());
+      }
+    });
+
+    if (this.obniz.isValidIO(this.params.vcc)) {
+      this.obniz.getAD(this.params.vcc).start(value => {
+        this.changeVccVoltage(value);
+      });
+    }
+
+    obniz.display.setPinName(this.params.x, 'KXR94_2050', 'x');
+    obniz.display.setPinName(this.params.y, 'KXR94_2050', 'y');
+    obniz.display.setPinName(this.params.z, 'KXR94_2050', 'z');
+
+    if (this.obniz.isValidIO(this.params.vcc)) {
+      obniz.display.setPinName(this.params.vcc, 'KXR94_2050', 'vcc');
+    }
   }
 
   changeVccVoltage(pwrVoltage) {
@@ -16328,17 +16331,28 @@ class KXR94_2050 {
     return (volt - this.offsetVoltage) / this.sensitivity;
   }
 
+  get() {
+    return this._get();
+  }
+
+  _get() {
+    return {
+      x: this.voltage2gravity(this._x_val),
+      y: this.voltage2gravity(this._y_val),
+      z: this.voltage2gravity(this._z_val)
+    };
+  }
+
   getWait() {
-    var _this2 = this;
+    var _this = this;
 
     return _asyncToGenerator(function* () {
-      let result = yield Promise.all([_this2.ad_x.getWait(), _this2.ad_y.getWait(), _this2.ad_z.getWait()]);
 
-      return {
-        x: _this2.voltage2gravity(result[0]),
-        y: _this2.voltage2gravity(result[1]),
-        z: _this2.voltage2gravity(result[2])
-      };
+      _this._x_val = yield _this.ad_x.getWait();
+      _this._y_val = yield _this.ad_y.getWait();
+      _this._z_val = yield _this.ad_z.getWait();
+
+      return _this._get();
     })();
   }
 }

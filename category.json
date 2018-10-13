@@ -282,7 +282,8 @@
         {
           "name": "KXR94-2050",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/",
+            "digikey": "https://www.digikey.jp/product-detail/en/kionix-inc/KXR94-2050-FR/1191-1012-1-ND/3137358"
           }
         }
       ]
