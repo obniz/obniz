@@ -2,11 +2,11 @@
 
 リモコンで使われる赤外線の信号を送受信します。
 
+![](./image.jpg)
+
 ## wired(obniz, { send, recv[, vcc, gnd]})
 
 sendとrecv, vcc, gndを接続します。vccとgndはオプショナルです。外に繋いでいる場合は無くても大丈夫です。
-
-
 
 ![](./irmodule.jpg)
 

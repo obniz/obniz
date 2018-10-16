@@ -2,6 +2,8 @@
 
 Detecting and sending Infrared signal like a remote controller's signal.
 
+![](./image.jpg)
+
 ## wired(obniz, { send, recv[, vcc, gnd]})
 
 Connect send, recv,  vcc and gnd. vcc and gnd is optional.
