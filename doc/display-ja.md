@@ -1,9 +1,9 @@
-# Display
+# Display (obniz.display)
 ObnizにあるOLEDディスプレイに文字や絵を描画します。
 
 ![](./images/obniz_display_sphere.gif)
 
-## display.clear();
+## clear();
 
 画面に表示されているものをすべてクリアします。
 
@@ -11,7 +11,7 @@ ObnizにあるOLEDディスプレイに文字や絵を描画します。
 // Javascript Example
 obniz.display.clear();
 ```
-## display.print(string);
+## print(string);
 
 文字を表示します。半角英数字にのみ対応しています。
 
@@ -28,7 +28,7 @@ obniz.display.print("Hello World🧡")
 ```
 ![](./images/obniz_display_print.jpg)
 
-## display.pos(x, y);
+## pos(x, y);
 (node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
  
 文字の描画位置を変更します。次にprint()でも字を出すときはこの位置を左上として文字を描画します。
@@ -39,7 +39,7 @@ obniz.display.print("YES. こんにちは");
 ```
 ![](./images/obniz_display_pos.jpg)
 
-## display.font(fontFamilyName, fontSize);
+## font(fontFamilyName, fontSize);
 (node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
  
 フォントを変更します。
@@ -59,7 +59,7 @@ obniz.display.font('Avenir') //Avenirのデフォルトサイズ(16px)
 ![](./images/obniz_display_samples2.jpg)
 ![](./images/obniz_display_samples4.jpg)
 
-## display.line(start_x, start_y, end_x, end_y);
+## line(start_x, start_y, end_x, end_y);
 (node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
  
 ２点間の線を描画します。
@@ -76,7 +76,7 @@ obniz.display.circle(50, 10, 10, true);
 ```
 ![](./images/obniz_display_draws.jpg)
 
-## display.rect(x, y, width, height, fill);
+## rect(x, y, width, height, fill);
 (node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
  
 矩形を描画します。
@@ -86,7 +86,7 @@ obniz.display.rect(10, 10, 20, 20);
 obniz.display.rect(20, 20, 20, 20, true); // filled rect
 ```
 
-## display.circle(x, y, radius, fill);
+## circle(x, y, radius, fill);
 (node.jsでは使えません 代わりにdisplay.draw()を使って下さい)
  
 円を描画します
@@ -96,8 +96,32 @@ obniz.display.circle(40, 30, 20);
 obniz.display.circle(90, 30, 20, true); // filled circle
 ```
 
+## drawing(mode)
 
-## display.qr(data, correction)
+これ以降の描画を転送するかどうかを指定できます。canvasを利用する`clear/print/line/rect/circle/draw`のみが影響を受けます。
+
+このディスプレイクラスではprintやlineなど、画面が少しでも変われば画面全体を
+obnizに転送して、obnizのディスプレイを更新します。
+その場合、描画が多い場合は転送に時間がかかってしまいます。
+ある程度描画してから最後に一気にobnizに転送するための機能がdrawing()です。
+`drawing(false)`で転送を停止でき、`drawing(true)`で転送を再開できます。再開時には変更があってもなくても一度転送されます。
+
+```javascript
+// Javascript Example
+obniz.display.drawing(false);
+for (var i=0;i<100; i++) {
+  var x0 = Math.random() * 128;
+  var y0 = Math.random() * 64;
+  var x1 = Math.random() * 128;
+  var y1 = Math.random() * 64;
+  obniz.display.clear();
+  obniz.display.line(x0, y0, x1, y1);
+}
+obniz.display.drawing(true);
+```
+
+
+## qr(data, correction)
 
 QRコードを表示します。dataは現在文字列にのみ対応しています。
 correctionはエラー訂正レベルで
@@ -114,7 +138,7 @@ correctionはエラー訂正レベルで
 obniz.display.qr("https://obniz.io")
 ```
 
-## display.raw([0,1,2,,,,]);
+## raw([0,1,2,,,,]);
 
 1ビットが1ドットです。 1=white, 0=black.
 1バイトはある行の一部分を示します。
@@ -128,7 +152,7 @@ obniz.display.qr("https://obniz.io")
 obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
 ```
 
-## display.draw(context)
+## draw(context)
 HTML5のCanvas contextをもとに描画します。
 node-canvasを利用すればnode.jsでも利用可能です。
 

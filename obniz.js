@@ -10679,19 +10679,21 @@ class Display {
 
   clear() {
     const ctx = this._ctx();
+    this._pos.x = 0;
+    this._pos.y = 0;
     if (ctx) {
       ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, this.width, this.height);
       ctx.fillStyle = '#FFF';
       ctx.strokeStyle = '#FFF';
+      this.draw(ctx);
+    } else {
+      let obj = {};
+      obj['display'] = {
+        clear: true,
+      };
+      this.Obniz.send(obj);
     }
-    this._pos.x = 0;
-    this._pos.y = 0;
-    let obj = {};
-    obj['display'] = {
-      clear: true,
-    };
-    this.Obniz.send(obj);
   }
 
   pos(x, y) {
@@ -10813,7 +10815,7 @@ class Display {
     }
   }
 
-  draw(ctx) {
+  _draw(ctx) {
     const stride = this.width / 8;
     let vram = new Array(stride * 64);
     const imageData = ctx.getImageData(0, 0, this.width, this.height);
@@ -10829,6 +10831,20 @@ class Display {
       if (brightness > 0x7f) vram[line * stride + col] |= 0x80 >> bits;
     }
     this.raw(vram);
+  }
+
+  draw(ctx) {
+    if (this.autoFlush) {
+      this._draw(ctx);
+    }
+  }
+
+  drawing(autoFlush) {
+    this.autoFlush = (autoFlush == true);
+    const ctx = this._ctx();
+    if (ctx) {
+      this.draw(ctx);
+    }
   }
 }
 

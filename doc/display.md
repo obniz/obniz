@@ -1,16 +1,16 @@
-# Display
+# Display (obniz.display)
 OLED display on obniz.
 
 ![](./images/obniz_display_sphere.gif)
 
-## display.clear();
+## clear();
 clear the display.
 
 ```Javascript
 // Javascript Example
 obniz.display.clear();
 ```
-## display.print(string);
+## print(string);
 print text on display.
 
 ```Javascript
@@ -26,7 +26,7 @@ obniz.display.print("Hello World🧡")
 ```
 ![](./images/obniz_display_print.jpg)
 
-## display.pos(x, y);
+## pos(x, y);
 (not works with node.js. please use display.draw())
  
 changing left-top position of next print().
@@ -37,7 +37,7 @@ obniz.display.print("YES. こんにちは");
 ```
 ![](./images/obniz_display_pos.jpg)
 
-## display.font(fontFamilyName, fontSize);
+## font(fontFamilyName, fontSize);
 (not works with node.js. please use display.draw())
  
 changing font.
@@ -58,7 +58,7 @@ obniz.display.font('Avenir') //Avenir with default size(16px)
 ![](./images/obniz_display_samples2.jpg)
 ![](./images/obniz_display_samples4.jpg)
 
-## display.line(start_x, start_y, end_x, end_y);
+## line(start_x, start_y, end_x, end_y);
 (not works with node.js. please use display.draw())
  
 draw a line between two point.
@@ -75,7 +75,7 @@ obniz.display.circle(50, 10, 10, true);
 ```
 ![](./images/obniz_display_draws.jpg)
 
-## display.rect(x, y, width, height, fill);
+## rect(x, y, width, height, fill);
 (not works with node.js. please use display.draw())
  
 draw a rect.
@@ -85,7 +85,7 @@ obniz.display.rect(10, 10, 20, 20);
 obniz.display.rect(20, 20, 20, 20, true); // filled rect
 ```
 
-## display.circle(x, y, radius, fill);
+## circle(x, y, radius, fill);
 (not works with node.js. please use display.draw())
  
 draw a circle.
@@ -94,9 +94,27 @@ draw a circle.
 obniz.display.circle(40, 30, 20);
 obniz.display.circle(90, 30, 20, true); // filled circle
 ```
+## drawing(mode)
 
+Specifying transfer a display data or not. This affect only functions which uses canvas like `clear/print/line/rect/circle/draw`.
 
-## display.qr(data, correction)
+`false` to stop updating OLED. `true` to start again updating.
+
+```javascript
+// Javascript Example
+obniz.display.drawing(false);
+for (var i=0;i<100; i++) {
+  var x0 = Math.random() * 128;
+  var y0 = Math.random() * 64;
+  var x1 = Math.random() * 128;
+  var y1 = Math.random() * 64;
+  obniz.display.clear();
+  obniz.display.line(x0, y0, x1, y1);
+}
+obniz.display.drawing(true);
+```
+
+## qr(data, correction)
 show QR code with given text and correction level.
 correction level can be from
 
@@ -112,7 +130,7 @@ H is the strongest error correction.
 obniz.display.qr("https://obniz.io")
 ```
 
-## display.raw([0,1,2,,,,]);
+## raw([0,1,2,,,,]);
 
 1 bit represents 1 dot. 1=white, 0=black.
 1 byte is part of one line.
@@ -128,7 +146,30 @@ obniz.display.raw([255, 255,,,,,])// must be 128*64 bits(=1024byte)
 
 ![](./images/obniz_display_sphere.gif)
 
-## display.draw(context)
+## draw(context)
+draw OLED from HTML5 Canvas context.
+With node-canvas, this works with node.js.
+
+```javascript
+// 1. load existing
+let ctx = $("#canvas")[0].getContext('2d');
+// 2. create new canvas dom and load it.
+let ctx = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+
+// 3. running with node.js
+//    npm install canvas. ( version 2.0.0 or later required )
+const { createCanvas } = require('canvas');
+const canvas = createCanvas(128, 64); 
+const ctx = canvas.getContext('2d');
+
+ctx.fillStyle = "white";
+ctx.font = "30px Avenir";
+ctx.fillText('Avenir', 0, 40);
+
+obniz.display.draw(ctx);
+```
+
+## draw(context)
 draw OLED from HTML5 Canvas context.
 With node-canvas, this works with node.js.
 
