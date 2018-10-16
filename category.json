@@ -2,6 +2,7 @@
   "categories": [
     {
       "name": "Light",
+      "image_url": "https://obniz.io/sdk/parts/FullcolorLED/animation.gif",
       "parts": [
         {
           "name": "LED",
@@ -44,6 +45,7 @@
     },
     {
       "name": "Infrared",
+      "image_url": "https://obniz.io/sdk/parts/IRModule/image.jpg",
       "parts": [
         {
           "name": "InfraredLED",
@@ -75,6 +77,7 @@
     },
     {
       "name": "Display",
+      "image_url": "https://obniz.io/sdk/parts/SainSmartTFT18LCD/connect.jpg",
       "parts": [
         {
           "name": "7SegmentLED",
@@ -117,6 +120,7 @@
     },
     {
       "name": "Camera",
+      "image_url": "https://obniz.io/sdk/parts/ArduCAMMini/image.jpg",
       "parts": [
         {
           "name": "ArduCAMMini",
@@ -136,6 +140,7 @@
     },
     {
       "name": "Moving",
+      "image_url": "https://obniz.io/sdk/parts/ServoMotor/servomotor.gif",
       "parts": [
         {
           "name": "DCMotor",
@@ -167,6 +172,7 @@
     },
     {
       "name": "Sound",
+      "image_url": "https://obniz.io/sdk/parts/Speaker/wired.png",
       "parts": [
         {
           "name": "Speaker",
@@ -182,6 +188,7 @@
     },
     {
       "name": "Logic",
+      "image_url": "https://obniz.io/sdk/parts/SNx4HC595/image.jpg",
       "parts": [
         {
           "name": "SNx4HC595",
@@ -196,6 +203,7 @@
     },
     {
       "name": "Accessory",
+      "image_url": "https://obniz.io/sdk/parts/USB/usb2.jpg",
       "parts": [
         {
           "name": "USB",
@@ -206,6 +214,7 @@
     },
     {
       "name": "Wireless",
+      "image_url": "https://obniz.io/sdk/parts/XBee/wired.png",
       "parts": [
         {
           "name": "RN42",
@@ -228,6 +237,7 @@
     },
     {
       "name": "Movement Sensor",
+      "image_url": "https://obniz.io/sdk/parts/JoyStick/joystick.jpg",
       "parts": [
         {
           "name": "Button",
@@ -290,6 +300,7 @@
     },
     {
       "name": "Distance Sensor",
+      "image_url": "https://obniz.io/sdk/parts/GP2Y0A21YK0F/image.gif",
       "parts": [
         {
           "name": "HC-SR04",
@@ -308,6 +319,7 @@
     },
     {
       "name": "GPS",
+      "image_url": "https://obniz.io/sdk/parts/GYSFDMAXB/image.jpg",
       "parts": [
         {
           "name": "GYSFDMAXB",
@@ -330,6 +342,7 @@
     },
     {
       "name": "Audio Sensor",
+      "image_url": "https://obniz.io/sdk/parts/AE_MICAMP/ae_micap.jpg",
       "parts": [
         {
           "name": "AE_MICAMP",
@@ -352,6 +365,7 @@
     },
     {
       "name": "Soil Moisture Sensor",
+      "image_url": "https://obniz.io/sdk/parts/SEN0114/wired.png",
       "parts": [
         {
           "name": "SEN0114",
@@ -363,6 +377,7 @@
     },
     {
       "name": "Temperature Sensor",
+      "image_url": "https://obniz.io/sdk/parts/BME280/image.jpg",
       "parts": [
         {
           "name": "LM35DZ",
@@ -429,6 +444,7 @@
     },
     {
       "name": "Light/Color Sensor",
+      "image_url": "https://obniz.io/sdk/parts/S11059/demo.gif",
       "parts": [
         {
           "name": "S11059",
@@ -440,6 +456,7 @@
     },
     {
       "name": "Grove",
+      "image_url": "https://obniz.io/sdk/parts/Grove_MP3/image.jpg",
       "parts": [
         {
           "name": "Grove_EarHeartRate",
