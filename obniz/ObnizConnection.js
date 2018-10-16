@@ -13,7 +13,7 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
-    this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
+    this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
     this._connectionRetryCount = 0;
