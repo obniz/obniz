@@ -5239,6 +5239,7 @@ class Display {
 
   _reset() {
     this._pos = { x: 0, y: 0 };
+    this.autoFlush = true;
   }
 
   warnCanvasAvailability() {
@@ -11613,7 +11614,6 @@ var map = {
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
-	"./MovementSensor/CircularSoftPotentiometer/index.js": "./parts/MovementSensor/CircularSoftPotentiometer/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
@@ -16075,55 +16075,6 @@ class Button {
 
 if (true) {
   module.exports = Button;
-}
-
-/***/ }),
-
-/***/ "./parts/MovementSensor/CircularSoftPotentiometer/index.js":
-/*!*****************************************************************!*\
-  !*** ./parts/MovementSensor/CircularSoftPotentiometer/index.js ***!
-  \*****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-class CircularSoftPot {
-  constructor() {
-    this.keys = ['outer', 'middle'];
-    this.requiredKeys = ['outer', 'middle'];
-  }
-
-  static info() {
-    return {
-      name: 'CircularSoftPot'
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-
-    this.io_pwr = obniz.getIO(this.params.outer);
-    this.ad = obniz.getAD(this.params.middle);
-
-    this.io_pwr.drive('5v');
-    this.io_pwr.output(true);
-
-    let self = this;
-
-    this.ad.start(function (value) {
-      let pressure = value;
-      self.press = pressure;
-      if (self.onchange) {
-        self.onchange(self.press);
-      }
-    });
-  }
-}
-
-if (true) {
-  module.exports = CircularSoftPot;
 }
 
 /***/ }),
