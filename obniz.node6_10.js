@@ -11595,7 +11595,7 @@ var map = {
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./parts/Display/SainSmartTFT18LCD/index.js",
-	"./Display/SharpMemoryDisplay/index.js": "./parts/Display/SharpMemoryDisplay/index.js",
+	"./Display/SharpMemoryTFT/index.js": "./parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
@@ -14025,17 +14025,17 @@ const font = [0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x5b, 0x4f, 0x5b, 0x3e, 0x3e, 
 
 /***/ }),
 
-/***/ "./parts/Display/SharpMemoryDisplay/index.js":
-/*!***************************************************!*\
-  !*** ./parts/Display/SharpMemoryDisplay/index.js ***!
-  \***************************************************/
+/***/ "./parts/Display/SharpMemoryTFT/index.js":
+/*!***********************************************!*\
+  !*** ./parts/Display/SharpMemoryTFT/index.js ***!
+  \***********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-class SharpMemoryDisplay {
+class SharpMemoryTFT {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sclk', 'mosi', 'cs', 'width', 'height'];
     this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
@@ -14051,7 +14051,7 @@ class SharpMemoryDisplay {
 
   static info() {
     return {
-      name: 'SharpMemoryDisplay'
+      name: 'SharpMemoryTFT'
     };
   }
 
@@ -14070,12 +14070,6 @@ class SharpMemoryDisplay {
 
     this.width = this.params.width;
     this.height = this.params.height;
-  }
-
-  sendbyte(data) {
-    if (data <= 0xff) {
-      this.spi.write([data]);
-    }
   }
 
   _reverseBits(data) {
@@ -14288,21 +14282,6 @@ class SharpMemoryDisplay {
     }
   }
 
-  /*
-  qr(text, correction) {
-      let obj = {};
-      obj['display'] = {
-        qr: {
-          text,
-        },
-      };
-      if (correction) {
-        obj['display'].qr.correction = correction;
-      }
-      this.obniz.send(obj);
-  }
-  */
-
   _draw(ctx) {
     const stride = this.width / 8;
     let vram = new Array(stride * 64);
@@ -14337,7 +14316,7 @@ class SharpMemoryDisplay {
 }
 
 if (true) {
-  module.exports = SharpMemoryDisplay;
+  module.exports = SharpMemoryTFT;
 }
 
 /***/ }),

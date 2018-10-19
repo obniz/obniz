@@ -17562,7 +17562,7 @@ var map = {
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./parts/Display/SainSmartTFT18LCD/index.js",
-	"./Display/SharpMemoryDisplay/index.js": "./parts/Display/SharpMemoryDisplay/index.js",
+	"./Display/SharpMemoryTFT/index.js": "./parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
@@ -21765,10 +21765,10 @@ const font = [
 
 /***/ }),
 
-/***/ "./parts/Display/SharpMemoryDisplay/index.js":
+/***/ "./parts/Display/SharpMemoryTFT/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-class SharpMemoryDisplay {
+class SharpMemoryTFT {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sclk', 'mosi', 'cs', 'width', 'height'];
     this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
@@ -21784,7 +21784,7 @@ class SharpMemoryDisplay {
 
   static info() {
     return {
-      name: 'SharpMemoryDisplay',
+      name: 'SharpMemoryTFT',
     };
   }
 
@@ -21803,12 +21803,6 @@ class SharpMemoryDisplay {
 
     this.width = this.params.width;
     this.height = this.params.height;
-  }
-
-  sendbyte(data) {
-    if (data <= 0xff) {
-      this.spi.write([data]);
-    }
   }
 
   _reverseBits(data) {
@@ -21836,7 +21830,7 @@ class SharpMemoryDisplay {
     let totalbytes = (this.width * this.height) / 8;
     let array = new Array(1024);
     let index = 0;
-    array[index++] = (this.commands.write | this.commands.vcom);
+    array[index++] = this.commands.write | this.commands.vcom;
     oldline = currentline = 1;
     array[index++] = this._reverseBits(currentline);
     this.io_cs.output(true);
@@ -21845,16 +21839,18 @@ class SharpMemoryDisplay {
       currentline = parseInt((i + 1) / (this.width / 8) + 1, 10);
       if (currentline != oldline) {
         array[index++] = 0x00;
-        if (currentline <= this.height) array[index++] = this._reverseBits(currentline);
+        if (currentline <= this.height)
+          array[index++] = this._reverseBits(currentline);
         oldline = currentline;
       }
-      if (index >= 1021) { // regarding SPI max.
+      if (index >= 1021) {
+        // regarding SPI max.
         this.spi.write(array.slice(0, index));
         array = new Array(1024);
         index = 0;
       }
     }
-    if (index>0) {
+    if (index > 0) {
       this.spi.write(array.slice(0, index));
     }
     this.spi.write([0x00]);
@@ -22022,21 +22018,6 @@ class SharpMemoryDisplay {
     }
   }
 
-  /*
-  qr(text, correction) {
-      let obj = {};
-      obj['display'] = {
-        qr: {
-          text,
-        },
-      };
-      if (correction) {
-        obj['display'].qr.correction = correction;
-      }
-      this.obniz.send(obj);
-  }
-  */
-
   _draw(ctx) {
     const stride = this.width / 8;
     let vram = new Array(stride * 64);
@@ -22071,7 +22052,7 @@ class SharpMemoryDisplay {
 }
 
 if (true) {
-  module.exports = SharpMemoryDisplay;
+  module.exports = SharpMemoryTFT;
 }
 
 

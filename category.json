@@ -115,6 +115,12 @@
             "amazon.com": "http://a.co/d/ceGfsNN",
             "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005223948&SearchText=1.8%22+tft"
           }
+        },
+        {
+          "name": "SharpMemoryTFT",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/3502"
+          }
         }
       ]
     },

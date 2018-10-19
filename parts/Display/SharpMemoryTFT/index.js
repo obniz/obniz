@@ -1,4 +1,4 @@
-class SharpMemoryDisplay {
+class SharpMemoryTFT {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sclk', 'mosi', 'cs', 'width', 'height'];
     this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
@@ -14,7 +14,7 @@ class SharpMemoryDisplay {
 
   static info() {
     return {
-      name: 'SharpMemoryDisplay',
+      name: 'SharpMemoryTFT',
     };
   }
 
@@ -33,12 +33,6 @@ class SharpMemoryDisplay {
 
     this.width = this.params.width;
     this.height = this.params.height;
-  }
-
-  sendbyte(data) {
-    if (data <= 0xff) {
-      this.spi.write([data]);
-    }
   }
 
   _reverseBits(data) {
@@ -254,21 +248,6 @@ class SharpMemoryDisplay {
     }
   }
 
-  /*
-  qr(text, correction) {
-      let obj = {};
-      obj['display'] = {
-        qr: {
-          text,
-        },
-      };
-      if (correction) {
-        obj['display'].qr.correction = correction;
-      }
-      this.obniz.send(obj);
-  }
-  */
-
   _draw(ctx) {
     const stride = this.width / 8;
     let vram = new Array(stride * 64);
@@ -303,5 +282,5 @@ class SharpMemoryDisplay {
 }
 
 if (typeof module === 'object') {
-  module.exports = SharpMemoryDisplay;
+  module.exports = SharpMemoryTFT;
 }
