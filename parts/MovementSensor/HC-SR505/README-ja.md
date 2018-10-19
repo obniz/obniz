@@ -30,3 +30,16 @@ sensor.onchange = function(val){
   console.log(val ? 'Moving Something!' : 'Nothing moving');
 }
 ```
+
+## [await] getWait()
+
+近くに人がいるかどうかを一度だけ取得します．
+`true`なら近くに人がいて，`false`なら近くに人がいない状態です
+
+
+```Javascript
+// Javascript Example
+var sensor = obniz.wired("HC-SR505", {vcc:0, signal:1, gnd:2});
+var val = await sensor.getWait();
+console.log(val ? 'Moving Something!' : 'Nothing moving');
+```
