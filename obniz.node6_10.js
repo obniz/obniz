@@ -11613,6 +11613,7 @@ var map = {
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
+	"./MovementSensor/FlickHat/index.js": "./parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
@@ -16295,6 +16296,294 @@ class Button {
 
 if (true) {
   module.exports = Button;
+}
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/FlickHat/index.js":
+/*!************************************************!*\
+  !*** ./parts/MovementSensor/FlickHat/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class FlickHat {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'reset', 'ts'];
+    this.requiredKeys = ['gnd', 'sda', 'scl', 'reset', 'ts'];
+
+    this.displayIoNames = {
+      //vcc: 'vcc', //5v
+      sda: 'sda',
+      scl: 'scl',
+      gnd: 'gnd',
+      reset: 'reset',
+      ts: 'ts'
+    };
+  }
+
+  static info() {
+    return {
+      name: 'FlickHat'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.address = 0x42;
+
+    if (this.obniz.isValidIO(this.params.vcc)) {
+      this.obniz.getIO(this.params.vcc).drive('5v');
+      this.obniz.getIO(this.params.vcc).output(true);
+    }
+    if (this.obniz.isValidIO(this.params.gnd)) {
+      this.obniz.getIO(this.params.gnd).drive('5v');
+      this.obniz.getIO(this.params.gnd).output(true);
+    }
+
+    this.io_reset = this.obniz.getIO(this.params.reset);
+    this.io_reset.drive('open-drain');
+
+    this.io_ts = this.obniz.getIO(this.params.ts);
+    this.io_ts.drive('open-drain');
+    this.io_ts.pull('3v');
+
+    this.params.mode = 'master';
+    this.params.pull = '3v';
+    this.params.clock = 100 * 1000; //100KHz
+
+    //PeripheralI2C
+    this.i2c = this.obniz.getI2CWithConfig(this.params);
+  }
+
+  start(callbackFwInfo) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      _this.io_ts.pull('3v');
+
+      _this.io_reset.pull('0v');
+      yield _this.obniz.wait(40);
+      _this.io_reset.pull('3v');
+      yield _this.obniz.wait(50);
+
+      _this.onfwinfo = callbackFwInfo;
+      _this.fwInfo = {
+        fwValid: 0,
+        fwInfoReceived: false
+      };
+      _this.rotation = 0;
+      _this.lastRotation = 0;
+
+      yield _this.polling();
+      yield _this.obniz.wait(200);
+
+      _this.i2c.write(_this.address, [0x10, 0x00, 0x00, 0xa2, 0xa1, 0x00, 0x00, 0x00, 0x1f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff]);
+      yield _this.obniz.wait(100);
+
+      _this.i2c.write(_this.address, [0x10, 0x00, 0x00, 0xa2, 0x80, 0x00, 0x00, 0x00, 0x3f, 0x00, 0x00, 0x00, 0x3f, 0x00, 0x00, 0x00]);
+    })();
+  }
+
+  _dataArray2string(data) {
+    var result = '';
+    for (let n of data) {
+      result += String.fromCharCode(n);
+    }
+    return result;
+  }
+
+  polling(timeout) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      timeout = timeout || 3000; //default: 3s
+
+      //DataOutputConfigMask	2byte
+      const maskDSPStatus = 1;
+      const maskGestureInfo = 1 << 1;
+      const maskTouchInfo = 1 << 2;
+      const maskAirWheelInfo = 1 << 3;
+      const maskXYZPosition = 1 << 4;
+
+      //SystemInfo	1byte
+      const sysPositionValid = 1;
+      const sysAirWheelValid = 1 << 1;
+      const sysDSPRunning = 1 << 7;
+
+      let startTime = new Date();
+      var ts = true;
+      while (ts && new Date() - startTime < timeout) ts = yield _this2.io_ts.inputWait();
+      if (!ts) {
+        _this2.io_ts.pull('0v');
+        //await this.obniz.wait(1);
+
+        let data = yield _this2.i2c.readWait(_this2.address, 132);
+        let size = data[0];
+        let flag = data[1];
+        let seq = data[2];
+        let msgID = data[3];
+
+        if (size != 0xff && size > 0) {
+          if (_this2.debugprint || _this2.obniz.debugprint) {
+            console.log('flickHat: ' + data.slice(0, size).map(function (v) {
+              return '0x' + v.toString(16);
+            }));
+          }
+          switch (msgID) {
+            case 0x91:
+              //sensor data output
+
+              let configmask = data[4] | data[5] << 8; //little endian
+              let timestamp = data[6]; // 200hz, 8-bit counter, max ~1.25sec
+              let sysinfo = data[7];
+              let dspstatus = data.slice(8, 10);
+              let gesture = data.slice(10, 14);
+              let touch = data.slice(14, 18);
+              let airwheel = data.slice(18, 20);
+              let xyz = data.slice(20, 26);
+              let noisepow = data.slice(27, 30);
+              if (gesture[0] == 255 && gesture[1] == 255 && gesture[2] == 255 && gesture[3] == 255) break;
+
+              if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
+                let xyz = { //little endian
+                  x: (data[20] | data[21] << 8) / 65536,
+                  y: (data[22] | data[23] << 8) / 65536,
+                  z: (data[24] | data[25] << 8) / 65536,
+                  seq: seq
+                };
+                _this2.xyz = xyz;
+                if (typeof _this2.onxyz == 'function') _this2.onxyz(xyz);
+              }
+
+              if (configmask & maskGestureInfo && gesture[0] > 0) {
+                _this2.lastGesture = gesture[0];
+                const gestures = [['', '', ''], //no gesture
+                ['garbage', '', ''], ['flick', 'west', 'east'], //2
+                ['flick', 'east', 'west'], //3
+                ['flick', 'south', 'north'], //4
+                ['flick', 'north', 'south'], //5
+                ['circle', 'clockwise', ''], ['circle', 'counter-clockwise', ''][('wave', 'x', '')], ['wave', 'y', ''], ['hold', '', '']];
+                for (let index in gestures) {
+                  if (index == gesture[0] && typeof _this2.ongestureall == 'function') _this2.ongestureall({ action: gestures[index][0], from: gestures[index][1], to: gestures[index][2], raw: gesture, seq: seq });
+                  if (index == gesture[0] && gestures[index][0] == 'flick' && typeof _this2.ongesture == 'function') _this2.ongesture({ action: 'gesture', from: gestures[index][1], to: gestures[index][2], raw: gesture, seq: seq });
+                }
+              }
+
+              if (configmask & maskTouchInfo && !(touch[0] == 0 && touch[1] == 0) && touch[3] == 0) {
+                //console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
+                let touchAction = touch[0] | touch[1] << 8; //little endian
+                if (touchAction == 0xffff) break;
+                let touchCount = touch[2] * 5; // touch counter value * 5[ms]
+                const actions = [['touch', 'south'], //0
+                ['touch', 'west'], //1
+                ['touch', 'north'], //2
+                ['touch', 'east'], //3
+                ['touch', 'center'], //4
+                ['tap', 'south'], //5
+                ['tap', 'west'], //6
+                ['tap', 'north'], //7
+                ['tap', 'east'], //8
+                ['tap', 'center'], //9
+                ['doubletap', 'south'], //10
+                ['doubletap', 'west'], //11
+                ['doubletap', 'north'], //12
+                ['doubletap', 'east'], //13
+                ['doubletap', 'center'] //14
+                ];
+
+                let touches = [];
+                let taps = [];
+                let doubletaps = [];
+                _this2.lastTouch = touchAction;
+
+                var comp = 1;
+                for (let index in actions) {
+                  let value = actions[index];
+                  if (touchAction & comp) {
+                    //console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
+                    switch (value[0]) {
+                      case 'touch':
+                        touches.push(value[1]);
+                        break;
+                      case 'tap':
+                        taps.push(value[1]);
+                        break;
+                      case 'doubletap':
+                        doubletaps.push(value[1]);
+                        break;
+                      default:
+                    }
+                  }
+                  comp <<= 1;
+                }
+
+                if (touches.length > 0 && typeof _this2.ontouch == 'function') _this2.ontouch({ action: 'touch', positions: touches, raw: touch, seq: seq });
+
+                if (taps.length > 0 && typeof _this2.ontap == 'function') _this2.ontap({ action: 'tap', positions: taps, raw: touch, seq: seq });
+
+                if (doubletaps.length > 0 && typeof _this2.ondoubletap == 'function') _this2.ondoubletap({ action: 'doubletap', positions: doubletaps, raw: touch, seq: seq });
+              }
+
+              if (configmask & maskAirWheelInfo && sysinfo & sysAirWheelValid) {
+                let delta = (airwheel[0] - _this2.lastRotation) / 32.0;
+                _this2.rotation += delta * 360.0;
+                _this2.rotation %= 360;
+                if (delta != 0 && delta > -0.5 && delta < 0.5) {
+                  if (typeof _this2.onairwheel == 'function') _this2.onairwheel({ delta: delta * 360.0, rotation: _this2.rotation, raw: airwheel, seq: seq });
+                }
+                _this2.lastRotation = airwheel[0];
+              }
+              break;
+
+            case 0x15:
+              //system status
+              let statusInfo = {
+                msgId: data[4],
+                maxCmdSize: data[5],
+                error: data[6] | data[7] << 8 //little endian
+              };
+              _this2.statusInfo = statusInfo;
+              if (_this2.debugprint || _this2.obniz.debugprint) {
+                console.log(`flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`);
+              }
+              break;
+
+            case 0x83:
+              // farmware information
+              let fwInfo = {
+                fwValid: data[4] == 0xaa,
+                hwRev: [data[5], data[6]],
+                paramStartAddr: data[7] * 128,
+                libLoaderVer: [data[8], data[9]],
+                libLoaderPlatform: data[10],
+                fwStartAddr: data[11] * 128,
+                fwVersion: _this2._dataArray2string(data.slice(12, 132)).split('\0')[0],
+                fwInfoReceived: true
+              };
+              _this2.fwInfo = fwInfo;
+              if (typeof _this2.onfwinfo == 'function') _this2.onfwinfo(fwInfo);
+              break;
+
+            default:
+          }
+        }
+
+        _this2.io_ts.pull('3v');
+        //await this.obniz.wait(1);
+      }
+    })();
+  }
+}
+
+if (true) {
+  module.exports = FlickHat;
 }
 
 /***/ }),
