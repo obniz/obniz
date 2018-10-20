@@ -28,6 +28,7 @@ class FlickHat {
       this.obniz.getIO(this.params.vcc).drive('5v');
       this.obniz.getIO(this.params.vcc).output(true);
     }
+    this.obniz.getIO(this.params.gnd).output(false);
 
     this.io_reset = this.obniz.getIO(this.params.reset);
     this.io_reset.drive('open-drain');
