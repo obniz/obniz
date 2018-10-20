@@ -30,6 +30,13 @@ class FSR40X {
       }
     });
   }
+
+  async getWait() {
+    let value = await this.ad.getWait();
+    let pressure = value * 100;
+    this.press = pressure;
+    return this.press;
+  }
 }
 
 if (typeof module === 'object') {

@@ -22,6 +22,10 @@ class HCSR505 {
       }
     });
   }
+
+  getWait() {
+    return this.io_signal.inputWait();
+  }
 }
 
 if (typeof module === 'object') {

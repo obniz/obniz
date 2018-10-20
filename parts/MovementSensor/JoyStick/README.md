@@ -67,3 +67,34 @@ joystick.onchangesw = function(pressed){
   console.log(pressed);
 };
 ```
+
+
+## [await] isPressedWait()
+
+Get button state once. 
+
+```Javascript
+// Javascript Example
+var joystick = obniz.wired("JoyStick", {gnd:4, sw:0, y:1, x:2, vcc:3});
+var isPressed = await joystick.isPressedWait()
+if(isPressed){
+  console.log("PRESSED");
+}
+
+```
+
+
+## [await] getXWait()
+## [await] getYWait()
+
+Get X or Y angle once
+
+```Javascript
+// Javascript Example
+var joystick = obniz.wired("JoyStick", {gnd:4, sw:0, y:1, x:2, vcc:3});
+var x = await joystick.getXWait()
+var y = await joystick.getYWait()
+ 
+console.log("x:" + x + " y:"+y);
+
+```

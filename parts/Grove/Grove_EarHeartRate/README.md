@@ -33,3 +33,14 @@ heartrate.start(function(rate){
   console.log(rate);
 })
 ```
+
+## [await] getWait()
+measure heart rate once. 
+
+```javascript
+// Javascript Example
+var heartrate = obniz.wired("Grove_EarHeartRate", {gnd: 0, vcc: 1, signal: 2});
+var rate = await heartrate.getWait();
+console.log(rate);
+```
+

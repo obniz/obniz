@@ -47,6 +47,14 @@ class Grove_EarHeartRate {
       }
     };
   }
+
+  getWait() {
+    return new Promise(resolve => {
+      this.start(rate => {
+        resolve(rate);
+      });
+    });
+  }
 }
 
 if (typeof module === 'object') {

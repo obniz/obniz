@@ -34,3 +34,16 @@ tempsens.onchange = function(temp){
   console.log(temp);
 };
 ```
+
+
+## getWait
+
+温度センサの値を一度だけ取得します
+温度は摂氏で返されます。
+
+```javascript
+// Javascript Example
+var tempsens = obniz.wired("<%= partname %>",   { gnd:<%= pins.gnd %> , output:<%= pins.output %>, vcc:<%= pins.vcc %>});
+var temp = tempsens.getWait();
+console.log(temp);
+```
