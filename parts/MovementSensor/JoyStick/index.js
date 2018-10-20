@@ -51,6 +51,18 @@ class JoyStick {
     let ret = await this.io_sig_sw.inputWait();
     return ret === false;
   }
+
+  async getXWait() {
+    let value = await this.ad_x.getWait();
+    this.positionX = value / 5.0;
+    return this.positionX * 2 - 1;
+  }
+
+  async getYWait() {
+    let value = await this.ad_y.getWait();
+    this.positionY = value / 5.0;
+    return this.positionY * 2 - 1;
+  }
 }
 
 if (typeof module === 'object') {

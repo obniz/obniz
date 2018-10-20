@@ -25,4 +25,17 @@ tempsens.onchange = function(temp){
   console.log(temp);
 };
 ```
+
+
+## getWait
+
+温度センサの値を一度だけ取得します
+温度は摂氏で返されます。
+
+```javascript
+// Javascript Example
+var tempsens = obniz.wired("S8100B",   { gnd:0 , output:1, vcc:2});
+var temp = tempsens.getWait();
+console.log(temp);
+```
  

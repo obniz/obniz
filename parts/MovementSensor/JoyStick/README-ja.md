@@ -54,3 +54,33 @@ joystick.onchangesw = function(pressed){
   console.log(pressed);
 };
 ```
+
+
+## [await] isPressedWait()
+ボタンが押されているかどうかを一度だけ取得します
+
+```Javascript
+// Javascript Example
+var joystick = obniz.wired("JoyStick", {gnd:4, sw:0, y:1, x:2, vcc:3});
+var isPressed = await joystick.isPressedWait()
+if(isPressed){
+  console.log("PRESSED");
+}
+
+```
+
+
+## [await] getXWait()
+## [await] getYWait()
+
+X,Yそれぞれの傾きを一度だけ取得します
+
+```Javascript
+// Javascript Example
+var joystick = obniz.wired("JoyStick", {gnd:4, sw:0, y:1, x:2, vcc:3});
+var x = await joystick.getXWait()
+var y = await joystick.getYWait()
+ 
+console.log("x:" + x + " y:"+y);
+
+```

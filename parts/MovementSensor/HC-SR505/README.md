@@ -31,3 +31,15 @@ sensor.onchange = function(val){
   console.log(val ? 'Moving Something!' : 'Nothing moving');
 }
 ```
+
+## [await] getWait()
+
+Get sensor value once.
+
+
+```Javascript
+// Javascript Example
+var sensor = obniz.wired("HC-SR505", {vcc:0, signal:1, gnd:2});
+var val = await sensor.getWait();
+console.log(val ? 'Moving Something!' : 'Nothing moving');
+```

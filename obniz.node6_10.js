@@ -11605,8 +11605,6 @@ var map = {
 	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./parts/Infrared/IRSensor/index.js",
 	"./Infrared/InfraredLED/index.js": "./parts/Infrared/InfraredLED/index.js",
-	"./InfraredSensor/IRModule/index.js": "./parts/InfraredSensor/IRModule/index.js",
-	"./InfraredSensor/InfraredLED/index.js": "./parts/InfraredSensor/InfraredLED/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
@@ -14332,6 +14330,8 @@ if (true) {
 "use strict";
 
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 class GP2Y0A21YK0F {
   constructor() {
     this.keys = ['vcc', 'gnd', 'signal'];
@@ -14362,21 +14362,41 @@ class GP2Y0A21YK0F {
 
   start(callback) {
     this.ad_signal.start(val => {
-      if (val <= 0) {
-        val = 0.001;
-      }
-      let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.25214) * 10;
-      if (this._unit === 'mm') {
-        distance = parseInt(distance * 10) / 10;
-      } else {
-        distance *= 0.0393701;
-        distance = parseInt(distance * 1000) / 1000;
-      }
-
+      let distance = this._volt2distance(val);
       if (typeof callback == 'function') {
         callback(distance);
       }
     });
+  }
+
+  _volt2distance(val) {
+    if (val <= 0) {
+      val = 0.001;
+    }
+    let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.25214) * 10;
+    if (this._unit === 'mm') {
+      distance = parseInt(distance * 10) / 10;
+    } else {
+      distance *= 0.0393701;
+      distance = parseInt(distance * 1000) / 1000;
+    }
+    return distance;
+  }
+
+  getWait() {
+    var _this = this;
+
+    return new Promise((() => {
+      var _ref = _asyncToGenerator(function* (resolve) {
+        let val = yield _this.ad_signal.getWait();
+        let distance = _this._volt2distance(val);
+        resolve(distance);
+      });
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    })());
   }
 
   unit(unit) {
@@ -14904,6 +14924,14 @@ class Grove_EarHeartRate {
       }
     };
   }
+
+  getWait() {
+    return new Promise(resolve => {
+      this.start(rate => {
+        resolve(rate);
+      });
+    });
+  }
 }
 
 if (true) {
@@ -15047,6 +15075,8 @@ if (true) {
 "use strict";
 
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 class ENC03R_Module {
   constructor() {
     this.keys = ['vcc', 'out1', 'out2', 'gnd'];
@@ -15079,6 +15109,38 @@ class ENC03R_Module {
         this.onchange2(this.sens2);
       }
     });
+  }
+
+  get1Wait() {
+    var _this = this;
+
+    return new Promise((() => {
+      var _ref = _asyncToGenerator(function* (resolve) {
+        let value = _this.ad0.getWait();
+        _this.sens1 = (value - 1.45) / _this.Sens;
+        resolve(_this.sens1);
+      });
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    })());
+  }
+
+  get2Wait() {
+    var _this2 = this;
+
+    return new Promise((() => {
+      var _ref2 = _asyncToGenerator(function* (resolve) {
+        let value = _this2.ad1.getWait();
+        _this2.sens2 = (value - 1.35) / _this2.Sens;
+        resolve(_this2.sens2);
+      });
+
+      return function (_x2) {
+        return _ref2.apply(this, arguments);
+      };
+    })());
   }
 }
 
@@ -15258,146 +15320,6 @@ if (true) {
 /*!*********************************************!*\
   !*** ./parts/Infrared/InfraredLED/index.js ***!
   \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-class InfraredLED {
-  constructor() {
-    this.keys = ['anode', 'cathode'];
-    this.requiredKeys = ['anode'];
-
-    this.dataSymbolLength = 0.07;
-  }
-
-  static info() {
-    return {
-      name: 'InfraredLED'
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    if (!this.obniz.isValidIO(this.params.anode)) {
-      throw new Error('anode is not valid io');
-    }
-    if (this.params.cathode) {
-      if (!this.obniz.isValidIO(this.params.cathode)) {
-        throw new Error('cathode is not valid io');
-      }
-      this.io_cathode = obniz.getIO(this.params.cathode);
-      this.io_cathode.output(false);
-    }
-    this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({ io: this.params.anode });
-    this.pwm.freq(38000);
-    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
-  }
-
-  send(arr) {
-    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
-      arr.push(0);
-    }
-    this.pwm.modulate('am', this.dataSymbolLength, arr);
-  }
-}
-
-if (true) {
-  module.exports = InfraredLED;
-}
-
-/***/ }),
-
-/***/ "./parts/InfraredSensor/IRModule/index.js":
-/*!************************************************!*\
-  !*** ./parts/InfraredSensor/IRModule/index.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-class IRModule {
-  constructor() {
-    this.keys = ['recv', 'vcc', 'send', 'gnd'];
-    this.requiredKeys = ['recv', 'send'];
-  }
-
-  static info() {
-    return {
-      name: 'IRModule'
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-
-    if (!obniz.isValidIO(this.params.recv)) {
-      throw new Error('recv is not valid io');
-    }
-
-    if (!obniz.isValidIO(this.params.send)) {
-      throw new Error('send is not valid io');
-    }
-
-    this.sensor = obniz.wired('IRSensor', {
-      output: this.params.recv
-    });
-    this.setGetterSetter('sensor', 'duration');
-    this.setGetterSetter('sensor', 'dataInverted');
-    this.setGetterSetter('sensor', 'cutTail');
-    this.setGetterSetter('sensor', 'output_pullup');
-    this.setGetterSetter('sensor', 'ondetect');
-
-    this.led = obniz.wired('InfraredLED', {
-      anode: this.params.send
-    });
-  }
-
-  //link
-  send(arr) {
-    this.led.send(arr);
-  }
-
-  start(callback) {
-    this.sensor.start(callback);
-  }
-
-  get dataSymbolLength() {
-    return this.sensor.dataSymbolLength;
-  }
-
-  set dataSymbolLength(x) {
-    this.sensor.dataSymbolLength = x;
-    this.led.dataSymbolLength = x;
-  }
-
-  setGetterSetter(partsName, varName) {
-    Object.defineProperty(this, varName, {
-      get() {
-        return this[partsName][varName];
-      },
-      set(x) {
-        this[partsName][varName] = x;
-      }
-    });
-  }
-}
-
-if (true) {
-  module.exports = IRModule;
-}
-
-/***/ }),
-
-/***/ "./parts/InfraredSensor/InfraredLED/index.js":
-/*!***************************************************!*\
-  !*** ./parts/InfraredSensor/InfraredLED/index.js ***!
-  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -16411,6 +16333,10 @@ class HCSR505 {
       }
     });
   }
+
+  getWait() {
+    return this.io_signal.inputWait();
+  }
 }
 
 if (true) {
@@ -16486,6 +16412,26 @@ class JoyStick {
     return _asyncToGenerator(function* () {
       let ret = yield _this.io_sig_sw.inputWait();
       return ret === false;
+    })();
+  }
+
+  getXWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      let value = yield _this2.ad_x.getWait();
+      _this2.positionX = value / 5.0;
+      return _this2.positionX * 2 - 1;
+    })();
+  }
+
+  getYWait() {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      let value = yield _this3.ad_y.getWait();
+      _this3.positionY = value / 5.0;
+      return _this3.positionY * 2 - 1;
     })();
   }
 }
@@ -17249,6 +17195,8 @@ if (true) {
 "use strict";
 
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 //Todo: add weight and calc pressure(kg)
 
 class FSR40X {
@@ -17280,6 +17228,17 @@ class FSR40X {
         self.onchange(self.press);
       }
     });
+  }
+
+  getWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      let value = yield _this.ad.getWait();
+      let pressure = value * 100;
+      _this.press = pressure;
+      return _this.press;
+    })();
   }
 }
 

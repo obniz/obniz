@@ -24,3 +24,14 @@ pressure.onchange =function(press){
   console.log(press)
 }
 ```
+
+## [await]getWait();
+
+Get pressure value once.
+
+```javascript
+// Javascript Example
+var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
+var press = pressure.getWait();
+console.log(press)
+```
