@@ -21,12 +21,19 @@ Servomotors which vcc can be driven directly from obniz io
 Maker | SKU
 --- | ---
 Tower Pro | SG-5010
+Tower Pro | MG92B
+Tower Pro | MG90S
+Tower Pro | MG90D
+Tower Pro | SG90
+Tower Pro | SG92R
+GWS | S35STD
 
 Servomotors which vcc can not be driven directly from obniz io
 
 Maker | SKU
 --- | ---
 Quimat | QKY66-5
+FEETECH | FS90R
 
 ## obniz.wired("ServoMotor", {[vcc, gnd, signal, pwm]})
 
@@ -69,6 +76,21 @@ angle : 0 - 180 degree
 // Javascript Example
 var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
 
+servo.angle(90.0); // half position
+```
+
+## range = {min, max}
+
+Adjusting output pulse length.
+By default 0.5 to 2.4 msec pulse will be generated regarding angle 0 to 180 degree.
+
+```Javascript
+// Javascript Example
+var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+servo.range = {
+  min: 0.8,
+  max: 2.4
+}
 servo.angle(90.0); // half position
 ```
 

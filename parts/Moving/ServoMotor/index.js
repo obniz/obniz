@@ -2,6 +2,11 @@ class ServoMotor {
   constructor() {
     this.keys = ['gnd', 'vcc', 'signal', 'pwm'];
     this.requiredKeys = [];
+
+    this.range = {
+      min: 0.5,
+      max: 2.4,
+    };
   }
 
   static info() {
@@ -31,8 +36,8 @@ class ServoMotor {
   // Module functions
 
   angle(ratio) {
-    let max = 2.4;
-    let min = 0.5;
+    let max = this.range.max;
+    let min = this.range.min;
     let val = ((max - min) * ratio) / 180.0 + min;
     this.pwm.pulse(val);
   }
