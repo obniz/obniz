@@ -173,6 +173,14 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-10761/"
           }
+        },
+        {
+          "name": "PCA9685",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-10350/",
+            "adafruit": "https://www.adafruit.com/product/815",
+            "switchscience": "https://www.switch-science.com/catalog/961/"
+          }
         }
       ]
     },

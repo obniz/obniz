@@ -4157,10 +4157,7 @@ for (var i = 0; i < R; i++) {
 }
 
 exports.parse = parse;
-function parse(version, options) {
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
-
+function parse(version, loose) {
   if (version instanceof SemVer)
     return version;
 
@@ -4170,37 +4167,35 @@ function parse(version, options) {
   if (version.length > MAX_LENGTH)
     return null;
 
-  var r = options.loose ? re[LOOSE] : re[FULL];
+  var r = loose ? re[LOOSE] : re[FULL];
   if (!r.test(version))
     return null;
 
   try {
-    return new SemVer(version, options);
+    return new SemVer(version, loose);
   } catch (er) {
     return null;
   }
 }
 
 exports.valid = valid;
-function valid(version, options) {
-  var v = parse(version, options);
+function valid(version, loose) {
+  var v = parse(version, loose);
   return v ? v.version : null;
 }
 
 
 exports.clean = clean;
-function clean(version, options) {
-  var s = parse(version.trim().replace(/^[=v]+/, ''), options);
+function clean(version, loose) {
+  var s = parse(version.trim().replace(/^[=v]+/, ''), loose);
   return s ? s.version : null;
 }
 
 exports.SemVer = SemVer;
 
-function SemVer(version, options) {
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
+function SemVer(version, loose) {
   if (version instanceof SemVer) {
-    if (version.loose === options.loose)
+    if (version.loose === loose)
       return version;
     else
       version = version.version;
@@ -4212,13 +4207,11 @@ function SemVer(version, options) {
     throw new TypeError('version is longer than ' + MAX_LENGTH + ' characters')
 
   if (!(this instanceof SemVer))
-    return new SemVer(version, options);
+    return new SemVer(version, loose);
 
-  debug('SemVer', version, options);
-  this.options = options;
-  this.loose = !!options.loose;
-
-  var m = version.trim().match(options.loose ? re[LOOSE] : re[FULL]);
+  debug('SemVer', version, loose);
+  this.loose = loose;
+  var m = version.trim().match(loose ? re[LOOSE] : re[FULL]);
 
   if (!m)
     throw new TypeError('Invalid Version: ' + version);
@@ -4268,16 +4261,16 @@ SemVer.prototype.toString = function() {
 };
 
 SemVer.prototype.compare = function(other) {
-  debug('SemVer.compare', this.version, this.options, other);
+  debug('SemVer.compare', this.version, this.loose, other);
   if (!(other instanceof SemVer))
-    other = new SemVer(other, this.options);
+    other = new SemVer(other, this.loose);
 
   return this.compareMain(other) || this.comparePre(other);
 };
 
 SemVer.prototype.compareMain = function(other) {
   if (!(other instanceof SemVer))
-    other = new SemVer(other, this.options);
+    other = new SemVer(other, this.loose);
 
   return compareIdentifiers(this.major, other.major) ||
          compareIdentifiers(this.minor, other.minor) ||
@@ -4286,7 +4279,7 @@ SemVer.prototype.compareMain = function(other) {
 
 SemVer.prototype.comparePre = function(other) {
   if (!(other instanceof SemVer))
-    other = new SemVer(other, this.options);
+    other = new SemVer(other, this.loose);
 
   // NOT having a prerelease is > having one
   if (this.prerelease.length && !other.prerelease.length)
@@ -4577,23 +4570,19 @@ function cmp(a, op, b, loose) {
 }
 
 exports.Comparator = Comparator;
-function Comparator(comp, options) {
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
-
+function Comparator(comp, loose) {
   if (comp instanceof Comparator) {
-    if (comp.loose === !!options.loose)
+    if (comp.loose === loose)
       return comp;
     else
       comp = comp.value;
   }
 
   if (!(this instanceof Comparator))
-    return new Comparator(comp, options);
+    return new Comparator(comp, loose);
 
-  debug('comparator', comp, options);
-  this.options = options;
-  this.loose = !!options.loose;
+  debug('comparator', comp, loose);
+  this.loose = loose;
   this.parse(comp);
 
   if (this.semver === ANY)
@@ -4606,7 +4595,7 @@ function Comparator(comp, options) {
 
 var ANY = {};
 Comparator.prototype.parse = function(comp) {
-  var r = this.options.loose ? re[COMPARATORLOOSE] : re[COMPARATOR];
+  var r = this.loose ? re[COMPARATORLOOSE] : re[COMPARATOR];
   var m = comp.match(r);
 
   if (!m)
@@ -4620,7 +4609,7 @@ Comparator.prototype.parse = function(comp) {
   if (!m[2])
     this.semver = ANY;
   else
-    this.semver = new SemVer(m[2], this.options.loose);
+    this.semver = new SemVer(m[2], this.loose);
 };
 
 Comparator.prototype.toString = function() {
@@ -4628,33 +4617,30 @@ Comparator.prototype.toString = function() {
 };
 
 Comparator.prototype.test = function(version) {
-  debug('Comparator.test', version, this.options.loose);
+  debug('Comparator.test', version, this.loose);
 
   if (this.semver === ANY)
     return true;
 
   if (typeof version === 'string')
-    version = new SemVer(version, this.options);
+    version = new SemVer(version, this.loose);
 
-  return cmp(version, this.operator, this.semver, this.options);
+  return cmp(version, this.operator, this.semver, this.loose);
 };
 
-Comparator.prototype.intersects = function(comp, options) {
+Comparator.prototype.intersects = function(comp, loose) {
   if (!(comp instanceof Comparator)) {
     throw new TypeError('a Comparator is required');
   }
 
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
-
   var rangeTmp;
 
   if (this.operator === '') {
-    rangeTmp = new Range(comp.value, options);
-    return satisfies(this.value, rangeTmp, options);
+    rangeTmp = new Range(comp.value, loose);
+    return satisfies(this.value, rangeTmp, loose);
   } else if (comp.operator === '') {
-    rangeTmp = new Range(this.value, options);
-    return satisfies(comp.semver, rangeTmp, options);
+    rangeTmp = new Range(this.value, loose);
+    return satisfies(comp.semver, rangeTmp, loose);
   }
 
   var sameDirectionIncreasing =
@@ -4668,11 +4654,11 @@ Comparator.prototype.intersects = function(comp, options) {
     (this.operator === '>=' || this.operator === '<=') &&
     (comp.operator === '>=' || comp.operator === '<=');
   var oppositeDirectionsLessThan =
-    cmp(this.semver, '<', comp.semver, options) &&
+    cmp(this.semver, '<', comp.semver, loose) &&
     ((this.operator === '>=' || this.operator === '>') &&
     (comp.operator === '<=' || comp.operator === '<'));
   var oppositeDirectionsGreaterThan =
-    cmp(this.semver, '>', comp.semver, options) &&
+    cmp(this.semver, '>', comp.semver, loose) &&
     ((this.operator === '<=' || this.operator === '<') &&
     (comp.operator === '>=' || comp.operator === '>'));
 
@@ -4683,29 +4669,23 @@ Comparator.prototype.intersects = function(comp, options) {
 
 
 exports.Range = Range;
-function Range(range, options) {
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
-
+function Range(range, loose) {
   if (range instanceof Range) {
-    if (range.loose === !!options.loose &&
-        range.includePrerelease === !!options.includePrerelease) {
+    if (range.loose === loose) {
       return range;
     } else {
-      return new Range(range.raw, options);
+      return new Range(range.raw, loose);
     }
   }
 
   if (range instanceof Comparator) {
-    return new Range(range.value, options);
+    return new Range(range.value, loose);
   }
 
   if (!(this instanceof Range))
-    return new Range(range, options);
+    return new Range(range, loose);
 
-  this.options = options;
-  this.loose = !!options.loose;
-  this.includePrerelease = !!options.includePrerelease
+  this.loose = loose;
 
   // First, split based on boolean or ||
   this.raw = range;
@@ -4735,8 +4715,9 @@ Range.prototype.toString = function() {
 };
 
 Range.prototype.parseRange = function(range) {
-  var loose = this.options.loose;
+  var loose = this.loose;
   range = range.trim();
+  debug('range', range, loose);
   // `1.2.3 - 1.2.4` => `>=1.2.3 <=1.2.4`
   var hr = loose ? re[HYPHENRANGELOOSE] : re[HYPHENRANGE];
   range = range.replace(hr, hyphenReplace);
@@ -4759,22 +4740,22 @@ Range.prototype.parseRange = function(range) {
 
   var compRe = loose ? re[COMPARATORLOOSE] : re[COMPARATOR];
   var set = range.split(' ').map(function(comp) {
-    return parseComparator(comp, this.options);
-  }, this).join(' ').split(/\s+/);
-  if (this.options.loose) {
+    return parseComparator(comp, loose);
+  }).join(' ').split(/\s+/);
+  if (this.loose) {
     // in loose mode, throw out any that are not valid comparators
     set = set.filter(function(comp) {
       return !!comp.match(compRe);
     });
   }
   set = set.map(function(comp) {
-    return new Comparator(comp, this.options);
-  }, this);
+    return new Comparator(comp, loose);
+  });
 
   return set;
 };
 
-Range.prototype.intersects = function(range, options) {
+Range.prototype.intersects = function(range, loose) {
   if (!(range instanceof Range)) {
     throw new TypeError('a Range is required');
   }
@@ -4783,7 +4764,7 @@ Range.prototype.intersects = function(range, options) {
     return thisComparators.every(function(thisComparator) {
       return range.set.some(function(rangeComparators) {
         return rangeComparators.every(function(rangeComparator) {
-          return thisComparator.intersects(rangeComparator, options);
+          return thisComparator.intersects(rangeComparator, loose);
         });
       });
     });
@@ -4792,8 +4773,8 @@ Range.prototype.intersects = function(range, options) {
 
 // Mostly just for testing and legacy API reasons
 exports.toComparators = toComparators;
-function toComparators(range, options) {
-  return new Range(range, options).set.map(function(comp) {
+function toComparators(range, loose) {
+  return new Range(range, loose).set.map(function(comp) {
     return comp.map(function(c) {
       return c.value;
     }).join(' ').trim().split(' ');
@@ -4803,15 +4784,15 @@ function toComparators(range, options) {
 // comprised of xranges, tildes, stars, and gtlt's at this point.
 // already replaced the hyphen ranges
 // turn into a set of JUST comparators.
-function parseComparator(comp, options) {
-  debug('comp', comp, options);
-  comp = replaceCarets(comp, options);
+function parseComparator(comp, loose) {
+  debug('comp', comp);
+  comp = replaceCarets(comp, loose);
   debug('caret', comp);
-  comp = replaceTildes(comp, options);
+  comp = replaceTildes(comp, loose);
   debug('tildes', comp);
-  comp = replaceXRanges(comp, options);
+  comp = replaceXRanges(comp, loose);
   debug('xrange', comp);
-  comp = replaceStars(comp, options);
+  comp = replaceStars(comp, loose);
   debug('stars', comp);
   return comp;
 }
@@ -4826,16 +4807,14 @@ function isX(id) {
 // ~1.2, ~1.2.x, ~>1.2, ~>1.2.x --> >=1.2.0 <1.3.0
 // ~1.2.3, ~>1.2.3 --> >=1.2.3 <1.3.0
 // ~1.2.0, ~>1.2.0 --> >=1.2.0 <1.3.0
-function replaceTildes(comp, options) {
+function replaceTildes(comp, loose) {
   return comp.trim().split(/\s+/).map(function(comp) {
-    return replaceTilde(comp, options);
+    return replaceTilde(comp, loose);
   }).join(' ');
 }
 
-function replaceTilde(comp, options) {
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
-  var r = options.loose ? re[TILDELOOSE] : re[TILDE];
+function replaceTilde(comp, loose) {
+  var r = loose ? re[TILDELOOSE] : re[TILDE];
   return comp.replace(r, function(_, M, m, p, pr) {
     debug('tilde', comp, _, M, m, p, pr);
     var ret;
@@ -4869,17 +4848,15 @@ function replaceTilde(comp, options) {
 // ^1.2, ^1.2.x --> >=1.2.0 <2.0.0
 // ^1.2.3 --> >=1.2.3 <2.0.0
 // ^1.2.0 --> >=1.2.0 <2.0.0
-function replaceCarets(comp, options) {
+function replaceCarets(comp, loose) {
   return comp.trim().split(/\s+/).map(function(comp) {
-    return replaceCaret(comp, options);
+    return replaceCaret(comp, loose);
   }).join(' ');
 }
 
-function replaceCaret(comp, options) {
-  debug('caret', comp, options);
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
-  var r = options.loose ? re[CARETLOOSE] : re[CARET];
+function replaceCaret(comp, loose) {
+  debug('caret', comp, loose);
+  var r = loose ? re[CARETLOOSE] : re[CARET];
   return comp.replace(r, function(_, M, m, p, pr) {
     debug('caret', comp, _, M, m, p, pr);
     var ret;
@@ -4926,18 +4903,16 @@ function replaceCaret(comp, options) {
   });
 }
 
-function replaceXRanges(comp, options) {
-  debug('replaceXRanges', comp, options);
+function replaceXRanges(comp, loose) {
+  debug('replaceXRanges', comp, loose);
   return comp.split(/\s+/).map(function(comp) {
-    return replaceXRange(comp, options);
+    return replaceXRange(comp, loose);
   }).join(' ');
 }
 
-function replaceXRange(comp, options) {
+function replaceXRange(comp, loose) {
   comp = comp.trim();
-  if (!options || typeof options !== 'object')
-    options = { loose: !!options, includePrerelease: false }
-  var r = options.loose ? re[XRANGELOOSE] : re[XRANGE];
+  var r = loose ? re[XRANGELOOSE] : re[XRANGE];
   return comp.replace(r, function(ret, gtlt, M, m, p, pr) {
     debug('xRange', comp, ret, gtlt, M, m, p, pr);
     var xM = isX(M);
@@ -5001,8 +4976,8 @@ function replaceXRange(comp, options) {
 
 // Because * is AND-ed with everything else in the comparator,
 // and '' means "any version", just remove the *s entirely.
-function replaceStars(comp, options) {
-  debug('replaceStars', comp, options);
+function replaceStars(comp, loose) {
+  debug('replaceStars', comp, loose);
   // Looseness is ignored here.  star is always as loose as it gets!
   return comp.trim().replace(re[STAR], '');
 }
@@ -5046,25 +5021,22 @@ Range.prototype.test = function(version) {
     return false;
 
   if (typeof version === 'string')
-    version = new SemVer(version, this.options);
+    version = new SemVer(version, this.loose);
 
   for (var i = 0; i < this.set.length; i++) {
-    if (testSet(this.set[i], version, this.options))
+    if (testSet(this.set[i], version))
       return true;
   }
   return false;
 };
 
-function testSet(set, version, options) {
+function testSet(set, version) {
   for (var i = 0; i < set.length; i++) {
     if (!set[i].test(version))
       return false;
   }
 
-  if (!options)
-    options = {}
-
-  if (version.prerelease.length && !options.includePrerelease) {
+  if (version.prerelease.length) {
     // Find the set of versions that are allowed to have prereleases
     // For example, ^1.2.3-pr.1 desugars to >=1.2.3-pr.1 <2.0.0
     // That should allow `1.2.3-pr.2` to pass.
@@ -5092,9 +5064,9 @@ function testSet(set, version, options) {
 }
 
 exports.satisfies = satisfies;
-function satisfies(version, range, options) {
+function satisfies(version, range, loose) {
   try {
-    range = new Range(range, options);
+    range = new Range(range, loose);
   } catch (er) {
     return false;
   }
@@ -5102,19 +5074,19 @@ function satisfies(version, range, options) {
 }
 
 exports.maxSatisfying = maxSatisfying;
-function maxSatisfying(versions, range, options) {
+function maxSatisfying(versions, range, loose) {
   var max = null;
   var maxSV = null;
   try {
-    var rangeObj = new Range(range, options);
+    var rangeObj = new Range(range, loose);
   } catch (er) {
     return null;
   }
   versions.forEach(function (v) {
-    if (rangeObj.test(v)) { // satisfies(v, range, options)
+    if (rangeObj.test(v)) { // satisfies(v, range, loose)
       if (!max || maxSV.compare(v) === -1) { // compare(max, v, true)
         max = v;
-        maxSV = new SemVer(max, options);
+        maxSV = new SemVer(max, loose);
       }
     }
   })
@@ -5122,19 +5094,19 @@ function maxSatisfying(versions, range, options) {
 }
 
 exports.minSatisfying = minSatisfying;
-function minSatisfying(versions, range, options) {
+function minSatisfying(versions, range, loose) {
   var min = null;
   var minSV = null;
   try {
-    var rangeObj = new Range(range, options);
+    var rangeObj = new Range(range, loose);
   } catch (er) {
     return null;
   }
   versions.forEach(function (v) {
-    if (rangeObj.test(v)) { // satisfies(v, range, options)
+    if (rangeObj.test(v)) { // satisfies(v, range, loose)
       if (!min || minSV.compare(v) === 1) { // compare(min, v, true)
         min = v;
-        minSV = new SemVer(min, options);
+        minSV = new SemVer(min, loose);
       }
     }
   })
@@ -5142,11 +5114,11 @@ function minSatisfying(versions, range, options) {
 }
 
 exports.validRange = validRange;
-function validRange(range, options) {
+function validRange(range, loose) {
   try {
     // Return '*' instead of '' so that truthiness works.
     // This will throw if it's invalid anyway
-    return new Range(range, options).range || '*';
+    return new Range(range, loose).range || '*';
   } catch (er) {
     return null;
   }
@@ -5154,20 +5126,20 @@ function validRange(range, options) {
 
 // Determine if version is less than all the versions possible in the range
 exports.ltr = ltr;
-function ltr(version, range, options) {
-  return outside(version, range, '<', options);
+function ltr(version, range, loose) {
+  return outside(version, range, '<', loose);
 }
 
 // Determine if version is greater than all the versions possible in the range.
 exports.gtr = gtr;
-function gtr(version, range, options) {
-  return outside(version, range, '>', options);
+function gtr(version, range, loose) {
+  return outside(version, range, '>', loose);
 }
 
 exports.outside = outside;
-function outside(version, range, hilo, options) {
-  version = new SemVer(version, options);
-  range = new Range(range, options);
+function outside(version, range, hilo, loose) {
+  version = new SemVer(version, loose);
+  range = new Range(range, loose);
 
   var gtfn, ltefn, ltfn, comp, ecomp;
   switch (hilo) {
@@ -5190,7 +5162,7 @@ function outside(version, range, hilo, options) {
   }
 
   // If it satisifes the range it is not outside
-  if (satisfies(version, range, options)) {
+  if (satisfies(version, range, loose)) {
     return false;
   }
 
@@ -5209,9 +5181,9 @@ function outside(version, range, hilo, options) {
       }
       high = high || comparator;
       low = low || comparator;
-      if (gtfn(comparator.semver, high.semver, options)) {
+      if (gtfn(comparator.semver, high.semver, loose)) {
         high = comparator;
-      } else if (ltfn(comparator.semver, low.semver, options)) {
+      } else if (ltfn(comparator.semver, low.semver, loose)) {
         low = comparator;
       }
     });
@@ -5235,15 +5207,15 @@ function outside(version, range, hilo, options) {
 }
 
 exports.prerelease = prerelease;
-function prerelease(version, options) {
-  var parsed = parse(version, options);
+function prerelease(version, loose) {
+  var parsed = parse(version, loose);
   return (parsed && parsed.prerelease.length) ? parsed.prerelease : null;
 }
 
 exports.intersects = intersects;
-function intersects(r1, r2, options) {
-  r1 = new Range(r1, options)
-  r2 = new Range(r2, options)
+function intersects(r1, r2, loose) {
+  r1 = new Range(r1, loose)
+  r2 = new Range(r2, loose)
   return r1.intersects(r2)
 }
 
@@ -17615,6 +17587,7 @@ var map = {
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
+	"./Moving/PCA9685/index.js": "./parts/Moving/PCA9685/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
@@ -24424,13 +24397,242 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Moving/PCA9685/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class PCA9685 {
+  constructor() {
+    /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
+    this.keys = [
+      'gnd',
+      'vcc',
+      'scl',
+      'sda',
+      'oe',
+      'i2c',
+      'enabled',
+      'address',
+      'drive',
+    ];
+    this.requiredKeys = [];
+
+    this.address = 0x40;
+
+    this._commands = {
+      MODE1: 0x00,
+      MODE2: 0x01,
+      SUBADR1: 0x02,
+      SUBADR2: 0x03,
+      SUBADR3: 0x04,
+      PRESCALE: 0xfe,
+      LED0_ON_L: 0x06,
+      ALL_LED_ON_L: 0xfa,
+      bits: {
+        ALLCALL: 0x01,
+        SLEEP_ENABLE: 0x10,
+        AUTO_INCREMENT_ENABLED: 0x20,
+        RESTART: 0x80,
+
+        OUTDRV: 0x04,
+        INVRT: 0x10,
+      },
+    };
+
+    this._regs = new Array(1);
+
+    this.pwmNum = 16;
+    this.pwms = [];
+    this._preparePWM(this.pwmNum);
+  }
+
+  static info() {
+    return {
+      name: 'PCA9685',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    if (obniz.isValidIO(this.params.oe)) {
+      this.io_oe = obniz.getIO(this.params.oe);
+    }
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (typeof this.params.address === 'number') {
+      this.address = this.params.address;
+    }
+
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    if (this.obniz.isValidIO(this.params.srclr)) {
+      this.io_srclr = this.obniz.getIO(this.params.srclr);
+      this.io_srclr.output(true);
+    }
+
+    if (typeof this.params.enabled !== 'boolean') {
+      this.params.enabled = true;
+    }
+    if (this.io_oe && this.params.enabled) {
+      this.io_oe.output(false);
+    }
+
+    if (this.params.drive === 'open-drain') {
+      this.i2c.write(this.address, [
+        this._commands.MODE2,
+        this._commands.bits.OUTDRV,
+      ]);
+    }
+
+    let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
+    mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
+    this.i2c.write(this.address, [this._commands.MODE1, mode1]);
+    this.i2c.write(this.address, [
+      this._commands.MODE1,
+      mode1 | this._commands.bits.RESTART,
+    ]);
+
+    this._regs[this._commands.MODE1] = mode1;
+
+    obniz.wait(10);
+  }
+
+  _preparePWM(num) {
+    class PCA9685_PWM {
+      constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = 0;
+        this.state = {};
+      }
+
+      freq(frequency) {
+        this.chip.freq(frequency);
+      }
+      pulse(value) {
+        this.chip.pulse(this.id, value);
+      }
+      duty(value) {
+        this.chip.duty(this.id, value);
+      }
+    }
+
+    for (let i = 0; i < num; i++) {
+      this.pwms.push(new PCA9685_PWM(this, i));
+    }
+  }
+
+  isValidPWM(id) {
+    return typeof id === 'number' && id >= 0 && id < this.pwmNum;
+  }
+
+  getPWM(id) {
+    if (!this.isValidPWM(id)) {
+      throw new Error('pwm ' + id + ' is not valid pwm');
+    }
+    return this.pwms[id];
+  }
+
+  freq(frequency) {
+    if (typeof frequency !== 'number') {
+      return;
+    }
+    if (frequency < 24 || 1526 < frequency) {
+      throw new Error('freq must be within 24-1526 hz');
+    }
+    if (this._freq === frequency) {
+      return;
+    }
+    let prescaleval = 25000000.0; // 25MHz
+    prescaleval /= 4096.0; //12bit
+    prescaleval /= frequency * 0.9;
+    prescaleval -= 1.0;
+
+    const prescale = parseInt(Math.floor(prescaleval + 0.5));
+    const mode1 = this._regs[this._commands.MODE1];
+
+    this.i2c.write(this.address, [
+      this._commands.MODE1,
+      (mode1 & 0x7f) | this._commands.bits.SLEEP_ENABLE,
+    ]); // enter sleep
+    this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
+    this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
+
+    this.obniz.wait(5);
+
+    // save
+    this._freq = frequency;
+    for (let i = 0; i < this.pwms.length; i++) {
+      this.pwms[i].state.freq = this._freq;
+    }
+  }
+
+  pulse(id, pulse_width) {
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
+    }
+    this.duty(id, (pulse_width / 1000.0 / (1.0 / this._freq)) * 100);
+  }
+
+  duty(id, duty) {
+    duty *= 1.0;
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
+    }
+    if (typeof duty !== 'number') {
+      throw new Error('please provide duty in number');
+    }
+    if (duty < 0) {
+      duty = 0;
+    }
+    if (duty > 100) {
+      duty = 100;
+    }
+    this.getPWM(id).state.duty = duty;
+    this.writeSingleONOFF(id, 0, (duty / 100.0) * 4095);
+  }
+
+  writeSingleONOFF(id, on, off) {
+    this.i2c.write(this.address, [
+      this._commands.LED0_ON_L + 4 * id,
+      on & 0xff,
+      on >> 8,
+      off & 0xff,
+      off >> 8,
+    ]);
+  }
+
+  setEnable(enable) {
+    if (!this.io_oe && enable == false) {
+      throw new Error('pin "oe" is not specified');
+    }
+    this.io_oe.output(!enable);
+  }
+}
+
+if (true) {
+  module.exports = PCA9685;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Moving/ServoMotor/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 class ServoMotor {
   constructor() {
-    this.keys = ['gnd', 'vcc', 'signal'];
-    this.requiredKeys = ['signal'];
+    this.keys = ['gnd', 'vcc', 'signal', 'pwm'];
+    this.requiredKeys = [];
+
+    this.range = {
+      min: 0.5,
+      max: 2.4,
+    };
   }
 
   static info() {
@@ -24447,18 +24649,21 @@ class ServoMotor {
       this.io_vcc = obniz.getIO(this.params.vcc);
     }
 
-    this.pwm = obniz.getFreePwm();
-    this.pwm_io_num = this.params.signal;
-
-    this.pwm.start({ io: this.pwm_io_num });
+    if (this.params.pwm) {
+      this.pwm = this.params.pwm;
+    } else {
+      this.pwm = obniz.getFreePwm();
+      this.pwm_io_num = this.params.signal;
+      this.pwm.start({ io: this.pwm_io_num });
+    }
     this.pwm.freq(50);
   }
 
   // Module functions
 
   angle(ratio) {
-    let max = 2.4;
-    let min = 0.5;
+    let max = this.range.max;
+    let min = this.range.min;
     let val = ((max - min) * ratio) / 180.0 + min;
     this.pwm.pulse(val);
   }
