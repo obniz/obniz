@@ -13,7 +13,7 @@ This library can drive Sharp Memory TFT (LS013B4DN04).
 ![](./sample.jpg)
 
 
-## wired(obniz,  { sclk, mosi, cs, width, height [vcc, gnd]} )
+## wired(obniz,  {[vcc, gnd, vcc_a, gnd_a, sclk, mosi, cs, disp, extcomin, extmode, width, height]} )
 
 Wire a TFT to an obniz.
 TFT is 3.3V. This library drive 5v to vin. Attention for using modules which doesn't have a regulator.
