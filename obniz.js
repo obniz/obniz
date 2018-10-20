@@ -21826,8 +21826,8 @@ class SharpMemoryTFT {
 
     this.width = this.params.width;
     this.height = this.params.height;
-    this.obniz.wait(100);
 
+    this.obniz.wait(100);
   }
 
   _reverseBits(data) {
