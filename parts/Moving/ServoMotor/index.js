@@ -1,7 +1,7 @@
 class ServoMotor {
   constructor() {
-    this.keys = ['gnd', 'vcc', 'signal'];
-    this.requiredKeys = ['signal'];
+    this.keys = ['gnd', 'vcc', 'signal', 'pwm'];
+    this.requiredKeys = [];
   }
 
   static info() {
