@@ -18,10 +18,13 @@ class ServoMotor {
       this.io_vcc = obniz.getIO(this.params.vcc);
     }
 
-    this.pwm = obniz.getFreePwm();
-    this.pwm_io_num = this.params.signal;
-
-    this.pwm.start({ io: this.pwm_io_num });
+    if (this.params.pwm) {
+      this.pwm = this.params.pwm;
+    } else {
+      this.pwm = obniz.getFreePwm();
+      this.pwm_io_num = this.params.signal;
+      this.pwm.start({ io: this.pwm_io_num });
+    }
     this.pwm.freq(50);
   }
 

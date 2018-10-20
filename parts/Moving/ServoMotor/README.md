@@ -28,7 +28,7 @@ Maker | SKU
 --- | ---
 Quimat | QKY66-5
 
-## obniz.wired("ServoMotor", {signal [, vcc, gnd]})
+## obniz.wired("ServoMotor", {[vcc, gnd, signal, pwm]})
 
 Connect three feet to obniz. gnd, vcc and signal, respectively, and the placement is different depending on the manufacturere of motor. 
 
@@ -51,6 +51,14 @@ servo.angle(90.0); // half position
 vcc and gnd is optional. When you connect vcc and gnd to other way, then just specify signal.
 ```Javascript
 var servo = obniz.wired("ServoMotor", {signal:0});
+```
+
+Or you can use pwm object.
+
+```Javascript
+var pwm = obniz.getFreePwm();
+pwm.start({io:0})
+var servo = obniz.wired("ServoMotor", {pwm:pwm});
 ```
 
 ## angle(degree)

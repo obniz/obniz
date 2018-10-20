@@ -26,7 +26,7 @@ obnizのioからでは直接電源供給できないサーボモーター
 --- | ---
 Quimat | QKY66-5
 
-## obniz.wired("ServoMotor", {signal [, vcc, gnd]})
+## obniz.wired("ServoMotor", {[vcc, gnd, signal, pwm]})
 ３本の足をObnizにつなぎます。それぞれプラス、信号、マイナスとなっていて、製造メーカーなどにより配置が違います。
 
 この例はもっともよく使われている配線パターンです。
@@ -46,6 +46,12 @@ servo.angle(90.0); // half position
 vccとgndを他の方法で接続している場合はsignalのみの指定でOKです
 ```Javascript
 var servo = obniz.wired("ServoMotor", {signal:2});
+```
+
+また、生成済みのpwmオブジェクトを利用することも出来ます
+```Javascript
+var pwm = obniz.getFreePwm();
+var servo = obniz.wired("ServoMotor", {pwm:pwm});
 ```
 
 ## angle(degree)
