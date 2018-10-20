@@ -17542,7 +17542,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.12.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.6.1","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.12.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17562,6 +17562,7 @@ var map = {
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./parts/Display/SainSmartTFT18LCD/index.js",
+	"./Display/SharpMemoryTFT/index.js": "./parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
@@ -21760,6 +21761,299 @@ const font = [
   0x00,
   0x00,
 ];
+
+
+/***/ }),
+
+/***/ "./parts/Display/SharpMemoryTFT/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class SharpMemoryTFT {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sclk', 'mosi', 'cs', 'width', 'height'];
+    this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
+
+    this.commands = {};
+    this.commands.write = 0x80;
+    this.commands.clear = 0x20;
+    this.commands.vcom = 0x40;
+
+    this._canvas = null;
+    this._reset();
+  }
+
+  static info() {
+    return {
+      name: 'SharpMemoryTFT',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.io_cs = obniz.getIO(this.params.cs);
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = parseInt(400 * 1000);
+    this.params.clk = this.params.sclk;
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    this.width = this.params.width;
+    this.height = this.params.height;
+  }
+
+  _reverseBits(data) {
+    let revData = 0;
+    for (let i = 0; i < 8; i++) {
+      revData += data & 0x01;
+      data >>= 1;
+      if (i < 7) revData <<= 1;
+    }
+    return revData;
+  }
+
+  sendLSB(data) {
+    this.spi.write([this._reverseBits(data)]);
+  }
+
+  sendClear() {
+    this.io_cs.output(true);
+    this.spi.write([this.commands.clear | 0x00, 0x00]);
+    this.io_cs.output(false);
+  }
+
+  raw(rawData) {
+    let oldline, currentline;
+    let totalbytes = (this.width * this.height) / 8;
+    let array = new Array(1024);
+    let index = 0;
+    array[index++] = this.commands.write | this.commands.vcom;
+    oldline = currentline = 1;
+    array[index++] = this._reverseBits(currentline);
+    this.io_cs.output(true);
+    for (let i = 0; i < totalbytes; i++) {
+      array[index++] = rawData[i]; //lsb
+      currentline = parseInt((i + 1) / (this.width / 8) + 1, 10);
+      if (currentline != oldline) {
+        array[index++] = 0x00;
+        if (currentline <= this.height)
+          array[index++] = this._reverseBits(currentline);
+        oldline = currentline;
+      }
+      if (index >= 1021) {
+        // regarding SPI max.
+        this.spi.write(array.slice(0, index));
+        array = new Array(1024);
+        index = 0;
+      }
+    }
+    if (index > 0) {
+      this.spi.write(array.slice(0, index));
+    }
+    this.spi.write([0x00]);
+    this.io_cs.output(false);
+  }
+
+  // copy from display.js
+
+  _reset() {
+    this._pos = { x: 0, y: 0 };
+    this.autoFlush = true;
+  }
+
+  warnCanvasAvailability() {
+    if (this.obniz.isNode) {
+      throw new Error(
+        'MemoryDisplay require node-canvas to draw rich contents. see more detail on docs'
+      );
+    } else {
+      throw new Error('MemoryDisplay cant create canvas element to body');
+    }
+  }
+
+  _preparedCanvas() {
+    if (this._canvas) {
+      return this._canvas;
+    }
+    if (this.obniz.isNode) {
+      try {
+        const { createCanvas } = __webpack_require__("./obniz/libs/webpackReplace/canvas.js");
+        this._canvas = createCanvas(this.width, this.height);
+      } catch (e) {
+        // this.warnCanvasAvailability();
+        return null;
+      }
+    } else {
+      const identifier = 'MemoryDispCanvas-' + this.obniz.id;
+      let canvas = document.getElementById(identifier);
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.setAttribute('id', identifier);
+        canvas.style.visibility = 'hidden';
+        canvas.width = this.width;
+        canvas.height = this.height;
+        canvas.style['-webkit-font-smoothing'] = 'none';
+        let body = document.getElementsByTagName('body')[0];
+        body.appendChild(canvas);
+      }
+      this._canvas = canvas;
+    }
+    const ctx = this._canvas.getContext('2d');
+    ctx.fillStyle = '#FFF';
+    ctx.fillRect(0, 0, this.width, this.height);
+    ctx.fillStyle = '#000';
+    ctx.strokeStyle = '#000';
+    this._pos.x = 0;
+    this._pos.y = 0;
+    this.fontSize = 16;
+    ctx.font = `${this.fontSize}px Arial`;
+    return this._canvas;
+  }
+
+  _ctx() {
+    const canvas = this._preparedCanvas();
+    if (canvas) {
+      return canvas.getContext('2d');
+    }
+  }
+
+  font(font, size) {
+    const ctx = this._ctx();
+    if (typeof size !== 'number') {
+      size = 16;
+    }
+    if (typeof font !== 'string') {
+      font = 'Arial';
+    }
+    this.fontSize = size;
+    ctx.font = '' + +' ' + size + 'px ' + font;
+  }
+
+  clear() {
+    const ctx = this._ctx();
+    this._pos.x = 0;
+    this._pos.y = 0;
+    if (ctx) {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, this.width, this.height);
+      ctx.fillStyle = '#000';
+      ctx.strokeStyle = '#000';
+      this.draw(ctx);
+    } else {
+      this.sendClear();
+    }
+  }
+
+  pos(x, y) {
+    this._ctx(); //crete first
+    if (typeof x == 'number') {
+      this._pos.x = x;
+    }
+    if (typeof y == 'number') {
+      this._pos.y = y;
+    }
+    return this._pos;
+  }
+
+  print(text) {
+    const ctx = this._ctx();
+    if (ctx) {
+      ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
+      this.draw(ctx);
+      this._pos.y += this.fontSize;
+    } else {
+      /*
+      let obj = {};
+      obj['display'] = {
+        text: '' + text,
+      };
+      this.obniz.send(obj);
+      */
+    }
+  }
+
+  line(x_0, y_0, x_1, y_1) {
+    const ctx = this._ctx();
+    if (ctx) {
+      ctx.beginPath();
+      ctx.moveTo(x_0, y_0);
+      ctx.lineTo(x_1, y_1);
+      ctx.stroke();
+      this.draw(ctx);
+    } else {
+      this.warnCanvasAvailability();
+    }
+  }
+
+  rect(x, y, width, height, mustFill) {
+    const ctx = this._ctx();
+    if (ctx) {
+      if (mustFill) {
+        ctx.fillRect(x, y, width, height);
+      } else {
+        ctx.strokeRect(x, y, width, height);
+      }
+      this.draw(ctx);
+    } else {
+      this.warnCanvasAvailability();
+    }
+  }
+
+  circle(x, y, r, mustFill) {
+    const ctx = this._ctx();
+    if (ctx) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      if (mustFill) {
+        ctx.fill();
+      } else {
+        ctx.stroke();
+      }
+      this.draw(ctx);
+    } else {
+      this.warnCanvasAvailability();
+    }
+  }
+
+  _draw(ctx) {
+    const stride = this.width / 8;
+    let vram = new Array(stride * 64);
+    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+    const data = imageData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let index = parseInt(i / 4);
+      let line = parseInt(index / this.width);
+      let col = parseInt((index - line * this.width) / 8);
+      let bits = parseInt(index - line * this.width) % 8;
+      if (bits == 0) vram[line * stride + col] = 0x00;
+      if (brightness > 0x73) vram[line * stride + col] |= 0x80 >> bits;
+    }
+    this.raw(vram);
+  }
+
+  draw(ctx) {
+    if (this.autoFlush) {
+      this._draw(ctx);
+    }
+  }
+
+  drawing(autoFlush) {
+    this.autoFlush = autoFlush == true;
+    const ctx = this._ctx();
+    if (ctx) {
+      this.draw(ctx);
+    }
+  }
+}
+
+if (true) {
+  module.exports = SharpMemoryTFT;
+}
 
 
 /***/ }),
