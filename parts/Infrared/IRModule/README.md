@@ -14,7 +14,7 @@ Connect send, recv,  vcc and gnd. vcc and gnd is optional.
  
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 ```
 
 
@@ -24,7 +24,7 @@ start monitoring. and set detect callback.
 
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.start(function (arr) {
   console.log('detected!!')
   console.log(JSON.stringify(arr));
@@ -53,7 +53,7 @@ You can chenge these before start.
 
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.duration = 150;
 module.dataInverted = false;
 module.start(function (arr) {
@@ -68,7 +68,7 @@ set callback after started
 
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.start()
 
 module.ondetect = function(arr) {
@@ -89,7 +89,7 @@ You can record your remote controller's signal by `start(callback)` function.
 ```Javascript
 // Javascript Example
 // Example: Turn on KOIZUMI's Room Lamp
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.send([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1])
 ```
 
@@ -101,7 +101,7 @@ See more dtail on pwm modulate document.
 
 ```Javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.dataSymbolLength = 0.1 // 100usec baud rate
 led.send([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1])
 ```

@@ -1,4 +1,4 @@
-# IRSensor
+# IRModule
 
 リモコンで使われる赤外線の信号を送受信します。
 
@@ -13,7 +13,7 @@ sendとrecv, vcc, gndを接続します。vccとgndはオプショナルです�
  
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 ```
 
 ## start(callback(array))
@@ -21,7 +21,7 @@ var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.start(function (arr) {
   console.log('detected!!')
   console.log(JSON.stringify(arr));
@@ -53,7 +53,7 @@ output_pullup | `number` | true | センサーの出力端子を5vで内部プ�
 
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.duration = 150;
 module.dataInverted = false;
 module.start(function (arr) {
@@ -68,7 +68,7 @@ startした後にcallbackを設定/変更する場合はこの変数に関数を
 
 ```javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.start()
 
 module.ondetect = function(arr) {
@@ -87,7 +87,7 @@ module.ondetect = function(arr) {
 ```Javascript
 // Javascript Example
 // Example: Turn on KOIZUMI's Room Lamp
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.send([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1])
 ```
 
@@ -99,7 +99,7 @@ module.send([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 
 ```Javascript
 // Javascript Example
-var module = obniz.wired('IRModuole', { vcc: 0, send: 1, recv: 2, gnd: 3 });
+var module = obniz.wired('IRModule', { vcc: 0, send: 1, recv: 2, gnd: 3 });
 module.dataSymbolLength = 0.1 // 100usec baud rate
 led.send([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1])
 ```
