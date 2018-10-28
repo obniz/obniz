@@ -63,7 +63,8 @@ obniz.onconnect = async function() {
   }
 
 //Obniz.PartsRegistrate(FlickHat);
-  const flick = obniz.wired('FlickHat', { /*vcc:7,*/ sda:0, scl:1, gnd:3, reset:4, ts:5 });
+//const flick = obniz.wired('FlickHat', { /*vcc:7,*/ sda:0, scl:1, gnd:3, reset:4, ts:5 }); //for flick Hat
+  const flick = obniz.wired("FlickHat", { /*vcc:0,*/ sda:1, scl:2, reset:3, ts:4, gnd:5, led1:6, led2:7 }); //for flick large
 
 //obniz.debugprint = true;
 //flick.debugprint = true;
@@ -79,6 +80,8 @@ obniz.onconnect = async function() {
     seq = gesture.seq;
     $('#seq').text(seq);
     $('#gesture').text(`form: ${gesture.from}, to: ${gesture.to}`);
+    flick.led1.blink(100);
+    setTimeout(function(){ flick.led1.off(); }, 500);
     displayEx.drawImmediately = false;
     switch (gesture.raw[0]) {
     case 2: //→
@@ -115,6 +118,8 @@ obniz.onconnect = async function() {
     seq = touch.seq;
     $('#seq').text(seq);
     $('#touch').text(`[ ${touch.positions.toString().replace(',', ', ')} ]`);
+    flick.led2.blink(100);
+    setTimeout(function(){ flick.led2.off(); }, 500);
     touch.positions.forEach(function(pos) {
       switch (pos) {
       case 'south':
