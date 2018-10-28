@@ -25,7 +25,7 @@ Flick Largeは5V駆動できるため、電源も含めてすべてobnizのioピ
 ![Flick Large](./flick_large_wired_50.png)
 ![](./flick_large_wired_closeup.png)
 
-## wired( { vcc, } sda, scl, reset, ts, gnd, { led1, led2 } )
+## wired( { vcc, } sda, scl, reset, ts, gnd { , led1, led2 } )
 
 `VCC(5v), SDA, SCL, RESET, TS, GND`をobnizに接続し、接続したioをプログラムで以下のように記述します。
 3.3Vや5V電源を別に用意した場合は、vccを省略します。  
