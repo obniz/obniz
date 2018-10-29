@@ -3115,18 +3115,12 @@ class Obniz extends ObnizUIs {
   repeat(callback, interval) {
     if (this.looper) {
       this.looper = callback;
+      this.repeatInterval = interval || this.repeatInterval || 100;
       return;
     }
     this.looper = callback;
     this.repeatInterval = interval || 100;
 
-    if (this.onConnectCalled) {
-      this.loop();
-    }
-  }
-
-  _callOnConnect() {
-    super._callOnConnect();
     this.loop();
   }
 
@@ -3134,21 +3128,14 @@ class Obniz extends ObnizUIs {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      if (typeof _this.looper === 'function') {
+      if (typeof _this.looper === 'function' && _this.onConnectCalled) {
         let prom = _this.looper();
         if (prom instanceof Promise) {
           yield prom;
         }
-        setTimeout(_this.loop.bind(_this), _this.repeatInterval || 100);
       }
+      setTimeout(_this.loop.bind(_this), _this.repeatInterval || 100);
     })();
-  }
-
-  wsOnClose() {
-    super.wsOnClose();
-    if (this.looper) {
-      this.looper = null;
-    }
   }
 
   message(target, message) {
