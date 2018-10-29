@@ -19,7 +19,9 @@ class Obniz extends ObnizUIs {
     this.looper = callback;
     this.repeatInterval = interval || 100;
 
-    this.loop();
+    if (this.onConnectCalled) {
+      this.loop();
+    }
   }
 
   async loop() {
@@ -28,8 +30,13 @@ class Obniz extends ObnizUIs {
       if (prom instanceof Promise) {
         await prom;
       }
+      setTimeout(this.loop.bind(this), this.repeatInterval || 100);
     }
-    setTimeout(this.loop.bind(this), this.repeatInterval || 100);
+  }
+
+  _callOnConnect() {
+    super._callOnConnect();
+    this.loop();
   }
 
   message(target, message) {
