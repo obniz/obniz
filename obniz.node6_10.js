@@ -11571,7 +11571,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.12.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.13.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11620,6 +11620,7 @@ var map = {
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
+	"./Moving/PCA9685/index.js": "./parts/Moving/PCA9685/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
@@ -14035,7 +14036,8 @@ const font = [0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x5b, 0x4f, 0x5b, 0x3e, 0x3e, 
 
 class SharpMemoryTFT {
   constructor() {
-    this.keys = ['vcc', 'gnd', 'sclk', 'mosi', 'cs', 'width', 'height'];
+    this.keys = ['vcc', 'gnd', 'vcc_a', 'gnd_a', 'sclk', 'mosi', 'cs', 'disp', 'extcomin', 'extmode', 'width', 'height'];
+
     this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
 
     this.commands = {};
@@ -14058,16 +14060,28 @@ class SharpMemoryTFT {
 
     this.io_cs = obniz.getIO(this.params.cs);
 
+    if (this.params.disp && this.params.extcomin && this.params.extmode) {
+      this.io_disp = obniz.getIO(this.params.disp);
+      this.io_extcomin = obniz.getIO(this.params.extcomin);
+      this.io_extmode = obniz.getIO(this.params.extmode);
+      this.io_disp.output(true);
+      this.io_extcomin.output(false);
+      this.io_extmode.output(false);
+    }
+
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, '5v');
 
     this.params.mode = 'master';
-    this.params.frequency = parseInt(400 * 1000);
+    this.params.frequency = parseInt(1000 * 1000);
     this.params.clk = this.params.sclk;
     this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
     this.width = this.params.width;
     this.height = this.params.height;
+
+    this.obniz.wait(100);
   }
 
   _reverseBits(data) {
@@ -16839,6 +16853,211 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Moving/PCA9685/index.js":
+/*!***************************************!*\
+  !*** ./parts/Moving/PCA9685/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class PCA9685 {
+  constructor() {
+    /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
+    this.keys = ['gnd', 'vcc', 'scl', 'sda', 'oe', 'i2c', 'enabled', 'address', 'drive'];
+    this.requiredKeys = [];
+
+    this.address = 0x40;
+
+    this._commands = {
+      MODE1: 0x00,
+      MODE2: 0x01,
+      SUBADR1: 0x02,
+      SUBADR2: 0x03,
+      SUBADR3: 0x04,
+      PRESCALE: 0xfe,
+      LED0_ON_L: 0x06,
+      ALL_LED_ON_L: 0xfa,
+      bits: {
+        ALLCALL: 0x01,
+        SLEEP_ENABLE: 0x10,
+        AUTO_INCREMENT_ENABLED: 0x20,
+        RESTART: 0x80,
+
+        OUTDRV: 0x04,
+        INVRT: 0x10
+      }
+    };
+
+    this._regs = new Array(1);
+
+    this.pwmNum = 16;
+    this.pwms = [];
+    this._preparePWM(this.pwmNum);
+  }
+
+  static info() {
+    return {
+      name: 'PCA9685'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    if (obniz.isValidIO(this.params.oe)) {
+      this.io_oe = obniz.getIO(this.params.oe);
+    }
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (typeof this.params.address === 'number') {
+      this.address = this.params.address;
+    }
+
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    if (this.obniz.isValidIO(this.params.srclr)) {
+      this.io_srclr = this.obniz.getIO(this.params.srclr);
+      this.io_srclr.output(true);
+    }
+
+    if (typeof this.params.enabled !== 'boolean') {
+      this.params.enabled = true;
+    }
+    if (this.io_oe && this.params.enabled) {
+      this.io_oe.output(false);
+    }
+
+    if (this.params.drive === 'open-drain') {
+      this.i2c.write(this.address, [this._commands.MODE2, this._commands.bits.OUTDRV]);
+    }
+
+    let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
+    mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
+    this.i2c.write(this.address, [this._commands.MODE1, mode1]);
+    this.i2c.write(this.address, [this._commands.MODE1, mode1 | this._commands.bits.RESTART]);
+
+    this._regs[this._commands.MODE1] = mode1;
+
+    obniz.wait(10);
+  }
+
+  _preparePWM(num) {
+    class PCA9685_PWM {
+      constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = 0;
+        this.state = {};
+      }
+
+      freq(frequency) {
+        this.chip.freq(frequency);
+      }
+      pulse(value) {
+        this.chip.pulse(this.id, value);
+      }
+      duty(value) {
+        this.chip.duty(this.id, value);
+      }
+    }
+
+    for (let i = 0; i < num; i++) {
+      this.pwms.push(new PCA9685_PWM(this, i));
+    }
+  }
+
+  isValidPWM(id) {
+    return typeof id === 'number' && id >= 0 && id < this.pwmNum;
+  }
+
+  getPWM(id) {
+    if (!this.isValidPWM(id)) {
+      throw new Error('pwm ' + id + ' is not valid pwm');
+    }
+    return this.pwms[id];
+  }
+
+  freq(frequency) {
+    if (typeof frequency !== 'number') {
+      return;
+    }
+    if (frequency < 24 || 1526 < frequency) {
+      throw new Error('freq must be within 24-1526 hz');
+    }
+    if (this._freq === frequency) {
+      return;
+    }
+    let prescaleval = 25000000.0; // 25MHz
+    prescaleval /= 4096.0; //12bit
+    prescaleval /= frequency * 0.9;
+    prescaleval -= 1.0;
+
+    const prescale = parseInt(Math.floor(prescaleval + 0.5));
+    const mode1 = this._regs[this._commands.MODE1];
+
+    this.i2c.write(this.address, [this._commands.MODE1, mode1 & 0x7f | this._commands.bits.SLEEP_ENABLE]); // enter sleep
+    this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
+    this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
+
+    this.obniz.wait(5);
+
+    // save
+    this._freq = frequency;
+    for (let i = 0; i < this.pwms.length; i++) {
+      this.pwms[i].state.freq = this._freq;
+    }
+  }
+
+  pulse(id, pulse_width) {
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
+    }
+    this.duty(id, pulse_width / 1000.0 / (1.0 / this._freq) * 100);
+  }
+
+  duty(id, duty) {
+    duty *= 1.0;
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
+    }
+    if (typeof duty !== 'number') {
+      throw new Error('please provide duty in number');
+    }
+    if (duty < 0) {
+      duty = 0;
+    }
+    if (duty > 100) {
+      duty = 100;
+    }
+    this.getPWM(id).state.duty = duty;
+    this.writeSingleONOFF(id, 0, duty / 100.0 * 4095);
+  }
+
+  writeSingleONOFF(id, on, off) {
+    this.i2c.write(this.address, [this._commands.LED0_ON_L + 4 * id, on & 0xff, on >> 8, off & 0xff, off >> 8]);
+  }
+
+  setEnable(enable) {
+    if (!this.io_oe && enable == false) {
+      throw new Error('pin "oe" is not specified');
+    }
+    this.io_oe.output(!enable);
+  }
+}
+
+if (true) {
+  module.exports = PCA9685;
+}
+
+/***/ }),
+
 /***/ "./parts/Moving/ServoMotor/index.js":
 /*!******************************************!*\
   !*** ./parts/Moving/ServoMotor/index.js ***!
@@ -16851,8 +17070,13 @@ if (true) {
 
 class ServoMotor {
   constructor() {
-    this.keys = ['gnd', 'vcc', 'signal'];
-    this.requiredKeys = ['signal'];
+    this.keys = ['gnd', 'vcc', 'signal', 'pwm'];
+    this.requiredKeys = [];
+
+    this.range = {
+      min: 0.5,
+      max: 2.4
+    };
   }
 
   static info() {
@@ -16869,18 +17093,21 @@ class ServoMotor {
       this.io_vcc = obniz.getIO(this.params.vcc);
     }
 
-    this.pwm = obniz.getFreePwm();
-    this.pwm_io_num = this.params.signal;
-
-    this.pwm.start({ io: this.pwm_io_num });
+    if (this.params.pwm) {
+      this.pwm = this.params.pwm;
+    } else {
+      this.pwm = obniz.getFreePwm();
+      this.pwm_io_num = this.params.signal;
+      this.pwm.start({ io: this.pwm_io_num });
+    }
     this.pwm.freq(50);
   }
 
   // Module functions
 
   angle(ratio) {
-    let max = 2.4;
-    let min = 0.5;
+    let max = this.range.max;
+    let min = this.range.min;
     let val = (max - min) * ratio / 180.0 + min;
     this.pwm.pulse(val);
   }

@@ -1,6 +1,20 @@
 class SharpMemoryTFT {
   constructor() {
-    this.keys = ['vcc', 'gnd', 'sclk', 'mosi', 'cs', 'width', 'height'];
+    this.keys = [
+      'vcc',
+      'gnd',
+      'vcc_a',
+      'gnd_a',
+      'sclk',
+      'mosi',
+      'cs',
+      'disp',
+      'extcomin',
+      'extmode',
+      'width',
+      'height',
+    ];
+
     this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
 
     this.commands = {};
@@ -23,16 +37,28 @@ class SharpMemoryTFT {
 
     this.io_cs = obniz.getIO(this.params.cs);
 
+    if (this.params.disp && this.params.extcomin && this.params.extmode) {
+      this.io_disp = obniz.getIO(this.params.disp);
+      this.io_extcomin = obniz.getIO(this.params.extcomin);
+      this.io_extmode = obniz.getIO(this.params.extmode);
+      this.io_disp.output(true);
+      this.io_extcomin.output(false);
+      this.io_extmode.output(false);
+    }
+
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, '5v');
 
     this.params.mode = 'master';
-    this.params.frequency = parseInt(400 * 1000);
+    this.params.frequency = parseInt(1000 * 1000);
     this.params.clk = this.params.sclk;
     this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
     this.width = this.params.width;
     this.height = this.params.height;
+
+    this.obniz.wait(100);
   }
 
   _reverseBits(data) {
