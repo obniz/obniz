@@ -99,7 +99,7 @@ class PeripheralUART {
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === 'string') {
-      const buf = Buffer(data);
+      const buf = Buffer.from(data);
       send_data = [...buf];
     }
     let obj = {};

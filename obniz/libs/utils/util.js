@@ -72,7 +72,7 @@ class ObnizUtil {
   }
 
   static string2dataArray(str) {
-    const buf = Buffer(str);
+    const buf = Buffer.from(str);
     return [...buf];
   }
 }

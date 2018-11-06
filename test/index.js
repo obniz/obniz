@@ -12,10 +12,8 @@ process.on('exit', () => {
 });
 
 describe('all', function() {
-  //先にjsファイルでテストをする
   require('mocha-directory')();
 
-  //htmlファイルのテスト
   let testUtil = require(global.appRoot + '/test/testUtil.js');
   let _ = require('underscore');
   let fs = require('fs');
@@ -97,7 +95,7 @@ describe('all', function() {
         let relativePath = path.relative(__dirname, file);
 
         describe(basename, function() {
-          this.timeout(60000); //browserは多めに取る
+          this.timeout(60000);
           it('runs ' + relativePath, () => {
             return testUtil.browser(file).then(results => {
               expect(results.passes).to.be.at.least(1);

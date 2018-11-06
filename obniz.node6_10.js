@@ -2232,7 +2232,7 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
-    this.bufferdAmoundWarnBytes = 100 * 1000; // 100k bytes
+    this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
     this._connectionRetryCount = 0;
@@ -3115,6 +3115,7 @@ class Obniz extends ObnizUIs {
   repeat(callback, interval) {
     if (this.looper) {
       this.looper = callback;
+      this.repeatInterval = interval || this.repeatInterval || 100;
       return;
     }
     this.looper = callback;
@@ -3125,16 +3126,11 @@ class Obniz extends ObnizUIs {
     }
   }
 
-  _callOnConnect() {
-    super._callOnConnect();
-    this.loop();
-  }
-
   loop() {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      if (typeof _this.looper === 'function') {
+      if (typeof _this.looper === 'function' && _this.onConnectCalled) {
         let prom = _this.looper();
         if (prom instanceof Promise) {
           yield prom;
@@ -3144,11 +3140,9 @@ class Obniz extends ObnizUIs {
     })();
   }
 
-  wsOnClose() {
-    super.wsOnClose();
-    if (this.looper) {
-      this.looper = null;
-    }
+  _callOnConnect() {
+    super._callOnConnect();
+    this.loop();
   }
 
   message(target, message) {
@@ -5239,6 +5233,7 @@ class Display {
 
   _reset() {
     this._pos = { x: 0, y: 0 };
+    this.autoFlush = true;
   }
 
   warnCanvasAvailability() {
@@ -5309,19 +5304,21 @@ class Display {
 
   clear() {
     const ctx = this._ctx();
+    this._pos.x = 0;
+    this._pos.y = 0;
     if (ctx) {
       ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, this.width, this.height);
       ctx.fillStyle = '#FFF';
       ctx.strokeStyle = '#FFF';
+      this.draw(ctx);
+    } else {
+      let obj = {};
+      obj['display'] = {
+        clear: true
+      };
+      this.Obniz.send(obj);
     }
-    this._pos.x = 0;
-    this._pos.y = 0;
-    let obj = {};
-    obj['display'] = {
-      clear: true
-    };
-    this.Obniz.send(obj);
   }
 
   pos(x, y) {
@@ -5443,7 +5440,7 @@ class Display {
     }
   }
 
-  draw(ctx) {
+  _draw(ctx) {
     const stride = this.width / 8;
     let vram = new Array(stride * 64);
     const imageData = ctx.getImageData(0, 0, this.width, this.height);
@@ -5459,6 +5456,20 @@ class Display {
       if (brightness > 0x7f) vram[line * stride + col] |= 0x80 >> bits;
     }
     this.raw(vram);
+  }
+
+  draw(ctx) {
+    if (this.autoFlush) {
+      this._draw(ctx);
+    }
+  }
+
+  drawing(autoFlush) {
+    this.autoFlush = autoFlush == true;
+    const ctx = this._ctx();
+    if (ctx) {
+      this.draw(ctx);
+    }
   }
 }
 
@@ -6402,7 +6413,7 @@ class PeripheralUART {
     } else if (data.constructor === Array) {
       send_data = data;
     } else if (typeof data === 'string') {
-      const buf = Buffer(data);
+      const buf = Buffer.from(data);
       send_data = [...buf];
     }
     let obj = {};
@@ -8297,7 +8308,7 @@ class ObnizUtil {
   }
 
   static string2dataArray(str) {
-    const buf = Buffer(str);
+    const buf = Buffer.from(str);
     return [...buf];
   }
 }
@@ -9942,7 +9953,7 @@ class WSCommand_Display extends WSCommand {
 
   printText(text) {
     let result;
-    const buf = Buffer(text, 'utf8');
+    const buf = Buffer.from(text, 'utf8');
     result = new Uint8Array(buf);
     this.print(result);
   }
@@ -11005,7 +11016,7 @@ class WSCommand_System extends WSCommand {
     const pongServerTime = new Date().getTime();
 
     if (payload.length >= 16) {
-      payload = Buffer(payload);
+      payload = Buffer.from(payload);
       let obnizTime = payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
       let pingServerTime = payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
       let key = [];
@@ -11098,7 +11109,6 @@ class WSCommand_UART extends WSCommand {
     } else if (params.stop === 0) {
       buf[7] = 0;
     } else {
-      //ここには来ない
       throw new Error('uart: invalid stop bits');
     }
 
@@ -11555,7 +11565,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.12.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix .","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --fix","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.6.1","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.2","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^7.0.1","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","ncp":"^2.0.0","node-notifier":"^5.2.1","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.5.1","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.13.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11579,15 +11589,17 @@ var map = {
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./parts/Display/SainSmartTFT18LCD/index.js",
+	"./Display/SharpMemoryTFT/index.js": "./parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
-	"./InfraredSensor/IRSensor/index.js": "./parts/InfraredSensor/IRSensor/index.js",
+	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
+	"./Infrared/IRSensor/index.js": "./parts/Infrared/IRSensor/index.js",
+	"./Infrared/InfraredLED/index.js": "./parts/Infrared/InfraredLED/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
-	"./Light/InfraredLED/index.js": "./parts/Light/InfraredLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
 	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
@@ -11595,7 +11607,7 @@ var map = {
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
-	"./MovementSensor/CircularSoftPotentiometer/index.js": "./parts/MovementSensor/CircularSoftPotentiometer/index.js",
+	"./MovementSensor/FlickHat/index.js": "./parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
@@ -11603,6 +11615,7 @@ var map = {
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
+	"./Moving/PCA9685/index.js": "./parts/Moving/PCA9685/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
@@ -11962,7 +11975,7 @@ class ArduCAMMini {
       [0x03, 0x0f], // Bit[3:2]: VEND[1:0]; Bit[1:0]: VSTRT[1:0]
       [0x37, 0x40], [0x4f, 0xbb], [0x50, 0x9c], [0x5a, 0x57], [0x6d, 0x80], [0x3d, 0x34], [0x39, 0x02], [0x35, 0x88], [0x22, 0x0a], [0x37, 0x40], [0x34, 0xa0], [0x06, 0x02], [0x0d, 0xb7], [0x0e, 0x01], [0xff, 0x00], [0xe0, 0x04], [0xc0, 0xc8], [0xc1, 0x96], [0x86, 0x3d], [0x50, 0x89], [0x51, 0x90], [0x52, 0x2c], [0x53, 0x00], [0x54, 0x00], [0x55, 0x88], [0x57, 0x00], [0x5a, 0xa0], [0x5b, 0x78], [0x5c, 0x00], [0xd3, 0x04], [0xe0, 0x00], [0xff, 0xff]],
 
-      OV2640_800x600_JPEG: [[0xff, 0x01], [0x11, 0x01], [0x12, 0x00], // Bit[6:4]: Resolution selection//0x02Ϊ����
+      OV2640_800x600_JPEG: [[0xff, 0x01], [0x11, 0x01], [0x12, 0x00], // Bit[6:4]: Resolution selection
       [0x17, 0x11], // HREFST[10:3]
       [0x18, 0x75], // HREFEND[10:3]
       [0x32, 0x36], // Bit[5:3]: HREFEND[2:0]; Bit[2:0]: HREFST[2:0]
@@ -13040,7 +13053,7 @@ class MatrixLED_MAX7219 {
   }
 
   initModule() {
-    this.write([0x09, 0x00]); // Code B decode for digits 3–0 No decode for digits 7–4
+    this.write([0x09, 0x00]); // Code B decode for digits 3-0 No decode for digits 7-4
     this.write([0x0a, 0x05]); // brightness 9/32 0 to f
     this.write([0x0b, 0x07]); // Display digits 0 1 2 3 4 567
     this.write([0x0c, 0x01]); // Shutdown to normal operation
@@ -14006,6 +14019,315 @@ const font = [0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x5b, 0x4f, 0x5b, 0x3e, 0x3e, 
 
 /***/ }),
 
+/***/ "./parts/Display/SharpMemoryTFT/index.js":
+/*!***********************************************!*\
+  !*** ./parts/Display/SharpMemoryTFT/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class SharpMemoryTFT {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'vcc_a', 'gnd_a', 'sclk', 'mosi', 'cs', 'disp', 'extcomin', 'extmode', 'width', 'height'];
+
+    this.requiredKeys = ['sclk', 'mosi', 'cs', 'width', 'height'];
+
+    this.commands = {};
+    this.commands.write = 0x80;
+    this.commands.clear = 0x20;
+    this.commands.vcom = 0x40;
+
+    this._canvas = null;
+    this._reset();
+  }
+
+  static info() {
+    return {
+      name: 'SharpMemoryTFT'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.io_cs = obniz.getIO(this.params.cs);
+
+    if (this.params.disp && this.params.extcomin && this.params.extmode) {
+      this.io_disp = obniz.getIO(this.params.disp);
+      this.io_extcomin = obniz.getIO(this.params.extcomin);
+      this.io_extmode = obniz.getIO(this.params.extmode);
+      this.io_disp.output(true);
+      this.io_extcomin.output(false);
+      this.io_extmode.output(false);
+    }
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    obniz.setVccGnd(this.params.vcc_a, this.params.gnd_a, '5v');
+
+    this.params.mode = 'master';
+    this.params.frequency = parseInt(1000 * 1000);
+    this.params.clk = this.params.sclk;
+    this.params.drive = '5v'; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    this.width = this.params.width;
+    this.height = this.params.height;
+
+    this.obniz.wait(100);
+  }
+
+  _reverseBits(data) {
+    let revData = 0;
+    for (let i = 0; i < 8; i++) {
+      revData += data & 0x01;
+      data >>= 1;
+      if (i < 7) revData <<= 1;
+    }
+    return revData;
+  }
+
+  sendLSB(data) {
+    this.spi.write([this._reverseBits(data)]);
+  }
+
+  sendClear() {
+    this.io_cs.output(true);
+    this.spi.write([this.commands.clear | 0x00, 0x00]);
+    this.io_cs.output(false);
+  }
+
+  raw(rawData) {
+    let oldline, currentline;
+    let totalbytes = this.width * this.height / 8;
+    let array = new Array(1024);
+    let index = 0;
+    array[index++] = this.commands.write | this.commands.vcom;
+    oldline = currentline = 1;
+    array[index++] = this._reverseBits(currentline);
+    this.io_cs.output(true);
+    for (let i = 0; i < totalbytes; i++) {
+      array[index++] = rawData[i]; //lsb
+      currentline = parseInt((i + 1) / (this.width / 8) + 1, 10);
+      if (currentline != oldline) {
+        array[index++] = 0x00;
+        if (currentline <= this.height) array[index++] = this._reverseBits(currentline);
+        oldline = currentline;
+      }
+      if (index >= 1021) {
+        // regarding SPI max.
+        this.spi.write(array.slice(0, index));
+        array = new Array(1024);
+        index = 0;
+      }
+    }
+    if (index > 0) {
+      this.spi.write(array.slice(0, index));
+    }
+    this.spi.write([0x00]);
+    this.io_cs.output(false);
+  }
+
+  // copy from display.js
+
+  _reset() {
+    this._pos = { x: 0, y: 0 };
+    this.autoFlush = true;
+  }
+
+  warnCanvasAvailability() {
+    if (this.obniz.isNode) {
+      throw new Error('MemoryDisplay require node-canvas to draw rich contents. see more detail on docs');
+    } else {
+      throw new Error('MemoryDisplay cant create canvas element to body');
+    }
+  }
+
+  _preparedCanvas() {
+    if (this._canvas) {
+      return this._canvas;
+    }
+    if (this.obniz.isNode) {
+      try {
+        const { createCanvas } = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'canvas'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+        this._canvas = createCanvas(this.width, this.height);
+      } catch (e) {
+        // this.warnCanvasAvailability();
+        return null;
+      }
+    } else {
+      const identifier = 'MemoryDispCanvas-' + this.obniz.id;
+      let canvas = document.getElementById(identifier);
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.setAttribute('id', identifier);
+        canvas.style.visibility = 'hidden';
+        canvas.width = this.width;
+        canvas.height = this.height;
+        canvas.style['-webkit-font-smoothing'] = 'none';
+        let body = document.getElementsByTagName('body')[0];
+        body.appendChild(canvas);
+      }
+      this._canvas = canvas;
+    }
+    const ctx = this._canvas.getContext('2d');
+    ctx.fillStyle = '#FFF';
+    ctx.fillRect(0, 0, this.width, this.height);
+    ctx.fillStyle = '#000';
+    ctx.strokeStyle = '#000';
+    this._pos.x = 0;
+    this._pos.y = 0;
+    this.fontSize = 16;
+    ctx.font = `${this.fontSize}px Arial`;
+    return this._canvas;
+  }
+
+  _ctx() {
+    const canvas = this._preparedCanvas();
+    if (canvas) {
+      return canvas.getContext('2d');
+    }
+  }
+
+  font(font, size) {
+    const ctx = this._ctx();
+    if (typeof size !== 'number') {
+      size = 16;
+    }
+    if (typeof font !== 'string') {
+      font = 'Arial';
+    }
+    this.fontSize = size;
+    ctx.font = '' + +' ' + size + 'px ' + font;
+  }
+
+  clear() {
+    const ctx = this._ctx();
+    this._pos.x = 0;
+    this._pos.y = 0;
+    if (ctx) {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, this.width, this.height);
+      ctx.fillStyle = '#000';
+      ctx.strokeStyle = '#000';
+      this.draw(ctx);
+    } else {
+      this.sendClear();
+    }
+  }
+
+  pos(x, y) {
+    this._ctx(); //crete first
+    if (typeof x == 'number') {
+      this._pos.x = x;
+    }
+    if (typeof y == 'number') {
+      this._pos.y = y;
+    }
+    return this._pos;
+  }
+
+  print(text) {
+    const ctx = this._ctx();
+    if (ctx) {
+      ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
+      this.draw(ctx);
+      this._pos.y += this.fontSize;
+    } else {
+      /*
+      let obj = {};
+      obj['display'] = {
+        text: '' + text,
+      };
+      this.obniz.send(obj);
+      */
+    }
+  }
+
+  line(x_0, y_0, x_1, y_1) {
+    const ctx = this._ctx();
+    if (ctx) {
+      ctx.beginPath();
+      ctx.moveTo(x_0, y_0);
+      ctx.lineTo(x_1, y_1);
+      ctx.stroke();
+      this.draw(ctx);
+    } else {
+      this.warnCanvasAvailability();
+    }
+  }
+
+  rect(x, y, width, height, mustFill) {
+    const ctx = this._ctx();
+    if (ctx) {
+      if (mustFill) {
+        ctx.fillRect(x, y, width, height);
+      } else {
+        ctx.strokeRect(x, y, width, height);
+      }
+      this.draw(ctx);
+    } else {
+      this.warnCanvasAvailability();
+    }
+  }
+
+  circle(x, y, r, mustFill) {
+    const ctx = this._ctx();
+    if (ctx) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      if (mustFill) {
+        ctx.fill();
+      } else {
+        ctx.stroke();
+      }
+      this.draw(ctx);
+    } else {
+      this.warnCanvasAvailability();
+    }
+  }
+
+  _draw(ctx) {
+    const stride = this.width / 8;
+    let vram = new Array(stride * 64);
+    const imageData = ctx.getImageData(0, 0, this.width, this.height);
+    const data = imageData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      let brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+      let index = parseInt(i / 4);
+      let line = parseInt(index / this.width);
+      let col = parseInt((index - line * this.width) / 8);
+      let bits = parseInt(index - line * this.width) % 8;
+      if (bits == 0) vram[line * stride + col] = 0x00;
+      if (brightness > 0x73) vram[line * stride + col] |= 0x80 >> bits;
+    }
+    this.raw(vram);
+  }
+
+  draw(ctx) {
+    if (this.autoFlush) {
+      this._draw(ctx);
+    }
+  }
+
+  drawing(autoFlush) {
+    this.autoFlush = autoFlush == true;
+    const ctx = this._ctx();
+    if (ctx) {
+      this.draw(ctx);
+    }
+  }
+}
+
+if (true) {
+  module.exports = SharpMemoryTFT;
+}
+
+/***/ }),
+
 /***/ "./parts/DistanceSensor/GP2Y0A21YK0F/index.js":
 /*!****************************************************!*\
   !*** ./parts/DistanceSensor/GP2Y0A21YK0F/index.js ***!
@@ -14015,6 +14337,8 @@ const font = [0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x5b, 0x4f, 0x5b, 0x3e, 0x3e, 
 
 "use strict";
 
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 class GP2Y0A21YK0F {
   constructor() {
@@ -14046,21 +14370,41 @@ class GP2Y0A21YK0F {
 
   start(callback) {
     this.ad_signal.start(val => {
-      if (val <= 0) {
-        val = 0.001;
-      }
-      let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.25214) * 10;
-      if (this._unit === 'mm') {
-        distance = parseInt(distance * 10) / 10;
-      } else {
-        distance *= 0.0393701;
-        distance = parseInt(distance * 1000) / 1000;
-      }
-
+      let distance = this._volt2distance(val);
       if (typeof callback == 'function') {
         callback(distance);
       }
     });
+  }
+
+  _volt2distance(val) {
+    if (val <= 0) {
+      val = 0.001;
+    }
+    let distance = 19988.34 * Math.pow(val / 5.0 * 1024, -1.25214) * 10;
+    if (this._unit === 'mm') {
+      distance = parseInt(distance * 10) / 10;
+    } else {
+      distance *= 0.0393701;
+      distance = parseInt(distance * 1000) / 1000;
+    }
+    return distance;
+  }
+
+  getWait() {
+    var _this = this;
+
+    return new Promise((() => {
+      var _ref = _asyncToGenerator(function* (resolve) {
+        let val = yield _this.ad_signal.getWait();
+        let distance = _this._volt2distance(val);
+        resolve(distance);
+      });
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    })());
   }
 
   unit(unit) {
@@ -14491,7 +14835,7 @@ class GYSFDMAXB {
 
   //--- latitude/longitude MNEA format change to each unit
   nmea2dms(val) {
-    //NMEA format to DMS format string (999°99'99.9")
+    //NMEA format to DMS format string (999° 99'99.9")
     val = parseFloat(val);
     let d = Math.floor(val / 100);
     let m = Math.floor((val / 100.0 - d) * 100.0);
@@ -14499,7 +14843,7 @@ class GYSFDMAXB {
     return d + '°' + m + "'" + s.toFixed(1) + '"';
   }
   nmea2dm(val) {
-    //NMEA format to DM format string (999°99.9999')
+    //NMEA format to DM format string (999° 99.9999')
     val = parseFloat(val);
     let d = Math.floor(val / 100.0);
     let m = (val / 100.0 - d) * 100.0;
@@ -14587,6 +14931,14 @@ class Grove_EarHeartRate {
         callback(pulseMin);
       }
     };
+  }
+
+  getWait() {
+    return new Promise(resolve => {
+      this.start(rate => {
+        resolve(rate);
+      });
+    });
   }
 }
 
@@ -14731,6 +15083,8 @@ if (true) {
 "use strict";
 
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 class ENC03R_Module {
   constructor() {
     this.keys = ['vcc', 'out1', 'out2', 'gnd'];
@@ -14764,6 +15118,38 @@ class ENC03R_Module {
       }
     });
   }
+
+  get1Wait() {
+    var _this = this;
+
+    return new Promise((() => {
+      var _ref = _asyncToGenerator(function* (resolve) {
+        let value = _this.ad0.getWait();
+        _this.sens1 = (value - 1.45) / _this.Sens;
+        resolve(_this.sens1);
+      });
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    })());
+  }
+
+  get2Wait() {
+    var _this2 = this;
+
+    return new Promise((() => {
+      var _ref2 = _asyncToGenerator(function* (resolve) {
+        let value = _this2.ad1.getWait();
+        _this2.sens2 = (value - 1.35) / _this2.Sens;
+        resolve(_this2.sens2);
+      });
+
+      return function (_x2) {
+        return _ref2.apply(this, arguments);
+      };
+    })());
+  }
 }
 
 if (true) {
@@ -14772,10 +15158,94 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/InfraredSensor/IRSensor/index.js":
-/*!************************************************!*\
-  !*** ./parts/InfraredSensor/IRSensor/index.js ***!
-  \************************************************/
+/***/ "./parts/Infrared/IRModule/index.js":
+/*!******************************************!*\
+  !*** ./parts/Infrared/IRModule/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class IRModule {
+  constructor() {
+    this.keys = ['recv', 'vcc', 'send', 'gnd'];
+    this.requiredKeys = ['recv', 'send'];
+  }
+
+  static info() {
+    return {
+      name: 'IRModule'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (!obniz.isValidIO(this.params.recv)) {
+      throw new Error('recv is not valid io');
+    }
+
+    if (!obniz.isValidIO(this.params.send)) {
+      throw new Error('send is not valid io');
+    }
+
+    this.sensor = obniz.wired('IRSensor', {
+      output: this.params.recv
+    });
+    this.setGetterSetter('sensor', 'duration');
+    this.setGetterSetter('sensor', 'dataInverted');
+    this.setGetterSetter('sensor', 'cutTail');
+    this.setGetterSetter('sensor', 'output_pullup');
+    this.setGetterSetter('sensor', 'ondetect');
+
+    this.led = obniz.wired('InfraredLED', {
+      anode: this.params.send
+    });
+  }
+
+  //link
+  send(arr) {
+    this.led.send(arr);
+  }
+
+  start(callback) {
+    this.sensor.start(callback);
+  }
+
+  get dataSymbolLength() {
+    return this.sensor.dataSymbolLength;
+  }
+
+  set dataSymbolLength(x) {
+    this.sensor.dataSymbolLength = x;
+    this.led.dataSymbolLength = x;
+  }
+
+  setGetterSetter(partsName, varName) {
+    Object.defineProperty(this, varName, {
+      get() {
+        return this[partsName][varName];
+      },
+      set(x) {
+        this[partsName][varName] = x;
+      }
+    });
+  }
+}
+
+if (true) {
+  module.exports = IRModule;
+}
+
+/***/ }),
+
+/***/ "./parts/Infrared/IRSensor/index.js":
+/*!******************************************!*\
+  !*** ./parts/Infrared/IRSensor/index.js ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -14850,6 +15320,62 @@ class IRSensor {
 
 if (true) {
   module.exports = IRSensor;
+}
+
+/***/ }),
+
+/***/ "./parts/Infrared/InfraredLED/index.js":
+/*!*********************************************!*\
+  !*** ./parts/Infrared/InfraredLED/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class InfraredLED {
+  constructor() {
+    this.keys = ['anode', 'cathode'];
+    this.requiredKeys = ['anode'];
+
+    this.dataSymbolLength = 0.07;
+  }
+
+  static info() {
+    return {
+      name: 'InfraredLED'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    if (!this.obniz.isValidIO(this.params.anode)) {
+      throw new Error('anode is not valid io');
+    }
+    if (this.params.cathode) {
+      if (!this.obniz.isValidIO(this.params.cathode)) {
+        throw new Error('cathode is not valid io');
+      }
+      this.io_cathode = obniz.getIO(this.params.cathode);
+      this.io_cathode.output(false);
+    }
+    this.pwm = this.obniz.getFreePwm();
+    this.pwm.start({ io: this.params.anode });
+    this.pwm.freq(38000);
+    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
+  }
+
+  send(arr) {
+    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
+      arr.push(0);
+    }
+    this.pwm.modulate('am', this.dataSymbolLength, arr);
+  }
+}
+
+if (true) {
+  module.exports = InfraredLED;
 }
 
 /***/ }),
@@ -14991,62 +15517,6 @@ class FullColorLED {
 
 if (true) {
   module.exports = FullColorLED;
-}
-
-/***/ }),
-
-/***/ "./parts/Light/InfraredLED/index.js":
-/*!******************************************!*\
-  !*** ./parts/Light/InfraredLED/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-class InfraredLED {
-  constructor() {
-    this.keys = ['anode', 'cathode'];
-    this.requiredKeys = ['anode'];
-
-    this.dataSymbolLength = 0.07;
-  }
-
-  static info() {
-    return {
-      name: 'InfraredLED'
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    if (!this.obniz.isValidIO(this.params.anode)) {
-      throw new Error('anode is not valid io');
-    }
-    if (this.params.cathode) {
-      if (!this.obniz.isValidIO(this.params.cathode)) {
-        throw new Error('cathode is not valid io');
-      }
-      this.io_cathode = obniz.getIO(this.params.cathode);
-      this.io_cathode.output(false);
-    }
-    this.pwm = this.obniz.getFreePwm();
-    this.pwm.start({ io: this.params.anode });
-    this.pwm.freq(38000);
-    this.obniz.wait(150); // TODO: this is instant fix for pwm start delay
-  }
-
-  send(arr) {
-    if (arr && arr.length > 0 && arr[arr.length - 1] === 1) {
-      arr.push(0);
-    }
-    this.pwm.modulate('am', this.dataSymbolLength, arr);
-  }
-}
-
-if (true) {
-  module.exports = InfraredLED;
 }
 
 /***/ }),
@@ -15837,51 +16307,318 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/MovementSensor/CircularSoftPotentiometer/index.js":
-/*!*****************************************************************!*\
-  !*** ./parts/MovementSensor/CircularSoftPotentiometer/index.js ***!
-  \*****************************************************************/
+/***/ "./parts/MovementSensor/FlickHat/index.js":
+/*!************************************************!*\
+  !*** ./parts/MovementSensor/FlickHat/index.js ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-class CircularSoftPot {
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class FlickHat {
   constructor() {
-    this.keys = ['outer', 'middle'];
-    this.requiredKeys = ['outer', 'middle'];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'reset', 'ts'];
+    this.requiredKeys = ['gnd', 'sda', 'scl', 'reset', 'ts'];
+
+    this.displayIoNames = {
+      //vcc: 'vcc', //5v
+      sda: 'sda',
+      scl: 'scl',
+      gnd: 'gnd',
+      reset: 'reset',
+      ts: 'ts'
+    };
   }
 
   static info() {
     return {
-      name: 'CircularSoftPot'
+      name: 'FlickHat'
     };
   }
 
   wired(obniz) {
     this.obniz = obniz;
 
-    this.io_pwr = obniz.getIO(this.params.outer);
-    this.ad = obniz.getAD(this.params.middle);
+    this.address = 0x42;
 
-    this.io_pwr.drive('5v');
-    this.io_pwr.output(true);
+    if (this.obniz.isValidIO(this.params.vcc)) {
+      this.obniz.getIO(this.params.vcc).drive('5v');
+      this.obniz.getIO(this.params.vcc).output(true);
+    }
 
-    let self = this;
+    this.io_reset = this.obniz.getIO(this.params.reset);
+    this.io_reset.drive('open-drain');
 
-    this.ad.start(function (value) {
-      let pressure = value;
-      self.press = pressure;
-      if (self.onchange) {
-        self.onchange(self.press);
+    this.io_ts = this.obniz.getIO(this.params.ts);
+    this.io_ts.drive('open-drain');
+    this.io_ts.pull('3v');
+
+    this.params.mode = 'master';
+    this.params.pull = '3v';
+    this.params.clock = 100 * 1000; //100KHz
+
+    //PeripheralI2C
+    this.i2c = this.obniz.getI2CWithConfig(this.params);
+  }
+
+  start(callbackFwInfo) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      _this.io_ts.pull('3v');
+
+      _this.io_reset.pull('0v');
+      yield _this.obniz.wait(40);
+      _this.io_reset.pull('3v');
+      yield _this.obniz.wait(50);
+
+      _this.onfwinfo = callbackFwInfo;
+      _this.fwInfo = {
+        fwValid: 0,
+        fwInfoReceived: false
+      };
+      _this.rotation = 0;
+      _this.lastRotation = 0;
+
+      yield _this.polling();
+      yield _this.obniz.wait(200);
+
+      _this.i2c.write(_this.address, [0x10, 0x00, 0x00, 0xa2, 0xa1, 0x00, 0x00, 0x00, 0x1f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff]);
+      yield _this.obniz.wait(100);
+
+      _this.i2c.write(_this.address, [0x10, 0x00, 0x00, 0xa2, 0x80, 0x00, 0x00, 0x00, 0x3f, 0x00, 0x00, 0x00, 0x3f, 0x00, 0x00, 0x00]);
+    })();
+  }
+
+  _dataArray2string(data) {
+    let result = '';
+    for (let n of data) {
+      result += String.fromCharCode(n);
+    }
+    return result;
+  }
+
+  polling(timeout) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      timeout = timeout || 3000; //default: 3s
+
+      //DataOutputConfigMask	2byte
+      // const maskDSPStatus = 1;
+      const maskGestureInfo = 1 << 1;
+      const maskTouchInfo = 1 << 2;
+      const maskAirWheelInfo = 1 << 3;
+      const maskXYZPosition = 1 << 4;
+
+      //SystemInfo	1byte
+      const sysPositionValid = 1;
+      const sysAirWheelValid = 1 << 1;
+      // const sysDSPRunning = 1 << 7;
+
+      let startTime = new Date();
+      let ts = true;
+      while (ts && new Date() - startTime < timeout) ts = yield _this2.io_ts.inputWait();
+      if (!ts) {
+        _this2.io_ts.pull('0v');
+        //await this.obniz.wait(1);
+
+        let data = yield _this2.i2c.readWait(_this2.address, 132);
+        let size = data[0];
+        // let flag = data[1];
+        let seq = data[2];
+        let msgID = data[3];
+
+        if (size != 0xff && size > 0) {
+          if (_this2.debugprint || _this2.obniz.debugprint) {
+            console.log('flickHat: ' + data.slice(0, size).map(function (v) {
+              return '0x' + v.toString(16);
+            }));
+          }
+          let configmask, sysinfo, gesture, touch, airwheel, statusInfo, fwInfo;
+          switch (msgID) {
+            case 0x91:
+              //sensor data output
+              configmask = data[4] | data[5] << 8; //little endian
+              // let timestamp = data[6]; // 200hz, 8-bit counter, max ~1.25sec
+              sysinfo = data[7];
+              // let dspstatus = data.slice(8, 10);
+              gesture = data.slice(10, 14);
+              touch = data.slice(14, 18);
+              airwheel = data.slice(18, 20);
+              // let xyz = data.slice(20, 26);
+              // let noisepow = data.slice(27, 30);
+              if (gesture[0] == 255 && gesture[1] == 255 && gesture[2] == 255 && gesture[3] == 255) break;
+
+              if (configmask & maskXYZPosition && sysinfo & sysPositionValid) {
+                let xyz = {
+                  //little endian
+                  x: (data[20] | data[21] << 8) / 65536,
+                  y: (data[22] | data[23] << 8) / 65536,
+                  z: (data[24] | data[25] << 8) / 65536,
+                  seq: seq
+                };
+                _this2.xyz = xyz;
+                if (typeof _this2.onxyz == 'function') _this2.onxyz(xyz);
+              }
+
+              if (configmask & maskGestureInfo && gesture[0] > 0) {
+                _this2.lastGesture = gesture[0];
+                const gestures = [['', '', ''], //no gesture
+                ['garbage', '', ''], ['flick', 'west', 'east'], //2
+                ['flick', 'east', 'west'], //3
+                ['flick', 'south', 'north'], //4
+                ['flick', 'north', 'south'], //5
+                ['circle', 'clockwise', ''], ['circle', 'counter-clockwise', ''][('wave', 'x', '')], ['wave', 'y', ''], ['hold', '', '']];
+                for (let index in gestures) {
+                  if (index == gesture[0] && typeof _this2.ongestureall == 'function') _this2.ongestureall({
+                    action: gestures[index][0],
+                    from: gestures[index][1],
+                    to: gestures[index][2],
+                    raw: gesture,
+                    seq: seq
+                  });
+                  if (index == gesture[0] && gestures[index][0] == 'flick' && typeof _this2.ongesture == 'function') _this2.ongesture({
+                    action: 'gesture',
+                    from: gestures[index][1],
+                    to: gestures[index][2],
+                    raw: gesture,
+                    seq: seq
+                  });
+                }
+              }
+
+              if (configmask & maskTouchInfo && !(touch[0] == 0 && touch[1] == 0) && touch[3] == 0) {
+                //console.log('touch: ' + touch.map(v => '0x' + v.toString(16)));
+                let touchAction = touch[0] | touch[1] << 8; //little endian
+                if (touchAction == 0xffff) break;
+                // let touchCount = touch[2] * 5; // touch counter value * 5[ms]
+                const actions = [['touch', 'south'], //0
+                ['touch', 'west'], //1
+                ['touch', 'north'], //2
+                ['touch', 'east'], //3
+                ['touch', 'center'], //4
+                ['tap', 'south'], //5
+                ['tap', 'west'], //6
+                ['tap', 'north'], //7
+                ['tap', 'east'], //8
+                ['tap', 'center'], //9
+                ['doubletap', 'south'], //10
+                ['doubletap', 'west'], //11
+                ['doubletap', 'north'], //12
+                ['doubletap', 'east'], //13
+                ['doubletap', 'center']];
+
+                let touches = [];
+                let taps = [];
+                let doubletaps = [];
+                _this2.lastTouch = touchAction;
+
+                let comp = 1;
+                for (let index in actions) {
+                  let value = actions[index];
+                  if (touchAction & comp) {
+                    //console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
+                    switch (value[0]) {
+                      case 'touch':
+                        touches.push(value[1]);
+                        break;
+                      case 'tap':
+                        taps.push(value[1]);
+                        break;
+                      case 'doubletap':
+                        doubletaps.push(value[1]);
+                        break;
+                      default:
+                    }
+                  }
+                  comp <<= 1;
+                }
+
+                if (touches.length > 0 && typeof _this2.ontouch == 'function') _this2.ontouch({
+                  action: 'touch',
+                  positions: touches,
+                  raw: touch,
+                  seq: seq
+                });
+
+                if (taps.length > 0 && typeof _this2.ontap == 'function') _this2.ontap({
+                  action: 'tap',
+                  positions: taps,
+                  raw: touch,
+                  seq: seq
+                });
+
+                if (doubletaps.length > 0 && typeof _this2.ondoubletap == 'function') _this2.ondoubletap({
+                  action: 'doubletap',
+                  positions: doubletaps,
+                  raw: touch,
+                  seq: seq
+                });
+              }
+
+              if (configmask & maskAirWheelInfo && sysinfo & sysAirWheelValid) {
+                let delta = (airwheel[0] - _this2.lastRotation) / 32.0;
+                _this2.rotation += delta * 360.0;
+                _this2.rotation %= 360;
+                if (delta != 0 && delta > -0.5 && delta < 0.5) {
+                  if (typeof _this2.onairwheel == 'function') _this2.onairwheel({
+                    delta: delta * 360.0,
+                    rotation: _this2.rotation,
+                    raw: airwheel,
+                    seq: seq
+                  });
+                }
+                _this2.lastRotation = airwheel[0];
+              }
+              break;
+
+            case 0x15:
+              //system status
+              statusInfo = {
+                msgId: data[4],
+                maxCmdSize: data[5],
+                error: data[6] | data[7] << 8 //little endian
+              };
+              _this2.statusInfo = statusInfo;
+              if (_this2.debugprint || _this2.obniz.debugprint) {
+                console.log(`flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`);
+              }
+              break;
+
+            case 0x83:
+              // farmware information
+              fwInfo = {
+                fwValid: data[4] == 0xaa,
+                hwRev: [data[5], data[6]],
+                paramStartAddr: data[7] * 128,
+                libLoaderVer: [data[8], data[9]],
+                libLoaderPlatform: data[10],
+                fwStartAddr: data[11] * 128,
+                fwVersion: _this2._dataArray2string(data.slice(12, 132)).split('\0')[0],
+                fwInfoReceived: true
+              };
+              _this2.fwInfo = fwInfo;
+              if (typeof _this2.onfwinfo == 'function') _this2.onfwinfo(fwInfo);
+              break;
+
+            default:
+          }
+        }
+
+        _this2.io_ts.pull('3v');
+        //await this.obniz.wait(1);
       }
-    });
+    })();
   }
 }
 
 if (true) {
-  module.exports = CircularSoftPot;
+  module.exports = FlickHat;
 }
 
 /***/ }),
@@ -15919,6 +16656,10 @@ class HCSR505 {
         this.onchange(value);
       }
     });
+  }
+
+  getWait() {
+    return this.io_signal.inputWait();
   }
 }
 
@@ -15997,6 +16738,26 @@ class JoyStick {
       return ret === false;
     })();
   }
+
+  getXWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      let value = yield _this2.ad_x.getWait();
+      _this2.positionX = value / 5.0;
+      return _this2.positionX * 2 - 1;
+    })();
+  }
+
+  getYWait() {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      let value = yield _this3.ad_y.getWait();
+      _this3.positionY = value / 5.0;
+      return _this3.positionY * 2 - 1;
+    })();
+  }
 }
 
 if (true) {
@@ -16025,13 +16786,11 @@ class KXR94_2050 {
 
   static info() {
     return {
-      name: 'KXR94_2050'
+      name: 'KXR94-2050'
     };
   }
 
   wired(obniz) {
-    var _this = this;
-
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
@@ -16043,52 +16802,59 @@ class KXR94_2050 {
     if (obniz.isValidIO(this.params.enable)) {
       obniz.getIO(this.params.enable).drive('5v');
       obniz.getIO(this.params.enable).output(true);
+      obniz.display.setPinName(this.params.enable, 'KXR94_2050', 'E');
     }
     if (obniz.isValidIO(this.params.self_test)) {
       obniz.getIO(this.params.self_test).drive('5v');
       obniz.getIO(this.params.self_test).output(false);
+      obniz.display.setPinName(this.params.self_test, 'KXR94_2050', 'T');
     }
 
-    return _asyncToGenerator(function* () {
-      if (obniz.isValidIO(_this.params.vcc)) {
-        let pwrVoltage = yield obniz.getAD(_this.params.vcc).getWait();
-        _this.changeVccVoltage(pwrVoltage);
-      } else {
-        _this.changeVccVoltage(5);
+    this.changeVccVoltage(5);
+
+    this.ad_x.start(value => {
+      this._x_val = value;
+      if (this.onChangeX) {
+        this.onChangeX(this.voltage2gravity(value));
       }
-
-      _this.ad_x.start(function (value) {
-        if (_this.onchangex) {
-          _this.onchangex(_this.voltage2gravity(value));
-        }
-      });
-
-      _this.ad_y.start(function (value) {
-        if (_this.onchangey) {
-          _this.onchangey(_this.voltage2gravity(value));
-        }
-      });
-
-      _this.ad_z.start(function (value) {
-        if (_this.onchangez) {
-          _this.onchangez(_this.voltage2gravity(value));
-        }
-      });
-
-      if (_this.obniz.isValidIO(_this.params.vcc)) {
-        _this.obniz.getAD(_this.params.vcc).start(function (value) {
-          _this.changeVccVoltage(value);
-        });
+      if (this.onChange) {
+        this.onChange(this._get());
       }
+    });
 
-      obniz.display.setPinName(_this.params.x, 'KXR94_2050', 'x');
-      obniz.display.setPinName(_this.params.y, 'KXR94_2050', 'y');
-      obniz.display.setPinName(_this.params.z, 'KXR94_2050', 'z');
-
-      if (_this.obniz.isValidIO(_this.params.vcc)) {
-        obniz.display.setPinName(_this.params.vcc, 'KXR94_2050', 'vcc');
+    this.ad_y.start(value => {
+      this._y_val = value;
+      if (this.onChangeY) {
+        this.onChangeY(this.voltage2gravity(value));
       }
-    })();
+      if (this.onChange) {
+        this.onChange(this._get());
+      }
+    });
+
+    this.ad_z.start(value => {
+      this._z_val = value;
+      if (this.onChangeZ) {
+        this.onChangeZ(this.voltage2gravity(value));
+      }
+      if (this.onChange) {
+        this.onChange(this._get());
+      }
+    });
+
+    if (this.obniz.isValidIO(this.params.vcc)) {
+      this.obniz.getAD(this.params.vcc).start(value => {
+        this.changeVccVoltage(value);
+      });
+    }
+
+    obniz.display.setPinName(this.params.x, 'KXR94_2050', 'x');
+    obniz.display.setPinName(this.params.y, 'KXR94_2050', 'y');
+    obniz.display.setPinName(this.params.z, 'KXR94_2050', 'z');
+
+    if (this.obniz.isValidIO(this.params.vcc)) {
+      obniz.display.setPinName(this.params.vcc, 'KXR94_2050', 'vcc');
+    }
   }
 
   changeVccVoltage(pwrVoltage) {
@@ -16100,17 +16866,27 @@ class KXR94_2050 {
     return (volt - this.offsetVoltage) / this.sensitivity;
   }
 
+  get() {
+    return this._get();
+  }
+
+  _get() {
+    return {
+      x: this.voltage2gravity(this._x_val),
+      y: this.voltage2gravity(this._y_val),
+      z: this.voltage2gravity(this._z_val)
+    };
+  }
+
   getWait() {
-    var _this2 = this;
+    var _this = this;
 
     return _asyncToGenerator(function* () {
-      let result = yield Promise.all([_this2.ad_x.getWait(), _this2.ad_y.getWait(), _this2.ad_z.getWait()]);
+      _this._x_val = yield _this.ad_x.getWait();
+      _this._y_val = yield _this.ad_y.getWait();
+      _this._z_val = yield _this.ad_z.getWait();
 
-      return {
-        x: _this2.voltage2gravity(result[0]),
-        y: _this2.voltage2gravity(result[1]),
-        z: _this2.voltage2gravity(result[2])
-      };
+      return _this._get();
     })();
   }
 }
@@ -16388,6 +17164,211 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Moving/PCA9685/index.js":
+/*!***************************************!*\
+  !*** ./parts/Moving/PCA9685/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class PCA9685 {
+  constructor() {
+    /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
+    this.keys = ['gnd', 'vcc', 'scl', 'sda', 'oe', 'i2c', 'enabled', 'address', 'drive'];
+    this.requiredKeys = [];
+
+    this.address = 0x40;
+
+    this._commands = {
+      MODE1: 0x00,
+      MODE2: 0x01,
+      SUBADR1: 0x02,
+      SUBADR2: 0x03,
+      SUBADR3: 0x04,
+      PRESCALE: 0xfe,
+      LED0_ON_L: 0x06,
+      ALL_LED_ON_L: 0xfa,
+      bits: {
+        ALLCALL: 0x01,
+        SLEEP_ENABLE: 0x10,
+        AUTO_INCREMENT_ENABLED: 0x20,
+        RESTART: 0x80,
+
+        OUTDRV: 0x04,
+        INVRT: 0x10
+      }
+    };
+
+    this._regs = new Array(1);
+
+    this.pwmNum = 16;
+    this.pwms = [];
+    this._preparePWM(this.pwmNum);
+  }
+
+  static info() {
+    return {
+      name: 'PCA9685'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    if (obniz.isValidIO(this.params.oe)) {
+      this.io_oe = obniz.getIO(this.params.oe);
+    }
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    if (typeof this.params.address === 'number') {
+      this.address = this.params.address;
+    }
+
+    this.params.clock = this.params.clock || 400 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || '5v'; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    if (this.obniz.isValidIO(this.params.srclr)) {
+      this.io_srclr = this.obniz.getIO(this.params.srclr);
+      this.io_srclr.output(true);
+    }
+
+    if (typeof this.params.enabled !== 'boolean') {
+      this.params.enabled = true;
+    }
+    if (this.io_oe && this.params.enabled) {
+      this.io_oe.output(false);
+    }
+
+    if (this.params.drive === 'open-drain') {
+      this.i2c.write(this.address, [this._commands.MODE2, this._commands.bits.OUTDRV]);
+    }
+
+    let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
+    mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
+    this.i2c.write(this.address, [this._commands.MODE1, mode1]);
+    this.i2c.write(this.address, [this._commands.MODE1, mode1 | this._commands.bits.RESTART]);
+
+    this._regs[this._commands.MODE1] = mode1;
+
+    obniz.wait(10);
+  }
+
+  _preparePWM(num) {
+    class PCA9685_PWM {
+      constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = 0;
+        this.state = {};
+      }
+
+      freq(frequency) {
+        this.chip.freq(frequency);
+      }
+      pulse(value) {
+        this.chip.pulse(this.id, value);
+      }
+      duty(value) {
+        this.chip.duty(this.id, value);
+      }
+    }
+
+    for (let i = 0; i < num; i++) {
+      this.pwms.push(new PCA9685_PWM(this, i));
+    }
+  }
+
+  isValidPWM(id) {
+    return typeof id === 'number' && id >= 0 && id < this.pwmNum;
+  }
+
+  getPWM(id) {
+    if (!this.isValidPWM(id)) {
+      throw new Error('pwm ' + id + ' is not valid pwm');
+    }
+    return this.pwms[id];
+  }
+
+  freq(frequency) {
+    if (typeof frequency !== 'number') {
+      return;
+    }
+    if (frequency < 24 || 1526 < frequency) {
+      throw new Error('freq must be within 24-1526 hz');
+    }
+    if (this._freq === frequency) {
+      return;
+    }
+    let prescaleval = 25000000.0; // 25MHz
+    prescaleval /= 4096.0; //12bit
+    prescaleval /= frequency * 0.9;
+    prescaleval -= 1.0;
+
+    const prescale = parseInt(Math.floor(prescaleval + 0.5));
+    const mode1 = this._regs[this._commands.MODE1];
+
+    this.i2c.write(this.address, [this._commands.MODE1, mode1 & 0x7f | this._commands.bits.SLEEP_ENABLE]); // enter sleep
+    this.i2c.write(this.address, [this._commands.PRESCALE, prescale]);
+    this.i2c.write(this.address, [this._commands.MODE1, mode1]); // recover from sleep
+
+    this.obniz.wait(5);
+
+    // save
+    this._freq = frequency;
+    for (let i = 0; i < this.pwms.length; i++) {
+      this.pwms[i].state.freq = this._freq;
+    }
+  }
+
+  pulse(id, pulse_width) {
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
+    }
+    this.duty(id, pulse_width / 1000.0 / (1.0 / this._freq) * 100);
+  }
+
+  duty(id, duty) {
+    duty *= 1.0;
+    if (typeof this._freq !== 'number' || this._freq <= 0) {
+      throw new Error('please provide freq first.');
+    }
+    if (typeof duty !== 'number') {
+      throw new Error('please provide duty in number');
+    }
+    if (duty < 0) {
+      duty = 0;
+    }
+    if (duty > 100) {
+      duty = 100;
+    }
+    this.getPWM(id).state.duty = duty;
+    this.writeSingleONOFF(id, 0, duty / 100.0 * 4095);
+  }
+
+  writeSingleONOFF(id, on, off) {
+    this.i2c.write(this.address, [this._commands.LED0_ON_L + 4 * id, on & 0xff, on >> 8, off & 0xff, off >> 8]);
+  }
+
+  setEnable(enable) {
+    if (!this.io_oe && enable == false) {
+      throw new Error('pin "oe" is not specified');
+    }
+    this.io_oe.output(!enable);
+  }
+}
+
+if (true) {
+  module.exports = PCA9685;
+}
+
+/***/ }),
+
 /***/ "./parts/Moving/ServoMotor/index.js":
 /*!******************************************!*\
   !*** ./parts/Moving/ServoMotor/index.js ***!
@@ -16400,8 +17381,13 @@ if (true) {
 
 class ServoMotor {
   constructor() {
-    this.keys = ['gnd', 'vcc', 'signal'];
-    this.requiredKeys = ['signal'];
+    this.keys = ['gnd', 'vcc', 'signal', 'pwm'];
+    this.requiredKeys = [];
+
+    this.range = {
+      min: 0.5,
+      max: 2.4
+    };
   }
 
   static info() {
@@ -16418,18 +17404,21 @@ class ServoMotor {
       this.io_vcc = obniz.getIO(this.params.vcc);
     }
 
-    this.pwm = obniz.getFreePwm();
-    this.pwm_io_num = this.params.signal;
-
-    this.pwm.start({ io: this.pwm_io_num });
+    if (this.params.pwm) {
+      this.pwm = this.params.pwm;
+    } else {
+      this.pwm = obniz.getFreePwm();
+      this.pwm_io_num = this.params.signal;
+      this.pwm.start({ io: this.pwm_io_num });
+    }
     this.pwm.freq(50);
   }
 
   // Module functions
 
   angle(ratio) {
-    let max = 2.4;
-    let min = 0.5;
+    let max = this.range.max;
+    let min = this.range.min;
     let val = (max - min) * ratio / 180.0 + min;
     this.pwm.pulse(val);
   }
@@ -16530,7 +17519,9 @@ if (true) {
 "use strict";
 
 
-//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+//Todo: add weight and calc pressure(kg)
 
 class FSR40X {
   constructor() {
@@ -16561,6 +17552,17 @@ class FSR40X {
         self.onchange(self.press);
       }
     });
+  }
+
+  getWait() {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      let value = yield _this.ad.getWait();
+      let pressure = value * 100;
+      _this.press = pressure;
+      return _this.press;
+    })();
   }
 }
 
@@ -16926,7 +17928,7 @@ if (true) {
 
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
-//センサから出力が無い(出力インピーダンス高すぎ？)
+//sensor resopnse not found
 
 class S8100B extends AnalogTemplatureSensor {
   calc(voltage) {
@@ -16957,9 +17959,9 @@ if (true) {
 
 const AnalogTemplatureSensor = __webpack_require__(/*! ../AnalogTempratureSensor */ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
 
-//不調, 正しく測れるときもある...
-//原因1:obnizの入力インピーダンスが低すぎる?
-//原因2:センサーが発振してる？（データシート通り抵抗を追加したが改善しない）
+//this not work, but sometimes good
+//resason1:too low of obniz input Impedance ?
+//resoson2:Is the sensor oscillating?
 
 class S8120C extends AnalogTemplatureSensor {
   calc(voltage) {
@@ -17029,7 +18031,6 @@ class ADT7410 {
       tempBin = tempBin >> 3;
 
       if (tempBin & 0x1000) {
-        //0度以下の時の処理
         tempBin = tempBin - 8192;
       }
 
@@ -17463,7 +18464,7 @@ if (true) {
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-//センサからの反応なし
+//sensor response not found
 class S5851A {
   constructor() {
     this.requiredKeys = ['vcc', 'gnd', 'adr0', 'adr1', 'adr_select'];
@@ -17726,15 +18727,14 @@ class ADT7310 {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      yield _this.spi.writeWait([0x54]); //毎回コマンドを送らないと安定しない
-      yield _this.obniz.wait(200); //適度な値でないと安定しない
+      yield _this.spi.writeWait([0x54]); //send before each commands for stable
+      yield _this.obniz.wait(200);
       let ret = yield _this.spi.writeWait([0x00, 0x00]);
       let tempBin = ret[0] << 8;
       tempBin |= ret[1];
       tempBin = tempBin >> 3;
 
       if (tempBin & 0x1000) {
-        //0度以下の時の処理
         tempBin = tempBin - 8192;
       }
 

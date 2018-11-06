@@ -171,7 +171,7 @@ describe('obniz.libs.spi', function() {
     return r;
   });
 
-  it.skip('SPIで2byte送って3byte帰ってきたときの対応？', function() {
+  it.skip('SPI send 2byte and receive 3byte', function() {
     this.obniz.spi0.start({
       clk: 0,
       frequency: 1000000,

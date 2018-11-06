@@ -98,7 +98,7 @@ class WSCommand_System extends WSCommand {
     const pongServerTime = new Date().getTime();
 
     if (payload.length >= 16) {
-      payload = Buffer(payload);
+      payload = Buffer.from(payload);
       let obnizTime =
         payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
       let pingServerTime =

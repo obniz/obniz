@@ -151,7 +151,7 @@ function detectPulse(io, ratioRange) {
         expect((ret[1] / (ret[0] + ret[1])) * 100).to.be.within(
           ratioRange[0],
           ratioRange[1]
-        ); // 割合だけ見る。パターンは間違っているかもしれない。
+        ); // check only rate
       } catch (e) {
         reject(e);
       }

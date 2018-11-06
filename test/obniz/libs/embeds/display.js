@@ -15,13 +15,15 @@ describe('obniz.libs.display', function() {
   });
 
   it('clear', function() {
-    this.obniz.display.clear();
-    expect(this.obniz).to.be.obniz;
-    expect(this.obniz).send([{ display: { clear: true } }]);
-    expect(this.obniz).to.be.finished;
+    if (this.obniz.isNode) {
+      this.obniz.display.clear();
+      expect(this.obniz).to.be.obniz;
+      expect(this.obniz).send([{ display: { clear: true } }]);
+      expect(this.obniz).to.be.finished;
+    }
   });
 
-  // if (this.obniz.isNode) { // ここどうやって書こうかな。。。。
+  // if (this.obniz.isNode) {
   //   it("print",  function () {
   //     this.obniz.display.print("Hello!!");
   //     expect(this.obniz).to.be.obniz;

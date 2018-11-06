@@ -23,10 +23,7 @@ module.exports = function(docfilePath) {
       );
       return callback();
     }
-
-    // プラグインの処理本体
     if (file.isBuffer()) {
-      // ファイルの内容をcontentsに読み込み
       let contents = String(file.contents);
       let output;
       try {
@@ -35,10 +32,8 @@ module.exports = function(docfilePath) {
         this.emit('error', new PluginError(PLUGIN_NAME, error));
       }
 
-      // 編集した内容を出力
-      file.contents = new Buffer(output);
+      file.contents = Buffer.from(output);
 
-      // 処理の完了を通知
       return callback(null, file);
     }
 
@@ -275,7 +270,7 @@ function jsonExample(params, schema) {
         //
         //   value = "obniz";
       } else {
-        throw Error('patternProperties 未対応');
+        throw Error('patternProperties is not compatible');
       }
 
       let obj = jsonObj;
@@ -398,7 +393,7 @@ function _checkSchema(schema, path, required, results, needDefs) {
         }
       }
 
-      throw Error('patternProperties 未対応');
+      throw Error('patternProperties is not compatible');
     }
     if (!schema.properties && !schema.patternProperties) {
       schema.required = required;

@@ -28,6 +28,25 @@ sensor.start(function( distance ){
 })
 ```
 
+
+
+## start(callback(distance))
+一度だけ距離を測定します
+
+```javascript
+// Javascript Example
+var sensor = obniz.wired("GP2Y0A21YK0F", {vcc:0, gnd:1, signal:2})
+
+while (1) {
+  var val = await sensor.getWait();
+  console.log("distance " + val);
+  await obniz.wait(1000);
+}
+    
+```
+    
+    
+    
 ## unit(unit)
 単位を変更します。
 

@@ -13,6 +13,7 @@ class Obniz extends ObnizUIs {
   repeat(callback, interval) {
     if (this.looper) {
       this.looper = callback;
+      this.repeatInterval = interval || this.repeatInterval || 100;
       return;
     }
     this.looper = callback;
@@ -23,13 +24,8 @@ class Obniz extends ObnizUIs {
     }
   }
 
-  _callOnConnect() {
-    super._callOnConnect();
-    this.loop();
-  }
-
   async loop() {
-    if (typeof this.looper === 'function') {
+    if (typeof this.looper === 'function' && this.onConnectCalled) {
       let prom = this.looper();
       if (prom instanceof Promise) {
         await prom;
@@ -38,11 +34,9 @@ class Obniz extends ObnizUIs {
     }
   }
 
-  wsOnClose() {
-    super.wsOnClose();
-    if (this.looper) {
-      this.looper = null;
-    }
+  _callOnConnect() {
+    super._callOnConnect();
+    this.loop();
   }
 
   message(target, message) {

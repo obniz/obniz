@@ -21,3 +21,13 @@ pressure.onchange =function(press){
   console.log(press)
 }
 ```
+
+## [await]getWait();
+圧力センサの値を一度だけ取得します
+
+```javascript
+// Javascript Example
+var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
+var press = pressure.getWait();
+console.log(press)
+```

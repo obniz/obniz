@@ -2,6 +2,7 @@
   "categories": [
     {
       "name": "Light",
+      "image_url": "https://obniz.io/sdk/parts/FullcolorLED/animation.gif",
       "parts": [
         {
           "name": "LED",
@@ -44,6 +45,7 @@
     },
     {
       "name": "Infrared",
+      "image_url": "https://obniz.io/sdk/parts/IRModule/image.jpg",
       "parts": [
         {
           "name": "InfraredLED",
@@ -64,11 +66,18 @@
             "amazon.com": "http://a.co/d/9ALVGNW",
             "aliexpress": "https://www.aliexpress.com/wholesale?initiative_id=SC_20181005232108&SearchText=infrared+receiver+38khz&g=y&spellcheckPrompt=&misspellText=infrared+reciever+38khz"
           }
+        },
+        {
+          "name": "IRModule",
+          "store": {
+            "obniz": "https://obniz.myshopify.com/products/ir-module-cbr-ir001?variant=15937533771834"
+          }
         }
       ]
     },
     {
       "name": "Display",
+      "image_url": "https://obniz.io/sdk/parts/SainSmartTFT18LCD/connect.jpg",
       "parts": [
         {
           "name": "7SegmentLED",
@@ -106,11 +115,18 @@
             "amazon.com": "http://a.co/d/ceGfsNN",
             "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20181005223948&SearchText=1.8%22+tft"
           }
+        },
+        {
+          "name": "SharpMemoryTFT",
+          "store": {
+            "adafruit": "https://www.adafruit.com/product/3502"
+          }
         }
       ]
     },
     {
       "name": "Camera",
+      "image_url": "https://obniz.io/sdk/parts/ArduCAMMini/image.jpg",
       "parts": [
         {
           "name": "ArduCAMMini",
@@ -130,6 +146,7 @@
     },
     {
       "name": "Moving",
+      "image_url": "https://obniz.io/sdk/parts/ServoMotor/servomotor.gif",
       "parts": [
         {
           "name": "DCMotor",
@@ -156,11 +173,20 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-10761/"
           }
+        },
+        {
+          "name": "PCA9685",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gK-10350/",
+            "adafruit": "https://www.adafruit.com/product/815",
+            "switchscience": "https://www.switch-science.com/catalog/961/"
+          }
         }
       ]
     },
     {
       "name": "Sound",
+      "image_url": "https://obniz.io/sdk/parts/Speaker/wired.png",
       "parts": [
         {
           "name": "Speaker",
@@ -176,6 +202,7 @@
     },
     {
       "name": "Logic",
+      "image_url": "https://obniz.io/sdk/parts/SNx4HC595/image.jpg",
       "parts": [
         {
           "name": "SNx4HC595",
@@ -190,6 +217,7 @@
     },
     {
       "name": "Accessory",
+      "image_url": "https://obniz.io/sdk/parts/USB/usb2.jpg",
       "parts": [
         {
           "name": "USB",
@@ -200,6 +228,7 @@
     },
     {
       "name": "Wireless",
+      "image_url": "https://obniz.io/sdk/parts/XBee/wired.png",
       "parts": [
         {
           "name": "RN42",
@@ -222,6 +251,7 @@
     },
     {
       "name": "Movement Sensor",
+      "image_url": "https://obniz.io/sdk/parts/JoyStick/joystick.jpg",
       "parts": [
         {
           "name": "Button",
@@ -276,13 +306,15 @@
         {
           "name": "KXR94-2050",
           "store": {
-            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/"
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/",
+            "digikey": "https://www.digikey.jp/product-detail/en/kionix-inc/KXR94-2050-FR/1191-1012-1-ND/3137358"
           }
         }
       ]
     },
     {
       "name": "Distance Sensor",
+      "image_url": "https://obniz.io/sdk/parts/GP2Y0A21YK0F/image.gif",
       "parts": [
         {
           "name": "HC-SR04",
@@ -301,6 +333,7 @@
     },
     {
       "name": "GPS",
+      "image_url": "https://obniz.io/sdk/parts/GYSFDMAXB/image.jpg",
       "parts": [
         {
           "name": "GYSFDMAXB",
@@ -323,6 +356,7 @@
     },
     {
       "name": "Audio Sensor",
+      "image_url": "https://obniz.io/sdk/parts/AE_MICAMP/ae_micap.jpg",
       "parts": [
         {
           "name": "AE_MICAMP",
@@ -345,6 +379,7 @@
     },
     {
       "name": "Soil Moisture Sensor",
+      "image_url": "https://obniz.io/sdk/parts/SEN0114/wired.png",
       "parts": [
         {
           "name": "SEN0114",
@@ -356,6 +391,7 @@
     },
     {
       "name": "Temperature Sensor",
+      "image_url": "https://obniz.io/sdk/parts/BME280/image.jpg",
       "parts": [
         {
           "name": "LM35DZ",
@@ -422,6 +458,7 @@
     },
     {
       "name": "Light/Color Sensor",
+      "image_url": "https://obniz.io/sdk/parts/S11059/demo.gif",
       "parts": [
         {
           "name": "S11059",
@@ -433,6 +470,7 @@
     },
     {
       "name": "Grove",
+      "image_url": "https://obniz.io/sdk/parts/Grove_MP3/image.jpg",
       "parts": [
         {
           "name": "Grove_EarHeartRate",
@@ -471,6 +509,9 @@
     },
     "marutsu": {
       "logo": "/images/shop/marutsu.png"
+    },
+    "obniz" : {
+      "logo": "/images/shop/obniz.png"
     }
   }
 }

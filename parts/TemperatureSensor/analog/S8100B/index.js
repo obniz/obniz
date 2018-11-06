@@ -1,6 +1,6 @@
 const AnalogTemplatureSensor = require('../AnalogTempratureSensor');
 
-//センサから出力が無い(出力インピーダンス高すぎ？)
+//sensor resopnse not found
 
 class S8100B extends AnalogTemplatureSensor {
   calc(voltage) {

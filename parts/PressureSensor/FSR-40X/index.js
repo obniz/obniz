@@ -1,4 +1,4 @@
-//Todo:抵抗を追加して圧力(kg)を求められるように改造する
+//Todo: add weight and calc pressure(kg)
 
 class FSR40X {
   constructor() {
@@ -29,6 +29,13 @@ class FSR40X {
         self.onchange(self.press);
       }
     });
+  }
+
+  async getWait() {
+    let value = await this.ad.getWait();
+    let pressure = value * 100;
+    this.press = pressure;
+    return this.press;
   }
 }
 

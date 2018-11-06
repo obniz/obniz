@@ -30,6 +30,24 @@ sensor.start(function( distance ){
 })
 ```
 
+
+
+## start(callback(distance))
+
+Measure distance once.
+
+```javascript
+// Javascript Example
+var sensor = obniz.wired("GP2Y0A21YK0F", {vcc:0, gnd:1, signal:2})
+
+while (1) {
+  var val = await sensor.getWait();
+  console.log("distance " + val);
+  await obniz.wait(1000);
+}
+    
+```
+    
 ## unit(unit)
 change unit
 
@@ -46,3 +64,4 @@ sensor.start(function( distance ){
   console.log("distance " + distance + " inch")
 })
 ```
+

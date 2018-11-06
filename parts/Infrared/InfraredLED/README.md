@@ -19,12 +19,12 @@ For Example,
 Normally, An resistor is reuqired to connect LED to obniz.
 Refer your LED's datasheet "Pulse Forward Current" like below. It is maximum value.
 If it is 1000mA, then 5ohm is enough.
-![](./fvid.png)
+![](fvid.png)
 
 Then wire your LED to obniz 
 
 
-![](./wired.jpg)
+![](wired.jpg)
 
 
 ![](./wired.png)

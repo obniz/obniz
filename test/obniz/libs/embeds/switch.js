@@ -29,7 +29,7 @@ describe('obniz.libs.switch', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it.skip('onchange changeしてないのにaction:getに反応しちゃってる', function() {
+  it.skip('not value changd  , but it detect action:get on onchange func', function() {
     let stub = sinon.stub();
     this.obniz.switch.onchange = stub;
     expect(this.obniz).to.be.obniz;
