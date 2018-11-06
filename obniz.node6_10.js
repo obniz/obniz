@@ -16321,7 +16321,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 class FlickHat {
   constructor() {
-    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'reset', 'ts'];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'reset', 'ts', 'led1', 'led2'];
     this.requiredKeys = ['gnd', 'sda', 'scl', 'reset', 'ts'];
 
     this.displayIoNames = {
@@ -16349,9 +16349,10 @@ class FlickHat {
       this.obniz.getIO(this.params.vcc).drive('5v');
       this.obniz.getIO(this.params.vcc).output(true);
     }
+    this.obniz.getIO(this.params.gnd).output(false);
 
     this.io_reset = this.obniz.getIO(this.params.reset);
-    this.io_reset.drive('open-drain');
+    this.io_reset.drive('3v');
 
     this.io_ts = this.obniz.getIO(this.params.ts);
     this.io_ts.drive('open-drain');
@@ -16363,6 +16364,13 @@ class FlickHat {
 
     //PeripheralI2C
     this.i2c = this.obniz.getI2CWithConfig(this.params);
+
+    if (this.obniz.isValidIO(this.params.led1)) {
+      this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
+    }
+    if (this.obniz.isValidIO(this.params.led2)) {
+      this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
+    }
   }
 
   start(callbackFwInfo) {
@@ -16371,9 +16379,9 @@ class FlickHat {
     return _asyncToGenerator(function* () {
       _this.io_ts.pull('3v');
 
-      _this.io_reset.pull('0v');
-      yield _this.obniz.wait(40);
-      _this.io_reset.pull('3v');
+      _this.io_reset.output(false);
+      yield _this.obniz.wait(50);
+      _this.io_reset.output(true);
       yield _this.obniz.wait(50);
 
       _this.onfwinfo = callbackFwInfo;
