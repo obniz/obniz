@@ -19,22 +19,27 @@ Flick HATとFlick Zeroは3.3V駆動のため、電源はobnizのioピンから�
 ![Flick HAT / Flick Zero](./flick_hat_wired_50.png)
 
 
-Flick Largeは5V駆動できるため、電源も含めてすべてobnizのioピンに接続します。
-
-Flick Largeには`red`と`green`の2色LEDが付いていますが、このライブラリでは制御しません。もし使用する場合は、[LEDライブラリ](https://obniz.io/sdk/parts/LED/README.md)を組み合わせることにより、必要に応じて制御してください。
+Flick Largeは5V駆動できるため、電源も含めてすべてobnizのioピンに接続します.  
+**<font color="Red">5V駆動で動作しない場合は、Flick HATと同様に3.3Vで試してください。</font>**
 
 ![Flick Large](./flick_large_wired_50.png)
 ![](./flick_large_wired_closeup.png)
 
-## wired( { vcc, } sda, scl, reset, ts, gnd )
+## wired( { vcc, } sda, scl, reset, ts, gnd { , led1, led2 } )
 
 `VCC(5v), SDA, SCL, RESET, TS, GND`をobnizに接続し、接続したioをプログラムで以下のように記述します。
-3.3Vや5V電源を別に用意した場合は、vccを省略します。
+3.3Vや5V電源を別に用意した場合は、vccを省略します。  
+LED1(赤)、LED2(緑)はFlick Largeの場合で、ioをobnizに接続した場合に指定します。
 
 ```javascript
 // Javascript Example
-let flickhat = obniz.wired("FlickHat", { vcc: 0, sda: 1, scl: 2, reset: 3, ts: 4, gnd: 5 });
+let flick = obniz.wired("FlickHat", { vcc: 0, sda: 1, scl: 2, reset: 3, ts: 4, gnd: 5, led1: 6, led2: 7 });
+flick.led1.on();
+flick.led2.blink(100);
 ```
+
+LED1(赤)、LED2(緑)の制御は[LEDライブラリ](https://obniz.io/sdk/parts/LED/README.md)を参照してください。
+
 
 ## [await] start({callbackFwInfo})
 
