@@ -11242,8 +11242,8 @@ class PeripheralI2C {
       }
       if (obj.error) {
         const message = `i2c${this.id}: ${obj.error.message}`;
-        if (typeof this.onerror === "function") {
-          this.onerror(new Error(message))
+        if (typeof this.onerror === 'function') {
+          this.onerror(new Error(message));
         } else {
           this.Obniz.error({
             alert: 'error',

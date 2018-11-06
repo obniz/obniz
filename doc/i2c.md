@@ -96,6 +96,22 @@ obniz.i2c0.onwritten = function(data){
 }
 ```
 
+## onerror = function(err){}
+
+> from obniz.js 1.14.0
+
+Setting i2c bus error handling callback.
+By setting a function, obniz.error will be never called.
+
+```Javascript
+// Javascript Example
+obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
+obniz.i2c0.onerror = function(err) {
+  console.log('Error', err);
+}
+var ret = await obniz.i2c0.readWait(0x50, 1);
+```
+
 ## end()
 end i2c .
 

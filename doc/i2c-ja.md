@@ -112,6 +112,22 @@ obniz.i2c0.onwritten = function(data){
 }
 ```
 
+## onerror = function(err){}
+
+> from obniz.js 1.14.0
+
+i2cでバスエラーが起きた際にエラーを受け取る関数を設定できます。
+この関数を設定しておくとobniz.errorは呼ばれなくなります。
+
+```Javascript
+// Javascript Example
+obniz.i2c0.start({mode:"master", sda:2, scl:3, clock:400000}); 
+obniz.i2c0.onerror = function(err) {
+  console.log('Error', err);
+}
+var ret = await obniz.i2c0.readWait(0x50, 1);
+```
+
 ## end()
 
 i2cを終了しIOを開放します。
