@@ -16366,10 +16366,10 @@ class FlickHat {
     this.i2c = this.obniz.getI2CWithConfig(this.params);
 
     if (this.obniz.isValidIO(this.params.led1)) {
-      this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
+      this.led1 = this.obniz.wired('LED', { anode: this.params.led1 });
     }
     if (this.obniz.isValidIO(this.params.led2)) {
-      this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
+      this.led2 = this.obniz.wired('LED', { anode: this.params.led2 });
     }
   }
 

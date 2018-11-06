@@ -45,21 +45,20 @@ class FlickHat {
     this.i2c = this.obniz.getI2CWithConfig(this.params);
 
     if (this.obniz.isValidIO(this.params.led1)) {
-      this.led1 = this.obniz.wired("LED", { anode: this.params.led1 });
+      this.led1 = this.obniz.wired('LED', { anode: this.params.led1 });
     }
     if (this.obniz.isValidIO(this.params.led2)) {
-      this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
+      this.led2 = this.obniz.wired('LED', { anode: this.params.led2 });
     }
-
   }
 
   async start(callbackFwInfo) {
     this.io_ts.pull('3v');
 
     this.io_reset.output(false);
-      await this.obniz.wait(50);
+    await this.obniz.wait(50);
     this.io_reset.output(true);
-      await this.obniz.wait(50);
+    await this.obniz.wait(50);
 
     this.onfwinfo = callbackFwInfo;
     this.fwInfo = {
