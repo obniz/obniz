@@ -80,7 +80,7 @@ module.exports = function(file, opt) {
       joinedFile = new File(file);
     }
 
-    joinedFile.contents = new Buffer(
+    joinedFile.contents = Buffer.from(
       opt.header + stringList.join(opt.separator) + opt.footer
     );
 

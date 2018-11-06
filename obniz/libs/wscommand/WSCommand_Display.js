@@ -26,7 +26,7 @@ class WSCommand_Display extends WSCommand {
 
   printText(text) {
     let result;
-    const buf = Buffer(text, 'utf8');
+    const buf = Buffer.from(text, 'utf8');
     result = new Uint8Array(buf);
     this.print(result);
   }

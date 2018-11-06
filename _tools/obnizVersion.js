@@ -29,7 +29,7 @@ module.exports = function() {
         output = `var _obniz_js_version = "${packageJson.version}";\n`;
       }
 
-      file.contents = new Buffer(output);
+      file.contents = Buffer.from(output);
 
       return callback(null, file);
     }
