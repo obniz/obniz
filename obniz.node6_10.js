@@ -5635,6 +5635,7 @@ class PeripheralI2C {
     this.Obniz = Obniz;
     this.id = id;
     this._reset();
+    this.onerror = undefined;
   }
 
   _reset() {
@@ -5809,10 +5810,15 @@ class PeripheralI2C {
         });
       }
       if (obj.error) {
-        this.Obniz.error({
-          alert: 'error',
-          message: `i2c${this.id}: ${obj.error.message}`
-        });
+        const message = `i2c${this.id}: ${obj.error.message}`;
+        if (typeof this.onerror === "function") {
+          this.onerror(new Error(message));
+        } else {
+          this.Obniz.error({
+            alert: 'error',
+            message: message
+          });
+        }
       }
     }
   }
