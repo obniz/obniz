@@ -45,12 +45,16 @@ available configurations are
 8. drive:  "3v","5v","open-drain"(See more detail at obniz.io.drive)
 9. pull: null, "0v", "3v", "5v"(See more detail at obniz.io.pull)
 
-
 ```Javascript
 // Javascript Example
-obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });  
+obniz.io0.output(false) // for sharing GND.
+obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });
 obniz.uart0.send("Hi");
+
+obniz.uart1.start({tx: 3, rx: 4, cts:5, rts:6, flowcontrol: 'rts-cts'});
+obniz.uart1.send("Hi");
 ```
+
 ## send(data)
 send a data.
 available formats are

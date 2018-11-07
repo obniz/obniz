@@ -43,9 +43,14 @@ Defaults
 
 ```Javascript
 // Javascript Example
+obniz.io0.output(false) // for sharing GND.
 obniz.uart0.start({tx: 1, rx: 2, baud:9600, bits:7 });
 obniz.uart0.send("Hi");
+
+obniz.uart1.start({tx: 3, rx: 4, cts:5, rts:6, flowcontrol: 'rts-cts'});
+obniz.uart1.send("Hi");
 ```
+
 ## send(data)
 
 データを送信します。
