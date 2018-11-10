@@ -51,7 +51,6 @@ class FlickHat {
       this.led2 = this.obniz.wired("LED", { anode: this.params.led2 });
     }
 
-    this.readSize = 132;
   }
 
   async start(callbackFwInfo) {
@@ -69,6 +68,7 @@ class FlickHat {
     };
     this.rotation = 0;
     this.lastRotation = 0;
+    this.readSize = 132;
 
     await this.polling();
     await this.obniz.wait(200);
