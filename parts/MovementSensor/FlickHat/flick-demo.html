@@ -80,8 +80,10 @@ obniz.onconnect = async function() {
     seq = gesture.seq;
     $('#seq').text(seq);
     $('#gesture').text(`form: ${gesture.from}, to: ${gesture.to}`);
-    flick.led1.blink(100);
-    setTimeout(function(){ flick.led1.off(); }, 500);
+    if (typeof flick.led1 !== 'undefined') {
+      flick.led1.blink(100);
+      setTimeout(function(){ flick.led1.off(); }, 500);
+    }
     displayEx.drawImmediately = false;
     switch (gesture.raw[0]) {
     case 2: //→
@@ -118,8 +120,10 @@ obniz.onconnect = async function() {
     seq = touch.seq;
     $('#seq').text(seq);
     $('#touch').text(`[ ${touch.positions.toString().replace(',', ', ')} ]`);
-    flick.led2.blink(100);
-    setTimeout(function(){ flick.led2.off(); }, 500);
+    if (typeof flick.led2 !== 'undefined') {
+      flick.led2.blink(100);
+      setTimeout(function(){ flick.led2.off(); }, 500);
+    }
     touch.positions.forEach(function(pos) {
       switch (pos) {
       case 'south':
