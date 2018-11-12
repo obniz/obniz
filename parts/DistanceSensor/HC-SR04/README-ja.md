@@ -55,7 +55,7 @@ while(true) {
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
 hcsr04.temp = 36;
-const distance = hcsr04.measureWait();
+var distance = await hcsr04.measureWait();
 console.log("distance " + distance + " mm")
 ```
 
@@ -67,7 +67,7 @@ console.log("distance " + distance + " mm")
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
 hcsr04.reset_alltime = true;
-const distance = hcsr04.measureWait();
+var distance = await hcsr04.measureWait();
 console.log("distance " + distance + " mm")
 ```
 
