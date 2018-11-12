@@ -28,6 +28,6 @@ pressure.onchange =function(press){
 ```javascript
 // Javascript Example
 var pressure = obniz.wired("FSR40X", {pin0:0, pin1:1});
-var press = pressure.getWait();
+var press = await pressure.getWait();
 console.log(press)
 ```

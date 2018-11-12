@@ -56,7 +56,7 @@ By default calculation temp is 15 degree(Celsius). Change this to get more accur
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
 hcsr04.temp = 36;
-const distance = hcsr04.measureWait();
+const distance = await hcsr04.measureWait();
 console.log("distance " + distance + " mm")
 ```
 
@@ -67,7 +67,7 @@ set true to this property to automatic power reset after each measurement.
 // Javascript Example
 var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
 hcsr04.reset_alltime = true;
-const distance = hcsr04.measureWait();
+const distance = await hcsr04.measureWait();
 console.log("distance " + distance + " mm")
 ```
 
