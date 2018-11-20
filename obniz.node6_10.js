@@ -16397,6 +16397,7 @@ class FlickHat {
       };
       _this.rotation = 0;
       _this.lastRotation = 0;
+      _this.readSize = 132;
 
       yield _this.polling();
       yield _this.obniz.wait(200);
@@ -16441,7 +16442,7 @@ class FlickHat {
         _this2.io_ts.pull('0v');
         //await this.obniz.wait(1);
 
-        let data = yield _this2.i2c.readWait(_this2.address, 132);
+        let data = yield _this2.i2c.readWait(_this2.address, _this2.readSize);
         let size = data[0];
         // let flag = data[1];
         let seq = data[2];
@@ -16618,10 +16619,13 @@ class FlickHat {
               };
               _this2.fwInfo = fwInfo;
               if (typeof _this2.onfwinfo == 'function') _this2.onfwinfo(fwInfo);
+              _this2.readSize = 26;
               break;
 
             default:
-          }
+              console.error(`unknown message: 0x${msgID.toString(16)}, data:${data.slice(0, size).map(function (v) {
+                return '0x' + v.toString(16);
+              })}`);}
         }
 
         _this2.io_ts.pull('3v');

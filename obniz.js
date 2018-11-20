@@ -24086,6 +24086,7 @@ class FlickHat {
     };
     this.rotation = 0;
     this.lastRotation = 0;
+    this.readSize = 132;
 
     await this.polling();
     await this.obniz.wait(200);
@@ -24161,7 +24162,7 @@ class FlickHat {
       this.io_ts.pull('0v');
       //await this.obniz.wait(1);
 
-      let data = await this.i2c.readWait(this.address, 132);
+      let data = await this.i2c.readWait(this.address, this.readSize);
       let size = data[0];
       // let flag = data[1];
       let seq = data[2];
@@ -24377,10 +24378,11 @@ class FlickHat {
             };
             this.fwInfo = fwInfo;
             if (typeof this.onfwinfo == 'function') this.onfwinfo(fwInfo);
+            this.readSize = 26;
             break;
 
           default:
-        }
+            console.error(`unknown message: 0x${msgID.toString(16)}, data:${data.slice(0, size).map(v => '0x' + v.toString(16))}`);        }
       }
 
       this.io_ts.pull('3v');
