@@ -52,14 +52,14 @@ describe('8-ble', function() {
     let ad = service.advData;
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
-    console.log('service created');
+    //console.log('service created');
     await obnizA.pingWait();
-    console.log('scannning');
+    //console.log('scannning');
     let peripheral = await obnizB.ble.scan.startOneWait({ uuids: ['FFF0'] });
     if (!peripheral) {
       throw new Error('NOT FOUND');
     }
-    console.log('FOUND');
+    //console.log('FOUND');
 
     expect(obnizA.ble.advertisement.adv_data).to.be.deep.equal(
       peripheral.adv_data
@@ -69,7 +69,7 @@ describe('8-ble', function() {
     if (!connected) {
       throw new Error('DISCONNECTED');
     }
-    console.log('CONNECTED');
+    //console.log('CONNECTED');
 
     this.peripheral = peripheral;
     this.service = service;
@@ -217,7 +217,7 @@ describe('8-ble', function() {
     expect(targetChara.canIndicate()).to.be.equal(false);
 
     targetChara.registerNotify(function() {
-      console.log('notify!');
+      //console.log('notify!');
       notifyed = true;
     });
     await obnizB.pingWait();
