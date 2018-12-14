@@ -523,24 +523,22 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
     {
         "io": {
             "animation": {
-                "animation": {
-                    "name": "animation-1",
-                    "status": "loop",
-                    "states": [
-                        {
-                            "duration": 500,
-                            "state": {
-                                "io0": true
-                            }
-                        },
-                        {
-                            "duration": 500,
-                            "state": {
-                                "io0": false
-                            }
+                "name": "animation-1",
+                "status": "loop",
+                "states": [
+                    {
+                        "duration": 500,
+                        "state": {
+                            "io0": true
                         }
-                    ]
-                }
+                    },
+                    {
+                        "duration": 500,
+                        "state": {
+                            "io0": false
+                        }
+                    }
+                ]
             }
         }
     }

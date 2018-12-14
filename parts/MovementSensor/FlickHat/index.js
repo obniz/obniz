@@ -363,7 +363,12 @@ class FlickHat {
             break;
 
           default:
-            console.error(`unknown message: 0x${msgID.toString(16)}, data:${data.slice(0, size).map(v => '0x' + v.toString(16))}`);        }
+            console.error(
+              `unknown message: 0x${msgID.toString(16)}, data:${data
+                .slice(0, size)
+                .map(v => '0x' + v.toString(16))}`
+            );
+        }
       }
 
       this.io_ts.pull('3v');

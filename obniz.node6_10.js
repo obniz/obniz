@@ -862,7 +862,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
@@ -16625,7 +16625,8 @@ class FlickHat {
             default:
               console.error(`unknown message: 0x${msgID.toString(16)}, data:${data.slice(0, size).map(function (v) {
                 return '0x' + v.toString(16);
-              })}`);}
+              })}`);
+          }
         }
 
         _this2.io_ts.pull('3v');
