@@ -6,7 +6,7 @@ class KXSC7_2050 {
 
   static info() {
     return {
-      name: 'KXSC7_2050',
+      name: 'KXSC7-2050',
     };
   }
 
