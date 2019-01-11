@@ -28,9 +28,7 @@ sensor.start(function( distance ){
 })
 ```
 
-
-
-## start(callback(distance))
+## [await] getWait()
 一度だけ距離を測定します
 
 ```javascript

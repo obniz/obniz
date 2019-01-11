@@ -36,7 +36,7 @@ sensor.onChange = function(values){
 ## onChange = function({x: y: z:})
 
 Specifying a callback function for one of value changes of x,y,z.
-The value is regarding gravity. 1 measn 9.8m^2.
+The value is regarding gravity. 1 measn 9.8m^2. The value will be -2<= and <= +2.
 
 ```javascript
 
