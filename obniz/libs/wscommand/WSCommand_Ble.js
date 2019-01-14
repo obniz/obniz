@@ -28,6 +28,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandReadDescriptor = 16;
     this._CommandNotifyCharacteristic = 17;
 
+    this._CommandSetDeviceName = 19;
     this._CommandServerStartPeripheral = 20;
     this._CommandServerNotifyConnect = 21;
     this._CommandServerAddService = 22;
@@ -43,6 +44,11 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerNotifyReadDescriptorValue = 32;
     this._CommandServerNofityCharavteristic = 33;
     this._CommandServerStartStopService = 34;
+
+    this._CommandSecuritySetAuth = 35;
+    this._CommandSecuritySetEncryptionLevel = 36;
+    this._CommandSecuritySetEnableKeyTypes = 37;
+    this._CommandSecuritySetKeyMaxSize = 38;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -90,6 +96,23 @@ class WSCommand_Ble extends WSCommand {
     this._commandResults = {
       success: 0,
       failed: 1,
+    };
+
+    this._securityAuthValues = {
+      0x01: 'bonding',
+      0x04: 'mitm',
+      0x08: 'secure_connection',
+    };
+    this._securityEncryotionLevels = {
+      none: 0x01,
+      encryption: 0x02,
+      mitm: 0x03,
+    };
+
+    this._securityKeyTypes = {
+      0x01: 'ltk',
+      0x02: 'irk',
+      0x04: 'csrk',
     };
   }
 
@@ -417,10 +440,10 @@ class WSCommand_Ble extends WSCommand {
     let permissionFlags = {
       0x001: 'read',
       0x002: 'read_encrypted',
-      0x004: 'read_enc_mitm',
+      0x004: 'read_encrypted_mitm',
       0x010: 'write',
       0x020: 'write_encrypted',
-      0x040: 'write_enc_mitm',
+      0x040: 'write_encrypted_mitm',
       0x080: 'write_signed',
       0x100: 'write_signed_mitm',
     };
@@ -672,6 +695,60 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
   }
 
+  securityAuth(params) {
+    let schema = [
+      {
+        path: 'security.auth',
+        type: 'flag',
+        length: 1,
+        required: true,
+        flags: this._securityAuthValues,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetAuth, buf);
+  }
+
+  securityEncryptionLevel(params) {
+    let schema = [
+      {
+        path: 'security.encryption_level',
+        type: 'enum',
+        length: 1,
+        enum: this._securityEncryotionLevels,
+        required: true,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetEncryptionLevel, buf);
+  }
+  securityKeyType(params) {
+    let schema = [
+      {
+        path: 'security.key.type',
+        type: 'flag',
+        length: 1,
+        required: true,
+        flags: this._securityKeyTypes,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetEnableKeyTypes, buf);
+  }
+
+  securityKeySize(params) {
+    let schema = [
+      {
+        path: 'security.key.max_size',
+        type: 'char',
+        length: 1,
+        required: true,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetKeyMaxSize, buf);
+  }
+
   parseFromJson(json) {
     let module = json['ble'];
     if (module === undefined) {
@@ -763,6 +840,22 @@ class WSCommand_Ble extends WSCommand {
       {
         uri: '/request/ble/peripheral/descriptor_write',
         onValid: this.peripheralDescriptorWrite,
+      },
+      {
+        uri: '/request/ble/security/auth',
+        onValid: this.securityAuth,
+      },
+      {
+        uri: '/request/ble/security/encription',
+        onValid: this.securityEncryptionLevel,
+      },
+      {
+        uri: '/request/ble/security/key/type',
+        onValid: this.securityKeyType,
+      },
+      {
+        uri: '/request/ble/security/key/max_size',
+        onValid: this.securityKeySize,
       },
     ];
     let res = this.validateCommandSchema(schemaData, module, 'ble');
@@ -1274,6 +1367,7 @@ class WSCommand_Ble extends WSCommand {
       0x06: 'device not found',
       0x07: 'ble is busy',
       0x08: 'service already running',
+      0x09: 'security param are already set',
       0xff: 'error',
     };
 
@@ -1306,6 +1400,12 @@ class WSCommand_Ble extends WSCommand {
       30: 'on reading descriptor',
       31: 'on writing descriptor from remote',
       32: 'on reading descriptor from remote',
+      33: 'on notify characteristic',
+      34: 'on start/stop service',
+      35: 'on set security auth param',
+      36: 'on set security encryption level param',
+      37: 'on set security key type param',
+      38: 'on set security key size param',
     };
 
     results.message =

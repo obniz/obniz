@@ -12,6 +12,9 @@ let semver = require('semver');
 let fs = require('fs');
 let ejs = require('ejs');
 
+const chai = require('chai');
+const expect = chai.expect;
+
 let Obniz;
 let MochaChrome;
 if (
@@ -308,6 +311,53 @@ let testUtil = {
       return false;
     }
     return true;
+  },
+
+  checkJsonToBinary: function(requestJson, binary, self) {
+    if (typeof requestJson === 'string') {
+      requestJson = JSON.parse(requestJson);
+    }
+    if (
+      Array.isArray(binary) &&
+      binary.length > 0 &&
+      typeof binary[0] === 'string'
+    ) {
+      binary = binary.join(' ');
+    }
+    if (typeof binary === 'string') {
+      binary = binary.split(' ').map(function(val, index) {
+        return parseInt(val, 16);
+      });
+
+      expect(binary.length).to.be.above(2);
+    }
+    binary = new Uint8Array(binary);
+
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = self.obniz.constructor.WSCommand.compress(
+      self.obniz.wscommands,
+      requestJson[0]
+    );
+
+    expect(compress).to.be.deep.equal(binary);
+  },
+
+  checkBinaryToJson: function(responseBinaryString, expectedJson, self) {
+    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
+      return parseInt(val, 16);
+    });
+    let binary = new Uint8Array(binaryArray);
+
+    let json = self.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectedJson);
   },
 };
 

@@ -259,7 +259,7 @@ class JsonBinaryConverter {
     let array = [];
     let length = schema.length || 1;
     for (let i = length - 1; i >= 0; i--) {
-      array.push((value >> i) & 0xff);
+      array.push((value >> (i * 8)) & 0xff);
     }
 
     return array;

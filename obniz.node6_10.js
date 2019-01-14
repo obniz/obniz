@@ -134,6 +134,11 @@ var map = {
 	"./request/ble/peripheral/servie_start.yml": "./json_schema/request/ble/peripheral/servie_start.yml",
 	"./request/ble/peripheral/servie_stop.yml": "./json_schema/request/ble/peripheral/servie_stop.yml",
 	"./request/ble/peripheral/servie_stop_all.yml": "./json_schema/request/ble/peripheral/servie_stop_all.yml",
+	"./request/ble/security/auth.yml": "./json_schema/request/ble/security/auth.yml",
+	"./request/ble/security/encryption.yml": "./json_schema/request/ble/security/encryption.yml",
+	"./request/ble/security/index.yml": "./json_schema/request/ble/security/index.yml",
+	"./request/ble/security/key_max_size.yml": "./json_schema/request/ble/security/key_max_size.yml",
+	"./request/ble/security/key_type.yml": "./json_schema/request/ble/security/key_type.yml",
 	"./request/display/clear.yml": "./json_schema/request/display/clear.yml",
 	"./request/display/index.yml": "./json_schema/request/display/index.yml",
 	"./request/display/pin_assign.yml": "./json_schema/request/display/pin_assign.yml",
@@ -477,7 +482,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"},{"$ref":"/request/ble/security"}]}
 
 /***/ }),
 
@@ -599,6 +604,61 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop_all","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/auth.yml":
+/*!***************************************************!*\
+  !*** ./json_schema/request/ble/security/auth.yml ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/auth","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["auth"],"properties":{"auth":{"type":"array","default":["bonding"],"minItems":"1,","items":{"type":"string","enum":["bonding","mitm","secure_connection"]}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/encryption.yml":
+/*!*********************************************************!*\
+  !*** ./json_schema/request/ble/security/encryption.yml ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/encription","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["encryption_level"],"properties":{"encryption_level":{"type":"string","enum":["none","encryption","mitm"]}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/index.yml":
+/*!****************************************************!*\
+  !*** ./json_schema/request/ble/security/index.yml ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/encryption"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/key_max_size.yml":
+/*!***********************************************************!*\
+  !*** ./json_schema/request/ble/security/key_max_size.yml ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/key_type.yml":
+/*!*******************************************************!*\
+  !*** ./json_schema/request/ble/security/key_type.yml ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
 
 /***/ }),
 
@@ -862,7 +922,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
@@ -3281,6 +3341,7 @@ const BleDescriptor = __webpack_require__(/*! ./bleDescriptor */ "./obniz/libs/e
 const BleRemotePeripheral = __webpack_require__(/*! ./bleRemotePeripheral */ "./obniz/libs/embeds/ble/bleRemotePeripheral.js");
 const BleAdvertisement = __webpack_require__(/*! ./bleAdvertisement */ "./obniz/libs/embeds/ble/bleAdvertisement.js");
 const BleScan = __webpack_require__(/*! ./bleScan */ "./obniz/libs/embeds/ble/bleScan.js");
+const BleSecurity = __webpack_require__(/*! ./bleSecurity */ "./obniz/libs/embeds/ble/bleSecurity.js");
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -3296,6 +3357,7 @@ class ObnizBLE {
 
     this.advertisement = new BleAdvertisement(Obniz);
     this.scan = new BleScan(Obniz);
+    this.security = new BleSecurity(Obniz);
     this._reset();
   }
 
@@ -5145,6 +5207,103 @@ class BleScan {
 }
 
 module.exports = BleScan;
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleSecurity.js":
+/*!**********************************************!*\
+  !*** ./obniz/libs/embeds/ble/bleSecurity.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+
+class BleSecurity {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.emitter = new emitter();
+  }
+
+  setAuth(authTypes) {
+    if (!Array.isArray(authTypes)) {
+      authTypes = [authTypes];
+    }
+    let sendTypes = authTypes.map(elm => {
+      return elm.toLowerCase();
+    }).filter(elm => {
+      return ['mitm', 'secure_connection', 'bonding'].includes(elm);
+    });
+
+    if (sendTypes.length !== authTypes.length) {
+      throw new Error('unknown auth type');
+    }
+
+    this.Obniz.send({
+      ble: {
+        security: {
+          auth: authTypes
+        }
+      }
+    });
+  }
+
+  setEncryptionLevel(level) {
+    level = level.toLowerCase();
+    let levels = ['none', 'encryption', 'mitm'];
+    if (!levels.includes(level)) {
+      throw new Error('unknown encryption level : ' + level);
+    }
+    this.Obniz.send({
+      ble: {
+        security: {
+          encryption_level: level
+        }
+      }
+    });
+  }
+
+  setEnableKeyTypes(keyTypes) {
+    if (!Array.isArray(keyTypes)) {
+      keyTypes = [keyTypes];
+    }
+    let sendTypes = keyTypes.map(elm => {
+      return elm.toLowerCase();
+    }).filter(elm => {
+      return ['ltk', 'csrk', 'irk'].includes(elm);
+    });
+
+    if (sendTypes.length !== keyTypes.length) {
+      throw new Error('unknown key type');
+    }
+
+    this.Obniz.send({
+      ble: {
+        security: {
+          key: { type: sendTypes }
+        }
+      }
+    });
+  }
+
+  setKeyMaxSize(size) {
+    if (typeof size !== 'number') {
+      throw new Error('please provide key size in number');
+    }
+    this.Obniz.send({
+      ble: {
+        security: {
+          key: { max_size: size }
+        }
+      }
+    });
+  }
+}
+
+module.exports = BleSecurity;
 
 /***/ }),
 
@@ -8843,6 +9002,11 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerNofityCharavteristic = 33;
     this._CommandServerStartStopService = 34;
 
+    this._CommandSecuritySetAuth = 35;
+    this._CommandSecuritySetEncryptionLevel = 36;
+    this._CommandSecuritySetEnableKeyTypes = 37;
+    this._CommandSecuritySetKeyMaxSize = 38;
+
     this._CommandScanResultsDevice = {
       breder: 0x01,
       ble: 0x02,
@@ -8889,6 +9053,23 @@ class WSCommand_Ble extends WSCommand {
     this._commandResults = {
       success: 0,
       failed: 1
+    };
+
+    this._securityAuthValues = {
+      0x01: 'bonding',
+      0x04: 'mitm',
+      0x08: 'secure_connection'
+    };
+    this._securityEncryotionLevels = {
+      none: 0x01,
+      encryption: 0x02,
+      mitm: 0x03
+    };
+
+    this._securityKeyTypes = {
+      0x01: 'ltk',
+      0x02: 'irk',
+      0x04: 'csrk'
     };
   }
 
@@ -9366,6 +9547,52 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
   }
 
+  securityAuth(params) {
+    let schema = [{
+      path: 'security.auth',
+      type: 'flag',
+      length: 1,
+      required: true,
+      flags: this._securityAuthValues
+    }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetAuth, buf);
+  }
+
+  securityEncryptionLevel(params) {
+    let schema = [{
+      path: 'security.encryption_level',
+      type: 'enum',
+      length: 1,
+      enum: this._securityEncryotionLevels,
+      required: true
+    }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetEncryptionLevel, buf);
+  }
+  securityKeyType(params) {
+    let schema = [{
+      path: 'security.key.type',
+      type: 'flag',
+      length: 1,
+      required: true,
+      flags: this._securityKeyTypes
+    }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetEnableKeyTypes, buf);
+  }
+
+  securityKeySize(params) {
+    let schema = [{
+      path: 'security.key.max_size',
+      type: 'char',
+      length: 1,
+      required: true
+    }];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetKeyMaxSize, buf);
+  }
+
   parseFromJson(json) {
     let module = json['ble'];
     if (module === undefined) {
@@ -9434,6 +9661,18 @@ class WSCommand_Ble extends WSCommand {
     }, {
       uri: '/request/ble/peripheral/descriptor_write',
       onValid: this.peripheralDescriptorWrite
+    }, {
+      uri: '/request/ble/security/auth',
+      onValid: this.securityAuth
+    }, {
+      uri: '/request/ble/security/encription',
+      onValid: this.securityEncryptionLevel
+    }, {
+      uri: '/request/ble/security/key/type',
+      onValid: this.securityKeyType
+    }, {
+      uri: '/request/ble/security/key/max_size',
+      onValid: this.securityKeySize
     }];
     let res = this.validateCommandSchema(schemaData, module, 'ble');
     if (res.valid === 0) {
@@ -16625,7 +16864,8 @@ class FlickHat {
             default:
               console.error(`unknown message: 0x${msgID.toString(16)}, data:${data.slice(0, size).map(function (v) {
                 return '0x' + v.toString(16);
-              })}`);}
+              })}`);
+          }
         }
 
         _this2.io_ts.pull('3v');

@@ -5,6 +5,7 @@ const BleDescriptor = require('./bleDescriptor');
 const BleRemotePeripheral = require('./bleRemotePeripheral');
 const BleAdvertisement = require('./bleAdvertisement');
 const BleScan = require('./bleScan');
+const BleSecurity = require('./bleSecurity');
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -20,6 +21,7 @@ class ObnizBLE {
 
     this.advertisement = new BleAdvertisement(Obniz);
     this.scan = new BleScan(Obniz);
+    this.security = new BleSecurity(Obniz);
     this._reset();
   }
 
@@ -204,6 +206,10 @@ class ObnizBLE {
         }
       }
 
+      if ([35, 36, 37, 38, 39].includes(params.function_code)) {
+        this.security.onerror(params);
+        handled = true;
+      }
       if (!handled) {
         this.Obniz.error(
           `ble ${params.message} service=${

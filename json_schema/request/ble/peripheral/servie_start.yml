@@ -59,8 +59,14 @@ properties:
                                         default : [read,write]
                                         type : string
                                         enum :
-                                          - read
-                                          - write
+                                           - read
+                                           - read_encrypted
+                                           - read_encrypted_mitm
+                                           - write
+                                           - write_encrypted
+                                           - write_encrypted_mitm
+                                           - write_signed
+                                           - write_signed_mitm
 
                                     descriptors :
                                         type : array
@@ -79,6 +85,12 @@ properties:
                                                     default : [read,write]
                                                     type : string
                                                     enum :
-                                                      - read
-                                                      - write
+                                                       - read
+                                                       - read_encrypted
+                                                       - read_encrypted_mitm
+                                                       - write
+                                                       - write_encrypted
+                                                       - write_encrypted_mitm
+                                                       - write_signed
+                                                       - write_signed_mitm
 
