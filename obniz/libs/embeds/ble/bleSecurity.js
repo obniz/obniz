@@ -1,4 +1,5 @@
 const emitter = require('eventemitter3');
+const semver = require('semver');
 
 class BleSecurity {
   constructor(Obniz) {
@@ -6,7 +7,18 @@ class BleSecurity {
     this.emitter = new emitter();
   }
 
+  checkIntroducedFirmware(introducedVersion, functionName) {
+    let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
+    if (results) {
+      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
+        this.Obniz.firmware_ver
+      })`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
   setAuth(authTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setAuth');
     if (!Array.isArray(authTypes)) {
       authTypes = [authTypes];
     }
@@ -32,6 +44,7 @@ class BleSecurity {
   }
 
   setEncryptionLevel(level) {
+    this.checkIntroducedFirmware('1.1.0', 'setEncryptionLevel');
     level = level.toLowerCase();
     let levels = ['none', 'encryption', 'mitm'];
     if (!levels.includes(level)) {
@@ -47,6 +60,7 @@ class BleSecurity {
   }
 
   setEnableKeyTypes(keyTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setEnableKeyTypes');
     if (!Array.isArray(keyTypes)) {
       keyTypes = [keyTypes];
     }
@@ -72,6 +86,7 @@ class BleSecurity {
   }
 
   setKeyMaxSize(size) {
+    this.checkIntroducedFirmware('1.1.0', 'setKeyMaxSize');
     if (typeof size !== 'number') {
       throw new Error('please provide key size in number');
     }
