@@ -7,6 +7,52 @@ class BleSecurity {
     this.emitter = new emitter();
   }
 
+  setModeLevel(mode, level) {
+    let auth = undefined;
+    let keys = undefined;
+    let indicateSecurityLevel = undefined;
+
+    if (mode == 1) {
+      if (level == 1) {
+        auth = [];
+        indicateSecurityLevel = 0; //no pairing request
+        keys = ['LTK', 'IRK'];
+      } else if (level == 2) {
+        auth = ['bonding'];
+        indicateSecurityLevel = 2;
+        keys = ['LTK', 'IRK'];
+      } else if (level == 3) {
+        //TODO
+        // auth = ['bonding','mitm'];
+        // indicateSecurityLevel = 3;
+        // keys = ['LTK', 'IRK'];
+      }
+    } else if (mode == 2) {
+      if (level == 1) {
+        //TODO
+        // auth = [];
+        // keys = ['LTK', 'IRK','CSRK'];
+      } else if (level == 2) {
+        //TODO
+        // auth = ['bonding'];
+        // keys = ['LTK', 'IRK','CSRK'];
+      }
+    }
+
+    if (
+      auth !== undefined &&
+      indicateSecurityLevel !== undefined &&
+      keys !== undefined
+    ) {
+      this.setAuth(auth);
+      this.setIndicateSecurityLevel(indicateSecurityLevel);
+      this.setEnableKeyTypes(keys);
+    } else {
+      let msg = `BLE security mode${mode}, level${level} is not available.`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
   checkIntroducedFirmware(introducedVersion, functionName) {
     let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
     if (results) {
@@ -43,17 +89,16 @@ class BleSecurity {
     });
   }
 
-  setEncryptionLevel(level) {
-    this.checkIntroducedFirmware('1.1.0', 'setEncryptionLevel');
-    level = level.toLowerCase();
-    let levels = ['none', 'encryption', 'mitm'];
-    if (!levels.includes(level)) {
-      throw new Error('unknown encryption level : ' + level);
+  setIndicateSecurityLevel(level) {
+    this.checkIntroducedFirmware('1.1.0', 'setIndicateSecurityLevel');
+
+    if (typeof level !== 'number') {
+      throw new Error('unknown secrity level : ' + level);
     }
     this.Obniz.send({
       ble: {
         security: {
-          encryption_level: level,
+          indicate_security_level: level,
         },
       },
     });
@@ -94,6 +139,16 @@ class BleSecurity {
       ble: {
         security: {
           key: { max_size: size },
+        },
+      },
+    });
+  }
+
+  clearBondingDevicesList() {
+    this.Obniz.send({
+      ble: {
+        security: {
+          devices: { clear: true },
         },
       },
     });

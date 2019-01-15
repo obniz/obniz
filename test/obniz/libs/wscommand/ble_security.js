@@ -49,23 +49,21 @@ describe('ble.security', function() {
   });
 
   it('encryption_level1', function() {
-    let requestJson = [{ ble: { security: { encryption_level: 'none' } } }];
+    let requestJson = [{ ble: { security: { indicate_security_level: 1 } } }];
     let expecteBinaryStrings = ['b 24 01 1'];
 
     testUtil.checkJsonToBinary(requestJson, expecteBinaryStrings, this);
   });
 
   it('encryption_level2', function() {
-    let requestJson = [
-      { ble: { security: { encryption_level: 'encryption' } } },
-    ];
-    let expecteBinaryStrings = ['b 24 01 2'];
+    let requestJson = [{ ble: { security: { indicate_security_level: 0 } } }];
+    let expecteBinaryStrings = ['b 24 01 0'];
 
     testUtil.checkJsonToBinary(requestJson, expecteBinaryStrings, this);
   });
 
   it('encryption_level3', function() {
-    let requestJson = [{ ble: { security: { encryption_level: 'mitm' } } }];
+    let requestJson = [{ ble: { security: { indicate_security_level: 3 } } }];
     let expecteBinaryStrings = ['b 24 01 3'];
 
     testUtil.checkJsonToBinary(requestJson, expecteBinaryStrings, this);
@@ -123,6 +121,12 @@ describe('ble.security', function() {
   it('key size bad', function() {
     let requestJson = [{ ble: { security: { key: { max_size: 6 } } } }];
     let expecteBinaryStrings = ['b 26 01 6'];
+
+    testUtil.checkJsonToBinary(requestJson, expecteBinaryStrings, this);
+  });
+  it('clear devies ', function() {
+    let requestJson = [{ ble: { security: { devices: { clear: true } } } }];
+    let expecteBinaryStrings = ['b 28 0'];
 
     testUtil.checkJsonToBinary(requestJson, expecteBinaryStrings, this);
   });

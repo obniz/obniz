@@ -135,8 +135,9 @@ var map = {
 	"./request/ble/peripheral/servie_stop.yml": "./json_schema/request/ble/peripheral/servie_stop.yml",
 	"./request/ble/peripheral/servie_stop_all.yml": "./json_schema/request/ble/peripheral/servie_stop_all.yml",
 	"./request/ble/security/auth.yml": "./json_schema/request/ble/security/auth.yml",
-	"./request/ble/security/encryption.yml": "./json_schema/request/ble/security/encryption.yml",
+	"./request/ble/security/devices_clear.yml": "./json_schema/request/ble/security/devices_clear.yml",
 	"./request/ble/security/index.yml": "./json_schema/request/ble/security/index.yml",
+	"./request/ble/security/indicate_security_level.yml": "./json_schema/request/ble/security/indicate_security_level.yml",
 	"./request/ble/security/key_max_size.yml": "./json_schema/request/ble/security/key_max_size.yml",
 	"./request/ble/security/key_type.yml": "./json_schema/request/ble/security/key_type.yml",
 	"./request/display/clear.yml": "./json_schema/request/display/clear.yml",
@@ -581,7 +582,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","read_encrypted","read_encrypted_mitm","write","write_encrypted","write_encrypted_mitm","write_signed","write_signed_mitm"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","read_encrypted","read_encrypted_mitm","write","write_encrypted","write_encrypted_mitm","write_signed","write_signed_mitm"]}}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -618,14 +619,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
-/***/ "./json_schema/request/ble/security/encryption.yml":
-/*!*********************************************************!*\
-  !*** ./json_schema/request/ble/security/encryption.yml ***!
-  \*********************************************************/
+/***/ "./json_schema/request/ble/security/devices_clear.yml":
+/*!************************************************************!*\
+  !*** ./json_schema/request/ble/security/devices_clear.yml ***!
+  \************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/encription","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["encryption_level"],"properties":{"encryption_level":{"type":"string","enum":["none","encryption","mitm"]}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices/clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
 
 /***/ }),
 
@@ -636,7 +637,18 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/encryption"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices/clear"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/indicate_security_level.yml":
+/*!**********************************************************************!*\
+  !*** ./json_schema/request/ble/security/indicate_security_level.yml ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/indicate_security_level","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["indicate_security_level"],"properties":{"indicate_security_level":{"type":"integer","min":0,"max":4}}}}}
 
 /***/ }),
 
@@ -3526,6 +3538,10 @@ class ObnizBLE {
         }
       }
 
+      if ([35, 36, 37, 38, 39].includes(params.function_code)) {
+        this.security.onerror(params);
+        handled = true;
+      }
       if (!handled) {
         this.Obniz.error(`ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`);
       }
@@ -5221,6 +5237,7 @@ module.exports = BleScan;
 
 
 const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
+const semver = __webpack_require__(/*! semver */ "semver");
 
 class BleSecurity {
   constructor(Obniz) {
@@ -5228,7 +5245,58 @@ class BleSecurity {
     this.emitter = new emitter();
   }
 
+  setModeLevel(mode, level) {
+    let auth = undefined;
+    let keys = undefined;
+    let indicateSecurityLevel = undefined;
+
+    if (mode == 1) {
+      if (level == 1) {
+        auth = [];
+        indicateSecurityLevel = 0; //no pairing request
+        keys = ['LTK', 'IRK'];
+      } else if (level == 2) {
+        auth = ['bonding'];
+        indicateSecurityLevel = 2;
+        keys = ['LTK', 'IRK'];
+      } else if (level == 3) {
+        //TODO
+        // auth = ['bonding','mitm'];
+        // indicateSecurityLevel = 3;
+        // keys = ['LTK', 'IRK'];
+      }
+    } else if (mode == 2) {
+      if (level == 1) {
+        //TODO
+        // auth = [];
+        // keys = ['LTK', 'IRK','CSRK'];
+      } else if (level == 2) {
+        //TODO
+        // auth = ['bonding'];
+        // keys = ['LTK', 'IRK','CSRK'];
+      }
+    }
+
+    if (auth !== undefined && indicateSecurityLevel !== undefined && keys !== undefined) {
+      this.setAuth(auth);
+      this.setIndicateSecurityLevel(indicateSecurityLevel);
+      this.setEnableKeyTypes(keys);
+    } else {
+      let msg = `BLE security mode${mode}, level${level} is not available.`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
+  checkIntroducedFirmware(introducedVersion, functionName) {
+    let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
+    if (results) {
+      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${this.Obniz.firmware_ver})`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
   setAuth(authTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setAuth');
     if (!Array.isArray(authTypes)) {
       authTypes = [authTypes];
     }
@@ -5251,22 +5319,23 @@ class BleSecurity {
     });
   }
 
-  setEncryptionLevel(level) {
-    level = level.toLowerCase();
-    let levels = ['none', 'encryption', 'mitm'];
-    if (!levels.includes(level)) {
-      throw new Error('unknown encryption level : ' + level);
+  setIndicateSecurityLevel(level) {
+    this.checkIntroducedFirmware('1.1.0', 'setIndicateSecurityLevel');
+
+    if (typeof level !== 'number') {
+      throw new Error('unknown secrity level : ' + level);
     }
     this.Obniz.send({
       ble: {
         security: {
-          encryption_level: level
+          indicate_security_level: level
         }
       }
     });
   }
 
   setEnableKeyTypes(keyTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setEnableKeyTypes');
     if (!Array.isArray(keyTypes)) {
       keyTypes = [keyTypes];
     }
@@ -5290,6 +5359,7 @@ class BleSecurity {
   }
 
   setKeyMaxSize(size) {
+    this.checkIntroducedFirmware('1.1.0', 'setKeyMaxSize');
     if (typeof size !== 'number') {
       throw new Error('please provide key size in number');
     }
@@ -5300,6 +5370,28 @@ class BleSecurity {
         }
       }
     });
+  }
+
+  clearBondingDevicesList() {
+    this.Obniz.send({
+      ble: {
+        security: {
+          devices: { clear: true }
+        }
+      }
+    });
+  }
+
+  onerror() {} //dummy
+
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case 'onerror':
+        {
+          this.onerror(params);
+          break;
+        }
+    }
   }
 }
 
@@ -8986,6 +9078,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandReadDescriptor = 16;
     this._CommandNotifyCharacteristic = 17;
 
+    this._CommandSetDeviceName = 19;
     this._CommandServerStartPeripheral = 20;
     this._CommandServerNotifyConnect = 21;
     this._CommandServerAddService = 22;
@@ -9006,6 +9099,8 @@ class WSCommand_Ble extends WSCommand {
     this._CommandSecuritySetEncryptionLevel = 36;
     this._CommandSecuritySetEnableKeyTypes = 37;
     this._CommandSecuritySetKeyMaxSize = 38;
+    this._CommandSecuritySetIOCapability = 39;
+    this._CommandSecurityClearBondingDevices = 40;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -9344,10 +9439,10 @@ class WSCommand_Ble extends WSCommand {
     let permissionFlags = {
       0x001: 'read',
       0x002: 'read_encrypted',
-      0x004: 'read_enc_mitm',
+      0x004: 'read_encrypted_mitm',
       0x010: 'write',
       0x020: 'write_encrypted',
-      0x040: 'write_enc_mitm',
+      0x040: 'write_encrypted_mitm',
       0x080: 'write_signed',
       0x100: 'write_signed_mitm'
     };
@@ -9559,12 +9654,11 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandSecuritySetAuth, buf);
   }
 
-  securityEncryptionLevel(params) {
+  securityIndicateLevel(params) {
     let schema = [{
-      path: 'security.encryption_level',
-      type: 'enum',
+      path: 'security.indicate_security_level',
+      type: 'char',
       length: 1,
-      enum: this._securityEncryotionLevels,
       required: true
     }];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
@@ -9591,6 +9685,10 @@ class WSCommand_Ble extends WSCommand {
     }];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandSecuritySetKeyMaxSize, buf);
+  }
+  clearBondingDevicesList(params) {
+    let buf = new Uint8Array([]); //noting to send
+    this.sendCommand(this._CommandSecurityClearBondingDevices, buf);
   }
 
   parseFromJson(json) {
@@ -9665,14 +9763,17 @@ class WSCommand_Ble extends WSCommand {
       uri: '/request/ble/security/auth',
       onValid: this.securityAuth
     }, {
-      uri: '/request/ble/security/encription',
-      onValid: this.securityEncryptionLevel
+      uri: '/request/ble/security/indicate_security_level',
+      onValid: this.securityIndicateLevel
     }, {
       uri: '/request/ble/security/key/type',
       onValid: this.securityKeyType
     }, {
       uri: '/request/ble/security/key/max_size',
       onValid: this.securityKeySize
+    }, {
+      uri: '/request/ble/security/devices/clear',
+      onValid: this.clearBondingDevicesList
     }];
     let res = this.validateCommandSchema(schemaData, module, 'ble');
     if (res.valid === 0) {
@@ -9961,6 +10062,7 @@ class WSCommand_Ble extends WSCommand {
       0x06: 'device not found',
       0x07: 'ble is busy',
       0x08: 'service already running',
+      0x09: 'security param are already set',
       0xff: 'error'
     };
 
@@ -9992,7 +10094,15 @@ class WSCommand_Ble extends WSCommand {
       29: 'on writing descriptor',
       30: 'on reading descriptor',
       31: 'on writing descriptor from remote',
-      32: 'on reading descriptor from remote'
+      32: 'on reading descriptor from remote',
+      33: 'on notify characteristic',
+      34: 'on start/stop service',
+      35: 'on set security auth param',
+      36: 'on set security encryption level param',
+      37: 'on set security key type param',
+      38: 'on set security key size param',
+      39: 'on set security io capability',
+      40: 'on clear bonding devices list'
     };
 
     results.message = errorMessage[results.error_code] + ' ' + functionMessage[results.function_code];
@@ -11788,7 +11898,7 @@ class JsonBinaryConverter {
     let array = [];
     let length = schema.length || 1;
     for (let i = length - 1; i >= 0; i--) {
-      array.push(value >> i & 0xff);
+      array.push(value >> i * 8 & 0xff);
     }
 
     return array;
@@ -17175,7 +17285,7 @@ class KXSC7_2050 {
 
   static info() {
     return {
-      name: 'KXSC7_2050'
+      name: 'KXSC7-2050'
     };
   }
 

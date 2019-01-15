@@ -6,9 +6,9 @@ basePath : "ble.security"
 description : "set obniz ble security"
 
 "anyOf":
-  -  {$ref : "/request/ble/security/encryption"}
+  -  {$ref : "/request/ble/security/indicate_security_level"}
   -  {$ref : "/request/ble/security/auth"}
   -  {$ref : "/request/ble/security/key_types"}
   -  {$ref : "/request/ble/security/key_max_size"}
 #  -  {$ref : "/request/ble/security/io_capability"}
-#  -  {$ref : "/request/b8le/security/key"}
+  -  {$ref : "/request/ble/security/devices/clear"}

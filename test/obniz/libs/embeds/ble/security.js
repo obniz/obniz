@@ -39,26 +39,26 @@ describe('ble-security', function() {
   });
 
   it('set encription none', function() {
-    this.obniz.ble.security.setEncryptionLevel('none');
+    this.obniz.ble.security.setIndicateSecurityLevel(0);
 
     expect(this.obniz).send([
-      { ble: { security: { encryption_level: 'none' } } },
+      { ble: { security: { indicate_security_level: 0 } } },
     ]);
     expect(this.obniz).to.be.finished;
   });
   it('set encription encryption', function() {
-    this.obniz.ble.security.setEncryptionLevel('encryption');
+    this.obniz.ble.security.setIndicateSecurityLevel(1);
 
     expect(this.obniz).send([
-      { ble: { security: { encryption_level: 'encryption' } } },
+      { ble: { security: { indicate_security_level: 1 } } },
     ]);
     expect(this.obniz).to.be.finished;
   });
   it('set encription mitm', function() {
-    this.obniz.ble.security.setEncryptionLevel('mitm');
+    this.obniz.ble.security.setIndicateSecurityLevel(2);
 
     expect(this.obniz).send([
-      { ble: { security: { encryption_level: 'mitm' } } },
+      { ble: { security: { indicate_security_level: 2 } } },
     ]);
     expect(this.obniz).to.be.finished;
   });
@@ -120,7 +120,86 @@ describe('ble-security', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('on scan finished', function() {
+  it('set mode level 1-1', function() {
+    this.obniz.ble.security.setModeLevel(1, 1);
+
+    expect(this.obniz).send([
+      {
+        ble: {
+          security: {
+            auth: [],
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          security: {
+            indicate_security_level: 0,
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          security: {
+            key: {
+              type: ['ltk', 'irk'],
+            },
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).to.be.finished;
+  });
+
+  it('set mode level 1-2', function() {
+    this.obniz.ble.security.setModeLevel(1, 2);
+
+    expect(this.obniz).send([
+      {
+        ble: {
+          security: {
+            auth: ['bonding'],
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          security: {
+            indicate_security_level: 2,
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).send([
+      {
+        ble: {
+          security: {
+            key: {
+              type: ['ltk', 'irk'],
+            },
+          },
+        },
+      },
+    ]);
+    expect(this.obniz).to.be.finished;
+  });
+
+  it('clear bonding devices', function() {
+    this.obniz.ble.security.clearBondingDevicesList();
+
+    expect(this.obniz).send([
+      { ble: { security: { devices: { clear: true } } } },
+    ]);
+    expect(this.obniz).to.be.finished;
+  });
+
+  it('on error', function() {
     let stub1 = sinon.stub();
 
     this.obniz.ble.security.onerror = stub1;

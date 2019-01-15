@@ -49,6 +49,8 @@ class WSCommand_Ble extends WSCommand {
     this._CommandSecuritySetEncryptionLevel = 36;
     this._CommandSecuritySetEnableKeyTypes = 37;
     this._CommandSecuritySetKeyMaxSize = 38;
+    this._CommandSecuritySetIOCapability = 39;
+    this._CommandSecurityClearBondingDevices = 40;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -709,13 +711,12 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandSecuritySetAuth, buf);
   }
 
-  securityEncryptionLevel(params) {
+  securityIndicateLevel(params) {
     let schema = [
       {
-        path: 'security.encryption_level',
-        type: 'enum',
+        path: 'security.indicate_security_level',
+        type: 'char',
         length: 1,
-        enum: this._securityEncryotionLevels,
         required: true,
       },
     ];
@@ -747,6 +748,10 @@ class WSCommand_Ble extends WSCommand {
     ];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
     this.sendCommand(this._CommandSecuritySetKeyMaxSize, buf);
+  }
+  clearBondingDevicesList(params) {
+    let buf = new Uint8Array([]); //noting to send
+    this.sendCommand(this._CommandSecurityClearBondingDevices, buf);
   }
 
   parseFromJson(json) {
@@ -846,8 +851,8 @@ class WSCommand_Ble extends WSCommand {
         onValid: this.securityAuth,
       },
       {
-        uri: '/request/ble/security/encription',
-        onValid: this.securityEncryptionLevel,
+        uri: '/request/ble/security/indicate_security_level',
+        onValid: this.securityIndicateLevel,
       },
       {
         uri: '/request/ble/security/key/type',
@@ -856,6 +861,10 @@ class WSCommand_Ble extends WSCommand {
       {
         uri: '/request/ble/security/key/max_size',
         onValid: this.securityKeySize,
+      },
+      {
+        uri: '/request/ble/security/devices/clear',
+        onValid: this.clearBondingDevicesList,
       },
     ];
     let res = this.validateCommandSchema(schemaData, module, 'ble');
@@ -1406,6 +1415,8 @@ class WSCommand_Ble extends WSCommand {
       36: 'on set security encryption level param',
       37: 'on set security key type param',
       38: 'on set security key size param',
+      39: 'on set security io capability',
+      40: 'on clear bonding devices list',
     };
 
     results.message =
