@@ -84,6 +84,11 @@
       "title": "BLE use as peripheral",
       "title-ja": "BLEペリフェラル",
       "filename": "ble-peripheral"
+    },
+    {
+      "title": "BLE security settings",
+      "title-ja": "BLEセキュリティ",
+      "filename": "ble-security"
     }
   ]
 }
