@@ -30,9 +30,7 @@ sensor.start(function( distance ){
 })
 ```
 
-
-
-## start(callback(distance))
+## [await] getWait()
 
 Measure distance once.
 
