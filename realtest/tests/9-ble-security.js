@@ -20,9 +20,7 @@ describe('9-ble-security', function() {
   it('dummy for reboot', async function() {});
 
   it('security', async function() {
-    obnizA.ble.security.setEncryptionLevel('mitm');
-    obnizA.ble.security.setAuth(['bonding']);
-    obnizA.ble.security.setEnableKeyTypes(['IRK', 'LTK']);
+    obnizA.ble.security.setModeLevel(1, 2);
 
     let SPDIService = new obnizA.ble.service({
       uuid: 'E625601E-9E55-4597-A598-76018A0D293D',
