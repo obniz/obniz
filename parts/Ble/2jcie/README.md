@@ -16,7 +16,6 @@ let omron = obniz.wired('2JCIE');
 ```
 
 
-![](./wired.png)
 
 ## [await] findWait()
 
