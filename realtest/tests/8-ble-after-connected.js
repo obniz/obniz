@@ -206,6 +206,7 @@ describe('8-ble', function() {
   });
 
   it('nofify', async () => {
+    console.log('start!');
     let notifyed = false;
     let targetChara = this.peripheral
       .getService('FFF0')
@@ -216,14 +217,23 @@ describe('8-ble', function() {
     expect(targetChara.canNotify()).to.be.equal(true);
     expect(targetChara.canIndicate()).to.be.equal(false);
 
-    targetChara.registerNotify(function() {
-      //console.log('notify!');
-      notifyed = true;
+    let p1 = new Promise(function(resolve) {
+      targetChara.registerNotify(function() {
+        console.log('notify!');
+        notifyed = true;
+        resolve();
+      });
     });
     await obnizB.pingWait();
     this.service.getCharacteristic('FFF3').notify();
     await obnizA.pingWait();
-    await obnizB.wait(10000);
+    let p2 = new Promise(function(resolve) {
+      setTimeout(function() {
+        console.log('timeout!');
+        resolve();
+      }, 10000);
+    });
+    await Promise.race([p1, p2]);
     expect(notifyed).to.be.equal(true);
   });
 

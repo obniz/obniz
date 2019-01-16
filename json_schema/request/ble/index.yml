@@ -7,3 +7,4 @@ basePath : "ble"
 "anyOf":
   -  {$ref : "/request/ble/peripheral" }
   -  {$ref : "/request/ble/central" }
+  -  {$ref : "/request/ble/security" }

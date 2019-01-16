@@ -2641,10 +2641,10 @@ Related item
 | `ble.peripheral.services[].characteristics[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.services[].characteristics[].data` | [dataArray](#dataarray)  | &nbsp; | &nbsp; |
 | `ble.peripheral.services[].characteristics[].properties[]` |  string  | <ul><li>enum <ul><li>`"broadcast"`</li><li>`"read"`</li><li>`"write_without_response"`</li><li>`"write"`</li><li>`"notify"`</li><li>`"indicate"`</li><li>`"auth"`</li><li>`"extended_properties"`</li></ul></li></ul> | &nbsp; |
-| `ble.peripheral.services[].characteristics[].permissions[]` |  string  | <ul><li>default `read,write`</li><li>enum <ul><li>`"read"`</li><li>`"write"`</li></ul></li></ul> | &nbsp; |
+| `ble.peripheral.services[].characteristics[].permissions[]` |  string  | <ul><li>default `read,write`</li><li>enum <ul><li>`"read"`</li><li>`"read_encrypted"`</li><li>`"read_encrypted_mitm"`</li><li>`"write"`</li><li>`"write_encrypted"`</li><li>`"write_encrypted_mitm"`</li><li>`"write_signed"`</li><li>`"write_signed_mitm"`</li></ul></li></ul> | &nbsp; |
 | `ble.peripheral.services[].characteristics[].descriptors[].uuid` | [uuid](#uuid)  | <ul><li>required</li></ul> | &nbsp; |
 | `ble.peripheral.services[].characteristics[].descriptors[].data` | [dataArray](#dataarray)  | &nbsp; | &nbsp; |
-| `ble.peripheral.services[].characteristics[].descriptors[].permissions[]` |  string  | <ul><li>default `read,write`</li><li>enum <ul><li>`"read"`</li><li>`"write"`</li></ul></li></ul> | &nbsp; |
+| `ble.peripheral.services[].characteristics[].descriptors[].permissions[]` |  string  | <ul><li>default `read,write`</li><li>enum <ul><li>`"read"`</li><li>`"read_encrypted"`</li><li>`"read_encrypted_mitm"`</li><li>`"write"`</li><li>`"write_encrypted"`</li><li>`"write_encrypted_mitm"`</li><li>`"write_signed"`</li><li>`"write_signed_mitm"`</li></ul></li></ul> | &nbsp; |
 
 
 

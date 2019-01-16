@@ -121,6 +121,12 @@ var map = {
 	"./request/ble/peripheral/servie_start.yml": "./json_schema/request/ble/peripheral/servie_start.yml",
 	"./request/ble/peripheral/servie_stop.yml": "./json_schema/request/ble/peripheral/servie_stop.yml",
 	"./request/ble/peripheral/servie_stop_all.yml": "./json_schema/request/ble/peripheral/servie_stop_all.yml",
+	"./request/ble/security/auth.yml": "./json_schema/request/ble/security/auth.yml",
+	"./request/ble/security/devices_clear.yml": "./json_schema/request/ble/security/devices_clear.yml",
+	"./request/ble/security/index.yml": "./json_schema/request/ble/security/index.yml",
+	"./request/ble/security/indicate_security_level.yml": "./json_schema/request/ble/security/indicate_security_level.yml",
+	"./request/ble/security/key_max_size.yml": "./json_schema/request/ble/security/key_max_size.yml",
+	"./request/ble/security/key_type.yml": "./json_schema/request/ble/security/key_type.yml",
 	"./request/display/clear.yml": "./json_schema/request/display/clear.yml",
 	"./request/display/index.yml": "./json_schema/request/display/index.yml",
 	"./request/display/pin_assign.yml": "./json_schema/request/display/pin_assign.yml",
@@ -388,7 +394,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/ble/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"},{"$ref":"/request/ble/security"}]}
 
 /***/ }),
 
@@ -451,7 +457,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/ble/peripheral/servie_start.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","write"]}}}}}}}}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_start","related":["/response/ble/peripheral/status","/response/ble/peripheral/characteristic_notify_read","/response/ble/peripheral/characteristic_notify_write","/response/ble/peripheral/descriptor_notify_read","/response/ble/peripheral/descriptor_notify_write"],"type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"object","required":["services"],"properties":{"services":{"type":"array","minItems":1,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"characteristics":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"properties":{"type":"array","default":["read","write"],"items":{"type":"string","enum":["broadcast","read","write_without_response","write","notify","indicate","auth","extended_properties"]}},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","read_encrypted","read_encrypted_mitm","write","write_encrypted","write_encrypted_mitm","write_signed","write_signed_mitm"]}},"descriptors":{"type":"array","minItems":0,"items":{"type":"object","required":["uuid"],"additionalProperties":false,"properties":{"uuid":{"$ref":"/uuid"},"data":{"$ref":"/dataArray"},"permissions":{"type":"array","default":["read","write"],"items":{"default":["read","write"],"type":"string","enum":["read","read_encrypted","read_encrypted_mitm","write","write_encrypted","write_encrypted_mitm","write_signed","write_signed_mitm"]}}}}}}}}}}}}}}}
 
 /***/ }),
 
@@ -466,6 +472,48 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/peripheral/service_stop_all","type":"object","required":["peripheral"],"properties":{"peripheral":{"type":"null"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/auth.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/auth","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["auth"],"properties":{"auth":{"type":"array","default":["bonding"],"minItems":"1,","items":{"type":"string","enum":["bonding","mitm","secure_connection"]}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/devices_clear.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices/clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices/clear"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/indicate_security_level.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/indicate_security_level","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["indicate_security_level"],"properties":{"indicate_security_level":{"type":"integer","min":0,"max":4}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/key_max_size.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/security/key_type.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
 
 /***/ }),
 
@@ -1285,97 +1333,65 @@ for (var i = 0, len = code.length; i < len; ++i) {
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
-function getLens (b64) {
+function placeHoldersCount (b64) {
   var len = b64.length
-
   if (len % 4 > 0) {
     throw new Error('Invalid string. Length must be a multiple of 4')
   }
 
-  // Trim off extra bytes after placeholder bytes are found
-  // See: https://github.com/beatgammit/base64-js/issues/42
-  var validLen = b64.indexOf('=')
-  if (validLen === -1) validLen = len
-
-  var placeHoldersLen = validLen === len
-    ? 0
-    : 4 - (validLen % 4)
-
-  return [validLen, placeHoldersLen]
+  // the number of equal signs (place holders)
+  // if there are two placeholders, than the two characters before it
+  // represent one byte
+  // if there is only one, then the three characters before it represent 2 bytes
+  // this is just a cheap hack to not do indexOf twice
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
 }
 
-// base64 is 4/3 + up to two characters of the original data
 function byteLength (b64) {
-  var lens = getLens(b64)
-  var validLen = lens[0]
-  var placeHoldersLen = lens[1]
-  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
-}
-
-function _byteLength (b64, validLen, placeHoldersLen) {
-  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+  // base64 is 4/3 + up to two characters of the original data
+  return (b64.length * 3 / 4) - placeHoldersCount(b64)
 }
 
 function toByteArray (b64) {
-  var tmp
-  var lens = getLens(b64)
-  var validLen = lens[0]
-  var placeHoldersLen = lens[1]
+  var i, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
 
-  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
-
-  var curByte = 0
+  arr = new Arr((len * 3 / 4) - placeHolders)
 
   // if there are placeholders, only get up to the last complete 4 chars
-  var len = placeHoldersLen > 0
-    ? validLen - 4
-    : validLen
+  l = placeHolders > 0 ? len - 4 : len
 
-  for (var i = 0; i < len; i += 4) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 18) |
-      (revLookup[b64.charCodeAt(i + 1)] << 12) |
-      (revLookup[b64.charCodeAt(i + 2)] << 6) |
-      revLookup[b64.charCodeAt(i + 3)]
-    arr[curByte++] = (tmp >> 16) & 0xFF
-    arr[curByte++] = (tmp >> 8) & 0xFF
-    arr[curByte++] = tmp & 0xFF
+  var L = 0
+
+  for (i = 0; i < l; i += 4) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
+    arr[L++] = (tmp >> 16) & 0xFF
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
   }
 
-  if (placeHoldersLen === 2) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 2) |
-      (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[curByte++] = tmp & 0xFF
-  }
-
-  if (placeHoldersLen === 1) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 10) |
-      (revLookup[b64.charCodeAt(i + 1)] << 4) |
-      (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[curByte++] = (tmp >> 8) & 0xFF
-    arr[curByte++] = tmp & 0xFF
+  if (placeHolders === 2) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[L++] = tmp & 0xFF
+  } else if (placeHolders === 1) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
   }
 
   return arr
 }
 
 function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] +
-    lookup[num >> 12 & 0x3F] +
-    lookup[num >> 6 & 0x3F] +
-    lookup[num & 0x3F]
+  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
 }
 
 function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp =
-      ((uint8[i] << 16) & 0xFF0000) +
-      ((uint8[i + 1] << 8) & 0xFF00) +
-      (uint8[i + 2] & 0xFF)
+    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
@@ -1385,33 +1401,30 @@ function fromByteArray (uint8) {
   var tmp
   var len = uint8.length
   var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var output = ''
   var parts = []
   var maxChunkLength = 16383 // must be multiple of 3
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(
-      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
-    ))
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
   if (extraBytes === 1) {
     tmp = uint8[len - 1]
-    parts.push(
-      lookup[tmp >> 2] +
-      lookup[(tmp << 4) & 0x3F] +
-      '=='
-    )
+    output += lookup[tmp >> 2]
+    output += lookup[(tmp << 4) & 0x3F]
+    output += '=='
   } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
-    parts.push(
-      lookup[tmp >> 10] +
-      lookup[(tmp >> 4) & 0x3F] +
-      lookup[(tmp << 2) & 0x3F] +
-      '='
-    )
+    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
+    output += lookup[tmp >> 10]
+    output += lookup[(tmp >> 4) & 0x3F]
+    output += lookup[(tmp << 2) & 0x3F]
+    output += '='
   }
+
+  parts.push(output)
 
   return parts.join('')
 }
@@ -8731,6 +8744,7 @@ const BleDescriptor = __webpack_require__("./obniz/libs/embeds/ble/bleDescriptor
 const BleRemotePeripheral = __webpack_require__("./obniz/libs/embeds/ble/bleRemotePeripheral.js");
 const BleAdvertisement = __webpack_require__("./obniz/libs/embeds/ble/bleAdvertisement.js");
 const BleScan = __webpack_require__("./obniz/libs/embeds/ble/bleScan.js");
+const BleSecurity = __webpack_require__("./obniz/libs/embeds/ble/bleSecurity.js");
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -8746,6 +8760,7 @@ class ObnizBLE {
 
     this.advertisement = new BleAdvertisement(Obniz);
     this.scan = new BleScan(Obniz);
+    this.security = new BleSecurity(Obniz);
     this._reset();
   }
 
@@ -8930,6 +8945,10 @@ class ObnizBLE {
         }
       }
 
+      if ([35, 36, 37, 38, 39].includes(params.function_code)) {
+        this.security.onerror(params);
+        handled = true;
+      }
       if (!handled) {
         this.Obniz.error(
           `ble ${params.message} service=${
@@ -10588,6 +10607,182 @@ class BleScan {
 }
 
 module.exports = BleScan;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/bleSecurity.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const semver = __webpack_require__("./node_modules/semver/semver.js");
+
+class BleSecurity {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.emitter = new emitter();
+  }
+
+  setModeLevel(mode, level) {
+    let auth = undefined;
+    let keys = undefined;
+    let indicateSecurityLevel = undefined;
+
+    if (mode == 1) {
+      if (level == 1) {
+        auth = [];
+        indicateSecurityLevel = 0; //no pairing request
+        keys = ['LTK', 'IRK'];
+      } else if (level == 2) {
+        auth = ['bonding'];
+        indicateSecurityLevel = 2;
+        keys = ['LTK', 'IRK'];
+      } else if (level == 3) {
+        //TODO
+        // auth = ['bonding','mitm'];
+        // indicateSecurityLevel = 3;
+        // keys = ['LTK', 'IRK'];
+      }
+    } else if (mode == 2) {
+      if (level == 1) {
+        //TODO
+        // auth = [];
+        // keys = ['LTK', 'IRK','CSRK'];
+      } else if (level == 2) {
+        //TODO
+        // auth = ['bonding'];
+        // keys = ['LTK', 'IRK','CSRK'];
+      }
+    }
+
+    if (
+      auth !== undefined &&
+      indicateSecurityLevel !== undefined &&
+      keys !== undefined
+    ) {
+      this.setAuth(auth);
+      this.setIndicateSecurityLevel(indicateSecurityLevel);
+      this.setEnableKeyTypes(keys);
+    } else {
+      let msg = `BLE security mode${mode}, level${level} is not available.`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
+  checkIntroducedFirmware(introducedVersion, functionName) {
+    let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
+    if (results) {
+      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
+        this.Obniz.firmware_ver
+      })`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
+  setAuth(authTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setAuth');
+    if (!Array.isArray(authTypes)) {
+      authTypes = [authTypes];
+    }
+    let sendTypes = authTypes
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['mitm', 'secure_connection', 'bonding'].includes(elm);
+      });
+
+    if (sendTypes.length !== authTypes.length) {
+      throw new Error('unknown auth type');
+    }
+
+    this.Obniz.send({
+      ble: {
+        security: {
+          auth: authTypes,
+        },
+      },
+    });
+  }
+
+  setIndicateSecurityLevel(level) {
+    this.checkIntroducedFirmware('1.1.0', 'setIndicateSecurityLevel');
+
+    if (typeof level !== 'number') {
+      throw new Error('unknown secrity level : ' + level);
+    }
+    this.Obniz.send({
+      ble: {
+        security: {
+          indicate_security_level: level,
+        },
+      },
+    });
+  }
+
+  setEnableKeyTypes(keyTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setEnableKeyTypes');
+    if (!Array.isArray(keyTypes)) {
+      keyTypes = [keyTypes];
+    }
+    let sendTypes = keyTypes
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['ltk', 'csrk', 'irk'].includes(elm);
+      });
+
+    if (sendTypes.length !== keyTypes.length) {
+      throw new Error('unknown key type');
+    }
+
+    this.Obniz.send({
+      ble: {
+        security: {
+          key: { type: sendTypes },
+        },
+      },
+    });
+  }
+
+  setKeyMaxSize(size) {
+    this.checkIntroducedFirmware('1.1.0', 'setKeyMaxSize');
+    if (typeof size !== 'number') {
+      throw new Error('please provide key size in number');
+    }
+    this.Obniz.send({
+      ble: {
+        security: {
+          key: { max_size: size },
+        },
+      },
+    });
+  }
+
+  clearBondingDevicesList() {
+    this.Obniz.send({
+      ble: {
+        security: {
+          devices: { clear: true },
+        },
+      },
+    });
+  }
+
+  onerror() {} //dummy
+
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case 'onerror': {
+        this.onerror(params);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleSecurity;
 
 
 /***/ }),
@@ -14494,6 +14689,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandReadDescriptor = 16;
     this._CommandNotifyCharacteristic = 17;
 
+    this._CommandSetDeviceName = 19;
     this._CommandServerStartPeripheral = 20;
     this._CommandServerNotifyConnect = 21;
     this._CommandServerAddService = 22;
@@ -14509,6 +14705,13 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerNotifyReadDescriptorValue = 32;
     this._CommandServerNofityCharavteristic = 33;
     this._CommandServerStartStopService = 34;
+
+    this._CommandSecuritySetAuth = 35;
+    this._CommandSecuritySetEncryptionLevel = 36;
+    this._CommandSecuritySetEnableKeyTypes = 37;
+    this._CommandSecuritySetKeyMaxSize = 38;
+    this._CommandSecuritySetIOCapability = 39;
+    this._CommandSecurityClearBondingDevices = 40;
 
     this._CommandScanResultsDevice = {
       breder: 0x01,
@@ -14556,6 +14759,23 @@ class WSCommand_Ble extends WSCommand {
     this._commandResults = {
       success: 0,
       failed: 1,
+    };
+
+    this._securityAuthValues = {
+      0x01: 'bonding',
+      0x04: 'mitm',
+      0x08: 'secure_connection',
+    };
+    this._securityEncryotionLevels = {
+      none: 0x01,
+      encryption: 0x02,
+      mitm: 0x03,
+    };
+
+    this._securityKeyTypes = {
+      0x01: 'ltk',
+      0x02: 'irk',
+      0x04: 'csrk',
     };
   }
 
@@ -14883,10 +15103,10 @@ class WSCommand_Ble extends WSCommand {
     let permissionFlags = {
       0x001: 'read',
       0x002: 'read_encrypted',
-      0x004: 'read_enc_mitm',
+      0x004: 'read_encrypted_mitm',
       0x010: 'write',
       0x020: 'write_encrypted',
-      0x040: 'write_enc_mitm',
+      0x040: 'write_encrypted_mitm',
       0x080: 'write_signed',
       0x100: 'write_signed_mitm',
     };
@@ -15138,6 +15358,63 @@ class WSCommand_Ble extends WSCommand {
     this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
   }
 
+  securityAuth(params) {
+    let schema = [
+      {
+        path: 'security.auth',
+        type: 'flag',
+        length: 1,
+        required: true,
+        flags: this._securityAuthValues,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetAuth, buf);
+  }
+
+  securityIndicateLevel(params) {
+    let schema = [
+      {
+        path: 'security.indicate_security_level',
+        type: 'char',
+        length: 1,
+        required: true,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetEncryptionLevel, buf);
+  }
+  securityKeyType(params) {
+    let schema = [
+      {
+        path: 'security.key.type',
+        type: 'flag',
+        length: 1,
+        required: true,
+        flags: this._securityKeyTypes,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetEnableKeyTypes, buf);
+  }
+
+  securityKeySize(params) {
+    let schema = [
+      {
+        path: 'security.key.max_size',
+        type: 'char',
+        length: 1,
+        required: true,
+      },
+    ];
+    let buf = JsonBinaryConverter.createSendBuffer(schema, params);
+    this.sendCommand(this._CommandSecuritySetKeyMaxSize, buf);
+  }
+  clearBondingDevicesList(params) {
+    let buf = new Uint8Array([]); //noting to send
+    this.sendCommand(this._CommandSecurityClearBondingDevices, buf);
+  }
+
   parseFromJson(json) {
     let module = json['ble'];
     if (module === undefined) {
@@ -15229,6 +15506,26 @@ class WSCommand_Ble extends WSCommand {
       {
         uri: '/request/ble/peripheral/descriptor_write',
         onValid: this.peripheralDescriptorWrite,
+      },
+      {
+        uri: '/request/ble/security/auth',
+        onValid: this.securityAuth,
+      },
+      {
+        uri: '/request/ble/security/indicate_security_level',
+        onValid: this.securityIndicateLevel,
+      },
+      {
+        uri: '/request/ble/security/key/type',
+        onValid: this.securityKeyType,
+      },
+      {
+        uri: '/request/ble/security/key/max_size',
+        onValid: this.securityKeySize,
+      },
+      {
+        uri: '/request/ble/security/devices/clear',
+        onValid: this.clearBondingDevicesList,
       },
     ];
     let res = this.validateCommandSchema(schemaData, module, 'ble');
@@ -15740,6 +16037,7 @@ class WSCommand_Ble extends WSCommand {
       0x06: 'device not found',
       0x07: 'ble is busy',
       0x08: 'service already running',
+      0x09: 'security param are already set',
       0xff: 'error',
     };
 
@@ -15772,6 +16070,14 @@ class WSCommand_Ble extends WSCommand {
       30: 'on reading descriptor',
       31: 'on writing descriptor from remote',
       32: 'on reading descriptor from remote',
+      33: 'on notify characteristic',
+      34: 'on start/stop service',
+      35: 'on set security auth param',
+      36: 'on set security encryption level param',
+      37: 'on set security key type param',
+      38: 'on set security key size param',
+      39: 'on set security io capability',
+      40: 'on clear bonding devices list',
     };
 
     results.message =
@@ -17585,7 +17891,7 @@ module.exports = WSCommand;
     let array = [];
     let length = schema.length || 1;
     for (let i = length - 1; i >= 0; i--) {
-      array.push((value >> i) & 0xff);
+      array.push((value >> (i * 8)) & 0xff);
     }
 
     return array;
@@ -24650,7 +24956,7 @@ class KXSC7_2050 {
 
   static info() {
     return {
-      name: 'KXSC7_2050',
+      name: 'KXSC7-2050',
     };
   }
 
