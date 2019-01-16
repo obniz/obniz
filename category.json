@@ -486,6 +486,17 @@
           }
         }
       ]
+    },
+    {
+      "name": "Ble",
+      "image_url": "https://obniz.io/sdk/parts/2JCIE/sensor.JPG",
+      "parts": [
+        {
+          "name": "2JCIE",
+          "store": {
+          }
+        }
+      ]
     }
   ],
   "store": {
