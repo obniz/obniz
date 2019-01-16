@@ -35,7 +35,7 @@ security.setModeLevel(1, 2); //LE Security Mode 1, Level 2
 
 ## security.setIndicateSecurityLevel(level)
 
-ペアリング要求時のセキュリティレベルをせってしいます。
+ペアリング要求時のセキュリティレベルを設定します。
 0の場合、ペアリング要求を行いません
 
 ```javascript
