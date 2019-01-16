@@ -17911,7 +17911,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.14.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"1.15.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -17922,6 +17922,7 @@ var map = {
 	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
 	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
+	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
@@ -18214,6 +18215,112 @@ AE_MICAMP.prototype.Average = function(callback) {
   this.average = callback;
 };
 */
+
+
+/***/ }),
+
+/***/ "./parts/Ble/2jcie/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class OMRON_2JCIE {
+  constructor() {
+    this.keys = [];
+    this.requiredKeys = [];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: '2JCIE',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async findWait() {
+    let target = {
+      localName: 'Envd',
+    };
+
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+
+    return this.periperal;
+  }
+
+  omron_uuid(uuid) {
+    return `0C4C${uuid}-7700-46F4-AA96D5E974E32A54`;
+  }
+
+  async connectWait() {
+    if (!this.periperal) {
+      await this.findWait();
+    }
+    if (!this.periperal) {
+      throw new Error('2JCIE not found');
+    }
+    if (!this.periperal.connected) {
+      await this.periperal.connectWait();
+    }
+  }
+
+  async disconnectWait() {
+    if (this.periperal && this.periperal.connected) {
+      this.periperal.disconnectWait();
+    }
+  }
+
+  signedNumberFromBinary(data) {
+    //little adian
+    let val = data[data.length - 1] & 0x7f;
+    for (let i = data.length - 2; i >= 0; i--) {
+      val = val * 256 + data[i];
+    }
+    if ((data[data.length - 1] & 0x80) !== 0) {
+      val = val - Math.pow(2, data.length * 8 - 1);
+    }
+    return val;
+  }
+
+  unsignedNumberFromBinary(data) {
+    //little adian
+    let val = data[data.length - 1];
+    for (let i = data.length - 2; i >= 0; i--) {
+      val = val * 256 + data[i];
+    }
+    return val;
+  }
+
+  async getLatestData() {
+    await this.connectWait();
+
+    let c = this.periperal
+      .getService(this.omron_uuid('3000'))
+      .getCharacteristic(this.omron_uuid('3001'));
+    let data = await c.readWait();
+    let json = {
+      row_number: data[0],
+      temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
+      relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+      light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
+      uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
+      barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
+      soud_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+      discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
+      heatstroke_risk_factor:
+        this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
+      battery_voltage:
+        this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+    };
+
+    return json;
+  }
+}
+
+if (true) {
+  module.exports = OMRON_2JCIE;
+}
 
 
 /***/ }),
