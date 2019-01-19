@@ -4,8 +4,8 @@ You can use bluetooth Low Energy with obniz as peripheral/central
 # Use obniz as ble peripheral
 
 ## advertisement.start()
-Start advertisement .
-Before call this function, you should call setAdvData/setAdvDataRaw for set data.
+This starts advertisement of BLE.
+Before calling this function, you should call setAdvData/setAdvDataRaw to set data.
 
 ```Javascript
 // Javascript Example
@@ -20,7 +20,7 @@ obniz.ble.advertisement.start();
 
 ## advertisement.end()
 
-Stop advertisement .
+This stops advertisement of BLE.
 
 ```Javascript
 // Javascript Example
@@ -31,7 +31,7 @@ obniz.ble.advertisement.end();
 
 ## advertisement.setAdvDataRaw(bytes[])
 
-Set advertise data from data array.
+This sets advertise data from data array.
 
 ```Javascript
 // Javascript Example
@@ -44,7 +44,7 @@ obniz.ble.advertisement.start();
 
 ## advertisement.setAdvData(setting)
 
-Set advertise data from json.
+This sets advertise data from json.
 
 ```Javascript
 // Javascript Example
@@ -62,7 +62,7 @@ obniz.ble.advertisement.setAdvData({
 obniz.ble.advertisement.start();
 ```
 
-Json parameters are here.．
+The json parameters are shown below.
 
 
 ```Javascript
@@ -80,7 +80,7 @@ Json parameters are here.．
 ```
 
 ## advertisement.setScanRespDataRaw(data[])
-Set scan response data from data array.
+This sets scan response data from data array.
 
 ```Javascript
 // Javascript Example
@@ -92,7 +92,7 @@ obniz.ble.advertisement.start();
 
 ## advertisement.setScanRespData(setting)
 
-Set scan response data from data json.
+This sets scan response data from json data.
 
 ```Javascript
 // Javascript Example
@@ -103,7 +103,7 @@ obniz.ble.advertisement.setScanRespData({
 obniz.ble.advertisement.start();
 ```
 
-Json parameters are here.．
+The json parameters are shown below.
 
 
 
@@ -121,7 +121,7 @@ Json parameters are here.．
 
 ## peripheral.addService(setting_json or service_obj)
 
-start as peripheral with setting_json or service_obj.
+This starts a service as peripheral with setting_json or service_obj.
 
 service_obj
 ```Javascript
@@ -142,7 +142,7 @@ obniz.ble.peripheral.addService(service); // call this after all descriptors and
 
 ## peripheral.onconnectionupdates
 
-callback of external device connect / disconnect
+This is a callback function used when an external device gets connected or disconnected.
     
 ```Javascript
 obniz.ble.peripheral.onconnectionupdates = function(data){
@@ -153,7 +153,7 @@ obniz.ble.peripheral.onconnectionupdates = function(data){
 
 ## peripheral.end()
 
-end peripheral
+This ends all the peripheral service
 ```Javascript
 
 obniz.ble.peripheral.addService(setting);
@@ -163,7 +163,7 @@ obniz.ble.peripheral.end();
 
 ## new service(json)
 
-create service object
+This creates service object
 uuid is required and characteristics is optional.
 
 ```Javascript
@@ -225,8 +225,8 @@ characteristic.onwrite = function(val){
 -->
 
 ## \[await] characteristic.writeWait(data)
-write data on characteristic
-return true for success, false for fail.
+This writes data on characteristic.
+It returns true when it is successful and false when it fails.
 
 ```Javascript 
 let result =  await characteristic.writeWait([0xf0,0x27]);
@@ -254,8 +254,8 @@ characteristic.onread = function(val){
 ```
 -->
 ## \[await] characteristic.readWait()
-read data on characteristic
-return data array for success, undefined for fail.
+This reads data on characteristic.
+It returns data array when it successds and undefined when it fails.
 
 ```Javascript 
 let data =  await characteristic.readWait()
@@ -266,7 +266,7 @@ console.log("data: " , data );
 ```
 
 ## characteristic.onwritefromremote(address, newvalue)
-callback of characteristic written by external device
+This is a callback function used when characteristic gets changed by an external device.
 
 
 ```Javascript 
@@ -279,7 +279,7 @@ characteristic.onwritefromremote = function(address, newvalue){
 ```
 
 ## characteristic.onreadfromremote(address)
-callback of characteristic read by external device
+This is a callback function used when characteristic is read by an external device.
 
 ```Javascript 
 
@@ -291,7 +291,7 @@ characteristic.onreadfromremote = function(address){
 
 
 ## characteristic.notify()
-send notify to connected central.
+This sends notify to the connected central.
 It needs CCCD descriptor(0x2901).
 
 ```javascript
@@ -321,6 +321,7 @@ characteristic.notify();
 
 
 ## new descriptor(json)
+This creates descriptor.
 
 ```Javascript
 var descriptor = new obniz.ble.characteristic({
@@ -363,8 +364,8 @@ descriptor.onwrite = function(val){
 -->
 
 ## descriptor.writeWait(data)
-write on descriptor
-return true for success, false for fail.
+This writes data on descriptor.
+It returns true when it succeeds and false when it fails.
 
 ```Javascript 
 let result =  await descriptor.writeWait([0xf0,0x27]);
@@ -394,8 +395,8 @@ descriptor.onread = function(val){
 -->
 
 ## \[await] descriptor.readWait()
-read data on descriptor.
-return data array for success, undefined for fail.
+This reads data on descriptor.
+It returns data array when it succeeds and undefined when it fails.
 
 
 ```Javascript 
@@ -409,7 +410,7 @@ console.log("data: " , data );
 
 ## descriptor.onwritefromremote(data)
 
-callback of descriptor written by external device
+This is a callback function used when the descriptor gets changed by an external device.
 
 
 ```Javascript 
@@ -422,7 +423,7 @@ descriptor.onwritefromremote = function(val){
 ```
 
 ## descriptor.onreadfromremote(data)
-callback of descriptor read by external device
+This is a callback function used when the descriptor is read by an external device.
 
 ```Javascript 
 
