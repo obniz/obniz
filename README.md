@@ -3,11 +3,9 @@
 [![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
-[obniz](https://obniz.io/) sdk for javascript.
+sdk for controlling [obniz](https://obniz.io/) using [obniz api](https://obniz.io/doc/about_obniz_api) from javascript.
 
-Control obniz from javascript. works on both browser / nodejs.
-
-This sdk works with [obniz api](https://obniz.io/doc/about_obniz_api).
+It works on both browser and nodejs.
 
 
 ## Usage
@@ -59,7 +57,7 @@ This sdk works with [obniz api](https://obniz.io/doc/about_obniz_api).
 ## Installation
 
 ### Browser
-add this line to your html
+Add the following script tag to your html
 ```html
   <script src="https://unpkg.com/obniz/obniz.js"></script>
 ```
@@ -68,16 +66,16 @@ Install obniz via npm
 ```shell
   npm install obniz
 ```
-and import it on js file.
+and import it to js file.
 ```javascript
   const Obniz = require('obniz');
 ```
 
 ## Connect
 
-Details on [doc/connection](./doc/connection.md) ([ja](./doc/connection-ja.md))
+The details are on [doc/connection](./doc/connection.md) ([ja](./doc/connection-ja.md))
 
-To use obniz, instantiate obniz with obniz id. and set onconnect callback function. It will be called when connected to obniz successfully.
+To use obniz, instantiate obniz with obniz id, and set onconnect callback function. It will be called when connected to obniz successfully.
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -85,7 +83,7 @@ To use obniz, instantiate obniz with obniz id. and set onconnect callback functi
   }
 ```
 
-You are able to use everything on obniz after connect.
+You can use everything on obniz once connection succeeds.
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -97,7 +95,7 @@ You are able to use everything on obniz after connect.
     }
   }
 ```
-and it's io peripherals too
+and its io peripherals too can be used
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -128,14 +126,14 @@ and it's io peripherals too
 ```
 
 ## Parts library
-parts library is embed in obniz.js.
-All parts and it's details can be seen at
+The parts library is embedded in obniz.js.
+All parts and their details can be found there.
 
 [obniz Parts Library](https://obniz.io/sdk/parts/)
 
-To use connected parts, instantiate parts in onconnect callback function. And use it. Function list is on also [obniz Parts Library](https://obniz.io/sdk/parts/).
+To use the connected parts, instantiate the parts in onconnect callback function and use it. The function list can be found on [obniz Parts Library](https://obniz.io/sdk/parts/).
 
-For example, LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
+For example, LED is found here [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -157,7 +155,7 @@ HC-SR40(distance measure) [https://obniz.io/sdk/parts/HC-SR04](https://obniz.io/
 ```
 
 ## Example: browser integrates hardware
-Easy to integrate UI on html and hardware
+It is easy to integrate UI and hardware on html
 ```html
 <input id="slider" type="range"  min="0" max="180" />
 
@@ -174,7 +172,7 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate web services
-Easy to integrate web servies like Dropbox, Twitter.
+It is also easy to integrate web services like Dropbox and Twitter and hardware.
 ```javascript
 // save data from obniz to dropbox
 var obniz = new Obniz("0000-0000");
@@ -190,7 +188,7 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate two or more obniz
-Not only web to obniz. obniz to obniz is easy too.
+Not only is web-obniz coordination easy, but obniz-obniz coordination is also easy.
 ```javascript
 // control servomotor from potention meter which connected to another obniz.
 var obnizA = new Obniz("0000-0000");

@@ -1,32 +1,32 @@
 # obniz connection
 
-obniz class provide abstract of obniz hardware.
-By providing obniz id and instantiate it, you can control obniz and connected parts without details of websocket api.
+obniz class is the abstract version of obniz hardware within javascript.
+By providing obniz id and instantiating it, you can control obniz and the connected parts without the details of websocket api.
 
-## basics
+## Basics
 
 Instantiate obniz with obniz id.
-In HTML, just include obniz.js in script tag then you can use Obniz class.
-In nodejs, after install from npm
+In HTML, just include obniz.js in the script tag and you can use obniz class.
+In nodejs, after installing it from npm,
 
 ```javascript
 var Obniz = require('obniz');
 ```
-Get class like this.
+obtain the class like this.
 
-Then instantiate obniz with id.
+Then instantiate obniz with the id.
 ```javascript
 var obniz = new Obniz('1234-5678');
 ```
-If you want to use two or more obniz then
+If you want to use two or more obniz, then write as below
 ```javascript
 var obnizA = new Obniz('1234-5678');
 var obnizB = new Obniz('0000-0000');
 ```
 
-After instantiate, obniz.js will try to connect obniz by using [obniz Websocket API](https://obniz.io/doc/about_obniz_api).
-Connection was established, onconnect function will be called. onclose is called when disconnected.
-By default, automatic connection is set to true. so obniz.js continue trying to connect after disconnection.
+After instantiating, obniz.js will try to connect to obniz by using [obniz Websocket API](https://obniz.io/doc/about_obniz_api).
+Once connection is established, onconnect function will be called. onclose will be called when disconnected.
+Automatic connection occurs by default, so obniz.js continues to try to re-establish connection after disconnection.
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -38,7 +38,7 @@ obniz.onclose = async function() {
 }
 ```
 
-Like turning on/off io is available after connection. So, any operation must done after onconnect
+Operations like turning on/off an io becomes possible only after connection is established, so any operations you want obniz to undertake must be written in onconnect
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -47,12 +47,12 @@ obniz.onconnect = async function() {
 }
 ```
 
-obniz.js has instantiate options.
+obniz.js has options for instantiation, so please see the function references below.
 
 ## new Obniz('obniz id', { options })
 
-Instantiate obniz.
-obniz id is string. '-' will be ignored. But numbers can't be accepted.
+We will now instantiate obniz.
+obniz id is a string. Hyphen '-' is optional, but with just the numbers they can't be accepted.
 
 ```javascript
 new Obniz('1234-5678') // OK
@@ -60,33 +60,33 @@ new Obniz('12345678') // OK
 new Obniz(12345678) // Can't accept
 ```
 
-If you connect to obniz which has access_token. Then provide like this way
+If you connect to obniz which has an access token, provide an option like this
 
 ```javascript
 new Obniz('1234-5678', {access_token: 'your token here'})
 ```
 
-If obniz is is not correct, then connection never established. In nodejs it will show error.
-In HTML, obniz.js show prompt. user can input correct obniz id to it.
-It shows only when invalid format. If you specify obniz id which doesn't exist, then this never be showed.
+If obniz id is incorrect, connection will never be established. In nodejs, an error occurs.
+In HTML, obniz.js shows a prompt message. The user can put in a correct obniz id into it.
+It shows up only when the format is invalid. If you specify obniz id which doesn't exist, this would never be shown.
 
 ![](images/obniz_prompt.png)
 
-When id is correct, obniz.js will try to connect cloud api and onconnect will be called after established.
+When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
 
-When obniz and the device obniz.js runnning are expected in same Network, obniz.js will try to establish Websocket connection to obniz directly. This is called "local connect". When local connect is avaiable almost commands throught it's connection. not cloud. But Connection to the cloud is never closed.
-And local connect is closed when cloud connection was closed.
+When obniz and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz. This is called "local connect". When local connect is avaiable, obniz can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+But when cloud connection gets closed, the local connect also gets closed.
 
 ![](images/local_connect.png)
 
-The timing of onconnect() called depends on availability of local connect.
-obniz.js will little wait for establish of local connect.
-See flows.
+The timing onconnect() gets called depends on the availability of local connect.
+obniz.js will wait a little to establish connection via local connect as much as possible.
+See the flow below.
 
 ![](images/onconnect_flow.png)
 
-Second parameter is option.
-These are availabe.
+The second parameter when instantiating obniz is an option.
+In that option, the following settings are possible.
 
 name | type | default | description
 --- | --- | --- | ---
@@ -99,7 +99,7 @@ reset_obniz_on_ws_disconnection | `boolean` | true | With 'true', obniz cloud wi
 
 
 ## connect()
-You can connect manually by calling this when auto_connect set to false.
+You can connect to obniz manually by calling connect() when auto_connect is set to be false.
 
 ```javascript
 var obniz = new Obniz('1234-5678', { auto_connect: false });
@@ -110,9 +110,10 @@ obniz.onconnect = async function() {
 }
 ```
 
+
 ## close()
-Close current connection.
-You need to set auto_connect to false, Otherwise connection will be recoverd.
+This closes the current connection.
+You need to set auto_connect to false. Otherwise the connection will be recovered.
 
 ```javascript
 var obniz = new Obniz('1234-5678', {
@@ -129,7 +130,7 @@ obniz.onconnect = async function() {
 
 
 ## [await]connectWait({timeout})
-Waiting finish to connect to obniz.
+With this you wait until the connection to obniz succeeds.
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -142,7 +143,7 @@ obniz.close();
 
 ```
 
-You can set timeout(sec) param.
+You can set timeout(sec) param. False will be returned when connection is not established within a set timeframe.
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -156,7 +157,7 @@ if(connected){
 
 ```
 
-If the param `auto_connect` is false, it try only once. 
+If the param `auto_connect` is set as false, it will try to connect only once and, if unsuccessful, return false. 
 
 ```javascript
 var obniz = new Obniz('1234-5678',{auto_connect: false});
@@ -170,7 +171,7 @@ if(connected){
 ```
 
 ## debugprint
-This let obniz.js to show logs like communicated jsons and connections logs to console.log.
+This lets obniz.js to show logs like communicated jsons and connection logs in console.log.
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -182,12 +183,12 @@ obniz.onconnect = async function() {
 
 ## resetOnDisconnect(reset)
 
-This let you set `reset_obniz_on_ws_disconnection` after connection established.
-By default. obniz will reset when user disconnect web socket from obniz cloud.
-It means output value and pwm are all stop at that time.
-this function can set "do not reset when no one connected to obniz".
-This configuration will consist until user web socket disconnected.
-Set false to this function to keepworking without user web socket.
+This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.
+By default, obniz.js resets itself when user disconnects the web socket to obniz cloud.
+It means the output value and pwm will all stop at that point.
+With the above function, you can nullify these resetting activities.
+This configuration will remain until the user's web socket gets disconnected.
+Set this function to false to keep working without the user's web socket.
 
 ```Javascript
 // Example

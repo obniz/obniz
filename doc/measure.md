@@ -1,39 +1,39 @@
 # measure
-measure module provide hardware level measurement.
+The measure module provides hardware level measurement.
 
 ## measure.echo({})
 
-Some electrical parts or circuits accept "pulse" then responds "pulse" after delay.
-If you want to measure delay, this module is best choice.
+Some electrical parts or circuits accept "pulse" and echo the "pulse" after delay.
+This module is best suited for measuring that delay.
 
-This module generate one shot pulse on a io, then measure response time.
+This module generates one pulse shot on an io, then measures the response time.
 
 ![](./images/measure.png)
 
 
 ### pulse generation
-you can choose belows to generate pulse
+You can choose below to generate a pulse
 
-1. io_pulse: io for output generated pulse
+1. io_pulse: io number to generate pulse
 2. pulse: "positive" or "negative"
-3. pulse_width: pulse duration in ms. 0.001 to 1000.
+3. pulse_width: pulse duration in values between ms. 0.001 to 1000.
 
 ![](./images/measure_posneg.png)
 
-### response measurement
-you can choose belows to measure response
+### Response measurement
+You can choose below to measure response
 
-1. io_echo: io for measure response
-2. measure_edges: maximum edges to detect. 1 to 4.
-3. timeout: timeout in ms. default is 1000. 0.001 to 1000.
-4. callback: callback function after measured or timeout
+1. io_echo: io for measuring response
+2. measure_edges: maximum number of edges to detect. 1 to 4.
+3. timeout: timeout in ms, and default is 1000. 0.001 to 1000.
+4. callback: callback function after measurement or timeout
 
-callback function will be called when edges count == measure_edges or timeout.
-It has array of edge information. For example, If you get a response like a below 
+A callback function will be called when the edge count = measure_edges or timeout.
+It has an array of edge information. For example, if you get a response like below 
 
 ![](./images/measure_response.png)
 
-Then, you will get like this
+then, you will get below
 ```javascript
 callback: function(edges) {
   edges.length // == 2
@@ -44,7 +44,7 @@ callback: function(edges) {
 }
 ```
 
-Full Example
+The full example is as follows.
 
 ```javascript
 // Javascript Example

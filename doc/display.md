@@ -1,24 +1,24 @@
 # Display (obniz.display)
-OLED display on obniz.
+Here we will show letters and pictures on OLED display on obniz.
 
 ![](./images/obniz_display_sphere.gif)
 
 ## clear();
-clear the display.
+Clear the display.
 
 ```Javascript
 // Javascript Example
 obniz.display.clear();
 ```
 ## print(string);
-print text on display.
+Print text on display.
 
 ```Javascript
 // Javascript Example
 obniz.display.print("Hello!");
 ```
 
-With browser, UTF8 string available. (not works with node.js. please use display.draw())
+With browser, UTF8 string is available. (It does not work with node.js. Please use display.draw())
 ```javascript
 // Javascript Example
 obniz.display.font('Serif',18)
@@ -27,9 +27,9 @@ obniz.display.print("Hello World🧡")
 ![](./images/obniz_display_print.jpg)
 
 ## pos(x, y);
-(not works with node.js. please use display.draw())
+(It does not work with node.js. Please use display.draw())
  
-changing left-top position of next print().
+It changes the display position of a text. If you are using print() to display a text, position it to top left.
 ```javascript
 // Javascript Example
 obniz.display.pos(0,30);
@@ -38,13 +38,13 @@ obniz.display.print("YES. こんにちは");
 ![](./images/obniz_display_pos.jpg)
 
 ## font(fontFamilyName, fontSize);
-(not works with node.js. please use display.draw())
+(It does not work with node.js. Please use display.draw())
  
-changing font.
-Options for fontFamily and fontSize depends on your browser.
+This changes the font.
+The options for fontFamily and fontSize depend on your browser.
 
-Default font is Arial 16px.
-If you set parameter null, using default font.
+The default font is Arial 16px.
+If you set the parameter to null, you will be using the default font.
 ```javascript
 // Javascript Example
 obniz.display.font('Avenir',30)
@@ -59,9 +59,9 @@ obniz.display.font('Avenir') //Avenir with default size(16px)
 ![](./images/obniz_display_samples4.jpg)
 
 ## line(start_x, start_y, end_x, end_y);
-(not works with node.js. please use display.draw())
+(It does not work with node.js. Please use display.draw())
  
-draw a line between two point.
+Now we draw a line between two points.
 ```javascript
 // Javascript Example
 obniz.display.line(30, 30, 100, 30);
@@ -76,9 +76,9 @@ obniz.display.circle(50, 10, 10, true);
 ![](./images/obniz_display_draws.jpg)
 
 ## rect(x, y, width, height, fill);
-(not works with node.js. please use display.draw())
+(It does not work with node.js. Please use display.draw())
  
-draw a rect.
+This draws a rectangle.
 ```javascript
 // Javascript Example
 obniz.display.rect(10, 10, 20, 20);
@@ -86,9 +86,9 @@ obniz.display.rect(20, 20, 20, 20, true); // filled rect
 ```
 
 ## circle(x, y, radius, fill);
-(not works with node.js. please use display.draw())
+(It does not work with node.js. Please use display.draw())
  
-draw a circle.
+This draws a circle.
 ```javascript
 // Javascript Example
 obniz.display.circle(40, 30, 20);
@@ -96,9 +96,9 @@ obniz.display.circle(90, 30, 20, true); // filled circle
 ```
 ## drawing(mode)
 
-Specifying transfer a display data or not. This affect only functions which uses canvas like `clear/print/line/rect/circle/draw`.
+You can specify to transfer the displayed data or not. This affects only the functions that use canvas like `clear/print/line/rect/circle/draw`.
 
-`false` to stop updating OLED. `true` to start again updating.
+Use `false` to stop updating OLED and `true` to restart updating.
 
 ```javascript
 // Javascript Example
@@ -115,8 +115,8 @@ obniz.display.drawing(true);
 ```
 
 ## qr(data, correction)
-show QR code with given text and correction level.
-correction level can be from
+This shows QR code with given text and correction level.
+The correction level can be
 
 1. L
 2. M(default)
@@ -134,7 +134,7 @@ obniz.display.qr("https://obniz.io")
 
 1 bit represents 1 dot. 1=white, 0=black.
 1 byte is part of one line.
-Order is same like.  
+The order is as below.  
 {1byte} {2byte} {3byte}...{16byte}  
 {17byte} {18byte} {19byte}...  
 .....  

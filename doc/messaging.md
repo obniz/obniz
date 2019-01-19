@@ -1,23 +1,24 @@
 # Messaging
-obniz can receive and transfer data from HTTP request to an obniz.
+obniz can receive and transfer data from HTTP request.
+Using this function you can also send data from one obniz to another. 
 
 
 
 ## API - obniz messaging
-you can send a message to an obniz by calling the REST API.
+You can send a message to an obniz by calling the REST API.
 
 ```
 GET https://obniz.io/obniz/{obniz_id}/message?data={what you want to send}
 ```
 
-for example send "move" text message to obniz 0000-0000
+For example, send "move" text message to obniz 0000-0000 as below.
 ```
 GET https://obniz.io/obniz/0000-0000/message?data=move
 ```
 
-And then, obniz 0000-0000 will get the message.
+And obniz 0000-0000 will get the message as long as it is online.
 You can do something on that event.
-404 return when obniz is not online.
+404 is returned when obniz is not online.
 
 ```Javascript
 // Example
@@ -33,18 +34,18 @@ obniz.onconnect = function() {
 }
 ```
 
-You can do with POST method. It accept multiple destinations.
+You can do this with POST method to send to multiple destinations.
 ```
 POST https://obniz.io/obniz/message
 ```
 Parameters
 
-- to:  destination separated "," 
+- to:  destination separated by "," 
 - data: message
 
 ## obniz - obniz messaging
-For example, press one button to move 10 robot's hand.
-First prepare obniz with one button connected. and send a message to 10 obniz when button pressed.
+Below is an example of pressing one button to move the hands of 10 robots aroudn the world simultaneously.
+First, prepare an obniz with one button connected, and send a message to 10 obniz when that button is pressed.
 ```Javascript
 // Example
 obniz.onconnect = function(){
@@ -67,9 +68,9 @@ obniz.onconnect = function(){
     };
  }
 ```
-targets is destination. and "pressed" is message.
+obniz ids written in targets are the destinations. and "pressed" is message.
 
-10 obniz will handle this message on onmessage function. In that function, move servomotor regarding the message.
+The 10 obniz will handle this message with onmessage function. With that function, servomotor attached to each obniz will be moved in response to the message.
 ```Javascript
 // Example
 obniz.onconnect = function() {

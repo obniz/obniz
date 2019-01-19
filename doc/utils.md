@@ -1,8 +1,8 @@
 # Utils
-Useful functions on obniz
+Useful functions to use obniz from program are ready for use.
 
 ## reset()
-force set obniz the state same as power on.
+This forces the obniz to go back to the initial state when the power was just turned on.
 
 ```Javascript
 // Example
@@ -13,8 +13,8 @@ obniz.onconnect = function() {
 ```
 
 ## repeat(callback)
-repeat will call callback function periodically.
-It stop calling when disconnected from obniz.
+Repeat will call the callback function periodically while it is connected to obniz.
+It will stop calling once it is disconnected from obniz.
 ```Javascript
 // Javascript Example
 obniz.ad0.start();
@@ -27,14 +27,14 @@ obniz.repeat(function(){
 })
 ```
 ## [await] wait(ms)
-Pause obniz until given ms passed.
+This pauses obniz for a period given in terms of ms (millisecond).
 ```Javascript
 // Javascript Example
 led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
 ```
-This method pause only obniz, javascript never stopped
+This method pauses only obniz, not javascript.
 ```Javascript
 // Javascript Example
 var time = new Date();
@@ -43,7 +43,7 @@ obniz.wait(1000); // led ON 1sec.
 led.off();
 console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
 ```
-But, when you call this method with await, javascript wait processing until given ms passed
+However, when you call this method together with the await function, javascript will pause for the given period in ms.
 ```Javascript
 // Javascript Example
 var time = new Date();
@@ -54,17 +54,17 @@ console.log((new Date()).getTime() - time.getTime()) // => about 1000
 ```
 
 ## keepWorkingAtOffline(working)
-By default. obniz will reset after disconnect from cloud.
-It means output value and pwm are all stop at that time.
-this function with argument true can set "do not reset when offline".
-This configuration will consist until obniz power down.
+By default, obniz resets after disconnection from the cloud.
+It means the output value and pwm will all stop at that point.
+But the above function with the argument true can nullify that default setting and change it to "do not reset when offline".
+This configuration remains as long as obniz is on.
 ```Javascript
 // Example
 obniz.keepWorkingAtOffline(true);
 ```
 
 ## util.createCanvasContext(width, height);
-create a Canvas context.
+This creates a Canvas context.
 It will add a canvas dom to body(in html).
 
 ```Javascript

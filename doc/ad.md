@@ -1,8 +1,8 @@
 # Peripheral AD
-AD read analog voltage applied on each io.
+AD reads analog voltage applied on each io.
 ad0(on io0) to ad11 are available.
 
-Only voltage change will be notified.
+Only the voltage change will be notified.
 
 ```Javascript
 // Javascript Example
@@ -16,13 +16,13 @@ obniz.ad1.start(function(voltage){
 
 #### Features
 ##### 12ch same time.
-all 12ch ad can be started. It will no affect to sampling rate.
+All 12ch ad can be used. It will not affect the sampling rate.
 ##### 30 samples/sec or slower
-Maximum sapling rate is depends on your network speed and also depends on obniz firmware version.(with ver1.0.0 max 30samples/sec)
+Maximum sampling rate depends on your network speed and on obniz firmware version.(with ver1.0.0, max is 30samples/sec)
 ##### 10bit - VDD calibrated
-ad also monitor vdd of obniz itself(normally 5v). Each ad result will be calibrated. And ad accuracy is 10bit.
+ad also monitors vdd of obniz itself(normally 5v). Each ad result will be calibrated. And ad accuracy is 10bit.
 ##### ad can be started even io is used for io-output/uart/spi etc
-ad converter is independent. It will work while IO is used for another function. 
+ad converter is independent. It also works while IO is used for another function. 
 
 ![](./images/ad_0.png)
 
@@ -35,8 +35,8 @@ obniz.ad0.start(function(voltage){
 ```
 
 ## start(callback(voltage))
-start measuring voltage on ioX until end() called.
-call callback function when voltage was changed.
+This starts measuring voltage on ioX until end() is called.
+Callback function is called when voltage gets changed.
 
 ```Javascript
 // Javascript Example
@@ -44,8 +44,8 @@ obniz.ad0.start(function(voltage){
   console.log("changed to "+voltage+" v")
 });
 ```
-You can start without callback function.
-callback function can be set at anytime.
+You can start without the callback function.
+The callback function can be set at anytime.
 
 ```Javascript
 // Javascript Example
@@ -55,10 +55,10 @@ obniz.ad0.onchange = function(voltage){
 }
 ```
 
-Get voltage without callback.
-The value will be stored `value` variable.
+Get the voltage value without callback.
+The value will be stored in the `value` variable.
 
-notice: This property stores last received value.
+Note: This property stores the last received value.
 NOT the value when you read this property.
 
 ```Javascript
@@ -70,8 +70,8 @@ while(true) {
 }
 ```
 ## [await] getWait()
-Measure voltage once. and return it's value.
-This function will pause until ad result arrive to your js.
+This measures the voltage just once and returns its value.
+This function will pause until ad result arrives to your js.
 
 ```Javascript
 // Javascript Example
@@ -81,7 +81,7 @@ obniz.io0.output(false)
 console.log(""+voltage+" should be closed to 5.00");
 ```
 ## end()
-Stop measuring voltage on ioX.
+This stops measuring voltage on ioX.
 
 ```Javascript
 // Javascript Example

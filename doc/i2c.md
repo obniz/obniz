@@ -1,10 +1,10 @@
 # Peripherals I2C
-I2C.
-i2c0 is only available. max speed 1Mhz.  
-Master/Slave.  
-But slave mode only works with "written" events. you cant set data to be read.
+i2c can be used.
+There is only i2c0 that is available. Max speed is 1Mhz.  
+Master/Slave mode.
+But slave mode only works with "written" events. You can't set data to be read.
 
-OverView
+Overview
 ```Javascript
 // Example
 // master mode sda=2 scl=3 400khz no internal pull up
@@ -22,27 +22,27 @@ obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
 ```
 
 # obniz.getFreeI2C()
-It returns not used i2c.
+It returns unused i2c.
 ```javascript
 var i2c = obniz.getFreeI2C();
 ```
-It equals to i2c0 because i2c0 is only available. ( no i2c1 ).
+It equals to i2c0 because only i2c0 is available. ( no i2c1 ).
 ```javascript
 (obniz.getFreeI2C() === obniz.i2c0) => true
 ```
-It throws error if no more i2c available
+It shows error if no more i2c is available
 ```javascript
 var i2c0 = obniz.getFreeI2C();
 var i2c1 = obniz.getFreeI2C(); // Error
 ```
 
 ## start({mode, sda, scl, clock[, pull, gnd]})
-start i2c on given io sda, scl.
-internal pull up is optional for io output setting. 
-Default it pull:null.
-See more for obniz.ioX.pull(). 
-For using internal-pull-up, you should specify "3v" to connect 3.3v targets. "5v" when 5v targets.
-When you choose internal pull up, speed is limited up to 100khz. Because internal pull up is not so tough.
+It starts i2c on given io sda, scl.
+Internal pull up is optional for io output setting. 
+By default it is pull:null.
+See more on obniz.ioX.pull(). 
+For using internal-pull-up, you should specify "3v" to connect to 3.3v targets, and "5v" for 5v targets.
+When you choose internal pull up, speed is limited to up to 100khz, because internal pull up is not so tough.
 Please add external pull-up resistor on scl/sda and choose pull:null when you need more speed.
 
 ```Javascript
@@ -61,8 +61,8 @@ obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
 ```
 ## write(address, data);
 
-send data to device which has the address. 7bit address only.
-max data length is 1024;
+It sends data to device which has the address - 7bit address only.
+Max data length is 1024;
 
 ```Javascript
 // Javascript Example
@@ -71,9 +71,9 @@ obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
 ```
 
 ## [await] readWait(address, length);
-read the data from device. length define the length of bytes. Treatment of address is same as write() function.
-This function will wait until data received.
-max length is 1024;
+It reads data from the device. length defines the length of bytes. The treatment of address is same as write() function.
+This function will wait until data is received.
+Max length is 1024;
 
 ```Javascript
 // Javascript Example
@@ -83,11 +83,11 @@ console.log("read "+ret);
 ```
 
 ## i2cX.onwritten = function(data){}
-slave mode only.  
-callbacks when data written.
-received data is fragmented.
-when written data is 100byte, you possibly get 56 byte and 44 byte separated.
-over 1024 bytes data can be drop few bytes.
+Slave mode only.  
+It is a callback that is called when data is written.
+Received data is fragmented.
+When written data is 100byte, you possibly receive it in 56 byte and 44 byte.
+For data over 1024 bytes, few bytes may be dropped.
 ```Javascript
 // Javascript Example
 obniz.i2c0.start({mode: "slave", sda: 0, scl: 1, slave_address: 0x01});
@@ -100,8 +100,8 @@ obniz.i2c0.onwritten = function(data){
 
 > from obniz.js 1.14.0
 
-Setting i2c bus error handling callback.
-By setting a function, obniz.error will be never called.
+It sets a function to receive error when i2c bus error occurs.
+By setting a function, obniz.error will never be called.
 
 ```Javascript
 // Javascript Example
