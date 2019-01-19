@@ -1,12 +1,12 @@
 # Peripherals IO
 General purpose IO
-available on each io (io0 to io11)
+This is available on each io (io0 to io11)
 
 #### Feature
 ##### output
-Each IO can output digital value.
+Each IO can put out digital values.
 
-Drive methods are below.
+Drive methods can be selected from the three below.
 
 Type | Voltage | max A | max Freq | Details
 :---: | :---: | :---: | :---: | ---
@@ -14,14 +14,14 @@ push-pull | `5v` | <=1A | <=250khz(recommend) | Default. Overcurrent protection
 push-pull | `3v` | <=1mA(recommend) | <=80Mhz | over current detection when using io.output().
 open-drain | `<=5v` | <=1mA(recommend) | <=80Mhz | 
 
-Each methods can be configured independently.
-Not only for io.output(), but also UART SPI can choose methods.
+Each method can be configured independently for each IO.
+Not only for io.output(), but also for UART and SPI you can choose your preferred drive method.
 
 ##### input
 
-Only one input method.
+There is only one input method.
 
-3v input with 5v tolerant. So, CMOS level.
+3v input with 5v tolerant, so the threshold value is CMOS level.
 
 
 Type | Level | max Freq | Detail
@@ -30,9 +30,9 @@ digital-in | `3v(5v tolerant)` | <=80Mhz |
 
 ##### internal weak pull-up/pull-dow
 
-Pull up down can bec configured independently.
+Pull up and down can be configured independently for each IO.
 
-Type is one of four state.
+There are four types as below.
 
 Type | Pull to | Detail
 :---: | :---: | :---:
@@ -43,7 +43,7 @@ pull-down | `gnd` |
 
 
 ## output(value)
-Make ioX to output mode and output.
+Make ioX to output mode and put out 1 or 0.
 
 ```Javascript
 // Javascript Example
@@ -54,15 +54,15 @@ obniz.io3.output(1); // io3 is around 3v.
 ```
 
 ## drive(type)
-Change output drive method.
-By default, it is push-pull 5v with motor driver(up to 1A).
+This allows you to change output drive method.
+By default, it is set as push-pull 5v with motor driver(up to 1A).
 
 1. "5v"
-  - push-pull 5v mode. up to 1A available
+  - Push-pull 5v mode. Up to 1A available
 2. "3v"
-  - push-pull 3v mode. up to around 1mA. It's voltage will reduce by current.
-3. "open-drain"
-  - open-drain mode. It sink up to around 1mA.
+  - Push-pull 3v mode. Up to around 1mA. Its voltage will reduce as more current flows.
+3. "Open-drain"
+  - Open-drain mode. It sinks up to around 1mA.
 
 ```Javascript
 // Javascript Example
@@ -77,7 +77,7 @@ obniz.io2.output(true); // output open-drain with 5v pull-up
 ```
 
 ## pull(pullType)
-enable/disable internal weak pull up/down resistors.
+This enables/disables internal weak pull up/down resistors.
 
 1. null (default) 
 2. "5v"  pull up to 5v
@@ -93,7 +93,7 @@ obniz.io0.output(false);
 
 ## input(callback)
 Make ioX to input mode.
-and callback function will be called when io changed it's input value.
+Callback function will be called when io changes its input value.
 ```Javascript
 // Javascript Example
 obniz.io0.input(function(value){
@@ -103,8 +103,8 @@ obniz.io0.input(function(value){
 
 ## [await] inputWait
 Make ioX to input mode.
-And This will return current input value.
-It will pause process.
+And this will return the current input value.
+It pauses the process until the value is returned.
 ```Javascript
 // Javascript Example
 var value = await obniz.io0.inputWait();
@@ -112,10 +112,10 @@ console.log(value);
 ```
 
 ## end()
-End output/input on ioX.
-This function only affect when using ioX.output(), ioX.input().
-AD/UART/etc are not stopped by calling this.
-pull-up down are also not changed.
+This ends output/input on ioX.
+This function is effective only when using ioX.output() or ioX.input().
+This won't be called when AD/UART/etc are used.
+Pull-up down also will not affected.
 
 ```Javascript
 // Javascript Example
@@ -124,12 +124,12 @@ obniz.io0.end();
 ```
 
 ## io.animation(name, status, array of animations)
-io animation is hardware acceleration for serial sequence change of io.
-now "loop" animation is available.
-it loop io changes regarding json array.
-io and pwm json commands only.
-duration is how long does it state consist. It ms. 1 to 429426 ms (around 1 hour).
-state is function which has io directives.
+io animation is used when you wish to accelerate the serial sequence change of io.
+"Loop" animation can be used.
+io changes repeatedly in a sequential manner according to json array.
+io and pwm json commands can only be used.
+duration means how long this state lasts, and you can set it between ms. 1 to 429426 ms (around 1 hour).
+state is a function which has io directives.
 
 ```Javascript
 // Javascript Example
@@ -150,7 +150,7 @@ obniz.io.animation("animation-1", "loop", [
 ])
 ```
 
-It will generate signals like
+It will generate signals like below
 
 ![](./images/ioanimation.png)
 
