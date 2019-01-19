@@ -2,8 +2,8 @@
 
 ## scan.start( \[target, \[setting]])
 
-Start scan.
-You can filter uuids or localName in target param.
+This starts scanning BLE.
+You can filter uuids or localName using the target param.
 
 ```Javascript
 // Javascript Example
@@ -20,11 +20,11 @@ obniz.ble.scan.start(target, setting);
 
 ```
 
-Also, without params are valid.
+This is also possible without params being valid.
 
 ```Javascript
 // Javascript Example
-obniz.ble.scan.start();  // 引数なしも可能
+obniz.ble.scan.start(); 
 
 ```
 
@@ -42,7 +42,7 @@ obniz.ble.scan.start(target);
 
 
 ## scan.end()
-stop scan.
+This stops scanning BLE.
 
 ```Javascript
 // Javascript Example
@@ -53,7 +53,7 @@ obniz.ble.scan.end();
 
 ## scan.onfind
 
-Call this func when obniz find new peripheral.
+This function gets called when obniz finds a new peripheral.
 
 
 ```Javascript
@@ -68,7 +68,7 @@ obniz.ble.scan.start();
 
 ## scan.onfinish
 
-Call this func when obniz have finish scan.
+This function gets called when obniz finishes scanning.
 
 
 ```Javascript
@@ -87,7 +87,8 @@ obniz.ble.scan.start();
 
 
 ## \[await] scan.startOneWait( \[target, \[setting]])
-Scan and return first find peripheral.
+This scans and returns the first peripheral that was found among the objects specified in the target.
+
 
 
 ```Javascript
@@ -102,9 +103,9 @@ console.log(peripheral);
 ```
 
 ## \[await] scan.startAllWait( \[target, \[setting]])
-Scan and return all find peripheral.
-This function not return until scan timeout.(default 30sec)
-If you want to change it, set duration param.
+This scans and returns all the peripherals found.
+This function does not return until scanning gets timed out.(default 30sec)
+If you want to change the default duration, you can do so with the duration param.
 
 ```Javascript
 // Javascript Example
@@ -125,7 +126,7 @@ for(var peripheral of peripherals){
 
 
 ## peripheral.adv_data
-Return raw advertise data.
+This returns raw advertise data.
 
 ```Javascript
 // Javascript Example
@@ -138,7 +139,7 @@ console.log(peripheral.adv_data)
 ```
 
 ## peripheral.localName
-Return local name if peripheral has it.
+This returns local name if the peripheral has it.
 
 ```Javascript
 // Javascript Example
@@ -156,8 +157,8 @@ console.log(peripheral.localName)
 ## peripheral.iBeacon
 // Javascript Example
 
-Return iBeacon data if peripheral has it.
-Return values are here.
+This returns iBeacon data if the peripheral has it. If none, it will return null.
+The return values are shown below.
 
 ```
 {
@@ -195,8 +196,8 @@ obniz.ble.startScan({duration : 10});
 
 -->
 ## \[await] peripheral.connectWait()
-connect to peripheral
-return true for success，false for fail
+This connects obniz to the peripheral.
+It returns true when it succeeds and false when it fails.
 
 ```Javascript
 // Javascript Example
@@ -215,7 +216,7 @@ if(connected){
 ```
 
 ## peripheral.onconnect
-Call  this func when obniz connect success
+This function is called when connection succeeds.
 
 ```Javascript
 // Javascript Example
@@ -255,8 +256,8 @@ obniz.ble.startScan({duration : 10});
 
 
 ## \[await] peripheral.disconnectWait()
-disconnect from peripheral
-return true for success，false for fail
+This disconnects obniz from peripheral.
+It returns true when it succeeds and false when it fails.
 
 ```Javascript
 // Javascript Example
@@ -284,7 +285,7 @@ if(peripheral){
 
 
 ## peripheral.ondisconnect
-Call this func when obniz close connection. 
+This function is called when obniz is disconnected.
 
 ```Javascript
 // Javascript Example
@@ -306,7 +307,8 @@ obniz.ble.scan.start();
 
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).writeWait(dataArray)
-write data to the characteristic from data array.
+This writes dataArray to the characteristic.
+It returns true when it succeeds and false when it fails.
 
 ```Javascript
 // Javascript Example
@@ -333,7 +335,7 @@ if(peripheral){
 ```
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).writeNumberWait(value)
-write data to the characteristic from value as 1byte.
+It writes data to the characteristic as 1byte.
 
 ```Javascript
 // Javascript Example
@@ -360,7 +362,8 @@ if(peripheral){
 
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).writeTextWait(str)
-write data to the characteristic from string.
+It writes data to the characteristic as string.
+It returns true when it succeeds and false when it fails.
 
 ```Javascript
 // Javascript Example
@@ -408,8 +411,8 @@ obniz.ble.startScan({duration : 10});
 
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).readWait()
-Read from characteristic.
-Return value appear in callback function (onread) .
+It reads data from the characteristic.
+The returned value appears in the callback function (onread). If reading succeeds an Array with data will be returned, but if it fails undefined will be returned.
 
 ```Javascript
 // Javascript Example
@@ -457,7 +460,7 @@ obniz.ble.startScan({duration : 10});
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).registerNotify(func)
 
-Set callback function of notify.
+This sets a callback function to receive notify when it comes from periperal.
 To receive notify, you need to register on CCCD Descriptor(0x2902).
 
 ```javascript
@@ -488,7 +491,7 @@ if(connected){
 
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).writeWait(dataArray)
-write descriptor with dataArray
+This writes dataArray to descriptor.
 
 ```Javascript
 // Javascript Example
@@ -539,7 +542,7 @@ obniz.ble.startScan({duration : 10});
 -->
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).writeNumber(value)
-write descriptor with number as 1 byte
+This writes a number to descriptor as 1byte.
 
 ```Javascript
 // Javascript Example
@@ -566,7 +569,8 @@ if(peripheral){
 
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).writeText(str)
-write data to the descriptor from string.
+This writes data to the descriptor as string.
+It returns true when it succeeds and false when it fails.
 
 
 
@@ -593,8 +597,8 @@ if(peripheral){
 ```
 
 ## peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).readWait()
-Read data from descriptor
-Return value appear in callback function (onread) .
+It reads data from descriptor.
+The return value appears in the callback function (onread). If reading succeeds an Array with data will be returned, but if it fails undefined will be returned.
 
 ```Javascript
 // Javascript Example
@@ -619,7 +623,7 @@ if(peripheral){
 
 
 ## peripheral.onerror
-Call this func when something error occurred with error messages.
+This gets called with an error message when some kind of error occurs.
 
 ```Javascript
 {
