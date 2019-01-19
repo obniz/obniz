@@ -1,11 +1,11 @@
 # Switch
-Embedded switch on obniz.
+Here we show how to use the embedded switch on obniz.
 
 ### switch.onchange = function(){}
-When switch state changed, This function will be called.
-If you press and release a switch, callback two times("push" and "none").
+When the switch state changes, this callback function will be called.
+If you press and release a switch, it callbacks twice ("push" and "none").
 
-The states is below.
+The states are as below.
 
 1. none
 2. push
@@ -25,7 +25,7 @@ obniz.switch.onchange = function(state) {
 ```
 
 ## [await] switch.getWait()
-Determine current state with waiting response.
+This determines the current status of the switch.
 
 ```Javascript
 // Javascript Example
@@ -39,7 +39,7 @@ if (state === "push") {
 
 
 ## [await] switch.stateWait(state)
-Wait until change to state switch.
+With this you wait until the switch status changes to state.
 
 ```Javascript
 // Javascript Example
