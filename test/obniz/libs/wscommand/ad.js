@@ -773,6 +773,23 @@ describe('ad', function() {
     expect(json).to.be.deep.equal(expectJson);
   });
 
+  it('response test 10bit mode', function() {
+    let responseBinaryString = '07 02 03 00 83 FF';
+    let expectJson = [{ ad0: 5.0 }];
+
+    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
+      return parseInt(val, 16);
+    });
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
+
   it('response double ad', function() {
     let responseBinaryString = '07 02 03 00 00 01 07 02 03 01 00 01';
     let expectJson = [{ ad0: 0.01 }, { ad1: 0.01 }];
