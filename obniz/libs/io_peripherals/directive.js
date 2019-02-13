@@ -1,3 +1,5 @@
+const semver = require('semver');
+
 class Directive {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
@@ -23,6 +25,12 @@ class Directive {
   }
 
   animation(name, status, array, repeat) {
+    if (
+      (typeof repeat == 'number' || status == 'registrate') &&
+      semver.lt(this.Obniz.firmware_ver, '2.0.0')
+    ) {
+      throw new Error(`Please update obniz firmware >= 2.0.0`);
+    }
     let obj = {};
     obj.io = {
       animation: {
@@ -58,6 +66,9 @@ class Directive {
   }
 
   repeatWait(array, repeat) {
+    if (semver.lt(this.Obniz.firmware_ver, '2.0.0')) {
+      throw new Error(`Please update obniz firmware >= 2.0.0`);
+    }
     if (typeof repeat !== 'number' || repeat < 1) {
       throw new Error('please specify repeat count > 0');
     }
