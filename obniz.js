@@ -11350,7 +11350,10 @@ class Directive {
   }
 
   animation(name, status, array, repeat) {
-    if ((typeof repeat == "number" || status == 'registrate') && semver.lt(this.Obniz.firmware_ver, '2.0.0')) {
+    if (
+      (typeof repeat == 'number' || status == 'registrate') &&
+      semver.lt(this.Obniz.firmware_ver, '2.0.0')
+    ) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
     let obj = {};
@@ -16295,8 +16298,11 @@ module.exports = class WSCommand_Directive extends WSCommand {
       frame.set(nameArray, offset);
       offset += nameArray.length;
       frame[offset++] = 0; // null string
-      if (params.animation.status === 'registrate' || typeof params.animation.repeat === 'number') {
-        throw new Error('you need to update your firmware >= 2.0.0')
+      if (
+        params.animation.status === 'registrate' ||
+        typeof params.animation.repeat === 'number'
+      ) {
+        throw new Error('you need to update your firmware >= 2.0.0');
       }
     } else {
       frame = new Uint8Array(1 + nameArray.length + 1 + 1 + 4);

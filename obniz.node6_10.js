@@ -5950,7 +5950,7 @@ class Directive {
   }
 
   animation(name, status, array, repeat) {
-    if ((typeof repeat == "number" || status == 'registrate') && semver.lt(this.Obniz.firmware_ver, '2.0.0')) {
+    if ((typeof repeat == 'number' || status == 'registrate') && semver.lt(this.Obniz.firmware_ver, '2.0.0')) {
       throw new Error(`Please update obniz firmware >= 2.0.0`);
     }
     let obj = {};
