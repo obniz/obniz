@@ -585,8 +585,8 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `io.name` |  string  | <ul><li>required</li><li>1 &le; length &le; 254</li></ul> | animation name which is finished&nbsp; |
-| `io.status` |  string  | <ul><li>required</li><li>const `"finish"`</li></ul> | status of an registrated animation&nbsp; |
+| `io.animation.name` |  string  | <ul><li>required</li><li>1 &le; length &le; 254</li></ul> | animation name which is finished&nbsp; |
+| `io.animation.status` |  string  | <ul><li>required</li><li>const `"finish"`</li></ul> | status of an registrated animation&nbsp; |
 
 
 
@@ -595,8 +595,10 @@ io animation is hardware acceleration for serial sequence change of io. now 'loo
 [
     {
         "io": {
-            "name": "animation-1",
-            "status": "finish"
+            "animation": {
+                "name": "animation-1",
+                "status": "finish"
+            }
         }
     }
 ]
