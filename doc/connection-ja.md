@@ -170,6 +170,28 @@ obniz.onconnect = async function() {
 }
 ```
 
+## connectionState
+
+obnizとの現在の接続状態を接続状態を表す文字列が入っています。
+以下の4状態のうちどれかになります。
+
+state | type
+--- | ---
+`'closed'` | 接続していない
+`'connecting'` | 接続中
+`'connected'` | 接続が完了した
+`'closing'` | 切断中
+
+
+```javascript
+var obniz = new Obniz('1234-5678');
+console.log(obniz.connectionState) // => === "connecting"
+obniz.onconnect = async function() {
+  console.log(obniz.connectionState) // => === "connected"
+}
+```
+
+
 ## debugprint
 通信でやりとりされるjsonを出力したり、接続状態などのobniz.js内のログがconsole.logに出力されます。
 

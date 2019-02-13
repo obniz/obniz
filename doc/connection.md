@@ -170,6 +170,26 @@ if(connected){
 }
 ```
 
+## connectionState
+
+This let you know connection state to your obniz as string value.
+
+state | type
+--- | ---
+`'closed'` | not connected.
+`'connecting'` | connecting 
+`'connected'` | connection established
+`'closing'` | closing connection.
+
+
+```javascript
+var obniz = new Obniz('1234-5678');
+console.log(obniz.connectionState) // => === "connecting"
+obniz.onconnect = async function() {
+  console.log(obniz.connectionState) // => === "connected"
+}
+```
+
 ## debugprint
 This lets obniz.js to show logs like communicated jsons and connection logs in console.log.
 

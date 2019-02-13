@@ -2295,7 +2295,6 @@ const emitter = __webpack_require__(/*! eventemitter3 */ "eventemitter3");
 const isNode = typeof window === 'undefined';
 
 module.exports = class ObnizConnection {
-
   constructor(id, options) {
     this.isNode = isNode;
     this.id = id;
@@ -2306,6 +2305,7 @@ module.exports = class ObnizConnection {
     this.debugs = [];
     this.onConnectCalled = false;
     this.firmware_ver = undefined;
+    this.connectionState = 'closed'; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
@@ -2452,6 +2452,7 @@ module.exports = class ObnizConnection {
   }
 
   wsconnect(desired_server) {
+
     let server = this.options.obniz_server;
     if (desired_server) {
       server = '' + desired_server;
@@ -2498,6 +2499,8 @@ module.exports = class ObnizConnection {
       socket.onerror = this.wsOnError.bind(this);
     }
     this.socket = socket;
+
+    this.connectionState = 'connecting';
   }
 
   _connectLocal(host) {
@@ -2600,24 +2603,26 @@ module.exports = class ObnizConnection {
     if (this.socket) {
       if (this.socket.readyState <= 1) {
         // Connecting & Connected
+        this.connectionState = 'closing';
         this.socket.close(1000, 'close');
       }
       this.clearSocket(this.socket);
       delete this.socket;
     }
+    this.connectionState = 'closed';
   }
 
   _callOnConnect() {
-    let shouldCall = true;
+    let canChangeToConnected = true;
     if (this._waitForLocalConnectReadyTimer) {
-      /* obniz.js has wait local_connect */
+      /* obniz.js can't wait for local_connect any more! */
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
     } else {
-      /* obniz.js hasn't wait local_connect */
+      /* obniz.js has to wait for local_connect establish */
       if (this.socket_local && this.socket_local.readyState === 1) {
         /* delayed connect */
-        shouldCall = false;
+        canChangeToConnected = false;
       } else {
         /* local_connect is not used */
       }
@@ -2625,7 +2630,8 @@ module.exports = class ObnizConnection {
 
     this.emitter.emit('connected');
 
-    if (shouldCall) {
+    if (canChangeToConnected) {
+      this.connectionState = 'connected';
       if (typeof this.onconnect === 'function') {
         const promise = this.onconnect(this);
         if (promise instanceof Promise) {
