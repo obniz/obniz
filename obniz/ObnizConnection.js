@@ -504,12 +504,14 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
-      for (let i = 0; i < this.wscommands.length; i++) {
-        const command = this.wscommands[i];
-        command.setHw({
-          model: 'obniz_board', // hard coding
-          firmware: this.firmware_ver,
-        });
+      if (this.wscommands) {
+        for (let i = 0; i < this.wscommands.length; i++) {
+          const command = this.wscommands[i];
+          command.setHw({
+            model: 'obniz_board', // hard coding
+            firmware: this.firmware_ver,
+          });
+        }
       }
       if (this.options.reset_obniz_on_ws_disconnection) {
         this.resetOnDisconnect(true);
