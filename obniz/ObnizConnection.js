@@ -40,7 +40,15 @@ module.exports = class ObnizConnection {
       let classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
       for (let class_name in classes) {
-        this.wscommands.push(new classes[class_name]());
+        this.wscommands.push(
+          new classes[class_name]({
+            hw: {
+              firmware: undefined,
+              model: 'obniz_board',
+            },
+            delegate: undefined,
+          })
+        );
       }
     }
     if (this.options.auto_connect) {
@@ -496,6 +504,13 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
+      for (let i = 0; i < this.wscommands.length; i++) {
+        const command = this.wscommands[i];
+        command.setHw({
+          model: 'obniz_board', // hard coding
+          firmware: this.firmware_ver,
+        });
+      }
       if (this.options.reset_obniz_on_ws_disconnection) {
         this.resetOnDisconnect(true);
       }

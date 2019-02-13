@@ -7737,7 +7737,13 @@ module.exports = class ObnizConnection {
       let classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
       for (let class_name in classes) {
-        this.wscommands.push(new classes[class_name]());
+        this.wscommands.push(new classes[class_name]({
+          hw: {
+            firmware: undefined,
+            model: 'obniz_board'
+          },
+          delegate: undefined
+        }));
       }
     }
     if (this.options.auto_connect) {
@@ -7859,7 +7865,6 @@ module.exports = class ObnizConnection {
   }
 
   wsconnect(desired_server) {
-
     let server = this.options.obniz_server;
     if (desired_server) {
       server = '' + desired_server;
@@ -7906,7 +7911,7 @@ module.exports = class ObnizConnection {
       socket.onerror = this.wsOnError.bind(this);
     }
     this.socket = socket;
-    
+
     this.connectionState = 'connecting';
   }
 
@@ -8194,6 +8199,13 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
+      for (let i = 0; i < this.wscommands.length; i++) {
+        const command = this.wscommands[i];
+        command.setHw({
+          model: 'obniz_board', // hard coding
+          firmware: this.firmware_ver
+        });
+      }
       if (this.options.reset_obniz_on_ws_disconnection) {
         this.resetOnDisconnect(true);
       }
@@ -14329,8 +14341,12 @@ const WSSchema = __webpack_require__("./obniz/libs/wscommand/WSSchema.js");
 let commandClasses = {};
 
 module.exports = class WSCommand {
-  constructor(delegate) {
-    this.delegate = delegate;
+  constructor() {
+    this._hw = {
+      model: undefined,
+      firmware: undefined
+    }
+    this._delegate = undefined
 
     //constants
     this.COMMAND_FUNC_ID_ERROR = 0xff;
@@ -14439,10 +14455,12 @@ module.exports = class WSCommand {
     return ret;
   }
 
+  setHw(obj) {
+    this._hw.model = obj.model;
+    this._hw.firmware = obj.firmware;
+  }
+
   sendCommand(func, payload) {
-    if (this.delegate && this.delegate.onParsed) {
-      this.delegate.onParsed(this.module, func, payload);
-    }
     if (this.parsed) {
       this.parsed(this.module, func, payload);
     }
@@ -14634,8 +14652,8 @@ class WSCommandNotFoundError extends Error {}
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_AD extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 7;
 
     this._CommandInitNormalInterval = 0;
@@ -14716,8 +14734,8 @@ const JsonBinaryConverter = __webpack_require__("./obniz/libs/wscommand/jsonBina
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Ble extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 11;
 
     this.uuidLength = 16 + 2;
@@ -16164,8 +16182,8 @@ const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 module.exports = class WSCommand_Directive extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 1;
 
     this._CommandRegistrate = 0;
@@ -16319,8 +16337,8 @@ module.exports = class WSCommand_Directive extends WSCommand {
 const qrcode = __webpack_require__("./obniz/libs/utils/qr.js");
 
 class WSCommand_Display extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 8;
 
     this._CommandClear = 0;
@@ -16475,8 +16493,8 @@ module.exports = WSCommand_Display;
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_I2C extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 6;
 
     this._CommandInit = 0;
@@ -16695,8 +16713,8 @@ const COMMAND_IO_MUTEX_NAMES = {
 };
 
 class WSCommand_IO extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 2;
 
     this._CommandOutput = 0;
@@ -16853,8 +16871,8 @@ module.exports = WSCommand_IO;
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_LogicAnalyzer extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 10;
 
     this._CommandInit = 0;
@@ -16945,8 +16963,8 @@ module.exports = WSCommand_LogicAnalyzer;
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Measurement extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 12;
 
     this._CommandMeasurementEcho = 0;
@@ -17035,8 +17053,8 @@ module.exports = WSCommand_Measurement;
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_PWM extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 3;
     this.ModuleNum = 6;
     this.resetInternalStatus();
@@ -17155,8 +17173,8 @@ module.exports = WSCommand_PWM;
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_SPI extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 5;
 
     this._CommandInit = 0;
@@ -17272,8 +17290,8 @@ module.exports = WSCommand_SPI;
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Switch extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 9;
 
     this._CommandNotifyValue = 0;
@@ -17334,8 +17352,8 @@ module.exports = WSCommand_Switch;
 /* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_System extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 0;
 
     this._CommandReboot = 0;
@@ -17489,8 +17507,8 @@ module.exports = WSCommand_System;
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_UART extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 4;
 
     this._CommandInit = 0;

@@ -2,8 +2,8 @@ const WSCommand = require('./WSCommand_.js');
 const ObnizUtil = require('../utils/util');
 
 module.exports = class WSCommand_Directive extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 1;
 
     this._CommandRegistrate = 0;

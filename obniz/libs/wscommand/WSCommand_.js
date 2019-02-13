@@ -3,8 +3,12 @@ const WSSchema = require('./WSSchema');
 let commandClasses = {};
 
 module.exports = class WSCommand {
-  constructor(delegate) {
-    this.delegate = delegate;
+  constructor() {
+    this._hw = {
+      model: undefined,
+      firmware: undefined,
+    };
+    this._delegate = undefined;
 
     //constants
     this.COMMAND_FUNC_ID_ERROR = 0xff;
@@ -113,10 +117,12 @@ module.exports = class WSCommand {
     return ret;
   }
 
+  setHw(obj) {
+    this._hw.model = obj.model;
+    this._hw.firmware = obj.firmware;
+  }
+
   sendCommand(func, payload) {
-    if (this.delegate && this.delegate.onParsed) {
-      this.delegate.onParsed(this.module, func, payload);
-    }
     if (this.parsed) {
       this.parsed(this.module, func, payload);
     }
