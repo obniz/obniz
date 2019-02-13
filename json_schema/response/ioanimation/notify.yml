@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ioAnimation/notify"
+
+type: object
+required : [name, status]
+properties:
+    name :
+        type: string
+
+    status :
+        type: string
+

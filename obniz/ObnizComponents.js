@@ -103,7 +103,7 @@ module.exports = class ObnizComponents extends ObnizParts {
         this[peripheral + '' + i].notified(module_value);
       }
     }
-    const names = ['switch', 'ble', 'measure'];
+    const names = ['io', 'switch', 'ble', 'measure'];
     for (let i = 0; i < names.length; i++) {
       if (obj[names[i]]) {
         this[names[i]].notified(obj[names[i]]);

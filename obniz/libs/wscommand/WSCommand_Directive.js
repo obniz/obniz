@@ -1,5 +1,6 @@
 const WSCommand = require('./WSCommand_.js');
 const ObnizUtil = require('../utils/util');
+const semver = require('semver');
 
 module.exports = class WSCommand_Directive extends WSCommand {
   constructor() {
@@ -9,6 +10,7 @@ module.exports = class WSCommand_Directive extends WSCommand {
     this._CommandRegistrate = 0;
     this._CommandPause = 1;
     this._CommandResume = 2;
+    this._CommandNotify = 3;
 
     const CommandIO = require('./WSCommand_IO');
     const CommandPWM = require('./WSCommand_PWM');
@@ -20,10 +22,40 @@ module.exports = class WSCommand_Directive extends WSCommand {
 
   init(params, originalParams) {
     const nameArray = ObnizUtil.string2dataArray(params.animation.name);
-    let frame = new Uint8Array(nameArray.length + 2);
-    frame[0] = nameArray.length + 1;
-    frame.set(nameArray, 1);
-    frame[frame.byteLength - 1] = 0; // null string
+    let frame,
+      offset = 0;
+    if (semver.lt(this._hw.firmware, '2.0.0')) {
+      // < 2.0.0
+      frame = new Uint8Array(1 + nameArray.length + 1);
+      // name //
+      frame[offset++] = nameArray.length + 1;
+      frame.set(nameArray, offset);
+      offset += nameArray.length;
+      frame[offset++] = 0; // null string
+    } else {
+      frame = new Uint8Array(1 + nameArray.length + 1 + 1 + 4);
+      // name //
+      frame[offset++] = nameArray.length + 1;
+      frame.set(nameArray, offset);
+      offset += nameArray.length;
+      frame[offset++] = 0; // null string
+      // type and count //
+      let type = 0,
+        repeat_count = 0;
+      if (params.animation.status === 'loop') {
+        type = 1; // auto start
+      }
+      if (typeof params.animation.repeat === 'number') {
+        repeat_count = params.animation.repeat;
+        type += 2;
+      }
+      frame[offset++] = type;
+      frame[offset++] = repeat_count >> (8 * 3);
+      frame[offset++] = repeat_count >> (8 * 2);
+      frame[offset++] = repeat_count >> (8 * 1);
+      frame[offset++] = repeat_count;
+    }
+
     const commandJsonArray = params.animation.states;
 
     for (let i = 0; i < commandJsonArray.length; i++) {
@@ -143,6 +175,23 @@ module.exports = class WSCommand_Directive extends WSCommand {
         let WSCommandNotFoundError = this.WSCommandNotFoundError;
         throw new WSCommandNotFoundError(`[io.animation]unknown command`);
       }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandNotify) {
+      const name = ObnizUtil.dataArray2string(
+        payload.slice(2, payload.byteLength - 1)
+      ); // remove null string
+
+      objToSend['io'] = {
+        animation: {
+          name,
+          status: 'finish',
+        },
+      };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 };

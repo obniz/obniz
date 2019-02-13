@@ -8,7 +8,6 @@ module.exports = class WSCommand {
       model: undefined,
       firmware: undefined,
     };
-    this._delegate = undefined;
 
     //constants
     this.COMMAND_FUNC_ID_ERROR = 0xff;

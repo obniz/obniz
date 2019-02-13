@@ -223,6 +223,8 @@ var map = {
 	"./response/index.yml": "./json_schema/response/index.yml",
 	"./response/io/get.yml": "./json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./json_schema/response/io/index.yml",
+	"./response/ioanimation/index.yml": "./json_schema/response/ioanimation/index.yml",
+	"./response/ioanimation/notify.yml": "./json_schema/response/ioanimation/notify.yml",
 	"./response/logicanalyzer/data.yml": "./json_schema/response/logicanalyzer/data.yml",
 	"./response/logicanalyzer/index.yml": "./json_schema/response/logicanalyzer/index.yml",
 	"./response/measure/echo.yml": "./json_schema/response/measure/echo.yml",
@@ -681,7 +683,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/ioanimation/init.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"repeat":{"type":"integer","minLength":1,"maxLength":4294967295,"default":"undefined"},"status":{"type":"string","default":"loop","enum":["loop","registrate"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
@@ -1171,7 +1173,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
 
 /***/ }),
 
@@ -1186,6 +1188,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","basePath":"io0","anyOf":[{"$ref":"/response/io/get"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ioanimation/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ioanimation/notify.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["name","status"],"properties":{"name":{"type":"string"},"status":{"type":"string"}}}
 
 /***/ }),
 
@@ -7536,7 +7552,7 @@ module.exports = class ObnizComponents extends ObnizParts {
         this[peripheral + '' + i].notified(module_value);
       }
     }
-    const names = ['switch', 'ble', 'measure'];
+    const names = ['io', 'switch', 'ble', 'measure'];
     for (let i = 0; i < names.length; i++) {
       if (obj[names[i]]) {
         this[names[i]].notified(obj[names[i]]);
@@ -11298,9 +11314,26 @@ module.exports = PeripheralAD;
 class Directive {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
+    this.observers = [];
+    this._reset();
   }
 
-  animation(name, status, array) {
+  _reset() {
+    for (let i=0; i<this.observers.length; i++) {
+      this.observers[i].reject();
+    }
+    this.observers = [];
+  }
+
+  addObserver(name, resolve, reject) {
+    if (name && resolve && reject) {
+      this.observers.push({
+        name, resolve, reject
+      });
+    }
+  }
+
+  animation(name, status, array, repeat) {
     let obj = {};
     obj.io = {
       animation: {
@@ -11308,6 +11341,9 @@ class Directive {
         status: status,
       },
     };
+    if (typeof repeat == 'number') {
+      obj.io.animation.repeat = repeat
+    }
     if (!array) array = [];
 
     let states = [];
@@ -11326,10 +11362,35 @@ class Directive {
         state: pooledJsonArray,
       });
     }
-    if (status === 'loop') {
+    if (status === 'loop' || status === 'registrate') {
       obj.io.animation.states = states;
     }
     this.Obniz.send(obj);
+  }
+
+  repeatWait(array, repeat) {
+
+    if(typeof repeat !== 'number' || repeat < 1) {
+      throw new Error('please specify repeat count > 0');
+    }
+    
+    return new Promise((resolve, reject) => {
+      const name = "_repeatwait";
+      
+      this.animation(name, 'loop', array, repeat)
+      this.addObserver(name, resolve, reject);
+    });
+  }
+
+  notified(obj) {
+    if (obj.animation.status == 'finish') {
+      for (let i=this.observers.length-1; i>=0; i--) {
+        if (obj.animation.name === this.observers[i].name) {
+          this.observers[i].resolve();
+          this.observers.splice(i, 1);
+        }
+      }
+    }
   }
 }
 
@@ -14348,7 +14409,6 @@ module.exports = class WSCommand {
       model: undefined,
       firmware: undefined,
     };
-    this._delegate = undefined;
 
     //constants
     this.COMMAND_FUNC_ID_ERROR = 0xff;
@@ -16182,6 +16242,7 @@ module.exports = WSCommand_Ble;
 
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
+const semver = __webpack_require__("./node_modules/semver/semver.js");
 
 module.exports = class WSCommand_Directive extends WSCommand {
   constructor() {
@@ -16191,6 +16252,7 @@ module.exports = class WSCommand_Directive extends WSCommand {
     this._CommandRegistrate = 0;
     this._CommandPause = 1;
     this._CommandResume = 2;
+    this._CommandNotify = 3;
 
     const CommandIO = __webpack_require__("./obniz/libs/wscommand/WSCommand_IO.js");
     const CommandPWM = __webpack_require__("./obniz/libs/wscommand/WSCommand_PWM.js");
@@ -16201,11 +16263,39 @@ module.exports = class WSCommand_Directive extends WSCommand {
   // Commands
 
   init(params, originalParams) {
+
     const nameArray = ObnizUtil.string2dataArray(params.animation.name);
-    let frame = new Uint8Array(nameArray.length + 2);
-    frame[0] = nameArray.length + 1;
-    frame.set(nameArray, 1);
-    frame[frame.byteLength - 1] = 0; // null string
+    let frame, offset = 0;
+    if (semver.lt(this._hw.firmware, '2.0.0')) { // < 2.0.0
+      frame = new Uint8Array(1 + nameArray.length + 1);
+      // name //
+      frame[offset++] = nameArray.length + 1;
+      frame.set(nameArray, offset);
+      offset += nameArray.length;
+      frame[offset++] = 0; // null string
+    } else {
+      frame = new Uint8Array(1 + nameArray.length + 1 + 1 + 4);
+      // name //
+      frame[offset++] = nameArray.length + 1;
+      frame.set(nameArray, offset);
+      offset += nameArray.length;
+      frame[offset++] = 0; // null string
+      // type and count //
+      let type = 0, repeat_count = 0;
+      if (params.animation.status === 'loop') {
+        type = 1; // auto start
+      }
+      if (typeof params.animation.repeat === 'number') {
+        repeat_count = params.animation.repeat;
+        type += 2;
+      }
+      frame[offset++] = type;
+      frame[offset++] = repeat_count >> (8 * 3);
+      frame[offset++] = repeat_count >> (8 * 2);
+      frame[offset++] = repeat_count >> (8 * 1);
+      frame[offset++] = repeat_count;
+    }
+
     const commandJsonArray = params.animation.states;
 
     for (let i = 0; i < commandJsonArray.length; i++) {
@@ -16325,6 +16415,21 @@ module.exports = class WSCommand_Directive extends WSCommand {
         let WSCommandNotFoundError = this.WSCommandNotFoundError;
         throw new WSCommandNotFoundError(`[io.animation]unknown command`);
       }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandNotify) {
+      const name = ObnizUtil.dataArray2string(payload.slice(2, payload.byteLength-1)); // remove null string
+
+      objToSend['io'] = {
+        animation: {
+          name,
+          status: 'finish'
+        }
+      };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload);
     }
   }
 };
