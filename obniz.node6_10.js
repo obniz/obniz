@@ -1750,7 +1750,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["name","status"],"properties":{"name":{"type":"string"},"status":{"type":"string"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
@@ -2796,12 +2796,14 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
-      for (let i = 0; i < this.wscommands.length; i++) {
-        const command = this.wscommands[i];
-        command.setHw({
-          model: 'obniz_board', // hard coding
-          firmware: this.firmware_ver
-        });
+      if (this.wscommands) {
+        for (let i = 0; i < this.wscommands.length; i++) {
+          const command = this.wscommands[i];
+          command.setHw({
+            model: 'obniz_board', // hard coding
+            firmware: this.firmware_ver
+          });
+        }
       }
       if (this.options.reset_obniz_on_ws_disconnection) {
         this.resetOnDisconnect(true);
