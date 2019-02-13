@@ -7441,7 +7441,7 @@ const ObnizMeasure = __webpack_require__("./obniz/libs/measurements/measure.js")
 const PeripheralAD = __webpack_require__("./obniz/libs/io_peripherals/ad.js");
 const PeripheralI2C = __webpack_require__("./obniz/libs/io_peripherals/i2c.js");
 const PeripheralIO = __webpack_require__("./obniz/libs/io_peripherals/io.js");
-const PeripheralIO_ = __webpack_require__("./obniz/libs/io_peripherals/io_.js");
+const PeripheralDirective = __webpack_require__("./obniz/libs/io_peripherals/directive.js");
 const PeripheralPWM = __webpack_require__("./obniz/libs/io_peripherals/pwm.js");
 const PeripheralSPI = __webpack_require__("./obniz/libs/io_peripherals/spi.js");
 const PeripheralUART = __webpack_require__("./obniz/libs/io_peripherals/uart.js");
@@ -7463,7 +7463,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   _prepareComponents() {
-    this.io = new PeripheralIO_(this);
+    this.io = new PeripheralDirective(this);
     for (let i = 0; i < 12; i++) {
       this['io' + i] = new PeripheralIO(this, i);
     }
@@ -7701,6 +7701,7 @@ const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const isNode = typeof window === 'undefined';
 
 module.exports = class ObnizConnection {
+
   constructor(id, options) {
     this.isNode = isNode;
     this.id = id;
@@ -7710,6 +7711,7 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
+    this.firmware_ver = undefined;
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
@@ -11270,6 +11272,52 @@ module.exports = PeripheralAD;
 
 /***/ }),
 
+/***/ "./obniz/libs/io_peripherals/directive.js":
+/***/ (function(module, exports) {
+
+class Directive {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+  }
+
+  animation(name, status, array) {
+    let obj = {};
+    obj.io = {
+      animation: {
+        name: name,
+        status: status,
+      },
+    };
+    if (!array) array = [];
+
+    let states = [];
+    for (let i = 0; i < array.length; i++) {
+      let state = array[i];
+      let duration = state.duration;
+      let operation = state.state;
+
+      // dry run. and get json commands
+      this.Obniz.sendPool = [];
+      operation(i);
+      let pooledJsonArray = this.Obniz.sendPool;
+      this.Obniz.sendPool = null;
+      states.push({
+        duration: duration,
+        state: pooledJsonArray,
+      });
+    }
+    if (status === 'loop') {
+      obj.io.animation.states = states;
+    }
+    this.Obniz.send(obj);
+  }
+}
+
+module.exports = Directive;
+
+
+/***/ }),
+
 /***/ "./obniz/libs/io_peripherals/i2c.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11647,51 +11695,6 @@ class PeripheralIO {
   }
 }
 module.exports = PeripheralIO;
-
-
-/***/ }),
-
-/***/ "./obniz/libs/io_peripherals/io_.js":
-/***/ (function(module, exports) {
-
-class PeripheralIO_ {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-  }
-
-  animation(name, status, array) {
-    let obj = {};
-    obj.io = {
-      animation: {
-        name: name,
-        status: status,
-      },
-    };
-    if (!array) array = [];
-
-    let states = [];
-    for (let i = 0; i < array.length; i++) {
-      let state = array[i];
-      let duration = state.duration;
-      let operation = state.state;
-
-      // dry run. and get json commands
-      this.Obniz.sendPool = [];
-      operation(i);
-      let pooledJsonArray = this.Obniz.sendPool;
-      this.Obniz.sendPool = null;
-      states.push({
-        duration: duration,
-        state: pooledJsonArray,
-      });
-    }
-    if (status === 'loop') {
-      obj.io.animation.states = states;
-    }
-    this.Obniz.send(obj);
-  }
-}
-module.exports = PeripheralIO_;
 
 
 /***/ }),
@@ -17965,7 +17968,6 @@ module.exports = {"name":"obniz","version":"1.16.1","description":"obniz sdk for
 var map = {
 	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
-	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
@@ -18184,81 +18186,6 @@ class USB {
 if (true) {
   module.exports = USB;
 }
-
-
-/***/ }),
-
-/***/ "./parts/AudioSensor/AE_MICAMP/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-class AE_MICAMP {
-  constructor() {
-    this.keys = ['vcc', 'gnd', 'out'];
-    this.requiredKeys = ['out'];
-
-    this.displayIoNames = {
-      vcc: 'vcc',
-      gnd: 'gnd',
-      out: 'out',
-    };
-  }
-
-  static info() {
-    return {
-      name: 'AE_MICAMP',
-    };
-  }
-
-  async wired(obniz) {
-    this.obniz = obniz;
-
-    this.ad = obniz.getAD(this.params.out);
-
-    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-
-    let self = this;
-    this.ad.start(function(value) {
-      self.voltage = value;
-      if (self.onchange) {
-        self.onchange(self.voltage);
-      }
-    });
-  }
-}
-
-if (true) {
-  module.exports = AE_MICAMP;
-}
-
-/*
-  var self = this;
-  var analogin = [];
-  var cnt = 0;
-  while(true){
-    var sum = 0;
-    if (cnt == 10) {
-      cnt = 0;
-    }
-    analogin[cnt] = this.ad.value;
-    cnt++;
-    for (var i = 0; i < 10; i++) {
-      if (typeof(analogin[i])=="number") {sum += analogin[i];}
-    }
-    var average = sum / 10;
-    //console.log('average='+average);
-    await obniz.wait(1);
-  }
-  self.voltage_ave = average;
-  if (self.average) {
-    self.average(self.voltage_ave);
-  }
-  */
-
-/*
-AE_MICAMP.prototype.Average = function(callback) {
-  this.average = callback;
-};
-*/
 
 
 /***/ }),

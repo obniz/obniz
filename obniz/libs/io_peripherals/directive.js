@@ -1,4 +1,4 @@
-class PeripheralIO_ {
+class Directive {
   constructor(Obniz, id) {
     this.Obniz = Obniz;
   }
@@ -35,4 +35,5 @@ class PeripheralIO_ {
     this.Obniz.send(obj);
   }
 }
-module.exports = PeripheralIO_;
+
+module.exports = Directive;
