@@ -5940,7 +5940,9 @@ class Directive {
   addObserver(name, resolve, reject) {
     if (name && resolve && reject) {
       this.observers.push({
-        name, resolve, reject
+        name,
+        resolve,
+        reject
       });
     }
   }
@@ -5981,13 +5983,12 @@ class Directive {
   }
 
   repeatWait(array, repeat) {
-
     if (typeof repeat !== 'number' || repeat < 1) {
       throw new Error('please specify repeat count > 0');
     }
 
     return new Promise((resolve, reject) => {
-      const name = "_repeatwait";
+      const name = '_repeatwait';
 
       this.animation(name, 'loop', array, repeat);
       this.addObserver(name, resolve, reject);
@@ -10262,7 +10263,6 @@ module.exports = class WSCommand_Directive extends WSCommand {
   // Commands
 
   init(params, originalParams) {
-
     const nameArray = ObnizUtil.string2dataArray(params.animation.name);
     let frame,
         offset = 0;

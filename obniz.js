@@ -11319,7 +11319,7 @@ class Directive {
   }
 
   _reset() {
-    for (let i=0; i<this.observers.length; i++) {
+    for (let i = 0; i < this.observers.length; i++) {
       this.observers[i].reject();
     }
     this.observers = [];
@@ -11328,7 +11328,9 @@ class Directive {
   addObserver(name, resolve, reject) {
     if (name && resolve && reject) {
       this.observers.push({
-        name, resolve, reject
+        name,
+        resolve,
+        reject,
       });
     }
   }
@@ -11342,7 +11344,7 @@ class Directive {
       },
     };
     if (typeof repeat == 'number') {
-      obj.io.animation.repeat = repeat
+      obj.io.animation.repeat = repeat;
     }
     if (!array) array = [];
 
@@ -11369,22 +11371,21 @@ class Directive {
   }
 
   repeatWait(array, repeat) {
-
-    if(typeof repeat !== 'number' || repeat < 1) {
+    if (typeof repeat !== 'number' || repeat < 1) {
       throw new Error('please specify repeat count > 0');
     }
-    
+
     return new Promise((resolve, reject) => {
-      const name = "_repeatwait";
-      
-      this.animation(name, 'loop', array, repeat)
+      const name = '_repeatwait';
+
+      this.animation(name, 'loop', array, repeat);
       this.addObserver(name, resolve, reject);
     });
   }
 
   notified(obj) {
     if (obj.animation.status == 'finish') {
-      for (let i=this.observers.length-1; i>=0; i--) {
+      for (let i = this.observers.length - 1; i >= 0; i--) {
         if (obj.animation.name === this.observers[i].name) {
           this.observers[i].resolve();
           this.observers.splice(i, 1);
@@ -16263,10 +16264,11 @@ module.exports = class WSCommand_Directive extends WSCommand {
   // Commands
 
   init(params, originalParams) {
-
     const nameArray = ObnizUtil.string2dataArray(params.animation.name);
-    let frame, offset = 0;
-    if (semver.lt(this._hw.firmware, '2.0.0')) { // < 2.0.0
+    let frame,
+      offset = 0;
+    if (semver.lt(this._hw.firmware, '2.0.0')) {
+      // < 2.0.0
       frame = new Uint8Array(1 + nameArray.length + 1);
       // name //
       frame[offset++] = nameArray.length + 1;
@@ -16281,7 +16283,8 @@ module.exports = class WSCommand_Directive extends WSCommand {
       offset += nameArray.length;
       frame[offset++] = 0; // null string
       // type and count //
-      let type = 0, repeat_count = 0;
+      let type = 0,
+        repeat_count = 0;
       if (params.animation.status === 'loop') {
         type = 1; // auto start
       }
@@ -16420,13 +16423,15 @@ module.exports = class WSCommand_Directive extends WSCommand {
 
   notifyFromBinary(objToSend, func, payload) {
     if (func === this._CommandNotify) {
-      const name = ObnizUtil.dataArray2string(payload.slice(2, payload.byteLength-1)); // remove null string
+      const name = ObnizUtil.dataArray2string(
+        payload.slice(2, payload.byteLength - 1)
+      ); // remove null string
 
       objToSend['io'] = {
         animation: {
           name,
-          status: 'finish'
-        }
+          status: 'finish',
+        },
       };
     } else {
       super.notifyFromBinary(objToSend, func, payload);
