@@ -13,6 +13,7 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
+    this.firmware_ver = undefined;
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
