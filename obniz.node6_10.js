@@ -15453,7 +15453,6 @@ if (true) {
 
 
 class MQ135 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
@@ -15551,7 +15550,6 @@ if (true) {
 
 
 class MQ2 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
@@ -15649,7 +15647,6 @@ if (true) {
 
 
 class MQ3 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
@@ -15747,7 +15744,6 @@ if (true) {
 
 
 class MQ4 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
@@ -15943,7 +15939,6 @@ if (true) {
 
 
 class MQ6 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
@@ -16041,7 +16036,6 @@ if (true) {
 
 
 class MQ7 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
@@ -16139,7 +16133,6 @@ if (true) {
 
 
 class MQ8 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
@@ -16237,7 +16230,6 @@ if (true) {
 
 
 class MQ9 {
-
   constructor() {
     this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];

@@ -23235,14 +23235,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ135 {
-  
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23268,12 +23262,16 @@ class MQ135 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23281,7 +23279,7 @@ class MQ135 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23297,12 +23295,13 @@ class MQ135 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -23331,14 +23330,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ2 {
-  
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23364,12 +23357,16 @@ class MQ2 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23377,7 +23374,7 @@ class MQ2 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23393,12 +23390,13 @@ class MQ2 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -23427,14 +23425,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ3 {
-  
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23460,12 +23452,16 @@ class MQ3 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23473,7 +23469,7 @@ class MQ3 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23489,12 +23485,13 @@ class MQ3 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -23523,14 +23520,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ4 {
-  
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23556,12 +23547,16 @@ class MQ4 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23569,7 +23564,7 @@ class MQ4 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23585,12 +23580,13 @@ class MQ4 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -23621,12 +23617,7 @@ if (true) {
 class MQ5 {
   // https://www.parallax.com/sites/default/files/downloads/605-00009-MQ-5-Datasheet.pdf
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23652,12 +23643,16 @@ class MQ5 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23665,7 +23660,7 @@ class MQ5 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23681,12 +23676,13 @@ class MQ5 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -23715,14 +23711,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ6 {
-
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23748,12 +23738,16 @@ class MQ6 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23761,7 +23755,7 @@ class MQ6 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23777,12 +23771,13 @@ class MQ6 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -23811,14 +23806,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ7 {
-  
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23844,12 +23833,16 @@ class MQ7 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23857,7 +23850,7 @@ class MQ7 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23873,12 +23866,13 @@ class MQ7 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -23907,14 +23901,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ8 {
-  
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -23940,12 +23928,16 @@ class MQ8 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -23953,7 +23945,7 @@ class MQ8 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -23969,12 +23961,13 @@ class MQ8 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
@@ -24003,14 +23996,8 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class MQ9 {
-  
   constructor() {
-    this.keys = [
-      'gnd',
-      'vcc',
-      'do',
-      'ao'
-    ];
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
     this.requiredKeys = [];
 
     this.onchangeanalog = undefined;
@@ -24036,12 +24023,16 @@ class MQ9 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start( (voltage)=> {
+      this.ad.start(voltage => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog == 'function') {
           this.onchangeanalog(voltage);
         }
-        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+        if (
+          typeof this.voltageLimit == 'number' &&
+          this.voltageLimit <= voltage &&
+          typeof this.onexceedvoltage == 'function'
+        ) {
           this.onexceedvoltage(voltage);
         }
       });
@@ -24049,7 +24040,7 @@ class MQ9 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input(value => {
         if (typeof this.onchangedigital == 'function') {
           this.onchangedigital(value);
         }
@@ -24065,12 +24056,13 @@ class MQ9 {
     this.startHeating();
     if (seconds > 0) {
       seconds *= 1000;
-    } else  {
+    } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
   }
-
 
   // Rs/Ro will descrease by insease of gas.
   // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
