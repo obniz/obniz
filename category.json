@@ -169,6 +169,14 @@
           }
         },
         {
+          "name": "StepperMotor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-05374/",
+            "adafruit": "https://www.adafruit.com/product/858",
+            "amazon.com": "https://www.amazon.com/Adafruit-Small-Reduction-Stepper-Motor/dp/B01BMRR0FM/ref=sr_1_8?ie=UTF8&qid=1550133053&sr=8-8&keywords=stepper+motor+5v"
+          }
+        },
+        {
           "name": "Solenoid",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-10761/"

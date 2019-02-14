@@ -1,141 +1,233 @@
-# PCA9685
+# StepperMotor
 
-PCA9685 generate 16 independent PWM. Frequency is shared by 16 PWM.
-This is useful for driving multiple servo motors independently up to 16.
+Stepper Motor is different from just rotating things like DC motors.
+It rotate by following electrical pulse. So, It can rotate correctly by step.
+So It is very useful when you want to move/rotate things correctly, and hold something at current state. In the other hands, Stepper Motor is not good for high-speed/high-power usages.
 
-Output is not so tough. You can't connect a DC motor directly.
+This library can drive both bipolar/unipolar stepper motors. This cabale to drive directy from obniz io. So 5v stepper motor is best.
+
 
 ![](./image.jpg)
 
-Some vendor sales module which have pin headers for servo motor.
-Above photo is Adafruit's one.
-[https://www.adafruit.com/product/815](https://www.adafruit.com/product/815)
 
+## wired(obniz, {a, b, aa, bb [, common]})
 
-## wired(obniz, {[gnd, vcc, oe, scl, sda, i2c, enabled, address, drive]})
+It recognize connected io.
 
-Specify connected io and configrations.
+See below image to connect.
 
-Please use another power supply to drive servo motors at V+.
+![](./wire.png)
+
+This function recognize motor bipolar/unipolar by specifying common.
+
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-scl | `number(obniz io)` | no |  &nbsp; | Specify obniz io number
-sda | `number(obniz io)` | no | &nbsp;  | Specify obniz io number
-i2c | `i2c object` | no | &nbsp;  | Specify configrated i2c object
-vcc | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
-gnd | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
-oe | `number(obniz io)` | no |  &nbsp; | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
-enabled | `boolean` | no | true  | If oe was specified, you can set initial enable/disable with this parameter.
-address | `number` | no | 0x40 | The address of module.
-drive | `boolean` | no |  'push-pull' | Default output is push-pull driven. Specify "open-drain" to drive as open-drain.
+a | `number(obniz io)` | no |  &nbsp; | Specify obniz io
+b | `number(obniz io)` | no |  &nbsp; | Specify obniz io
+aa | `number(obniz io)` | no |  &nbsp; | Specify obniz io. This is other side of a.
+bb | `number(obniz io)` | no |  &nbsp; | Specify obniz io. This is other side of b.
+common | `number(obniz io)` | no |  &nbsp; | Specify only when unipolar.
+
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-var pwm0 = driver.getPWM(0);
-pwm0.freq(1000);
-pwm0.duty(50);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepWait(200);
+console.log(motor.currentStep); // => 300
 ```
 
-### Multiple on single i2c
+### stepType(type: string)
 
-This module accept flexible address configration.
-You can put multiple modules on same i2c bus.
+It change stepping method. By default, it is 2
+
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+type | `string` | yes | `'2'` | See below options
+
+
+
+keyname | type | description
+--- | --- | ---
+`'1'` | 1 phase ecitation | Only one coil is driven. Low power consumption. But not strong
+`'2'` | 2 phase ecitation | Two coil is always driven. Very common.
+`'1-2'` | 1-2 phase ecitation | Combination of above two method. Step is 1/2.
 
 ```Javascript
 // Javascript Example
-
-var i2c = obniz.getFreeI2C();
-i2c.start({mode:"master", sda:3, scl:2, clock:400 * 1000, pull:"5v"}); 
-
-var driver0 = obniz.wired("PCA9685", {gnd:0, oe:1, i2c:i2c, vcc:4, address:0x40});
-var driver1 = obniz.wired("PCA9685", {i2c:i2c, address:0x41});
-
-var pwm0 = driver0.getPWM(0);
-pwm0.freq(1000);
-pwm0.duty(50);
-
-var pwm16 = driver1.getPWM(0);
-pwm16.freq(1000);
-pwm16.duty(50);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.stepType('1');
+await motor.stepWait(100);
+await motor.stepWait(200);
+console.log(motor.currentStep); // => 300
 ```
 
-## getPWM(num)
+### speed(frequency: number)
 
-Retriving pwm object. 0 to 15.
+It specify speed in hz. 100 means 100 step per sec.
 
-pwm object have similar functions as obniz.pwm. 
+name | type | required | default | description
+--- | --- | --- | --- | ---
+frequency | `number` | yes | `100` | frequency of steps
 
- - pwm.freq()
- - pwm.duty()
- - pwm.pulse()
-
-But frequency is shared by all pwm. So if you change one, then others frequency will be affected.
+Limit of frequency is depends on motor which you are using. High frequency has risks of slips.
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-var pwm0 = driver.getPWM(0);
-pwm0.freq(1000);
-pwm0.duty(50);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.speed(1000);
+await motor.stepWait(100);
 ```
 
-And [ServoMotor](../ServoMotor) can accept this pwm object.
+### [await] stepWait(step: number)
+
+It rotate a motor by specified steps.
+Also it follow speed and stepType.
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+step | `number` | yes | - | Steps wants to move
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-var servo0 = obniz.wired("ServoMotor", {pwm: driver.getPWM(0)});
-var servo1 = obniz.wired("ServoMotor", {pwm: driver.getPWM(1)});
-var servo2 = obniz.wired("ServoMotor", {pwm: driver.getPWM(2)});
-servo0.angle(90);
-servo1.angle(95);
-servo2.angle(100);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepWait(-100);
+// now returned to start position.
 ```
 
-## freq(frequency)
+### [await] stepToWait(destination: number)
 
-Specify a frequency. 24 to 1526 hz.
+It rotate a motor to specified destionation step.
+Also it follow speed and stepType.
 
-Duty ratio will be kept.
+name | type | required | default | description
+--- | --- | --- | --- | ---
+destination | `number` | yes | - | Destionation step
+
+
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-driver.freq(1000);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepToWait(-150); // it move -250 steps
+console.log(motor.currentStep) // => -150
 ```
 
-## duty(index, duty)
+### currentStep
 
-Changing a duty ratio of specified index pwm.
+It is current step count number. Initially 0.
+When you move +100 then -50, It is 50
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-driver.freq(1000);
-driver.duty(0, 50);
-driver.duty(1, 60);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepToWait(-150); // it move -250 steps
+console.log(motor.currentStep) // => -150
 ```
 
-## pulse(index, pulse_width)
+### [await] rotateWait(rotation: number)
 
-Changing high length (msec) of specified index pwm.
+It rotate by specified angle.
+It also follow rotationStepCount variable. Please set correct number first.
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+rotation | `number` | yes | - | angle to move in degree
+
+360 measn one rotate.
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-driver.freq(100); // 100hz = 10msec interval
-driver.pulse(0, 5);
-driver.pulse(1, 6);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.rotationStepCount = 100;
+await motor.rotateWait(360 * 2);
+console.log(motor.currentRotation()); // => 720
+console.log(motor.currentAngle()); // => 0
 ```
 
-## setEnable(enabled)
-This function available only when oe was specified.
-Changing Normal-operation/Hi-Z on all of it's chip output.
+### [await] rotateToWait(rotation: number)
+
+It rotate to specified angle. (Initial angle is recognized as 0).
+It rotate at minimum rotation.
+It also follow rotationStepCount variable. Please set correct number first.
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+angle | `number` | yes | - | Destination angle in degree
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4, enabled: false});
-driver.setEnable(true);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.rotationStepCount = 100;
+await motor.rotateWait(355);
+await motor.rotateToWait(0); // it rotate only 5
+```
+
+### rotationStepCount
+
+It is configration of needed step count to one rotation.
+It depends on your motor. It initially 100.
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.rotationStepCount = 100;
+await motor.rotateToWait(90);
+```
+
+### [await] moveWait(distance: number)
+
+It rotate specified distance in mm.
+It also follow milliMeterStepCount variable. Please set correct number first.
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+distance | `number` | yes | - | distance to be moved
+
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.milliMeterStepCount = 10;
+await motor.moveWait(100);
+await motor.moveWait(-10);
+console.log(motor.currentDistance()); // => 90
+```
+
+### [await] moveToWait(destination: number)
+
+It rotate to specified distance in mm. Initial position is recognized as 0.
+It also follow milliMeterStepCount variable. Please set correct number first.
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+destination | `number` | yes | - | destination distance in mm
+
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.milliMeterStepCount = 10;
+await motor.moveWait(100);
+await motor.moveToWait(-10);
+console.log(motor.currentDistance()); // => -10
+```
+
+### milliMeterStepCount
+
+It is configration of needed step count to move 1 mm.
+It depends on your motor. It initially 1.
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.milliMeterStepCount = 10;
+await motor.moveWait(100);
+await motor.moveToWait(-10);
+console.log(motor.currentDistance()); // => -10
 ```

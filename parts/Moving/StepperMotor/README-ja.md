@@ -1,145 +1,228 @@
-# PCA9685
+# StepperMotor
 
-PCA9685は16の独立したPWMを出力できるチップです。周波数は16全てで共通となります。
-サーボモーターの駆動に最適で、16のサーボモーターをそれぞれ別々に動かすことが出来ます。
+ステッピングモーター(またはパルスモーター)はDCモーターのように中にあるコイルをとにかく回すというものとは違い、
+ある角度ずつ正確に回転させることができるモーターです。ステップごとに動かすのでそのような名前になっています。
+ステッピングモーターを使えば正確に回転させたり、移動させたり、または動かないように位置をキープしたりといったことが簡単にできます。逆に高速にパワフルに回転させる用途には向きません。
 
-出力電流はそれほど強くないのでDCモーターを直接つなぐことは出来ません。
+このライブラリではバイポーラ・ユニポーラのステッピングモーターを駆動できます。obnizから直接つないで動かすため5vで動くものを想定しています。
 
 ![](./image.jpg)
 
-各社からサーボモーター用のピンヘッダもついたモジュール販売されています。
-上の写真はAdafruitのものです。
-[https://www.adafruit.com/product/815](https://www.adafruit.com/product/815)
 
+## wired(obniz, {a, b, aa, bb [, common]})
 
-## wired(obniz, {[gnd, vcc, oe, scl, sda, i2c, enabled, address, drive]})
+部品と接続したioを指定します。
 
-チップの各ピンをどのobnizのioに接続したか設定します。
+バイポーラ・ユニポーラ、それぞれでこのように接続します。
 
-サーボモーターに供給する電源（AdafruitのモジュールではV+と表示されています。）はobnizからではなく、別の電源を利用して下さい。
+![](./wire.png)
+
+ライブラリはcommonの有無でバイポーラかユニポーラかを判断します。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-scl | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。
-sda | `number(obniz io)` | no | &nbsp;  | つないだobnizのioを指定してください。
-i2c | `i2c object` | no | &nbsp;  | 設定済みのi2cに接続している場合に利用できます。
-vcc | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-gnd | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-oe | `number(obniz io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
-enabled | `boolean` | no | true  | oeが指定されていた場合、初期状態をどちらにするか指定できます。
-address | `number` | no | 0x40 | モジュールのアドレスです。初期設定(0x40)から変更している場合は指定して下さい。
-drive | `boolean` | no |  'push-pull' | 標準で出力はプッシュプル出力ですが、'open-drain'を指定することでオープンドレイン出力にできます。
+a | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。
+b | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。
+aa | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。aの逆相を指定します。
+bb | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。bの逆相を指定します。
+common | `number(obniz io)` | no |  &nbsp; | ユニポーラの場合に指定します。
 
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-var pwm0 = driver.getPWM(0);
-pwm0.freq(1000);
-pwm0.duty(50);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepWait(200);
+console.log(motor.currentStep); // => 300
 ```
 
-### Multiple on single i2c
+### stepType(type: string)
 
-このモジュールはI2Cのアドレスを比較的自由に設定できます。
-そのため同じI2Cバスライン上に複数のモジュールを置くことが出来ます。
+励磁方法を変更します。デフォルトで2となっています。
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+type | `string` | yes | `'2'` | 下に詳細を記す
+
+指定できるのは以下です。
+
+keyname | type | description
+--- | --- | ---
+`'1'` | 1相励磁 | どれか１つのコイルのみを動作する方法。消費電力が少ないが、パワーは弱い
+`'2'` | 2相励磁 | 必ず２つのコイルを動作する方法。最も一般的
+`'1-2'` | 1-2相励磁 | 上記２つを組み合わせた方式で半分のステップで駆動できるのが特徴
+
+`'1-2'`のみステップあたりの移動量が変わるので注意が必要です。
 
 ```Javascript
 // Javascript Example
-
-var i2c = obniz.getFreeI2C();
-i2c.start({mode:"master", sda:3, scl:2, clock:400 * 1000, pull:"5v"}); 
-
-var driver0 = obniz.wired("PCA9685", {gnd:0, oe:1, i2c:i2c, vcc:4, address:0x40});
-var driver1 = obniz.wired("PCA9685", {i2c:i2c, address:0x41});
-
-var pwm0 = driver0.getPWM(0);
-pwm0.freq(1000);
-pwm0.duty(50);
-
-var pwm16 = driver1.getPWM(0);
-pwm16.freq(1000);
-pwm16.duty(50);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.stepType('1');
+await motor.stepWait(100);
+await motor.stepWait(200);
+console.log(motor.currentStep); // => 300
 ```
 
-## getPWM(num)
+### speed(frequency: number)
 
-16あるpwmモジュールのうちいずれか1つをpwmオブジェクトとして取得できます。0~15が指定できます。
+速度をHzで指定します。100は1秒間に100ステップとなります。
 
-pwmオブジェクトはobniz.pwmXと同じく以下の関数を持っています。
+name | type | required | default | description
+--- | --- | --- | --- | ---
+frequency | `number` | yes | `100` | ステップ移動の周波数
 
- - pwm.freq()
- - pwm.duty()
- - pwm.pulse()
-
-ただし、周波数だけはモジュール全体で共通なので、他のPWMと違う値を指定すると他のPWMに影響があります。pwm0だけ1khzでほかは500hzといった使い方はできません。
+指定できる最大値はモーターとモーターの負荷によって異なります。大きいほどスリップの可能性(動かしたはずなのに実際は動いていない)が上がります
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-var pwm0 = driver.getPWM(0);
-pwm0.freq(1000);
-pwm0.duty(50);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.speed(1000);
+await motor.stepWait(100);
 ```
 
-また、[ServoMotor](../ServoMotor)もこのpwmオブジェクトを受け付けられるようになっています。
+### [await] stepWait(step: number)
+
+指定したステップだけ移動します。speedとstepTypeに従ってモーターを駆動します。
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+step | `number` | yes | - | 動かしたいステップ数
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-var servo0 = obniz.wired("ServoMotor", {pwm: driver.getPWM(0)});
-var servo1 = obniz.wired("ServoMotor", {pwm: driver.getPWM(1)});
-var servo2 = obniz.wired("ServoMotor", {pwm: driver.getPWM(2)});
-servo0.angle(90);
-servo1.angle(95);
-servo2.angle(100);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepWait(-100);
+// now returned to start position.
 ```
 
-## freq(frequency)
+### [await] stepToWait(destination: number)
 
-モジュールの周波数を指定します。
-16あるPWMは独立していますが、周波数だけは共通となります。
+目的となるステップ数の場所まで移動します。speedとstepTypeに従ってモーターを駆動します。
 
-24~1526Hzが指定できます。
+name | type | required | default | description
+--- | --- | --- | --- | ---
+destination | `number` | yes | - | 目的となるステップ数。
 
-また、このモジュールはパルス出力にDuty比を重要視しますので、出力中のpwmの周波数を変更してもDuty比には影響はありません。
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-driver.freq(1000);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepToWait(-150); // it move -250 steps
+console.log(motor.currentStep) // => -150
 ```
 
-## duty(index, duty)
+### currentStep
 
-indexで指定したpwmのDuty比を変更できます。
+現在の位置をステップで表します。初期値は0です。
+100ステップ動かし-50動かしたなら50となっています。
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-driver.freq(1000);
-driver.duty(0, 50);
-driver.duty(1, 60);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.stepToWait(-150); // it move -250 steps
+console.log(motor.currentStep) // => -150
 ```
 
-## pulse(index, pulse_width)
+### [await] rotateWait(rotation: number)
 
-indexで指定したpwmのパルス出力幅をmsecで指定します。
+指定した角度だけ回転させます。
+rotationStepCount変数に従い動かすので、先に設定する必要があります。
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+rotation | `number` | yes | - | 回転させたい角度(度)
+
+360を指定すれば1回転することになり、-360で逆向きに１回転します。
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4});
-driver.freq(100); // 100hz = 10msec interval
-driver.pulse(0, 5);
-driver.pulse(1, 6);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.rotationStepCount = 100;
+await motor.rotateWait(360 * 2);
+console.log(motor.currentRotation()); // => 720
+console.log(motor.currentAngle()); // => 0
 ```
 
-## setEnable(enabled)
-oe端子をobnizにつないでいる場合にのみ使えます。
-出力ピンをすべてハイインピーダンスにします。
+### [await] rotateToWait(rotation: number)
+
+始めの角度を0度として指定した角度になるように回転させます。
+また、最も少ない移動数でその角度に移動します。
+rotationStepCount変数に従い動かすので、先に設定する必要があります。
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+angle | `number` | yes | - | 目標となる角度(0 to 360)
+
+355度に移動したあと0を指定すると355度ではなく5度の移動となります。
 
 ```Javascript
 // Javascript Example
-var driver = obniz.wired("PCA9685", {gnd:0, oe:1, scl:2, sda:3, vcc:4, enabled: false});
-driver.setEnable(true);
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.rotationStepCount = 100;
+await motor.rotateToWait(90);
+```
+
+### rotationStepCount
+
+1回転するのに何ステップ必要かを指定します。この値はモーターによって異なります。デフォルトで100となっています。
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.rotationStepCount = 100;
+await motor.rotateToWait(90);
+```
+
+### [await] moveWait(distance: number)
+
+指定した距離(mm)だけ移動します。
+milliMeterStepCount変数に従い動かすので、先に設定する必要があります。
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+distance | `number` | yes | - | 移動距離(mm)
+
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.milliMeterStepCount = 10;
+await motor.moveWait(100);
+await motor.moveWait(-10);
+console.log(motor.currentDistance()); // => 90
+```
+
+### [await] moveToWait(destination: number)
+
+はじめを0として、指定した位置(mm)に移動します。
+milliMeterStepCount変数に従い動かすので、先に設定する必要があります。
+
+name | type | required | default | description
+--- | --- | --- | --- | ---
+destination | `number` | yes | - | 目標位置(mm)
+
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.milliMeterStepCount = 10;
+await motor.moveWait(100);
+await motor.moveToWait(-10);
+console.log(motor.currentDistance()); // => -10
+```
+
+### milliMeterStepCount
+
+1ミリ移動するのに何ステップ必要なのかを指定します。デフォルトで1となっています。
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+motor.milliMeterStepCount = 10;
+await motor.moveWait(100);
+await motor.moveToWait(-10);
+console.log(motor.currentDistance()); // => -10
 ```

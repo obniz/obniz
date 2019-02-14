@@ -18973,95 +18973,229 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// class MQ6 {
 
-//   constructor() {
-//     this.keys = [
-//       'gnd',
-//       'vcc',
-//       'do',
-//       'ao'
-//     ];
-//     this.requiredKeys = [];
-//   }
 
-//   static info() {
-//     return {
-//       name: 'MQ6',
-//     };
-//   }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-//   wired(obniz) {
-//     this.obniz = obniz;
+class StepperMotor {
 
-//     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+  constructor() {
+    this.keys = ['a', 'b', 'aa', 'bb', 'common'];
+    this.requiredKeys = ['a', 'b', 'aa', 'bb'];
 
-//     if (this.obniz.isValidIO(this.params.srclr)) {
-//       this.io_srclr = this.obniz.getIO(this.params.srclr);
-//       this.io_srclr.output(true);
-//     }
+    this._stepInstructions = {
+      '1': [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
+      '2': [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+      '1-2': [[0, 1, 1, 1], [0, 0, 1, 1], [1, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 1], [1, 1, 0, 0], [1, 1, 1, 0], [0, 1, 1, 0]]
+    };
 
-//     if (typeof this.params.enabled !== 'boolean') {
-//       this.params.enabled = true;
-//     }
-//     if (this.io_oe && this.params.enabled) {
-//       this.io_oe.output(false);
-//     }
+    this.type = undefined; // common exist? => unipolar : bipolar
+    this.currentStep = 0;
+    this._stepType = '2';
+    this.frequency = 100;
 
-//     if (this.params.drive === 'open-drain') {
-//       this.i2c.write(this.address, [
-//         this._commands.MODE2,
-//         this._commands.bits.OUTDRV,
-//       ]);
-//     }
+    this.rotationStepCount = 100;
+    this.milliMeterStepCount = 1;
+  }
 
-//     let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
-//     mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
-//     this.i2c.write(this.address, [this._commands.MODE1, mode1]);
-//     this.i2c.write(this.address, [
-//       this._commands.MODE1,
-//       mode1 | this._commands.bits.RESTART,
-//     ]);
+  static info() {
+    return {
+      name: 'StepperMotor'
+    };
+  }
 
-//     this._regs[this._commands.MODE1] = mode1;
+  wired(obniz) {
+    this.obniz = obniz;
 
-//     obniz.wait(10);
-//   }
+    if (obniz.isValidIO(this.params.common)) {
+      this.common = obniz.getIO(this.params.common);
+      this.common.output(true);
+      this.type = 'unipolar';
+    } else {
+      this.type = 'bipolar';
+    }
+    this.ios = [];
+    this.ios.push(obniz.getIO(this.params.a));
+    this.ios.push(obniz.getIO(this.params.b));
+    this.ios.push(obniz.getIO(this.params.aa));
+    this.ios.push(obniz.getIO(this.params.bb));
+  }
 
-//   _preparePWM(num) {
-//     class PCA9685_PWM {
-//       constructor(chip, id) {
-//         this.chip = chip;
-//         this.id = id;
-//         this.value = 0;
-//         this.state = {};
-//       }
+  stepWait(step_count) {
+    var _this = this;
 
-//       freq(frequency) {
-//         this.chip.freq(frequency);
-//       }
-//       pulse(value) {
-//         this.chip.pulse(this.id, value);
-//       }
-//       duty(value) {
-//         this.chip.duty(this.id, value);
-//       }
-//     }
+    return _asyncToGenerator(function* () {
+      if (step_count == 0) {
+        return;
+      }
+      const step_count_abs = Math.abs(step_count);
+      const instructions = _this._getStepInstructions();
+      const instruction_length = instructions.length;
+      let array = [];
+      // set instructions
+      let currentPhase = _this.currentStep % instruction_length;
+      if (currentPhase < 0) {
+        currentPhase = instruction_length - currentPhase * -1;
+      }
+      if (step_count > 0) {
+        for (let i = 0; i < instructions.length; i++) {
+          if (++currentPhase >= instruction_length) {
+            currentPhase = 0;
+          }
+          array.push(instructions[currentPhase]);
+        }
+      } else {
+        for (let i = 0; i < instructions.length; i++) {
+          if (--currentPhase < 0) {
+            currentPhase = instruction_length - 1;
+          }
+          array.push(instructions[currentPhase]);
+        }
+      }
+      // prepare animation
+      let msec = 1000 / _this.frequency;
+      msec = parseInt(msec);
+      if (msec < 1) {
+        msec = 1;
+      }
+      const state = function (index) {
+        const instruction = instructions[index];
+        for (let i = 0; i < _this.ios.length; i++) {
+          _this.ios[i].output(instruction[i]);
+        }
+      };
+      let states = [];
+      for (let i = 0; i < instruction_length; i++) {
+        states.push({
+          duration: msec,
+          state
+        });
+      }
+      // execute and wait
+      yield _this.obniz.io.repeatWait(states, step_count_abs);
+      _this.currentStep += step_count;
+    })();
+  }
 
-//     for (let i = 0; i < num; i++) {
-//       this.pwms.push(new PCA9685_PWM(this, i));
-//     }
-//   }
+  stepToWait(destination) {
+    var _this2 = this;
 
-//   isValidPWM(id) {
-//     return typeof id === 'number' && id >= 0 && id < this.pwmNum;
-//   }
-// }
+    return _asyncToGenerator(function* () {
+      const mustmove = destination - _this2.currentStep;
+      yield _this2.stepWait(mustmove);
+    })();
+  }
 
-// if (typeof module === 'object') {
-//   module.exports = MQ6;
-// }
+  holdWait() {
+    var _this3 = this;
 
+    return _asyncToGenerator(function* () {
+      const instructions = _this3._getStepInstructions();
+      const instruction_length = instructions.length;
+      // set instructions
+      let currentPhase = _this3.currentStep % instruction_length;
+      if (currentPhase < 0) {
+        currentPhase = instruction_length - currentPhase * -1;
+      }
+
+      for (let i = 0; i < _this3.ios.length; i++) {
+        _this3.ios[i].output(instructions[currentPhase][i]);
+      }
+      yield _this3.obniz.pingWait();
+    })();
+  }
+
+  freeWait() {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      for (let i = 0; i < _this4.ios.length; i++) {
+        _this4.ios[i].output(true);
+      }
+      yield _this4.obniz.pingWait();
+    })();
+  }
+
+  stepType(stepType) {
+    const newType = this._stepInstructions[stepType];
+    if (!newType) {
+      throw new Error('unknown step type ' + stepType);
+    }
+    this._stepType = stepType;
+  }
+
+  speed(step_per_sec) {
+    this.frequency = step_per_sec;
+  }
+
+  currentRotation() {
+    // => degree
+    return this.currentStep / this.rotationStepCount * 360;
+  }
+
+  currentAngle() {
+    // => degree
+    let angle = parseInt(this.currentRotation() * 1000) % 360000 / 1000;
+    if (angle < 0) {
+      angle = 360 - angle;
+    }
+    return angle;
+  }
+
+  rotateWait(rotation) {
+    var _this5 = this;
+
+    return _asyncToGenerator(function* () {
+      rotation /= 360;
+      const needed = rotation * _this5.rotationStepCount;
+      yield _this5.stepWait(needed);
+    })();
+  }
+
+  rotateToWait(angle) {
+    var _this6 = this;
+
+    return _asyncToGenerator(function* () {
+      let needed = angle - _this6.currentAngle();
+      if (Math.abs(needed) > 180) {
+        needed = needed > 0 ? needed - 360 : 360 + needed;
+      }
+      needed = needed / 360 * _this6.rotationStepCount;
+      yield _this6.stepWait(needed);
+    })();
+  }
+
+  currentDistance() {
+    // => mm
+    return this.currentStep / this.milliMeterStepCount;
+  }
+
+  moveWait(distance) {
+    var _this7 = this;
+
+    return _asyncToGenerator(function* () {
+      const needed = distance * _this7.milliMeterStepCount;
+      yield _this7.stepWait(needed);
+    })();
+  }
+
+  moveToWait(destination) {
+    var _this8 = this;
+
+    return _asyncToGenerator(function* () {
+      const needed = (destination - _this8.currentDistance()) * _this8.milliMeterStepCount;
+      yield _this8.stepWait(needed);
+    })();
+  }
+
+  _getStepInstructions() {
+    return this._stepInstructions[this._stepType];
+  }
+}
+
+if (true) {
+  module.exports = StepperMotor;
+}
 
 /***/ }),
 
