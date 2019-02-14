@@ -18149,6 +18149,15 @@ var map = {
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
+	"./GasSensor/MQ135/index.js": "./parts/GasSensor/MQ135/index.js",
+	"./GasSensor/MQ2/index.js": "./parts/GasSensor/MQ2/index.js",
+	"./GasSensor/MQ3/index.js": "./parts/GasSensor/MQ3/index.js",
+	"./GasSensor/MQ4/index.js": "./parts/GasSensor/MQ4/index.js",
+	"./GasSensor/MQ5/index.js": "./parts/GasSensor/MQ5/index.js",
+	"./GasSensor/MQ6/index.js": "./parts/GasSensor/MQ6/index.js",
+	"./GasSensor/MQ7/index.js": "./parts/GasSensor/MQ7/index.js",
+	"./GasSensor/MQ8/index.js": "./parts/GasSensor/MQ8/index.js",
+	"./GasSensor/MQ9/index.js": "./parts/GasSensor/MQ9/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
@@ -18174,6 +18183,7 @@ var map = {
 	"./Moving/PCA9685/index.js": "./parts/Moving/PCA9685/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
+	"./Moving/StepperMotor/index.js": "./parts/Moving/StepperMotor/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
@@ -23221,6 +23231,870 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/GasSensor/MQ135/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ135 {
+  
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ135',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ135;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ2 {
+  
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ2',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ2;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ3/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ3 {
+  
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ3',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ3;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ4/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ4 {
+  
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ4',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ4;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ5/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ5 {
+  // https://www.parallax.com/sites/default/files/downloads/605-00009-MQ-5-Datasheet.pdf
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ5',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ5;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ6/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ6 {
+
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ6',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ6;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ7/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ7 {
+  
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ7',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ7;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ8/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ8 {
+  
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ8',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ8;
+}
+
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ9/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MQ9 {
+  
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'do',
+      'ao'
+    ];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ9',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start( (voltage)=> {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input((value) => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else  {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise((resolve) => {setTimeout(resolve, seconds)});
+  }
+
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ9;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25775,6 +26649,101 @@ class Solenoid {
 if (true) {
   module.exports = Solenoid;
 }
+
+
+/***/ }),
+
+/***/ "./parts/Moving/StepperMotor/index.js":
+/***/ (function(module, exports) {
+
+// class MQ6 {
+
+//   constructor() {
+//     this.keys = [
+//       'gnd',
+//       'vcc',
+//       'do',
+//       'ao'
+//     ];
+//     this.requiredKeys = [];
+//   }
+
+//   static info() {
+//     return {
+//       name: 'MQ6',
+//     };
+//   }
+
+//   wired(obniz) {
+//     this.obniz = obniz;
+
+//     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+//     if (this.obniz.isValidIO(this.params.srclr)) {
+//       this.io_srclr = this.obniz.getIO(this.params.srclr);
+//       this.io_srclr.output(true);
+//     }
+
+//     if (typeof this.params.enabled !== 'boolean') {
+//       this.params.enabled = true;
+//     }
+//     if (this.io_oe && this.params.enabled) {
+//       this.io_oe.output(false);
+//     }
+
+//     if (this.params.drive === 'open-drain') {
+//       this.i2c.write(this.address, [
+//         this._commands.MODE2,
+//         this._commands.bits.OUTDRV,
+//       ]);
+//     }
+
+//     let mode1 = this._commands.bits.AUTO_INCREMENT_ENABLED;
+//     mode1 = mode1 & ~this._commands.bits.SLEEP_ENABLE;
+//     this.i2c.write(this.address, [this._commands.MODE1, mode1]);
+//     this.i2c.write(this.address, [
+//       this._commands.MODE1,
+//       mode1 | this._commands.bits.RESTART,
+//     ]);
+
+//     this._regs[this._commands.MODE1] = mode1;
+
+//     obniz.wait(10);
+//   }
+
+//   _preparePWM(num) {
+//     class PCA9685_PWM {
+//       constructor(chip, id) {
+//         this.chip = chip;
+//         this.id = id;
+//         this.value = 0;
+//         this.state = {};
+//       }
+
+//       freq(frequency) {
+//         this.chip.freq(frequency);
+//       }
+//       pulse(value) {
+//         this.chip.pulse(this.id, value);
+//       }
+//       duty(value) {
+//         this.chip.duty(this.id, value);
+//       }
+//     }
+
+//     for (let i = 0; i < num; i++) {
+//       this.pwms.push(new PCA9685_PWM(this, i));
+//     }
+//   }
+
+//   isValidPWM(id) {
+//     return typeof id === 'number' && id >= 0 && id < this.pwmNum;
+//   }
+// }
+
+// if (typeof module === 'object') {
+//   module.exports = MQ6;
+// }
 
 
 /***/ }),
