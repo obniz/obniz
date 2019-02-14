@@ -18490,7 +18490,7 @@ if (true) {
       'spi',
       'i2c',
       'spi_frequency',
-      'spi_drive'
+      'spi_drive',
     ];
     this.requiredKeys = ['cs'];
 
