@@ -26649,30 +26649,13 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 class StepperMotor {
-
   constructor() {
-    this.keys = [
-      'a',
-      'b',
-      'aa',
-      'bb',
-      'common'
-    ];
+    this.keys = ['a', 'b', 'aa', 'bb', 'common'];
     this.requiredKeys = ['a', 'b', 'aa', 'bb'];
 
     this._stepInstructions = {
-      '1': [
-        [0, 1, 1, 1],
-        [1, 0, 1, 1],
-        [1, 1, 0, 1],
-        [1, 1, 1, 0]
-      ],
-      '2': [
-        [0, 0, 1, 1],
-        [1, 0, 0, 1],
-        [1, 1, 0, 0],
-        [0, 1, 1, 0]
-      ],
+      '1': [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
+      '2': [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
       '1-2': [
         [0, 1, 1, 1],
         [0, 0, 1, 1],
@@ -26681,9 +26664,9 @@ class StepperMotor {
         [1, 1, 0, 1],
         [1, 1, 0, 0],
         [1, 1, 1, 0],
-        [0, 1, 1, 0]
+        [0, 1, 1, 0],
       ],
-    }
+    };
 
     this.type = undefined; // common exist? => unipolar : bipolar
     this.currentStep = 0;
@@ -26706,15 +26689,15 @@ class StepperMotor {
     if (obniz.isValidIO(this.params.common)) {
       this.common = obniz.getIO(this.params.common);
       this.common.output(true);
-      this.type = 'unipolar'
+      this.type = 'unipolar';
     } else {
-      this.type = 'bipolar'
+      this.type = 'bipolar';
     }
     this.ios = [];
-    this.ios.push(obniz.getIO(this.params.a))
-    this.ios.push(obniz.getIO(this.params.b))
-    this.ios.push(obniz.getIO(this.params.aa))
-    this.ios.push(obniz.getIO(this.params.bb))
+    this.ios.push(obniz.getIO(this.params.a));
+    this.ios.push(obniz.getIO(this.params.b));
+    this.ios.push(obniz.getIO(this.params.aa));
+    this.ios.push(obniz.getIO(this.params.bb));
   }
 
   async stepWait(step_count) {
@@ -26722,23 +26705,23 @@ class StepperMotor {
       return;
     }
     const step_count_abs = Math.abs(step_count);
-    const instructions = this._getStepInstructions()
+    const instructions = this._getStepInstructions();
     const instruction_length = instructions.length;
     let array = [];
     // set instructions
     let currentPhase = this.currentStep % instruction_length;
     if (currentPhase < 0) {
-      currentPhase = instruction_length - (currentPhase * -1);
+      currentPhase = instruction_length - currentPhase * -1;
     }
     if (step_count > 0) {
-      for (let i=0; i<instructions.length; i++) {
+      for (let i = 0; i < instructions.length; i++) {
         if (++currentPhase >= instruction_length) {
           currentPhase = 0;
         }
         array.push(instructions[currentPhase]);
       }
     } else {
-      for (let i=0; i<instructions.length; i++) {
+      for (let i = 0; i < instructions.length; i++) {
         if (--currentPhase < 0) {
           currentPhase = instruction_length - 1;
         }
@@ -26751,21 +26734,21 @@ class StepperMotor {
     if (msec < 1) {
       msec = 1;
     }
-    const state = (index) => {
+    const state = index => {
       const instruction = instructions[index];
-      for (let i=0; i<this.ios.length; i++) {
+      for (let i = 0; i < this.ios.length; i++) {
         this.ios[i].output(instruction[i]);
       }
-    }
+    };
     let states = [];
-    for (let i=0; i<instruction_length; i++) {
+    for (let i = 0; i < instruction_length; i++) {
       states.push({
         duration: msec,
-        state
-      })
+        state,
+      });
     }
     // execute and wait
-    await this.obniz.io.repeatWait(states, step_count_abs)
+    await this.obniz.io.repeatWait(states, step_count_abs);
     this.currentStep += step_count;
   }
 
@@ -26775,22 +26758,22 @@ class StepperMotor {
   }
 
   async holdWait() {
-    const instructions = this._getStepInstructions()
+    const instructions = this._getStepInstructions();
     const instruction_length = instructions.length;
     // set instructions
     let currentPhase = this.currentStep % instruction_length;
     if (currentPhase < 0) {
-      currentPhase = instruction_length - (currentPhase * -1);
+      currentPhase = instruction_length - currentPhase * -1;
     }
-    
-    for (let i=0; i<this.ios.length; i++) {
+
+    for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(instructions[currentPhase][i]);
     }
     await this.obniz.pingWait();
   }
 
   async freeWait() {
-    for (let i=0; i<this.ios.length; i++) {
+    for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(true);
     }
     await this.obniz.pingWait();
@@ -26808,14 +26791,16 @@ class StepperMotor {
     this.frequency = step_per_sec;
   }
 
-  currentRotation() { // => degree
-    return this.currentStep / this.rotationStepCount * 360;
+  currentRotation() {
+    // => degree
+    return (this.currentStep / this.rotationStepCount) * 360;
   }
 
-  currentAngle() { // => degree
-    let angle =  (parseInt(this.currentRotation() * 1000) % 360000)/1000;
+  currentAngle() {
+    // => degree
+    let angle = (parseInt(this.currentRotation() * 1000) % 360000) / 1000;
     if (angle < 0) {
-      angle = 360-angle;
+      angle = 360 - angle;
     }
     return angle;
   }
@@ -26827,15 +26812,16 @@ class StepperMotor {
   }
 
   async rotateToWait(angle) {
-    let needed = (angle - this.currentAngle());
+    let needed = angle - this.currentAngle();
     if (Math.abs(needed) > 180) {
-      needed = (needed > 0) ? (needed - 360) : (360 + needed);
+      needed = needed > 0 ? needed - 360 : 360 + needed;
     }
-    needed = needed / 360 * this.rotationStepCount;
+    needed = (needed / 360) * this.rotationStepCount;
     await this.stepWait(needed);
   }
 
-  currentDistance() { // => mm
+  currentDistance() {
+    // => mm
     return this.currentStep / this.milliMeterStepCount;
   }
 
@@ -26845,7 +26831,8 @@ class StepperMotor {
   }
 
   async moveToWait(destination) {
-    const needed = (destination - this.currentDistance()) * this.milliMeterStepCount;
+    const needed =
+      (destination - this.currentDistance()) * this.milliMeterStepCount;
     await this.stepWait(needed);
   }
 
