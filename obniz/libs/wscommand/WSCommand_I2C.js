@@ -1,8 +1,8 @@
 const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_I2C extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 6;
 
     this._CommandInit = 0;

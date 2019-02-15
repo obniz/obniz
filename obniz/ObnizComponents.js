@@ -8,7 +8,7 @@ const ObnizMeasure = require('./libs/measurements/measure');
 const PeripheralAD = require('./libs/io_peripherals/ad');
 const PeripheralI2C = require('./libs/io_peripherals/i2c');
 const PeripheralIO = require('./libs/io_peripherals/io');
-const PeripheralIO_ = require('./libs/io_peripherals/io_');
+const PeripheralDirective = require('./libs/io_peripherals/directive');
 const PeripheralPWM = require('./libs/io_peripherals/pwm');
 const PeripheralSPI = require('./libs/io_peripherals/spi');
 const PeripheralUART = require('./libs/io_peripherals/uart');
@@ -30,7 +30,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   _prepareComponents() {
-    this.io = new PeripheralIO_(this);
+    this.io = new PeripheralDirective(this);
     for (let i = 0; i < 12; i++) {
       this['io' + i] = new PeripheralIO(this, i);
     }
@@ -103,7 +103,7 @@ module.exports = class ObnizComponents extends ObnizParts {
         this[peripheral + '' + i].notified(module_value);
       }
     }
-    const names = ['switch', 'ble', 'measure'];
+    const names = ['io', 'switch', 'ble', 'measure'];
     for (let i = 0; i < names.length; i++) {
       if (obj[names[i]]) {
         this[names[i]].notified(obj[names[i]]);

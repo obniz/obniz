@@ -68,6 +68,26 @@ let testUtil = {
     });
   },
 
+  setupNotConnectedYetObnizPromise: function(obj, done, options) {
+    options = options || {};
+    let stub = sinon.stub();
+    stub.on = sinon.stub();
+    stub.send = sinon.stub();
+    stub.close = sinon.stub();
+    stub.removeAllListeners = sinon.stub();
+    stub.readyState = 1;
+
+    sinon.stub(Obniz.prototype, 'wsconnect');
+    obj.obniz = this.createObniz(100, '12345678', options);
+    obj.obniz.socket = stub;
+    obj.obniz.error = sinon.stub();
+    obj.obniz.wsOnOpen();
+
+    serverDataCount = 0;
+
+    done();
+  },
+
   setupObnizPromise: function(obj, done, options) {
     options = options || {};
     let stub = sinon.stub();
@@ -82,8 +102,22 @@ let testUtil = {
     obj.obniz.socket = stub;
     obj.obniz.error = sinon.stub();
     obj.obniz.wsOnOpen();
-    obj.obniz.firmware_ver = '1.1.0';
+    obj.obniz.wsOnMessage(
+      JSON.stringify([
+        {
+          ws: {
+            ready: true,
+            obniz: {
+              firmware: options.__firmware_ver || '1.1.0',
+            },
+          },
+        },
+      ])
+    );
     serverDataCount = 0;
+
+    expect(obj.obniz).send([{ ws: { reset_obniz_on_ws_disconnection: true } }]);
+
     done();
   },
 

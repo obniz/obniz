@@ -121,11 +121,29 @@ obniz.io0.output(true)
 obniz.io0.end();
 ```
 
-## io.animation(name, status, array of animations)
+## io.animation(name, status [, animations, repeat])
 io animationは高速にioを変化させたいたい時に使います。
-"loop"アニメーションが利用できます。
-jsonのarrayに従い順番にioを繰り返し変更します。
-ioとpwmコマンドのみ利用できます。
+名前を分けて複数登録しておくことができます。ある一連のioの変化を登録しておいて繰り返し変化させるという"loop"アニメーションが利用できます。
+どのように変化させるかはjavascriptで同じように記載することができます。
+
+名前 | 型 | デフォルト | オプショナル |  説明
+--- | --- | --- | --- | ---
+name | string | なし | 必須 | アニメーションの名前になります。
+status | string | なし | 必須 | このアニメーションの状態を指定します。
+animations | array | なし | オプショナル | 実際のアニメーションになります。`pause``resume`のときは不要です
+repeat | number | undefined | オプショナル | アニメーションの繰り返し回数です。指定しない場合は無限となります。1から2^32-1までの数字を指定できます。この回数はanimationsで指定する各状態の変化を何度行うかになります。
+
+### statusについて
+
+status | 意味
+--- | --- |
+`'loop'` | 繰り返し変化させます。すぐに動作を開始します。
+`'registrate'` | 繰り返し変化させます。登録だけを行い、動作は開始しません
+`'pause'` | 登録済みのアニメーションを今の状態で一時停止します
+`'resume'` | 一時停止しているアニメーションを再開します
+
+### animationの指定方法
+
 durationはその状態がどれだけ続くかで、1~429426ミリ秒(約1時間)が指定できます。
 stateにセットする関数の中でioの状態を指定してください。
 
@@ -168,4 +186,30 @@ io animationの再開
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "resume")
+```
+
+## [await] io.repeatWait(animations, repeat)
+
+io animationを回数付きで指定し、かつそれが完了するまで待ちます。
+
+名前 | 型 | デフォルト |　オプショナル |  説明
+--- | --- | --- | --- | ---
+animations | array | なし | 必須 | 実際のアニメーションになります。
+repeat | number | なし | 必須 | アニメーションの回数になります
+
+```Javascript
+// Javascript Example
+await obniz.io.repeatWait([
+  {
+    duration: 1000,
+    state: function(index){
+      obniz.io0.output(true)
+    }
+  },{
+    duration: 1000,
+    state: function(index){
+      obniz.io0.output(false)
+    }
+  }
+], 4)
 ```

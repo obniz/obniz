@@ -2,8 +2,8 @@ const WSCommand = require('./WSCommand_.js');
 const qrcode = require('../utils/qr');
 
 class WSCommand_Display extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 8;
 
     this._CommandClear = 0;

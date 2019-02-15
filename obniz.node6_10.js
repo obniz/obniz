@@ -236,6 +236,8 @@ var map = {
 	"./response/index.yml": "./json_schema/response/index.yml",
 	"./response/io/get.yml": "./json_schema/response/io/get.yml",
 	"./response/io/index.yml": "./json_schema/response/io/index.yml",
+	"./response/ioanimation/index.yml": "./json_schema/response/ioanimation/index.yml",
+	"./response/ioanimation/notify.yml": "./json_schema/response/ioanimation/notify.yml",
 	"./response/logicanalyzer/data.yml": "./json_schema/response/logicanalyzer/data.yml",
 	"./response/logicanalyzer/index.yml": "./json_schema/response/logicanalyzer/index.yml",
 	"./response/measure/echo.yml": "./json_schema/response/measure/echo.yml",
@@ -934,7 +936,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","default":"loop","enum":["loop"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ioAnimation/init","commandExample":{"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}},"type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status","states"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"repeat":{"type":"integer","minLength":1,"maxLength":4294967295,"default":"undefined"},"status":{"type":"string","default":"loop","enum":["loop","registrate"]},"states":{"type":"array","default":[],"items":{"type":"object","required":["duration","state"],"additionalProperties":false,"properties":{"duration":{"type":"integer","minimum":0,"maximum":60000},"state":{"type":["object","array"],"filter":"pass_all"}}}}}}}}
 
 /***/ }),
 
@@ -1704,7 +1706,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
 
 /***/ }),
 
@@ -1727,6 +1729,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/io","basePath":"io0","anyOf":[{"$ref":"/response/io/get"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ioanimation/index.yml":
+/*!****************************************************!*\
+  !*** ./json_schema/response/ioanimation/index.yml ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation","basePath":"io","anyOf":[{"$ref":"/response/ioAnimation/notify"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ioanimation/notify.yml":
+/*!*****************************************************!*\
+  !*** ./json_schema/response/ioanimation/notify.yml ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ioAnimation/notify","type":"object","required":["animation"],"properties":{"animation":{"type":"object","required":["name","status"],"properties":{"name":{"type":"string","minLength":1,"maxLength":254},"status":{"type":"string","enum":["finish"]}}}}}
 
 /***/ }),
 
@@ -2033,7 +2057,7 @@ const ObnizMeasure = __webpack_require__(/*! ./libs/measurements/measure */ "./o
 const PeripheralAD = __webpack_require__(/*! ./libs/io_peripherals/ad */ "./obniz/libs/io_peripherals/ad.js");
 const PeripheralI2C = __webpack_require__(/*! ./libs/io_peripherals/i2c */ "./obniz/libs/io_peripherals/i2c.js");
 const PeripheralIO = __webpack_require__(/*! ./libs/io_peripherals/io */ "./obniz/libs/io_peripherals/io.js");
-const PeripheralIO_ = __webpack_require__(/*! ./libs/io_peripherals/io_ */ "./obniz/libs/io_peripherals/io_.js");
+const PeripheralDirective = __webpack_require__(/*! ./libs/io_peripherals/directive */ "./obniz/libs/io_peripherals/directive.js");
 const PeripheralPWM = __webpack_require__(/*! ./libs/io_peripherals/pwm */ "./obniz/libs/io_peripherals/pwm.js");
 const PeripheralSPI = __webpack_require__(/*! ./libs/io_peripherals/spi */ "./obniz/libs/io_peripherals/spi.js");
 const PeripheralUART = __webpack_require__(/*! ./libs/io_peripherals/uart */ "./obniz/libs/io_peripherals/uart.js");
@@ -2055,7 +2079,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   _prepareComponents() {
-    this.io = new PeripheralIO_(this);
+    this.io = new PeripheralDirective(this);
     for (let i = 0; i < 12; i++) {
       this['io' + i] = new PeripheralIO(this, i);
     }
@@ -2124,7 +2148,7 @@ module.exports = class ObnizComponents extends ObnizParts {
         this[peripheral + '' + i].notified(module_value);
       }
     }
-    const names = ['switch', 'ble', 'measure'];
+    const names = ['io', 'switch', 'ble', 'measure'];
     for (let i = 0; i < names.length; i++) {
       if (obj[names[i]]) {
         this[names[i]].notified(obj[names[i]]);
@@ -2304,6 +2328,8 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
+    this.firmware_ver = undefined;
+    this.connectionState = 'closed'; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
@@ -2328,7 +2354,13 @@ module.exports = class ObnizConnection {
       let classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
       for (let class_name in classes) {
-        this.wscommands.push(new classes[class_name]());
+        this.wscommands.push(new classes[class_name]({
+          hw: {
+            firmware: undefined,
+            model: 'obniz_board'
+          },
+          delegate: undefined
+        }));
       }
     }
     if (this.options.auto_connect) {
@@ -2496,6 +2528,8 @@ module.exports = class ObnizConnection {
       socket.onerror = this.wsOnError.bind(this);
     }
     this.socket = socket;
+
+    this.connectionState = 'connecting';
   }
 
   _connectLocal(host) {
@@ -2598,24 +2632,26 @@ module.exports = class ObnizConnection {
     if (this.socket) {
       if (this.socket.readyState <= 1) {
         // Connecting & Connected
+        this.connectionState = 'closing';
         this.socket.close(1000, 'close');
       }
       this.clearSocket(this.socket);
       delete this.socket;
     }
+    this.connectionState = 'closed';
   }
 
   _callOnConnect() {
-    let shouldCall = true;
+    let canChangeToConnected = true;
     if (this._waitForLocalConnectReadyTimer) {
-      /* obniz.js has wait local_connect */
+      /* obniz.js can't wait for local_connect any more! */
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
     } else {
-      /* obniz.js hasn't wait local_connect */
+      /* obniz.js has to wait for local_connect establish */
       if (this.socket_local && this.socket_local.readyState === 1) {
         /* delayed connect */
-        shouldCall = false;
+        canChangeToConnected = false;
       } else {
         /* local_connect is not used */
       }
@@ -2623,7 +2659,8 @@ module.exports = class ObnizConnection {
 
     this.emitter.emit('connected');
 
-    if (shouldCall) {
+    if (canChangeToConnected) {
+      this.connectionState = 'connected';
       if (typeof this.onconnect === 'function') {
         const promise = this.onconnect(this);
         if (promise instanceof Promise) {
@@ -2759,6 +2796,15 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
+      if (this.wscommands) {
+        for (let i = 0; i < this.wscommands.length; i++) {
+          const command = this.wscommands[i];
+          command.setHw({
+            model: 'obniz_board', // hard coding
+            firmware: this.firmware_ver
+          });
+        }
+      }
       if (this.options.reset_obniz_on_ws_disconnection) {
         this.resetOnDisconnect(true);
       }
@@ -5869,6 +5915,112 @@ module.exports = PeripheralAD;
 
 /***/ }),
 
+/***/ "./obniz/libs/io_peripherals/directive.js":
+/*!************************************************!*\
+  !*** ./obniz/libs/io_peripherals/directive.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const semver = __webpack_require__(/*! semver */ "semver");
+
+class Directive {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.observers = [];
+    this._reset();
+  }
+
+  _reset() {
+    for (let i = 0; i < this.observers.length; i++) {
+      this.observers[i].reject();
+    }
+    this.observers = [];
+  }
+
+  addObserver(name, resolve, reject) {
+    if (name && resolve && reject) {
+      this.observers.push({
+        name,
+        resolve,
+        reject
+      });
+    }
+  }
+
+  animation(name, status, array, repeat) {
+    if ((typeof repeat == 'number' || status == 'registrate') && semver.lt(this.Obniz.firmware_ver, '2.0.0')) {
+      throw new Error(`Please update obniz firmware >= 2.0.0`);
+    }
+    let obj = {};
+    obj.io = {
+      animation: {
+        name: name,
+        status: status
+      }
+    };
+    if (typeof repeat == 'number') {
+      obj.io.animation.repeat = repeat;
+    }
+    if (!array) array = [];
+
+    let states = [];
+    for (let i = 0; i < array.length; i++) {
+      let state = array[i];
+      let duration = state.duration;
+      let operation = state.state;
+
+      // dry run. and get json commands
+      this.Obniz.sendPool = [];
+      operation(i);
+      let pooledJsonArray = this.Obniz.sendPool;
+      this.Obniz.sendPool = null;
+      states.push({
+        duration: duration,
+        state: pooledJsonArray
+      });
+    }
+    if (status === 'loop' || status === 'registrate') {
+      obj.io.animation.states = states;
+    }
+    this.Obniz.send(obj);
+  }
+
+  repeatWait(array, repeat) {
+    if (semver.lt(this.Obniz.firmware_ver, '2.0.0')) {
+      throw new Error(`Please update obniz firmware >= 2.0.0`);
+    }
+    if (typeof repeat !== 'number' || repeat < 1) {
+      throw new Error('please specify repeat count > 0');
+    }
+
+    return new Promise((resolve, reject) => {
+      const name = '_repeatwait';
+
+      this.animation(name, 'loop', array, repeat);
+      this.addObserver(name, resolve, reject);
+    });
+  }
+
+  notified(obj) {
+    if (obj.animation.status == 'finish') {
+      for (let i = this.observers.length - 1; i >= 0; i--) {
+        if (obj.animation.name === this.observers[i].name) {
+          this.observers[i].resolve();
+          this.observers.splice(i, 1);
+        }
+      }
+    }
+  }
+}
+
+module.exports = Directive;
+
+/***/ }),
+
 /***/ "./obniz/libs/io_peripherals/i2c.js":
 /*!******************************************!*\
   !*** ./obniz/libs/io_peripherals/i2c.js ***!
@@ -6243,57 +6395,6 @@ class PeripheralIO {
   }
 }
 module.exports = PeripheralIO;
-
-/***/ }),
-
-/***/ "./obniz/libs/io_peripherals/io_.js":
-/*!******************************************!*\
-  !*** ./obniz/libs/io_peripherals/io_.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-class PeripheralIO_ {
-  constructor(Obniz, id) {
-    this.Obniz = Obniz;
-  }
-
-  animation(name, status, array) {
-    let obj = {};
-    obj.io = {
-      animation: {
-        name: name,
-        status: status
-      }
-    };
-    if (!array) array = [];
-
-    let states = [];
-    for (let i = 0; i < array.length; i++) {
-      let state = array[i];
-      let duration = state.duration;
-      let operation = state.state;
-
-      // dry run. and get json commands
-      this.Obniz.sendPool = [];
-      operation(i);
-      let pooledJsonArray = this.Obniz.sendPool;
-      this.Obniz.sendPool = null;
-      states.push({
-        duration: duration,
-        state: pooledJsonArray
-      });
-    }
-    if (status === 'loop') {
-      obj.io.animation.states = states;
-    }
-    this.Obniz.send(obj);
-  }
-}
-module.exports = PeripheralIO_;
 
 /***/ }),
 
@@ -8698,8 +8799,11 @@ const WSSchema = __webpack_require__(/*! ./WSSchema */ "./obniz/libs/wscommand/W
 let commandClasses = {};
 
 module.exports = class WSCommand {
-  constructor(delegate) {
-    this.delegate = delegate;
+  constructor() {
+    this._hw = {
+      model: undefined,
+      firmware: undefined
+    };
 
     //constants
     this.COMMAND_FUNC_ID_ERROR = 0xff;
@@ -8804,10 +8908,12 @@ module.exports = class WSCommand {
     return ret;
   }
 
+  setHw(obj) {
+    this._hw.model = obj.model;
+    this._hw.firmware = obj.firmware;
+  }
+
   sendCommand(func, payload) {
-    if (this.delegate && this.delegate.onParsed) {
-      this.delegate.onParsed(this.module, func, payload);
-    }
     if (this.parsed) {
       this.parsed(this.module, func, payload);
     }
@@ -8979,8 +9085,8 @@ class WSCommandNotFoundError extends Error {}
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_AD extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 7;
 
     this._CommandInitNormalInterval = 0;
@@ -9061,8 +9167,8 @@ const JsonBinaryConverter = __webpack_require__(/*! ./jsonBinaryConverter */ "./
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Ble extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 11;
 
     this.uuidLength = 16 + 2;
@@ -10146,15 +10252,17 @@ module.exports = WSCommand_Ble;
 
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 const ObnizUtil = __webpack_require__(/*! ../utils/util */ "./obniz/libs/utils/util.js");
+const semver = __webpack_require__(/*! semver */ "semver");
 
 module.exports = class WSCommand_Directive extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 1;
 
     this._CommandRegistrate = 0;
     this._CommandPause = 1;
     this._CommandResume = 2;
+    this._CommandNotify = 3;
 
     const CommandIO = __webpack_require__(/*! ./WSCommand_IO */ "./obniz/libs/wscommand/WSCommand_IO.js");
     const CommandPWM = __webpack_require__(/*! ./WSCommand_PWM */ "./obniz/libs/wscommand/WSCommand_PWM.js");
@@ -10166,10 +10274,43 @@ module.exports = class WSCommand_Directive extends WSCommand {
 
   init(params, originalParams) {
     const nameArray = ObnizUtil.string2dataArray(params.animation.name);
-    let frame = new Uint8Array(nameArray.length + 2);
-    frame[0] = nameArray.length + 1;
-    frame.set(nameArray, 1);
-    frame[frame.byteLength - 1] = 0; // null string
+    let frame,
+        offset = 0;
+    if (semver.lt(this._hw.firmware, '2.0.0')) {
+      // < 2.0.0
+      frame = new Uint8Array(1 + nameArray.length + 1);
+      // name //
+      frame[offset++] = nameArray.length + 1;
+      frame.set(nameArray, offset);
+      offset += nameArray.length;
+      frame[offset++] = 0; // null string
+      if (params.animation.status === 'registrate' || typeof params.animation.repeat === 'number') {
+        throw new Error('you need to update your firmware >= 2.0.0');
+      }
+    } else {
+      frame = new Uint8Array(1 + nameArray.length + 1 + 1 + 4);
+      // name //
+      frame[offset++] = nameArray.length + 1;
+      frame.set(nameArray, offset);
+      offset += nameArray.length;
+      frame[offset++] = 0; // null string
+      // type and count //
+      let type = 0,
+          repeat_count = 0;
+      if (params.animation.status === 'loop') {
+        type = 1; // auto start
+      }
+      if (typeof params.animation.repeat === 'number') {
+        repeat_count = params.animation.repeat;
+        type += 2;
+      }
+      frame[offset++] = type;
+      frame[offset++] = repeat_count >> 8 * 3;
+      frame[offset++] = repeat_count >> 8 * 2;
+      frame[offset++] = repeat_count >> 8 * 1;
+      frame[offset++] = repeat_count;
+    }
+
     const commandJsonArray = params.animation.states;
 
     for (let i = 0; i < commandJsonArray.length; i++) {
@@ -10275,6 +10416,21 @@ module.exports = class WSCommand_Directive extends WSCommand {
       }
     }
   }
+
+  notifyFromBinary(objToSend, func, payload) {
+    if (func === this._CommandNotify) {
+      const name = ObnizUtil.dataArray2string(payload.slice(2, payload.byteLength - 1)); // remove null string
+
+      objToSend['io'] = {
+        animation: {
+          name,
+          status: 'finish'
+        }
+      };
+    } else {
+      super.notifyFromBinary(objToSend, func, payload);
+    }
+  }
 };
 
 /***/ }),
@@ -10293,8 +10449,8 @@ const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscom
 const qrcode = __webpack_require__(/*! ../utils/qr */ "./obniz/libs/utils/qr.js");
 
 class WSCommand_Display extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 8;
 
     this._CommandClear = 0;
@@ -10443,8 +10599,8 @@ module.exports = WSCommand_Display;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_I2C extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 6;
 
     this._CommandInit = 0;
@@ -10657,8 +10813,8 @@ const COMMAND_IO_MUTEX_NAMES = {
 };
 
 class WSCommand_IO extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 2;
 
     this._CommandOutput = 0;
@@ -10797,8 +10953,8 @@ module.exports = WSCommand_IO;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_LogicAnalyzer extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 10;
 
     this._CommandInit = 0;
@@ -10890,8 +11046,8 @@ module.exports = WSCommand_LogicAnalyzer;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Measurement extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 12;
 
     this._CommandMeasurementEcho = 0;
@@ -10986,8 +11142,8 @@ module.exports = WSCommand_Measurement;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_PWM extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 3;
     this.ModuleNum = 6;
     this.resetInternalStatus();
@@ -11106,8 +11262,8 @@ module.exports = WSCommand_PWM;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_SPI extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 5;
 
     this._CommandInit = 0;
@@ -11225,8 +11381,8 @@ module.exports = WSCommand_SPI;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_Switch extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 9;
 
     this._CommandNotifyValue = 0;
@@ -11290,8 +11446,8 @@ module.exports = WSCommand_Switch;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_System extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 0;
 
     this._CommandReboot = 0;
@@ -11441,8 +11597,8 @@ module.exports = WSCommand_System;
 const WSCommand = __webpack_require__(/*! ./WSCommand_.js */ "./obniz/libs/wscommand/WSCommand_.js");
 
 class WSCommand_UART extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 4;
 
     this._CommandInit = 0;
@@ -11929,7 +12085,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"1.16.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.0","node-dir":"^0.1.17","node-fetch":"^2.2.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.0"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"2.0.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.3"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -11943,7 +12099,6 @@ module.exports = {"name":"obniz","version":"1.16.1","description":"obniz sdk for
 var map = {
 	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
-	"./AudioSensor/AE_MICAMP/index.js": "./parts/AudioSensor/AE_MICAMP/index.js",
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
@@ -11958,6 +12113,15 @@ var map = {
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
 	"./DistanceSensor/HC-SR04/index.js": "./parts/DistanceSensor/HC-SR04/index.js",
 	"./GPS/GYSFDMAXB/index.js": "./parts/GPS/GYSFDMAXB/index.js",
+	"./GasSensor/MQ135/index.js": "./parts/GasSensor/MQ135/index.js",
+	"./GasSensor/MQ2/index.js": "./parts/GasSensor/MQ2/index.js",
+	"./GasSensor/MQ3/index.js": "./parts/GasSensor/MQ3/index.js",
+	"./GasSensor/MQ4/index.js": "./parts/GasSensor/MQ4/index.js",
+	"./GasSensor/MQ5/index.js": "./parts/GasSensor/MQ5/index.js",
+	"./GasSensor/MQ6/index.js": "./parts/GasSensor/MQ6/index.js",
+	"./GasSensor/MQ7/index.js": "./parts/GasSensor/MQ7/index.js",
+	"./GasSensor/MQ8/index.js": "./parts/GasSensor/MQ8/index.js",
+	"./GasSensor/MQ9/index.js": "./parts/GasSensor/MQ9/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
@@ -11983,6 +12147,7 @@ var map = {
 	"./Moving/PCA9685/index.js": "./parts/Moving/PCA9685/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
+	"./Moving/StepperMotor/index.js": "./parts/Moving/StepperMotor/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
@@ -12194,93 +12359,6 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/AudioSensor/AE_MICAMP/index.js":
-/*!**********************************************!*\
-  !*** ./parts/AudioSensor/AE_MICAMP/index.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
-class AE_MICAMP {
-  constructor() {
-    this.keys = ['vcc', 'gnd', 'out'];
-    this.requiredKeys = ['out'];
-
-    this.displayIoNames = {
-      vcc: 'vcc',
-      gnd: 'gnd',
-      out: 'out'
-    };
-  }
-
-  static info() {
-    return {
-      name: 'AE_MICAMP'
-    };
-  }
-
-  wired(obniz) {
-    var _this = this;
-
-    return _asyncToGenerator(function* () {
-      _this.obniz = obniz;
-
-      _this.ad = obniz.getAD(_this.params.out);
-
-      obniz.setVccGnd(_this.params.vcc, _this.params.gnd, '5v');
-
-      let self = _this;
-      _this.ad.start(function (value) {
-        self.voltage = value;
-        if (self.onchange) {
-          self.onchange(self.voltage);
-        }
-      });
-    })();
-  }
-}
-
-if (true) {
-  module.exports = AE_MICAMP;
-}
-
-/*
-  var self = this;
-  var analogin = [];
-  var cnt = 0;
-  while(true){
-    var sum = 0;
-    if (cnt == 10) {
-      cnt = 0;
-    }
-    analogin[cnt] = this.ad.value;
-    cnt++;
-    for (var i = 0; i < 10; i++) {
-      if (typeof(analogin[i])=="number") {sum += analogin[i];}
-    }
-    var average = sum / 10;
-    //console.log('average='+average);
-    await obniz.wait(1);
-  }
-  self.voltage_ave = average;
-  if (self.average) {
-    self.average(self.voltage_ave);
-  }
-  */
-
-/*
-AE_MICAMP.prototype.Average = function(callback) {
-  this.average = callback;
-};
-*/
-
-/***/ }),
-
 /***/ "./parts/Ble/2jcie/index.js":
 /*!**********************************!*\
   !*** ./parts/Ble/2jcie/index.js ***!
@@ -12421,7 +12499,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 class ArduCAMMini {
   constructor() {
-    this.keys = ['cs', 'mosi', 'miso', 'sclk', 'gnd', 'vcc', 'sda', 'scl', 'spi', 'i2c'];
+    this.keys = ['cs', 'mosi', 'miso', 'sclk', 'gnd', 'vcc', 'sda', 'scl', 'spi', 'i2c', 'spi_frequency', 'spi_drive'];
     this.requiredKeys = ['cs'];
 
     this.ioKeys = this.keys;
@@ -12522,8 +12600,8 @@ class ArduCAMMini {
     this.sensor_addr = 0x30; // i2c
 
     this.params.mode = this.params.mode || 'master';
-    this.params.drive = '3v';
-    this.params.frequency = this.params.frequency || 4 * 1000 * 1000;
+    this.params.drive = this.params.spi_drive || '3v';
+    this.params.frequency = this.params.spi_frequency || 4 * 1000 * 1000;
     this.params.clk = this.params.sclk;
     this.spi = this.obniz.getSpiWithConfig(this.params);
 
@@ -15364,6 +15442,880 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/GasSensor/MQ135/index.js":
+/*!****************************************!*\
+  !*** ./parts/GasSensor/MQ135/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ135 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ135'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ135;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ2/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ2/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ2 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ2'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ2;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ3/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ3/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ3 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ3'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ3;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ4/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ4/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ4 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ4'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ4;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ5/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ5/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ5 {
+  // https://www.parallax.com/sites/default/files/downloads/605-00009-MQ-5-Datasheet.pdf
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ5'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ5;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ6/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ6/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ6 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ6'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ6;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ7/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ7/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ7 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ7'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ7;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ8/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ8/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ8 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ8'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ8;
+}
+
+/***/ }),
+
+/***/ "./parts/GasSensor/MQ9/index.js":
+/*!**************************************!*\
+  !*** ./parts/GasSensor/MQ9/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+class MQ9 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'do', 'ao'];
+    this.requiredKeys = [];
+
+    this.onchangeanalog = undefined;
+    this.onchangedigital = undefined;
+    this.onexceedvoltage = undefined;
+    this.voltageLimit = undefined;
+
+    // this.RL = 2 * 1000;
+    // this.RO = 20 * 1000;
+  }
+
+  static info() {
+    return {
+      name: 'MQ9'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+
+    if (this.obniz.isValidIO(this.params.ao)) {
+      this.ad = obniz.getAD(this.params.ao);
+      this.ad.start(voltage => {
+        // this.level = this.calc(voltage);
+        if (typeof this.onchangeanalog == 'function') {
+          this.onchangeanalog(voltage);
+        }
+        if (typeof this.voltageLimit == 'number' && this.voltageLimit <= voltage && typeof this.onexceedvoltage == 'function') {
+          this.onexceedvoltage(voltage);
+        }
+      });
+    }
+
+    if (this.obniz.isValidIO(this.params.do)) {
+      this.do = obniz.getIO(this.params.do);
+      this.do.input(value => {
+        if (typeof this.onchangedigital == 'function') {
+          this.onchangedigital(value);
+        }
+      });
+    }
+  }
+
+  startHeating() {
+    this.obniz.setVccGnd(this.vcc, this.gnd, '5v');
+  }
+
+  heatWait(seconds) {
+    this.startHeating();
+    if (seconds > 0) {
+      seconds *= 1000;
+    } else {
+      seconds = 2 * 60 * 1000;
+    }
+    return new Promise(resolve => {
+      setTimeout(resolve, seconds);
+    });
+  }
+
+  // Rs/Ro will descrease by insease of gas.
+  // Rs = resitance 20k-100k. Ro = resistance of 1000ppm LPG
+  // If RL =
+
+  // calc(voltage) {
+
+  //   if (voltage == 0) {
+  //     voltage = 0.000001
+  //   }
+  //   const RS = this.RL / voltage * 5.0
+  //   const ratio = RS / this.RO;
+
+  //   return voltage;
+  // }
+}
+
+if (true) {
+  module.exports = MQ9;
+}
+
+/***/ }),
+
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
 /*!*************************************************!*\
   !*** ./parts/Grove/Grove_EarHeartRate/index.js ***!
@@ -18009,6 +18961,239 @@ class Solenoid {
 
 if (true) {
   module.exports = Solenoid;
+}
+
+/***/ }),
+
+/***/ "./parts/Moving/StepperMotor/index.js":
+/*!********************************************!*\
+  !*** ./parts/Moving/StepperMotor/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class StepperMotor {
+  constructor() {
+    this.keys = ['a', 'b', 'aa', 'bb', 'common'];
+    this.requiredKeys = ['a', 'b', 'aa', 'bb'];
+
+    this._stepInstructions = {
+      '1': [[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]],
+      '2': [[0, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 1, 0]],
+      '1-2': [[0, 1, 1, 1], [0, 0, 1, 1], [1, 0, 1, 1], [1, 0, 0, 1], [1, 1, 0, 1], [1, 1, 0, 0], [1, 1, 1, 0], [0, 1, 1, 0]]
+    };
+
+    this.type = undefined; // common exist? => unipolar : bipolar
+    this.currentStep = 0;
+    this._stepType = '2';
+    this.frequency = 100;
+
+    this.rotationStepCount = 100;
+    this.milliMeterStepCount = 1;
+  }
+
+  static info() {
+    return {
+      name: 'StepperMotor'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    if (obniz.isValidIO(this.params.common)) {
+      this.common = obniz.getIO(this.params.common);
+      this.common.output(true);
+      this.type = 'unipolar';
+    } else {
+      this.type = 'bipolar';
+    }
+    this.ios = [];
+    this.ios.push(obniz.getIO(this.params.a));
+    this.ios.push(obniz.getIO(this.params.b));
+    this.ios.push(obniz.getIO(this.params.aa));
+    this.ios.push(obniz.getIO(this.params.bb));
+  }
+
+  stepWait(step_count) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      if (step_count == 0) {
+        return;
+      }
+      const step_count_abs = Math.abs(step_count);
+      const instructions = _this._getStepInstructions();
+      const instruction_length = instructions.length;
+      let array = [];
+      // set instructions
+      let currentPhase = _this.currentStep % instruction_length;
+      if (currentPhase < 0) {
+        currentPhase = instruction_length - currentPhase * -1;
+      }
+      if (step_count > 0) {
+        for (let i = 0; i < instructions.length; i++) {
+          if (++currentPhase >= instruction_length) {
+            currentPhase = 0;
+          }
+          array.push(instructions[currentPhase]);
+        }
+      } else {
+        for (let i = 0; i < instructions.length; i++) {
+          if (--currentPhase < 0) {
+            currentPhase = instruction_length - 1;
+          }
+          array.push(instructions[currentPhase]);
+        }
+      }
+      // prepare animation
+      let msec = 1000 / _this.frequency;
+      msec = parseInt(msec);
+      if (msec < 1) {
+        msec = 1;
+      }
+      const state = function (index) {
+        const instruction = array[index];
+        for (let i = 0; i < _this.ios.length; i++) {
+          _this.ios[i].output(instruction[i]);
+        }
+      };
+      let states = [];
+      for (let i = 0; i < instruction_length; i++) {
+        states.push({
+          duration: msec,
+          state
+        });
+      }
+      // execute and wait
+      yield _this.obniz.io.repeatWait(states, step_count_abs);
+      _this.currentStep += step_count;
+    })();
+  }
+
+  stepToWait(destination) {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      const mustmove = destination - _this2.currentStep;
+      yield _this2.stepWait(mustmove);
+    })();
+  }
+
+  holdWait() {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      const instructions = _this3._getStepInstructions();
+      const instruction_length = instructions.length;
+      // set instructions
+      let currentPhase = _this3.currentStep % instruction_length;
+      if (currentPhase < 0) {
+        currentPhase = instruction_length - currentPhase * -1;
+      }
+
+      for (let i = 0; i < _this3.ios.length; i++) {
+        _this3.ios[i].output(instructions[currentPhase][i]);
+      }
+      yield _this3.obniz.pingWait();
+    })();
+  }
+
+  freeWait() {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      for (let i = 0; i < _this4.ios.length; i++) {
+        _this4.ios[i].output(true);
+      }
+      yield _this4.obniz.pingWait();
+    })();
+  }
+
+  stepType(stepType) {
+    const newType = this._stepInstructions[stepType];
+    if (!newType) {
+      throw new Error('unknown step type ' + stepType);
+    }
+    this._stepType = stepType;
+  }
+
+  speed(step_per_sec) {
+    this.frequency = step_per_sec;
+  }
+
+  currentRotation() {
+    // => degree
+    return this.currentStep / this.rotationStepCount * 360;
+  }
+
+  currentAngle() {
+    // => degree
+    let angle = parseInt(this.currentRotation() * 1000) % 360000 / 1000;
+    if (angle < 0) {
+      angle = 360 - angle;
+    }
+    return angle;
+  }
+
+  rotateWait(rotation) {
+    var _this5 = this;
+
+    return _asyncToGenerator(function* () {
+      rotation /= 360;
+      const needed = rotation * _this5.rotationStepCount;
+      yield _this5.stepWait(needed);
+    })();
+  }
+
+  rotateToWait(angle) {
+    var _this6 = this;
+
+    return _asyncToGenerator(function* () {
+      let needed = angle - _this6.currentAngle();
+      if (Math.abs(needed) > 180) {
+        needed = needed > 0 ? needed - 360 : 360 + needed;
+      }
+      needed = needed / 360 * _this6.rotationStepCount;
+      yield _this6.stepWait(needed);
+    })();
+  }
+
+  currentDistance() {
+    // => mm
+    return this.currentStep / this.milliMeterStepCount;
+  }
+
+  moveWait(distance) {
+    var _this7 = this;
+
+    return _asyncToGenerator(function* () {
+      const needed = distance * _this7.milliMeterStepCount;
+      yield _this7.stepWait(needed);
+    })();
+  }
+
+  moveToWait(destination) {
+    var _this8 = this;
+
+    return _asyncToGenerator(function* () {
+      const needed = (destination - _this8.currentDistance()) * _this8.milliMeterStepCount;
+      yield _this8.stepWait(needed);
+    })();
+  }
+
+  _getStepInstructions() {
+    return this._stepInstructions[this._stepType];
+  }
+}
+
+if (true) {
+  module.exports = StepperMotor;
 }
 
 /***/ }),
