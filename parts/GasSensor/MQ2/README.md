@@ -7,9 +7,6 @@ This sensor need pre-heating. To get stable output, wait for heat-up, minimum 2 
 
 This library get analog voltage from a sensor. Output voltage will increase regarding gas level. When you need actual level (ppm), you should do calibrate the sensor and prepare a formula.
 
-This sensor response CO2, You can check behavior by breathing.
-
-
 ![](./image.jpg)
 
 ## wired(obniz,  { vcc, gnd, do, ao});
