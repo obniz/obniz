@@ -26737,7 +26737,7 @@ class StepperMotor {
       msec = 1;
     }
     const state = index => {
-      const instruction = instructions[index];
+      const instruction = array[index];
       for (let i = 0; i < this.ios.length; i++) {
         this.ios[i].output(instruction[i]);
       }
