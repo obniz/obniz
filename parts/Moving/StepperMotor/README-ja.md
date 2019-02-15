@@ -113,6 +113,28 @@ await motor.stepToWait(-150); // it move -250 steps
 console.log(motor.currentStep) // => -150
 ```
 
+### [await] holdWait()
+
+今のステップ位置で電流を流し、維持した状態にします。
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.holdWait();
+```
+
+### [await] freeWait()
+
+全てのコイルへの電流を停止し、モーターを自由な状態にします。
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.freeWait();
+```
+
+
 ### currentStep
 
 現在の位置をステップで表します。初期値は0です。

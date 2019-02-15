@@ -117,6 +117,27 @@ await motor.stepToWait(-150); // it move -250 steps
 console.log(motor.currentStep) // => -150
 ```
 
+### [await] holdWait()
+
+Drain current to keep position.
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.holdWait();
+```
+
+### [await] freeWait()
+
+Stop drain current and make free a motor.
+
+```Javascript
+// Javascript Example
+var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
+await motor.stepWait(100);
+await motor.freeWait();
+```
+
 ### currentStep
 
 It is current step count number. Initially 0.
