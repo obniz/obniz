@@ -408,7 +408,7 @@ console.log("data: " , data );
 ```
 
 
-## descriptor.onwritefromremote(data)
+## descriptor.onwritefromremote
 
 This is a callback function used when the descriptor gets changed by an external device.
 
@@ -422,7 +422,7 @@ descriptor.onwritefromremote = function(val){
 
 ```
 
-## descriptor.onreadfromremote(data)
+## descriptor.onreadfromremote
 This is a callback function used when the descriptor is read by an external device.
 
 ```Javascript 
