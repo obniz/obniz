@@ -95,7 +95,7 @@ local_connect | `boolean` | true | obniz.js try to connect locally after cloud a
 debug_dom_id | `string` | 'obniz-debug' | In HTML, online status and debug info will be showed in DOM which has this id.
 auto_connect | `boolean` | true | obniz.js automatically connect to cloud API after instantiate soon. falset to disable it. The interval of auto connect become longer.
 access_token | `string` | null | If you specified access_token to your obniz. set it's key to this parameter.
-reset_obniz_on_ws_disconnection | `boolean` | true | With 'true', obniz cloud will reset your obniz after websocket from obniz.js connection was closed.
+reset_obniz_on_ws_disconnection | `boolean` | true | With 'true', obniz cloud will reset your obniz after all websocket connection to an obniz was closed.
 
 
 ## connect()
@@ -170,6 +170,26 @@ if(connected){
 }
 ```
 
+## connectionState
+
+This let you know connection state to your obniz as string value.
+
+state | type
+--- | ---
+`'closed'` | not connected.
+`'connecting'` | connecting 
+`'connected'` | connection established
+`'closing'` | closing connection.
+
+
+```javascript
+var obniz = new Obniz('1234-5678');
+console.log(obniz.connectionState) // => === "connecting"
+obniz.onconnect = async function() {
+  console.log(obniz.connectionState) // => === "connected"
+}
+```
+
 ## debugprint
 This lets obniz.js to show logs like communicated jsons and connection logs in console.log.
 
@@ -184,11 +204,11 @@ obniz.onconnect = async function() {
 ## resetOnDisconnect(reset)
 
 This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.
-By default, obniz.js resets itself when user disconnects the web socket to obniz cloud.
+By default, obniz cloud resets target obniz when the all websocket to obniz cloud was closed.
 It means the output value and pwm will all stop at that point.
 With the above function, you can nullify these resetting activities.
-This configuration will remain until the user's web socket gets disconnected.
-Set this function to false to keep working without the user's web socket.
+This configuration will remain until target obniz gets disconnected.
+Set this function to false to keep working without any of the websocket connections.
 
 ```Javascript
 // Example

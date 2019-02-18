@@ -202,7 +202,7 @@ describe('obniz.index', function() {
   it('onconnect', function() {
     let called = false;
     return new Promise(resolve => {
-      testUtil.setupObnizPromise(this, resolve);
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
     })
       .then(() => {
         expect(this.obniz).to.be.obniz;
@@ -239,7 +239,7 @@ describe('obniz.index', function() {
   it('repeat', function() {
     let called = false;
     return new Promise(resolve => {
-      testUtil.setupObnizPromise(this, resolve);
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
     })
       .then(() => {
         expect(this.obniz).to.be.obniz;
@@ -277,7 +277,7 @@ describe('obniz.index', function() {
   it('connect_repeat', function() {
     let results = true;
     return new Promise(resolve => {
-      testUtil.setupObnizPromise(this, resolve);
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
     })
       .then(() => {
         expect(this.obniz).to.be.obniz;
@@ -323,7 +323,7 @@ describe('obniz.index', function() {
   it('connectWait', function() {
     let called = false;
     return new Promise(resolve => {
-      testUtil.setupObnizPromise(this, resolve);
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
     })
       .then(() => {
         expect(this.obniz).to.be.obniz;
@@ -360,7 +360,7 @@ describe('obniz.index', function() {
   it('connectWaitTimeout', function() {
     let called = false;
     return new Promise(resolve => {
-      testUtil.setupObnizPromise(this, resolve);
+      testUtil.setupNotConnectedYetObnizPromise(this, resolve);
     })
       .then(() => {
         expect(this.obniz).to.be.obniz;

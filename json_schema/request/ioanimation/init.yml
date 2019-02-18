@@ -20,11 +20,20 @@ properties:
                 minLength: 1
                 maxLength: 254
 
+            repeat :
+                type: integer
+                description : "The limitation number of transitions of states"
+                example : 1000
+                minLength: 1
+                maxLength: 4294967295
+                default: undefined
+
             status :
                 type: string
                 default : loop
                 enum :
                    - loop
+                   - registrate
 
             states:
                 type: array

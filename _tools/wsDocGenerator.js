@@ -270,7 +270,12 @@ function jsonExample(params, schema) {
         //
         //   value = "obniz";
       } else {
-        throw Error('patternProperties is not compatible');
+        throw Error(
+          'patternProperties is not compatible for ' +
+            path +
+            ' type ' +
+            param.schema.type
+        );
       }
 
       let obj = jsonObj;

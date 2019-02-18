@@ -1,8 +1,8 @@
 const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_SPI extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 5;
 
     this._CommandInit = 0;

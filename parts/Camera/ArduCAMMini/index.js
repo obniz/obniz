@@ -11,6 +11,8 @@ class ArduCAMMini {
       'scl',
       'spi',
       'i2c',
+      'spi_frequency',
+      'spi_drive',
     ];
     this.requiredKeys = ['cs'];
 
@@ -667,8 +669,8 @@ class ArduCAMMini {
     this.sensor_addr = 0x30; // i2c
 
     this.params.mode = this.params.mode || 'master';
-    this.params.drive = '3v';
-    this.params.frequency = this.params.frequency || 4 * 1000 * 1000;
+    this.params.drive = this.params.spi_drive || '3v';
+    this.params.frequency = this.params.spi_frequency || 4 * 1000 * 1000;
     this.params.clk = this.params.sclk;
     this.spi = this.obniz.getSpiWithConfig(this.params);
 

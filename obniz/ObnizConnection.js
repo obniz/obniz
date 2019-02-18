@@ -13,6 +13,8 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
+    this.firmware_ver = undefined;
+    this.connectionState = 'closed'; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
@@ -38,7 +40,15 @@ module.exports = class ObnizConnection {
       let classes = this.constructor.WSCommand.CommandClasses;
       this.wscommands = [];
       for (let class_name in classes) {
-        this.wscommands.push(new classes[class_name]());
+        this.wscommands.push(
+          new classes[class_name]({
+            hw: {
+              firmware: undefined,
+              model: 'obniz_board',
+            },
+            delegate: undefined,
+          })
+        );
       }
     }
     if (this.options.auto_connect) {
@@ -206,6 +216,8 @@ module.exports = class ObnizConnection {
       socket.onerror = this.wsOnError.bind(this);
     }
     this.socket = socket;
+
+    this.connectionState = 'connecting';
   }
 
   _connectLocal(host) {
@@ -314,24 +326,26 @@ module.exports = class ObnizConnection {
     if (this.socket) {
       if (this.socket.readyState <= 1) {
         // Connecting & Connected
+        this.connectionState = 'closing';
         this.socket.close(1000, 'close');
       }
       this.clearSocket(this.socket);
       delete this.socket;
     }
+    this.connectionState = 'closed';
   }
 
   _callOnConnect() {
-    let shouldCall = true;
+    let canChangeToConnected = true;
     if (this._waitForLocalConnectReadyTimer) {
-      /* obniz.js has wait local_connect */
+      /* obniz.js can't wait for local_connect any more! */
       clearTimeout(this._waitForLocalConnectReadyTimer);
       this._waitForLocalConnectReadyTimer = null;
     } else {
-      /* obniz.js hasn't wait local_connect */
+      /* obniz.js has to wait for local_connect establish */
       if (this.socket_local && this.socket_local.readyState === 1) {
         /* delayed connect */
-        shouldCall = false;
+        canChangeToConnected = false;
       } else {
         /* local_connect is not used */
       }
@@ -339,7 +353,8 @@ module.exports = class ObnizConnection {
 
     this.emitter.emit('connected');
 
-    if (shouldCall) {
+    if (canChangeToConnected) {
+      this.connectionState = 'connected';
       if (typeof this.onconnect === 'function') {
         const promise = this.onconnect(this);
         if (promise instanceof Promise) {
@@ -489,6 +504,15 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
+      if (this.wscommands) {
+        for (let i = 0; i < this.wscommands.length; i++) {
+          const command = this.wscommands[i];
+          command.setHw({
+            model: 'obniz_board', // hard coding
+            firmware: this.firmware_ver,
+          });
+        }
+      }
       if (this.options.reset_obniz_on_ws_disconnection) {
         this.resetOnDisconnect(true);
       }

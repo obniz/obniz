@@ -17,6 +17,7 @@
         "^i2c0$" : {$ref : "/response/i2c"}
 
       properties:
+        io: {$ref : "/response/ioAnimation" }
         switch : {$ref : "/response/switch"}
         ble : {$ref : "/response/ble"}
         measure :  {$ref : "/response/measure"}

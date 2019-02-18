@@ -95,7 +95,7 @@ local_connect | `boolean` | true | obniz.js はクラウドAPI経由でobnizと�
 debug_dom_id | `string` | 'obniz-debug' | HTMLではここで指定されたidを持つDOMにオンラインステータスなど各種情報が出力されます
 auto_connect | `boolean` | true | 標準でobniz.jsは自動的に接続を行い、切れても再接続を自動で行いますが、これによりoffにできます。自動接続は1秒間隔ではじまり、徐々に間隔が伸びるようになっています。
 access_token | `string` | null | access_tokenが発行されているobnizに接続する場合は指定してください。
-reset_obniz_on_ws_disconnection | `boolean` | true | obniz.jsとクラウドとの接続が切れた時にクラウドがobnizをリセットするかどうかを決められます。
+reset_obniz_on_ws_disconnection | `boolean` | true | 同一のobnizに対してのwebsocket接続が0本になった時にクラウド側がobnizをリセットするかどうか
 
 
 ## connect()
@@ -170,6 +170,28 @@ obniz.onconnect = async function() {
 }
 ```
 
+## connectionState
+
+obnizとの現在の接続状態を接続状態を表す文字列が入っています。
+以下の4状態のうちどれかになります。
+
+state | type
+--- | ---
+`'closed'` | 接続していない
+`'connecting'` | 接続中
+`'connected'` | 接続が完了した
+`'closing'` | 切断中
+
+
+```javascript
+var obniz = new Obniz('1234-5678');
+console.log(obniz.connectionState) // => === "connecting"
+obniz.onconnect = async function() {
+  console.log(obniz.connectionState) // => === "connected"
+}
+```
+
+
 ## debugprint
 通信でやりとりされるjsonを出力したり、接続状態などのobniz.js内のログがconsole.logに出力されます。
 
@@ -183,10 +205,10 @@ obniz.onconnect = async function() {
 
 ## resetOnDisconnect(reset)
 オプションである `reset_obniz_on_ws_disconnection` の設定をあとから変更する場合に使う関数です。
-obniz.jsでは標準でtrueなので、obniz.jsはユーザーがobniz cloudへのweb socketを切断するとリセットするようになっています。
+obniz.jsでは標準でtrueなので、obnizクラウドは同一obnizへのwebsocket接続が0本になったところでobnizに対してリセットを行います。
 リセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
 この関数でそれを無効にし、リセットしないようにできます。
-この設定はユーザーのweb socketが切断されるまで保持されます。
+この設定はobnizがオンラインである限り有効となります。
 ```Javascript
 // Example
 obniz.resetOnDisconnect(false);

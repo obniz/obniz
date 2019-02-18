@@ -128,6 +128,26 @@ io animation is used when you wish to accelerate the serial sequence change of i
 "Loop" animation can be used.
 io changes repeatedly in a sequential manner according to json array.
 io and pwm json commands can only be used.
+
+
+Key | Type | Default | Required | Description
+--- | --- | --- | --- | ---
+name | string | - | Required | name of animation
+status | string | - | Required | status of animation
+animations | array | - | Optional | instructions. This is optional when status is `pause``resume`.
+repeat | number | undefined | Optional | The number of repeat count of animation. If not specified, it repeat endless.
+
+### about status
+
+status | Description
+--- | --- |
+`'loop'` | loop animation. It start immidiately.
+`'registrate'` | Loop animation. Just registration.
+`'pause'` | Pause current runnning animation.
+`'resume'` | Resume paused or jsut registrated animation.
+
+### about animation
+
 duration means how long this state lasts, and you can set it between ms. 1 to 429426 ms (around 1 hour).
 state is a function which has io directives.
 
@@ -170,4 +190,31 @@ Resume paused animation
 ```Javascript
 // Example
 obniz.io.animation("animation-1", "resume")
+```
+
+## [await] io.repeatWait(animations, repeat)
+
+It start io aniomation with limited repeat count. And It wait until done.
+
+
+Key | Type | Default | Required | Description
+--- | --- | --- | --- | ---
+animations | array | - | Required | instructions.
+repeat | number | - | Required | The number of repeat count of animation.
+
+```Javascript
+// Javascript Example
+await obniz.io.repeatWait([
+  {
+    duration: 1000,
+    state: function(index){
+      obniz.io0.output(true)
+    }
+  },{
+    duration: 1000,
+    state: function(index){
+      obniz.io0.output(false)
+    }
+  }
+], 4)
 ```
