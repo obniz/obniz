@@ -1,8 +1,8 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/request/ble/security/key/max_size"
-description : "ble encription key max size setting (7~16byte)"
+id: "/request/ble/security/key_max_size"
+description : "ble encryption key max size setting (7~16byte)"
 
 
 type: object

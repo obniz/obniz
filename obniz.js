@@ -487,14 +487,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/ble/security/devices_clear.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices/clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices_clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/ble/security/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices/clear"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_type"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices_clear"}]}
 
 /***/ }),
 
@@ -508,14 +508,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/ble/security/key_max_size.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/ble/security/key_type.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
 
 /***/ }),
 
@@ -3699,27 +3699,15 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 "use strict";
 
 
-// ref: https://github.com/tc39/proposal-global
-var getGlobal = function () {
-	// the only reliable means to get the global object is
-	// `Function('return this')()`
-	// However, this causes CSP violations in Chrome apps.
-	if (typeof self !== 'undefined') { return self; }
-	if (typeof window !== 'undefined') { return window; }
-	if (typeof global !== 'undefined') { return global; }
-	throw new Error('unable to locate global object');
-}
-
-var global = getGlobal();
-
-module.exports = exports = global.fetch;
+module.exports = exports = self.fetch;
 
 // Needed for TypeScript and Webpack.
-exports.default = global.fetch.bind(global);
+exports.default = self.fetch.bind(self);
 
-exports.Headers = global.Headers;
-exports.Request = global.Request;
-exports.Response = global.Response;
+exports.Headers = self.Headers;
+exports.Request = self.Request;
+exports.Response = self.Response;
+
 
 /***/ }),
 

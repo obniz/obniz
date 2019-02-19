@@ -628,7 +628,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices/clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices_clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
 
 /***/ }),
 
@@ -639,7 +639,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices/clear"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_type"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices_clear"}]}
 
 /***/ }),
 
@@ -661,7 +661,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
 
 /***/ }),
 
@@ -672,7 +672,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
 
 /***/ }),
 
