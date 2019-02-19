@@ -1,8 +1,8 @@
 const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_PWM extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 3;
     this.ModuleNum = 6;
     this.resetInternalStatus();

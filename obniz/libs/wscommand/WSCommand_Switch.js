@@ -1,8 +1,8 @@
 const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_Switch extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 9;
 
     this._CommandNotifyValue = 0;

@@ -26,8 +26,8 @@ const COMMAND_IO_MUTEX_NAMES = {
 };
 
 class WSCommand_IO extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 2;
 
     this._CommandOutput = 0;

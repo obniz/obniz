@@ -1,8 +1,8 @@
 const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_Measurement extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 12;
 
     this._CommandMeasurementEcho = 0;

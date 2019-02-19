@@ -8,7 +8,7 @@
 ![](./image.jpg)
 
 
-## wired(obniz,  {cs [, mosi, miso, sclk, gnd, vcc, sda, scl, spi, i2c]} )
+## wired(obniz,  {cs [, mosi, miso, sclk, gnd, vcc, sda, scl, spi, i2c, spi_drive, spi_frequency]} )
 
 つながっているioを指定してオブジェクト化します。
 
@@ -38,6 +38,8 @@ sda | `number(obniz io)` | no | &nbsp; | obniz io. I2C sda 端子
 scl | `number(obniz io)` | no | &nbsp; | obniz io. I2C scl 端子
 i2c | `i2c object` | no | &nbsp; | configured i2c object
 spi | `spi object` | no | &nbsp; | configured spi object
+spi_frequency | `spi object` | no | 4Mhz | SPI通信がうまくいかない場合に周波数を下げる時に利用します
+spi_drive | `spi object` | no | `'3v'` | SPI通信がうまくいかない場合に駆動方法を変更する時に利用します
 
 ピンだけを指定して以下のように設定することが出来ます。
 
@@ -198,7 +200,7 @@ I2Cに問題があるかや、チップがサポートされているものか�
 // Javascript Example
 obniz.io11.output(true);
 var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
-const chipid = await this.getChipIdWait();
+const chipid = await cam.getChipIdWait();
 if (chipid != 0x2642) {
   throw new Error('unknown chip ' + chipid)
 }
@@ -264,7 +266,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```
@@ -286,7 +288,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```
@@ -306,7 +308,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```
@@ -326,7 +328,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```

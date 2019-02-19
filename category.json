@@ -169,6 +169,14 @@
           }
         },
         {
+          "name": "StepperMotor",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gP-05374/",
+            "adafruit": "https://www.adafruit.com/product/858",
+            "amazon.com": "https://www.amazon.com/Adafruit-Small-Reduction-Stepper-Motor/dp/B01BMRR0FM/ref=sr_1_8?ie=UTF8&qid=1550133053&sr=8-8&keywords=stepper+motor+5v"
+          }
+        },
+        {
           "name": "Solenoid",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-10761/"
@@ -196,6 +204,75 @@
             "switchscience": "https://www.switch-science.com/catalog/472/",
             "amazon.com": "http://a.co/d/gIoj5KN",
             "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005230006&SearchText=piezo+buzzer"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GasSensor",
+      "image_url": "https://obniz.io/sdk/parts/MQ6/image.jpg",
+      "parts": [
+        {
+          "name": "MQ2",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ3",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ4",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ5",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ6",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ7",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ8",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ9",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
+          }
+        },
+        {
+          "name": "MQ135",
+          "store": {
+            "amazon.com": "https://www.amazon.com/Eiechip9PCS-Gas-Detection-Sensor-Module/dp/B079NJML69/ref=sr_1_2?ie=UTF8&qid=1550117613&sr=8-2&keywords=mq-6",
+            "aliexpress": "https://www.aliexpress.com/item/MQ-2-MQ-3-MQ-4-MQ-5-MQ-6-MQ-7-MQ-8-MQ-9/32928371071.html?spm=2114.search0204.3.1.435e3918nLX40M&ws_ab_test=searchweb0_0,searchweb201602_4_10065_10068_319_10059_10884_317_10887_10696_321_322_10084_453_10083_454_10103_10618_10307_537_536_10902,searchweb201603_56,ppcSwitch_0&algo_expid=8be5002e-22e6-4365-bbc7-3a410f767e26-0&algo_pvid=8be5002e-22e6-4365-bbc7-3a410f767e26"
           }
         }
       ]

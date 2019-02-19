@@ -39,6 +39,8 @@ sda | `number(obniz io)` | no | &nbsp; | obniz io. I2C sda 端子
 scl | `number(obniz io)` | no | &nbsp; | obniz io. I2C scl 端子
 i2c | `i2c object` | no | &nbsp; | configured i2c object
 spi | `spi object` | no | &nbsp; | configured spi object
+spi_frequency | `spi object` | no | 4Mhz | for unstable situation, change frequency of spi
+spi_drive | `spi object` | no | `'3v'` | for unstable situation, change drive method of spi
 
 Just specify connected io to configure.
 
@@ -195,7 +197,7 @@ This function is used in startupWait() function.
 // Javascript Example
 obniz.io11.output(true);
 var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
-const chipid = await this.getChipIdWait();
+const chipid = await cam.getChipIdWait();
 if (chipid != 0x2642) {
   throw new Error('unknown chip ' + chipid)
 }
@@ -258,7 +260,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```
@@ -279,7 +281,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```
@@ -299,7 +301,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```
@@ -320,7 +322,7 @@ cam.flushFIFO();
 cam.flushFIFO();
 cam.startCapture();
 while (true) {
-  if ((await this.isCaptureDoneWait())) { break; }
+  if ((await cam.isCaptureDoneWait())) { break; }
 }
 const jpegData = await cam.readFIFOWait();
 ```

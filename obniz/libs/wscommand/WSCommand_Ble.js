@@ -2,8 +2,8 @@ const JsonBinaryConverter = require('./jsonBinaryConverter');
 const WSCommand = require('./WSCommand_.js');
 
 class WSCommand_Ble extends WSCommand {
-  constructor(delegate) {
-    super(delegate);
+  constructor() {
+    super();
     this.module = 11;
 
     this.uuidLength = 16 + 2;
