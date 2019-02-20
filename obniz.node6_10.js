@@ -9881,13 +9881,13 @@ class WSCommand_Ble extends WSCommand {
       uri: '/request/ble/security/indicate_security_level',
       onValid: this.securityIndicateLevel
     }, {
-      uri: '/request/ble/security/key/type',
+      uri: '/request/ble/security/key_type',
       onValid: this.securityKeyType
     }, {
-      uri: '/request/ble/security/key/max_size',
+      uri: '/request/ble/security/key_max_size',
       onValid: this.securityKeySize
     }, {
-      uri: '/request/ble/security/devices/clear',
+      uri: '/request/ble/security/devices_clear',
       onValid: this.clearBondingDevicesList
     }];
     let res = this.validateCommandSchema(schemaData, module, 'ble');
