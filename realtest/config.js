@@ -47,8 +47,6 @@ function connectTwoObniz(done, params) {
     }
     obnizB.onconnect = () => {
       console.log('connected two');
-      obnizA.debugprint = true;
-      obnizB.debugprint = true;
       done();
     };
   };

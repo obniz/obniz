@@ -432,7 +432,7 @@ console.log("data: " , data );
 
 ```
 
-## descriptor.onwritefromremote(data)
+## descriptor.onwritefromremote
 descriptorが外部から変更されたときのコールバックです
 
 
@@ -445,7 +445,7 @@ descriptor.onwritefromremote = function(val){
 
 ```
 
-## descriptor.onreadfromremote(data)
+## descriptor.onreadfromremote
 descriptorが外部からよまれたときのコールバックです
 
 ```Javascript 
