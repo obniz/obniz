@@ -12163,6 +12163,7 @@ var map = {
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
+	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js",
@@ -20137,6 +20138,80 @@ class BME280 {
 
 if (true) {
   module.exports = BME280;
+}
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/D6T44L/index.js":
+/*!*****************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/D6T44L/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class D6T44L {
+  constructor() {
+    this.requiredKeys = [];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'clock'];
+    this.address = 0x0a;
+
+    this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
+    this.commands = {};
+    this.commands.read_data = [0x4c];
+  }
+
+  static info() {
+    return {
+      name: 'D6T44L'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.clock = this.params.clock || 100 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || null; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(50);
+  }
+
+  getOnePixWait(pixcel) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      let data = yield _this.getAllPixWait();
+      return data[pixcel];
+    })();
+  }
+
+  getAllPixWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      _this2.i2c.write(_this2.address, [0x4c]);
+      //await obniz.wait(160);
+      let raw = yield _this2.i2c.readWait(_this2.address, 35);
+
+      let data = [];
+
+      for (let i = 0; i < 16; i++) {
+        data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
+      }
+
+      return data;
+    })();
+  }
+}
+
+if (true) {
+  module.exports = D6T44L;
 }
 
 /***/ }),
