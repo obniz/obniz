@@ -5939,6 +5939,7 @@ class Directive {
       this.observers[i].reject();
     }
     this.observers = [];
+    this._animationIdentifier = 0;
   }
 
   addObserver(name, resolve, reject) {
@@ -5998,7 +5999,10 @@ class Directive {
     }
 
     return new Promise((resolve, reject) => {
-      const name = '_repeatwait';
+      const name = '_repeatwait' + Date.now() + this._animationIdentifier;
+      if (++this._animationIdentifier > 1000) {
+        this._animationIdentifier = 0;
+      }
 
       this.animation(name, 'loop', array, repeat);
       this.addObserver(name, resolve, reject);
@@ -13281,8 +13285,10 @@ class _7SegmentLED {
     this.ios.push(getIO(this.params.f));
     this.ios.push(getIO(this.params.g));
 
+    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
+
     for (let i = 0; i < this.ios.length; i++) {
-      this.ios[i].output(false);
+      this.ios[i].output(this.isCathodeCommon ? false : true);
     }
 
     if (isValidIO(this.params.dp)) {
@@ -13293,8 +13299,6 @@ class _7SegmentLED {
       this.common = getIO(this.params.common);
       this.on();
     }
-
-    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
   }
 
   print(data) {
