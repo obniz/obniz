@@ -2,7 +2,7 @@
 MEMS Thermal Sensor D6T44L Library.
 It has 4x4 (5 to 50 degree in celsius) temperature sensors.
 
-
+![](./image.jpg)
 
 ## wired(obniz,  { [ gnd, vcc, sda, scl] } )
 connect a sensor.
