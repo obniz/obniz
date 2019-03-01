@@ -19793,7 +19793,7 @@ class _7SegmentLED {
     this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
 
     for (let i = 0; i < this.ios.length; i++) {
-      this.ios[i].output( this.isCathodeCommon ? false : true);
+      this.ios[i].output(this.isCathodeCommon ? false : true);
     }
 
     if (isValidIO(this.params.dp)) {
@@ -19804,7 +19804,6 @@ class _7SegmentLED {
       this.common = getIO(this.params.common);
       this.on();
     }
-    
   }
 
   print(data) {
