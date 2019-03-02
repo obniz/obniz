@@ -50,44 +50,88 @@ if (!tv4Path) {
   throw new Error('tv4 not found.npm install please');
 }
 
-gulp.task('jsonSchemaDoc', function jsonSchemaForVar() {
-  gulp
-    .src(schemaSrcPath)
-    .pipe(plumber({ errorHandler: reportError }))
-    .pipe(gulp_sort())
-    .pipe(gulp_yaml({ safe: true }))
-    .pipe(
-      concatWith('schema.js', {
-        header: 'let wsSchema = [',
-        separator: ',',
-        footer: '];',
-      })
-    )
-    .pipe(docGenerator(path.resolve(__dirname, 'doctemplate/doc.ejs')))
-    .pipe(rename('websocket.md'))
-    .pipe(gulp.dest(docPath))
-    .on('end', function() {
-      console.log('jsonSchemaDoc compiled!');
-    });
+gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
+  const baseSchemaSrcPath = path.join(__dirname, '../json_schema/index.yml');
 
-  gulp
-    .src(schemaSrcPath)
-    .pipe(plumber({ errorHandler: reportError }))
-    .pipe(gulp_sort())
-    .pipe(gulp_yaml({ safe: true }))
-    .pipe(
-      concatWith('schema.js', {
-        header: 'let wsSchema = [',
-        separator: ',',
-        footer: '];',
-      })
-    )
-    .pipe(docGenerator(path.resolve(__dirname, 'doctemplate/doc-ja.ejs')))
-    .pipe(rename('websocket-ja.md'))
-    .pipe(gulp.dest(docPath))
-    .on('end', function() {
-      console.log('jsonSchemaDoc(ja) compiled!');
-    });
+  let list = [
+    'ws',
+    'system',
+    'io',
+    'ioAnimation',
+    'ad',
+    'pwm',
+    'uart',
+    'spi',
+    'i2c',
+    'logicAnalyzer',
+    'measure',
+    'display',
+    'switch',
+    'ble/central',
+    'ble/peripheral',
+    // 'ble/security',
+    'message',
+    'debug',
+  ];
+
+  let wait_max = list.length * 2;
+  let wait_count = 0;
+
+  function onEnd(one) {
+    wait_count++;
+
+    console.log(`jsonSchemaDoc compiled! ${wait_count}/${wait_max}  : ${one} `);
+
+    if (wait_max === wait_count) {
+      callback();
+    }
+  }
+
+  for (let one of list) {
+    const srcPath = path.join(__dirname, '../json_schema/*/' + one + '/*.yml');
+
+    gulp
+      .src([srcPath, baseSchemaSrcPath])
+      .pipe(plumber({ errorHandler: reportError }))
+      .pipe(gulp_sort())
+      .pipe(gulp_yaml({ safe: true }))
+      .pipe(
+        concatWith('schema.js', {
+          header: 'let wsSchema = [',
+          separator: ',',
+          footer: '];',
+        })
+      )
+      .pipe(
+        docGenerator(path.resolve(__dirname, 'doctemplate/doc-one.ejs'), one)
+      )
+      .pipe(rename('websocket/' + one.replace('/', '_') + '.md'))
+      .pipe(gulp.dest(docPath))
+      .on('end', function() {
+        onEnd(one);
+      });
+
+    gulp
+      .src([srcPath, baseSchemaSrcPath])
+      .pipe(plumber({ errorHandler: reportError }))
+      .pipe(gulp_sort())
+      .pipe(gulp_yaml({ safe: true }))
+      .pipe(
+        concatWith('schema.js', {
+          header: 'let wsSchema = [',
+          separator: ',',
+          footer: '];',
+        })
+      )
+      .pipe(
+        docGenerator(path.resolve(__dirname, 'doctemplate/doc-one.ejs'), one)
+      )
+      .pipe(rename('websocket/' + one.replace('/', '_') + '-ja.md'))
+      .pipe(gulp.dest(docPath))
+      .on('end', function() {
+        onEnd(one + '-ja');
+      });
+  }
 });
 
 const webpackConfig = require('../webpack.config.js');

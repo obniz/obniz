@@ -1,0 +1,55 @@
+
+#  <a name="<%= module.name.split("/").join("-") %>"><%= module.name.split("/").join(".") %></a>
+<% for(var method of module.methods){ %>
+
+<%- method.schema.description %>
+<% for(var command of method.commands){ %>
+##  <%= method.method %>: <a name="<%= command.uri.split("/").join("-").toLowerCase() %>"><%= command.name %></a>
+<%- command.schema.description %>
+
+<% if(command.schema.related){ %>
+Related item
+<% if(Array.isArray(command.schema.related)){ %>
+<% for(var one of command.schema.related){
+%>- [<%= one %>](#<%= one.split("/").join("-").toLowerCase() %>)
+<% } %>
+<% }else{ %>
+- [<%= command.schema.related %>](#<%= command.schema.related.split("/").join("-") %>)
+<% } %>
+<% } %>
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+<% for ( var param of command.params){
+
+%>| `<%= param.path.replace(/\d\b/g,"X") %>` | <% if(param.ref){ %>[<%= param.type %>](#<%= param.ref.toLowerCase() %>) <% }else{ %> <%= param.type %> <% } %> | <%- conditions(param.schema, param) %> | <%= param.schema.description %>&nbsp; |
+<% } %><%# for ( var param of command.params)%>
+
+<%=command.schema.exampleDescription %>
+```
+<%if(method.method.indexOf("request") == 0){%>// Json Example<%}else{%>//Response Example<%}%>
+<%- jsonExample(command.params, command.schema ) %>
+```
+
+<% } %><%# for(var command of method.commands) %>
+<% } %><%# for(var method of module.methods) %>
+
+
+<% if (Object.keys(defines).length ){ %>
+# type defines
+
+<% for ( var key in defines ){ var schema = defines[key];
+    if (!Array.isArray(schema.example)) {
+        schema.example = schema.example ? [schema.example] : [];
+    } %>
+
+##  <a name="<%= key.toLowerCase() %>"><%= key %></a>
+| type | conditions | examples | description |
+|:----|:----|:----|:----|
+| <%= schema.type %> | <%- conditions(schema) %>  |  <ul><% for(var val of  schema.example){ %><li>`<%- formatter(val) %>`</li><% } %></ul> | <%= schema.description %>&nbsp; |
+
+<% } %><%# for ( var key in defines )%>
+<% } %><%#  if (Object.keys(defines).length )%>
+
+
+

@@ -25,14 +25,14 @@ console.log(temp)
 };
 ```
 
-## getWait
+## [await]getWait
 get temperature change.
 Unit of temp is Celsius
 
 ```javascript
 // Javascript Example
 var tempsens = obniz.wired("S8100B",   { gnd:1 , output:2, vcc:0});
-var temp = tempsens.getWait();
+var temp = await tempsens.getWait();
 console.log(temp);
 ```
  

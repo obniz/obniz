@@ -628,7 +628,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices/clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices_clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
 
 /***/ }),
 
@@ -639,7 +639,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices/clear"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_type"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices_clear"}]}
 
 /***/ }),
 
@@ -661,7 +661,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
 
 /***/ }),
 
@@ -672,7 +672,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
 
 /***/ }),
 
@@ -5939,6 +5939,7 @@ class Directive {
       this.observers[i].reject();
     }
     this.observers = [];
+    this._animationIdentifier = 0;
   }
 
   addObserver(name, resolve, reject) {
@@ -5998,7 +5999,10 @@ class Directive {
     }
 
     return new Promise((resolve, reject) => {
-      const name = '_repeatwait';
+      const name = '_repeatwait' + Date.now() + this._animationIdentifier;
+      if (++this._animationIdentifier > 1000) {
+        this._animationIdentifier = 0;
+      }
 
       this.animation(name, 'loop', array, repeat);
       this.addObserver(name, resolve, reject);
@@ -9881,13 +9885,13 @@ class WSCommand_Ble extends WSCommand {
       uri: '/request/ble/security/indicate_security_level',
       onValid: this.securityIndicateLevel
     }, {
-      uri: '/request/ble/security/key/type',
+      uri: '/request/ble/security/key_type',
       onValid: this.securityKeyType
     }, {
-      uri: '/request/ble/security/key/max_size',
+      uri: '/request/ble/security/key_max_size',
       onValid: this.securityKeySize
     }, {
-      uri: '/request/ble/security/devices/clear',
+      uri: '/request/ble/security/devices_clear',
       onValid: this.clearBondingDevicesList
     }];
     let res = this.validateCommandSchema(schemaData, module, 'ble');
@@ -12085,7 +12089,7 @@ module.exports = JsonBinaryConverter;
 /*! exports provided: name, version, description, main, scripts, lint-staged, keywords, repository, author, homepage, license, devDependencies, dependencies, bugs, private, browser, default */
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"2.0.1","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.3"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"2.0.2","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.3"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -12163,6 +12167,7 @@ var map = {
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
+	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js",
@@ -13280,8 +13285,10 @@ class _7SegmentLED {
     this.ios.push(getIO(this.params.f));
     this.ios.push(getIO(this.params.g));
 
+    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
+
     for (let i = 0; i < this.ios.length; i++) {
-      this.ios[i].output(false);
+      this.ios[i].output(this.isCathodeCommon ? false : true);
     }
 
     if (isValidIO(this.params.dp)) {
@@ -13292,8 +13299,6 @@ class _7SegmentLED {
       this.common = getIO(this.params.common);
       this.on();
     }
-
-    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
   }
 
   print(data) {
@@ -20137,6 +20142,80 @@ class BME280 {
 
 if (true) {
   module.exports = BME280;
+}
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/D6T44L/index.js":
+/*!*****************************************************!*\
+  !*** ./parts/TemperatureSensor/i2c/D6T44L/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+class D6T44L {
+  constructor() {
+    this.requiredKeys = [];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'clock'];
+    this.address = 0x0a;
+
+    this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
+    this.commands = {};
+    this.commands.read_data = [0x4c];
+  }
+
+  static info() {
+    return {
+      name: 'D6T44L'
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.clock = this.params.clock || 100 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || null; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(50);
+  }
+
+  getOnePixWait(pixcel) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      let data = yield _this.getAllPixWait();
+      return data[pixcel];
+    })();
+  }
+
+  getAllPixWait() {
+    var _this2 = this;
+
+    return _asyncToGenerator(function* () {
+      _this2.i2c.write(_this2.address, [0x4c]);
+      //await obniz.wait(160);
+      let raw = yield _this2.i2c.readWait(_this2.address, 35);
+
+      let data = [];
+
+      for (let i = 0; i < 16; i++) {
+        data[i] = parseFloat(((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1));
+      }
+
+      return data;
+    })();
+  }
+}
+
+if (true) {
+  module.exports = D6T44L;
 }
 
 /***/ }),
