@@ -19032,7 +19032,7 @@ class StepperMotor {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      if (typeof step_count !== "number") {
+      if (typeof step_count !== 'number') {
         throw new Error('must provide number');
       }
       step_count = Math.round(step_count);
