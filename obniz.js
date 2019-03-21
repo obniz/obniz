@@ -11400,6 +11400,9 @@ class Directive {
     if (typeof repeat !== 'number' || repeat < 1) {
       throw new Error('please specify repeat count > 0');
     }
+    if (parseInt(repeat) !== repeat) {
+      throw new Error('please provide integer number like 1, 2, 3,,,');
+    }
 
     return new Promise((resolve, reject) => {
       const name = '_repeatwait' + Date.now() + this._animationIdentifier;
@@ -26708,6 +26711,10 @@ class StepperMotor {
   }
 
   async stepWait(step_count) {
+    if (typeof step_count !== "number") {
+      throw new Error('must provide number');
+    }
+    step_count = Math.round(step_count)
     if (step_count == 0) {
       return;
     }

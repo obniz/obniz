@@ -51,6 +51,10 @@ class StepperMotor {
   }
 
   async stepWait(step_count) {
+    if (typeof step_count !== 'number') {
+      throw new Error('must provide number');
+    }
+    step_count = Math.round(step_count);
     if (step_count == 0) {
       return;
     }

@@ -73,6 +73,9 @@ class Directive {
     if (typeof repeat !== 'number' || repeat < 1) {
       throw new Error('please specify repeat count > 0');
     }
+    if (parseInt(repeat) !== repeat) {
+      throw new Error('please provide integer number like 1, 2, 3,,,');
+    }
 
     return new Promise((resolve, reject) => {
       const name = '_repeatwait' + Date.now() + this._animationIdentifier;

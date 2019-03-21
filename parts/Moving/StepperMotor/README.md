@@ -91,6 +91,8 @@ name | type | required | default | description
 --- | --- | --- | --- | ---
 step | `number` | yes | - | Steps wants to move
 
+If decimal number was provided, then the number will be rounded.
+
 ```Javascript
 // Javascript Example
 var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});

@@ -90,6 +90,8 @@ name | type | required | default | description
 --- | --- | --- | --- | ---
 step | `number` | yes | - | 動かしたいステップ数
 
+小数が与えられた場合は四捨五入されます。
+
 ```Javascript
 // Javascript Example
 var motor = obniz.wired("StepperMotor", {a:0, aa:1, b:2, bb:3});
