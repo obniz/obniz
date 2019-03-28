@@ -1,10 +1,10 @@
-# obniz.js: sdk for javascript
+# obniz.js: SDK for JavaScript
 
 [![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
 
-[obniz](https://obniz.io/) を[obniz api](https://obniz.io/doc/about_obniz_api)を使いjavascriptから操作するためのsdkです。
+[obniz](https://obniz.io/) を[obniz api](https://obniz.io/doc/about_obniz_api)を使いJavaScriptから操作するためのsdkです。
 
 ## 使い方
 
