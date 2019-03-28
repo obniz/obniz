@@ -136,7 +136,6 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
 
 const webpackConfig = require('../webpack.config.js');
 const webpackConfigProduction = require('../webpack.production.js');
-const webpackConfigNode = require('../webpack.node6_10.js');
 
 gulp.task('obniz.js', [], function obnizJsBuild() {
   return gulp
@@ -159,18 +158,6 @@ gulp.task('obniz.min.js', [], function obnizJsBuild() {
     .pipe(gulp.dest(path.join(__dirname, '../')))
     .on('end', function() {
       console.log('obniz.min.js compiled!');
-    });
-});
-
-gulp.task('obniz.node6_10.js', [], function obnizNodeBuild() {
-  return gulp
-    .src(obnizMain)
-    .pipe(plumber({ errorHandler: reportError }))
-    .pipe(webpackStream(webpackConfigNode, webpack))
-    .pipe(rename('obniz.node6_10.js'))
-    .pipe(gulp.dest(path.join(__dirname, '../')))
-    .on('end', function() {
-      console.log('obniz.node6_10.js compiled!');
     });
 });
 
@@ -217,15 +204,9 @@ gulp.task('watch', () => {
       packageJsonPath,
       schemaSrcPath,
     ],
-    ['obniz.js', 'obniz.min.js', 'obniz.node6_10.js']
+    ['obniz.js', 'obniz.min.js']
   );
 });
 
-gulp.task('build', [
-  'jsonSchemaDoc',
-  'obniz.js',
-  'obniz.min.js',
-  'obniz.node6_10.js',
-  'readMe',
-]);
+gulp.task('build', ['jsonSchemaDoc', 'obniz.js', 'obniz.min.js', 'readMe']);
 gulp.task('default', ['server', 'build', 'watch']);

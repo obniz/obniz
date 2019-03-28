@@ -1,6 +1,5 @@
 obniz.js
 obniz.min.js
-obniz.node6_10.js
 coverage/*
 node_modules/*
 temp/*

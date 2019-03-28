@@ -3,7 +3,6 @@ node_js:
 - lts/*
 - '8'
 - '7'
-- '6'
 
 sudo: required
 addons:
