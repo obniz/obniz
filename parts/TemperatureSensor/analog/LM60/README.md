@@ -3,7 +3,7 @@ Temperature sensor LM60BIZ/LM60CIM
 
 
 
-![photo of AnalogTempratureSensor](./wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 
