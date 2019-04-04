@@ -16,7 +16,7 @@ obniz.onconnect = function() {
 obnizがつながっている間に繰り返し実行したい関数を渡すと実行します。
 obniz切断時には呼ばれなくなります。
 待つための関数を呼ばなくてもスレッドがフリーズすることはありません。
-javascript言語から考えると、無限にループするよりはcallback関数を利用することをおすすめします。
+JavaScript言語から考えると、無限にループするよりはcallback関数を利用することをおすすめします。
 ```Javascript
 // Javascript Example
 obniz.ad0.start();
@@ -36,7 +36,7 @@ led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
 ```
-obnizは停止しますが、しかし、javascriptはこのコマンドだけでは停止しません。
+obnizは停止しますが、しかし、JavaScriptはこのコマンドだけでは停止しません。
 ```Javascript
 // Javascript Example
 var time = new Date();

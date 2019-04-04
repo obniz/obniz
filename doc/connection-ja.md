@@ -1,6 +1,6 @@
 # obniz connection
 
-obnizクラスはobnizをjavascriptの中で抽象化したクラスです。
+obnizクラスはobnizをJavaScriptの中で抽象化したクラスです。
 idを指定してインスタンス化することで通信内容を意識せずにobnizやobnizに繋がれた部品の操作ができるようになります。
 
 ## basics

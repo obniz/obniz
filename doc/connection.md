@@ -1,6 +1,6 @@
 # obniz connection
 
-obniz class is the abstract version of obniz hardware within javascript.
+obniz class is the abstract version of obniz hardware within JavaScript.
 By providing obniz id and instantiating it, you can control obniz and the connected parts without the details of websocket api.
 
 ## Basics

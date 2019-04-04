@@ -34,7 +34,7 @@ led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
 ```
-This method pauses only obniz, not javascript.
+This method pauses only obniz, not JavaScript.
 ```Javascript
 // Javascript Example
 var time = new Date();
@@ -43,7 +43,7 @@ obniz.wait(1000); // led ON 1sec.
 led.off();
 console.log((new Date()).getTime() - time.getTime()) // 0 or very few ms. not 1000ms.
 ```
-However, when you call this method together with the await function, javascript will pause for the given period in ms.
+However, when you call this method together with the await function, JavaScript will pause for the given period in ms.
 ```Javascript
 // Javascript Example
 var time = new Date();
