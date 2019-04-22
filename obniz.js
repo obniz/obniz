@@ -22589,7 +22589,7 @@ class SharpMemoryTFT {
       font = 'Arial';
     }
     this.fontSize = size;
-    ctx.font = '' + +' ' + size + 'px ' + font;
+    ctx.font = '' + size + 'px ' + font;
   }
 
   clear() {
@@ -25385,7 +25385,7 @@ if (true) {
 class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
-    this.required = ['signal'];
+    this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = function() {};
   }
@@ -26170,7 +26170,7 @@ if (true) {
 class Potentiometer {
   constructor() {
     this.keys = ['pin0', 'pin1', 'pin2'];
-    this.reuiredKeys = ['pin0', 'pin1', 'pin2'];
+    this.requiredKeys = ['pin0', 'pin1', 'pin2'];
 
     this.vcc_voltage = 5.0;
   }

@@ -185,7 +185,7 @@ class SharpMemoryTFT {
       font = 'Arial';
     }
     this.fontSize = size;
-    ctx.font = '' + +' ' + size + 'px ' + font;
+    ctx.font = '' + size + 'px ' + font;
   }
 
   clear() {
