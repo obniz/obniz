@@ -1349,65 +1349,97 @@ for (var i = 0, len = code.length; i < len; ++i) {
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
-function placeHoldersCount (b64) {
+function getLens (b64) {
   var len = b64.length
+
   if (len % 4 > 0) {
     throw new Error('Invalid string. Length must be a multiple of 4')
   }
 
-  // the number of equal signs (place holders)
-  // if there are two placeholders, than the two characters before it
-  // represent one byte
-  // if there is only one, then the three characters before it represent 2 bytes
-  // this is just a cheap hack to not do indexOf twice
-  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+  // Trim off extra bytes after placeholder bytes are found
+  // See: https://github.com/beatgammit/base64-js/issues/42
+  var validLen = b64.indexOf('=')
+  if (validLen === -1) validLen = len
+
+  var placeHoldersLen = validLen === len
+    ? 0
+    : 4 - (validLen % 4)
+
+  return [validLen, placeHoldersLen]
 }
 
+// base64 is 4/3 + up to two characters of the original data
 function byteLength (b64) {
-  // base64 is 4/3 + up to two characters of the original data
-  return (b64.length * 3 / 4) - placeHoldersCount(b64)
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function _byteLength (b64, validLen, placeHoldersLen) {
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
 }
 
 function toByteArray (b64) {
-  var i, l, tmp, placeHolders, arr
-  var len = b64.length
-  placeHolders = placeHoldersCount(b64)
+  var tmp
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
 
-  arr = new Arr((len * 3 / 4) - placeHolders)
+  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
+
+  var curByte = 0
 
   // if there are placeholders, only get up to the last complete 4 chars
-  l = placeHolders > 0 ? len - 4 : len
+  var len = placeHoldersLen > 0
+    ? validLen - 4
+    : validLen
 
-  var L = 0
-
-  for (i = 0; i < l; i += 4) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
-    arr[L++] = (tmp >> 16) & 0xFF
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
+  for (var i = 0; i < len; i += 4) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 18) |
+      (revLookup[b64.charCodeAt(i + 1)] << 12) |
+      (revLookup[b64.charCodeAt(i + 2)] << 6) |
+      revLookup[b64.charCodeAt(i + 3)]
+    arr[curByte++] = (tmp >> 16) & 0xFF
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
   }
 
-  if (placeHolders === 2) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[L++] = tmp & 0xFF
-  } else if (placeHolders === 1) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
+  if (placeHoldersLen === 2) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 2) |
+      (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 1) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 10) |
+      (revLookup[b64.charCodeAt(i + 1)] << 4) |
+      (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
   }
 
   return arr
 }
 
 function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+  return lookup[num >> 18 & 0x3F] +
+    lookup[num >> 12 & 0x3F] +
+    lookup[num >> 6 & 0x3F] +
+    lookup[num & 0x3F]
 }
 
 function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
+    tmp =
+      ((uint8[i] << 16) & 0xFF0000) +
+      ((uint8[i + 1] << 8) & 0xFF00) +
+      (uint8[i + 2] & 0xFF)
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
@@ -1417,30 +1449,33 @@ function fromByteArray (uint8) {
   var tmp
   var len = uint8.length
   var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-  var output = ''
   var parts = []
   var maxChunkLength = 16383 // must be multiple of 3
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+    parts.push(encodeChunk(
+      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
+    ))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
   if (extraBytes === 1) {
     tmp = uint8[len - 1]
-    output += lookup[tmp >> 2]
-    output += lookup[(tmp << 4) & 0x3F]
-    output += '=='
+    parts.push(
+      lookup[tmp >> 2] +
+      lookup[(tmp << 4) & 0x3F] +
+      '=='
+    )
   } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
-    output += lookup[tmp >> 10]
-    output += lookup[(tmp >> 4) & 0x3F]
-    output += lookup[(tmp << 2) & 0x3F]
-    output += '='
+    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 10] +
+      lookup[(tmp >> 4) & 0x3F] +
+      lookup[(tmp << 2) & 0x3F] +
+      '='
+    )
   }
-
-  parts.push(output)
 
   return parts.join('')
 }
@@ -3699,15 +3734,27 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 "use strict";
 
 
-module.exports = exports = self.fetch;
+// ref: https://github.com/tc39/proposal-global
+var getGlobal = function () {
+	// the only reliable means to get the global object is
+	// `Function('return this')()`
+	// However, this causes CSP violations in Chrome apps.
+	if (typeof self !== 'undefined') { return self; }
+	if (typeof window !== 'undefined') { return window; }
+	if (typeof global !== 'undefined') { return global; }
+	throw new Error('unable to locate global object');
+}
+
+var global = getGlobal();
+
+module.exports = exports = global.fetch;
 
 // Needed for TypeScript and Webpack.
-exports.default = self.fetch.bind(self);
+exports.default = global.fetch.bind(global);
 
-exports.Headers = self.Headers;
-exports.Request = self.Request;
-exports.Response = self.Response;
-
+exports.Headers = global.Headers;
+exports.Request = global.Request;
+exports.Response = global.Response;
 
 /***/ }),
 
@@ -18147,7 +18194,7 @@ var map = {
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
-	"./TemperatureSensor/analog/AnalogTempratureSensor.js": "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js",
+	"./TemperatureSensor/analog/AnalogTemperatureSensor.js": "./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js",
 	"./TemperatureSensor/analog/LM35DZ/index.js": "./parts/TemperatureSensor/analog/LM35DZ/index.js",
 	"./TemperatureSensor/analog/LM60/index.js": "./parts/TemperatureSensor/analog/LM60/index.js",
 	"./TemperatureSensor/analog/LM61/index.js": "./parts/TemperatureSensor/analog/LM61/index.js",
@@ -26954,10 +27001,10 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js":
+/***/ "./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js":
 /***/ (function(module, exports) {
 
-class AnalogTemplatureSensor {
+class AnalogTemperatureSensor {
   constructor() {
     this.keys = ['vcc', 'gnd', 'output'];
     this.requiredKeys = ['output'];
@@ -26990,7 +27037,7 @@ class AnalogTemplatureSensor {
   }
 }
 
-module.exports = AnalogTemplatureSensor;
+module.exports = AnalogTemperatureSensor;
 
 
 /***/ }),
@@ -26998,8 +27045,9 @@ module.exports = AnalogTemplatureSensor;
 /***/ "./parts/TemperatureSensor/analog/LM35DZ/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-class LM35DZ extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LM35DZ extends AnalogTemperatureSensor {
   calc(voltage) {
     return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }
@@ -27020,30 +27068,17 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LM60/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-class LM60 {
-  constructor() {
-    this.keys = ['vcc', 'gnd', 'output'];
-    this.requiredKeys = ['output'];
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LM60 extends AnalogTemperatureSensor {
+  calc(voltage) {
+    return Math.round(((voltage - 0.424) / 0.00625) * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
 
   static info() {
     return {
       name: 'LM60',
     };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.ad = obniz.getAD(this.params.output);
-
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-    let self = this;
-    this.ad.start(function(value) {
-      self.temp = Math.round(((value - 0.424) / 0.00625) * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-      if (self.onchange) {
-        self.onchange(self.temp);
-      }
-    });
   }
 }
 
@@ -27057,9 +27092,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LM61/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class LM61 extends AnalogTemplatureSensor {
+class LM61 extends AnalogTemperatureSensor {
   calc(voltage) {
     return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
@@ -27080,8 +27115,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LMT87/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-class LMT87 extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LMT87 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage * 1000 - 2365) / -13.6 + 20; //20-50dc;
   }
@@ -27102,9 +27138,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/MCP9700/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class MCP9700 extends AnalogTemplatureSensor {
+class MCP9700 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
@@ -27126,9 +27162,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/MCP9701/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class MCP9701 extends AnalogTemplatureSensor {
+class MCP9701 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
@@ -27149,11 +27185,11 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/S8100B/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
 //sensor resopnse not found
 
-class S8100B extends AnalogTemplatureSensor {
+class S8100B extends AnalogTemperatureSensor {
   calc(voltage) {
     return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
   }
@@ -27174,13 +27210,13 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/S8120C/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
 //this not work, but sometimes good
 //resason1:too low of obniz input Impedance ?
 //resoson2:Is the sensor oscillating?
 
-class S8120C extends AnalogTemplatureSensor {
+class S8120C extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
@@ -27625,11 +27661,7 @@ class BME280 {
     return this.calcAltitude(pressure);
   }
 
-  calcAltitude(pressure, seaLevel) {
-    if (!seaLevel) {
-      seaLevel = 1013.25;
-    }
-
+  calcAltitude(pressure, seaLevel = 1013.25) {
     return (
       (1.0 - Math.pow(pressure / seaLevel, 1 / 5.2553)) * 145366.45 * 0.3048
     );
