@@ -1,5 +1,6 @@
-const AnalogTemplatureSensor = require('../AnalogTempratureSensor');
-class LMT87 extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = require('../AnalogTemperatureSensor');
+
+class LMT87 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage * 1000 - 2365) / -13.6 + 20; //20-50dc;
   }

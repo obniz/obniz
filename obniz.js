@@ -18202,7 +18202,7 @@ var map = {
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
-	"./TemperatureSensor/analog/AnalogTempratureSensor.js": "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js",
+	"./TemperatureSensor/analog/AnalogTemperatureSensor.js": "./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js",
 	"./TemperatureSensor/analog/LM35DZ/index.js": "./parts/TemperatureSensor/analog/LM35DZ/index.js",
 	"./TemperatureSensor/analog/LM60/index.js": "./parts/TemperatureSensor/analog/LM60/index.js",
 	"./TemperatureSensor/analog/LM61/index.js": "./parts/TemperatureSensor/analog/LM61/index.js",
@@ -27009,10 +27009,10 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js":
+/***/ "./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js":
 /***/ (function(module, exports) {
 
-class AnalogTemplatureSensor {
+class AnalogTemperatureSensor {
   constructor() {
     this.keys = ['vcc', 'gnd', 'output'];
     this.requiredKeys = ['output'];
@@ -27045,7 +27045,7 @@ class AnalogTemplatureSensor {
   }
 }
 
-module.exports = AnalogTemplatureSensor;
+module.exports = AnalogTemperatureSensor;
 
 
 /***/ }),
@@ -27053,8 +27053,9 @@ module.exports = AnalogTemplatureSensor;
 /***/ "./parts/TemperatureSensor/analog/LM35DZ/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-class LM35DZ extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LM35DZ extends AnalogTemperatureSensor {
   calc(voltage) {
     return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }
@@ -27075,9 +27076,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LM60/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class LM60 extends AnalogTemplatureSensor {
+class LM60 extends AnalogTemperatureSensor {
   calc(voltage) {
     return Math.round(((voltage - 0.424) / 0.00625) * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
@@ -27099,9 +27100,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LM61/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class LM61 extends AnalogTemplatureSensor {
+class LM61 extends AnalogTemperatureSensor {
   calc(voltage) {
     return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
@@ -27122,8 +27123,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LMT87/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-class LMT87 extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LMT87 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage * 1000 - 2365) / -13.6 + 20; //20-50dc;
   }
@@ -27144,9 +27146,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/MCP9700/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class MCP9700 extends AnalogTemplatureSensor {
+class MCP9700 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
@@ -27168,9 +27170,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/MCP9701/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class MCP9701 extends AnalogTemplatureSensor {
+class MCP9701 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
@@ -27191,11 +27193,11 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/S8100B/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
 //sensor resopnse not found
 
-class S8100B extends AnalogTemplatureSensor {
+class S8100B extends AnalogTemperatureSensor {
   calc(voltage) {
     return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
   }
@@ -27216,13 +27218,13 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/S8120C/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
 //this not work, but sometimes good
 //resason1:too low of obniz input Impedance ?
 //resoson2:Is the sensor oscillating?
 
-class S8120C extends AnalogTemplatureSensor {
+class S8120C extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
@@ -27667,11 +27669,7 @@ class BME280 {
     return this.calcAltitude(pressure);
   }
 
-  calcAltitude(pressure, seaLevel) {
-    if (!seaLevel) {
-      seaLevel = 1013.25;
-    }
-
+  calcAltitude(pressure, seaLevel = 1013.25) {
     return (
       (1.0 - Math.pow(pressure / seaLevel, 1 / 5.2553)) * 145366.45 * 0.3048
     );

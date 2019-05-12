@@ -1,4 +1,4 @@
-class AnalogTemplatureSensor {
+class AnalogTemperatureSensor {
   constructor() {
     this.keys = ['vcc', 'gnd', 'output'];
     this.requiredKeys = ['output'];
@@ -31,4 +31,4 @@ class AnalogTemplatureSensor {
   }
 }
 
-module.exports = AnalogTemplatureSensor;
+module.exports = AnalogTemperatureSensor;
