@@ -17,7 +17,7 @@ class OMRON_2JCIE {
 
   async findWait() {
     let target = {
-      localName: 'Envd',
+      localName: 'Env',
     };
 
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
