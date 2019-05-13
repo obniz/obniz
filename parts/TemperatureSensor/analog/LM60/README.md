@@ -1,6 +1,7 @@
 # Temperature Sensor - LM60
 Temperature sensor LM60BIZ/LM60CIM
 
+![](./image.jpg)
 
 
 ![photo of AnalogTemperatureSensor](./wired.png)
