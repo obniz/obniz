@@ -1,6 +1,6 @@
-const AnalogTemplatureSensor = require('../AnalogTempratureSensor');
+const AnalogTemperatureSensor = require('../AnalogTemperatureSensor');
 
-class LM61 extends AnalogTemplatureSensor {
+class LM61 extends AnalogTemperatureSensor {
   calc(voltage) {
     return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }

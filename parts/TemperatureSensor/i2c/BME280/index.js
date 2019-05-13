@@ -257,11 +257,7 @@ class BME280 {
     return this.calcAltitude(pressure);
   }
 
-  calcAltitude(pressure, seaLevel) {
-    if (!seaLevel) {
-      seaLevel = 1013.25;
-    }
-
+  calcAltitude(pressure, seaLevel = 1013.25) {
     return (
       (1.0 - Math.pow(pressure / seaLevel, 1 / 5.2553)) * 145366.45 * 0.3048
     );

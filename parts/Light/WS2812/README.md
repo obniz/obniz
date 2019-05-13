@@ -2,7 +2,7 @@
 Full color LED driver.
 Not only one LED. Capable of chaining leds.
 
-![](./WS2811.jpg)
+![](./image.jpg)
 
 WS2812 is embed in various Full Color LEDs. 
 

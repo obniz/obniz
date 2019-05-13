@@ -1,10 +1,13 @@
 # DCMotor
 タミヤモーターやマブチモーターのような、<br>電池を繋いで回すような一般的なモーターです。プラスとマイナスはありませんが逆にすると逆に回転します。
 
-![photo of DCMotor](./wired.png)
+![](./image.jpg)
 
 ## wire({forward, back})
 モーターから出ている２本の線をObnizにつなぎます。どちらをどこにつないでもOKですが、プログラムで「前」と書いて後ろに動いたらあとで配線を逆にすると良いです。モーターをObnizの0と1番に繋いだ場合は以下のようにします
+
+![photo of DCMotor](./wired.png)
+
 ```javascript
 // Javascript Example
 var motor = obniz.wired("DCMotor",  {forward:0, back:1});

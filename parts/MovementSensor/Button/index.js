@@ -1,7 +1,7 @@
 class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
-    this.required = ['signal'];
+    this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = function() {};
   }

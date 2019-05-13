@@ -2,6 +2,8 @@
 
 24-bit ADC designed for weigh scales.
 
+![](./image.jpg)
+
 
 ## wired(obniz, {vcc, gnd, sck, dout})
 

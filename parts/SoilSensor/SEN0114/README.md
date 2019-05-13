@@ -2,6 +2,8 @@
 
 It detect moisture level in soil.
 
+![](./image.jpg)
+
 ## wired(obniz, { vcc, output, gnd} )
 connect vcc,output,gnd to an obniz.
 

@@ -487,14 +487,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/ble/security/devices_clear.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices/clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/devices_clear","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["devices"],"properties":{"devices":{"type":"object","required":["clear"],"properties":{"clear":{"type":"boolean","enum":[true]}}}}}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/ble/security/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_types"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices/clear"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security","basePath":"ble.security","anyOf":[{"$ref":"/request/ble/security/indicate_security_level"},{"$ref":"/request/ble/security/auth"},{"$ref":"/request/ble/security/key_type"},{"$ref":"/request/ble/security/key_max_size"},{"$ref":"/request/ble/security/devices_clear"}]}
 
 /***/ }),
 
@@ -508,14 +508,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/ble/security/key_max_size.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_max_size","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["max_size"],"properties":{"max_size":{"type":"integer","min":7,"max":16}}}}}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/ble/security/key_type.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key/type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/security/key_type","type":"object","required":["security"],"properties":{"security":{"type":"object","required":["key"],"properties":{"key":{"type":"object","required":["type"],"properties":{"type":{"type":"array","default":["encryption"],"items":{"type":"string","enum":["ltk","irk","csrk"]}}}}}}}}
 
 /***/ }),
 
@@ -11339,6 +11339,7 @@ class Directive {
       this.observers[i].reject();
     }
     this.observers = [];
+    this._animationIdentifier = 0;
   }
 
   addObserver(name, resolve, reject) {
@@ -11399,9 +11400,15 @@ class Directive {
     if (typeof repeat !== 'number' || repeat < 1) {
       throw new Error('please specify repeat count > 0');
     }
+    if (parseInt(repeat) !== repeat) {
+      throw new Error('please provide integer number like 1, 2, 3,,,');
+    }
 
     return new Promise((resolve, reject) => {
-      const name = '_repeatwait';
+      const name = '_repeatwait' + Date.now() + this._animationIdentifier;
+      if (++this._animationIdentifier > 1000) {
+        this._animationIdentifier = 0;
+      }
 
       this.animation(name, 'loop', array, repeat);
       this.addObserver(name, resolve, reject);
@@ -12241,6 +12248,14 @@ class PeripheralUART {
     }
     this.received = [];
     return results;
+  }
+
+  readByte() {
+    let results = [];
+    if (this.isDataExists()) {
+      return results.unshift();
+    }
+    return null;
   }
 
   readText() {
@@ -15675,15 +15690,15 @@ class WSCommand_Ble extends WSCommand {
         onValid: this.securityIndicateLevel,
       },
       {
-        uri: '/request/ble/security/key/type',
+        uri: '/request/ble/security/key_type',
         onValid: this.securityKeyType,
       },
       {
-        uri: '/request/ble/security/key/max_size',
+        uri: '/request/ble/security/key_max_size',
         onValid: this.securityKeySize,
       },
       {
-        uri: '/request/ble/security/devices/clear',
+        uri: '/request/ble/security/devices_clear',
         onValid: this.clearBondingDevicesList,
       },
     ];
@@ -18125,7 +18140,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"2.0.0","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js && git add obniz.node6_10.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.3"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"2.0.3","description":"obniz sdk for javascript","main":"index.js","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.3"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -18187,7 +18202,7 @@ var map = {
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
-	"./TemperatureSensor/analog/AnalogTempratureSensor.js": "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js",
+	"./TemperatureSensor/analog/AnalogTemperatureSensor.js": "./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js",
 	"./TemperatureSensor/analog/LM35DZ/index.js": "./parts/TemperatureSensor/analog/LM35DZ/index.js",
 	"./TemperatureSensor/analog/LM60/index.js": "./parts/TemperatureSensor/analog/LM60/index.js",
 	"./TemperatureSensor/analog/LM61/index.js": "./parts/TemperatureSensor/analog/LM61/index.js",
@@ -18199,6 +18214,7 @@ var map = {
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
+	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js",
@@ -18389,7 +18405,7 @@ class OMRON_2JCIE {
 
   async findWait() {
     let target = {
-      localName: 'Envd',
+      localName: 'Env',
     };
 
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
@@ -19786,8 +19802,10 @@ class _7SegmentLED {
     this.ios.push(getIO(this.params.f));
     this.ios.push(getIO(this.params.g));
 
+    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
+
     for (let i = 0; i < this.ios.length; i++) {
-      this.ios[i].output(false);
+      this.ios[i].output(this.isCathodeCommon ? false : true);
     }
 
     if (isValidIO(this.params.dp)) {
@@ -19798,8 +19816,6 @@ class _7SegmentLED {
       this.common = getIO(this.params.common);
       this.on();
     }
-
-    this.isCathodeCommon = this.params.commonType === 'anode' ? false : true;
   }
 
   print(data) {
@@ -22581,7 +22597,7 @@ class SharpMemoryTFT {
       font = 'Arial';
     }
     this.fontSize = size;
-    ctx.font = '' + +' ' + size + 'px ' + font;
+    ctx.font = '' + size + 'px ' + font;
   }
 
   clear() {
@@ -25377,7 +25393,7 @@ if (true) {
 class Button {
   constructor() {
     this.keys = ['signal', 'gnd'];
-    this.required = ['signal'];
+    this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = function() {};
   }
@@ -26162,7 +26178,7 @@ if (true) {
 class Potentiometer {
   constructor() {
     this.keys = ['pin0', 'pin1', 'pin2'];
-    this.reuiredKeys = ['pin0', 'pin1', 'pin2'];
+    this.requiredKeys = ['pin0', 'pin1', 'pin2'];
 
     this.vcc_voltage = 5.0;
   }
@@ -26703,6 +26719,10 @@ class StepperMotor {
   }
 
   async stepWait(step_count) {
+    if (typeof step_count !== 'number') {
+      throw new Error('must provide number');
+    }
+    step_count = Math.round(step_count);
     if (step_count == 0) {
       return;
     }
@@ -26989,10 +27009,10 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/TemperatureSensor/analog/AnalogTempratureSensor.js":
+/***/ "./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js":
 /***/ (function(module, exports) {
 
-class AnalogTemplatureSensor {
+class AnalogTemperatureSensor {
   constructor() {
     this.keys = ['vcc', 'gnd', 'output'];
     this.requiredKeys = ['output'];
@@ -27025,7 +27045,7 @@ class AnalogTemplatureSensor {
   }
 }
 
-module.exports = AnalogTemplatureSensor;
+module.exports = AnalogTemperatureSensor;
 
 
 /***/ }),
@@ -27033,8 +27053,9 @@ module.exports = AnalogTemplatureSensor;
 /***/ "./parts/TemperatureSensor/analog/LM35DZ/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-class LM35DZ extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LM35DZ extends AnalogTemperatureSensor {
   calc(voltage) {
     return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }
@@ -27055,30 +27076,17 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LM60/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-class LM60 {
-  constructor() {
-    this.keys = ['vcc', 'gnd', 'output'];
-    this.requiredKeys = ['output'];
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LM60 extends AnalogTemperatureSensor {
+  calc(voltage) {
+    return Math.round(((voltage - 0.424) / 0.00625) * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
 
   static info() {
     return {
       name: 'LM60',
     };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    this.ad = obniz.getAD(this.params.output);
-
-    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
-    let self = this;
-    this.ad.start(function(value) {
-      self.temp = Math.round(((value - 0.424) / 0.00625) * 10) / 10; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
-      if (self.onchange) {
-        self.onchange(self.temp);
-      }
-    });
   }
 }
 
@@ -27092,9 +27100,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LM61/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class LM61 extends AnalogTemplatureSensor {
+class LM61 extends AnalogTemperatureSensor {
   calc(voltage) {
     return Math.round((voltage - 0.6) / 0.01); //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg(Offset voltage)])/[Temp coefficient]
   }
@@ -27115,8 +27123,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/LMT87/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
-class LMT87 extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
+
+class LMT87 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage * 1000 - 2365) / -13.6 + 20; //20-50dc;
   }
@@ -27137,9 +27146,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/MCP9700/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class MCP9700 extends AnalogTemplatureSensor {
+class MCP9700 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 0.5) / 0.01; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
@@ -27161,9 +27170,9 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/MCP9701/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
-class MCP9701 extends AnalogTemplatureSensor {
+class MCP9701 extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 0.4) / 0.0195; //Temp(Celsius) = ([AD Voltage]-[Voltage at 0 deg])/[Temp coefficient]
   }
@@ -27184,11 +27193,11 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/S8100B/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
 //sensor resopnse not found
 
-class S8100B extends AnalogTemplatureSensor {
+class S8100B extends AnalogTemperatureSensor {
   calc(voltage) {
     return 30 + (1.508 - voltage) / -0.08; //Temp(Celsius) =
   }
@@ -27209,13 +27218,13 @@ if (true) {
 /***/ "./parts/TemperatureSensor/analog/S8120C/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-const AnalogTemplatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTempratureSensor.js");
+const AnalogTemperatureSensor = __webpack_require__("./parts/TemperatureSensor/analog/AnalogTemperatureSensor.js");
 
 //this not work, but sometimes good
 //resason1:too low of obniz input Impedance ?
 //resoson2:Is the sensor oscillating?
 
-class S8120C extends AnalogTemplatureSensor {
+class S8120C extends AnalogTemperatureSensor {
   calc(voltage) {
     return (voltage - 1.474) / -0.0082 + 30; //Temp(Celsius) = (([AD Voltage] - [Output Voltage at 30deg])/[V/deg]) + 30
   }
@@ -27660,11 +27669,7 @@ class BME280 {
     return this.calcAltitude(pressure);
   }
 
-  calcAltitude(pressure, seaLevel) {
-    if (!seaLevel) {
-      seaLevel = 1013.25;
-    }
-
+  calcAltitude(pressure, seaLevel = 1013.25) {
     return (
       (1.0 - Math.pow(pressure / seaLevel, 1 / 5.2553)) * 145366.45 * 0.3048
     );
@@ -27673,6 +27678,66 @@ class BME280 {
 
 if (true) {
   module.exports = BME280;
+}
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/D6T44L/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class D6T44L {
+  constructor() {
+    this.requiredKeys = [];
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'clock'];
+    this.address = 0x0a;
+
+    this.ioKeys = ['vcc', 'gnd', 'sda', 'scl'];
+    this.commands = {};
+    this.commands.read_data = [0x4c];
+  }
+
+  static info() {
+    return {
+      name: 'D6T44L',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.clock = this.params.clock || 100 * 1000; //for i2c
+    this.params.mode = this.params.mode || 'master'; //for i2c
+    this.params.pull = this.params.pull || null; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(50);
+  }
+
+  async getOnePixWait(pixcel) {
+    let data = await this.getAllPixWait();
+    return data[pixcel];
+  }
+
+  async getAllPixWait() {
+    this.i2c.write(this.address, [0x4c]);
+    //await obniz.wait(160);
+    let raw = await this.i2c.readWait(this.address, 35);
+
+    let data = [];
+
+    for (let i = 0; i < 16; i++) {
+      data[i] = parseFloat(
+        ((raw[i * 2 + 2] + (raw[i * 2 + 3] << 8)) * 0.1).toFixed(1)
+      );
+    }
+
+    return data;
+  }
+}
+
+if (true) {
+  module.exports = D6T44L;
 }
 
 

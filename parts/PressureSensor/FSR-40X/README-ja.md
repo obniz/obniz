@@ -1,6 +1,8 @@
 # Pressure Sensor - FSR40X
 圧力センサFSR40Xです。センサで取得した圧力を知ることができます。
 
+![](./image.jpg)
+
 ## wired(obniz, {pin0, pin1})
 Obnizに圧力センサをつなぎます。
 pin0,pin1を圧力センサへ接続してください。

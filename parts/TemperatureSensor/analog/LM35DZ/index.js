@@ -1,5 +1,6 @@
-const AnalogTemplatureSensor = require('../AnalogTempratureSensor');
-class LM35DZ extends AnalogTemplatureSensor {
+const AnalogTemperatureSensor = require('../AnalogTemperatureSensor');
+
+class LM35DZ extends AnalogTemperatureSensor {
   calc(voltage) {
     return voltage * 100; //Temp(Celsius) = [AD Voltage] * 100l;
   }

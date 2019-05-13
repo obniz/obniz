@@ -1,6 +1,7 @@
 # 7SegmentLED
 7 Segment LED. Cathode/Anode Common.
 
+![](./image.jpg)
 
 ## wired(obniz,{ a, b, c, d, e, f, g, dp, common, commonType})
 a to g is 7 segment's io.
@@ -9,7 +10,7 @@ commonType must be "anode"/"cathode". default is "cathode".
 
 ```javascript
 // Javascript Example
-var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:5, b: 6, c: 7, d:1, e:0, f:3, g:2, dp:8, common:4, commonType:"cathode"});
 seg.print(7);
 ```
 
@@ -25,7 +26,7 @@ print a number.
 
 ```javascript
 // Javascript Example
-var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:5, b: 6, c: 7, d:1, e:0, f:3, g:2, dp:8, common:4, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
   seg.print(i)
@@ -37,7 +38,7 @@ for(var i=0; i<10; i++){
 control each led directly.
 ```javascript
 // Javascript Example
-var seg = obniz.wired("7SegmentLED", {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:5, b: 6, c: 7, d:1, e:0, f:3, g:2, dp:8, common:4, commonType:"cathode"});
 seg.printRaw(0x77)
 ```
 
@@ -45,7 +46,7 @@ seg.printRaw(0x77)
 turn display off
 ```javascript
 // Javascript Example
-var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:5, b: 6, c: 7, d:1, e:0, f:3, g:2, dp:8, common:4, commonType:"cathode"});
 
 for(var i=0; i<10; i++){
   seg.print(i)
@@ -58,7 +59,7 @@ seg.off();
 turn display on
 ```javascript
 // Javascript Example
-var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:5, b: 6, c: 7, d:1, e:0, f:3, g:2, dp:8, common:4, commonType:"cathode"});
 
 seg.print(7);
 while(true){
@@ -73,7 +74,7 @@ while(true){
 turn on/off dp
 ```javascript
 // Javascript Example
-var seg = obniz.wired("7SegmentLED",  {a:7, b: 8, c: 1, d:2, e:3, f:5, g:4, dp:0, common:6, commonType:"cathode"});
+var seg = obniz.wired("7SegmentLED", {a:5, b: 6, c: 7, d:1, e:0, f:3, g:2, dp:8, common:4, commonType:"cathode"});
 
 seg.print(7);
 while(true){

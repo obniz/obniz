@@ -68,6 +68,8 @@ obniz.uart0.send("Hi");
 obniz.uart0.send(0x11);
 obniz.uart0.send([0x11, 0x45, 0x44]);
 ```
+
+
 ## end()
 
 uartを停止します。uartで使われていたピンは入力となります
@@ -113,6 +115,23 @@ while(1){
     await obniz.wait(10);  //wait for 10ms
 }
 ```
+
+
+## readByte
+受信済みで，まだ使用していないデータを1byteだけ取得します
+
+```Javascript
+// Javascript Example
+obniz.uart0.start({tx:0, rx:1})
+
+while(1){
+    while(obniz.uart0.isDataExists()){
+        console.log(obniz.uart0.readByte());
+    }
+    await obniz.wait(10);  //wait for 10ms
+}
+```
+
 
 ## readBytes
 受信済みで，まだ使用していないデータをarrayで返します

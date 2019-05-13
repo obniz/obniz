@@ -2,6 +2,8 @@
 
 ソレノイドは金属のピストン付きのコイルです。
 
+![](./image.jpg)
+
 <div class="embed-responsive embed-responsive-4by3 iframe_outer" >
 <iframe class="embed-responsive-item iframe_inner" src="https://www.youtube.com/embed/6BeLaH5HkVw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 </div>

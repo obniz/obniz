@@ -6,9 +6,9 @@ So It is very useful when you want to move/rotate things correctly, and hold som
 
 This library can drive both bipolar/unipolar stepper motors. This cabale to drive directy from obniz io. So 5v stepper motor is best.
 
-![](./wire.jpg)
-
 ![](./image.jpg)
+
+![](./wire.jpg)
 
 
 ## wired(obniz, {a, b, aa, bb [, common]})
@@ -90,6 +90,8 @@ Also it follow speed and stepType.
 name | type | required | default | description
 --- | --- | --- | --- | ---
 step | `number` | yes | - | Steps wants to move
+
+If decimal number was provided, then the number will be rounded.
 
 ```Javascript
 // Javascript Example

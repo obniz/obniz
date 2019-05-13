@@ -12,6 +12,7 @@ class Directive {
       this.observers[i].reject();
     }
     this.observers = [];
+    this._animationIdentifier = 0;
   }
 
   addObserver(name, resolve, reject) {
@@ -72,9 +73,15 @@ class Directive {
     if (typeof repeat !== 'number' || repeat < 1) {
       throw new Error('please specify repeat count > 0');
     }
+    if (parseInt(repeat) !== repeat) {
+      throw new Error('please provide integer number like 1, 2, 3,,,');
+    }
 
     return new Promise((resolve, reject) => {
-      const name = '_repeatwait';
+      const name = '_repeatwait' + Date.now() + this._animationIdentifier;
+      if (++this._animationIdentifier > 1000) {
+        this._animationIdentifier = 0;
+      }
 
       this.animation(name, 'loop', array, repeat);
       this.addObserver(name, resolve, reject);

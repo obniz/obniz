@@ -1,9 +1,7 @@
 # 2JCIE
 enviroment sensor made by OMRON
 
-
-![](./sensor.JPG)
-
+![](./image.jpg)
 
 
 ## wired(obniz)

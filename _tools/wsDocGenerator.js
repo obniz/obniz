@@ -6,7 +6,7 @@ let through = require('through2');
 let PluginError = require('gulp-util').PluginError;
 let PLUGIN_NAME = 'wsDocGenerator';
 
-module.exports = function(docfilePath) {
+module.exports = function(docfilePath, moduleName) {
   /**
    * @this {Transform}
    */
@@ -27,11 +27,12 @@ module.exports = function(docfilePath) {
       let contents = String(file.contents);
       let output;
       try {
-        output = convert(contents, docfilePath);
+        output = convert(contents, docfilePath, moduleName);
       } catch (error) {
         this.emit('error', new PluginError(PLUGIN_NAME, error));
       }
 
+      console.log(moduleName);
       file.contents = Buffer.from(output);
 
       return callback(null, file);
@@ -44,7 +45,7 @@ module.exports = function(docfilePath) {
   return through.obj(transform);
 };
 
-let convert = function(str, docfilePath) {
+let convert = function(str, docfilePath, moduleName) {
   let wsSchema;
   eval(str.substring(3)); //let wsSchema = [ [....} ]
   for (let schema of wsSchema) {
@@ -52,64 +53,61 @@ let convert = function(str, docfilePath) {
   }
 
   let docTemplate = fs.readFileSync(docfilePath, 'utf8');
-
-  let list = [
-    'ws',
-    'system',
-    'io',
-    'ioAnimation',
-    'ad',
-    'pwm',
-    'uart',
-    'spi',
-    'i2c',
-    'logicAnalyzer',
-    'measure',
-    'display',
-    'switch',
-    'ble/central',
-    'ble/peripheral',
-    'message',
-    'debug',
-  ];
+  //
+  // let list = [
+  //   'ws',
+  //   'system',
+  //   'io',
+  //   'ioAnimation',
+  //   'ad',
+  //   'pwm',
+  //   'uart',
+  //   'spi',
+  //   'i2c',
+  //   'logicAnalyzer',
+  //   'measure',
+  //   'display',
+  //   'switch',
+  //   'ble/central',
+  //   'ble/peripheral',
+  //   'message',
+  //   'debug',
+  // ];
   let md = [];
 
-  let param = { moduleNames: list, formatter, conditions, jsonExample };
-  param.modules = [];
+  let param = { formatter, conditions, jsonExample };
   param.defines = {};
 
-  for (let module of list) {
-    let moduleParams = { name: module, methods: [] };
-    for (let methodType of ['request', 'response']) {
-      let groupUri = '/' + methodType + '/' + module;
-      let groupSchema = tv4.getSchema(groupUri);
-      if (!groupSchema) continue;
-      let commands = groupSchema.anyOf.map(elm => {
-        return elm['$ref'];
-      });
+  let moduleParams = { name: moduleName, methods: [] };
+  for (let methodType of ['request', 'response']) {
+    let groupUri = '/' + methodType + '/' + moduleName;
+    let groupSchema = tv4.getSchema(groupUri);
+    if (!groupSchema) continue;
+    let commands = groupSchema.anyOf.map(elm => {
+      return elm['$ref'];
+    });
 
-      let methodParams = {
-        uri: groupUri,
-        schema: groupSchema,
-        method: methodType,
-        commands: [],
+    let methodParams = {
+      uri: groupUri,
+      schema: groupSchema,
+      method: methodType,
+      commands: [],
+    };
+    for (let command of commands) {
+      let schema = tv4.getSchema(command);
+      let basePath = groupSchema.basePath;
+      let name = command.split('/').pop();
+      let commandParam = {
+        uri: command,
+        schema,
+        name,
+        params: requestParams(schema, basePath, param.defines),
       };
-      for (let command of commands) {
-        let schema = tv4.getSchema(command);
-        let basePath = groupSchema.basePath;
-        let name = command.split('/').pop();
-        let commandParam = {
-          uri: command,
-          schema,
-          name,
-          params: requestParams(schema, basePath, param.defines),
-        };
-        methodParams.commands.push(commandParam);
-      }
-      moduleParams.methods.push(methodParams);
+      methodParams.commands.push(commandParam);
     }
-    param.modules.push(moduleParams);
+    moduleParams.methods.push(methodParams);
   }
+  param.module = moduleParams;
 
   function sortOnKeys(dict) {
     let sorted = [];
@@ -441,15 +439,29 @@ function _checkSchema(schema, path, required, results, needDefs) {
   throw Error('unknown json schema type');
 }
 
-//
-//
-// //test
-// const gulp_yaml = require("gulp-yaml");
-// const gulp = require("gulp");
-// const concatWith = require("./concatWith");
-// const schemaSrcPath = path.join(__dirname, '../json_schema/**/*.yml');
-// gulp.src(schemaSrcPath)
-//     .pipe(gulp_yaml({ safe: true }))
-//     .pipe(concatWith("schema.md",{header:"let wsSchema = [", separator:",", footer:"];" }))
-//     .pipe(module.exports())
-//     .pipe(gulp.dest(__dirname));
+//test
+const gulp_yaml = require('gulp-yaml');
+const gulp = require('gulp');
+const concatWith = require('./concatWith');
+const path = require('path');
+const target = 'ble/security';
+const schemaSrcPath = path.join(
+  __dirname,
+  '../json_schema/*/' + target + '/*.yml'
+);
+const baseSchemaSrcPath = path.join(__dirname, '../json_schema/index.yml');
+
+gulp
+  .src([schemaSrcPath, baseSchemaSrcPath])
+  .pipe(gulp_yaml({ safe: true }))
+  .pipe(
+    concatWith('schema.md', {
+      header: 'let wsSchema = [',
+      separator: ',',
+      footer: '];',
+    })
+  )
+  .pipe(
+    module.exports(path.resolve(__dirname, 'doctemplate/doc-one.ejs'), target)
+  )
+  .pipe(gulp.dest(__dirname));

@@ -4,7 +4,7 @@
 
 
 
-![photo of AnalogTempratureSensor](./wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 
@@ -27,7 +27,7 @@ tempsens.onchange = function(temp){
 ```
 
 
-## getWait
+## [await]getWait
 
 温度センサの値を一度だけ取得します
 温度は摂氏で返されます。
@@ -35,7 +35,7 @@ tempsens.onchange = function(temp){
 ```javascript
 // Javascript Example
 var tempsens = obniz.wired("S8100B",   { gnd:0 , output:1, vcc:2});
-var temp = tempsens.getWait();
+var temp = await tempsens.getWait();
 console.log(temp);
 ```
  

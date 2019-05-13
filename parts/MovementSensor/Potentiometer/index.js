@@ -1,7 +1,7 @@
 class Potentiometer {
   constructor() {
     this.keys = ['pin0', 'pin1', 'pin2'];
-    this.reuiredKeys = ['pin0', 'pin1', 'pin2'];
+    this.requiredKeys = ['pin0', 'pin1', 'pin2'];
 
     this.vcc_voltage = 5.0;
   }

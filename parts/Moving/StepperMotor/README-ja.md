@@ -6,9 +6,9 @@
 
 このライブラリではバイポーラ・ユニポーラのステッピングモーターを駆動できます。obnizから直接つないで動かすため5vで動くものを想定しています。
 
-![](./wire.jpg)
-
 ![](./image.jpg)
+
+![](./wire.jpg)
 
 
 ## wired(obniz, {a, b, aa, bb [, common]})
@@ -89,6 +89,8 @@ await motor.stepWait(100);
 name | type | required | default | description
 --- | --- | --- | --- | ---
 step | `number` | yes | - | 動かしたいステップ数
+
+小数が与えられた場合は四捨五入されます。
 
 ```Javascript
 // Javascript Example

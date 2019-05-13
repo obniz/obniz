@@ -124,6 +124,14 @@ class PeripheralUART {
     return results;
   }
 
+  readByte() {
+    let results = [];
+    if (this.isDataExists()) {
+      return results.unshift();
+    }
+    return null;
+  }
+
   readText() {
     let string = null;
     if (this.isDataExists()) {

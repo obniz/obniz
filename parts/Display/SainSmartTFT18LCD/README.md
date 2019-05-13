@@ -4,7 +4,7 @@ Library for  [Sainsmart 1.8 inch TFT](https://www.sainsmart.com/products/1-8-tft
 
 Drawing supports. But This library doesn't include MicroSD access yet.
 
-![](./image.png)
+![](./image.jpg)
 
 SPI is used to communicate.
 obniz can't draw fast as Arduino/Raspberry Pi.

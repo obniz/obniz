@@ -1,13 +1,12 @@
 # XBee
 複数のXBeeを使って通信します．ブロードキャストや１対１の通信ができます
 
+![](./image.jpg)
+
 ## obniz.wired
 
 XBeeをtx,rxのピンを指定して接続します．
 XBeeはVCCとGNDが必要なので，それは別で用意する必要があります．
-
-この画像のように配線したのであれば，下のように書きます．
-![photo of wired XBee](./xbee.png)
 
 ![](./wired.png)
 

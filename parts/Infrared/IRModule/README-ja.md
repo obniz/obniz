@@ -8,8 +8,6 @@
 
 sendとrecv, vcc, gndを接続します。vccとgndはオプショナルです。外に繋いでいる場合は無くても大丈夫です。
 
-![](./irmodule.jpg)
-
  
 ```javascript
 // Javascript Example

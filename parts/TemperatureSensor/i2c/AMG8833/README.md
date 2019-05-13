@@ -2,12 +2,12 @@
 Infrared Arraied sensor AMG833 Library.
 It has 8x8 (0 to 80 degree in celsius) temperature sensors.
 
-![](./gif.gif)
+![](./image.jpg)
 
 Some maker produce AMG833 moduels.
-Below is Adafruit's one.
+Above is Adafruit's one.
 
-![](./image.jpg)
+![](./gif.gif)
 
 
 ## wired(obniz,  {[vin, gnd, sda, scl, address]} )

@@ -3,9 +3,7 @@
 Simply, Supplying power to usb accesorries.
 Control USB light, etc with your obniz.
 
-![](./usb.jpg)
-
-![](./usb2.jpg)
+![](./image.jpg)
 
 ## wired(obniz, {vcc, gnd})
 

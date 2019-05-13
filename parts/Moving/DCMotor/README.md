@@ -2,12 +2,14 @@
 
 Common Brushed DC Motor which moves when connected to +/- and reverse when connected to other side.
 
-![photo of DCMotor](./wired.png)
+![](./image.jpg)
 
 ## wire({forward, back})
 
 connect two wire to an obniz and set io number to forward,back.
 If you connect to io 0 and 1, then write a program like a below.
+
+![photo of DCMotor](./wired.png)
 
 ```javascript
 // Javascript Example

@@ -4,7 +4,7 @@ Potention Meter change it's resistor value regarding angle or position.
 obniz can read resistor value by using AD.
 It has three pins. between sides resistor values is constant. voltage of center pin moves within left and right side's voltage.
 
-![](./pm.jpg)
+![](./image.jpg)
 
 This parts can treat only 10 ohm to 100 k ohm.
 
@@ -12,9 +12,6 @@ This parts can treat only 10 ohm to 100 k ohm.
 ## obniz.wired(obniz, {pin0, pin1, pin2})
 
 pin0 and pin2 is side pins. It can be swapped. But position will be reversed.
-
-
-![](./c_pm.jpg)
 
 
 ![](./wired.png)

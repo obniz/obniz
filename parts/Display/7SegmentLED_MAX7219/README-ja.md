@@ -5,7 +5,7 @@ MAX7219一つにつき最大8桁の7セグメントLEDを制御することが�
 MAX7219を連続してつなげ、8桁以上のディスプレイを作ることもできます。
 
 
-![](./7seg_max72.jpg)
+![](./image.jpg)
 
 
 ## wired(obniz,  { clk, cs, din, gnd, vcc});

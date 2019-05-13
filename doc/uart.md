@@ -118,6 +118,22 @@ while(1){
 }
 ```
 
+
+## readByte
+It returns the one byte that are received but not yet used.
+
+```Javascript
+// Javascript Example
+obniz.uart0.start({tx:0, rx:1})
+
+while(1){
+    while(obniz.uart0.isDataExists()){
+        console.log(obniz.uart0.readByte());
+    }
+    await obniz.wait(10);  //wait for 10ms
+}
+```
+
 ## readBytes
 It returns the data array that are received but not yet used.
 

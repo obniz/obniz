@@ -2,11 +2,11 @@
 赤外線を利用した距離センサーです。
 距離を電圧として出力するモジュールです。
 
+![photo of wired](./image.jpg)
+
 ![photo of wired](./image.gif)
 
 ## wired(obniz, {vcc, gnd, signal})
-
-![photo of wired](./image.jpg)
 
 ![photo of wired](./wired.png)
 ```javascript

@@ -1,9 +1,10 @@
 # Temperature Sensor - LM60
 Temperature sensor LM60BIZ/LM60CIM
 
+![](./image.jpg)
 
 
-![photo of AnalogTempratureSensor](./wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 
@@ -26,14 +27,14 @@ console.log(temp)
 };
 ```
 
-## getWait
+## [await]getWait
 get temperature change.
 Unit of temp is Celsius
 
 ```javascript
 // Javascript Example
 var tempsens = obniz.wired("LM60",   { gnd:0 , output:1, vcc:2});
-var temp = tempsens.getWait();
+var temp = await tempsens.getWait();
 console.log(temp);
 ```
  

@@ -1,0 +1,89 @@
+{
+  "title": "obniz.js API Reference",
+  "title-ja": "obniz.js API リファレンス",
+  "contents": [
+    {
+      "title": "Ws",
+      "title-ja": "ws",
+      "filename": "ws"
+    },
+    {
+      "title": "System",
+      "title-ja": "System",
+      "filename": "system"
+    },
+    {
+      "title": "IO",
+      "title-ja": "io",
+      "filename": "io"
+    },
+    {
+      "title": "ioAnimation",
+      "title-ja": "ioAnimation",
+      "filename": "ioAnimation"
+    },
+    {
+      "title": "AD",
+      "filename": "ad"
+    },
+    {
+      "title": "PWM",
+      "filename": "pwm"
+    },
+    {
+      "title": "UART",
+      "filename": "uart"
+    },
+    {
+      "title": "SPI",
+      "filename": "spi"
+    },
+    {
+      "title": "I2C",
+      "filename": "i2c"
+    },
+    {
+      "title": "LogicAnalyzer",
+      "filename": "logicanalyzer"
+    },
+    {
+      "title": "Measurement",
+      "filename": "measure"
+    },
+    {
+      "title": "Display",
+      "title-ja": "ディスプレイ",
+      "filename": "display"
+    },
+    {
+      "title": "Switch",
+      "title-ja": "スイッチ",
+      "filename": "switch"
+    },
+    {
+      "title": "BLE use as central",
+      "title-ja": "BLEセントラル",
+      "filename": "ble_central"
+    },
+    {
+      "title": "BLE use as peripheral",
+      "title-ja": "BLEペリフェラル",
+      "filename": "ble_peripheral"
+    },
+    {
+      "title": "BLE security",
+      "title-ja": "BLEセキュリティ",
+      "filename": "ble_security"
+    },
+    {
+      "title": "Message",
+      "title-ja": "Message",
+      "filename": "message"
+    },
+    {
+      "title": "Debug",
+      "title-ja": "Debug",
+      "filename": "debug"
+    }
+  ]
+}

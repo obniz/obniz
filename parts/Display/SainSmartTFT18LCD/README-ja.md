@@ -3,7 +3,7 @@
 
 Obnizから[サインスマート 1.8インチ TFTカラーディスプレイ](https://www.amazon.co.jp/サインスマート（SainSmart）-カラー-LCD-インタフェース-MicroSD-付き-Arduino/dp/B008HWTVQ2/)に描画するためのライブラリです。ただし、このLCDに内蔵するMicroSDへのアクセスはサポートしていません。
 
-![](./image.png)
+![](./image.jpg)
 
 
 このLCDはSPIインターフェースでアクセスしますが、ObnizではArduinoやRaspberry Piの様に高速に描画することはできません。また、LCDからデータを読み出すこともできません。  

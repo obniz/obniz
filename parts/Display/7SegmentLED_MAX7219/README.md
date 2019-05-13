@@ -3,7 +3,8 @@ This class controls 7 segment LEDs connected to MAX7219.
 One MAX7219 can drive up to 8 digits.
 And chaining connections of MAX7219 is available.
 
-![](./7seg_max72.jpg)
+
+![](./image.jpg)
 
 
 ## wired(obniz,  { clk, cs, din, gnd, vcc});

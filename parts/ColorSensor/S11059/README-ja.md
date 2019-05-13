@@ -1,6 +1,8 @@
 # S11059
 カラーセンサS11059-02DTから赤,緑,青,赤外のそれぞれの色のレベルを取得します。
 
+![](./image.jpg)
+
 ![](./demo.gif)
 
 ## wired(obniz,  { vcc, sda, scl, gnd});

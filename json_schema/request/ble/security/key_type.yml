@@ -1,7 +1,7 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/request/ble/security/key/type"
+id: "/request/ble/security/key_type"
 description : "ble encription key type settings"
 
 

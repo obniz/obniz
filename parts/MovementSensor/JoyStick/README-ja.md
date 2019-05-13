@@ -1,7 +1,7 @@
 # JoyStick
 X軸Y軸とプッシュスイッチをもつジョイスティックです。出力がアナログ値の一般的なものに対して利用できます。
 
-![](./joystick.jpg)
+![](./image.jpg)
 
 ## wired(obniz, {sw, x, y, vcc, gnd})
 obnizと接続します。vccはジョイスティックの5v入力へ。gndはマイナスへ接続します。  
