@@ -4,6 +4,8 @@
 
 このライブラリではアノードコモン、カソードコモンの７セグメントLEDに対応しています。
 
+![](./image.jpg)
+
 ## wired(obniz,{ a, b, c, d, e, f, g, dp, common, commonType})
 a~gはセグメントのそれぞれに対応しています。
 つないだobnizのioを指定します。dpは小数点で、使わない場合は不要です。

@@ -2,6 +2,8 @@
 
 It is a speaker such as piezo. Connect with two wires, and generate sound by current.
 
+![](./image.jpg)
+
 ## wired(obniz , {signal. gnd} )
 Connect to the speaker. If there are plus and minus, please specify minus to gnd.
 

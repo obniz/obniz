@@ -2,6 +2,8 @@
 
 This is InfraredLED class. Especially, This has a function to transfer data via Infrared like remote-control.
 
+![](./image.jpg)
+
 ## wired(obniz, {anode, cathode})
 
 anode,cathode is pin no of obniz io.

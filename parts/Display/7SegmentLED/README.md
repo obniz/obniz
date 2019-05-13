@@ -1,6 +1,7 @@
 # 7SegmentLED
 7 Segment LED. Cathode/Anode Common.
 
+![](./image.jpg)
 
 ## wired(obniz,{ a, b, c, d, e, f, g, dp, common, commonType})
 a to g is 7 segment's io.

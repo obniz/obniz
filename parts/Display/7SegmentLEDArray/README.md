@@ -3,6 +3,8 @@
 Dynamic Lightning.
 This uses "7SegmentLED" parts.
 
+![](./image.jpg)
+
 ## wired(obniz, {segments:[]})
 provide 7SegmentLED. min 1.
 This 7SegmentLEDArray will drive all 7 segments automatically by Dynamic Lightning.

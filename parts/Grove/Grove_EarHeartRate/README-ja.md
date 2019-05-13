@@ -1,7 +1,7 @@
 # Grove_EarHeartRate
 Grove の耳たぶクリップ式心拍センサーです
 
-![](./heartrate.jpg)
+![](./image.jpg)
 
 Stores
 
@@ -14,6 +14,8 @@ Stores
 センサーと接続します。
 センサーからはGroveケーブルで３本のケーブルがでています。
 黒がGND,赤がVCC、黄色がsignalです。
+
+![](./heartrate.jpg)
 
 ```javascript
 // Javascript Example

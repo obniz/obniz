@@ -2,6 +2,8 @@
 
 赤外線LEDを操作します。特に、リモコンのような赤外線で信号を送るためのクラスです。
 
+![](./image.jpg)
+
 ## wired(obniz, {anode, cathode})
 
 anodeとcathodeはそれを繋いだobnizのioを指定して下さい。

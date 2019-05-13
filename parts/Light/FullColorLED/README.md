@@ -2,6 +2,8 @@
 
 Analog Full Color LED. It's consist of three color LED.
 
+![](./image.jpg)
+
 ![](./animation.gif)
 
 

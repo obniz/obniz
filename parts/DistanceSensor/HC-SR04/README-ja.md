@@ -1,6 +1,8 @@
 # HC-SR04
 超音波を利用した距離センサーです。
 
+![](./image.jpg)
+
 ## wired(obniz, {vcc, trigger, echo, gnd})
 
 ![photo of wired](./wired.png)

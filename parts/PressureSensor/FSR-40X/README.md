@@ -2,6 +2,7 @@
 
 Pressure sensor. It output pressure as a voltage.
 
+![](./image.jpg)
 
 ## wired(obniz, {pin0, pin1})
 

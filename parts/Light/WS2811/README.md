@@ -2,7 +2,7 @@
 Full color LED driver.
 Not only one LED. Capable of chaining leds.
 
-![](./ws2811.jpg)
+![](./image.jpg)
 
 WS2811 is embed in various Full Color LEDs. (In the photo `PL9823` is used)
 

@@ -4,7 +4,6 @@ SDカードに保存したMP3を再生することができます。
 Grove MP3 v2.0 に対応したライブラリです。
 
 ![](./image.jpg)
-![](./image2.jpg)
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cCRMpeUk9HM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 

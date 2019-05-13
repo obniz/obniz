@@ -3,6 +3,8 @@
 7セグメントやマトリックスLEDとセットで販売されていることが多く、色々な表示が可能です。
 また、連続してつなげることができるのも特徴です。
 
+![](./image.jpg)
+
 [http://akizukidenshi.com/catalog/g/gM-09984/](http://akizukidenshi.com/catalog/g/gM-09984/)
 
 ![](./max7219.jpg)

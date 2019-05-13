@@ -4,6 +4,9 @@ RC Servo Motor is computer embeded geard motor.
 It keep "Angle".
 You just need to send a angle data to servomotor. 
 
+
+![](./image.jpg)
+
 ![](./servomotor.gif)
 
 ### About Motor Power Supply

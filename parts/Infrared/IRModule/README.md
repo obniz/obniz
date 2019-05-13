@@ -8,9 +8,6 @@ Detecting and sending Infrared signal like a remote controller's signal.
 
 Connect send, recv,  vcc and gnd. vcc and gnd is optional.
 
-
-![](./irmodule.jpg)
-
  
 ```javascript
 // Javascript Example

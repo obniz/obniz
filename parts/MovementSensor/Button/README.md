@@ -1,6 +1,8 @@
 # Button
 Button turn on/off electricity. Just monitor voltage to check button pressed or not.
 
+![](./image.jpg)
+
 ## wired(obniz, {signal [,gnd]})
 
 Connect two pins to obniz. Many buttons has no pin direction. you can connect each one to signal,gnd.

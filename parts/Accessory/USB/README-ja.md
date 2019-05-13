@@ -3,9 +3,7 @@
 USBアクセサリに電力を供給します。
 USBで光る電気や扇風機などをobnizから操作できます。
 
-![](./usb.jpg)
-
-![](./usb2.jpg)
+![](./image.jpg)
 
 ## wired(obniz, {vcc, gnd})
 

@@ -1,6 +1,7 @@
 # HC-SR04
 Ultrasonic Distance Measurement Unit.
 
+![](./image.jpg)
 
 ## wired(obniz, {vcc, trigger, echo, gnd})
 
