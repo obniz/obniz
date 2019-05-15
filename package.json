@@ -3,6 +3,7 @@
   "version": "2.0.3",
   "description": "obniz sdk for javascript",
   "main": "index.js",
+  "types": "obniz.d.ts",
   "scripts": {
     "test": "nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js",
     "buildAndtest": "npm run build && npm test",
