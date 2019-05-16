@@ -15,6 +15,9 @@ import { PCA9685, PCA9685Options } from './parts/Moving/PCA9685';
 import { ServoMotor, ServoMotorOptions } from './parts/Moving/ServoMotor';
 import { Solenoid, SolenoidOptions } from './parts/Moving/Solenoid';
 import { StepperMotor, StepperMotorOptions } from './parts/Moving/StepperMotor';
+// DistanceSensor
+import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A21YK0F';
+import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
 
 interface ObnizOptions {
   binary?: boolean;
@@ -58,6 +61,9 @@ interface Obniz {
   wired(name: 'ServoMotor', options: ServoMotorOptions): ServoMotor;
   wired(name: 'Solenoid', options: SolenoidOptions): Solenoid;
   wired(name: 'StepperMotor', options: StepperMotorOptions): StepperMotor;
+  // DistanceSensor
+  wired(name: 'HCSR04', options: HCSR04Options): HCSR04;
+  wired(name: 'GP2Y0A21YK0F', options: GP2Y0A21YK0FOptions): GP2Y0A21YK0F;
 }
 
 interface ObnizConstructor {
