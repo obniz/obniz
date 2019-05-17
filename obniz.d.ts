@@ -26,6 +26,7 @@ import { ServoMotor, ServoMotorOptions } from './parts/Moving/ServoMotor';
 import { Solenoid, SolenoidOptions } from './parts/Moving/Solenoid';
 import { StepperMotor, StepperMotorOptions } from './parts/Moving/StepperMotor';
 // Sound
+import { Speaker, SpeakerOptions } from './parts/Sound/Speaker';
 // GasSensor
 // Logic
 // Accessory
@@ -95,6 +96,7 @@ interface Obniz {
   wired(name: 'Solenoid', options: SolenoidOptions): Solenoid;
   wired(name: 'StepperMotor', options: StepperMotorOptions): StepperMotor;
   // Sound
+  wired(name: 'Speaker', options: SpeakerOptions): Speaker;
   // GasSensor
   // Logic
   // Accessory
