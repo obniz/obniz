@@ -17,6 +17,8 @@ import { MatrixLED_MAX7219, MatrixLED_MAX7219Options } from './parts/Display/Mat
 import { SainSmartTFT18LCD, SainSmartTFT18LCDOptions } from './parts/Display/SainSmartTFT18LCD';
 import { SharpMemoryTFT, SharpMemoryTFTOptions } from './parts/Display/SharpMemoryTFT';
 // Camera
+import { ArduCAMMini, ArduCAMMiniOptions } from './parts/Camera/ArduCAMMini';
+import { JpegSerialCam, JpegSerialCamOptions } from './parts/Camera/JpegSerialCam';
 // Moving
 import { DCMotor, DCMotorOptions } from './parts/Moving/DCMotor';
 import { PCA9685, PCA9685Options } from './parts/Moving/PCA9685';
@@ -84,6 +86,8 @@ interface Obniz {
   wired(name: 'SainSmartTFT18LCD', options: SainSmartTFT18LCDOptions): SainSmartTFT18LCD;
   wired(name: 'SharpMemoryTFT', options: SharpMemoryTFTOptions): SharpMemoryTFT;
   // Camera
+  wired(name: 'ArduCAMMini', options: ArduCAMMiniOptions): ArduCAMMini;
+  wired(name: 'JpegSerialCam', options: JpegSerialCamOptions): JpegSerialCam;
   // Moving
   wired(name: 'DCMotor', options: DCMotorOptions): DCMotor;
   wired(name: 'PCA9685', options: PCA9685Options): PCA9685;
