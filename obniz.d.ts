@@ -40,6 +40,7 @@ import { MQ135, MQ135Options } from './parts/GasSensor/MQ135';
 // Logic
 import { SNx4HC595, SNx4HC595Options } from './parts/Logic/SNx4HC595';
 // Accessory
+import { USB, USBOptions } from './parts/Accessory/USB';
 // Wireless
 // Movement Sensor
 // Distance Sensor
@@ -120,6 +121,7 @@ interface Obniz {
   // Logic
   wired(name: 'SNx4HC595', options: SNx4HC595Options): SNx4HC595;
   // Accessory
+  wired(name: 'USB', options: USBOptions): USB;
   // Wireless
   // Movement Sensor
   // Distance Sensor
