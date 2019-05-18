@@ -28,6 +28,15 @@ import { StepperMotor, StepperMotorOptions } from './parts/Moving/StepperMotor';
 // Sound
 import { Speaker, SpeakerOptions } from './parts/Sound/Speaker';
 // GasSensor
+import { MQ2, MQ2Options } from './parts/GasSensor/MQ2';
+import { MQ3, MQ3Options } from './parts/GasSensor/MQ3';
+import { MQ4, MQ4Options } from './parts/GasSensor/MQ4';
+import { MQ5, MQ5Options } from './parts/GasSensor/MQ5';
+import { MQ6, MQ6Options } from './parts/GasSensor/MQ6';
+import { MQ7, MQ7Options } from './parts/GasSensor/MQ7';
+import { MQ8, MQ8Options } from './parts/GasSensor/MQ8';
+import { MQ9, MQ9Options } from './parts/GasSensor/MQ9';
+import { MQ135, MQ135Options } from './parts/GasSensor/MQ135';
 // Logic
 // Accessory
 // Wireless
@@ -98,6 +107,15 @@ interface Obniz {
   // Sound
   wired(name: 'Speaker', options: SpeakerOptions): Speaker;
   // GasSensor
+  wired(name: 'MQ2', options: MQ2Options): MQ2;
+  wired(name: 'MQ3', options: MQ3Options): MQ3;
+  wired(name: 'MQ4', options: MQ4Options): MQ4;
+  wired(name: 'MQ5', options: MQ5Options): MQ5;
+  wired(name: 'MQ6', options: MQ6Options): MQ6;
+  wired(name: 'MQ7', options: MQ7Options): MQ7;
+  wired(name: 'MQ8', options: MQ8Options): MQ8;
+  wired(name: 'MQ9', options: MQ9Options): MQ9;
+  wired(name: 'MQ135', options: MQ135Options): MQ135;
   // Logic
   // Accessory
   // Wireless
