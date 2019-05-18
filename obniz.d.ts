@@ -49,6 +49,7 @@ import { XBee, XBeeOptions } from './parts/Wireless/XBee';
 import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A21YK0F';
 import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
 // GPS
+import { GYSFDMAXB, GYSFDMAXBOptions } from './parts/GPS/GYSFDMAXB';
 // Magnet
 // ADConverter
 // Soil Moisture Sensor
@@ -132,6 +133,7 @@ interface Obniz {
   wired(name: 'HCSR04', options: HCSR04Options): HCSR04;
   wired(name: 'GP2Y0A21YK0F', options: GP2Y0A21YK0FOptions): GP2Y0A21YK0F;
   // GPS
+  wired(name: 'GYSFDMAXB', options: GYSFDMAXBOptions): GYSFDMAXB;
   // Magnet
   // ADConverter
   // Soil Moisture Sensor
