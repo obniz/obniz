@@ -42,6 +42,8 @@ import { SNx4HC595, SNx4HC595Options } from './parts/Logic/SNx4HC595';
 // Accessory
 import { USB, USBOptions } from './parts/Accessory/USB';
 // Wireless
+import { RN42, RN42Options } from './parts/Wireless/RN42';
+import { XBee, XBeeOptions } from './parts/Wireless/XBee';
 // Movement Sensor
 // Distance Sensor
 import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A21YK0F';
@@ -123,6 +125,8 @@ interface Obniz {
   // Accessory
   wired(name: 'USB', options: USBOptions): USB;
   // Wireless
+  wired(name: 'RN42', options: RN42Options): RN42;
+  wired(name: 'XBee', options: XBeeOptions): XBee;
   // Movement Sensor
   // Distance Sensor
   wired(name: 'HCSR04', options: HCSR04Options): HCSR04;
