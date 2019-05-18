@@ -38,6 +38,7 @@ import { MQ8, MQ8Options } from './parts/GasSensor/MQ8';
 import { MQ9, MQ9Options } from './parts/GasSensor/MQ9';
 import { MQ135, MQ135Options } from './parts/GasSensor/MQ135';
 // Logic
+import { SNx4HC595, SNx4HC595Options } from './parts/Logic/SNx4HC595';
 // Accessory
 // Wireless
 // Movement Sensor
@@ -117,6 +118,7 @@ interface Obniz {
   wired(name: 'MQ9', options: MQ9Options): MQ9;
   wired(name: 'MQ135', options: MQ135Options): MQ135;
   // Logic
+  wired(name: 'SNx4HC595', options: SNx4HC595Options): SNx4HC595;
   // Accessory
   // Wireless
   // Movement Sensor
