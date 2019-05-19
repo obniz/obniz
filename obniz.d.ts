@@ -57,6 +57,8 @@ import { HX711, HX711Options } from './parts/ADConverter/hx711';
 // SoilSensor
 import { SEN0114, SEN0114Options } from './parts/SoilSensor/SEN0114';
 // Temperature Sensor
+// ColorSensor
+import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 // Grove
 // Ble
 
@@ -144,6 +146,8 @@ interface Obniz {
   // SoilSensor
   wired(name: 'SEN0114', options: SEN0114Options): SEN0114;
   // Temperature Sensor
+  // ColorSensor
+  wired(name: 'S11059', options: S11059Options): S11059;
   // Grove
   // Ble
 }
