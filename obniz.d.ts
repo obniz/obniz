@@ -60,6 +60,8 @@ import { SEN0114, SEN0114Options } from './parts/SoilSensor/SEN0114';
 // ColorSensor
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 // Grove
+import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
+import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 // Ble
 
 interface ObnizOptions {
@@ -149,6 +151,8 @@ interface Obniz {
   // ColorSensor
   wired(name: 'S11059', options: S11059Options): S11059;
   // Grove
+  wired(name: 'Grove_EarHeartRate', options: Grove_EarHeartRateOptions): Grove_EarHeartRate;
+  wired(name: 'Grove_MP3', options: Grove_MP3Options): Grove_MP3;
   // Ble
 }
 
