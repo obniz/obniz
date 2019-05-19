@@ -54,7 +54,8 @@ import { GYSFDMAXB, GYSFDMAXBOptions } from './parts/GPS/GYSFDMAXB';
 import { HMC5883L, HMC5883LOptions } from './parts/CompassSensor/HMC5883L';
 // ADConverter
 import { HX711, HX711Options } from './parts/ADConverter/hx711';
-// Soil Moisture Sensor
+// SoilSensor
+import { SEN0114, SEN0114Options } from './parts/SoilSensor/SEN0114';
 // Temperature Sensor
 // Grove
 // Ble
@@ -140,7 +141,8 @@ interface Obniz {
   wired(name: 'HMC5883L', options: HMC5883LOptions): HMC5883L;
   // ADConverter
   wired(name: 'hx711', options: HX711Options): HX711;
-  // Soil Moisture Sensor
+  // SoilSensor
+  wired(name: 'SEN0114', options: SEN0114Options): SEN0114;
   // Temperature Sensor
   // Grove
   // Ble
