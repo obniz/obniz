@@ -50,7 +50,8 @@ import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A
 import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
 // GPS
 import { GYSFDMAXB, GYSFDMAXBOptions } from './parts/GPS/GYSFDMAXB';
-// Magnet
+// CompassSensor
+import { HMC5883L, HMC5883LOptions } from './parts/CompassSensor/HMC5883L';
 // ADConverter
 // Soil Moisture Sensor
 // Temperature Sensor
@@ -134,7 +135,8 @@ interface Obniz {
   wired(name: 'GP2Y0A21YK0F', options: GP2Y0A21YK0FOptions): GP2Y0A21YK0F;
   // GPS
   wired(name: 'GYSFDMAXB', options: GYSFDMAXBOptions): GYSFDMAXB;
-  // Magnet
+  // CompassSensor
+  wired(name: 'HMC5883L', options: HMC5883LOptions): HMC5883L;
   // ADConverter
   // Soil Moisture Sensor
   // Temperature Sensor
