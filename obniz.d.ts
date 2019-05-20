@@ -63,6 +63,7 @@ import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 // Ble
+import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
 
 interface ObnizOptions {
   binary?: boolean;
@@ -154,6 +155,7 @@ interface Obniz {
   wired(name: 'Grove_EarHeartRate', options: Grove_EarHeartRateOptions): Grove_EarHeartRate;
   wired(name: 'Grove_MP3', options: Grove_MP3Options): Grove_MP3;
   // Ble
+  wired(name: '2JCIE'): OMRON_2JCIE;
 }
 
 interface ObnizConstructor {
