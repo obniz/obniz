@@ -167,15 +167,15 @@ interface Obniz {
   wired(name: 'XBee', options: XBeeOptions): XBee;
   // Movement Sensor
   wired(name: 'Button', options: ButtonOptions): Button;
-  wired(name: 'FlickHat', options: FlickHatOptions): FlickHat;
+  // wired(name: 'FlickHat', options: FlickHatOptions): FlickHat;
   wired(name: 'HC-SR505', options: HCSR505Options): HCSR505;
   wired(name: 'JoyStick', options: JoyStickOptions): JoyStick;
   wired(name: 'KXR94-2050', options: KXR94_2050Options): KXR94_2050;
-  wired(name: 'KXSC7-2050', options: KXSC7_2050Options): KXSC7_2050;
+  // wired(name: 'KXSC7-2050', options: KXSC7_2050Options): KXSC7_2050;
   wired(name: 'PaPIRsVZ', options: PaPIRsVZOptions): PaPIRsVZ;
   wired(name: 'Potentiometer', options: PotentiometerOptions): Potentiometer;
   // Memory
-  wired(name: '24LC256', options: _24LC256Options): _24LC256;
+  // wired(name: '24LC256', options: _24LC256Options): _24LC256;
   // GyroSensor
   wired(name: 'ENC03R_Module', options: ENC03R_ModuleOptions): ENC03R_Module;
   // PressureSensor
@@ -198,15 +198,15 @@ interface Obniz {
   wired(name: 'LMT87', options: LMT87Options): LMT87;
   wired(name: 'MCP9700', options: MCP9700Options): MCP9700;
   wired(name: 'MCP9701', options: MCP9701Options): MCP9701;
-  wired(name: 'S8100B', options: S8100BOptions): S8100B;
-  wired(name: 'S8120C', options: S8120COptions): S8120C;
-  wired(name: 'ADT7410', options: ADT7410Options): ADT7410;
+  // wired(name: 'S8100B', options: S8100BOptions): S8100B;
+  // wired(name: 'S8120C', options: S8120COptions): S8120C;
+  // wired(name: 'ADT7410', options: ADT7410Options): ADT7410;
   wired(name: 'AMG8833', options: AMG8833Options): AMG8833;
   wired(name: 'BME280', options: BME280Options): BME280;
   wired(name: 'D6T44L', options: D6T44LOptions): D6T44L;
-  wired(name: 'S5851A', options: S5851AOptions): S5851A;
+  // wired(name: 'S5851A', options: S5851AOptions): S5851A;
   wired(name: 'SHT31', options: SHT31Options): SHT31;
-  wired(name: 'ADT7310', options: ADT7310Options): ADT7310;
+  // wired(name: 'ADT7310', options: ADT7310Options): ADT7310;
   // ColorSensor
   wired(name: 'S11059', options: S11059Options): S11059;
   // Grove
