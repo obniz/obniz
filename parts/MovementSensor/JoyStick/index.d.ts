@@ -4,6 +4,7 @@ export interface JoyStickOptions {
   y: number;
   vcc?: number;
   gnd?: number;
+  i2c?: any;
 }
 
 export interface JoyStick {

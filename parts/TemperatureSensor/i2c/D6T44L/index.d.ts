@@ -3,6 +3,7 @@ export interface D6T44LOptions {
   vcc?: number;
   sda?: number;
   scl?: number;
+  clock?: any;
 }
 
 export interface D6T44L {

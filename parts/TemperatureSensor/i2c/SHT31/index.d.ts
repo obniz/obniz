@@ -5,6 +5,8 @@ export interface SHT31Options {
   adr: number;
   gnd?: number;
   addressmode: number;
+  i2c?: any;
+  pull?: any;
 }
 
 export interface SHT31 {

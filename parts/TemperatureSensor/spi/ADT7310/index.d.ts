@@ -1,3 +1,4 @@
+// TODO: README と実装でパラメータが異なるが、パーツライブラリには載っていないパーツ
 export interface ADT7310Options {
   vcc: number;
   gnd: number;

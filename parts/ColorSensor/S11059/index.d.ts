@@ -3,6 +3,7 @@ export interface S11059Options {
   sda?: number;
   scl?: number;
   gnd?: number;
+  i2c?: any;
 }
 
 export type S11059Gain = 0 | 1;

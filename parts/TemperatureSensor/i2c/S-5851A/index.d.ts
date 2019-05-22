@@ -1,3 +1,4 @@
+// TODO: README と実装が異なっているが、パーツライブラリには載っていないパーツ
 export interface S5851AOptions {
   vcc: number;
   gnd: number;
