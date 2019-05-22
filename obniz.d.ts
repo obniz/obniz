@@ -45,6 +45,14 @@ import { USB, USBOptions } from './parts/Accessory/USB';
 import { RN42, RN42Options } from './parts/Wireless/RN42';
 import { XBee, XBeeOptions } from './parts/Wireless/XBee';
 // Movement Sensor
+import { Button, ButtonOptions } from './parts/MovementSensor/Button';
+import { FlickHat, FlickHatOptions } from './parts/MovementSensor/FlickHat';
+import { HCSR505, HCSR505Options } from './parts/MovementSensor/HC-SR505';
+import { JoyStick, JoyStickOptions } from './parts/MovementSensor/JoyStick';
+import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050';
+import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
+import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
+import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
 // Distance Sensor
 import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A21YK0F';
 import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
@@ -152,6 +160,14 @@ interface Obniz {
   wired(name: 'RN42', options: RN42Options): RN42;
   wired(name: 'XBee', options: XBeeOptions): XBee;
   // Movement Sensor
+  wired(name: 'Button', options: ButtonOptions): Button;
+  wired(name: 'FlickHat', options: FlickHatOptions): FlickHat;
+  wired(name: 'HC-SR505', options: HCSR505Options): HCSR505;
+  wired(name: 'JoyStick', options: JoyStickOptions): JoyStick;
+  wired(name: 'KXR94-2050', options: KXR94_2050Options): KXR94_2050;
+  wired(name: 'KXSC7-2050', options: KXSC7_2050Options): KXSC7_2050;
+  wired(name: 'PaPIRsVZ', options: PaPIRsVZOptions): PaPIRsVZ;
+  wired(name: 'Potentiometer', options: PotentiometerOptions): Potentiometer;
   // Distance Sensor
   wired(name: 'HCSR04', options: HCSR04Options): HCSR04;
   wired(name: 'GP2Y0A21YK0F', options: GP2Y0A21YK0FOptions): GP2Y0A21YK0F;
