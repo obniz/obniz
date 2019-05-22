@@ -60,7 +60,7 @@ import { SEN0114, SEN0114Options } from './parts/SoilSensor/SEN0114';
 import { LM35DZ, LM35DZOptions } from './parts/TemperatureSensor/analog/LM35DZ';
 import { LM60, LM60Options } from './parts/TemperatureSensor/analog/LM60';
 import { LM61, LM61Options } from './parts/TemperatureSensor/analog/LM61';
-import { LMT87, LM87Options } from './parts/TemperatureSensor/analog/LMT87';
+import { LMT87, LMT87Options } from './parts/TemperatureSensor/analog/LMT87';
 import { MCP9700, MCP9700Options } from './parts/TemperatureSensor/analog/MCP9700';
 import { MCP9701, MCP9701Options } from './parts/TemperatureSensor/analog/MCP9701';
 import { S8100B, S8100BOptions } from './parts/TemperatureSensor/analog/S8100B';
@@ -175,7 +175,7 @@ interface Obniz {
   wired(name: 'ADT7410', options: ADT7410Options): ADT7410;
   wired(name: 'AMG8833', options: AMG8833Options): AMG8833;
   wired(name: 'BME280', options: BME280Options): BME280;
-  wired(name: 'D6T44L', options: D6T44Lptions): D6T44L;
+  wired(name: 'D6T44L', options: D6T44LOptions): D6T44L;
   wired(name: 'S5851A', options: S5851AOptions): S5851A;
   wired(name: 'SHT31', options: SHT31Options): SHT31;
   wired(name: 'ADT7310', options: ADT7310Options): ADT7310;
