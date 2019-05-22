@@ -1,5 +1,5 @@
 export interface HCSR04Options {
-  gnd: number;
+  gnd?: number;
   echo: number;
   trigger: number;
   vcc: number;

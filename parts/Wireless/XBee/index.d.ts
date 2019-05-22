@@ -1,6 +1,7 @@
 export interface XBeeOptions {
   tx: number;
   rx: number;
+  gnd?: number;
 }
 
 export interface XBeeConfig {

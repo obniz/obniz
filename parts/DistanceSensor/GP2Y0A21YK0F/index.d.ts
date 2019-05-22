@@ -1,6 +1,6 @@
 export interface GP2Y0A21YK0FOptions {
-  vcc: number;
-  gnd: number;
+  vcc?: number;
+  gnd?: number;
   signal: number;
 }
 

@@ -1,7 +1,7 @@
 export interface WS2811Options {
-  gnd: number;
+  gnd?: number;
   vcc?: number;
-  din?: number;
+  din: number;
 }
 
 export interface WS2811 {

@@ -1,6 +1,7 @@
 export interface RN42Options {
   tx: number;
   rx: number;
+  gnd?: number;
 }
 
 export type RN42Config_Mode =

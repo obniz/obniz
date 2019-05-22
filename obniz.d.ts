@@ -169,7 +169,7 @@ interface Obniz {
   wired(name: 'PaPIRsVZ', options: PaPIRsVZOptions): PaPIRsVZ;
   wired(name: 'Potentiometer', options: PotentiometerOptions): Potentiometer;
   // Distance Sensor
-  wired(name: 'HCSR04', options: HCSR04Options): HCSR04;
+  wired(name: 'HC-SR04', options: HCSR04Options): HCSR04;
   wired(name: 'GP2Y0A21YK0F', options: GP2Y0A21YK0FOptions): GP2Y0A21YK0F;
   // GPS
   wired(name: 'GYSFDMAXB', options: GYSFDMAXBOptions): GYSFDMAXB;

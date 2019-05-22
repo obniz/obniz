@@ -1,13 +1,13 @@
 export interface PCA9685Options {
-  gnd: number;
-  vcc: number;
-  oe: number;
-  scl: number;
-  sda: number;
-  i2c: any; // TODO: i2c object
-  enabled: boolean;
-  address: number;
-  drive: string;
+  gnd?: number;
+  vcc?: number;
+  oe?: number;
+  scl?: number;
+  sda?: number;
+  i2c?: any; // TODO: i2c object
+  enabled?: boolean;
+  address?: number;
+  drive?: string;
 }
 
 export interface PCA9685 {
