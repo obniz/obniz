@@ -15,5 +15,5 @@ export interface SNx4HC595 {
   output(io: number, value: boolean): void;
   onece(func: () => void): void;
   getIO(io: number): any;
-  setEnable(enabled: boolean): boid;
+  setEnable(enabled: boolean): void;
 }

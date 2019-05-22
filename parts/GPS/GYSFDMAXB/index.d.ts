@@ -15,7 +15,7 @@ export interface GYSFDMAXBEditedData {
   GPRMC: any;
   GPVTG: any;
   GPZDA: any;
-  [key: string]: string;
+  [key: string]: any;
   timestamp: Date;
 }
 
