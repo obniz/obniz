@@ -53,6 +53,12 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
+// Memory
+import { _24LC256, _24LC256Options } from './parts/Memory/24LC256';
+// GyroSensor
+import { ENC03R_Module, ENC03R_ModuleOptions } from './parts/GyroSensor/ENC03R_Module';
+// PressureSensor
+import { FSR40X, FSR40XOptions } from './parts/PressureSensor/FSR-40X';
 // Distance Sensor
 import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A21YK0F';
 import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
@@ -168,6 +174,12 @@ interface Obniz {
   wired(name: 'KXSC7-2050', options: KXSC7_2050Options): KXSC7_2050;
   wired(name: 'PaPIRsVZ', options: PaPIRsVZOptions): PaPIRsVZ;
   wired(name: 'Potentiometer', options: PotentiometerOptions): Potentiometer;
+  // Memory
+  wired(name: '24LC256', options: _24LC256Options): _24LC256;
+  // GyroSensor
+  wired(name: 'ENC03R_Module', options: ENC03R_ModuleOptions): ENC03R_Module;
+  // PressureSensor
+  wired(name: 'FSR40X', options: FSR40XOptions): FSR40X;
   // Distance Sensor
   wired(name: 'HC-SR04', options: HCSR04Options): HCSR04;
   wired(name: 'GP2Y0A21YK0F', options: GP2Y0A21YK0FOptions): GP2Y0A21YK0F;
