@@ -2,6 +2,8 @@
 
 リモコンで使われる赤外線の信号を検出します。
 
+![](./image.jpg)
+
 
 ## wired(obniz, {output [vcc, gnd]})
 

@@ -1,7 +1,7 @@
 # Temperature Sensor - SHT31
 Temperature and Humidity sensor SHT31
 
-![](./sht31.jpg)
+![](./image.jpg)
 
 ## wired(obniz,  {vcc , sda, scl, adr, gnd, addressmode} )
 the address of SHT31 can be choosed from 0x44,0x45.

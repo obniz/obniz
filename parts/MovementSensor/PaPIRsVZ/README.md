@@ -3,14 +3,12 @@
 Panasonic's PIR sensor. It is used tot detects humans/animals.
 This sensor include filters. So Easy to separate signal from noises.
 
-![](./papirsvzwire.jpg)
+![](./image.jpg)
 
 
 ## wired(obniz, [signal [,vcc, gnd]])
 
 It has three pins. Connect them to an obniz directly.
-
-![](./papirsvzpins.jpg)
 
 ```Javascript
 // Javascript Example

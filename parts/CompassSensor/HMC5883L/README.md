@@ -4,6 +4,8 @@ TRIPLE-AXIS magnetometer (compass)
 
 Calibration is important to get correct direction.
 
+![](./image.jpg)
+
 [Datasheet](http://www.farnell.com/datasheets/1683374.pdf)
 
 

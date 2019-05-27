@@ -3,14 +3,12 @@
 パナソニックの PIR センサーです。人や動物が近くにいるかを検出できます。
 フィルター回路内蔵なので、ノイズに強いのが特徴です。
 
-![](./papirsvzwire.jpg)
+![](./image.jpg)
 
 
 ## wired(obniz, [signal [,vcc, gnd]])
 
-３つのピンがあります。直接obnizに接続して下さい。
-
-![](./papirsvzpins.jpg)
+３つのピンがあります。それぞれを直接obnizに接続して下さい。
 
 ```Javascript
 // Javascript Example

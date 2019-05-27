@@ -3,7 +3,8 @@
 X and Y direction with Push Switch Joystick.
 This class accept only analog output.
 
-![](./joystick.jpg)
+
+![](./image.jpg)
 
 ## wired(obniz, {sw, x, y, vcc, gnd})
 

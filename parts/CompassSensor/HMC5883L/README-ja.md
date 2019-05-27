@@ -2,6 +2,8 @@
 3軸地磁気センサです。取得した値から方位を知ることができます。
 コンパスとして使うには、キャリブレーションが必要です。
 
+![](./image.jpg)
+
 [Datasheet](http://www.farnell.com/datasheets/1683374.pdf)
 
 

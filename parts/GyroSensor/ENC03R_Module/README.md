@@ -3,7 +3,7 @@
 Gyrosensor ENC03R Module.
 It detect "Rotation Speed".
 
-![](./enc03r.jpg)
+![](./image.jpg)
 
 
 ## wired

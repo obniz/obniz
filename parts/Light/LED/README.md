@@ -3,11 +3,14 @@ LED bright by supplying voltage.
 It has two pins anode and cathode.
 connect anode to plus and cathode to minus then it bright.
 anode is a little bit longer than cathode.
-![](./led.jpg)
+
+![](./image.jpg)
 
 ## obniz.wired("LED", {anode, cathode})
 anode is loger leg.
 specify obniz io numbers you connected LED.
+
+You need a resistor if you are not using a resistor embeded LED.
 
 ![](./wired.png)
 

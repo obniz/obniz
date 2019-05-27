@@ -2,6 +2,8 @@
 
 アナログのフルカラーLEDです。３色のLEDが１つのLEDになっているものです。
 
+![](./image.jpg)
+
 ![](./animation.gif)
 
 

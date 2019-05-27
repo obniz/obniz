@@ -2,6 +2,8 @@
 Wireless network Module.
 P2P or broadcasting communication with some Xbee modules are you can use.
 
+![](./image.jpg)
+
 ## obniz.wired(obniz, {tx, rx})
 
 Wiring obniz and XBee. XBee also need VCC(3.3V) and GND.

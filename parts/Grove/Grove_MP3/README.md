@@ -4,7 +4,6 @@ It can play mp3 file inside a SD card.
 This library can drive Grove MP3 V2.0.
 
 ![](./image.jpg)
-![](./image2.jpg)
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cCRMpeUk9HM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 

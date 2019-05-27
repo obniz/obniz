@@ -1,6 +1,8 @@
 # S11059
 Color Sensor S11059-02DT.
 
+![](./image.jpg)
+
 ![](./demo.gif)
 
 ## wired(obniz,  { vcc, sda, scl, gnd});

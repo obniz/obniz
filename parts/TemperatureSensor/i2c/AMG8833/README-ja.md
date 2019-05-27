@@ -3,12 +3,12 @@
 測定範囲は0~80℃です。
 8x8画素で温度分布を測定することができます。
 
-![](./gif.gif)
+![](./image.jpg)
 
 いくつかのメーカーからAMG8833を使ったモジュールが発売されています。
-以下はAdafruitの出しているモジュールの写真です。
+上の写真はAdafruitの出しているモジュールの写真です。
 
-![](./image.jpg)
+![](./gif.gif)
 
 
 ## wired(obniz,  {[vin, gnd, sda, scl, address]} )

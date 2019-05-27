@@ -1,6 +1,7 @@
 # 2JCIE
 OMRON社製の環境センサです
-![](./sensor.JPG)
+
+![](./image.jpg)
 
 
 ## wired(obniz)

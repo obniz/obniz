@@ -1,7 +1,7 @@
 # Grove_EarHeartRate
 Grove - Ear-clip Heart Rate Sensor
 
-![](./heartrate.jpg)
+![](./image.jpg)
 
 Stores
 

@@ -2,6 +2,8 @@
 BluetoothClassic Module.
 SPP and HID profile can be used.
 
+![](./image.jpg)
+
 ## wired(obniz, {tx, rx})
 RN42 require 3.3v supply. You should supply stable 3.3v to RN42.
 

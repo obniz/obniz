@@ -2,11 +2,11 @@
 Infrared Distance Measurement Unit.
 This unit output voltage regarding measured distance.
 
+![photo of wired](./image.jpg)
+
 ![photo of wired](./image.gif)
 
 ## wired(obniz, {vcc, gnd, signal})
-
-![photo of wired](./image.jpg)
 
 ![photo of wired](./wired.png)
 
