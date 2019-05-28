@@ -11,9 +11,9 @@ export interface PCA9685Options {
 }
 
 export interface PCA9685 {
-  getPWM(num: number): void;
+  getPWM(num: number): any;
   freq(frequency: number): void;
   duty(index: number, duty: number): void;
   pulse(index: number, pulse_width: number): void;
-  setEnable(enabled: number): void;
+  setEnable(enabled: boolean): void;
 }

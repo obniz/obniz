@@ -5,6 +5,11 @@ export interface IRSensorOptions {
 }
 
 export interface IRSensor {
+  dataSymbolLength: number;
+  duration: number;
+  dataInverted: boolean;
+  cutTail: boolean;
+  output_pullup: boolean;
   ondetect: (array: number[]) => void;
-  start(callback: (array: number[]) => void): void;
+  start(callback?: (array: number[]) => void): void;
 }

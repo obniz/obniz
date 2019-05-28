@@ -155,8 +155,9 @@ export interface PresetColor {
 }
 
 export interface SainSmartTFT18LCD {
-  readonly witdh: number;
+  readonly width: number;
   readonly height: number;
+  readonly color: PresetColor;
   color16(r: number, g: number, b: number): RGB16;
   fillScreen(color: RGB16): void;
   drawRect(x: number, y: number, width: number, height: number, color: RGB16): void;
@@ -190,7 +191,7 @@ export interface SainSmartTFT18LCD {
     y1: number,
     gray: boolean
   ): void;
-  drawContext(context: any, gray: boolean): void;
+  drawContext(context: CanvasRenderingContext2D, gray: boolean): void;
   setRotation(dir: number): void;
   setInversionOn(): void;
   setInversionOff(): void;

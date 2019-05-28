@@ -17,12 +17,12 @@ export type RN42Config_Auth = 'open' | 'ssp-keyboard' | 'just-work' | 'pincode';
 export type RN43Config_Power = 16 | 12 | 8 | 4 | 0 | -4 | -8;
 
 export interface RN42Config {
-  display_name: string;
-  master_slave: RN42Config_Mode;
-  profile: RN42Config_Profile;
-  auth: RN42Config_Auth;
-  power: RN43Config_Power;
-  hid_flag: any;
+  display_name?: string;
+  master_slave?: RN42Config_Mode;
+  profile?: RN42Config_Profile;
+  auth?: RN42Config_Auth;
+  power?: RN43Config_Power;
+  hid_flag?: any;
 }
 
 export interface RN42 {

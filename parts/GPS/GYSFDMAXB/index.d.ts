@@ -21,7 +21,7 @@ export interface GYSFDMAXBEditedData {
 
 export interface GYSFDMAXB {
   start1pps(callback: () => void): void;
-  getGpsInfo(editedData?: GYSFDMAXBEditedData): void;
+  getGpsInfo(editedData?: GYSFDMAXBEditedData): any;
   readSentence(): any;
   getEditedData(): GYSFDMAXBEditedData;
   nmea2dms(value: any): string;

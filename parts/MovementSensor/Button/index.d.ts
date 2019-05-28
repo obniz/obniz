@@ -6,5 +6,5 @@ export interface ButtonOptions {
 export interface Button {
   onchange: (pressed: boolean) => void;
   isPressedWait(): Promise<boolean>;
-  stateWait(pressed: true): Promise<void>;
+  stateWait(pressed: boolean): Promise<void>;
 }

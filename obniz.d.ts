@@ -309,106 +309,29 @@ interface Obniz {
   connectionState: ConnectionState;
   debugprint: boolean;
   display: Display;
+  util: any;
+  io0: any;
+  io1: any;
+  io2: any;
+  io3: any;
+  io4: any;
+  io5: any;
+  io6: any;
+  io7: any;
+  io8: any;
+  io9: any;
+  io10: any;
+  io11: any;
 
   connect(): void;
   connectWait(options?: ConnectOptions): Promise<boolean>;
   close(): void;
+  getFreePwm(): any;
+  getFreeI2C(): any;
   resetOnDisconnect(reset: boolean): void;
+  wait(time: number): Promise<void>;
 
-  // Light
-  wired(name: 'LED', options: LEDOptions): LED;
-  wired(name: 'FullColorLED', options: FullColorLEDOptions): FullColorLED;
-  wired(name: 'WS2811', options: WS2811Options): WS2811;
-  wired(name: 'WS2812', options: WS2812Options): WS2812;
-  wired(name: 'WS2812B', options: WS2812BOptions): WS2812B;
-  // Infrared
-  wired(name: 'InfraredLED', options: InfraredLEDOptions): InfraredLED;
-  wired(name: 'IRSensor', options: IRSensorOptions): IRSensor;
-  wired(name: 'IRModule', options: IRModuleOptions): IRModule;
-  // Display
-  wired(name: '7SegmentLED', options: _7SegmentLEDOptions): _7SegmentLED;
-  wired(name: '7SegmentLEDArray', options: _7SegmentLEDArrayOptions): _7SegmentLEDArray;
-  wired(name: '7SegmentLED_MAX7219', options: _7SegmentLED_MAX7219Options): _7SegmentLED_MAX7219;
-  wired(name: 'MatrixLED_MAX7219', options: MatrixLED_MAX7219Options): MatrixLED_MAX7219;
-  wired(name: 'SainSmartTFT18LCD', options: SainSmartTFT18LCDOptions): SainSmartTFT18LCD;
-  wired(name: 'SharpMemoryTFT', options: SharpMemoryTFTOptions): SharpMemoryTFT;
-  // Camera
-  wired(name: 'ArduCAMMini', options: ArduCAMMiniOptions): ArduCAMMini;
-  wired(name: 'JpegSerialCam', options: JpegSerialCamOptions): JpegSerialCam;
-  // Moving
-  wired(name: 'DCMotor', options: DCMotorOptions): DCMotor;
-  wired(name: 'PCA9685', options: PCA9685Options): PCA9685;
-  wired(name: 'ServoMotor', options: ServoMotorOptions): ServoMotor;
-  wired(name: 'Solenoid', options: SolenoidOptions): Solenoid;
-  wired(name: 'StepperMotor', options: StepperMotorOptions): StepperMotor;
-  // Sound
-  wired(name: 'Speaker', options: SpeakerOptions): Speaker;
-  // GasSensor
-  wired(name: 'MQ2', options: MQ2Options): MQ2;
-  wired(name: 'MQ3', options: MQ3Options): MQ3;
-  wired(name: 'MQ4', options: MQ4Options): MQ4;
-  wired(name: 'MQ5', options: MQ5Options): MQ5;
-  wired(name: 'MQ6', options: MQ6Options): MQ6;
-  wired(name: 'MQ7', options: MQ7Options): MQ7;
-  wired(name: 'MQ8', options: MQ8Options): MQ8;
-  wired(name: 'MQ9', options: MQ9Options): MQ9;
-  wired(name: 'MQ135', options: MQ135Options): MQ135;
-  // Logic
-  wired(name: 'SNx4HC595', options: SNx4HC595Options): SNx4HC595;
-  // Accessory
-  wired(name: 'USB', options: USBOptions): USB;
-  // Wireless
-  wired(name: 'RN42', options: RN42Options): RN42;
-  wired(name: 'XBee', options: XBeeOptions): XBee;
-  // Movement Sensor
-  wired(name: 'Button', options: ButtonOptions): Button;
-  // wired(name: 'FlickHat', options: FlickHatOptions): FlickHat;
-  wired(name: 'HC-SR505', options: HCSR505Options): HCSR505;
-  wired(name: 'JoyStick', options: JoyStickOptions): JoyStick;
-  wired(name: 'KXR94-2050', options: KXR94_2050Options): KXR94_2050;
-  // wired(name: 'KXSC7-2050', options: KXSC7_2050Options): KXSC7_2050;
-  wired(name: 'PaPIRsVZ', options: PaPIRsVZOptions): PaPIRsVZ;
-  wired(name: 'Potentiometer', options: PotentiometerOptions): Potentiometer;
-  // Memory
-  // wired(name: '24LC256', options: _24LC256Options): _24LC256;
-  // GyroSensor
-  wired(name: 'ENC03R_Module', options: ENC03R_ModuleOptions): ENC03R_Module;
-  // PressureSensor
-  wired(name: 'FSR40X', options: FSR40XOptions): FSR40X;
-  // Distance Sensor
-  wired(name: 'HC-SR04', options: HCSR04Options): HCSR04;
-  wired(name: 'GP2Y0A21YK0F', options: GP2Y0A21YK0FOptions): GP2Y0A21YK0F;
-  // GPS
-  wired(name: 'GYSFDMAXB', options: GYSFDMAXBOptions): GYSFDMAXB;
-  // CompassSensor
-  wired(name: 'HMC5883L', options: HMC5883LOptions): HMC5883L;
-  // ADConverter
-  wired(name: 'hx711', options: HX711Options): HX711;
-  // SoilSensor
-  wired(name: 'SEN0114', options: SEN0114Options): SEN0114;
-  // Temperature Sensor
-  wired(name: 'LM35DZ', options: LM35DZOptions): LM35DZ;
-  wired(name: 'LM60', options: LM60Options): LM60;
-  wired(name: 'LM61', options: LM61Options): LM61;
-  wired(name: 'LMT87', options: LMT87Options): LMT87;
-  wired(name: 'MCP9700', options: MCP9700Options): MCP9700;
-  wired(name: 'MCP9701', options: MCP9701Options): MCP9701;
-  // wired(name: 'S8100B', options: S8100BOptions): S8100B;
-  // wired(name: 'S8120C', options: S8120COptions): S8120C;
-  // wired(name: 'ADT7410', options: ADT7410Options): ADT7410;
-  wired(name: 'AMG8833', options: AMG8833Options): AMG8833;
-  wired(name: 'BME280', options: BME280Options): BME280;
-  wired(name: 'D6T44L', options: D6T44LOptions): D6T44L;
-  // wired(name: 'S5851A', options: S5851AOptions): S5851A;
-  wired(name: 'SHT31', options: SHT31Options): SHT31;
-  // wired(name: 'ADT7310', options: ADT7310Options): ADT7310;
-  // ColorSensor
-  wired(name: 'S11059', options: S11059Options): S11059;
-  // Grove
-  wired(name: 'Grove_EarHeartRate', options: Grove_EarHeartRateOptions): Grove_EarHeartRate;
-  wired(name: 'Grove_MP3', options: Grove_MP3Options): Grove_MP3;
-  // Ble
-  wired(name: '2JCIE'): OMRON_2JCIE;
+  wired<K extends keyof WiredNameMap>(name: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K];
 }
 
 interface ObnizConstructor {

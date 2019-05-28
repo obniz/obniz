@@ -11,6 +11,9 @@ export interface StepperMotor {
   currentStep: number;
   rotationStepCount: number;
   milliMeterStepCount: number;
+  currentRotation(): number;
+  currentAngle(): number;
+  currentDistance(): number;
   stepType(type: StepType): void;
   speed(frequency: number): void;
   stepWait(step: number): Promise<void>;

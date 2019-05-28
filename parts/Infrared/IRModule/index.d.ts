@@ -6,8 +6,12 @@ export interface IRModuleOptions {
 }
 
 export interface IRModule {
-  ondetect: (array: number[]) => void;
   dataSymbolLength: number;
-  start(callback: (array: number[]) => void): void;
+  duration: number;
+  dataInverted: boolean;
+  cutTail: boolean;
+  output_pullup: boolean;
+  ondetect: (array: number[]) => void;
+  start(callback?: (array: number[]) => void): void;
   send(array: number[]): void;
 }

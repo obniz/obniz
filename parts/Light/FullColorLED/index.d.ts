@@ -3,7 +3,7 @@ export interface FullColorLEDOptions {
   g: number;
   b: number;
   common: number;
-  common_type: string;
+  commonType: string;
 }
 
 export interface FullColorLED {

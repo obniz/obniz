@@ -8,8 +8,8 @@ export interface HX711Options {
 export interface HX711 {
   offset: number;
   scale: number;
-  getValueWait(times: number): Promise<number>;
-  zeroAdjust(times: number): void;
+  getValueWait(times?: number): Promise<number>;
+  zeroAdjust(times?: number): void;
   powerDown(): void;
   powerUp(): void;
 }
