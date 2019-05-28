@@ -1,4 +1,4 @@
-import * as Obniz from '../';
+import * as Obniz from '../../obniz';
 
 const OBNIZ_ID = '1234-5678';
 
@@ -71,38 +71,27 @@ class DisplayTest {
   }
   draw() {
     const obniz = new Obniz(OBNIZ_ID);
-    const canvas = document.createElement('canvas');
-    obniz.display.draw(canvas);
-  }
-}
+    obniz.onconnect = async () => {
+      // 1. load existing
+      const canvas1 = document.getElementById('canvas') as HTMLCanvasElement;
+      const ctx1 = canvas1.getContext('2d');
+      obniz.display.draw(ctx1);
 
-/**
- * https://obniz.io/ja/sdk/parts/LED/README.md
- */
-class LEDTest {
-  led() {
-    const obniz = new Obniz(OBNIZ_ID);
-    var led = obniz.wired('LED', { anode: 0 }); // io0 is anode. cathode is connected obniz GND other way.
-    led.on();
-  }
-  on() {
-    const obniz = new Obniz(OBNIZ_ID);
-    var led = obniz.wired('LED', { anode: 0, cathode: 1 });
-    led.on();
-  }
-  off() {
-    const obniz = new Obniz(OBNIZ_ID);
-    var led = obniz.wired('LED', { anode: 0, cathode: 1 });
-    led.output(true);
-  }
-  blink() {
-    const obniz = new Obniz(OBNIZ_ID);
-    var led = obniz.wired('LED', { anode: 0, cathode: 1 });
-    led.blink(); // 100msec
-  }
-  endBlick() {
-    const obniz = new Obniz(OBNIZ_ID);
-    var led = obniz.wired('LED', { anode: 0, cathode: 1 });
-    led.endBlink();
+      // 2. create new canvas dom and load it.
+      const ctx2 = obniz.util.createCanvasContext(obniz.display.width, obniz.display.height);
+      obniz.display.draw(ctx2);
+
+      // 3. running with node.js
+      //    npm install canvas. ( version 2.0.0 or later required )
+      const { createCanvas } = require('canvas');
+      const canvas = createCanvas(128, 64);
+      const ctx3 = canvas.getContext('2d');
+
+      ctx3.fillStyle = 'white';
+      ctx3.font = '30px Avenir';
+      ctx3.fillText('Avenir', 0, 40);
+
+      obniz.display.draw(ctx3);
+    };
   }
 }

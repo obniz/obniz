@@ -94,6 +94,201 @@ import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
 
+interface WiredNameMap {
+  // Light
+  'LED': LED;
+  'FullColorLED': FullColorLED;
+  'WS2811': WS2811;
+  'WS2812': WS2812;
+  'WS2812B': WS2812B;
+  // Infrared
+  'InfraredLED': InfraredLED;
+  'IRSensor': IRSensor;
+  'IRModule': IRModule;
+  // Display
+  '7SegmentLED': _7SegmentLED;
+  '7SegmentLEDArray': _7SegmentLEDArray;
+  '7SegmentLED_MAX7219': _7SegmentLED_MAX7219;
+  'MatrixLED_MAX7219': MatrixLED_MAX7219;
+  'SainSmartTFT18LCD': SainSmartTFT18LCD;
+  'SharpMemoryTFT': SharpMemoryTFT;
+  // Camera
+  'ArduCAMMini': ArduCAMMini;
+  'JpegSerialCam': JpegSerialCam;
+  // Moving
+  'DCMotor': DCMotor;
+  'PCA9685': PCA9685;
+  'ServoMotor': ServoMotor;
+  'Solenoid': Solenoid;
+  'StepperMotor': StepperMotor;
+  // Sound
+  'Speaker': Speaker;
+  // GasSensor
+  'MQ2': MQ2;
+  'MQ3': MQ3;
+  'MQ4': MQ4;
+  'MQ5': MQ5;
+  'MQ6': MQ6;
+  'MQ7': MQ7;
+  'MQ8': MQ8;
+  'MQ9': MQ9;
+  'MQ135': MQ135;
+  // Logic
+  'SNx4HC595': SNx4HC595;
+  // Accessory
+  'USB': USB;
+  // Wireless
+  'RN42': RN42;
+  'XBee': XBee;
+  // Movement Sensor
+  'Button': Button;
+  // 'FlickHat': FlickHat;
+  'HC-SR505': HCSR505;
+  'JoyStick': JoyStick;
+  'KXR94-2050': KXR94_2050;
+  // 'KXSC7-2050': KXSC7_2050;
+  'PaPIRsVZ': PaPIRsVZ;
+  'Potentiometer': Potentiometer;
+  // Memory
+  // '24LC256': _24LC256;
+  // GyroSensor
+  'ENC03R_Module': ENC03R_Module;
+  // PressureSensor
+  'FSR40X': FSR40X;
+  // Distance Sensor
+  'HC-SR04': HCSR04;
+  'GP2Y0A21YK0F': GP2Y0A21YK0F;
+  // GPS
+  'GYSFDMAXB': GYSFDMAXB;
+  // CompassSensor
+  'HMC5883L': HMC5883L;
+  // ADConverter
+  'hx711': HX711;
+  // SoilSensor
+  'SEN0114': SEN0114;
+  // Temperature Sensor
+  'LM35DZ': LM35DZ;
+  'LM60': LM60;
+  'LM61': LM61;
+  'LMT87': LMT87;
+  'MCP9700': MCP9700;
+  'MCP9701': MCP9701;
+  // 'S8100B': S8100B;
+  // 'S8120C': S8120C;
+  // 'ADT7410': ADT7410;
+  'AMG8833': AMG8833;
+  'BME280': BME280;
+  'D6T44L': D6T44L;
+  // 'S5851A': S5851A;
+  'SHT31': SHT31;
+  'ADT7310': ADT7310;
+  // ColorSensor
+  'S11059': S11059;
+  // Grove
+  'Grove_EarHeartRate': Grove_EarHeartRate;
+  'Grove_MP3': Grove_MP3;
+  // Ble
+  '2JCIE': OMRON_2JCIE;
+}
+
+// TODO: この二重管理をなんとかしたい
+interface WiredNameOptionsMap {
+  // Light
+  'LED': LEDOptions;
+  'FullColorLED': FullColorLEDOptions;
+  'WS2811': WS2811Options;
+  'WS2812': WS2812Options;
+  'WS2812B': WS2812BOptions;
+  // Infrared
+  'InfraredLED': InfraredLEDOptions;
+  'IRSensor': IRSensorOptions;
+  'IRModule': IRModuleOptions;
+  // Display
+  '7SegmentLED': _7SegmentLEDOptions;
+  '7SegmentLEDArray': _7SegmentLEDArrayOptions;
+  '7SegmentLED_MAX7219': _7SegmentLED_MAX7219Options;
+  'MatrixLED_MAX7219': MatrixLED_MAX7219Options;
+  'SainSmartTFT18LCD': SainSmartTFT18LCDOptions;
+  'SharpMemoryTFT': SharpMemoryTFTOptions;
+  // Camera
+  'ArduCAMMini': ArduCAMMiniOptions;
+  'JpegSerialCam': JpegSerialCamOptions;
+  // Moving
+  'DCMotor': DCMotorOptions;
+  'PCA9685': PCA9685Options;
+  'ServoMotor': ServoMotorOptions;
+  'Solenoid': SolenoidOptions;
+  'StepperMotor': StepperMotorOptions;
+  // Sound
+  'Speaker': SpeakerOptions;
+  // GasSensor
+  'MQ2': MQ2Options;
+  'MQ3': MQ3Options;
+  'MQ4': MQ4Options;
+  'MQ5': MQ5Options;
+  'MQ6': MQ6Options;
+  'MQ7': MQ7Options;
+  'MQ8': MQ8Options;
+  'MQ9': MQ9Options;
+  'MQ135': MQ135Options;
+  // Logic
+  'SNx4HC595': SNx4HC595Options;
+  // Accessory
+  'USB': USBOptions;
+  // Wireless
+  'RN42': RN42Options;
+  'XBee': XBeeOptions;
+  // Movement Sensor
+  'Button': ButtonOptions;
+  // 'FlickHat': FlickHatOptions;
+  'HC-SR505': HCSR505Options;
+  'JoyStick': JoyStickOptions;
+  'KXR94-2050': KXR94_2050Options;
+  // 'KXSC7-2050': KXSC7_2050Options;
+  'PaPIRsVZ': PaPIRsVZOptions;
+  'Potentiometer': PotentiometerOptions;
+  // Memory
+  // '24LC256': _24LC256Options;
+  // GyroSensor
+  'ENC03R_Module': ENC03R_ModuleOptions;
+  // PressureSensor
+  'FSR40X': FSR40XOptions;
+  // Distance Sensor
+  'HC-SR04': HCSR04Options;
+  'GP2Y0A21YK0F': GP2Y0A21YK0FOptions;
+  // GPS
+  'GYSFDMAXB': GYSFDMAXBOptions;
+  // CompassSensor
+  'HMC5883L': HMC5883LOptions;
+  // ADConverter
+  'hx711': HX711Options;
+  // SoilSensor
+  'SEN0114': SEN0114Options;
+  // Temperature Sensor
+  'LM35DZ': LM35DZOptions;
+  'LM60': LM60Options;
+  'LM61': LM61Options;
+  'LMT87': LMT87Options;
+  'MCP9700': MCP9700Options;
+  'MCP9701': MCP9701Options;
+  // 'S8100B': S8100BOptions;
+  // 'S8120C': S8120COptions;
+  // 'ADT7410': ADT7410Options;
+  'AMG8833': AMG8833Options;
+  'BME280': BME280Options;
+  'D6T44L': D6T44LOptions;
+  // 'S5851A': S5851AOptions;
+  'SHT31': SHT31Options;
+  'ADT7310': ADT7310Options;
+  // ColorSensor
+  'S11059': S11059Options;
+  // Grove
+  'Grove_EarHeartRate': Grove_EarHeartRateOptions;
+  'Grove_MP3': Grove_MP3Options;
+  // Ble
+  '2JCIE': OMRON_2JCIEOptions;
+}
+
 interface ObnizOptions {
   binary?: boolean;
   local_connect?: boolean;
