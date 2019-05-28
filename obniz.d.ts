@@ -306,10 +306,24 @@ type ConnectionState = 'closed' | 'connecting' | 'connected' | 'closing';
 interface Obniz {
   onconnect: () => Promise<void>;
   onclose: () => Promise<void>;
+  wired<K extends keyof WiredNameMap>(name: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K];
+
+  // connect
   connectionState: ConnectionState;
   debugprint: boolean;
-  display: Display;
+  connect(): void;
+  connectWait(options?: ConnectOptions): Promise<boolean>;
+  close(): void;
+  resetOnDisconnect(reset: boolean): void;
+
+  // utils
   util: any;
+  reset(): void;
+  repeat(callback: () => void): void;
+  wait(time: number): Promise<void>;
+  keepWorkingAtOffline(working: boolean): void;
+
+  // io
   io0: any;
   io1: any;
   io2: any;
@@ -323,15 +337,57 @@ interface Obniz {
   io10: any;
   io11: any;
 
-  connect(): void;
-  connectWait(options?: ConnectOptions): Promise<boolean>;
-  close(): void;
-  getFreePwm(): any;
-  getFreeI2C(): any;
-  resetOnDisconnect(reset: boolean): void;
-  wait(time: number): Promise<void>;
+  // ad
+  ad0: any;
+  ad1: any;
+  ad2: any;
+  ad3: any;
+  ad4: any;
+  ad5: any;
+  ad6: any;
+  ad7: any;
+  ad8: any;
+  ad9: any;
+  ad10: any;
+  ad11: any;
 
-  wired<K extends keyof WiredNameMap>(name: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K];
+  // pwm
+  getFreePwm(): any;
+  pwm0: any;
+  pwm1: any;
+  pwm2: any;
+  pwm3: any;
+  pwm4: any;
+  pwm5: any;
+
+  // uart
+  getFreeUart(): any;
+  uart0: any;
+  uart1: any;
+
+  // spi
+  getFreeSpi(): any;
+  spi0: any;
+  spi1: any;
+
+  // i2c
+  getFreeI2C(): any;
+  i2c0: any;
+
+  // LogicAnalyzer
+  logicAnalyzer: any;
+
+  // measure
+  measure: any;
+
+  // display
+  display: Display;
+
+  // switch
+  switch: any;
+
+  // ble
+  ble: any;
 }
 
 interface ObnizConstructor {
