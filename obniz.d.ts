@@ -1,4 +1,10 @@
 import { Display } from './obniz/libs/embeds/display';
+import { AD } from './obniz/libs/io_peripherals/ad';
+import { I2C } from './obniz/libs/io_peripherals/i2c';
+import { IO } from './obniz/libs/io_peripherals/io';
+import { PWM } from './obniz/libs/io_peripherals/pwm';
+import { SPI } from './obniz/libs/io_peripherals/spi';
+import { UART } from './obniz/libs/io_peripherals/uart';
 // Light
 import { LED, LEDOptions } from './parts/Light/LED';
 import { FullColorLED, FullColorLEDOptions } from './parts/Light/FullColorLED';
@@ -324,55 +330,56 @@ interface Obniz {
   keepWorkingAtOffline(working: boolean): void;
 
   // io
-  io0: any;
-  io1: any;
-  io2: any;
-  io3: any;
-  io4: any;
-  io5: any;
-  io6: any;
-  io7: any;
-  io8: any;
-  io9: any;
-  io10: any;
-  io11: any;
+  io: any;
+  io0: IO;
+  io1: IO;
+  io2: IO;
+  io3: IO;
+  io4: IO;
+  io5: IO;
+  io6: IO;
+  io7: IO;
+  io8: IO;
+  io9: IO;
+  io10: IO;
+  io11: IO;
 
   // ad
-  ad0: any;
-  ad1: any;
-  ad2: any;
-  ad3: any;
-  ad4: any;
-  ad5: any;
-  ad6: any;
-  ad7: any;
-  ad8: any;
-  ad9: any;
-  ad10: any;
-  ad11: any;
+  ad0: AD;
+  ad1: AD;
+  ad2: AD;
+  ad3: AD;
+  ad4: AD;
+  ad5: AD;
+  ad6: AD;
+  ad7: AD;
+  ad8: AD;
+  ad9: AD;
+  ad10: AD;
+  ad11: AD;
 
   // pwm
-  getFreePwm(): any;
-  pwm0: any;
-  pwm1: any;
-  pwm2: any;
-  pwm3: any;
-  pwm4: any;
-  pwm5: any;
+  getFreePwm(): PWM;
+  pwm0: PWM;
+  pwm1: PWM;
+  pwm2: PWM;
+  pwm3: PWM;
+  pwm4: PWM;
+  pwm5: PWM;
 
   // uart
-  getFreeUart(): any;
-  uart0: any;
-  uart1: any;
+  getFreeUart(): UART;
+  uart0: UART;
+  uart1: UART;
 
   // spi
-  getFreeSpi(): any;
-  spi0: any;
-  spi1: any;
+  getFreeSpi(): SPI;
+  spi0: SPI;
+  spi1: SPI;
 
   // i2c
-  getFreeI2C(): any;
-  i2c0: any;
+  getFreeI2C(): I2C;
+  i2c0: I2C;
 
   // LogicAnalyzer
   logicAnalyzer: any;

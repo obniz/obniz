@@ -12,8 +12,8 @@ export interface UART {
     bits?: BitType;
     parity?: ParityType;
     flowcontrol?: FlowControlType;
-    rts: number;
-    cts: number;
+    rts?: number;
+    cts?: number;
     drive?: DriveType;
     pull?: PullType;
   }): void;

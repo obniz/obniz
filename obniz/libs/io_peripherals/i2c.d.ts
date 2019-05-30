@@ -8,7 +8,7 @@ export interface I2C {
     mode: 'master' | 'slave';
     sda: number;
     scl: number;
-    clock: number;
+    clock?: number;
     pull?: PullType;
     gnd?: number;
     slave_address?: any;
