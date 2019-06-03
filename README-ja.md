@@ -53,6 +53,23 @@
 </html>
 ```
 
+## TypeScript
+
+```typescript
+import * as Obniz from 'obniz'
+
+const obniz = new Obniz("0000-0000");
+obniz.onconnect = async () => {
+
+  obniz.display.print("hello!");
+  obniz.switch.onchange = (state: string) => {
+    console.log(state);
+  }
+  const servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
+  servo.angle(90);
+}
+```
+
 ## インストール
 
 ### ブラウザ
