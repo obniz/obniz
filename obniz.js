@@ -24717,7 +24717,7 @@ class LED {
     this.obniz = obniz;
     this.io_anode = getIO(this.params.anode);
     this.io_anode.output(false);
-    if (this.params.cathode) {
+    if (this.obniz.isValidIO(this.params.cathode)) {
       this.io_cathode = getIO(this.params.cathode);
       this.io_cathode.output(false);
     }
