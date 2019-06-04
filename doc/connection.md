@@ -201,6 +201,30 @@ obniz.onconnect = async function() {
 }
 ```
 
+## hw
+
+This variable indicate connected hardware identifier of target device
+
+```javascript
+var obniz = new Obniz('1234-5678');
+obniz.debugprint = true
+obniz.onconnect = async function() {
+  console.log(obniz.hw) // ex. "obnizb1"
+}
+```
+
+## firmware_ver
+
+This variable indicate installed firmware version of target device
+
+```javascript
+var obniz = new Obniz('1234-5678');
+obniz.debugprint = true
+obniz.onconnect = async function() {
+  console.log(obniz.firmware_ver) // ex. "2.0.0"
+}
+```
+
 ## resetOnDisconnect(reset)
 
 This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.

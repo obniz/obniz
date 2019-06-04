@@ -240,6 +240,7 @@ var map = {
 	"./response/uart/index.yml": "./json_schema/response/uart/index.yml",
 	"./response/uart/receive.yml": "./json_schema/response/uart/receive.yml",
 	"./response/ws/index.yml": "./json_schema/response/ws/index.yml",
+	"./response/ws/obniz.yml": "./json_schema/response/ws/obniz.yml",
 	"./response/ws/ready.yml": "./json_schema/response/ws/ready.yml",
 	"./response/ws/redirect.yml": "./json_schema/response/ws/redirect.yml"
 };
@@ -1306,7 +1307,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./json_schema/response/ws/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","basePath":"ws","anyOf":[{"$ref":"/response/ws/ready"},{"$ref":"/response/ws/redirect"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws","basePath":"ws","anyOf":[{"$ref":"/response/ws/ready"},{"$ref":"/response/ws/obniz"},{"$ref":"/response/ws/redirect"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ws/obniz.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ws/obniz","type":"object","required":["obniz"],"properties":{"obniz":{"type":"object","required":["hw","firmware"],"additionalProperties":false,"properties":{"hw":{"type":"string"},"firmware":{"type":"string"}}}}}
 
 /***/ }),
 
@@ -7738,6 +7746,7 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
+    this.hw = undefined;
     this.firmware_ver = undefined;
     this.connectionState = 'closed'; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
@@ -8229,11 +8238,12 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
+      this.hw = wsObj.obniz.hw;
       if (this.wscommands) {
         for (let i = 0; i < this.wscommands.length; i++) {
           const command = this.wscommands[i];
           command.setHw({
-            model: 'obniz_board', // hard coding
+            hw: this.hw, // hard coding
             firmware: this.firmware_ver,
           });
         }
@@ -14447,7 +14457,7 @@ let commandClasses = {};
 module.exports = class WSCommand {
   constructor() {
     this._hw = {
-      model: undefined,
+      hw: undefined,
       firmware: undefined,
     };
 
@@ -14559,8 +14569,7 @@ module.exports = class WSCommand {
   }
 
   setHw(obj) {
-    this._hw.model = obj.model;
-    this._hw.firmware = obj.firmware;
+    this._hw = obj;
   }
 
   sendCommand(func, payload) {
