@@ -21,8 +21,6 @@ module.exports = class ObnizConnection {
 
     this._connectionRetryCount = 0;
 
-    this._prepareComponents();
-
     if (!options) {
       options = {};
     }
@@ -476,8 +474,6 @@ module.exports = class ObnizConnection {
     clearTimeout(this._sendQueueTimer);
     this._sendQueueTimer = null;
   }
-
-  _prepareComponents() {}
 
   notifyToModule(obj) {
     if (this.debugprint) {

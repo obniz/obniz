@@ -21,7 +21,6 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
   }
   reboot() {
     this.send({ system: { reboot: true } });
-    this._prepareComponents();
   }
   selfCheck() {
     this.send({ system: { self_check: true } });

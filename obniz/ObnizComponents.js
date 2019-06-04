@@ -29,34 +29,63 @@ module.exports = class ObnizComponents extends ObnizParts {
     }
   }
 
+  _callOnConnect() {
+    this._prepareComponents();
+    super._callOnConnect();
+  }
+
   _prepareComponents() {
-    this.io = new PeripheralDirective(this);
-    for (let i = 0; i < 12; i++) {
-      this['io' + i] = new PeripheralIO(this, i);
+    if (this.hw === 'obnizb1') {
+      this.io = new PeripheralDirective(this);
+      for (let i = 0; i < 12; i++) {
+        this['io' + i] = new PeripheralIO(this, i);
+      }
+      for (let i = 0; i < 12; i++) {
+        this['ad' + i] = new PeripheralAD(this, i);
+      }
+      for (let i = 0; i < 2; i++) {
+        this['uart' + i] = new PeripheralUART(this, i);
+      }
+      for (let i = 0; i < 2; i++) {
+        this['spi' + i] = new PeripheralSPI(this, i);
+      }
+      for (let i = 0; i < 1; i++) {
+        this['i2c' + i] = new PeripheralI2C(this, i);
+      }
+      for (let i = 0; i < 6; i++) {
+        this['pwm' + i] = new PeripheralPWM(this, i);
+      }
+      this.display = new Display(this);
+      this.switch = new ObnizSwitch(this);
+      this.logicAnalyzer = new LogicAnalyzer(this);
+      this.ble = new ObnizBLE(this);
+      this.measure = new ObnizMeasure(this);
+      this.util = new ObnizUtil(this);
+    } else if (this.hw === 'esp32w') {
+      this.io = new PeripheralDirective(this);
+      for (let i = 0; i < 40; i++) {
+        this['io' + i] = new PeripheralIO(this, i);
+      }
+      for (let i = 0; i < 40; i++) {
+        this['ad' + i] = new PeripheralAD(this, i);
+      }
+      for (let i = 0; i < 2; i++) {
+        this['uart' + i] = new PeripheralUART(this, i);
+      }
+      for (let i = 0; i < 2; i++) {
+        this['spi' + i] = new PeripheralSPI(this, i);
+      }
+      for (let i = 0; i < 1; i++) {
+        this['i2c' + i] = new PeripheralI2C(this, i);
+      }
+      for (let i = 0; i < 6; i++) {
+        this['pwm' + i] = new PeripheralPWM(this, i);
+      }
+      this.logicAnalyzer = new LogicAnalyzer(this);
+      this.ble = new ObnizBLE(this);
+      this.measure = new ObnizMeasure(this);
+      this.util = new ObnizUtil(this);
     }
-    for (let i = 0; i < 12; i++) {
-      this['ad' + i] = new PeripheralAD(this, i);
-    }
-    for (let i = 0; i < 2; i++) {
-      this['uart' + i] = new PeripheralUART(this, i);
-    }
-    for (let i = 0; i < 2; i++) {
-      this['spi' + i] = new PeripheralSPI(this, i);
-    }
-    for (let i = 0; i < 1; i++) {
-      this['i2c' + i] = new PeripheralI2C(this, i);
-    }
-    for (let i = 0; i < 6; i++) {
-      this['pwm' + i] = new PeripheralPWM(this, i);
-    }
-
-    this.display = new Display(this);
-    this.switch = new ObnizSwitch(this);
-    this.logicAnalyzer = new LogicAnalyzer(this);
-    this.ble = new ObnizBLE(this);
-    this.measure = new ObnizMeasure(this);
-
-    this.util = new ObnizUtil(this);
   }
 
   _resetComponents() {
