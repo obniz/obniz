@@ -7,7 +7,7 @@
           id : "pinSetting"
           type : integer
           minimum : 0
-          maximum : 11
+          maximum : 40
           default : null
           example : [0,1,2,3,4,5,6]
 
