@@ -27,7 +27,7 @@ class WSCommand_AD extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 40; i++) {
       let module = json['ad' + i];
       if (module === undefined) {
         continue;

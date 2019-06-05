@@ -13,13 +13,15 @@ const PeripheralPWM = require('./libs/io_peripherals/pwm');
 const PeripheralSPI = require('./libs/io_peripherals/spi');
 const PeripheralUART = require('./libs/io_peripherals/uart');
 
-const ObnizUtil = require('./libs/utils/util');
 const ObnizParts = require('./ObnizParts');
+
+const HW = require('./libs/hw/index');
 
 module.exports = class ObnizComponents extends ObnizParts {
   constructor(id, options) {
     super(id, options);
     this.pongObservers = [];
+    this._allComponentKeys = [];
   }
 
   close() {
@@ -35,111 +37,85 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   _prepareComponents() {
-    if (this.hw === 'obnizb1') {
-      this.io = new PeripheralDirective(this);
-      for (let i = 0; i < 12; i++) {
-        this['io' + i] = new PeripheralIO(this, i);
+    if (this._allComponentKeys.length !== 0) {
+      return;
+    }
+
+    const hwDefinition = HW.getDefinitionFor(this.hw);
+    if (!hwDefinition) {
+      throw new Error(`unkown hw ${this.hw}`);
+    }
+
+    const hw_peripherals = hwDefinition.peripherals;
+    const hw_embeds = hwDefinition.embeds;
+
+    const shared_map = {
+      io: PeripheralDirective,
+      logicAnalyzer: LogicAnalyzer,
+      measure: ObnizMeasure,
+    };
+
+    const peripheral_map = {
+      io: PeripheralIO,
+      ad: PeripheralAD,
+      uart: PeripheralUART,
+      spi: PeripheralSPI,
+      i2c: PeripheralI2C,
+      pwm: PeripheralPWM,
+    };
+
+    const embeds_map = {
+      display: Display,
+      switch: ObnizSwitch,
+      ble: ObnizBLE,
+    };
+
+    for (const key in shared_map) {
+      const Class = shared_map[key];
+      this[key] = new Class(this);
+      this._allComponentKeys.push(key);
+    }
+
+    for (const key in peripheral_map) {
+      if (hw_peripherals[key]) {
+        const units = hw_peripherals[key].units;
+        const Class = peripheral_map[key];
+        for (const unitId in units) {
+          this[key + unitId] = new Class(this, unitId);
+          this._allComponentKeys.push(key + unitId);
+        }
       }
-      for (let i = 0; i < 12; i++) {
-        this['ad' + i] = new PeripheralAD(this, i);
+    }
+
+    for (const key in embeds_map) {
+      if (hw_embeds[key]) {
+        const Class = embeds_map[key];
+        this[key] = new Class(this);
+        this._allComponentKeys.push(key);
       }
-      for (let i = 0; i < 2; i++) {
-        this['uart' + i] = new PeripheralUART(this, i);
-      }
-      for (let i = 0; i < 2; i++) {
-        this['spi' + i] = new PeripheralSPI(this, i);
-      }
-      for (let i = 0; i < 1; i++) {
-        this['i2c' + i] = new PeripheralI2C(this, i);
-      }
-      for (let i = 0; i < 6; i++) {
-        this['pwm' + i] = new PeripheralPWM(this, i);
-      }
-      this.display = new Display(this);
-      this.switch = new ObnizSwitch(this);
-      this.logicAnalyzer = new LogicAnalyzer(this);
-      this.ble = new ObnizBLE(this);
-      this.measure = new ObnizMeasure(this);
-      this.util = new ObnizUtil(this);
-    } else if (this.hw === 'esp32w') {
-      this.io = new PeripheralDirective(this);
-      for (let i = 0; i < 40; i++) {
-        this['io' + i] = new PeripheralIO(this, i);
-      }
-      for (let i = 0; i < 40; i++) {
-        this['ad' + i] = new PeripheralAD(this, i);
-      }
-      for (let i = 0; i < 2; i++) {
-        this['uart' + i] = new PeripheralUART(this, i);
-      }
-      for (let i = 0; i < 2; i++) {
-        this['spi' + i] = new PeripheralSPI(this, i);
-      }
-      for (let i = 0; i < 1; i++) {
-        this['i2c' + i] = new PeripheralI2C(this, i);
-      }
-      for (let i = 0; i < 6; i++) {
-        this['pwm' + i] = new PeripheralPWM(this, i);
-      }
-      this.logicAnalyzer = new LogicAnalyzer(this);
-      this.ble = new ObnizBLE(this);
-      this.measure = new ObnizMeasure(this);
-      this.util = new ObnizUtil(this);
     }
   }
 
   _resetComponents() {
     this.print_debug('components state resets');
-    for (let i = 0; i < 12; i++) {
-      this['io' + i]._reset();
+    for (const key of this._allComponentKeys) {
+      this[key]._reset();
     }
-    for (let i = 0; i < 12; i++) {
-      this['ad' + i]._reset();
-    }
-    for (let i = 0; i < 2; i++) {
-      this['uart' + i]._reset();
-    }
-    for (let i = 0; i < 2; i++) {
-      this['spi' + i]._reset();
-    }
-    for (let i = 0; i < 1; i++) {
-      this['i2c' + i]._reset();
-    }
-    for (let i = 0; i < 6; i++) {
-      this['pwm' + i]._reset();
-    }
-
-    this.display._reset();
-    this.switch._reset();
-    this.logicAnalyzer._reset();
-    this.ble._reset();
-    this.measure._reset();
   }
 
   notifyToModule(obj) {
     super.notifyToModule(obj);
-    const notifyHandlers = ['io', 'uart', 'spi', 'i2c', 'ad'];
-    for (
-      let handerIndex = 0;
-      handerIndex < notifyHandlers.length;
-      handerIndex++
-    ) {
-      const peripheral = notifyHandlers[handerIndex];
-      let i = -1;
-      while (this[peripheral + '' + ++i]) {
-        let module_value = obj[peripheral + '' + i];
-        if (module_value === undefined) continue;
-        this[peripheral + '' + i].notified(module_value);
+    for (const key of this._allComponentKeys) {
+      if (key === 'logicAnalyzer') {
+        if (obj.hasOwnProperty('logic_analyzer')) {
+          this.logicAnalyzer.notified(obj['logic_analyzer']);
+        }
+        continue;
       }
-    }
-    const names = ['io', 'switch', 'ble', 'measure'];
-    for (let i = 0; i < names.length; i++) {
-      if (obj[names[i]]) {
-        this[names[i]].notified(obj[names[i]]);
+      if (obj.hasOwnProperty(key)) {
+        /* because of nullable */
+        this[key].notified(obj[key]);
       }
-    }
-    if (obj.logic_analyzer) {
-      this.logicAnalyzer.notified(obj.logic_analyzer);
     }
   }
 
@@ -167,7 +143,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   isValidIO(io) {
-    return typeof io === 'number' && io >= 0 && io < 12;
+    return typeof io === 'number' && this['io' + io] != null;
   }
 
   setVccGnd(vcc, gnd, drive) {
@@ -200,34 +176,26 @@ module.exports = class ObnizComponents extends ObnizParts {
     return this['ad' + io];
   }
 
-  getFreePwm() {
-    let i = 0;
-    for (i = 0; i < 6; i++) {
-      let pwm = this['pwm' + i];
-      if (!pwm) {
-        break;
-      }
-      if (!pwm.isUsed()) {
-        pwm.used = true;
-        return pwm;
+  _getFreePeripheralUnit(peripheral) {
+    for (const key of this._allComponentKeys) {
+      if (key.indexOf(peripheral) === 0) {
+        /* "io" for "io0" */
+        const obj = this[key];
+        if (typeof obj == 'function' && !obj.isUsed()) {
+          obj.used = true;
+          return obj;
+        }
       }
     }
-    throw new Error('No More PWM Available. max = ' + i);
+    throw new Error(`No More ${peripheral} Available.`);
+  }
+
+  getFreePwm() {
+    return this._getFreePeripheralUnit('pwm');
   }
 
   getFreeI2C() {
-    let i = 0;
-    for (i = 0; i < 1; i++) {
-      let i2c = this['i2c' + i];
-      if (!i2c) {
-        break;
-      }
-      if (!i2c.isUsed()) {
-        i2c.used = true;
-        return i2c;
-      }
-    }
-    throw new Error('No More I2C Available. max = ' + i);
+    return this._getFreePeripheralUnit('i2c');
   }
 
   getI2CWithConfig(config) {
@@ -243,18 +211,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   getFreeSpi() {
-    let i = 0;
-    for (i = 0; i < 2; i++) {
-      let spi = this['spi' + i];
-      if (!spi) {
-        break;
-      }
-      if (!spi.isUsed()) {
-        spi.used = true;
-        return spi;
-      }
-    }
-    throw new Error('No More SPI Available. max = ' + i);
+    return this._getFreePeripheralUnit('spi');
   }
 
   getSpiWithConfig(config) {
@@ -270,17 +227,6 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   getFreeUart() {
-    let i = 0;
-    for (i = 0; i < 2; i++) {
-      let uart = this['uart' + i];
-      if (!uart) {
-        break;
-      }
-      if (!uart.isUsed()) {
-        uart.used = true;
-        return uart;
-      }
-    }
-    throw new Error('No More uart Available. max = ' + i);
+    return this._getFreePeripheralUnit('uart');
   }
 };
