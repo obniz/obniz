@@ -7482,13 +7482,15 @@ const PeripheralPWM = __webpack_require__("./obniz/libs/io_peripherals/pwm.js");
 const PeripheralSPI = __webpack_require__("./obniz/libs/io_peripherals/spi.js");
 const PeripheralUART = __webpack_require__("./obniz/libs/io_peripherals/uart.js");
 
-const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 const ObnizParts = __webpack_require__("./obniz/ObnizParts.js");
+
+const HW = __webpack_require__("./obniz/libs/hw/index.js");
 
 module.exports = class ObnizComponents extends ObnizParts {
   constructor(id, options) {
     super(id, options);
     this.pongObservers = [];
+    this._allComponentKeys = [];
   }
 
   close() {
@@ -7504,111 +7506,85 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   _prepareComponents() {
-    if (this.hw === 'obnizb1') {
-      this.io = new PeripheralDirective(this);
-      for (let i = 0; i < 12; i++) {
-        this['io' + i] = new PeripheralIO(this, i);
+    if (this._allComponentKeys.length !== 0) {
+      return;
+    }
+
+    const hwDefinition = HW.getDefinitionFor(this.hw);
+    if (!hwDefinition) {
+      throw new Error(`unkown hw ${this.hw}`);
+    }
+
+    const hw_peripherals = hwDefinition.peripherals;
+    const hw_embeds = hwDefinition.embeds;
+
+    const shared_map = {
+      io: PeripheralDirective,
+      logicAnalyzer: LogicAnalyzer,
+      measure: ObnizMeasure,
+    };
+
+    const peripheral_map = {
+      io: PeripheralIO,
+      ad: PeripheralAD,
+      uart: PeripheralUART,
+      spi: PeripheralSPI,
+      i2c: PeripheralI2C,
+      pwm: PeripheralPWM,
+    };
+
+    const embeds_map = {
+      display: Display,
+      switch: ObnizSwitch,
+      ble: ObnizBLE,
+    };
+
+    for (const key in shared_map) {
+      const Class = shared_map[key];
+      this[key] = new Class(this);
+      this._allComponentKeys.push(key);
+    }
+
+    for (const key in peripheral_map) {
+      if (hw_peripherals[key]) {
+        const units = hw_peripherals[key].units;
+        const Class = peripheral_map[key];
+        for (const unitId in units) {
+          this[key + unitId] = new Class(this, unitId);
+          this._allComponentKeys.push(key + unitId);
+        }
       }
-      for (let i = 0; i < 12; i++) {
-        this['ad' + i] = new PeripheralAD(this, i);
+    }
+
+    for (const key in embeds_map) {
+      if (hw_embeds[key]) {
+        const Class = embeds_map[key];
+        this[key] = new Class(this);
+        this._allComponentKeys.push(key);
       }
-      for (let i = 0; i < 2; i++) {
-        this['uart' + i] = new PeripheralUART(this, i);
-      }
-      for (let i = 0; i < 2; i++) {
-        this['spi' + i] = new PeripheralSPI(this, i);
-      }
-      for (let i = 0; i < 1; i++) {
-        this['i2c' + i] = new PeripheralI2C(this, i);
-      }
-      for (let i = 0; i < 6; i++) {
-        this['pwm' + i] = new PeripheralPWM(this, i);
-      }
-      this.display = new Display(this);
-      this.switch = new ObnizSwitch(this);
-      this.logicAnalyzer = new LogicAnalyzer(this);
-      this.ble = new ObnizBLE(this);
-      this.measure = new ObnizMeasure(this);
-      this.util = new ObnizUtil(this);
-    } else if (this.hw === 'esp32w') {
-      this.io = new PeripheralDirective(this);
-      for (let i = 0; i < 40; i++) {
-        this['io' + i] = new PeripheralIO(this, i);
-      }
-      for (let i = 0; i < 40; i++) {
-        this['ad' + i] = new PeripheralAD(this, i);
-      }
-      for (let i = 0; i < 2; i++) {
-        this['uart' + i] = new PeripheralUART(this, i);
-      }
-      for (let i = 0; i < 2; i++) {
-        this['spi' + i] = new PeripheralSPI(this, i);
-      }
-      for (let i = 0; i < 1; i++) {
-        this['i2c' + i] = new PeripheralI2C(this, i);
-      }
-      for (let i = 0; i < 6; i++) {
-        this['pwm' + i] = new PeripheralPWM(this, i);
-      }
-      this.logicAnalyzer = new LogicAnalyzer(this);
-      this.ble = new ObnizBLE(this);
-      this.measure = new ObnizMeasure(this);
-      this.util = new ObnizUtil(this);
     }
   }
 
   _resetComponents() {
     this.print_debug('components state resets');
-    for (let i = 0; i < 12; i++) {
-      this['io' + i]._reset();
+    for (const key of this._allComponentKeys) {
+      this[key]._reset();
     }
-    for (let i = 0; i < 12; i++) {
-      this['ad' + i]._reset();
-    }
-    for (let i = 0; i < 2; i++) {
-      this['uart' + i]._reset();
-    }
-    for (let i = 0; i < 2; i++) {
-      this['spi' + i]._reset();
-    }
-    for (let i = 0; i < 1; i++) {
-      this['i2c' + i]._reset();
-    }
-    for (let i = 0; i < 6; i++) {
-      this['pwm' + i]._reset();
-    }
-
-    this.display._reset();
-    this.switch._reset();
-    this.logicAnalyzer._reset();
-    this.ble._reset();
-    this.measure._reset();
   }
 
   notifyToModule(obj) {
     super.notifyToModule(obj);
-    const notifyHandlers = ['io', 'uart', 'spi', 'i2c', 'ad'];
-    for (
-      let handerIndex = 0;
-      handerIndex < notifyHandlers.length;
-      handerIndex++
-    ) {
-      const peripheral = notifyHandlers[handerIndex];
-      let i = -1;
-      while (this[peripheral + '' + ++i]) {
-        let module_value = obj[peripheral + '' + i];
-        if (module_value === undefined) continue;
-        this[peripheral + '' + i].notified(module_value);
+    for (const key of this._allComponentKeys) {
+      if (key === 'logicAnalyzer') {
+        if (obj.hasOwnProperty('logic_analyzer')) {
+          this.logicAnalyzer.notified(obj['logic_analyzer']);
+        }
+        continue;
       }
-    }
-    const names = ['io', 'switch', 'ble', 'measure'];
-    for (let i = 0; i < names.length; i++) {
-      if (obj[names[i]]) {
-        this[names[i]].notified(obj[names[i]]);
+      if (obj.hasOwnProperty(key)) {
+        /* because of nullable */
+        this[key].notified(obj[key]);
       }
-    }
-    if (obj.logic_analyzer) {
-      this.logicAnalyzer.notified(obj.logic_analyzer);
     }
   }
 
@@ -7636,7 +7612,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   isValidIO(io) {
-    return typeof io === 'number' && io >= 0 && io < 12;
+    return typeof io === 'number' && this['io' + io] != null;
   }
 
   setVccGnd(vcc, gnd, drive) {
@@ -7669,34 +7645,26 @@ module.exports = class ObnizComponents extends ObnizParts {
     return this['ad' + io];
   }
 
-  getFreePwm() {
-    let i = 0;
-    for (i = 0; i < 6; i++) {
-      let pwm = this['pwm' + i];
-      if (!pwm) {
-        break;
-      }
-      if (!pwm.isUsed()) {
-        pwm.used = true;
-        return pwm;
+  _getFreePeripheralUnit(peripheral) {
+    for (const key of this._allComponentKeys) {
+      if (key.indexOf(peripheral) === 0) {
+        /* "io" for "io0" */
+        const obj = this[key];
+        if (typeof obj == 'function' && !obj.isUsed()) {
+          obj.used = true;
+          return obj;
+        }
       }
     }
-    throw new Error('No More PWM Available. max = ' + i);
+    throw new Error(`No More ${peripheral} Available.`);
+  }
+
+  getFreePwm() {
+    return this._getFreePeripheralUnit('pwm');
   }
 
   getFreeI2C() {
-    let i = 0;
-    for (i = 0; i < 1; i++) {
-      let i2c = this['i2c' + i];
-      if (!i2c) {
-        break;
-      }
-      if (!i2c.isUsed()) {
-        i2c.used = true;
-        return i2c;
-      }
-    }
-    throw new Error('No More I2C Available. max = ' + i);
+    return this._getFreePeripheralUnit('i2c');
   }
 
   getI2CWithConfig(config) {
@@ -7712,18 +7680,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   getFreeSpi() {
-    let i = 0;
-    for (i = 0; i < 2; i++) {
-      let spi = this['spi' + i];
-      if (!spi) {
-        break;
-      }
-      if (!spi.isUsed()) {
-        spi.used = true;
-        return spi;
-      }
-    }
-    throw new Error('No More SPI Available. max = ' + i);
+    return this._getFreePeripheralUnit('spi');
   }
 
   getSpiWithConfig(config) {
@@ -7739,18 +7696,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   getFreeUart() {
-    let i = 0;
-    for (i = 0; i < 2; i++) {
-      let uart = this['uart' + i];
-      if (!uart) {
-        break;
-      }
-      if (!uart.isUsed()) {
-        uart.used = true;
-        return uart;
-      }
-    }
-    throw new Error('No More uart Available. max = ' + i);
+    return this._getFreePeripheralUnit('uart');
   }
 };
 
@@ -8446,7 +8392,7 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
 
   reset() {
     this.send({ system: { reset: true } });
-    this._prepareComponents();
+    this._resetComponents();
   }
   reboot() {
     this.send({ system: { reboot: true } });
@@ -8697,6 +8643,7 @@ function _ReadCookie(name) {
 
 /* WEBPACK VAR INJECTION */(function(__dirname) {const ObnizUIs = __webpack_require__("./obniz/ObnizUIs.js");
 const ObnizApi = __webpack_require__("./obniz/ObnizApi.js");
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
 
 /* global showObnizDebugError  */
 
@@ -8705,6 +8652,7 @@ const isNode = typeof window === 'undefined';
 class Obniz extends ObnizUIs {
   constructor(id, options) {
     super(id, options);
+    this.util = new ObnizUtil(this);
   }
 
   repeat(callback, interval) {
@@ -11285,6 +11233,39 @@ class ObnizSwitch {
 
 module.exports = ObnizSwitch;
 
+
+/***/ }),
+
+/***/ "./obniz/libs/hw/esp32w.json":
+/***/ (function(module) {
+
+module.exports = {"rev":"1","hw":"esp32w","peripherals":{"io":{"units":{"0":{},"2":{},"4":{},"5":{},"12":{},"13":{},"14":{},"15":{},"16":{},"17":{},"18":{},"19":{},"21":{},"22":{},"23":{},"25":{},"26":{},"27":{},"32":{},"33":{},"34":{},"35":{},"36":{},"37":{},"38":{},"39":{}}},"ad":{"units":{"32":{},"33":{},"34":{},"35":{},"36":{},"39":{}}},"pwm":{"units":{"0":{},"1":{},"2":{},"3":{},"4":{},"5":{}}},"uart":{"units":{"0":{},"1":{}}},"spi":{"units":{"0":{},"1":{}}},"i2c":{"units":{"0":{}}}},"embeds":{"ble":{},"display":{},"switch":{}}};
+
+/***/ }),
+
+/***/ "./obniz/libs/hw/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = class HW {
+  constructor() {}
+
+  static getDefinitionFor(hw) {
+    if (hw === 'obnizb1') {
+      return __webpack_require__("./obniz/libs/hw/obnizb1.json");
+    } else if (hw === 'esp32w') {
+      return __webpack_require__("./obniz/libs/hw/esp32w.json");
+    }
+    return undefined;
+  }
+};
+
+
+/***/ }),
+
+/***/ "./obniz/libs/hw/obnizb1.json":
+/***/ (function(module) {
+
+module.exports = {"rev":"1","hw":"obnizb1","peripherals":{"io":{"units":{"0":{},"1":{},"2":{},"3":{},"4":{},"5":{},"6":{},"7":{},"8":{},"9":{},"10":{},"11":{}}},"ad":{"units":{"0":{},"1":{},"2":{},"3":{},"4":{},"5":{},"6":{},"7":{},"8":{},"9":{},"10":{},"11":{}}},"pwm":{"units":{"0":{},"1":{},"2":{},"3":{},"4":{},"5":{}}},"uart":{"units":{"0":{},"1":{}}},"spi":{"units":{"0":{},"1":{}}},"i2c":{"units":{"0":{}}}},"embeds":{"ble":{},"display":{},"switch":{}}};
 
 /***/ }),
 
@@ -14814,7 +14795,7 @@ class WSCommand_AD extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 40; i++) {
       let module = json['ad' + i];
       if (module === undefined) {
         continue;
@@ -16979,7 +16960,7 @@ class WSCommand_IO extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (let i = 0; i <= 11; i++) {
+    for (let i = 0; i < 40; i++) {
       let module = json['io' + i];
       if (module === undefined) {
         continue;
@@ -18173,7 +18154,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"2.1.0","description":"obniz sdk for javascript","main":"index.js","types":"obniz.d.ts","scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.3"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"2.1.0","description":"obniz sdk for javascript","main":"obniz/index.js","types":"obniz.d.ts","engines":{"node":">=7.6.0"},"engineStrict":true,"scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.1","eslint":"^5.7.0","eslint-config-prettier":"^3.1.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.16.4","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.20.2","webpack-cli":"^3.1.2","webpack-node-externals":"^1.7.2","webpack-stream":"^5.1.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.0","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.6.0","tv4":"^1.3.0","ws":"^6.1.3"},"bugs":{"url":"https://github.com/obniz/obniz/issues"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 

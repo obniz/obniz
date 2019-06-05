@@ -2,8 +2,10 @@
   "name": "obniz",
   "version": "2.1.0",
   "description": "obniz sdk for javascript",
-  "main": "index.js",
+  "main": "obniz/index.js",
   "types": "obniz.d.ts",
+  "engines": { "node" : ">=7.6.0" },
+  "engineStrict": true,
   "scripts": {
     "test": "nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js",
     "buildAndtest": "npm run build && npm test",
