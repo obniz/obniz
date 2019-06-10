@@ -24,7 +24,7 @@ class DHT11 {
   }
 
   arrayCount(arr) {
-    var c = [];
+    let c = [];
     c[0] = arr[0] ? 0 : 1;
     for (let i = 1; i < arr.length; i++) {
       if (arr[i] == arr[i - 1]) {
@@ -37,7 +37,7 @@ class DHT11 {
   }
 
   convertCountToData(cnt) {
-    var s = [];
+    let s = [];
     for (let i = 4; i < cnt.length - 3; i += 2) {
       s.push(cnt[i] > cnt[i + 1] ? 0 : 1);
     }
