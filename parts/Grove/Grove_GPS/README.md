@@ -1,36 +1,30 @@
 # GYSFDMAXB
 
-Library for GPS Module [GYSFDMAXB](https://www.yuden.co.jp/jp/product/category/module/GYSFDMAXB.html).
+Library for Grove GPS Module [Grove - GPS](https://www.seeedstudio.com/Grove-GPS-p-959.html).
 
-![](./image.jpg)
 
-## wired(vcc, gnd, txd, rxd {, Opps })
+## wired(tx, rx {, vcc, gnd})
 
-Connect vcc(5v), gnd, txd, rxd, Opps to an obniz.
+Connect tx, rx, vcc, gnd to an obniz.
+| obniz | Color of Grove cable |
+|:--:|:--:|
+| tx | Yellow |
+| rx | White |
+| vcc | Red |
+| gnd | Black |
+
+**To prevent rush current, plase insert resistor(5~10R) between obniz vcc and GPS vcc.**
+
 And specify the pins on program.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { tx:5, rx:6, vcc:7, gnd:8 });
 let sentence = gps.readSentence();
 ```
 
-This module start blinking LED and output pulse at 1PPS while receiving GPS signal.
-
-Opps is optional.
-
-## start1pps(callback)
-
-callback will be called every 1pps regarding Opps.
-
-```javascript
-// Javascript Example
-let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
-gps.start1pps(function() {
-  console.log("1pps received.");
-});
-```
-
+Functions are common with [GYSFDMAXB Library](https://obniz.io/ja/sdk/parts/GYSFDMAXB/README.md) apart from start1pps function.
+The following is common functions.
 
 ## getGpsInfo({editedData})
 
@@ -41,45 +35,9 @@ Same information will be set to gpsInfo property.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
-let gpsInfo = gps.getGpsInfo();
+let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gpsInfo = getGpsInfo();
 console.log(gpsInfo);
-
-// Output example
-gpsInfo: Object
-  utc: Sat Sep 08 2018 22:42:14 GMT+0900 (JST)
-  status: A [Active]	// Active or Void
-  fixMode: 3 [3D]	// 1:Fix not available, 2:2D, 3:3D
-  gpsQuality: 2 [DGPS fix]	// 0:Invalid, 1:GPS fix, 2:DGPS fix
-  latitude: 35.999999
-  longitude: 139.999999
-  pdop: 1.24	// PDOP: Position Dilution of Precision
-  hdop: 0.97	// HDOP: Horizontal Dilution of Precision
-  vdop: 0.77	// VDOP: Vertical Dilution of Position
-  altitude: 57.4[M]
-  declination: NaN	// Magnetic declination
-  direction: 236.34
-  speed: 0.02[km/h]
-  satelliteInfo: Object
-    inUse: 11
-    inView: 15
-    satellites: Array (15)
-      [0]: {id: 194,	elevation: 87,	azimuth: 261,	snr: 31[dB],	inUse: true, }
-      [1]: {id: 25,	elevation: 63,	azimuth: 179,	snr: 34[dB],	inUse: true, }
-      [2]: {id: 12,	elevation: 59,	azimuth: 67,	snr: 20[dB],	inUse: true, }
-      [3]: {id: 193,	elevation: 59,	azimuth: 210,	snr: 37[dB],	inUse: true, }
-      [4]: {id: 10,	elevation: 55,	azimuth: 256,	snr: 40[dB],	inUse: true, }
-      [5]: {id: 42,	elevation: 48,	azimuth: 170,	snr: 31[dB],	inUse: false, }
-      [6]: {id: 20,	elevation: 43,	azimuth: 211,	snr: 35[dB],	inUse: true, }
-      [7]: {id: 32,	elevation: 41,	azimuth: 315,	snr: 46[dB],	inUse: true, }
-      [8]: {id: 24,	elevation: 35,	azimuth: 57,	snr: NaN[dB],	inUse: false, }
-      [9]: {id: 15,	elevation: 25,	azimuth: 120,	snr: 23[dB],	inUse: true, }
-      [10]: {id: 14,	elevation: 19,	azimuth: 307,	snr: 30[dB],	inUse: true, }
-      [11]: {id: 195,	elevation: 18,	azimuth: 168,	snr: 28[dB],	inUse: true, }
-      [12]: {id: 31,	elevation: 12,	azimuth: 260,	snr: 24[dB],	inUse: true, }
-      [13]: {id: 19,	elevation: 5,	azimuth: 46,	snr: NaN[dB],	inUse: false, }
-      [14]: {id: 29,	elevation: 1,	azimuth: 160,	snr: NaN[dB],	inUse: false, }
-  sentences: Set {GPGGA, GPGSA, GPGSV, GPRMC, GPVTG, GPZDA, }
 
 ```
 
@@ -95,7 +53,7 @@ One sentence will appear in one string.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
 let sentence = gps.readSentence();
 ```
 
@@ -121,7 +79,7 @@ Same data is set to editedData property.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
 
 function mainLoop() {
   var data = gps.getEditedData();
@@ -187,9 +145,3 @@ Latitude/Longitude of NMEA to S format string (0.999999999)
 [Reference](https://www.petitmonte.com/robot/howto_gysfdmaxb.html)
 
 ---
-
-Merged Pull Request
-
-[https://github.com/obniz/obniz/pull/127](https://github.com/obniz/obniz/pull/127)
-
-[https://github.com/obniz/obniz/pull/132](https://github.com/obniz/obniz/pull/132)
