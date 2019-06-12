@@ -7650,7 +7650,7 @@ module.exports = class ObnizComponents extends ObnizParts {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */
         const obj = this[key];
-        if (typeof obj == 'function' && !obj.isUsed()) {
+        if (typeof obj == 'object' && !obj.isUsed()) {
           obj.used = true;
           return obj;
         }
