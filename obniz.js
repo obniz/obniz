@@ -18173,8 +18173,11 @@ var map = {
 	"./GasSensor/MQ7/index.js": "./parts/GasSensor/MQ7/index.js",
 	"./GasSensor/MQ8/index.js": "./parts/GasSensor/MQ8/index.js",
 	"./GasSensor/MQ9/index.js": "./parts/GasSensor/MQ9/index.js",
+	"./Grove/Grove_Button/index.js": "./parts/Grove/Grove_Button/index.js",
+	"./Grove/Grove_Buzzer/index.js": "./parts/Grove/Grove_Buzzer/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
+	"./Grove/Grove_Magnetic_Switch/index.js": "./parts/Grove/Grove_Magnetic_Switch/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./parts/Infrared/IRSensor/index.js",
@@ -24105,6 +24108,119 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Grove/Grove_Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_Button {
+  constructor() {
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal', 'vcc'];
+
+    this.onChangeForStateWait = function() {};
+  }
+
+  static info() {
+    return {
+      name: 'Grove_Button',
+    };
+  }
+
+  wired(obniz) {
+    this.io_signal = obniz.getIO(this.params.signal);
+
+    if (obniz.isValidIO(this.params.vcc)) {
+      this.io_vcc = obniz.getIO(this.params.vcc);
+      this.io_vcc.output(true);
+    }
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_supply = obniz.getIO(this.params.gnd);
+      this.io_supply.output(false);
+    }
+
+    this.io_signal.pull('5v');
+
+    let self = this;
+    this.io_signal.input(function(value) {
+      self.isPressed = value;
+      if (self.onchange) {
+        self.onchange(value);
+      }
+      self.onChangeForStateWait(value);
+    });
+  }
+
+  async isPressedWait() {
+    let ret = await this.io_signal.inputWait();
+    return ret;
+  }
+
+  stateWait(isPressed) {
+    return new Promise((resolve, reject) => {
+      this.onChangeForStateWait = pressed => {
+        if (isPressed == pressed) {
+          this.onChangeForStateWait = function() {};
+          resolve();
+        }
+      };
+    });
+  }
+}
+
+if (true) {
+  module.exports = Grove_Button;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Grove/Grove_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_Buzzer {
+  constructor(obniz) {
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['gnd', 'vcc'];
+  }
+
+  static info() {
+    return {
+      name: 'Grove_Buzzer',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.pwm = obniz.getFreePwm();
+    this.pwm.start({ io: this.params.signal });
+  }
+
+  play(freq) {
+    if (typeof freq !== 'number') {
+      throw new Error('freq must be a number');
+    }
+    freq = parseInt(freq);
+    if (freq > 0) {
+      this.pwm.freq(freq);
+      this.pwm.pulse((1 / freq / 2) * 1000);
+    } else {
+      this.pwm.pulse(0);
+    }
+  }
+
+  stop() {
+    this.play(0);
+  }
+}
+
+if (true) {
+  module.exports = Grove_Buzzer;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24282,6 +24398,72 @@ class Grove_MP3 {
 }
 if (true) {
   module.exports = Grove_MP3;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Grove/Grove_Magnetic_Switch/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_Magnetic_Switch {
+  constructor() {
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal', 'vcc'];
+
+    this.onChangeForStateWait = function() {};
+  }
+
+  static info() {
+    return {
+      name: 'Grove_Magnetic_Switch',
+    };
+  }
+
+  wired(obniz) {
+    this.io_signal = obniz.getIO(this.params.signal);
+
+    if (obniz.isValidIO(this.params.vcc)) {
+      this.io_vcc = obniz.getIO(this.params.vcc);
+      this.io_vcc.output(true);
+    }
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_supply = obniz.getIO(this.params.gnd);
+      this.io_supply.output(false);
+    }
+
+    this.io_signal.pull('0v');
+
+    let self = this;
+    this.io_signal.input(function(value) {
+      self.isNear = value;
+      if (self.onchange) {
+        self.onchange(value);
+      }
+      self.onChangeForStateWait(value);
+    });
+  }
+
+  async isNearWait() {
+    let ret = await this.io_signal.inputWait();
+    return ret;
+  }
+
+  stateWait(isNear) {
+    return new Promise((resolve, reject) => {
+      this.onChangeForStateWait = near => {
+        if (isNear == near) {
+          this.onChangeForStateWait = function() {};
+          resolve();
+        }
+      };
+    });
+  }
+}
+
+if (true) {
+  module.exports = Grove_Magnetic_Switch;
 }
 
 
