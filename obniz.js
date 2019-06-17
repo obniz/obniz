@@ -18154,7 +18154,6 @@ var map = {
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
-	"./CompassSensor/HMC5883L/index.js": "./parts/CompassSensor/HMC5883L/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -18177,7 +18176,6 @@ var map = {
 	"./Grove/Grove_Buzzer/index.js": "./parts/Grove/Grove_Buzzer/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
-	"./Grove/Grove_Magnetic_Switch/index.js": "./parts/Grove/Grove_Magnetic_Switch/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./parts/Infrared/IRSensor/index.js",
@@ -18188,6 +18186,8 @@ var map = {
 	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
 	"./Light/WS2812B/index.js": "./parts/Light/WS2812B/index.js",
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
+	"./Magnet/CT10/index.js": "./parts/Magnet/CT10/index.js",
+	"./Magnet/HMC5883L/index.js": "./parts/Magnet/HMC5883L/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./parts/MovementSensor/FlickHat/index.js",
@@ -19658,68 +19658,6 @@ class S11059 {
 
 if (true) {
   module.exports = S11059;
-}
-
-
-/***/ }),
-
-/***/ "./parts/CompassSensor/HMC5883L/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-class HMC5883L {
-  constructor() {
-    this.keys = ['gnd', 'sda', 'scl', 'i2c'];
-
-    this.address = {};
-    this.address.device = 0x1e;
-    this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
-    this.address.xMSB = [0x03];
-  }
-
-  static info() {
-    return {
-      name: 'HMC5883L',
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(null, this.params.gnd, '3v');
-
-    this.params.clock = 100000;
-    this.params.pull = '3v';
-    this.params.mode = 'master';
-
-    this.i2c = obniz.getI2CWithConfig(this.params);
-
-    this.obniz.wait(500);
-  }
-
-  init() {
-    this.i2c.write(this.address.device, this.address.reset);
-    this.obniz.wait(500);
-  }
-
-  async get() {
-    this.i2c.write(this.address.device, this.address.xMSB);
-    let readed = await this.i2c.readWait(this.address.device, 2 * 3);
-
-    let obj = {};
-    let keys = ['x', 'y', 'z'];
-    for (let i = 0; i < 3; i++) {
-      let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
-      if (val & 0x8000) {
-        val = val - 65536;
-      }
-      obj[keys[i]] = val;
-    }
-
-    return obj;
-  }
-}
-
-if (true) {
-  module.exports = HMC5883L;
 }
 
 
@@ -24403,72 +24341,6 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/Grove/Grove_Magnetic_Switch/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-class Grove_Magnetic_Switch {
-  constructor() {
-    this.keys = ['signal', 'gnd', 'vcc'];
-    this.requiredKeys = ['signal', 'vcc'];
-
-    this.onChangeForStateWait = function() {};
-  }
-
-  static info() {
-    return {
-      name: 'Grove_Magnetic_Switch',
-    };
-  }
-
-  wired(obniz) {
-    this.io_signal = obniz.getIO(this.params.signal);
-
-    if (obniz.isValidIO(this.params.vcc)) {
-      this.io_vcc = obniz.getIO(this.params.vcc);
-      this.io_vcc.output(true);
-    }
-
-    if (obniz.isValidIO(this.params.gnd)) {
-      this.io_supply = obniz.getIO(this.params.gnd);
-      this.io_supply.output(false);
-    }
-
-    this.io_signal.pull('0v');
-
-    let self = this;
-    this.io_signal.input(function(value) {
-      self.isNear = value;
-      if (self.onchange) {
-        self.onchange(value);
-      }
-      self.onChangeForStateWait(value);
-    });
-  }
-
-  async isNearWait() {
-    let ret = await this.io_signal.inputWait();
-    return ret;
-  }
-
-  stateWait(isNear) {
-    return new Promise((resolve, reject) => {
-      this.onChangeForStateWait = near => {
-        if (isNear == near) {
-          this.onChangeForStateWait = function() {};
-          resolve();
-        }
-      };
-    });
-  }
-}
-
-if (true) {
-  module.exports = Grove_Magnetic_Switch;
-}
-
-
-/***/ }),
-
 /***/ "./parts/GyroSensor/ENC03R_Module/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25516,6 +25388,134 @@ class SNx4HC595 {
 
 if (true) {
   module.exports = SNx4HC595;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Magnet/CT10/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class CT10 {
+  constructor() {
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal', 'vcc'];
+
+    this.onChangeForStateWait = function() {};
+  }
+
+  static info() {
+    return {
+      name: 'CT10',
+    };
+  }
+
+  wired(obniz) {
+    this.io_signal = obniz.getIO(this.params.signal);
+
+    if (obniz.isValidIO(this.params.vcc)) {
+      this.io_vcc = obniz.getIO(this.params.vcc);
+      this.io_vcc.output(true);
+    }
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_supply = obniz.getIO(this.params.gnd);
+      this.io_supply.output(false);
+    }
+
+    this.io_signal.pull('0v');
+
+    let self = this;
+    this.io_signal.input(function(value) {
+      self.isNear = value;
+      if (self.onchange) {
+        self.onchange(value);
+      }
+      self.onChangeForStateWait(value);
+    });
+  }
+
+  async isNearWait() {
+    let ret = await this.io_signal.inputWait();
+    return ret;
+  }
+
+  stateWait(isNear) {
+    return new Promise((resolve, reject) => {
+      this.onChangeForStateWait = near => {
+        if (isNear == near) {
+          this.onChangeForStateWait = function() {};
+          resolve();
+        }
+      };
+    });
+  }
+}
+
+if (true) {
+  module.exports = CT10;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Magnet/HMC5883L/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class HMC5883L {
+  constructor() {
+    this.keys = ['gnd', 'sda', 'scl', 'i2c'];
+
+    this.address = {};
+    this.address.device = 0x1e;
+    this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
+    this.address.xMSB = [0x03];
+  }
+
+  static info() {
+    return {
+      name: 'HMC5883L',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(null, this.params.gnd, '3v');
+
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    this.obniz.wait(500);
+  }
+
+  init() {
+    this.i2c.write(this.address.device, this.address.reset);
+    this.obniz.wait(500);
+  }
+
+  async get() {
+    this.i2c.write(this.address.device, this.address.xMSB);
+    let readed = await this.i2c.readWait(this.address.device, 2 * 3);
+
+    let obj = {};
+    let keys = ['x', 'y', 'z'];
+    for (let i = 0; i < 3; i++) {
+      let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
+      if (val & 0x8000) {
+        val = val - 65536;
+      }
+      obj[keys[i]] = val;
+    }
+
+    return obj;
+  }
+}
+
+if (true) {
+  module.exports = HMC5883L;
 }
 
 

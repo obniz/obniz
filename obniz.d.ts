@@ -70,8 +70,8 @@ import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A
 import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
 // GPS
 import { GYSFDMAXB, GYSFDMAXBOptions } from './parts/GPS/GYSFDMAXB';
-// CompassSensor
-import { HMC5883L, HMC5883LOptions } from './parts/CompassSensor/HMC5883L';
+// MagnetSensor
+import { HMC5883L, HMC5883LOptions } from './parts/Magnet/HMC5883L';
 // ADConverter
 import { HX711, HX711Options } from './parts/ADConverter/hx711';
 // SoilSensor
