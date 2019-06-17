@@ -1,6 +1,6 @@
 class DHT11 {
   constructor() {
-    this.keys = ['sda', 'vcc', 'gnd', 'trigger'];
+    this.keys = ['gnd', 'sda', 'vcc', 'trigger'];
     this.requiredKeys = ['sda', 'trigger'];
     this.dataSymbolLength = 0.01;
     this.duration = 40;
@@ -20,6 +20,9 @@ class DHT11 {
     obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     if (!obniz.isValidIO(this.params.sda)) {
       throw new Error('sda is not valid io');
+    }
+    if (!obniz.isValidIO(this.params.trigger)) {
+      throw new Error('trigger is not valid io');
     }
   }
 
@@ -80,7 +83,7 @@ class DHT11 {
       if (typeof callback === 'function') {
         var cnt = this.arrayCount(levels);
         if (cnt.length < 80) {
-          this.print_debug("Short data");
+          this.print_debug("Short data: " + JSON.stringify(cnt));
           return;
         }
         var sig = this.convertCountToData(cnt);
@@ -121,6 +124,22 @@ class DHT11 {
         }
       }
     ], 3);
+  }
+
+  getAllWait() {
+    return new Promise(resolve => {
+      this.read(function (obj) {
+        resolve(obj);
+      });
+    });
+  }
+
+  async getTempWait() {
+    return (await this.getAllWait()).temperature;
+  }
+
+  async getHumdWait() {
+    return (await this.getAllWait()).humidity;
   }
 }
 
