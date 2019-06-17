@@ -94,6 +94,7 @@ import { S5851A, S5851AOptions } from './parts/TemperatureSensor/i2c/S-5851A';
 import { SHT31, SHT31Options } from './parts/TemperatureSensor/i2c/SHT31';
 import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
 // ColorSensor
+import { PT550, PT550Options } from './parts/ColorSensor/PT550';
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 // Grove
 import { Grove_Button, Grove_ButtonOptions } from './parts/Grove/Grove_Button';
@@ -193,6 +194,7 @@ interface WiredNameMap {
   'SHT31': SHT31;
   'ADT7310': ADT7310;
   // ColorSensor
+  'PT550': PT550;
   'S11059': S11059;
   // Grove
   'Grove_Button': Grove_Button;
@@ -294,6 +296,7 @@ interface WiredNameOptionsMap {
   'SHT31': SHT31Options;
   'ADT7310': ADT7310Options;
   // ColorSensor
+  'PT550': PT550Options;
   'S11059': S11059Options;
   // Grove
   'Grove_Button': Grove_ButtonOptions;

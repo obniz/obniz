@@ -18153,6 +18153,7 @@ var map = {
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
+	"./ColorSensor/PT550/index.js": "./parts/ColorSensor/PT550/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
@@ -19602,6 +19603,45 @@ if (true) {
 }
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./parts/ColorSensor/PT550/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class PT550 {
+  constructor() {
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal', 'vcc'];
+  }
+
+  static info() {
+    return {
+      name: 'PT550',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.signal = this.obniz.getAD(this.params.signal);
+    this.signal.start(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+
+  async getWait() {
+    let value = await this.signal.getWait();
+    return value;
+  }
+}
+
+if (true) {
+  module.exports = PT550;
+}
+
 
 /***/ }),
 
