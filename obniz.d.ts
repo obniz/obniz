@@ -71,6 +71,7 @@ import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
 // GPS
 import { GYSFDMAXB, GYSFDMAXBOptions } from './parts/GPS/GYSFDMAXB';
 // MagnetSensor
+import { CT10, CT10Options } from './parts/Magnet/CT10';
 import { HMC5883L, HMC5883LOptions } from './parts/Magnet/HMC5883L';
 // ADConverter
 import { HX711, HX711Options } from './parts/ADConverter/hx711';
@@ -95,6 +96,8 @@ import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
 // ColorSensor
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 // Grove
+import { Grove_Button, Grove_ButtonOptions } from './parts/Grove/Grove_Button';
+import { Grove_Buzzer, Grove_BuzzerOptions } from './parts/Grove/Grove_Buzzer';
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 // Ble
@@ -166,7 +169,8 @@ interface WiredNameMap {
   'GP2Y0A21YK0F': GP2Y0A21YK0F;
   // GPS
   'GYSFDMAXB': GYSFDMAXB;
-  // CompassSensor
+  // MagnetSensor
+  'CT10': CT10;
   'HMC5883L': HMC5883L;
   // ADConverter
   'hx711': HX711;
@@ -191,6 +195,8 @@ interface WiredNameMap {
   // ColorSensor
   'S11059': S11059;
   // Grove
+  'Grove_Button': Grove_Button;
+  'Grove_Buzzer': Grove_Buzzer;
   'Grove_EarHeartRate': Grove_EarHeartRate;
   'Grove_MP3': Grove_MP3;
   // Ble
@@ -264,7 +270,8 @@ interface WiredNameOptionsMap {
   'GP2Y0A21YK0F': GP2Y0A21YK0FOptions;
   // GPS
   'GYSFDMAXB': GYSFDMAXBOptions;
-  // CompassSensor
+  // MagnetSensor
+  'CT10': CT10Options;
   'HMC5883L': HMC5883LOptions;
   // ADConverter
   'hx711': HX711Options;
@@ -289,6 +296,8 @@ interface WiredNameOptionsMap {
   // ColorSensor
   'S11059': S11059Options;
   // Grove
+  'Grove_Button': Grove_ButtonOptions;
+  'Grove_Buzzer': Grove_BuzzerOptions;
   'Grove_EarHeartRate': Grove_EarHeartRateOptions;
   'Grove_MP3': Grove_MP3Options;
   // Ble
