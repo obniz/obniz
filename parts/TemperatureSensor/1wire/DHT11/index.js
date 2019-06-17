@@ -1,6 +1,6 @@
 class DHT11 {
   constructor() {
-    this.keys = ['gnd', 'sda', 'vcc', 'trigger'];
+    this.keys = ['vcc', 'sda', 'gnd', 'trigger'];
     this.requiredKeys = ['sda', 'trigger'];
     this.dataSymbolLength = 0.01;
     this.duration = 40;

@@ -3,7 +3,7 @@
 
 ![](./image.jpg)
 
-## wired(obniz, {[gnd, sda, vcc, trigger]})
+## wired(obniz, {[vcc, sda, gnd, trigger]})
 
 センサをobnizにつなぎます。
 このライブラリでは、`sda`と`trigger`ピンはどちらも、センサのシリアルデータ端子に接続する必要があります。
@@ -13,7 +13,7 @@
 
 ```javascript
 // Javascript Example
-var dht11 = obniz.wired("DHT11", { gnd: 0, sda: 1, vcc: 2, trigger: 3 });
+var dht11 = obniz.wired("DHT11", { vcc: 0, sda: 1, gnd: 2, trigger: 3 });
 obniz.wait(2000);
 const obj = await dht11.getAllWait();
 console.log(obj);
@@ -31,7 +31,7 @@ DHT11のサンプリング間隔は2秒以上必要です。
 
 ```javascript
 // Javascript Example
-var dht11 = obniz.wired("DHT11", { gnd: 0, sda: 1, vcc: 2, trigger: 3 });
+var dht11 = obniz.wired("DHT11", { vcc: 0, sda: 1, gnd: 2, trigger: 3 });
 obniz.wait(2000); //DHT11のサンプリング間隔は2秒以上必要なため、初期化時にも2秒以上待つ必要がある
 const obj = await dht11.getAllWait();
 console.log('temp: ' + obj.temperature + ' degree');
@@ -43,7 +43,7 @@ console.log('humidity: ' + obj.humidity + ' %');
 
 ```javascript
 // Javascript Example
-var dht11 = obniz.wired("DHT11", { gnd: 0, sda: 1, vcc: 2, trigger: 3 });
+var dht11 = obniz.wired("DHT11", { vcc: 0, sda: 1, gnd: 2, trigger: 3 });
 dht11.debugprint = true;
 setInterval(async function () {
   const obj = await dht11.getAllWait();
@@ -59,7 +59,7 @@ getAllWait,getTempWait,getHumdWaitを合わせて、2秒以内に2回以上実�
 
 ```javascript
 // Javascript Example
-var dht11 = obniz.wired("DHT11", { gnd: 0, sda: 1, vcc: 2, trigger: 3 });
+var dht11 = obniz.wired("DHT11", { vcc: 0, sda: 1, gnd: 2, trigger: 3 });
 obniz.wait(2000);
 const temp = await dht11.getTempWait();
 console.log('temp: ' + temp + ' degree');
@@ -72,7 +72,7 @@ getAllWait,getTempWait,getHumdWaitを合わせて、2秒以内に2回以上実�
 
 ```javascript
 // Javascript Example
-var dht11 = obniz.wired("DHT11", { gnd: 0, sda: 1, vcc: 2, trigger: 3 });
+var dht11 = obniz.wired("DHT11", { vcc: 0, sda: 1, gnd: 2, trigger: 3 });
 obniz.wait(2000);
 const humd = await dht11.getHumdWait();
 console.log('humd: ' + humd + ' %');
@@ -84,7 +84,7 @@ console.log('humd: ' + humd + ' %');
 
 ```javascript
 // Javascript Example
-var dht11 = obniz.wired("DHT11", { gnd: 0, sda: 1, vcc: 2, trigger: 3 });
+var dht11 = obniz.wired("DHT11", { vcc: 0, sda: 1, gnd: 2, trigger: 3 });
 obniz.wait(2000); //DHT11のサンプリング間隔は2秒以上必要なため、初期化時にも2秒以上待つ必要がある
 await dht11.read(function(obj){
   console.log('temp: ' + obj.temperature + ' degree');
