@@ -502,6 +502,9 @@ module.exports = class ObnizConnection {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
       this.hw = wsObj.obniz.hw;
+      if (!this.hw) {
+        this.hw = 'obnizb1';
+      }
       if (this.wscommands) {
         for (let i = 0; i < this.wscommands.length; i++) {
           const command = this.wscommands[i];
