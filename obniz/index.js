@@ -1,5 +1,6 @@
 const ObnizUIs = require('./ObnizUIs');
 const ObnizApi = require('./ObnizApi');
+const ObnizUtil = require('./libs/utils/util');
 
 /* global showObnizDebugError  */
 
@@ -8,6 +9,7 @@ const isNode = typeof window === 'undefined';
 class Obniz extends ObnizUIs {
   constructor(id, options) {
     super(id, options);
+    this.util = new ObnizUtil(this);
   }
 
   repeat(callback, interval) {

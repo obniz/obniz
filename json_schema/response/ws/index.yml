@@ -6,4 +6,5 @@ basePath : "ws"
 
 "anyOf":
   -  {$ref : "/response/ws/ready"}
+  -  {$ref : "/response/ws/obniz"}
   -  {$ref : "/response/ws/redirect"}

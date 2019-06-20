@@ -5,7 +5,7 @@ let commandClasses = {};
 module.exports = class WSCommand {
   constructor() {
     this._hw = {
-      model: undefined,
+      hw: undefined,
       firmware: undefined,
     };
 
@@ -117,8 +117,7 @@ module.exports = class WSCommand {
   }
 
   setHw(obj) {
-    this._hw.model = obj.model;
-    this._hw.firmware = obj.firmware;
+    this._hw = obj;
   }
 
   sendCommand(func, payload) {

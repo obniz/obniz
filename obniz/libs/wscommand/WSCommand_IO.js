@@ -101,7 +101,7 @@ class WSCommand_IO extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (let i = 0; i <= 11; i++) {
+    for (let i = 0; i < 40; i++) {
       let module = json['io' + i];
       if (module === undefined) {
         continue;
