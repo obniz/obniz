@@ -80,7 +80,8 @@ module.exports = class ObnizComponents extends ObnizParts {
       if (hw_peripherals[key]) {
         const units = hw_peripherals[key].units;
         const Class = peripheral_map[key];
-        for (const unitId in units) {
+        for (let unitId in units) {
+          unitId = parseInt(unitId);
           this[key + unitId] = new Class(this, unitId);
           this._allComponentKeys.push(key + unitId);
         }
