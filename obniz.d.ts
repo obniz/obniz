@@ -96,6 +96,7 @@ import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
 // ColorSensor
 import { PT550, PT550Options } from './parts/ColorSensor/PT550';
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
+import { YG1006, YG1006Options } from './parts/ColorSensor/YG1006';
 // Grove
 import { Grove_Button, Grove_ButtonOptions } from './parts/Grove/Grove_Button';
 import { Grove_Buzzer, Grove_BuzzerOptions } from './parts/Grove/Grove_Buzzer';
@@ -196,6 +197,7 @@ interface WiredNameMap {
   // ColorSensor
   'PT550': PT550;
   'S11059': S11059;
+  'YG1006': YG1006;
   // Grove
   'Grove_Button': Grove_Button;
   'Grove_Buzzer': Grove_Buzzer;
@@ -298,6 +300,7 @@ interface WiredNameOptionsMap {
   // ColorSensor
   'PT550': PT550Options;
   'S11059': S11059Options;
+  'YG1006': YG1006Options;
   // Grove
   'Grove_Button': Grove_ButtonOptions;
   'Grove_Buzzer': Grove_BuzzerOptions;

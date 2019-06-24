@@ -18155,6 +18155,7 @@ var map = {
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/PT550/index.js": "./parts/ColorSensor/PT550/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
+	"./ColorSensor/YG1006/index.js": "./parts/ColorSensor/YG1006/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -19698,6 +19699,45 @@ class S11059 {
 
 if (true) {
   module.exports = S11059;
+}
+
+
+/***/ }),
+
+/***/ "./parts/ColorSensor/YG1006/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class YG1006 {
+  constructor() {
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal', 'vcc'];
+  }
+
+  static info() {
+    return {
+      name: 'YG1006',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.signal = this.obniz.getAD(this.params.signal);
+    this.signal.start(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+
+  async getWait() {
+    let value = await this.signal.getWait();
+    return value;
+  }
+}
+
+if (true) {
+  module.exports = YG1006;
 }
 
 
