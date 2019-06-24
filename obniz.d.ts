@@ -59,6 +59,7 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
+import { IPM_165, IPM_165Options} from './parts/MovementSensor/IPM-165';
 // Memory
 import { _24LC256, _24LC256Options } from './parts/Memory/24LC256';
 // GyroSensor
@@ -157,6 +158,7 @@ interface WiredNameMap {
   'HC-SR505': HCSR505;
   'JoyStick': JoyStick;
   'KXR94-2050': KXR94_2050;
+  'IPM-165': IPM_165;
   // 'KXSC7-2050': KXSC7_2050;
   'PaPIRsVZ': PaPIRsVZ;
   'Potentiometer': Potentiometer;
@@ -260,6 +262,7 @@ interface WiredNameOptionsMap {
   'HC-SR505': HCSR505Options;
   'JoyStick': JoyStickOptions;
   'KXR94-2050': KXR94_2050Options;
+  'IPM-165': IPM_165Options;
   // 'KXSC7-2050': KXSC7_2050Options;
   'PaPIRsVZ': PaPIRsVZOptions;
   'Potentiometer': PotentiometerOptions;

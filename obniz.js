@@ -18194,6 +18194,7 @@ var map = {
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
+	"./MovementSensor/IPM-165/index.js": "./parts/MovementSensor/IPM-165/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
@@ -26135,6 +26136,45 @@ class HCSR505 {
 
 if (true) {
   module.exports = HCSR505;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/IPM-165/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class IPM_165 {
+  constructor() {
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal', 'vcc'];
+  }
+
+  static info() {
+    return {
+      name: 'IPM-165',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.signal = this.obniz.getAD(this.params.signal);
+    this.signal.start(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+
+  async getWait() {
+    let value = await this.signal.getWait();
+    return value;
+  }
+}
+
+if (true) {
+  module.exports = IPM_165;
 }
 
 
