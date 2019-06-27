@@ -3,12 +3,12 @@
 少ないピン数で利用できるカメラモジュールです。
 たくさんの解像度を選べる上に、jpegで画像を取り出すことが出来ます。
 
-同じArduCAMMiniでも種類がありますが、OV2640の2Mピクセルのカメラに対応しています。
+同じArduCAMMiniでも種類がありますが、OV2640搭載の2Mピクセルのカメラである、ArduCAM-Mini-2MPまたはArduCAM-Mini-2MP-Plusに対応しています。
 
 ![](./image.jpg)
 
 
-## wired(obniz,  {cs [, mosi, miso, sclk, gnd, vcc, sda, scl, spi, i2c, spi_drive, spi_frequency]} )
+## wired(obniz,  {cs [, mosi, miso, sclk, gnd, vcc, sda, scl, spi, i2c, spi_drive, spi_frequency, module_version]} )
 
 つながっているioを指定してオブジェクト化します。
 
@@ -40,6 +40,7 @@ i2c | `i2c object` | no | &nbsp; | configured i2c object
 spi | `spi object` | no | &nbsp; | configured spi object
 spi_frequency | `spi object` | no | 4Mhz | SPI通信がうまくいかない場合に周波数を下げる時に利用します
 spi_drive | `spi object` | no | `'3v'` | SPI通信がうまくいかない場合に駆動方法を変更する時に利用します
+module_version | `number` | no | 0 | ArduCAM-Mini-2MP-Plusを使用する場合は1を指定してください
 
 ピンだけを指定して以下のように設定することが出来ます。
 
