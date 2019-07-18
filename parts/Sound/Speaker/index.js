@@ -1,7 +1,7 @@
 class Speaker {
   constructor(obniz) {
     this.keys = ['signal', 'gnd'];
-    this.requiredKeys = ['gnd'];
+    this.requiredKeys = ['signal'];
   }
 
   static info() {
