@@ -330,6 +330,7 @@ interface Obniz {
   keepWorkingAtOffline(working: boolean): void;
 
   // io
+  getIO(pin:number): IO;
   io: any;
   io0: IO;
   io1: IO;
@@ -345,6 +346,7 @@ interface Obniz {
   io11: IO;
 
   // ad
+  getAD(pin:number): AD;
   ad0: AD;
   ad1: AD;
   ad2: AD;
