@@ -32,6 +32,28 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
   }
 
+  sleepSeconds(sec) {
+    if (sec < 1) {
+      //min 1s
+      sec = 1;
+    } else if (sec > 60 * 60 * 18) {
+      //max 18h (60(s)*60(m)*18(h))
+      throw new Error('Error max 18h(64800) sleep');
+    }
+    this.send({ system: { sleepSeconds: sec } });
+  }
+
+  sleepMinute(minute) {
+    if (minute < 1) {
+      //min 1m
+      minute = 1;
+    } else if (minute > 60 * 24 * 45) {
+      //max 45day (60(m)*24(h)*45(d))
+      throw new Error('max 45day(64800m) sleep');
+    }
+    this.send({ system: { sleepMinute: minute } });
+  }
+
   pingWait(unixtime, rand, forceGlobalNetwork) {
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor(unixtime / Math.pow(2, 32));

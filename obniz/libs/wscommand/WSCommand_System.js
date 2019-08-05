@@ -14,6 +14,8 @@ class WSCommand_System extends WSCommand {
 
     this._CommandPingPong = 8;
     this._CommandVCC = 9;
+    this._CommandSleepSeconds = 10;
+    this._CommandSleepMinute = 11;
   }
 
   // Commands
@@ -81,6 +83,8 @@ class WSCommand_System extends WSCommand {
         onValid: this.keepWorkingAtOffline,
       },
       { uri: '/request/system/ping', onValid: this.ping },
+      { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
+      { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
     ];
     let res = this.validateCommandSchema(schemaData, module, 'system');
 
@@ -141,6 +145,18 @@ class WSCommand_System extends WSCommand {
         super.notifyFromBinary(objToSend, func, payload);
         break;
     }
+  }
+
+  sleepSeconds(params) {
+    let sec = params.sleepSeconds;
+    let buf = new Uint8Array([sec >> 8, sec]);
+    this.sendCommand(this._CommandSleepSeconds, buf);
+  }
+
+  sleepMinute(params) {
+    let minute = params.sleepMinute;
+    let buf = new Uint8Array([minute >> 8, minute]);
+    this.sendCommand(this._CommandSleepMinute, buf);
   }
 }
 
