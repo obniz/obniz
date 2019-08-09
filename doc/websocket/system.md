@@ -144,6 +144,52 @@ reset obniz when obniz gone to offline.
 ```
 
 
+##  request: <a name="-request-system-sleepseconds">sleepSeconds</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.sleepSeconds` |  integer  | <ul><li>required</li></ul> | sleep time (seconds)&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "sleepSeconds": 500
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-system-sleepminute">sleepMinute</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.sleepMinute` |  integer  | <ul><li>required</li></ul> | sleep time (minute)&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "sleepMinute": 500
+        }
+    }
+]
+```
+
+
 
 
 
