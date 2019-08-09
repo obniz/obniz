@@ -47,7 +47,6 @@ describe('10-sleep', function() {
     await reconnect();
     await wait(1000);
     await obnizA.pingWait();
-    console.log('await obnizA.pingWait();');
     obnizA.getIO(0).output(true);
     await obnizA.pingWait();
     let valB = await obnizB.getIO(0).inputWait();
@@ -59,7 +58,6 @@ function reconnect() {
   new Promise(resolve => {
     config.waitForConenct(() => {
       obnizA = config.obnizA;
-      console.log('reconnect');
       resolve();
     });
   });
