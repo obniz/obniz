@@ -825,7 +825,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/system/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"},{"$ref":"/request/system/sleepSeconds"},{"$ref":"/request/system/sleepMinute"}]}
 
 /***/ }),
 
@@ -8577,6 +8577,28 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
       throw new Error('max 45day(64800m) sleep');
     }
     this.send({ system: { sleepMinute: minute } });
+  }
+
+  sleep(date) {
+    if (!(date instanceof Date)) {
+      throw new Error('Date instance argument required');
+    }
+    let sleepTime = Math.floor((date - new Date()) / 1000);
+    this.print_debug(`sleep time : ${sleepTime}s`);
+    if (sleepTime <= 0) {
+      throw new Error(`past sleep time : ${sleepTime}s`);
+    }
+    if (sleepTime <= 60 * 60 * 18) {
+      this.sleepSeconds(sleepTime);
+      return;
+    }
+    sleepTime = Math.floor(sleepTime / 60);
+    this.print_debug(`sleep time : ${sleepTime}m`);
+    if (sleepTime <= 60 * 24 * 45) {
+      this.sleepMinute(sleepTime);
+    } else {
+      throw new Error(`over max sleep time : ${sleepTime}m`);
+    }
   }
 
   pingWait(unixtime, rand, forceGlobalNetwork) {
@@ -17850,6 +17872,7 @@ class WSCommand_System extends WSCommand {
   sleepSeconds(params) {
     let sec = params.sleepSeconds;
     let buf = new Uint8Array([sec >> 8, sec]);
+    console.log(buf);
     this.sendCommand(this._CommandSleepSeconds, buf);
   }
 
