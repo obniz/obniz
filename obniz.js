@@ -17872,7 +17872,6 @@ class WSCommand_System extends WSCommand {
   sleepSeconds(params) {
     let sec = params.sleepSeconds;
     let buf = new Uint8Array([sec >> 8, sec]);
-    console.log(buf);
     this.sendCommand(this._CommandSleepSeconds, buf);
   }
 
