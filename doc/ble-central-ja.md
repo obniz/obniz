@@ -462,7 +462,7 @@ var connected = await peripheral.connectWait();
 if(connected){
   let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
   let cccd = char.getDescriptor("2902");
-  let result = await cccd.writeWait([0x00, 0x01]); // register cccd for remote peripheral 
+  let result = await cccd.writeWait([0x01, 0x00]); // register cccd for remote peripheral 
 
   console.log(await cccd.readWait()); // check cccd 
 
