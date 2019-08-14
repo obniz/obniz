@@ -39,7 +39,6 @@ describe('10-sleep', function() {
     config.close(obnizA);
     let valB = await obnizB.getIO(0).inputWait();
     expect(valB, `expected io0 ${valB} is must be false`).to.be.equal(false);
-    await wait(10000); //obnizA online wait
   });
 
   //step3
@@ -51,15 +50,36 @@ describe('10-sleep', function() {
     await obnizA.pingWait();
     let valB = await obnizB.getIO(0).inputWait();
     expect(valB, `expected io0 ${valB} is must be true`).to.be.equal(true);
+    obnizA.getIO(0).end();
+  });
+
+  //step4
+  it('sleepIO sleep', async function() {
+    obnizA.sleepIoTrigger(true);
+    config.close(obnizA);
+    await wait(3000); //sleep = Wait 3 seconds because we can't verify if the command was executed offline
+    obnizB.getIO(0).output(true); //wake up
+    await obnizB.pingWait();
+    obnizB.getIO(0).end();
+    await reconnect();
+    await wait(1000);
+    await obnizA.pingWait();
+    obnizA.getIO(0).output(true);
+    await obnizA.pingWait();
+    let valB = await obnizB.getIO(0).inputWait();
+    expect(valB, `expected io0 ${valB} is must be true`).to.be.equal(true);
+    obnizA.getIO(0).end();
   });
 });
 
 function reconnect() {
-  new Promise(resolve => {
-    config.waitForConenct(() => {
+  return new Promise(resolve => {
+    config.reboot(() => {
       obnizA = config.obnizA;
+      obnizB = config.obnizB;
+      console.error('reboot finished');
       resolve();
-    });
+    }, false);
   });
 }
 
