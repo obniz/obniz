@@ -124,7 +124,7 @@ describe('obniz.libs.system', function() {
     let now = new Date();
     this.obniz.sleep(date);
     expect(this.obniz).send([
-      { system: { sleepSeconds: Math.floor((date - now) / 1000) } },
+      { system: { sleep_seconds: Math.floor((date - now) / 1000) } },
     ]);
     expect(this.obniz).to.be.finished;
   });
@@ -135,20 +135,26 @@ describe('obniz.libs.system', function() {
     let now = new Date();
     this.obniz.sleep(date);
     expect(this.obniz).send([
-      { system: { sleepMinute: Math.floor((date - now) / 1000 / 60) } },
+      { system: { sleep_minute: Math.floor((date - now) / 1000 / 60) } },
     ]);
     expect(this.obniz).to.be.finished;
   });
 
   it('sleepSeconds', function() {
     this.obniz.sleepSeconds(300);
-    expect(this.obniz).send([{ system: { sleepSeconds: 300 } }]);
+    expect(this.obniz).send([{ system: { sleep_seconds: 300 } }]);
     expect(this.obniz).to.be.finished;
   });
 
   it('sleepMinute', function() {
     this.obniz.sleepMinute(5);
-    expect(this.obniz).send([{ system: { sleepMinute: 5 } }]);
+    expect(this.obniz).send([{ system: { sleep_minute: 5 } }]);
+    expect(this.obniz).to.be.finished;
+  });
+
+  it('sleepIoTrigger', function() {
+    this.obniz.sleepIoTrigger(true);
+    expect(this.obniz).send([{ system: { sleep_io_trigger: true } }]);
     expect(this.obniz).to.be.finished;
   });
 });

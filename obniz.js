@@ -176,6 +176,7 @@ var map = {
 	"./request/system/reboot.yml": "./json_schema/request/system/reboot.yml",
 	"./request/system/reset.yml": "./json_schema/request/system/reset.yml",
 	"./request/system/self_check.yml": "./json_schema/request/system/self_check.yml",
+	"./request/system/sleep_io_trigger.yml": "./json_schema/request/system/sleep_io_trigger.yml",
 	"./request/system/sleep_minute.yml": "./json_schema/request/system/sleep_minute.yml",
 	"./request/system/sleep_seconds.yml": "./json_schema/request/system/sleep_seconds.yml",
 	"./request/system/wait.yml": "./json_schema/request/system/wait.yml",
@@ -825,7 +826,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/system/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"},{"$ref":"/request/system/sleepSeconds"},{"$ref":"/request/system/sleepMinute"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"},{"$ref":"/request/system/sleepSeconds"},{"$ref":"/request/system/sleepMinute"},{"$ref":"/request/system/sleepIoTrigger"}]}
 
 /***/ }),
 
@@ -864,17 +865,24 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./json_schema/request/system/sleep_io_trigger.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepIoTrigger","type":"object","required":["sleep_io_trigger"],"properties":{"sleep_io_trigger":{"type":"boolean"}}}
+
+/***/ }),
+
 /***/ "./json_schema/request/system/sleep_minute.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepMinute","type":"object","required":["sleepMinute"],"properties":{"sleepMinute":{"type":"integer"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepMinute","type":"object","required":["sleep_minute"],"properties":{"sleep_minute":{"type":"integer"}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/system/sleep_seconds.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepSeconds","type":"object","required":["sleepSeconds"],"properties":{"sleepSeconds":{"type":"integer"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepSeconds","type":"object","required":["sleep_seconds"],"properties":{"sleep_seconds":{"type":"integer"}}}
 
 /***/ }),
 
@@ -8565,7 +8573,7 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
       //max 18h (60(s)*60(m)*18(h))
       throw new Error('Error max 18h(64800) sleep');
     }
-    this.send({ system: { sleepSeconds: sec } });
+    this.send({ system: { sleep_seconds: sec } });
   }
 
   sleepMinute(minute) {
@@ -8576,7 +8584,7 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
       //max 45day (60(m)*24(h)*45(d))
       throw new Error('max 45day(64800m) sleep');
     }
-    this.send({ system: { sleepMinute: minute } });
+    this.send({ system: { sleep_minute: minute } });
   }
 
   sleep(date) {
@@ -8599,6 +8607,13 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     } else {
       throw new Error(`over max sleep time : ${sleepTime}m`);
     }
+  }
+
+  sleepIoTrigger(trigger) {
+    if (typeof trigger !== 'boolean') {
+      throw new Error('sleepIoTrigger need boolean arg');
+    }
+    this.send({ system: { sleep_io_trigger: trigger } });
   }
 
   pingWait(unixtime, rand, forceGlobalNetwork) {
@@ -17738,6 +17753,7 @@ class WSCommand_System extends WSCommand {
     this._CommandVCC = 9;
     this._CommandSleepSeconds = 10;
     this._CommandSleepMinute = 11;
+    this._CommandSleepIoTrigger = 12;
   }
 
   // Commands
@@ -17807,6 +17823,7 @@ class WSCommand_System extends WSCommand {
       { uri: '/request/system/ping', onValid: this.ping },
       { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
       { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
+      { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
     ];
     let res = this.validateCommandSchema(schemaData, module, 'system');
 
@@ -17870,15 +17887,26 @@ class WSCommand_System extends WSCommand {
   }
 
   sleepSeconds(params) {
-    let sec = params.sleepSeconds;
+    let sec = params.sleep_seconds;
     let buf = new Uint8Array([sec >> 8, sec]);
     this.sendCommand(this._CommandSleepSeconds, buf);
   }
 
   sleepMinute(params) {
-    let minute = params.sleepMinute;
+    let minute = params.sleep_minute;
     let buf = new Uint8Array([minute >> 8, minute]);
     this.sendCommand(this._CommandSleepMinute, buf);
+  }
+
+  sleepIoTrigger(params) {
+    let trigger = params.sleep_io_trigger;
+    if (trigger === true) {
+      trigger = 1;
+    } else {
+      trigger = 0;
+    }
+    let buf = new Uint8Array([trigger]);
+    this.sendCommand(this._CommandSleepIoTrigger, buf);
   }
 }
 
@@ -18369,7 +18397,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"2.2.0","description":"obniz sdk for javascript","main":"index.js","types":"obniz.d.ts","engines":{"node":">=7.6.0"},"engineStrict":true,"scripts":{"test":"nyc --reporter=text --reporter=html mocha  ./test/index.js -b 1","buildAndtest":"npm run build && npm test","realtest":"mocha  ./realtest/index.js","realtest-debug":"DEBUG=1 mocha -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.2","eslint":"^5.16.0","eslint-config-prettier":"^3.6.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.17.1","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.34.0","webpack-cli":"^3.3.4","webpack-node-externals":"^1.7.2","webpack-stream":"^5.2.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.2","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.7.0","tv4":"^1.3.0","ws":"^6.1.4"},"bugs":{"url":"https://forum.obniz.io"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"2.2.0","description":"obniz sdk for javascript","main":"index.js","types":"obniz.d.ts","engines":{"node":">=7.6.0"},"engineStrict":true,"scripts":{"test":"nyc --reporter=text --reporter=html mocha  ./test/index.js -b 1","buildAndtest":"npm run build && npm test","realtest":"mocha ./realtest/index.js","realtest-debug":"DEBUG=1 mocha -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.2","eslint":"^5.16.0","eslint-config-prettier":"^3.6.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.17.1","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.34.0","webpack-cli":"^3.3.4","webpack-node-externals":"^1.7.2","webpack-stream":"^5.2.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.2","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.7.0","tv4":"^1.3.0","ws":"^6.1.4"},"bugs":{"url":"https://forum.obniz.io"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 

@@ -4,8 +4,8 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/system/sleepSeconds"
 
 type: object
-required : [sleepSeconds]
+required : [sleep_seconds]
 properties:
-    sleepSeconds :
+    sleep_seconds :
         type: integer
         description : "sleep time (seconds)"

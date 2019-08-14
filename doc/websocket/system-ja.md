@@ -151,7 +151,7 @@ reset obniz when obniz gone to offline.
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `system.sleepSeconds` |  integer  | <ul><li>required</li></ul> | sleep time (seconds)&nbsp; |
+| `system.sleep_seconds` |  integer  | <ul><li>required</li></ul> | sleep time (seconds)&nbsp; |
 
 
 
@@ -160,7 +160,7 @@ reset obniz when obniz gone to offline.
 [
     {
         "system": {
-            "sleepSeconds": 500
+            "sleep_seconds": 500
         }
     }
 ]
@@ -174,7 +174,7 @@ reset obniz when obniz gone to offline.
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `system.sleepMinute` |  integer  | <ul><li>required</li></ul> | sleep time (minute)&nbsp; |
+| `system.sleep_minute` |  integer  | <ul><li>required</li></ul> | sleep time (minute)&nbsp; |
 
 
 
@@ -183,7 +183,30 @@ reset obniz when obniz gone to offline.
 [
     {
         "system": {
-            "sleepMinute": 500
+            "sleep_minute": 500
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-system-sleepiotrigger">sleepIoTrigger</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.sleep_io_trigger` |  boolean  | <ul><li>required</li></ul> | true:Wake up on rising edge false:Wake up on falling edge&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "sleep_io_trigger": true
         }
     }
 ]

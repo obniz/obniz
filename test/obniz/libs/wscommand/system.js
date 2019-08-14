@@ -206,7 +206,7 @@ describe('system.log', function() {
   });
 
   it('request sleepSeconds', function() {
-    let requestJson = [{ system: { sleepSeconds: 5 } }];
+    let requestJson = [{ system: { sleep_seconds: 5 } }];
     let expecteBinaryStrings = ['00 A 2 00 5'];
 
     expect(requestJson.length).to.be.equal(1);
@@ -232,8 +232,34 @@ describe('system.log', function() {
   });
 
   it('request sleepMinute', function() {
-    let requestJson = [{ system: { sleepMinute: 5 } }];
+    let requestJson = [{ system: { sleep_minute: 5 } }];
     let expecteBinaryStrings = ['00 B 2 00 5'];
+
+    expect(requestJson.length).to.be.equal(1);
+
+    let isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
+    expect(isValidCommand.valid).to.be.true;
+
+    let compress = this.obniz.constructor.WSCommand.compress(
+      this.obniz.wscommands,
+      requestJson[0]
+    );
+
+    let binaryArray = expecteBinaryStrings
+      .join(' ')
+      .split(' ')
+      .map(function(val, index) {
+        return parseInt(val, 16);
+      });
+    expect(binaryArray.length).to.be.above(2);
+    let binary = new Uint8Array(binaryArray);
+
+    expect(compress).to.be.deep.equal(binary);
+  });
+
+  it('request sleepIoTrigger', function() {
+    let requestJson = [{ system: { sleep_io_trigger: true } }];
+    let expecteBinaryStrings = ['00 C 1 1'];
 
     expect(requestJson.length).to.be.equal(1);
 

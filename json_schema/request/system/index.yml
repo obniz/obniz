@@ -13,3 +13,4 @@ basePath : "system"
   -  {$ref : "/request/system/ping"}
   -  {$ref : "/request/system/sleepSeconds"}
   -  {$ref : "/request/system/sleepMinute"}
+  -  {$ref : "/request/system/sleepIoTrigger"}

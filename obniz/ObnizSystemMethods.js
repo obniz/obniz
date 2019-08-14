@@ -40,7 +40,7 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
       //max 18h (60(s)*60(m)*18(h))
       throw new Error('Error max 18h(64800) sleep');
     }
-    this.send({ system: { sleepSeconds: sec } });
+    this.send({ system: { sleep_seconds: sec } });
   }
 
   sleepMinute(minute) {
@@ -51,7 +51,7 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
       //max 45day (60(m)*24(h)*45(d))
       throw new Error('max 45day(64800m) sleep');
     }
-    this.send({ system: { sleepMinute: minute } });
+    this.send({ system: { sleep_minute: minute } });
   }
 
   sleep(date) {
@@ -74,6 +74,13 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     } else {
       throw new Error(`over max sleep time : ${sleepTime}m`);
     }
+  }
+
+  sleepIoTrigger(trigger) {
+    if (typeof trigger !== 'boolean') {
+      throw new Error('sleepIoTrigger need boolean arg');
+    }
+    this.send({ system: { sleep_io_trigger: trigger } });
   }
 
   pingWait(unixtime, rand, forceGlobalNetwork) {
