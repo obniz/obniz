@@ -99,6 +99,7 @@ import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Gro
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
+import {DriveType} from './obniz/libs/io_peripherals/common';
 
 interface WiredNameMap {
   // Light
@@ -328,6 +329,8 @@ interface Obniz {
   repeat(callback: () => void): void;
   wait(time: number): Promise<void>;
   keepWorkingAtOffline(working: boolean): void;
+  setVccGnd(vcc:number, gnd:number, drive:DriveType):void;
+  isValidIO(io:any): io is IO;
 
   // io
   io: any;
