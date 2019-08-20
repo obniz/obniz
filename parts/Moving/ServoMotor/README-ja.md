@@ -43,12 +43,12 @@ obnizのセットに入っているサーボモーターもこのパターンで
 
 ![](./servocable.jpg)
 
-信号(signal)、プラス(vcc)、マイナス(gnd)をそれぞれ obnizの0, 1, 2につないだ場合は以下のようにします。
+マイナス(gnd)、プラス(vcc)、信号(signal)をそれぞれ obnizの0, 1, 2につないだ場合は以下のようにします。
 
 ![](./wired.png)
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 servo.angle(90.0); // half position
 ```
 
@@ -68,7 +68,7 @@ var servo = obniz.wired("ServoMotor", {pwm:pwm});
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 ```
@@ -80,7 +80,7 @@ servo.angle(90.0); // half position
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 servo.range = {
   min: 0.8,
   max: 2.4
@@ -93,7 +93,7 @@ servo.angle(90.0); // half position
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();
@@ -104,7 +104,7 @@ servo.on();
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();
