@@ -54,6 +54,33 @@ all things ready
 ```
 
 
+##  response: <a name="-response-ws-obniz">obniz</a>
+target device information
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `ws.obniz.hw` |  string  | <ul><li>required</li></ul> | Hardware Identifier String of target device&nbsp; |
+| `ws.obniz.firmware` |  string  | <ul><li>required</li></ul> | Installed firmware version of target device&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "ws": {
+            "obniz": {
+                "hw": "obnizb1",
+                "firmware": "2.0.0"
+            }
+        }
+    }
+]
+```
+
+
 ##  response: <a name="-response-ws-redirect">redirect</a>
 If the server required you to connect other endpoint to communicate with your obniz. This json will be sent.
 

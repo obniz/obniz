@@ -13,14 +13,13 @@ module.exports = class ObnizConnection {
     this.debugprintBinary = false;
     this.debugs = [];
     this.onConnectCalled = false;
+    this.hw = undefined;
     this.firmware_ver = undefined;
     this.connectionState = 'closed'; // closed/connecting/connected/closing
     this.bufferdAmoundWarnBytes = 10 * 1000 * 1000; // 10M bytes
     this.emitter = new emitter();
 
     this._connectionRetryCount = 0;
-
-    this._prepareComponents();
 
     if (!options) {
       options = {};
@@ -476,8 +475,6 @@ module.exports = class ObnizConnection {
     this._sendQueueTimer = null;
   }
 
-  _prepareComponents() {}
-
   notifyToModule(obj) {
     if (this.debugprint) {
       this.print_debug(JSON.stringify(obj));
@@ -504,11 +501,15 @@ module.exports = class ObnizConnection {
   handleWSCommand(wsObj) {
     if (wsObj.ready) {
       this.firmware_ver = wsObj.obniz.firmware;
+      this.hw = wsObj.obniz.hw;
+      if (!this.hw) {
+        this.hw = 'obnizb1';
+      }
       if (this.wscommands) {
         for (let i = 0; i < this.wscommands.length; i++) {
           const command = this.wscommands[i];
           command.setHw({
-            model: 'obniz_board', // hard coding
+            hw: this.hw, // hard coding
             firmware: this.firmware_ver,
           });
         }

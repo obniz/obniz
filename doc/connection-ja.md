@@ -203,6 +203,30 @@ obniz.onconnect = async function() {
 }
 ```
 
+## hw
+
+接続されたデバイスのハードウェア番号です
+
+```javascript
+var obniz = new Obniz('1234-5678');
+obniz.debugprint = true
+obniz.onconnect = async function() {
+  console.log(obniz.hw) // ex. "obnizb1"
+}
+```
+
+## firmware_ver
+
+接続されたデバイスにインストールされているobnizOSのバージョンを取得します
+
+```javascript
+var obniz = new Obniz('1234-5678');
+obniz.debugprint = true
+obniz.onconnect = async function() {
+  console.log(obniz.firmware_ver) // ex. "2.0.0"
+}
+```
+
 ## resetOnDisconnect(reset)
 オプションである `reset_obniz_on_ws_disconnection` の設定をあとから変更する場合に使う関数です。
 obniz.jsでは標準でtrueなので、obnizクラウドは同一obnizへのwebsocket接続が0本になったところでobnizに対してリセットを行います。

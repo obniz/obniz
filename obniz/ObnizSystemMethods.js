@@ -17,11 +17,10 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
 
   reset() {
     this.send({ system: { reset: true } });
-    this._prepareComponents();
+    this._resetComponents();
   }
   reboot() {
     this.send({ system: { reboot: true } });
-    this._prepareComponents();
   }
   selfCheck() {
     this.send({ system: { self_check: true } });

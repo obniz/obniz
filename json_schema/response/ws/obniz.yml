@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ws/obniz"
+description : "target device information"
+type: object
+required : [obniz]
+properties:
+    obniz:
+       type: object
+       required : [hw, firmware]
+       additionalProperties: false
+       properties:
+           hw :
+                type : string
+                example : "obnizb1"
+                description : "Hardware Identifier String of target device"
+
+           firmware :
+                type : string
+                example : "2.0.0"
+                description : "Installed firmware version of target device"
