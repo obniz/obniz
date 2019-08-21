@@ -32,7 +32,7 @@ module.exports = function(docfilePath, moduleName) {
         this.emit('error', new PluginError(PLUGIN_NAME, error));
       }
 
-      console.log(moduleName);
+      // console.log(moduleName);
       file.contents = Buffer.from(output);
 
       return callback(null, file);

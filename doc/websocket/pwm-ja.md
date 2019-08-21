@@ -141,7 +141,7 @@ available 0 to 5
 ##  <a name="pinsetting">pinSetting</a>
 | type | conditions | examples | description |
 |:----|:----|:----|:----|
-| integer | <ul><li>0 &le; value &le; 11</li></ul>  |  <ul><li>`0`</li><li>`1`</li><li>`2`</li><li>`3`</li><li>`4`</li><li>`5`</li><li>`6`</li></ul> | &nbsp; |
+| integer | <ul><li>0 &le; value &le; 40</li></ul>  |  <ul><li>`0`</li><li>`1`</li><li>`2`</li><li>`3`</li><li>`4`</li><li>`5`</li><li>`6`</li></ul> | &nbsp; |
 
 
 

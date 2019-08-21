@@ -12,7 +12,7 @@ export interface BME280Options {
 
 export interface BME280 {
   applyCalibration(): Promise<void>;
-  setIIRStrength(value?: number);
+  setIIRStrength(value?: number): Promise<void>;
   getAllWait(): Promise<{ temperature: number; humidity: number; pressure: number }>;
   calcAltitude(pressure: number, seaPressure?: number): number;
 }
