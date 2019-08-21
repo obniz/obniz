@@ -1,10 +1,10 @@
-export interface Grove_EarHeartRateOptions {
-  gnd: number;
-  vcc: number;
-  signal?: number;
+export interface Grove_3AxisAccelerometerOptions {
+  gnd?: number;
+  vcc?: number;
+  sda: number;
+  scl: number;
 }
 
-export interface Grove_EarHeartRate {
-  start(callback: (heartrate: any) => void): void;
-  getWait(): Promise<any>;
+export interface Grove_3AxisAccelerometer {
+  getWait(): Promise<number[]>;
 }

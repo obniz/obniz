@@ -98,6 +98,7 @@ import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 import { Grove_GPS, Grove_GPSOptions } from './parts/Grove/Grove_GPS';
+import { Grove_3AxisAccelerometer, Grove_3AxisAccelerometerOptions } from './parts/Grove/Grove_3AxisAccelerometer';
 
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
@@ -196,6 +197,7 @@ interface WiredNameMap {
   'Grove_EarHeartRate': Grove_EarHeartRate;
   'Grove_MP3': Grove_MP3;
   'Grove_GPS': Grove_GPS;
+  'Grove_3AxisAccelerometer': Grove_3AxisAccelerometer;
   // Ble
   '2JCIE': OMRON_2JCIE;
 }
@@ -294,7 +296,8 @@ interface WiredNameOptionsMap {
   // Grove
   'Grove_EarHeartRate': Grove_EarHeartRateOptions;
   'Grove_MP3': Grove_MP3Options;
-  'Grove_GPS': Grove_GPS;
+  'Grove_GPS': Grove_GPSOptions;
+  'Grove_3AxisAccelerometer': Grove_3AxisAccelerometerOptions;
   // Ble
   '2JCIE': OMRON_2JCIEOptions;
 }
