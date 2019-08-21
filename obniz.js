@@ -18293,7 +18293,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"2.2.0","description":"obniz sdk for javascript","main":"index.js","types":"obniz.d.ts","engines":{"node":">=7.6.0"},"engineStrict":true,"scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.2","eslint":"^5.16.0","eslint-config-prettier":"^3.6.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.17.1","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.34.0","webpack-cli":"^3.3.4","webpack-node-externals":"^1.7.2","webpack-stream":"^5.2.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.2","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.7.0","tv4":"^1.3.0","ws":"^6.1.4"},"bugs":{"url":"https://forum.obniz.io"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"2.2.0","description":"obniz sdk for javascript","main":"index.js","types":"obniz.d.ts","engines":{"node":">=7.6.0"},"engineStrict":true,"scripts":{"test":"nyc --reporter=text --reporter=html mocha  ./test/index.js -b 1","buildAndtest":"npm run build && npm test","realtest":"mocha ./realtest/index.js","realtest-debug":"DEBUG=1 mocha -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.2","eslint":"^5.16.0","eslint-config-prettier":"^3.6.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.17.1","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.34.0","webpack-cli":"^3.3.4","webpack-node-externals":"^1.7.2","webpack-stream":"^5.2.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.2","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.7.0","tv4":"^1.3.0","ws":"^6.1.4"},"bugs":{"url":"https://forum.obniz.io"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -18365,6 +18365,7 @@ var map = {
 	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
 	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/AM2320/index.js": "./parts/TemperatureSensor/i2c/AM2320/index.js",
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
@@ -27442,6 +27443,66 @@ class ADT7410 {
 
 if (true) {
   module.exports = ADT7410;
+}
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/AM2320/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class AM2320 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
+    this.requiredKeys = [];
+  }
+
+  static info() {
+    return {
+      name: 'AM2320',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.address = 0x5c;
+    this.params.pull = '5v';
+    this.params.mode = 'master';
+    this.params.clock = this.params.clock || 100 * 1000;
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  async getAllWait() {
+    let i2cOnerror = this.i2c.onerror;
+    this.i2c.onerror = () => {};
+    this.i2c.write(this.address, [0]); //wake
+    this.obniz.wait(2);
+    this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+    this.obniz.wait(2);
+    this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+    let ret = await this.i2c.readWait(this.address, 6);
+    this.i2c.onerror = i2cOnerror;
+    if (ret[0] != 3 || ret[1] != 4) {
+      console.log('AM2320: Could not receive data correctly');
+      return {};
+    }
+    let humidity = (ret[2] * 256 + ret[3]) / 10.0;
+    let temperature = (ret[4] * 256 + ret[5]) / 10.0;
+    return { temperature, humidity };
+  }
+
+  async getTempWait() {
+    return (await this.getAllWait()).temperature;
+  }
+
+  async getHumdWait() {
+    return (await this.getAllWait()).humidity;
+  }
+}
+
+if (true) {
+  module.exports = AM2320;
 }
 
 
