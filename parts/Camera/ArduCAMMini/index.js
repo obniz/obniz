@@ -13,6 +13,7 @@ class ArduCAMMini {
       'i2c',
       'spi_frequency',
       'spi_drive',
+      'module_version',
     ];
     this.requiredKeys = ['cs'];
 
@@ -668,6 +669,7 @@ class ArduCAMMini {
 
     this.sensor_addr = 0x30; // i2c
 
+    this.params.module_version = this.params.module_version || 0;
     this.params.mode = this.params.mode || 'master';
     this.params.drive = this.params.spi_drive || '3v';
     this.params.frequency = this.params.spi_frequency || 4 * 1000 * 1000;
@@ -847,7 +849,10 @@ class ArduCAMMini {
     // start bust
     this.io_cs.output(false);
     this.spi.write([this.regs.BURST_FIFO_READ]);
-    this.spi.write([0xff]); // dummy read
+
+    if (this.params.module_version == 0) {
+      this.spi.write([0xff]); // dummy read
+    }
 
     let buf = [];
 
