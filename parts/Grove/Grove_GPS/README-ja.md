@@ -1,49 +1,65 @@
 # Grove_GPS
-
-
 Grove GPSモジュール[(Grove - GPS)](https://www.seeedstudio.com/Grove-GPS-p-959.html)から情報を取得するライブラリです。
-機能は[こちらのモジュール](https://obniz.io/ja/sdk/parts/GYSFDMAXB/README.md)とほぼ同じですが、Grove GPSモジュールには1PPM出力がありません。
+機能は[GYSFDMAXB](https://obniz.io/ja/sdk/parts/GYSFDMAXB/README.md)とほぼ同じですが、Grove GPSモジュールには1PPM出力がありません。
 
-## wired(tx, rx {, vcc, gnd})
+![](./image.jpg)
 
-obnizのtx,rx,vcc,gndをぞれぞれGPSモジュールの対応するピンに接続します。
-Groveシステムなので、
-| obniz | Groveケーブルの色 |
-|:--:|:--:|
-| tx | 黄 |
-| rx | 白 |
-| vcc | 赤 |
-| gnd | 黒 |
-となるはずです。
+```html
+<!-- HTML Example -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+<script src="https://unpkg.com/obniz@latest/obniz.js"></script>
+</head>
+<body>
+
+<div id="obniz-debug"></div>
+<h1>obniz GPS</h1>
+<div id="obniz-gps"></div>
+
+<script>
+  var obniz = new Obniz("95496709");
+  obniz.onconnect = async function () {
+    let gps = obniz.wired("Grove_GPS", { rx: 0, tx: 1, vcc: 2, gnd: 3 });
+
+    setInterval(async function () {
+      let gpsInfo = gps.getGpsInfo();
+      console.log(gpsInfo);
+      document.getElementById("obniz-gps").textContent = "longitude:" + gpsInfo.longitude + " latitude:" + gpsInfo.latitude;
+    }, 1000);
+  }
+</script>
+</body>
+</html>
+```
+
+
+## wired(rx, tx {, vcc, gnd})
+
+obniz BoardにGPSモジュールを接続します。
+次のように接続を行います。
+
+| grove | cable | obniz |
+|:--:|:--:|:--:|
+| tx | - | rx |
+| rx | - | tx |
+| vcc | - | vcc |
+| gnd | - | gnd |
+
 
 **突入電流対策のため、obnizのvcc(5V出力)とGPSモジュールのvccの間に5~10Ω程度の抵抗を挿入してください。**
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("Grove_GPS", { tx:5, rx:6, vcc:7, gnd:8 });
-let sentence = gps.readSentence();
-```
-
-start1pps関数が使えない以外は[GYSFDMAXB用ライブラリ](https://obniz.io/ja/sdk/parts/GYSFDMAXB/README.md)と共通です。
-以下の関数についてもGYSFDMAXBライブラリと共通です。
-
-
-## getGpsInfo({editedData})
-
-受信したNMEAフォーマットのセンテンスから有用なデータをオブジェクト化した結果を取り出します。同じ情報が`gpsInfo`プロパティにもセットされます。<br>
-通常は引数を省略しますが、後述の`editedData`を指定すると、その情報を使用してオブジェクト化します。
-
-```javascript
-// Javascript Example
-let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
-let gpsInfo = gps.getGpsInfo();
-console.log(gpsInfo);
-
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 ```
 
 ## readSentence()
 
-受信したGPSデータ([NMEAフォーマット](https://ja.wikipedia.org/wiki/NMEA_0183))の1センテンス(1行の)データを読み出します。データがない場合は、空文字が返ります。
+受信したGPSデータ([NMEAフォーマット](https://ja.wikipedia.org/wiki/NMEA_0183))の1センテンス(1行の)データを読み出します。
+データがない場合は、空文字が返ります。
 NMEAフォーマットのデータを直接使いたい場合にこのAPIを使います。
 
 受信した1センテンス分のデータが文字列としてセットされます。<br>
@@ -52,8 +68,21 @@ NMEAフォーマットのデータを直接使いたい場合にこのAPIを使�
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 let sentence = gps.readSentence();
+```
+
+## getGpsInfo({editedData})
+
+受信したNMEAフォーマットのセンテンスから有用なデータをオブジェクト化した結果を取り出します。同じ情報が`gpsInfo`プロパティにもセットされます。<br>
+通常は引数を省略しますが、後述の`editedData`を指定すると、その情報を使用してオブジェクト化します。
+
+```javascript
+// Javascript Example
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
+let gpsInfo = gps.getGpsInfo();
+console.log(gpsInfo);
+
 ```
 
 ## getEditedData()
@@ -79,7 +108,7 @@ let sentence = gps.readSentence();
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 
 function mainLoop() {
   var data = gps.getEditedData();
@@ -123,22 +152,19 @@ NMEAの緯度経度を「秒(S)」の数値に変換（999999.999）
 
 ```javascript
 // Javascript Example
-
-  let d = gps.getEditedData();
-  if (d.enable) {
-    if (d.GPGGA) {
-      let p = d.GPGGA;
-      if (p[6] != "0") {
-        //経度
-        let longitude = gps.nmea2dd(p[2]);
-        //緯度
-        let latitude = gps.nmea2dd(p[4]);
-
-        ・・・
-
-      }
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
+let d = gps.getEditedData();
+if (d.enable) {
+  if (d.GPGGA) {
+    let p = d.GPGGA;
+    if (p[6] != "0") {
+      //経度
+      let longitude = gps.nmea2dd(p[2]);
+      //緯度
+      let latitude = gps.nmea2dd(p[4]);
     }
   }
+}
 
 ```
 

@@ -1,17 +1,52 @@
-# GYSFDMAXB
+# Grove_GPS
 
 Library for Grove GPS Module [Grove - GPS](https://www.seeedstudio.com/Grove-GPS-p-959.html).
 
+![](./image.jpg)
+
+
+```html
+<!-- HTML Example -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+<script src="https://unpkg.com/obniz@latest/obniz.js"></script>
+</head>
+<body>
+
+<div id="obniz-debug"></div>
+<h1>obniz GPS</h1>
+<div id="obniz-gps"></div>
+
+<script>
+  var obniz = new Obniz("95496709");
+  obniz.onconnect = async function () {
+    let gps = obniz.wired("Grove_GPS", { rx: 0, tx: 1, vcc: 2, gnd: 3 });
+
+    setInterval(async function () {
+      let gpsInfo = gps.getGpsInfo();
+      console.log(gpsInfo);
+      document.getElementById("obniz-gps").textContent = "longitude:" + gpsInfo.longitude + " latitude:" + gpsInfo.latitude;
+    }, 1000);
+  }
+</script>
+</body>
+</html>
+```
 
 ## wired(tx, rx {, vcc, gnd})
 
 Connect tx, rx, vcc, gnd to an obniz.
-| obniz | Color of Grove cable |
-|:--:|:--:|
-| tx | Yellow |
-| rx | White |
-| vcc | Red |
-| gnd | Black |
+
+| grove | cable | obniz |
+|:--:|:--:|:--:|
+| tx | - | rx |
+| rx | - | tx |
+| vcc | - | vcc |
+| gnd | - | gnd |
+
 
 **To prevent rush current, plase insert resistor(5~10R) between obniz vcc and GPS vcc.**
 
@@ -19,8 +54,7 @@ And specify the pins on program.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("Grove_GPS", { tx:5, rx:6, vcc:7, gnd:8 });
-let sentence = gps.readSentence();
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 ```
 
 Functions are common with [GYSFDMAXB Library](https://obniz.io/ja/sdk/parts/GYSFDMAXB/README.md) apart from start1pps function.
@@ -35,7 +69,7 @@ Same information will be set to gpsInfo property.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 let gpsInfo = getGpsInfo();
 console.log(gpsInfo);
 
@@ -53,8 +87,9 @@ One sentence will appear in one string.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 let sentence = gps.readSentence();
+console.log(sentence);
 ```
 
 ## getEditedData()
@@ -79,7 +114,7 @@ Same data is set to editedData property.
 
 ```javascript
 // Javascript Example
-let gps = obniz.wired("Grove_GPS", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
 
 function mainLoop() {
   var data = gps.getEditedData();
@@ -123,22 +158,19 @@ Latitude/Longitude of NMEA to S format string (0.999999999)
 
 ```javascript
 // Javascript Example
-
-  let d = gps.getEditedData();
-  if (d.enable) {
-    if (d.GPGGA) {
-      let p = d.GPGGA;
-      if (p[6] != "0") {
-        //Longitude
-        let longitude = gps.nmea2dd(p[2]);
-        //Latitude
-        let latitude = gps.nmea2dd(p[4]);
-
-        ・・・
-
-      }
+let gps = obniz.wired("Grove_GPS", { rx:0, tx:1, vcc:2, gnd:3 });
+let d = gps.getEditedData();
+if (d.enable) {
+  if (d.GPGGA) {
+    let p = d.GPGGA;
+    if (p[6] != "0") {
+      //Longitude
+      let longitude = gps.nmea2dd(p[2]);
+      //Latitude
+      let latitude = gps.nmea2dd(p[4]);
     }
   }
+}
 
 ```
 

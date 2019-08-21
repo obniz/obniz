@@ -151,7 +151,7 @@ class Grove_3AxisAccelerometer {
     return rawVal;
   }
 
-  async getVal() {
+  async getWait() {
     let accelVal = [0, 0, 0];
     let raw = await this.getRawVal();
     accelVal[0] = raw[0] * this.constVal.gainX;

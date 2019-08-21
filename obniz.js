@@ -24415,7 +24415,7 @@ class Grove_3AxisAccelerometer {
     return rawVal;
   }
 
-  async getVal() {
+  async getWait() {
     let accelVal = [0, 0, 0];
     let raw = await this.getRawVal();
     accelVal[0] = raw[0] * this.constVal.gainX;
@@ -24522,16 +24522,12 @@ class Grove_GPS {
 
   wired(obniz) {
     this.obniz = obniz;
-    this.tx = this.params.rx;
-    this.rx = this.params.tx;
-    this.vcc = this.params.vcc;
-    this.gnd = this.params.gnd;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
     this.uart = obniz.getFreeUart();
     this.uart.start({
-      tx: this.tx,
-      rx: this.rx,
+      tx: this.params.tx,
+      rx: this.params.rx,
       baud: 9600,
     });
 
