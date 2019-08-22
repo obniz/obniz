@@ -1,8 +1,7 @@
 class AK8963 {
   constructor() {
-    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address'];
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address', 'adb_cycle'];
     this.required = [];
-    this._adc_cycle = 8;
   }
 
   static info() {
@@ -19,6 +18,7 @@ class AK8963 {
     this.params.mode = 'master';
     this._address = this.params.address || 0x0c;
     this.i2c = obniz.getI2CWithConfig(this.params);
+    this.setConfig(this.params.adc_cycle || 8);
   }
 
   setConfig(ADC_cycle) {

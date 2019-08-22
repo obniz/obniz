@@ -26092,9 +26092,8 @@ if (true) {
 
 class AK8963 {
   constructor() {
-    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address'];
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address', 'adb_cycle'];
     this.required = [];
-    this._adc_cycle = 8;
   }
 
   static info() {
@@ -26111,6 +26110,7 @@ class AK8963 {
     this.params.mode = 'master';
     this._address = this.params.address || 0x0c;
     this.i2c = obniz.getI2CWithConfig(this.params);
+    this.setConfig(this.params.adc_cycle || 8);
   }
 
   setConfig(ADC_cycle) {
@@ -26905,10 +26905,17 @@ if (true) {
 
 class MPU6050 {
   constructor() {
-    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address'];
+    this.keys = [
+      'gnd',
+      'vcc',
+      'sda',
+      'scl',
+      'i2c',
+      'address',
+      'accelerometer_range',
+      'gyroscope_range',
+    ];
     this.required = [];
-    this._accel_range = 2;
-    this._gyro_range = 250;
   }
 
   static info() {
@@ -26925,11 +26932,15 @@ class MPU6050 {
     this.params.mode = 'master';
     this._address = this.params.address || 0x68;
     this.i2c = obniz.getI2CWithConfig(this.params);
+    this.setConfig(
+      this.params.accelerometer_range || 2,
+      this.params.gyroscope_range || 250
+    );
   }
 
-  setConfig(accel_range, gyro_range) {
+  setConfig(accelerometer_range, gyroscope_range) {
     //accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
-    switch (accel_range) {
+    switch (accelerometer_range) {
       case 2:
         this.i2c.write(this._address, [0x1c, 0x00]);
         break;
@@ -26946,7 +26957,7 @@ class MPU6050 {
         throw new Error('accel_range variable 2,4,8,16 setting');
     }
     //gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
-    switch (gyro_range) {
+    switch (gyroscope_range) {
       case 250:
         this.i2c.write(this._address, [0x1b, 0x00]);
         break;
@@ -26962,8 +26973,8 @@ class MPU6050 {
       default:
         throw new Error('accel_range variable 250,500,1000,2000 setting');
     }
-    this._accel_ramge = accel_range;
-    this._gyro_range = gyro_range;
+    this._accel_ramge = accelerometer_range;
+    this._gyro_range = gyroscope_range;
   }
 
   async getWait() {
