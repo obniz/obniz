@@ -18341,12 +18341,15 @@ var map = {
 	"./Light/WS2812B/index.js": "./parts/Light/WS2812B/index.js",
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
+	"./MovementSensor/AK8963/index.js": "./parts/MovementSensor/AK8963/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
+	"./MovementSensor/MPU6050/index.js": "./parts/MovementSensor/MPU6050/index.js",
+	"./MovementSensor/MPU9250/index.js": "./parts/MovementSensor/MPU9250/index.js",
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
@@ -26084,6 +26087,71 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/MovementSensor/AK8963/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class AK8963 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address'];
+    this.required = [];
+    this._adc_cycle = 8;
+  }
+
+  static info() {
+    return {
+      name: 'AK8963',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this._address = this.params.address || 0x0c;
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  setConfig(ADC_cycle) {
+    switch (ADC_cycle) {
+      case 8:
+        this.i2c.write(this._address, [0x0a, 0x12]);
+        break;
+      case 100:
+        this.i2c.write(this._address, [0x0a, 0x16]);
+        break;
+      default:
+        throw new Error('ADC_cycle variable 8,100 setting');
+    }
+    this._adc_cycle = ADC_cycle;
+  }
+
+  async getWait() {
+    this.i2c.write(this._address, [0x03]); //request AK8963 data
+    let raw_data_AK8963 = await this.i2c.readWait(this._address, 7); //read 7byte(read mag_data[6] to refresh)
+    return {
+      x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
+      y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
+      z: this.char2short(raw_data_AK8963[4], raw_data_AK8963[5]),
+    };
+  }
+
+  char2short(valueH, valueL) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
+    dv.setUint8(0, valueH);
+    dv.setUint8(1, valueL);
+    return dv.getInt16(0, false);
+  }
+}
+if (true) {
+  module.exports = AK8963;
+}
+
+
+/***/ }),
+
 /***/ "./parts/MovementSensor/Button/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26827,6 +26895,172 @@ class KXSC7_2050 {
 
 if (true) {
   module.exports = KXSC7_2050;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/MPU6050/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MPU6050 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address'];
+    this.required = [];
+    this._accel_range = 2;
+    this._gyro_range = 250;
+  }
+
+  static info() {
+    return {
+      name: 'MPU6050',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this._address = this.params.address || 0x68;
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  setConfig(accel_range, gyro_range) {
+    //accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+    switch (accel_range) {
+      case 2:
+        this.i2c.write(this._address, [0x1c, 0x00]);
+        break;
+      case 4:
+        this.i2c.write(this._address, [0x1c, 0x08]);
+        break;
+      case 8:
+        this.i2c.write(this._address, [0x1c, 0x10]);
+        break;
+      case 16:
+        this.i2c.write(this._address, [0x1c, 0x18]);
+        break;
+      default:
+        throw new Error('accel_range variable 2,4,8,16 setting');
+    }
+    //gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+    switch (gyro_range) {
+      case 250:
+        this.i2c.write(this._address, [0x1b, 0x00]);
+        break;
+      case 500:
+        this.i2c.write(this._address, [0x1b, 0x08]);
+        break;
+      case 1000:
+        this.i2c.write(this._address, [0x1b, 0x10]);
+        break;
+      case 2000:
+        this.i2c.write(this._address, [0x1b, 0x18]);
+        break;
+      default:
+        throw new Error('accel_range variable 250,500,1000,2000 setting');
+    }
+    this._accel_ramge = accel_range;
+    this._gyro_range = gyro_range;
+  }
+
+  async getWait() {
+    this.i2c.write(this._address, [0x3b]); //request MPU6050 data
+    let raw_data_MPU6050 = await this.i2c.readWait(this._address, 14); //read 14byte
+    let ac_scale = this._accel_range / 32768;
+    let gy_scale = this._gyro_range / 32768;
+    return {
+      accelerometer: {
+        x: this.char2short(raw_data_MPU6050[0], raw_data_MPU6050[1]) * ac_scale,
+        y: this.char2short(raw_data_MPU6050[2], raw_data_MPU6050[3]) * ac_scale,
+        z: this.char2short(raw_data_MPU6050[4], raw_data_MPU6050[5]) * ac_scale,
+      },
+      temp:
+        this.char2short(raw_data_MPU6050[6], raw_data_MPU6050[7]) / 333.87 + 21,
+      gyroscope: {
+        x: this.char2short(raw_data_MPU6050[8], raw_data_MPU6050[9]) * gy_scale,
+        y:
+          this.char2short(raw_data_MPU6050[10], raw_data_MPU6050[11]) *
+          gy_scale,
+        z:
+          this.char2short(raw_data_MPU6050[12], raw_data_MPU6050[13]) *
+          gy_scale,
+      },
+    };
+  }
+
+  char2short(valueH, valueL) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
+    dv.setUint8(0, valueH);
+    dv.setUint8(1, valueL);
+    return dv.getInt16(0, false);
+  }
+}
+if (true) {
+  module.exports = MPU6050;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/MPU9250/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MPU9250 {
+  constructor(obniz) {
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c'];
+    this.required = ['sda', 'scl'];
+  }
+
+  static info() {
+    return {
+      name: 'MPU9250',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    this.mpu6050 = obniz.wired('MPU6050', { i2c: this.i2c });
+    this.ak8963 = obniz.wired('AK8963', { i2c: this.i2c });
+    this.obniz.wait(100);
+  }
+
+  setConfig(accel_range, gyro_range, ADC_cycle) {
+    this.i2c.write(0x68, [0x6b, 0x00]); //activate MPU9250
+    this.i2c.write(0x68, [0x37, 0x02]); //activate AK8963 (bypass)
+    this.i2c.write(0x68, [0x1a, 0x06]); //activate LPF (search datasheet_p.13)
+    this.i2c.write(0x68, [0x1d, 0x02]); //accel LPF set.
+
+    this.mpu6050.setConfig(accel_range, gyro_range);
+    this.ak8963.setConfig(ADC_cycle);
+  }
+
+  async _getAK8963Wait() {
+    this.i2c.write(0x68, [0x02]); //request AK8983 data
+    let ST1 = await this.i2c.readWait(0x68, 1); //confirm magnet value readable
+    if (ST1 & 0x01) {
+      return await this.ak8963.getWait();
+    }
+    return {};
+  }
+
+  async getAllWait() {
+    let data = await this.mpu6050.getWait();
+    //data.compass = await this.ak8963.getWait();
+    console.log(data);
+  }
+}
+if (true) {
+  module.exports = MPU9250;
 }
 
 
