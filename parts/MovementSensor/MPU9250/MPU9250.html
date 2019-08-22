@@ -1,0 +1,29 @@
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="../MPU9250/index.js"></script>
+	<script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+	<script src="https://unpkg.com/obniz@2.2.0/obniz.js"></script>
+</head>
+
+<body>
+	<div id="obniz-debug"></div>
+
+	<script>
+		Obniz.PartsRegistrate(MPU9250);
+		var obniz = new Obniz("1255-1852"); //obniz ID here
+		obniz.onconnect = async function () {
+			var mpu = obniz.wired("MPU9250", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
+			var Accel_range = 16;
+			var Gyro_range = 2000;
+			var ADC_cycle = 100;
+			mpu.init(Accel_range, Gyro_range, ADC_cycle);
+			accel_temp_gyro = await mpu.get_MPU6050(Accel_range, Gyro_range, 1);
+			magnet = await mpu.get_AK8963(1);
+		};
+	</script>
+
+</body>
+
+</html>
