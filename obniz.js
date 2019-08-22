@@ -10231,7 +10231,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
         break;
       }
       case 'onnotify': {
-        this.onnotify();
+        this.onnotify(params.data || undefined);
         break;
       }
     }
