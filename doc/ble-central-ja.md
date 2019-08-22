@@ -452,6 +452,10 @@ obniz.ble.scan.start();
 peripheralからnotifyがきたときに受け取る関数を設定します．
 notifyを受け取るためには，BLEの仕様上，CCCD Descriptor(0x2902)を書き込む必要があります
 
+BLE/CCCDの仕様については[bluetooth公式ドキュメント](https://www.bluetooth.com/specifications/gatt/descriptors/)を確認ください
+
+
+
 ```javascript
 var target = {
   localName: "obniz-notify"
@@ -465,9 +469,9 @@ if(connected){
   let result = await cccd.writeWait([0x01, 0x00]); // register cccd for remote peripheral 
 
   console.log(await cccd.readWait()); // check cccd 
-
-  char.registerNotify( function(){
-    console.log("notify");
+  
+  char.registerNotify( function(data){
+    console.log("notify with data " + data.join(','));
   });
 
 
