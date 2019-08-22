@@ -18406,8 +18406,8 @@ class hx711 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sck', 'dout'];
     this.requiredKeys = ['sck', 'dout'];
-    this.offset = 0;
-    this.scale = 1;
+    this._offset = 0;
+    this._scale = 1;
   }
 
   static info() {
@@ -18431,27 +18431,58 @@ class hx711 {
     this.dout = obniz.getIO(this.params.dout);
 
     this.sck.output(true);
+    obniz.wait(500);
   }
 
   async readWait() {
     this.sck.output(false);
 
-    // while(true) {
-    //   let val = await this.dout.inputWait();
-    //   if (val == false) break;
-    // }
+    while (true) {
+      let val = await this.dout.inputWait();
+      if (val == false) break;
+    }
     this.spi.start({
       mode: 'master',
-      clk: this.params.sck,
+      mosi: this.params.sck,
       miso: this.params.dout,
-      frequency: 66 * 1000,
+      frequency: 500 * 1000,
     });
 
-    let ret = await this.spi.writeWait([0, 0, 0]);
+    let ret_double = await this.spi.writeWait([
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0x80,
+    ]);
     this.spi.end(true);
     this.sck.output(false);
+    let ret = [
+      this.doubleBit2singleBit(ret_double[0], ret_double[1]),
+      this.doubleBit2singleBit(ret_double[2], ret_double[3]),
+      this.doubleBit2singleBit(ret_double[4], ret_double[5]),
+    ];
     let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
     return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
+  }
+
+  doubleBit2singleBit(a, b) {
+    return (
+      (this.bit(a, 7) << 7) |
+      (this.bit(a, 5) << 6) |
+      (this.bit(a, 3) << 5) |
+      (this.bit(a, 1) << 4) |
+      (this.bit(b, 7) << 3) |
+      (this.bit(b, 5) << 2) |
+      (this.bit(b, 3) << 1) |
+      (this.bit(b, 1) << 0)
+    );
+  }
+
+  bit(a, n) {
+    return a & (1 << n) ? 1 : 0;
   }
 
   async readAverageWait(times) {
@@ -18474,15 +18505,29 @@ class hx711 {
     this.sck.output(false);
   }
 
-  async zeroAdjust(times) {
+  async zeroAdjustWait(times) {
     times = parseInt(times) || 1;
-    this.offset = await this.readAverageWait(times);
+    this._offset = await this.readAverageWait(times);
   }
 
   async getValueWait(times) {
     times = parseInt(times) || 1;
     let val = await this.readAverageWait(times);
-    return (val - this.offset) / this.scale;
+    return (val - this._offset) / this._scale;
+  }
+
+  setOffset(offset) {
+    if (typeof offset !== 'number') {
+      throw new Error('offset variable is Number');
+    }
+    this._offset = offset;
+  }
+
+  setScale(scale) {
+    if (typeof scale !== 'number') {
+      throw new Error('scale variable is Number');
+    }
+    this._scale = scale;
   }
 }
 
@@ -27620,7 +27665,7 @@ if (true) {
 class Speaker {
   constructor(obniz) {
     this.keys = ['signal', 'gnd'];
-    this.requiredKeys = ['gnd'];
+    this.requiredKeys = ['signal'];
   }
 
   static info() {

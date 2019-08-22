@@ -340,6 +340,7 @@ interface Obniz {
   isValidIO(io:any): io is IO;
 
   // io
+  getIO(pin:number): IO;
   io: any;
   io0: IO;
   io1: IO;
@@ -355,6 +356,7 @@ interface Obniz {
   io11: IO;
 
   // ad
+  getAD(pin:number): AD;
   ad0: AD;
   ad1: AD;
   ad2: AD;

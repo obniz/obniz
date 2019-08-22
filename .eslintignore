@@ -3,3 +3,5 @@ obniz.min.js
 coverage/*
 node_modules/*
 temp/*
+test.js
+test-*.js
