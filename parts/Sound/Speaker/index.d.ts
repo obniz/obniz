@@ -1,6 +1,6 @@
 export interface SpeakerOptions {
-  signal?: number;
-  gnd: number;
+  signal: number;
+  gnd?: number;
 }
 
 export interface Speaker {
