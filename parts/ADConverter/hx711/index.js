@@ -2,8 +2,8 @@ class hx711 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sck', 'dout'];
     this.requiredKeys = ['sck', 'dout'];
-    this.offset = 0;
-    this.scale = 1;
+    this._offset = 0;
+    this._scale = 1;
   }
 
   static info() {
@@ -101,15 +101,29 @@ class hx711 {
     this.sck.output(false);
   }
 
-  async zeroAdjust(times) {
+  async zeroAdjustWait(times) {
     times = parseInt(times) || 1;
-    this.offset = await this.readAverageWait(times);
+    this._offset = await this.readAverageWait(times);
   }
 
   async getValueWait(times) {
     times = parseInt(times) || 1;
     let val = await this.readAverageWait(times);
-    return (val - this.offset) / this.scale;
+    return (val - this._offset) / this._scale;
+  }
+
+  setOffset(offset) {
+    if (typeof offset !== 'number') {
+      throw new Error('offset variable is Number');
+    }
+    this._offset = offset;
+  }
+
+  setScale(scale) {
+    if (typeof scale !== 'number') {
+      throw new Error('scale variable is Number');
+    }
+    this._scale = scale;
   }
 }
 
