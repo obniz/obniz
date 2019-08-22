@@ -218,9 +218,11 @@ describe('8-ble', function() {
     expect(targetChara.canIndicate()).to.be.equal(false);
 
     let p1 = new Promise(function(resolve) {
-      targetChara.registerNotify(function() {
-        console.log('notify!');
-        notifyed = true;
+      targetChara.registerNotify(function(data) {
+        console.log('notify!' + data.join(','));
+        if (data.length === 1 && data[0] === 92) {
+          notifyed = true;
+        }
         resolve();
       });
     });

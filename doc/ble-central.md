@@ -463,6 +463,9 @@ obniz.ble.startScan({duration : 10});
 This sets a callback function to receive notify when it comes from periperal.
 To receive notify, you need to register on CCCD Descriptor(0x2902).
 
+More infomation of BLE/CCCD is available at [bluetooth.com](https://www.bluetooth.com/specifications/gatt/descriptors/).
+
+
 ```javascript
 var target = {
   localName: "obniz-notify"
@@ -473,12 +476,12 @@ var connected = await peripheral.connectWait();
 if(connected){
   let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
   let cccd = char.getDescriptor("2902");
-  let result = await cccd.writeWait([0x00, 0x01]); // register cccd for remote peripheral 
+  let result = await cccd.writeWait([0x01, 0x00]); // register cccd for remote peripheral 
 
   console.log(await cccd.readWait()); // check cccd 
 
-  char.registerNotify( function(){
-    console.log("notify");
+  char.registerNotify( function(data){
+    console.log("notify with data " + data.join(','));
   });
 
 

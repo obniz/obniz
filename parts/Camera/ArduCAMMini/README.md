@@ -3,7 +3,7 @@
 ArduCAM Mini works with few pins.
 It takes image with many image resolutions and alos jpeg format.
 
-ArduCam Mini has many series of product. This library is only for OV2640 2M pixel ArduCam.
+ArduCam Mini has many series of product. This library is only for OV2640 2M pixel ArduCam, ArduCAM-Mini-2MP or ArduCAM-Mini-2MP-Plus.
 
 ![](./image.jpg)
 
@@ -41,6 +41,7 @@ i2c | `i2c object` | no | &nbsp; | configured i2c object
 spi | `spi object` | no | &nbsp; | configured spi object
 spi_frequency | `spi object` | no | 4Mhz | for unstable situation, change frequency of spi
 spi_drive | `spi object` | no | `'3v'` | for unstable situation, change drive method of spi
+module_version | `number` | no | 0 | Specify 1 when using ArduCAM-Mini-2MP-Plus
 
 Just specify connected io to configure.
 
