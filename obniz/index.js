@@ -138,8 +138,12 @@ try {
       }
     }
   }
-} catch (error) {
-  console.error(error);
+} catch (e) {
+  if (e instanceof DOMException) {
+    //cross origin iframe
+  } else {
+    console.error(e);
+  }
 }
 
 /*===================*/
