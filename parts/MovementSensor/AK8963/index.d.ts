@@ -1,26 +1,18 @@
-export interface MPU9250Options {
+export interface AK8963Options {
 	gnd?: number;
 	vcc?: number;
 	sda?: number;
 	scl?: number;
-	i2c?: any;
-	address?: any;
+	i2c?: I2C;
+	address?: number;
+	adb_cycle?: number;
 }
 
-export interface MPU9250 {
-	setConfig(accel_range: number, gyro_range: number): void;
+export interface AK8963 {
+	setConfig(ADC_cycle: number): void;
 	getWait(): Promise<{
-		accelerometer: {
-			x: number,
-			y: number,
-			z: number,
-		},
-		temp: number,
-		gyroscope: {
-			x: number,
-			y: number,
-			z: number,
-		},
+		x: number,
+		y: number,
+		z: number,
 	}>;
-
 }

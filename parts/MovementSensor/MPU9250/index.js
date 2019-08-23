@@ -1,7 +1,7 @@
 class MPU9250 {
   constructor(obniz) {
     this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address'];
-    this.required = ['sda', 'scl'];
+    this.required = [];
   }
 
   static info() {

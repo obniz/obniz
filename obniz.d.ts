@@ -59,6 +59,7 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
+import { MPU9250, MPU9250Options } from './parts/MovementSensor/MPU9250';
 import { MPU6050, MPU6050Options } from './parts/MovementSensor/MPU6050';
 import { AK8963, AK8963Options } from './parts/MovementSensor/AK8963';
 
@@ -134,8 +135,6 @@ interface WiredNameMap {
   'ServoMotor': ServoMotor;
   'Solenoid': Solenoid;
   'StepperMotor': StepperMotor;
-  'AK8963': AK8963;
-  'MPU6050': MPU6050;
   // Sound
   'Speaker': Speaker;
   // GasSensor
@@ -157,6 +156,9 @@ interface WiredNameMap {
   'XBee': XBee;
   // Movement Sensor
   'Button': Button;
+  'AK8963': AK8963;
+  'MPU6050': MPU6050;
+  'MPU9250': MPU9250;
   // 'FlickHat': FlickHat;
   'HC-SR505': HCSR505;
   'JoyStick': JoyStick;
@@ -236,8 +238,6 @@ interface WiredNameOptionsMap {
   'ServoMotor': ServoMotorOptions;
   'Solenoid': SolenoidOptions;
   'StepperMotor': StepperMotorOptions;
-  'AK8963': AK8963Options;
-  'MPU6050': MPU6050Options;
   // Sound
   'Speaker': SpeakerOptions;
   // GasSensor
@@ -259,6 +259,9 @@ interface WiredNameOptionsMap {
   'XBee': XBeeOptions;
   // Movement Sensor
   'Button': ButtonOptions;
+  'AK8963': AK8963Options;
+  'MPU6050': MPU6050Options;
+  'MPU9250': MPU9250Options;
   // 'FlickHat': FlickHatOptions;
   'HC-SR505': HCSR505Options;
   'JoyStick': JoyStickOptions;

@@ -1,10 +1,13 @@
+import { I2C } from '../../../obniz/libs/io_peripherals/i2c';
 export interface MPU6050Options {
 	gnd?: number;
 	vcc?: number;
 	sda?: number;
 	scl?: number;
-	i2c?: any;
-	address?: any;
+	i2c?: I2C;
+	address?: number;
+	accelerometer_range?: number;
+	gyroscope_range?: number;
 }
 
 export interface MPU6050 {
