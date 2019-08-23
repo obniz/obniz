@@ -11,6 +11,7 @@ export interface ArduCAMMiniOptions {
   spi?: any; // TODO: spi object
   spi_drive?: any; // TODO: spi object
   spi_frequency?: any; // TODO: spi object
+  module_version?: number;
 }
 
 export type ArduCAMMiniMode = 'MCU2LCD' | 'CAM2LCD' | 'LCD2MCU';
