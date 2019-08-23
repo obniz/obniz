@@ -19,13 +19,13 @@ class MPU9250 {
     this.params.mode = 'master';
     this.i2c = obniz.getI2CWithConfig(this.params);
 
-    this.mpu6050 = obniz.wired('MPU6050', { i2c: this.i2c });
-    this.ak8963 = obniz.wired('AK8963', { i2c: this.i2c });
-
     this.i2c.write(this._address, [0x6b, 0x00]); //activate MPU9250
     this.i2c.write(this._address, [0x37, 0x02]); //activate AK8963 (bypass)
     this.i2c.write(this._address, [0x1a, 0x06]); //activate LPF (search datasheet_p.13)
     this.i2c.write(this._address, [0x1d, 0x02]); //accel LPF set.
+
+    this.mpu6050 = obniz.wired('MPU6050', { i2c: this.i2c });
+    this.ak8963 = obniz.wired('AK8963', { i2c: this.i2c });
   }
 
   setConfig(accel_range, gyro_range, ADC_cycle) {
