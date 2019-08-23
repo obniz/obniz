@@ -48,19 +48,19 @@ obniz set include this pattern's servomotor.
 ![](./servocable.jpg)
 
 
-If you connect signal,vcc and gnd to Obniz 0, 1, 2 respectively, write a code as follows.
+If you connect gnd ,vcc and signal to Obniz 0, 1, 2 respectively, write a code as follows.
 
 ![](./wired.png)
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 servo.angle(90.0); // half position
 ```
 
 vcc and gnd is optional. When you connect vcc and gnd to other way, then just specify signal.
 ```Javascript
-var servo = obniz.wired("ServoMotor", {signal:0});
+var servo = obniz.wired("ServoMotor", {signal:2});
 ```
 
 Or you can use pwm object.
@@ -77,7 +77,7 @@ angle : 0 - 180 degree
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 ```
@@ -89,7 +89,7 @@ By default 0.5 to 2.4 msec pulse will be generated regarding angle 0 to 180 degr
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 servo.range = {
   min: 0.8,
   max: 2.4
@@ -103,7 +103,7 @@ When you call wired function, it automatically turn on.
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();
@@ -116,7 +116,7 @@ When you call wired function, it automatically turn on.
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();

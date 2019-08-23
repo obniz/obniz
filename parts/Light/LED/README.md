@@ -72,5 +72,5 @@ LED stops last state.
 // Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1});
 led.blink();
-led.endBllink();
+led.endBlink();
 ```
