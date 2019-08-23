@@ -68,7 +68,7 @@ class MPU6050 {
       default:
         throw new Error('accel_range variable 250,500,1000,2000 setting');
     }
-    this._accel_ramge = accelerometer_range;
+    this._accel_range = accelerometer_range;
     this._gyro_range = gyroscope_range;
   }
 
