@@ -99,8 +99,12 @@ import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 // Grove
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
+import { Grove_GPS, Grove_GPSOptions } from './parts/Grove/Grove_GPS';
+import { Grove_3AxisAccelerometer, Grove_3AxisAccelerometerOptions } from './parts/Grove/Grove_3AxisAccelerometer';
+
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
+import {DriveType} from './obniz/libs/io_peripherals/common';
 
 interface WiredNameMap {
   // Light
@@ -196,6 +200,8 @@ interface WiredNameMap {
   // Grove
   'Grove_EarHeartRate': Grove_EarHeartRate;
   'Grove_MP3': Grove_MP3;
+  'Grove_GPS': Grove_GPS;
+  'Grove_3AxisAccelerometer': Grove_3AxisAccelerometer;
   // Ble
   '2JCIE': OMRON_2JCIE;
 }
@@ -295,6 +301,8 @@ interface WiredNameOptionsMap {
   // Grove
   'Grove_EarHeartRate': Grove_EarHeartRateOptions;
   'Grove_MP3': Grove_MP3Options;
+  'Grove_GPS': Grove_GPSOptions;
+  'Grove_3AxisAccelerometer': Grove_3AxisAccelerometerOptions;
   // Ble
   '2JCIE': OMRON_2JCIEOptions;
 }
@@ -332,8 +340,11 @@ interface Obniz {
   repeat(callback: () => void): void;
   wait(time: number): Promise<void>;
   keepWorkingAtOffline(working: boolean): void;
+  setVccGnd(vcc:number, gnd:number, drive:DriveType):void;
+  isValidIO(io:any): io is IO;
 
   // io
+  getIO(pin:number): IO;
   io: any;
   io0: IO;
   io1: IO;
@@ -349,6 +360,7 @@ interface Obniz {
   io11: IO;
 
   // ad
+  getAD(pin:number): AD;
   ad0: AD;
   ad1: AD;
   ad2: AD;

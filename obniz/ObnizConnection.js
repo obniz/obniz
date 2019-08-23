@@ -82,7 +82,7 @@ module.exports = class ObnizConnection {
       json = JSON.parse(data);
     } else if (this.wscommands) {
       if (this.debugprintBinary) {
-        this.print_debug('' + new Uint8Array(data).toString());
+        console.log('Obniz: binalized: ' + new Uint8Array(data).toString());
       }
       json = this.binary2Json(data);
     }
@@ -367,7 +367,7 @@ module.exports = class ObnizConnection {
   }
 
   print_debug(str) {
-    if (this.debugprint || this.debugprintBinary) {
+    if (this.debugprint) {
       console.log('Obniz: ' + str);
     }
   }
@@ -406,8 +406,8 @@ module.exports = class ObnizConnection {
         if (compressed) {
           sendData = compressed;
           if (this.debugprintBinary) {
-            this.print_debug(
-              'binalized: ' + new Uint8Array(compressed).toString()
+            console.log(
+              'Obniz: binalized: ' + new Uint8Array(compressed).toString()
             );
           }
         }
