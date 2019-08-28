@@ -126,15 +126,23 @@ module.exports = Obniz;
 /*===================*/
 /* Utils */
 /*===================*/
-if (!isNode) {
-  if (window && window.parent && window.parent.userAppLoaded) {
-    window.parent.userAppLoaded(window);
-  }
-
-  function showObnizDebugError(err) {//eslint-disable-line
-    if (window.parent && window.parent.logger) {
-      window.parent.logger.onObnizError(err);
+try {
+  if (!isNode) {
+    if (window && window.parent && window.parent.userAppLoaded) {
+      window.parent.userAppLoaded(window);
     }
+
+    function showObnizDebugError(err) {//eslint-disable-line
+      if (window.parent && window.parent.logger) {
+        window.parent.logger.onObnizError(err);
+      }
+    }
+  }
+} catch (e) {
+  if (e instanceof DOMException) {
+    //cross origin iframe
+  } else {
+    console.error(e);
   }
 }
 
