@@ -40,7 +40,7 @@ sensor.setConfig(2, 250);
 
 ## [await] getWait
 
-MPU9250の加速度センサー、ジャイロセンサー、磁気センサーのデータを取得して、JSONで返します。
+MPU9250の加速度センサー、ジャイロセンサーのデータを取得して、JSONで返します。
 
 ```javascript
 var sensor = obniz.wired("MPU6050", { gnd: 0, vcc: 1, sda: 2, scl: 3 });

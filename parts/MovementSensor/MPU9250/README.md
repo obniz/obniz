@@ -7,14 +7,10 @@ A total of 9 axes consisted of 3 axes of acceleration, 3 axes of gyro, 3 axes of
 
 ![](./image.jpg)
 
-## Wiring diagram and sample program
+## wired("MPU9250", { gnd , vcc , sda , scl })
 
 3.3V power supply is not supported by obniz, so need to get another way.
 
-Since the 3V output of obniz have not enough power, please drop 5V pin setting to 2.4-3.6V with a regulator!!
-
-
-## wired("MPU9250", { gnd , vcc , sda , scl })
 
 ```javascript
 var sensor = obniz.wired("MPU9250", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
