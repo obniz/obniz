@@ -59,6 +59,10 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
+import { MPU9250, MPU9250Options } from './parts/MovementSensor/MPU9250';
+import { MPU6050, MPU6050Options } from './parts/MovementSensor/MPU6050';
+import { AK8963, AK8963Options } from './parts/MovementSensor/AK8963';
+
 // Memory
 import { _24LC256, _24LC256Options } from './parts/Memory/24LC256';
 // GyroSensor
@@ -102,7 +106,7 @@ import { Grove_3AxisAccelerometer, Grove_3AxisAccelerometerOptions } from './par
 
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
-import {DriveType} from './obniz/libs/io_peripherals/common';
+import { DriveType } from './obniz/libs/io_peripherals/common';
 
 interface WiredNameMap {
   // Light
@@ -152,6 +156,9 @@ interface WiredNameMap {
   'XBee': XBee;
   // Movement Sensor
   'Button': Button;
+  'AK8963': AK8963;
+  'MPU6050': MPU6050;
+  'MPU9250': MPU9250;
   // 'FlickHat': FlickHat;
   'HC-SR505': HCSR505;
   'JoyStick': JoyStick;
@@ -252,6 +259,9 @@ interface WiredNameOptionsMap {
   'XBee': XBeeOptions;
   // Movement Sensor
   'Button': ButtonOptions;
+  'AK8963': AK8963Options;
+  'MPU6050': MPU6050Options;
+  'MPU9250': MPU9250Options;
   // 'FlickHat': FlickHatOptions;
   'HC-SR505': HCSR505Options;
   'JoyStick': JoyStickOptions;
@@ -336,11 +346,11 @@ interface Obniz {
   repeat(callback: () => void): void;
   wait(time: number): Promise<void>;
   keepWorkingAtOffline(working: boolean): void;
-  setVccGnd(vcc:number, gnd:number, drive:DriveType):void;
-  isValidIO(io:any): io is IO;
+  setVccGnd(vcc: number, gnd: number, drive: DriveType): void;
+  isValidIO(io: any): io is IO;
 
   // io
-  getIO(pin:number): IO;
+  getIO(pin: number): IO;
   io: any;
   io0: IO;
   io1: IO;
@@ -356,7 +366,7 @@ interface Obniz {
   io11: IO;
 
   // ad
-  getAD(pin:number): AD;
+  getAD(pin: number): AD;
   ad0: AD;
   ad1: AD;
   ad2: AD;
