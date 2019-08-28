@@ -19990,6 +19990,7 @@ class _7SegmentLED {
       }
       return obniz.getIO(io);
     }
+
     function isValidIO(io) {
       if (io && typeof io === 'object') {
         if (typeof io['output'] === 'function') {

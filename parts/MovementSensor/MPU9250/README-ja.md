@@ -67,7 +67,7 @@ console.log('accelerometer: %o', data);
 ```
 ## [await] getGyroscopeWait()
 
-磁気センサーのデータを取得して、JSONで返します。
+ジャイロのデータを取得して、JSONで返します。
 
 ```javascript
 var sensor = obniz.wired("MPU9250", { gnd: 0, vcc: 1, sda: 2, scl: 3 });
