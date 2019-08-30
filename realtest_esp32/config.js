@@ -235,7 +235,7 @@ function connectTwoObniz(done, params) {
 
 function getDevice(device) {
   if (device === 'esp32') {
-    return obnizA;
+    return esp32;
   } else if (device === 'obnizB') {
     return obnizB;
   }
