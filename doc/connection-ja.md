@@ -1,11 +1,11 @@
-# obniz connection
+# obniz Board connection
 
-obnizクラスはobnizをJavaScriptの中で抽象化したクラスです。
-idを指定してインスタンス化することで通信内容を意識せずにobnizやobnizに繋がれた部品の操作ができるようになります。
+obnizクラスはobniz BoardをJavaScriptの中で抽象化したクラスです。
+idを指定してインスタンス化することで通信内容を意識せずにobniz Boardやobniz Boardに繋がれた部品の操作ができるようになります。
 
 ## basics
 
-obnizはidをもとにインスタンス化します。
+obniz idをもとにインスタンス化します。
 HTMLの場合はscriptタグで読み込むだけでObnizクラスが利用できます。nodejsの場合はnpmでインストールした後に、
 
 ```javascript
@@ -13,18 +13,18 @@ var Obniz = require('obniz');
 ```
 このようにクラスを取得できます。
 
-そして、接続して利用したいobnizのidを与えてインスタンス化します。
+そして、接続して利用したいobniz Boardのidを与えてインスタンス化します。
 ```javascript
 var obniz = new Obniz('1234-5678');
 ```
-２台以上のobnizを使いたい場合は
+２台以上のobniz Boardを使いたい場合は
 ```javascript
 var obnizA = new Obniz('1234-5678');
 var obnizB = new Obniz('0000-0000');
 ```
 のように記載することになります。
 
-インスタンス化した段階で[obniz Websocket API](https://obniz.io/doc/about_obniz_api)を使いobnizとの接続を行います。
+インスタンス化した段階で[obniz Websocket API](https://obniz.io/doc/about_obniz_api)を使いobniz Boardとの接続を行います。
 接続が完了するとonconnectが呼ばれます。また、oncloseは切断時に呼ばれます。
 標準で自動接続が行われますので、切断が起きても、継続的に接続を試みます。
 
@@ -38,7 +38,7 @@ obniz.onclose = async function() {
 }
 ```
 
-ioのon,offなどは接続することで操作できるようになりますので、onconnectの中でobnizに対して行いたいことを記載します。
+ioのon,offなどは接続することで操作できるようになりますので、onconnectの中でobniz Boardに対して行いたいことを記載します。
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -52,7 +52,7 @@ obniz.onconnect = async function() {
 ## new Obniz('obniz id', { options })
 
 obnizインスタンス化します。
-obniz idに半角文字列でobnizの番号を入力します。ハイフン(-)はあってもなくても大丈夫です。数値では認識できません。
+obniz idに半角文字列でobniz Boardの番号を入力します。ハイフン(-)はあってもなくても大丈夫です。数値では認識できません。
 
 ```javascript
 new Obniz('1234-5678') // OK
@@ -60,22 +60,22 @@ new Obniz('12345678') // OK
 new Obniz(12345678) // Can't accept
 ```
 
-また、obnizにアクセストークンを設定しているobnizの場合は以下のようにオプションで指定します。
+また、obniz Boardにアクセストークンを設定している場合は以下のようにオプションで指定します。
 
 ```javascript
 new Obniz('1234-5678', {access_token: 'your token here'})
 ```
 
 obniz idとして正しくないと判断された場合は接続は行われません。nodejsの場合はエラーとなります。
-ブラウザ上で実行している場合はpromptが表示されます。そこでidを入れることでそのobnizに接続することが可能です。
+ブラウザ上で実行している場合はpromptが表示されます。そこでidを入れることでそのobniz Boardに接続することが可能です。
 これは正しくない形式の場合にのみ表示されます。正しくても存在しないobniz idを入れた場合には表示されません。
 
 ![](images/obniz_prompt.png)
 
 idが正しければ、クラウドに接続を行い、接続が完了するとonconnectが呼ばれます。
 
-ただし、obnizとobniz.jsを利用している端末が同一LAN内にある可能性が高い場合、obniz.jsは同時にobnizと直接Websocket接続を行おうとします。これをlocal connectといいます。
-local connectできた場合はほとんどのコマンドで、クラウドを経由せずにobnizを操作可能です。ただし、local connectしていてもクラウドとの接続は切断されません。
+ただし、obniz Boardとobniz.jsを利用している端末が同一LAN内にある可能性が高い場合、obniz.jsは同時にobniz Boardと直接Websocket接続を行おうとします。これをlocal connectといいます。
+local connectできた場合はほとんどのコマンドで、クラウドを経由せずにobniz Boardを操作可能です。ただし、local connectしていてもクラウドとの接続は切断されません。
 また、クラウドとの接続が切断されるとlocal connectも切断されます。
 
 ![](images/local_connect.png)
@@ -85,21 +85,21 @@ onconnectが呼ばれるタイミングは、クラウドにつながったと�
 
 ![](images/onconnect_flow.png)
 
-obnizをインスタンス化するときの第二引数はオプションです。
+インスタンス化するときの第二引数はオプションです。
 そのoptionで以下の設定が指定できます。
 
 name | type | default | description
 --- | --- | --- | ---
 binary | `boolean` | true | APIの通信ではjsonでなく圧縮形式が使えますが、それのon-offとなります。falseにした場合local_connectは利用できません。
-local_connect | `boolean` | true | obniz.js はクラウドAPI経由でobnizとつないだあとに可能であればobnizと直接接続しようとします。falseにすることでそれを使わない設定にできます。binaryがfalseの場合はlocal_connectは自動的にfalseになります。
+local_connect | `boolean` | true | obniz.js はクラウドAPI経由でobniz Boardとつないだあとに可能であればobniz Boardと直接接続しようとします。falseにすることでそれを使わない設定にできます。binaryがfalseの場合はlocal_connectは自動的にfalseになります。
 debug_dom_id | `string` | 'obniz-debug' | HTMLではここで指定されたidを持つDOMにオンラインステータスなど各種情報が出力されます
 auto_connect | `boolean` | true | 標準でobniz.jsは自動的に接続を行い、切れても再接続を自動で行いますが、これによりoffにできます。自動接続は1秒間隔ではじまり、徐々に間隔が伸びるようになっています。
-access_token | `string` | null | access_tokenが発行されているobnizに接続する場合は指定してください。
-reset_obniz_on_ws_disconnection | `boolean` | true | 同一のobnizに対してのwebsocket接続が0本になった時にクラウド側がobnizをリセットするかどうか
+access_token | `string` | null | access_tokenが発行されているobniz Boardに接続する場合は指定してください。
+reset_obniz_on_ws_disconnection | `boolean` | true | 同一のobniz Boardに対してのwebsocket接続が0本になった時にクラウド側がobniz Boardをリセットするかどうか
 
 
 ## connect()
-optionのauto_connectをfalseにしている場合に利用できます。connectを呼ぶことでobnizとの接続を試みます。
+optionのauto_connectをfalseにしている場合に利用できます。connectを呼ぶことでobniz Boardとの接続を試みます。
 
 ```javascript
 var obniz = new Obniz('1234-5678', { auto_connect: false });
@@ -172,7 +172,7 @@ obniz.onconnect = async function() {
 
 ## connectionState
 
-obnizとの現在の接続状態を接続状態を表す文字列が入っています。
+obniz Boardとの現在の接続状態を接続状態を表す文字列が入っています。
 以下の4状態のうちどれかになります。
 
 state | type
@@ -217,7 +217,7 @@ obniz.onconnect = async function() {
 
 ## firmware_ver
 
-接続されたデバイスにインストールされているobnizOSのバージョンを取得します
+接続されたデバイスにインストールされているobniz BoardOSのバージョンを取得します
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -229,10 +229,10 @@ obniz.onconnect = async function() {
 
 ## resetOnDisconnect(reset)
 オプションである `reset_obniz_on_ws_disconnection` の設定をあとから変更する場合に使う関数です。
-obniz.jsでは標準でtrueなので、obnizクラウドは同一obnizへのwebsocket接続が0本になったところでobnizに対してリセットを行います。
+obniz.jsでは標準でtrueなので、obnizクラウドは同一obniz Boardへのwebsocket接続が0本になったところでobniz Boardに対してリセットを行います。
 リセットするので、出力されている電圧などももとに戻り、pwmなども全て停止します。
 この関数でそれを無効にし、リセットしないようにできます。
-この設定はobnizがオンラインである限り有効となります。
+この設定はobniz Boardがオンラインである限り有効となります。
 ```Javascript
 // Example
 obniz.resetOnDisconnect(false);

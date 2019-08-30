@@ -1,4 +1,4 @@
-# obnizをcentralとして使う
+# obniz Boardをcentralとして使う
 
 ## scan.start( \[target, \[setting]])
 

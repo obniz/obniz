@@ -40,7 +40,7 @@ pull-up | `3v` |
 pull-down | `gnd` | 
 
 ## output(value)
-ObnizのX番ピンを出力ピンにして１または０を出力します。
+obniz BoardのX番ピンを出力ピンにして１または０を出力します。
 
 ```Javascript
 // Javascript Example

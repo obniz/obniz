@@ -2,7 +2,7 @@
 #  <a name="switch">switch</a>
 
 
-the switch embed on obniz itself. If it's state is changed, notification will be fired.
+the switch embed on obniz Board itself. If it's state is changed, notification will be fired.
 
 ##  request: <a name="-request-switch-get">get</a>
 

@@ -1,4 +1,4 @@
-# Use obniz as central
+# Use obniz Board as central
 
 ## scan.start( \[target, \[setting]])
 
@@ -53,7 +53,7 @@ obniz.ble.scan.end();
 
 ## scan.onfind
 
-This function gets called when obniz finds a new peripheral.
+This function gets called when obniz Board finds a new peripheral.
 
 
 ```Javascript
@@ -68,7 +68,7 @@ obniz.ble.scan.start();
 
 ## scan.onfinish
 
-This function gets called when obniz finishes scanning.
+This function gets called when obniz Board finishes scanning.
 
 
 ```Javascript

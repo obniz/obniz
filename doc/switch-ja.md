@@ -1,5 +1,5 @@
 # Switch
-obniz組み込みスイッチの使い方です
+obniz Board組み込みスイッチの使い方です
 
 ### switch.onchange = function(){}
 スイッチの状態が変更されたときのコールバックです．

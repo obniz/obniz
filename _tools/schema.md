@@ -2,7 +2,7 @@
 #  <a name="ble-security">ble.security</a>
 
 
-set obniz ble security
+set obniz Board ble security
 
 ##  request: <a name="-request-ble-security-indicate_security_level">indicate_security_level</a>
 ble indicate security level settings
