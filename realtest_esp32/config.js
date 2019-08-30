@@ -125,52 +125,52 @@ const check_io = [
     obniz: 'obnizB',
     obniz_io: 7,
   },
-  // {
-  //   esp32_io: 32,
-  //   mode: [
-  //     mode.digitalRead,
-  //     mode.digitalWrite,
-  //     mode.analogRead,
-  //     mode.analogWrite,
-  //   ],
-  //   obniz: 'obnizB',
-  //   obniz_io: 8,
-  // },
-  // {
-  //   esp32_io: 33,
-  //   mode: [
-  //     mode.digitalRead,
-  //     mode.digitalWrite,
-  //     mode.analogRead,
-  //     mode.analogWrite,
-  //   ],
-  //   obniz: 'obnizB',
-  //   obniz_io: 9,
-  // },
-  // {
-  //   esp32_io: 34,
-  //   mode: [mode.digitalRead, mode.analogRead],
-  //   obniz: 'obnizB',
-  //   obniz_io: 10,
-  // },
-  // {
-  //   esp32_io: 35,
-  //   mode: [mode.digitalRead, mode.analogRead],
-  //   obniz: 'obnizB',
-  //   obniz_io: 11,
-  // },
-  // {
-  //   esp32_io: 36,
-  //   mode: [mode.digitalRead, mode.analogRead],
-  //   obniz: 'obnizA',
-  //   obniz_io: 2,
-  // },
-  // {
-  //   esp32_io: 39,
-  //   mode: [mode.digitalRead, mode.analogRead],
-  //   obniz: 'obnizA',
-  //   obniz_io: 3,
-  // },
+  {
+    esp32_io: 32,
+    mode: [
+      mode.digitalRead,
+      mode.digitalWrite,
+      mode.analogRead,
+      mode.analogWrite,
+    ],
+    obniz: 'obnizB',
+    obniz_io: 8,
+  },
+  {
+    esp32_io: 33,
+    mode: [
+      mode.digitalRead,
+      mode.digitalWrite,
+      mode.analogRead,
+      mode.analogWrite,
+    ],
+    obniz: 'obnizB',
+    obniz_io: 9,
+  },
+  {
+    esp32_io: 34,
+    mode: [mode.digitalRead, mode.analogRead],
+    obniz: 'obnizB',
+    obniz_io: 10,
+  },
+  {
+    esp32_io: 35,
+    mode: [mode.digitalRead, mode.analogRead],
+    obniz: 'obnizB',
+    obniz_io: 11,
+  },
+  {
+    esp32_io: 36,
+    mode: [mode.digitalRead, mode.analogRead],
+    obniz: 'obnizA',
+    obniz_io: 3,
+  },
+  {
+    esp32_io: 39,
+    mode: [mode.digitalRead, mode.analogRead],
+    obniz: 'obnizA',
+    obniz_io: 2,
+  },
 ];
 
 function waitForConenct(done) {

@@ -86,12 +86,11 @@ async function ioEspisInRange(obniz, read_io, write_io, output_val, range) {
 async function ioObnizisInRange(obniz, read_io, write_io, output_val, range) {
   obniz.getIO(write_io).drive('3v');
   obniz.getIO(write_io).output(output_val);
-  obniz.pingWait();
+  await obniz.pingWait();
   let voltage = await esp32.getAD(read_io).getWait();
   expect(
     voltage,
     `expected io${read_io} ${voltage} is  ${range[0]} ~ ${range[1]}`
   ).to.be.within(range[0], range[1]);
   obniz.getIO(write_io).end();
-  esp32.getIO(read_io).end();
 }

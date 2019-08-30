@@ -124,6 +124,7 @@ describe('3-pwm', function() {
     pwm.duty(99);
 
     await esp32.pingWait();
+    await esp32.wait(500);
     let obniz = config.getDevice(check_io[0].obniz);
     let valB = await obniz.getIO(check_io[0].obniz_io).inputWait();
     expect(valB).to.be.equal(false);
