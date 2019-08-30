@@ -9,7 +9,7 @@
 
 ## wired(obniz, {r, g, b, common, common_type})
 
-r,g,b,common は繋いだobnizのioを指定してください。
+r,g,b,common は繋いだobniz Boardのioを指定してください。
 common_type はLEDがアノードコモンであれば`anode_common`カソードコモンであれば`cathode_common`を指定してください。
 
 ![](./wired.png)

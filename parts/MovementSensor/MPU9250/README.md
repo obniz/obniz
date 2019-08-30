@@ -9,7 +9,7 @@ A total of 9 axes consisted of 3 axes of acceleration, 3 axes of gyro, 3 axes of
 
 ## wired("MPU9250", { gnd , vcc , sda , scl })
 
-3.3V power supply is not supported by obniz, so need to get another way.
+3.3V power supply is not supported by obniz Board, so need to get another way.
 
 
 ```javascript

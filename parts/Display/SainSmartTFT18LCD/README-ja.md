@@ -1,12 +1,12 @@
 # SainSmartTFT18LCD
 
 
-Obnizから[サインスマート 1.8インチ TFTカラーディスプレイ](https://www.amazon.co.jp/サインスマート（SainSmart）-カラー-LCD-インタフェース-MicroSD-付き-Arduino/dp/B008HWTVQ2/)に描画するためのライブラリです。ただし、このLCDに内蔵するMicroSDへのアクセスはサポートしていません。
+obniz Boardから[サインスマート 1.8インチ TFTカラーディスプレイ](https://www.amazon.co.jp/サインスマート（SainSmart）-カラー-LCD-インタフェース-MicroSD-付き-Arduino/dp/B008HWTVQ2/)に描画するためのライブラリです。ただし、このLCDに内蔵するMicroSDへのアクセスはサポートしていません。
 
 ![](./image.jpg)
 
 
-このLCDはSPIインターフェースでアクセスしますが、ObnizではArduinoやRaspberry Piの様に高速に描画することはできません。また、LCDからデータを読み出すこともできません。  
+このLCDはSPIインターフェースでアクセスしますが、obniz BoardではArduinoやRaspberry Piの様に高速に描画することはできません。また、LCDからデータを読み出すこともできません。  
 
 
 [example.html](./example.html)
@@ -15,7 +15,7 @@ Obnizから[サインスマート 1.8インチ TFTカラーディスプレイ](h
 
 ## wired(scl, sda, dc, res, cs {, vcc, gnd })
 
-scl, sda, dc, res, cs, vcc, gndをobnizに接続し、接続したioをプログラムで以下のように記述します。SD-CARDのアクセスに必要なピンは接続しません。
+scl, sda, dc, res, cs, vcc, gndをobniz Boardに接続し、接続したioをプログラムで以下のように記述します。SD-CARDのアクセスに必要なピンは接続しません。
 
 ![](./connect.jpg)
 

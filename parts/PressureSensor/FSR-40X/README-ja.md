@@ -4,7 +4,7 @@
 ![](./image.jpg)
 
 ## wired(obniz, {pin0, pin1})
-Obnizに圧力センサをつなぎます。
+obniz Boardに圧力センサをつなぎます。
 pin0,pin1を圧力センサへ接続してください。
 
 ![](./wired.png)

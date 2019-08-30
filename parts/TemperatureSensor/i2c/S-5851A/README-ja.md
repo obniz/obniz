@@ -2,7 +2,7 @@
 温度センサS-5851Aです。センサで取得した温度を知ることができます。
 
 ## wired(obniz, {vcc, gnd, sda, scl, addr0, addr1, addressmode})
-Obnizに温度センサをつなぎます。
+obniz Boardに温度センサをつなぎます。
 vcc,gnd,sda,scl,addr0,addr1はそれぞれ温度センサの電源,GND,SDA,SCL,AD0, AD1 ピンへ接続してください。
 AddrSelectはI2Cアドレスです。
 AddrSelectに指定した数値とアドレスの対応は以下の通りです。(指定数値:アドレス)

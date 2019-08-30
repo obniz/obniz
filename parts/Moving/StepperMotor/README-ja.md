@@ -4,7 +4,7 @@
 ある角度ずつ正確に回転させることができるモーターです。ステップごとに動かすのでそのような名前になっています。
 ステッピングモーターを使えば正確に回転させたり、移動させたり、または動かないように位置をキープしたりといったことが簡単にできます。逆に高速にパワフルに回転させる用途には向きません。
 
-このライブラリではバイポーラ・ユニポーラのステッピングモーターを駆動できます。obnizから直接つないで動かすため5vで動くものを想定しています。
+このライブラリではバイポーラ・ユニポーラのステッピングモーターを駆動できます。obniz Boardから直接つないで動かすため5vで動くものを想定しています。
 
 ![](./image.jpg)
 
@@ -23,11 +23,11 @@
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-a | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。
-b | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。
-aa | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。aの逆相を指定します。
-bb | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。bの逆相を指定します。
-common | `number(obniz io)` | no |  &nbsp; | ユニポーラの場合に指定します。
+a | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。
+b | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。
+aa | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。aの逆相を指定します。
+bb | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。bの逆相を指定します。
+common | `number(obniz Board io)` | no |  &nbsp; | ユニポーラの場合に指定します。
 
 
 ```Javascript

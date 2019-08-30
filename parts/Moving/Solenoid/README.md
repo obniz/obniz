@@ -9,12 +9,12 @@ Solenoid is a coil with pistone.
 </div>
 
 Solenoid consume much energy.
-You can connect only Tiny Solenoid directly to an obniz.
+You can connect only Tiny Solenoid directly to an obniz Board.
 It's resistance should be more than 5 Ohm.
 
 ## obniz.wired("Solenoid", {signal, [, gnd]})
 
-Connect two wires to an obniz.
+Connect two wires to an obniz Board.
 Most solenoids has no polarity.
 
 ![](./wired.png)

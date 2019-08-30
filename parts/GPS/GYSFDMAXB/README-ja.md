@@ -10,7 +10,7 @@ GPSモジュール[(GYSFDMAXB(太陽誘電))](http://akizukidenshi.com/catalog/g
 
 ## wired(vcc, gnd, txd, rxd {, Opps })
 
-vcc(5v), gnd, txd, rxd, Oppsをobnizに接続し、接続したioをプログラムで以下のように記述します。
+vcc(5v), gnd, txd, rxd, Oppsをobniz Boardに接続し、接続したioをプログラムで以下のように記述します。
 
 ```javascript
 // Javascript Example

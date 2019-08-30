@@ -8,7 +8,7 @@ This class accept only analog output.
 
 ## wired(obniz, {sw, x, y, vcc, gnd})
 
-connect to an obniz.
+connect to an obniz Board.
 
 1. vcc: power supply
 2. gnd: power supply
@@ -19,7 +19,7 @@ connect to an obniz.
 ### Attention! pins assing is diffrerent in each product!
 There are some joystick and these pin assigns are different.
 
-For example, A joystick commonly used with obniz is below.
+For example, A joystick commonly used with obniz Board is below.
 
 ![](./joystick_pins.jpg)
 

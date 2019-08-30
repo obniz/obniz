@@ -7,7 +7,7 @@ Drawing supports. But This library doesn't include MicroSD access yet.
 ![](./image.jpg)
 
 SPI is used to communicate.
-obniz can't draw fast as Arduino/Raspberry Pi.
+obniz Board can't draw fast as Arduino/Raspberry Pi.
 
 
 [example.html](./example.html)
@@ -16,7 +16,7 @@ obniz can't draw fast as Arduino/Raspberry Pi.
 
 ## wired(scl, sda, dc, res, cs {, vcc, gnd })
 
-Connect scl, sda, dc, res, cs, vcc, gnd to an obniz and specify ios like follow.
+Connect scl, sda, dc, res, cs, vcc, gnd to an obniz Board and specify ios like follow.
 sd-card related io is not necdesarry.
 
 ![](./connect.jpg)
