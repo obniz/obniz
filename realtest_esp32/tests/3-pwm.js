@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
 
-let esp32, check_io;
+let checkBoard, check_io;
 
 describe('3-pwm', function() {
   this.timeout(20000);
@@ -10,9 +10,9 @@ describe('3-pwm', function() {
   before(function() {
     return new Promise(resolve => {
       config.waitForConenct(() => {
-        esp32 = config.esp32;
+        checkBoard = config.checkBoard;
         check_io = config.check_io.filter(io =>
-          io.mode.some(mode => mode === config.mode.digitalWrite)
+          io.mode.some(mode => mode === 'digitalWrite')
         );
         resolve();
       });
@@ -22,44 +22,45 @@ describe('3-pwm', function() {
   let pwms = new Array(6);
 
   it('10%', async function() {
-    const pwm = esp32.getFreePwm();
-    pwm.start({ io: check_io[0].esp32_io }); // start pwm. output at io0
+    const pwm = checkBoard.getFreePwm();
+    pwm.start({ io: check_io[0].board_io }); // start pwm. output at io0
     pwm.freq(100);
     pwm.duty(10);
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     await detectPulse(check_io[0], [0, 20]);
     pwm.end();
   });
 
   it('50%', async function() {
-    const pwm = esp32.getFreePwm();
-    pwm.start({ io: check_io[0].esp32_io }); // start pwm. output at io0
+    const pwm = checkBoard.getFreePwm();
+    pwm.start({ io: check_io[0].board_io }); // start pwm. output at io0
     pwm.freq(100);
     pwm.duty(50);
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     await detectPulse(check_io[0], [40, 60]);
     pwm.end();
   });
 
   it('90%', async function() {
-    const pwm = esp32.getFreePwm();
-    pwm.start({ io: check_io[0].esp32_io }); // start pwm. output at io0
+    const pwm = checkBoard.getFreePwm();
+    pwm.start({ io: check_io[0].board_io }); // start pwm. output at io0
     pwm.freq(100);
     pwm.duty(90);
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     await detectPulse(check_io[0], [80, 100]);
     pwm.end();
   });
 
   it('six pwm', async function() {
     for (let i = 0; i < 6; i++) {
-      let pwm = esp32.getFreePwm();
-      pwm.start({ io: check_io[i].esp32_io }); // start pwm. output at io0
+      if (check_io.length <= i) break;
+      let pwm = checkBoard.getFreePwm();
+      pwm.start({ io: check_io[i].board_io }); // start pwm. output at io0
       pwm.freq(100 * (i + 1));
       pwm.duty(30 + i * 10);
       pwms[i] = pwm;
     }
-    await esp32.pingWait();
+    await checkBoard.pingWait();
   });
 
   it('pwm0 = duty 30', async function() {
@@ -88,43 +89,44 @@ describe('3-pwm', function() {
   });
 
   it('terminate successfull', async function() {
-    for (let i = 0; i < pwms.length; i++) {
+    for (let i = 0; i < 6; i++) {
+      if (check_io.length <= i) break;
       pwms[i].end();
     }
   });
 
   it('pwm with push-pull3v', async function() {
-    const pwm = esp32.getFreePwm();
-    pwm.start({ io: check_io[0].esp32_io, drive: '3v' });
+    const pwm = checkBoard.getFreePwm();
+    pwm.start({ io: check_io[0].board_io, drive: '3v' });
     pwm.freq(100);
     pwm.duty(50);
 
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     await detectPulse(check_io[0], [40, 60]);
 
     pwm.end();
   });
-  //todo: esp32 5v not supported
+  //todo: checkBoard 5v not supported
   // it('pwm with open-drain', async function () {
-  //   const pwm = esp32.getFreePwm();
-  //   pwm.start({ io: check_io[0].esp32_io, drive: 'open-drain', pull: '5v' });
+  //   const pwm = checkBoard.getFreePwm();
+  //   pwm.start({ io: check_io[0].board_io, drive: 'open-drain', pull: '5v' });
   //   pwm.freq(100);
   //   pwm.duty(50);
 
-  //   await esp32.pingWait();
+  //   await checkBoard.pingWait();
   //   await detectPulse(check_io[0], [40, 60]);
 
   //   pwm.end();
   // });
 
   it('pwm with open-drain(no pullup)', async function() {
-    const pwm = esp32.getFreePwm();
-    pwm.start({ io: check_io[0].esp32_io, drive: 'open-drain' });
+    const pwm = checkBoard.getFreePwm();
+    pwm.start({ io: check_io[0].board_io, drive: 'open-drain' });
     pwm.freq(1000);
     pwm.duty(99);
 
-    await esp32.pingWait();
-    await esp32.wait(500);
+    await checkBoard.pingWait();
+    await checkBoard.wait(500);
     let obniz = config.getDevice(check_io[0].obniz);
     let valB = await obniz.getIO(check_io[0].obniz_io).inputWait();
     expect(valB).to.be.equal(false);
@@ -139,6 +141,9 @@ describe('3-pwm', function() {
 
 function detectPulse(device, ratioRange) {
   return new Promise((resolve, reject) => {
+    if (device === undefined) {
+      resolve();
+    }
     let ignores = 0;
     let obniz = config.getDevice(device.obniz);
     obniz.logicAnalyzer.start({

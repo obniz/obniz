@@ -1,6 +1,6 @@
 const config = require('../config.js');
 
-let obnizA, esp32;
+let obnizA, checkBoard;
 
 describe('7-ble', function() {
   this.timeout(30000);
@@ -9,20 +9,20 @@ describe('7-ble', function() {
     return new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
-        esp32 = config.esp32;
+        checkBoard = config.checkBoard;
         resolve();
       });
     });
   });
 
   it('simple ad', async function() {
-    let service = new esp32.ble.service({
+    let service = new checkBoard.ble.service({
       uuid: '0000',
     });
-    esp32.ble.peripheral.addService(service);
+    checkBoard.ble.peripheral.addService(service);
     let ad = service.advData;
-    esp32.ble.advertisement.setAdvData(ad);
-    esp32.ble.advertisement.start();
+    checkBoard.ble.advertisement.setAdvData(ad);
+    checkBoard.ble.advertisement.start();
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
@@ -44,22 +44,22 @@ describe('7-ble', function() {
       await wait(1);
     }
 
-    esp32.ble.advertisement.end();
-    esp32.ble.peripheral.end();
+    checkBoard.ble.advertisement.end();
+    checkBoard.ble.peripheral.end();
   });
 
   it('ad localname', async function() {
-    let service = new esp32.ble.service({
+    let service = new checkBoard.ble.service({
       uuid: '0001',
     });
-    esp32.ble.peripheral.addService(service);
+    checkBoard.ble.peripheral.addService(service);
     let ad = service.advData;
     const localName = '' + new Date().getTime();
-    esp32.ble.advertisement.setScanRespData({
+    checkBoard.ble.advertisement.setScanRespData({
       localName: localName,
     });
-    esp32.ble.advertisement.setAdvData(ad);
-    esp32.ble.advertisement.start();
+    checkBoard.ble.advertisement.setAdvData(ad);
+    checkBoard.ble.advertisement.start();
 
     let found = false;
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
@@ -73,8 +73,8 @@ describe('7-ble', function() {
     while (!found) {
       await wait(1);
     }
-    esp32.ble.advertisement.end();
-    esp32.ble.peripheral.end();
+    checkBoard.ble.advertisement.end();
+    checkBoard.ble.peripheral.end();
   });
 });
 

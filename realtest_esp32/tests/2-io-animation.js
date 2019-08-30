@@ -2,16 +2,16 @@ const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
 
-let esp32, check_io;
+let checkBoard, check_io;
 
 describe('2-io-animation', function() {
   this.timeout(20000);
   before(function() {
     return new Promise(resolve => {
       config.waitForConenct(() => {
-        esp32 = config.esp32;
+        checkBoard = config.checkBoard;
         check_io = config.check_io.filter(io =>
-          io.mode.some(mode => mode === config.mode.digitalWrite)
+          io.mode.some(mode => mode === 'digitalWrite')
         );
         resolve();
       });
@@ -19,80 +19,80 @@ describe('2-io-animation', function() {
   });
 
   it('animation', async function() {
-    esp32.io.animation('animation-1', 'loop', [
+    checkBoard.io.animation('animation-1', 'loop', [
       {
         duration: 10,
         state: function() {
-          esp32.getIO(check_io[0].esp32_io).output(false);
+          checkBoard.getIO(check_io[0].board_io).output(false);
         },
       },
       {
         duration: 10,
         state: function() {
-          esp32.getIO(check_io[0].esp32_io).output(true);
+          checkBoard.getIO(check_io[0].board_io).output(true);
         },
       },
     ]);
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     await detectPulse(check_io[0], [40, 60]);
   });
 
   it('animation pause', async function() {
-    esp32.io.animation('animation-1', 'pause');
-    await esp32.pingWait();
+    checkBoard.io.animation('animation-1', 'pause');
+    await checkBoard.pingWait();
 
     await ioAisB(check_io[0], false);
     await ioAisB(check_io[0], true);
   });
 
   it('animation resume', async function() {
-    esp32.io.animation('animation-1', 'resume');
-    await esp32.pingWait();
+    checkBoard.io.animation('animation-1', 'resume');
+    await checkBoard.pingWait();
     await detectPulse(check_io[0], [40, 60]);
   });
 
   it('animation remove', async function() {
-    esp32.io.animation('animation-1', 'loop');
-    await esp32.pingWait();
+    checkBoard.io.animation('animation-1', 'loop');
+    await checkBoard.pingWait();
 
     await ioAisB(check_io[0], false);
     await ioAisB(check_io[0], true);
   });
 
   it('two animation', async function() {
-    esp32.io.animation('animation-1', 'loop', [
+    checkBoard.io.animation('animation-1', 'loop', [
       {
         duration: 10,
         state: function() {
-          esp32.getIO(check_io[0].esp32_io).output(false);
+          checkBoard.getIO(check_io[0].board_io).output(false);
         },
       },
       {
         duration: 10,
         state: function() {
-          esp32.getIO(check_io[0].esp32_io).output(true);
-        },
-      },
-    ]);
-    esp32.io.animation('animation-2', 'loop', [
-      {
-        duration: 10,
-        state: function() {
-          esp32.getIO(check_io[1].esp32_io).output(false);
-        },
-      },
-      {
-        duration: 10,
-        state: function() {
-          esp32.getIO(check_io[1].esp32_io).output(true);
+          checkBoard.getIO(check_io[0].board_io).output(true);
         },
       },
     ]);
-    await esp32.pingWait();
+    checkBoard.io.animation('animation-2', 'loop', [
+      {
+        duration: 10,
+        state: function() {
+          checkBoard.getIO(check_io[1].board_io).output(false);
+        },
+      },
+      {
+        duration: 10,
+        state: function() {
+          checkBoard.getIO(check_io[1].board_io).output(true);
+        },
+      },
+    ]);
+    await checkBoard.pingWait();
     await detectPulse(check_io[0], [40, 60]);
     await detectPulse(check_io[1], [40, 60]);
-    esp32.io.animation('animation-1', 'loop');
-    esp32.io.animation('animation-2', 'loop');
+    checkBoard.io.animation('animation-1', 'loop');
+    checkBoard.io.animation('animation-2', 'loop');
   });
 });
 
@@ -136,8 +136,8 @@ async function ioAisB(device, val, mustbe) {
   if (mustbe === undefined) {
     mustbe = val;
   }
-  esp32.getIO(device.obniz_io).output(val);
-  await esp32.pingWait();
+  checkBoard.getIO(device.board_io).output(val);
+  await checkBoard.pingWait();
   let obniz = config.getDevice(device.obniz);
   let valB = await obniz.getIO(device.obniz_io).inputWait();
   expect(valB).to.be.equal(mustbe);

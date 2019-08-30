@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
 
-let obnizA, esp32;
+let obnizA, checkBoard;
 
 describe('8-ble', function() {
   this.timeout(120000);
@@ -11,16 +11,16 @@ describe('8-ble', function() {
     await new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
-        esp32 = config.esp32;
+        checkBoard = config.checkBoard;
         resolve();
       });
     });
-    let service = new esp32.ble.service({ uuid: 'FFF0' });
-    let characteristic = new esp32.ble.characteristic({
+    let service = new checkBoard.ble.service({ uuid: 'FFF0' });
+    let characteristic = new checkBoard.ble.characteristic({
       uuid: 'FFF1',
       text: 'Hi',
     });
-    let descriptor = new esp32.ble.descriptor({
+    let descriptor = new checkBoard.ble.descriptor({
       uuid: '2901',
       text: 'hello wrold characteristic',
     });
@@ -28,14 +28,14 @@ describe('8-ble', function() {
     characteristic.addProperty('write');
     characteristic.addPermission('read');
     characteristic.addPermission('write');
-    let characteristic2 = new esp32.ble.characteristic({
+    let characteristic2 = new checkBoard.ble.characteristic({
       uuid: 'FFF2',
       data: [101, 51, 214],
     });
     characteristic2.addProperty('read');
     characteristic2.addPermission('read');
 
-    let characteristic3 = new esp32.ble.characteristic({
+    let characteristic3 = new checkBoard.ble.characteristic({
       uuid: 'FFF3',
       value: 92,
     });
@@ -48,12 +48,12 @@ describe('8-ble', function() {
     service.addCharacteristic(characteristic2);
     service.addCharacteristic(characteristic3);
 
-    esp32.ble.peripheral.addService(service);
+    checkBoard.ble.peripheral.addService(service);
     let ad = service.advData;
-    esp32.ble.advertisement.setAdvData(ad);
-    esp32.ble.advertisement.start();
+    checkBoard.ble.advertisement.setAdvData(ad);
+    checkBoard.ble.advertisement.start();
     //console.log('service created');
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     //console.log('scannning');
     let peripheral = await obnizA.ble.scan.startOneWait({ uuids: ['FFF0'] });
     if (!peripheral) {
@@ -61,7 +61,7 @@ describe('8-ble', function() {
     }
     //console.log('FOUND');
 
-    expect(esp32.ble.advertisement.adv_data).to.be.deep.equal(
+    expect(checkBoard.ble.advertisement.adv_data).to.be.deep.equal(
       peripheral.adv_data
     );
 
@@ -228,7 +228,7 @@ describe('8-ble', function() {
     });
     await obnizA.pingWait();
     this.service.getCharacteristic('FFF3').notify();
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     let p2 = new Promise(function(resolve) {
       setTimeout(function() {
         console.log('timeout!');
@@ -244,7 +244,7 @@ describe('8-ble', function() {
       .getService('FF00')
       .getCharacteristic('FF00')
       .writeWait([10]);
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     expect(results).to.be.false;
   });
   it('unknown char error read', async () => {
@@ -252,7 +252,7 @@ describe('8-ble', function() {
       .getService('FFF0')
       .getCharacteristic('FF00')
       .readWait();
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     expect(val).to.be.undefined;
   });
 
@@ -261,7 +261,7 @@ describe('8-ble', function() {
       .getService('FFF0')
       .getCharacteristic('FF00')
       .writeWait([10]);
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     expect(results).to.be.false;
   });
 
@@ -271,7 +271,7 @@ describe('8-ble', function() {
       .getCharacteristic('fff1')
       .getDescriptor('2902')
       .writeWait([10]);
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     expect(results).to.be.false;
   });
 
@@ -281,7 +281,7 @@ describe('8-ble', function() {
       .getCharacteristic('fff1')
       .getDescriptor('2902')
       .readWait();
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     expect(results).to.be.undefined;
   });
 });

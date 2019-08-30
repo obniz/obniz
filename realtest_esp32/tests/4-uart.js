@@ -1,6 +1,6 @@
 const config = require('../config.js');
 
-let obnizA, esp32, check_io;
+let obnizA, checkBoard, check_io;
 
 describe('4-uart', function() {
   this.timeout(20000);
@@ -9,7 +9,7 @@ describe('4-uart', function() {
     return new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
-        esp32 = config.esp32;
+        checkBoard = config.checkBoard;
         check_io = config.check_io.filter(io => io.obniz === 'obnizA');
         resolve();
       });
@@ -20,8 +20,8 @@ describe('4-uart', function() {
     const receiver = obnizA.getFreeUart();
     receiver.start({ tx: check_io[1].obniz_io, rx: check_io[0].obniz_io });
     await obnizA.pingWait();
-    const sender = esp32.getFreeUart();
-    sender.start({ tx: check_io[0].esp32_io, rx: check_io[1].esp32_io });
+    const sender = checkBoard.getFreeUart();
+    sender.start({ tx: check_io[0].board_io, rx: check_io[1].board_io });
 
     const text = 'HelloWorld';
     let received = '';
@@ -43,8 +43,8 @@ describe('4-uart', function() {
     const receiver = obnizA.getFreeUart();
     receiver.start({ tx: check_io[1].obniz_io, rx: check_io[0].obniz_io });
     await obnizA.pingWait();
-    const sender = esp32.getFreeUart();
-    sender.start({ tx: check_io[0].esp32_io, rx: check_io[1].esp32_io });
+    const sender = checkBoard.getFreeUart();
+    sender.start({ tx: check_io[0].board_io, rx: check_io[1].board_io });
 
     const text = 'こんにちは'; //eslint-disable-line non-ascii
     let received = '';
@@ -70,10 +70,10 @@ describe('4-uart', function() {
       baud: 9600,
     });
     await obnizA.pingWait();
-    const sender = esp32.getFreeUart();
+    const sender = checkBoard.getFreeUart();
     sender.start({
-      tx: check_io[0].esp32_io,
-      rx: check_io[1].esp32_io,
+      tx: check_io[0].board_io,
+      rx: check_io[1].board_io,
       baud: 9600,
     });
 
@@ -105,10 +105,10 @@ describe('4-uart', function() {
       baud: 115200,
     });
     await obnizA.pingWait();
-    const sender = esp32.getFreeUart();
+    const sender = checkBoard.getFreeUart();
     sender.start({
-      tx: check_io[0].esp32_io,
-      rx: check_io[1].esp32_io,
+      tx: check_io[0].board_io,
+      rx: check_io[1].board_io,
       baud: 115200,
     });
 
@@ -140,10 +140,10 @@ describe('4-uart', function() {
       baud: 115200,
     });
     await obnizA.pingWait();
-    const sender = esp32.getFreeUart();
+    const sender = checkBoard.getFreeUart();
     sender.start({
-      tx: check_io[0].esp32_io,
-      rx: check_io[1].esp32_io,
+      tx: check_io[0].board_io,
+      rx: check_io[1].board_io,
       baud: 115200,
     });
 
@@ -181,19 +181,19 @@ describe('4-uart', function() {
       baud: 115200,
     });
     await obnizA.pingWait();
-    const sender0 = esp32.getFreeUart();
+    const sender0 = checkBoard.getFreeUart();
     sender0.start({
-      tx: check_io[0].esp32_io,
-      rx: check_io[1].esp32_io,
+      tx: check_io[0].board_io,
+      rx: check_io[1].board_io,
       baud: 9600,
     });
-    const sender1 = esp32.getFreeUart();
+    const sender1 = checkBoard.getFreeUart();
     sender1.start({
-      tx: check_io[2].esp32_io,
-      rx: check_io[3].esp32_io,
+      tx: check_io[2].board_io,
+      rx: check_io[3].board_io,
       baud: 115200,
     });
-    await esp32.pingWait();
+    await checkBoard.pingWait();
 
     let text0 = '';
     let text1 = '';

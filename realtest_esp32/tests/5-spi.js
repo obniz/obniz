@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
 
-let obnizA, esp32, check_io;
+let obnizA, checkBoard, check_io;
 
 describe('5-spi', function() {
   this.timeout(10000);
@@ -11,20 +11,24 @@ describe('5-spi', function() {
     return new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
-        esp32 = config.esp32;
-        check_io = config.check_io.filter(io => io.obniz === 'obnizA');
+        checkBoard = config.checkBoard;
+        check_io = config.check_io.filter(
+          io =>
+            io.obniz === 'obnizA' &&
+            io.mode.some(mode => mode === 'digitalWrite')
+        );
         resolve();
       });
     });
   });
 
   it('send-receive', async function() {
-    let spi0 = esp32.getFreeSpi();
+    let spi0 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
-      clk: check_io[0].esp32_io,
-      mosi: check_io[1].esp32_io,
-      miso: check_io[2].esp32_io,
+      clk: check_io[0].board_io,
+      mosi: check_io[1].board_io,
+      miso: check_io[2].board_io,
       frequency: 1 * 1000 * 1000,
     });
 
@@ -56,12 +60,12 @@ describe('5-spi', function() {
   });
 
   it('send-receive 26Mhz@3vz', async function() {
-    let spi0 = esp32.getFreeSpi();
+    let spi0 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
-      clk: check_io[0].esp32_io,
-      mosi: check_io[1].esp32_io,
-      miso: check_io[2].esp32_io,
+      clk: check_io[0].board_io,
+      mosi: check_io[1].board_io,
+      miso: check_io[2].board_io,
       frequency: 26 * 1000 * 1000,
       drive: '3v',
     });
@@ -94,20 +98,24 @@ describe('5-spi', function() {
   });
 
   it('two port at same time', async function() {
-    let spi0 = esp32.getFreeSpi();
-    let spi1 = esp32.getFreeSpi();
+    if (check_io.length < 6) {
+      expect(true).to.be.true;
+      return;
+    }
+    let spi0 = checkBoard.getFreeSpi();
+    let spi1 = checkBoard.getFreeSpi();
     spi0.start({
       mode: 'master',
-      clk: check_io[0].esp32_io,
-      mosi: check_io[1].esp32_io,
-      miso: check_io[2].esp32_io,
+      clk: check_io[0].board_io,
+      mosi: check_io[1].board_io,
+      miso: check_io[2].board_io,
       frequency: 1 * 1000 * 1000,
     });
     spi1.start({
       mode: 'master',
-      clk: check_io[3].esp32_io,
-      mosi: check_io[4].esp32_io,
-      miso: check_io[5].esp32_io,
+      clk: check_io[3].board_io,
+      mosi: check_io[4].board_io,
+      miso: check_io[5].board_io,
       frequency: 1 * 1000 * 1000,
     });
 

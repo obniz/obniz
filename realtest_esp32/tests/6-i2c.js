@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
 
-let obnizA, esp32, check_io;
+let obnizA, checkBoard, check_io;
 
 describe('6-i2c', function() {
   this.timeout(10000);
@@ -11,7 +11,7 @@ describe('6-i2c', function() {
     return new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
-        esp32 = config.esp32;
+        checkBoard = config.checkBoard;
         check_io = config.check_io.filter(io => io.obniz === 'obnizA');
         resolve();
       });
@@ -19,15 +19,15 @@ describe('6-i2c', function() {
   });
 
   it('1k data', async function() {
-    const sender = esp32.getFreeI2C();
+    const sender = checkBoard.getFreeI2C();
     sender.start({
       mode: 'master',
-      sda: check_io[0].esp32_io,
-      scl: check_io[1].esp32_io,
+      sda: check_io[0].board_io,
+      scl: check_io[1].board_io,
       clock: 100 * 1000,
       pull: '3v',
     });
-    await esp32.pingWait();
+    await checkBoard.pingWait();
     const receiver = obnizA.getFreeI2C();
     receiver.start({
       mode: 'slave',
@@ -62,11 +62,11 @@ describe('6-i2c', function() {
   });
 
   it('1k data again', async function() {
-    const sender = esp32.getFreeI2C();
+    const sender = checkBoard.getFreeI2C();
     sender.start({
       mode: 'master',
-      sda: check_io[0].esp32_io,
-      scl: check_io[1].esp32_io,
+      sda: check_io[0].board_io,
+      scl: check_io[1].board_io,
       clock: 100 * 1000,
       pull: '3v',
     });
@@ -114,16 +114,16 @@ describe('6-i2c', function() {
       pull: '3v',
     });
     await obnizA.pingWait();
-    const receiver = esp32.getFreeI2C();
+    const receiver = checkBoard.getFreeI2C();
     receiver.start({
       mode: 'slave',
-      sda: check_io[0].esp32_io,
-      scl: check_io[1].esp32_io,
+      sda: check_io[0].board_io,
+      scl: check_io[1].board_io,
       clock: 100 * 1000,
       slave_address: 0x50,
       pull: '3v',
     });
-    await esp32.pingWait();
+    await checkBoard.pingWait();
 
     let data = [];
     for (let i = 0; i < 1024; i++) {
@@ -147,8 +147,8 @@ describe('6-i2c', function() {
     sender.end();
     obnizA.getIO(check_io[0].obniz_io).pull(null);
     obnizA.getIO(check_io[1].obniz_io).pull(null);
-    esp32.getIO(check_io[0].esp32_io).pull(null);
-    esp32.getIO(check_io[1].esp32_io).pull(null);
+    checkBoard.getIO(check_io[0].board_io).pull(null);
+    checkBoard.getIO(check_io[1].board_io).pull(null);
   });
 });
 

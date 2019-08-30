@@ -1,180 +1,29 @@
 const Obniz = require('../index.js');
 
+const json = require('./board/esp32devkitc_check_io.json');
+//const json = require('./board/m5stickc_check_io.json');
+//const json = require('./board/obniz_check_io.json');
+
 //test device
-const esp32_ID = '30109815';
+//esp32
+const checkBoard_ID = '30109815';
+//m5stickc
+//const checkBoard_ID = '09130585';
+//obniz
+//const checkBoard_ID = '09643850';
 //check device
 const obnizA_ID = '24658668';
 const obnizB_ID = '09643850';
 
-let obnizA, obnizB, esp32;
-
-const mode = {
-  digitalRead: 0,
-  digitalWrite: 1,
-  analogRead: 2,
-  analogWrite: 3,
-};
-
-const check_io = [
-  {
-    //default pin (0:pullup,2:pulldown)
-    esp32_io: 4,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 4,
-  },
-  {
-    esp32_io: 0,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 0,
-  },
-  {
-    esp32_io: 2,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 1,
-  },
-  {
-    esp32_io: 5,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 5,
-  },
-  {
-    esp32_io: 12,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 6,
-  },
-  {
-    esp32_io: 13,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 7,
-  },
-  {
-    esp32_io: 14,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 8,
-  },
-  {
-    esp32_io: 15,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 9,
-  },
-  {
-    esp32_io: 16,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 10,
-  },
-  {
-    esp32_io: 17,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizA',
-    obniz_io: 11,
-  },
-  {
-    esp32_io: 18,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 0,
-  },
-  {
-    esp32_io: 19,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 1,
-  },
-  {
-    esp32_io: 21,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 2,
-  },
-  {
-    esp32_io: 22,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 3,
-  },
-  {
-    esp32_io: 23,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 4,
-  },
-  {
-    esp32_io: 25,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 5,
-  },
-  {
-    esp32_io: 26,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 6,
-  },
-  {
-    esp32_io: 27,
-    mode: [mode.digitalRead, mode.digitalWrite, mode.analogWrite],
-    obniz: 'obnizB',
-    obniz_io: 7,
-  },
-  {
-    esp32_io: 32,
-    mode: [
-      mode.digitalRead,
-      mode.digitalWrite,
-      mode.analogRead,
-      mode.analogWrite,
-    ],
-    obniz: 'obnizB',
-    obniz_io: 8,
-  },
-  {
-    esp32_io: 33,
-    mode: [
-      mode.digitalRead,
-      mode.digitalWrite,
-      mode.analogRead,
-      mode.analogWrite,
-    ],
-    obniz: 'obnizB',
-    obniz_io: 9,
-  },
-  {
-    esp32_io: 34,
-    mode: [mode.digitalRead, mode.analogRead],
-    obniz: 'obnizB',
-    obniz_io: 10,
-  },
-  {
-    esp32_io: 35,
-    mode: [mode.digitalRead, mode.analogRead],
-    obniz: 'obnizB',
-    obniz_io: 11,
-  },
-  {
-    esp32_io: 36,
-    mode: [mode.digitalRead, mode.analogRead],
-    obniz: 'obnizA',
-    obniz_io: 3,
-  },
-  {
-    esp32_io: 39,
-    mode: [mode.digitalRead, mode.analogRead],
-    obniz: 'obnizA',
-    obniz_io: 2,
-  },
-];
+let obnizA, obnizB, checkBoard;
+const check_io = json.io;
 
 function waitForConenct(done) {
-  if (obnizA === undefined || obnizB === undefined || esp32 === undefined) {
+  if (
+    (obnizA === undefined && json.board.some(board => board === 'obnizA')) ||
+    (obnizB === undefined && json.board.some(board => board === 'obnizB')) ||
+    checkBoard === undefined
+  ) {
     connectTwoObniz(done);
   } else {
     done();
@@ -192,13 +41,13 @@ function reboot(done) {
     obnizB.close();
   }
 
-  if (esp32 !== undefined) {
-    esp32.reboot();
-    esp32.close();
+  if (checkBoard !== undefined) {
+    checkBoard.reboot();
+    checkBoard.close();
   }
   obnizA = undefined;
   obnizB = undefined;
-  esp32 = undefined;
+  checkBoard = undefined;
 
   setTimeout(() => {
     waitForConenct(done);
@@ -206,36 +55,55 @@ function reboot(done) {
 }
 
 function connectTwoObniz(done, params) {
+  console.log(json.name + ' Board Test Program');
   let local_connect = true;
-  esp32 = new Obniz(esp32_ID, { local_connect: local_connect });
-  esp32.onconnect = () => {
+  checkBoard = new Obniz(checkBoard_ID, { local_connect: local_connect });
+  checkBoard.onconnect = () => {
     if (process.env.DEBUG) {
-      esp32.debugprint = true;
+      checkBoard.debugprint = true;
     }
-    console.log('esp32 local_connect : ' + local_connect);
-    if (obnizA) return;
-    obnizA = new Obniz(obnizA_ID, { local_connect: local_connect });
-    console.log('A local_connect : ' + local_connect);
-    if (process.env.DEBUG) {
-      obnizA.debugprint = true;
-    }
-    obnizA.onconnect = () => {
-      obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
-      console.log('B local_connect : ' + local_connect);
+    console.log('checkBoard local_connect : ' + local_connect);
+    if (json.board.some(board => board === 'obnizA')) {
+      obnizA = new Obniz(obnizA_ID, { local_connect: local_connect });
+      console.log('A local_connect : ' + local_connect);
       if (process.env.DEBUG) {
-        obnizB.debugprint = true;
+        obnizA.debugprint = true;
       }
-      obnizB.onconnect = () => {
-        console.log('connected two');
-        done();
+      obnizA.onconnect = () => {
+        if (json.board.some(board => board === 'obnizB')) {
+          obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
+          console.log('B local_connect : ' + local_connect);
+          if (process.env.DEBUG) {
+            obnizB.debugprint = true;
+          }
+          obnizB.onconnect = () => {
+            console.log('connected finish');
+            done();
+          };
+        } else {
+          console.log('connected finish');
+          done();
+        }
       };
-    };
+    } else {
+      if (json.board.some(board => board === 'obnizB')) {
+        obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
+        console.log('B local_connect : ' + local_connect);
+        if (process.env.DEBUG) {
+          obnizB.debugprint = true;
+        }
+        obnizB.onconnect = () => {
+          console.log('connected finish');
+          done();
+        };
+      }
+    }
   };
 }
 
 function getDevice(device) {
-  if (device === 'esp32') {
-    return esp32;
+  if (device === 'checkBoard') {
+    return checkBoard;
   } else if (device === 'obnizB') {
     return obnizB;
   }
@@ -250,14 +118,13 @@ module.exports = {
   get obnizB() {
     return obnizB;
   },
-  get esp32() {
-    return esp32;
+  get checkBoard() {
+    return checkBoard;
   },
-  esp32_ID,
+  checkBoard_ID,
   obnizA_ID,
   obnizB_ID,
   reboot,
   check_io,
-  mode,
   getDevice,
 };
