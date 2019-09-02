@@ -8,17 +8,17 @@ x,y,zの3軸加速度センサ
 
 ## obniz.wired(obniz, {x, y, z [, vcc, gnd, enable, self_test]})
 
-部品のピンをobnizに接続し、どこに接続したかなどを設定します。
+部品のピンをobniz Boardに接続し、どこに接続したかなどを設定します。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-x | `number(obniz io)` | yes | &nbsp; | X軸の加速度の値が電圧として出力されます。
-y | `number(obniz io)` | yes | &nbsp; | Y軸の加速度の値が電圧として出力されます。
-z | `number(obniz io)` | yes | &nbsp; | Z軸の加速度の値が電圧として出力されます。
-vcc | `number(obniz io)` | &nbsp; | &nbsp; | 電源です。5V。
-gnd | `number(obniz io)` | &nbsp; | &nbsp; | 電源です。GND
-self_test | `number(obniz io)` | &nbsp; | &nbsp; | highにするとセルフテストモードになります。
-enable | `number(obniz io)` | &nbsp; | &nbsp; | lowにすると加速度の計測を無効化出来ます。
+x | `number(obniz Board io)` | yes | &nbsp; | X軸の加速度の値が電圧として出力されます。
+y | `number(obniz Board io)` | yes | &nbsp; | Y軸の加速度の値が電圧として出力されます。
+z | `number(obniz Board io)` | yes | &nbsp; | Z軸の加速度の値が電圧として出力されます。
+vcc | `number(obniz Board io)` | &nbsp; | &nbsp; | 電源です。5V。
+gnd | `number(obniz Board io)` | &nbsp; | &nbsp; | 電源です。GND
+self_test | `number(obniz Board io)` | &nbsp; | &nbsp; | highにするとセルフテストモードになります。
+enable | `number(obniz Board io)` | &nbsp; | &nbsp; | lowにすると加速度の計測を無効化出来ます。
 
 ```javascript
 
@@ -63,7 +63,7 @@ X,Y,Z軸、それぞれの加速度が変わったときにのみ呼び出さ�
 ## get()
 
 今の加速度を３つとも取得します。
-obnizに問い合わせることなく、obnizから届いた最後の値を取得します。
+obniz Boardに問い合わせることなく、obniz Boardから届いた最後の値を取得します。
 
 無限ループで実行する場合はwaitを入れる必要があります。
 
@@ -85,7 +85,7 @@ while (true) {
 ## [await] getWait()
 
 ３軸の加速度情報を取得します。
-obnizに問い合わせることで最新の値を取得します。
+obniz Boardに問い合わせることで最新の値を取得します。
 
 ```javascript
 // Javascript Example

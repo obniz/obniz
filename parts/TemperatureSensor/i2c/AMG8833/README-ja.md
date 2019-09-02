@@ -12,10 +12,10 @@
 
 
 ## wired(obniz,  {[vin, gnd, sda, scl, address]} )
-obnizにセンサをつなぎます。
+obniz Boardにセンサをつなぎます。
 AMG8833は3.3V駆動です。このライブラリでのvinは5V出力になりますので、Adafruit社製以外のモジュールを使用する場合は注意してください。
 
-Adafruitのモジュールを使う場合は、電源を安定供給するためにobnizの２箇所以上のIOから電源を供給してください。
+Adafruitのモジュールを使う場合は、電源を安定供給するためにobniz Boardの２箇所以上のIOから電源を供給してください。
 
 addressは未指定の場合は0x69になります。モジュール裏面のジャンパを接続した場合は、0x68を指定してください。
 ```javascript

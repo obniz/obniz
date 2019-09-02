@@ -21,7 +21,7 @@ BLEの仕様に基づいたセキュリティを設定します。(Core Spec 4.2
 
 セキュリティの設定は1度しかできません。
 再度設定しようとすると、security.onerrorが呼ばれます。
-設定を変更するためにはobnizの再起動が必要です。
+設定を変更するためにはobniz Boardの再起動が必要です。
 
 ```javascript
 
@@ -76,7 +76,7 @@ obniz.ble.security.setAuth(['bonding','mitm','secure_connection']);
  
 認証キーの設定は1度しかできません。
 再度設定しようとすると、security.onerrorが呼ばれます。
-設定変更するためにはobnizの再起動が必要です。
+設定変更するためにはobniz Boardの再起動が必要です。
 
 
 ```javascript

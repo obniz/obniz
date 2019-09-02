@@ -8,8 +8,8 @@ WS2812B is embed in various Full Color LEDs.
 
 
 ## wire({din, [vcc, gnd]})
-connect VDD and GND to obniz and drive it.
-And, wire DIN(Data in) to obniz. and write a code below
+connect VDD and GND to obniz Board and drive it.
+And, wire DIN(Data in) to obniz Board. and write a code below
 
 ```Javascript
 // Javascript Example

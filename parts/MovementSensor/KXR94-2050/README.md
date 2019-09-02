@@ -8,17 +8,17 @@ This is used for determin direction and angle of a device.
 
 ## obniz.wired(obniz, {x, y, z [, vcc, gnd, enable, self_test]})
 
-Connect pins to an obniz and specify io.
+Connect pins to an obniz Board and specify io.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-x | `number(obniz io)` | yes | &nbsp; | value of x
-y | `number(obniz io)` | yes | &nbsp; | value of y
-z | `number(obniz io)` | yes | &nbsp; | value of z
-vcc | `number(obniz io)` | &nbsp; | &nbsp; | Power supply. 5v
-gnd | `number(obniz io)` | &nbsp; | &nbsp; | Power supply. gnd
-self_test | `number(obniz io)` | &nbsp; | &nbsp; | high for enter test mode
-enable | `number(obniz io)` | &nbsp; | &nbsp; | low for disable device.
+x | `number(obniz Board io)` | yes | &nbsp; | value of x
+y | `number(obniz Board io)` | yes | &nbsp; | value of y
+z | `number(obniz Board io)` | yes | &nbsp; | value of z
+vcc | `number(obniz Board io)` | &nbsp; | &nbsp; | Power supply. 5v
+gnd | `number(obniz Board io)` | &nbsp; | &nbsp; | Power supply. gnd
+self_test | `number(obniz Board io)` | &nbsp; | &nbsp; | high for enter test mode
+enable | `number(obniz Board io)` | &nbsp; | &nbsp; | low for disable device.
 
 ```javascript
 
@@ -63,7 +63,7 @@ This is useful when you only want to watch one of them.
 ## get()
 
 Getting a current three acceleration value.
-This function not contact to an obniz. It return last notified value from an obniz.
+This function not contact to an obniz Board. It return last notified value from an obniz Board.
 
 Notice: You should insert a wait() in infinity loop.
 
@@ -85,7 +85,7 @@ while (true) {
 ## [await] getWait()
 
 Getting a current three acceleration value.
-This function will contact to an obniz to retrive current value.
+This function will contact to an obniz Board to retrive current value.
 
 ```javascript
 // Javascript Example

@@ -9,7 +9,7 @@ WS2811 は多くのフルカラーLEDに組み込まれています。(写真は
 
 ## wire({din, [vcc, gnd]})
 
-vcc,gnd,dinをobnizに接続し、接続したioをプログラムで以下のように記載します。
+vcc,gnd,dinをobniz Boardに接続し、接続したioをプログラムで以下のように記載します。
 
 ![](./wired.png)
 

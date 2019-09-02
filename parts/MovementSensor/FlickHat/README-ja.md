@@ -12,14 +12,14 @@
 [RS](https://jp.rs-online.com/web/p/human-machine-interface-hmi-development-kits/1365431/)、他から購入可能です。
 
 
-## obnizとの接続
+## obniz Boardとの接続
 
-Flick HATとFlick Zeroは3.3V駆動のため、電源はobnizのioピンから直接取ることができません。3.3V電源を別に用意してください。電源以外の`SDA, SCL, Gnd, Reset, TS`は、下図を参考にobnizのioピンに接続します。  
+Flick HATとFlick Zeroは3.3V駆動のため、電源はobniz Boardのioピンから直接取ることができません。3.3V電源を別に用意してください。電源以外の`SDA, SCL, Gnd, Reset, TS`は、下図を参考にobniz Boardのioピンに接続します。  
 
 ![Flick HAT / Flick Zero](./flick_hat_wired_50.png)
 
 
-Flick Largeは5V駆動できるため、電源も含めてすべてobnizのioピンに接続します.  
+Flick Largeは5V駆動できるため、電源も含めてすべてobniz Boardのioピンに接続します.  
 **<font color="Red">5V駆動で動作しない場合は、Flick HATと同様に3.3Vで試してください。</font>**
 
 ![Flick Large](./flick_large_wired_50.png)
@@ -27,9 +27,9 @@ Flick Largeは5V駆動できるため、電源も含めてすべてobnizのioピ
 
 ## wired( { vcc, } sda, scl, reset, ts, gnd { , led1, led2 } )
 
-`VCC(5v), SDA, SCL, RESET, TS, GND`をobnizに接続し、接続したioをプログラムで以下のように記述します。
+`VCC(5v), SDA, SCL, RESET, TS, GND`をobniz Boardに接続し、接続したioをプログラムで以下のように記述します。
 3.3Vや5V電源を別に用意した場合は、vccを省略します。  
-LED1(赤)、LED2(緑)はFlick Largeの場合で、ioをobnizに接続した場合に指定します。
+LED1(赤)、LED2(緑)はFlick Largeの場合で、ioをobniz Boardに接続した場合に指定します。
 
 ```javascript
 // Javascript Example
@@ -56,7 +56,7 @@ await flickhat.start(function(fwinfo) {
 
 ## [await] polling({timeout})
 
-Flick Hatをポーリングします。定期的に呼び出す必要があるため、タイマーループまたはobnizのアイドルループ内で呼び出します。引数`timeout`は、ジェスチャー情報が何も無い場合に監視ループする最大時間をミリ秒で指定します。省略値は3000ms(3秒)です。（`ts`ピンが`high(true)`から`low(false)`に変化することを監視している）
+Flick Hatをポーリングします。定期的に呼び出す必要があるため、タイマーループまたはobniz Boardのアイドルループ内で呼び出します。引数`timeout`は、ジェスチャー情報が何も無い場合に監視ループする最大時間をミリ秒で指定します。省略値は3000ms(3秒)です。（`ts`ピンが`high(true)`から`low(false)`に変化することを監視している）
 
 ```javascript
 // Javascript Example

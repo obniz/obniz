@@ -5,7 +5,7 @@ Library for Grove 3-axis accelerometer module[Grove - 3 Axis Digital Acceleromet
 ![](./image.jpg)
 
 ## wired(scl, sda {, vcc, gnd})
-Connect pins to an obniz.
+Connect pins to an obniz Board.
 
 | grove | cable | obniz |
 |:--:|:--:|:--:|

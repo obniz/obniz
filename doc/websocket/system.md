@@ -97,7 +97,7 @@ circuit IO check
 
 
 ##  request: <a name="-request-system-keepworkingatoffline">keepWorkingAtOffline</a>
-reset obniz when obniz gone to offline.
+reset obniz Board when obniz Board gone to offline.
 
 
 

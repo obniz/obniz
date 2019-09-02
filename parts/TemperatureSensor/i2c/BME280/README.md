@@ -6,8 +6,8 @@ Very low energy consumption and high accuracy.
 
 ## wired(obniz,  {[vio, vcore, gnd, csb, sdi, sck, sdo, address, i2c]} )
 
-Connect a sensor to an obniz.
-obniz has internal pull up. But for communication stability, please add pull-up resistor to both SCK and SDI.
+Connect a sensor to an obniz Board.
+obniz Board has internal pull up. But for communication stability, please add pull-up resistor to both SCK and SDI.
 
 ![](./image2.jpg)
 
@@ -17,13 +17,13 @@ obniz has internal pull up. But for communication stability, please add pull-up 
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-vio | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for interface
-vcore | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for core
-gnd | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply
-csb | `number(obniz io)` | no | &nbsp; | connected obniz io. I2C/SPI selection.
-sdi | `number(obniz io)` | no | &nbsp; | connected obniz io. data port
-sck | `number(obniz io)` | no | &nbsp; | connected obniz io. clock
-sdo | `number(obniz io)` | no | &nbsp; | connected obniz io. data port or address selection
+vio | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for interface
+vcore | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for core
+gnd | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply
+csb | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. I2C/SPI selection.
+sdi | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. data port
+sck | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. clock
+sdo | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. data port or address selection
 i2c | `i2c object` | no | &nbsp; | configured i2c object
 address | `number` | no | 0x76  | 0x76 or 0x77
 

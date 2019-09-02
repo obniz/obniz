@@ -6,7 +6,7 @@ Common Brushed DC Motor which moves when connected to +/- and reverse when conne
 
 ## wire({forward, back})
 
-connect two wire to an obniz and set io number to forward,back.
+connect two wire to an obniz Board and set io number to forward,back.
 If you connect to io 0 and 1, then write a program like a below.
 
 ![photo of DCMotor](./wired.png)

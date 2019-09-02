@@ -4,7 +4,7 @@ Stepper Motor is different from just rotating things like DC motors.
 It rotate by following electrical pulse. So, It can rotate correctly by step.
 So It is very useful when you want to move/rotate things correctly, and hold something at current state. In the other hands, Stepper Motor is not good for high-speed/high-power usages.
 
-This library can drive both bipolar/unipolar stepper motors. This cabale to drive directy from obniz io. So 5v stepper motor is best.
+This library can drive both bipolar/unipolar stepper motors. This cabale to drive directy from obniz Board io. So 5v stepper motor is best.
 
 ![](./image.jpg)
 
@@ -24,11 +24,11 @@ This function recognize motor bipolar/unipolar by specifying common.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-a | `number(obniz io)` | no |  &nbsp; | Specify obniz io
-b | `number(obniz io)` | no |  &nbsp; | Specify obniz io
-aa | `number(obniz io)` | no |  &nbsp; | Specify obniz io. This is other side of a.
-bb | `number(obniz io)` | no |  &nbsp; | Specify obniz io. This is other side of b.
-common | `number(obniz io)` | no |  &nbsp; | Specify only when unipolar.
+a | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io
+b | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io
+aa | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io. This is other side of a.
+bb | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io. This is other side of b.
+common | `number(obniz Board io)` | no |  &nbsp; | Specify only when unipolar.
 
 
 ```Javascript

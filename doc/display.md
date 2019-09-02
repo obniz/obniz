@@ -1,5 +1,5 @@
 # Display (obniz.display)
-Here we will show letters and pictures on OLED display on obniz.
+Here we will show letters and pictures on OLED display on obniz Board.
 
 ![](./images/obniz_display_sphere.gif)
 

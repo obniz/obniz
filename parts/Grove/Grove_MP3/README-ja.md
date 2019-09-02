@@ -57,7 +57,7 @@ Groveケーブルの場合以下のようになります。
 ```Javascript
 // Javascript Example
 var mp3 = obniz.wired("Grove_MP3", {gnd:0, vcc:1, mp3_rx:2, mp3_tx:3});
-// Groveケーブルの場合はobnizのIO_0に黒,IO_1に赤,IO_2に白,IO_3に黄色を接続してください。
+// Groveケーブルの場合はobniz BoardのIO_0に黒,IO_1に赤,IO_2に白,IO_3に黄色を接続してください。
 ```
 
 ## [await] initWait()

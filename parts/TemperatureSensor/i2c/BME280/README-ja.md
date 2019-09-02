@@ -6,8 +6,8 @@
 
 ## wired(obniz,  {[vio, vcore, gnd, csb, sdi, sck, sdo, address, i2c]} )
 
-センサーをobnizにつなぎます。
-obnizには内部プルアップがありますが、安定した通信のためには外部の抵抗を使ってSCKとSDIをvioなどにプルアップして下さい。
+センサーをobniz Boardにつなぎます。
+obniz Boardには内部プルアップがありますが、安定した通信のためには外部の抵抗を使ってSCKとSDIをvioなどにプルアップして下さい。
 
 ![](./image2.jpg)
 
@@ -17,13 +17,13 @@ obnizには内部プルアップがありますが、安定した通信のため
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-vio | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for interface
-vcore | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply for core
-gnd | `number(obniz io)` | no | &nbsp; | connected obniz io. power supply
-csb | `number(obniz io)` | no | &nbsp; | connected obniz io. I2C/SPI 選択.
-sdi | `number(obniz io)` | no | &nbsp; | connected obniz io. データ端子
-sck | `number(obniz io)` | no | &nbsp; | connected obniz io. クロック
-sdo | `number(obniz io)` | no | &nbsp; | connected obniz io. データ通信かアドレス選択
+vio | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for interface
+vcore | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for core
+gnd | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply
+csb | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. I2C/SPI 選択.
+sdi | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. データ端子
+sck | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. クロック
+sdo | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. データ通信かアドレス選択
 i2c | `i2c object` | no | &nbsp; | configured i2c object
 address | `number` | no | 0x76  | 0x76 or 0x77
 
@@ -40,7 +40,7 @@ console.log(val);
 
 vioとvcoreは直接繋げられます。
 csbはhighに単純に繋げられ、sdoもgndに単純に繋げられます。
-なので、そのように繋いだものをobnizにつなぐときの最小構成は以下になります。
+なので、そのように繋いだものをobniz Boardにつなぐときの最小構成は以下になります。
 
 
 ```javascript

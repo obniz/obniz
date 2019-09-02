@@ -1,4 +1,4 @@
-# obnizをperipheralとして使う
+# obniz Boardをperipheralとして使う
 
 ## advertisement.start()
 

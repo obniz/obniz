@@ -7,7 +7,7 @@ This is a sensor module that combines the acceleration / gyro.
 
 ## wired("MPU6050", { [gnd , vcc , sda , scl , i2c, address]})
 Set gnd, vcc, sda and scl to your favorite pins.
-3.3V power supply is not supported by obniz, so need to get another way.
+3.3V power supply is not supported by obniz Board, so need to get another way.
 
 
 ```javascript

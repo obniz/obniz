@@ -6,7 +6,7 @@ Library for GPS Module [GYSFDMAXB](https://www.yuden.co.jp/jp/product/category/m
 
 ## wired(vcc, gnd, txd, rxd {, Opps })
 
-Connect vcc(5v), gnd, txd, rxd, Opps to an obniz.
+Connect vcc(5v), gnd, txd, rxd, Opps to an obniz Board.
 And specify the pins on program.
 
 ```javascript

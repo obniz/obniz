@@ -6,11 +6,11 @@ P2P or broadcasting communication with some Xbee modules are you can use.
 
 ## obniz.wired(obniz, {tx, rx})
 
-Wiring obniz and XBee. XBee also need VCC(3.3V) and GND.
-3.3V power supply is not supported by obniz, so need to get another way.
+Wiring obniz Board and XBee. XBee also need VCC(3.3V) and GND.
+3.3V power supply is not supported by obniz Board, so need to get another way.
 
 If you wired like this photo,code is here.
-Obniz output 5V vcc to regulator and convert to 3.3V. 
+obniz Board output 5V vcc to regulator and convert to 3.3V. 
 ![photo of wired XBee](./xbee.png)
 
 ![](./wired.png)
