@@ -210,7 +210,6 @@
       "board_io": 34,
       "mode": [
         "digitalRead",
-        "digitalWrite",
         "analogWrite"
       ],
       "obniz": "obnizB",
@@ -220,7 +219,6 @@
       "board_io": 35,
       "mode": [
         "digitalRead",
-        "digitalWrite",
         "analogWrite"
       ],
       "obniz": "obnizB",
