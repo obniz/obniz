@@ -1,4 +1,4 @@
-# obniz Board connection
+# obniz connection
 
 obnizクラスはobniz BoardをJavaScriptの中で抽象化したクラスです。
 idを指定してインスタンス化することで通信内容を意識せずにobniz Boardやobniz Boardに繋がれた部品の操作ができるようになります。
@@ -217,7 +217,7 @@ obniz.onconnect = async function() {
 
 ## firmware_ver
 
-接続されたデバイスにインストールされているobniz BoardOSのバージョンを取得します
+接続されたデバイスにインストールされているOSのバージョンを取得します
 
 ```javascript
 var obniz = new Obniz('1234-5678');
