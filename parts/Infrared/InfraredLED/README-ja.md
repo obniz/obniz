@@ -6,7 +6,7 @@
 
 ## wired(obniz, {anode, cathode})
 
-anodeとcathodeはそれを繋いだobnizのioを指定して下さい。
+anodeとcathodeはそれを繋いだobniz Boardのioを指定して下さい。
 cathodeはオプショナルです。ない場合は他のGNDに繋いでいるとみなします。
 
 このクラスはほとんどの赤外線LEDを操作できます。
@@ -18,12 +18,12 @@ cathodeはオプショナルです。ない場合は他のGNDに繋いでいる�
 
 ### 抵抗が必要です。
 
-obnizにLEDを繋ぐには抵抗が必要です。(抵抗入りのLEDは別ですが)。
+obniz BoardにLEDを繋ぐには抵抗が必要です。(抵抗入りのLEDは別ですが)。
 赤外線LEDは高速に点滅するため、また遠くの電子機器を動かすために抵抗は低めに設定します。
 データシートの "Pulse Forward Current" を参考にしてください。例えば、下の例の場合は最大1000mAなので、5Ωあれば安心です。
 ![](fvid.png)
 
-抵抗を介してobnizに接続します。
+抵抗を介してobniz Boardに接続します。
 
 ![](wired.jpg)
 

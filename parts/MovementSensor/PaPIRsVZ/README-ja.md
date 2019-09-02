@@ -8,7 +8,7 @@
 
 ## wired(obniz, [signal [,vcc, gnd]])
 
-３つのピンがあります。それぞれを直接obnizに接続して下さい。
+３つのピンがあります。それぞれを直接obniz Boardに接続して下さい。
 
 ```Javascript
 // Javascript Example

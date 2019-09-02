@@ -49,7 +49,7 @@ obniz BoardにGPSモジュールを接続します。
 | gnd | - | gnd |
 
 
-**突入電流対策のため、obnizのvcc(5V出力)とGPSモジュールのvccの間に5~10Ω程度の抵抗を挿入してください。**
+**突入電流対策のため、obniz Boardのvcc(5V出力)とGPSモジュールのvccの間に5~10Ω程度の抵抗を挿入してください。**
 
 ```javascript
 // Javascript Example

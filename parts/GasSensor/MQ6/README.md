@@ -16,10 +16,10 @@ This sensor response CO2, You can check behavior by breathing.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-vcc | `number(obniz io)` | no |  &nbsp; | VCC or H on MQ6.
-gnd | `number(obniz io)` | no |  &nbsp; | GND or H on MQ6.
-do | `number(obniz io)` | no |  &nbsp; | digital out
-ao | `number(obniz io)` | no | &nbsp;  | analog out
+vcc | `number(obniz Board io)` | no |  &nbsp; | VCC or H on MQ6.
+gnd | `number(obniz Board io)` | no |  &nbsp; | GND or H on MQ6.
+do | `number(obniz Board io)` | no |  &nbsp; | digital out
+ao | `number(obniz Board io)` | no | &nbsp;  | analog out
 
 
 ```Javascript

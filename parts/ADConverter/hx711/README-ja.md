@@ -7,7 +7,7 @@
 
 ## wired(obniz, {vcc, gnd, sck, dout})
 
-SCKとDOUTをobnizと接続してください。
+SCKとDOUTをobniz Boardと接続してください。
 VCCとGNDはオプションです。
 
 ```javascript

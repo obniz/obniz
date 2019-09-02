@@ -7,7 +7,7 @@ This is a 3-axis magnetic sensor
 
 ## wired("AK8963", { [gnd , vcc , sda , scl , i2c, address]})
 
-3.3V power supply is not supported by obniz, so need to get another way.
+3.3V power supply is not supported by obniz Board, so need to get another way.
 
 ```javascript
 var sensor = obniz.wired("AK8963", { gnd: 0, vcc: 1, sda: 2, scl: 3 });

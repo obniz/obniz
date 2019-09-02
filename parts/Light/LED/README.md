@@ -8,7 +8,7 @@ anode is a little bit longer than cathode.
 
 ## obniz.wired("LED", {anode, cathode})
 anode is loger leg.
-specify obniz io numbers you connected LED.
+specify obniz Board io numbers you connected LED.
 
 You need a resistor if you are not using a resistor embeded LED.
 

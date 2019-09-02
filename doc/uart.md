@@ -15,8 +15,8 @@ var uart2 = obniz.getFreeUart(); // Error
 
 ## start({tx, rx[, gnd, baud, stop, bits, parity, flow control, rts, cts, drive, pull]})
 It starts uart on io tx, rx.
-tx is used for sending data from obniz to parts.
-rx is used for receiving data from parts to obniz.
+tx is used for sending data from obniz Board to parts.
+rx is used for receiving data from parts to obniz Board.
 You can start uart without much configuration. Just use as below.
 ```javascript
 obniz.uart0.start({tx:0, rx:1})
@@ -85,7 +85,7 @@ It is called when data is received.
 Data is array of bytes.
 Text is the same data but in text representation.
 
-So, if obniz receives 'A'.  
+So, if obniz Board receives 'A'.  
 Data is [0x41]  
 Text is "A"  
 

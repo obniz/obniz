@@ -10,7 +10,7 @@
 
 
 ## wired(obniz, {vcc, output, gnd})
-Obnizに温度センサをつなぎます。
+obniz Boardに温度センサをつなぎます。
 ```javascript
 // Javascript Example
 var tempsens = obniz.wired("MCP9701",  { gnd:0 , output:1, vcc:2});

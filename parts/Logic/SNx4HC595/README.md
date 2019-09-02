@@ -13,18 +13,18 @@ Reference
 
 ## obniz.wired('SNx4HC595', {ser, rclk, srclk [, gnd, vcc, oe, srclr, io_num]});
 
-Specify which obniz io is connected to each pin.
+Specify which obniz Board io is connected to each pin.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-ser | `number(obniz io)` | yes | &nbsp; | connected obniz io
-rclk | `number(obniz io)` | yes | &nbsp;  | connected obniz io
-srclk | `number(obniz io)` | yes | &nbsp;  | connected obniz io
-vcc | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
-gnd | `number(obniz io)` | no | &nbsp;  | If you specify either vcc/gnd, wire() will wait a moment after power up.
-oe | `number(obniz io)` | no |  &nbsp; | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
-srclr | `number(obniz io)` | no | &nbsp;  | srclr clear shift resistor values. You don't need to specify srclr when srclr is connected directly to 5v.
-io_num | `number` | no | 8  | io_num is number of io. You can set under 8. If you specify over 8 like 16, then obniz will treat chained chip.
+ser | `number(obniz Board io)` | yes | &nbsp; | connected obniz Board io
+rclk | `number(obniz Board io)` | yes | &nbsp;  | connected obniz Board io
+srclk | `number(obniz Board io)` | yes | &nbsp;  | connected obniz Board io
+vcc | `number(obniz Board io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
+gnd | `number(obniz Board io)` | no | &nbsp;  | If you specify either vcc/gnd, wire() will wait a moment after power up.
+oe | `number(obniz Board io)` | no |  &nbsp; | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
+srclr | `number(obniz Board io)` | no | &nbsp;  | srclr clear shift resistor values. You don't need to specify srclr when srclr is connected directly to 5v.
+io_num | `number` | no | 8  | io_num is number of io. You can set under 8. If you specify over 8 like 16, then obniz Board will treat chained chip.
 enabled | `boolean` | no | true  | If oe was specified, you can set initial enable/disable with this parameter.
 
 
@@ -83,7 +83,7 @@ ioext.onece(function(){ // io 4 and 5 will be changed to false state at same tim
 ```
 
 ## getIO(io)
-Retriving io object. io object works like a obniz io. You can call output().
+Retriving io object. io object works like a obniz Board io. You can call output().
 Additionaly, you can use this io for io in  [LED](./LED) and [7SegmentLED](./7SegmentLED).
 
 ```Javascript

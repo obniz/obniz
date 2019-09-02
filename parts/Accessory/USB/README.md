@@ -1,7 +1,7 @@
 # USB
 
 Simply, Supplying power to usb accesorries.
-Control USB light, etc with your obniz.
+Control USB light, etc with your obniz Board.
 
 ![](./image.jpg)
 

@@ -11,10 +11,10 @@ Calibration is important to get correct direction.
 
 ## wired(obniz,  { [gnd, sda, scl, i2c]});
 
-Connect to an obniz.
+Connect to an obniz Board.
 
-obniz can't supply a power to this sensor directly.
-Use external 3.3v or use linear regulator to drop 5v output of obniz to 3.3v.
+obniz Board can't supply a power to this sensor directly.
+Use external 3.3v or use linear regulator to drop 5v output of obniz Board to 3.3v.
 
 ```javascript
 // Javascript Example

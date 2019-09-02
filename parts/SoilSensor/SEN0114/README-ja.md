@@ -10,7 +10,7 @@
 
 
 ## wired(obniz, { vcc, output, gnd} )
-Obnizに土壌湿度センサをつなぎます。
+obniz Boardに土壌湿度センサをつなぎます。
 0,1,2はそれぞれ温度センサの電源,GND,センサ出力へ接続してください。
 
 

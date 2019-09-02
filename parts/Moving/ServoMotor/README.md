@@ -11,15 +11,15 @@ You just need to send a angle data to servomotor.
 
 ### About Motor Power Supply
 
-Some RC Servo Motors can be connected obniz directly even power supply.
-But Some (Especcialy tiny)  Motors tends to leak vcc. So obniz would recognize as over current situation and stop supplying.
+Some RC Servo Motors can be connected obniz Board directly even power supply.
+But Some (Especcialy tiny)  Motors tends to leak vcc. So obniz Board would recognize as over current situation and stop supplying.
 
 If it occure, our recommendations are
 
-- (Recommended) connect power supply to other resource. (J1 pin on obniz can be use. It's USB direct)
+- (Recommended) connect power supply to other resource. (J1 pin on obniz Board can be use. It's USB direct)
 - Connect throught the bread board. (It's resistance is not so low. So, it can prevent over current detection)
 
-Servomotors which vcc can be driven directly from obniz io
+Servomotors which vcc can be driven directly from obniz Board io
 
 Maker | SKU
 --- | ---
@@ -31,7 +31,7 @@ Tower Pro | SG90
 Tower Pro | SG92R
 GWS | S35STD
 
-Servomotors which vcc can not be driven directly from obniz io
+Servomotors which vcc can not be driven directly from obniz Board io
 
 Maker | SKU
 --- | ---
@@ -40,15 +40,15 @@ FEETECH | FS90R
 
 ## obniz.wired("ServoMotor", {[vcc, gnd, signal, pwm]})
 
-Connect three feet to obniz. gnd, vcc and signal, respectively, and the placement is different depending on the manufacturere of motor. 
+Connect three feet to obniz Board. gnd, vcc and signal, respectively, and the placement is different depending on the manufacturere of motor. 
 
 This is commonly used pattern.
-obniz set include this pattern's servomotor.
+obniz Board set include this pattern's servomotor.
 
 ![](./servocable.jpg)
 
 
-If you connect gnd ,vcc and signal to Obniz 0, 1, 2 respectively, write a code as follows.
+If you connect gnd ,vcc and signal to obniz Board 0, 1, 2 respectively, write a code as follows.
 
 ![](./wired.png)
 

@@ -1,7 +1,7 @@
 # LogicAnalyzer
 LogicAnalyzer records samples read from io periodically.
 This is useful for digital bus signal check.
-Only one LogicAnalyzer can be used per obniz.
+Only one LogicAnalyzer can be used per obniz Board.
 
 ### How it works
 

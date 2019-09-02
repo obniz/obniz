@@ -1,7 +1,7 @@
 # LogicAnalyzer
 ピンの状態を監視し、一定間隔で1,0の状態を取得します。
 信号が送られているかの確認などに利用できます。
-obnizで利用できるLogicAnalyerは1つのみです。
+obniz Boardで利用できるLogicAnalyerは1つのみです。
 
 ### How work
 

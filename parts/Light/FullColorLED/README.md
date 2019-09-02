@@ -9,7 +9,7 @@ Analog Full Color LED. It's consist of three color LED.
 
 ## wired(obniz, {r, g, b, common, common_type})
 
-r,g,b,common is pin no of obniz io.
+r,g,b,common is pin no of obniz Board io.
 common_type is LED common type : anode_common or cathode_common
 
 ![](./wired.png)
