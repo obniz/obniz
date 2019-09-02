@@ -96,6 +96,8 @@ import { D6T44L, D6T44LOptions } from './parts/TemperatureSensor/i2c/D6T44L';
 import { S5851A, S5851AOptions } from './parts/TemperatureSensor/i2c/S-5851A';
 import { SHT31, SHT31Options } from './parts/TemperatureSensor/i2c/SHT31';
 import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
+import { AM2320, AM2320ptions } from './parts/TemperatureSensor/i2c/AM2320';
+
 // ColorSensor
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 // Grove
@@ -199,6 +201,7 @@ interface WiredNameMap {
   // 'S5851A': S5851A;
   'SHT31': SHT31;
   'ADT7310': ADT7310;
+  'AM2320': AM2320;
   // ColorSensor
   'S11059': S11059;
   // Grove
@@ -302,6 +305,7 @@ interface WiredNameOptionsMap {
   // 'S5851A': S5851AOptions;
   'SHT31': SHT31Options;
   'ADT7310': ADT7310Options;
+  'AM2320': AM2320ptions;
   // ColorSensor
   'S11059': S11059Options;
   // Grove

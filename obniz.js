@@ -18378,6 +18378,7 @@ var map = {
 	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
 	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/AM2320/index.js": "./parts/TemperatureSensor/i2c/AM2320/index.js",
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
@@ -28252,6 +28253,66 @@ class ADT7410 {
 
 if (true) {
   module.exports = ADT7410;
+}
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/AM2320/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class AM2320 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
+    this.requiredKeys = [];
+  }
+
+  static info() {
+    return {
+      name: 'AM2320',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.address = 0x5c;
+    this.params.pull = '5v';
+    this.params.mode = 'master';
+    this.params.clock = this.params.clock || 100 * 1000;
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  async getAllWait() {
+    let i2cOnerror = this.i2c.onerror;
+    this.i2c.onerror = () => {};
+    this.i2c.write(this.address, [0]); //wake
+    this.obniz.wait(2);
+    this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+    this.obniz.wait(2);
+    this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+    let ret = await this.i2c.readWait(this.address, 6);
+    this.i2c.onerror = i2cOnerror;
+    if (ret[0] != 3 || ret[1] != 4) {
+      console.log('AM2320: Could not receive data correctly');
+      return {};
+    }
+    let humidity = (ret[2] * 256 + ret[3]) / 10.0;
+    let temperature = (ret[4] * 256 + ret[5]) / 10.0;
+    return { temperature, humidity };
+  }
+
+  async getTempWait() {
+    return (await this.getAllWait()).temperature;
+  }
+
+  async getHumdWait() {
+    return (await this.getAllWait()).humidity;
+  }
+}
+
+if (true) {
+  module.exports = AM2320;
 }
 
 
