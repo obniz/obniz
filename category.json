@@ -386,6 +386,14 @@
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/",
             "digikey": "https://www.digikey.jp/product-detail/en/kionix-inc/KXR94-2050-FR/1191-1012-1-ND/3137358"
           }
+        },
+        {
+          "name": "MPU9250",
+          "store": {}
+        },
+        {
+          "name": "MPU6050",
+          "store": {}
         }
       ]
     },
@@ -523,6 +531,11 @@
           "name": "D6T44L",
           "store": {
             "switchscience" : "https://www.switch-science.com/catalog/1297/"
+        },
+        {
+          "name": "AM2320",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-08663/"
           }
         }
       ]
@@ -554,6 +567,19 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-10450/",
             "seedstudio": "https://www.seeedstudio.com/Grove-MP3-v2.0-p-2597.html"
+          }
+        },
+        {
+          "name": "Grove_GPS",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/1179/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-GPS-p-959.html"
+          }
+        },
+        {
+          "name": "Grove_3AxisAccelerometer",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-3-Axis-Digital-Accelerometer-16g-p-1156.html"
           }
         }
       ]
