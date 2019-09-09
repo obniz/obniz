@@ -134,7 +134,7 @@ class JpegSerialCam {
     ]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     //await this.obniz.wait(1000);
-    await this.startwait({
+    await this.startWait({
       baud,
     });
   }
