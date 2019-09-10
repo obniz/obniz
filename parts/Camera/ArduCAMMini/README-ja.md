@@ -5,6 +5,8 @@
 
 同じArduCAMMiniでも種類がありますが、OV2640搭載の2Mピクセルのカメラである、ArduCAM-Mini-2MPまたはArduCAM-Mini-2MP-Plusに対応しています。
 
+ArduCAM-Mini-2MP-Plusを使用する場合はwiredの引数で```module_version:1```と指定してください。
+
 ![](./image.jpg)
 
 

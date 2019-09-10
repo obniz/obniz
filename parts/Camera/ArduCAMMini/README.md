@@ -5,6 +5,8 @@ It takes image with many image resolutions and alos jpeg format.
 
 ArduCam Mini has many series of product. This library is only for OV2640 2M pixel ArduCam, ArduCAM-Mini-2MP or ArduCAM-Mini-2MP-Plus.
 
+Specify ```module_version:1``` when using ArduCAM-Mini-2MP-Plus.
+
 ![](./image.jpg)
 
 
