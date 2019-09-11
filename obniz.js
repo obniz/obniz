@@ -8903,15 +8903,23 @@ module.exports = Obniz;
 /*===================*/
 /* Utils */
 /*===================*/
-if (!isNode) {
-  if (window && window.parent && window.parent.userAppLoaded) {
-    window.parent.userAppLoaded(window);
-  }
-
-  function showObnizDebugError(err) {//eslint-disable-line
-    if (window.parent && window.parent.logger) {
-      window.parent.logger.onObnizError(err);
+try {
+  if (!isNode) {
+    if (window && window.parent && window.parent.userAppLoaded) {
+      window.parent.userAppLoaded(window);
     }
+
+    function showObnizDebugError(err) {//eslint-disable-line
+      if (window.parent && window.parent.logger) {
+        window.parent.logger.onObnizError(err);
+      }
+    }
+  }
+} catch (e) {
+  if (e instanceof DOMException) {
+    //cross origin iframe
+  } else {
+    console.error(e);
   }
 }
 
@@ -10231,7 +10239,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
         break;
       }
       case 'onnotify': {
-        this.onnotify();
+        this.onnotify(params.data || undefined);
         break;
       }
     }
@@ -18293,7 +18301,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = {"name":"obniz","version":"2.2.0","description":"obniz sdk for javascript","main":"index.js","types":"obniz.d.ts","engines":{"node":">=7.6.0"},"engineStrict":true,"scripts":{"test":"nyc --reporter=text --reporter=html mocha   ./test/index.js -b 1","buildAndtest":"npm run build && npm test","realtest":"mocha  ./realtest/index.js","realtest-debug":"DEBUG=1 mocha  -b ./realtest/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp  --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.2","eslint":"^5.16.0","eslint-config-prettier":"^3.6.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.17.1","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.34.0","webpack-cli":"^3.3.4","webpack-node-externals":"^1.7.2","webpack-stream":"^5.2.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.2","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.7.0","tv4":"^1.3.0","ws":"^6.1.4"},"bugs":{"url":"https://forum.obniz.io"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
+module.exports = {"name":"obniz","version":"2.2.0","description":"obniz sdk for javascript","main":"index.js","types":"obniz.d.ts","engines":{"node":">=7.6.0"},"engineStrict":true,"scripts":{"test":"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1","buildAndtest":"npm run build && npm test","realtest":"mocha $NODE_DEBUG_OPTION ./realtest/index.js","realtest-debug":"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js","realtest-esp32":"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js","local":"gulp --gulpfile ./_tools/server.js --cwd .","build":"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build","version":"npm run build && git add obniz.js && git add obniz.min.js","lint":"eslint --fix . --rulesdir eslint/rule","precommit":"lint-staged && npm run build && git add obniz.js && git add obniz.min.js"},"lint-staged":{"*.js":["eslint --rulesdir eslint/rule --fix ","git add"]},"keywords":["obniz"],"repository":"obniz/obniz","author":"yukisato <yuki@yuki-sato.com>","homepage":"https://obniz.io/","license":"SEE LICENSE IN LICENSE.txt","devDependencies":{"babel-cli":"^6.26.0","babel-core":"^6.26.3","babel-loader":"^7.1.5","babel-polyfill":"^6.26.0","babel-preset-env":"^1.7.0","babel-preset-es2015":"^6.24.1","babel-preset-stage-3":"^6.24.1","chai":"^4.2.0","chai-like":"^1.1.1","child_process":"^1.0.2","chokidar":"^2.0.4","concat-with-sourcemaps":"^1.1.0","ejs":"^2.6.2","eslint":"^5.16.0","eslint-config-prettier":"^3.6.0","eslint-plugin-jasmine":"^2.10.1","eslint-plugin-prettier":"^2.7.0","express":"^4.17.1","get-port":"^4.0.0","glob":"^7.1.3","gulp":"^3.9.1","gulp-babel":"^8.0.0","gulp-concat":"^2.6.1","gulp-ejs":"^3.2.0","gulp-filter":"^5.1.0","gulp-notify":"^3.2.0","gulp-plumber":"^1.2.0","gulp-sort":"^2.0.0","gulp-util":"^3.0.8","gulp-yaml":"^2.0.2","husky":"^0.14.3","json-loader":"^0.5.7","lint-staged":"^7.3.0","mocha":"^5.2.0","mocha-chrome":"^1.1.0","mocha-directory":"^2.3.0","mocha-sinon":"^2.1.0","natives":"^1.1.6","ncp":"^2.0.0","node-notifier":"^5.3.0","nyc":"^12.0.2","path":"^0.12.7","prettier":"^1.14.3","sinon":"^6.3.5","svg-to-png":"^3.1.2","through2":"^2.0.3","uglifyjs-webpack-plugin":"^1.3.0","vinyl":"^2.2.0","webpack":"^4.34.0","webpack-cli":"^3.3.4","webpack-node-externals":"^1.7.2","webpack-stream":"^5.2.1","yaml-loader":"^0.5.0"},"dependencies":{"eventemitter3":"^3.1.2","js-yaml":"^3.12.1","node-dir":"^0.1.17","node-fetch":"^2.3.0","semver":"^5.7.0","tv4":"^1.3.0","ws":"^6.1.4"},"bugs":{"url":"https://forum.obniz.io"},"private":false,"browser":{"ws":"./obniz/libs/webpackReplace/ws.js","canvas":"./obniz/libs/webpackReplace/canvas.js","./obniz/libs/webpackReplace/require-context.js":"./obniz/libs/webpackReplace/require-context-browser.js"}};
 
 /***/ }),
 
@@ -18326,7 +18334,9 @@ var map = {
 	"./GasSensor/MQ7/index.js": "./parts/GasSensor/MQ7/index.js",
 	"./GasSensor/MQ8/index.js": "./parts/GasSensor/MQ8/index.js",
 	"./GasSensor/MQ9/index.js": "./parts/GasSensor/MQ9/index.js",
+	"./Grove/Grove_3AxisAccelerometer/index.js": "./parts/Grove/Grove_3AxisAccelerometer/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
+	"./Grove/Grove_GPS/index.js": "./parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
 	"./GyroSensor/ENC03R_Module/index.js": "./parts/GyroSensor/ENC03R_Module/index.js",
 	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
@@ -18339,12 +18349,15 @@ var map = {
 	"./Light/WS2812B/index.js": "./parts/Light/WS2812B/index.js",
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
+	"./MovementSensor/AK8963/index.js": "./parts/MovementSensor/AK8963/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
+	"./MovementSensor/MPU6050/index.js": "./parts/MovementSensor/MPU6050/index.js",
+	"./MovementSensor/MPU9250/index.js": "./parts/MovementSensor/MPU9250/index.js",
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
@@ -18365,6 +18378,7 @@ var map = {
 	"./TemperatureSensor/analog/S8100B/index.js": "./parts/TemperatureSensor/analog/S8100B/index.js",
 	"./TemperatureSensor/analog/S8120C/index.js": "./parts/TemperatureSensor/analog/S8120C/index.js",
 	"./TemperatureSensor/i2c/ADT7410/index.js": "./parts/TemperatureSensor/i2c/ADT7410/index.js",
+	"./TemperatureSensor/i2c/AM2320/index.js": "./parts/TemperatureSensor/i2c/AM2320/index.js",
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
@@ -18404,8 +18418,8 @@ class hx711 {
   constructor() {
     this.keys = ['vcc', 'gnd', 'sck', 'dout'];
     this.requiredKeys = ['sck', 'dout'];
-    this.offset = 0;
-    this.scale = 1;
+    this._offset = 0;
+    this._scale = 1;
   }
 
   static info() {
@@ -18429,27 +18443,58 @@ class hx711 {
     this.dout = obniz.getIO(this.params.dout);
 
     this.sck.output(true);
+    obniz.wait(500);
   }
 
   async readWait() {
     this.sck.output(false);
 
-    // while(true) {
-    //   let val = await this.dout.inputWait();
-    //   if (val == false) break;
-    // }
+    while (true) {
+      let val = await this.dout.inputWait();
+      if (val == false) break;
+    }
     this.spi.start({
       mode: 'master',
-      clk: this.params.sck,
+      mosi: this.params.sck,
       miso: this.params.dout,
-      frequency: 66 * 1000,
+      frequency: 500 * 1000,
     });
 
-    let ret = await this.spi.writeWait([0, 0, 0]);
+    let ret_double = await this.spi.writeWait([
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0xaa,
+      0x80,
+    ]);
     this.spi.end(true);
     this.sck.output(false);
+    let ret = [
+      this.doubleBit2singleBit(ret_double[0], ret_double[1]),
+      this.doubleBit2singleBit(ret_double[2], ret_double[3]),
+      this.doubleBit2singleBit(ret_double[4], ret_double[5]),
+    ];
     let flag = (ret[0] & 0x80) === 0 ? 1 : -1;
     return flag * (((ret[0] & 0x7f) << 16) + (ret[1] << 8) + (ret[2] << 0));
+  }
+
+  doubleBit2singleBit(a, b) {
+    return (
+      (this.bit(a, 7) << 7) |
+      (this.bit(a, 5) << 6) |
+      (this.bit(a, 3) << 5) |
+      (this.bit(a, 1) << 4) |
+      (this.bit(b, 7) << 3) |
+      (this.bit(b, 5) << 2) |
+      (this.bit(b, 3) << 1) |
+      (this.bit(b, 1) << 0)
+    );
+  }
+
+  bit(a, n) {
+    return a & (1 << n) ? 1 : 0;
   }
 
   async readAverageWait(times) {
@@ -18472,15 +18517,29 @@ class hx711 {
     this.sck.output(false);
   }
 
-  async zeroAdjust(times) {
+  async zeroAdjustWait(times) {
     times = parseInt(times) || 1;
-    this.offset = await this.readAverageWait(times);
+    this._offset = await this.readAverageWait(times);
   }
 
   async getValueWait(times) {
     times = parseInt(times) || 1;
     let val = await this.readAverageWait(times);
-    return (val - this.offset) / this.scale;
+    return (val - this._offset) / this._scale;
+  }
+
+  setOffset(offset) {
+    if (typeof offset !== 'number') {
+      throw new Error('offset variable is Number');
+    }
+    this._offset = offset;
+  }
+
+  setScale(scale) {
+    if (typeof scale !== 'number') {
+      throw new Error('scale variable is Number');
+    }
+    this._scale = scale;
   }
 }
 
@@ -18659,6 +18718,7 @@ if (true) {
       'i2c',
       'spi_frequency',
       'spi_drive',
+      'module_version',
     ];
     this.requiredKeys = ['cs'];
 
@@ -19314,6 +19374,7 @@ if (true) {
 
     this.sensor_addr = 0x30; // i2c
 
+    this.params.module_version = this.params.module_version || 0;
     this.params.mode = this.params.mode || 'master';
     this.params.drive = this.params.spi_drive || '3v';
     this.params.frequency = this.params.spi_frequency || 4 * 1000 * 1000;
@@ -19493,7 +19554,10 @@ if (true) {
     // start bust
     this.io_cs.output(false);
     this.spi.write([this.regs.BURST_FIFO_READ]);
-    this.spi.write([0xff]); // dummy read
+
+    if (this.params.module_version == 0) {
+      this.spi.write([0xff]); // dummy read
+    }
 
     let buf = [];
 
@@ -19665,7 +19729,7 @@ if (true) {
     ]);
     await this._drainUntil(this.uart, [0x76, 0x00, 0x31, 0x00]);
     //await this.obniz.wait(1000);
-    await this.startwait({
+    await this.startWait({
       baud,
     });
   }
@@ -24257,6 +24321,179 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Grove/Grove_3AxisAccelerometer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_3AxisAccelerometer {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'sda', 'scl'];
+    this.requiredKeys = ['sda', 'scl'];
+
+    this.ioKeys = this.keys;
+    this.displayName = '3axis';
+    this.displayIoNames = { sda: 'sda', scl: 'scl' };
+
+    this.address = 0x53;
+    this.regAdrs = {};
+    this.regAdrs.POWER_CTL = 0x2d;
+    this.regAdrs.THRESH_ACT = 0x24;
+    this.regAdrs.THRESH_INACT = 0x25;
+    this.regAdrs.TIME_INACT = 0x26;
+    this.regAdrs.ACT_INACT_CTL = 0x27;
+    this.regAdrs.TAP_AXES = 0x2a;
+    this.regAdrs.THRESH_TAP = 0x1d;
+    this.regAdrs.DUR = 0x21;
+    this.regAdrs.LATENT = 0x22;
+    this.regAdrs.WINDOW = 0x23;
+    this.regAdrs.THRESH_FF = 0x28;
+    this.regAdrs.TIME_FF = 0x29;
+    this.regAdrs.INT_MAP = 0x2f;
+    this.regAdrs.INT_ENABLE = 0x2e;
+    this.regAdrs.DATAX0 = 0x32;
+
+    this.regAdrs.INT_DATA_READY_BIT = 0x07;
+    this.regAdrs.INT_SINGLE_TAP_BIT = 0x06;
+    this.regAdrs.INT_DOUBLE_TAP_BIT = 0x05;
+    this.regAdrs.INT_ACTIVITY_BIT = 0x04;
+    this.regAdrs.INT_INACTIVITY_BIT = 0x03;
+    this.regAdrs.INT_FREE_FALL_BIT = 0x02;
+    this.regAdrs.INT_WATERMARK_BIT = 0x01;
+    this.regAdrs.INT_OVERRUNY_BIT = 0x00;
+
+    this.constVal = {};
+    this.constVal.gainX = 0.0037639;
+    this.constVal.gainY = 0.00376009;
+    this.constVal.gainZ = 0.00349265;
+    this.constVal.INT1_PIN = 0x00;
+    this.constVal.INT2_PIN = 0x01;
+  }
+
+  static info() {
+    return {
+      name: 'Grove_3AxisAccelerometer',
+    };
+  }
+
+  async wired(obniz) {
+    this.obniz = obniz;
+    this.vcc = this.params.vcc;
+    this.gnd = this.params.gnd;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+
+    this.params.clock = 400000;
+    this.params.mode = 'master';
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.obniz.wait(100);
+
+    // power on
+    this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 0]);
+    this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 16]);
+    this.i2c.write(this.address, [this.regAdrs.POWER_CTL, 8]);
+
+    this.i2c.write(this.address, [this.regAdrs.THRESH_ACT, 75]); // set activity threshold 0~255
+    this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 75]); // set inactivity threshold 0~255
+    this.i2c.write(this.address, [this.regAdrs.THRESH_INACT, 10]); // set time inactivity 0~255
+    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 6, 1); // setActivityX
+    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 5, 1); // setActivityY
+    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 4, 1); // setActivityZ
+    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 2, 1); // setInactivityX
+    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 1, 1); // setInactivityY
+    await this.setRegisterBit(this.regAdrs.ACT_INACT_CTL, 0, 1); // setInactivityZ
+    await this.setRegisterBit(this.regAdrs.TAP_AXES, 2, 0); // setTapDetectionOnX
+    await this.setRegisterBit(this.regAdrs.TAP_AXES, 1, 0); // setTapDetectionOnY
+    await this.etRegisterBit(this.regAdrs.TAP_AXES, 0, 1); // setTapDetectionOnZ
+
+    this.i2c.write(this.address, [this.regAdrs.THRESH_TAP, 50]); // setTapThreshold
+    this.i2c.write(this.address, [this.regAdrs.DUR, 15]); // setTapDuration
+    this.i2c.write(this.address, [this.regAdrs.LATENT, 80]); // setDoubleTapLatency
+    this.i2c.write(this.address, [this.regAdrs.WINDOW, 200]); // setDoubleTapWindow
+    this.i2c.write(this.address, [this.regAdrs.THRESH_FF, 7]); // setFreeFallThreshold
+    this.i2c.write(this.address, [this.regAdrs.TIME_FF, 45]); // setFreeFallDuration
+
+    // setInterruptMapping
+    await this.setInterruptMapping(
+      this.regAdrs.INT_SINGLE_TAP_BIT,
+      this.constVal.INT1_PIN
+    );
+    await this.setInterruptMapping(
+      this.regAdrs.INT_DOUBLE_TAP_BIT,
+      this.constVal.INT1_PIN
+    );
+    await this.setInterruptMapping(
+      this.regAdrs.INT_FREE_FALL_BIT,
+      this.constVal.INT1_PIN
+    );
+    await this.setInterruptMapping(
+      this.regAdrs.INT_ACTIVITY_BIT,
+      this.constVal.INT1_PIN
+    );
+    await this.setInterruptMapping(
+      this.regAdrs.INT_INACTIVITY_BIT,
+      this.constVal.INT1_PIN
+    );
+
+    // setInterrupt
+    await this.setInterrupt(this.regAdrs.INT_SINGLE_TAP_BIT, 1);
+    await this.setInterrupt(this.regAdrs.INT_DOUBLE_TAP_BIT, 1);
+    await this.setInterrupt(this.regAdrs.INT_FREE_FALL_BIT, 1);
+    await this.setInterrupt(this.regAdrs.INT_ACTIVITY_BIT, 1);
+    await this.setInterrupt(this.regAdrs.INT_INACTIVITY_BIT, 1);
+  }
+
+  async setRegisterBit(regAddr, bitPos, state) {
+    this.i2c.write(this.address, [regAddr]);
+    let b = await this.i2c.readWait(this.address, 1);
+    if (state) {
+      b = b | (1 << bitPos); // forces nth bit of b to be 1.  all other bits left alone.
+    } else {
+      b = b & ~(1 << bitPos); // forces nth bit of b to be 0.  all other bits left alone.
+    }
+    this.i2c.write(this.address, [b]);
+  }
+
+  async setInterruptMapping(interruptBit, interruptPin) {
+    await this.setRegisterBit(this.regAdrs.INT_MAP, interruptBit, interruptPin);
+  }
+
+  async setInterrupt(interruptBit, state) {
+    await this.setRegisterBit(this.regAdrs.INT_ENABLE, interruptBit, state);
+  }
+
+  signHandling(val) {
+    let sign = val >> 15;
+    if (sign) {
+      val = -(0xffff - val);
+    }
+    return val;
+  }
+
+  async getRawVal() {
+    this.i2c.write(this.address, [this.regAdrs.DATAX0]);
+    let buff = await this.i2c.readWait(this.address, 6);
+    let rawVal = [0, 0, 0];
+    rawVal[0] = this.signHandling((buff[1] << 8) | buff[0]);
+    rawVal[1] = this.signHandling((buff[3] << 8) | buff[2]);
+    rawVal[2] = this.signHandling((buff[5] << 8) | buff[4]);
+    return rawVal;
+  }
+
+  async getWait() {
+    let accelVal = [0, 0, 0];
+    let raw = await this.getRawVal();
+    accelVal[0] = raw[0] * this.constVal.gainX;
+    accelVal[1] = raw[1] * this.constVal.gainY;
+    accelVal[2] = raw[2] * this.constVal.gainZ;
+    return accelVal;
+  }
+}
+
+if (true) {
+  module.exports = Grove_3AxisAccelerometer;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24321,6 +24558,326 @@ class Grove_EarHeartRate {
 
 if (true) {
   module.exports = Grove_EarHeartRate;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Grove/Grove_GPS/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_GPS {
+  constructor() {
+    this.keys = ['tx', 'rx', 'vcc', 'gnd'];
+    this.requiredKeys = ['tx', 'rx'];
+
+    this.ioKeys = this.keys;
+    this.displayName = 'gps';
+    this.displayIoNames = { tx: 'tx', rx: 'rx' };
+  }
+
+  static info() {
+    return {
+      name: 'Grove_GPS',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.uart = obniz.getFreeUart();
+    this.uart.start({
+      tx: this.params.tx,
+      rx: this.params.rx,
+      baud: 9600,
+    });
+
+    this.editedData = {};
+    this.editedData.enable = false;
+    this.editedData.GPGSV = new Array(4);
+
+    this.gpsInfo = {};
+    this.gpsInfo._sentenceType = {
+      GPGGA: 0x0001, // GGA - Global Positioning System Fix Data
+      GPGSA: 0x0002, // GSA - GNSS DOP and active satellites
+      GPGSV: 0x0004, // GSV - Satellites in view
+      GPRMC: 0x0008, // RMC - Recommended minimum specific GNSS data
+      GPVTG: 0x0010, // VTG - Track made good and ground speed
+      GPZDA: 0x0020, // ZDA - Date & Time
+    };
+    this.gpsInfo.status = 'V';
+    this.gpsInfo.sentences = new Set(); // Set specifying sentence of MNEA from which data have been obtained
+    this.gpsInfo.satelliteInfo = {
+      satellites: [],
+      inView: 0,
+    };
+  }
+
+  readSentence() {
+    let results = [];
+    if (this.uart.isDataExists()) {
+      let pos = this.uart.received.indexOf(0x0a);
+      if (pos >= 0) {
+        results = this.uart.received.slice(0, pos - 1);
+        this.uart.received.splice(0, pos + 1);
+        return this.uart.tryConvertString(results);
+      }
+    }
+    return '';
+  }
+
+  getEditedData() {
+    let n, utc, format;
+    let sentence = this.readSentence();
+    this.editedData.enable = false;
+    this.editedData.GPGSV = new Array(4);
+    while (sentence.length > 0) {
+      let part = sentence.split(',');
+      if (sentence.slice(-4, -3) != ',') {
+        let st = part[part.length - 1].slice(0, -3);
+        part.push(part[part.length - 1].slice(-3));
+        part[part.length - 2] = st;
+      }
+      this.editedData.sentence = part.join(',');
+      switch (part[0]) {
+        case '$GPGGA':
+          this.editedData.GPGGA = part;
+          break;
+        case '$GPGLL':
+          this.editedData.GPGLL = part;
+          break;
+        case '$GPGSA':
+          this.editedData.GPGSA = part;
+          break;
+        case '$GPGSV':
+          n = Number(part[2]);
+          if (n > this.editedData.GPGSV.length) {
+            while (n > this.editedData.GPGSV.length) {
+              this.editedData.GPGSV.push([]);
+            }
+          }
+          this.editedData.GPGSV[n - 1] = part;
+          break;
+        case '$GPRMC':
+          this.editedData.GPRMC = part;
+          break;
+        case '$GPVTG':
+          this.editedData.GPVTG = part;
+          break;
+        case '$GPZDA':
+          this.editedData.GPZDA = part;
+          utc =
+            part[4] +
+            '/' +
+            part[3] +
+            '/' +
+            part[2] +
+            ' ' +
+            part[1].substring(0, 2) +
+            ':' +
+            part[1].substring(2, 4) +
+            ':' +
+            part[1].substring(4, 6) +
+            ' +00:00';
+          this.editedData.timestamp = new Date(utc);
+          break;
+        default:
+          format = part[0].substr(1);
+          this.editedData[format] = part;
+      }
+
+      this.editedData.enable = true;
+      sentence = this.readSentence();
+    }
+    return this.editedData;
+  }
+
+  getGpsInfo(editedData) {
+    const NMEA_SATINSENTENCE = 4,
+      NMEA_MAXSAT = 12;
+    editedData = editedData || this.getEditedData();
+    this.gpsInfo.status = 'V';
+    if (editedData.enable) {
+      if (editedData.GPGGA) {
+        const gga = editedData.GPGGA;
+        this.gpsInfo.gpsQuality = parseFloat(gga[6]); //Fix Quality: 0 = Invalid, 1 = GPS fix, 2 = DGPS fix
+        this.gpsInfo.hdop = parseFloat(gga[8]); //Horizontal Dilution of Precision (HDOP)
+        this.gpsInfo.altitude = parseFloat(gga[9]); //Antenna Altitude meters above mean sea level
+        const latitude = this.nmea2dd(parseFloat(gga[2]));
+        this.gpsInfo.latitude = gga[3] == 'N' ? latitude : -latitude;
+        const longitude = this.nmea2dd(parseFloat(gga[4]));
+        this.gpsInfo.longitude = gga[5] == 'E' ? longitude : -longitude;
+        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
+      }
+      if (editedData.GPGSV) {
+        for (let n = 0; n < editedData.GPGSV.length; n++)
+          if (editedData.GPGSV[n]) {
+            const gsv = editedData.GPGSV[n].map(v => parseFloat(v));
+            const pack_count = gsv[1],
+              pack_index = gsv[2],
+              sat_count = gsv[3];
+            if (pack_index > pack_count) continue;
+
+            this.gpsInfo.satelliteInfo.inView = sat_count;
+            let nsat = (pack_index - 1) * NMEA_SATINSENTENCE;
+            nsat =
+              nsat + NMEA_SATINSENTENCE > sat_count
+                ? sat_count - nsat
+                : NMEA_SATINSENTENCE;
+
+            for (let isat = 0; isat < nsat; ++isat) {
+              const isi = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
+              if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
+                this.gpsInfo.satelliteInfo.satellites.push({});
+              }
+              const isatn = isat * NMEA_SATINSENTENCE;
+              this.gpsInfo.satelliteInfo.satellites[isi] = {
+                id: gsv[isatn + 4], // SV PRN number
+                elevation: gsv[isatn + 5], // Elevation in degrees, 90 maximum
+                azimuth: gsv[isatn + 6], // Azimuth, degrees from true north, 000 to 359
+                snr: gsv[isatn + 7], // SNR, 00-99 dB (null when not tracking)
+                inUse: false,
+              };
+            }
+            this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSV);
+          }
+      }
+      if (editedData.GPGSA) {
+        const gsa = editedData.GPGSA;
+        let nuse = 0;
+        this.gpsInfo.fixMode = parseFloat(gsa[2]); // Fix Mode: 1=Fix not available, 2=2D, 3=3D
+        this.gpsInfo.pdop = parseFloat(gsa[15]); // PDOP: Position Dilution of Precision
+        this.gpsInfo.hdop = parseFloat(gsa[16]); // HDOP: Horizontal Dilution of Precision
+        this.gpsInfo.vdop = parseFloat(gsa[17]); // VDOP: Vertical Dilution of Position
+        for (let i = 0; i < NMEA_MAXSAT; ++i) {
+          for (let j = 0; j < this.gpsInfo.satelliteInfo.inView; ++j) {
+            if (
+              this.gpsInfo.satelliteInfo.satellites[j] &&
+              gsa[i + 3] == this.gpsInfo.satelliteInfo.satellites[j].id
+            ) {
+              this.gpsInfo.satelliteInfo.satellites[j].inUse = true;
+              nuse++;
+            }
+          }
+        }
+        this.gpsInfo.satelliteInfo.inUse = nuse;
+        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGSA);
+      }
+      if (editedData.GPRMC) {
+        const rmc = editedData.GPRMC;
+        this.gpsInfo.status = rmc[2]; // Status Active or Void
+        const latitude = this.nmea2dd(parseFloat(rmc[3]));
+        this.gpsInfo.latitude = rmc[4] == 'N' ? latitude : -latitude;
+        const longitude = this.nmea2dd(parseFloat(rmc[5]));
+        this.gpsInfo.longitude = rmc[6] == 'E' ? longitude : -longitude;
+        const NMEA_TUD_KNOTS = 1.852; // 1knot=1.852km/h
+        this.gpsInfo.speed = parseFloat(rmc[7]) * NMEA_TUD_KNOTS; //unit: km/h
+        this.gpsInfo.direction = rmc[8];
+        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPRMC);
+      }
+      if (editedData.GPVTG) {
+        const vtg = editedData.GPVTG;
+        this.gpsInfo.direction = parseFloat(vtg[1]);
+        this.gpsInfo.declination = parseFloat(vtg[3]);
+        this.gpsInfo.speed = parseFloat(vtg[7]);
+        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPVTG);
+      }
+      if (editedData.GPZDA) {
+        this.gpsInfo.utc = editedData.timestamp;
+        this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPZDA);
+      }
+    }
+    return this.gpsInfo;
+  }
+  //-------------------
+  get latitude() {
+    return this.nmea2dd(this._latitude);
+  }
+  get longitude() {
+    return this.nmea2dd(this._longitude);
+  }
+  _mneaTo(format, value) {
+    let result = this.nmea2dd(value);
+    if (typeof format == 'string') {
+      switch (format.toUpperCase()) {
+        case 'DMS':
+          result = this.nmea2dms(value);
+          break;
+        case 'DM':
+          result = this.nmea2dm(value);
+          break;
+        case 'S':
+          result = this.nmea2s(value);
+          break;
+        default:
+      }
+    }
+    return result;
+  }
+  latitudeTo(format) {
+    return this._mneaTo(format, this._latitude);
+  }
+  longitudeTo(format) {
+    return this._mneaTo(format, this._longitude);
+  }
+  status2string(status) {
+    status = status || this.status;
+    if (status == 'A') return 'Active';
+    if (status == 'V') return 'Void';
+    return status;
+  }
+  fixMode2string(fixMode) {
+    fixMode = fixMode || this.fixMode;
+    if (fixMode == 1) return 'Fix not available';
+    if (fixMode == 2) return '2D';
+    if (fixMode == 3) return '3D';
+    return fixMode;
+  }
+  gpsQuality2string(gpsQuality) {
+    gpsQuality = gpsQuality || this.gpsQuality;
+    if (gpsQuality == 0) return 'Invalid';
+    if (gpsQuality == 1) return 'GPS fix';
+    if (gpsQuality == 2) return 'DGPS fix';
+    return gpsQuality;
+  }
+
+  //--- latitude/longitude MNEA format change to each unit
+  nmea2dms(val) {
+    //NMEA format to DMS format string (999° 99'99.9")
+    val = parseFloat(val);
+    let d = Math.floor(val / 100);
+    let m = Math.floor((val / 100.0 - d) * 100.0);
+    let s = ((val / 100.0 - d) * 100.0 - m) * 60;
+    return d + '°' + m + "'" + s.toFixed(1) + '"';
+  }
+  nmea2dm(val) {
+    //NMEA format to DM format string (999° 99.9999')
+    val = parseFloat(val);
+    let d = Math.floor(val / 100.0);
+    let m = (val / 100.0 - d) * 100.0;
+    return d + '°' + m.toFixed(4) + "'";
+  }
+  nmea2dd(val) {
+    //NMEA format to DD format decimal (999.999999)
+    val = parseFloat(val);
+    let d = Math.floor(val / 100.0);
+    let m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+    let s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
+    return parseFloat((d + m + s).toFixed(6));
+  }
+  nmea2s(val) {
+    //NMEA format to S format decimal (99999.9999)
+    val = parseFloat(val);
+    let d = Math.floor(val / 100.0);
+    let m = Math.floor(((val / 100.0 - d) * 100.0) / 60);
+    let s = (((val / 100.0 - d) * 100.0 - m) * 60) / (60 * 60);
+    return (d + m + s) / (1.0 / 60.0 / 60.0);
+  }
+}
+
+if (true) {
+  module.exports = Grove_GPS;
 }
 
 
@@ -25539,6 +26096,71 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/MovementSensor/AK8963/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class AK8963 {
+  constructor() {
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address', 'adb_cycle'];
+    this.required = [];
+  }
+
+  static info() {
+    return {
+      name: 'AK8963',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this._address = this.params.address || 0x0c;
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.setConfig(this.params.adc_cycle || 8);
+  }
+
+  setConfig(ADC_cycle) {
+    switch (ADC_cycle) {
+      case 8:
+        this.i2c.write(this._address, [0x0a, 0x12]);
+        break;
+      case 100:
+        this.i2c.write(this._address, [0x0a, 0x16]);
+        break;
+      default:
+        throw new Error('ADC_cycle variable 8,100 setting');
+    }
+    this._adc_cycle = ADC_cycle;
+  }
+
+  async getWait() {
+    this.i2c.write(this._address, [0x03]); //request AK8963 data
+    let raw_data_AK8963 = await this.i2c.readWait(this._address, 7); //read 7byte(read mag_data[6] to refresh)
+    return {
+      x: this.char2short(raw_data_AK8963[0], raw_data_AK8963[1]),
+      y: this.char2short(raw_data_AK8963[2], raw_data_AK8963[3]),
+      z: this.char2short(raw_data_AK8963[4], raw_data_AK8963[5]),
+    };
+  }
+
+  char2short(valueH, valueL) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
+    dv.setUint8(0, valueH);
+    dv.setUint8(1, valueL);
+    return dv.getInt16(0, false);
+  }
+}
+if (true) {
+  module.exports = AK8963;
+}
+
+
+/***/ }),
+
 /***/ "./parts/MovementSensor/Button/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26282,6 +26904,195 @@ class KXSC7_2050 {
 
 if (true) {
   module.exports = KXSC7_2050;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/MPU6050/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MPU6050 {
+  constructor() {
+    this.keys = [
+      'gnd',
+      'vcc',
+      'sda',
+      'scl',
+      'i2c',
+      'address',
+      'accelerometer_range',
+      'gyroscope_range',
+    ];
+    this.required = [];
+  }
+
+  static info() {
+    return {
+      name: 'MPU6050',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this._address = this.params.address || 0x68;
+    this.i2c = obniz.getI2CWithConfig(this.params);
+    this.setConfig(
+      this.params.accelerometer_range || 2,
+      this.params.gyroscope_range || 250
+    );
+  }
+
+  setConfig(accelerometer_range, gyroscope_range) {
+    //accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+    switch (accelerometer_range) {
+      case 2:
+        this.i2c.write(this._address, [0x1c, 0x00]);
+        break;
+      case 4:
+        this.i2c.write(this._address, [0x1c, 0x08]);
+        break;
+      case 8:
+        this.i2c.write(this._address, [0x1c, 0x10]);
+        break;
+      case 16:
+        this.i2c.write(this._address, [0x1c, 0x18]);
+        break;
+      default:
+        throw new Error('accel_range variable 2,4,8,16 setting');
+    }
+    //gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+    switch (gyroscope_range) {
+      case 250:
+        this.i2c.write(this._address, [0x1b, 0x00]);
+        break;
+      case 500:
+        this.i2c.write(this._address, [0x1b, 0x08]);
+        break;
+      case 1000:
+        this.i2c.write(this._address, [0x1b, 0x10]);
+        break;
+      case 2000:
+        this.i2c.write(this._address, [0x1b, 0x18]);
+        break;
+      default:
+        throw new Error('accel_range variable 250,500,1000,2000 setting');
+    }
+    this._accel_range = accelerometer_range;
+    this._gyro_range = gyroscope_range;
+  }
+
+  async getWait() {
+    this.i2c.write(this._address, [0x3b]); //request MPU6050 data
+    let raw_data_MPU6050 = await this.i2c.readWait(this._address, 14); //read 14byte
+    let ac_scale = this._accel_range / 32768;
+    let gy_scale = this._gyro_range / 32768;
+    return {
+      accelerometer: {
+        x: this.char2short(raw_data_MPU6050[0], raw_data_MPU6050[1]) * ac_scale,
+        y: this.char2short(raw_data_MPU6050[2], raw_data_MPU6050[3]) * ac_scale,
+        z: this.char2short(raw_data_MPU6050[4], raw_data_MPU6050[5]) * ac_scale,
+      },
+      temp:
+        this.char2short(raw_data_MPU6050[6], raw_data_MPU6050[7]) / 333.87 + 21,
+      gyroscope: {
+        x: this.char2short(raw_data_MPU6050[8], raw_data_MPU6050[9]) * gy_scale,
+        y:
+          this.char2short(raw_data_MPU6050[10], raw_data_MPU6050[11]) *
+          gy_scale,
+        z:
+          this.char2short(raw_data_MPU6050[12], raw_data_MPU6050[13]) *
+          gy_scale,
+      },
+    };
+  }
+
+  char2short(valueH, valueL) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
+    dv.setUint8(0, valueH);
+    dv.setUint8(1, valueL);
+    return dv.getInt16(0, false);
+  }
+}
+if (true) {
+  module.exports = MPU6050;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/MPU9250/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class MPU9250 {
+  constructor(obniz) {
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'address'];
+    this.required = [];
+  }
+
+  static info() {
+    return {
+      name: 'MPU9250',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this._address = this.params.address || 0x68;
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    this.i2c.write(this._address, [0x6b, 0x00]); //activate MPU9250
+    this.i2c.write(this._address, [0x37, 0x02]); //activate AK8963 (bypass)
+    this.i2c.write(this._address, [0x1a, 0x06]); //activate LPF (search datasheet_p.13)
+    this.i2c.write(this._address, [0x1d, 0x02]); //accel LPF set.
+
+    this.mpu6050 = obniz.wired('MPU6050', { i2c: this.i2c });
+    this.ak8963 = obniz.wired('AK8963', { i2c: this.i2c });
+  }
+
+  setConfig(accel_range, gyro_range, ADC_cycle) {
+    this.mpu6050.setConfig(accel_range, gyro_range);
+    this.ak8963.setConfig(ADC_cycle);
+  }
+
+  async _getAK8963Wait() {
+    await this.i2c.write(this._address, [0x02]); //request AK8983 data
+    let ST1 = await this.i2c.readWait(this._address, 1); //confirm magnet value readable
+    if (ST1 & 0x01) {
+      return await this.ak8963.getWait();
+    }
+    return {};
+  }
+
+  async getAllWait() {
+    let data = await this.mpu6050.getWait();
+    data.compass = await this.ak8963.getWait();
+    return data;
+  }
+
+  async getCompassWait() {
+    return await this.ak8963.getWait();
+  }
+
+  async getAccelerometerWait() {
+    return (await this.mpu6050.getWait()).accelerometer;
+  }
+
+  async getGyroscopeWait() {
+    return (await this.mpu6050.getWait()).gyroscope;
+  }
+}
+if (true) {
+  module.exports = MPU9250;
 }
 
 
@@ -27120,7 +27931,7 @@ if (true) {
 class Speaker {
   constructor(obniz) {
     this.keys = ['signal', 'gnd'];
-    this.requiredKeys = ['gnd'];
+    this.requiredKeys = ['signal'];
   }
 
   static info() {
@@ -27442,6 +28253,66 @@ class ADT7410 {
 
 if (true) {
   module.exports = ADT7410;
+}
+
+
+/***/ }),
+
+/***/ "./parts/TemperatureSensor/i2c/AM2320/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class AM2320 {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'sda', 'scl', 'i2c'];
+    this.requiredKeys = [];
+  }
+
+  static info() {
+    return {
+      name: 'AM2320',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.address = 0x5c;
+    this.params.pull = '5v';
+    this.params.mode = 'master';
+    this.params.clock = this.params.clock || 100 * 1000;
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  async getAllWait() {
+    let i2cOnerror = this.i2c.onerror;
+    this.i2c.onerror = () => {};
+    this.i2c.write(this.address, [0]); //wake
+    this.obniz.wait(2);
+    this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+    this.obniz.wait(2);
+    this.i2c.write(this.address, [0x03, 0x00, 0x04]);
+    let ret = await this.i2c.readWait(this.address, 6);
+    this.i2c.onerror = i2cOnerror;
+    if (ret[0] != 3 || ret[1] != 4) {
+      console.log('AM2320: Could not receive data correctly');
+      return {};
+    }
+    let humidity = (ret[2] * 256 + ret[3]) / 10.0;
+    let temperature = (ret[4] * 256 + ret[5]) / 10.0;
+    return { temperature, humidity };
+  }
+
+  async getTempWait() {
+    return (await this.getAllWait()).temperature;
+  }
+
+  async getHumdWait() {
+    return (await this.getAllWait()).humidity;
+  }
+}
+
+if (true) {
+  module.exports = AM2320;
 }
 
 

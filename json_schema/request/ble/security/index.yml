@@ -3,7 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/security"
 basePath : "ble.security"
-description : "set obniz ble security"
+description : "set obniz Board ble security"
 
 "anyOf":
   -  {$ref : "/request/ble/security/indicate_security_level"}

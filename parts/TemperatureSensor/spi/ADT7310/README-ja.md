@@ -5,7 +5,7 @@
 
 
 ## wired(obniz, {vcc, gnd, din, dout, sclk})
-Obnizに温度センサをつなぎます。
+obniz Boardに温度センサをつなぎます。
 vcc,gnd,sclk,mosi,misoはそれぞれ温度センサの電源,GND,SCLK,DIN,DOUTピンへ接続してください。
 センサのCSピンはプルダウンする必要があります。
 ```javascript

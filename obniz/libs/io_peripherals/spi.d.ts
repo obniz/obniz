@@ -3,9 +3,9 @@ import { DriveType, PullType } from './common';
 export interface SPI {
   start(options: {
     mode: 'master';
-    clk: number;
-    mosi: number;
-    miso: number;
+    clk?: number;
+    mosi?: number;
+    miso?: number;
     frequency: number;
     drive?: DriveType;
     pull?: PullType;

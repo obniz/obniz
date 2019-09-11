@@ -20,12 +20,12 @@ Please use another power supply to drive servo motors at V+.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-scl | `number(obniz io)` | no |  &nbsp; | Specify obniz io number
-sda | `number(obniz io)` | no | &nbsp;  | Specify obniz io number
+scl | `number(obniz Board io)` | no |  &nbsp; | Specify obniz Board io number
+sda | `number(obniz Board io)` | no | &nbsp;  | Specify obniz Board io number
 i2c | `i2c object` | no | &nbsp;  | Specify configrated i2c object
-vcc | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
-gnd | `number(obniz io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
-oe | `number(obniz io)` | no |  &nbsp; | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
+vcc | `number(obniz Board io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
+gnd | `number(obniz Board io)` | no |  &nbsp; | If you specify either vcc/gnd, wire() will wait a moment after power up.
+oe | `number(obniz Board io)` | no |  &nbsp; | oe controls output tri-state. off for normal operation.This is optional. You don't need to specify oe when oe is connected directly to GND.You can use setEnable() function when specify oe. By default, oe is set to enabled state.
 enabled | `boolean` | no | true  | If oe was specified, you can set initial enable/disable with this parameter.
 address | `number` | no | 0x40 | The address of module.
 drive | `boolean` | no |  'push-pull' | Default output is push-pull driven. Specify "open-drain" to drive as open-drain.

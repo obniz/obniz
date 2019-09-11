@@ -18,9 +18,9 @@ obniz.ad1.start(function(voltage){
 ##### 12ch same time.
 All 12ch ad can be used. It will not affect the sampling rate.
 ##### 30 samples/sec or slower
-Maximum sampling rate depends on your network speed and on obniz firmware version.(with ver1.0.0, max is 30samples/sec)
+Maximum sampling rate depends on your network speed and on obniz Board firmware version.(with ver1.0.0, max is 30samples/sec)
 ##### 10bit - VDD calibrated
-ad also monitors vdd of obniz itself(normally 5v). Each ad result will be calibrated. And ad accuracy is 10bit.
+ad also monitors vdd of obniz Board itself(normally 5v). Each ad result will be calibrated. And ad accuracy is 10bit.
 
 Calibration method is depend on firmware version.
 

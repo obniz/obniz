@@ -14,18 +14,18 @@ PCA9685は16の独立したPWMを出力できるチップです。周波数は16
 
 ## wired(obniz, {[gnd, vcc, oe, scl, sda, i2c, enabled, address, drive]})
 
-チップの各ピンをどのobnizのioに接続したか設定します。
+チップの各ピンをどのobniz Boardのioに接続したか設定します。
 
-サーボモーターに供給する電源（AdafruitのモジュールではV+と表示されています。）はobnizからではなく、別の電源を利用して下さい。
+サーボモーターに供給する電源（AdafruitのモジュールではV+と表示されています。）はobniz Boardからではなく、別の電源を利用して下さい。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-scl | `number(obniz io)` | no |  &nbsp; | つないだobnizのioを指定してください。
-sda | `number(obniz io)` | no | &nbsp;  | つないだobnizのioを指定してください。
+scl | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。
+sda | `number(obniz Board io)` | no | &nbsp;  | つないだobniz Boardのioを指定してください。
 i2c | `i2c object` | no | &nbsp;  | 設定済みのi2cに接続している場合に利用できます。
-vcc | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-gnd | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-oe | `number(obniz io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
+vcc | `number(obniz Board io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
+gnd | `number(obniz Board io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
+oe | `number(obniz Board io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
 enabled | `boolean` | no | true  | oeが指定されていた場合、初期状態をどちらにするか指定できます。
 address | `number` | no | 0x40 | モジュールのアドレスです。初期設定(0x40)から変更している場合は指定して下さい。
 drive | `boolean` | no |  'push-pull' | 標準で出力はプッシュプル出力ですが、'open-drain'を指定することでオープンドレイン出力にできます。
@@ -135,7 +135,7 @@ driver.pulse(1, 6);
 ```
 
 ## setEnable(enabled)
-oe端子をobnizにつないでいる場合にのみ使えます。
+oe端子をobniz Boardにつないでいる場合にのみ使えます。
 出力ピンをすべてハイインピーダンスにします。
 
 ```Javascript

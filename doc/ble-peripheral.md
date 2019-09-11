@@ -1,7 +1,7 @@
 # BLE
-You can use bluetooth Low Energy with obniz as peripheral/central
+You can use bluetooth Low Energy with obniz Board as peripheral/central
 
-# Use obniz as ble peripheral
+# Use obniz Board as ble peripheral
 
 ## advertisement.start()
 This starts advertisement of BLE.

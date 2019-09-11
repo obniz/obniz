@@ -13,8 +13,9 @@
     "buildAndtest": "npm run build && npm test",
     "realtest": "mocha $NODE_DEBUG_OPTION ./realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js",
+    "realtest-esp32": "mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js",
     "local": "gulp --gulpfile ./_tools/server.js --cwd .",
-    "build": "npm run lint && gulp $NODE_DEBUG_OPTION --gulpfile ./_tools/server.js --cwd . build",
+    "build": "npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "eslint --fix . --rulesdir eslint/rule",
     "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js"

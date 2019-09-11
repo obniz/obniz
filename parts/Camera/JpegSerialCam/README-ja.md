@@ -39,13 +39,13 @@ obniz.onconnect = async function () {
 ## wire(obniz, {vcc, cam_tx, cam_rx, gnd})
 電源とUARTを接続します。cam_txはカメラ側のtxと言う意味です。
 
-このカメラの電源はobniz以外から供給する方法がおすすめです。
-obnizから電源を供給する場合は過電流に気をつける必要があります。
+このカメラの電源はobniz Board以外から供給する方法がおすすめです。
+obniz Boardから電源を供給する場合は過電流に気をつける必要があります。
 電源は以下のように供給して下さい
 
-- obniz以外の外部電源に接続する
-- obnizのJ1ピンに接続する
-- vccとgndを2つ以上のobnizのioから供給する
+- obniz Board以外の外部電源に接続する
+- obniz BoardのJ1ピンに接続する
+- vccとgndを2つ以上のobniz Boardのioから供給する
 
 このドキュメントではio6とio9もvcc/gnd供給に使用する方法でカメラを動かしています。
 

@@ -14,10 +14,10 @@ This library get analog voltage from a sensor. Output voltage will increase rega
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-vcc | `number(obniz io)` | no |  &nbsp; | VCC or H on MQ4.
-gnd | `number(obniz io)` | no |  &nbsp; | GND or H on MQ4.
-do | `number(obniz io)` | no |  &nbsp; | digital out
-ao | `number(obniz io)` | no | &nbsp;  | analog out
+vcc | `number(obniz Board io)` | no |  &nbsp; | VCC or H on MQ4.
+gnd | `number(obniz Board io)` | no |  &nbsp; | GND or H on MQ4.
+do | `number(obniz Board io)` | no |  &nbsp; | digital out
+ao | `number(obniz Board io)` | no | &nbsp;  | analog out
 
 
 ```Javascript

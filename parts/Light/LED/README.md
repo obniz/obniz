@@ -8,7 +8,7 @@ anode is a little bit longer than cathode.
 
 ## obniz.wired("LED", {anode, cathode})
 anode is loger leg.
-specify obniz io numbers you connected LED.
+specify obniz Board io numbers you connected LED.
 
 You need a resistor if you are not using a resistor embeded LED.
 
@@ -72,5 +72,5 @@ LED stops last state.
 // Javascript Example
 var led = obniz.wired("LED", {anode:0, cathode:1});
 led.blink();
-led.endBllink();
+led.endBlink();
 ```

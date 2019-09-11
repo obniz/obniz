@@ -59,6 +59,10 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
+import { MPU9250, MPU9250Options } from './parts/MovementSensor/MPU9250';
+import { MPU6050, MPU6050Options } from './parts/MovementSensor/MPU6050';
+import { AK8963, AK8963Options } from './parts/MovementSensor/AK8963';
+
 // Memory
 import { _24LC256, _24LC256Options } from './parts/Memory/24LC256';
 // GyroSensor
@@ -92,13 +96,19 @@ import { D6T44L, D6T44LOptions } from './parts/TemperatureSensor/i2c/D6T44L';
 import { S5851A, S5851AOptions } from './parts/TemperatureSensor/i2c/S-5851A';
 import { SHT31, SHT31Options } from './parts/TemperatureSensor/i2c/SHT31';
 import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
+import { AM2320, AM2320ptions } from './parts/TemperatureSensor/i2c/AM2320';
+
 // ColorSensor
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
 // Grove
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
+import { Grove_GPS, Grove_GPSOptions } from './parts/Grove/Grove_GPS';
+import { Grove_3AxisAccelerometer, Grove_3AxisAccelerometerOptions } from './parts/Grove/Grove_3AxisAccelerometer';
+
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
+import { DriveType } from './obniz/libs/io_peripherals/common';
 
 interface WiredNameMap {
   // Light
@@ -148,6 +158,9 @@ interface WiredNameMap {
   'XBee': XBee;
   // Movement Sensor
   'Button': Button;
+  'AK8963': AK8963;
+  'MPU6050': MPU6050;
+  'MPU9250': MPU9250;
   // 'FlickHat': FlickHat;
   'HC-SR505': HCSR505;
   'JoyStick': JoyStick;
@@ -188,11 +201,14 @@ interface WiredNameMap {
   // 'S5851A': S5851A;
   'SHT31': SHT31;
   'ADT7310': ADT7310;
+  'AM2320': AM2320;
   // ColorSensor
   'S11059': S11059;
   // Grove
   'Grove_EarHeartRate': Grove_EarHeartRate;
   'Grove_MP3': Grove_MP3;
+  'Grove_GPS': Grove_GPS;
+  'Grove_3AxisAccelerometer': Grove_3AxisAccelerometer;
   // Ble
   '2JCIE': OMRON_2JCIE;
 }
@@ -246,6 +262,9 @@ interface WiredNameOptionsMap {
   'XBee': XBeeOptions;
   // Movement Sensor
   'Button': ButtonOptions;
+  'AK8963': AK8963Options;
+  'MPU6050': MPU6050Options;
+  'MPU9250': MPU9250Options;
   // 'FlickHat': FlickHatOptions;
   'HC-SR505': HCSR505Options;
   'JoyStick': JoyStickOptions;
@@ -286,11 +305,14 @@ interface WiredNameOptionsMap {
   // 'S5851A': S5851AOptions;
   'SHT31': SHT31Options;
   'ADT7310': ADT7310Options;
+  'AM2320': AM2320ptions;
   // ColorSensor
   'S11059': S11059Options;
   // Grove
   'Grove_EarHeartRate': Grove_EarHeartRateOptions;
   'Grove_MP3': Grove_MP3Options;
+  'Grove_GPS': Grove_GPSOptions;
+  'Grove_3AxisAccelerometer': Grove_3AxisAccelerometerOptions;
   // Ble
   '2JCIE': OMRON_2JCIEOptions;
 }
@@ -328,8 +350,11 @@ interface Obniz {
   repeat(callback: () => void): void;
   wait(time: number): Promise<void>;
   keepWorkingAtOffline(working: boolean): void;
+  setVccGnd(vcc: number, gnd: number, drive: DriveType): void;
+  isValidIO(io: any): io is IO;
 
   // io
+  getIO(pin: number): IO;
   io: any;
   io0: IO;
   io1: IO;
@@ -345,6 +370,7 @@ interface Obniz {
   io11: IO;
 
   // ad
+  getAD(pin: number): AD;
   ad0: AD;
   ad1: AD;
   ad2: AD;
@@ -398,7 +424,7 @@ interface Obniz {
 }
 
 interface ObnizConstructor {
-  new (id: string, options?: ObnizOptions): Obniz;
+  new(id: string, options?: ObnizOptions): Obniz;
 }
 declare const Obniz: ObnizConstructor;
 

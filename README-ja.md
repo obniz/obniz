@@ -4,7 +4,7 @@
 ![](https://img.shields.io/npm/dt/obniz.svg) [![Build Status](https://secure.travis-ci.org/obniz/obniz.png?branch=master)](http://travis-ci.org/obniz/obniz)
 
 
-[obniz](https://obniz.io/) を[obniz api](https://obniz.io/doc/about_obniz_api)を使いJavaScriptから操作するためのsdkです。
+[obniz Board](https://obniz.io/ja/) や[obnizOS](https://obniz.io/ja/doc/obnizos)を[obniz api](https://obniz.io/ja/doc/obniz_api/about_obniz_api)を使いJavaScriptから操作するためのsdkです。
 
 ## 使い方
 
@@ -88,7 +88,7 @@ npmでインストールします。
 ```
 
 ## 接続
-obnizをobniz idを使ってインスタンス化します。
+obniz Boardをobniz idを使ってインスタンス化します。
 そして接続が完了した時に呼ばれる関数をセットします。
 ```javascript
   var obniz = new Obniz("0000-0000");
@@ -96,7 +96,7 @@ obnizをobniz idを使ってインスタンス化します。
 
   }
 ```
-接続完了後にobnizやobnizにつながれた部品を扱えます。
+接続完了後にobniz Boardやobniz Boardにつながれた部品を扱えます。
 ```javascript
   var obniz = new Obniz("0000-0000");
   obniz.onconnect = async function () {
@@ -143,7 +143,7 @@ IOペリフェラルも利用可能です。詳しくはそれぞれのペリフ
 
 [obniz Parts Library](https://obniz.io/sdk/parts)
 
-obnizにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.io/sdk/parts/) で確認できます。
+obniz Boardにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.io/sdk/parts/) で確認できます。
 
 例えば LED [https://obniz.io/sdk/parts/LED](https://obniz.io/sdk/parts/LED)
 ```javascript
@@ -200,8 +200,8 @@ obniz.onconnect = async function () {
 ```
 
 ## Example: integrate two or more obniz
-web-obnizだけでなくobniz-obnizの連携も簡単に行なえます。  
-obnizにつながれたサーボモーターを別のobnizにつながれたつまみから操作してみます。
+web-obniz Boardだけでなくobniz Board-obniz Boardの連携も簡単に行なえます。  
+obniz Boardにつながれたサーボモーターを別のobniz Boardにつながれたつまみから操作してみます。
 ```javascript
 // control servomotor from potention meter which connected to another obniz.
 var obnizA = new Obniz("0000-0000");

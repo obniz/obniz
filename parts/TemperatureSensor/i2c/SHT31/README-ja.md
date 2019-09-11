@@ -4,7 +4,7 @@
 ![](./image.jpg)
 
 ## wired(obniz,  {vcc , sda, scl, adr, gnd, addressmode} )
-Obnizに温度センサをつなぎます。
+obniz Boardに温度センサをつなぎます。
 0,1,2,3,4はそれぞれ温度センサの電源,SDA,SCL,GND,ADDRピンへ接続してください。
 5はI2Cアドレスです。アドレスを0x44にする場合は4,0x45にする場合は5を入力してください。
 ADDRピンをプルアップしている場合は0x45,プルダウンしている場合は0x44です。

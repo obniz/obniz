@@ -8,7 +8,7 @@ This sensor include filters. So Easy to separate signal from noises.
 
 ## wired(obniz, [signal [,vcc, gnd]])
 
-It has three pins. Connect them to an obniz directly.
+It has three pins. Connect them to an obniz Board directly.
 
 ```Javascript
 // Javascript Example
