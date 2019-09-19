@@ -245,6 +245,7 @@ module.exports = class WSCommand {
   }
 
   _filterSchema(schema, json) {
+    if (schema) return json;
     if (schema['$ref']) {
       let refSchema = WSSchema.getSchema(schema['$ref']);
       return this._filterSchema(refSchema, json);
