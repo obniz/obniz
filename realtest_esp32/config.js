@@ -6,13 +6,13 @@ const json = require('./board/esp32devkitc_check_io.json');
 
 //test device
 //esp32
-const checkBoard_ID = '30109815';
+const checkBoard_ID = '09632612';
 //m5stickc
 //const checkBoard_ID = '09130585';
 //obniz
 //const checkBoard_ID = '09643850';
 //check device
-const obnizA_ID = '24658668';
+const obnizA_ID = '09643850';
 const obnizB_ID = '09643850';
 
 let obnizA, obnizB, checkBoard;

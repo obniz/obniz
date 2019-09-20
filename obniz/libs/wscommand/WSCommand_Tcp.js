@@ -32,14 +32,11 @@ class WSCommand_Tcp extends WSCommand {
   }
 
   write(params) {
-    console.log(params);
-    console.log(params.write.data);
     let buf = new Uint8Array(params.write.data.length + 1);
     buf[0] = params.write.index;
     for (let i = 0; i < params.write.data.length; i++) {
       buf[1 + i] = params.write.data[i];
     }
-    console.log(buf);
     this.sendCommand(this._CommandWrite, buf);
   }
 
@@ -87,7 +84,8 @@ class WSCommand_Tcp extends WSCommand {
         let module_index = payload[0];
         objToSend['tcp' + module_index] = {
           connect: {
-            state: state,
+            message: state,
+            code: payload[1],
           },
         };
         break;

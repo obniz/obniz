@@ -8,16 +8,22 @@ class Tcp {
   }
 
   _reset() {
-    this.observers = [];
+    this.connectObservers = [];
+    this.readObservers = [];
     this.used = false;
   }
 
-  addObserver(callback) {
+  addConnectObserver(callback) {
     if (callback) {
-      this.observers.push(callback);
+      this.connectObservers.push(callback);
     }
   }
 
+  addReadObserver(callback) {
+    if (callback) {
+      this.readObservers.push(callback);
+    }
+  }
   connectWait(port, domain) {
     if (this.used) {
       throw new Error(`tcp${this.id} is used`);
@@ -29,11 +35,11 @@ class Tcp {
       throw new Error(`tcp${this.id} is domain length over`);
     }
 
-    this.received = [];
+    this.connectObservers = [];
     this.used = true;
     let self = this;
     return new Promise(function(resolve, reject) {
-      self.addObserver(resolve);
+      self.addConnectObserver(resolve);
       self.Obniz.send({
         tcp: {
           connect: {
@@ -54,13 +60,12 @@ class Tcp {
         },
       },
     });
-    this.used = false;
   }
 
   write(data) {
-    // if (!this.used) {
-    //   throw new Error(`tcp${this.id} is not started`);
-    // }
+    if (!this.used) {
+      throw new Error(`tcp${this.id} is not started`);
+    }
     if (data === undefined) {
       return;
     }
@@ -88,6 +93,13 @@ class Tcp {
     });
   }
 
+  readWait() {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.addReadObserver(resolve);
+    });
+  }
+
   end() {
     close();
   }
@@ -97,20 +109,26 @@ class Tcp {
       if (this.onconnection) {
         this.onconnection(obj.connection.connected);
       }
+      if (!obj.connection.connected) {
+        this._reset();
+      }
     } else if (obj.read) {
       if (this.onreceive) {
         this.onreceive(obj.read.data);
       }
+      let callback = this.readObservers.shift();
+      if (callback) {
+        callback(obj.read.data);
+      }
     } else if (obj.connect) {
-      console.log(obj.connect);
-      if (obj.connect.state !== 'ok') {
+      if (obj.connect.code !== 0) {
         if (this.onerror) {
-          this.onerror(obj.connect.state);
+          this.onerror(obj.connect.message);
         }
       }
-      let callback = this.observers.shift();
+      let callback = this.connectObservers.shift();
       if (callback) {
-        callback();
+        callback(obj.connect.code);
       }
     }
   }
