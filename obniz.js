@@ -7897,6 +7897,10 @@ module.exports = class ObnizComponents extends ObnizParts {
   getFreeUart() {
     return this._getFreePeripheralUnit('uart');
   }
+
+  getFreeTcp() {
+    return this._getFreePeripheralUnit('tcp');
+  }
 };
 
 
@@ -12701,9 +12705,9 @@ class Tcp {
     }
   }
   connectWait(port, domain) {
-    if (this.used) {
-      throw new Error(`tcp${this.id} is used`);
-    }
+    // if (this.used) {
+    //   throw new Error(`tcp${this.id} is used`);
+    // }
     if (port < 0 || port > 65535) {
       throw new Error(`tcp${this.id} is port`);
     }
