@@ -249,4 +249,8 @@ module.exports = class ObnizComponents extends ObnizParts {
   getFreeUart() {
     return this._getFreePeripheralUnit('uart');
   }
+
+  getFreeTcp() {
+    return this._getFreePeripheralUnit('tcp');
+  }
 };

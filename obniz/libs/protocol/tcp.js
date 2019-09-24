@@ -13,21 +13,22 @@ class Tcp {
     this.used = false;
   }
 
-  addConnectObserver(callback) {
+  _addConnectObserver(callback) {
     if (callback) {
       this.connectObservers.push(callback);
     }
   }
 
-  addReadObserver(callback) {
+  _addReadObserver(callback) {
     if (callback) {
       this.readObservers.push(callback);
     }
   }
+
   connectWait(port, domain) {
-    if (this.used) {
-      throw new Error(`tcp${this.id} is used`);
-    }
+    // if (this.used) {
+    //   throw new Error(`tcp${this.id} is used`);
+    // }
     if (port < 0 || port > 65535) {
       throw new Error(`tcp${this.id} is port`);
     }
@@ -39,7 +40,7 @@ class Tcp {
     this.used = true;
     let self = this;
     return new Promise(function(resolve, reject) {
-      self.addConnectObserver(resolve);
+      self._addConnectObserver(resolve);
       self.Obniz.send({
         tcp: {
           connect: {
@@ -96,12 +97,12 @@ class Tcp {
   readWait() {
     let self = this;
     return new Promise(function(resolve, reject) {
-      self.addReadObserver(resolve);
+      self._addReadObserver(resolve);
     });
   }
 
   end() {
-    close();
+    this.close();
   }
 
   notified(obj) {
@@ -123,7 +124,7 @@ class Tcp {
     } else if (obj.connect) {
       if (obj.connect.code !== 0) {
         if (this.onerror) {
-          this.onerror(obj.connect.message);
+          this.onerror(obj.connect);
         }
       }
       let callback = this.connectObservers.shift();
