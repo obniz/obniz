@@ -7,14 +7,10 @@ type: object
 required : [write]
 properties:
     write :
-        type : object
-        required: [index,data]
+        type: object
+        required: [data]
         additionalProperties: false
         properties:
-            index:
-                type: integer
-                enum: [0, 1, 2, 3, 4, 5, 6, 7]
-                description : "TCP session index"
             data :
-                type: array
+                $ref : "/dataArray"
                 description : "TCP data"

@@ -17,16 +17,15 @@ describe('tcp.log', function() {
   it('tcp connect', function() {
     let requestJson = [
       {
-        tcp: {
+        tcp0: {
           connect: {
-            index: 0,
             port: 8,
             domain: 'obniz.io',
           },
         },
       },
     ];
-    let expecteBinaryStrings = ['00 00 08 6f 62 6e 69 7a 2e 69 6f'];
+    let expecteBinaryStrings = ['0d 0 0b 00 00 08 6f 62 6e 69 7a 2e 69 6f'];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -53,14 +52,12 @@ describe('tcp.log', function() {
   it('tcp disconnect', function() {
     let requestJson = [
       {
-        tcp: {
-          disconnect: {
-            index: 0,
-          },
+        tcp0: {
+          disconnect: true,
         },
       },
     ];
-    let expecteBinaryStrings = ['00'];
+    let expecteBinaryStrings = ['0d 01 01 00'];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -87,15 +84,14 @@ describe('tcp.log', function() {
   it('tcp write', function() {
     let requestJson = [
       {
-        tcp: {
+        tcp0: {
           write: {
-            index: 0,
             data: [0, 1, 2, 3, 4],
           },
         },
       },
     ];
-    let expecteBinaryStrings = ['00 01 02 03 04'];
+    let expecteBinaryStrings = ['0d 03 06 00 00 01 02 03 04'];
 
     expect(requestJson.length).to.be.equal(1);
 

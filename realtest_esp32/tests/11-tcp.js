@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 app.listen(process.env.PORT || 3001);
 app.use(express.static(path.join(__dirname, 'web')));
-const useIp = '192.168.0.19';
+const useIp = '192.168.8.33';
 
 let checkBoard;
 const MAX_TCP_CONNECTION = 8;
@@ -69,6 +69,11 @@ describe('10-tcp', function() {
     // let boardData = await checkBoard.tcp0.readWait();
     // boardData = new TextDecoder('utf-8').decode(new Uint8Array(boardData));
     //console.log(boardData);
+
+    //close wait
+    while (checkBoard.tcp0.isUsed()) {
+      await wait(10);
+    }
 
     socketState = checkBoard.tcp0.isUsed();
     expect(socketState, 'socket close').to.be.false;
@@ -190,7 +195,7 @@ describe('10-tcp', function() {
         '\r\n\r\n'
     );
     jsData = bodyParser(jsData);
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
       tcpArray[i].write(
         'GET / HTTP/1.0\r\n' +
           'Connection:close\r\n' +

@@ -30,27 +30,26 @@ describe('obniz.libs.tcp', function() {
     expect(tcp2).to.be.equal(this.obniz.tcp1);
   });
 
-  it.skip('tcp close', function() {
+  it('tcp close', function() {
     this.obniz.tcp0.close();
     expect(this.obniz).send([
       {
-        tcp: {
-          disconnect: {
-            index: 0,
-          },
+        tcp0: {
+          disconnect: true,
         },
       },
     ]);
     expect(this.obniz).to.be.finished;
   });
 
-  it.skip('tcp start', function() {
-    this.obniz.tcp0.connectWait(80, 'obniz.io');
+  it.skip('tcp start', async function() {
+    let tcp = this.obniz.getFreeTcp();
+    expect(tcp).to.be.equal(this.obniz.tcp0);
+    tcp.connectWait(80, 'obniz.io');
     expect(this.obniz).send([
       {
-        tcp: {
+        tcp0: {
           connect: {
-            index: 0,
             port: 80,
             domain: 'obniz.io',
           },
@@ -60,15 +59,14 @@ describe('obniz.libs.tcp', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it.skip('tcp number write', function() {
+  it('tcp number write', function() {
     let tcp1 = this.obniz.getFreeTcp();
     expect(tcp1).to.be.equal(this.obniz.tcp0);
     tcp1.write([0, 1, 2, 3, 4, 5]);
     expect(this.obniz).send([
       {
-        tcp: {
+        tcp0: {
           write: {
-            index: 0,
             data: [0, 1, 2, 3, 4, 5],
           },
         },
@@ -77,15 +75,14 @@ describe('obniz.libs.tcp', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it.skip('tcp text write', function() {
+  it('tcp text write', function() {
     let tcp1 = this.obniz.getFreeTcp();
     expect(tcp1).to.be.equal(this.obniz.tcp0);
     tcp1.write('hello');
     expect(this.obniz).send([
       {
-        tcp: {
+        tcp0: {
           write: {
-            index: 0,
             data: [0x68, 0x65, 0x6c, 0x6c, 0x6f],
           },
         },

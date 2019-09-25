@@ -14,10 +14,10 @@ class WSCommand_Tcp extends WSCommand {
     this._CommandRead = 4;
   }
 
-  connect(params) {
+  connect(params, index) {
     let domain = new Uint8Array(new Buffer(params.connect.domain, 'utf8'));
     let buf = new Uint8Array(domain.length + 3);
-    buf[0] = params.connect.index;
+    buf[0] = index;
     buf[1] = 0xff && params.connect.port >> 8;
     buf[2] = 0xff && params.connect.port;
     for (let i = 0; i < domain.length; i++) {
@@ -26,14 +26,14 @@ class WSCommand_Tcp extends WSCommand {
     this.sendCommand(this._CommandConnect, buf);
   }
 
-  disconnect(params) {
-    let buf = new Uint8Array([params.disconnect.index]);
+  disconnect(params, index) {
+    let buf = new Uint8Array([index]);
     this.sendCommand(this._CommandClose, buf);
   }
 
-  write(params) {
+  write(params, index) {
     let buf = new Uint8Array(params.write.data.length + 1);
-    buf[0] = params.write.index;
+    buf[0] = index;
     for (let i = 0; i < params.write.data.length; i++) {
       buf[1 + i] = params.write.data[i];
     }
@@ -41,21 +41,25 @@ class WSCommand_Tcp extends WSCommand {
   }
 
   parseFromJson(json) {
-    let module = json['tcp'];
-    if (module === undefined) {
-      return;
-    }
-    let schemaData = [
-      { uri: '/request/tcp/connect', onValid: this.connect },
-      { uri: '/request/tcp/disconnect', onValid: this.disconnect },
-      { uri: '/request/tcp/write', onValid: this.write },
-    ];
-    let res = this.validateCommandSchema(schemaData, module, 'tcp');
-    if (res.valid === 0) {
-      if (res.invalidButLike.length > 0) {
-        throw new Error(res.invalidButLike[0].message);
-      } else {
-        throw new this.WSCommandNotFoundError(`[tcp]unknown command`);
+    for (let i = 0; i < 2; i++) {
+      let module = json['tcp' + i];
+      if (module === undefined) {
+        continue;
+      }
+
+      let schemaData = [
+        { uri: '/request/tcp/connect', onValid: this.connect },
+        { uri: '/request/tcp/disconnect', onValid: this.disconnect },
+        { uri: '/request/tcp/write', onValid: this.write },
+      ];
+      let res = this.validateCommandSchema(schemaData, module, 'tcp' + i, i);
+
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        } else {
+          throw new this.WSCommandNotFoundError(`[tcp${i}]unknown command`);
+        }
       }
     }
   }

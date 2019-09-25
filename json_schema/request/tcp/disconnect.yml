@@ -8,12 +8,6 @@ type: object
 required : [disconnect]
 properties:
     disconnect :
-        type : object
-        required: [index]
-        additionalProperties: false
-        properties:
-            index:
-                type: integer
-                enum: [0, 1, 2, 3, 4, 5, 6, 7]
-                description : "TCP session index"
-            
+        type : boolean
+        required: []
+        additionalProperties: false    

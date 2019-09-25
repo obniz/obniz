@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/tcp"
-basePath : "tcp"
+basePath : "tcp0"
 
 "anyOf":
-  -  {$ref : "/response/tcp/read"}
+  -  {$ref :  "/response/tcp/read"}

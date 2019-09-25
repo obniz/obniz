@@ -41,26 +41,23 @@ class Tcp {
     let self = this;
     return new Promise(function(resolve, reject) {
       self._addConnectObserver(resolve);
-      self.Obniz.send({
-        tcp: {
-          connect: {
-            index: self.id,
-            port: port,
-            domain: domain,
-          },
+      let obj = {};
+      obj['tcp' + self.id] = {
+        connect: {
+          port: port,
+          domain: domain,
         },
-      });
+      };
+      self.Obniz.send(obj);
     });
   }
 
   close() {
-    this.Obniz.send({
-      tcp: {
-        disconnect: {
-          index: this.id,
-        },
-      },
-    });
+    let obj = {};
+    obj['tcp' + this.id] = {
+      disconnect: true,
+    };
+    this.Obniz.send(obj);
   }
 
   write(data) {
@@ -83,15 +80,13 @@ class Tcp {
       const buf = Buffer.from(data);
       send_data = [...buf];
     }
-
-    this.Obniz.send({
-      tcp: {
-        write: {
-          index: this.id,
-          data: send_data,
-        },
+    let obj = {};
+    obj['tcp' + this.id] = {
+      write: {
+        data: send_data,
       },
-    });
+    };
+    this.Obniz.send(obj);
   }
 
   readWait() {

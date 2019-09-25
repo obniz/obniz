@@ -878,28 +878,28 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/tcp/connect.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["index","port","domain"],"additionalProperties":false,"properties":{"index":{"type":"integer","enum":[0,1,2,3,4,5,6,7]},"port":{"type":"integer","minimum":0,"maximum":65535},"domain":{"type":"string","maxLength":30}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["port","domain"],"additionalProperties":false,"properties":{"port":{"type":"integer","minimum":0,"maximum":65535},"domain":{"type":"string","default":"obniz.ios","maxLength":30}}}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/tcp/disconnect.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"object","required":["index"],"additionalProperties":false,"properties":{"index":{"type":"integer","enum":[0,1,2,3,4,5,6,7]}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"boolean","required":[],"additionalProperties":false}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/tcp/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp","basePath":"tcp","anyOf":[{"$ref":"/request/tcp/connect"},{"$ref":"/request/tcp/disconnect"},{"$ref":"/request/tcp/write"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp","basePath":"tcp0","anyOf":[{"$ref":"/request/tcp/connect"},{"$ref":"/request/tcp/disconnect"},{"$ref":"/request/tcp/write"}]}
 
 /***/ }),
 
 /***/ "./json_schema/request/tcp/write.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/write","type":"object","required":["write"],"properties":{"write":{"type":"object","required":["index","data"],"additionalProperties":false,"properties":{"index":{"type":"integer","enum":[0,1,2,3,4,5,6,7]},"data":{"type":"array"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/write","type":"object","required":["write"],"properties":{"write":{"type":"object","required":["data"],"additionalProperties":false,"properties":{"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1326,14 +1326,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./json_schema/response/tcp/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp","basePath":"tcp","anyOf":[{"$ref":"/response/tcp/read"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp","basePath":"tcp0","anyOf":[{"$ref":"/response/tcp/read"}]}
 
 /***/ }),
 
 /***/ "./json_schema/response/tcp/read.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/read","type":"object","required":["read"],"properties":{"read":{"type":"object","required":["index","data"],"additionalProperties":false,"properties":{"index":{"type":"integer","enum":[0,1,2,3,4,5,6,7]},"data":{"type":"array"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/read","desccription":"value changes are always notified.","type":"object","required":["read"],"properties":{"read":{"type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -12721,26 +12721,23 @@ class Tcp {
     let self = this;
     return new Promise(function(resolve, reject) {
       self._addConnectObserver(resolve);
-      self.Obniz.send({
-        tcp: {
-          connect: {
-            index: self.id,
-            port: port,
-            domain: domain,
-          },
+      let obj = {};
+      obj['tcp' + self.id] = {
+        connect: {
+          port: port,
+          domain: domain,
         },
-      });
+      };
+      self.Obniz.send(obj);
     });
   }
 
   close() {
-    this.Obniz.send({
-      tcp: {
-        disconnect: {
-          index: this.id,
-        },
-      },
-    });
+    let obj = {};
+    obj['tcp' + this.id] = {
+      disconnect: true,
+    };
+    this.Obniz.send(obj);
   }
 
   write(data) {
@@ -12763,15 +12760,13 @@ class Tcp {
       const buf = Buffer.from(data);
       send_data = [...buf];
     }
-
-    this.Obniz.send({
-      tcp: {
-        write: {
-          index: this.id,
-          data: send_data,
-        },
+    let obj = {};
+    obj['tcp' + this.id] = {
+      write: {
+        data: send_data,
       },
-    });
+    };
+    this.Obniz.send(obj);
   }
 
   readWait() {
@@ -18061,10 +18056,10 @@ class WSCommand_Tcp extends WSCommand {
     this._CommandRead = 4;
   }
 
-  connect(params) {
+  connect(params, index) {
     let domain = new Uint8Array(new Buffer(params.connect.domain, 'utf8'));
     let buf = new Uint8Array(domain.length + 3);
-    buf[0] = params.connect.index;
+    buf[0] = index;
     buf[1] =  true && params.connect.port >> 8;
     buf[2] =  true && params.connect.port;
     for (let i = 0; i < domain.length; i++) {
@@ -18073,14 +18068,14 @@ class WSCommand_Tcp extends WSCommand {
     this.sendCommand(this._CommandConnect, buf);
   }
 
-  disconnect(params) {
-    let buf = new Uint8Array([params.disconnect.index]);
+  disconnect(params, index) {
+    let buf = new Uint8Array([index]);
     this.sendCommand(this._CommandClose, buf);
   }
 
-  write(params) {
+  write(params, index) {
     let buf = new Uint8Array(params.write.data.length + 1);
-    buf[0] = params.write.index;
+    buf[0] = index;
     for (let i = 0; i < params.write.data.length; i++) {
       buf[1 + i] = params.write.data[i];
     }
@@ -18088,21 +18083,25 @@ class WSCommand_Tcp extends WSCommand {
   }
 
   parseFromJson(json) {
-    let module = json['tcp'];
-    if (module === undefined) {
-      return;
-    }
-    let schemaData = [
-      { uri: '/request/tcp/connect', onValid: this.connect },
-      { uri: '/request/tcp/disconnect', onValid: this.disconnect },
-      { uri: '/request/tcp/write', onValid: this.write },
-    ];
-    let res = this.validateCommandSchema(schemaData, module, 'tcp');
-    if (res.valid === 0) {
-      if (res.invalidButLike.length > 0) {
-        throw new Error(res.invalidButLike[0].message);
-      } else {
-        throw new this.WSCommandNotFoundError(`[tcp]unknown command`);
+    for (let i = 0; i < 2; i++) {
+      let module = json['tcp' + i];
+      if (module === undefined) {
+        continue;
+      }
+
+      let schemaData = [
+        { uri: '/request/tcp/connect', onValid: this.connect },
+        { uri: '/request/tcp/disconnect', onValid: this.disconnect },
+        { uri: '/request/tcp/write', onValid: this.write },
+      ];
+      let res = this.validateCommandSchema(schemaData, module, 'tcp' + i, i);
+
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        } else {
+          throw new this.WSCommandNotFoundError(`[tcp${i}]unknown command`);
+        }
       }
     }
   }
