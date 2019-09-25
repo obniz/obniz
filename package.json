@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "obniz sdk for javascript",
   "main": "index.js",
   "types": "obniz.d.ts",
