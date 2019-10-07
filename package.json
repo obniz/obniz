@@ -58,7 +58,7 @@
     "gulp-yaml": "^2.0.2",
     "husky": "^0.14.3",
     "json-loader": "^0.5.7",
-    "lint-staged": "^7.3.0",
+    "lint-staged": "^9.4.1",
     "mocha": "^5.2.0",
     "mocha-chrome": "^2.1.0",
     "mocha-directory": "^2.3.0",
