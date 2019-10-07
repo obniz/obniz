@@ -37,7 +37,6 @@
     "chai": "^4.2.0",
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
-    "chokidar": "^2.0.4",
     "concat-with-sourcemaps": "^1.1.0",
     "ejs": "^2.6.2",
     "eslint": "^5.16.0",
