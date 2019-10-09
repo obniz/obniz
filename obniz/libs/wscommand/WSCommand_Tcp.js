@@ -4,6 +4,7 @@ class WSCommand_Tcp extends WSCommand {
   constructor() {
     super();
     this.module = 13;
+    this._MaxPort = 8;
 
     this._CommandConnect = 0;
     this._CommandClose = 1;
@@ -15,7 +16,7 @@ class WSCommand_Tcp extends WSCommand {
   }
 
   connect(params, index) {
-    let domain = new Uint8Array(new Buffer(params.connect.domain, 'utf8'));
+    let domain = new Uint8Array(Buffer.from(params.connect.domain, 'utf8'));
     let buf = new Uint8Array(domain.length + 3);
     buf[0] = index;
     buf[1] = 0xff && params.connect.port >> 8;
@@ -41,7 +42,7 @@ class WSCommand_Tcp extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this._MaxPort; i++) {
       let module = json['tcp' + i];
       if (module === undefined) {
         continue;

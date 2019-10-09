@@ -26,11 +26,8 @@ class Tcp {
   }
 
   connectWait(port, domain) {
-    // if (this.used) {
-    //   throw new Error(`tcp${this.id} is used`);
-    // }
     if (port < 0 || port > 65535) {
-      throw new Error(`tcp${this.id} is port`);
+      throw new Error(`tcp${this.id} is invalid port`);
     }
     if (domain.length > 30) {
       throw new Error(`tcp${this.id} is domain length over`);
@@ -38,17 +35,16 @@ class Tcp {
 
     this.connectObservers = [];
     this.used = true;
-    let self = this;
-    return new Promise(function(resolve, reject) {
-      self._addConnectObserver(resolve);
+    return new Promise((resolve, reject) => {
+      this._addConnectObserver(resolve);
       let obj = {};
-      obj['tcp' + self.id] = {
+      obj['tcp' + this.id] = {
         connect: {
           port: port,
           domain: domain,
         },
       };
-      self.Obniz.send(obj);
+      this.Obniz.send(obj);
     });
   }
 
@@ -90,9 +86,8 @@ class Tcp {
   }
 
   readWait() {
-    let self = this;
-    return new Promise(function(resolve, reject) {
-      self._addReadObserver(resolve);
+    return new Promise((resolve, reject) => {
+      this._addReadObserver(resolve);
     });
   }
 

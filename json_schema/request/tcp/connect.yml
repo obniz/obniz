@@ -19,6 +19,6 @@ properties:
                 description : "TCP port"
             domain:
                 type: string
-                default : "obniz.ios"                
+                default : "obniz.io"
                 maxLength: 30
                 description : "Server Domain"

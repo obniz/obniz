@@ -878,14 +878,14 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/tcp/connect.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["port","domain"],"additionalProperties":false,"properties":{"port":{"type":"integer","minimum":0,"maximum":65535},"domain":{"type":"string","default":"obniz.ios","maxLength":30}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["port","domain"],"additionalProperties":false,"properties":{"port":{"type":"integer","minimum":0,"maximum":65535},"domain":{"type":"string","default":"obniz.io","maxLength":30}}}}}
 
 /***/ }),
 
 /***/ "./json_schema/request/tcp/disconnect.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"boolean","required":[],"additionalProperties":false}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"boolean","additionalProperties":false}}}
 
 /***/ }),
 
@@ -8284,62 +8284,67 @@ module.exports = class ObnizConnection {
   }
 
   send(obj, options) {
-    if (!obj || typeof obj !== 'object') {
-      console.log('obnizjs. didnt send ', obj);
-      return;
-    }
-    if (Array.isArray(obj)) {
-      for (let i = 0; i < obj.length; i++) {
-        this.send(obj[i]);
+    try {
+      if (!obj || typeof obj !== 'object') {
+        console.log('obnizjs. didnt send ', obj);
+        return;
       }
-      return;
-    }
-    if (this.sendPool) {
-      this.sendPool.push(obj);
-      return;
-    }
-
-    let sendData = JSON.stringify([obj]);
-    if (this.debugprint) {
-      this.print_debug('send: ' + sendData);
-    }
-    /* compress */
-    if (
-      this.wscommand &&
-      (typeof options !== 'object' || options.local_connect !== false)
-    ) {
-      let compressed;
-      try {
-        compressed = this.wscommand.compress(
-          this.wscommands,
-          JSON.parse(sendData)[0]
-        );
-        if (compressed) {
-          sendData = compressed;
-          if (this.debugprintBinary) {
-            console.log(
-              'Obniz: binalized: ' + new Uint8Array(compressed).toString()
-            );
-          }
+      if (Array.isArray(obj)) {
+        for (let i = 0; i < obj.length; i++) {
+          this.send(obj[i]);
         }
-      } catch (e) {
-        this.error('------ errored json -------');
-        this.error(sendData);
-        throw e;
+        return;
       }
-    }
+      if (this.sendPool) {
+        this.sendPool.push(obj);
+        return;
+      }
 
-    /* queue sending */
-    if (typeof sendData === 'string') {
-      this._drainQueued();
-      this._sendRouted(sendData);
-    } else {
-      if (this._sendQueue) {
-        this._sendQueue.push(sendData);
-      } else {
-        this._sendQueue = [sendData];
-        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+      let sendData = JSON.stringify([obj]);
+      if (this.debugprint) {
+        this.print_debug('send: ' + sendData);
       }
+
+      /* compress */
+      if (
+        this.wscommand &&
+        (typeof options !== 'object' || options.local_connect !== false)
+      ) {
+        let compressed;
+        try {
+          compressed = this.wscommand.compress(
+            this.wscommands,
+            JSON.parse(sendData)[0]
+          );
+          if (compressed) {
+            sendData = compressed;
+            if (this.debugprintBinary) {
+              console.log(
+                'Obniz: binalized: ' + new Uint8Array(compressed).toString()
+              );
+            }
+          }
+        } catch (e) {
+          this.error('------ errored json -------');
+          this.error(sendData);
+          throw e;
+        }
+      }
+
+      /* queue sending */
+      if (typeof sendData === 'string') {
+        this._drainQueued();
+        this._sendRouted(sendData);
+      } else {
+        if (this._sendQueue) {
+          this._sendQueue.push(sendData);
+        } else {
+          this._sendQueue = [sendData];
+          this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+        }
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -12706,11 +12711,8 @@ class Tcp {
   }
 
   connectWait(port, domain) {
-    // if (this.used) {
-    //   throw new Error(`tcp${this.id} is used`);
-    // }
     if (port < 0 || port > 65535) {
-      throw new Error(`tcp${this.id} is port`);
+      throw new Error(`tcp${this.id} is invalid port`);
     }
     if (domain.length > 30) {
       throw new Error(`tcp${this.id} is domain length over`);
@@ -12718,17 +12720,16 @@ class Tcp {
 
     this.connectObservers = [];
     this.used = true;
-    let self = this;
-    return new Promise(function(resolve, reject) {
-      self._addConnectObserver(resolve);
+    return new Promise((resolve, reject) => {
+      this._addConnectObserver(resolve);
       let obj = {};
-      obj['tcp' + self.id] = {
+      obj['tcp' + this.id] = {
         connect: {
           port: port,
           domain: domain,
         },
       };
-      self.Obniz.send(obj);
+      this.Obniz.send(obj);
     });
   }
 
@@ -12770,9 +12771,8 @@ class Tcp {
   }
 
   readWait() {
-    let self = this;
-    return new Promise(function(resolve, reject) {
-      self._addReadObserver(resolve);
+    return new Promise((resolve, reject) => {
+      this._addReadObserver(resolve);
     });
   }
 
@@ -18045,6 +18045,7 @@ class WSCommand_Tcp extends WSCommand {
   constructor() {
     super();
     this.module = 13;
+    this._MaxPort = 8;
 
     this._CommandConnect = 0;
     this._CommandClose = 1;
@@ -18056,7 +18057,7 @@ class WSCommand_Tcp extends WSCommand {
   }
 
   connect(params, index) {
-    let domain = new Uint8Array(new Buffer(params.connect.domain, 'utf8'));
+    let domain = new Uint8Array(Buffer.from(params.connect.domain, 'utf8'));
     let buf = new Uint8Array(domain.length + 3);
     buf[0] = index;
     buf[1] =  true && params.connect.port >> 8;
@@ -18082,7 +18083,7 @@ class WSCommand_Tcp extends WSCommand {
   }
 
   parseFromJson(json) {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this._MaxPort; i++) {
       let module = json['tcp' + i];
       if (module === undefined) {
         continue;

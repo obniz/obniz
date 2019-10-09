@@ -9,5 +9,4 @@ required : [disconnect]
 properties:
     disconnect :
         type : boolean
-        required: []
         additionalProperties: false    
