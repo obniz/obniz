@@ -23,7 +23,7 @@ tcp command
         "tcp0": {
             "connect": {
                 "port": 32767,
-                "domain": "obniz.ios"
+                "domain": "obniz.io"
             }
         }
     }

@@ -1,7 +1,8 @@
 let chai = require('chai');
 let expect = chai.expect;
+let sinon = require('sinon');
 
-let testUtil = require(global.appRoot + '/test/testUtil.js');
+let testUtil = require('../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
@@ -30,29 +31,27 @@ describe('obniz.libs.tcp', function() {
     expect(tcp2).to.be.equal(this.obniz.tcp1);
   });
 
-  it('tcp close', function() {
-    this.obniz.tcp0.close();
+  it('tcp connect', function() {
+    this.obniz.tcp2.connectWait(80, 'obniz.io');
     expect(this.obniz).send([
       {
-        tcp0: {
-          disconnect: true,
+        tcp2: {
+          connect: {
+            port: 80,
+            domain: 'obniz.io',
+          },
         },
       },
     ]);
     expect(this.obniz).to.be.finished;
   });
 
-  it.skip('tcp start', async function() {
-    let tcp = this.obniz.getFreeTcp();
-    expect(tcp).to.be.equal(this.obniz.tcp0);
-    tcp.connectWait(80, 'obniz.io');
+  it('tcp close', function() {
+    this.obniz.tcp4.close();
     expect(this.obniz).send([
       {
-        tcp0: {
-          connect: {
-            port: 80,
-            domain: 'obniz.io',
-          },
+        tcp4: {
+          disconnect: true,
         },
       },
     ]);
@@ -89,5 +88,30 @@ describe('obniz.libs.tcp', function() {
       },
     ]);
     expect(this.obniz).to.be.finished;
+  });
+
+  it('tcp onreceive', function() {
+    let stub = sinon.stub();
+    this.obniz.tcp0.onreceive = stub;
+    let data = [20, 30];
+    testUtil.receiveJson(this.obniz, [{ tcp0: { read: { data: data } } }]);
+    sinon.assert.callCount(stub, 1);
+    expect(stub.getCall(0).args[0]).to.be.deep.equal(data);
+
+    expect(this.obniz).to.be.finished;
+  });
+
+  it('tcp readWait', function() {
+    let data = [20, 30];
+    return new Promise(
+      function(resolve, reject) {
+        this.obniz.tcp0.readWait().then(result => {
+          expect(result).to.be.deep.equal(data);
+          resolve();
+        });
+        testUtil.receiveJson(this.obniz, [{ tcp0: { read: { data: data } } }]);
+        expect(this.obniz).to.be.finished;
+      }.bind(this)
+    );
   });
 });

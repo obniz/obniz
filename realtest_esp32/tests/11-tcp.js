@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 app.listen(process.env.PORT || 3001);
 app.use(express.static(path.join(__dirname, 'web')));
-const useIp = '192.168.8.33';
+const useIp = config.LOCAL_IP;
 
 let checkBoard;
 const MAX_TCP_CONNECTION = 8;

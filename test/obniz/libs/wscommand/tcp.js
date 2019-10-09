@@ -114,4 +114,21 @@ describe('tcp.log', function() {
 
     expect(compress).to.be.deep.equal(binary);
   });
+
+  it('tcp response', function() {
+    let responseBinaryString = '0d 04 03 00 12 98';
+    let expectJson = [{ tcp0: { read: { data: [18, 152] } } }];
+
+    let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
+      return parseInt(val, 16);
+    });
+    let binary = new Uint8Array(binaryArray);
+
+    let json = this.obniz.binary2Json(binary);
+
+    let isValidCommand = testUtil.isValidCommandResponseJson(json);
+    expect(isValidCommand.valid).to.be.true;
+
+    expect(json).to.be.deep.equal(expectJson);
+  });
 });

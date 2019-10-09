@@ -6,7 +6,7 @@ const json = require('./board/esp32devkitc_check_io.json');
 
 //test device
 //esp32
-const checkBoard_ID = '09632612';
+const checkBoard_ID = '30109815';
 //m5stickc
 //const checkBoard_ID = '09130585';
 //obniz
@@ -14,6 +14,11 @@ const checkBoard_ID = '09632612';
 //check device
 const obnizA_ID = '09643850';
 const obnizB_ID = '09643850';
+
+//TCP Command Test
+//Express server used
+// your pc IP Address
+const LOCAL_IP = '192.168.8.33';
 
 let obnizA, obnizB, checkBoard;
 const check_io = json.io;
@@ -59,6 +64,8 @@ function connectTwoObniz(done, params) {
   let local_connect = true;
   checkBoard = new Obniz(checkBoard_ID, { local_connect: local_connect });
   checkBoard.onconnect = () => {
+    checkBoard.debugprintBinary = true;
+    checkBoard.debugprint = true;
     if (process.env.DEBUG) {
       checkBoard.debugprint = true;
     }
@@ -127,4 +134,5 @@ module.exports = {
   reboot,
   check_io,
   getDevice,
+  LOCAL_IP,
 };
