@@ -11455,6 +11455,13 @@ module.exports = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./obniz/libs/hw/esp32p.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}}}");
+
+/***/ }),
+
 /***/ "./obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
@@ -11473,6 +11480,8 @@ module.exports = class HW {
       return __webpack_require__("./obniz/libs/hw/obnizb1.json");
     } else if (hw === 'esp32w') {
       return __webpack_require__("./obniz/libs/hw/esp32w.json");
+    } else if (hw === 'esp32p') {
+      return __webpack_require__("./obniz/libs/hw/esp32p.json");
     }
     return undefined;
   }
