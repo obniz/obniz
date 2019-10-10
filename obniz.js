@@ -7731,34 +7731,40 @@ module.exports = class ObnizComponents extends ObnizParts {
       this._allComponentKeys.push(key);
     }
 
-    for (const key in peripheral_map) {
-      if (hw_peripherals[key]) {
-        const units = hw_peripherals[key].units;
-        const Class = peripheral_map[key];
-        for (let unitId in units) {
-          unitId = parseInt(unitId);
-          this[key + unitId] = new Class(this, unitId);
-          this._allComponentKeys.push(key + unitId);
+    if (hw_peripherals) {
+      for (const key in peripheral_map) {
+        if (hw_peripherals[key]) {
+          const units = hw_peripherals[key].units;
+          const Class = peripheral_map[key];
+          for (let unitId in units) {
+            unitId = parseInt(unitId);
+            this[key + unitId] = new Class(this, unitId);
+            this._allComponentKeys.push(key + unitId);
+          }
         }
       }
     }
 
-    for (const key in embeds_map) {
-      if (hw_embeds[key]) {
-        const Class = embeds_map[key];
-        this[key] = new Class(this);
-        this._allComponentKeys.push(key);
+    if (hw_embeds) {
+      for (const key in embeds_map) {
+        if (hw_embeds[key]) {
+          const Class = embeds_map[key];
+          this[key] = new Class(this);
+          this._allComponentKeys.push(key);
+        }
       }
     }
 
-    for (const key in protocol_map) {
-      if (hw_protocol[key]) {
-        const units = hw_protocol[key].units;
-        const Class = protocol_map[key];
-        for (let unitId in units) {
-          unitId = parseInt(unitId);
-          this[key + unitId] = new Class(this, unitId);
-          this._allComponentKeys.push(key + unitId);
+    if (hw_protocol) {
+      for (const key in protocol_map) {
+        if (hw_protocol[key]) {
+          const units = hw_protocol[key].units;
+          const Class = protocol_map[key];
+          for (let unitId in units) {
+            unitId = parseInt(unitId);
+            this[key + unitId] = new Class(this, unitId);
+            this._allComponentKeys.push(key + unitId);
+          }
         }
       }
     }
@@ -11458,7 +11464,7 @@ module.exports = ObnizSwitch;
 /***/ "./obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}}}");
+module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
