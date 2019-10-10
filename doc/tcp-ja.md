@@ -1,10 +1,37 @@
 # Protocol TCP
-TCPのコネクションを作成します。
+デバイスからデバイスが繋がれているネットワーク経由でTCPのコネクションを作成します。
 TCPは8本利用可能です。
 tcp0からtcp7までが利用できます。
 
+```javascript
+// Javascript Example
+
+var tcp = obniz.getFreeTcp();
+await tcp.connectWait(80, "obniz.io");
+const request = ""
+    + "GET / HTTP/1.1\r\n"
+    + "Host: obniz.io\r\n"
+    + "Accept: */*\r\n"
+    + "Connection: close\r\n\r\n";
+tcp.write(request)
+
+obniz.repeat(async()=>{
+    let data = await tcp.readWait();
+    console.log(dataArray2string(data));
+}, 1)
+
+function dataArray2string(data) {
+    let result = '';
+    for (let n of data) {
+        result += String.fromCharCode(n);
+    }
+    return result;
+}
+
+```
+
 ## obniz.getFreeTcp()
-obniz Boardが利用していないTCPモジュールを取得します。
+デバイスが利用していないTCPモジュールを取得します。
 TCPはtcp0〜tcp7の8つが利用できますが、
 この関数を呼ぶことで利用中でないTCPを取得することが出来ます。
 
