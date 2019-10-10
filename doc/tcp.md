@@ -1,9 +1,36 @@
 # Protocol TCP
 
-Create a TCP connection.
+Create a TCP connection from a device throught the network the device is currently connected to.
 
 8 TCP can be used.
 tcp0 to tcp7 can be used.
+
+```javascript
+// Javascript Example
+
+var tcp = obniz.getFreeTcp();
+await tcp.connectWait(80, "obniz.io");
+const request = ""
+    + "GET / HTTP/1.1\r\n"
+    + "Host: obniz.io\r\n"
+    + "Accept: */*\r\n"
+    + "Connection: close\r\n\r\n";
+tcp.write(request)
+
+obniz.repeat(async()=>{
+    let data = await tcp.readWait();
+    console.log(dataArray2string(data));
+}, 1)
+
+function dataArray2string(data) {
+    let result = '';
+    for (let n of data) {
+        result += String.fromCharCode(n);
+    }
+    return result;
+}
+
+```
 
 ## obniz.getFreeTcp()
 Get TCP modules not used by obniz Board.
