@@ -1,0 +1,35 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="/path/to/obniz.js"></script>
+</head>
+<body>
+
+<script>
+  function toHexString(byteArray) {
+    return Array.from(byteArray, function(byte) {
+      return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+    }).join(' ')
+  }
+
+  var obniz = new Obniz("46273152");
+  obniz.onconnect = async function () {        
+    var pmic = obniz.wired("AXP192", {sda:21, scl:22});
+    pmic.set3VLDO2_3();
+    pmic.enableLDO2_3();    
+    obniz.wait(200);
+    lcd = obniz.wired("ST7735S", {});
+    const bg = lcd.color16(200, 10, 10);
+    const fr = lcd.color16(20, 200, 10);
+    const ge = lcd.color16(20, 20, 200);
+    const ba = lcd.color16(0, 0, 0);
+    lcd.fillScreen(ba);
+    lcd.setRotation(1);
+    lcd.drawString( 5, 2, "I'm   using obniz!", fr, ba, 2, true);
+    lcd.fillRect(10, 40, 30, 30, ge);
+    lcd.fillCircle(65, 55, 15, bg);
+    lcd.fillTriangle(105,40, 135, 40, 120, 70, fr);   
+  }
+</script>
+</body>
+</html>
