@@ -12,4 +12,6 @@ export interface AXP192 {
   setLDO3Voltage(voltage:number): void;
   toggleLDO2(val:number): void;
   toggleLDO3(val:number): void;
+  initM5StickC():void;
+  getVbat():Promise<number>;
 }
