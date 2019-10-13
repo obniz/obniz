@@ -60,6 +60,7 @@ import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
 import { MPU9250, MPU9250Options } from './parts/MovementSensor/MPU9250';
+import { MPU6886, MPU6886Options } from './parts/MovementSensor/MPU6886';
 import { MPU6050, MPU6050Options } from './parts/MovementSensor/MPU6050';
 import { AK8963, AK8963Options } from './parts/MovementSensor/AK8963';
 
@@ -93,6 +94,7 @@ import { ADT7410, ADT7410Options } from './parts/TemperatureSensor/i2c/ADT7410';
 import { AMG8833, AMG8833Options } from './parts/TemperatureSensor/i2c/AMG8833';
 import { BME280, BME280Options } from './parts/TemperatureSensor/i2c/BME280';
 import { D6T44L, D6T44LOptions } from './parts/TemperatureSensor/i2c/D6T44L';
+import { DHT12, DHT12Options } from './parts/TemperatureSensor/i2c/DHT12';
 import { S5851A, S5851AOptions } from './parts/TemperatureSensor/i2c/S-5851A';
 import { SHT31, SHT31Options } from './parts/TemperatureSensor/i2c/SHT31';
 import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
@@ -109,6 +111,9 @@ import { Grove_3AxisAccelerometer, Grove_3AxisAccelerometerOptions } from './par
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
 import { DriveType } from './obniz/libs/io_peripherals/common';
+
+//biological
+import {Puls08M5stickcS, Puls08M5stickcSOptions} from "./parts/Biological/PULSE08-M5STICKC-S";
 
 interface WiredNameMap {
   // Light
@@ -160,6 +165,7 @@ interface WiredNameMap {
   'Button': Button;
   'AK8963': AK8963;
   'MPU6050': MPU6050;
+  'MPU6886': MPU6886;
   'MPU9250': MPU9250;
   // 'FlickHat': FlickHat;
   'HC-SR505': HCSR505;
@@ -198,6 +204,7 @@ interface WiredNameMap {
   'AMG8833': AMG8833;
   'BME280': BME280;
   'D6T44L': D6T44L;
+  'DHT12': DHT12;
   // 'S5851A': S5851A;
   'SHT31': SHT31;
   'ADT7310': ADT7310;
@@ -211,6 +218,8 @@ interface WiredNameMap {
   'Grove_3AxisAccelerometer': Grove_3AxisAccelerometer;
   // Ble
   '2JCIE': OMRON_2JCIE;
+  // Bioligical
+  'PULSE08_M5STICKC-S' : Puls08M5stickcS;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -264,6 +273,7 @@ interface WiredNameOptionsMap {
   'Button': ButtonOptions;
   'AK8963': AK8963Options;
   'MPU6050': MPU6050Options;
+  'MPU6886': MPU6886Options;
   'MPU9250': MPU9250Options;
   // 'FlickHat': FlickHatOptions;
   'HC-SR505': HCSR505Options;
@@ -302,6 +312,7 @@ interface WiredNameOptionsMap {
   'AMG8833': AMG8833Options;
   'BME280': BME280Options;
   'D6T44L': D6T44LOptions;
+  'DHT12': DHT12Options;
   // 'S5851A': S5851AOptions;
   'SHT31': SHT31Options;
   'ADT7310': ADT7310Options;
@@ -315,6 +326,8 @@ interface WiredNameOptionsMap {
   'Grove_3AxisAccelerometer': Grove_3AxisAccelerometerOptions;
   // Ble
   '2JCIE': OMRON_2JCIEOptions;
+  // Bioligical
+  'PULSE08_M5STICKC-S' : Puls08M5stickcSOptions;
 }
 
 interface ObnizOptions {
