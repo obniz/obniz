@@ -9,7 +9,7 @@
   },
   "engineStrict": true,
   "scripts": {
-    "test": "nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1",
+    "test": "npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1",
     "buildAndtest": "npm run build && npm test",
     "tstest": "tsc --project ./test",
     "realtest": "mocha $NODE_DEBUG_OPTION ./realtest/index.js",
