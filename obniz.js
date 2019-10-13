@@ -1555,7 +1555,7 @@ function fromByteArray (uint8) {
 
 var base64 = __webpack_require__("./node_modules/base64-js/index.js")
 var ieee754 = __webpack_require__("./node_modules/ieee754/index.js")
-var isArray = __webpack_require__("./node_modules/isarray/index.js")
+var isArray = __webpack_require__("./node_modules/buffer/node_modules/isarray/index.js")
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -3337,6 +3337,18 @@ function isnan (val) {
 
 /***/ }),
 
+/***/ "./node_modules/buffer/node_modules/isarray/index.js":
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/eventemitter3/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3768,18 +3780,6 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
   buffer[offset + i - d] |= s * 128
 }
-
-
-/***/ }),
-
-/***/ "./node_modules/isarray/index.js":
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
 
 
 /***/ }),
@@ -5569,33 +5569,9 @@ function coerce (version) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
-/*<replacement>*/
 
 var Buffer = __webpack_require__("./node_modules/safe-buffer/index.js").Buffer;
-/*</replacement>*/
 
 var isEncoding = Buffer.isEncoding || function (encoding) {
   encoding = '' + encoding;
@@ -5707,10 +5683,10 @@ StringDecoder.prototype.fillLast = function (buf) {
 };
 
 // Checks the type of a UTF-8 byte, whether it's ASCII, a leading byte, or a
-// continuation byte. If an invalid byte is detected, -2 is returned.
+// continuation byte.
 function utf8CheckByte(byte) {
   if (byte <= 0x7F) return 0;else if (byte >> 5 === 0x06) return 2;else if (byte >> 4 === 0x0E) return 3;else if (byte >> 3 === 0x1E) return 4;
-  return byte >> 6 === 0x02 ? -1 : -2;
+  return -1;
 }
 
 // Checks at most 3 bytes at the end of a Buffer in order to detect an
@@ -5724,13 +5700,13 @@ function utf8CheckIncomplete(self, buf, i) {
     if (nb > 0) self.lastNeed = nb - 1;
     return nb;
   }
-  if (--j < i || nb === -2) return 0;
+  if (--j < i) return 0;
   nb = utf8CheckByte(buf[j]);
   if (nb >= 0) {
     if (nb > 0) self.lastNeed = nb - 2;
     return nb;
   }
-  if (--j < i || nb === -2) return 0;
+  if (--j < i) return 0;
   nb = utf8CheckByte(buf[j]);
   if (nb >= 0) {
     if (nb > 0) {
@@ -5744,7 +5720,7 @@ function utf8CheckIncomplete(self, buf, i) {
 // Validates as many continuation bytes for a multi-byte UTF-8 character as
 // needed or are available. If we see a non-continuation byte where we expect
 // one, we "replace" the validated continuation bytes we've seen so far with
-// a single UTF-8 replacement character ('\ufffd'), to match v8's UTF-8 decoding
+// UTF-8 replacement characters ('\ufffd'), to match v8's UTF-8 decoding
 // behavior. The continuation byte check is included three times in the case
 // where all of the continuation bytes for a character exist in the same buffer.
 // It is also done this way as a slight performance increase instead of using a
@@ -5752,17 +5728,17 @@ function utf8CheckIncomplete(self, buf, i) {
 function utf8CheckExtraBytes(self, buf, p) {
   if ((buf[0] & 0xC0) !== 0x80) {
     self.lastNeed = 0;
-    return '\ufffd';
+    return '\ufffd'.repeat(p);
   }
   if (self.lastNeed > 1 && buf.length > 1) {
     if ((buf[1] & 0xC0) !== 0x80) {
       self.lastNeed = 1;
-      return '\ufffd';
+      return '\ufffd'.repeat(p + 1);
     }
     if (self.lastNeed > 2 && buf.length > 2) {
       if ((buf[2] & 0xC0) !== 0x80) {
         self.lastNeed = 2;
-        return '\ufffd';
+        return '\ufffd'.repeat(p + 2);
       }
     }
   }
@@ -5793,11 +5769,11 @@ function utf8Text(buf, i) {
   return buf.toString('utf8', i, end);
 }
 
-// For UTF-8, a replacement character is added when ending on a partial
-// character.
+// For UTF-8, a replacement character for each buffered byte of a (partial)
+// character needs to be added to the output.
 function utf8End(buf) {
   var r = buf && buf.length ? this.write(buf) : '';
-  if (this.lastNeed) return r + '\ufffd';
+  if (this.lastNeed) return r + '\ufffd'.repeat(this.lastTotal - this.lastNeed);
   return r;
 }
 
@@ -9269,7 +9245,11 @@ class ObnizBLE {
       }
       if (!handled) {
         this.Obniz.error(
-          `ble ${params.message} service=${params.service_uuid} characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${params.descriptor_uuid}`
+          `ble ${params.message} service=${
+            params.service_uuid
+          } characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${
+            params.descriptor_uuid
+          }`
         );
       }
     }
@@ -10986,7 +10966,9 @@ class BleSecurity {
   checkIntroducedFirmware(introducedVersion, functionName) {
     let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
     if (results) {
-      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${this.Obniz.firmware_ver})`;
+      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
+        this.Obniz.firmware_ver
+      })`;
       this.Obniz.error(msg);
       throw new Error(msg);
     }
@@ -12317,7 +12299,11 @@ class PeripheralSPI {
     }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
-        `with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`
+        `with your obniz ${
+          this.Obniz.firmware_ver
+        }. spi max length=32byte but yours ${
+          data.length
+        }. Please update obniz firmware`
       );
     }
 
@@ -12339,7 +12325,11 @@ class PeripheralSPI {
     }
     if (semver.lte(this.Obniz.firmware_ver, '1.0.2') && data.length > 32) {
       throw new Error(
-        `with your obniz ${this.Obniz.firmware_ver}. spi max length=32byte but yours ${data.length}. Please update obniz firmware`
+        `with your obniz ${
+          this.Obniz.firmware_ver
+        }. spi max length=32byte but yours ${
+          data.length
+        }. Please update obniz firmware`
       );
     }
 
@@ -14980,7 +14970,9 @@ module.exports = class WSCommand {
         err.err0 = payload[0];
         err.err1 = payload[1];
         err.function = payload[2];
-        err.message = `Error module=${this.module} func=${err.function} err0=${err.err0} returned=${err.err1}`;
+        err.message = `Error module=${this.module} func=${err.function} err0=${
+          err.err0
+        } returned=${err.err1}`;
       } else {
         err.message = `Error module=${this.module} with + ${err._args}`;
       }
@@ -17405,7 +17397,11 @@ class WSCommand_IO extends WSCommand {
         const oldMutexOwner = payload[4];
         const newMutexOwner = payload[5];
         this.envelopWarning(objToSend, 'debug', {
-          message: `io${module_index} binded "${COMMAND_IO_MUTEX_NAMES[oldMutexOwner]}" was stopped. "${COMMAND_IO_MUTEX_NAMES[newMutexOwner]}" have started using this io.`,
+          message: `io${module_index} binded "${
+            COMMAND_IO_MUTEX_NAMES[oldMutexOwner]
+          }" was stopped. "${
+            COMMAND_IO_MUTEX_NAMES[newMutexOwner]
+          }" have started using this io.`,
         });
       }
     } else {
@@ -18688,6 +18684,7 @@ module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"2.4.0-beta.0\",\"
 var map = {
 	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
+	"./Biological/PULSE08-M5STICKC-S/index.js": "./parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
@@ -18735,6 +18732,7 @@ var map = {
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
 	"./MovementSensor/MPU6050/index.js": "./parts/MovementSensor/MPU6050/index.js",
+	"./MovementSensor/MPU6886/index.js": "./parts/MovementSensor/MPU6886/index.js",
 	"./MovementSensor/MPU9250/index.js": "./parts/MovementSensor/MPU9250/index.js",
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
@@ -18761,11 +18759,13 @@ var map = {
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
+	"./TemperatureSensor/i2c/DHT12/index.js": "./parts/TemperatureSensor/i2c/DHT12/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js",
 	"./Wireless/RN42/index.js": "./parts/Wireless/RN42/index.js",
-	"./Wireless/XBee/index.js": "./parts/Wireless/XBee/index.js"
+	"./Wireless/XBee/index.js": "./parts/Wireless/XBee/index.js",
+	"./i2cParts.js": "./parts/i2cParts.js"
 };
 
 
@@ -18970,6 +18970,97 @@ if (true) {
   module.exports = USB;
 }
 
+
+/***/ }),
+
+/***/ "./parts/Biological/PULSE08-M5STICKC-S/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {class Puls08M5stickcS {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'tx', 'rx'];
+    this.requiredKeys = ['tx', 'rx'];
+    this.delimiter = 0x0a;
+  }
+
+  static info() {
+    return {
+      name: 'Puls08M5stickcS',
+    };
+  }
+
+  onbpmupdate(data) {
+    return;
+  }
+
+  onrawupdate(data) {
+    return;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.uart = obniz.getFreeUart();
+    this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 19200 });
+    this.receivingData = [];
+
+    this.init();
+
+    this.uart.onreceive = (data, text) => {
+      let dataToCallback = [];
+      data.forEach(e => {
+        if (e !== this.delimiter) {
+          this.receivingData.push(e);
+          return;
+        } else {
+          let row = this.receivingData;
+          if (row[0] === '#'.charCodeAt(0)) {
+            row[0] = ' '.charCodeAt(0);
+            let str = this.decode(row);
+            let val = parseInt(str);
+            let bpm = val > 0 ? 60000 / val : null;
+            this.onbpmupdate(bpm);
+          } else {
+            let str = this.decode(row);
+            let val = parseInt(str);
+            dataToCallback.push(val);
+          }
+          this.receivingData = [];
+        }
+      });
+      if (dataToCallback.length > 0) {
+        this.onrawupdate(dataToCallback);
+      }
+    };
+  }
+
+  decode(data) {
+    return Buffer.from(data).toString('utf8');
+
+    // if (typeof TextDecoder !== 'undefined') {
+    //   let enc = new TextDecoder('utf-8');
+    //   let arr = new Uint8Array(data);
+    //   return enc.decode(arr);
+    // } else if (typeof Buffer !== 'undefined') {
+    // return Buffer.from(data).toString('utf8');
+    // }
+    // throw new Error('cannot decode');
+  }
+
+  init() {
+    this.uart.send('@OF30');
+    this.uart.send(0x0a);
+    this.uart.send('@RG2');
+    this.uart.send(0x0a);
+  }
+}
+
+if (true) {
+  module.exports = Puls08M5stickcS;
+}
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -29142,7 +29233,11 @@ class FlickHat {
             this.statusInfo = statusInfo;
             if (this.debugprint || this.obniz.debugprint) {
               console.log(
-                `flickHat: system status: {msgId: ${statusInfo.msgId}, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${statusInfo.error}}`
+                `flickHat: system status: {msgId: ${
+                  statusInfo.msgId
+                }, maxCmdSize: ${statusInfo.maxCmdSize}, error: ${
+                  statusInfo.error
+                }}`
               );
             }
             break;
@@ -29596,6 +29691,185 @@ class MPU6050 {
 }
 if (true) {
   module.exports = MPU6050;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/MPU6886/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const i2cParts = __webpack_require__("./parts/i2cParts.js");
+
+class MPU6886 extends i2cParts {
+  static info() {
+    return {
+      name: 'MPU6886',
+    };
+  }
+
+  constructor() {
+    super();
+    this.commands = {};
+    this.commands.whoami = 0x75;
+    this.commands.accelIntelCtrl = 0x69;
+    this.commands.smplrtDiv = 0x19;
+    this.commands.intPinCfg = 0x37;
+    this.commands.intEnable = 0x38;
+    this.commands.accelXoutH = 0x3b;
+    this.commands.accelXoutL = 0x3c;
+    this.commands.accelYoutH = 0x3d;
+    this.commands.accelYoutL = 0x3e;
+    this.commands.accelZoutH = 0x3f;
+    this.commands.accelZoutL = 0x40;
+
+    this.commands.tempOutH = 0x41;
+    this.commands.tempOutL = 0x42;
+
+    this.commands.gyroXoutH = 0x43;
+    this.commands.gyroXoutL = 0x44;
+    this.commands.gyroYoutH = 0x45;
+    this.commands.gyroYoutL = 0x46;
+    this.commands.gyroZoutH = 0x47;
+    this.commands.gyroZoutL = 0x48;
+
+    this.commands.userCtrl = 0x6a;
+    this.commands.pwrMgmt1 = 0x6b;
+    this.commands.pwrMgmt2 = 0x6c;
+    this.commands.config = 0x1a;
+    this.commands.gyroConfig = 0x1b;
+    this.commands.accelConfig = 0x1c;
+    this.commands.accelConfig2 = 0x1d;
+    this.commands.fifoEn = 0x23;
+  }
+
+  wired(obniz) {
+    super.wired(obniz);
+
+    this.init();
+  }
+
+  i2cInfo() {
+    return {
+      address: 0x68,
+      clock: 100000,
+      voltage: '3v',
+    };
+  }
+
+  whoamiWait() {
+    return this.readWait(this.commands.whoami, 1);
+  }
+
+  init() {
+    this.write(this.commands.pwrMgmt1, 0x00);
+    this.obniz.wait(10);
+    this.write(this.commands.pwrMgmt1, 0x01 << 7);
+    this.obniz.wait(10);
+    this.write(this.commands.pwrMgmt1, 0x01 << 0);
+    this.obniz.wait(10);
+    this.setConfig(
+      this.params.accelerometer_range || 2,
+      this.params.gyroscope_range || 250
+    );
+    this.obniz.wait(1);
+    this.write(this.commands.config, 0x01);
+    this.obniz.wait(1);
+    this.write(this.commands.smplrtDiv, 0x05);
+    this.obniz.wait(1);
+    this.write(this.commands.intEnable, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.accelConfig2, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.userCtrl, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.fifoEn, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.intPinCfg, 0x22);
+    this.obniz.wait(1);
+    this.write(this.commands.intEnable, 0x01);
+    this.obniz.wait(1);
+  }
+
+  setConfig(accelerometer_range, gyroscope_range) {
+    //accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+    switch (accelerometer_range) {
+      case 2:
+        this.write(this.commands.accelConfig, 0x00);
+        break;
+      case 4:
+        this.write(this.commands.accelConfig, 0x08);
+        break;
+      case 8:
+        this.write(this.commands.accelConfig, 0x10);
+        break;
+      case 16:
+        this.write(this.commands.accelConfig, 0x18);
+        break;
+      default:
+        throw new Error('accel_range variable 2,4,8,16 setting');
+    }
+    //gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+    switch (gyroscope_range) {
+      case 250:
+        this.write(this.commands.gyroConfig, 0x00);
+        break;
+      case 500:
+        this.write(this.commands.gyroConfig, 0x08);
+        break;
+      case 1000:
+        this.write(this.commands.gyroConfig, 0x10);
+        break;
+      case 2000:
+        this.write(this.commands.gyroConfig, 0x18);
+        break;
+      default:
+        throw new Error('accel_range variable 250,500,1000,2000 setting');
+    }
+    this._accel_range = accelerometer_range;
+    this._gyro_range = gyroscope_range;
+  }
+
+  async getAllDataWait() {
+    let raw_data = await this.readWait(this.commands.accelXoutH, 14); //request all data
+    let ac_scale = this._accel_range / 32768;
+    let gy_scale = this._gyro_range / 32768;
+
+    const accelerometer = {
+      x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
+      y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
+      z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+    };
+    const temperature =
+      this.char2short(raw_data[6], raw_data[7]) / 326.8 + 25.0;
+    const gyroscope = {
+      x: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
+      y: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+      z: this.char2short(raw_data[12], raw_data[13]) * gy_scale,
+    };
+
+    return {
+      accelerometer,
+      temperature,
+      gyroscope,
+    };
+  }
+
+  async getTempWait() {
+    return (await this.getAllDataWait()).temperature;
+  }
+
+  async getAccelWait() {
+    return (await this.getAllDataWait()).accelerometer;
+  }
+
+  async getGyroWait() {
+    return (await this.getAllDataWait()).gyroscope;
+  }
+}
+
+if (true) {
+  module.exports = MPU6886;
 }
 
 
@@ -31476,6 +31750,61 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/TemperatureSensor/i2c/DHT12/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const i2cParts = __webpack_require__("./parts/i2cParts.js");
+
+class DHT12 extends i2cParts {
+  static info() {
+    return {
+      name: 'DHT12',
+    };
+  }
+
+  i2cInfo() {
+    return {
+      address: 0x5c,
+      clock: 100000,
+      voltage: '3v',
+    };
+  }
+
+  async getAllDataWait() {
+    const data = await this.readWait(0x00, 5);
+    const humidity = data[0] + data[1] * 0.1;
+    let temperature = data[2] + (data[3] & 0x7f) * 0.1;
+    if (data[3] & 0x80) {
+      temperature *= -1;
+    }
+
+    const checksum = data[0] + data[1] + data[2] + data[3];
+    if (checksum !== data[4]) {
+      return null;
+    }
+
+    return {
+      humidity,
+      temperature,
+    };
+  }
+
+  async getTempWait() {
+    return (await this.getAllDataWait()).temperature;
+  }
+
+  async getHumdWait() {
+    return (await this.getAllDataWait()).humidity;
+  }
+}
+
+if (true) {
+  module.exports = DHT12;
+}
+
+
+/***/ }),
+
 /***/ "./parts/TemperatureSensor/i2c/S-5851A/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32106,6 +32435,69 @@ class XBee {
 if (true) {
   module.exports = XBee;
 }
+
+
+/***/ }),
+
+/***/ "./parts/i2cParts.js":
+/***/ (function(module, exports) {
+
+class I2cPartsAbstruct {
+  constructor() {
+    this.keys = ['gnd', 'sda', 'scl', 'i2c', 'vcc'];
+    this.requiredKeys = [];
+
+    this.i2cinfo = this.i2cInfo();
+    this.address = this.i2cinfo.address;
+  }
+  i2cInfo() {
+    throw new Error('abstruct class');
+
+    // eslint-disable-next-line no-unreachable
+    return {
+      address: 0x00,
+      clock: 100000,
+      voltage: '3v',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(null, this.params.gnd, this.i2cinfo.voltage);
+    this.params.clock = this.i2cinfo.clock;
+    this.params.pull = this.i2cinfo.voltage;
+    this.params.mode = 'master';
+    // @ts-ignore
+    this.i2c = this.obniz.getI2CWithConfig(this.params);
+  }
+
+  char2short(val1, val2) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
+    dv.setUint8(0, val1);
+    dv.setUint8(1, val2);
+    return dv.getInt16(0, false);
+  }
+
+  async readWait(command, length) {
+    this.i2c.write(this.address, [command]);
+    return await this.i2c.readWait(this.address, length);
+  }
+
+  async readUint16Wait(command, length) {
+    this.i2c.write(this.address, [command]);
+    return await this.i2c.readWait(this.address, length);
+  }
+
+  write(command, buf) {
+    if (!Array.isArray(buf)) {
+      buf = [buf];
+    }
+    this.i2c.write(this.address, [command, ...buf]);
+  }
+}
+module.exports = I2cPartsAbstruct;
 
 
 /***/ })
