@@ -15,6 +15,7 @@
         "^uart[0-1]$" : {$ref : "/response/uart"}
         "^spi[0-1]$" : {$ref : "/response/spi"}
         "^i2c0$" : {$ref : "/response/i2c"}
+        "^tcp[0-7]$" : {$ref : "/response/tcp" }
 
       properties:
         io: {$ref : "/response/ioAnimation" }
