@@ -116,6 +116,7 @@ import { DriveType } from './obniz/libs/io_peripherals/common';
 import {Puls08M5stickcS, Puls08M5stickcSOptions} from "./parts/Biological/PULSE08-M5STICKC-S";
 import {ST7735S, ST7735SOptions} from "./parts/Display/ST7735S";
 import {AXP192, AXP192Options} from "./parts/Power/AXP192";
+import {SH200Q, SH200Q6Options} from "./parts/MovementSensor/SH200Q";
 
 interface WiredNameMap {
   // Light
@@ -172,6 +173,7 @@ interface WiredNameMap {
   'MPU6050': MPU6050;
   'MPU6886': MPU6886;
   'MPU9250': MPU9250;
+  'SH200Q': SH200Q;
   // 'FlickHat': FlickHat;
   'HC-SR505': HCSR505;
   'JoyStick': JoyStick;
@@ -283,6 +285,7 @@ interface WiredNameOptionsMap {
   'MPU6050': MPU6050Options;
   'MPU6886': MPU6886Options;
   'MPU9250': MPU9250Options;
+  'SH200Q': SH200Q6Options;
   // 'FlickHat': FlickHatOptions;
   'HC-SR505': HCSR505Options;
   'JoyStick': JoyStickOptions;

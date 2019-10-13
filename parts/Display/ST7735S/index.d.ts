@@ -1,4 +1,4 @@
-import {I2C} from "../../../obniz/libs/io_peripherals/i2c";
+import {SPI} from "../../../obniz/libs/io_peripherals/spi";
 
 export interface ST7735SOptions {    
   sclk?: number;
@@ -6,7 +6,7 @@ export interface ST7735SOptions {
   cs?: number;
   res?: number;
   dc?: number;
-  i2c?: I2C
+  spi?: SPI
 }
 
 export type RGB16 = number;
@@ -192,7 +192,7 @@ export interface ST7735S {
     y1: number,
     gray: boolean
   ): void;
-  drawContext(context: CanvasRenderingContext2D, gray: boolean): void;
+  draw(context: CanvasRenderingContext2D, gray: boolean): void;
   setRotation(dir: number): void;
   setInversionOn(): void;
   setInversionOff(): void;

@@ -21582,7 +21582,7 @@ class ST7735S {
     this._writeBuffer(); //for flush
     this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
   }
-  drawContext(context, gray) {
+  draw(context, gray) {
     gray = gray || false;
     this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
   }
@@ -29745,7 +29745,7 @@ class MPU6886 extends i2cParts {
   }
 
   whoamiWait() {
-    return this.readWait(this.commands.whoami, 1);
+    return this.readWait(this.commands.whoami, 1)[0];
   }
 
   init() {
@@ -30060,7 +30060,7 @@ class SH200Q extends i2cParts {
   }
 
   whoamiWait() {
-    return this.readWait(this.commands.whoami, 1);
+    return this.readWait(this.commands.whoami, 1)[0];
   }
 
   async initWait() {
@@ -30856,7 +30856,7 @@ if (true) {
 class AXP192 {
   constructor() {
     this.requiredKeys = [];
-    this.keys = ['sda', 'scl'];
+    this.keys = ['sda', 'scl', 'i2c'];
   }
 
   static info() {

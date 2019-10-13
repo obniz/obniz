@@ -1,7 +1,7 @@
 class AXP192 {
   constructor() {
     this.requiredKeys = [];
-    this.keys = ['sda', 'scl'];
+    this.keys = ['sda', 'scl', 'i2c'];
   }
 
   static info() {

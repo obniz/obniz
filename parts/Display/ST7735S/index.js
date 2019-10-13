@@ -673,7 +673,7 @@ class ST7735S {
     this._writeBuffer(); //for flush
     this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
   }
-  drawContext(context, gray) {
+  draw(context, gray) {
     gray = gray || false;
     this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
   }

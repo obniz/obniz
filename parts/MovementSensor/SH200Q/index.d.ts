@@ -1,10 +1,10 @@
 import {I2cPartsOptions} from "../../i2cParts";
 
-export interface MPU6886Options  extends  I2cPartsOptions{}
+export interface SH200Q6Options  extends  I2cPartsOptions{}
 
 
-export interface MPU6886 {
-  whoamiWait() : Promise<number>;
+export interface SH200Q {
+  whoamiWait() :Promise<number>;
   setConfig(accel_range: number, gyro_range: number): void;
   getAllDataWait(): Promise<{
     accelerometer: {
