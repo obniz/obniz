@@ -705,7 +705,7 @@ class ST7735S {
     this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
   }
   raw(pixels) {
-    this.raw(0, 0, this.width, this.height, pixels);
+    this.rawBound16(0, 0, this.width, this.height, pixels);
   }
 
   _setPresetColor() {

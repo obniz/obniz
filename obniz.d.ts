@@ -114,6 +114,8 @@ import { DriveType } from './obniz/libs/io_peripherals/common';
 
 //biological
 import {Puls08M5stickcS, Puls08M5stickcSOptions} from "./parts/Biological/PULSE08-M5STICKC-S";
+import {ST7735S, ST7735SOptions} from "./parts/Display/ST7735S";
+import {AXP192, AXP192Options} from "./parts/Power/AXP192";
 
 interface WiredNameMap {
   // Light
@@ -133,6 +135,7 @@ interface WiredNameMap {
   'MatrixLED_MAX7219': MatrixLED_MAX7219;
   'SainSmartTFT18LCD': SainSmartTFT18LCD;
   'SharpMemoryTFT': SharpMemoryTFT;
+  'ST7735S': ST7735S;
   // Camera
   'ArduCAMMini': ArduCAMMini;
   'JpegSerialCam': JpegSerialCam;
@@ -144,6 +147,8 @@ interface WiredNameMap {
   'StepperMotor': StepperMotor;
   // Sound
   'Speaker': Speaker;
+  // Power
+  'AXP192': AXP192;
   // GasSensor
   'MQ2': MQ2;
   'MQ3': MQ3;
@@ -241,6 +246,7 @@ interface WiredNameOptionsMap {
   'MatrixLED_MAX7219': MatrixLED_MAX7219Options;
   'SainSmartTFT18LCD': SainSmartTFT18LCDOptions;
   'SharpMemoryTFT': SharpMemoryTFTOptions;
+  'ST7735S': ST7735SOptions;
   // Camera
   'ArduCAMMini': ArduCAMMiniOptions;
   'JpegSerialCam': JpegSerialCamOptions;
@@ -252,6 +258,8 @@ interface WiredNameOptionsMap {
   'StepperMotor': StepperMotorOptions;
   // Sound
   'Speaker': SpeakerOptions;
+  // Power
+  'AXP192': AXP192Options;
   // GasSensor
   'MQ2': MQ2Options;
   'MQ3': MQ3Options;

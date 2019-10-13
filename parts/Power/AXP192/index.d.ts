@@ -1,6 +1,9 @@
+import {I2C} from "../../../obniz/libs/io_peripherals/i2c";
+
 export interface AXP192Options {
-  scl: number;
-  sda: number;
+  scl?: number;
+  sda?: number;
+  i2c?: I2C
 }
 
 export interface AXP192 {

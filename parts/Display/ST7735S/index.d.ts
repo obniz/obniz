@@ -1,10 +1,12 @@
+import {I2C} from "../../../obniz/libs/io_peripherals/i2c";
 
 export interface ST7735SOptions {    
-  sclk: number;
-  mosi: number;
-  cs: number; 
-  res: number;
-  dc: number;  
+  sclk?: number;
+  mosi?: number;
+  cs?: number;
+  res?: number;
+  dc?: number;
+  i2c?: I2C
 }
 
 export type RGB16 = number;
