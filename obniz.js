@@ -20924,20 +20924,6 @@ class ST7735S {
     this.debugprint = false;
     this.obniz = obniz;
 
-    /* Default pin connections for M5StickC */
-    if (this.obniz.hw === 'esp32p') {
-      this.params.sclk =
-        typeof this.params.sclk !== 'undefined' ? this.params.sclk : 13;
-      this.params.mosi =
-        typeof this.params.mosi !== 'undefined' ? this.params.mosi : 15;
-      this.params.cs =
-        typeof this.params.cs !== 'undefined' ? this.params.cs : 5;
-      this.params.res =
-        typeof this.params.res !== 'undefined' ? this.params.res : 18;
-      this.params.dc =
-        typeof this.params.dc !== 'undefined' ? this.params.dc : 23;
-    }
-
     this.io_dc = obniz.getIO(this.params.dc);
     this.io_res = obniz.getIO(this.params.res);
     this.io_cs = obniz.getIO(this.params.cs);
