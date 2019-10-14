@@ -1,3 +1,7 @@
+
+
+### from .gitignore
+
 .DS_Store
 npm-debug.log
 node_modules
@@ -5,6 +9,8 @@ node_modules
 /nbproject/private/
 coverage
 test/**/*.html
+/test*.js
+/test*.html
 
 .idea/modules.xml
 .idea/obnizjs.iml
@@ -13,5 +19,20 @@ test/**/*.html
 temp
 .idea
 log
-/test*.js
-/test*.html
+
+
+### remove images
+*.jpeg
+*.jpg
+*.png
+*.gif
+/fritzing/
+/doc/
+/_tools/
+*.fzz
+
+
+### remove test
+/test/
+/realtest/
+/realtest_esp32/
