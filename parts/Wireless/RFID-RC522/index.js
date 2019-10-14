@@ -1,7 +1,6 @@
 /* ver 1.0
- * Copyright (c) 2019 Zjalic
- * Released under the MIT license.
- * see https://opensource.org/licenses/MIT
+ * 2019/10/14
+ * Created by Zjalic
  */
 
 /*jshint esversion: 8 */
