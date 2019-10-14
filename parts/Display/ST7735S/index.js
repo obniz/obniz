@@ -48,10 +48,12 @@ class ST7735S {
       );
     }
   }
+
   _deadSleep(waitMsec) {
     let startMsec = new Date();
     while (new Date() - startMsec < waitMsec);
   }
+
   _reset() {
     this.io_res.output(false);
     this._deadSleep(10);
@@ -65,20 +67,24 @@ class ST7735S {
     this.spi.write([cmd]);
     this.io_cs.output(true);
   }
+
   writeData(data) {
     this.io_dc.output(true);
     this.io_cs.output(false);
     this.spi.write(data);
     this.io_cs.output(true);
   }
+
   write(cmd, data) {
     if (data.length == 0) return;
     this.writeCommand(cmd);
     this.writeData(data);
   }
+
   async asyncwait() {
     return await this.spi.writeWait([0x00]);
   }
+
   _writeFlush() {
     while (this.writeBuffer.length > 0) {
       if (this.writeBuffer.length > 1024) {
@@ -91,6 +97,7 @@ class ST7735S {
       }
     }
   }
+
   _writeBuffer(data) {
     if (data && data.length > 0) {
       this.writeBuffer = this.writeBuffer.concat(data);
@@ -175,9 +182,11 @@ class ST7735S {
   setDisplayOn() {
     this.writeCommand(ST7735_DISPON);
   }
+
   setDisplayOff() {
     this.writeCommand(ST7735_DISPOFF);
   }
+
   setDisplay(on) {
     if (on == true) this.setDisplayOn();
     else this.setDisplayOff();
@@ -186,9 +195,11 @@ class ST7735S {
   setInversionOn() {
     this.writeCommand(ST7735_INVON);
   }
+
   setInversionOff() {
     this.writeCommand(ST7735_INVOFF);
   }
+
   setInversion(inversion) {
     if (inversion == true) this.setInversionOn();
     else this.setInversionOff();
@@ -266,6 +277,7 @@ class ST7735S {
   fillScreen(color) {
     this.fillRect(0, 0, this.width, this.height, color);
   }
+
   fillRect(x, y, w, h, color) {
     if (x >= this.width || y >= this.height) return;
     if (x + w - 1 >= this.width) w = this.width - x;
@@ -286,12 +298,14 @@ class ST7735S {
     this._writeBuffer(data);
     this._writeBuffer(); //for flush
   }
+
   drawRect(x, y, w, h, color) {
     this.drawHLine(x, y, w, color);
     this.drawHLine(x, y + h - 1, w, color);
     this.drawVLine(x, y, h, color);
     this.drawVLine(x + w - 1, y, h, color);
   }
+
   drawCircle(x0, y0, r, color) {
     let f = 1 - r;
     let ddF_x = 1;
@@ -324,6 +338,7 @@ class ST7735S {
       this.drawPixel(x0 - y, y0 - x, color);
     }
   }
+
   _drawCircleHelper(x0, y0, r, cornername, color) {
     let f = 1 - r;
     let ddF_x = 1;
@@ -358,10 +373,12 @@ class ST7735S {
       }
     }
   }
+
   fillCircle(x0, y0, r, color) {
     this.drawVLine(x0, y0 - r, 2 * r + 1, color);
     this._fillCircleHelper(x0, y0, r, 3, 0, color);
   }
+
   _fillCircleHelper(x0, y0, r, cornername, delta, color) {
     let f = 1 - r;
     let ddF_x = 1;
@@ -389,6 +406,7 @@ class ST7735S {
       }
     }
   }
+
   drawRoundRect(x, y, w, h, r, color) {
     this.drawHLine(x + r, y, w - 2 * r, color); // Top
     this.drawHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
@@ -400,17 +418,20 @@ class ST7735S {
     this._drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
     this._drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
   }
+
   fillRoundRect(x, y, w, h, r, color) {
     this.fillRect(x + r, y, w - 2 * r, h, color);
 
     this._fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
     this._fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
   }
+
   drawTriangle(x0, y0, x1, y1, x2, y2, color) {
     this.drawLine(x0, y0, x1, y1, color);
     this.drawLine(x1, y1, x2, y2, color);
     this.drawLine(x2, y2, x0, y0, color);
   }
+
   fillTriangle(x0, y0, x1, y1, x2, y2, color) {
     let a, b, y, last;
 
@@ -472,6 +493,7 @@ class ST7735S {
       this.drawHLine(a, y, b - a + 1, color);
     }
   }
+
   drawVLine(x, y, h, color) {
     if (x >= this.width || y >= this.height) return;
     if (y + h - 1 >= this.height) h = this.height - y;
@@ -487,6 +509,7 @@ class ST7735S {
     }
     this.writeData(data);
   }
+
   drawHLine(x, y, w, color) {
     if (x >= this.width || y >= this.height) return;
     if (x + w - 1 >= this.width) w = this.width - x;
@@ -502,6 +525,7 @@ class ST7735S {
     }
     this.writeData(data);
   }
+
   drawLine(x0, y0, x1, y1, color) {
     let step = Math.abs(y1 - y0) > Math.abs(x1 - x0);
     if (step) {
@@ -532,12 +556,14 @@ class ST7735S {
       }
     }
   }
+
   drawPixel(x, y, color) {
     if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
 
     this.setAddrWindow(x, y, x + 1, y + 1);
     this.writeData([color >> 8, color & 0xff]);
   }
+
   drawChar(x, y, ch, color, bg, size) {
     //  bg = bg || color;
     size = size || 1;
@@ -580,6 +606,7 @@ class ST7735S {
       }
     }
   }
+
   drawChar2(x, y, ch, color, bg, size) {
     //  bg = bg || color;
     size = size || 1;
@@ -609,6 +636,7 @@ class ST7735S {
     }
     this.rawBound16(x, y, 6 * size, 8 * size, pixels);
   }
+
   rawBound16(x, y, width, height, pixels) {
     let rgb = [];
     pixels.forEach(function(v) {
@@ -619,6 +647,7 @@ class ST7735S {
     this._writeBuffer(rgb);
     this._writeBuffer(); //for flush
   }
+
   drawString(x, y, str, color, bg, size, wrap) {
     //  bg = bg || color;
     size = size || 1;
@@ -641,6 +670,7 @@ class ST7735S {
     }
     return [x, y];
   }
+
   drawContextBound(context, x0, y0, width, height, x1, y1, gray) {
     x0 = x0 || 0;
     y0 = y0 || 0;
@@ -673,10 +703,16 @@ class ST7735S {
     this._writeBuffer(); //for flush
     this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
   }
-  draw(context, gray) {
+
+  drawContext(context, gray) {
     gray = gray || false;
     this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
   }
+
+  draw(context, gray) {
+    this.drawContext(context, gray);
+  }
+
   rawBound(x, y, width, height, pixels) {
     let rgb = [];
     pixels.forEach(function(v) {
@@ -690,6 +726,7 @@ class ST7735S {
     this._writeBuffer(); //for flush
     this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
   }
+
   raw(pixels) {
     this.rawBound16(0, 0, this.width, this.height, pixels);
   }

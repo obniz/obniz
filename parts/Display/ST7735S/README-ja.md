@@ -16,12 +16,13 @@ lcd = obniz.wired("ST7735S", {'sclk': 0, 'mosi':1, 'cs':2, 'res':3, 'dc':4});
 ```
 
 
-# Drawing API
+# 描画API
 
+このパーツライブラリはLCDに描画するための様々なAPIを提供します。はじめに各APIに共通する事項から説明します。  
 
-## `witdh` and `height` property
+## `witdh`と`height`プロパティ
 
-You can retrive `witdh`and`height` from property.
+LCDのサイズは`witdh`と`height`プロパティから得ることができます。
 
 ```javascript
 // Javascript Example
@@ -32,15 +33,12 @@ console.log(lcd.height); //160
 
 ## color16(r, g, b)
 
-Get 16bit color pallet for specified rgb. Each r,g,b msut be in 0 to 255.
-Result is 16bit format.
+描画APIは引数`color`に16bitRGB値を指定します。`color16()`は、引数に指定した各色8bit値(0〜255)(つまり24bitRGB値)から減色して16bitRGB値を生成します。
 ```
-16bitRGB　=　Red(r)：upper 5bit、Green(g)：lower 6bit、Blue(b)： lower 5it
+16bitRGB値　=　赤(r)：8bit値の上位5bit、緑(g)：8bit値の上位6bit、青(b)：8bit値の上位5bit
 ```
-
-Or you can specify preset 16bit RGB color.
-
-`pixel` for `raw()` and `rawBound()` is 24bit. But It down to 18bit RGB when drawing.
+また、引数`color`には後述する16bitRGB値プリセットカラーを指定することもできます。   
+なお、後述する`raw()`と`rawBound()`で指定する`pixel`データは24bitRGB値を指定しますが、実際の描画は18bitRGB値に減色してLCDに描画します。
 
 
 ```javascript
@@ -49,63 +47,66 @@ let red = lcd.color16(255, 0, 0); //16bitRGB for red
 lcd.drawRect(0, 0, lcd.width, lcd.height, red);
 ```
 
-# Common arguments
+# 共通的な引数の説明
 
-|Argument|Description|
+描画APIに共通する引数を以下に説明します。
+
+|引数|説明|
 |:---|:--|
-|x<br>y|`x`and`y` coordinate。|
-|width<br>height| dimention of drawing|
-|color|16bit color|
-|radius|radius on drawing circle|
-|round| corner radius|
-|backgroundColor| background color for drawing `dwarChar()`, `drawString()`. If you specify same color as `color`, then background color is transparant|
-|size| text size for `dwarChar()`, `drawString()`. 1-4. No smoothing.|
+|x<br>y|描画の起点となる座標を`x`と`y`で指定します。<br>2点を指定する関数の場合は`x0,y0`と`x1,y1`、3点を指定する関数の場合は`x0,y0`と`x1,y1`と`x2,y2`で指定します。|
+|width<br>height|描画する図形の幅と高さを`width`と`height`で指定します。描画APIによっては`width`のみ、`height`のみ指定する関数もあります。|
+|color|描画する色を16bitRGB値で指定します。後述する16bitRGB値プリセットカラーを指定することもできます。|
+|radius|円を描画する場合の半径を指定します。|
+|round|角丸矩形を描画する場合の角の丸みの半径を指定します。|
+|backgroundColor|`dwarChar()`, `drawString()`において、描画する文字の背景色を指定します。`color`と同じ値を指定した場合は、背景を描画しません。つまり、透過モードとなります。|
+|size|`dwarChar()`, `drawString()`において、描画する文字サイズの倍率を指定します。`1`：1倍（横5ピクセルx縦7ピクセルの文字）、`2`：2倍（横10ピクセルx縦14ピクセルの文字）、`3`：3倍、`4`：4倍、・・・。スムージングではなく、縦横単純にピクセルを等倍した文字を描画します。|
 |||
 
-# Drawing API
+# 描画API
 
 ## fillScreen(color)
 
-Fill whole screen with specified color.
+LCD全体を`color`で塗りつぶします。次の`fillRect(0, 0, lcd.width, lcd.height, color)`と等価です。
+
 
 ## drawRect(x, y, width, height, color)<br>fillRect(x, y, width, height, color)
 
-Draw a rectangle. Regarding `x`, `y`, `width`, `height` and `color`.
-This draw only border. `fillRect()` will Fill a rectangle.
+`drawRect()`は引数`x`, `y`, `width`, `height`に指定した矩形を`color`で描画します。
+`fillRect()`は塗りつぶします。
+
 
 ## drawRoundRect(x, y, width, height, round, color)<br>fillRoundRect(x, y, width, height, round, color)
 
-Draw a rectangle with corner radius. Regarding `x`, `y`, `width`, `height` and `color` and `round`.
-This draw only border. `fillRoundRect()` will Fill a rectangle.
+`drawRoundRect()`は引数`x`, `y`, `width`, `height`, `round`に指定した角丸矩形を`color`で描画します。
+`fillRoundRect()`は塗りつぶします。
 
 
 ## drawCircle(x, y, radius, color)<br>fillCircle(x, y, radius, color)
   
-Draw a circle. Regarding `x`, `y` and `radius` and `color`.
-`fillCircle()` will fill a circle.
+`drawCircle()`は引数`x`, `y`を中心として半径`radius`の円を`color`で描画します。
+`fillCircle()`は塗りつぶします。
 
 
 ## drawTriangle(x0, y0, x1, y1, x2, y2, color)<br>fillTriangle(x0, y0, x1, y1, x2, y2, color)
   
-`drawTriangle()` will draw a triangle regarding three points `x0`, `y0`,`x1`, `y1`,`x2`, `y2` with `color`.
-`fillTriangle()` will fill a triangle.
+`drawTriangle()`は引数で指定した座標3点`x0`, `y0`と`x1`, `y1`と`x2`, `y2`を結ぶ三角形を`color`で描画します。
+`fillTriangle()`は塗りつぶします。
 
 
 ## drawVLine(x, y, height, color)<br>drawHLine(x, y, width, color)
   
-`drawVLine()` will draw a vertical line `x`, `y` to `height`
-`drawHLine()` will draw a horizonal line `x`, `y` to `width` with color.
-Each function works faster than `drawLine()`.
+`drawVLine()`は引数`x`, `y`で指定した座標点から高さ`height`の垂直線を`color`で描画します。  
+`drawHLine()`は引数`x`, `y`で指定した座標点から幅`width`の水平線を`color`で描画します。これらの関数は次の`drawLine()`より高速に描画します。
 
 
 ## drawLine(x0, y0, x1, y1, color)
   
-`drawLine()` will draw a line `x0`, `y0` to `x1`, `y1` with `color`.
+`drawLine()`は引数で指定した座標2点`x0`, `y0`と`x1`, `y1`を`color`で直線を描画します。
 
 
 ```javascript
 // Javascript Example
-
+:  :
 // 16bit-RGB color value
 const BLACK   = 0x0000;
 const BLUE    = 0x001F;
@@ -137,12 +138,12 @@ lcd.drawLine(10, 10, lcd.width - 10, lcd.height - 10, BLACK);
 
 ## drawChar(x, y, char, color, backgroundColor {, size })<br>drawString(x, y, string, color, backgroundColor {, size {, wrap }})
   
-`drawChar()` draw ACII single character at`x`, `y` with `char` specified with `color` and `backgroundColor` and `size`. 
+`drawChar()`は引数`x`, `y`で指定した座標点に引数`char`で指定したASCII文字を`color`で描画します。文字の背景色は`backgroundColor`で指定します。文字サイズを引数`size`で指定します。`size`を省略すると`1`と解釈します。
 
-`drawString()` draw `string`.
-
-`wrap=true` will automatically use new line when overflow.
-And final coordinate wil be returnd.
+`drawString()`は文字列`string`を描画します。1文字づつ1文字分の横幅ピクセル数を`x`に加えながら、`drawChar()`を呼び出して描画します。  
+引数`wrap`が`true`の場合は、`x`が`width`を超えた場合に、`y`に1文字分の縦幅ピクセル数を加え、`x=0`にします（つまり、改行します）。また、文字列中に改行コード`'\n'`が出現した場合は`wrap`の値によらず改行します。  
+このように`drawString()`内では`x`と`y`を更新しながら文字列を描画して、最後の文字を描画し終わった後の`[x, y]`をリターンします。つまり、戻り値の`x`, `y`を再使用することで、`drawString()`を繰り返し呼ぶことができます。   
+`size`を省略すると`1`と解釈します。`wrap`を省略すると`false`と解釈します。
 
 ```javascript
 // Javascript Example
@@ -156,24 +157,19 @@ var x = 7, y = 32;
 [x, y] = lcd.drawString(x, y, 'This is 2nd draw.', red, red, 2, true);
 ```
 
-If you want to draw not ascii string. Use [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) and transfer by using `drawContextBound()` and `drawContext()`.
+
+文字フォントを指定したり漢字や他言語などASCII文字以外を描画する場合は、一旦[Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)に描画してから次の`drawContextBound()`や`drawContext()`を使用してLCDに転送してください。  
 
 
 ## drawContextBound(context, x0, y0, width, height, x1, y1)<br>drawContext(context)
 
-`drawContextBound()` and `drawContext()` use `canvas.context(2D)` to draw a LCD.
-
+`drawContextBound()`と`drawContext()`は`canvas.context(2D)`に描画した内容をLCDに転送します。転送元(**context**)と転送先(**LCD**)の関係を下図に示します。
 
 ![転送元/先の関係](./drawBound.png)
 
-
-Specify `context` to `canvas.context` and region `x0`, `y0`, `width`, `height`.
-And destination is `x1`, `y1`. 
-
-`drawContext()`is equal to `drawContextBound(context, 0, 0, lcd.width, lcd.height, 0, 0)`.
-
-Drawing speed depends on network. At minimum `drawContext()` takes around 300 msec.
-
+転送元の`canvas.context`を引数`context`に、転送範囲を引数`x0`, `y0`, `width`, `height`に指定し、転送先のLCDの座標を引数`x1`, `y1`に指定します。`drawContextBound()`と`drawContext()`は`context`の内容を18bitRGB値に減色したカラーで描画します。  
+`drawContext()`は`drawContextBound(context, 0, 0, lcd.width, lcd.height, 0, 0)`と等価です。  
+ネットワーク環境にもよりますが`drawContext()`で約300ミリ秒を要します。なお、描画性能はネットワーク環境にも依存します。
 
 ```javascript
 // Javascript
@@ -185,16 +181,16 @@ context.fillRect(0, 0, lcd.width, lcd.height);
 lcd.drawContext(context, false);
 ```
 
-# Other APIs
+# その他のAPI
 
 ## setRotation(dir)
 
-Set LCD direction by specifing 0 to 3. Default is 0.
-This function doesn't affect current display.
+LCDの向きを`0`から`3`で指定します。初期化後は `0` (正位)です。
+この設定後の描画から有効となり、描画済みの内容の向きは変わりません。
 
 ![](./rotate60.png)
 
-After calling this, `witdh` and `height` will be updated. `x=0, y=0` points is like this image.
+指定した向きに応じて`witdh`と`height`プロパティも再設定されます。また、描画の原点`{x:0, y:0}`は図の<font color="Red">赤点</font>の位置、つまり、向きに応じた左上となります。
 
 ```javascript
 // Javascript Example
@@ -209,40 +205,31 @@ for (let n = 0; n < 4; n++) {
 
 ## setInversionOn()<br>setInversionOff()<br>setInversion(inversion)
 
-Invert a displayed color.
-
-`setInversionOn()`: Invert
-
-`setInversionOff()`: Not Invert
-
-`setInversion(inversion)`: inversion=true is Invert.
+LCD表示の色反転を制御します。LCD自体の機能です。  
+`setInversionOn()`：LCD表示を色反転します。   
+`setInversionOff()`：LCD表示の色反転を戻します。  
+`setInversion(inversion)`：引数`inversion`が`true`の場合、LCD表示を色反転します。`false`の場合、LCD表示の色反転を戻します。
 
 
 ## rawBound(x, y, width, height, [pixel0, pixel1, pixel2, ...])<br>raw([pixel0, pixel1, pixel2, ...])
 
-`rawBound()` directly draw pixels.
+`rawBound()`は引数`x`, `y`, `width`, `height`に指定したLCDの範囲に`pixel0`, `pixel1`, `pixel2`, `...`の順に描画します。各ピクセルデータは24bitRGB値の配列を指定します。実際の描画は18bitRGB値に減色されます。  
+`raw()`は`rawBound(0, 0, lcd.width, lcd.height, [pixel0, pixel1, pixel2, ...])`と等価でLCD全体を描画します。  
+これらの関数は`drawPixel()`の繰り返しより遥かに高速で描画できますが、大量のデータ転送を必要とするため、`raw()`で約800ミリ秒を要します。なお、描画性能はネットワーク環境にも依存します。   
+<font color="Red">注意）</font>`pixel[]`は24bitRGBカラー値を指定するため、後述の16bitRGB値プリセットカラーを指定すると色が異なります。
 
-Regions is `x`, `y`, `width`, `height`.
-
-Pixels are `pixel0`, `pixel1`, `pixel2`, `...`. Each pixel is 24bit RGB color.
-
-`raw()` is equal to `rawBound(0, 0, lcd.width, lcd.height, [pixel0, pixel1, pixel2, ...])`.
-
-Each function will draw faster than `drawPixel()`. But it require more data transfer. Sigle calling of `raw()` takes 800 msec.
-
-<font color="Red">Attention</font> `pixel[]` is 24bit RGB color. If you use 16bit color, then strange color you will see.
-
-Single calling of `raw()` tansfer data is 60Kbyte( 128 x 160 x 3byte（18bitcolor) )
+`raw()`1回当たりのLCDへの転送データ量：60Kbyte ≒ 128 x 160 x 3byte（18bitカラー値）
 
 
-## Preset Color（16bitRGB）
+## プリセットカラー（16bitRGB値）
 
-Preset colors.
-This color can be used for `color` on each function.
+このライブラリで提供する16bitRGB値プリセットカラーを下表に示します。各描画APIの`color`引数に使用することができます。なお、プリセットカラーは24bitRGB値から16bitRGB値を生成しているため、名前は異なるが値(色)が同じ場合があります。
 
 ```javascript
 // Javascript Example
+:  :                 引数colorに「xxx.color.プリセット名」で指定します。
 lcd.drawLine(0, 0, lcd.width, lcd.height, lcd.color.AliceBlue);
+:  :
 ```
 
 | preset name  | red | green | blue | sample | 
