@@ -1,4 +1,4 @@
-import * as Obniz from '../../obniz';
+import Obniz from '../../obniz';
 
 const OBNIZ_ID = '1234-5678';
 
@@ -74,7 +74,7 @@ class DisplayTest {
     obniz.onconnect = async () => {
       // 1. load existing
       const canvas1 = document.getElementById('canvas') as HTMLCanvasElement;
-      const ctx1 = canvas1.getContext('2d');
+      const ctx1 = canvas1.getContext('2d')!;
       obniz.display.draw(ctx1);
 
       // 2. create new canvas dom and load it.
@@ -180,7 +180,7 @@ class I2CTest {
   write() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000, pull: null });
+      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
       obniz.i2c0.write(0x50, [0x00, 0x00, 0x12]);
     };
   }
@@ -188,7 +188,7 @@ class I2CTest {
   readWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000, pull: null });
+      obniz.i2c0.start({ mode: 'master', sda: 2, scl: 3, clock: 400000 });
       var ret = await obniz.i2c0.readWait(0x50, 1);
       console.log('read ' + ret);
     };
@@ -292,7 +292,7 @@ class IOTest {
       obniz.io.animation('animation-1', 'loop', [
         {
           duration: 10,
-          state: function(index) {
+          state: function(index: number) {
             // index = 0
             obniz.io0.output(false);
             obniz.io1.output(true);
@@ -300,7 +300,7 @@ class IOTest {
         },
         {
           duration: 10,
-          state: function(index) {
+          state: function(index: number) {
             // index = 1
             obniz.io0.output(true);
             obniz.io1.output(false);
@@ -317,13 +317,13 @@ class IOTest {
         [
           {
             duration: 1000,
-            state: function(index) {
+            state: function(index: number) {
               obniz.io0.output(true);
             }
           },
           {
             duration: 1000,
-            state: function(index) {
+            state: function(index: number) {
               obniz.io0.output(false);
             }
           }
@@ -430,7 +430,7 @@ class SPITest {
       console.log('received: ' + ret);
 
       // drive and pull is optional
-      obniz.spi0.start({ mode: 'master', clk: 0, mosi: 1, miso: 2, frequency: 1000000, drive: '5v', pull: null });
+      obniz.spi0.start({ mode: 'master', clk: 0, mosi: 1, miso: 2, frequency: 1000000, drive: '5v'});
     };
   }
 

@@ -119,11 +119,11 @@ describe('3-pwm', function() {
   //   pwm.end();
   // });
 
-  it('pwm with open-drain(no pullup)', async function() {
+  it.skip('pwm with open-drain(no pullup)', async function() {
     const pwm = checkBoard.getFreePwm();
     pwm.start({ io: check_io[0].board_io, drive: 'open-drain' });
     pwm.freq(1000);
-    pwm.duty(99);
+    pwm.duty(40);
 
     await checkBoard.pingWait();
     await checkBoard.wait(500);

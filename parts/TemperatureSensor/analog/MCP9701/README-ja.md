@@ -3,8 +3,6 @@
 
 
 
-
-
 ![photo of AnalogTemperatureSensor](./wired.png)
 
 
@@ -13,7 +11,7 @@
 obniz Boardに温度センサをつなぎます。
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("MCP9701",  { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("MCP9701", { gnd:0 , output:1, vcc:2});
 ```
 
 ## onchange
@@ -21,9 +19,9 @@ var tempsens = obniz.wired("MCP9701",  { gnd:0 , output:1, vcc:2});
 温度は摂氏で返されます。
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("MCP9701",  { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("MCP9701", { gnd:0 , output:1, vcc:2});
 tempsens.onchange = function(temp){
-  console.log(temp);
+console.log(temp);
 };
 ```
 
@@ -35,8 +33,7 @@ tempsens.onchange = function(temp){
 
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("MCP9701",   { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("MCP9701", { gnd:0 , output:1, vcc:2});
 var temp = await tempsens.getWait();
 console.log(temp);
-```
- 
+``` 

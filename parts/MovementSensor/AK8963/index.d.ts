@@ -1,3 +1,4 @@
+import { I2C } from '../../../obniz/libs/io_peripherals/i2c';
 export interface AK8963Options {
 	gnd?: number;
 	vcc?: number;

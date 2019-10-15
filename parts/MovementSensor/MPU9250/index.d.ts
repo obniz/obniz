@@ -33,17 +33,17 @@ export interface MPU9250 {
 		x: number,
 		y: number,
 		z: number,
-	},>;
+	}>;
 
 	getAccelerometerWait(): Promise<{
 		x: number,
 		y: number,
 		z: number,
-	},>;
+	}>;
 
 	getGyroscopeWait(): Promise<{
 		x: number,
 		y: number,
 		z: number,
-	},>;
+	}>;
 }

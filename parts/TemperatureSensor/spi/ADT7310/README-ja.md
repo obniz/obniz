@@ -21,4 +21,3 @@ var sensor = obniz.wired("ADT7310", {vcc:0, gnd:1, din:2, dout:3, sclk:4});
 var temp = await sensor.getTempWait();
 console.log('temperature:' + temp);
 ```
-

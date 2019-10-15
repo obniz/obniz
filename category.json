@@ -396,6 +396,10 @@
           "store": {}
         },
         {
+          "name": "MPU6886",
+          "store": {}
+        },
+        {
           "name": "AK8963",
           "store": {}
         }
@@ -467,6 +471,16 @@
       ]
     },
     {
+      "name": "Biological Sensor",
+      "image_url": "https://obniz.io/sdk/parts/PULSE08-M5STICKC-S/image.jpg",
+      "parts": [
+        {
+          "name": "PULSE08-M5STICKC-S",
+          "store": {}
+        }
+      ]
+    },
+    {
       "name": "Temperature Sensor",
       "image_url": "https://obniz.io/sdk/parts/BME280/image.jpg",
       "parts": [
@@ -530,6 +544,10 @@
             "switchscience" : "https://www.switch-science.com/catalog/3395/",
             "adafruit": "https://www.adafruit.com/product/3538"
           }
+        },
+        {
+          "name": "DHT12",
+          "store": {}
         },
         {
           "name": "D6T44L",

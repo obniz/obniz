@@ -177,6 +177,10 @@ var map = {
 	"./request/system/reset.yml": "./json_schema/request/system/reset.yml",
 	"./request/system/self_check.yml": "./json_schema/request/system/self_check.yml",
 	"./request/system/wait.yml": "./json_schema/request/system/wait.yml",
+	"./request/tcp/connect.yml": "./json_schema/request/tcp/connect.yml",
+	"./request/tcp/disconnect.yml": "./json_schema/request/tcp/disconnect.yml",
+	"./request/tcp/index.yml": "./json_schema/request/tcp/index.yml",
+	"./request/tcp/write.yml": "./json_schema/request/tcp/write.yml",
 	"./request/uart/deinit.yml": "./json_schema/request/uart/deinit.yml",
 	"./request/uart/index.yml": "./json_schema/request/uart/index.yml",
 	"./request/uart/init.yml": "./json_schema/request/uart/init.yml",
@@ -237,6 +241,8 @@ var map = {
 	"./response/switch/index.yml": "./json_schema/response/switch/index.yml",
 	"./response/system/index.yml": "./json_schema/response/system/index.yml",
 	"./response/system/pong.yml": "./json_schema/response/system/pong.yml",
+	"./response/tcp/index.yml": "./json_schema/response/tcp/index.yml",
+	"./response/tcp/read.yml": "./json_schema/response/tcp/read.yml",
 	"./response/uart/index.yml": "./json_schema/response/uart/index.yml",
 	"./response/uart/receive.yml": "./json_schema/response/uart/receive.yml",
 	"./response/ws/index.yml": "./json_schema/response/ws/index.yml",
@@ -606,7 +612,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c0$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"}}}}
 
 /***/ }),
 
@@ -866,6 +872,34 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/wait","type":"object","required":["wait"],"properties":{"wait":{"type":"integer"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/tcp/connect.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/connect","type":"object","required":["connect"],"properties":{"connect":{"type":"object","required":["port","domain"],"additionalProperties":false,"properties":{"port":{"type":"integer","minimum":0,"maximum":65535},"domain":{"type":"string","default":"obniz.io","maxLength":30}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/tcp/disconnect.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/disconnect","type":"object","required":["disconnect"],"properties":{"disconnect":{"type":"boolean","additionalProperties":false}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/tcp/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp","basePath":"tcp0","anyOf":[{"$ref":"/request/tcp/connect"},{"$ref":"/request/tcp/disconnect"},{"$ref":"/request/tcp/write"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/tcp/write.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/write","type":"object","required":["write"],"properties":{"write":{"type":"object","required":["data"],"additionalProperties":false,"properties":{"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1173,7 +1207,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c0$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"}}}}
 
 /***/ }),
 
@@ -1286,6 +1320,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system/pong","desccription":"pong response with same key of ping request","type":"object","required":["pong"],"properties":{"pong":{"type":"object","required":["key"],"properties":{"key":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./json_schema/response/tcp/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp","basePath":"tcp0","anyOf":[{"$ref":"/response/tcp/read"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/tcp/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/tcp/read","desccription":"value changes are always notified.","type":"object","required":["read"],"properties":{"read":{"type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -7613,6 +7661,8 @@ const PeripheralPWM = __webpack_require__("./obniz/libs/io_peripherals/pwm.js");
 const PeripheralSPI = __webpack_require__("./obniz/libs/io_peripherals/spi.js");
 const PeripheralUART = __webpack_require__("./obniz/libs/io_peripherals/uart.js");
 
+const TCP = __webpack_require__("./obniz/libs/protocol/tcp.js");
+
 const ObnizParts = __webpack_require__("./obniz/ObnizParts.js");
 
 const HW = __webpack_require__("./obniz/libs/hw/index.js");
@@ -7648,6 +7698,7 @@ module.exports = class ObnizComponents extends ObnizParts {
 
     const hw_peripherals = hwDefinition.peripherals;
     const hw_embeds = hwDefinition.embeds;
+    const hw_protocol = hwDefinition.protocol;
 
     const shared_map = {
       io: PeripheralDirective,
@@ -7670,29 +7721,51 @@ module.exports = class ObnizComponents extends ObnizParts {
       ble: ObnizBLE,
     };
 
+    const protocol_map = {
+      tcp: TCP,
+    };
+
     for (const key in shared_map) {
       const Class = shared_map[key];
       this[key] = new Class(this);
       this._allComponentKeys.push(key);
     }
 
-    for (const key in peripheral_map) {
-      if (hw_peripherals[key]) {
-        const units = hw_peripherals[key].units;
-        const Class = peripheral_map[key];
-        for (let unitId in units) {
-          unitId = parseInt(unitId);
-          this[key + unitId] = new Class(this, unitId);
-          this._allComponentKeys.push(key + unitId);
+    if (hw_peripherals) {
+      for (const key in peripheral_map) {
+        if (hw_peripherals[key]) {
+          const units = hw_peripherals[key].units;
+          const Class = peripheral_map[key];
+          for (let unitId in units) {
+            unitId = parseInt(unitId);
+            this[key + unitId] = new Class(this, unitId);
+            this._allComponentKeys.push(key + unitId);
+          }
         }
       }
     }
 
-    for (const key in embeds_map) {
-      if (hw_embeds[key]) {
-        const Class = embeds_map[key];
-        this[key] = new Class(this);
-        this._allComponentKeys.push(key);
+    if (hw_embeds) {
+      for (const key in embeds_map) {
+        if (hw_embeds[key]) {
+          const Class = embeds_map[key];
+          this[key] = new Class(this);
+          this._allComponentKeys.push(key);
+        }
+      }
+    }
+
+    if (hw_protocol) {
+      for (const key in protocol_map) {
+        if (hw_protocol[key]) {
+          const units = hw_protocol[key].units;
+          const Class = protocol_map[key];
+          for (let unitId in units) {
+            unitId = parseInt(unitId);
+            this[key + unitId] = new Class(this, unitId);
+            this._allComponentKeys.push(key + unitId);
+          }
+        }
       }
     }
   }
@@ -7829,6 +7902,10 @@ module.exports = class ObnizComponents extends ObnizParts {
 
   getFreeUart() {
     return this._getFreePeripheralUnit('uart');
+  }
+
+  getFreeTcp() {
+    return this._getFreePeripheralUnit('tcp');
   }
 };
 
@@ -8213,62 +8290,67 @@ module.exports = class ObnizConnection {
   }
 
   send(obj, options) {
-    if (!obj || typeof obj !== 'object') {
-      console.log('obnizjs. didnt send ', obj);
-      return;
-    }
-    if (Array.isArray(obj)) {
-      for (let i = 0; i < obj.length; i++) {
-        this.send(obj[i]);
+    try {
+      if (!obj || typeof obj !== 'object') {
+        console.log('obnizjs. didnt send ', obj);
+        return;
       }
-      return;
-    }
-    if (this.sendPool) {
-      this.sendPool.push(obj);
-      return;
-    }
-
-    let sendData = JSON.stringify([obj]);
-    if (this.debugprint) {
-      this.print_debug('send: ' + sendData);
-    }
-    /* compress */
-    if (
-      this.wscommand &&
-      (typeof options !== 'object' || options.local_connect !== false)
-    ) {
-      let compressed;
-      try {
-        compressed = this.wscommand.compress(
-          this.wscommands,
-          JSON.parse(sendData)[0]
-        );
-        if (compressed) {
-          sendData = compressed;
-          if (this.debugprintBinary) {
-            console.log(
-              'Obniz: binalized: ' + new Uint8Array(compressed).toString()
-            );
-          }
+      if (Array.isArray(obj)) {
+        for (let i = 0; i < obj.length; i++) {
+          this.send(obj[i]);
         }
-      } catch (e) {
-        this.error('------ errored json -------');
-        this.error(sendData);
-        throw e;
+        return;
       }
-    }
+      if (this.sendPool) {
+        this.sendPool.push(obj);
+        return;
+      }
 
-    /* queue sending */
-    if (typeof sendData === 'string') {
-      this._drainQueued();
-      this._sendRouted(sendData);
-    } else {
-      if (this._sendQueue) {
-        this._sendQueue.push(sendData);
-      } else {
-        this._sendQueue = [sendData];
-        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+      let sendData = JSON.stringify([obj]);
+      if (this.debugprint) {
+        this.print_debug('send: ' + sendData);
       }
+
+      /* compress */
+      if (
+        this.wscommand &&
+        (typeof options !== 'object' || options.local_connect !== false)
+      ) {
+        let compressed;
+        try {
+          compressed = this.wscommand.compress(
+            this.wscommands,
+            JSON.parse(sendData)[0]
+          );
+          if (compressed) {
+            sendData = compressed;
+            if (this.debugprintBinary) {
+              console.log(
+                'Obniz: binalized: ' + new Uint8Array(compressed).toString()
+              );
+            }
+          }
+        } catch (e) {
+          this.error('------ errored json -------');
+          this.error(sendData);
+          throw e;
+        }
+      }
+
+      /* queue sending */
+      if (typeof sendData === 'string') {
+        this._drainQueued();
+        this._sendRouted(sendData);
+      } else {
+        if (this._sendQueue) {
+          this._sendQueue.push(sendData);
+        } else {
+          this._sendQueue = [sendData];
+          this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+        }
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -11379,10 +11461,17 @@ module.exports = ObnizSwitch;
 
 /***/ }),
 
+/***/ "./obniz/libs/hw/esp32p.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+
+/***/ }),
+
 /***/ "./obniz/libs/hw/esp32w.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}}}");
+module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -11397,6 +11486,8 @@ module.exports = class HW {
       return __webpack_require__("./obniz/libs/hw/obnizb1.json");
     } else if (hw === 'esp32w') {
       return __webpack_require__("./obniz/libs/hw/esp32w.json");
+    } else if (hw === 'esp32p') {
+      return __webpack_require__("./obniz/libs/hw/esp32p.json");
     }
     return undefined;
   }
@@ -11408,7 +11499,7 @@ module.exports = class HW {
 /***/ "./obniz/libs/hw/obnizb1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}}}");
+module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -12601,6 +12692,150 @@ class ObnizMeasure {
 }
 module.exports = ObnizMeasure;
 
+
+/***/ }),
+
+/***/ "./obniz/libs/protocol/tcp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {const isNode = typeof window === 'undefined';
+const semver = __webpack_require__("./node_modules/semver/semver.js");
+
+class Tcp {
+  constructor(Obniz, id) {
+    this.Obniz = Obniz;
+    this.id = id;
+    this._reset();
+  }
+
+  _reset() {
+    this.connectObservers = [];
+    this.readObservers = [];
+    this.used = false;
+  }
+
+  _addConnectObserver(callback) {
+    if (callback) {
+      this.connectObservers.push(callback);
+    }
+  }
+
+  _addReadObserver(callback) {
+    if (callback) {
+      this.readObservers.push(callback);
+    }
+  }
+
+  connectWait(port, domain) {
+    if (semver.lt(this.Obniz.firmware_ver, '2.1.0')) {
+      throw new Error(`Please update obniz firmware >= 2.1.0`);
+    }
+
+    if (port < 0 || port > 65535) {
+      throw new Error(`tcp${this.id} is invalid port`);
+    }
+    if (domain.length > 30) {
+      throw new Error(`tcp${this.id} is domain length over`);
+    }
+
+    this.connectObservers = [];
+    this.used = true;
+    return new Promise((resolve, reject) => {
+      this._addConnectObserver(resolve);
+      let obj = {};
+      obj['tcp' + this.id] = {
+        connect: {
+          port: port,
+          domain: domain,
+        },
+      };
+      this.Obniz.send(obj);
+    });
+  }
+
+  close() {
+    let obj = {};
+    obj['tcp' + this.id] = {
+      disconnect: true,
+    };
+    this.Obniz.send(obj);
+  }
+
+  write(data) {
+    if (!this.used) {
+      throw new Error(`tcp${this.id} is not started`);
+    }
+    if (data === undefined) {
+      return;
+    }
+    if (typeof data === 'number') {
+      data = [data];
+    }
+
+    let send_data = null;
+    if (isNode && data instanceof Buffer) {
+      send_data = [...data];
+    } else if (data.constructor === Array) {
+      send_data = data;
+    } else if (typeof data === 'string') {
+      const buf = Buffer.from(data);
+      send_data = [...buf];
+    }
+    let obj = {};
+    obj['tcp' + this.id] = {
+      write: {
+        data: send_data,
+      },
+    };
+    this.Obniz.send(obj);
+  }
+
+  readWait() {
+    return new Promise((resolve, reject) => {
+      this._addReadObserver(resolve);
+    });
+  }
+
+  end() {
+    this.close();
+  }
+
+  notified(obj) {
+    if (obj.connection) {
+      if (this.onconnection) {
+        this.onconnection(obj.connection.connected);
+      }
+      if (!obj.connection.connected) {
+        this._reset();
+      }
+    } else if (obj.read) {
+      if (this.onreceive) {
+        this.onreceive(obj.read.data);
+      }
+      let callback = this.readObservers.shift();
+      if (callback) {
+        callback(obj.read.data);
+      }
+    } else if (obj.connect) {
+      if (obj.connect.code !== 0) {
+        if (this.onerror) {
+          this.onerror(obj.connect);
+        }
+      }
+      let callback = this.connectObservers.shift();
+      if (callback) {
+        callback(obj.connect.code);
+      }
+    }
+  }
+
+  isUsed() {
+    return this.used;
+  }
+}
+module.exports = Tcp;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -17821,6 +18056,147 @@ module.exports = WSCommand_System;
 
 /***/ }),
 
+/***/ "./obniz/libs/wscommand/WSCommand_Tcp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
+
+class WSCommand_Tcp extends WSCommand {
+  constructor() {
+    super();
+    this.module = 13;
+    this._MaxPort = 8;
+
+    this._CommandConnect = 0;
+    this._CommandClose = 1;
+    //Notification
+    this._CommandConnection = 2;
+    this._CommandWrite = 3;
+    //Notification
+    this._CommandRead = 4;
+  }
+
+  connect(params, index) {
+    let domain = new Uint8Array(Buffer.from(params.connect.domain, 'utf8'));
+    let buf = new Uint8Array(domain.length + 3);
+    buf[0] = index;
+    buf[1] =  true && params.connect.port >> 8;
+    buf[2] =  true && params.connect.port;
+    for (let i = 0; i < domain.length; i++) {
+      buf[3 + i] = domain[i];
+    }
+    this.sendCommand(this._CommandConnect, buf);
+  }
+
+  disconnect(params, index) {
+    let buf = new Uint8Array([index]);
+    this.sendCommand(this._CommandClose, buf);
+  }
+
+  write(params, index) {
+    let buf = new Uint8Array(params.write.data.length + 1);
+    buf[0] = index;
+    for (let i = 0; i < params.write.data.length; i++) {
+      buf[1 + i] = params.write.data[i];
+    }
+    this.sendCommand(this._CommandWrite, buf);
+  }
+
+  parseFromJson(json) {
+    for (let i = 0; i < this._MaxPort; i++) {
+      let module = json['tcp' + i];
+      if (module === undefined) {
+        continue;
+      }
+
+      let schemaData = [
+        { uri: '/request/tcp/connect', onValid: this.connect },
+        { uri: '/request/tcp/disconnect', onValid: this.disconnect },
+        { uri: '/request/tcp/write', onValid: this.write },
+      ];
+      let res = this.validateCommandSchema(schemaData, module, 'tcp' + i, i);
+
+      if (res.valid === 0) {
+        if (res.invalidButLike.length > 0) {
+          throw new Error(res.invalidButLike[0].message);
+        } else {
+          throw new this.WSCommandNotFoundError(`[tcp${i}]unknown command`);
+        }
+      }
+    }
+  }
+
+  notifyFromBinary(objToSend, func, payload) {
+    switch (func) {
+      case this._CommandConnect: {
+        let state = 'Error';
+        switch (payload[1]) {
+          case 0:
+            state = 'ok';
+            break;
+          case 1:
+            state = 'Port Used';
+            break;
+          case 2:
+            state = 'Port Area Error';
+            break;
+          case 3:
+            state = 'Lookup Error';
+            break;
+          case 4:
+            state = 'Error';
+            break;
+        }
+        let module_index = payload[0];
+        objToSend['tcp' + module_index] = {
+          connect: {
+            message: state,
+            code: payload[1],
+          },
+        };
+        break;
+      }
+      case this._CommandConnection:
+        if (payload.length === 2 && payload[1] === 0) {
+          let module_index = payload[0];
+          objToSend['tcp' + module_index] = {
+            connection: {
+              connected: true,
+            },
+          };
+        } else {
+          let module_index = payload[0];
+          objToSend['tcp' + module_index] = {
+            connection: {
+              connected: false,
+            },
+          };
+        }
+        break;
+      case this._CommandRead:
+        if (payload.length >= 1) {
+          let module_index = payload[0];
+          let arr = new Array(payload.byteLength - 1);
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] = payload[i + 1];
+          }
+          objToSend['tcp' + module_index] = {
+            read: {
+              data: arr,
+            },
+          };
+        }
+        break;
+    }
+  }
+}
+
+module.exports = WSCommand_Tcp;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./obniz/libs/wscommand/WSCommand_UART.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18000,18 +18376,19 @@ const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
 
 /* eslint-disable */
 WSCommand.addCommandClass('WSCommand_System', __webpack_require__("./obniz/libs/wscommand/WSCommand_System.js"));
-WSCommand.addCommandClass('WSCommand_Directive',  __webpack_require__("./obniz/libs/wscommand/WSCommand_Directive.js"));
+WSCommand.addCommandClass('WSCommand_Directive', __webpack_require__("./obniz/libs/wscommand/WSCommand_Directive.js"));
 WSCommand.addCommandClass('WSCommand_IO', __webpack_require__("./obniz/libs/wscommand/WSCommand_IO.js"));
 WSCommand.addCommandClass('WSCommand_PWM', __webpack_require__("./obniz/libs/wscommand/WSCommand_PWM.js"));
 WSCommand.addCommandClass('WSCommand_UART', __webpack_require__("./obniz/libs/wscommand/WSCommand_UART.js"));
 WSCommand.addCommandClass('WSCommand_AD', __webpack_require__("./obniz/libs/wscommand/WSCommand_AD.js"));
 WSCommand.addCommandClass('WSCommand_SPI', __webpack_require__("./obniz/libs/wscommand/WSCommand_SPI.js"));
 WSCommand.addCommandClass('WSCommand_I2C', __webpack_require__("./obniz/libs/wscommand/WSCommand_I2C.js"));
-WSCommand.addCommandClass('WSCommand_LogicAnalyzer',  __webpack_require__("./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
+WSCommand.addCommandClass('WSCommand_LogicAnalyzer', __webpack_require__("./obniz/libs/wscommand/WSCommand_LogicAnalyzer.js"));
 WSCommand.addCommandClass('WSCommand_Display', __webpack_require__("./obniz/libs/wscommand/WSCommand_Display.js"));
 WSCommand.addCommandClass('WSCommand_Switch', __webpack_require__("./obniz/libs/wscommand/WSCommand_Switch.js"));
 WSCommand.addCommandClass('WSCommand_Ble', __webpack_require__("./obniz/libs/wscommand/WSCommand_Ble.js"));
-WSCommand.addCommandClass( 'WSCommand_Measurement',  __webpack_require__("./obniz/libs/wscommand/WSCommand_Measurement.js"));
+WSCommand.addCommandClass('WSCommand_Measurement', __webpack_require__("./obniz/libs/wscommand/WSCommand_Measurement.js"));
+WSCommand.addCommandClass('WSCommand_Tcp', __webpack_require__("./obniz/libs/wscommand/WSCommand_Tcp.js"));
 
 module.exports = WSCommand;
 
@@ -18302,7 +18679,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"2.3.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"buildAndtest\":\"npm run build && npm test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"through2\":\"^2.0.3\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
+module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"2.4.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
 
 /***/ }),
 
@@ -18312,6 +18689,7 @@ module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"2.3.0\",\"descrip
 var map = {
 	"./ADConverter/hx711/index.js": "./parts/ADConverter/hx711/index.js",
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
+	"./Biological/PULSE08-M5STICKC-S/index.js": "./parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
@@ -18321,6 +18699,7 @@ var map = {
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
 	"./Display/MatrixLED_MAX7219/index.js": "./parts/Display/MatrixLED_MAX7219/index.js",
+	"./Display/ST7735S/index.js": "./parts/Display/ST7735S/index.js",
 	"./Display/SainSmartTFT18LCD/index.js": "./parts/Display/SainSmartTFT18LCD/index.js",
 	"./Display/SharpMemoryTFT/index.js": "./parts/Display/SharpMemoryTFT/index.js",
 	"./DistanceSensor/GP2Y0A21YK0F/index.js": "./parts/DistanceSensor/GP2Y0A21YK0F/index.js",
@@ -18358,14 +18737,17 @@ var map = {
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
 	"./MovementSensor/MPU6050/index.js": "./parts/MovementSensor/MPU6050/index.js",
+	"./MovementSensor/MPU6886/index.js": "./parts/MovementSensor/MPU6886/index.js",
 	"./MovementSensor/MPU9250/index.js": "./parts/MovementSensor/MPU9250/index.js",
 	"./MovementSensor/PaPIRsVZ/index.js": "./parts/MovementSensor/PaPIRsVZ/index.js",
 	"./MovementSensor/Potentiometer/index.js": "./parts/MovementSensor/Potentiometer/index.js",
+	"./MovementSensor/SH200Q/index.js": "./parts/MovementSensor/SH200Q/index.js",
 	"./Moving/DCMotor/index.js": "./parts/Moving/DCMotor/index.js",
 	"./Moving/PCA9685/index.js": "./parts/Moving/PCA9685/index.js",
 	"./Moving/ServoMotor/index.js": "./parts/Moving/ServoMotor/index.js",
 	"./Moving/Solenoid/index.js": "./parts/Moving/Solenoid/index.js",
 	"./Moving/StepperMotor/index.js": "./parts/Moving/StepperMotor/index.js",
+	"./Power/AXP192/index.js": "./parts/Power/AXP192/index.js",
 	"./PressureSensor/FSR-40X/index.js": "./parts/PressureSensor/FSR-40X/index.js",
 	"./SoilSensor/SEN0114/index.js": "./parts/SoilSensor/SEN0114/index.js",
 	"./Sound/Speaker/index.js": "./parts/Sound/Speaker/index.js",
@@ -18383,11 +18765,13 @@ var map = {
 	"./TemperatureSensor/i2c/AMG8833/index.js": "./parts/TemperatureSensor/i2c/AMG8833/index.js",
 	"./TemperatureSensor/i2c/BME280/index.js": "./parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./parts/TemperatureSensor/i2c/D6T44L/index.js",
+	"./TemperatureSensor/i2c/DHT12/index.js": "./parts/TemperatureSensor/i2c/DHT12/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js",
 	"./Wireless/RN42/index.js": "./parts/Wireless/RN42/index.js",
-	"./Wireless/XBee/index.js": "./parts/Wireless/XBee/index.js"
+	"./Wireless/XBee/index.js": "./parts/Wireless/XBee/index.js",
+	"./i2cParts.js": "./parts/i2cParts.js"
 };
 
 
@@ -18592,6 +18976,97 @@ if (true) {
   module.exports = USB;
 }
 
+
+/***/ }),
+
+/***/ "./parts/Biological/PULSE08-M5STICKC-S/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {class Puls08M5stickcS {
+  constructor() {
+    this.keys = ['vcc', 'gnd', 'tx', 'rx'];
+    this.requiredKeys = ['tx', 'rx'];
+    this.delimiter = 0x0a;
+  }
+
+  static info() {
+    return {
+      name: 'Puls08M5stickcS',
+    };
+  }
+
+  onbpmupdate(data) {
+    return;
+  }
+
+  onrawupdate(data) {
+    return;
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.uart = obniz.getFreeUart();
+    this.uart.start({ tx: this.params.tx, rx: this.params.rx, baud: 19200 });
+    this.receivingData = [];
+
+    this.init();
+
+    this.uart.onreceive = (data, text) => {
+      let dataToCallback = [];
+      data.forEach(e => {
+        if (e !== this.delimiter) {
+          this.receivingData.push(e);
+          return;
+        } else {
+          let row = this.receivingData;
+          if (row[0] === '#'.charCodeAt(0)) {
+            row[0] = ' '.charCodeAt(0);
+            let str = this.decode(row);
+            let val = parseInt(str);
+            let bpm = val > 0 ? 60000 / val : null;
+            this.onbpmupdate(bpm);
+          } else {
+            let str = this.decode(row);
+            let val = parseInt(str);
+            dataToCallback.push(val);
+          }
+          this.receivingData = [];
+        }
+      });
+      if (dataToCallback.length > 0) {
+        this.onrawupdate(dataToCallback);
+      }
+    };
+  }
+
+  decode(data) {
+    return Buffer.from(data).toString('utf8');
+
+    // if (typeof TextDecoder !== 'undefined') {
+    //   let enc = new TextDecoder('utf-8');
+    //   let arr = new Uint8Array(data);
+    //   return enc.decode(arr);
+    // } else if (typeof Buffer !== 'undefined') {
+    // return Buffer.from(data).toString('utf8');
+    // }
+    // throw new Error('cannot decode');
+  }
+
+  init() {
+    this.uart.send('@OF30');
+    this.uart.send(0x0a);
+    this.uart.send('@RG2');
+    this.uart.send(0x0a);
+  }
+}
+
+if (true) {
+  module.exports = Puls08M5stickcS;
+}
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -20430,6 +20905,2229 @@ class MatrixLED_MAX7219 {
 if (true) {
   module.exports = MatrixLED_MAX7219;
 }
+
+
+/***/ }),
+
+/***/ "./parts/Display/ST7735S/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+//SainSmart ST7735 1.8" TFT LCD 128x160 pixel
+class ST7735S {
+  constructor() {
+    this.keys = ['sclk', 'mosi', 'cs', 'res', 'dc'];
+    this.required = [];
+  }
+
+  static info() {
+    return {
+      name: 'ST7735S',
+    };
+  }
+
+  wired(obniz) {
+    this.debugprint = false;
+    this.obniz = obniz;
+
+    this.io_dc = obniz.getIO(this.params.dc);
+    this.io_res = obniz.getIO(this.params.res);
+    this.io_cs = obniz.getIO(this.params.cs);
+
+    this.params.frequency = 16 * 1000 * 1000; //16MHz
+    this.params.mode = 'master';
+    this.params.clk = this.params.sclk;
+    this.params.mosi = this.params.mosi;
+    this.params.drive = '3v';
+    this.spi = this.obniz.getSpiWithConfig(this.params);
+
+    this.io_dc.output(true);
+    this.io_cs.output(false);
+
+    this.width = ST7735S_TFTWIDTH;
+    this.height = ST7735S_TFTHEIGHT;
+    this.rotation = 0;
+    this.x_offset = 26;
+    this.y_offset = 2;
+
+    this.writeBuffer = []; //1024bytes bufferring
+
+    this._setPresetColor();
+    this.init();
+  }
+
+  print_debug(v) {
+    if (this.debugprint) {
+      console.log(
+        'SainSmartTFT18LCD: ' + Array.prototype.slice.call(arguments).join('')
+      );
+    }
+  }
+
+  _deadSleep(waitMsec) {
+    let startMsec = new Date();
+    while (new Date() - startMsec < waitMsec);
+  }
+
+  _reset() {
+    this.io_res.output(false);
+    this._deadSleep(10);
+    this.io_res.output(true);
+    this._deadSleep(10);
+  }
+
+  writeCommand(cmd) {
+    this.io_dc.output(false);
+    this.io_cs.output(false);
+    this.spi.write([cmd]);
+    this.io_cs.output(true);
+  }
+
+  writeData(data) {
+    this.io_dc.output(true);
+    this.io_cs.output(false);
+    this.spi.write(data);
+    this.io_cs.output(true);
+  }
+
+  write(cmd, data) {
+    if (data.length == 0) return;
+    this.writeCommand(cmd);
+    this.writeData(data);
+  }
+
+  async asyncwait() {
+    return await this.spi.writeWait([0x00]);
+  }
+
+  _writeFlush() {
+    while (this.writeBuffer.length > 0) {
+      if (this.writeBuffer.length > 1024) {
+        let data = this.writeBuffer.slice(0, 1024);
+        this.writeData(data);
+        this.writeBuffer.splice(0, 1024);
+      } else {
+        if (this.writeBuffer.length > 0) this.writeData(this.writeBuffer);
+        this.writeBuffer = [];
+      }
+    }
+  }
+
+  _writeBuffer(data) {
+    if (data && data.length > 0) {
+      this.writeBuffer = this.writeBuffer.concat(data);
+    } else {
+      this._writeFlush();
+    }
+  }
+
+  color16(r, g, b) {
+    //  1st byte  (r & 0xF8 | g >> 5)
+    //  2nd byte  (g & 0xFC << 3 | b >> 3)
+    return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
+  }
+
+  _initG() {
+    // initialize display
+    this.writeCommand(ST7735_SWRESET);
+    this.obniz.wait(150);
+    this.writeCommand(ST7735_SLPOUT); //Sleep out & booster on
+    this.obniz.wait(500);
+    this.write(ST7735_FRMCTR1, [0x01, 0x2c, 0x2d]);
+    this.write(ST7735_FRMCTR2, [0x01, 0x2c, 0x2d]);
+    this.write(ST7735_FRMCTR3, [0x01, 0x2c, 0x2d, 0x01, 0x2c, 0x2d]);
+    this.write(ST7735_INVCTR, [0x07]);
+    this.write(ST7735_PWCTR1, [0xa2, 0x02, 0x84]);
+    this.write(ST7735_PWCTR2, [0xc5]);
+    this.write(ST7735_PWCTR3, [0x0a, 0x00]);
+    this.write(ST7735_PWCTR4, [0x8a, 0x2a]);
+    this.write(ST7735_PWCTR5, [0x8a, 0xee]);
+    this.write(ST7735_VMCTR1, [0x0e]);
+    this.writeCommand(ST7735_INVOFF);
+    this.write(ST7735_MADCTL, [0xc8]);
+    this.write(ST7735_COLMOD, [0x05]);
+    this.write(ST7735_CASET, [0x00, 0x00, 0x00, 0x7f]);
+    this.write(ST7735_RASET, [0x00, 0x00, 0x00, 0x9f]);
+    this.writeCommand(ST7735_INVON);
+    this.write(ST7735_GMCTRP1, [
+      0x02,
+      0x1c,
+      0x07,
+      0x12,
+      0x37,
+      0x32,
+      0x29,
+      0x2d,
+      0x29,
+      0x25,
+      0x2b,
+      0x39,
+      0x00,
+      0x01,
+      0x03,
+      0x10,
+    ]);
+    this.write(ST7735_GMCTRN1, [
+      0x03,
+      0x1d,
+      0x07,
+      0x06,
+      0x2e,
+      0x2c,
+      0x29,
+      0x2d,
+      0x2e,
+      0x2e,
+      0x37,
+      0x3f,
+      0x00,
+      0x00,
+      0x02,
+      0x10,
+    ]);
+  }
+
+  init() {
+    this._reset();
+    this._initG();
+    this.setDisplayOn();
+    this.setRotation(0);
+  }
+
+  setDisplayOn() {
+    this.writeCommand(ST7735_DISPON);
+  }
+
+  setDisplayOff() {
+    this.writeCommand(ST7735_DISPOFF);
+  }
+
+  setDisplay(on) {
+    if (on == true) this.setDisplayOn();
+    else this.setDisplayOff();
+  }
+
+  setInversionOn() {
+    this.writeCommand(ST7735_INVON);
+  }
+
+  setInversionOff() {
+    this.writeCommand(ST7735_INVOFF);
+  }
+
+  setInversion(inversion) {
+    if (inversion == true) this.setInversionOn();
+    else this.setInversionOff();
+  }
+
+  setRotation(m) {
+    const MADCTL_MY = 0x80;
+    const MADCTL_MX = 0x40;
+    const MADCTL_MV = 0x20;
+    // const MADCTL_ML = 0x10;
+    const MADCTL_RGB = 0x00; //always RGB, never BGR
+    // const MADCTL_MH = 0x04;
+
+    let data;
+    this.rotation = m % 4; // can't be higher than 3
+    switch (this.rotation) {
+      case 0:
+        data = [MADCTL_MX | MADCTL_MY | MADCTL_RGB];
+        this.width = ST7735S_TFTWIDTH;
+        this.height = ST7735S_TFTHEIGHT;
+        break;
+      case 1:
+        data = [MADCTL_MY | MADCTL_MV | MADCTL_RGB];
+        this.width = ST7735S_TFTHEIGHT;
+        this.height = ST7735S_TFTWIDTH;
+        break;
+      case 2:
+        data = [MADCTL_RGB];
+        this.width = ST7735S_TFTWIDTH;
+        this.height = ST7735S_TFTHEIGHT;
+        break;
+      case 3:
+        data = [MADCTL_MX | MADCTL_MV | MADCTL_RGB];
+        this.width = ST7735S_TFTHEIGHT;
+        this.height = ST7735S_TFTWIDTH;
+        break;
+    }
+    this.write(ST7735_MADCTL, data);
+    this.setAddrWindow(0, 0, this.width - 1, this.height - 1);
+  }
+
+  setAddrWindow(x0, y0, x1, y1) {
+    this.print_debug(
+      `setAddrWindow: (x0: ${x0}, y0: ${y0}) - (x1: ${x1}, y1: ${y1})`
+    );
+
+    if (x0 < 0) x0 = 0;
+    if (y0 < 0) y0 = 0;
+    if (x1 < 0) x1 = 0;
+    if (y1 < 0) y1 = 0;
+
+    if (this.rotation == 0 || this.rotation == 2) {
+      x0 = x0 + this.x_offset;
+      x1 = x1 + this.x_offset;
+      y0 = y0 + this.y_offset;
+      y1 = y1 + this.y_offset;
+    } else {
+      x0 = x0 + this.y_offset;
+      x1 = x1 + this.y_offset;
+      y0 = y0 + this.x_offset;
+      y1 = y1 + this.x_offset;
+    }
+
+    // column addr set
+    this.write(ST7735_CASET, [0x00, x0, 0x00, x1]); // XSTART-XEND
+    // row addr set
+    this.write(ST7735_RASET, [0x00, y0, 0x00, y1]); // YSTART-YEND
+    // write to RAM
+    this.writeCommand(ST7735_RAMWR);
+    this.writeBuffer = [];
+  }
+
+  //__swap(a, b) { let t = a; a = b; b = t; }
+
+  fillScreen(color) {
+    this.fillRect(0, 0, this.width, this.height, color);
+  }
+
+  fillRect(x, y, w, h, color) {
+    if (x >= this.width || y >= this.height) return;
+    if (x + w - 1 >= this.width) w = this.width - x;
+    if (y + h - 1 >= this.height) h = this.height - y;
+
+    this.setAddrWindow(x, y, x + w - 1, y + h - 1);
+
+    let hi = color >> 8,
+      lo = color & 0xff;
+    let data = [];
+
+    for (y = h; y > 0; y--) {
+      for (x = w; x > 0; x--) {
+        data.push(hi);
+        data.push(lo);
+      }
+    }
+    this._writeBuffer(data);
+    this._writeBuffer(); //for flush
+  }
+
+  drawRect(x, y, w, h, color) {
+    this.drawHLine(x, y, w, color);
+    this.drawHLine(x, y + h - 1, w, color);
+    this.drawVLine(x, y, h, color);
+    this.drawVLine(x + w - 1, y, h, color);
+  }
+
+  drawCircle(x0, y0, r, color) {
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
+
+    this.drawPixel(x0, y0 + r, color);
+    this.drawPixel(x0, y0 - r, color);
+    this.drawPixel(x0 + r, y0, color);
+    this.drawPixel(x0 - r, y0, color);
+
+    while (x < y) {
+      if (f >= 0) {
+        y--;
+        ddF_y += 2;
+        f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+
+      this.drawPixel(x0 + x, y0 + y, color);
+      this.drawPixel(x0 - x, y0 + y, color);
+      this.drawPixel(x0 + x, y0 - y, color);
+      this.drawPixel(x0 - x, y0 - y, color);
+      this.drawPixel(x0 + y, y0 + x, color);
+      this.drawPixel(x0 - y, y0 + x, color);
+      this.drawPixel(x0 + y, y0 - x, color);
+      this.drawPixel(x0 - y, y0 - x, color);
+    }
+  }
+
+  _drawCircleHelper(x0, y0, r, cornername, color) {
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
+
+    while (x < y) {
+      if (f >= 0) {
+        y--;
+        ddF_y += 2;
+        f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+      if (cornername & 0x4) {
+        this.drawPixel(x0 + x, y0 + y, color);
+        this.drawPixel(x0 + y, y0 + x, color);
+      }
+      if (cornername & 0x2) {
+        this.drawPixel(x0 + x, y0 - y, color);
+        this.drawPixel(x0 + y, y0 - x, color);
+      }
+      if (cornername & 0x8) {
+        this.drawPixel(x0 - y, y0 + x, color);
+        this.drawPixel(x0 - x, y0 + y, color);
+      }
+      if (cornername & 0x1) {
+        this.drawPixel(x0 - y, y0 - x, color);
+        this.drawPixel(x0 - x, y0 - y, color);
+      }
+    }
+  }
+
+  fillCircle(x0, y0, r, color) {
+    this.drawVLine(x0, y0 - r, 2 * r + 1, color);
+    this._fillCircleHelper(x0, y0, r, 3, 0, color);
+  }
+
+  _fillCircleHelper(x0, y0, r, cornername, delta, color) {
+    let f = 1 - r;
+    let ddF_x = 1;
+    let ddF_y = -2 * r;
+    let x = 0;
+    let y = r;
+
+    while (x < y) {
+      if (f >= 0) {
+        y--;
+        ddF_y += 2;
+        f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+
+      if (cornername & 0x1) {
+        this.drawVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
+        this.drawVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
+      }
+      if (cornername & 0x2) {
+        this.drawVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
+        this.drawVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
+      }
+    }
+  }
+
+  drawRoundRect(x, y, w, h, r, color) {
+    this.drawHLine(x + r, y, w - 2 * r, color); // Top
+    this.drawHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
+    this.drawVLine(x, y + r, h - 2 * r, color); // Left
+    this.drawVLine(x + w - 1, y + r, h - 2 * r, color); // Right
+
+    this._drawCircleHelper(x + r, y + r, r, 1, color);
+    this._drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
+    this._drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
+    this._drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
+  }
+
+  fillRoundRect(x, y, w, h, r, color) {
+    this.fillRect(x + r, y, w - 2 * r, h, color);
+
+    this._fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
+    this._fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
+  }
+
+  drawTriangle(x0, y0, x1, y1, x2, y2, color) {
+    this.drawLine(x0, y0, x1, y1, color);
+    this.drawLine(x1, y1, x2, y2, color);
+    this.drawLine(x2, y2, x0, y0, color);
+  }
+
+  fillTriangle(x0, y0, x1, y1, x2, y2, color) {
+    let a, b, y, last;
+
+    // Sort coordinates by Y order (y2 >= y1 >= y0)
+    if (y0 > y1) {
+      y1 = [y0, (y0 = y1)][0]; //this._swap(y0, y1);
+      x1 = [x0, (x0 = x1)][0]; //this._swap(x0, x1);
+    }
+    if (y1 > y2) {
+      y2 = [y1, (y1 = y2)][0]; //this._swap(y2, y1);
+      x2 = [x1, (x1 = x2)][0]; //this._swap(x2, x1);
+    }
+    if (y0 > y1) {
+      y1 = [y0, (y0 = y1)][0]; //this._swap(y0, y1);
+      x1 = [x0, (x0 = x1)][0]; //this._swap(x0, x1);
+    }
+
+    if (y0 == y2) {
+      // Handle awkward all-on-same-line case as its own thing
+      a = b = x0;
+      if (x1 < a) a = x1;
+      else if (x1 > b) b = x1;
+      if (x2 < a) a = x2;
+      else if (x2 > b) b = x2;
+      this.drawHLine(a, y0, b - a + 1, color);
+      return;
+    }
+
+    let dx01 = x1 - x0,
+      dy01 = y1 - y0,
+      dx02 = x2 - x0,
+      dy02 = y2 - y0,
+      dx12 = x2 - x1,
+      dy12 = y2 - y1,
+      sa = 0,
+      sb = 0;
+
+    if (y1 == y2) last = y1;
+    // include y1 scanline
+    else last = y1 - 1; // skip it
+
+    for (y = y0; y <= last; y++) {
+      a = x0 + Math.floor(sa / dy01);
+      b = x0 + Math.floor(sb / dy02);
+      sa += dx01;
+      sb += dx02;
+      if (a > b) b = [a, (a = b)][0]; //this._swap(a,b);
+      this.drawHLine(a, y, b - a + 1, color);
+    }
+
+    sa = dx12 * (y - y1);
+    sb = dx02 * (y - y0);
+    for (; y <= y2; y++) {
+      a = x1 + Math.floor(sa / dy12);
+      b = x0 + Math.floor(sb / dy02);
+      sa += dx12;
+      sb += dx02;
+      if (a > b) b = [a, (a = b)][0]; //this._swap(a,b);
+      this.drawHLine(a, y, b - a + 1, color);
+    }
+  }
+
+  drawVLine(x, y, h, color) {
+    if (x >= this.width || y >= this.height) return;
+    if (y + h - 1 >= this.height) h = this.height - y;
+
+    this.setAddrWindow(x, y, x, y + h - 1);
+
+    let hi = color >> 8,
+      lo = color & 0xff;
+    let data = [];
+    while (h--) {
+      data.push(hi);
+      data.push(lo);
+    }
+    this.writeData(data);
+  }
+
+  drawHLine(x, y, w, color) {
+    if (x >= this.width || y >= this.height) return;
+    if (x + w - 1 >= this.width) w = this.width - x;
+
+    this.setAddrWindow(x, y, x + w - 1, y);
+
+    let hi = color >> 8,
+      lo = color & 0xff;
+    let data = [];
+    while (w--) {
+      data.push(hi);
+      data.push(lo);
+    }
+    this.writeData(data);
+  }
+
+  drawLine(x0, y0, x1, y1, color) {
+    let step = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+    if (step) {
+      y0 = [x0, (x0 = y0)][0]; //this._swap(x0, y0);
+      y1 = [x1, (x1 = y1)][0]; //this._swap(x1, y1);
+    }
+    if (x0 > x1) {
+      x1 = [x0, (x0 = x1)][0]; //this._swap(x0, x1);
+      y1 = [y0, (y0 = y1)][0]; //this._swap(y0, y1);
+    }
+
+    let dx = x1 - x0;
+    let dy = Math.abs(y1 - y0);
+
+    let err = dx / 2;
+    let ystep = y0 < y1 ? 1 : -1;
+
+    for (; x0 <= x1; x0++) {
+      if (step) {
+        this.drawPixel(y0, x0, color);
+      } else {
+        this.drawPixel(x0, y0, color);
+      }
+      err -= dy;
+      if (err < 0) {
+        y0 += ystep;
+        err += dx;
+      }
+    }
+  }
+
+  drawPixel(x, y, color) {
+    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
+
+    this.setAddrWindow(x, y, x + 1, y + 1);
+    this.writeData([color >> 8, color & 0xff]);
+  }
+
+  drawChar(x, y, ch, color, bg, size) {
+    //  bg = bg || color;
+    size = size || 1;
+    if (
+      x >= this.width || // Clip right
+      y >= this.height || // Clip bottom
+      x + 6 * size - 1 < 0 || // Clip left
+      y + 8 * size - 1 < 0
+    )
+      // Clip top
+      return;
+
+    if (color != bg) {
+      this.drawChar2(x, y, ch, color, bg, size);
+      return;
+    }
+
+    let c = ch.charCodeAt(0);
+    for (let i = 0; i < 6; i++) {
+      let line = i == 5 ? 0 : font[c * 5 + i];
+      for (let j = 0; j < 8; j++) {
+        if (line & 0x1) {
+          if (size == 1)
+            // default size
+            this.drawPixel(x + i, y + j, color);
+          else {
+            // big size
+            this.fillRect(x + i * size, y + j * size, size, size, color);
+          }
+        } else if (bg != color) {
+          if (size == 1)
+            // default size
+            this.drawPixel(x + i, y + j, bg);
+          else {
+            // big size
+            this.fillRect(x + i * size, y + j * size, size, size, bg);
+          }
+        }
+        line >>= 1;
+      }
+    }
+  }
+
+  drawChar2(x, y, ch, color, bg, size) {
+    //  bg = bg || color;
+    size = size || 1;
+    if (
+      x >= this.width || // Clip right
+      y >= this.height || // Clip bottom
+      x + 6 * size - 1 < 0 || // Clip left
+      y + 8 * size - 1 < 0 // Clip top
+    )
+      return;
+
+    let pixels = new Array(6 * 8 * size * size);
+    let c = ch.charCodeAt(0);
+    for (let i = 0; i < 6; i++) {
+      let line = i == 5 ? 0 : font[c * 5 + i];
+      for (let j = 0; j < 8; j++) {
+        let cl = line & 0x1 ? color : bg;
+        for (let w = 0; w < size; w++) {
+          for (let h = 0; h < size; h++) {
+            pixels[
+              i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))
+            ] = cl;
+          }
+        }
+        line >>= 1;
+      }
+    }
+    this.rawBound16(x, y, 6 * size, 8 * size, pixels);
+  }
+
+  rawBound16(x, y, width, height, pixels) {
+    let rgb = [];
+    pixels.forEach(function(v) {
+      rgb.push((v & 0xff00) >> 8);
+      rgb.push(v & 0xff);
+    });
+    this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+    this._writeBuffer(rgb);
+    this._writeBuffer(); //for flush
+  }
+
+  drawString(x, y, str, color, bg, size, wrap) {
+    //  bg = bg || color;
+    size = size || 1;
+    //  wrap = wrap || true;
+    for (let n = 0; n < str.length; n++) {
+      let c = str.charAt(n);
+      if (c == '\n') {
+        y += size * 8;
+        x = 0;
+      } else if (c == '\r') {
+        // skip em
+      } else {
+        this.drawChar(x, y, c, color, bg, size);
+        x += size * 6;
+        if (wrap && x > this.width - size * 6) {
+          y += size * 8;
+          x = 0;
+        }
+      }
+    }
+    return [x, y];
+  }
+
+  drawContextBound(context, x0, y0, width, height, x1, y1, gray) {
+    x0 = x0 || 0;
+    y0 = y0 || 0;
+    width = width || context.canvas.clientWidth;
+    height = height || context.canvas.clientHeight;
+    x1 = x1 || 0;
+    y1 = y1 || 0;
+    gray = gray || false;
+    this.write(ST7735_COLMOD, [ST7735_18bit]); //18bit/pixel
+    let imageData = context.getImageData(x0, y0, width, height).data;
+    let rgb = [];
+    for (let n = 0; n < imageData.length; n += 4) {
+      let r = imageData[n + 0];
+      let g = imageData[n + 1];
+      let b = imageData[n + 2];
+      if (!gray) {
+        rgb.push(r);
+        rgb.push(g);
+        rgb.push(b);
+      } else {
+        let gs = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+        rgb.push(gs);
+        rgb.push(gs);
+        rgb.push(gs);
+      }
+    }
+    this.write(ST7735_COLMOD, [ST7735_18bit]); //18bit/pixel
+    this.setAddrWindow(x1, y1, x1 + width - 1, y1 + height - 1);
+    this._writeBuffer(rgb);
+    this._writeBuffer(); //for flush
+    this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
+  }
+
+  drawContext(context, gray) {
+    gray = gray || false;
+    this.drawContextBound(context, 0, 0, this.width, this.height, 0, 0, gray);
+  }
+
+  draw(context, gray) {
+    this.drawContext(context, gray);
+  }
+
+  rawBound(x, y, width, height, pixels) {
+    let rgb = [];
+    pixels.forEach(function(v) {
+      rgb.push((v & 0xff0000) >> 16);
+      rgb.push((v & 0xff00) >> 8);
+      rgb.push(v & 0xff);
+    });
+    this.write(ST7735_COLMOD, [ST7735_18bit]); //18bit/pixel
+    this.setAddrWindow(x, y, x + width - 1, y + height - 1);
+    this._writeBuffer(rgb);
+    this._writeBuffer(); //for flush
+    this.write(ST7735_COLMOD, [ST7735_16bit]); //16bit/pixel
+  }
+
+  raw(pixels) {
+    this.rawBound16(0, 0, this.width, this.height, pixels);
+  }
+
+  _setPresetColor() {
+    this.color = {
+      AliceBlue: 0xf7df,
+      AntiqueWhite: 0xff5a,
+      Aqua: 0x07ff,
+      Aquamarine: 0x7ffa,
+      Azure: 0xf7ff,
+      Beige: 0xf7bb,
+      Bisque: 0xff38,
+      Black: 0x0000,
+      BlanchedAlmond: 0xff59,
+      Blue: 0x001f,
+      BlueViolet: 0x895c,
+      Brown: 0xa145,
+      BurlyWood: 0xddd0,
+      CadetBlue: 0x5cf4,
+      Chartreuse: 0x7fe0,
+      Chocolate: 0xd343,
+      Coral: 0xfbea,
+      CornflowerBlue: 0x64bd,
+      Cornsilk: 0xffdb,
+      Crimson: 0xd8a7,
+      Cyan: 0x07ff,
+      DarkBlue: 0x0011,
+      DarkCyan: 0x0451,
+      DarkGoldenRod: 0xbc21,
+      DarkGray: 0xad55,
+      DarkGreen: 0x0320,
+      DarkKhaki: 0xbdad,
+      DarkMagenta: 0x8811,
+      DarkOliveGreen: 0x5345,
+      DarkOrange: 0xfc60,
+      DarkOrchid: 0x9999,
+      DarkRed: 0x8800,
+      DarkSalmon: 0xecaf,
+      DarkSeaGreen: 0x8df1,
+      DarkSlateBlue: 0x49f1,
+      DarkSlateGray: 0x2a69,
+      DarkTurquoise: 0x067a,
+      DarkViolet: 0x901a,
+      DeepPink: 0xf8b2,
+      DeepSkyBlue: 0x05ff,
+      DimGray: 0x6b4d,
+      DodgerBlue: 0x1c9f,
+      FireBrick: 0xb104,
+      FloralWhite: 0xffde,
+      ForestGreen: 0x2444,
+      Fuchsia: 0xf81f,
+      Gainsboro: 0xdefb,
+      GhostWhite: 0xffdf,
+      Gold: 0xfea0,
+      GoldenRod: 0xdd24,
+      Gray: 0x8410,
+      Green: 0x0400,
+      GreenYellow: 0xafe5,
+      HoneyDew: 0xf7fe,
+      HotPink: 0xfb56,
+      IndianRed: 0xcaeb,
+      Indigo: 0x4810,
+      Ivory: 0xfffe,
+      Khaki: 0xf731,
+      Lavender: 0xe73f,
+      LavenderBlush: 0xff9e,
+      LawnGreen: 0x7fe0,
+      LemonChiffon: 0xffd9,
+      LightBlue: 0xaedc,
+      LightCoral: 0xf410,
+      LightCyan: 0xe7ff,
+      LightGoldenRodYellow: 0xffda,
+      LightGray: 0xd69a,
+      LightGreen: 0x9772,
+      LightPink: 0xfdb8,
+      LightSalmon: 0xfd0f,
+      LightSeaGreen: 0x2595,
+      LightSkyBlue: 0x867f,
+      LightSlateGray: 0x7453,
+      LightSteelBlue: 0xb63b,
+      LightYellow: 0xfffc,
+      Lime: 0x07e0,
+      LimeGreen: 0x3666,
+      Linen: 0xff9c,
+      Magenta: 0xf81f,
+      Maroon: 0x8000,
+      MediumAquaMarine: 0x6675,
+      MediumBlue: 0x0019,
+      MediumOrchid: 0xbaba,
+      MediumPurple: 0x939b,
+      MediumSeaGreen: 0x3d8e,
+      MediumSlateBlue: 0x7b5d,
+      MediumSpringGreen: 0x07d3,
+      MediumTurquoise: 0x4e99,
+      MediumVioletRed: 0xc0b0,
+      MidnightBlue: 0x18ce,
+      MintCream: 0xf7ff,
+      MistyRose: 0xff3c,
+      Moccasin: 0xff36,
+      NavajoWhite: 0xfef5,
+      Navy: 0x0010,
+      OldLace: 0xffbc,
+      Olive: 0x8400,
+      OliveDrab: 0x6c64,
+      Orange: 0xfd20,
+      OrangeRed: 0xfa20,
+      Orchid: 0xdb9a,
+      PaleGoldenRod: 0xef55,
+      PaleGreen: 0x9fd3,
+      PaleTurquoise: 0xaf7d,
+      PaleVioletRed: 0xdb92,
+      PapayaWhip: 0xff7a,
+      PeachPuff: 0xfed7,
+      Peru: 0xcc27,
+      Pink: 0xfe19,
+      Plum: 0xdd1b,
+      PowderBlue: 0xb71c,
+      Purple: 0x8010,
+      RebeccaPurple: 0x6193,
+      Red: 0xf800,
+      RosyBrown: 0xbc71,
+      RoyalBlue: 0x435c,
+      SaddleBrown: 0x8a22,
+      Salmon: 0xfc0e,
+      SandyBrown: 0xf52c,
+      SeaGreen: 0x2c4a,
+      SeaShell: 0xffbd,
+      Sienna: 0xa285,
+      Silver: 0xc618,
+      SkyBlue: 0x867d,
+      SlateBlue: 0x6ad9,
+      SlateGray: 0x7412,
+      Snow: 0xffdf,
+      SpringGreen: 0x07ef,
+      SteelBlue: 0x4416,
+      Tan: 0xd5b1,
+      Teal: 0x0410,
+      Thistle: 0xddfb,
+      Tomato: 0xfb08,
+      Turquoise: 0x471a,
+      Violet: 0xec1d,
+      Wheat: 0xf6f6,
+      White: 0xffff,
+      WhiteSmoke: 0xf7be,
+      Yellow: 0xffe0,
+      YellowGreen: 0x9e66,
+    };
+  }
+}
+
+if (true) {
+  module.exports = ST7735S;
+}
+
+//----------------------------------------------------------
+
+const ST7735S_TFTWIDTH = 80;
+const ST7735S_TFTHEIGHT = 160;
+
+// const ST7735_NOP = 0x00;
+const ST7735_SWRESET = 0x01;
+// const ST7735_RDDID = 0x04;
+// const ST7735_RDDST = 0x09;
+// const ST7735_RDDPM = 0x0a;
+
+// const ST7735_SLPIN = 0x10;
+const ST7735_SLPOUT = 0x11;
+// const ST7735_PTLON = 0x12;
+// const ST7735_NORON = 0x13;
+
+const ST7735_INVOFF = 0x20;
+const ST7735_INVON = 0x21;
+const ST7735_DISPOFF = 0x28;
+const ST7735_DISPON = 0x29;
+const ST7735_CASET = 0x2a;
+const ST7735_RASET = 0x2b;
+const ST7735_RAMWR = 0x2c;
+// const ST7735_RAMRD = 0x2e;
+const ST7735_MADCTL = 0x36;
+// const ST7735_PTLAR = 0x30;
+const ST7735_COLMOD = 0x3a;
+
+const ST7735_FRMCTR1 = 0xb1;
+const ST7735_FRMCTR2 = 0xb2;
+const ST7735_FRMCTR3 = 0xb3;
+const ST7735_INVCTR = 0xb4;
+// const ST7735_DISSET5 = 0xb6;
+
+const ST7735_PWCTR1 = 0xc0;
+const ST7735_PWCTR2 = 0xc1;
+const ST7735_PWCTR3 = 0xc2;
+const ST7735_PWCTR4 = 0xc3;
+const ST7735_PWCTR5 = 0xc4;
+const ST7735_VMCTR1 = 0xc5;
+
+// const ST7735_RDID1 = 0xda;
+// const ST7735_RDID2 = 0xdb;
+// const ST7735_RDID3 = 0xdc;
+// const ST7735_RDID4 = 0xdd;
+
+// const ST7735_PWCTR6 = 0xfc;
+
+const ST7735_GMCTRP1 = 0xe0;
+const ST7735_GMCTRN1 = 0xe1;
+
+const ST7735_18bit = 0x06; // 18bit/pixel
+const ST7735_16bit = 0x05; // 16bit/pixel
+
+// standard ascii 5x7 font
+const font = [
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x3e,
+  0x5b,
+  0x4f,
+  0x5b,
+  0x3e,
+  0x3e,
+  0x6b,
+  0x4f,
+  0x6b,
+  0x3e,
+  0x1c,
+  0x3e,
+  0x7c,
+  0x3e,
+  0x1c,
+  0x18,
+  0x3c,
+  0x7e,
+  0x3c,
+  0x18,
+  0x1c,
+  0x57,
+  0x7d,
+  0x57,
+  0x1c,
+  0x1c,
+  0x5e,
+  0x7f,
+  0x5e,
+  0x1c,
+  0x00,
+  0x18,
+  0x3c,
+  0x18,
+  0x00,
+  0xff,
+  0xe7,
+  0xc3,
+  0xe7,
+  0xff,
+  0x00,
+  0x18,
+  0x24,
+  0x18,
+  0x00,
+  0xff,
+  0xe7,
+  0xdb,
+  0xe7,
+  0xff,
+  0x30,
+  0x48,
+  0x3a,
+  0x06,
+  0x0e,
+  0x26,
+  0x29,
+  0x79,
+  0x29,
+  0x26,
+  0x40,
+  0x7f,
+  0x05,
+  0x05,
+  0x07,
+  0x40,
+  0x7f,
+  0x05,
+  0x25,
+  0x3f,
+  0x5a,
+  0x3c,
+  0xe7,
+  0x3c,
+  0x5a,
+  0x7f,
+  0x3e,
+  0x1c,
+  0x1c,
+  0x08,
+  0x08,
+  0x1c,
+  0x1c,
+  0x3e,
+  0x7f,
+  0x14,
+  0x22,
+  0x7f,
+  0x22,
+  0x14,
+  0x5f,
+  0x5f,
+  0x00,
+  0x5f,
+  0x5f,
+  0x06,
+  0x09,
+  0x7f,
+  0x01,
+  0x7f,
+  0x00,
+  0x66,
+  0x89,
+  0x95,
+  0x6a,
+  0x60,
+  0x60,
+  0x60,
+  0x60,
+  0x60,
+  0x94,
+  0xa2,
+  0xff,
+  0xa2,
+  0x94,
+  0x08,
+  0x04,
+  0x7e,
+  0x04,
+  0x08,
+  0x10,
+  0x20,
+  0x7e,
+  0x20,
+  0x10,
+  0x08,
+  0x08,
+  0x2a,
+  0x1c,
+  0x08,
+  0x08,
+  0x1c,
+  0x2a,
+  0x08,
+  0x08,
+  0x1e,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x0c,
+  0x1e,
+  0x0c,
+  0x1e,
+  0x0c,
+  0x30,
+  0x38,
+  0x3e,
+  0x38,
+  0x30,
+  0x06,
+  0x0e,
+  0x3e,
+  0x0e,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x5f,
+  0x00,
+  0x00,
+  0x00,
+  0x07,
+  0x00,
+  0x07,
+  0x00,
+  0x14,
+  0x7f,
+  0x14,
+  0x7f,
+  0x14,
+  0x24,
+  0x2a,
+  0x7f,
+  0x2a,
+  0x12,
+  0x23,
+  0x13,
+  0x08,
+  0x64,
+  0x62,
+  0x36,
+  0x49,
+  0x56,
+  0x20,
+  0x50,
+  0x00,
+  0x08,
+  0x07,
+  0x03,
+  0x00,
+  0x00,
+  0x1c,
+  0x22,
+  0x41,
+  0x00,
+  0x00,
+  0x41,
+  0x22,
+  0x1c,
+  0x00,
+  0x2a,
+  0x1c,
+  0x7f,
+  0x1c,
+  0x2a,
+  0x08,
+  0x08,
+  0x3e,
+  0x08,
+  0x08,
+  0x00,
+  0x80,
+  0x70,
+  0x30,
+  0x00,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x00,
+  0x00,
+  0x60,
+  0x60,
+  0x00,
+  0x20,
+  0x10,
+  0x08,
+  0x04,
+  0x02,
+  0x3e,
+  0x51,
+  0x49,
+  0x45,
+  0x3e,
+  0x00,
+  0x42,
+  0x7f,
+  0x40,
+  0x00,
+  0x72,
+  0x49,
+  0x49,
+  0x49,
+  0x46,
+  0x21,
+  0x41,
+  0x49,
+  0x4d,
+  0x33,
+  0x18,
+  0x14,
+  0x12,
+  0x7f,
+  0x10,
+  0x27,
+  0x45,
+  0x45,
+  0x45,
+  0x39,
+  0x3c,
+  0x4a,
+  0x49,
+  0x49,
+  0x31,
+  0x41,
+  0x21,
+  0x11,
+  0x09,
+  0x07,
+  0x36,
+  0x49,
+  0x49,
+  0x49,
+  0x36,
+  0x46,
+  0x49,
+  0x49,
+  0x29,
+  0x1e,
+  0x00,
+  0x00,
+  0x14,
+  0x00,
+  0x00,
+  0x00,
+  0x40,
+  0x34,
+  0x00,
+  0x00,
+  0x00,
+  0x08,
+  0x14,
+  0x22,
+  0x41,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x00,
+  0x41,
+  0x22,
+  0x14,
+  0x08,
+  0x02,
+  0x01,
+  0x59,
+  0x09,
+  0x06,
+  0x3e,
+  0x41,
+  0x5d,
+  0x59,
+  0x4e,
+  0x7c,
+  0x12,
+  0x11,
+  0x12,
+  0x7c,
+  0x7f,
+  0x49,
+  0x49,
+  0x49,
+  0x36,
+  0x3e,
+  0x41,
+  0x41,
+  0x41,
+  0x22,
+  0x7f,
+  0x41,
+  0x41,
+  0x41,
+  0x3e,
+  0x7f,
+  0x49,
+  0x49,
+  0x49,
+  0x41,
+  0x7f,
+  0x09,
+  0x09,
+  0x09,
+  0x01,
+  0x3e,
+  0x41,
+  0x41,
+  0x51,
+  0x73,
+  0x7f,
+  0x08,
+  0x08,
+  0x08,
+  0x7f,
+  0x00,
+  0x41,
+  0x7f,
+  0x41,
+  0x00,
+  0x20,
+  0x40,
+  0x41,
+  0x3f,
+  0x01,
+  0x7f,
+  0x08,
+  0x14,
+  0x22,
+  0x41,
+  0x7f,
+  0x40,
+  0x40,
+  0x40,
+  0x40,
+  0x7f,
+  0x02,
+  0x1c,
+  0x02,
+  0x7f,
+  0x7f,
+  0x04,
+  0x08,
+  0x10,
+  0x7f,
+  0x3e,
+  0x41,
+  0x41,
+  0x41,
+  0x3e,
+  0x7f,
+  0x09,
+  0x09,
+  0x09,
+  0x06,
+  0x3e,
+  0x41,
+  0x51,
+  0x21,
+  0x5e,
+  0x7f,
+  0x09,
+  0x19,
+  0x29,
+  0x46,
+  0x26,
+  0x49,
+  0x49,
+  0x49,
+  0x32,
+  0x03,
+  0x01,
+  0x7f,
+  0x01,
+  0x03,
+  0x3f,
+  0x40,
+  0x40,
+  0x40,
+  0x3f,
+  0x1f,
+  0x20,
+  0x40,
+  0x20,
+  0x1f,
+  0x3f,
+  0x40,
+  0x38,
+  0x40,
+  0x3f,
+  0x63,
+  0x14,
+  0x08,
+  0x14,
+  0x63,
+  0x03,
+  0x04,
+  0x78,
+  0x04,
+  0x03,
+  0x61,
+  0x59,
+  0x49,
+  0x4d,
+  0x43,
+  0x00,
+  0x7f,
+  0x41,
+  0x41,
+  0x41,
+  0x02,
+  0x04,
+  0x08,
+  0x10,
+  0x20,
+  0x00,
+  0x41,
+  0x41,
+  0x41,
+  0x7f,
+  0x04,
+  0x02,
+  0x01,
+  0x02,
+  0x04,
+  0x40,
+  0x40,
+  0x40,
+  0x40,
+  0x40,
+  0x00,
+  0x03,
+  0x07,
+  0x08,
+  0x00,
+  0x20,
+  0x54,
+  0x54,
+  0x78,
+  0x40,
+  0x7f,
+  0x28,
+  0x44,
+  0x44,
+  0x38,
+  0x38,
+  0x44,
+  0x44,
+  0x44,
+  0x28,
+  0x38,
+  0x44,
+  0x44,
+  0x28,
+  0x7f,
+  0x38,
+  0x54,
+  0x54,
+  0x54,
+  0x18,
+  0x00,
+  0x08,
+  0x7e,
+  0x09,
+  0x02,
+  0x18,
+  0xa4,
+  0xa4,
+  0x9c,
+  0x78,
+  0x7f,
+  0x08,
+  0x04,
+  0x04,
+  0x78,
+  0x00,
+  0x44,
+  0x7d,
+  0x40,
+  0x00,
+  0x20,
+  0x40,
+  0x40,
+  0x3d,
+  0x00,
+  0x7f,
+  0x10,
+  0x28,
+  0x44,
+  0x00,
+  0x00,
+  0x41,
+  0x7f,
+  0x40,
+  0x00,
+  0x7c,
+  0x04,
+  0x78,
+  0x04,
+  0x78,
+  0x7c,
+  0x08,
+  0x04,
+  0x04,
+  0x78,
+  0x38,
+  0x44,
+  0x44,
+  0x44,
+  0x38,
+  0xfc,
+  0x18,
+  0x24,
+  0x24,
+  0x18,
+  0x18,
+  0x24,
+  0x24,
+  0x18,
+  0xfc,
+  0x7c,
+  0x08,
+  0x04,
+  0x04,
+  0x08,
+  0x48,
+  0x54,
+  0x54,
+  0x54,
+  0x24,
+  0x04,
+  0x04,
+  0x3f,
+  0x44,
+  0x24,
+  0x3c,
+  0x40,
+  0x40,
+  0x20,
+  0x7c,
+  0x1c,
+  0x20,
+  0x40,
+  0x20,
+  0x1c,
+  0x3c,
+  0x40,
+  0x30,
+  0x40,
+  0x3c,
+  0x44,
+  0x28,
+  0x10,
+  0x28,
+  0x44,
+  0x4c,
+  0x90,
+  0x90,
+  0x90,
+  0x7c,
+  0x44,
+  0x64,
+  0x54,
+  0x4c,
+  0x44,
+  0x00,
+  0x08,
+  0x36,
+  0x41,
+  0x00,
+  0x00,
+  0x00,
+  0x77,
+  0x00,
+  0x00,
+  0x00,
+  0x41,
+  0x36,
+  0x08,
+  0x00,
+  0x02,
+  0x01,
+  0x02,
+  0x04,
+  0x02,
+  0x3c,
+  0x26,
+  0x23,
+  0x26,
+  0x3c,
+  0x1e,
+  0xa1,
+  0xa1,
+  0x61,
+  0x12,
+  0x3a,
+  0x40,
+  0x40,
+  0x20,
+  0x7a,
+  0x38,
+  0x54,
+  0x54,
+  0x55,
+  0x59,
+  0x21,
+  0x55,
+  0x55,
+  0x79,
+  0x41,
+  0x21,
+  0x54,
+  0x54,
+  0x78,
+  0x41,
+  0x21,
+  0x55,
+  0x54,
+  0x78,
+  0x40,
+  0x20,
+  0x54,
+  0x55,
+  0x79,
+  0x40,
+  0x0c,
+  0x1e,
+  0x52,
+  0x72,
+  0x12,
+  0x39,
+  0x55,
+  0x55,
+  0x55,
+  0x59,
+  0x39,
+  0x54,
+  0x54,
+  0x54,
+  0x59,
+  0x39,
+  0x55,
+  0x54,
+  0x54,
+  0x58,
+  0x00,
+  0x00,
+  0x45,
+  0x7c,
+  0x41,
+  0x00,
+  0x02,
+  0x45,
+  0x7d,
+  0x42,
+  0x00,
+  0x01,
+  0x45,
+  0x7c,
+  0x40,
+  0xf0,
+  0x29,
+  0x24,
+  0x29,
+  0xf0,
+  0xf0,
+  0x28,
+  0x25,
+  0x28,
+  0xf0,
+  0x7c,
+  0x54,
+  0x55,
+  0x45,
+  0x00,
+  0x20,
+  0x54,
+  0x54,
+  0x7c,
+  0x54,
+  0x7c,
+  0x0a,
+  0x09,
+  0x7f,
+  0x49,
+  0x32,
+  0x49,
+  0x49,
+  0x49,
+  0x32,
+  0x32,
+  0x48,
+  0x48,
+  0x48,
+  0x32,
+  0x32,
+  0x4a,
+  0x48,
+  0x48,
+  0x30,
+  0x3a,
+  0x41,
+  0x41,
+  0x21,
+  0x7a,
+  0x3a,
+  0x42,
+  0x40,
+  0x20,
+  0x78,
+  0x00,
+  0x9d,
+  0xa0,
+  0xa0,
+  0x7d,
+  0x39,
+  0x44,
+  0x44,
+  0x44,
+  0x39,
+  0x3d,
+  0x40,
+  0x40,
+  0x40,
+  0x3d,
+  0x3c,
+  0x24,
+  0xff,
+  0x24,
+  0x24,
+  0x48,
+  0x7e,
+  0x49,
+  0x43,
+  0x66,
+  0x2b,
+  0x2f,
+  0xfc,
+  0x2f,
+  0x2b,
+  0xff,
+  0x09,
+  0x29,
+  0xf6,
+  0x20,
+  0xc0,
+  0x88,
+  0x7e,
+  0x09,
+  0x03,
+  0x20,
+  0x54,
+  0x54,
+  0x79,
+  0x41,
+  0x00,
+  0x00,
+  0x44,
+  0x7d,
+  0x41,
+  0x30,
+  0x48,
+  0x48,
+  0x4a,
+  0x32,
+  0x38,
+  0x40,
+  0x40,
+  0x22,
+  0x7a,
+  0x00,
+  0x7a,
+  0x0a,
+  0x0a,
+  0x72,
+  0x7d,
+  0x0d,
+  0x19,
+  0x31,
+  0x7d,
+  0x26,
+  0x29,
+  0x29,
+  0x2f,
+  0x28,
+  0x26,
+  0x29,
+  0x29,
+  0x29,
+  0x26,
+  0x30,
+  0x48,
+  0x4d,
+  0x40,
+  0x20,
+  0x38,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x08,
+  0x38,
+  0x2f,
+  0x10,
+  0xc8,
+  0xac,
+  0xba,
+  0x2f,
+  0x10,
+  0x28,
+  0x34,
+  0xfa,
+  0x00,
+  0x00,
+  0x7b,
+  0x00,
+  0x00,
+  0x08,
+  0x14,
+  0x2a,
+  0x14,
+  0x22,
+  0x22,
+  0x14,
+  0x2a,
+  0x14,
+  0x08,
+  0xaa,
+  0x00,
+  0x55,
+  0x00,
+  0xaa,
+  0xaa,
+  0x55,
+  0xaa,
+  0x55,
+  0xaa,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0x10,
+  0x10,
+  0x10,
+  0xff,
+  0x00,
+  0x14,
+  0x14,
+  0x14,
+  0xff,
+  0x00,
+  0x10,
+  0x10,
+  0xff,
+  0x00,
+  0xff,
+  0x10,
+  0x10,
+  0xf0,
+  0x10,
+  0xf0,
+  0x14,
+  0x14,
+  0x14,
+  0xfc,
+  0x00,
+  0x14,
+  0x14,
+  0xf7,
+  0x00,
+  0xff,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0xff,
+  0x14,
+  0x14,
+  0xf4,
+  0x04,
+  0xfc,
+  0x14,
+  0x14,
+  0x17,
+  0x10,
+  0x1f,
+  0x10,
+  0x10,
+  0x1f,
+  0x10,
+  0x1f,
+  0x14,
+  0x14,
+  0x14,
+  0x1f,
+  0x00,
+  0x10,
+  0x10,
+  0x10,
+  0xf0,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x1f,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x1f,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0xf0,
+  0x10,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0x10,
+  0xff,
+  0x10,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0x14,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0xff,
+  0x00,
+  0x00,
+  0x1f,
+  0x10,
+  0x17,
+  0x00,
+  0x00,
+  0xfc,
+  0x04,
+  0xf4,
+  0x14,
+  0x14,
+  0x17,
+  0x10,
+  0x17,
+  0x14,
+  0x14,
+  0xf4,
+  0x04,
+  0xf4,
+  0x00,
+  0x00,
+  0xff,
+  0x00,
+  0xf7,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0x14,
+  0xf7,
+  0x00,
+  0xf7,
+  0x14,
+  0x14,
+  0x14,
+  0x17,
+  0x14,
+  0x10,
+  0x10,
+  0x1f,
+  0x10,
+  0x1f,
+  0x14,
+  0x14,
+  0x14,
+  0xf4,
+  0x14,
+  0x10,
+  0x10,
+  0xf0,
+  0x10,
+  0xf0,
+  0x00,
+  0x00,
+  0x1f,
+  0x10,
+  0x1f,
+  0x00,
+  0x00,
+  0x00,
+  0x1f,
+  0x14,
+  0x00,
+  0x00,
+  0x00,
+  0xfc,
+  0x14,
+  0x00,
+  0x00,
+  0xf0,
+  0x10,
+  0xf0,
+  0x10,
+  0x10,
+  0xff,
+  0x10,
+  0xff,
+  0x14,
+  0x14,
+  0x14,
+  0xff,
+  0x14,
+  0x10,
+  0x10,
+  0x10,
+  0x1f,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0xf0,
+  0x10,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xf0,
+  0xf0,
+  0xf0,
+  0xf0,
+  0xf0,
+  0xff,
+  0xff,
+  0xff,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0xff,
+  0x0f,
+  0x0f,
+  0x0f,
+  0x0f,
+  0x0f,
+  0x38,
+  0x44,
+  0x44,
+  0x38,
+  0x44,
+  0x7c,
+  0x2a,
+  0x2a,
+  0x3e,
+  0x14,
+  0x7e,
+  0x02,
+  0x02,
+  0x06,
+  0x06,
+  0x02,
+  0x7e,
+  0x02,
+  0x7e,
+  0x02,
+  0x63,
+  0x55,
+  0x49,
+  0x41,
+  0x63,
+  0x38,
+  0x44,
+  0x44,
+  0x3c,
+  0x04,
+  0x40,
+  0x7e,
+  0x20,
+  0x1e,
+  0x20,
+  0x06,
+  0x02,
+  0x7e,
+  0x02,
+  0x02,
+  0x99,
+  0xa5,
+  0xe7,
+  0xa5,
+  0x99,
+  0x1c,
+  0x2a,
+  0x49,
+  0x2a,
+  0x1c,
+  0x4c,
+  0x72,
+  0x01,
+  0x72,
+  0x4c,
+  0x30,
+  0x4a,
+  0x4d,
+  0x4d,
+  0x30,
+  0x30,
+  0x48,
+  0x78,
+  0x48,
+  0x30,
+  0xbc,
+  0x62,
+  0x5a,
+  0x46,
+  0x3d,
+  0x3e,
+  0x49,
+  0x49,
+  0x49,
+  0x00,
+  0x7e,
+  0x01,
+  0x01,
+  0x01,
+  0x7e,
+  0x2a,
+  0x2a,
+  0x2a,
+  0x2a,
+  0x2a,
+  0x44,
+  0x44,
+  0x5f,
+  0x44,
+  0x44,
+  0x40,
+  0x51,
+  0x4a,
+  0x44,
+  0x40,
+  0x40,
+  0x44,
+  0x4a,
+  0x51,
+  0x40,
+  0x00,
+  0x00,
+  0xff,
+  0x01,
+  0x03,
+  0xe0,
+  0x80,
+  0xff,
+  0x00,
+  0x00,
+  0x08,
+  0x08,
+  0x6b,
+  0x6b,
+  0x08,
+  0x36,
+  0x12,
+  0x36,
+  0x24,
+  0x36,
+  0x06,
+  0x0f,
+  0x09,
+  0x0f,
+  0x06,
+  0x00,
+  0x00,
+  0x18,
+  0x18,
+  0x00,
+  0x00,
+  0x00,
+  0x10,
+  0x10,
+  0x00,
+  0x30,
+  0x40,
+  0xff,
+  0x01,
+  0x01,
+  0x00,
+  0x1f,
+  0x01,
+  0x01,
+  0x1e,
+  0x00,
+  0x19,
+  0x1d,
+  0x17,
+  0x12,
+  0x00,
+  0x3c,
+  0x3c,
+  0x3c,
+  0x3c,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+];
 
 
 /***/ }),
@@ -27027,6 +29725,185 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/MovementSensor/MPU6886/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const i2cParts = __webpack_require__("./parts/i2cParts.js");
+
+class MPU6886 extends i2cParts {
+  static info() {
+    return {
+      name: 'MPU6886',
+    };
+  }
+
+  constructor() {
+    super();
+    this.commands = {};
+    this.commands.whoami = 0x75;
+    this.commands.accelIntelCtrl = 0x69;
+    this.commands.smplrtDiv = 0x19;
+    this.commands.intPinCfg = 0x37;
+    this.commands.intEnable = 0x38;
+    this.commands.accelXoutH = 0x3b;
+    this.commands.accelXoutL = 0x3c;
+    this.commands.accelYoutH = 0x3d;
+    this.commands.accelYoutL = 0x3e;
+    this.commands.accelZoutH = 0x3f;
+    this.commands.accelZoutL = 0x40;
+
+    this.commands.tempOutH = 0x41;
+    this.commands.tempOutL = 0x42;
+
+    this.commands.gyroXoutH = 0x43;
+    this.commands.gyroXoutL = 0x44;
+    this.commands.gyroYoutH = 0x45;
+    this.commands.gyroYoutL = 0x46;
+    this.commands.gyroZoutH = 0x47;
+    this.commands.gyroZoutL = 0x48;
+
+    this.commands.userCtrl = 0x6a;
+    this.commands.pwrMgmt1 = 0x6b;
+    this.commands.pwrMgmt2 = 0x6c;
+    this.commands.config = 0x1a;
+    this.commands.gyroConfig = 0x1b;
+    this.commands.accelConfig = 0x1c;
+    this.commands.accelConfig2 = 0x1d;
+    this.commands.fifoEn = 0x23;
+  }
+
+  wired(obniz) {
+    super.wired(obniz);
+
+    this.init();
+  }
+
+  i2cInfo() {
+    return {
+      address: 0x68,
+      clock: 100000,
+      voltage: '3v',
+    };
+  }
+
+  whoamiWait() {
+    return this.readWait(this.commands.whoami, 1)[0];
+  }
+
+  init() {
+    this.write(this.commands.pwrMgmt1, 0x00);
+    this.obniz.wait(10);
+    this.write(this.commands.pwrMgmt1, 0x01 << 7);
+    this.obniz.wait(10);
+    this.write(this.commands.pwrMgmt1, 0x01 << 0);
+    this.obniz.wait(10);
+    this.setConfig(
+      this.params.accelerometer_range || 2,
+      this.params.gyroscope_range || 250
+    );
+    this.obniz.wait(1);
+    this.write(this.commands.config, 0x01);
+    this.obniz.wait(1);
+    this.write(this.commands.smplrtDiv, 0x05);
+    this.obniz.wait(1);
+    this.write(this.commands.intEnable, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.accelConfig2, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.userCtrl, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.fifoEn, 0x00);
+    this.obniz.wait(1);
+    this.write(this.commands.intPinCfg, 0x22);
+    this.obniz.wait(1);
+    this.write(this.commands.intEnable, 0x01);
+    this.obniz.wait(1);
+  }
+
+  setConfig(accelerometer_range, gyroscope_range) {
+    //accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+    switch (accelerometer_range) {
+      case 2:
+        this.write(this.commands.accelConfig, 0x00);
+        break;
+      case 4:
+        this.write(this.commands.accelConfig, 0x08);
+        break;
+      case 8:
+        this.write(this.commands.accelConfig, 0x10);
+        break;
+      case 16:
+        this.write(this.commands.accelConfig, 0x18);
+        break;
+      default:
+        throw new Error('accel_range variable 2,4,8,16 setting');
+    }
+    //gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+    switch (gyroscope_range) {
+      case 250:
+        this.write(this.commands.gyroConfig, 0x00);
+        break;
+      case 500:
+        this.write(this.commands.gyroConfig, 0x08);
+        break;
+      case 1000:
+        this.write(this.commands.gyroConfig, 0x10);
+        break;
+      case 2000:
+        this.write(this.commands.gyroConfig, 0x18);
+        break;
+      default:
+        throw new Error('accel_range variable 250,500,1000,2000 setting');
+    }
+    this._accel_range = accelerometer_range;
+    this._gyro_range = gyroscope_range;
+  }
+
+  async getAllDataWait() {
+    let raw_data = await this.readWait(this.commands.accelXoutH, 14); //request all data
+    let ac_scale = this._accel_range / 32768;
+    let gy_scale = this._gyro_range / 32768;
+
+    const accelerometer = {
+      x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
+      y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
+      z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+    };
+    const temperature =
+      this.char2short(raw_data[6], raw_data[7]) / 326.8 + 25.0;
+    const gyroscope = {
+      x: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
+      y: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+      z: this.char2short(raw_data[12], raw_data[13]) * gy_scale,
+    };
+
+    return {
+      accelerometer,
+      temperature,
+      gyroscope,
+    };
+  }
+
+  async getTempWait() {
+    return (await this.getAllDataWait()).temperature;
+  }
+
+  async getAccelWait() {
+    return (await this.getAllDataWait()).accelerometer;
+  }
+
+  async getGyroWait() {
+    return (await this.getAllDataWait()).gyroscope;
+  }
+}
+
+if (true) {
+  module.exports = MPU6886;
+}
+
+
+/***/ }),
+
 /***/ "./parts/MovementSensor/MPU9250/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -27174,6 +30051,187 @@ class Potentiometer {
 
 if (true) {
   module.exports = Potentiometer;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/SH200Q/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const i2cParts = __webpack_require__("./parts/i2cParts.js");
+
+class SH200Q extends i2cParts {
+  static info() {
+    return {
+      name: 'SH200Q',
+    };
+  }
+
+  constructor() {
+    super();
+    this.commands = {};
+    this.commands.whoami = 0x30;
+
+    this.commands.accConfig = 0x0e;
+    this.commands.gyroConfig = 0x0f;
+    this.commands.gyroDlpf = 0x11;
+    this.commands.fifoConfig = 0x12;
+    this.commands.accRange = 0x16;
+    this.commands.gyroRange = 0x2b;
+    this.commands.outputAcc = 0x00;
+    this.commands.outputGyro = 0x06;
+    this.commands.outputTemp = 0x0c;
+    this.commands.regSet1 = 0xba;
+    this.commands.regSet2 = 0xca;
+    this.commands.adcReset = 0xc2;
+    this.commands.softReset = 0x7f;
+    this.commands.reset = 0x75;
+  }
+
+  wired(obniz) {
+    super.wired(obniz);
+  }
+
+  i2cInfo() {
+    return {
+      address: 0x6c,
+      clock: 100000,
+      voltage: '3v',
+    };
+  }
+
+  whoamiWait() {
+    return this.readWait(this.commands.whoami, 1)[0];
+  }
+
+  async initWait() {
+    await this.resetAdcWait();
+
+    await this.writeFlagWait(0xd8, 7);
+    await this.obniz.wait(1);
+    await this.clearFlagWait(0xd8, 7);
+
+    await this.write(0x78, 0x61);
+    await this.obniz.wait(1);
+    await this.write(0x78, 0x00);
+
+    //set acc odr 256hz
+    await this.write(this.commands.accConfig, 0x91);
+
+    //set gyro odr 500hz
+    await this.write(this.commands.gyroConfig, 0x13);
+
+    //set gyro dlpf 50hz
+    await this.write(this.commands.gyroDlpf, 0x03);
+
+    //set no buffer mode
+    await this.write(this.commands.fifoConfig, 0x00);
+
+    this.setConfig(8, 2000);
+
+    await this.write(this.commands.regSet1, 0xc0);
+
+    //ADC Reset
+    await this.writeFlagWait(this.commands.regSet2, 4);
+    await this.obniz.wait(1);
+    await this.clearFlagWait(this.commands.regSet2, 4);
+    await this.obniz.wait(10);
+  }
+
+  setConfig(accelerometer_range, gyroscope_range) {
+    //accel range set (0x00:2g, 0x08:4g, 0x10:8g, 0x18:16g)
+    switch (accelerometer_range) {
+      case 4:
+        this.write(this.commands.accRange, 0x00);
+        break;
+      case 8:
+        this.write(this.commands.accRange, 0x01);
+        break;
+      case 16:
+        this.write(this.commands.accRange, 0x10);
+        break;
+      default:
+        throw new Error('accel_range variable 4,8,16 setting');
+    }
+    //gyro range & LPF set (0x00:250, 0x08:500, 0x10:1000, 0x18:2000[deg/s])
+    switch (gyroscope_range) {
+      case 125:
+        this.write(this.commands.gyroRange, 0x04);
+        break;
+      case 250:
+        this.write(this.commands.gyroRange, 0x03);
+        break;
+      case 500:
+        this.write(this.commands.gyroRange, 0x02);
+        break;
+      case 1000:
+        this.write(this.commands.gyroRange, 0x01);
+        break;
+      case 2000:
+        this.write(this.commands.gyroRange, 0x00);
+        break;
+      default:
+        throw new Error(
+          'gyroscope_range variable 125,250,500,1000,2000 setting'
+        );
+    }
+    this._accel_range = accelerometer_range;
+    this._gyro_range = gyroscope_range;
+  }
+
+  async resetAdcWait() {
+    //set 0xC2 bit2 1-->0
+    let tempdata = await this.readWait(this.commands.adcReset, 1);
+    tempdata[0] = tempdata[0] | 0x04; //tempdata[0] = 0x0E; //CC
+    this.write(this.commands.adcReset, tempdata);
+    await this.obniz.wait(1);
+    tempdata[0] = tempdata[0] & 0xfb; //tempdata[0] = 0x0A; //C8
+    this.write(this.commands.adcReset, tempdata);
+  }
+
+  async getAllDataWait() {
+    let raw_data = await this.readWait(this.commands.outputAcc, 14); //request all data
+    let ac_scale = this._accel_range / 32768;
+    let gy_scale = this._gyro_range / 32768;
+
+    const accelerometer = {
+      x: this.char2short(raw_data[0], raw_data[1]) * ac_scale,
+      y: this.char2short(raw_data[2], raw_data[3]) * ac_scale,
+      z: this.char2short(raw_data[4], raw_data[5]) * ac_scale,
+    };
+    const gyroscope = {
+      x: this.char2short(raw_data[6], raw_data[7]) * gy_scale,
+      y: this.char2short(raw_data[8], raw_data[9]) * gy_scale,
+      z: this.char2short(raw_data[10], raw_data[11]) * gy_scale,
+    };
+
+    const temperature =
+      this.char2short(raw_data[12], raw_data[13]) / 333.87 + 21.0;
+
+    return {
+      accelerometer,
+      temperature,
+      gyroscope,
+    };
+  }
+
+  async getTempWait() {
+    let raw_data = await this.readWait(this.commands.outputTemp, 2); //request all data
+    return this.char2short(raw_data[1], raw_data[0]) / 333.87 + 21.0;
+  }
+
+  async getAccelWait() {
+    return (await this.getAllDataWait()).accelerometer;
+  }
+
+  async getGyroWait() {
+    return (await this.getAllDataWait()).gyroscope;
+  }
+}
+
+if (true) {
+  module.exports = SH200Q;
 }
 
 
@@ -27830,6 +30888,141 @@ class StepperMotor {
 if (true) {
   module.exports = StepperMotor;
 }
+
+
+/***/ }),
+
+/***/ "./parts/Power/AXP192/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class AXP192 {
+  constructor() {
+    this.requiredKeys = [];
+    this.keys = ['sda', 'scl', 'i2c'];
+  }
+
+  static info() {
+    return {
+      name: 'AXP192',
+    };
+  }
+
+  wired(obniz) {
+    this.params.mode = 'master'; //for i2c
+    this.params.clock = 400 * 1000; //for i2c
+    this.i2c = obniz.getI2CWithConfig(this.params);
+  }
+
+  // Module functions
+  set(address, data) {
+    this.i2c.write(AXP192_ADDRESS, [address, data]);
+  }
+
+  async getWait(address) {
+    this.i2c.write(AXP192_ADDRESS, [address]);
+    return await this.i2c.readWait(AXP192_ADDRESS, 1);
+  }
+
+  async setLDO2Voltage(voltage) {
+    if (voltage < 1.8) {
+      voltage = 1.8;
+    }
+    if (voltage > 3.3) {
+      voltage = 3.3;
+    }
+    let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+    let offset = (voltage - 1.8) * 10;
+    if (offset > 15) {
+      offset = 15;
+    }
+    set = (set & 0x0f) | (offset << 4);
+    console.log('set voltage to ', set);
+    this.set(REG_VOLT_SET_LDO2_3, set);
+  }
+
+  async setLDO3Voltage(voltage) {
+    if (voltage < 1.8) {
+      voltage = 1.8;
+    }
+    if (voltage > 3.3) {
+      voltage = 3.3;
+    }
+    let set = await this.getWait(REG_VOLT_SET_LDO2_3);
+    let offset = (voltage - 1.8) * 10;
+    if (offset > 15) {
+      offset = 15;
+    }
+    set = (set & 0xf0) | offset;
+    this.set(REG_VOLT_SET_LDO2_3, set);
+  }
+
+  set3VLDO2_3() {
+    this.set(REG_VOLT_SET_LDO2_3, 0xcc);
+  }
+
+  enableLDO2_3() {
+    this.set(REG_EN_DC1_LDO2_3, 0x4d);
+  }
+
+  async toggleLDO2(val) {
+    const bit = val ? 1 : 0;
+    let state = await this.getWait(REG_EN_DC1_LDO2_3);
+    state = (state & LDO2_EN_MASK) | (bit << 2);
+    this.set(REG_EN_DC1_LDO2_3, state);
+  }
+
+  async toggleLDO3(val) {
+    const bit = val ? 1 : 0;
+    let state = await this.getWait(REG_EN_DC1_LDO2_3);
+    state = (state & LDO3_EN_MASK) | (bit << 3);
+    this.set(REG_EN_DC1_LDO2_3, state);
+  }
+
+  initM5StickC() {
+    this.i2c.write(AXP192_ADDRESS, [REG_EN_EXT_DC2, 0xff]);
+    this.i2c.write(AXP192_ADDRESS, [REG_VOLT_SET_LDO2_3, 0xcc]);
+    this.i2c.write(AXP192_ADDRESS, [REG_ADC_EN1, 0xff]);
+    this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_CTRL1, 0xc0]);
+    this.i2c.write(AXP192_ADDRESS, [REG_CCOUNTER, 0x80]);
+    this.i2c.write(AXP192_ADDRESS, [REG_EN_DC1_LDO2_3, 0x4d]);
+    this.i2c.write(AXP192_ADDRESS, [REG_PEK, 0x0c]);
+    this.i2c.write(AXP192_ADDRESS, [REG_GPIO0, 0x02]);
+    this.i2c.write(AXP192_ADDRESS, [REG_VBUS_IPSOUT, 0xe0]);
+    this.i2c.write(AXP192_ADDRESS, [REG_CHARGE_OVTEMP, 0xfc]);
+    this.i2c.write(AXP192_ADDRESS, [REG_BCKUP_BAT, 0xa2]);
+  }
+
+  async getVbat() {
+    this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
+    let vbat_lsb = await this.readWait(AXP192_ADDRESS, 1);
+    this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
+    let vbat_msb = await this.readWait(AXP192_ADDRESS, 1);
+    return (vbat_lsb << 4) + vbat_msb;
+  }
+}
+
+if (true) {
+  module.exports = AXP192;
+}
+
+const AXP192_ADDRESS = 0x34;
+
+const REG_EN_EXT_DC2 = 0x10;
+const REG_EN_DC1_LDO2_3 = 0x12;
+const REG_VOLT_SET_LDO2_3 = 0x28;
+const REG_VBUS_IPSOUT = 0x30;
+const REG_CHARGE_CTRL1 = 0x33;
+const REG_BCKUP_BAT = 0x35;
+const REG_PEK = 0x36;
+const REG_CHARGE_OVTEMP = 0x39;
+const REG_VBAT_LSB = 0x78;
+const REG_VBAT_MSB = 0x79;
+const REG_ADC_EN1 = 0x82;
+const REG_GPIO0 = 0x90;
+const REG_CCOUNTER = 0xb8;
+
+const LDO2_EN_MASK = 0xfb;
+const LDO3_EN_MASK = 0xf7;
 
 
 /***/ }),
@@ -28767,6 +31960,61 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/TemperatureSensor/i2c/DHT12/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const i2cParts = __webpack_require__("./parts/i2cParts.js");
+
+class DHT12 extends i2cParts {
+  static info() {
+    return {
+      name: 'DHT12',
+    };
+  }
+
+  i2cInfo() {
+    return {
+      address: 0x5c,
+      clock: 100000,
+      voltage: '3v',
+    };
+  }
+
+  async getAllDataWait() {
+    const data = await this.readWait(0x00, 5);
+    const humidity = data[0] + data[1] * 0.1;
+    let temperature = data[2] + (data[3] & 0x7f) * 0.1;
+    if (data[3] & 0x80) {
+      temperature *= -1;
+    }
+
+    const checksum = data[0] + data[1] + data[2] + data[3];
+    if (checksum !== data[4]) {
+      return null;
+    }
+
+    return {
+      humidity,
+      temperature,
+    };
+  }
+
+  async getTempWait() {
+    return (await this.getAllDataWait()).temperature;
+  }
+
+  async getHumdWait() {
+    return (await this.getAllDataWait()).humidity;
+  }
+}
+
+if (true) {
+  module.exports = DHT12;
+}
+
+
+/***/ }),
+
 /***/ "./parts/TemperatureSensor/i2c/S-5851A/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -29397,6 +32645,69 @@ class XBee {
 if (true) {
   module.exports = XBee;
 }
+
+
+/***/ }),
+
+/***/ "./parts/i2cParts.js":
+/***/ (function(module, exports) {
+
+class I2cPartsAbstruct {
+  constructor() {
+    this.keys = ['gnd', 'sda', 'scl', 'i2c', 'vcc'];
+    this.requiredKeys = [];
+
+    this.i2cinfo = this.i2cInfo();
+    this.address = this.i2cinfo.address;
+  }
+  i2cInfo() {
+    throw new Error('abstruct class');
+
+    // eslint-disable-next-line no-unreachable
+    return {
+      address: 0x00,
+      clock: 100000,
+      voltage: '3v',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+
+    obniz.setVccGnd(null, this.params.gnd, this.i2cinfo.voltage);
+    this.params.clock = this.i2cinfo.clock;
+    this.params.pull = this.i2cinfo.voltage;
+    this.params.mode = 'master';
+    // @ts-ignore
+    this.i2c = this.obniz.getI2CWithConfig(this.params);
+  }
+
+  char2short(val1, val2) {
+    const buffer = new ArrayBuffer(2);
+    const dv = new DataView(buffer);
+    dv.setUint8(0, val1);
+    dv.setUint8(1, val2);
+    return dv.getInt16(0, false);
+  }
+
+  async readWait(command, length) {
+    this.i2c.write(this.address, [command]);
+    return await this.i2c.readWait(this.address, length);
+  }
+
+  async readUint16Wait(command, length) {
+    this.i2c.write(this.address, [command]);
+    return await this.i2c.readWait(this.address, length);
+  }
+
+  write(command, buf) {
+    if (!Array.isArray(buf)) {
+      buf = [buf];
+    }
+    this.i2c.write(this.address, [command, ...buf]);
+  }
+}
+module.exports = I2cPartsAbstruct;
 
 
 /***/ })

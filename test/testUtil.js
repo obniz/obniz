@@ -108,7 +108,7 @@ let testUtil = {
           ws: {
             ready: true,
             obniz: {
-              firmware: options.__firmware_ver || '1.1.0',
+              firmware: options.__firmware_ver || '2.1.0',
             },
           },
         },
