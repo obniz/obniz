@@ -1,4 +1,5 @@
 const isNode = typeof window === 'undefined';
+const semver = require('semver');
 
 class Tcp {
   constructor(Obniz, id) {
@@ -26,6 +27,10 @@ class Tcp {
   }
 
   connectWait(port, domain) {
+    if (semver.lt(this.Obniz.firmware_ver, '2.1.0')) {
+      throw new Error(`Please update obniz firmware >= 2.1.0`);
+    }
+
     if (port < 0 || port > 65535) {
       throw new Error(`tcp${this.id} is invalid port`);
     }
