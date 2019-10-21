@@ -9039,6 +9039,7 @@ const BleRemotePeripheral = __webpack_require__("./obniz/libs/embeds/ble/bleRemo
 const BleAdvertisement = __webpack_require__("./obniz/libs/embeds/ble/bleAdvertisement.js");
 const BleScan = __webpack_require__("./obniz/libs/embeds/ble/bleScan.js");
 const BleSecurity = __webpack_require__("./obniz/libs/embeds/ble/bleSecurity.js");
+const BleRemotePdlpDevice = __webpack_require__("./obniz/libs/embeds/ble/bleRemotePdlpDevice.js");
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -9072,8 +9073,21 @@ class ObnizBLE {
   notified(obj) {
     if (obj.scan_result) {
       let val = this.findPeripheral(obj.scan_result.address);
+      let uuid_128bit = this.constructor._dataArray2uuidHex(
+        obj.scan_result.adv_data.slice(5, 21).reverse()
+      );
+      let uuid_16bit = this.constructor._dataArray2uuidHex(
+        obj.scan_result.adv_data.slice(5, 7).reverse()
+      );
       if (!val) {
-        val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+        if (
+          uuid_128bit != BleRemotePdlpDevice.UUID_128BIT &&
+          uuid_16bit != BleRemotePdlpDevice.UUID_16BIT
+        ) {
+          val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+        } else {
+          val = new BleRemotePdlpDevice(this.Obniz, obj.scan_result.address);
+        }
         this.remotePeripherals.push(val);
       }
       val.discoverdOnRemote = true;
@@ -9955,10 +9969,57 @@ const BleHelper = {
   uuidFilter: function(uuid) {
     return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
   },
+  ieee754Converter: function(data, signlen, explen, fraclen) {
+    let sgn = signlen ? (data >>> 11) & 0b1 : 0; // sign
+    let max = Math.pow(2, explen) - 1; // maximum of exponent
+    let exp = (data >>> fraclen) & max; // exponent
+    let fra = 0; // fraction
+    for (let i = 0; i < fraclen; i++) {
+      if ((data >>> (fraclen - i - 1)) & 0b1) {
+        fra += Math.pow(2, -(i + 1));
+      }
+    }
+    if (exp === 0 && fra === 0) {
+      return 0;
+    } else if (exp === 0 && fra !== 0) {
+      let m = Math.pow(2, explen - 1) - 1; // median (7 or 15)
+      let v = Math.pow(-1, sgn) * fra * Math.pow(2, 1 - m);
+      return v;
+    } else if (exp >= 1 && exp <= max - 1) {
+      let m = Math.pow(2, explen - 1) - 1; // median (7 or 15)
+      let v = Math.pow(-1, sgn) * (1 + fra) * Math.pow(2, exp - m);
+      return v;
+    } else if (exp === max && fra === 0) {
+      return Infinity;
+    } else {
+      return NaN;
+    }
+  },
 };
 
 module.exports = BleHelper;
 
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/blePdlpParameter.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {class BlePdlpParameter {
+  constructor(type, value) {
+    this.id = type;
+    this.value = Buffer.from(value).toJSON().data;
+    this.length = this.value.length;
+  }
+
+  toArray() {
+    return [this.id, this.length].concat(this.value);
+  }
+}
+
+module.exports = BlePdlpParameter;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -10388,6 +10449,191 @@ module.exports = BleRemoteDescriptor;
 
 /***/ }),
 
+/***/ "./obniz/libs/embeds/ble/bleRemotePdlpDevice.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const BleRemotePeripheral = __webpack_require__("./obniz/libs/embeds/ble/bleRemotePeripheral.js");
+const BlePdlpParameter = __webpack_require__("./obniz/libs/embeds/ble/blePdlpParameter.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/ble/bleHelper.js");
+const HEADER_SRC_CLIENT = 1;
+const HEADER_RESERVED_BIT = 0;
+const HEADER_MULTIPLE_PACKET = 0;
+const HEADER_SINGLE_PACKET = 1;
+const UUID_128BIT = 'b3b36901-50d3-4044-808d-50835b13a6cd';
+const UUID_16BIT = 'fe4e';
+const SERVICE_ID_MASK = 0xf000;
+const SERVICE_VAL_MASK = 0x0fff;
+
+const SERVICES = [
+  {
+    name: 'Available services',
+    sensor: false,
+    parse: function(raw) {
+      return raw;
+    },
+  },
+  {
+    name: 'Temperature',
+    mask: 0x0800,
+    sensor: true,
+    parse: function(raw) {
+      return BleHelper.ieee754Converter(raw, 1, 4, 7);
+    },
+  },
+  {
+    name: 'Humidity',
+    mask: 0x0400,
+    sensor: true,
+    parse: function(raw) {
+      return BleHelper.ieee754Converter(raw, 0, 4, 8);
+    },
+  },
+  {
+    name: 'Atmospheric pressure',
+    mask: 0x0200,
+    sensor: true,
+    parse: function(raw) {
+      return BleHelper.ieee754Converter(raw, 0, 5, 7);
+    },
+  },
+  {
+    name: 'Remaining battery',
+    mask: 0x0100,
+    sensor: false,
+    parse: function(raw) {
+      return raw;
+    },
+  },
+  {
+    name: 'Button information',
+    mask: 0x0080,
+    sensor: false,
+    parse: function(raw) {
+      return raw;
+    },
+  },
+  {
+    name: 'Open/Close information',
+    mask: 0x0040,
+    sensor: false,
+    parse: function(raw) {
+      return raw;
+    },
+  },
+  {
+    name: 'Motion sensor',
+    mask: 0x0020,
+    sensor: true,
+    parse: function(raw) {
+      return raw;
+    },
+  },
+  {
+    name: 'Vibration',
+    mask: 0x0010,
+    sensor: false,
+    parse: function(raw) {
+      return raw;
+    },
+  },
+  {
+    name: 'Brigthness sensor',
+    mask: 0x0008,
+    sensor: true,
+    parse: function(raw) {
+      let range = (raw & 0x800) >> 11;
+      let val = raw & 0x7ff;
+      if (range === 0) return val;
+      else return val * 50;
+    },
+  },
+];
+
+class BleRemotePdlpDevice extends BleRemotePeripheral {
+  constructor(Obniz, address) {
+    super(Obniz, address);
+    this.sequenceNumber = 0;
+    this.writeCharacteristic = null;
+    this.functions = {
+      PROPERTY_INFORMATION: 0,
+      NOTIFICATION: 1,
+      OPERATION: 2,
+      SENSOR_INFORMATION: 3,
+      SETTING_OPERATION: 4,
+    };
+    this.sensorData = {};
+  }
+
+  _getHeader(lastPacket) {
+    let header = [HEADER_SRC_CLIENT, HEADER_RESERVED_BIT, this.sequenceNumber];
+    if (lastPacket) {
+      header.push(HEADER_SINGLE_PACKET);
+    } else {
+      header.push(HEADER_MULTIPLE_PACKET);
+    }
+    return header;
+  }
+
+  static get UUID_128BIT() {
+    return UUID_128BIT;
+  }
+
+  static get UUID_16BIT() {
+    return UUID_16BIT;
+  }
+
+  static get SERVICES() {
+    return SERVICES;
+  }
+
+  setParams(dic) {
+    super.setParams(dic);
+    let serviceData = this.advertise_data_rows[2];
+    serviceData.shift();
+    for (let i = 0; i < serviceData.length / 2 + 1; i++) {
+      let val = (serviceData[2 * i] << 8) + serviceData[2 * i + 1];
+      let service = SERVICES[(val & SERVICE_ID_MASK) >> 12];
+      if (service && service.sensor) {
+        this.sensorData[service.name] = service.parse(val & SERVICE_VAL_MASK);
+      }
+    }
+    this.onSensorData(this.sensorData);
+  }
+
+  updateSensorData() {
+    this.Obniz.ble.scan.start(this);
+  }
+
+  onSensorData() {}
+
+  writeFinal(fnId, msgId, params) {
+    let header = this._getHeader(true);
+    let message = [];
+    if (Array.isArray(params)) {
+      message = [fnId, msgId, params.length];
+      params.forEach(param => {
+        if (param instanceof BlePdlpParameter) {
+          message.concat(param.toArray());
+        }
+      });
+    } else {
+      message = [fnId, msgId];
+    }
+    let payload = header.concat(message);
+    this.writeCharacteristic.write(payload);
+    this.sequenceNumber++;
+  }
+
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
+  }
+}
+
+module.exports = BleRemotePdlpDevice;
+
+
+/***/ }),
+
 /***/ "./obniz/libs/embeds/ble/bleRemotePeripheral.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10790,7 +11036,6 @@ class BleScan {
     this.scanTarget = null;
     this.Obniz = Obniz;
     this.emitter = new emitter();
-
     this.scanedPeripherals = [];
   }
 
@@ -18691,6 +18936,13 @@ var map = {
 	"./Accessory/USB/index.js": "./parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
+	"./Ble/Furueru/index.js": "./parts/Ble/Furueru/index.js",
+	"./Ble/Kizuku/index.js": "./parts/Ble/Kizuku/index.js",
+	"./Ble/Pochiru/index.js": "./parts/Ble/Pochiru/index.js",
+	"./Ble/Sizuku6x/index.js": "./parts/Ble/Sizuku6x/index.js",
+	"./Ble/SizukuLUX/index.js": "./parts/Ble/SizukuLUX/index.js",
+	"./Ble/SizukuTHA/index.js": "./parts/Ble/SizukuTHA/index.js",
+	"./Ble/Tomoru/index.js": "./parts/Ble/Tomoru/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
@@ -19171,6 +19423,328 @@ class OMRON_2JCIE {
 
 if (true) {
   module.exports = OMRON_2JCIE;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Ble/Furueru/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Furueru {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'Furueru',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'Furueru' + this.params.serial,
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+  }
+
+  getSensors() {
+    return this.periperal.sensorData;
+  }
+
+  updateSensors() {
+    this.periperal.onSensorData = this.onSensorData;
+    this.periperal.updateSensorData();
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = Furueru;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Ble/Kizuku/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Kizuku {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'Kizuku',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'Kizuku' + this.params.serial,
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+  }
+
+  getSensors() {
+    return this.periperal.sensorData;
+  }
+
+  updateSensors() {
+    this.periperal.onSensorData = this.onSensorData;
+    this.periperal.updateSensorData();
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = Kizuku;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Ble/Pochiru/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Pochiru {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'Pochiru',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'Pochiru' + this.params.serial,
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+  }
+
+  getSensors() {
+    return this.periperal.sensorData;
+  }
+
+  updateSensors() {
+    this.periperal.onSensorData = this.onSensorData;
+    this.periperal.updateSensorData();
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = Pochiru;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Ble/Sizuku6x/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Sizuku6x {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'Sizuku6x',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'Sizuku_6x04 ' + parseInt(this.params.serial),
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+  }
+
+  getSensors() {
+    return this.periperal.sensorData;
+  }
+
+  updateSensors() {
+    this.periperal.onSensorData = this.onSensorData;
+    this.periperal.updateSensorData();
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = Sizuku6x;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Ble/SizukuLUX/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class SizukuLUX {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'SizukuLUX',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'Sizuku_Lux' + this.params.serial,
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+  }
+
+  getSensors() {
+    return this.periperal.sensorData;
+  }
+
+  updateSensors() {
+    this.periperal.onSensorData = this.onSensorData;
+    this.periperal.updateSensorData();
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = SizukuLUX;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Ble/SizukuTHA/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class SizukuTHA {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'SizukuTHA',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'Sizuku_tha' + this.params.serial,
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+  }
+
+  getSensors() {
+    return this.periperal.sensorData;
+  }
+
+  updateSensors() {
+    this.periperal.onSensorData = this.onSensorData;
+    this.periperal.updateSensorData();
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = SizukuTHA;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Ble/Tomoru/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Tomoru {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'Tomoru',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'TomoruFC' + this.params.serial,
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+  }
+
+  getSensors() {
+    return this.periperal.sensorData;
+  }
+
+  updateSensors() {
+    this.periperal.onSensorData = this.onSensorData;
+    this.periperal.updateSensorData();
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = Tomoru;
 }
 
 

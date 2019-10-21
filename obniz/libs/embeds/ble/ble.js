@@ -6,6 +6,7 @@ const BleRemotePeripheral = require('./bleRemotePeripheral');
 const BleAdvertisement = require('./bleAdvertisement');
 const BleScan = require('./bleScan');
 const BleSecurity = require('./bleSecurity');
+const BleRemotePdlpDevice = require('./bleRemotePdlpDevice');
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -39,8 +40,21 @@ class ObnizBLE {
   notified(obj) {
     if (obj.scan_result) {
       let val = this.findPeripheral(obj.scan_result.address);
+      let uuid_128bit = this.constructor._dataArray2uuidHex(
+        obj.scan_result.adv_data.slice(5, 21).reverse()
+      );
+      let uuid_16bit = this.constructor._dataArray2uuidHex(
+        obj.scan_result.adv_data.slice(5, 7).reverse()
+      );
       if (!val) {
-        val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+        if (
+          uuid_128bit != BleRemotePdlpDevice.UUID_128BIT &&
+          uuid_16bit != BleRemotePdlpDevice.UUID_16BIT
+        ) {
+          val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
+        } else {
+          val = new BleRemotePdlpDevice(this.Obniz, obj.scan_result.address);
+        }
         this.remotePeripherals.push(val);
       }
       val.discoverdOnRemote = true;
