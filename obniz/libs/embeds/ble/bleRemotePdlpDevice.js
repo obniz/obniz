@@ -43,17 +43,19 @@ const SERVICES = [
     },
   },
   {
-    name: 'Remaining battery',
+    name: 'Battery',
     mask: 0x0100,
     sensor: false,
     parse: function(raw) {
-      return raw;
+      let state = (raw & 0x800) >> 11;
+      if (state === 0) return 'ok';
+      else return 'low';
     },
   },
   {
-    name: 'Button information',
+    name: 'Button',
     mask: 0x0080,
-    sensor: false,
+    sensor: true,
     parse: function(raw) {
       return raw;
     },
@@ -61,9 +63,15 @@ const SERVICES = [
   {
     name: 'Open/Close information',
     mask: 0x0040,
-    sensor: false,
+    sensor: true,
     parse: function(raw) {
-      return raw;
+      let st = (raw & 0x800) >> 11;
+      let val = raw & 0x7ff;
+      let obj = {};
+      if (st === 0) obj['state'] = 'closed';
+      else obj['state'] = 'open';
+      obj['count'] = val;
+      return obj;
     },
   },
   {
@@ -71,19 +79,31 @@ const SERVICES = [
     mask: 0x0020,
     sensor: true,
     parse: function(raw) {
-      return raw;
+      let st = (raw & 0x800) >> 11;
+      let val = raw & 0x7ff;
+      let obj = {};
+      if (st === 0) obj['state'] = 'off';
+      else obj['state'] = 'on';
+      obj['count'] = val;
+      return obj;
     },
   },
   {
     name: 'Vibration',
     mask: 0x0010,
-    sensor: false,
+    sensor: true,
     parse: function(raw) {
-      return raw;
+      let st = (raw & 0x800) >> 11;
+      let val = raw & 0x7ff;
+      let obj = {};
+      if (st === 0) obj['state'] = 'off';
+      else obj['state'] = 'on';
+      obj['count'] = val;
+      return obj;
     },
   },
   {
-    name: 'Brigthness sensor',
+    name: 'Brigthness',
     mask: 0x0008,
     sensor: true,
     parse: function(raw) {
@@ -108,6 +128,8 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
       SETTING_OPERATION: 4,
     };
     this.sensorData = {};
+    this.localServices = [];
+    console.log('PDLP BLE', this);
   }
 
   _getHeader(lastPacket) {
@@ -132,6 +154,12 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     return SERVICES;
   }
 
+  setLocalServices(list) {
+    if (Array.isArray(list)) {
+      this.localServices = list;
+    }
+  }
+
   setParams(dic) {
     super.setParams(dic);
     let serviceData = this.advertise_data_rows[2];
@@ -139,8 +167,19 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     for (let i = 0; i < serviceData.length / 2 + 1; i++) {
       let val = (serviceData[2 * i] << 8) + serviceData[2 * i + 1];
       let service = SERVICES[(val & SERVICE_ID_MASK) >> 12];
+      if (service) {
+        console.log(
+          this.localName,
+          service.name,
+          service.parse(val & SERVICE_VAL_MASK)
+        );
+      }
       if (service && service.sensor) {
-        this.sensorData[service.name] = service.parse(val & SERVICE_VAL_MASK);
+        if (
+          this.localServices.length > 0 &&
+          this.localServices.includes(service.name)
+        )
+          this.sensorData[service.name] = service.parse(val & SERVICE_VAL_MASK);
       }
     }
     this.onSensorData(this.sensorData);

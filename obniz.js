@@ -10497,17 +10497,19 @@ const SERVICES = [
     },
   },
   {
-    name: 'Remaining battery',
+    name: 'Battery',
     mask: 0x0100,
     sensor: false,
     parse: function(raw) {
-      return raw;
+      let state = (raw & 0x800) >> 11;
+      if (state === 0) return 'ok';
+      else return 'low';
     },
   },
   {
-    name: 'Button information',
+    name: 'Button',
     mask: 0x0080,
-    sensor: false,
+    sensor: true,
     parse: function(raw) {
       return raw;
     },
@@ -10515,9 +10517,15 @@ const SERVICES = [
   {
     name: 'Open/Close information',
     mask: 0x0040,
-    sensor: false,
+    sensor: true,
     parse: function(raw) {
-      return raw;
+      let st = (raw & 0x800) >> 11;
+      let val = raw & 0x7ff;
+      let obj = {};
+      if (st === 0) obj['state'] = 'closed';
+      else obj['state'] = 'open';
+      obj['count'] = val;
+      return obj;
     },
   },
   {
@@ -10525,19 +10533,31 @@ const SERVICES = [
     mask: 0x0020,
     sensor: true,
     parse: function(raw) {
-      return raw;
+      let st = (raw & 0x800) >> 11;
+      let val = raw & 0x7ff;
+      let obj = {};
+      if (st === 0) obj['state'] = 'off';
+      else obj['state'] = 'on';
+      obj['count'] = val;
+      return obj;
     },
   },
   {
     name: 'Vibration',
     mask: 0x0010,
-    sensor: false,
+    sensor: true,
     parse: function(raw) {
-      return raw;
+      let st = (raw & 0x800) >> 11;
+      let val = raw & 0x7ff;
+      let obj = {};
+      if (st === 0) obj['state'] = 'off';
+      else obj['state'] = 'on';
+      obj['count'] = val;
+      return obj;
     },
   },
   {
-    name: 'Brigthness sensor',
+    name: 'Brigthness',
     mask: 0x0008,
     sensor: true,
     parse: function(raw) {
@@ -10562,6 +10582,8 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
       SETTING_OPERATION: 4,
     };
     this.sensorData = {};
+    this.localServices = [];
+    console.log('PDLP BLE', this);
   }
 
   _getHeader(lastPacket) {
@@ -10586,6 +10608,12 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     return SERVICES;
   }
 
+  setLocalServices(list) {
+    if (Array.isArray(list)) {
+      this.localServices = list;
+    }
+  }
+
   setParams(dic) {
     super.setParams(dic);
     let serviceData = this.advertise_data_rows[2];
@@ -10593,8 +10621,19 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     for (let i = 0; i < serviceData.length / 2 + 1; i++) {
       let val = (serviceData[2 * i] << 8) + serviceData[2 * i + 1];
       let service = SERVICES[(val & SERVICE_ID_MASK) >> 12];
+      if (service) {
+        console.log(
+          this.localName,
+          service.name,
+          service.parse(val & SERVICE_VAL_MASK)
+        );
+      }
       if (service && service.sensor) {
-        this.sensorData[service.name] = service.parse(val & SERVICE_VAL_MASK);
+        if (
+          this.localServices.length > 0 &&
+          this.localServices.includes(service.name)
+        )
+          this.sensorData[service.name] = service.parse(val & SERVICE_VAL_MASK);
       }
     }
     this.onSensorData(this.sensorData);
@@ -18938,6 +18977,7 @@ var map = {
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Ble/Furueru/index.js": "./parts/Ble/Furueru/index.js",
 	"./Ble/Kizuku/index.js": "./parts/Ble/Kizuku/index.js",
+	"./Ble/Oshieru/index.js": "./parts/Ble/Oshieru/index.js",
 	"./Ble/Pochiru/index.js": "./parts/Ble/Pochiru/index.js",
 	"./Ble/Sizuku6x/index.js": "./parts/Ble/Sizuku6x/index.js",
 	"./Ble/SizukuLUX/index.js": "./parts/Ble/SizukuLUX/index.js",
@@ -19431,6 +19471,8 @@ if (true) {
 /***/ "./parts/Ble/Furueru/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
+const LOCAL_SERVICES = ['Battery', 'Vibration'];
+
 class Furueru {
   constructor() {
     this.keys = ['serial'];
@@ -19453,15 +19495,21 @@ class Furueru {
       localName: 'Furueru' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}
@@ -19476,6 +19524,8 @@ if (true) {
 
 /***/ "./parts/Ble/Kizuku/index.js":
 /***/ (function(module, exports, __webpack_require__) {
+
+const LOCAL_SERVICES = ['Battery', 'Vibration'];
 
 class Kizuku {
   constructor() {
@@ -19499,15 +19549,21 @@ class Kizuku {
       localName: 'Kizuku' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}
@@ -19520,8 +19576,64 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Ble/Oshieru/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const LOCAL_SERVICES = ['Battery', 'Open/Close information'];
+
+class Oshieru {
+  constructor() {
+    this.keys = ['serial'];
+    this.requiredKeys = ['serial'];
+    this.periperal = null;
+  }
+
+  static info() {
+    return {
+      name: 'Oshieru',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+  }
+
+  async connectWait() {
+    let target = {
+      localName: 'Oshieru' + this.params.serial,
+    };
+    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+  }
+
+  getSensors() {
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
+  }
+
+  updateSensors() {
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
+  }
+
+  onSensorData() {}
+}
+
+if (true) {
+  module.exports = Oshieru;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Ble/Pochiru/index.js":
 /***/ (function(module, exports, __webpack_require__) {
+
+const LOCAL_SERVICES = ['Battery', 'Button', 'LED'];
 
 class Pochiru {
   constructor() {
@@ -19545,15 +19657,21 @@ class Pochiru {
       localName: 'Pochiru' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}
@@ -19568,6 +19686,8 @@ if (true) {
 
 /***/ "./parts/Ble/Sizuku6x/index.js":
 /***/ (function(module, exports, __webpack_require__) {
+
+const LOCAL_SERVICES = ['Battery', 'LED'];
 
 class Sizuku6x {
   constructor() {
@@ -19591,15 +19711,21 @@ class Sizuku6x {
       localName: 'Sizuku_6x04 ' + parseInt(this.params.serial),
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}
@@ -19614,6 +19740,8 @@ if (true) {
 
 /***/ "./parts/Ble/SizukuLUX/index.js":
 /***/ (function(module, exports, __webpack_require__) {
+
+const LOCAL_SERVICES = ['Battery', 'LED', 'Brigthness'];
 
 class SizukuLUX {
   constructor() {
@@ -19637,15 +19765,21 @@ class SizukuLUX {
       localName: 'Sizuku_Lux' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}
@@ -19660,6 +19794,14 @@ if (true) {
 
 /***/ "./parts/Ble/SizukuTHA/index.js":
 /***/ (function(module, exports, __webpack_require__) {
+
+const LOCAL_SERVICES = [
+  'Battery',
+  'LED',
+  'Temperature',
+  'Humidity',
+  'Atmospheric pressure',
+];
 
 class SizukuTHA {
   constructor() {
@@ -19683,15 +19825,21 @@ class SizukuTHA {
       localName: 'Sizuku_tha' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}
@@ -19706,6 +19854,8 @@ if (true) {
 
 /***/ "./parts/Ble/Tomoru/index.js":
 /***/ (function(module, exports, __webpack_require__) {
+
+const LOCAL_SERVICES = ['Battery', 'LED'];
 
 class Tomoru {
   constructor() {
@@ -19729,15 +19879,21 @@ class Tomoru {
       localName: 'TomoruFC' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}

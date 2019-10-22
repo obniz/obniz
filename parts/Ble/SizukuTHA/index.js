@@ -1,3 +1,11 @@
+const LOCAL_SERVICES = [
+  'Battery',
+  'LED',
+  'Temperature',
+  'Humidity',
+  'Atmospheric pressure',
+];
+
 class SizukuTHA {
   constructor() {
     this.keys = ['serial'];
@@ -20,15 +28,21 @@ class SizukuTHA {
       localName: 'Sizuku_tha' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
   }
 
   getSensors() {
-    return this.periperal.sensorData;
+    if (this.periperal) return this.peripral.sensorData;
+    else return { error: 'Not connected' };
   }
 
   updateSensors() {
-    this.periperal.onSensorData = this.onSensorData;
-    this.periperal.updateSensorData();
+    if (this.periperal) {
+      this.periperal.onSensorData = this.onSensorData;
+      this.periperal.updateSensorData();
+    } else {
+      this.onSensorData({ error: 'Not connected' });
+    }
   }
 
   onSensorData() {}

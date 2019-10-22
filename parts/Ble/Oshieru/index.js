@@ -1,6 +1,6 @@
-const LOCAL_SERVICES = ['Battery', 'Button', 'LED'];
+const LOCAL_SERVICES = ['Battery', 'Open/Close information'];
 
-class Pochiru {
+class Oshieru {
   constructor() {
     this.keys = ['serial'];
     this.requiredKeys = ['serial'];
@@ -9,7 +9,7 @@ class Pochiru {
 
   static info() {
     return {
-      name: 'Pochiru',
+      name: 'Oshieru',
     };
   }
 
@@ -19,7 +19,7 @@ class Pochiru {
 
   async connectWait() {
     let target = {
-      localName: 'Pochiru' + this.params.serial,
+      localName: 'Oshieru' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
     if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
@@ -43,5 +43,5 @@ class Pochiru {
 }
 
 if (typeof module === 'object') {
-  module.exports = Pochiru;
+  module.exports = Oshieru;
 }
