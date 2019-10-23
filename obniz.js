@@ -9040,6 +9040,11 @@ const BleAdvertisement = __webpack_require__("./obniz/libs/embeds/ble/bleAdverti
 const BleScan = __webpack_require__("./obniz/libs/embeds/ble/bleScan.js");
 const BleSecurity = __webpack_require__("./obniz/libs/embeds/ble/bleSecurity.js");
 const BleRemotePdlpDevice = __webpack_require__("./obniz/libs/embeds/ble/bleRemotePdlpDevice.js");
+const BlePdlpPropertyInformation = __webpack_require__("./obniz/libs/embeds/ble/blePdlpPropertyInformation.js");
+const BlePdlpNotification = __webpack_require__("./obniz/libs/embeds/ble/blePdlpNotification.js");
+const BlePdlpSettingOperation = __webpack_require__("./obniz/libs/embeds/ble/blePdlpSettingOperation.js");
+const BlePdlpOperation = __webpack_require__("./obniz/libs/embeds/ble/blePdlpOperation.js");
+const BlePdlpSensorInformation = __webpack_require__("./obniz/libs/embeds/ble/blePdlpSensorInformation.js");
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -9087,6 +9092,11 @@ class ObnizBLE {
           val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
         } else {
           val = new BleRemotePdlpDevice(this.Obniz, obj.scan_result.address);
+          this.PdlpNotification = BlePdlpNotification;
+          this.PdlpPropertyInformation = BlePdlpPropertyInformation;
+          this.PdlpSettingOperation = BlePdlpSettingOperation;
+          this.PdlpOperation = BlePdlpOperation;
+          this.PdlpSensorInformation = BlePdlpSensorInformation;
         }
         this.remotePeripherals.push(val);
       }
@@ -10002,6 +10012,468 @@ module.exports = BleHelper;
 
 /***/ }),
 
+/***/ "./obniz/libs/embeds/ble/blePdlpNotification.js":
+/***/ (function(module, exports) {
+
+const ID = 0x01;
+const NAME = 'Notification';
+const MESSAGES = {
+  CONFIRM_NOTIFY_CATEGORY: 0x06,
+  CONFIRM_NOTIFY_CATEGORY_RESP: 0x07,
+  NOTIFY_INFORMATION: 0x02,
+  GET_PD_NOTIFY_DETAIL_DATA: 0x03,
+  GET_PD_NOTIFY_DETAIL_DATA_RESP: 0x04,
+  NOTIFY_PD_GENERAL_INFORMATION: 0x05,
+};
+const PARAMETERS = {
+  ResultCode: {
+    id: 0,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OK: 0x00,
+      Cancel: 0x01,
+      Failed: 0x02,
+      Error: 0x03,
+      NotAvailable: 0x04,
+      NotSupported: 0x05,
+    },
+  },
+  Cancel: {
+    id: 1,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      UserCancel: 0x00,
+    },
+  },
+  GetStatus: {
+    id: 0x02,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OK: 0x00,
+      Partial: 0x01,
+      Cancel: 0x02,
+      Failed: 0x03,
+      Error: 0x04,
+      NotAvailable: 0x05,
+      NotSupported: 0x06,
+    },
+  },
+  NotifyCategory: {
+    id: 0x03,
+    length: 2,
+    type: 'bit',
+    paramValues: {
+      NotNotify: 0x0001,
+      All: 0x0002,
+      PhoneIncomingCall: 0x0004,
+      Mail: 0x0020,
+      Schedule: 0x0040,
+      General: 0x0080,
+      Etc: 0x0100,
+    },
+  },
+  NotifyCategoryIDs: {
+    id: 0x04,
+    length: 2,
+    type: 'value',
+  },
+  GetParameterID: {
+    id: 0x05,
+    length: 1,
+    type: 'value',
+  },
+  GetParameterLength: {
+    id: 0x06,
+    length: 4,
+    type: 'value',
+  },
+  ParameterIdList: {
+    id: 0x07,
+    lenght: 2,
+    type: 'value',
+  },
+  UniqueId: {
+    id: 0x08,
+    lenght: 2,
+    type: 'value',
+  },
+  NotifyId: {
+    id: 0x09,
+    lenght: 2,
+    type: 'value',
+  },
+  NotificationOperation: {
+    id: 0x0a,
+    lenght: 1,
+    type: 'enum',
+    paramValues: {
+      AlreadyRead: 0x00,
+      Delete: 0x01,
+    },
+  },
+  Title: {
+    id: 0x0b,
+    lenght: undefined,
+    type: 'value',
+  },
+  Text: {
+    id: 0x0c,
+    lenght: undefined,
+    type: 'value',
+  },
+  AppName: {
+    id: 0x0d,
+    lenght: undefined,
+    type: 'value',
+  },
+  AppNameLocal: {
+    id: 0x0e,
+    lenght: undefined,
+    type: 'value',
+  },
+  NotifyApp: {
+    id: 0x0f,
+    lenght: undefined,
+    type: 'value',
+  },
+  RumblingSetting: {
+    id: 0x10,
+    lenght: 1,
+    type: 'bit',
+    paramValues: {
+      LED: 0x01,
+      Vibration: 0x02,
+      Beep: 0x04,
+    },
+  },
+  VibrationPattern: {
+    id: 0x11,
+    lenght: undefined,
+    type: 'value',
+  },
+  LedPattern: {
+    id: 0x12,
+    lenght: undefined,
+    type: 'value',
+  },
+  Sender: {
+    id: 0x13,
+    lenght: undefined,
+    type: 'value',
+  },
+  SenderAddress: {
+    id: 0x14,
+    lenght: undefined,
+    type: 'value',
+  },
+  ReceiveDate: {
+    id: 0x15,
+    lenght: 7,
+    type: 'value',
+  },
+  StartDate: {
+    id: 0x16,
+    lenght: 7,
+    type: 'value',
+  },
+  EndDate: {
+    id: 0x17,
+    lenght: 7,
+    type: 'value',
+  },
+  Area: {
+    id: 0x18,
+    lenght: undefined,
+    type: 'value',
+  },
+  Person: {
+    id: 0x19,
+    lenght: undefined,
+    type: 'value',
+  },
+  MimeTypeForImage: {
+    id: 0x1a,
+    lenght: undefined,
+    type: 'value',
+  },
+  MimeTypeForMedia: {
+    id: 0x1b,
+    lenght: undefined,
+    type: 'value',
+  },
+  Image: {
+    id: 0x1c,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents1: {
+    id: 0x1d,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents2: {
+    id: 0x1e,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents3: {
+    id: 0x1f,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents4: {
+    id: 0x20,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents5: {
+    id: 0x21,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents6: {
+    id: 0x22,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents7: {
+    id: 0x23,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents8: {
+    id: 0x24,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents9: {
+    id: 0x25,
+    lenght: undefined,
+    type: 'value',
+  },
+  Contents10: {
+    id: 0x26,
+    lenght: undefined,
+    type: 'value',
+  },
+  Media: {
+    id: 0x27,
+    lenght: undefined,
+    type: 'value',
+  },
+  Package: {
+    id: 0x28,
+    lenght: undefined,
+    type: 'value',
+  },
+  BeepPattern: {
+    id: 0x2b,
+    lenght: undefined,
+    type: 'value',
+  },
+};
+const getEnumKey = function(e, val) {
+  return Object.keys(e).find(k => e[k] === val);
+};
+const getParam = function(val) {
+  return Object.values(PARAMETERS).find(k => k.id === val);
+};
+class BlePdlpNotification {
+  static get ID() {
+    return ID;
+  }
+
+  static get MESSAGES() {
+    return MESSAGES;
+  }
+
+  static get PARAMETERS() {
+    return PARAMETERS;
+  }
+
+  static parse(data) {
+    let obj = {};
+    if (Array.isArray(data)) {
+      data.shift();
+      if (data[0] !== ID) {
+        return {};
+      } else {
+        obj['function'] = NAME;
+        obj['message'] = getEnumKey(MESSAGES, (data[1] << 8) + data[2]);
+        let paramNo = data[3];
+        data = data.slice(4, data.length);
+        obj['parameters'] = {};
+        for (let i = 0; i < paramNo; i++) {
+          let pid = data[0];
+          let plen = (data[1] << 16) + (data[2] << 8) + data[3];
+          let pval = 0;
+          for (let k = 1; k <= plen; k++) {
+            pval += data[3 + k] << ((plen - k) * 8);
+          }
+          let param = getParam(pid);
+          let opt = [];
+          switch (param.type) {
+            case 'enum':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = getEnumKey(
+                param.paramValues,
+                pval
+              );
+              break;
+            case 'bit':
+              for (let bit in Object.values(param.paramValues)) {
+                if (pval & bit) opt.push(getEnumKey(param.paramValues, bit));
+              }
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = opt;
+              break;
+            case 'value':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = pval;
+              break;
+          }
+          data = data.slice(5 + i * plen, data.lenght);
+        }
+      }
+    }
+    return obj;
+  }
+}
+
+module.exports = BlePdlpNotification;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/blePdlpOperation.js":
+/***/ (function(module, exports) {
+
+const ID = 0x02;
+const NAME = 'Operation';
+const MESSAGES = {
+  NOTIFY_PD_OPERATION: 0x00,
+};
+const PARAMETERS = {
+  ResultCode: {
+    id: 0,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OK: 0x00,
+      Cancel: 0x01,
+      Failed: 0x02,
+      Error: 0x03,
+      NotAvailable: 0x04,
+      NotSupported: 0x05,
+    },
+  },
+  Cancel: {
+    id: 1,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      UserCancel: 0x00,
+    },
+  },
+  ButtonId: {
+    id: 0x02,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      SingleClick: 0x02,
+      DoubleClick: 0x04,
+      LongPress: 0x07,
+      LongPressRelease: 0x09,
+      Power: 0x00,
+      Return: 0x01,
+      Home: 0x03,
+      VolumeUp: 0x05,
+      VolumeDown: 0x06,
+      Pause: 0x08,
+      FastForward: 0x0a,
+      ReWind: 0x0b,
+      Shutter: 0x0c,
+      Up: 0x0d,
+      Down: 0x0e,
+      Left: 0x0f,
+      Right: 0x10,
+      Enter: 0x11,
+      Menu: 0x12,
+      Play: 0x13,
+      Stop: 0x14,
+    },
+  },
+};
+const getEnumKey = function(e, val) {
+  return Object.keys(e).find(k => e[k] === val);
+};
+const getParam = function(val) {
+  return Object.values(PARAMETERS).find(k => k.id === val);
+};
+class BlePdlpOperation {
+  static get ID() {
+    return ID;
+  }
+
+  static get MESSAGES() {
+    return MESSAGES;
+  }
+
+  static get PARAMETERS() {
+    return PARAMETERS;
+  }
+
+  static parse(data) {
+    let obj = {};
+    if (Array.isArray(data)) {
+      data.shift();
+      if (data[0] !== ID) {
+        return {};
+      } else {
+        obj['function'] = NAME;
+        obj['message'] = getEnumKey(MESSAGES, (data[1] << 8) + data[2]);
+        let paramNo = data[3];
+        data = data.slice(4, data.length);
+        obj['parameters'] = {};
+        for (let i = 0; i < paramNo; i++) {
+          let pid = data[0];
+          let plen = (data[1] << 16) + (data[2] << 8) + data[3];
+          let pval = 0;
+          for (let k = 1; k <= plen; k++) {
+            pval += data[3 + k] << ((plen - k) * 8);
+          }
+          let param = getParam(pid);
+          let opt = [];
+          switch (param.type) {
+            case 'enum':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = getEnumKey(
+                param.paramValues,
+                pval
+              );
+              break;
+            case 'bit':
+              for (let bit in Object.values(param.paramValues)) {
+                if (pval & bit) opt.push(getEnumKey(param.paramValues, bit));
+              }
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = opt;
+              break;
+            case 'value':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = pval;
+              break;
+          }
+          data = data.slice(5 + i * plen, data.lenght);
+        }
+      }
+    }
+    return obj;
+  }
+}
+
+module.exports = BlePdlpOperation;
+
+
+/***/ }),
+
 /***/ "./obniz/libs/embeds/ble/blePdlpParameter.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10020,6 +10492,499 @@ module.exports = BleHelper;
 module.exports = BlePdlpParameter;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/blePdlpPropertyInformation.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const BleRemotePdlpDevice = __webpack_require__("./obniz/libs/embeds/ble/bleRemotePdlpDevice.js");
+const ID = 0x00;
+const NAME = 'Property Information';
+const MESSAGES = {
+  GET_DEVICE_INFORMATION: 0,
+  GET_DEVICE_INFORMATION_RESP: 1,
+};
+const PARAMETERS = {
+  ResultCode: {
+    id: 0,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OK: 0x00,
+      Cancel: 0x01,
+      Failed: 0x02,
+      Error: 0x03,
+      NotAvailable: 0x04,
+      NotSupported: 0x05,
+    },
+  },
+  Cancel: {
+    id: 1,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      UserCancel: 0x00,
+    },
+  },
+  FnList: {
+    id: 2,
+    length: 1,
+    type: 'bit',
+    paramValues: {
+      PropertyInformation: 0x01,
+      Notification: 0x02,
+      Operation: 0x04,
+      SensorInformation: 0x08,
+      SettingOperation: 0x10,
+    },
+  },
+  DeviceId: {
+    id: 3,
+    length: 2,
+    type: 'value',
+  },
+  DeviceUid: {
+    id: 4,
+    length: 4,
+    type: 'value',
+  },
+  DeviceCapability: {
+    id: 5,
+    length: 1,
+    type: 'bit',
+    paramValues: {
+      Reserved: 0x01,
+      Gyroscope: 0x02,
+      Accelerometer: 0x04,
+      Orientation: 0x08,
+      Battery: 0x10,
+      Temperature: 0x20,
+      Humidity: 0x40,
+      AtmosphericPressure: 0x80,
+    },
+  },
+  ExSensorType: {
+    id: 7,
+    length: 1,
+    type: 'bit',
+    paramValues: {
+      Version1: 0x01,
+      Version2: 0x02,
+      Flag: 0x04,
+      Button: 0x08,
+      OpenClose: 0x10,
+      Motion: 0x20,
+      Vibration: 0x40,
+      Brigthness: 0x80,
+    },
+  },
+};
+const getEnumKey = function(e, val) {
+  return Object.keys(e).find(k => e[k] === val);
+};
+const getParam = function(val) {
+  return Object.values(PARAMETERS).find(k => k.id === val);
+};
+class BlePdlpPropertyInformation {
+  static get ID() {
+    return ID;
+  }
+
+  static get MESSAGES() {
+    return MESSAGES;
+  }
+
+  static get PARAMETERS() {
+    return PARAMETERS;
+  }
+
+  request(peripheral) {
+    if (peripheral instanceof BleRemotePdlpDevice && peripheral.connected) {
+      peripheral.writeFinal(this.ID, this.MESSAGES.GET_DEVICE_INFORMATION);
+    }
+  }
+
+  static parse(data) {
+    let obj = {};
+    if (Array.isArray(data)) {
+      data.shift();
+      if (data[0] !== ID) {
+        return {};
+      } else {
+        obj['function'] = NAME;
+        obj['message'] = getEnumKey(MESSAGES, (data[1] << 8) + data[2]);
+        let paramNo = data[3];
+        data = data.slice(4, data.length);
+        obj['parameters'] = {};
+        for (let i = 0; i < paramNo; i++) {
+          let pid = data[0];
+          let plen = (data[1] << 16) + (data[2] << 8) + data[3];
+          let pval = 0;
+          for (let k = 1; k <= plen; k++) {
+            pval += data[3 + k] << ((plen - k) * 8);
+          }
+          let param = getParam(pid);
+          let opt = [];
+          switch (param.type) {
+            case 'enum':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = getEnumKey(
+                param.paramValues,
+                pval
+              );
+              break;
+            case 'bit':
+              for (let bit in Object.values(param.paramValues)) {
+                if (pval & bit) opt.push(getEnumKey(param.paramValues, bit));
+              }
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = opt;
+              break;
+            case 'value':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = pval;
+              break;
+          }
+          data = data.slice(5 + i * plen, data.lenght);
+        }
+      }
+    }
+    return obj;
+  }
+}
+
+module.exports = BlePdlpPropertyInformation;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/blePdlpSensorInformation.js":
+/***/ (function(module, exports) {
+
+const ID = 0x04;
+const NAME = 'Sensor Information';
+const MESSAGES = {
+  GET_SENSOR_INFO: 0x00,
+  GET_SENSOR_INFO_RESP: 0x01,
+  SET_NOTIFY_SENSOR_INFO: 0x02,
+  SET_NOTIFY_SENSOR_INFO_RESP: 0x03,
+  NOTIFY_PD_SENSOR_INFO: 0x04,
+};
+const PARAMETERS = {
+  ResultCode: {
+    id: 0,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OK: 0x00,
+      Cancel: 0x01,
+      Failed: 0x02,
+      Error: 0x03,
+      NotAvailable: 0x04,
+      NotSupported: 0x05,
+    },
+  },
+  Cancel: {
+    id: 1,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      UserCancel: 0x00,
+    },
+  },
+  SensorType: {
+    id: 0x02,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      Gyroscope: 0x00,
+      Accelerometer: 0x01,
+      Orientation: 0x02,
+      Battery: 0x03,
+      Temperature: 0x04,
+      Humidity: 0x05,
+      AtmosphericPressure: 0x06,
+      Open_Close: 0x07,
+      HumanDetection: 0x08,
+      Motion: 0x09,
+      Brightness: 0x0a,
+    },
+  },
+  Status: {
+    id: 0x03,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OFF: 0x00,
+      ON: 0x01,
+    },
+  },
+  X_value: {
+    id: 0x04,
+    length: 4,
+    type: 'value',
+  },
+  Y_value: {
+    id: 0x05,
+    length: 4,
+    type: 'value',
+  },
+  Z_value: {
+    id: 0x06,
+    length: 4,
+    type: 'value',
+  },
+  X_threshold: {
+    id: 0x07,
+    length: 4,
+    type: 'value',
+  },
+  Y_threshold: {
+    id: 0x08,
+    length: 4,
+    type: 'value',
+  },
+  Z_threshold: {
+    id: 0x09,
+    length: 4,
+    type: 'value',
+  },
+  OriginalData: {
+    id: 0x0a,
+    length: undefined,
+    type: 'value',
+  },
+};
+const getEnumKey = function(e, val) {
+  return Object.keys(e).find(k => e[k] === val);
+};
+const getParam = function(val) {
+  return Object.values(PARAMETERS).find(k => k.id === val);
+};
+class BlePdlpSensorInformation {
+  static get ID() {
+    return ID;
+  }
+
+  static get MESSAGES() {
+    return MESSAGES;
+  }
+
+  static get PARAMETERS() {
+    return PARAMETERS;
+  }
+
+  static parse(data) {
+    let obj = {};
+    if (Array.isArray(data)) {
+      data.shift();
+      if (data[0] !== ID) {
+        return {};
+      } else {
+        obj['function'] = NAME;
+        obj['message'] = getEnumKey(MESSAGES, (data[1] << 8) + data[2]);
+        let paramNo = data[3];
+        data = data.slice(4, data.length);
+        obj['parameters'] = {};
+        for (let i = 0; i < paramNo; i++) {
+          let pid = data[0];
+          let plen = (data[1] << 16) + (data[2] << 8) + data[3];
+          let pval = 0;
+          for (let k = 1; k <= plen; k++) {
+            pval += data[3 + k] << ((plen - k) * 8);
+          }
+          let param = getParam(pid);
+          let opt = [];
+          switch (param.type) {
+            case 'enum':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = getEnumKey(
+                param.paramValues,
+                pval
+              );
+              break;
+            case 'bit':
+              for (let bit in Object.values(param.paramValues)) {
+                if (pval & bit) opt.push(getEnumKey(param.paramValues, bit));
+              }
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = opt;
+              break;
+            case 'value':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = pval;
+              break;
+          }
+          data = data.slice(5 + i * plen, data.lenght);
+        }
+      }
+    }
+    return obj;
+  }
+}
+
+module.exports = BlePdlpSensorInformation;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/ble/blePdlpSettingOperation.js":
+/***/ (function(module, exports) {
+
+const ID = 0x04;
+const NAME = 'Setting Operation';
+const MESSAGES = {
+  GET_APP_VERSION: 0x00,
+  GET_APP_VERSION_RESP: 0x01,
+  CONFIRM_INSTALL_APP: 0x02,
+  CONFIRM_INSTALL_APP_RESP: 0x03,
+  GET_SETTING_NAME: 0x04,
+  GET_SETTING_NAME_RESP: 0x05,
+  SELECT_SETTING_INFORMATION: 0x06,
+  SELECT_SETTING_INFORMATION_RESP: 0x07,
+};
+const PARAMETERS = {
+  ResultCode: {
+    id: 0,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OK: 0x00,
+      Cancel: 0x01,
+      Failed: 0x02,
+      Error: 0x03,
+      NotAvailable: 0x04,
+      NotSupported: 0x05,
+    },
+  },
+  Cancel: {
+    id: 1,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      UserCancel: 0x00,
+    },
+  },
+  SettingNameType: {
+    id: 0x02,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      LEDColorName: 0x00,
+      LEDPatternName: 0x01,
+      VibrationPatternName: 0x02,
+      BeepPatternName: 0x03,
+    },
+  },
+  AppName: {
+    id: 0x03,
+    length: undefined,
+    type: 'value',
+  },
+  FileVer: {
+    id: 0x04,
+    length: undefined,
+    type: 'value',
+  },
+  FileSize: {
+    id: 0x05,
+    length: 4,
+    type: 'value',
+  },
+  InstallConfirmStatus: {
+    id: 0x06,
+    length: 1,
+    type: 'enum',
+    paramValues: {
+      OK: 0x00,
+      Cancel: 0x01,
+      Failed: 0x02,
+      Error: 0x03,
+      NotAvailable: 0x04,
+      NotSupported: 0x05,
+      NoSpace: 0x06,
+      AlreadyInstalled: 0x07,
+      NewerInstalled: 0x08,
+    },
+  },
+  SettingInformationRequest: {
+    id: 0x07,
+    length: undefined,
+    type: 'value',
+  },
+  SettingInformationData: {
+    id: 0x08,
+    length: undefined,
+    type: 'value',
+  },
+  SettingNameData: {
+    id: 0x09,
+    length: undefined,
+    type: 'value',
+  },
+};
+const getEnumKey = function(e, val) {
+  return Object.keys(e).find(k => e[k] === val);
+};
+const getParam = function(val) {
+  return Object.values(PARAMETERS).find(k => k.id === val);
+};
+class BlePdlpSettingOperation {
+  static get ID() {
+    return ID;
+  }
+
+  static get MESSAGES() {
+    return MESSAGES;
+  }
+
+  static get PARAMETERS() {
+    return PARAMETERS;
+  }
+
+  static parse(data) {
+    let obj = {};
+    if (Array.isArray(data)) {
+      data.shift();
+      if (data[0] !== ID) {
+        return {};
+      } else {
+        obj['function'] = NAME;
+        obj['message'] = getEnumKey(MESSAGES, (data[1] << 8) + data[2]);
+        let paramNo = data[3];
+        data = data.slice(4, data.length);
+        obj['parameters'] = {};
+        for (let i = 0; i < paramNo; i++) {
+          let pid = data[0];
+          let plen = (data[1] << 16) + (data[2] << 8) + data[3];
+          let pval = 0;
+          for (let k = 1; k <= plen; k++) {
+            pval += data[3 + k] << ((plen - k) * 8);
+          }
+          let param = getParam(pid);
+          let opt = [];
+          switch (param.type) {
+            case 'enum':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = getEnumKey(
+                param.paramValues,
+                pval
+              );
+              break;
+            case 'bit':
+              for (let bit in Object.values(param.paramValues)) {
+                if (pval & bit) opt.push(getEnumKey(param.paramValues, bit));
+              }
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = opt;
+              break;
+            case 'value':
+              obj['parameters'][getEnumKey(PARAMETERS, param)] = pval;
+              break;
+          }
+          data = data.slice(5 + i * plen, data.lenght);
+        }
+      }
+    }
+    return obj;
+  }
+}
+
+module.exports = BlePdlpSettingOperation;
+
 
 /***/ }),
 
@@ -10461,6 +11426,9 @@ const HEADER_MULTIPLE_PACKET = 0;
 const HEADER_SINGLE_PACKET = 1;
 const UUID_128BIT = 'b3b36901-50d3-4044-808d-50835b13a6cd';
 const UUID_16BIT = 'fe4e';
+const LINK_SERVICE_UUID = 'b3b3690150d34044808d50835b13a6cd';
+const LINK_WRITE_UUID = 'b3b3910150d34044808d50835b13a6cd';
+const LINK_INDICATE_UUID = 'b3b39102-50d3-4044-808d-50835b13a6cd';
 const SERVICE_ID_MASK = 0xf000;
 const SERVICE_VAL_MASK = 0x0fff;
 
@@ -10573,7 +11541,6 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
   constructor(Obniz, address) {
     super(Obniz, address);
     this.sequenceNumber = 0;
-    this.writeCharacteristic = null;
     this.functions = {
       PROPERTY_INFORMATION: 0,
       NOTIFICATION: 1,
@@ -10608,9 +11575,35 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     return SERVICES;
   }
 
-  setLocalServices(list) {
+  static get LINK_SERVICE_UUID() {
+    return LINK_SERVICE_UUID;
+  }
+
+  static get LINK_WRITE_UUID() {
+    return LINK_WRITE_UUID;
+  }
+
+  static get LINK_INDICATE_UUID() {
+    return LINK_INDICATE_UUID;
+  }
+
+  async setLocalServices(list) {
     if (Array.isArray(list)) {
       this.localServices = list;
+    }
+    let services = await this.discoverAllServicesWait();
+    Array.from(services).forEach(service => {
+      if (service.uuid === LINK_SERVICE_UUID) {
+        this.linkService = service;
+      }
+    });
+    if (this.linkService) {
+      let characteristics = await this.linkService.discoverAllCharacteristicsWait();
+      Array.from(characteristics).forEach(chara => {
+        if (chara.uuid === LINK_WRITE_UUID) this.writeCharacteristic = chara;
+        else if (chara.uuid === LINK_INDICATE_UUID)
+          this.indicateCharacteristic = chara;
+      });
     }
   }
 
@@ -10643,6 +11636,12 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     this.Obniz.ble.scan.start(this);
   }
 
+  registerNotify(callback) {
+    if (this.indicateCharacteristic) {
+      this.indicateCharacteristic.registerNotify(callback);
+    }
+  }
+
   onSensorData() {}
 
   writeFinal(fnId, msgId, params) {
@@ -10656,7 +11655,7 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
         }
       });
     } else {
-      message = [fnId, msgId];
+      message = [fnId, msgId, 0];
     }
     let payload = header.concat(message);
     this.writeCharacteristic.write(payload);
@@ -19495,8 +20494,47 @@ class Furueru {
       localName: 'Furueru' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;
@@ -19549,8 +20587,47 @@ class Kizuku {
       localName: 'Kizuku' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;
@@ -19603,8 +20680,47 @@ class Oshieru {
       localName: 'Oshieru' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;
@@ -19657,8 +20773,47 @@ class Pochiru {
       localName: 'Pochiru' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;
@@ -19711,8 +20866,47 @@ class Sizuku6x {
       localName: 'Sizuku_6x04 ' + parseInt(this.params.serial),
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;
@@ -19765,8 +20959,47 @@ class SizukuLUX {
       localName: 'Sizuku_Lux' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;
@@ -19825,8 +21058,47 @@ class SizukuTHA {
       localName: 'Sizuku_tha' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;
@@ -19879,8 +21151,47 @@ class Tomoru {
       localName: 'TomoruFC' + this.params.serial,
     };
     this.periperal = await this.obniz.ble.scan.startOneWait(target);
-    if (this.periperal) this.periperal.setLocalServices(LOCAL_SERVICES);
+    if (this.periperal) {
+      await this.periperal.setLocalServices(LOCAL_SERVICES);
+      this.periperal.registerNotify(this._responseParser);
+    }
   }
+
+  /*
+   * Based on PDLP spec data should be a byte array
+   * Header (1 byte) + Payload (19 bytes)
+   * Payload (19 bytes) = FunctionID (1 byte) + MessageID (2 bytes) + ParamNo (1 byte) + ParamList (variable)
+   */
+  _responseParser(data) {
+    if (Array.isArray(data)) {
+      if (data[0] >> 7 === 1) {
+        let fnID = data[1];
+        let reply = null;
+        switch (fnID) {
+          case 0:
+            reply = this.obniz.ble.PdlpPropertyInformation.parse(data);
+            break;
+          case 1:
+            reply = this.obniz.ble.PdlpNotification.parse(data);
+            break;
+          case 2:
+            reply = this.obniz.ble.PdlpOperation.parse(data);
+            break;
+          case 3:
+            reply = this.obniz.ble.PdlpSensorInformation.parse(data);
+            break;
+          case 4:
+            reply = this.obniz.ble.PdlpSettingOperation.parse(data);
+            break;
+          default:
+            reply = {};
+        }
+        this.onNotify(reply);
+      }
+    }
+  }
+
+  onNotify() {}
 
   getSensors() {
     if (this.periperal) return this.peripral.sensorData;

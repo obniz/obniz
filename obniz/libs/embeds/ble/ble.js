@@ -7,6 +7,11 @@ const BleAdvertisement = require('./bleAdvertisement');
 const BleScan = require('./bleScan');
 const BleSecurity = require('./bleSecurity');
 const BleRemotePdlpDevice = require('./bleRemotePdlpDevice');
+const BlePdlpPropertyInformation = require('./blePdlpPropertyInformation');
+const BlePdlpNotification = require('./blePdlpNotification');
+const BlePdlpSettingOperation = require('./blePdlpSettingOperation');
+const BlePdlpOperation = require('./blePdlpOperation');
+const BlePdlpSensorInformation = require('./blePdlpSensorInformation');
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -54,6 +59,11 @@ class ObnizBLE {
           val = new BleRemotePeripheral(this.Obniz, obj.scan_result.address);
         } else {
           val = new BleRemotePdlpDevice(this.Obniz, obj.scan_result.address);
+          this.PdlpNotification = BlePdlpNotification;
+          this.PdlpPropertyInformation = BlePdlpPropertyInformation;
+          this.PdlpSettingOperation = BlePdlpSettingOperation;
+          this.PdlpOperation = BlePdlpOperation;
+          this.PdlpSensorInformation = BlePdlpSensorInformation;
         }
         this.remotePeripherals.push(val);
       }

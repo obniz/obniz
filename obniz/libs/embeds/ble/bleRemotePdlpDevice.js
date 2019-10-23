@@ -7,6 +7,9 @@ const HEADER_MULTIPLE_PACKET = 0;
 const HEADER_SINGLE_PACKET = 1;
 const UUID_128BIT = 'b3b36901-50d3-4044-808d-50835b13a6cd';
 const UUID_16BIT = 'fe4e';
+const LINK_SERVICE_UUID = 'b3b3690150d34044808d50835b13a6cd';
+const LINK_WRITE_UUID = 'b3b3910150d34044808d50835b13a6cd';
+const LINK_INDICATE_UUID = 'b3b39102-50d3-4044-808d-50835b13a6cd';
 const SERVICE_ID_MASK = 0xf000;
 const SERVICE_VAL_MASK = 0x0fff;
 
@@ -119,7 +122,6 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
   constructor(Obniz, address) {
     super(Obniz, address);
     this.sequenceNumber = 0;
-    this.writeCharacteristic = null;
     this.functions = {
       PROPERTY_INFORMATION: 0,
       NOTIFICATION: 1,
@@ -154,9 +156,35 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     return SERVICES;
   }
 
-  setLocalServices(list) {
+  static get LINK_SERVICE_UUID() {
+    return LINK_SERVICE_UUID;
+  }
+
+  static get LINK_WRITE_UUID() {
+    return LINK_WRITE_UUID;
+  }
+
+  static get LINK_INDICATE_UUID() {
+    return LINK_INDICATE_UUID;
+  }
+
+  async setLocalServices(list) {
     if (Array.isArray(list)) {
       this.localServices = list;
+    }
+    let services = await this.discoverAllServicesWait();
+    Array.from(services).forEach(service => {
+      if (service.uuid === LINK_SERVICE_UUID) {
+        this.linkService = service;
+      }
+    });
+    if (this.linkService) {
+      let characteristics = await this.linkService.discoverAllCharacteristicsWait();
+      Array.from(characteristics).forEach(chara => {
+        if (chara.uuid === LINK_WRITE_UUID) this.writeCharacteristic = chara;
+        else if (chara.uuid === LINK_INDICATE_UUID)
+          this.indicateCharacteristic = chara;
+      });
     }
   }
 
@@ -189,6 +217,12 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
     this.Obniz.ble.scan.start(this);
   }
 
+  registerNotify(callback) {
+    if (this.indicateCharacteristic) {
+      this.indicateCharacteristic.registerNotify(callback);
+    }
+  }
+
   onSensorData() {}
 
   writeFinal(fnId, msgId, params) {
@@ -202,7 +236,7 @@ class BleRemotePdlpDevice extends BleRemotePeripheral {
         }
       });
     } else {
-      message = [fnId, msgId];
+      message = [fnId, msgId, 0];
     }
     let payload = header.concat(message);
     this.writeCharacteristic.write(payload);
