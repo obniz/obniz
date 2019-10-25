@@ -82,7 +82,7 @@ class WSCommand_Display extends WSCommand {
   }
 
   pinName(params) {
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 40; i++) {
       if (typeof params.pin_assign[i] === 'object') {
         this.setPinName(
           i,
