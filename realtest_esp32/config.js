@@ -13,12 +13,12 @@ const checkBoard_ID = '30109815';
 //const checkBoard_ID = '09643850';
 //check device
 const obnizA_ID = '09643850';
-const obnizB_ID = '09643850';
+const obnizB_ID = '30373117';
 
 //TCP Command Test
 //Express server used
 // your pc IP Address
-const LOCAL_IP = '192.168.8.33';
+const LOCAL_IP = '192.168.8.130';
 
 let obnizA, obnizB, checkBoard;
 const check_io = json.io;
