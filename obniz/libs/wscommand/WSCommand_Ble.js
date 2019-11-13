@@ -1,5 +1,6 @@
 const JsonBinaryConverter = require('./jsonBinaryConverter');
 const WSCommand = require('./WSCommand_.js');
+const WSCommand_BleHci = require('./WSCommand_BleHci');
 
 class WSCommand_Ble extends WSCommand {
   constructor() {
@@ -116,6 +117,8 @@ class WSCommand_Ble extends WSCommand {
       0x02: 'irk',
       0x04: 'csrk',
     };
+
+    this.hciCommand = new WSCommand_BleHci(this);
   }
 
   /* CENTRAL   */
@@ -867,6 +870,8 @@ class WSCommand_Ble extends WSCommand {
         onValid: this.clearBondingDevicesList,
       },
     ];
+
+    schemaData.push(...this.hciCommand.schemaData());
     let res = this.validateCommandSchema(schemaData, module, 'ble');
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
