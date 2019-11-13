@@ -767,7 +767,7 @@ class ArduCAMMini {
     await this.spi_pingpongWait();
     this.setMode('MCU2LCD');
     const chipid = await this.getChipIdWait();
-    if (chipid != 0x2642) {
+    if (chipid != 0x2642 && chipid != 0x2641) {
       throw new Error('unknown chip ' + chipid);
     }
     this.init();
