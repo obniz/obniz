@@ -210,6 +210,8 @@ var map = {
 	"./response/ble/central/service_get.yml": "./json_schema/response/ble/central/service_get.yml",
 	"./response/ble/central/service_get_finish.yml": "./json_schema/response/ble/central/service_get_finish.yml",
 	"./response/ble/central/status_update.yml": "./json_schema/response/ble/central/status_update.yml",
+	"./response/ble/hci/index.yml": "./json_schema/response/ble/hci/index.yml",
+	"./response/ble/hci/read.yml": "./json_schema/response/ble/hci/read.yml",
 	"./response/ble/index.yml": "./json_schema/response/ble/index.yml",
 	"./response/ble/peripheral/characteristic_notify_read.yml": "./json_schema/response/ble/peripheral/characteristic_notify_read.yml",
 	"./response/ble/peripheral/characteristic_notify_write.yml": "./json_schema/response/ble/peripheral/characteristic_notify_write.yml",
@@ -1109,10 +1111,24 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./json_schema/response/ble/hci/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/hci","anyOf":[{"$ref":"/response/ble/hci/read"}]}
+
+/***/ }),
+
+/***/ "./json_schema/response/ble/hci/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble/hci/read","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["read"],"properties":{"read":{"type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}}}}}
+
+/***/ }),
+
 /***/ "./json_schema/response/ble/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","basePath":"ble","anyOf":[{"$ref":"/response/ble/central"},{"$ref":"/response/ble/peripheral"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/ble","basePath":"ble","anyOf":[{"$ref":"/response/ble/central"},{"$ref":"/response/ble/peripheral"},{"$ref":"/response/ble/hci"}]}
 
 /***/ }),
 
@@ -16205,6 +16221,8 @@ class WSCommand_Ble extends WSCommand {
       this
     );
 
+    Object.assign(funcList, this.hciCommand.notifyFunctionList());
+
     if (funcList[func]) {
       funcList[func](objToSend, payload);
     }
@@ -16720,11 +16738,27 @@ class WSCommand_BleHci {
     return [{ uri: '/request/ble/hci/write', onValid: this.send.bind(this) }];
   }
 
+  notifyFunctionList() {
+    let funcList = {};
+    funcList[this._CommandHCIRecv] = this.recv.bind(this);
+    return funcList;
+  }
+
   send(params, module) {
-    let buf = new Uint8Array(1 + params.hci.write.length);
-    buf[0] = module;
-    buf.set(params.hci.write, 1);
+    let buf = new Uint8Array(params.hci.write.length);
+    buf.set(params.hci.write);
     this._delegate.sendCommand(this._CommandHCISend, buf);
+  }
+
+  recv(objToSend, payload) {
+    let arr = new Array(payload.byteLength);
+    for (let i = 0; i < arr.length; i++) {
+      arr[i] = payload[i];
+    }
+
+    objToSend.ble = objToSend.ble || {};
+    objToSend.ble.hci = objToSend.ble.hci || {};
+    objToSend.ble.hci.read = { data: arr };
   }
 }
 

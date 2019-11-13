@@ -24,7 +24,7 @@ describe('ble.hci', function() {
       });
     let requestJson = [{ ble: { hci: { write: binaryArray } } }];
     let expecteBinaryStrings = [
-      'b 2b 11 0 04 00 0d 00 00 01 00 00 25 80 01 07 00 00 00 00',
+      'b 2b 10 04 00 0d 00 00 01 00 00 25 80 01 07 00 00 00 00',
     ];
     testUtil.checkJsonToBinary(requestJson, expecteBinaryStrings, this);
   });
@@ -36,8 +36,8 @@ describe('ble.hci', function() {
     });
 
     let responseBinaryString =
-      'b 2c 11 0 04 00 0d 00 00 01 00 00 25 80 01 07 00 00 00 00';
-    let expectJson = [{ ble: { hci: { read: recvBinary } } }];
+      'b 2c 10 04 00 0d 00 00 01 00 00 25 80 01 07 00 00 00 00';
+    let expectJson = [{ ble: { hci: { read: { data: recvBinary } } } }];
 
     let binaryArray = responseBinaryString.split(' ').map(function(val, index) {
       return parseInt(val, 16);

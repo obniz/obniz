@@ -949,6 +949,8 @@ class WSCommand_Ble extends WSCommand {
       this
     );
 
+    Object.assign(funcList, this.hciCommand.notifyFunctionList());
+
     if (funcList[func]) {
       funcList[func](objToSend, payload);
     }

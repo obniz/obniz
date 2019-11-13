@@ -11,11 +11,27 @@ class WSCommand_BleHci {
     return [{ uri: '/request/ble/hci/write', onValid: this.send.bind(this) }];
   }
 
+  notifyFunctionList() {
+    let funcList = {};
+    funcList[this._CommandHCIRecv] = this.recv.bind(this);
+    return funcList;
+  }
+
   send(params, module) {
-    let buf = new Uint8Array(1 + params.hci.write.length);
-    buf[0] = module;
-    buf.set(params.hci.write, 1);
+    let buf = new Uint8Array(params.hci.write.length);
+    buf.set(params.hci.write);
     this._delegate.sendCommand(this._CommandHCISend, buf);
+  }
+
+  recv(objToSend, payload) {
+    let arr = new Array(payload.byteLength);
+    for (let i = 0; i < arr.length; i++) {
+      arr[i] = payload[i];
+    }
+
+    objToSend.ble = objToSend.ble || {};
+    objToSend.ble.hci = objToSend.ble.hci || {};
+    objToSend.ble.hci.read = { data: arr };
   }
 }
 
