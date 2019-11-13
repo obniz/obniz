@@ -109,6 +109,9 @@ var map = {
 	"./request/ble/central/scan_start.yml": "./json_schema/request/ble/central/scan_start.yml",
 	"./request/ble/central/scan_stop.yml": "./json_schema/request/ble/central/scan_stop.yml",
 	"./request/ble/central/service_get.yml": "./json_schema/request/ble/central/service_get.yml",
+	"./request/ble/hci/deinit.yml": "./json_schema/request/ble/hci/deinit.yml",
+	"./request/ble/hci/index.yml": "./json_schema/request/ble/hci/index.yml",
+	"./request/ble/hci/write.yml": "./json_schema/request/ble/hci/write.yml",
 	"./request/ble/index.yml": "./json_schema/request/ble/index.yml",
 	"./request/ble/peripheral/advertisement_start.yml": "./json_schema/request/ble/peripheral/advertisement_start.yml",
 	"./request/ble/peripheral/advertisement_stop.yml": "./json_schema/request/ble/peripheral/advertisement_stop.yml",
@@ -399,10 +402,31 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./json_schema/request/ble/hci/deinit.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/hci/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci","anyOf":[{"$ref":"/request/ble/hci/write"}]}
+
+/***/ }),
+
+/***/ "./json_schema/request/ble/hci/write.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble/hci/write","type":"object","required":["hci"],"properties":{"hci":{"type":"object","required":["write"],"properties":{"write":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
 /***/ "./json_schema/request/ble/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"},{"$ref":"/request/ble/security"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/ble","basePath":"ble","anyOf":[{"$ref":"/request/ble/peripheral"},{"$ref":"/request/ble/central"},{"$ref":"/request/ble/security"},{"$ref":"/request/ble/hci"}]}
 
 /***/ }),
 
@@ -15232,6 +15256,7 @@ module.exports = WSCommand_AD;
 
 const JsonBinaryConverter = __webpack_require__("./obniz/libs/wscommand/jsonBinaryConverter.js");
 const WSCommand = __webpack_require__("./obniz/libs/wscommand/WSCommand_.js");
+const WSCommand_BleHci = __webpack_require__("./obniz/libs/wscommand/WSCommand_BleHci.js");
 
 class WSCommand_Ble extends WSCommand {
   constructor() {
@@ -15348,6 +15373,8 @@ class WSCommand_Ble extends WSCommand {
       0x02: 'irk',
       0x04: 'csrk',
     };
+
+    this.hciCommand = new WSCommand_BleHci(this);
   }
 
   /* CENTRAL   */
@@ -16099,6 +16126,8 @@ class WSCommand_Ble extends WSCommand {
         onValid: this.clearBondingDevicesList,
       },
     ];
+
+    schemaData.push(...this.hciCommand.schemaData());
     let res = this.validateCommandSchema(schemaData, module, 'ble');
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -16671,6 +16700,35 @@ class WSCommand_Ble extends WSCommand {
 }
 
 module.exports = WSCommand_Ble;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/wscommand/WSCommand_BleHci.js":
+/***/ (function(module, exports) {
+
+class WSCommand_BleHci {
+  constructor(delegate) {
+    this._delegate = delegate;
+    this._CommandHCIInit = 41;
+    this._CommandHCIDeinit = 42;
+    this._CommandHCISend = 43;
+    this._CommandHCIRecv = 44;
+  }
+
+  schemaData() {
+    return [{ uri: '/request/ble/hci/write', onValid: this.send.bind(this) }];
+  }
+
+  send(params, module) {
+    let buf = new Uint8Array(1 + params.hci.write.length);
+    buf[0] = module;
+    buf.set(params.hci.write, 1);
+    this._delegate.sendCommand(this._CommandHCISend, buf);
+  }
+}
+
+module.exports = WSCommand_BleHci;
 
 
 /***/ }),
