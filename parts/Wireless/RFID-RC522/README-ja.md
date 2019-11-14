@@ -12,7 +12,7 @@ write 	：カードへ指定データの書込み
 
 ## RFID-RC522の注意・説明
 ### 配線の注意
-obnizの3Vピン設定は十分な電力ではないので、レギュレータで5Vピン設定を2.5-3.6V(3.3V推奨)に落としてください！
+obnizの3Vピン設定は十分な電力ではないので、レギュレータで5Vピン設定を2.5-3.6V(3.3V推奨)に落としてください。
 
 ### ピンの設定
 RFID-RC522には以下の様なピンがあります．
@@ -28,7 +28,7 @@ RFID-RC522には以下の様なピンがあります．
 | MISO 				| miso 					| 必須					|
 | IRQ 				| - 					| -						|
 | GND 				| gnd 					| 不要					|
-| RST 				| RST 					| 必須					|
+| rst 				| rst 					| 必須					|
 | 3.3V 				| vcc 					| 不要					|
 
 ### UID
@@ -69,67 +69,115 @@ UID, 認証Blockは書き換えると復帰不可能になる場合がある為�
 
 # ライブラリ内の関数
 
-## wired("MFRC522", {cs, clk, mosi, miso, gnd, RST, vcc})
+## wired("MFRC522", {cs, clk, mosi, miso, gnd, rst})
 RFID-RC522は占有ピンが多い為，宣言不要ピンを設定しています．\
 上記”ピン設定”の表で表した宣言必須ピンは必ず wired() 関数内で宣言する必要があります．\
 宣言不要ピンは必ず wired() 関数内で宣言する必要はありませんが，その場合他のモジュールとのピンの共用が必要です．
 
+name | type | required | default | description
+--- | --- | --- | --- | ---
+cs | `number(obniz Board io)` | yes |  &nbsp; | SDAと表記のあるピンです。
+clk | `number(obniz Board io)` | yes |  &nbsp; | SCKと表記のあるピンです。
+mosi | `number(obniz Board io)` | yes |  &nbsp; | MOSIと表記のあるピンです。
+miso | `number(obniz Board io)` | yes |  &nbsp; | MISOと表記のあるピンです。
+rst | `number(obniz Board io)` | no |  &nbsp; | RSTと表記のあるピンです。
+gnd | `number(obniz Board io)` | no |  &nbsp; | GNDと表記のあるピンです。
+
+
 ```Javascript
-// Parts Registration
-var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 4, RST: 5, vcc: 6});
+// Javascript Example
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
 ```
 
 
-## findCard() = function(uid, PICC_Type)
+## [await] findCardWait(uid, PICC_Type)
 
 カードを探すための関数です．\
 カードを検知すると，カードの'uid', 'PICC Type'が引数の要素に入ります．
 
 ```Javascript
-// Find card
-let response = await mfrc522.findCard();
-console.log("Card is detected!");
-console.log("UID		: " + response.uid);
-console.log("PICC Type 	: " + response.PICC_Type);
+// Javascript Example
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+	try {
+		let card = await mfrc522.findCardWait();
+		console.log("Card is detected!");
+		console.log("UID		: " + card.uid);
+		console.log("PICC Type 	: " + card.PICC_Type);
+	} catch(e) {
+		// Not Found or Error
+		console.error(e)
+	}
+}
 ```
 
 
-## readBlockData() = function(Block, UID)
+## [await] readBlockDataWait(Block, UID)
 Block数とUIDを入れることで，1Block分のデータを取得できます．
 
 ```Javascript
+// Javascript Example
 // Read block data in the card
-const Block = 4;
-response = await mfrc522.readBlockData(Block, UID);
-console.log("Block: " + Block + " Data: " + response);
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+	try {
+		let card = await mfrc522.findCardWait();
+		const Block = 4;
+		response = await mfrc522.readBlockDataWait(Block, card.uid);
+		console.log("Block: " + Block + " Data: " + response);
+	} catch(e) {
+		// Not Found or Error
+		console.error(e)
+	}
+}
 ```
 
-## readSectorData() = function(Sector, UID)
+## [await] readSectorDataWait(Sector, UID)
 Sector数とUIDを入れることで，4Block分のデータを配列で1度に取得できます．
 
 ```Javascript
+// Javascript Example
 // Read Sector data in the card
-const Sector = 2;
-response = await mfrc522.readSectorData(Sector, UID);
-console.log("Sector: " + Sector);
-for (let i = 0; i < 4; i++)
-	console.log("Block: " + (Sector * 4 + i) + " Data: " + response[i]);
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+  try {
+    let card = await mfrc522.findCardWait();
+    const Sector = 2;
+    response = await mfrc522.readSectorDataWait(Sector, card.uid);
+    console.log("Sector: " + Sector);
+    for (let i = 0; i < 4; i++)
+	  console.log("Block: " + (Sector * 4 + i) + " Data: " + response[i]);
+  } catch(e) {
+    // Not Found or Error
+    console.error(e)
+  }
+}
 ```
 
-## writeBlockData(Block, data)
+## [await] writeBlockDataWait(Block, data)
 書き込みたいBlock数と16Byteのデータを入れることで，指定したブロックに指定したデータの書き込みが出来ます．
 
+注意：書き込み動作はメーカーが非推奨としております。不安定またはデータの破損に繋がる可能性があります。
+
 ```Javascript
-let data00 = [
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00
-];
-// Write block data to card
-console.log("Writing data to Block " + Block + "...");
-await mfrc522.writeBlockData(Block, data00);
-console.log("Wrinting finished.");
+// Javascript Example
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+  try {
+    let card = await mfrc522.findCardWait();
+    let data00 = [
+        0x00, 0x00
+    ];
+    const Block = 4;
+    // Write block data to card
+    console.log("Writing data to Block " + Block + "...");
+    await mfrc522.writeBlockDataWait(Block, data00);
+    console.log("Wrinting finished.");
+  } catch(e) {
+    // Not Found or Error
+    console.error(e)
+  }
+}
 ```
 
 # サンプルプログラムについての注釈

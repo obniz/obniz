@@ -28,7 +28,7 @@ Each pin's relation of obniz corresponds to the table below.
 | MISO | miso | Required |
 | IRQ |-|-|
 | GND | gnd | Not required |
-| RST | RST | Required |
+| rst | rst | Required |
 | 3.3V | vcc | Not required |
 
 ### UID
@@ -67,67 +67,117 @@ However, commercial cards such as point cards are protected and the internal dat
 
 # Functions in the library
 
-## wired("MFRC522", { cs, clk, mosi, miso, gnd, RST, vcc})
+## wired("MFRC522", { cs, clk, mosi, miso, gnd, rst, vcc})
 Since RFID-RC522 has many occupied pins, we set some pins that don't require declaration. \
 Required pins shown in the “Pin Relation table above must be declared in the wired(). \
 Not required pins don't have to be declared in the wired() function, but in that case, these pins must share with other modules.
 
+name | type | required | default | description
+--- | --- | --- | --- | ---
+cs | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as SDA
+clk | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as SCK
+mosi | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as MOSI
+miso | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as MISO
+rst | `number(obniz Board io)` | no |  &nbsp; | pin which printed as RST
+gnd | `number(obniz Board io)` | no |  &nbsp; | pin which printed as GND
+
 ```Javascript
-// Parts Registration
-var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 4, RST: 5, vcc: 6});
+// Javascript Example
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
 ```
 
-## findCard() = function(uid, PICC_Type)
+
+## [await] findCardWait(uid, PICC_Type)
+
 A function for finding cards. \
 When a card is detected, "uid" and "PICC Type" are included in the returned value.
 
 ```Javascript
-// Find card
-let response = await mfrc522.findCard();
-console.log("Card is detected!");
-console.log("UID		: " + response.uid);
-console.log("PICC Type 	: " + response.PICC_Type);
+// Javascript Example
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+	try {
+		let card = await mfrc522.findCardWait();
+		console.log("Card is detected!");
+		console.log("UID		: " + card.uid);
+		console.log("PICC Type 	: " + card.PICC_Type);
+	} catch(e) {
+		// Not Found or Error
+		console.error(e)
+	}
+}
 ```
 
 
-## readBlockData() = function(Block, UID)
+## [await] readBlockDataWait(Block, UID)
 This function can get 1 block data by entering the number of blocks you want to read and UID.
 
 ```Javascript
+// Javascript Example
 // Read block data in the card
-const Block = 4;
-response = await mfrc522.readBlockData(Block, UID);
-console.log("Block: " + Block + " Data: " + response);
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+	try {
+		let card = await mfrc522.findCardWait();
+		const Block = 4;
+		response = await mfrc522.readBlockDataWait(Block, card.uid);
+		console.log("Block: " + Block + " Data: " + response);
+	} catch(e) {
+		// Not Found or Error
+		console.error(e)
+	}
+}
 ```
 
-## readSectorData() = function(Sector, UID)
+## [await] readSectorDataWait(Sector, UID)
 This function can get 1 Sector (4 Block) data at once by entering the number of sectors you want to read and UID.
 This function return value as 4 arrays.
 
 ```Javascript
+// Javascript Example
 // Read Sector data in the card
-const Sector = 2;
-response = await mfrc522.readSectorData(Sector, UID);
-console.log("Sector: " + Sector);
-for (let i = 0; i < 4; i++)
-	console.log("Block: " + (Sector * 4 + i) + " Data: " + response[i]);
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+  try {
+    let card = await mfrc522.findCardWait();
+    const Sector = 2;
+    response = await mfrc522.readSectorDataWait(Sector, card.uid);
+    console.log("Sector: " + Sector);
+    for (let i = 0; i < 4; i++)
+	  console.log("Block: " + (Sector * 4 + i) + " Data: " + response[i]);
+  } catch(e) {
+    // Not Found or Error
+    console.error(e)
+  }
+}
 ```
 
-## writeBlockData (Block, data)
+## [await] writeBlockDataWait(Block, data)
 You can write the specified data to the specified block by entering the number of blocks you want to write and 16 bytes of data.
 
+Attention: Writing is not recommended by manufacturer. Possibly not stable and breaking data will be caused.
+
 ```Javascript
-let data00 = [
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00
-];
-// Write block data to card
-console.log("Writing data to Block " + Block + "...");
-await mfrc522.writeBlockData(Block, data00);
-console.log("Wrinting finished.");
+// Javascript Example
+var mfrc522 = obniz.wired("MFRC522", { cs: 0, clk: 1, mosi: 2, miso: 3, gnd: 5, rst: 6});
+while(true) {
+  try {
+    let card = await mfrc522.findCardWait();
+    let data00 = [
+        0x00, 0x00
+    ];
+    const Block = 4;
+    // Write block data to card
+    console.log("Writing data to Block " + Block + "...");
+    await mfrc522.writeBlockDataWait(Block, data00);
+    console.log("Wrinting finished.");
+  } catch(e) {
+    // Not Found or Error
+    console.error(e)
+  }
+}
 ```
+
 
 # Notes about the sample program
 ## alert (buzzer_pin)
