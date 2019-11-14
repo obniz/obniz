@@ -8,7 +8,7 @@ export interface MFRC522Options {
 	spi?: number;
 	spi_frequency?: number;
 	pull?: any;
-	RST: number;
+	rst: number;
 }
 
 export interface MFRC522 {
@@ -25,36 +25,36 @@ export interface MFRC522 {
 		data: any;
 		bitSize: number;
 	}>;
-	findCard(): Promise<{
+	findCardWait(): Promise<{
 		uid: any;
 		PICC_Type: string;
 	}>;
-	searchTag(): Promise<void>;
-	getUid(): Promise<any>;
-	calculateCRC(data: any): Promise<any>;
-	identifySoftware(): Promise<any>;
-	identifyCardType(uid: any): Promise<string>;
-	readSectorData(Sector: any, uid: any): Promise<any[]>;
-	readBlockData(Block: any, uid: any): Promise<{
+	searchTagWait(): Promise<void>;
+	getUidWait(): Promise<any>;
+	calculateCRCWait(data: any): Promise<any>;
+	identifySoftwareWait(): Promise<any>;
+	identifyCardTypeWait(uid: any): Promise<string>;
+	readSectorDataWait(Sector: any, uid: any): Promise<any[]>;
+	readBlockDatWaita(Block: any, uid: any): Promise<{
 		status: boolean;
 		data: any;
 		bitSize: number;
 	}>;
-	authenticateSector(Sector: any, uid: any): Promise<void>;
-	authenticateBlock(Block: any, uid: any): Promise<void>;
-	readAgain(): Promise<void>;
-	getSectorData(address: any): Promise<any[]>;
-	getBlockData(address: any): Promise<{
+	authenticateSectorWait(Sector: any, uid: any): Promise<void>;
+	authenticateBlockWait(Block: any, uid: any): Promise<void>;
+	readAgainWait(): Promise<void>;
+	getSectorDataWait(address: any): Promise<any[]>;
+	getBlockDataWait(address: any): Promise<{
 		status: boolean;
 		data: any;
 		bitSize: number;
 	}>;
-	appendCRCtoBufferAndSendToCard(buffer: any): Promise<{
+	appendCRCtoBufferAndSendToCardWait(buffer: any): Promise<{
 		status: boolean;
 		data: any;
 		bitSize: number;
 	}>;
-	writeBlockData(address: any, sixteenBytes: any): Promise<{
+	writeBlockDataWait(address: any, sixteenBytes: any): Promise<{
 		data: any;
 	}>;
 }
