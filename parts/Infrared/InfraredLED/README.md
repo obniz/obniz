@@ -6,7 +6,7 @@ This is InfraredLED class. Especially, This has a function to transfer data via 
 
 ## wired(obniz, {anode, cathode})
 
-anode,cathode is pin no of obniz io.
+anode,cathode is pin no of obniz Board io.
 cathode is optional.
 
 This module works with various InfraredLED  
@@ -18,12 +18,12 @@ For Example,
 
 ### Add Resistor
 
-Normally, An resistor is reuqired to connect LED to obniz.
+Normally, An resistor is reuqired to connect LED to obniz Board.
 Refer your LED's datasheet "Pulse Forward Current" like below. It is maximum value.
 If it is 1000mA, then 5ohm is enough.
 ![](fvid.png)
 
-Then wire your LED to obniz 
+Then wire your LED to obniz Board 
 
 
 ![](wired.jpg)

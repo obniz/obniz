@@ -1,4 +1,4 @@
-import * as Obniz from '../../obniz';
+import Obniz from '../../obniz';
 
 const OBNIZ_ID = '1234-5678';
 
@@ -494,7 +494,7 @@ class SainSmartTFT18LCDTest {
 
       // drawContext
       let canvas = document.getElementById('canvas') as HTMLCanvasElement;
-      let context = canvas.getContext('2d');
+      let context = canvas.getContext('2d')!;
       context.fillStyle = '#FFFFCC';
       context.fillRect(0, 0, lcd.width, lcd.height);
       lcd.drawContext(context, false);
@@ -532,7 +532,7 @@ class SharpMemoryTFT {
       if (!canvas || !canvas.getContext) {
         return;
       }
-      var ctx = canvas.getContext('2d');
+      var ctx = canvas.getContext('2d')!;
       var img = new Image();
       img.src = 'Image address here';
       img.onload = function() {

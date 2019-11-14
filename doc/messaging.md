@@ -1,24 +1,24 @@
 # Messaging
-obniz can receive and transfer data from HTTP request.
-Using this function you can also send data from one obniz to another. 
+obniz Board can receive and transfer data from HTTP request.
+Using this function you can also send data from one obniz Board to another. 
 
 
 
 ## API - obniz messaging
-You can send a message to an obniz by calling the REST API.
+You can send a message to an obniz Board by calling the REST API.
 
 ```
 GET https://obniz.io/obniz/{obniz_id}/message?data={what you want to send}
 ```
 
-For example, send "move" text message to obniz 0000-0000 as below.
+For example, send "move" text message to obniz Board 0000-0000 as below.
 ```
 GET https://obniz.io/obniz/0000-0000/message?data=move
 ```
 
-And obniz 0000-0000 will get the message as long as it is online.
+And obniz Board 0000-0000 will get the message as long as it is online.
 You can do something on that event.
-404 is returned when obniz is not online.
+404 is returned when obniz Board is not online.
 
 ```Javascript
 // Example
@@ -45,7 +45,7 @@ Parameters
 
 ## obniz - obniz messaging
 Below is an example of pressing one button to move the hands of 10 robots aroudn the world simultaneously.
-First, prepare an obniz with one button connected, and send a message to 10 obniz when that button is pressed.
+First, prepare an obniz Board with one button connected, and send a message to 10 obniz Board when that button is pressed.
 ```Javascript
 // Example
 obniz.onconnect = function(){
@@ -68,9 +68,9 @@ obniz.onconnect = function(){
     };
  }
 ```
-obniz ids written in targets are the destinations. and "pressed" is message.
+obniz Board ids written in targets are the destinations. and "pressed" is message.
 
-The 10 obniz will handle this message with onmessage function. With that function, servomotor attached to each obniz will be moved in response to the message.
+The 10 obniz Board will handle this message with onmessage function. With that function, servomotor attached to each obniz Board will be moved in response to the message.
 ```Javascript
 // Example
 obniz.onconnect = function() {

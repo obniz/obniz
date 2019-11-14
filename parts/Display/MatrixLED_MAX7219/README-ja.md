@@ -19,7 +19,7 @@
 3. din: SPIの MOSI ピンです。
 4. cs: チップ選択です。
  
-チェーン上に複数繋ぐ場合は１つだけをobnizにつなぎ、残りはこのように接続して下さい。
+チェーン上に複数繋ぐ場合は１つだけをobniz Boardにつなぎ、残りはこのように接続して下さい。
 
 ![](./wired.png)
 
@@ -52,7 +52,7 @@ matrix.brightness(7);
 ```
 
 ## draw(ctx)
-HTML5のcanvasをそのまま描画します。html上でobnizを使っている場合は
+HTML5のcanvasをそのまま描画します。html上でobniz Boardを使っている場合は
 
 `obniz.util.createCanvasContext()`
 

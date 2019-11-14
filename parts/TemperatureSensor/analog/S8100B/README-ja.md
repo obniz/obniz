@@ -2,17 +2,15 @@
 
 
 
-
-
 ![photo of AnalogTemperatureSensor](./wired.png)
 
 
 
 ## wired(obniz, {vcc, output, gnd})
-Obnizに温度センサをつなぎます。
+obniz Boardに温度センサをつなぎます。
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("S8100B",  { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("S8100B", { gnd:0 , output:1, vcc:2});
 ```
 
 ## onchange
@@ -20,9 +18,9 @@ var tempsens = obniz.wired("S8100B",  { gnd:0 , output:1, vcc:2});
 温度は摂氏で返されます。
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("S8100B",  { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("S8100B", { gnd:0 , output:1, vcc:2});
 tempsens.onchange = function(temp){
-  console.log(temp);
+console.log(temp);
 };
 ```
 
@@ -34,8 +32,7 @@ tempsens.onchange = function(temp){
 
 ```javascript
 // Javascript Example
-var tempsens = obniz.wired("S8100B",   { gnd:0 , output:1, vcc:2});
+var tempsens = obniz.wired("S8100B", { gnd:0 , output:1, vcc:2});
 var temp = await tempsens.getWait();
 console.log(temp);
-```
- 
+``` 

@@ -6,7 +6,7 @@ Pressure sensor. It output pressure as a voltage.
 
 ## wired(obniz, {pin0, pin1})
 
-Connect two pins to an obniz. pin0 and pin1 is obniz io number.
+Connect two pins to an obniz Board. pin0 and pin1 is obniz Board io number.
 
 ![](./wired.png)
 ```javascript

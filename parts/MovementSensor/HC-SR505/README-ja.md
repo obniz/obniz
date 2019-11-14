@@ -7,7 +7,7 @@ PIR センサーです。人や動物が近くにいるかを検出できます�
 
 ## wired(obniz, {signal [,vcc, gnd]})
 
-３つのピンがあります。直接obnizに接続して下さい。
+３つのピンがあります。直接obniz Boardに接続して下さい。
 
 ```Javascript
 // Javascript Example

@@ -82,7 +82,7 @@ module.exports = class ObnizConnection {
       json = JSON.parse(data);
     } else if (this.wscommands) {
       if (this.debugprintBinary) {
-        this.print_debug('' + new Uint8Array(data).toString());
+        console.log('Obniz: binalized: ' + new Uint8Array(data).toString());
       }
       json = this.binary2Json(data);
     }
@@ -367,68 +367,73 @@ module.exports = class ObnizConnection {
   }
 
   print_debug(str) {
-    if (this.debugprint || this.debugprintBinary) {
+    if (this.debugprint) {
       console.log('Obniz: ' + str);
     }
   }
 
   send(obj, options) {
-    if (!obj || typeof obj !== 'object') {
-      console.log('obnizjs. didnt send ', obj);
-      return;
-    }
-    if (Array.isArray(obj)) {
-      for (let i = 0; i < obj.length; i++) {
-        this.send(obj[i]);
+    try {
+      if (!obj || typeof obj !== 'object') {
+        console.log('obnizjs. didnt send ', obj);
+        return;
       }
-      return;
-    }
-    if (this.sendPool) {
-      this.sendPool.push(obj);
-      return;
-    }
-
-    let sendData = JSON.stringify([obj]);
-    if (this.debugprint) {
-      this.print_debug('send: ' + sendData);
-    }
-    /* compress */
-    if (
-      this.wscommand &&
-      (typeof options !== 'object' || options.local_connect !== false)
-    ) {
-      let compressed;
-      try {
-        compressed = this.wscommand.compress(
-          this.wscommands,
-          JSON.parse(sendData)[0]
-        );
-        if (compressed) {
-          sendData = compressed;
-          if (this.debugprintBinary) {
-            this.print_debug(
-              'binalized: ' + new Uint8Array(compressed).toString()
-            );
-          }
+      if (Array.isArray(obj)) {
+        for (let i = 0; i < obj.length; i++) {
+          this.send(obj[i]);
         }
-      } catch (e) {
-        this.error('------ errored json -------');
-        this.error(sendData);
-        throw e;
+        return;
       }
-    }
+      if (this.sendPool) {
+        this.sendPool.push(obj);
+        return;
+      }
 
-    /* queue sending */
-    if (typeof sendData === 'string') {
-      this._drainQueued();
-      this._sendRouted(sendData);
-    } else {
-      if (this._sendQueue) {
-        this._sendQueue.push(sendData);
-      } else {
-        this._sendQueue = [sendData];
-        this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+      let sendData = JSON.stringify([obj]);
+      if (this.debugprint) {
+        this.print_debug('send: ' + sendData);
       }
+
+      /* compress */
+      if (
+        this.wscommand &&
+        (typeof options !== 'object' || options.local_connect !== false)
+      ) {
+        let compressed;
+        try {
+          compressed = this.wscommand.compress(
+            this.wscommands,
+            JSON.parse(sendData)[0]
+          );
+          if (compressed) {
+            sendData = compressed;
+            if (this.debugprintBinary) {
+              console.log(
+                'Obniz: binalized: ' + new Uint8Array(compressed).toString()
+              );
+            }
+          }
+        } catch (e) {
+          this.error('------ errored json -------');
+          this.error(sendData);
+          throw e;
+        }
+      }
+
+      /* queue sending */
+      if (typeof sendData === 'string') {
+        this._drainQueued();
+        this._sendRouted(sendData);
+      } else {
+        if (this._sendQueue) {
+          this._sendQueue.push(sendData);
+        } else {
+          this._sendQueue = [sendData];
+          this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
+        }
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 

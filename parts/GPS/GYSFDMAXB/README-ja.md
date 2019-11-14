@@ -10,7 +10,7 @@ GPSモジュール[(GYSFDMAXB(太陽誘電))](http://akizukidenshi.com/catalog/g
 
 ## wired(vcc, gnd, txd, rxd {, Opps })
 
-vcc(5v), gnd, txd, rxd, Oppsをobnizに接続し、接続したioをプログラムで以下のように記述します。
+vcc(5v), gnd, txd, rxd, Oppsをobniz Boardに接続し、接続したioをプログラムで以下のように記述します。
 
 ```javascript
 // Javascript Example
@@ -44,7 +44,7 @@ gps.start1pps(function() {
 ```javascript
 // Javascript Example
 let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
-let gpsInfo = getGpsInfo();
+let gpsInfo = gps.getGpsInfo();
 console.log(gpsInfo);
 
 // 出力結果
@@ -170,16 +170,16 @@ NMEAの緯度経度を「秒(S)」の数値に変換（999999.999）
 
   let d = gps.getEditedData();
   if (d.enable) {
-    if (d.GPGGA) { 
+    if (d.GPGGA) {
       let p = d.GPGGA;
       if (p[6] != "0") {
         //経度
         let longitude = gps.nmea2dd(p[2]);
         //緯度
         let latitude = gps.nmea2dd(p[4]);
-        
+
         ・・・
-        
+
       }
     }
   }

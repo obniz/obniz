@@ -2,7 +2,7 @@
 #  <a name="ble-central">ble.central</a>
 
 
-use obniz as central
+use obniz Board as central
 
 ##  request: <a name="-request-ble-central-scan_start">scan_start</a>
 

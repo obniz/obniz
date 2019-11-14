@@ -24,37 +24,34 @@ var value = await sensor.getValueWait(10); //10 times average
 console.log('grams:' + value);
 ```
 
-
-## offset
-
-```javascript
-// Javascript Example
-var sensor = obniz.wired("hx711" , {gnd:0, dout:1, sck:2, vcc:3} );
-sensor.offset = 7000;
-sensor.scale = 2280;
-var value = await sensor.getValueWait(10); //10 times average
-console.log('grams:' + value);
-```
-
-## zeroAdjust(times = 1)
+## [await] zeroAdjust(times = 1)
 Set offset with current value. 
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("hx711" , {gnd:0, dout:1, sck:2, vcc:3} );
-sensor.zeroAdjust();
-sensor.scale = 2280;
+await sensor.zeroAdjustWait();
+var value = await sensor.getValueWait(10); //10 times average
+console.log('grams:' + value);
+```
+
+## setOffset
+
+```javascript
+// Javascript Example
+var sensor = obniz.wired("hx711" , {gnd:0, dout:1, sck:2, vcc:3} );
+sensor.setOffset(7000);
 var value = await sensor.getValueWait(10); //10 times average
 console.log('grams:' + value);
 ```
 
 
-## scale
+
+## setScale
 
 ```javascript
 // Javascript Example
 var sensor = obniz.wired("hx711" , {gnd:0, dout:1, sck:2, vcc:3} );
-sensor.zeroAdjust();
-sensor.scale = 2280;
+sensor.setScale(2280);
 var value = await sensor.getValueWait(10); //10 times average
 console.log('grams:' + value);
 ```
@@ -63,10 +60,8 @@ console.log('grams:' + value);
 Into sleep Mode.
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("hx711" , {gnd:1, dout:1, sck:2, vcc:3} );
-
+var sensor = obniz.wired("hx711" , {gnd:0, dout:1, sck:2, vcc:3} );
 sensor.powerDown();
-sensor.powerUp();
 ```
 
 
@@ -74,7 +69,6 @@ sensor.powerUp();
 Wake up from sleep Mode.
 ```javascript
 // Javascript Example
-var sensor = obniz.wired("hx711" , {gnd:1, dout:1, sck:2, vcc:3} );
-sensor.powerDown();
+var sensor = obniz.wired("hx711" , {gnd:0, dout:1, sck:2, vcc:3} );
 sensor.powerUp();
 ```

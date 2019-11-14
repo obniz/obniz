@@ -22,7 +22,7 @@ Now, we are support Mode1 level1,2 only.
 This function can call once only.
 If call more, call security.onerror.
 
-To change setting, obniz require reboot.
+To change setting, obniz Board require reboot.
 
 ```javascript
 
@@ -36,8 +36,8 @@ security.setModeLevel(1, 2); //LE Security Mode 1, Level 2
 
 ## security.setIndicateSecurityLevel(level)
 
-When obniz is pheripheral mode and a central connected,
-obniz require to the central paring request include security level which want to use.
+When obniz Board is pheripheral mode and a central connected,
+obniz Board require to the central paring request include security level which want to use.
 
 This function set the security level request to central.
 If set 0, don't send paring request.
@@ -80,7 +80,7 @@ Set security keys to use.
 This function can call once only.
 If call more, call security.onerror.
 
-To change setting, obniz require reboot.
+To change setting, obniz Board require reboot.
 
 ```javascript
 

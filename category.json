@@ -29,8 +29,7 @@
         },
         {
           "name": "WS2812",
-          "store": {
-          }
+          "store": {}
         },
         {
           "name": "WS2812B",
@@ -298,8 +297,7 @@
       "parts": [
         {
           "name": "USB",
-          "store": {
-          }
+          "store": {}
         }
       ]
     },
@@ -323,6 +321,13 @@
             "switchscience": "https://www.switch-science.com/catalog/394/",
             "amazon.com": "http://a.co/d/gyjg40I"
           }
+        },
+        {
+          "name": "RFID-RC522",
+          "store": {
+            "amazon.co.jp": "https://www.amazon.co.jp/dp/B00HF1ACY6",
+            "amazon.com": "https://www.amazon.com/dp/B07KGBJ9VG"
+          }
         }
       ]
     },
@@ -338,13 +343,12 @@
             "switchscience": "https://www.switch-science.com/catalog/293/",
             "amazon.com": "http://a.co/d/cgC9cZ5",
             "aliexpress": "https://www.aliexpress.com/wholesale?catId=0&initiative_id=AS_20181005231521&SearchText=tactile+switch+12x12"
-
           }
         },
         {
           "name": "JoyStick",
           "store": {
-            "amazon.co.jp" : "https://www.amazon.co.jp/EasyWordMall-Dual-axis-Joystick-ジョイスティック-モジュールArduino用/dp/B016PXVH66/ref=sr_1_fkmr1_3?ie=UTF8&qid=1531998812&sr=8-3-fkmr1&keywords=hiletgo+joystick",
+            "amazon.co.jp": "https://www.amazon.co.jp/EasyWordMall-Dual-axis-Joystick-ジョイスティック-モジュールArduino用/dp/B016PXVH66/ref=sr_1_fkmr1_3?ie=UTF8&qid=1531998812&sr=8-3-fkmr1&keywords=hiletgo+joystick",
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-08763/",
             "adafruit": "https://www.adafruit.com/product/512"
           }
@@ -352,7 +356,7 @@
         {
           "name": "Potentiometer",
           "store": {
-            "amazon.co.jp" : "https://www.amazon.co.jp/alpha-RV16シリーズ-Aカーブ-Potentiometer-可変抵抗器各種/dp/B01ARIWY5S/ref=sr_1_5?ie=UTF8&qid=1531998874&sr=8-5&keywords=Potentiometer",
+            "amazon.co.jp": "https://www.amazon.co.jp/alpha-RV16シリーズ-Aカーブ-Potentiometer-可変抵抗器各種/dp/B01ARIWY5S/ref=sr_1_5?ie=UTF8&qid=1531998874&sr=8-5&keywords=Potentiometer",
             "akizuki": "http://akizukidenshi.com/catalog/g/gP-00246/"
           }
         },
@@ -386,6 +390,22 @@
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-05153/",
             "digikey": "https://www.digikey.jp/product-detail/en/kionix-inc/KXR94-2050-FR/1191-1012-1-ND/3137358"
           }
+        },
+        {
+          "name": "MPU9250",
+          "store": {}
+        },
+        {
+          "name": "MPU6050",
+          "store": {}
+        },
+        {
+          "name": "MPU6886",
+          "store": {}
+        },
+        {
+          "name": "AK8963",
+          "store": {}
         }
       ]
     },
@@ -455,6 +475,16 @@
       ]
     },
     {
+      "name": "Biological Sensor",
+      "image_url": "https://obniz.io/sdk/parts/PULSE08-M5STICKC-S/image.jpg",
+      "parts": [
+        {
+          "name": "PULSE08-M5STICKC-S",
+          "store": {}
+        }
+      ]
+    },
+    {
       "name": "Temperature Sensor",
       "image_url": "https://obniz.io/sdk/parts/BME280/image.jpg",
       "parts": [
@@ -508,21 +538,31 @@
         {
           "name": "BME280",
           "store": {
-            "switchscience" : "https://www.switch-science.com/catalog/2236/",
+            "switchscience": "https://www.switch-science.com/catalog/2236/",
             "adafruit": "https://www.adafruit.com/product/2652"
           }
         },
         {
           "name": "AMG8833",
           "store": {
-            "switchscience" : "https://www.switch-science.com/catalog/3395/",
+            "switchscience": "https://www.switch-science.com/catalog/3395/",
             "adafruit": "https://www.adafruit.com/product/3538"
           }
         },
         {
+          "name": "DHT12",
+          "store": {}
+        },
+        {
           "name": "D6T44L",
           "store": {
-            "switchscience" : "https://www.switch-science.com/catalog/1297/"
+            "switchscience": "https://www.switch-science.com/catalog/1297/"
+          }
+        },
+        {
+          "name": "AM2320",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-08663/"
           }
         }
       ]
@@ -549,11 +589,25 @@
             "switchscience": "https://www.switch-science.com/catalog/2526/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Ear-clip-Heart-Rate-Sensor-p-1116.html"
           }
-        },{
+        },
+        {
           "name": "Grove_MP3",
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gM-10450/",
             "seedstudio": "https://www.seeedstudio.com/Grove-MP3-v2.0-p-2597.html"
+          }
+        },
+        {
+          "name": "Grove_GPS",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/1179/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-GPS-p-959.html"
+          }
+        },
+        {
+          "name": "Grove_3AxisAccelerometer",
+          "store": {
+            "seedstudio": "https://www.seeedstudio.com/Grove-3-Axis-Digital-Accelerometer-16g-p-1156.html"
           }
         }
       ]
@@ -564,8 +618,7 @@
       "parts": [
         {
           "name": "2JCIE",
-          "store": {
-          }
+          "store": {}
         }
       ]
     }
@@ -592,7 +645,7 @@
     "marutsu": {
       "logo": "/images/shop/marutsu.png"
     },
-    "obniz" : {
+    "obniz": {
       "logo": "/images/shop/obniz.png"
     }
   }

@@ -5,7 +5,7 @@
 
 
 ## wired(obniz, {vcc, gnd, din, dout, sclk})
-Obnizに温度センサをつなぎます。
+obniz Boardに温度センサをつなぎます。
 vcc,gnd,sclk,mosi,misoはそれぞれ温度センサの電源,GND,SCLK,DIN,DOUTピンへ接続してください。
 センサのCSピンはプルダウンする必要があります。
 ```javascript
@@ -21,4 +21,3 @@ var sensor = obniz.wired("ADT7310", {vcc:0, gnd:1, din:2, dout:3, sclk:4});
 var temp = await sensor.getTempWait();
 console.log('temperature:' + temp);
 ```
-

@@ -3,7 +3,9 @@
 ArduCAM Mini works with few pins.
 It takes image with many image resolutions and alos jpeg format.
 
-ArduCam Mini has many series of product. This library is only for OV2640 2M pixel ArduCam.
+ArduCam Mini has many series of product. This library is only for OV2640 2M pixel ArduCam, ArduCAM-Mini-2MP or ArduCAM-Mini-2MP-Plus.
+
+Specify ```module_version:1``` when using ArduCAM-Mini-2MP-Plus.
 
 ![](./image.jpg)
 
@@ -13,13 +15,13 @@ ArduCam Mini has many series of product. This library is only for OV2640 2M pixe
 Instantiate camera object regarding ios.
 
 We recommend to supply power to an arducam from other power resource.
-You should pay attention over current detection when using an obniz as poewr supply.
+You should pay attention over current detection when using an obniz Board as poewr supply.
 Supply methods are
 
 
 - use other power resource
-- use J1 on an obniz.
-- supply vcc more than two obniz io
+- use J1 on an obniz Board.
+- supply vcc more than two obniz Board io
 
 This document use io5 and io11 to supply a vcc.
 
@@ -29,18 +31,19 @@ Arducam require each SPI and I2C.
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-cs | `number(obniz io)` | yes | &nbsp; | obniz io. チップ選択
-vcc | `number(obniz io)` | no | &nbsp; | obniz io. 電源 +5V
-gnd | `number(obniz io)` | no | &nbsp; | obniz io. 電源 0v
-mosi | `number(obniz io)` | no | &nbsp; | obniz io. SPI mosi 端子
-miso | `number(obniz io)` | no | &nbsp; | obniz io. SPI miso 端子
-sclk | `number(obniz io)` | no | &nbsp; | obniz io. SPI clk 端子
-sda | `number(obniz io)` | no | &nbsp; | obniz io. I2C sda 端子
-scl | `number(obniz io)` | no | &nbsp; | obniz io. I2C scl 端子
+cs | `number(obniz Board io)` | yes | &nbsp; | obniz Board io. チップ選択
+vcc | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 +5V
+gnd | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 0v
+mosi | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI mosi 端子
+miso | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI miso 端子
+sclk | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI clk 端子
+sda | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C sda 端子
+scl | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C scl 端子
 i2c | `i2c object` | no | &nbsp; | configured i2c object
 spi | `spi object` | no | &nbsp; | configured spi object
 spi_frequency | `spi object` | no | 4Mhz | for unstable situation, change frequency of spi
 spi_drive | `spi object` | no | `'3v'` | for unstable situation, change drive method of spi
+module_version | `number` | no | 0 | Specify 1 when using ArduCAM-Mini-2MP-Plus
 
 Just specify connected io to configure.
 
@@ -174,7 +177,7 @@ cam.setMode('MCU2LCD')
 
 ## [await] spi_pingpongWait()
 
-Testing a cam and obniz spi communication.
+Testing a cam and obniz Board spi communication.
 Use this to check cam power supply correction and wiring check.
 
 This function is used in startupWait() function.

@@ -1,11 +1,11 @@
-# obniz connection
+# obniz Board connection
 
-obniz class is the abstract version of obniz hardware within JavaScript.
-By providing obniz id and instantiating it, you can control obniz and the connected parts without the details of websocket api.
+obniz class is the abstract version of obniz Board hardware within JavaScript.
+By providing obniz id and instantiating it, you can control obniz Board and the connected parts without the details of websocket api.
 
 ## Basics
 
-Instantiate obniz with obniz id.
+Instantiate obniz Board with obniz id.
 In HTML, just include obniz.js in the script tag and you can use obniz class.
 In nodejs, after installing it from npm,
 
@@ -14,17 +14,17 @@ var Obniz = require('obniz');
 ```
 obtain the class like this.
 
-Then instantiate obniz with the id.
+Then instantiate obniz Board with the id.
 ```javascript
 var obniz = new Obniz('1234-5678');
 ```
-If you want to use two or more obniz, then write as below
+If you want to use two or more obniz Board, then write as below
 ```javascript
 var obnizA = new Obniz('1234-5678');
 var obnizB = new Obniz('0000-0000');
 ```
 
-After instantiating, obniz.js will try to connect to obniz by using [obniz Websocket API](https://obniz.io/doc/about_obniz_api).
+After instantiating, obniz.js will try to connect to obniz Board by using [obniz Websocket API](https://obniz.io/doc/about_obniz_api).
 Once connection is established, onconnect function will be called. onclose will be called when disconnected.
 Automatic connection occurs by default, so obniz.js continues to try to re-establish connection after disconnection.
 
@@ -38,7 +38,7 @@ obniz.onclose = async function() {
 }
 ```
 
-Operations like turning on/off an io becomes possible only after connection is established, so any operations you want obniz to undertake must be written in onconnect
+Operations like turning on/off an io becomes possible only after connection is established, so any operations you want obniz Board to undertake must be written in onconnect
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -74,7 +74,7 @@ It shows up only when the format is invalid. If you specify obniz id which doesn
 
 When id is correct, obniz.js will try to connect cloud api and onconnect will be called after connection is established.
 
-When obniz and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz. This is called "local connect". When local connect is avaiable, obniz can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
+When obniz Board and the device running obniz.js is expected to be in the same network, obniz.js will try to establish a direct Websocket connection to obniz Board. This is called "local connect". When local connect is avaiable, obniz Board can be controlled with almost all commands without having to go through the cloud. However, the connection to the cloud never gets disconnected even when using local connect.
 But when cloud connection gets closed, the local connect also gets closed.
 
 ![](images/local_connect.png)
@@ -85,7 +85,7 @@ See the flow below.
 
 ![](images/onconnect_flow.png)
 
-The second parameter when instantiating obniz is an option.
+The second parameter when instantiating obniz Board is an option.
 In that option, the following settings are possible.
 
 name | type | default | description
@@ -94,12 +94,12 @@ binary | `boolean` | true | compressed format. not json. It set to false, then l
 local_connect | `boolean` | true | obniz.js try to connect locally after cloud api established if possible. true will be ignored when binary was set to false
 debug_dom_id | `string` | 'obniz-debug' | In HTML, online status and debug info will be showed in DOM which has this id.
 auto_connect | `boolean` | true | obniz.js automatically connect to cloud API after instantiate soon. falset to disable it. The interval of auto connect become longer.
-access_token | `string` | null | If you specified access_token to your obniz. set it's key to this parameter.
-reset_obniz_on_ws_disconnection | `boolean` | true | With 'true', obniz cloud will reset your obniz after all websocket connection to an obniz was closed.
+access_token | `string` | null | If you specified access_token to your obniz Board. set it's key to this parameter.
+reset_obniz_on_ws_disconnection | `boolean` | true | With 'true', obniz cloud will reset your obniz Board after all websocket connection to an obniz Board was closed.
 
 
 ## connect()
-You can connect to obniz manually by calling connect() when auto_connect is set to be false.
+You can connect to obniz Board manually by calling connect() when auto_connect is set to be false.
 
 ```javascript
 var obniz = new Obniz('1234-5678', { auto_connect: false });
@@ -130,7 +130,7 @@ obniz.onconnect = async function() {
 
 
 ## [await]connectWait({timeout})
-With this you wait until the connection to obniz succeeds.
+With this you wait until the connection to obniz Board succeeds.
 
 ```javascript
 var obniz = new Obniz('1234-5678');
@@ -172,7 +172,7 @@ if(connected){
 
 ## connectionState
 
-This let you know connection state to your obniz as string value.
+This let you know connection state to your obniz Board as string value.
 
 state | type
 --- | ---
@@ -228,10 +228,10 @@ obniz.onconnect = async function() {
 ## resetOnDisconnect(reset)
 
 This lets you change the setting of `reset_obniz_on_ws_disconnection` after connection is established.
-By default, obniz cloud resets target obniz when the all websocket to obniz cloud was closed.
+By default, obniz cloud resets target obniz Board when the all websocket to obniz cloud was closed.
 It means the output value and pwm will all stop at that point.
 With the above function, you can nullify these resetting activities.
-This configuration will remain until target obniz gets disconnected.
+This configuration will remain until target obniz Board gets disconnected.
 Set this function to false to keep working without any of the websocket connections.
 
 ```Javascript

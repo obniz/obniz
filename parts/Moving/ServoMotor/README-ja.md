@@ -7,16 +7,16 @@ RCサーボモーターはコンピューターの入っているギヤードモ
 
 ![](./servomotor.gif)
 
-### 電源もobnizに繋げられるモーターについて
+### 電源もobniz Boardに繋げられるモーターについて
 
-RCサーボの多くは電源も含めそのままobnizに接続できますが、いくつかの(特に小型の）サーボモーターでは電源の電流がリークしやすくobnizの過電流検知により電源を供給できない場合があります。
+RCサーボの多くは電源も含めそのままobniz Boardに接続できますが、いくつかの(特に小型の）サーボモーターでは電源の電流がリークしやすくobniz Boardの過電流検知により電源を供給できない場合があります。
 
 その場合は以下のような対策が必要となります。
 
-- （推奨）電源のみ外部から供給する(obnizのJ1ピンはUSB直結なのでそこから供給することもできます)
-- ブレッドボードを介してobnizと接続する(ブレッドボードは抵抗が大きく、過電流検知を回避できることがあります。)
+- （推奨）電源のみ外部から供給する(obniz BoardのJ1ピンはUSB直結なのでそこから供給することもできます)
+- ブレッドボードを介してobniz Boardと接続する(ブレッドボードは抵抗が大きく、過電流検知を回避できることがあります。)
 
-obnizのioから直接電源供給を確認したサーボモーター
+obniz Boardのioから直接電源供給を確認したサーボモーター
 
 メーカー | 型番
 --- | ---
@@ -28,7 +28,7 @@ Tower Pro | SG90
 Tower Pro | SG92R
 GWS | S35STD
 
-obnizのioからでは直接電源供給できないサーボモーター
+obniz Boardのioからでは直接電源供給できないサーボモーター
 
 メーカー | 型番
 --- | ---
@@ -36,19 +36,19 @@ Quimat | QKY66-5
 FEETECH | FS90R
 
 ## obniz.wired("ServoMotor", {[vcc, gnd, signal, pwm]})
-３本の足をObnizにつなぎます。それぞれプラス、信号、マイナスとなっていて、製造メーカーなどにより配置が違います。
+３本の足をobniz Boardにつなぎます。それぞれプラス、信号、マイナスとなっていて、製造メーカーなどにより配置が違います。
 
 この例はもっともよく使われている配線パターンです。
-obnizのセットに入っているサーボモーターもこのパターンです。
+obniz Boardのセットに入っているサーボモーターもこのパターンです。
 
 ![](./servocable.jpg)
 
-信号(signal)、プラス(vcc)、マイナス(gnd)をそれぞれ obnizの0, 1, 2につないだ場合は以下のようにします。
+マイナス(gnd)、プラス(vcc)、信号(signal)をそれぞれ obniz Boardの0, 1, 2につないだ場合は以下のようにします。
 
 ![](./wired.png)
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 servo.angle(90.0); // half position
 ```
 
@@ -68,7 +68,7 @@ var servo = obniz.wired("ServoMotor", {pwm:pwm});
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 ```
@@ -80,7 +80,7 @@ servo.angle(90.0); // half position
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 servo.range = {
   min: 0.8,
   max: 2.4
@@ -93,7 +93,7 @@ servo.angle(90.0); // half position
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();
@@ -104,7 +104,7 @@ servo.on();
 
 ```Javascript
 // Javascript Example
-var servo = obniz.wired("ServoMotor", {signal:0,vcc:1, gnd:2});
+var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
 
 servo.angle(90.0); // half position
 servo.off();

@@ -25,8 +25,8 @@ DIPタイプのMAX7219であれば、以下のような接続になります。
 一例として、下記のページで販売されている4桁7セグメントLEDの接続例を示します。
 [LED](http://akizukidenshi.com/catalog/goods/search.aspx?keyword=&maker=&goods=i&number=osl40391&name=%83J%83%5C%81%5B%83h&min_price=&max_price=&last_sdt=&sort=&style=T&search.x=0&search.y=0)
 
-チェーン状につなぐ場合は最初の1つをObnizにつなぎ、2つ目以降はDINを前のDOUTにつないでください。
-obniz-DIN[1つ目のディスプレイ]DOUT-DIN[2つ目のディスプレイ]DOUT-~
+チェーン状につなぐ場合は最初の1つをobniz Boardにつなぎ、2つ目以降はDINを前のDOUTにつないでください。
+obniz Board-DIN[1つ目のディスプレイ]DOUT-DIN[2つ目のディスプレイ]DOUT-~
 ![](./obniz-max7219_multi.png)
 
 7セグメントLEDとMAX7219は以下のように接続します。
