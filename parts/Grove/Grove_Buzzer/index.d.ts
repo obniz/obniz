@@ -1,7 +1,7 @@
 export interface Grove_BuzzerOprions {
-  signal?: number;
-  gnd: number;
-  vcc: number;
+  signal: number;
+  gnd?: number;
+  vcc?: number;
 }
 
 export interface Grove_Buzzer {

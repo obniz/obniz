@@ -28062,7 +28062,7 @@ if (true) {
 class YG1006 {
   constructor() {
     this.keys = ['signal', 'vcc', 'gnd'];
-    this.requiredKeys = ['signal', 'vcc'];
+    this.requiredKeys = ['signal'];
   }
 
   static info() {
