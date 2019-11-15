@@ -18775,7 +18775,7 @@ var map = {
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./parts/TemperatureSensor/i2c/SHT31/index.js",
 	"./TemperatureSensor/spi/ADT7310/index.js": "./parts/TemperatureSensor/spi/ADT7310/index.js",
-	"./Wireless/RFID-RC522/index.js": "./parts/Wireless/RFID-RC522/index.js",
+	"./Wireless/MFRC522/index.js": "./parts/Wireless/MFRC522/index.js",
 	"./Wireless/RN42/index.js": "./parts/Wireless/RN42/index.js",
 	"./Wireless/XBee/index.js": "./parts/Wireless/XBee/index.js",
 	"./i2cParts.js": "./parts/i2cParts.js"
@@ -32573,7 +32573,7 @@ if (true) {
 
 /***/ }),
 
-/***/ "./parts/Wireless/RFID-RC522/index.js":
+/***/ "./parts/Wireless/MFRC522/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* ver 1.0

@@ -329,7 +329,7 @@
           }
         },
         {
-          "name": "RFID-RC522",
+          "name": "MFRC522",
           "store": {
             "amazon.co.jp": "https://www.amazon.co.jp/dp/B00HF1ACY6",
             "amazon.com": "https://www.amazon.com/dp/B07KGBJ9VG"

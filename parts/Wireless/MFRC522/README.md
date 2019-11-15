@@ -1,4 +1,4 @@
-# RFID-RC522
+# MFRC522
 RFID-RC522 is an RFID card reader / writer equipped with NXP MFRC522 chip. \
 You can also identify Mifare cards such as point cards, student ID cards and so on.\
 Three sample programs are also available. \
@@ -7,7 +7,7 @@ read.html	: Read specified data in the card \
 write.html	: Write specified data to the card
 
 ![](image.jpg)
-(Left: RFID-RC522, Right: data card, data tag)
+
 
 ## Notes and Explanations about RFID-RC522
 ### Wiring Notes
