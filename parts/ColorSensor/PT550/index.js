@@ -1,7 +1,7 @@
 class PT550 {
   constructor() {
     this.keys = ['signal', 'vcc', 'gnd'];
-    this.requiredKeys = ['signal', 'vcc'];
+    this.requiredKeys = ['signal'];
   }
 
   static info() {
@@ -22,8 +22,7 @@ class PT550 {
   }
 
   async getWait() {
-    let value = await this.signal.getWait();
-    return value;
+    return await this.signal.getWait();
   }
 }
 

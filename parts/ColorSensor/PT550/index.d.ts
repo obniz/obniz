@@ -1,6 +1,6 @@
 export interface PT550Options {
   signal: number;
-  vcc: number;
+  vcc?: number;
   gnd?: number;
 }
 
