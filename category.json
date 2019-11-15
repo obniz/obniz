@@ -590,6 +590,13 @@
       "image_url": "https://obniz.io/sdk/parts/Grove_MP3/image.jpg",
       "parts": [
         {
+          "name": "Grove_Button",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/801/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Button.html"
+          }
+        },
+        {
           "name": "Grove_EarHeartRate",
           "store": {
             "switchscience": "https://www.switch-science.com/catalog/2526/",

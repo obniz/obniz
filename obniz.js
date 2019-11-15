@@ -27182,7 +27182,7 @@ if (true) {
 class Grove_Button {
   constructor() {
     this.keys = ['signal', 'gnd', 'vcc'];
-    this.requiredKeys = ['signal', 'vcc'];
+    this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = function() {};
   }
