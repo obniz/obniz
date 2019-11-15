@@ -71,6 +71,12 @@
           "store": {
             "obniz": "https://obniz.myshopify.com/products/ir-module-cbr-ir001?variant=15937533771834"
           }
+        },
+        {
+          "name": "YG1006",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07041/"
+          }
         }
       ]
     },

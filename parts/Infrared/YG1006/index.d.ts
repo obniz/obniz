@@ -1,6 +1,6 @@
 export interface YG1006Options {
   signal: number;
-  vcc: number;
+  vcc?: number;
   gnd?: number;
 }
 
