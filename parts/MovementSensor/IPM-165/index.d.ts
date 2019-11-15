@@ -1,6 +1,6 @@
 export interface IPM_165Options {
   signal: number;
-  vcc: number;
+  vcc?: number;
   gnd?: number;
 }
 

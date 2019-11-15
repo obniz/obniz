@@ -1,7 +1,7 @@
 class IPM_165 {
   constructor() {
     this.keys = ['signal', 'vcc', 'gnd'];
-    this.requiredKeys = ['signal', 'vcc'];
+    this.requiredKeys = ['signal'];
   }
 
   static info() {

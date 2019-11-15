@@ -412,6 +412,12 @@
         {
           "name": "AK8963",
           "store": {}
+        },
+        {
+          "name": "IPM-165",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-04911/"
+          }
         }
       ]
     },
