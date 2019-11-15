@@ -1,7 +1,7 @@
 class Grove_Buzzer {
   constructor(obniz) {
     this.keys = ['signal', 'gnd', 'vcc'];
-    this.requiredKeys = ['gnd', 'vcc'];
+    this.requiredKeys = ['signal'];
   }
 
   static info() {
