@@ -592,8 +592,15 @@
         {
           "name": "Grove_Button",
           "store": {
-            "switchscience": "https://www.switch-science.com/catalog/801/",
+            "switchscience": "https://www.switch-science.com/catalog/804/",
             "seedstudio": "https://www.seeedstudio.com/Grove-Button.html"
+          }
+        },
+        {
+          "name": "Grove_Buzzer",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/1179/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Buzzer.html"
           }
         },
         {
