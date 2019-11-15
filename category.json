@@ -71,6 +71,12 @@
           "store": {
             "obniz": "https://obniz.myshopify.com/products/ir-module-cbr-ir001?variant=15937533771834"
           }
+        },
+        {
+          "name": "YG1006",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07041/"
+          }
         }
       ]
     },
@@ -406,6 +412,12 @@
         {
           "name": "AK8963",
           "store": {}
+        },
+        {
+          "name": "IPM-165",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-04911/"
+          }
         }
       ]
     },
@@ -447,6 +459,12 @@
           "name": "HMC5883L",
           "store": {
             "adafruit": "https://www.adafruit.com/product/1746"
+          }
+        },
+        {
+          "name": "CT10",
+          "store": {
+            "seedstudio": "https://jp.seeedstudio.com/Grove-Magnetic-Switch-p-744.html"
           }
         }
       ]
@@ -576,6 +594,12 @@
           "store": {
             "akizuki": "http://akizukidenshi.com/catalog/g/gK-08316/"
           }
+        },
+        {
+          "name": "PT550",
+          "store": {
+            "akizuki": "http://akizukidenshi.com/catalog/g/gM-07035/"
+          }
         }
       ]
     },
@@ -583,6 +607,20 @@
       "name": "Grove",
       "image_url": "https://obniz.io/sdk/parts/Grove_MP3/image.jpg",
       "parts": [
+        {
+          "name": "Grove_Button",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/804/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Button.html"
+          }
+        },
+        {
+          "name": "Grove_Buzzer",
+          "store": {
+            "switchscience": "https://www.switch-science.com/catalog/1179/",
+            "seedstudio": "https://www.seeedstudio.com/Grove-Buzzer.html"
+          }
+        },
         {
           "name": "Grove_EarHeartRate",
           "store": {

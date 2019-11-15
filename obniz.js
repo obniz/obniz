@@ -18693,8 +18693,8 @@ var map = {
 	"./Ble/2jcie/index.js": "./parts/Ble/2jcie/index.js",
 	"./Camera/ArduCAMMini/index.js": "./parts/Camera/ArduCAMMini/index.js",
 	"./Camera/JpegSerialCam/index.js": "./parts/Camera/JpegSerialCam/index.js",
+	"./ColorSensor/PT550/index.js": "./parts/ColorSensor/PT550/index.js",
 	"./ColorSensor/S11059/index.js": "./parts/ColorSensor/S11059/index.js",
-	"./CompassSensor/HMC5883L/index.js": "./parts/CompassSensor/HMC5883L/index.js",
 	"./Display/7SegmentLED/index.js": "./parts/Display/7SegmentLED/index.js",
 	"./Display/7SegmentLEDArray/index.js": "./parts/Display/7SegmentLEDArray/index.js",
 	"./Display/7SegmentLED_MAX7219/index.js": "./parts/Display/7SegmentLED_MAX7219/index.js",
@@ -18715,6 +18715,8 @@ var map = {
 	"./GasSensor/MQ8/index.js": "./parts/GasSensor/MQ8/index.js",
 	"./GasSensor/MQ9/index.js": "./parts/GasSensor/MQ9/index.js",
 	"./Grove/Grove_3AxisAccelerometer/index.js": "./parts/Grove/Grove_3AxisAccelerometer/index.js",
+	"./Grove/Grove_Button/index.js": "./parts/Grove/Grove_Button/index.js",
+	"./Grove/Grove_Buzzer/index.js": "./parts/Grove/Grove_Buzzer/index.js",
 	"./Grove/Grove_EarHeartRate/index.js": "./parts/Grove/Grove_EarHeartRate/index.js",
 	"./Grove/Grove_GPS/index.js": "./parts/Grove/Grove_GPS/index.js",
 	"./Grove/Grove_MP3/index.js": "./parts/Grove/Grove_MP3/index.js",
@@ -18722,17 +18724,21 @@ var map = {
 	"./Infrared/IRModule/index.js": "./parts/Infrared/IRModule/index.js",
 	"./Infrared/IRSensor/index.js": "./parts/Infrared/IRSensor/index.js",
 	"./Infrared/InfraredLED/index.js": "./parts/Infrared/InfraredLED/index.js",
+	"./Infrared/YG1006/index.js": "./parts/Infrared/YG1006/index.js",
 	"./Light/FullColorLED/index.js": "./parts/Light/FullColorLED/index.js",
 	"./Light/LED/index.js": "./parts/Light/LED/index.js",
 	"./Light/WS2811/index.js": "./parts/Light/WS2811/index.js",
 	"./Light/WS2812/index.js": "./parts/Light/WS2812/index.js",
 	"./Light/WS2812B/index.js": "./parts/Light/WS2812B/index.js",
 	"./Logic/SNx4HC595/index.js": "./parts/Logic/SNx4HC595/index.js",
+	"./Magnet/CT10/index.js": "./parts/Magnet/CT10/index.js",
+	"./Magnet/HMC5883L/index.js": "./parts/Magnet/HMC5883L/index.js",
 	"./Memory/24LC256/index.js": "./parts/Memory/24LC256/index.js",
 	"./MovementSensor/AK8963/index.js": "./parts/MovementSensor/AK8963/index.js",
 	"./MovementSensor/Button/index.js": "./parts/MovementSensor/Button/index.js",
 	"./MovementSensor/FlickHat/index.js": "./parts/MovementSensor/FlickHat/index.js",
 	"./MovementSensor/HC-SR505/index.js": "./parts/MovementSensor/HC-SR505/index.js",
+	"./MovementSensor/IPM-165/index.js": "./parts/MovementSensor/IPM-165/index.js",
 	"./MovementSensor/JoyStick/index.js": "./parts/MovementSensor/JoyStick/index.js",
 	"./MovementSensor/KXR94-2050/index.js": "./parts/MovementSensor/KXR94-2050/index.js",
 	"./MovementSensor/KXSC7-2050/index.js": "./parts/MovementSensor/KXSC7-2050/index.js",
@@ -20295,6 +20301,44 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/ColorSensor/PT550/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class PT550 {
+  constructor() {
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'PT550',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.signal = this.obniz.getAD(this.params.signal);
+    this.signal.start(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+
+  async getWait() {
+    return await this.signal.getWait();
+  }
+}
+
+if (true) {
+  module.exports = PT550;
+}
+
+
+/***/ }),
+
 /***/ "./parts/ColorSensor/S11059/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20348,68 +20392,6 @@ class S11059 {
 
 if (true) {
   module.exports = S11059;
-}
-
-
-/***/ }),
-
-/***/ "./parts/CompassSensor/HMC5883L/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-class HMC5883L {
-  constructor() {
-    this.keys = ['gnd', 'sda', 'scl', 'i2c'];
-
-    this.address = {};
-    this.address.device = 0x1e;
-    this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
-    this.address.xMSB = [0x03];
-  }
-
-  static info() {
-    return {
-      name: 'HMC5883L',
-    };
-  }
-
-  wired(obniz) {
-    this.obniz = obniz;
-    obniz.setVccGnd(null, this.params.gnd, '3v');
-
-    this.params.clock = 100000;
-    this.params.pull = '3v';
-    this.params.mode = 'master';
-
-    this.i2c = obniz.getI2CWithConfig(this.params);
-
-    this.obniz.wait(500);
-  }
-
-  init() {
-    this.i2c.write(this.address.device, this.address.reset);
-    this.obniz.wait(500);
-  }
-
-  async get() {
-    this.i2c.write(this.address.device, this.address.xMSB);
-    let readed = await this.i2c.readWait(this.address.device, 2 * 3);
-
-    let obj = {};
-    let keys = ['x', 'y', 'z'];
-    for (let i = 0; i < 3; i++) {
-      let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
-      if (val & 0x8000) {
-        val = val - 65536;
-      }
-      obj[keys[i]] = val;
-    }
-
-    return obj;
-  }
-}
-
-if (true) {
-  module.exports = HMC5883L;
 }
 
 
@@ -27194,6 +27176,119 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Grove/Grove_Button/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_Button {
+  constructor() {
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal'];
+
+    this.onChangeForStateWait = function() {};
+  }
+
+  static info() {
+    return {
+      name: 'Grove_Button',
+    };
+  }
+
+  wired(obniz) {
+    this.io_signal = obniz.getIO(this.params.signal);
+
+    if (obniz.isValidIO(this.params.vcc)) {
+      this.io_vcc = obniz.getIO(this.params.vcc);
+      this.io_vcc.output(true);
+    }
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_supply = obniz.getIO(this.params.gnd);
+      this.io_supply.output(false);
+    }
+
+    this.io_signal.pull('5v');
+
+    let self = this;
+    this.io_signal.input(function(value) {
+      self.isPressed = value;
+      if (self.onchange) {
+        self.onchange(value);
+      }
+      self.onChangeForStateWait(value);
+    });
+  }
+
+  async isPressedWait() {
+    let ret = await this.io_signal.inputWait();
+    return ret;
+  }
+
+  stateWait(isPressed) {
+    return new Promise((resolve, reject) => {
+      this.onChangeForStateWait = pressed => {
+        if (isPressed == pressed) {
+          this.onChangeForStateWait = function() {};
+          resolve();
+        }
+      };
+    });
+  }
+}
+
+if (true) {
+  module.exports = Grove_Button;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Grove/Grove_Buzzer/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class Grove_Buzzer {
+  constructor(obniz) {
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'Grove_Buzzer',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.pwm = obniz.getFreePwm();
+    this.pwm.start({ io: this.params.signal });
+  }
+
+  play(freq) {
+    if (typeof freq !== 'number') {
+      throw new Error('freq must be a number');
+    }
+    freq = parseInt(freq);
+    if (freq > 0) {
+      this.pwm.freq(freq);
+      this.pwm.pulse((1 / freq / 2) * 1000);
+    } else {
+      this.pwm.pulse(0);
+    }
+  }
+
+  stop() {
+    this.play(0);
+  }
+}
+
+if (true) {
+  module.exports = Grove_Buzzer;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Grove/Grove_EarHeartRate/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -27956,6 +28051,45 @@ class InfraredLED {
 
 if (true) {
   module.exports = InfraredLED;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Infrared/YG1006/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class YG1006 {
+  constructor() {
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'YG1006',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.signal = this.obniz.getAD(this.params.signal);
+    this.signal.start(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+
+  async getWait() {
+    let value = await this.signal.getWait();
+    return value;
+  }
+}
+
+if (true) {
+  module.exports = YG1006;
 }
 
 
@@ -28748,6 +28882,134 @@ if (true) {
 
 /***/ }),
 
+/***/ "./parts/Magnet/CT10/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class CT10 {
+  constructor() {
+    this.keys = ['signal', 'gnd', 'vcc'];
+    this.requiredKeys = ['signal'];
+
+    this.onChangeForStateWait = function() {};
+  }
+
+  static info() {
+    return {
+      name: 'CT10',
+    };
+  }
+
+  wired(obniz) {
+    this.io_signal = obniz.getIO(this.params.signal);
+
+    if (obniz.isValidIO(this.params.vcc)) {
+      this.io_vcc = obniz.getIO(this.params.vcc);
+      this.io_vcc.output(true);
+    }
+
+    if (obniz.isValidIO(this.params.gnd)) {
+      this.io_supply = obniz.getIO(this.params.gnd);
+      this.io_supply.output(false);
+    }
+
+    this.io_signal.pull('0v');
+
+    let self = this;
+    this.io_signal.input(function(value) {
+      self.isNear = value;
+      if (self.onchange) {
+        self.onchange(value);
+      }
+      self.onChangeForStateWait(value);
+    });
+  }
+
+  async isNearWait() {
+    let ret = await this.io_signal.inputWait();
+    return ret;
+  }
+
+  stateWait(isNear) {
+    return new Promise((resolve, reject) => {
+      this.onChangeForStateWait = near => {
+        if (isNear == near) {
+          this.onChangeForStateWait = function() {};
+          resolve();
+        }
+      };
+    });
+  }
+}
+
+if (true) {
+  module.exports = CT10;
+}
+
+
+/***/ }),
+
+/***/ "./parts/Magnet/HMC5883L/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class HMC5883L {
+  constructor() {
+    this.keys = ['gnd', 'sda', 'scl', 'i2c'];
+
+    this.address = {};
+    this.address.device = 0x1e;
+    this.address.reset = [0x02, 0x00]; // Continuous Measurment Mode
+    this.address.xMSB = [0x03];
+  }
+
+  static info() {
+    return {
+      name: 'HMC5883L',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    obniz.setVccGnd(null, this.params.gnd, '3v');
+
+    this.params.clock = 100000;
+    this.params.pull = '3v';
+    this.params.mode = 'master';
+
+    this.i2c = obniz.getI2CWithConfig(this.params);
+
+    this.obniz.wait(500);
+  }
+
+  init() {
+    this.i2c.write(this.address.device, this.address.reset);
+    this.obniz.wait(500);
+  }
+
+  async get() {
+    this.i2c.write(this.address.device, this.address.xMSB);
+    let readed = await this.i2c.readWait(this.address.device, 2 * 3);
+
+    let obj = {};
+    let keys = ['x', 'y', 'z'];
+    for (let i = 0; i < 3; i++) {
+      let val = (readed[i * 2] << 8) | readed[i * 2 + 1];
+      if (val & 0x8000) {
+        val = val - 65536;
+      }
+      obj[keys[i]] = val;
+    }
+
+    return obj;
+  }
+}
+
+if (true) {
+  module.exports = HMC5883L;
+}
+
+
+/***/ }),
+
 /***/ "./parts/Memory/24LC256/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -29347,6 +29609,45 @@ class HCSR505 {
 
 if (true) {
   module.exports = HCSR505;
+}
+
+
+/***/ }),
+
+/***/ "./parts/MovementSensor/IPM-165/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+class IPM_165 {
+  constructor() {
+    this.keys = ['signal', 'vcc', 'gnd'];
+    this.requiredKeys = ['signal'];
+  }
+
+  static info() {
+    return {
+      name: 'IPM-165',
+    };
+  }
+
+  wired(obniz) {
+    this.obniz = obniz;
+    this.obniz.setVccGnd(this.params.vcc, this.params.gnd, '5v');
+    this.signal = this.obniz.getAD(this.params.signal);
+    this.signal.start(value => {
+      if (this.onchange) {
+        this.onchange(value);
+      }
+    });
+  }
+
+  async getWait() {
+    let value = await this.signal.getWait();
+    return value;
+  }
+}
+
+if (true) {
+  module.exports = IPM_165;
 }
 
 
