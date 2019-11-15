@@ -1,6 +1,6 @@
 export interface CT10Options {
   signal: number;
-  vcc: number;
+  vcc?: number;
   gnd?: number;
 }
 

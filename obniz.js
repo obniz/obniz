@@ -28888,7 +28888,7 @@ if (true) {
 class CT10 {
   constructor() {
     this.keys = ['signal', 'gnd', 'vcc'];
-    this.requiredKeys = ['signal', 'vcc'];
+    this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = function() {};
   }

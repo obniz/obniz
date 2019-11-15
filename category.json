@@ -454,6 +454,12 @@
           "store": {
             "adafruit": "https://www.adafruit.com/product/1746"
           }
+        },
+        {
+          "name": "CT10",
+          "store": {
+            "seedstudio": "https://jp.seeedstudio.com/Grove-Magnetic-Switch-p-744.html"
+          }
         }
       ]
     },
