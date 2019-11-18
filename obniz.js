@@ -7687,8 +7687,10 @@ module.exports = ObnizApi;
 /***/ (function(module, exports, __webpack_require__) {
 
 const ObnizBLE = __webpack_require__("./obniz/libs/embeds/ble/ble.js");
+const ObnizBLEHci = __webpack_require__("./obniz/libs/embeds/bleHci/ble.js");
 const Display = __webpack_require__("./obniz/libs/embeds/display.js");
 const ObnizSwitch = __webpack_require__("./obniz/libs/embeds/switch.js");
+const semver = __webpack_require__("./node_modules/semver/semver.js");
 
 const LogicAnalyzer = __webpack_require__("./obniz/libs/measurements/logicanalyzer.js");
 const ObnizMeasure = __webpack_require__("./obniz/libs/measurements/measure.js");
@@ -7755,10 +7757,17 @@ module.exports = class ObnizComponents extends ObnizParts {
       pwm: PeripheralPWM,
     };
 
+    let ble = ObnizBLEHci;
+
+    // < 3.0.0
+    if (semver.lt(this.Obniz.firmware_ver, '3.0.0')) {
+      ble = ObnizBLE;
+    }
+
     const embeds_map = {
       display: Display,
       switch: ObnizSwitch,
-      ble: ObnizBLE,
+      ble: ble,
     };
 
     const protocol_map = {
@@ -11174,6 +11183,63 @@ class BleService extends BleAttributeAbstract {
 }
 
 module.exports = BleService;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/ble.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+const ObnizBLEHci = __webpack_require__("./obniz/libs/embeds/bleHci/hci.js");
+class ObnizBLE {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.hci = new ObnizBLEHci(Obniz);
+    this._reset();
+  }
+
+  notified(obj) {
+    if (obj.hci) {
+      this.hci.notified(obj.hci);
+    }
+  }
+
+  _reset() {}
+}
+
+module.exports = ObnizBLE;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/hci.js":
+/***/ (function(module, exports) {
+
+class ObnizBLEHci {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+  }
+
+  send(hciCommand) {
+    this.Obniz.send({
+      ble: {
+        hci: {
+          write: hciCommand,
+        },
+      },
+    });
+  }
+
+  notified(obj) {
+    if (obj.read && obj.read.data) {
+      this.onread(obj.read.data);
+    }
+  }
+
+  onread() {}
+}
+
+module.exports = ObnizBLEHci;
 
 
 /***/ }),
