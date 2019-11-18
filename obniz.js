@@ -33518,7 +33518,7 @@ if (true) {
 
 class I2cPartsAbstruct {
   constructor() {
-    this.keys = ['gnd', 'sda', 'scl', 'i2c', 'vcc'];
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'vcc'];
     this.requiredKeys = [];
 
     this.i2cinfo = this.i2cInfo();
@@ -33538,7 +33538,7 @@ class I2cPartsAbstruct {
   wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(null, this.params.gnd, this.i2cinfo.voltage);
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, this.i2cinfo.voltage);
     this.params.clock = this.i2cinfo.clock;
     this.params.pull = this.i2cinfo.voltage;
     this.params.mode = 'master';
