@@ -12,7 +12,7 @@ obniz.onconnect = function() {
 }
 ```
 
-## repeat(callback)
+## repeat(callback, ms)
 obniz Boardがつながっている間に繰り返し実行したい関数を渡すと実行します。
 切断時には呼ばれなくなります。
 待つための関数を呼ばなくてもスレッドがフリーズすることはありません。
@@ -26,7 +26,7 @@ obniz.repeat(function(){
   } else {
     obniz.io0.output(false);
   }
-})
+},100) //100ms loop
 ```
 ## [await] wait(ms)
 obniz Boardの動作をms(ミリ秒)で指定された値だけ停止します。

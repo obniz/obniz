@@ -12,7 +12,7 @@ obniz.onconnect = function() {
 }
 ```
 
-## repeat(callback)
+## repeat(callback, ms)
 Repeat will call the callback function periodically while it is connected to obniz Board.
 It will stop calling once it is disconnected from obniz Board.
 ```Javascript
@@ -24,7 +24,7 @@ obniz.repeat(function(){
   } else {
     obniz.io0.output(false);
   }
-})
+}, 100) //100ms loop
 ```
 ## [await] wait(ms)
 This pauses obniz Board for a period given in terms of ms (millisecond).
