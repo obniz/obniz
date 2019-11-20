@@ -3,7 +3,7 @@ class ObnizBLEHci {
     this.Obniz = Obniz;
   }
 
-  send(hciCommand) {
+  write(hciCommand) {
     this.Obniz.send({
       ble: {
         hci: {

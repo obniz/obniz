@@ -16,7 +16,7 @@ describe('ble-security', function() {
   });
 
   it('write', function() {
-    this.obniz.ble.hci.send([0, 1, 2, 3, 4, 5, 22, 1]);
+    this.obniz.ble.hci.write([0, 1, 2, 3, 4, 5, 22, 1]);
 
     expect(this.obniz).send([
       { ble: { hci: { write: [0, 1, 2, 3, 4, 5, 22, 1] } } },
