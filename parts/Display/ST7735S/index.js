@@ -112,6 +112,22 @@ class ST7735S {
     return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
   }
 
+  complementaryColor16(color) {
+    let r = (color & 0xf800) >> 8;
+    let g = (color & 0x7e0) >> 3;
+    let b = (color & 0x1f) << 3;
+    let x = Math.max(r, g, b) + Math.min(r, g, b);
+    return this.color16(x - r, x - g, x - b);
+  }
+
+  reverseColor16(color) {
+    let r = (color & 0xf800) >> 8;
+    let g = (color & 0x7e0) >> 3;
+    let b = (color & 0x1f) << 3;
+    let x = 0xff;
+    return this.color16(x - r, x - g, x - b);
+  }
+
   _initG() {
     // initialize display
     this.writeCommand(ST7735_SWRESET);
@@ -278,25 +294,16 @@ class ST7735S {
     this.fillRect(0, 0, this.width, this.height, color);
   }
 
+  _color2pixels(w, h, color) {
+    return Array.from(new Array(Math.abs(w * h))).map((v, i) => color);
+  }
+
   fillRect(x, y, w, h, color) {
     if (x >= this.width || y >= this.height) return;
     if (x + w - 1 >= this.width) w = this.width - x;
     if (y + h - 1 >= this.height) h = this.height - y;
-
-    this.setAddrWindow(x, y, x + w - 1, y + h - 1);
-
-    let hi = color >> 8,
-      lo = color & 0xff;
-    let data = [];
-
-    for (y = h; y > 0; y--) {
-      for (x = w; x > 0; x--) {
-        data.push(hi);
-        data.push(lo);
-      }
-    }
-    this._writeBuffer(data);
-    this._writeBuffer(); //for flush
+    let pixels = this._color2pixels(w, h, color);
+    this.rawBound16(x, y, w, h, pixels, true);
   }
 
   drawRect(x, y, w, h, color) {
@@ -495,38 +502,31 @@ class ST7735S {
   }
 
   drawVLine(x, y, h, color) {
+    if (h < 0) { h = -h; y = y - h; }
     if (x >= this.width || y >= this.height) return;
     if (y + h - 1 >= this.height) h = this.height - y;
-
-    this.setAddrWindow(x, y, x, y + h - 1);
-
-    let hi = color >> 8,
-      lo = color & 0xff;
-    let data = [];
-    while (h--) {
-      data.push(hi);
-      data.push(lo);
-    }
-    this.writeData(data);
+    let pixels = this._color2pixels(1, h, color);
+    this.rawBound16(x, y, 1, h, pixels, false);
   }
 
   drawHLine(x, y, w, color) {
+    if (w < 0) { w = -w; x = x - w; }
     if (x >= this.width || y >= this.height) return;
     if (x + w - 1 >= this.width) w = this.width - x;
-
-    this.setAddrWindow(x, y, x + w - 1, y);
-
-    let hi = color >> 8,
-      lo = color & 0xff;
-    let data = [];
-    while (w--) {
-      data.push(hi);
-      data.push(lo);
-    }
-    this.writeData(data);
+    let pixels = this._color2pixels(w, 1, color);
+    this.rawBound16(x, y, w, 1, pixels, false);
   }
 
   drawLine(x0, y0, x1, y1, color) {
+    if (x0 == x1) {
+      this.drawVLine(x0, y0, y1 - y0, color);
+      return;
+    }
+    if (y0 == y1) {
+      this.drawHLine(x0, y0, x1 - x0, color);
+      return;
+    }
+
     let step = Math.abs(y1 - y0) > Math.abs(x1 - x0);
     if (step) {
       y0 = [x0, (x0 = y0)][0]; //this._swap(x0, y0);
@@ -559,9 +559,7 @@ class ST7735S {
 
   drawPixel(x, y, color) {
     if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
-
-    this.setAddrWindow(x, y, x + 1, y + 1);
-    this.writeData([color >> 8, color & 0xff]);
+    this.rawBound16(x, y, 1, 1, [color], false);
   }
 
   drawChar(x, y, ch, color, bg, size) {
@@ -637,15 +635,20 @@ class ST7735S {
     this.rawBound16(x, y, 6 * size, 8 * size, pixels);
   }
 
-  rawBound16(x, y, width, height, pixels) {
+  rawBound16(x, y, width, height, pixels, flush) {
     let rgb = [];
-    pixels.forEach(function(v) {
-      rgb.push((v & 0xff00) >> 8);
-      rgb.push(v & 0xff);
+    pixels.forEach(function (v) {
+      let v2 = ((v & 0xf800) >> 11) | (v & 0x7e0) | ((v & 0x1f) << 11);
+      rgb.push((v2 & 0xff00) >> 8);
+      rgb.push(v2 & 0xff);
     });
     this.setAddrWindow(x, y, x + width - 1, y + height - 1);
-    this._writeBuffer(rgb);
-    this._writeBuffer(); //for flush
+    if (flush) {
+      this._writeBuffer(rgb);
+      this._writeBuffer(); //for flush
+    } else {
+      this.writeData(rgb);
+    }
   }
 
   drawString(x, y, str, color, bg, size, wrap) {
@@ -687,9 +690,9 @@ class ST7735S {
       let g = imageData[n + 1];
       let b = imageData[n + 2];
       if (!gray) {
-        rgb.push(r);
-        rgb.push(g);
         rgb.push(b);
+        rgb.push(g);
+        rgb.push(r);
       } else {
         let gs = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
         rgb.push(gs);
@@ -715,10 +718,10 @@ class ST7735S {
 
   rawBound(x, y, width, height, pixels) {
     let rgb = [];
-    pixels.forEach(function(v) {
-      rgb.push((v & 0xff0000) >> 16);
-      rgb.push((v & 0xff00) >> 8);
+    pixels.forEach(function (v) {
       rgb.push(v & 0xff);
+      rgb.push((v & 0xff00) >> 8);
+      rgb.push((v & 0xff0000) >> 16);
     });
     this.write(ST7735_COLMOD, [ST7735_18bit]); //18bit/pixel
     this.setAddrWindow(x, y, x + width - 1, y + height - 1);
@@ -728,7 +731,7 @@ class ST7735S {
   }
 
   raw(pixels) {
-    this.rawBound16(0, 0, this.width, this.height, pixels);
+    this.rawBound16(0, 0, this.width, this.height, pixels, true);
   }
 
   _setPresetColor() {
