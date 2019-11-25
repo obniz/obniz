@@ -8,7 +8,7 @@ chai.use(testUtil.obnizAssert);
 
 describe('ble-security', function() {
   beforeEach(function(done) {
-    return testUtil.setupObnizPromise(this, done);
+    return testUtil.setupObnizPromise(this, done, { __firmware_ver: '3.0.0' });
   });
 
   afterEach(function(done) {
