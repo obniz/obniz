@@ -502,7 +502,10 @@ class ST7735S {
   }
 
   drawVLine(x, y, h, color) {
-    if (h < 0) { h = -h; y = y - h; }
+    if (h < 0) {
+      h = -h;
+      y = y - h;
+    }
     if (x >= this.width || y >= this.height) return;
     if (y + h - 1 >= this.height) h = this.height - y;
     let pixels = this._color2pixels(1, h, color);
@@ -510,7 +513,10 @@ class ST7735S {
   }
 
   drawHLine(x, y, w, color) {
-    if (w < 0) { w = -w; x = x - w; }
+    if (w < 0) {
+      w = -w;
+      x = x - w;
+    }
     if (x >= this.width || y >= this.height) return;
     if (x + w - 1 >= this.width) w = this.width - x;
     let pixels = this._color2pixels(w, 1, color);
@@ -637,7 +643,7 @@ class ST7735S {
 
   rawBound16(x, y, width, height, pixels, flush) {
     let rgb = [];
-    pixels.forEach(function (v) {
+    pixels.forEach(function(v) {
       let v2 = ((v & 0xf800) >> 11) | (v & 0x7e0) | ((v & 0x1f) << 11);
       rgb.push((v2 & 0xff00) >> 8);
       rgb.push(v2 & 0xff);
@@ -718,7 +724,7 @@ class ST7735S {
 
   rawBound(x, y, width, height, pixels) {
     let rgb = [];
-    pixels.forEach(function (v) {
+    pixels.forEach(function(v) {
       rgb.push(v & 0xff);
       rgb.push((v & 0xff00) >> 8);
       rgb.push((v & 0xff0000) >> 16);
