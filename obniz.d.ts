@@ -59,11 +59,11 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
+import { IPM_165, IPM_165Options} from './parts/MovementSensor/IPM-165';
 import { MPU9250, MPU9250Options } from './parts/MovementSensor/MPU9250';
 import { MPU6886, MPU6886Options } from './parts/MovementSensor/MPU6886';
 import { MPU6050, MPU6050Options } from './parts/MovementSensor/MPU6050';
 import { AK8963, AK8963Options } from './parts/MovementSensor/AK8963';
-
 // Memory
 import { _24LC256, _24LC256Options } from './parts/Memory/24LC256';
 // GyroSensor
@@ -75,8 +75,9 @@ import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A
 import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
 // GPS
 import { GYSFDMAXB, GYSFDMAXBOptions } from './parts/GPS/GYSFDMAXB';
-// CompassSensor
-import { HMC5883L, HMC5883LOptions } from './parts/CompassSensor/HMC5883L';
+// MagnetSensor
+import { CT10, CT10Options } from './parts/Magnet/CT10';
+import { HMC5883L, HMC5883LOptions } from './parts/Magnet/HMC5883L';
 // ADConverter
 import { HX711, HX711Options } from './parts/ADConverter/hx711';
 // SoilSensor
@@ -101,8 +102,12 @@ import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
 import { AM2320, AM2320ptions } from './parts/TemperatureSensor/i2c/AM2320';
 
 // ColorSensor
+import { PT550, PT550Options } from './parts/ColorSensor/PT550';
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
+import { YG1006, YG1006Options } from './parts/Infrared/YG1006';
 // Grove
+import { Grove_Button, Grove_ButtonOptions } from './parts/Grove/Grove_Button';
+import { Grove_Buzzer, Grove_BuzzerOprions } from './parts/Grove/Grove_Buzzer';
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 import { Grove_GPS, Grove_GPSOptions } from './parts/Grove/Grove_GPS';
@@ -178,6 +183,7 @@ interface WiredNameMap {
   'HC-SR505': HCSR505;
   'JoyStick': JoyStick;
   'KXR94-2050': KXR94_2050;
+  'IPM-165': IPM_165;
   // 'KXSC7-2050': KXSC7_2050;
   'PaPIRsVZ': PaPIRsVZ;
   'Potentiometer': Potentiometer;
@@ -192,7 +198,8 @@ interface WiredNameMap {
   'GP2Y0A21YK0F': GP2Y0A21YK0F;
   // GPS
   'GYSFDMAXB': GYSFDMAXB;
-  // CompassSensor
+  // MagnetSensor
+  'CT10': CT10;
   'HMC5883L': HMC5883L;
   // ADConverter
   'hx711': HX711;
@@ -217,8 +224,12 @@ interface WiredNameMap {
   'ADT7310': ADT7310;
   'AM2320': AM2320;
   // ColorSensor
+  'PT550': PT550;
   'S11059': S11059;
+  'YG1006': YG1006;
   // Grove
+  'Grove_Button': Grove_Button;
+  'Grove_Buzzer': Grove_Buzzer;
   'Grove_EarHeartRate': Grove_EarHeartRate;
   'Grove_MP3': Grove_MP3;
   'Grove_GPS': Grove_GPS;
@@ -290,6 +301,7 @@ interface WiredNameOptionsMap {
   'HC-SR505': HCSR505Options;
   'JoyStick': JoyStickOptions;
   'KXR94-2050': KXR94_2050Options;
+  'IPM-165': IPM_165Options;
   // 'KXSC7-2050': KXSC7_2050Options;
   'PaPIRsVZ': PaPIRsVZOptions;
   'Potentiometer': PotentiometerOptions;
@@ -304,7 +316,8 @@ interface WiredNameOptionsMap {
   'GP2Y0A21YK0F': GP2Y0A21YK0FOptions;
   // GPS
   'GYSFDMAXB': GYSFDMAXBOptions;
-  // CompassSensor
+  // MagnetSensor
+  'CT10': CT10Options;
   'HMC5883L': HMC5883LOptions;
   // ADConverter
   'hx711': HX711Options;
@@ -329,8 +342,12 @@ interface WiredNameOptionsMap {
   'ADT7310': ADT7310Options;
   'AM2320': AM2320ptions;
   // ColorSensor
+  'PT550': PT550Options;
   'S11059': S11059Options;
+  'YG1006': YG1006Options;
   // Grove
+  'Grove_Button': Grove_ButtonOptions;
+  'Grove_Buzzer': Grove_BuzzerOprions;
   'Grove_EarHeartRate': Grove_EarHeartRateOptions;
   'Grove_MP3': Grove_MP3Options;
   'Grove_GPS': Grove_GPSOptions;

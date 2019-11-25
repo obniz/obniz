@@ -12,11 +12,13 @@ obniz.onconnect = function() {
 }
 ```
 
-## repeat(callback)
+## repeat(callback[, ms])
 obniz Boardがつながっている間に繰り返し実行したい関数を渡すと実行します。
 切断時には呼ばれなくなります。
 待つための関数を呼ばなくてもスレッドがフリーズすることはありません。
 JavaScript言語から考えると、無限にループするよりはcallback関数を利用することをおすすめします。
+
+"ms"はオプションパラメータで、ループインターバルの時間を指定します。デフォルトでは100で、100msインターバルのループを実行します。
 ```Javascript
 // Javascript Example
 obniz.ad0.start();
@@ -26,7 +28,7 @@ obniz.repeat(function(){
   } else {
     obniz.io0.output(false);
   }
-})
+},100) 
 ```
 ## [await] wait(ms)
 obniz Boardの動作をms(ミリ秒)で指定された値だけ停止します。
