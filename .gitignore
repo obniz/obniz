@@ -13,3 +13,5 @@ test/**/*.html
 temp
 .idea
 log
+/test*.js
+/test*.html

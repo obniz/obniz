@@ -1,5 +1,5 @@
 # Display (obniz.display)
-ObnizにあるOLEDディスプレイに文字や絵を描画します。
+obniz BoardにあるOLEDディスプレイに文字や絵を描画します。
 
 ![](./images/obniz_display_sphere.gif)
 
@@ -101,9 +101,9 @@ obniz.display.circle(90, 30, 20, true); // filled circle
 これ以降の描画を転送するかどうかを指定できます。canvasを利用する`clear/print/line/rect/circle/draw`のみが影響を受けます。
 
 このディスプレイクラスではprintやlineなど、画面が少しでも変われば画面全体を
-obnizに転送して、obnizのディスプレイを更新します。
+obniz Boardに転送して、obniz Boardのディスプレイを更新します。
 その場合、描画が多い場合は転送に時間がかかってしまいます。
-ある程度描画してから最後に一気にobnizに転送するための機能がdrawing()です。
+ある程度描画してから最後に一気にobniz Boardに転送するための機能がdrawing()です。
 `drawing(false)`で転送を停止でき、`drawing(true)`で転送を再開できます。再開時には変更があってもなくても一度転送されます。
 
 ```javascript

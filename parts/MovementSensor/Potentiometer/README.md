@@ -1,7 +1,7 @@
 # Potentiometer
 
 Potention Meter change it's resistor value regarding angle or position.
-obniz can read resistor value by using AD.
+obniz Board can read resistor value by using AD.
 It has three pins. between sides resistor values is constant. voltage of center pin moves within left and right side's voltage.
 
 ![](./image.jpg)

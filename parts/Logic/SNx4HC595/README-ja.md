@@ -11,17 +11,17 @@ Reference
 
 ## obniz.wired('SNx4HC595', {ser, rclk, srclk [, gnd, vcc, oe, srclr, io_num]});
 
-チップの各ピンをどのobnizのioに接続したか設定します。
+チップの各ピンをどのobniz Boardのioに接続したか設定します。
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-ser | `number(obniz io)` | yes | &nbsp; | つないだobnizのioを指定してください。
-rclk | `number(obniz io)` | yes |  &nbsp; | つないだobnizのioを指定してください。
-srclk | `number(obniz io)` | yes | &nbsp;  | つないだobnizのioを指定してください。
-vcc | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-gnd | `number(obniz io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-oe | `number(obniz io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。gndにつなぐことで、通常使用となります。obnizにつながずにgndにつないでいる場合はwired関数で指定しなくても良いです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
-srclr | `number(obniz io)` | no | &nbsp; | シフトレジスタの値をすべてクリアするためのピンです。low->highでクリアされます。5vなどに接続し、obnizから操作しない場合は指定する必要はありません。
+ser | `number(obniz Board io)` | yes | &nbsp; | つないだobniz Boardのioを指定してください。
+rclk | `number(obniz Board io)` | yes |  &nbsp; | つないだobniz Boardのioを指定してください。
+srclk | `number(obniz Board io)` | yes | &nbsp;  | つないだobniz Boardのioを指定してください。
+vcc | `number(obniz Board io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
+gnd | `number(obniz Board io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
+oe | `number(obniz Board io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。gndにつなぐことで、通常使用となります。obniz Boardにつながずにgndにつないでいる場合はwired関数で指定しなくても良いです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
+srclr | `number(obniz Board io)` | no | &nbsp; | シフトレジスタの値をすべてクリアするためのピンです。low->highでクリアされます。5vなどに接続し、obniz Boardから操作しない場合は指定する必要はありません。
 io_num | `number` | no | 8  | ioの数を指定します。1つのチップに8個までioがありますが、5などを指定すると、そのうちの5本のみ使用されます。また、連続でチップが繋がれている場合は、ここの数字を増えたIOの数だけ指定します。例えば2チップつないでいて、16ある場合はio_num:16とすることで操作できます。
 enabled | `boolean` | no | true  | oeが指定されていた場合、初期状態をどちらにするか指定できます。
 
@@ -83,7 +83,7 @@ ioext.onece(function(){ // io 4 and 5 will be changed to false state at same tim
 ```
 
 ## getIO(io)
-それぞれの出力端子のioオブジェクトを取得します。ioオブジェクトはobnizのioのようにoutput()関数を呼ぶことができます。
+それぞれの出力端子のioオブジェクトを取得します。ioオブジェクトはobniz Boardのioのようにoutput()関数を呼ぶことができます。
 また、obnizパーツライブラリの[LED](./LED)や[7SegmentLED](./7SegmentLED)のioとしても使用することが出来ます。
 
 ```Javascript
@@ -104,7 +104,7 @@ seg.print(0);
 ```
 
 ## setEnable(enabled)
-oe端子をobnizにつないでいる場合にのみ使えます。
+oe端子をobniz Boardにつないでいる場合にのみ使えます。
 出力ピンをすべてハイインピーダンスにします。
 
 ```Javascript

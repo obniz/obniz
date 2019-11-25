@@ -13,6 +13,8 @@ const PeripheralPWM = require('./libs/io_peripherals/pwm');
 const PeripheralSPI = require('./libs/io_peripherals/spi');
 const PeripheralUART = require('./libs/io_peripherals/uart');
 
+const TCP = require('./libs/protocol/tcp');
+
 const ObnizParts = require('./ObnizParts');
 
 const HW = require('./libs/hw/index');
@@ -48,6 +50,7 @@ module.exports = class ObnizComponents extends ObnizParts {
 
     const hw_peripherals = hwDefinition.peripherals;
     const hw_embeds = hwDefinition.embeds;
+    const hw_protocol = hwDefinition.protocol;
 
     const shared_map = {
       io: PeripheralDirective,
@@ -70,29 +73,51 @@ module.exports = class ObnizComponents extends ObnizParts {
       ble: ObnizBLE,
     };
 
+    const protocol_map = {
+      tcp: TCP,
+    };
+
     for (const key in shared_map) {
       const Class = shared_map[key];
       this[key] = new Class(this);
       this._allComponentKeys.push(key);
     }
 
-    for (const key in peripheral_map) {
-      if (hw_peripherals[key]) {
-        const units = hw_peripherals[key].units;
-        const Class = peripheral_map[key];
-        for (let unitId in units) {
-          unitId = parseInt(unitId);
-          this[key + unitId] = new Class(this, unitId);
-          this._allComponentKeys.push(key + unitId);
+    if (hw_peripherals) {
+      for (const key in peripheral_map) {
+        if (hw_peripherals[key]) {
+          const units = hw_peripherals[key].units;
+          const Class = peripheral_map[key];
+          for (let unitId in units) {
+            unitId = parseInt(unitId);
+            this[key + unitId] = new Class(this, unitId);
+            this._allComponentKeys.push(key + unitId);
+          }
         }
       }
     }
 
-    for (const key in embeds_map) {
-      if (hw_embeds[key]) {
-        const Class = embeds_map[key];
-        this[key] = new Class(this);
-        this._allComponentKeys.push(key);
+    if (hw_embeds) {
+      for (const key in embeds_map) {
+        if (hw_embeds[key]) {
+          const Class = embeds_map[key];
+          this[key] = new Class(this);
+          this._allComponentKeys.push(key);
+        }
+      }
+    }
+
+    if (hw_protocol) {
+      for (const key in protocol_map) {
+        if (hw_protocol[key]) {
+          const units = hw_protocol[key].units;
+          const Class = protocol_map[key];
+          for (let unitId in units) {
+            unitId = parseInt(unitId);
+            this[key + unitId] = new Class(this, unitId);
+            this._allComponentKeys.push(key + unitId);
+          }
+        }
       }
     }
   }
@@ -229,5 +254,9 @@ module.exports = class ObnizComponents extends ObnizParts {
 
   getFreeUart() {
     return this._getFreePeripheralUnit('uart');
+  }
+
+  getFreeTcp() {
+    return this._getFreePeripheralUnit('tcp');
   }
 };

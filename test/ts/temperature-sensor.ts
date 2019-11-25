@@ -1,4 +1,4 @@
-import * as Obniz from '../../obniz';
+import Obniz from '../../obniz';
 
 const OBNIZ_ID = '1234-5678';
 
@@ -164,7 +164,7 @@ class AMG8833Test {
       console.log('temperature:' + temps);
 
       var canvas = document.getElementById('canvas') as HTMLCanvasElement;
-      var ctx = canvas.getContext('2d');
+      var ctx = canvas.getContext('2d')!;
       var width = canvas.width;
       var height = canvas.height;
 
@@ -256,7 +256,7 @@ class D6T44LTest {
       console.log('temperature:' + temps);
 
       var canvas = document.getElementById('canvas') as HTMLCanvasElement;
-      var ctx = canvas.getContext('2d');
+      var ctx = canvas.getContext('2d')!;
       var width = canvas.width;
       var height = canvas.height;
 

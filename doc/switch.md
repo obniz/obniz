@@ -1,5 +1,5 @@
 # Switch
-Here we show how to use the embedded switch on obniz.
+Here we show how to use the embedded switch on obniz Board.
 
 ### switch.onchange = function(){}
 When the switch state changes, this callback function will be called.

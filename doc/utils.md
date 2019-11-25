@@ -1,8 +1,8 @@
 # Utils
-Useful functions to use obniz from program are ready for use.
+Useful functions to use obniz Board from program are ready for use.
 
 ## reset()
-This forces the obniz to go back to the initial state when the power was just turned on.
+This forces the obniz Board to go back to the initial state when the power was just turned on.
 
 ```Javascript
 // Example
@@ -12,9 +12,11 @@ obniz.onconnect = function() {
 }
 ```
 
-## repeat(callback)
-Repeat will call the callback function periodically while it is connected to obniz.
-It will stop calling once it is disconnected from obniz.
+## repeat(callback[, ms])
+Repeat will call the callback function periodically while it is connected to obniz Board.
+It will stop calling once it is disconnected from obniz Board.
+
+"ms" is optional parameter and default 100. It mean 100ms interval loop.
 ```Javascript
 // Javascript Example
 obniz.ad0.start();
@@ -24,17 +26,17 @@ obniz.repeat(function(){
   } else {
     obniz.io0.output(false);
   }
-})
+}, 100) 
 ```
 ## [await] wait(ms)
-This pauses obniz for a period given in terms of ms (millisecond).
+This pauses obniz Board for a period given in terms of ms (millisecond).
 ```Javascript
 // Javascript Example
 led.on();
 obniz.wait(1000); // led ON 1sec.
 led.off();
 ```
-This method pauses only obniz, not JavaScript.
+This method pauses only obniz Board, not JavaScript.
 ```Javascript
 // Javascript Example
 var time = new Date();
@@ -54,10 +56,10 @@ console.log((new Date()).getTime() - time.getTime()) // => about 1000
 ```
 
 ## keepWorkingAtOffline(working)
-By default, obniz resets after disconnection from the cloud.
+By default, obniz Board resets after disconnection from the cloud.
 It means the output value and pwm will all stop at that point.
 But the above function with the argument true can nullify that default setting and change it to "do not reset when offline".
-This configuration remains as long as obniz is on.
+This configuration remains as long as obniz Board is on.
 ```Javascript
 // Example
 obniz.keepWorkingAtOffline(true);

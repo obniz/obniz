@@ -1,8 +1,6 @@
 # Compass Sensor - HMC5883L
-
-TRIPLE-AXIS magnetometer (compass) 
-
-Calibration is important to get correct direction.
+3軸地磁気センサです。取得した値から方位を知ることができます。
+コンパスとして使うには、キャリブレーションが必要です。
 
 ![](./image.jpg)
 
@@ -10,11 +8,10 @@ Calibration is important to get correct direction.
 
 
 ## wired(obniz,  { [gnd, sda, scl, i2c]});
+obniz Boardに地磁気センサをつなぎます。
 
-Connect to an obniz.
-
-obniz can't supply a power to this sensor directly.
-Use external 3.3v or use linear regulator to drop 5v output of obniz to 3.3v.
+消費電力のためにobniz Boardから直接電源を供給することができません。
+外部の3.3v電源を用意するか、３端子レギュレータなどでobniz Boardから出力させる5vを3.3vに変換して供給する必要があります。
 
 ```javascript
 // Javascript Example
@@ -27,9 +24,7 @@ while(true) {
 ```
 
 ## init();
-
-initialize the sensor.
-
+センサを初期化します。
 ```javascript
 // Javascript Example
 var compass = obniz.wired("HMC5883L", {gnd:1 , sda:2 , scl:3 });
@@ -38,7 +33,7 @@ compass.init();
 
 ## [await] get()
 
-get x,y,z result object from a sensor.
+x,y,zの結果を持ったオブジェクトを取得します。
 
 ```javascript
 // Javascript Example

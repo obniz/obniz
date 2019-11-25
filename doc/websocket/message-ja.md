@@ -2,7 +2,7 @@
 #  <a name="message">message</a>
 
 
-send/receive with other obniz or WebHook
+send/receive with other obniz Board or WebHook
 
 ##  request: <a name="-request-message-send">send</a>
 

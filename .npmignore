@@ -1,0 +1,38 @@
+
+
+### from .gitignore
+
+.DS_Store
+npm-debug.log
+node_modules
+.nyc_output
+/nbproject/private/
+coverage
+test/**/*.html
+/test*.js
+/test*.html
+
+.idea/modules.xml
+.idea/obnizjs.iml
+.idea/vcs.xml
+.idea/workspace.xml
+temp
+.idea
+log
+
+
+### remove images
+*.jpeg
+*.jpg
+*.png
+*.gif
+/fritzing/
+/doc/
+/_tools/
+*.fzz
+
+
+### remove test
+/test/
+/realtest/
+/realtest_esp32/

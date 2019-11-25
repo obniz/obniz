@@ -1,4 +1,4 @@
-import * as Obniz from '../../obniz';
+import Obniz from '../../obniz';
 
 const OBNIZ_ID = '1234-5678';
 
@@ -117,7 +117,7 @@ class XBeeTest {
       obniz.io11.output(true);
       obniz.io8.output(false);
       var xbee = obniz.wired('XBee', { tx: 9, rx: 10 });
-      xbee.onreceive = function(data, text) {
+      xbee.onreceive = function(data :any, text:string) {
         console.log('recieved : ' + text);
       };
     };

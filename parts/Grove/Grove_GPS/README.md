@@ -38,9 +38,9 @@ Library for Grove GPS Module [Grove - GPS](https://www.seeedstudio.com/Grove-GPS
 
 ## wired(tx, rx {, vcc, gnd})
 
-Connect tx, rx, vcc, gnd to an obniz.
+Connect tx, rx, vcc, gnd to an obniz Board.
 
-| grove | cable | obniz |
+| grove | cable | obniz Board |
 |:--:|:--:|:--:|
 | tx | - | rx |
 | rx | - | tx |

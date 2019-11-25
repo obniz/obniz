@@ -40,12 +40,12 @@ connect PowerSupply and UART.
 cam_tx measn transmit from camera.
 
 We recommend to supply power to an arducam from other power resource.
-You should pay attention over current detection when using an obniz as poewr supply.
+You should pay attention over current detection when using an obniz Board as poewr supply.
 Supply methods are
 
 - use other power resource
-- use J1 on an obniz.
-- supply vcc more than two obniz io
+- use J1 on an obniz Board.
+- supply vcc more than two obniz Board io
 
 This document use io5 and io11 to supply a vcc.
 
@@ -110,7 +110,7 @@ So you should specify new baud value to startWait() function next time.
 5. 115200
 
 are avaiable.
-High-speed is better. But, if the Wifi network speed is slow, then obniz will lost the data when high-speed.
+High-speed is better. But, if the Wifi network speed is slow, then obniz Board will lost the data when high-speed.
 
 ```Javascript
 // Javascript Example

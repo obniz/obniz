@@ -5,6 +5,8 @@
 
 同じArduCAMMiniでも種類がありますが、OV2640搭載の2Mピクセルのカメラである、ArduCAM-Mini-2MPまたはArduCAM-Mini-2MP-Plusに対応しています。
 
+ArduCAM-Mini-2MP-Plusを使用する場合はwiredの引数で```module_version:1```と指定してください。
+
 ![](./image.jpg)
 
 
@@ -12,13 +14,13 @@
 
 つながっているioを指定してオブジェクト化します。
 
-このカメラの電源はobniz以外から供給する方法がおすすめです。
-obnizから電源を供給する場合は過電流に気をつける必要があります。
+このカメラの電源はobniz Board以外から供給する方法がおすすめです。
+obniz Boardから電源を供給する場合は過電流に気をつける必要があります。
 電源は以下のように供給して下さい
 
-- obniz以外の外部電源に接続する
-- obnizのJ1ピンに接続する
-- vccを2つ以上のobnizのioから供給する
+- obniz Board以外の外部電源に接続する
+- obniz BoardのJ1ピンに接続する
+- vccを2つ以上のobniz Boardのioから供給する
 
 このドキュメントではio11もvcc供給に使用する方法でカメラを動かしています。
 
@@ -28,14 +30,14 @@ obnizから電源を供給する場合は過電流に気をつける必要があ
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-cs | `number(obniz io)` | yes | &nbsp; | obniz io. チップ選択
-vcc | `number(obniz io)` | no | &nbsp; | obniz io. 電源 +5V
-gnd | `number(obniz io)` | no | &nbsp; | obniz io. 電源 0v
-mosi | `number(obniz io)` | no | &nbsp; | obniz io. SPI mosi 端子
-miso | `number(obniz io)` | no | &nbsp; | obniz io. SPI miso 端子
-sclk | `number(obniz io)` | no | &nbsp; | obniz io. SPI clk 端子
-sda | `number(obniz io)` | no | &nbsp; | obniz io. I2C sda 端子
-scl | `number(obniz io)` | no | &nbsp; | obniz io. I2C scl 端子
+cs | `number(obniz Board io)` | yes | &nbsp; | obniz Board io. チップ選択
+vcc | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 +5V
+gnd | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 0v
+mosi | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI mosi 端子
+miso | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI miso 端子
+sclk | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI clk 端子
+sda | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C sda 端子
+scl | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C scl 端子
 i2c | `i2c object` | no | &nbsp; | configured i2c object
 spi | `spi object` | no | &nbsp; | configured spi object
 spi_frequency | `spi object` | no | 4Mhz | SPI通信がうまくいかない場合に周波数を下げる時に利用します
@@ -128,7 +130,7 @@ sizeを指定すると、カメラの解像度設定を変更します。
 sizeで指定できるのはsetSize関数で指定できるものと同じです。
 
 返り値はjpegデータの入ったarrayとなります。
-カメラとobnizの間の通信に失敗した場合はエラーとなるか、ずっと応答待ちとなりこの関数から抜けないかのどちらかとなります。
+カメラとobniz Boardの間の通信に失敗した場合はエラーとなるか、ずっと応答待ちとなりこの関数から抜けないかのどちらかとなります。
 
 
 ```javascript
@@ -178,7 +180,7 @@ cam.setMode('MCU2LCD')
 
 ## [await] spi_pingpongWait()
 
-obnizとカメラとの間のspi通信をテストします。
+obniz Boardとカメラとの間のspi通信をテストします。
 カメラの電源が入っているか、配線が正しいかの確認ができます。
 
 この関数はstartupWait()関数内で使われています。

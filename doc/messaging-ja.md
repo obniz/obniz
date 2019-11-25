@@ -1,12 +1,11 @@
 # Messaging
-obnizはHTTPリクエストやTwitterでのイベントなど、
-インターネット上で何か起きた時にそれをメッセージとして受け取る機能があります。
+HTTPリクエストやTwitterでのイベントなど、インターネット上で何か起きた時にそれをメッセージとして受け取る機能があります。
 
-また、その機能を使ってobnizから他のobnizにメッセージを送ることが出来ます。
+また、その機能を使ってobniz Boardから他のobniz Boardにメッセージを送ることが出来ます。
 メッセージは文字でもデータでもOKです。
 
 ## API - obniz messaging
-HTTPによりobnizへメッセージを送るエンドポイントはこちらです。
+HTTPによりobniz Boardへメッセージを送るエンドポイントはこちらです。
 
 ```
 GET https://obniz.io/obniz/{obniz_id}/message?data={what you want to send}
@@ -17,7 +16,7 @@ GET https://obniz.io/obniz/{obniz_id}/message?data={what you want to send}
 GET https://obniz.io/obniz/0000-0000/message?data=move
 ```
 
-となります。obnizがオンラインならメッセージを受け取れて、そうでなければ404が返ります。
+となります。obniz Boardがオンラインならメッセージを受け取れて、そうでなければ404が返ります。
 
 ```Javascript
 // Example
@@ -43,10 +42,10 @@ Parameters
 - data: message
 
 ## obniz - obniz messaging
-obniz間のメッセージングです。実際に見てみましょう。
+obniz Board間のメッセージングです。実際に見てみましょう。
 仮にボタンを押すことで世界中にある別々の10台のロボットの右手を同時に上げたい場合です。
 
-まず、ボタンだけが繋がったobnizを用意して、押された時にmessageを送るようにします。
+まず、ボタンだけが繋がったobniz Boardを用意して、押された時にmessageを送るようにします。
 ```Javascript
 // Example
 obniz.onconnect = function(){
@@ -69,9 +68,9 @@ obniz.onconnect = function(){
     };
  }
 ```
-targetsで書かれているのは送りたい相手のobnizのidです。
+targetsで書かれているのは送りたい相手のobniz Boardのidです。
 
-そしてこれを受け取りたいobnizではメッセージを受け取ったら右手につながっているサーボモーターを回すようにします。
+そしてこれを受け取りたいobniz Boardではメッセージを受け取ったら右手につながっているサーボモーターを回すようにします。
 ```Javascript
 // Example
 obniz.onconnect = function() {

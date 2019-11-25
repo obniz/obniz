@@ -2,7 +2,7 @@
 #  <a name="ble-peripheral">ble.peripheral</a>
 
 
-use obniz as peripheral
+use obniz Board as peripheral
 
 ##  request: <a name="-request-ble-peripheral-advertisement_start">advertisement_start</a>
 

@@ -1,7 +1,7 @@
 # USB
 
 USBアクセサリに電力を供給します。
-USBで光る電気や扇風機などをobnizから操作できます。
+USBで光る電気や扇風機などをobniz Boardから操作できます。
 
 ![](./image.jpg)
 

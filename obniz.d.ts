@@ -59,6 +59,11 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
+import { IPM_165, IPM_165Options} from './parts/MovementSensor/IPM-165';
+import { MPU9250, MPU9250Options } from './parts/MovementSensor/MPU9250';
+import { MPU6886, MPU6886Options } from './parts/MovementSensor/MPU6886';
+import { MPU6050, MPU6050Options } from './parts/MovementSensor/MPU6050';
+import { AK8963, AK8963Options } from './parts/MovementSensor/AK8963';
 // Memory
 import { _24LC256, _24LC256Options } from './parts/Memory/24LC256';
 // GyroSensor
@@ -70,8 +75,9 @@ import { GP2Y0A21YK0F, GP2Y0A21YK0FOptions } from './parts/DistanceSensor/GP2Y0A
 import { HCSR04, HCSR04Options } from './parts/DistanceSensor/HC-SR04';
 // GPS
 import { GYSFDMAXB, GYSFDMAXBOptions } from './parts/GPS/GYSFDMAXB';
-// CompassSensor
-import { HMC5883L, HMC5883LOptions } from './parts/CompassSensor/HMC5883L';
+// MagnetSensor
+import { CT10, CT10Options } from './parts/Magnet/CT10';
+import { HMC5883L, HMC5883LOptions } from './parts/Magnet/HMC5883L';
 // ADConverter
 import { HX711, HX711Options } from './parts/ADConverter/hx711';
 // SoilSensor
@@ -89,12 +95,19 @@ import { ADT7410, ADT7410Options } from './parts/TemperatureSensor/i2c/ADT7410';
 import { AMG8833, AMG8833Options } from './parts/TemperatureSensor/i2c/AMG8833';
 import { BME280, BME280Options } from './parts/TemperatureSensor/i2c/BME280';
 import { D6T44L, D6T44LOptions } from './parts/TemperatureSensor/i2c/D6T44L';
+import { DHT12, DHT12Options } from './parts/TemperatureSensor/i2c/DHT12';
 import { S5851A, S5851AOptions } from './parts/TemperatureSensor/i2c/S-5851A';
 import { SHT31, SHT31Options } from './parts/TemperatureSensor/i2c/SHT31';
 import { ADT7310, ADT7310Options } from './parts/TemperatureSensor/spi/ADT7310';
+import { AM2320, AM2320ptions } from './parts/TemperatureSensor/i2c/AM2320';
+
 // ColorSensor
+import { PT550, PT550Options } from './parts/ColorSensor/PT550';
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
+import { YG1006, YG1006Options } from './parts/Infrared/YG1006';
 // Grove
+import { Grove_Button, Grove_ButtonOptions } from './parts/Grove/Grove_Button';
+import { Grove_Buzzer, Grove_BuzzerOprions } from './parts/Grove/Grove_Buzzer';
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 import { Grove_GPS, Grove_GPSOptions } from './parts/Grove/Grove_GPS';
@@ -102,7 +115,13 @@ import { Grove_3AxisAccelerometer, Grove_3AxisAccelerometerOptions } from './par
 
 // Ble
 import { OMRON_2JCIE, OMRON_2JCIEOptions } from './parts/Ble/2jcie';
-import {DriveType} from './obniz/libs/io_peripherals/common';
+import { DriveType } from './obniz/libs/io_peripherals/common';
+
+//biological
+import {Puls08M5stickcS, Puls08M5stickcSOptions} from "./parts/Biological/PULSE08-M5STICKC-S";
+import {ST7735S, ST7735SOptions} from "./parts/Display/ST7735S";
+import {AXP192, AXP192Options} from "./parts/Power/AXP192";
+import {SH200Q, SH200Q6Options} from "./parts/MovementSensor/SH200Q";
 
 interface WiredNameMap {
   // Light
@@ -122,6 +141,7 @@ interface WiredNameMap {
   'MatrixLED_MAX7219': MatrixLED_MAX7219;
   'SainSmartTFT18LCD': SainSmartTFT18LCD;
   'SharpMemoryTFT': SharpMemoryTFT;
+  'ST7735S': ST7735S;
   // Camera
   'ArduCAMMini': ArduCAMMini;
   'JpegSerialCam': JpegSerialCam;
@@ -133,6 +153,8 @@ interface WiredNameMap {
   'StepperMotor': StepperMotor;
   // Sound
   'Speaker': Speaker;
+  // Power
+  'AXP192': AXP192;
   // GasSensor
   'MQ2': MQ2;
   'MQ3': MQ3;
@@ -152,10 +174,16 @@ interface WiredNameMap {
   'XBee': XBee;
   // Movement Sensor
   'Button': Button;
+  'AK8963': AK8963;
+  'MPU6050': MPU6050;
+  'MPU6886': MPU6886;
+  'MPU9250': MPU9250;
+  'SH200Q': SH200Q;
   // 'FlickHat': FlickHat;
   'HC-SR505': HCSR505;
   'JoyStick': JoyStick;
   'KXR94-2050': KXR94_2050;
+  'IPM-165': IPM_165;
   // 'KXSC7-2050': KXSC7_2050;
   'PaPIRsVZ': PaPIRsVZ;
   'Potentiometer': Potentiometer;
@@ -170,7 +198,8 @@ interface WiredNameMap {
   'GP2Y0A21YK0F': GP2Y0A21YK0F;
   // GPS
   'GYSFDMAXB': GYSFDMAXB;
-  // CompassSensor
+  // MagnetSensor
+  'CT10': CT10;
   'HMC5883L': HMC5883L;
   // ADConverter
   'hx711': HX711;
@@ -189,18 +218,26 @@ interface WiredNameMap {
   'AMG8833': AMG8833;
   'BME280': BME280;
   'D6T44L': D6T44L;
+  'DHT12': DHT12;
   // 'S5851A': S5851A;
   'SHT31': SHT31;
   'ADT7310': ADT7310;
+  'AM2320': AM2320;
   // ColorSensor
+  'PT550': PT550;
   'S11059': S11059;
+  'YG1006': YG1006;
   // Grove
+  'Grove_Button': Grove_Button;
+  'Grove_Buzzer': Grove_Buzzer;
   'Grove_EarHeartRate': Grove_EarHeartRate;
   'Grove_MP3': Grove_MP3;
   'Grove_GPS': Grove_GPS;
   'Grove_3AxisAccelerometer': Grove_3AxisAccelerometer;
   // Ble
   '2JCIE': OMRON_2JCIE;
+  // Bioligical
+  'PULSE08_M5STICKC-S' : Puls08M5stickcS;
 }
 
 // TODO: この二重管理をなんとかしたい
@@ -222,6 +259,7 @@ interface WiredNameOptionsMap {
   'MatrixLED_MAX7219': MatrixLED_MAX7219Options;
   'SainSmartTFT18LCD': SainSmartTFT18LCDOptions;
   'SharpMemoryTFT': SharpMemoryTFTOptions;
+  'ST7735S': ST7735SOptions;
   // Camera
   'ArduCAMMini': ArduCAMMiniOptions;
   'JpegSerialCam': JpegSerialCamOptions;
@@ -233,6 +271,8 @@ interface WiredNameOptionsMap {
   'StepperMotor': StepperMotorOptions;
   // Sound
   'Speaker': SpeakerOptions;
+  // Power
+  'AXP192': AXP192Options;
   // GasSensor
   'MQ2': MQ2Options;
   'MQ3': MQ3Options;
@@ -252,10 +292,16 @@ interface WiredNameOptionsMap {
   'XBee': XBeeOptions;
   // Movement Sensor
   'Button': ButtonOptions;
+  'AK8963': AK8963Options;
+  'MPU6050': MPU6050Options;
+  'MPU6886': MPU6886Options;
+  'MPU9250': MPU9250Options;
+  'SH200Q': SH200Q6Options;
   // 'FlickHat': FlickHatOptions;
   'HC-SR505': HCSR505Options;
   'JoyStick': JoyStickOptions;
   'KXR94-2050': KXR94_2050Options;
+  'IPM-165': IPM_165Options;
   // 'KXSC7-2050': KXSC7_2050Options;
   'PaPIRsVZ': PaPIRsVZOptions;
   'Potentiometer': PotentiometerOptions;
@@ -270,7 +316,8 @@ interface WiredNameOptionsMap {
   'GP2Y0A21YK0F': GP2Y0A21YK0FOptions;
   // GPS
   'GYSFDMAXB': GYSFDMAXBOptions;
-  // CompassSensor
+  // MagnetSensor
+  'CT10': CT10Options;
   'HMC5883L': HMC5883LOptions;
   // ADConverter
   'hx711': HX711Options;
@@ -289,18 +336,26 @@ interface WiredNameOptionsMap {
   'AMG8833': AMG8833Options;
   'BME280': BME280Options;
   'D6T44L': D6T44LOptions;
+  'DHT12': DHT12Options;
   // 'S5851A': S5851AOptions;
   'SHT31': SHT31Options;
   'ADT7310': ADT7310Options;
+  'AM2320': AM2320ptions;
   // ColorSensor
+  'PT550': PT550Options;
   'S11059': S11059Options;
+  'YG1006': YG1006Options;
   // Grove
+  'Grove_Button': Grove_ButtonOptions;
+  'Grove_Buzzer': Grove_BuzzerOprions;
   'Grove_EarHeartRate': Grove_EarHeartRateOptions;
   'Grove_MP3': Grove_MP3Options;
   'Grove_GPS': Grove_GPSOptions;
   'Grove_3AxisAccelerometer': Grove_3AxisAccelerometerOptions;
   // Ble
   '2JCIE': OMRON_2JCIEOptions;
+  // Bioligical
+  'PULSE08_M5STICKC-S' : Puls08M5stickcSOptions;
 }
 
 interface ObnizOptions {
@@ -336,11 +391,11 @@ interface Obniz {
   repeat(callback: () => void): void;
   wait(time: number): Promise<void>;
   keepWorkingAtOffline(working: boolean): void;
-  setVccGnd(vcc:number, gnd:number, drive:DriveType):void;
-  isValidIO(io:any): io is IO;
+  setVccGnd(vcc: number, gnd: number, drive: DriveType): void;
+  isValidIO(io: any): io is IO;
 
   // io
-  getIO(pin:number): IO;
+  getIO(pin: number): IO;
   io: any;
   io0: IO;
   io1: IO;
@@ -356,7 +411,7 @@ interface Obniz {
   io11: IO;
 
   // ad
-  getAD(pin:number): AD;
+  getAD(pin: number): AD;
   ad0: AD;
   ad1: AD;
   ad2: AD;

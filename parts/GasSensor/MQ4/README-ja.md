@@ -15,10 +15,10 @@
 
 name | type | required | default | description
 --- | --- | --- | --- | ---
-vcc | `number(obniz io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-gnd | `number(obniz io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-do | `number(obniz io)` | no |  &nbsp; | デジタル出力です。モジュールの場合doを接続して下さい。
-ao | `number(obniz io)` | no | &nbsp;  | アナログ出力です。単体の場合はRLを接続したVoutを。モジュールの場合はaoを接続して下さい。
+vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
+gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
+do | `number(obniz Board io)` | no |  &nbsp; | デジタル出力です。モジュールの場合doを接続して下さい。
+ao | `number(obniz Board io)` | no | &nbsp;  | アナログ出力です。単体の場合はRLを接続したVoutを。モジュールの場合はaoを接続して下さい。
 
 
 ```Javascript

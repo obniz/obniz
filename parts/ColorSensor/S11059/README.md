@@ -12,10 +12,10 @@ Color Sensor S11059-02DT.
 3. scl: I2C SCL
 4. gnd: Power Supply(0v)
 
-This module's power supply is 3.3v. obniz can drive but possibly it is not enough.
+This module's power supply is 3.3v. obniz Board can drive but possibly it is not enough.
 So please use 3.3v regulator to generate 3.3v.
 
-This library use obniz to supply 3.3v. Some S11059 may throw errors.
+This library use obniz Board to supply 3.3v. Some S11059 may throw errors.
 
 ```Javascript
 // Javascript Example
