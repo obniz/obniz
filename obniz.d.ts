@@ -59,15 +59,11 @@ import { KXR94_2050, KXR94_2050Options } from './parts/MovementSensor/KXR94-2050
 import { KXSC7_2050, KXSC7_2050Options } from './parts/MovementSensor/KXSC7-2050';
 import { PaPIRsVZ, PaPIRsVZOptions } from './parts/MovementSensor/PaPIRsVZ';
 import { Potentiometer, PotentiometerOptions } from './parts/MovementSensor/Potentiometer';
-<<<<<<< HEAD
 import { IPM_165, IPM_165Options} from './parts/MovementSensor/IPM-165';
-=======
 import { MPU9250, MPU9250Options } from './parts/MovementSensor/MPU9250';
 import { MPU6886, MPU6886Options } from './parts/MovementSensor/MPU6886';
 import { MPU6050, MPU6050Options } from './parts/MovementSensor/MPU6050';
 import { AK8963, AK8963Options } from './parts/MovementSensor/AK8963';
-
->>>>>>> develop
 // Memory
 import { _24LC256, _24LC256Options } from './parts/Memory/24LC256';
 // GyroSensor
@@ -108,10 +104,10 @@ import { AM2320, AM2320ptions } from './parts/TemperatureSensor/i2c/AM2320';
 // ColorSensor
 import { PT550, PT550Options } from './parts/ColorSensor/PT550';
 import { S11059, S11059Options } from './parts/ColorSensor/S11059';
-import { YG1006, YG1006Options } from './parts/ColorSensor/YG1006';
+import { YG1006, YG1006Options } from './parts/Infrared/YG1006';
 // Grove
 import { Grove_Button, Grove_ButtonOptions } from './parts/Grove/Grove_Button';
-import { Grove_Buzzer, Grove_BuzzerOptions } from './parts/Grove/Grove_Buzzer';
+import { Grove_Buzzer, Grove_BuzzerOprions } from './parts/Grove/Grove_Buzzer';
 import { Grove_EarHeartRate, Grove_EarHeartRateOptions } from './parts/Grove/Grove_EarHeartRate';
 import { Grove_MP3, Grove_MP3Options } from './parts/Grove/Grove_MP3';
 import { Grove_GPS, Grove_GPSOptions } from './parts/Grove/Grove_GPS';
@@ -351,7 +347,7 @@ interface WiredNameOptionsMap {
   'YG1006': YG1006Options;
   // Grove
   'Grove_Button': Grove_ButtonOptions;
-  'Grove_Buzzer': Grove_BuzzerOptions;
+  'Grove_Buzzer': Grove_BuzzerOprions;
   'Grove_EarHeartRate': Grove_EarHeartRateOptions;
   'Grove_MP3': Grove_MP3Options;
   'Grove_GPS': Grove_GPSOptions;
