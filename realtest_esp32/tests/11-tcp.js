@@ -16,25 +16,42 @@ const MAX_TCP_CONNECTION = 8;
 let tcpArray = [];
 
 describe('10-tcp', function() {
-  this.timeout(20000);
+  this.timeout(30000);
 
   before(function() {
     return new Promise(resolve => {
-      config.waitForConenct(() => {
+      config.waitForConenct(async () => {
         checkBoard = config.checkBoard;
         // checkBoard.tcp0.onconnection = state => {
         //   console.log(state);
         // };
+        for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
+          let tcp = checkBoard['tcp' + i];
+          if (tcp.isUsed()) {
+            tcp.close();
+            await checkBoard.pingWait();
+          }
+        }
         resolve();
       });
     });
   });
 
+  afterEach(async () => {
+    for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
+      let tcp = checkBoard['tcp' + i];
+      if (tcp.isUsed()) {
+        tcp.close();
+        await checkBoard.pingWait();
+      }
+    }
+  });
+
   it('tcp connect error', async function() {
     let res = await checkBoard.tcp0.connectWait(80, 'obniz.i');
-    expect(res).to.deep.equal(3);
+    expect(res).to.deep.within(3, 4);
     checkBoard.tcp0.close();
-
+    await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
@@ -43,9 +60,11 @@ describe('10-tcp', function() {
 
   it('tcp connect ok', async function() {
     let res = await checkBoard.tcp0.connectWait(80, 'obniz.io');
+    await checkBoard.pingWait();
     expect(res).to.deep.equal(0);
     checkBoard.tcp0.close();
 
+    await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
@@ -70,6 +89,7 @@ describe('10-tcp', function() {
     // boardData = new TextDecoder('utf-8').decode(new Uint8Array(boardData));
     //console.log(boardData);
 
+    await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
@@ -102,6 +122,7 @@ describe('10-tcp', function() {
     //console.log(boardData);
     expect(boardData).to.be.equals(jsData);
 
+    await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
@@ -132,6 +153,7 @@ describe('10-tcp', function() {
     jsData = new TextDecoder('utf-8').decode(bodyParser(jsData));
     expect(boardData).to.be.equals(jsData);
 
+    await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
@@ -152,6 +174,7 @@ describe('10-tcp', function() {
       boardData = boardData.concat(data);
       //console.log(boardData.length);
     };
+    await checkBoard.pingWait();
     while (checkBoard.tcp0.isUsed()) {
       await wait(1);
     }
@@ -171,6 +194,7 @@ describe('10-tcp', function() {
 
     expect(boardData).to.deep.equals(jsData);
 
+    await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
@@ -182,9 +206,6 @@ describe('10-tcp', function() {
       tcpArray.push(checkBoard.getFreeTcp());
       await tcpArray[i].connectWait(3001, useIp);
     }
-  });
-
-  it('tcp mult read', async function() {
     let jsData = await getServerData(
       3001,
       useIp,
@@ -195,6 +216,7 @@ describe('10-tcp', function() {
         '\r\n\r\n'
     );
     jsData = bodyParser(jsData);
+    console.log(jsData);
     for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
       tcpArray[i].write(
         'GET / HTTP/1.0\r\n' +
@@ -203,13 +225,16 @@ describe('10-tcp', function() {
           useIp +
           '\r\n\r\n'
       );
+      //    console.log("wait");
       let boardData = await tcpArray[i].readWait();
       boardData = bodyParser(boardData);
       expect(boardData, 'tcp mult read connection : ' + i).to.deep.equals(
         jsData
       );
+      console.log(boardData);
     }
 
+    await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);

@@ -10,6 +10,7 @@ console.log(
 
 describe('obniz', async () => {
   const files = fs.readdirSync(path.join(__dirname, 'tests'));
+  files.sort();
   for (let i = 0; i < files.length; i++) {
     if (files[i].indexOf('.js') >= 0) {
       require(path.join(__dirname, 'tests', files[i]));
