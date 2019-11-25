@@ -12731,6 +12731,10 @@ class Tcp {
       throw new Error(`Please update obniz firmware >= 2.1.0`);
     }
 
+    if (this.used) {
+      throw new Error(`tcp${this.id} is in used`);
+    }
+
     if (port < 0 || port > 65535) {
       throw new Error(`tcp${this.id} is invalid port`);
     }
@@ -12754,6 +12758,9 @@ class Tcp {
   }
 
   close() {
+    if (!this.used) {
+      throw new Error(`tcp${this.id} is not used`);
+    }
     let obj = {};
     obj['tcp' + this.id] = {
       disconnect: true,
@@ -12791,6 +12798,9 @@ class Tcp {
   }
 
   readWait() {
+    if (!this.used) {
+      throw new Error(`tcp${this.id} is not started`);
+    }
     return new Promise((resolve, reject) => {
       this._addReadObserver(resolve);
     });
@@ -12802,6 +12812,7 @@ class Tcp {
 
   notified(obj) {
     if (obj.connection) {
+      /* Connectino state update. response of connect(), close from destination, response from */
       if (this.onconnection) {
         this.onconnection(obj.connection.connected);
       }
@@ -12817,6 +12828,8 @@ class Tcp {
         callback(obj.read.data);
       }
     } else if (obj.connect) {
+      /* response of connect() */
+      /* `this.connection` will called before this function */
       if (obj.connect.code !== 0) {
         if (this.onerror) {
           this.onerror(obj.connect);
@@ -33518,7 +33531,7 @@ if (true) {
 
 class I2cPartsAbstruct {
   constructor() {
-    this.keys = ['gnd', 'sda', 'scl', 'i2c', 'vcc'];
+    this.keys = ['gnd', 'vcc', 'sda', 'scl', 'i2c', 'vcc'];
     this.requiredKeys = [];
 
     this.i2cinfo = this.i2cInfo();
@@ -33538,7 +33551,7 @@ class I2cPartsAbstruct {
   wired(obniz) {
     this.obniz = obniz;
 
-    obniz.setVccGnd(null, this.params.gnd, this.i2cinfo.voltage);
+    obniz.setVccGnd(this.params.vcc, this.params.gnd, this.i2cinfo.voltage);
     this.params.clock = this.i2cinfo.clock;
     this.params.pull = this.i2cinfo.voltage;
     this.params.mode = 'master';
