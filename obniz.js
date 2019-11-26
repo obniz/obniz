@@ -12731,9 +12731,10 @@ class Tcp {
       throw new Error(`Please update obniz firmware >= 2.1.0`);
     }
 
-    if (this.used) {
-      throw new Error(`tcp${this.id} is in used`);
-    }
+    // TODO
+    // if (this.used) {
+    //   throw new Error(`tcp${this.id} is in used`);
+    // }
 
     if (port < 0 || port > 65535) {
       throw new Error(`tcp${this.id} is invalid port`);
