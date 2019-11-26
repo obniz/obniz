@@ -14,7 +14,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 4
+      "obniz_io": 2
     },
     {
       "board_io": 0,
@@ -44,7 +44,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 5
+      "obniz_io": 3
     },
     {
       "board_io": 12,
@@ -54,7 +54,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 6
+      "obniz_io": 4
     },
     {
       "board_io": 13,
@@ -64,7 +64,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 7
+      "obniz_io": 5
     },
     {
       "board_io": 14,
@@ -74,7 +74,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 8
+      "obniz_io": 6
     },
     {
       "board_io": 15,
@@ -84,7 +84,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 9
+      "obniz_io": 7
     },
     {
       "board_io": 16,
@@ -94,7 +94,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 10
+      "obniz_io": 8
     },
     {
       "board_io": 17,
@@ -104,7 +104,7 @@
         "analogWrite"
       ],
       "obniz": "obnizA",
-      "obniz_io": 11
+      "obniz_io": 9
     },
     {
       "board_io": 18,
@@ -113,8 +113,8 @@
         "digitalWrite",
         "analogWrite"
       ],
-      "obniz": "obnizB",
-      "obniz_io": 0
+      "obniz": "obnizA",
+      "obniz_io": 10
     },
     {
       "board_io": 19,
@@ -123,8 +123,8 @@
         "digitalWrite",
         "analogWrite"
       ],
-      "obniz": "obnizB",
-      "obniz_io": 1
+      "obniz": "obnizA",
+      "obniz_io": 11
     },
     {
       "board_io": 21,
@@ -134,7 +134,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 2
+      "obniz_io": 0
     },
     {
       "board_io": 22,
@@ -144,7 +144,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 3
+      "obniz_io": 1
     },
     {
       "board_io": 23,
@@ -154,7 +154,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 4
+      "obniz_io": 2
     },
     {
       "board_io": 25,
@@ -164,7 +164,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 5
+      "obniz_io": 3
     },
     {
       "board_io": 26,
@@ -174,7 +174,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 6
+      "obniz_io": 4
     },
     {
       "board_io": 27,
@@ -184,7 +184,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 7
+      "obniz_io": 5
     },
     {
       "board_io": 32,
@@ -194,7 +194,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 8
+      "obniz_io": 6
     },
     {
       "board_io": 33,
@@ -204,7 +204,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 9
+      "obniz_io": 7
     },
     {
       "board_io": 34,
@@ -213,7 +213,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 10
+      "obniz_io": 8
     },
     {
       "board_io": 35,
@@ -222,7 +222,7 @@
         "analogWrite"
       ],
       "obniz": "obnizB",
-      "obniz_io": 11
+      "obniz_io": 9
     },
     {
       "board_io": 36,
@@ -230,8 +230,8 @@
         "digitalRead",
         "analogRead"
       ],
-      "obniz": "obnizA",
-      "obniz_io": 2
+      "obniz": "obnizB",
+      "obniz_io": 10
     },
     {
       "board_io": 39,
@@ -239,8 +239,8 @@
         "digitalRead",
         "analogRead"
       ],
-      "obniz": "obnizA",
-      "obniz_io": 3
+      "obniz": "obnizB",
+      "obniz_io": 11
     }
   ]
 }
