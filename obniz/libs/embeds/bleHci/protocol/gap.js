@@ -238,6 +238,7 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     i += (length + 1);
   }
 
+  advertisement.raw = Array.from(eir);
   debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
   var connectable = (type === 0x04 && previouslyDiscovered) ? this._discoveries[address].connectable : (type !== 0x03);

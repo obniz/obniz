@@ -33001,6 +33001,7 @@ class ObnizBLE {
     this.hci = new ObnizBLEHci(Obniz);
     this._bindings = new Bindings(this.hci);
 
+
     this._initialized = false;
 
     this.remotePeripherals = [];
@@ -33015,6 +33016,8 @@ class ObnizBLE {
     this.advertisement = new BleAdvertisement(this);
     this.scan = new BleScan(this);
     this.security = new BleSecurity(this);
+
+    this._bind();
     this._reset();
   }
 
@@ -33065,6 +33068,208 @@ class ObnizBLE {
         str.slice(20);
     }
     return str;
+  }
+
+
+
+
+  _bind() {
+
+    this._bindings.on('discover', (uuid, address, addressType, connectable, advertisement, rssi)=>{
+
+      let val = this.findPeripheral(uuid);
+      if (!val) {
+        val = new BleRemotePeripheral(this.Obniz, uuid);
+        this.remotePeripherals.push(val);
+      }
+      val.discoverdOnRemote = true;
+
+      let peripheralData = {
+        'device_type' : "ble" ,
+        'address_type' : addressType,
+        'ble_event_type': connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
+        'rssi' :rssi,
+        'adv_data' : advertisement.raw,
+        'scan_resp': [],
+      };
+
+      val.setParams(peripheralData);
+
+      this.scan.notifyFromServer('onfind', val);
+    });
+
+    this._bindings.on('scanStop', ()=> {
+      this.scan.notifyFromServer('onfinish');
+    });
+
+  //
+  //   let remotePeripheralCallbackFunc = function(val, func, type) {
+  //     let obj = null;
+  //     if (val === undefined) return;
+  //     let p = this.findPeripheral(val.address);
+  //     if (!p) {
+  //       return;
+  //     }
+  //     if (type === 'peripheral') {
+  //       obj = p;
+  //     } else if (type === 'service') {
+  //       obj = p.findService(val);
+  //     } else if (type === 'characteristic') {
+  //       obj = p.findCharacteristic(val);
+  //     } else if (type === 'descriptor') {
+  //       obj = p.findDescriptor(val);
+  //     }
+  //     if (!obj) {
+  //       return;
+  //     }
+  //     func(val, obj);
+  //   }.bind(this);
+  //
+  //   const paramList = {
+  //     status_update: { name: 'statusupdate', obj: 'peripheral' },
+  //     get_service_result: { name: 'discover', obj: 'peripheral' },
+  //     get_service_result_finish: {
+  //       name: 'discoverfinished',
+  //       obj: 'peripheral',
+  //     },
+  //     get_characteristic_result: { name: 'discover', obj: 'service' },
+  //     get_characteristic_result_finish: {
+  //       name: 'discoverfinished',
+  //       obj: 'service',
+  //     },
+  //     write_characteristic_result: { name: 'onwrite', obj: 'characteristic' },
+  //     read_characteristic_result: { name: 'onread', obj: 'characteristic' },
+  //     register_notify_characteristic_result: {
+  //       name: 'onregisternotify',
+  //       obj: 'characteristic',
+  //     },
+  //     unregister_notify_characteristic_result: {
+  //       name: 'onunregisternotify',
+  //       obj: 'characteristic',
+  //     },
+  //     nofity_characteristic: { name: 'onnotify', obj: 'characteristic' },
+  //     get_descriptor_result: { name: 'discover', obj: 'characteristic' },
+  //     get_descriptor_result_finish: {
+  //       name: 'discoverfinished',
+  //       obj: 'characteristic',
+  //     },
+  //     write_descriptor_result: { name: 'onwrite', obj: 'descriptor' },
+  //     read_descriptor_result: { name: 'onread', obj: 'descriptor' },
+  //   };
+  //
+  //   for (let key in paramList) {
+  //     remotePeripheralCallbackFunc(
+  //         obj[key],
+  //         function(val, bleobj) {
+  //           bleobj.notifyFromServer(paramList[key].name, val);
+  //         }.bind(this),
+  //         paramList[key].obj
+  //     );
+  //   }
+  //
+  //   let callbackFunc = function(val, func, type) {
+  //     let obj = null;
+  //     if (val === undefined) return;
+  //     if (type === 'peripheral') {
+  //       obj = this.peripheral;
+  //     } else if (type === 'service') {
+  //       obj = this.peripheral.getService(val);
+  //     } else if (type === 'characteristic') {
+  //       obj = this.peripheral.findCharacteristic(val);
+  //     } else if (type === 'descriptor') {
+  //       obj = this.peripheral.findDescriptor(val);
+  //     }
+  //     if (!obj) {
+  //       return;
+  //     }
+  //     func(val, obj);
+  //   }.bind(this);
+  //
+  //   if (obj.peripheral) {
+  //     callbackFunc(
+  //         obj.peripheral.connection_status,
+  //         function(val) {
+  //           this.peripheral.onconnectionupdates(val);
+  //         }.bind(this),
+  //         'peripheral'
+  //     );
+  //
+  //     const paramList = {
+  //       read_characteristic_result: { name: 'onread', obj: 'characteristic' },
+  //       write_characteristic_result: { name: 'onwrite', obj: 'characteristic' },
+  //       notify_read_characteristic: {
+  //         name: 'onreadfromremote',
+  //         obj: 'characteristic',
+  //       },
+  //       notify_write_characteristic: {
+  //         name: 'onwritefromremote',
+  //         obj: 'characteristic',
+  //       },
+  //       read_descriptor_result: { name: 'onread', obj: 'descriptor' },
+  //       write_descriptor_result: { name: 'onwrite', obj: 'descriptor' },
+  //       notify_read_descriptor: { name: 'onreadfromremote', obj: 'descriptor' },
+  //       notify_write_descriptor: {
+  //         name: 'onwritefromremote',
+  //         obj: 'descriptor',
+  //       },
+  //     };
+  //
+  //     for (let key in paramList) {
+  //       callbackFunc(
+  //           obj.peripheral[key],
+  //           function(val, bleobj) {
+  //             bleobj.notifyFromServer(paramList[key].name, val);
+  //           }.bind(this),
+  //           paramList[key].obj
+  //       );
+  //     }
+  //   }
+  //
+  //   if (obj.error) {
+  //     let params = obj.error;
+  //     let handled = false;
+  //     let peripheral, target;
+  //     if (!params.address) {
+  //       peripheral = this.peripheral;
+  //     } else {
+  //       peripheral = this.findPeripheral(params.address);
+  //     }
+  //
+  //     if (peripheral) {
+  //       if (
+  //           params.service_uuid &&
+  //           params.characteristic_uuid &&
+  //           params.descriptor_uuid
+  //       ) {
+  //         target = peripheral.findDescriptor(params);
+  //       } else if (params.service_uuid && params.characteristic_uuid) {
+  //         target = peripheral.findCharacteristic(params);
+  //       } else if (params.service_uuid) {
+  //         target = peripheral.findService(params);
+  //       }
+  //       if (target) {
+  //         target.notifyFromServer('onerror', params);
+  //         handled = true;
+  //       } else {
+  //         peripheral.onerror(params);
+  //         handled = true;
+  //       }
+  //     }
+  //
+  //     if ([35, 36, 37, 38, 39].includes(params.function_code)) {
+  //       this.security.onerror(params);
+  //       handled = true;
+  //     }
+  //     if (!handled) {
+  //       this.Obniz.error(
+  //           `ble ${params.message} service=${
+  //               params.service_uuid
+  //               } characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${
+  //               params.descriptor_uuid
+  //               }`
+  //       );
+  //     }
+  //   }
   }
 }
 
@@ -34575,11 +34780,11 @@ class BleScan {
 
     this.scanedPeripherals = [];
 
-    this._bind();
   }
 
   start(target, settings) {
 
+    let timeout = (settings || {} ).duration || 30;
     this.scanTarget = target;
     if (
       this.scanTarget &&
@@ -34592,10 +34797,10 @@ class BleScan {
     }
     this.scanedPeripherals = [];
 
-    // todo
-    // this.Obniz.send(obj);
 
-    this.obnizBle._bindings.startScanning(null, false)
+    this.obnizBle._bindings.startScanning(null, false);
+
+    setTimeout(()=>{ this.end() },timeout * 1000);
   }
 
   startOneWait(target, settings) {
@@ -34632,12 +34837,7 @@ class BleScan {
   }
 
   end() {
-    let obj = {};
-    obj['ble'] = {};
-    obj['ble']['scan'] = null;
-
-    // todo
-    // this.Obniz.send(obj);
+    this.obnizBle._bindings.stopScanning()
   }
 
   isTarget(peripheral) {
@@ -34664,20 +34864,24 @@ class BleScan {
   onfinish() {} //dummy
   onfind() {} //dummy
 
-  _bind() {
-
-    this.obnizBle._bindings.on('discover', (uuid, address, addressType, connectable, advertisement, rssi)=>{
-      console.log(uuid);
-
-    });
-
-    this.obnizBle._bindings.on('scanStop', ()=>{
-      this.emitter.emit(notifyName, this.scanedPeripherals);
-      this.onfinish(this.scanedPeripherals);
-    });
-
-
-  }}
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case 'onfind': {
+        if (this.isTarget(params)) {
+          this.scanedPeripherals.push(params);
+          this.emitter.emit(notifyName, params);
+          this.onfind(params);
+        }
+        break;
+      }
+      case 'onfinish': {
+        this.emitter.emit(notifyName, this.scanedPeripherals);
+        this.onfinish(this.scanedPeripherals);
+        break;
+      }
+    }
+  }
+}
 
 module.exports = BleScan;
 
@@ -35883,6 +36087,7 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     i += (length + 1);
   }
 
+  advertisement.raw = Array.from(eir);
   debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
   var connectable = (type === 0x04 && previouslyDiscovered) ? this._discoveries[address].connectable : (type !== 0x03);
@@ -36767,7 +36972,7 @@ Hci.prototype.init = function() {
       let arr = Array.from(data);
       let str = "0x" + arr.map(e=>( parseInt(e).toString(16).padStart(2,"0"))).join(",0x");
       this._obnizHci.write(arr);
-      console.log(str);
+      // console.log(str);
     }
   };
   this._obnizHci.onread = this.onSocketData.bind(this);
@@ -37061,7 +37266,7 @@ Hci.prototype.writeAclDataPkt = function(handle, cid, data) {
 Hci.prototype.onSocketData = function(array) {
 
   let str = "0x" + array.map(e =>( parseInt(e).toString(16).padStart(2,"0"))).join(",0x");
-  console.log(str);
+  // console.log(str);
 
   let data = Buffer.from(array);
   debug('onSocketData: ' + data.toString('hex'));

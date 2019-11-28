@@ -11,11 +11,11 @@ class BleScan {
 
     this.scanedPeripherals = [];
 
-    this._bind();
   }
 
   start(target, settings) {
 
+    let timeout = (settings || {} ).duration || 30;
     this.scanTarget = target;
     if (
       this.scanTarget &&
@@ -28,10 +28,10 @@ class BleScan {
     }
     this.scanedPeripherals = [];
 
-    // todo
-    // this.Obniz.send(obj);
 
-    this.obnizBle._bindings.startScanning(null, false)
+    this.obnizBle._bindings.startScanning(null, false);
+
+    setTimeout(()=>{ this.end() },timeout * 1000);
   }
 
   startOneWait(target, settings) {
@@ -68,12 +68,7 @@ class BleScan {
   }
 
   end() {
-    let obj = {};
-    obj['ble'] = {};
-    obj['ble']['scan'] = null;
-
-    // todo
-    // this.Obniz.send(obj);
+    this.obnizBle._bindings.stopScanning()
   }
 
   isTarget(peripheral) {
@@ -100,19 +95,23 @@ class BleScan {
   onfinish() {} //dummy
   onfind() {} //dummy
 
-  _bind() {
-
-    this.obnizBle._bindings.on('discover', (uuid, address, addressType, connectable, advertisement, rssi)=>{
-      console.log(uuid);
-
-    });
-
-    this.obnizBle._bindings.on('scanStop', ()=>{
-      this.emitter.emit(notifyName, this.scanedPeripherals);
-      this.onfinish(this.scanedPeripherals);
-    });
-
-
-  }}
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case 'onfind': {
+        if (this.isTarget(params)) {
+          this.scanedPeripherals.push(params);
+          this.emitter.emit(notifyName, params);
+          this.onfind(params);
+        }
+        break;
+      }
+      case 'onfinish': {
+        this.emitter.emit(notifyName, this.scanedPeripherals);
+        this.onfinish(this.scanedPeripherals);
+        break;
+      }
+    }
+  }
+}
 
 module.exports = BleScan;

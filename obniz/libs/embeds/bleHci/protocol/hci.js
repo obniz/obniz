@@ -91,7 +91,7 @@ Hci.prototype.init = function() {
       let arr = Array.from(data);
       let str = "0x" + arr.map(e=>( parseInt(e).toString(16).padStart(2,"0"))).join(",0x");
       this._obnizHci.write(arr);
-      console.log(str);
+      // console.log(str);
     }
   };
   this._obnizHci.onread = this.onSocketData.bind(this);
@@ -385,7 +385,7 @@ Hci.prototype.writeAclDataPkt = function(handle, cid, data) {
 Hci.prototype.onSocketData = function(array) {
 
   let str = "0x" + array.map(e =>( parseInt(e).toString(16).padStart(2,"0"))).join(",0x");
-  console.log(str);
+  // console.log(str);
 
   let data = Buffer.from(array);
   debug('onSocketData: ' + data.toString('hex'));
