@@ -12,29 +12,35 @@ const BleAdvertisement = require('./bleAdvertisement');
 const BleScan = require('./bleScan');
 const BleSecurity = require('./bleSecurity');
 
-class ObnizBLE_ {
+class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.hci = new ObnizBLEHci(Obniz);
     this._bindings = new Bindings(this.hci);
+
+    this._initialized = false;
 
     this.remotePeripherals = [];
 
     this.service = BleService;
     this.characteristic = BleCharacteristic;
     this.descriptor = BleDescriptor;
-    this.peripheral = new BlePeripheral(Obniz);
+    this.peripheral = new BlePeripheral(this);
 
     this.scanTarget = null;
 
-    this.advertisement = new BleAdvertisement(Obniz);
-    this.scan = new BleScan(Obniz);
-    this.security = new BleSecurity(Obniz);
+    this.advertisement = new BleAdvertisement(this);
+    this.scan = new BleScan(this);
+    this.security = new BleSecurity(this);
     this._reset();
   }
 
   init() {
-    this._bindings.init();
+    if(!this._initialized){
+      this._initialized = true;
+
+      this._bindings.init();
+    }
   }
 
   notified(obj) {
@@ -79,4 +85,4 @@ class ObnizBLE_ {
   }
 }
 
-module.exports = ObnizBLE_;
+module.exports = ObnizBLE;

@@ -96,12 +96,14 @@ Hci.prototype.init = function() {
   };
   this._obnizHci.onread = this.onSocketData.bind(this);
 
-  this.setEventMask();
-  this.setLeEventMask();
-  this.readLocalVersion();
-  this.writeLeHostSupported();
-  this.readLeHostSupported();
-  this.readBdAddr();
+
+  this.reset();
+  // this.setEventMask();
+  // this.setLeEventMask();
+  // this.readLocalVersion();
+  // this.writeLeHostSupported();
+  // this.readLeHostSupported();
+  // this.readBdAddr();
 
 };
 

@@ -4,22 +4,17 @@ const emitter = require('eventemitter3');
 const BleHelper = require('./bleHelper');
 
 class BleScan {
-  constructor(Obniz) {
+  constructor(obnizBle) {
     this.scanTarget = null;
-    this.Obniz = Obniz;
+    this.obnizBle = obnizBle;
     this.emitter = new emitter();
 
     this.scanedPeripherals = [];
+
+    this._bind();
   }
 
   start(target, settings) {
-    let obj = {};
-    obj['ble'] = {};
-    obj['ble']['scan'] = {
-      //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
-      //    "interval" : settings && settings.interval ? settings.interval : 30,
-      duration: settings && settings.duration ? settings.duration : 30,
-    };
 
     this.scanTarget = target;
     if (
@@ -35,6 +30,8 @@ class BleScan {
 
     // todo
     // this.Obniz.send(obj);
+
+    this.obnizBle._bindings.startScanning(null, false)
   }
 
   startOneWait(target, settings) {
@@ -103,23 +100,19 @@ class BleScan {
   onfinish() {} //dummy
   onfind() {} //dummy
 
-  notifyFromServer(notifyName, params) {
-    switch (notifyName) {
-      case 'onfind': {
-        if (this.isTarget(params)) {
-          this.scanedPeripherals.push(params);
-          this.emitter.emit(notifyName, params);
-          this.onfind(params);
-        }
-        break;
-      }
-      case 'onfinish': {
-        this.emitter.emit(notifyName, this.scanedPeripherals);
-        this.onfinish(this.scanedPeripherals);
-        break;
-      }
-    }
-  }
-}
+  _bind() {
+
+    this.obnizBle._bindings.on('discover', (uuid, address, addressType, connectable, advertisement, rssi)=>{
+      console.log(uuid);
+
+    });
+
+    this.obnizBle._bindings.on('scanStop', ()=>{
+      this.emitter.emit(notifyName, this.scanedPeripherals);
+      this.onfinish(this.scanedPeripherals);
+    });
+
+
+  }}
 
 module.exports = BleScan;
