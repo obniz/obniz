@@ -29549,8 +29549,8 @@ module.exports = class ObnizComponents extends ObnizParts {
 
     let ble = ObnizBLEHci;
 
-    // < 3.0.0
-    if (semver.lt(this.firmware_ver, '3.0.0')) {
+    // < 3.0.0 TODO:FIX
+    if (semver.lt(this.firmware_ver, '3.0.0-beta')) {
       ble = ObnizBLE;
     }
 
@@ -32981,14 +32981,39 @@ module.exports = BleService;
 /***/ "./obniz/libs/embeds/bleHci/ble.js":
 /***/ (function(module, exports, __webpack_require__) {
 
+/* eslint-disable */
+
 const ObnizBLEHci = __webpack_require__("./obniz/libs/embeds/bleHci/hci.js");
 const Bindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/bindings.js");
-class ObnizBLE {
+
+const BlePeripheral = __webpack_require__("./obniz/libs/embeds/bleHci/blePeripheral.js");
+const BleService = __webpack_require__("./obniz/libs/embeds/bleHci/bleService.js");
+const BleCharacteristic = __webpack_require__("./obniz/libs/embeds/bleHci/bleCharacteristic.js");
+const BleDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleDescriptor.js");
+const BleRemotePeripheral = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemotePeripheral.js");
+const BleAdvertisement = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisement.js");
+const BleScan = __webpack_require__("./obniz/libs/embeds/bleHci/bleScan.js");
+const BleSecurity = __webpack_require__("./obniz/libs/embeds/bleHci/bleSecurity.js");
+
+class ObnizBLE_ {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.hci = new ObnizBLEHci(Obniz);
-    this._reset();
     this._bindings = new Bindings(this.hci);
+
+    this.remotePeripherals = [];
+
+    this.service = BleService;
+    this.characteristic = BleCharacteristic;
+    this.descriptor = BleDescriptor;
+    this.peripheral = new BlePeripheral(Obniz);
+
+    this.scanTarget = null;
+
+    this.advertisement = new BleAdvertisement(Obniz);
+    this.scan = new BleScan(Obniz);
+    this.security = new BleSecurity(Obniz);
+    this._reset();
   }
 
   init() {
@@ -33002,9 +33027,1906 @@ class ObnizBLE {
   }
 
   _reset() {}
+
+  findPeripheral(address) {
+    for (let key in this.remotePeripherals) {
+      if (this.remotePeripherals[key].address === address) {
+        return this.remotePeripherals[key];
+      }
+    }
+    return null;
+  }
+
+  static _dataArray2uuidHex(data, reverse) {
+    let uuid = [];
+    for (let i = 0; i < data.length; i++) {
+      uuid.push(('00' + data[i].toString(16).toLowerCase()).slice(-2));
+    }
+    if (reverse) {
+      uuid = uuid.reverse();
+    }
+    let str = uuid.join('');
+    if (uuid.length >= 16) {
+      str =
+        str.slice(0, 8) +
+        '-' +
+        str.slice(8, 12) +
+        '-' +
+        str.slice(12, 16) +
+        '-' +
+        str.slice(16, 20) +
+        '-' +
+        str.slice(20);
+    }
+    return str;
+  }
 }
 
-module.exports = ObnizBLE;
+module.exports = ObnizBLE_;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleAdvertisement.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const Builder = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
+
+class BleAdvertisement {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.adv_data = [];
+    this.scan_resp = [];
+  }
+
+  start() {
+    // todo
+  }
+
+  end() {
+    // todo
+  }
+
+  setAdvDataRaw(adv_data) {
+    this.adv_data = adv_data;
+  }
+
+  setAdvData(json) {
+    let builder = this.advDataBulider(json);
+    this.setAdvDataRaw(builder.build());
+  }
+
+  advDataBulider(jsonVal) {
+    return new Builder(this.Obniz, jsonVal);
+  }
+
+  scanRespDataBuilder(json) {
+    return new Builder(this.Obniz, json);
+  }
+
+  setScanRespDataRaw(scan_resp) {
+    this.scan_resp = scan_resp;
+  }
+
+  setScanRespData(json) {
+    this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
+  }
+}
+
+module.exports = BleAdvertisement;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleAdvertisementBuilder {
+  constructor(Obniz, json) {
+    this.Obniz = Obniz;
+    this.rows = {};
+
+    if (json) {
+      if (json.localName) {
+        this.setCompleteLocalName(json.localName);
+      }
+      if (
+        json.manufacturerData &&
+        json.manufacturerData.companyCode &&
+        json.manufacturerData.data
+      ) {
+        this.setManufacturerSpecificData(
+          json.manufacturerData.companyCode,
+          json.manufacturerData.data
+        );
+      }
+      if (json.serviceUuids) {
+        for (let uuid of json.serviceUuids) {
+          this.setUuid(uuid);
+        }
+      }
+    }
+    if (typeof this.extendEvalJson === 'function') {
+      this.extendEvalJson(json);
+    }
+  }
+
+  setRow(type, data) {
+    this.rows[type] = data;
+  }
+
+  getRow(type) {
+    return this.rows[type] || [];
+  }
+
+  build() {
+    let data = [];
+    for (let key in this.rows) {
+      if (this.rows[key].length === 0) continue;
+
+      data.push(this.rows[key].length + 1);
+      data.push(parseInt(key));
+      Array.prototype.push.apply(data, this.rows[key]);
+    }
+    if (data.length > 31) {
+      this.Obniz.error(
+        'Too large data. Advertise/ScanResponse data are must be less than 32 byte.'
+      );
+    }
+
+    return data;
+  }
+
+  setStringData(type, string) {
+    let data = [];
+
+    for (let i = 0; i < string.length; i++) {
+      data.push(string.charCodeAt(i));
+    }
+
+    this.setRow(type, data);
+  }
+
+  setShortenedLocalName(name) {
+    this.setStringData(0x08, name);
+  }
+
+  setCompleteLocalName(name) {
+    this.setStringData(0x09, name);
+  }
+
+  setManufacturerSpecificData(companyCode, data) {
+    let row = [];
+    row.push(companyCode & 0xff);
+    row.push((companyCode >> 8) & 0xff);
+    Array.prototype.push.apply(row, data);
+    this.setRow(0xff, row);
+  }
+
+  setUuid(uuid) {
+    let uuidData = this.convertUuid(uuid);
+    let type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
+    this.setRow(type, uuidData);
+  }
+
+  convertUuid(uuid) {
+    let uuidNumeric = BleHelper.uuidFilter(uuid);
+    if (
+      uuidNumeric.length !== 32 &&
+      uuidNumeric.length !== 8 &&
+      uuidNumeric.length !== 4
+    ) {
+      this.Obniz.error(
+        'BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)'
+      );
+    }
+
+    let data = [];
+    for (let i = uuidNumeric.length; i > 1; i -= 2) {
+      data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
+    }
+    return data;
+  }
+
+  setIbeaconData(uuid, major, minor, txPower) {
+    let data = [];
+    data.push(0x02, 0x15); // fixed data
+
+    let uuidData = this.convertUuid(uuid);
+    Array.prototype.push.apply(data, uuidData);
+
+    data.push((major >> 8) & 0xff);
+    data.push((major >> 0) & 0xff);
+    data.push((minor >> 8) & 0xff);
+    data.push((minor >> 0) & 0xff);
+    data.push((txPower >> 0) & 0xff);
+
+    this.setManufacturerSpecificData(0x004c, data);
+    return;
+  }
+
+  extendEvalJson(json) {
+    if (json) {
+      if (json.flags) {
+        if (json.flags.includes('limited_discoverable_mode'))
+          this.setLeLimitedDiscoverableModeFlag();
+        if (json.flags.includes('general_discoverable_mode'))
+          this.setLeGeneralDiscoverableModeFlag();
+        if (json.flags.includes('br_edr_not_supported'))
+          this.setBrEdrNotSupportedFlag();
+        if (json.flags.includes('le_br_edr_controller'))
+          this.setLeBrEdrControllerFlag();
+        if (json.flags.includes('le_br_edr_host')) this.setLeBrEdrHostFlag();
+      }
+    }
+  }
+
+  setFlags(flag) {
+    let data = this.getRow(0x01);
+    data[0] = (data[0] || 0) | flag;
+    this.setRow(0x01, data);
+  }
+
+  setLeLimitedDiscoverableModeFlag() {
+    this.setFlags(0x01);
+  }
+
+  setLeGeneralDiscoverableModeFlag() {
+    this.setFlags(0x02);
+  }
+
+  setBrEdrNotSupportedFlag() {
+    this.setFlags(0x04);
+  }
+
+  setLeBrEdrControllerFlag() {
+    this.setFlags(0x08);
+  }
+
+  setLeBrEdrHostFlag() {
+    this.setFlags(0x10);
+  }
+}
+
+module.exports = BleAdvertisementBuilder;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const ObnizUtil = __webpack_require__("./obniz/libs/utils/util.js");
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleAttributeAbstract {
+  constructor(params) {
+    this.uuid = BleHelper.uuidFilter(params.uuid);
+    this.parent = null;
+    this.children = [];
+
+    this.isRemote = false;
+    this.discoverdOnRemote = false;
+
+    this.data = params.data || null;
+    if (!this.data && params.text) {
+      this.data = ObnizUtil.string2dataArray(params.text);
+    }
+    if (!this.data && params.value) {
+      this.data = [params.value];
+    }
+
+    if (params[this.childrenName]) {
+      for (let child of params[this.childrenName]) {
+        this.addChild(child);
+      }
+    }
+
+    this.setFunctions();
+
+    this.emitter = new emitter();
+  }
+
+  setFunctions() {
+    let childrenName = this.childrenName;
+    if (childrenName) {
+      childrenName =
+        childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
+      let childName = childrenName.slice(0, -1);
+
+      let funcName = 'add' + childName;
+      this[funcName] = this.addChild;
+
+      funcName = 'get' + childName;
+      this[funcName] = this.getChild;
+    }
+
+    let parentName = this.parentName;
+    if (parentName) {
+      Object.defineProperty(this, parentName, {
+        get() {
+          return this.parent;
+        },
+        set(newValue) {
+          this.parent = newValue;
+        },
+      });
+    }
+  }
+
+  get childrenClass() {
+    return Object;
+  }
+  get childrenName() {
+    return null;
+  }
+  get parentName() {
+    return null;
+  }
+
+  addChild(child) {
+    if (!(child instanceof this.childrenClass)) {
+      let childrenClass = this.childrenClass;
+      child = new childrenClass(child);
+    }
+    child.parent = this;
+
+    this.children.push(child);
+    return child;
+  }
+
+  getChild(uuid) {
+    uuid = BleHelper.uuidFilter(uuid);
+    return this.children
+      .filter(function(element) {
+        return BleHelper.uuidFilter(element.uuid) === uuid;
+      })
+      .shift();
+  }
+
+  toJSON() {
+    let obj = {
+      uuid: BleHelper.uuidFilter(this.uuid),
+    };
+
+    if (this.children.length > 0) {
+      let key = this.childrenName;
+      obj[key] = this.children;
+    }
+    if (this.data) {
+      obj.data = this.data;
+    }
+    return obj;
+  }
+
+  /**
+   * WS COMMANDS
+   */
+
+  read() {}
+  write() {}
+
+  writeNumber(val, needResponse) {
+    this.write([val], needResponse);
+  }
+
+  writeText(str, needResponse) {
+    this.write(ObnizUtil.string2dataArray(str), needResponse);
+  }
+
+  readWait() {
+    return new Promise(resolve => {
+      this.emitter.once('onread', params => {
+        if (params.result === 'success') {
+          resolve(params.data);
+        } else {
+          resolve(undefined);
+        }
+      });
+      this.read();
+    });
+  }
+
+  writeWait(data, needResponse) {
+    return new Promise(resolve => {
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
+      });
+      this.write(data, needResponse);
+    });
+  }
+
+  writeTextWait(data) {
+    return new Promise(resolve => {
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
+      });
+      this.writeText(data);
+    });
+  }
+
+  writeNumberWait(data) {
+    return new Promise(resolve => {
+      this.emitter.once('onwrite', params => {
+        resolve(params.result === 'success');
+      });
+      this.writeNumber(data);
+    });
+  }
+
+  readFromRemoteWait() {
+    return new Promise(resolve => {
+      this.emitter.once('onreadfromremote', () => {
+        resolve();
+      });
+    });
+  }
+
+  writeFromRemoteWait() {
+    return new Promise(resolve => {
+      this.emitter.once('onreadfromremote', params => {
+        resolve(params.data);
+      });
+    });
+  }
+
+  /**
+   * CALLBACKS
+   */
+  onwrite() {}
+  onread() {}
+  onwritefromremote() {}
+  onreadfromremote() {}
+
+  onerror(err) {
+    console.error(err.message);
+  }
+
+  notifyFromServer(notifyName, params) {
+    this.emitter.emit(notifyName, params);
+    switch (notifyName) {
+      case 'onerror': {
+        this.onerror(params);
+        break;
+      }
+      case 'onwrite': {
+        this.onwrite(params.result);
+        break;
+      }
+      case 'onread': {
+        this.onread(params.data);
+        break;
+      }
+      case 'onwritefromremote': {
+        this.onwritefromremote(params.address, params.data);
+        break;
+      }
+      case 'onreadfromremote': {
+        this.onreadfromremote(params.address);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleAttributeAbstract;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleCharacteristic.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleDescriptor.js");
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleCharacteristic extends BleAttributeAbstract {
+  constructor(obj) {
+    super(obj);
+
+    this.addDescriptor = this.addChild;
+    this.getDescriptor = this.getChild;
+
+    this.properties = obj.properties || [];
+    if (!Array.isArray(this.properties)) {
+      this.properties = [this.properties];
+    }
+
+    this.permissions = obj.permissions || [];
+    if (!Array.isArray(this.permissions)) {
+      this.permissions = [this.permissions];
+    }
+  }
+
+  get parentName() {
+    return 'service';
+  }
+
+  get childrenClass() {
+    return BleDescriptor;
+  }
+
+  get childrenName() {
+    return 'descriptors';
+  }
+
+  toJSON() {
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0) {
+      obj.properties = this.properties;
+    }
+
+    if (this.permissions.length > 0) {
+      obj.permissions = this.permissions;
+    }
+    return obj;
+  }
+
+  addProperty(param) {
+    if (!this.properties.includes(param)) {
+      this.properties.push(param);
+    }
+  }
+
+  removeProperty(param) {
+    this.properties = this.properties.filter(elm => {
+      return elm !== param;
+    });
+  }
+
+  addPermission(param) {
+    if (!this.permissions.includes(param)) {
+      this.permissions.push(param);
+    }
+  }
+
+  removePermission(param) {
+    this.permissions = this.permissions.filter(elm => {
+      return elm !== param;
+    });
+  }
+
+  write(data) {
+    // todo
+  }
+
+  read() {
+    // todo
+  }
+
+  notify() {
+    this.service.peripheral.Obniz.send({
+      ble: {
+        peripheral: {
+          notify_characteristic: {
+            service_uuid: BleHelper.uuidFilter(this.service.uuid),
+            characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+          },
+        },
+      },
+    });
+  }
+}
+
+module.exports = BleCharacteristic;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleDescriptor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleDescriptor extends BleAttributeAbstract {
+  constructor(obj) {
+    super(obj);
+
+    this.permissions = obj.permissions || [];
+    if (!Array.isArray(this.permissions)) {
+      this.permissions = [this.permissions];
+    }
+  }
+
+  get parentName() {
+    return 'characteristic';
+  }
+
+  addPermission(param) {
+    if (!this.permissions.includes(param)) {
+      this.permissions.push(param);
+    }
+  }
+
+  removePermission(param) {
+    this.permissions = this.permissions.filter(elm => {
+      return elm !== param;
+    });
+  }
+
+  toJSON() {
+    let obj = super.toJSON();
+
+    if (this.permissions.length > 0) {
+      obj.permissions = this.permissions;
+    }
+    return obj;
+  }
+
+  write(dataArray) {
+    // todo
+  }
+
+  read() {
+    // todo
+  }
+}
+
+module.exports = BleDescriptor;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleHelper.js":
+/***/ (function(module, exports) {
+
+const BleHelper = {
+  uuidFilter: function(uuid) {
+    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+  },
+};
+
+module.exports = BleHelper;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/blePeripheral.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleService = __webpack_require__("./obniz/libs/embeds/bleHci/bleService.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BlePeripheral {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.services = [];
+  }
+
+  addService(obj) {
+    if (!(obj instanceof BleService)) {
+      obj = new BleService(obj);
+    }
+    this.services.push(obj);
+    obj.peripheral = this;
+
+    // todo
+
+    // this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
+  }
+
+  setJson(json) {
+    if (json['services']) {
+      for (let service of json['services']) {
+        this.addService(service);
+      }
+    }
+  }
+
+  getService(uuid) {
+    uuid = BleHelper.uuidFilter(uuid);
+    return this.services
+      .filter(function(element) {
+        return BleHelper.uuidFilter(element.uuid) === uuid;
+      })
+      .shift();
+  }
+
+  removeService(uuid) {
+    this.services = this.services.filter(function(element) {
+      return BleHelper.uuidFilter(element.uuid) !== uuid;
+    });
+  }
+
+  stopAllService() {
+    // todo
+
+    // this.Obniz.send({
+    //   ble: {
+    //     peripheral: null,
+    //   },
+    // });
+    this.services = [];
+  }
+
+  toJSON() {
+    return {
+      services: this.services,
+    };
+  }
+
+  findCharacteristic(param) {
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
+    let s = this.getService(serviceUuid);
+    if (s) {
+      return s.getCharacteristic(characteristicUuid);
+    }
+    return null;
+  }
+
+  findDescriptor(param) {
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
+    let c = this.findCharacteristic(param);
+    if (c) {
+      return c.getDescriptor(descriptorUuid);
+    }
+    return null;
+  }
+
+  end() {
+    // todo
+  }
+
+  onconnectionupdates() {}
+
+  onerror() {}
+}
+
+module.exports = BlePeripheral;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
+
+class BleRemoteAttributeAbstract extends BleAttributeAbstract {
+  constructor(params) {
+    super(params);
+
+    this.isRemote = false;
+    this.discoverdOnRemote = false;
+  }
+
+  get wsChildUuidName() {
+    let childrenName = this.childrenName;
+    if (!childrenName) {
+      return null;
+    }
+    let childName = childrenName.slice(0, -1);
+    return childName + '_uuid';
+  }
+
+  getChild(uuid) {
+    let obj = super.getChild(uuid);
+    if (!obj) {
+      obj = this.addChild({ uuid });
+    }
+    return obj;
+  }
+
+  discoverChildren() {}
+
+  discoverChildrenWait() {
+    return new Promise(resolve => {
+      this.emitter.once('discoverfinished', () => {
+        let children = this.children.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        resolve(children);
+      });
+      this.discoverChildren();
+    });
+  }
+
+  /**
+   * CALLBACKS
+   */
+  ondiscover() {}
+
+  ondiscoverfinished() {}
+
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
+    switch (notifyName) {
+      case 'discover': {
+        let child = this.getChild(params[this.wsChildUuidName]);
+        child.discoverdOnRemote = true;
+        child.properties = params.properties || [];
+        this.ondiscover(child);
+        break;
+      }
+      case 'discoverfinished': {
+        let children = this.children.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        this.ondiscoverfinished(children);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleRemoteAttributeAbstract;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleRemoteDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js");
+const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
+  constructor(params) {
+    super(params);
+
+    this.properties = params.properties || [];
+    if (!Array.isArray(this.properties)) {
+      this.properties = [this.properties];
+    }
+  }
+
+  get parentName() {
+    return 'service';
+  }
+
+  get childrenClass() {
+    return BleRemoteDescriptor;
+  }
+
+  get childrenName() {
+    return 'descriptors';
+  }
+
+  addDescriptor(params) {
+    return this.addChild(params);
+  }
+
+  //
+  // getCharacteristic(params) {
+  //   return this.getChild(params)
+  // }
+
+  getDescriptor(uuid) {
+    let obj = this.getChild(uuid);
+    if (obj) {
+      return obj;
+    }
+    let newCharacteristic = new BleRemoteDescriptor(this.Obniz, this, uuid);
+    this.addChild(newCharacteristic);
+    return newCharacteristic;
+  }
+
+  registerNotify(callback) {
+    this.onnotify = callback;
+    const obj = {
+      ble: {
+        register_notify_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+        },
+      },
+    };
+
+    // todo
+    // this.service.peripheral.Obniz.send(obj);
+  }
+
+  unregisterNotify() {
+    this.onnotify = function() {};
+    const obj = {
+      ble: {
+        unregister_notify_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+        },
+      },
+    };
+
+    // todo
+    // this.service.peripheral.Obniz.send(obj);
+  }
+
+  read() {
+    const obj = {
+      ble: {
+        read_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+        },
+      },
+    };
+
+    // todo
+    // this.service.peripheral.Obniz.send(obj);
+  }
+
+  write(array, needResponse) {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
+    const obj = {
+      ble: {
+        write_characteristic: {
+          address: this.service.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+          data: array,
+          needResponse,
+        },
+      },
+    };
+
+    // todo
+    // this.service.peripheral.Obniz.send(obj);
+  }
+
+  discoverChildren() {
+    const obj = {
+      ble: {
+        get_descriptors: {
+          address: this.service.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
+        },
+      },
+    };
+
+    // todo
+    // this.service.peripheral.Obniz.send(obj);
+  }
+
+  discoverAllDescriptors() {
+    return this.discoverChildren();
+  }
+
+  discoverAllDescriptorsWait() {
+    return this.discoverChildrenWait();
+  }
+
+  toJSON() {
+    let obj = super.toJSON();
+
+    if (this.properties.length > 0) {
+      obj.properties = this.properties;
+    }
+    return obj;
+  }
+
+  canBroadcast() {
+    return this.properties.includes('broadcast');
+  }
+
+  canNotify() {
+    return this.properties.includes('notify');
+  }
+
+  canRead() {
+    return this.properties.includes('read');
+  }
+
+  canWrite() {
+    return this.properties.includes('write');
+  }
+
+  canWriteWithoutResponse() {
+    return this.properties.includes('write_without_response');
+  }
+
+  canIndicate() {
+    return this.properties.includes('indicate');
+  }
+
+  ondiscover(descriptor) {
+    this.ondiscoverdescriptor(descriptor);
+  }
+
+  ondiscoverfinished(descriptors) {
+    this.ondiscoverdescriptorfinished(descriptors);
+  }
+
+  ondiscoverdescriptor() {}
+
+  ondiscoverdescriptorfinished() {}
+
+  onregisternofity() {}
+
+  onunregisternofity() {}
+
+  onnotify() {}
+
+  notifyFromServer(notifyName, params) {
+    super.notifyFromServer(notifyName, params);
+    switch (notifyName) {
+      case 'onregisternofity': {
+        this.onregisternofity();
+        break;
+      }
+      case 'onunregisternofity': {
+        this.onunregisternofity();
+        break;
+      }
+      case 'onnotify': {
+        this.onnotify(params.data || undefined);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleRemoteCharacteristic;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
+  constructor(params) {
+    super(params);
+  }
+
+  get parentName() {
+    return 'characteristic';
+  }
+
+  read() {
+    const obj = {
+      ble: {
+        read_descriptor: {
+          address: this.characteristic.service.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
+          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
+        },
+      },
+    };
+
+    // todo
+    // this.characteristic.service.peripheral.Obniz.send(obj);
+  }
+
+  write(array, needResponse) {
+    if (needResponse === undefined) {
+      needResponse = true;
+    }
+    const obj = {
+      ble: {
+        write_descriptor: {
+          address: this.characteristic.service.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
+          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
+          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
+          data: array,
+          needResponse,
+        },
+      },
+    };
+
+    // todo
+    // this.characteristic.service.peripheral.Obniz.send(obj);
+  }
+}
+
+module.exports = BleRemoteDescriptor;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleRemotePeripheral.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleRemoteService = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteService.js");
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleRemotePeripheral {
+  constructor(Obniz, address) {
+    this.Obniz = Obniz;
+    this.address = address;
+    this.connected = false;
+
+    this.device_type = null;
+    this.address_type = null;
+    this.ble_event_type = null;
+    this.rssi = null;
+    this.adv_data = null;
+    this.scan_resp = null;
+
+    this.keys = [
+      'device_type',
+      'address_type',
+      'ble_event_type',
+      'rssi',
+      'adv_data',
+      'scan_resp',
+    ];
+
+    this.services = [];
+    this.emitter = new emitter();
+  }
+
+  /**
+   *
+   * @return {String} json value
+   */
+  toString() {
+    return JSON.stringify({
+      address: this.address,
+      addressType: this.address_type,
+      advertisement: this.adv_data,
+      scanResponse: this.scan_resp,
+      rssi: this.rssi,
+    });
+  }
+
+  setParams(dic) {
+    this.advertise_data_rows = null;
+    for (let key in dic) {
+      if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
+        this[key] = dic[key];
+      }
+    }
+    this.analyseAdvertisement();
+  }
+
+  analyseAdvertisement() {
+    if (!this.advertise_data_rows) {
+      this.advertise_data_rows = [];
+      if (this.adv_data) {
+        for (let i = 0; i < this.adv_data.length; i++) {
+          let length = this.adv_data[i];
+          let arr = new Array(length);
+          for (let j = 0; j < length; j++) {
+            arr[j] = this.adv_data[i + j + 1];
+          }
+          this.advertise_data_rows.push(arr);
+          i = i + length;
+        }
+      }
+      if (this.scan_resp) {
+        for (let i = 0; i < this.scan_resp.length; i++) {
+          let length = this.scan_resp[i];
+          let arr = new Array(length);
+          for (let j = 0; j < length; j++) {
+            arr[j] = this.scan_resp[i + j + 1];
+          }
+          this.advertise_data_rows.push(arr);
+          i = i + length;
+        }
+      }
+      this.setLocalName();
+      this.setIBeacon();
+    }
+  }
+
+  searchTypeVal(type) {
+    this.analyseAdvertisement();
+    for (let i = 0; i < this.advertise_data_rows.length; i++) {
+      if (this.advertise_data_rows[i][0] === type) {
+        let results = [].concat(this.advertise_data_rows[i]);
+        results.shift();
+        return results;
+      }
+    }
+    return undefined;
+  }
+
+  setLocalName() {
+    let data = this.searchTypeVal(0x09);
+    if (!data) {
+      data = this.searchTypeVal(0x08);
+    }
+    if (!data) {
+      this.localName = null;
+    } else {
+      this.localName = String.fromCharCode.apply(null, data);
+    }
+  }
+
+  setIBeacon() {
+    let data = this.searchTypeVal(0xff);
+    if (
+      !data ||
+      data[0] !== 0x4c ||
+      data[1] !== 0x00 ||
+      data[2] !== 0x02 ||
+      data[3] !== 0x15 ||
+      data.length !== 25
+    ) {
+      this.iBeacon = null;
+      return;
+    }
+    let uuidData = data.slice(4, 20);
+    let uuid = '';
+    for (let i = 0; i < uuidData.length; i++) {
+      uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+      if (
+        i === 4 - 1 ||
+        i === 4 + 2 - 1 ||
+        i === 4 + 2 * 2 - 1 ||
+        i === 4 + 2 * 3 - 1
+      ) {
+        uuid += '-';
+      }
+    }
+
+    let major = (data[20] << 8) + data[21];
+    let minor = (data[22] << 8) + data[23];
+    let power = data[24];
+
+    this.iBeacon = {
+      uuid: uuid,
+      major: major,
+      minor: minor,
+      power: power,
+      rssi: this.rssi,
+    };
+  }
+
+  _addServiceUuids(results, data, bit) {
+    if (!data) return;
+    let uuidLength = bit / 4;
+    for (let i = 0; i < data.length; i = i + uuidLength) {
+      let one = data.slice(i, i + uuidLength);
+      results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
+    }
+  }
+
+  advertisementServiceUuids() {
+    let results = [];
+    this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
+    this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
+    this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
+    this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
+    this._addServiceUuids(results, this.searchTypeVal(0x06), 64);
+    this._addServiceUuids(results, this.searchTypeVal(0x07), 64);
+    return results;
+  }
+
+  connect() {
+    let obj = {
+      ble: {
+        connect: {
+          address: this.address,
+        },
+      },
+    };
+
+    // todo
+    // this.Obniz.send(obj);
+  }
+
+  connectWait() {
+    return new Promise(resolve => {
+      this.emitter.once('statusupdate', params => {
+        resolve(params.status === 'connected');
+      });
+      this.connect();
+    });
+  }
+
+  disconnect() {
+    let obj = {
+      ble: {
+        disconnect: {
+          address: this.address,
+        },
+      },
+    };
+
+    // todo
+    // this.Obniz.send(obj);
+  }
+
+  disconnectWait() {
+    return new Promise(resolve => {
+      this.emitter.once('statusupdate', params => {
+        resolve(params.status === 'disconnected');
+      });
+      this.disconnect();
+    });
+  }
+
+  getService(uuid) {
+    uuid = BleHelper.uuidFilter(uuid);
+    for (let key in this.services) {
+      if (this.services[key].uuid === uuid) {
+        return this.services[key];
+      }
+    }
+    let newService = new BleRemoteService({ uuid });
+    newService.parent = this;
+    this.services.push(newService);
+    return newService;
+  }
+
+  findService(param) {
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    return this.getService(serviceUuid);
+  }
+
+  findCharacteristic(param) {
+    let serviceUuid = BleHelper.uuidFilter(param.service_uuid);
+    let characteristicUuid = BleHelper.uuidFilter(param.characteristic_uuid);
+    let s = this.getService(serviceUuid);
+    if (s) {
+      return s.getCharacteristic(characteristicUuid);
+    }
+    return null;
+  }
+
+  findDescriptor(param) {
+    let descriptorUuid = BleHelper.uuidFilter(param.descriptor_uuid);
+    let c = this.findCharacteristic(param);
+    if (c) {
+      return c.getDescriptor(descriptorUuid);
+    }
+    return null;
+  }
+
+  discoverAllServices() {
+    let obj = {
+      ble: {
+        get_services: {
+          address: this.address,
+        },
+      },
+    };
+
+    // todo
+    // this.Obniz.send(obj);
+  }
+
+  discoverAllServicesWait() {
+    return new Promise(resolve => {
+      this.emitter.once('discoverfinished', () => {
+        let children = this.services.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        resolve(children);
+      });
+      this.discoverAllServices();
+    });
+  }
+
+  onconnect() {}
+
+  ondisconnect() {}
+
+  ondiscoverservice() {}
+
+  ondiscoverservicefinished() {}
+
+  ondiscover() {}
+
+  ondiscoverfinished() {}
+
+  notifyFromServer(notifyName, params) {
+    this.emitter.emit(notifyName, params);
+    switch (notifyName) {
+      case 'statusupdate': {
+        if (params.status === 'connected') {
+          this.connected = true;
+          this.onconnect();
+        }
+        if (params.status === 'disconnected') {
+          this.connected = false;
+          this.ondisconnect();
+        }
+        break;
+      }
+      case 'discover': {
+        let child = this.getService(params.service_uuid);
+        child.discoverdOnRemote = true;
+        this.ondiscoverservice(child);
+        break;
+      }
+      case 'discoverfinished': {
+        let children = this.services.filter(elm => {
+          return elm.discoverdOnRemote;
+        });
+        this.ondiscoverservicefinished(children);
+        break;
+      }
+    }
+  }
+
+  onerror() {}
+}
+
+module.exports = BleRemotePeripheral;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleRemoteService.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleRemoteCharacteristic = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js");
+const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleRemoteService extends BleRemoteAttributeAbstract {
+  constructor(obj) {
+    super(obj);
+  }
+
+  get parentName() {
+    return 'peripheral';
+  }
+
+  get childrenClass() {
+    return BleRemoteCharacteristic;
+  }
+
+  get childrenName() {
+    return 'characteristics';
+  }
+
+  addCharacteristic(params) {
+    return this.addChild(params);
+  }
+
+  getCharacteristic(params) {
+    return this.getChild(params);
+  }
+
+  discoverAllCharacteristics() {
+    return this.discoverChildren();
+  }
+
+  discoverAllCharacteristicsWait() {
+    return this.discoverChildrenWait();
+  }
+
+  discoverChildren() {
+    const obj = {
+      ble: {
+        get_characteristics: {
+          address: this.peripheral.address,
+          service_uuid: BleHelper.uuidFilter(this.uuid),
+        },
+      },
+    };
+
+    // todo
+    // this.parent.Obniz.send(obj);
+  }
+
+  ondiscover(characteristic) {
+    this.ondiscovercharacteristic(characteristic);
+  }
+
+  ondiscoverfinished(characteristics) {
+    this.ondiscovercharacteristicfinished(characteristics);
+  }
+
+  ondiscovercharacteristic() {}
+
+  ondiscovercharacteristicfinished() {}
+}
+
+module.exports = BleRemoteService;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleScan.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleScan {
+  constructor(Obniz) {
+    this.scanTarget = null;
+    this.Obniz = Obniz;
+    this.emitter = new emitter();
+
+    this.scanedPeripherals = [];
+  }
+
+  start(target, settings) {
+    let obj = {};
+    obj['ble'] = {};
+    obj['ble']['scan'] = {
+      //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
+      //    "interval" : settings && settings.interval ? settings.interval : 30,
+      duration: settings && settings.duration ? settings.duration : 30,
+    };
+
+    this.scanTarget = target;
+    if (
+      this.scanTarget &&
+      this.scanTarget.uuids &&
+      Array.isArray(this.scanTarget.uuids)
+    ) {
+      this.scanTarget.uuids = this.scanTarget.uuids.map(elm => {
+        return BleHelper.uuidFilter(elm);
+      });
+    }
+    this.scanedPeripherals = [];
+
+    // todo
+    // this.Obniz.send(obj);
+  }
+
+  startOneWait(target, settings) {
+    let state = 0;
+
+    return new Promise(resolve => {
+      this.emitter.once('onfind', param => {
+        if (state === 0) {
+          state = 1;
+          this.end();
+          resolve(param);
+        }
+      });
+
+      this.emitter.once('onfinish', () => {
+        if (state === 0) {
+          state = 1;
+          resolve(null);
+        }
+      });
+
+      this.start(target, settings);
+    });
+  }
+
+  startAllWait(target, settings) {
+    return new Promise(resolve => {
+      this.emitter.once('onfinish', () => {
+        resolve(this.scanedPeripherals);
+      });
+
+      this.start(target, settings);
+    });
+  }
+
+  end() {
+    let obj = {};
+    obj['ble'] = {};
+    obj['ble']['scan'] = null;
+
+    // todo
+    // this.Obniz.send(obj);
+  }
+
+  isTarget(peripheral) {
+    if (
+      this.scanTarget &&
+      this.scanTarget.localName &&
+      peripheral.localName !== this.scanTarget.localName
+    ) {
+      return false;
+    }
+    if (this.scanTarget && this.scanTarget.uuids) {
+      let uuids = peripheral.advertisementServiceUuids().map(e => {
+        return BleHelper.uuidFilter(e);
+      });
+      for (let uuid of this.scanTarget.uuids) {
+        if (!uuids.includes(uuid)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  onfinish() {} //dummy
+  onfind() {} //dummy
+
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case 'onfind': {
+        if (this.isTarget(params)) {
+          this.scanedPeripherals.push(params);
+          this.emitter.emit(notifyName, params);
+          this.onfind(params);
+        }
+        break;
+      }
+      case 'onfinish': {
+        this.emitter.emit(notifyName, this.scanedPeripherals);
+        this.onfinish(this.scanedPeripherals);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleScan;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleSecurity.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const semver = __webpack_require__("./node_modules/semver/semver.js");
+
+class BleSecurity {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.emitter = new emitter();
+  }
+
+  setModeLevel(mode, level) {
+    let auth = undefined;
+    let keys = undefined;
+    let indicateSecurityLevel = undefined;
+
+    if (mode == 1) {
+      if (level == 1) {
+        auth = [];
+        indicateSecurityLevel = 0; //no pairing request
+        keys = ['LTK', 'IRK'];
+      } else if (level == 2) {
+        auth = ['bonding'];
+        indicateSecurityLevel = 2;
+        keys = ['LTK', 'IRK'];
+      } else if (level == 3) {
+        //TODO
+        // auth = ['bonding','mitm'];
+        // indicateSecurityLevel = 3;
+        // keys = ['LTK', 'IRK'];
+      }
+    } else if (mode == 2) {
+      if (level == 1) {
+        //TODO
+        // auth = [];
+        // keys = ['LTK', 'IRK','CSRK'];
+      } else if (level == 2) {
+        //TODO
+        // auth = ['bonding'];
+        // keys = ['LTK', 'IRK','CSRK'];
+      }
+    }
+
+    if (
+      auth !== undefined &&
+      indicateSecurityLevel !== undefined &&
+      keys !== undefined
+    ) {
+      this.setAuth(auth);
+      this.setIndicateSecurityLevel(indicateSecurityLevel);
+      this.setEnableKeyTypes(keys);
+    } else {
+      let msg = `BLE security mode${mode}, level${level} is not available.`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
+  checkIntroducedFirmware(introducedVersion, functionName) {
+    let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
+    if (results) {
+      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
+        this.Obniz.firmware_ver
+      })`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
+  setAuth(authTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setAuth');
+    if (!Array.isArray(authTypes)) {
+      authTypes = [authTypes];
+    }
+    let sendTypes = authTypes
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['mitm', 'secure_connection', 'bonding'].includes(elm);
+      });
+
+    if (sendTypes.length !== authTypes.length) {
+      throw new Error('unknown auth type');
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       auth: authTypes,
+    //     },
+    //   },
+    // });
+  }
+
+  setIndicateSecurityLevel(level) {
+    this.checkIntroducedFirmware('1.1.0', 'setIndicateSecurityLevel');
+
+    if (typeof level !== 'number') {
+      throw new Error('unknown secrity level : ' + level);
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       indicate_security_level: level,
+    //     },
+    //   },
+    // });
+  }
+
+  setEnableKeyTypes(keyTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setEnableKeyTypes');
+    if (!Array.isArray(keyTypes)) {
+      keyTypes = [keyTypes];
+    }
+    let sendTypes = keyTypes
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['ltk', 'csrk', 'irk'].includes(elm);
+      });
+
+    if (sendTypes.length !== keyTypes.length) {
+      throw new Error('unknown key type');
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       key: { type: sendTypes },
+    //     },
+    //   },
+    // });
+  }
+
+  setKeyMaxSize(size) {
+    this.checkIntroducedFirmware('1.1.0', 'setKeyMaxSize');
+    if (typeof size !== 'number') {
+      throw new Error('please provide key size in number');
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       key: { max_size: size },
+    //     },
+    //   },
+    // });
+  }
+
+  clearBondingDevicesList() {
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       devices: { clear: true },
+    //     },
+    //   },
+    // });
+  }
+
+  onerror() {} //dummy
+
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case 'onerror': {
+        this.onerror(params);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleSecurity;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/bleService.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
+const BleCharacteristic = __webpack_require__("./obniz/libs/embeds/bleHci/bleCharacteristic.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+
+class BleService extends BleAttributeAbstract {
+  constructor(obj) {
+    super(obj);
+
+    this.addCharacteristic = this.addChild;
+    this.getCharacteristic = this.getChild;
+  }
+
+  get parentName() {
+    return 'peripheral';
+  }
+
+  get childrenName() {
+    return 'characteristics';
+  }
+
+  get childrenClass() {
+    return BleCharacteristic;
+  }
+
+  get advData() {
+    return {
+      flags: ['general_discoverable_mode', 'br_edr_not_supported'],
+      serviceUuids: [this.uuid],
+    };
+  }
+
+  end() {
+    // todo
+    // this.peripheral.Obniz.send({
+    //   ble: {
+    //     peripheral: {
+    //       stop_service: {
+    //         service_uuid: BleHelper.uuidFilter(this.uuid),
+    //       },
+    //     },
+    //   },
+    // });
+    this.peripheral.removeService(this.uuid);
+  }
+
+  notify(notifyName, params) {
+    //nothing
+  }
+}
+
+module.exports = BleService;
+
 
 
 /***/ }),
