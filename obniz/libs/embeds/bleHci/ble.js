@@ -96,7 +96,7 @@ class ObnizBLE {
 
       let val = this.findPeripheral(uuid);
       if (!val) {
-        val = new BleRemotePeripheral(this.Obniz, uuid);
+        val = new BleRemotePeripheral(this, uuid);
         this.remotePeripherals.push(val);
       }
       val.discoverdOnRemote = true;
@@ -117,6 +117,34 @@ class ObnizBLE {
 
     this._bindings.on('scanStop', ()=> {
       this.scan.notifyFromServer('onfinish');
+    });
+
+    this._bindings.on('connect', (peripheralUuid, error)=>{
+      let peripheral = this.findPeripheral(peripheralUuid);
+      peripheral.notifyFromServer("statusupdate", {status: error ? "disconnected" : "connected"})
+    });
+
+    this._bindings.on('disconnect', (peripheralUuid)=>{
+      let peripheral = this.findPeripheral(peripheralUuid);
+      peripheral.notifyFromServer("statusupdate", {status: "disconnected"})
+    });
+
+    // this._bindings.on('rssiUpdate', ()=>{});
+
+    this._bindings.on('servicesDiscover', (peripheralUuid, serviceUuids)=>{
+      let peripheral = this.findPeripheral(peripheralUuid);
+      for( let serviceUuid of serviceUuids){
+        peripheral.notifyFromServer("discover", {service_uuid: serviceUuid})
+      }
+      peripheral.notifyFromServer("discoverfinished", {});
+    });
+
+    this._bindings.on('includedServicesDiscover',  (peripheralUuid, serviceUuid, includedServiceUuids)=>{
+
+    });
+
+    this._bindings.on('characteristicsDiscover',  (peripheralUuid, serviceUuid, characteristics)=>{
+
     });
 
   //

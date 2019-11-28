@@ -5,8 +5,8 @@ const emitter = require('eventemitter3');
 const BleHelper = require('./bleHelper');
 
 class BleRemotePeripheral {
-  constructor(Obniz, address) {
-    this.Obniz = Obniz;
+  constructor(obnizBle, address) {
+    this.obnizBle = obnizBle;
     this.address = address;
     this.connected = false;
 
@@ -169,16 +169,7 @@ class BleRemotePeripheral {
   }
 
   connect() {
-    let obj = {
-      ble: {
-        connect: {
-          address: this.address,
-        },
-      },
-    };
-
-    // todo
-    // this.Obniz.send(obj);
+    this.obnizBle._bindings.connect(this.address);
   }
 
   connectWait() {
@@ -191,16 +182,7 @@ class BleRemotePeripheral {
   }
 
   disconnect() {
-    let obj = {
-      ble: {
-        disconnect: {
-          address: this.address,
-        },
-      },
-    };
-
-    // todo
-    // this.Obniz.send(obj);
+    this.obnizBle._bindings.disconnect(this.address);
   }
 
   disconnectWait() {
@@ -250,16 +232,7 @@ class BleRemotePeripheral {
   }
 
   discoverAllServices() {
-    let obj = {
-      ble: {
-        get_services: {
-          address: this.address,
-        },
-      },
-    };
-
-    // todo
-    // this.Obniz.send(obj);
+    this.obnizBle._bindings.discoverServices(this.address);
   }
 
   discoverAllServicesWait() {
