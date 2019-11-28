@@ -31,6 +31,11 @@ class Tcp {
       throw new Error(`Please update obniz firmware >= 2.1.0`);
     }
 
+    // TODO
+    // if (this.used) {
+    //   throw new Error(`tcp${this.id} is in used`);
+    // }
+
     if (port < 0 || port > 65535) {
       throw new Error(`tcp${this.id} is invalid port`);
     }
@@ -54,6 +59,9 @@ class Tcp {
   }
 
   close() {
+    if (!this.used) {
+      throw new Error(`tcp${this.id} is not used`);
+    }
     let obj = {};
     obj['tcp' + this.id] = {
       disconnect: true,
@@ -91,6 +99,9 @@ class Tcp {
   }
 
   readWait() {
+    if (!this.used) {
+      throw new Error(`tcp${this.id} is not started`);
+    }
     return new Promise((resolve, reject) => {
       this._addReadObserver(resolve);
     });
@@ -102,6 +113,7 @@ class Tcp {
 
   notified(obj) {
     if (obj.connection) {
+      /* Connectino state update. response of connect(), close from destination, response from */
       if (this.onconnection) {
         this.onconnection(obj.connection.connected);
       }
@@ -117,6 +129,8 @@ class Tcp {
         callback(obj.read.data);
       }
     } else if (obj.connect) {
+      /* response of connect() */
+      /* `this.connection` will called before this function */
       if (obj.connect.code !== 0) {
         if (this.onerror) {
           this.onerror(obj.connect);
