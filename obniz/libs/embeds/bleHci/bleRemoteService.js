@@ -38,17 +38,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    const obj = {
-      ble: {
-        get_characteristics: {
-          address: this.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.parent.Obniz.send(obj);
+    this.parent.obnizBle._bindings.discoverCharacteristics(this.peripheral.address,this.uuid);
   }
 
   ondiscover(characteristic) {

@@ -2,6 +2,7 @@
 
 const ObnizBLEHci = require('./hci');
 const Bindings = require('./protocol/bindings');
+const BleHelper = require("./bleHelper");
 
 const BlePeripheral = require('./blePeripheral');
 const BleService = require('./bleService');
@@ -145,6 +146,16 @@ class ObnizBLE {
 
     this._bindings.on('characteristicsDiscover',  (peripheralUuid, serviceUuid, characteristics)=>{
 
+      let peripheral = this.findPeripheral(peripheralUuid);
+      let service = peripheral.findService({service_uuid: serviceUuid});
+      for( let char of characteristics){
+        let obj = {
+          properties : char.properties.map(e=>BleHelper.toSnakeCase(e)),
+          characteristic_uuid : char.uuid
+        };
+        service.notifyFromServer("discover", obj)
+      }
+      service.notifyFromServer("discoverfinished", {});
     });
 
   //

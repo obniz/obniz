@@ -32985,6 +32985,7 @@ module.exports = BleService;
 
 const ObnizBLEHci = __webpack_require__("./obniz/libs/embeds/bleHci/hci.js");
 const Bindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/bindings.js");
+const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 const BlePeripheral = __webpack_require__("./obniz/libs/embeds/bleHci/blePeripheral.js");
 const BleService = __webpack_require__("./obniz/libs/embeds/bleHci/bleService.js");
@@ -33128,6 +33129,16 @@ class ObnizBLE {
 
     this._bindings.on('characteristicsDiscover',  (peripheralUuid, serviceUuid, characteristics)=>{
 
+      let peripheral = this.findPeripheral(peripheralUuid);
+      let service = peripheral.findService({service_uuid: serviceUuid});
+      for( let char of characteristics){
+        let obj = {
+          properties : char.properties.map(e=>BleHelper.toSnakeCase(e)),
+          characteristic_uuid : char.uuid
+        };
+        service.notifyFromServer("discover", obj)
+      }
+      service.notifyFromServer("discoverfinished", {});
     });
 
   //
@@ -33928,6 +33939,20 @@ module.exports = BleDescriptor;
 const BleHelper = {
   uuidFilter: function(uuid) {
     return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+  },
+
+  toCamelCase: function(str) {
+    str = str.charAt(0).toLowerCase() + str.slice(1);
+    return str.replace(/[-_](.)/g, function(match, group1) {
+      return group1.toUpperCase();
+    });
+  },
+
+  toSnakeCase: function(str) {
+    let camel = this.toCamelCase(str);
+    return camel.replace(/[A-Z]/g, function(s) {
+      return '_' + s.charAt(0).toLowerCase();
+    });
   },
 };
 
@@ -34734,17 +34759,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    const obj = {
-      ble: {
-        get_characteristics: {
-          address: this.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.parent.Obniz.send(obj);
+    this.parent.obnizBle._bindings.discoverCharacteristics(this.peripheral.address,this.uuid);
   }
 
   ondiscover(characteristic) {
