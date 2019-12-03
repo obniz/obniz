@@ -3,7 +3,7 @@ const Obniz = require('../index.js');
 const json = require('./board/esp32devkitc_check_io.json');
 //const json = require('./board/m5stickc_check_io.json');
 //const json = require('./board/obniz_check_io.json');
-
+//const json = require('./board/esp32lte_check_io.json');
 //test device
 //esp32
 const checkBoard_ID = '30109815';
@@ -11,9 +11,11 @@ const checkBoard_ID = '30109815';
 //const checkBoard_ID = '09130585';
 //obniz
 //const checkBoard_ID = '09643850';
+//LTE
+//const checkBoard_ID = '64188531';
 //check device
-const obnizA_ID = '09643850';
-const obnizB_ID = '09643850';
+const obnizA_ID = '07368634';
+const obnizB_ID = '51871280';
 
 //TCP Command Test
 //Express server used
@@ -62,10 +64,10 @@ function reboot(done) {
 function connectTwoObniz(done, params) {
   console.log(json.name + ' Board Test Program');
   let local_connect = true;
-  checkBoard = new Obniz(checkBoard_ID, { local_connect: local_connect });
+  checkBoard = new Obniz(checkBoard_ID, { local_connect: local_connect }); //,obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
-    checkBoard.debugprintBinary = true;
-    checkBoard.debugprint = true;
+    // checkBoard.debugprintBinary = true;
+    // checkBoard.debugprint = true;
     if (process.env.DEBUG) {
       checkBoard.debugprint = true;
     }
