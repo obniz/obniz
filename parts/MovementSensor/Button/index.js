@@ -21,14 +21,12 @@ class Button {
     }
 
     // start input
-    if (this.params.pull == null) {
-      this.io_signal.pull('5v');
-    } else if (this.params.pull === '5v') {
-      this.io_signal.pull('5v');
-    } else if (this.params.pull === '3v') {
+    if (this.params.pull === '3v') {
       this.io_signal.pull('3v');
     } else if (this.params.pull === '0v') {
       this.io_signal.pull('0v');
+    }else{
+      this.io_signal.pull('5v');
     }
 
     let self = this;
