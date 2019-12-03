@@ -1,7 +1,7 @@
 const Obniz = require('../index.js');
-
-const obnizA_ID = '07963957';
-const obnizB_ID = '87783859';
+46480897;
+const obnizA_ID = '46480897';
+const obnizB_ID = '22967721';
 
 let obnizA, obnizB;
 
@@ -31,6 +31,16 @@ function reboot(done) {
   }, 10000); // wait for reboot
 }
 
+function close(obniz) {
+  if (obniz == obnizA) {
+    obnizA.close();
+    obnizA = undefined;
+  } else if (obniz == obnizB) {
+    obnizB.close();
+    obnizB = undefined;
+  }
+}
+
 function connectTwoObniz(done, params) {
   let local_connect = true;
   if (obnizA) return;
@@ -40,6 +50,10 @@ function connectTwoObniz(done, params) {
     obnizA.debugprint = true;
   }
   obnizA.onconnect = () => {
+    if (obnizB) {
+      done();
+      return;
+    }
     obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
     console.log('B local_connect : ' + local_connect);
     if (process.env.DEBUG) {
@@ -63,4 +77,5 @@ module.exports = {
   obnizA_ID,
   obnizB_ID,
   reboot,
+  close,
 };
