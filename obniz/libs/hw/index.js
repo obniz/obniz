@@ -4,6 +4,8 @@ module.exports = class HW {
   static getDefinitionFor(hw) {
     if (hw === 'obnizb1') {
       return require('./obnizb1.json');
+    } else if (hw === 'obnizb2') {
+      return require('./obnizb2.json');
     } else if (hw === 'esp32w') {
       return require('./esp32w.json');
     } else if (hw === 'esp32p') {
