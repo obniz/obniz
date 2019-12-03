@@ -3,7 +3,7 @@ Button turn on/off electricity. Just monitor voltage to check button pressed or 
 
 ![](./image.jpg)
 
-## wired(obniz, {signal [,gnd]})
+## wired(obniz, {signal [,gnd,pull]})
 
 Connect two pins to obniz Board. Many buttons has no pin direction. you can connect each one to signal,gnd.
 
@@ -21,7 +21,19 @@ gnd is optional. It can be shared other gnd.
 var button = obniz.wired("Button",  {signal:0});
 ```
 
+pull is optional. The default is pulled up to 5V.
 
+Select one of the following three options.
+
+-"5v" Internal pull-up to 5v. (Default)
+-"3v" Internal pull-up to 3v.
+-"0v" Internal pull-down.
+
+
+```Javascript
+// Javascript Example
+var button = obniz.wired("Button",  {signal:0,pull:"0v"});
+```
 
 ## onchange = function(pressed){}
 called when button pressed/released.

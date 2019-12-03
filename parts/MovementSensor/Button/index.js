@@ -1,6 +1,6 @@
 class Button {
   constructor() {
-    this.keys = ['signal', 'gnd'];
+    this.keys = ['signal', 'gnd', 'pull'];
     this.requiredKeys = ['signal'];
 
     this.onChangeForStateWait = function() {};
@@ -21,7 +21,15 @@ class Button {
     }
 
     // start input
-    this.io_signal.pull('5v');
+    if (this.params.pull == null) {
+      this.io_signal.pull('5v');
+    } else if (this.params.pull === '5v') {
+      this.io_signal.pull('5v');
+    } else if (this.params.pull === '3v') {
+      this.io_signal.pull('3v');
+    } else if (this.params.pull === '0v') {
+      this.io_signal.pull('0v');
+    }
 
     let self = this;
     this.io_signal.input(function(value) {
