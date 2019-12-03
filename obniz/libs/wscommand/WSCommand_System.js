@@ -14,6 +14,9 @@ class WSCommand_System extends WSCommand {
 
     this._CommandPingPong = 8;
     this._CommandVCC = 9;
+    this._CommandSleepSeconds = 10;
+    this._CommandSleepMinute = 11;
+    this._CommandSleepIoTrigger = 12;
   }
 
   // Commands
@@ -81,6 +84,9 @@ class WSCommand_System extends WSCommand {
         onValid: this.keepWorkingAtOffline,
       },
       { uri: '/request/system/ping', onValid: this.ping },
+      { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
+      { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
+      { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
     ];
     let res = this.validateCommandSchema(schemaData, module, 'system');
 
@@ -141,6 +147,29 @@ class WSCommand_System extends WSCommand {
         super.notifyFromBinary(objToSend, func, payload);
         break;
     }
+  }
+
+  sleepSeconds(params) {
+    let sec = params.sleep_seconds;
+    let buf = new Uint8Array([sec >> 8, sec]);
+    this.sendCommand(this._CommandSleepSeconds, buf);
+  }
+
+  sleepMinute(params) {
+    let minute = params.sleep_minute;
+    let buf = new Uint8Array([minute >> 8, minute]);
+    this.sendCommand(this._CommandSleepMinute, buf);
+  }
+
+  sleepIoTrigger(params) {
+    let trigger = params.sleep_io_trigger;
+    if (trigger === true) {
+      trigger = 1;
+    } else {
+      trigger = 0;
+    }
+    let buf = new Uint8Array([trigger]);
+    this.sendCommand(this._CommandSleepIoTrigger, buf);
   }
 }
 

@@ -32,6 +32,57 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
   }
 
+  sleepSeconds(sec) {
+    if (sec < 1) {
+      //min 1s
+      sec = 1;
+    } else if (sec > 60 * 60 * 18) {
+      //max 18h (60(s)*60(m)*18(h))
+      throw new Error('Error max 18h(64800) sleep');
+    }
+    this.send({ system: { sleep_seconds: sec } });
+  }
+
+  sleepMinute(minute) {
+    if (minute < 1) {
+      //min 1m
+      minute = 1;
+    } else if (minute > 60 * 24 * 45) {
+      //max 45day (60(m)*24(h)*45(d))
+      throw new Error('max 45day(64800m) sleep');
+    }
+    this.send({ system: { sleep_minute: minute } });
+  }
+
+  sleep(date) {
+    if (!(date instanceof Date)) {
+      throw new Error('Date instance argument required');
+    }
+    let sleepTime = Math.floor((date - new Date()) / 1000);
+    this.print_debug(`sleep time : ${sleepTime}s`);
+    if (sleepTime <= 0) {
+      throw new Error(`past sleep time : ${sleepTime}s`);
+    }
+    if (sleepTime <= 60 * 60 * 18) {
+      this.sleepSeconds(sleepTime);
+      return;
+    }
+    sleepTime = Math.floor(sleepTime / 60);
+    this.print_debug(`sleep time : ${sleepTime}m`);
+    if (sleepTime <= 60 * 24 * 45) {
+      this.sleepMinute(sleepTime);
+    } else {
+      throw new Error(`over max sleep time : ${sleepTime}m`);
+    }
+  }
+
+  sleepIoTrigger(trigger) {
+    if (typeof trigger !== 'boolean') {
+      throw new Error('sleepIoTrigger need boolean arg');
+    }
+    this.send({ system: { sleep_io_trigger: trigger } });
+  }
+
   pingWait(unixtime, rand, forceGlobalNetwork) {
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor(unixtime / Math.pow(2, 32));

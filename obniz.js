@@ -176,6 +176,9 @@ var map = {
 	"./request/system/reboot.yml": "./json_schema/request/system/reboot.yml",
 	"./request/system/reset.yml": "./json_schema/request/system/reset.yml",
 	"./request/system/self_check.yml": "./json_schema/request/system/self_check.yml",
+	"./request/system/sleep_io_trigger.yml": "./json_schema/request/system/sleep_io_trigger.yml",
+	"./request/system/sleep_minute.yml": "./json_schema/request/system/sleep_minute.yml",
+	"./request/system/sleep_seconds.yml": "./json_schema/request/system/sleep_seconds.yml",
 	"./request/system/wait.yml": "./json_schema/request/system/wait.yml",
 	"./request/tcp/connect.yml": "./json_schema/request/tcp/connect.yml",
 	"./request/tcp/disconnect.yml": "./json_schema/request/tcp/disconnect.yml",
@@ -829,7 +832,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./json_schema/request/system/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"},{"$ref":"/request/system/sleepSeconds"},{"$ref":"/request/system/sleepMinute"},{"$ref":"/request/system/sleepIoTrigger"}]}
 
 /***/ }),
 
@@ -865,6 +868,27 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/sleep_io_trigger.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepIoTrigger","type":"object","required":["sleep_io_trigger"],"properties":{"sleep_io_trigger":{"type":"boolean"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/sleep_minute.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepMinute","type":"object","required":["sleep_minute"],"properties":{"sleep_minute":{"type":"integer"}}}
+
+/***/ }),
+
+/***/ "./json_schema/request/system/sleep_seconds.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/sleepSeconds","type":"object","required":["sleep_seconds"],"properties":{"sleep_seconds":{"type":"integer"}}}
 
 /***/ }),
 
@@ -8624,6 +8648,57 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
   }
 
+  sleepSeconds(sec) {
+    if (sec < 1) {
+      //min 1s
+      sec = 1;
+    } else if (sec > 60 * 60 * 18) {
+      //max 18h (60(s)*60(m)*18(h))
+      throw new Error('Error max 18h(64800) sleep');
+    }
+    this.send({ system: { sleep_seconds: sec } });
+  }
+
+  sleepMinute(minute) {
+    if (minute < 1) {
+      //min 1m
+      minute = 1;
+    } else if (minute > 60 * 24 * 45) {
+      //max 45day (60(m)*24(h)*45(d))
+      throw new Error('max 45day(64800m) sleep');
+    }
+    this.send({ system: { sleep_minute: minute } });
+  }
+
+  sleep(date) {
+    if (!(date instanceof Date)) {
+      throw new Error('Date instance argument required');
+    }
+    let sleepTime = Math.floor((date - new Date()) / 1000);
+    this.print_debug(`sleep time : ${sleepTime}s`);
+    if (sleepTime <= 0) {
+      throw new Error(`past sleep time : ${sleepTime}s`);
+    }
+    if (sleepTime <= 60 * 60 * 18) {
+      this.sleepSeconds(sleepTime);
+      return;
+    }
+    sleepTime = Math.floor(sleepTime / 60);
+    this.print_debug(`sleep time : ${sleepTime}m`);
+    if (sleepTime <= 60 * 24 * 45) {
+      this.sleepMinute(sleepTime);
+    } else {
+      throw new Error(`over max sleep time : ${sleepTime}m`);
+    }
+  }
+
+  sleepIoTrigger(trigger) {
+    if (typeof trigger !== 'boolean') {
+      throw new Error('sleepIoTrigger need boolean arg');
+    }
+    this.send({ system: { sleep_io_trigger: trigger } });
+  }
+
   pingWait(unixtime, rand, forceGlobalNetwork) {
     unixtime = unixtime || new Date().getTime();
     let upper = Math.floor(unixtime / Math.pow(2, 32));
@@ -11464,7 +11539,7 @@ module.exports = ObnizSwitch;
 /***/ "./obniz/libs/hw/esp32p.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"esp32w\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"5\":{},\"9\":{},\"10\":{},\"12\":{},\"13\":{},\"14\":{},\"15\":{},\"18\":{},\"19\":{},\"21\":{},\"22\":{},\"23\":{},\"25\":{},\"26\":{},\"27\":{},\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"ad\":{\"units\":{\"32\":{},\"33\":{},\"34\":{},\"35\":{},\"36\":{},\"37\":{},\"38\":{},\"39\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -11484,6 +11559,8 @@ module.exports = class HW {
   static getDefinitionFor(hw) {
     if (hw === 'obnizb1') {
       return __webpack_require__("./obniz/libs/hw/obnizb1.json");
+    } else if (hw === 'obnizb2') {
+      return __webpack_require__("./obniz/libs/hw/obnizb2.json");
     } else if (hw === 'esp32w') {
       return __webpack_require__("./obniz/libs/hw/esp32w.json");
     } else if (hw === 'esp32p') {
@@ -11500,6 +11577,13 @@ module.exports = class HW {
 /***/ (function(module) {
 
 module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
+
+/***/ }),
+
+/***/ "./obniz/libs/hw/obnizb2.json":
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"rev\":\"1\",\"hw\":\"obnizb2\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{},\"display\":{},\"switch\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}}}");
 
 /***/ }),
 
@@ -17934,6 +18018,9 @@ class WSCommand_System extends WSCommand {
 
     this._CommandPingPong = 8;
     this._CommandVCC = 9;
+    this._CommandSleepSeconds = 10;
+    this._CommandSleepMinute = 11;
+    this._CommandSleepIoTrigger = 12;
   }
 
   // Commands
@@ -18001,6 +18088,9 @@ class WSCommand_System extends WSCommand {
         onValid: this.keepWorkingAtOffline,
       },
       { uri: '/request/system/ping', onValid: this.ping },
+      { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
+      { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
+      { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
     ];
     let res = this.validateCommandSchema(schemaData, module, 'system');
 
@@ -18061,6 +18151,29 @@ class WSCommand_System extends WSCommand {
         super.notifyFromBinary(objToSend, func, payload);
         break;
     }
+  }
+
+  sleepSeconds(params) {
+    let sec = params.sleep_seconds;
+    let buf = new Uint8Array([sec >> 8, sec]);
+    this.sendCommand(this._CommandSleepSeconds, buf);
+  }
+
+  sleepMinute(params) {
+    let minute = params.sleep_minute;
+    let buf = new Uint8Array([minute >> 8, minute]);
+    this.sendCommand(this._CommandSleepMinute, buf);
+  }
+
+  sleepIoTrigger(params) {
+    let trigger = params.sleep_io_trigger;
+    if (trigger === true) {
+      trigger = 1;
+    } else {
+      trigger = 0;
+    }
+    let buf = new Uint8Array([trigger]);
+    this.sendCommand(this._CommandSleepIoTrigger, buf);
   }
 }
 
@@ -29172,14 +29285,12 @@ class Button {
     }
 
     // start input
-    if (this.params.pull == null) {
-      this.io_signal.pull('5v');
-    } else if (this.params.pull === '5v') {
-      this.io_signal.pull('5v');
-    } else if (this.params.pull === '3v') {
+    if (this.params.pull === '3v') {
       this.io_signal.pull('3v');
     } else if (this.params.pull === '0v') {
       this.io_signal.pull('0v');
+    } else {
+      this.io_signal.pull('5v');
     }
 
     let self = this;

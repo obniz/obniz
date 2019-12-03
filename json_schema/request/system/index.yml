@@ -11,3 +11,6 @@ basePath : "system"
   -  {$ref : "/request/system/selfCheck"}
   -  {$ref : "/request/system/keepWorkingAtOffline"}
   -  {$ref : "/request/system/ping"}
+  -  {$ref : "/request/system/sleepSeconds"}
+  -  {$ref : "/request/system/sleepMinute"}
+  -  {$ref : "/request/system/sleepIoTrigger"}
