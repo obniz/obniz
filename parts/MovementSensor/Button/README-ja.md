@@ -3,7 +3,7 @@
 
 ![](./image.jpg)
 
-## wired(obniz, {signal [,gnd]})
+## wired(obniz, {signal [,gnd,pull]})
 
 ボタンにある２つのピンをobniz Boardにつなぎます。プラスとマイナスはありません。例えば片方をobniz Boardの0番に。もう片方を1番につないだ場合は以下のようにプログラム上でwireします
 
@@ -19,6 +19,19 @@ gndはオプショナルです。他のGNDに繋いだ場合は、指定しな�
 ```Javascript
 // Javascript Example
 var button = obniz.wired("Button",  {signal:0});
+```
+
+pullはオプショナルです。デフォルトは5Vにプルアップされます。
+
+次の3つのいずれかを選択ください。
+
+- "5v" 5vに内部プルアップします。(デフォルト)
+- "3v" 3vに内部プルアップします。
+- "0v" gndにプルダウンします。
+
+```Javascript
+// Javascript Example
+var button = obniz.wired("Button",  {signal:0,pull:"0v"});
 ```
 
 ## onchange = function(pressed){}
