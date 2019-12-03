@@ -77,3 +77,47 @@ const ctx = obniz.util.createCanvasContext(128, 64);
 ctx.font = "9px sans-serif";
 ctx.fillText('Hello', 0, 7);
 ```
+## sleep(date)
+obniz Board 1Yのみで動作します。
+
+obniz BoardをDate型で指定された値だけスリープします。
+
+最大45日間(64800分)スリープできます。
+```Javascript
+// Javascript Example
+let dt = new Date();
+dt.setHours(dt.getHours()+1,0,0,0);//毎時00分に指定
+obniz.sleep(dt);
+```
+## sleepSeconds(sec)
+obniz Board 1Yのみで動作します。
+
+obniz Boardをsec(秒)で指定された値だけスリープします。
+
+最大18時間（64800秒）スリープできます。
+```Javascript
+// Javascript Example
+obniz.sleepSeconds(60);//60 sec
+```
+## sleepMinute(min)
+obniz Board 1Yのみで動作します。
+
+obniz Boardをmin(分)で指定された値だけスリープします。
+
+最大45日間(64800分)スリープできます。
+```Javascript
+// Javascript Example
+obniz.sleepMinute(60);//60 minute
+```
+## sleepIoTrigger(trigger)
+obniz Board 1Yのみで動作します。
+
+IO0のピン状態によってスリープから復帰します。
+
+true：立ち上がり
+false:立ち下がり
+
+```Javascript
+// Javascript Example
+obniz.sleepIoTrigger(true);
+```

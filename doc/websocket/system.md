@@ -144,6 +144,75 @@ reset obniz Board when obniz Board gone to offline.
 ```
 
 
+##  request: <a name="-request-system-sleepseconds">sleepSeconds</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.sleep_seconds` |  integer  | <ul><li>required</li></ul> | sleep time (seconds)&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "sleep_seconds": 500
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-system-sleepminute">sleepMinute</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.sleep_minute` |  integer  | <ul><li>required</li></ul> | sleep time (minute)&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "sleep_minute": 500
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-system-sleepiotrigger">sleepIoTrigger</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.sleep_io_trigger` |  boolean  | <ul><li>required</li></ul> | true:Wake up on rising edge false:Wake up on falling edge&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "sleep_io_trigger": true
+        }
+    }
+]
+```
+
+
 
 
 
