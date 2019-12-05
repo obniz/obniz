@@ -33104,8 +33104,11 @@ class ObnizBLE {
     this.scan.notifyFromServer('onfind', val);
   }
 
-  onConnect(peripheralUuid, error){
+  async onConnect(peripheralUuid, error){
     let peripheral = this.findPeripheral(peripheralUuid);
+    if(!error){
+      await peripheral.discoverAllHandlesWait();
+    }
     peripheral.notifyFromServer("statusupdate", {status: error ? "disconnected" : "connected"})
   }
 
@@ -33178,7 +33181,17 @@ class ObnizBLE {
   onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){}
 
 
-  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){}
+  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    for( let descr of descriptors){
+      let obj = {
+        descriptor_uuid : descr
+      };
+      char.notifyFromServer("discover", obj)
+    }
+    char.notifyFromServer("discoverfinished", {});
+  }
 
 
   onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data){}
@@ -34078,10 +34091,6 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return this.addChild(params);
   }
 
-  //
-  // getCharacteristic(params) {
-  //   return this.getChild(params)
-  // }
 
   getDescriptor(uuid) {
     let obj = this.getChild(uuid);
@@ -34148,18 +34157,11 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    const obj = {
-      ble: {
-        get_descriptors: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.discoverDescriptors(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid
+    );
   }
 
   discoverAllDescriptors() {
@@ -34556,6 +34558,15 @@ class BleRemotePeripheral {
       });
       this.discoverAllServices();
     });
+  }
+
+  async discoverAllHandlesWait(){
+    let services = await this.discoverAllServicesWait();
+    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait));
+    let chars = charsNest.flat();
+    let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
+    let descriptors = descriptorsNest.flat();
+
   }
 
   onconnect() {}
@@ -36206,7 +36217,7 @@ Gatt.prototype.writeAtt = function(data) {
 };
 
 Gatt.prototype.errorResponse = function(opcode, handle, status) {
-    var buf = new Buffer(5);
+    var buf = Buffer.alloc(5);
 
     buf.writeUInt8(ATT_OP_ERROR, 0);
     buf.writeUInt8(opcode, 1);
@@ -36241,7 +36252,7 @@ Gatt.prototype._queueCommand = function(buffer, callback, writeCallback) {
 };
 
 Gatt.prototype.mtuRequest = function(mtu) {
-  var buf = new Buffer(3);
+  var buf =  Buffer.alloc(3);
 
   buf.writeUInt8(ATT_OP_MTU_REQ, 0);
   buf.writeUInt16LE(mtu, 1);
@@ -36250,7 +36261,7 @@ Gatt.prototype.mtuRequest = function(mtu) {
 };
 
 Gatt.prototype.readByGroupRequest = function(startHandle, endHandle, groupUuid) {
-  var buf = new Buffer(7);
+  var buf = Buffer.alloc(7);
 
   buf.writeUInt8(ATT_OP_READ_BY_GROUP_REQ, 0);
   buf.writeUInt16LE(startHandle, 1);
@@ -36261,7 +36272,7 @@ Gatt.prototype.readByGroupRequest = function(startHandle, endHandle, groupUuid) 
 };
 
 Gatt.prototype.readByTypeRequest = function(startHandle, endHandle, groupUuid) {
-  var buf = new Buffer(7);
+  var buf = Buffer.alloc(7);
 
   buf.writeUInt8(ATT_OP_READ_BY_TYPE_REQ, 0);
   buf.writeUInt16LE(startHandle, 1);
@@ -36272,7 +36283,7 @@ Gatt.prototype.readByTypeRequest = function(startHandle, endHandle, groupUuid) {
 };
 
 Gatt.prototype.readRequest = function(handle) {
-  var buf = new Buffer(3);
+  var buf = Buffer.alloc(3);
 
   buf.writeUInt8(ATT_OP_READ_REQ, 0);
   buf.writeUInt16LE(handle, 1);
@@ -36281,7 +36292,7 @@ Gatt.prototype.readRequest = function(handle) {
 };
 
 Gatt.prototype.readBlobRequest = function(handle, offset) {
-  var buf = new Buffer(5);
+  var buf = Buffer.alloc(5);
 
   buf.writeUInt8(ATT_OP_READ_BLOB_REQ, 0);
   buf.writeUInt16LE(handle, 1);
@@ -36291,7 +36302,7 @@ Gatt.prototype.readBlobRequest = function(handle, offset) {
 };
 
 Gatt.prototype.findInfoRequest = function(startHandle, endHandle) {
-  var buf = new Buffer(5);
+  var buf = Buffer.alloc(5);
 
   buf.writeUInt8(ATT_OP_FIND_INFO_REQ, 0);
   buf.writeUInt16LE(startHandle, 1);
@@ -36301,7 +36312,7 @@ Gatt.prototype.findInfoRequest = function(startHandle, endHandle) {
 };
 
 Gatt.prototype.writeRequest = function(handle, data, withoutResponse) {
-  var buf = new Buffer(3 + data.length);
+  var buf = Buffer.alloc(3 + data.length);
 
   buf.writeUInt8(withoutResponse ? ATT_OP_WRITE_CMD : ATT_OP_WRITE_REQ , 0);
   buf.writeUInt16LE(handle, 1);
@@ -36314,7 +36325,7 @@ Gatt.prototype.writeRequest = function(handle, data, withoutResponse) {
 };
 
 Gatt.prototype.prepareWriteRequest = function(handle, offset, data) {
-  var buf = new Buffer(5 + data.length);
+  var buf =Buffer.alloc(5 + data.length);
 
   buf.writeUInt8(ATT_OP_PREPARE_WRITE_REQ, 0);
   buf.writeUInt16LE(handle, 1);
@@ -36328,7 +36339,7 @@ Gatt.prototype.prepareWriteRequest = function(handle, offset, data) {
 };
 
 Gatt.prototype.executeWriteRequest = function(handle, cancelPreparedWrites) {
-  var buf = new Buffer(2);
+  var buf = Buffer.alloc(2);
 
   buf.writeUInt8(ATT_OP_EXECUTE_WRITE_REQ, 0);
   buf.writeUInt8(cancelPreparedWrites ? 0 : 1, 1);
@@ -36337,7 +36348,7 @@ Gatt.prototype.executeWriteRequest = function(handle, cancelPreparedWrites) {
 };
 
 Gatt.prototype.handleConfirmation = function() {
-  var buf = new Buffer(1);
+  var buf = Buffer.alloc(1);
 
   buf.writeUInt8(ATT_OP_HANDLE_CNF, 0);
 
@@ -36532,13 +36543,13 @@ Gatt.prototype.discoverCharacteristics = function(serviceUuid, characteristicUui
 Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
   var characteristic = this._characteristics[serviceUuid][characteristicUuid];
 
-  var readData = new Buffer(0);
+  var readData = Buffer.alloc(0);
 
   var callback = function(data) {
     var opcode = data[0];
 
     if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_READ_BLOB_RESP) {
-      readData = new Buffer(readData.toString('hex') + data.slice(1).toString('hex'), 'hex');
+      readData = Buffer.from(readData.toString('hex') + data.slice(1).toString('hex'), 'hex');
 
       if (data.length === this._mtu) {
         this._queueCommand(this.readBlobRequest(characteristic.valueHandle, readData.length), callback);
@@ -36631,7 +36642,7 @@ Gatt.prototype.broadcast = function(serviceUuid, characteristicUuid, broadcast) 
         value &= 0xfffe;
       }
 
-      var valueBuffer = new Buffer(2);
+      var valueBuffer = Buffer.alloc(2);
       valueBuffer.writeUInt16LE(value, 0);
 
       this._queueCommand(this.writeRequest(handle, valueBuffer, false), function(data) {
@@ -36672,7 +36683,7 @@ Gatt.prototype.notify = function(serviceUuid, characteristicUuid, notify) {
         }
       }
 
-      var valueBuffer = new Buffer(2);
+      var valueBuffer = Buffer.alloc(2);
       valueBuffer.writeUInt16LE(value, 0);
 
       this._queueCommand(this.writeRequest(handle, valueBuffer, false), function(data) {
