@@ -35133,8 +35133,8 @@ AclStream.prototype.pushEncrypt = function(encrypt) {
 };
 
 AclStream.prototype.onSmpStk = function(stk) {
-  var random = new Buffer('0000000000000000', 'hex');
-  var diversifier = new Buffer('0000', 'hex');
+  var random = Buffer.from('0000000000000000', 'hex');
+  var diversifier = Buffer.from('0000', 'hex');
 
   this._hci.startLeEncryption(this._handle, random, diversifier, stk);
 };
@@ -35701,7 +35701,7 @@ function c1(k, r, pres, preq, iat, ia, rat, ra) {
   var p2 = Buffer.concat([
     ra,
     ia,
-    new Buffer('00000000', 'hex')
+    Buffer.from('00000000', 'hex')
   ]);
 
   var res = xor(r, p1);
@@ -35733,7 +35733,7 @@ function e(key, data) {
 }
 
 function xor(b1, b2) {
-  var result = new Buffer(b1.length);
+  var result = Buffer.alloc(b1.length);
 
   for (var i = 0; i < b1.length; i++) {
     result[i] = b1[i] ^ b2[i];
@@ -35743,7 +35743,7 @@ function xor(b1, b2) {
 }
 
 function swap(input) {
-  var output = new Buffer(input.length);
+  var output = Buffer.alloc(input.length);
 
   for (var i = 0; i < output.length; i++) {
     output[i] = input[input.length - i - 1];
@@ -36911,8 +36911,8 @@ Hci.prototype.init = function() {
 };
 
 Hci.prototype.setEventMask = function() {
-  var cmd = new Buffer(12);
-  var eventMask = new Buffer('fffffbff07f8bf3d', 'hex');
+  var cmd = Buffer.alloc(12);
+  var eventMask = Buffer.from('fffffbff07f8bf3d', 'hex');
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -36928,7 +36928,7 @@ Hci.prototype.setEventMask = function() {
 };
 
 Hci.prototype.reset = function() {
-    var cmd = new Buffer(4);
+    var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -36943,7 +36943,7 @@ Hci.prototype.reset = function() {
 
 
 Hci.prototype.readLocalVersion = function() {
-  var cmd = new Buffer(4);
+  var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -36957,7 +36957,7 @@ Hci.prototype.readLocalVersion = function() {
 };
 
 Hci.prototype.readBdAddr = function() {
-  var cmd = new Buffer(4);
+  var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -36971,8 +36971,8 @@ Hci.prototype.readBdAddr = function() {
 };
 
 Hci.prototype.setLeEventMask = function() {
-  var cmd = new Buffer(12);
-  var leEventMask = new Buffer('1f00000000000000', 'hex');
+  var cmd = Buffer.alloc(12);
+  var leEventMask = Buffer.from('1f00000000000000', 'hex');
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -36988,7 +36988,7 @@ Hci.prototype.setLeEventMask = function() {
 };
 
 Hci.prototype.readLeHostSupported = function() {
-  var cmd = new Buffer(4);
+  var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37002,7 +37002,7 @@ Hci.prototype.readLeHostSupported = function() {
 };
 
 Hci.prototype.writeLeHostSupported = function() {
-  var cmd = new Buffer(6);
+  var cmd = Buffer.alloc(6);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37020,7 +37020,7 @@ Hci.prototype.writeLeHostSupported = function() {
 };
 
 Hci.prototype.setScanParameters = function() {
-  var cmd = new Buffer(11);
+  var cmd = Buffer.alloc(11);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37041,7 +37041,7 @@ Hci.prototype.setScanParameters = function() {
 };
 
 Hci.prototype.setScanEnabled = function(enabled, filterDuplicates) {
-  var cmd = new Buffer(6);
+  var cmd = Buffer.alloc(6);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37059,7 +37059,7 @@ Hci.prototype.setScanEnabled = function(enabled, filterDuplicates) {
 };
 
 Hci.prototype.createLeConn = function(address, addressType) {
-  var cmd = new Buffer(29);
+  var cmd = Buffer.alloc(29);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37074,7 +37074,7 @@ Hci.prototype.createLeConn = function(address, addressType) {
   cmd.writeUInt8(0x00, 8); // initiator filter
 
   cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 9); // peer address type
-  (new Buffer(address.split(':').reverse().join(''), 'hex')).copy(cmd, 10); // peer address
+  (Buffer.from(address.split(':').reverse().join(''), 'hex')).copy(cmd, 10); // peer address
 
   cmd.writeUInt8(0x00, 16); // own address type
 
@@ -37090,7 +37090,7 @@ Hci.prototype.createLeConn = function(address, addressType) {
 };
 
 Hci.prototype.connUpdateLe = function(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-  var cmd = new Buffer(18);
+  var cmd = Buffer.alloc(18);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37113,7 +37113,7 @@ Hci.prototype.connUpdateLe = function(handle, minInterval, maxInterval, latency,
 };
 
 Hci.prototype.startLeEncryption = function(handle, random, diversifier, key) {
-  var cmd = new Buffer(32);
+  var cmd = Buffer.alloc(32);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37133,7 +37133,7 @@ Hci.prototype.startLeEncryption = function(handle, random, diversifier, key) {
 };
 
 Hci.prototype.disconnect = function(handle, reason) {
-  var cmd = new Buffer(7);
+  var cmd = Buffer.alloc(7);
 
   reason = reason || HCI_OE_USER_ENDED_CONNECTION;
 
@@ -37153,7 +37153,7 @@ Hci.prototype.disconnect = function(handle, reason) {
 };
 
 Hci.prototype.readRssi = function(handle) {
-  var cmd = new Buffer(6);
+  var cmd = Buffer.alloc(6);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -37170,7 +37170,7 @@ Hci.prototype.readRssi = function(handle) {
 };
 
 Hci.prototype.writeAclDataPkt = function(handle, cid, data) {
-  var pkt = new Buffer(9 + data.length);
+  var pkt = Buffer.alloc(9 + data.length);
 
   // header
   pkt.writeUInt8(HCI_ACLDATA_PKT, 0);
@@ -37524,7 +37524,7 @@ Signaling.prototype.processConnectionParameterUpdateRequest = function(identifie
   debug('\t\tsupervision timeout = ', supervisionTimeout);
 
   if (os.platform() !== 'linux' || process.env.HCI_CHANNEL_USER) {
-    var response = new Buffer(6);
+    var response = Buffer.alloc(6);
 
     response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
     response.writeUInt8(identifier, 1); // identifier
@@ -37567,10 +37567,10 @@ var SMP_MASTER_IDENT = 0x07;
 var Smp = function(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
   this._aclStream = aclStream;
 
-  this._iat = new Buffer([(localAddressType === 'random') ? 0x01 : 0x00]);
-  this._ia = new Buffer(localAddress.split(':').reverse().join(''), 'hex');
-  this._rat = new Buffer([(remoteAddressType === 'random') ? 0x01 : 0x00]);
-  this._ra = new Buffer(remoteAddress.split(':').reverse().join(''), 'hex');
+  this._iat = Buffer.from([(localAddressType === 'random') ? 0x01 : 0x00]);
+  this._ia = Buffer.from(localAddress.split(':').reverse().join(''), 'hex');
+  this._rat = Buffer.from([(remoteAddressType === 'random') ? 0x01 : 0x00]);
+  this._ra = Buffer.from(remoteAddress.split(':').reverse().join(''), 'hex');
 
   this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
   this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
@@ -37582,7 +37582,7 @@ var Smp = function(aclStream, localAddressType, localAddress, remoteAddressType,
 util.inherits(Smp, events.EventEmitter);
 
 Smp.prototype.sendPairingRequest = function() {
-  this._preq = new Buffer([
+  this._preq = Buffer.from([
     SMP_PAIRING_REQUEST,
     0x03, // IO capability: NoInputNoOutput
     0x00, // OOB data: Authentication data not present
@@ -37627,11 +37627,11 @@ Smp.prototype.onAclStreamEnd = function() {
 Smp.prototype.handlePairingResponse = function(data) {
   this._pres = data;
 
-  this._tk = new Buffer('00000000000000000000000000000000', 'hex');
+  this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
   this._r = crypto.r();
 
   this.write(Buffer.concat([
-    new Buffer([SMP_PAIRING_CONFIRM]),
+    Buffer.from([SMP_PAIRING_CONFIRM]),
     crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
   ]));
 };
@@ -37640,7 +37640,7 @@ Smp.prototype.handlePairingConfirm = function(data) {
   this._pcnf = data;
 
   this.write(Buffer.concat([
-    new Buffer([SMP_PAIRING_RANDOM]),
+    Buffer.from([SMP_PAIRING_RANDOM]),
     this._r
   ]));
 };
@@ -37649,7 +37649,7 @@ Smp.prototype.handlePairingRandom = function(data) {
   var r = data.slice(1);
 
   var pcnf = Buffer.concat([
-    new Buffer([SMP_PAIRING_CONFIRM]),
+    Buffer.from([SMP_PAIRING_CONFIRM]),
     crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
   ]);
 
@@ -37658,7 +37658,7 @@ Smp.prototype.handlePairingRandom = function(data) {
 
     this.emit('stk', stk);
   } else {
-    this.write(new Buffer([
+    this.write(Buffer.from([
       SMP_PAIRING_RANDOM,
       SMP_PAIRING_CONFIRM
     ]));

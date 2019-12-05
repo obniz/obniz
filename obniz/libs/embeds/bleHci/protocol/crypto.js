@@ -16,7 +16,7 @@ function c1(k, r, pres, preq, iat, ia, rat, ra) {
   var p2 = Buffer.concat([
     ra,
     ia,
-    new Buffer('00000000', 'hex')
+    Buffer.from('00000000', 'hex')
   ]);
 
   var res = xor(r, p1);
@@ -48,7 +48,7 @@ function e(key, data) {
 }
 
 function xor(b1, b2) {
-  var result = new Buffer(b1.length);
+  var result = Buffer.alloc(b1.length);
 
   for (var i = 0; i < b1.length; i++) {
     result[i] = b1[i] ^ b2[i];
@@ -58,7 +58,7 @@ function xor(b1, b2) {
 }
 
 function swap(input) {
-  var output = new Buffer(input.length);
+  var output = Buffer.alloc(input.length);
 
   for (var i = 0; i < output.length; i++) {
     output[i] = input[input.length - i - 1];

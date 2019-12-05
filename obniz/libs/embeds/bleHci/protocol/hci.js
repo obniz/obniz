@@ -108,8 +108,8 @@ Hci.prototype.init = function() {
 };
 
 Hci.prototype.setEventMask = function() {
-  var cmd = new Buffer(12);
-  var eventMask = new Buffer('fffffbff07f8bf3d', 'hex');
+  var cmd = Buffer.alloc(12);
+  var eventMask = Buffer.from('fffffbff07f8bf3d', 'hex');
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -125,7 +125,7 @@ Hci.prototype.setEventMask = function() {
 };
 
 Hci.prototype.reset = function() {
-    var cmd = new Buffer(4);
+    var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -140,7 +140,7 @@ Hci.prototype.reset = function() {
 
 
 Hci.prototype.readLocalVersion = function() {
-  var cmd = new Buffer(4);
+  var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -154,7 +154,7 @@ Hci.prototype.readLocalVersion = function() {
 };
 
 Hci.prototype.readBdAddr = function() {
-  var cmd = new Buffer(4);
+  var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -168,8 +168,8 @@ Hci.prototype.readBdAddr = function() {
 };
 
 Hci.prototype.setLeEventMask = function() {
-  var cmd = new Buffer(12);
-  var leEventMask = new Buffer('1f00000000000000', 'hex');
+  var cmd = Buffer.alloc(12);
+  var leEventMask = Buffer.from('1f00000000000000', 'hex');
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -185,7 +185,7 @@ Hci.prototype.setLeEventMask = function() {
 };
 
 Hci.prototype.readLeHostSupported = function() {
-  var cmd = new Buffer(4);
+  var cmd = Buffer.alloc(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -199,7 +199,7 @@ Hci.prototype.readLeHostSupported = function() {
 };
 
 Hci.prototype.writeLeHostSupported = function() {
-  var cmd = new Buffer(6);
+  var cmd = Buffer.alloc(6);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -217,7 +217,7 @@ Hci.prototype.writeLeHostSupported = function() {
 };
 
 Hci.prototype.setScanParameters = function() {
-  var cmd = new Buffer(11);
+  var cmd = Buffer.alloc(11);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -238,7 +238,7 @@ Hci.prototype.setScanParameters = function() {
 };
 
 Hci.prototype.setScanEnabled = function(enabled, filterDuplicates) {
-  var cmd = new Buffer(6);
+  var cmd = Buffer.alloc(6);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -256,7 +256,7 @@ Hci.prototype.setScanEnabled = function(enabled, filterDuplicates) {
 };
 
 Hci.prototype.createLeConn = function(address, addressType) {
-  var cmd = new Buffer(29);
+  var cmd = Buffer.alloc(29);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -271,7 +271,7 @@ Hci.prototype.createLeConn = function(address, addressType) {
   cmd.writeUInt8(0x00, 8); // initiator filter
 
   cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 9); // peer address type
-  (new Buffer(address.split(':').reverse().join(''), 'hex')).copy(cmd, 10); // peer address
+  (Buffer.from(address.split(':').reverse().join(''), 'hex')).copy(cmd, 10); // peer address
 
   cmd.writeUInt8(0x00, 16); // own address type
 
@@ -287,7 +287,7 @@ Hci.prototype.createLeConn = function(address, addressType) {
 };
 
 Hci.prototype.connUpdateLe = function(handle, minInterval, maxInterval, latency, supervisionTimeout) {
-  var cmd = new Buffer(18);
+  var cmd = Buffer.alloc(18);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -310,7 +310,7 @@ Hci.prototype.connUpdateLe = function(handle, minInterval, maxInterval, latency,
 };
 
 Hci.prototype.startLeEncryption = function(handle, random, diversifier, key) {
-  var cmd = new Buffer(32);
+  var cmd = Buffer.alloc(32);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -330,7 +330,7 @@ Hci.prototype.startLeEncryption = function(handle, random, diversifier, key) {
 };
 
 Hci.prototype.disconnect = function(handle, reason) {
-  var cmd = new Buffer(7);
+  var cmd = Buffer.alloc(7);
 
   reason = reason || HCI_OE_USER_ENDED_CONNECTION;
 
@@ -350,7 +350,7 @@ Hci.prototype.disconnect = function(handle, reason) {
 };
 
 Hci.prototype.readRssi = function(handle) {
-  var cmd = new Buffer(6);
+  var cmd = Buffer.alloc(6);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -367,7 +367,7 @@ Hci.prototype.readRssi = function(handle) {
 };
 
 Hci.prototype.writeAclDataPkt = function(handle, cid, data) {
-  var pkt = new Buffer(9 + data.length);
+  var pkt = Buffer.alloc(9 + data.length);
 
   // header
   pkt.writeUInt8(HCI_ACLDATA_PKT, 0);
