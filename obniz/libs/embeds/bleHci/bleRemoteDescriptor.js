@@ -23,7 +23,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
 
   write(array) {
 
-    this.characteristic.service.peripheral.obnizBle._bindings.readValue(
+    this.characteristic.service.peripheral.obnizBle._bindings.writeValue(
         this.characteristic.service.peripheral.address,
         this.characteristic.service.uuid,
         this.characteristic.uuid,

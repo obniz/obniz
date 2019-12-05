@@ -164,7 +164,7 @@ class ObnizBLE {
 
 
 
-  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {
+  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
 
@@ -175,17 +175,17 @@ class ObnizBLE {
       characteristic.notifyFromServer("onnotify", obj)
     }else {
       let obj = {
-        result : "success",
+        result : isSuccess ? "success" : "failed",
         data : Array.from(data)
       };
       characteristic.notifyFromServer("onread", obj)
     }
   }
 
-  onWrite(peripheralUuid, serviceUuid, characteristicUuid){
+  onWrite(peripheralUuid, serviceUuid, characteristicUuid,isSuccess){
     let peripheral = this.findPeripheral(peripheralUuid);
     let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    characteristic.notifyFromServer("onwrite", {result : "success"})
+    characteristic.notifyFromServer("onwrite", {result : isSuccess ? "success" : "failed"})
   }
 
   // todo
@@ -210,7 +210,7 @@ class ObnizBLE {
   }
 
 
-  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
+  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
@@ -219,13 +219,13 @@ class ObnizBLE {
     });
 
     let obj = {
-      result: "success",
+      result:  isSuccess ? "success" : "failed",
       data: Array.from(data)
     };
     descriptor.notifyFromServer("onread", obj)
   }
 
-  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
@@ -234,7 +234,7 @@ class ObnizBLE {
     });
 
     let obj = {
-      result: "success",
+      result: isSuccess ? "success" : "failed",
     };
     descriptor.notifyFromServer("onwrite", obj)
 

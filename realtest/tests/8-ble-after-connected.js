@@ -1,6 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
+chai.use(require('chai-like'));
 
 let obnizA, obnizB;
 
@@ -44,10 +45,17 @@ describe('8-ble', function() {
     characteristic3.addProperty('write');
     characteristic3.addProperty('notify');
 
+    let characteristic4 = new obnizA.ble.characteristic({
+      uuid: 'FFF4',
+      data: [0, 1, 2, 3, 4],
+    });
+    characteristic4.addProperty('write');
+
     service.addCharacteristic(characteristic);
     characteristic.addDescriptor(descriptor);
     service.addCharacteristic(characteristic2);
     service.addCharacteristic(characteristic3);
+    service.addCharacteristic(characteristic4);
 
     obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
@@ -94,11 +102,10 @@ describe('8-ble', function() {
       results.push(JSON.parse(JSON.stringify(service)));
     }
 
-    expect(results).to.be.deep.equal([
+    expect(results).like([
       {
         characteristics: [
           {
-            data: [],
             properties: ['indicate'],
             uuid: '2a05',
           },
@@ -175,6 +182,11 @@ describe('8-ble', function() {
             data: [92],
             uuid: 'fff3',
           },
+          {
+            data: [0, 1, 2, 3, 4],
+            properties: ['write'],
+            uuid: 'fff4',
+          },
         ],
         uuid: 'fff0',
       },
@@ -201,11 +213,27 @@ describe('8-ble', function() {
     expect(chara.canRead()).to.be.equal(true);
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
+    console.log('write');
     let result = await chara.writeTextWait('hello');
     expect(result).to.be.equal(false);
+    console.log('read');
     let data = await chara.readWait();
     expect(data).to.be.deep.equal([101, 51, 214]);
+    console.log('finished');
   });
+  //
+  // it('read error', async () => {
+  //   let chara = this.peripheral.getService('fff0').getCharacteristic('fff4');
+  //   expect(chara.canWrite()).to.be.equal(true);
+  //   expect(chara.canWriteWithoutResponse()).to.be.equal(false);
+  //   expect(chara.canRead()).to.be.equal(false);
+  //   expect(chara.canNotify()).to.be.equal(false);
+  //   expect(chara.canIndicate()).to.be.equal(false);
+  //
+  //   let data = await chara.readWait();
+  //   expect(data).to.be.deep.equal([0, 1, 2, 3, 4]);
+  //   console.log('finished');
+  // });
 
   it('nofify', async () => {
     console.log('start!');

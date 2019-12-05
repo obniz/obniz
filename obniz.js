@@ -33147,7 +33147,7 @@ class ObnizBLE {
 
 
 
-  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {
+  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
 
@@ -33158,17 +33158,17 @@ class ObnizBLE {
       characteristic.notifyFromServer("onnotify", obj)
     }else {
       let obj = {
-        result : "success",
+        result : isSuccess ? "success" : "failed",
         data : Array.from(data)
       };
       characteristic.notifyFromServer("onread", obj)
     }
   }
 
-  onWrite(peripheralUuid, serviceUuid, characteristicUuid){
+  onWrite(peripheralUuid, serviceUuid, characteristicUuid,isSuccess){
     let peripheral = this.findPeripheral(peripheralUuid);
     let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    characteristic.notifyFromServer("onwrite", {result : "success"})
+    characteristic.notifyFromServer("onwrite", {result : isSuccess ? "success" : "failed"})
   }
 
   // todo
@@ -33193,7 +33193,7 @@ class ObnizBLE {
   }
 
 
-  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
+  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
@@ -33202,13 +33202,13 @@ class ObnizBLE {
     });
 
     let obj = {
-      result: "success",
+      result:  isSuccess ? "success" : "failed",
       data: Array.from(data)
     };
     descriptor.notifyFromServer("onread", obj)
   }
 
-  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
@@ -33217,7 +33217,7 @@ class ObnizBLE {
     });
 
     let obj = {
-      result: "success",
+      result: isSuccess ? "success" : "failed",
     };
     descriptor.notifyFromServer("onwrite", obj)
 
@@ -34291,7 +34291,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
 
   write(array) {
 
-    this.characteristic.service.peripheral.obnizBle._bindings.readValue(
+    this.characteristic.service.peripheral.obnizBle._bindings.writeValue(
         this.characteristic.service.peripheral.address,
         this.characteristic.service.uuid,
         this.characteristic.uuid,
@@ -35515,10 +35515,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onRead(address, serviceUuid, characteristicUuid, data) {
+  onRead(address, serviceUuid, characteristicUuid, data, isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('read', uuid, serviceUuid, characteristicUuid, data, false);
+    this.emit('read', uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
   };
 
   write(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
@@ -35532,10 +35532,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onWrite(address, serviceUuid, characteristicUuid) {
+  onWrite(address, serviceUuid, characteristicUuid, isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('write', uuid, serviceUuid, characteristicUuid);
+    this.emit('write', uuid, serviceUuid, characteristicUuid,isSuccess);
   };
 
   broadcast(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
@@ -35575,7 +35575,7 @@ class NobleBindings extends events.EventEmitter {
   onNotification(address, serviceUuid, characteristicUuid, data) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('read', uuid, serviceUuid, characteristicUuid, data, true);
+    this.emit('read', uuid, serviceUuid, characteristicUuid, data, true, true);
   };
 
   discoverDescriptors(peripheralUuid, serviceUuid, characteristicUuid) {
@@ -35606,10 +35606,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data) {
+  onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('valueRead', uuid, serviceUuid, characteristicUuid, descriptorUuid, data);
+    this.emit('valueRead', uuid, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess);
   };
 
   writeValue(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
@@ -35623,10 +35623,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid) {
+  onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('valueWrite', uuid, serviceUuid, characteristicUuid, descriptorUuid);
+    this.emit('valueWrite', uuid, serviceUuid, characteristicUuid, descriptorUuid,isSuccess);
   };
 
   readHandle(peripheralUuid, attHandle) {
@@ -36549,6 +36549,12 @@ Gatt.prototype.discoverCharacteristics = function(serviceUuid, characteristicUui
 };
 
 Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
+
+  if(! this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]){
+    this.emit('read', this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
+    return;
+  }
+
   var characteristic = this._characteristics[serviceUuid][characteristicUuid];
 
   var readData = Buffer.alloc(0);
@@ -36562,10 +36568,12 @@ Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
       if (data.length === this._mtu) {
         this._queueCommand(this.readBlobRequest(characteristic.valueHandle, readData.length), callback);
       } else {
-        this.emit('read', this._address, serviceUuid, characteristicUuid, readData);
+        this.emit('read', this._address, serviceUuid, characteristicUuid, readData, true);
       }
-    } else {
-      this.emit('read', this._address, serviceUuid, characteristicUuid, readData);
+    } else if(opcode === ATT_OP_ERROR){
+      this.emit('read', this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
+    }else  {
+      this.emit('read', this._address, serviceUuid, characteristicUuid, readData, true);
     }
   }.bind(this);
 
@@ -36573,8 +36581,12 @@ Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
 };
 
 Gatt.prototype.write = function(serviceUuid, characteristicUuid, data, withoutResponse) {
-  var characteristic = this._characteristics[serviceUuid][characteristicUuid];
+  if(! this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]){
+    this.emit('write', this._address, serviceUuid, characteristicUuid, false);
+    return;
+  }
 
+  var characteristic = this._characteristics[serviceUuid][characteristicUuid];
   if (withoutResponse) {
     this._queueCommand(this.writeRequest(characteristic.valueHandle, data, true), null, function() {
       this.emit('write', this._address, serviceUuid, characteristicUuid);
@@ -36585,8 +36597,8 @@ Gatt.prototype.write = function(serviceUuid, characteristicUuid, data, withoutRe
     this._queueCommand(this.writeRequest(characteristic.valueHandle, data, false), function(data) {
       var opcode = data[0];
 
-      if (opcode === ATT_OP_WRITE_RESP) {
-        this.emit('write', this._address, serviceUuid, characteristicUuid);
+      if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
+        this.emit('write', this._address, serviceUuid, characteristicUuid, opcode === ATT_OP_WRITE_RESP);
       }
     }.bind(this));
   }
@@ -36744,25 +36756,37 @@ Gatt.prototype.discoverDescriptors = function(serviceUuid, characteristicUuid) {
 };
 
 Gatt.prototype.readValue = function(serviceUuid, characteristicUuid, descriptorUuid) {
+
+  if(! this._descriptors[serviceUuid] || !this._descriptors[serviceUuid][characteristicUuid] || !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]){
+    this.emit('valueRead', this._address, serviceUuid, characteristicUuid,  descriptorUuid, Buffer.alloc(0), false);
+    return;
+  }
+
   var descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
 
   this._queueCommand(this.readRequest(descriptor.handle), function(data) {
     var opcode = data[0];
 
-    if (opcode === ATT_OP_READ_RESP) {
-      this.emit('valueRead', this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1));
+    if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_ERROR) {
+      this.emit('valueRead', this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1),opcode === ATT_OP_READ_RESP  );
     }
   }.bind(this));
 };
 
 Gatt.prototype.writeValue = function(serviceUuid, characteristicUuid, descriptorUuid, data) {
+
+  if(! this._descriptors[serviceUuid] || !this._descriptors[serviceUuid][characteristicUuid] || !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]){
+    this.emit('valueWrite', this._address, serviceUuid, characteristicUuid,  descriptorUuid, false);
+    return;
+  }
+
   var descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
 
   this._queueCommand(this.writeRequest(descriptor.handle, data, false), function(data) {
     var opcode = data[0];
 
-    if (opcode === ATT_OP_WRITE_RESP) {
-      this.emit('valueWrite', this._address, serviceUuid, characteristicUuid, descriptorUuid);
+    if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
+      this.emit('valueWrite', this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT_OP_WRITE_RESP);
     }
   }.bind(this));
 };

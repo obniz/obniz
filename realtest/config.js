@@ -42,9 +42,9 @@ function connectTwoObniz(done, params) {
   obnizA.onconnect = () => {
     obnizB = new Obniz(obnizB_ID, { local_connect: local_connect });
     console.log('B local_connect : ' + local_connect);
-    if (process.env.DEBUG) {
-      obnizB.debugprint = true;
-    }
+    // if (process.env.DEBUG) {
+    obnizB.debugprint = true;
+    // }
     obnizB.onconnect = () => {
       console.log('connected two');
       done();

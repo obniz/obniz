@@ -500,6 +500,12 @@ Gatt.prototype.discoverCharacteristics = function(serviceUuid, characteristicUui
 };
 
 Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
+
+  if(! this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]){
+    this.emit('read', this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
+    return;
+  }
+
   var characteristic = this._characteristics[serviceUuid][characteristicUuid];
 
   var readData = Buffer.alloc(0);
@@ -513,10 +519,12 @@ Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
       if (data.length === this._mtu) {
         this._queueCommand(this.readBlobRequest(characteristic.valueHandle, readData.length), callback);
       } else {
-        this.emit('read', this._address, serviceUuid, characteristicUuid, readData);
+        this.emit('read', this._address, serviceUuid, characteristicUuid, readData, true);
       }
-    } else {
-      this.emit('read', this._address, serviceUuid, characteristicUuid, readData);
+    } else if(opcode === ATT_OP_ERROR){
+      this.emit('read', this._address, serviceUuid, characteristicUuid, Buffer.alloc(0), false);
+    }else  {
+      this.emit('read', this._address, serviceUuid, characteristicUuid, readData, true);
     }
   }.bind(this);
 
@@ -524,8 +532,12 @@ Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
 };
 
 Gatt.prototype.write = function(serviceUuid, characteristicUuid, data, withoutResponse) {
-  var characteristic = this._characteristics[serviceUuid][characteristicUuid];
+  if(! this._characteristics[serviceUuid] || !this._characteristics[serviceUuid][characteristicUuid]){
+    this.emit('write', this._address, serviceUuid, characteristicUuid, false);
+    return;
+  }
 
+  var characteristic = this._characteristics[serviceUuid][characteristicUuid];
   if (withoutResponse) {
     this._queueCommand(this.writeRequest(characteristic.valueHandle, data, true), null, function() {
       this.emit('write', this._address, serviceUuid, characteristicUuid);
@@ -536,8 +548,8 @@ Gatt.prototype.write = function(serviceUuid, characteristicUuid, data, withoutRe
     this._queueCommand(this.writeRequest(characteristic.valueHandle, data, false), function(data) {
       var opcode = data[0];
 
-      if (opcode === ATT_OP_WRITE_RESP) {
-        this.emit('write', this._address, serviceUuid, characteristicUuid);
+      if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
+        this.emit('write', this._address, serviceUuid, characteristicUuid, opcode === ATT_OP_WRITE_RESP);
       }
     }.bind(this));
   }
@@ -695,25 +707,37 @@ Gatt.prototype.discoverDescriptors = function(serviceUuid, characteristicUuid) {
 };
 
 Gatt.prototype.readValue = function(serviceUuid, characteristicUuid, descriptorUuid) {
+
+  if(! this._descriptors[serviceUuid] || !this._descriptors[serviceUuid][characteristicUuid] || !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]){
+    this.emit('valueRead', this._address, serviceUuid, characteristicUuid,  descriptorUuid, Buffer.alloc(0), false);
+    return;
+  }
+
   var descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
 
   this._queueCommand(this.readRequest(descriptor.handle), function(data) {
     var opcode = data[0];
 
-    if (opcode === ATT_OP_READ_RESP) {
-      this.emit('valueRead', this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1));
+    if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_ERROR) {
+      this.emit('valueRead', this._address, serviceUuid, characteristicUuid, descriptorUuid, data.slice(1),opcode === ATT_OP_READ_RESP  );
     }
   }.bind(this));
 };
 
 Gatt.prototype.writeValue = function(serviceUuid, characteristicUuid, descriptorUuid, data) {
+
+  if(! this._descriptors[serviceUuid] || !this._descriptors[serviceUuid][characteristicUuid] || !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]){
+    this.emit('valueWrite', this._address, serviceUuid, characteristicUuid,  descriptorUuid, false);
+    return;
+  }
+
   var descriptor = this._descriptors[serviceUuid][characteristicUuid][descriptorUuid];
 
   this._queueCommand(this.writeRequest(descriptor.handle, data, false), function(data) {
     var opcode = data[0];
 
-    if (opcode === ATT_OP_WRITE_RESP) {
-      this.emit('valueWrite', this._address, serviceUuid, characteristicUuid, descriptorUuid);
+    if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
+      this.emit('valueWrite', this._address, serviceUuid, characteristicUuid, descriptorUuid, opcode === ATT_OP_WRITE_RESP);
     }
   }.bind(this));
 };

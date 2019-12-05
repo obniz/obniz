@@ -355,10 +355,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onRead(address, serviceUuid, characteristicUuid, data) {
+  onRead(address, serviceUuid, characteristicUuid, data, isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('read', uuid, serviceUuid, characteristicUuid, data, false);
+    this.emit('read', uuid, serviceUuid, characteristicUuid, data, false, isSuccess);
   };
 
   write(peripheralUuid, serviceUuid, characteristicUuid, data, withoutResponse) {
@@ -372,10 +372,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onWrite(address, serviceUuid, characteristicUuid) {
+  onWrite(address, serviceUuid, characteristicUuid, isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('write', uuid, serviceUuid, characteristicUuid);
+    this.emit('write', uuid, serviceUuid, characteristicUuid,isSuccess);
   };
 
   broadcast(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
@@ -415,7 +415,7 @@ class NobleBindings extends events.EventEmitter {
   onNotification(address, serviceUuid, characteristicUuid, data) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('read', uuid, serviceUuid, characteristicUuid, data, true);
+    this.emit('read', uuid, serviceUuid, characteristicUuid, data, true, true);
   };
 
   discoverDescriptors(peripheralUuid, serviceUuid, characteristicUuid) {
@@ -446,10 +446,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data) {
+  onValueRead(address, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('valueRead', uuid, serviceUuid, characteristicUuid, descriptorUuid, data);
+    this.emit('valueRead', uuid, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess);
   };
 
   writeValue(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
@@ -463,10 +463,10 @@ class NobleBindings extends events.EventEmitter {
     }
   };
 
-  onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid) {
+  onValueWrite(address, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
     var uuid = address.split(':').join('').toLowerCase();
 
-    this.emit('valueWrite', uuid, serviceUuid, characteristicUuid, descriptorUuid);
+    this.emit('valueWrite', uuid, serviceUuid, characteristicUuid, descriptorUuid,isSuccess);
   };
 
   readHandle(peripheralUuid, attHandle) {
