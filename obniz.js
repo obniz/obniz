@@ -33143,11 +33143,44 @@ class ObnizBLE {
 
 
 
-  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {}
-  onWrite(peripheralUuid, serviceUuid, characteristicUuid){}
-  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state){}
+  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let service = peripheral.findService({service_uuid: serviceUuid});
+    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+
+    if(isNotification){
+      let obj = {
+        data : Array.from(data)
+      };
+      characteristic.notifyFromServer("onnotify", obj)
+    }else {
+      let obj = {
+        result : "success",
+        data : Array.from(data)
+      };
+      characteristic.notifyFromServer("onread", obj)
+    }
+  }
+
+  onWrite(peripheralUuid, serviceUuid, characteristicUuid){
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let service = peripheral.findService({service_uuid: serviceUuid});
+    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+    characteristic.notifyFromServer("onwrite", {result : "success"})
+  }
+
+  // todo
+  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state){
+
+  }
+
+  // notify when my device is peripheral?
   onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){}
-  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid, descriptors){}
+
+
+  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){}
+
+
   onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data){}
   onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid){}
   onHandleRead(peripheralUuid, handle, data){}
@@ -34013,7 +34046,7 @@ module.exports = BleRemoteAttributeAbstract;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
 
 const BleRemoteDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js");
 const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
@@ -34093,38 +34126,25 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    const obj = {
-      ble: {
-        read_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.read(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid
+    );
   }
 
   write(array, needResponse) {
     if (needResponse === undefined) {
       needResponse = true;
     }
-    const obj = {
-      ble: {
-        write_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-          data: array,
-          needResponse,
-        },
-      },
-    };
+    this.service.peripheral.obnizBle._bindings.write(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        Buffer.from(array),
+        !needResponse
+    );
 
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
   }
 
   discoverChildren() {
@@ -34222,6 +34242,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
 module.exports = BleRemoteCharacteristic;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -35840,7 +35861,8 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     manufacturerData: undefined,
     serviceData: [],
     serviceUuids: [],
-    solicitationServiceUuids: []
+    solicitationServiceUuids: [],
+    raw : []
   };
 
   var discoveryCount = previouslyDiscovered ? this._discoveries[address].count : 0;
@@ -35974,7 +35996,9 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     i += (length + 1);
   }
 
-  advertisement.raw = Array.from(eir);
+  if(eir.length > 0){
+    advertisement.raw = Array.from(eir);
+  }
   debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
   var connectable = (type === 0x04 && previouslyDiscovered) ? this._discoveries[address].connectable : (type !== 0x03);

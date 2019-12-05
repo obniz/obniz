@@ -160,11 +160,44 @@ class ObnizBLE {
 
 
 
-  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {}
-  onWrite(peripheralUuid, serviceUuid, characteristicUuid){}
-  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state){}
+  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let service = peripheral.findService({service_uuid: serviceUuid});
+    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+
+    if(isNotification){
+      let obj = {
+        data : Array.from(data)
+      };
+      characteristic.notifyFromServer("onnotify", obj)
+    }else {
+      let obj = {
+        result : "success",
+        data : Array.from(data)
+      };
+      characteristic.notifyFromServer("onread", obj)
+    }
+  }
+
+  onWrite(peripheralUuid, serviceUuid, characteristicUuid){
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let service = peripheral.findService({service_uuid: serviceUuid});
+    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+    characteristic.notifyFromServer("onwrite", {result : "success"})
+  }
+
+  // todo
+  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state){
+
+  }
+
+  // notify when my device is peripheral?
   onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){}
-  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid, descriptors){}
+
+
+  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){}
+
+
   onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data){}
   onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid){}
   onHandleRead(peripheralUuid, handle, data){}

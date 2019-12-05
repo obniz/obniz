@@ -78,38 +78,25 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    const obj = {
-      ble: {
-        read_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.read(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid
+    );
   }
 
   write(array, needResponse) {
     if (needResponse === undefined) {
       needResponse = true;
     }
-    const obj = {
-      ble: {
-        write_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-          data: array,
-          needResponse,
-        },
-      },
-    };
+    this.service.peripheral.obnizBle._bindings.write(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        Buffer.from(array),
+        !needResponse
+    );
 
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
   }
 
   discoverChildren() {
