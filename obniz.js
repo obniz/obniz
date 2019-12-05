@@ -33095,11 +33095,12 @@ class ObnizBLE {
       'address_type': addressType,
       'ble_event_type': connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
       'rssi': rssi,
-      'adv_data': advertisement.raw,
-      'scan_resp': [],
+      'adv_data': advertisement.advertisementRaw,
+      'scan_resp': advertisement.scanResponseRaw,
     };
 
     val.setParams(peripheralData);
+    val._adv_data_filtered = advertisement;
 
     this.scan.notifyFromServer('onfind', val);
   }
@@ -33148,8 +33149,7 @@ class ObnizBLE {
 
   onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
-    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
 
     if(isNotification){
       let obj = {
@@ -33167,8 +33167,7 @@ class ObnizBLE {
 
   onWrite(peripheralUuid, serviceUuid, characteristicUuid){
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
-    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
     characteristic.notifyFromServer("onwrite", {result : "success"})
   }
 
@@ -33194,8 +33193,35 @@ class ObnizBLE {
   }
 
 
-  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data){}
-  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid){}
+  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let descriptor = peripheral.findDescriptor({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+      descriptor_uuid: descriptorUuid
+    });
+
+    let obj = {
+      result: "success",
+      data: Array.from(data)
+    };
+    descriptor.notifyFromServer("onread", obj)
+  }
+
+  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let descriptor = peripheral.findDescriptor({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+      descriptor_uuid: descriptorUuid
+    });
+
+    let obj = {
+      result: "success",
+    };
+    descriptor.notifyFromServer("onwrite", obj)
+
+  }
   onHandleRead(peripheralUuid, handle, data){}
   onHandleWrite(peripheralUuid, handle){}
   onHandleNotify(peripheralUuid, handle, data){}
@@ -34104,34 +34130,23 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   registerNotify(callback) {
     this.onnotify = callback;
-    const obj = {
-      ble: {
-        register_notify_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.notify(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        true
+    );
   }
 
   unregisterNotify() {
     this.onnotify = function() {};
-    const obj = {
-      ble: {
-        unregister_notify_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
 
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.notify(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        false
+    );
   }
 
   read() {
@@ -34251,7 +34266,7 @@ module.exports = BleRemoteCharacteristic;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
 
 const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
@@ -34266,45 +34281,30 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    const obj = {
-      ble: {
-        read_descriptor: {
-          address: this.characteristic.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
-          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.characteristic.service.peripheral.Obniz.send(obj);
+    this.characteristic.service.peripheral.obnizBle._bindings.readValue(
+        this.characteristic.service.peripheral.address,
+        this.characteristic.service.uuid,
+        this.characteristic.uuid,
+        this.uuid
+    );
   }
 
-  write(array, needResponse) {
-    if (needResponse === undefined) {
-      needResponse = true;
-    }
-    const obj = {
-      ble: {
-        write_descriptor: {
-          address: this.characteristic.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
-          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
-          data: array,
-          needResponse,
-        },
-      },
-    };
+  write(array) {
 
-    // todo
-    // this.characteristic.service.peripheral.Obniz.send(obj);
+    this.characteristic.service.peripheral.obnizBle._bindings.readValue(
+        this.characteristic.service.peripheral.address,
+        this.characteristic.service.uuid,
+        this.characteristic.uuid,
+        this.uuid,
+        Buffer.from(array)
+    );
+
   }
 }
 
 module.exports = BleRemoteDescriptor;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -34466,7 +34466,7 @@ class BleRemotePeripheral {
     let uuidLength = bit / 4;
     for (let i = 0; i < data.length; i = i + uuidLength) {
       let one = data.slice(i, i + uuidLength);
-      results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
+      results.push(this.obnizBle.constructor._dataArray2uuidHex(one, true));
     }
   }
 
@@ -34562,7 +34562,7 @@ class BleRemotePeripheral {
 
   async discoverAllHandlesWait(){
     let services = await this.discoverAllServicesWait();
-    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait));
+    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
     let chars = charsNest.flat();
     let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
     let descriptors = descriptorsNest.flat();
@@ -35873,6 +35873,8 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     serviceData: [],
     serviceUuids: [],
     solicitationServiceUuids: [],
+    advertisementRaw: [],
+    scanResponseRaw : [],
     raw : []
   };
 
@@ -35881,11 +35883,20 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
 
   if (type === 0x04) {
     hasScanResponse = true;
+
+    if(eir.length > 0){
+      advertisement.scanResponseRaw = Array.from(eir);
+    }
   } else {
     // reset service data every non-scan response event
     advertisement.serviceData = [];
     advertisement.serviceUuids = [];
     advertisement.serviceSolicitationUuids = [];
+
+    if(eir.length > 0){
+      advertisement.advertisementRaw = Array.from(eir);
+    }
+
   }
 
   discoveryCount++;
@@ -36007,9 +36018,6 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     i += (length + 1);
   }
 
-  if(eir.length > 0){
-    advertisement.raw = Array.from(eir);
-  }
   debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
   var connectable = (type === 0x04 && previouslyDiscovered) ? this._discoveries[address].connectable : (type !== 0x03);

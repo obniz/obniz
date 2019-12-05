@@ -15,6 +15,7 @@ describe('8-ble', function() {
         resolve();
       });
     });
+    obnizB.ble.init();
     let service = new obnizA.ble.service({ uuid: 'FFF0' });
     let characteristic = new obnizA.ble.characteristic({
       uuid: 'FFF1',
@@ -97,6 +98,7 @@ describe('8-ble', function() {
       {
         characteristics: [
           {
+            data: [],
             properties: ['indicate'],
             uuid: '2a05',
           },

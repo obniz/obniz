@@ -153,7 +153,7 @@ class BleRemotePeripheral {
     let uuidLength = bit / 4;
     for (let i = 0; i < data.length; i = i + uuidLength) {
       let one = data.slice(i, i + uuidLength);
-      results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
+      results.push(this.obnizBle.constructor._dataArray2uuidHex(one, true));
     }
   }
 
@@ -245,6 +245,15 @@ class BleRemotePeripheral {
       });
       this.discoverAllServices();
     });
+  }
+
+  async discoverAllHandlesWait(){
+    let services = await this.discoverAllServicesWait();
+    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
+    let chars = charsNest.flat();
+    let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
+    let descriptors = descriptorsNest.flat();
+
   }
 
   onconnect() {}

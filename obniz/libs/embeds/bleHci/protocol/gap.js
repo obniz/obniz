@@ -105,6 +105,8 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     serviceData: [],
     serviceUuids: [],
     solicitationServiceUuids: [],
+    advertisementRaw: [],
+    scanResponseRaw : [],
     raw : []
   };
 
@@ -113,11 +115,20 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
 
   if (type === 0x04) {
     hasScanResponse = true;
+
+    if(eir.length > 0){
+      advertisement.scanResponseRaw = Array.from(eir);
+    }
   } else {
     // reset service data every non-scan response event
     advertisement.serviceData = [];
     advertisement.serviceUuids = [];
     advertisement.serviceSolicitationUuids = [];
+
+    if(eir.length > 0){
+      advertisement.advertisementRaw = Array.from(eir);
+    }
+
   }
 
   discoveryCount++;
@@ -239,9 +250,6 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     i += (length + 1);
   }
 
-  if(eir.length > 0){
-    advertisement.raw = Array.from(eir);
-  }
   debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
   var connectable = (type === 0x04 && previouslyDiscovered) ? this._discoveries[address].connectable : (type !== 0x03);

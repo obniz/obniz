@@ -5,17 +5,19 @@ let obnizA, obnizB;
 describe('7-ble', function() {
   this.timeout(30000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(async function() {
+    await new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         obnizB = config.obnizB;
         resolve();
       });
     });
+    obnizB.ble.init();
   });
 
   it('simple ad', async function() {
+    obnizB.ble.init();
     let service = new obnizA.ble.service({
       uuid: '0000',
     });
@@ -49,6 +51,7 @@ describe('7-ble', function() {
   });
 
   it('ad localname', async function() {
+    obnizB.ble.init();
     let service = new obnizA.ble.service({
       uuid: '0001',
     });

@@ -13,40 +13,24 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    const obj = {
-      ble: {
-        read_descriptor: {
-          address: this.characteristic.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
-          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.characteristic.service.peripheral.Obniz.send(obj);
+    this.characteristic.service.peripheral.obnizBle._bindings.readValue(
+        this.characteristic.service.peripheral.address,
+        this.characteristic.service.uuid,
+        this.characteristic.uuid,
+        this.uuid
+    );
   }
 
-  write(array, needResponse) {
-    if (needResponse === undefined) {
-      needResponse = true;
-    }
-    const obj = {
-      ble: {
-        write_descriptor: {
-          address: this.characteristic.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.characteristic.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
-          descriptor_uuid: BleHelper.uuidFilter(this.uuid),
-          data: array,
-          needResponse,
-        },
-      },
-    };
+  write(array) {
 
-    // todo
-    // this.characteristic.service.peripheral.Obniz.send(obj);
+    this.characteristic.service.peripheral.obnizBle._bindings.readValue(
+        this.characteristic.service.peripheral.address,
+        this.characteristic.service.uuid,
+        this.characteristic.uuid,
+        this.uuid,
+        Buffer.from(array)
+    );
+
   }
 }
 

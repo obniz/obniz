@@ -30,10 +30,6 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return this.addChild(params);
   }
 
-  //
-  // getCharacteristic(params) {
-  //   return this.getChild(params)
-  // }
 
   getDescriptor(uuid) {
     let obj = this.getChild(uuid);
@@ -47,34 +43,23 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   registerNotify(callback) {
     this.onnotify = callback;
-    const obj = {
-      ble: {
-        register_notify_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.notify(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        true
+    );
   }
 
   unregisterNotify() {
     this.onnotify = function() {};
-    const obj = {
-      ble: {
-        unregister_notify_characteristic: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
 
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.notify(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        false
+    );
   }
 
   read() {
@@ -100,18 +85,11 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    const obj = {
-      ble: {
-        get_descriptors: {
-          address: this.service.peripheral.address,
-          service_uuid: BleHelper.uuidFilter(this.service.uuid),
-          characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-        },
-      },
-    };
-
-    // todo
-    // this.service.peripheral.Obniz.send(obj);
+    this.service.peripheral.obnizBle._bindings.discoverDescriptors(
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid
+    );
   }
 
   discoverAllDescriptors() {

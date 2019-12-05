@@ -112,17 +112,21 @@ class ObnizBLE {
       'address_type': addressType,
       'ble_event_type': connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
       'rssi': rssi,
-      'adv_data': advertisement.raw,
-      'scan_resp': [],
+      'adv_data': advertisement.advertisementRaw,
+      'scan_resp': advertisement.scanResponseRaw,
     };
 
     val.setParams(peripheralData);
+    val._adv_data_filtered = advertisement;
 
     this.scan.notifyFromServer('onfind', val);
   }
 
-  onConnect(peripheralUuid, error){
+  async onConnect(peripheralUuid, error){
     let peripheral = this.findPeripheral(peripheralUuid);
+    if(!error){
+      await peripheral.discoverAllHandlesWait();
+    }
     peripheral.notifyFromServer("statusupdate", {status: error ? "disconnected" : "connected"})
   }
 
@@ -162,8 +166,7 @@ class ObnizBLE {
 
   onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
-    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
 
     if(isNotification){
       let obj = {
@@ -181,8 +184,7 @@ class ObnizBLE {
 
   onWrite(peripheralUuid, serviceUuid, characteristicUuid){
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
-    let characteristic = service.findCharacteristic({characteristic_uuid: characteristicUuid});
+    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
     characteristic.notifyFromServer("onwrite", {result : "success"})
   }
 
@@ -195,11 +197,48 @@ class ObnizBLE {
   onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){}
 
 
-  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){}
+  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    for( let descr of descriptors){
+      let obj = {
+        descriptor_uuid : descr
+      };
+      char.notifyFromServer("discover", obj)
+    }
+    char.notifyFromServer("discoverfinished", {});
+  }
 
 
-  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data){}
-  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid){}
+  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data) {
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let descriptor = peripheral.findDescriptor({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+      descriptor_uuid: descriptorUuid
+    });
+
+    let obj = {
+      result: "success",
+      data: Array.from(data)
+    };
+    descriptor.notifyFromServer("onread", obj)
+  }
+
+  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid) {
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let descriptor = peripheral.findDescriptor({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+      descriptor_uuid: descriptorUuid
+    });
+
+    let obj = {
+      result: "success",
+    };
+    descriptor.notifyFromServer("onwrite", obj)
+
+  }
   onHandleRead(peripheralUuid, handle, data){}
   onHandleWrite(peripheralUuid, handle){}
   onHandleNotify(peripheralUuid, handle, data){}
