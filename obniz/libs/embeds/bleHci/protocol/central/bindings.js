@@ -6,7 +6,7 @@ let AclStream = require('./acl-stream');
 let Gatt = require('./gatt');
 let Gap = require('./gap');
 let Signaling = require('./signaling');
-let Hci = require('./hci');
+let Hci = require('../hci');
 
 class NobleBindings extends events.EventEmitter {
   constructor(hciProtocol) {

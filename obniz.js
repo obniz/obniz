@@ -35183,7 +35183,7 @@ let AclStream = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central
 let Gatt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/gatt.js");
 let Gap = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/gap.js");
 let Signaling = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/signaling.js");
-let Hci = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './hci'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+let Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
 
 class NobleBindings extends events.EventEmitter {
   constructor(hciProtocol) {
