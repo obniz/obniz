@@ -1,15 +1,28 @@
 // var debug = require('debug')('acl-att-stream');
-/* eslint-disable */
-var events = require('events');
-var util = require('util');
 
-var Smp = require('./smp');
+let events = require('events');
+let util = require('util');
 
-var AclStream = function(hci, handle, localAddressType, localAddress, remoteAddressType, remoteAddress) {
+let Smp = require('./smp');
+
+let AclStream = function(
+  hci,
+  handle,
+  localAddressType,
+  localAddress,
+  remoteAddressType,
+  remoteAddress
+) {
   this._hci = hci;
   this._handle = handle;
 
-  this._smp = new Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+  this._smp = new Smp(
+    this,
+    localAddressType,
+    localAddress,
+    remoteAddressType,
+    remoteAddress
+  );
 
   this.onSmpStkBinded = this.onSmpStk.bind(this);
   this.onSmpFailBinded = this.onSmpFail.bind(this);
@@ -43,8 +56,8 @@ AclStream.prototype.pushEncrypt = function(encrypt) {
 };
 
 AclStream.prototype.onSmpStk = function(stk) {
-  var random = Buffer.from('0000000000000000', 'hex');
-  var diversifier = Buffer.from('0000', 'hex');
+  let random = Buffer.from('0000000000000000', 'hex');
+  let diversifier = Buffer.from('0000', 'hex');
 
   this._hci.startLeEncryption(this._handle, random, diversifier, stk);
 };

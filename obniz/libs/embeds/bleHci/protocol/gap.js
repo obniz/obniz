@@ -1,13 +1,13 @@
-/* eslint-disable */
-var debug = require('debug')('gap');
+// let debug = require('debug')('gap');
+const debug = () => {};
 
-var events = require('events');
-var os = require('os');
-var util = require('util');
+let events = require('events');
+let os = require('os');
+let util = require('util');
 
-var isChip = (os.platform() === 'linux') && (os.release().indexOf('-ntc') !== -1);
+let isChip = os.platform() === 'linux' && os.release().indexOf('-ntc') !== -1;
 
-var Gap = function(hci) {
+let Gap = function(hci) {
   this._hci = hci;
 
   this._scanState = null;
@@ -48,13 +48,9 @@ Gap.prototype.stopScanning = function() {
   this._hci.setScanEnabled(false, true);
 };
 
-Gap.prototype.onHciError = function(error) {
+Gap.prototype.onHciError = function(error) {};
 
-};
-
-Gap.prototype.onHciLeScanParametersSet = function() {
-
-};
+Gap.prototype.onHciLeScanParametersSet = function() {};
 
 // Called when receive an event "Command Complete" for "LE Set Scan Enable"
 Gap.prototype.onHciLeScanEnableSet = function(status) {
@@ -82,7 +78,7 @@ Gap.prototype.onLeScanEnableSetCmd = function(enable, filterDuplicates) {
   // If we are scanning, then a change happens if the new command stops
   // scanning or if duplicate filtering changes.
   // If we are not scanning, then a change happens if scanning was enabled.
-  if ((this._scanState == 'starting' || this._scanState == 'started')) {
+  if (this._scanState == 'starting' || this._scanState == 'started') {
     if (!enable) {
       this.emit('scanStop');
     } else if (this._scanFilterDuplicates !== filterDuplicates) {
@@ -90,33 +86,49 @@ Gap.prototype.onLeScanEnableSetCmd = function(enable, filterDuplicates) {
 
       this.emit('scanStart', this._scanFilterDuplicates);
     }
-  } else if ((this._scanState == 'stopping' || this._scanState == 'stopped') && enable) {
+  } else if (
+    (this._scanState == 'stopping' || this._scanState == 'stopped') &&
+    enable
+  ) {
     // Someone started scanning on us.
     this.emit('scanStart', this._scanFilterDuplicates);
   }
 };
 
-Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, addressType, eir, rssi) {
-  var previouslyDiscovered = !!this._discoveries[address];
-  var advertisement =  previouslyDiscovered ? this._discoveries[address].advertisement : {
-    localName: undefined,
-    txPowerLevel: undefined,
-    manufacturerData: undefined,
-    serviceData: [],
-    serviceUuids: [],
-    solicitationServiceUuids: [],
-    advertisementRaw: [],
-    scanResponseRaw : [],
-    raw : []
-  };
+Gap.prototype.onHciLeAdvertisingReport = function(
+  status,
+  type,
+  address,
+  addressType,
+  eir,
+  rssi
+) {
+  let previouslyDiscovered = !!this._discoveries[address];
+  let advertisement = previouslyDiscovered
+    ? this._discoveries[address].advertisement
+    : {
+        localName: undefined,
+        txPowerLevel: undefined,
+        manufacturerData: undefined,
+        serviceData: [],
+        serviceUuids: [],
+        solicitationServiceUuids: [],
+        advertisementRaw: [],
+        scanResponseRaw: [],
+        raw: [],
+      };
 
-  var discoveryCount = previouslyDiscovered ? this._discoveries[address].count : 0;
-  var hasScanResponse = previouslyDiscovered ? this._discoveries[address].hasScanResponse : false;
+  let discoveryCount = previouslyDiscovered
+    ? this._discoveries[address].count
+    : 0;
+  let hasScanResponse = previouslyDiscovered
+    ? this._discoveries[address].hasScanResponse
+    : false;
 
   if (type === 0x04) {
     hasScanResponse = true;
 
-    if(eir.length > 0){
+    if (eir.length > 0) {
       advertisement.scanResponseRaw = Array.from(eir);
     }
   } else {
@@ -125,37 +137,36 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     advertisement.serviceUuids = [];
     advertisement.serviceSolicitationUuids = [];
 
-    if(eir.length > 0){
+    if (eir.length > 0) {
       advertisement.advertisementRaw = Array.from(eir);
     }
-
   }
 
   discoveryCount++;
 
-  var i = 0;
-  var j = 0;
-  var serviceUuid = null;
-  var serviceSolicitationUuid = null;
+  let i = 0;
+  let j = 0;
+  let serviceUuid = null;
+  let serviceSolicitationUuid = null;
 
-  while ((i + 1) < eir.length) {
-    var length = eir.readUInt8(i);
+  while (i + 1 < eir.length) {
+    let length = eir.readUInt8(i);
 
     if (length < 1) {
       debug('invalid EIR data, length = ' + length);
       break;
     }
 
-    var eirType = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
+    let eirType = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
 
-    if ((i + length + 1) > eir.length) {
+    if (i + length + 1 > eir.length) {
       debug('invalid EIR data, out of range of buffer length');
       break;
     }
 
-    var bytes = eir.slice(i + 2).slice(0, length - 1);
+    let bytes = eir.slice(i + 2).slice(0, length - 1);
 
-    switch(eirType) {
+    switch (eirType) {
       case 0x02: // Incomplete List of 16-bit Service Class UUID
       case 0x03: // Complete List of 16-bit Service Class UUIDs
         for (j = 0; j < bytes.length; j += 2) {
@@ -169,7 +180,12 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
       case 0x06: // Incomplete List of 128-bit Service Class UUIDs
       case 0x07: // Complete List of 128-bit Service Class UUIDs
         for (j = 0; j < bytes.length; j += 16) {
-          serviceUuid = bytes.slice(j, j + 16).toString('hex').match(/.{1,2}/g).reverse().join('');
+          serviceUuid = bytes
+            .slice(j, j + 16)
+            .toString('hex')
+            .match(/.{1,2}/g)
+            .reverse()
+            .join('');
           if (advertisement.serviceUuids.indexOf(serviceUuid) === -1) {
             advertisement.serviceUuids.push(serviceUuid);
           }
@@ -177,67 +193,112 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
         break;
 
       case 0x08: // Shortened Local Name
-      case 0x09: // Complete Local Name»
+      case 0x09: // Complete Local Name
         advertisement.localName = bytes.toString('utf8');
         break;
 
-      case 0x0a: // Tx Power Level
+      case 0x0a: {
+        // Tx Power Level
         advertisement.txPowerLevel = bytes.readInt8(0);
         break;
-
-      case  0x14: // List of 16 bit solicitation UUIDs
+      }
+      case 0x14: {
+        // List of 16 bit solicitation UUIDs
         for (j = 0; j < bytes.length; j += 2) {
           serviceSolicitationUuid = bytes.readUInt16LE(j).toString(16);
-          if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
-            advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
+          if (
+            advertisement.serviceSolicitationUuids.indexOf(
+              serviceSolicitationUuid
+            ) === -1
+          ) {
+            advertisement.serviceSolicitationUuids.push(
+              serviceSolicitationUuid
+            );
           }
         }
         break;
-
-      case  0x15: // List of 128 bit solicitation UUIDs
+      }
+      case 0x15: {
+        // List of 128 bit solicitation UUIDs
         for (j = 0; j < bytes.length; j += 16) {
-          serviceSolicitationUuid = bytes.slice(j, j + 16).toString('hex').match(/.{1,2}/g).reverse().join('');
-          if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
-            advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
+          serviceSolicitationUuid = bytes
+            .slice(j, j + 16)
+            .toString('hex')
+            .match(/.{1,2}/g)
+            .reverse()
+            .join('');
+          if (
+            advertisement.serviceSolicitationUuids.indexOf(
+              serviceSolicitationUuid
+            ) === -1
+          ) {
+            advertisement.serviceSolicitationUuids.push(
+              serviceSolicitationUuid
+            );
           }
         }
         break;
-
-      case 0x16: // 16-bit Service Data, there can be multiple occurences
-        var serviceDataUuid = bytes.slice(0, 2).toString('hex').match(/.{1,2}/g).reverse().join('');
-        var serviceData = bytes.slice(2, bytes.length);
+      }
+      case 0x16: {
+        // 16-bit Service Data, there can be multiple occurences
+        let serviceDataUuid = bytes
+          .slice(0, 2)
+          .toString('hex')
+          .match(/.{1,2}/g)
+          .reverse()
+          .join('');
+        let serviceData = bytes.slice(2, bytes.length);
 
         advertisement.serviceData.push({
           uuid: serviceDataUuid,
-          data: serviceData
+          data: serviceData,
         });
         break;
-
-      case 0x20: // 32-bit Service Data, there can be multiple occurences
-        var serviceData32Uuid = bytes.slice(0, 4).toString('hex').match(/.{1,2}/g).reverse().join('');
-        var serviceData32 = bytes.slice(4, bytes.length);
+      }
+      case 0x20: {
+        // 32-bit Service Data, there can be multiple occurences
+        let serviceData32Uuid = bytes
+          .slice(0, 4)
+          .toString('hex')
+          .match(/.{1,2}/g)
+          .reverse()
+          .join('');
+        let serviceData32 = bytes.slice(4, bytes.length);
 
         advertisement.serviceData.push({
           uuid: serviceData32Uuid,
-          data: serviceData32
+          data: serviceData32,
         });
         break;
+      }
+      case 0x21: {
+        // 128-bit Service Data, there can be multiple occurences
 
-      case 0x21: // 128-bit Service Data, there can be multiple occurences
-        var serviceData128Uuid = bytes.slice(0, 16).toString('hex').match(/.{1,2}/g).reverse().join('');
-        var serviceData128 = bytes.slice(16, bytes.length);
+        let serviceData128Uuid = bytes
+          .slice(0, 16)
+          .toString('hex')
+          .match(/.{1,2}/g)
+          .reverse()
+          .join('');
+        let serviceData128 = bytes.slice(16, bytes.length);
 
         advertisement.serviceData.push({
           uuid: serviceData128Uuid,
-          data: serviceData128
+          data: serviceData128,
         });
         break;
-
-      case  0x1f: // List of 32 bit solicitation UUIDs
+      }
+      case 0x1f: // List of 32 bit solicitation UUIDs
         for (j = 0; j < bytes.length; j += 4) {
           serviceSolicitationUuid = bytes.readUInt32LE(j).toString(16);
-          if (advertisement.serviceSolicitationUuids.indexOf(serviceSolicitationUuid) === -1) {
-            advertisement.serviceSolicitationUuids.push(serviceSolicitationUuid);
+          if (
+            advertisement.serviceSolicitationUuids.indexOf(
+              serviceSolicitationUuid
+            ) === -1
+          ) {
+            advertisement.serviceSolicitationUuids.push(
+              serviceSolicitationUuid
+            );
           }
         }
         break;
@@ -247,12 +308,15 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
         break;
     }
 
-    i += (length + 1);
+    i += length + 1;
   }
 
   debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
-  var connectable = (type === 0x04 && previouslyDiscovered) ? this._discoveries[address].connectable : (type !== 0x03);
+  let connectable =
+    type === 0x04 && previouslyDiscovered
+      ? this._discoveries[address].connectable
+      : type !== 0x03;
 
   this._discoveries[address] = {
     address: address,
@@ -261,12 +325,25 @@ Gap.prototype.onHciLeAdvertisingReport = function(status, type, address, address
     advertisement: advertisement,
     rssi: rssi,
     count: discoveryCount,
-    hasScanResponse: hasScanResponse
+    hasScanResponse: hasScanResponse,
   };
 
   // only report after a scan response event or if non-connectable or more than one discovery without a scan response, so more data can be collected
-  if (type === 0x04 || !connectable || (discoveryCount > 1 && !hasScanResponse) || process.env.NOBLE_REPORT_ALL_HCI_EVENTS) {
-    this.emit('discover', status, address, addressType, connectable, advertisement, rssi);
+  if (
+    type === 0x04 ||
+    !connectable ||
+    (discoveryCount > 1 && !hasScanResponse) ||
+    process.env.NOBLE_REPORT_ALL_HCI_EVENTS
+  ) {
+    this.emit(
+      'discover',
+      status,
+      address,
+      addressType,
+      connectable,
+      advertisement,
+      rssi
+    );
   }
 };
 
