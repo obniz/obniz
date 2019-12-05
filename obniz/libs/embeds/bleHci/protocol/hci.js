@@ -416,7 +416,7 @@ Hci.prototype.writeAclDataPkt = function(handle, cid, data) {
 };
 
 Hci.prototype.setAdvertisingParameters = function() {
-  let cmd = Buffer.alloc(19);
+  let cmd = new Buffer(19);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -437,7 +437,7 @@ Hci.prototype.setAdvertisingParameters = function() {
   cmd.writeUInt8(0x00, 8); // adv type
   cmd.writeUInt8(0x00, 9); // own addr typ
   cmd.writeUInt8(0x00, 10); // direct addr type
-  Buffer.from('000000000000', 'hex').copy(cmd, 11); // direct addr
+  new Buffer('000000000000', 'hex').copy(cmd, 11); // direct addr
   cmd.writeUInt8(0x07, 17);
   cmd.writeUInt8(0x00, 18);
 
@@ -446,7 +446,7 @@ Hci.prototype.setAdvertisingParameters = function() {
 };
 
 Hci.prototype.setAdvertisingData = function(data) {
-  let cmd = Buffer.alloc(36);
+  let cmd = new Buffer(36);
 
   cmd.fill(0x00);
 
@@ -466,7 +466,7 @@ Hci.prototype.setAdvertisingData = function(data) {
 };
 
 Hci.prototype.setScanResponseData = function(data) {
-  let cmd = Buffer.alloc(36);
+  let cmd = new Buffer(36);
 
   cmd.fill(0x00);
 
@@ -486,7 +486,7 @@ Hci.prototype.setScanResponseData = function(data) {
 };
 
 Hci.prototype.setAdvertiseEnable = function(enabled) {
-  let cmd = Buffer.alloc(5);
+  let cmd = new Buffer(5);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -503,7 +503,7 @@ Hci.prototype.setAdvertiseEnable = function(enabled) {
 };
 
 Hci.prototype.leReadBufferSize = function() {
-  let cmd = Buffer.alloc(4);
+  let cmd = new Buffer(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -517,7 +517,7 @@ Hci.prototype.leReadBufferSize = function() {
 };
 
 Hci.prototype.readBufferSize = function() {
-  let cmd = Buffer.alloc(4);
+  let cmd = new Buffer(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -533,7 +533,7 @@ Hci.prototype.readBufferSize = function() {
 Hci.prototype.queueAclDataPkt = function(handle, cid, data) {
   let hf = handle | (ACL_START_NO_FLUSH << 12);
   // l2cap pdu may be fragmented on hci level
-  let l2capPdu = Buffer.alloc(4 + data.length);
+  let l2capPdu = new Buffer(4 + data.length);
   l2capPdu.writeUInt16LE(data.length, 0);
   l2capPdu.writeUInt16LE(cid, 2);
   data.copy(l2capPdu, 4);
@@ -542,7 +542,7 @@ Hci.prototype.queueAclDataPkt = function(handle, cid, data) {
   while (l2capPdu.length) {
     let frag = l2capPdu.slice(0, this._aclMtu);
     l2capPdu = l2capPdu.slice(frag.length);
-    let pkt = Buffer.alloc(5 + frag.length);
+    let pkt = new Buffer(5 + frag.length);
 
     // hci header
     pkt.writeUInt8(HCI_ACLDATA_PKT, 0);

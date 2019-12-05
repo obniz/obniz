@@ -42,9 +42,9 @@ class BleSecurity {
     }
 
     if (
-        auth !== undefined &&
-        indicateSecurityLevel !== undefined &&
-        keys !== undefined
+      auth !== undefined &&
+      indicateSecurityLevel !== undefined &&
+      keys !== undefined
     ) {
       this.setAuth(auth);
       this.setIndicateSecurityLevel(indicateSecurityLevel);
@@ -55,30 +55,28 @@ class BleSecurity {
       throw new Error(msg);
     }
   }
-
   checkIntroducedFirmware(introducedVersion, functionName) {
     let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
     if (results) {
       let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
-          this.Obniz.firmware_ver
-          })`;
+        this.Obniz.firmware_ver
+      })`;
       this.Obniz.error(msg);
       throw new Error(msg);
     }
   }
-
   setAuth(authTypes) {
     this.checkIntroducedFirmware('1.1.0', 'setAuth');
     if (!Array.isArray(authTypes)) {
       authTypes = [authTypes];
     }
     let sendTypes = authTypes
-        .map(elm => {
-          return elm.toLowerCase();
-        })
-        .filter(elm => {
-          return ['mitm', 'secure_connection', 'bonding'].includes(elm);
-        });
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['mitm', 'secure_connection', 'bonding'].includes(elm);
+      });
 
     if (sendTypes.length !== authTypes.length) {
       throw new Error('unknown auth type');
@@ -117,12 +115,12 @@ class BleSecurity {
       keyTypes = [keyTypes];
     }
     let sendTypes = keyTypes
-        .map(elm => {
-          return elm.toLowerCase();
-        })
-        .filter(elm => {
-          return ['ltk', 'csrk', 'irk'].includes(elm);
-        });
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['ltk', 'csrk', 'irk'].includes(elm);
+      });
 
     if (sendTypes.length !== keyTypes.length) {
       throw new Error('unknown key type');
@@ -165,8 +163,7 @@ class BleSecurity {
     // });
   }
 
-  onerror() {
-  } //dummy
+  onerror() {} //dummy
 
   notifyFromServer(notifyName, params) {
     switch (notifyName) {

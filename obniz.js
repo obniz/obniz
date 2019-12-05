@@ -20309,6 +20309,62 @@ exports.callbackify = callbackify;
 
 /***/ }),
 
+/***/ "./node_modules/os-browserify/browser.js":
+/***/ (function(module, exports) {
+
+exports.endianness = function () { return 'LE' };
+
+exports.hostname = function () {
+    if (typeof location !== 'undefined') {
+        return location.hostname
+    }
+    else return '';
+};
+
+exports.loadavg = function () { return [] };
+
+exports.uptime = function () { return 0 };
+
+exports.freemem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.totalmem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.cpus = function () { return [] };
+
+exports.type = function () { return 'Browser' };
+
+exports.release = function () {
+    if (typeof navigator !== 'undefined') {
+        return navigator.appVersion;
+    }
+    return '';
+};
+
+exports.networkInterfaces
+= exports.getNetworkInterfaces
+= function () { return {} };
+
+exports.arch = function () { return 'javascript' };
+
+exports.platform = function () { return 'browser' };
+
+exports.tmpdir = exports.tmpDir = function () {
+    return '/tmp';
+};
+
+exports.EOL = '\n';
+
+exports.homedir = function () {
+	return '/'
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/parse-asn1/aesid.json":
 /***/ (function(module) {
 
@@ -35872,12 +35928,14 @@ module.exports = {
 /***/ "./obniz/libs/embeds/bleHci/protocol/gap.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {// let debug = require('debug')('gap');
+/* WEBPACK VAR INJECTION */(function(process) {// let debug = require('debug')('gap');
 const debug = () => {};
 
 let events = __webpack_require__("./node_modules/events/events.js");
+let os = __webpack_require__("./node_modules/os-browserify/browser.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
-let Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
+
+let isChip = os.platform() === 'linux' && os.release().indexOf('-ntc') !== -1;
 
 let Gap = function(hci) {
   this._hci = hci;
@@ -35892,23 +35950,6 @@ let Gap = function(hci) {
   this._hci.on('leAdvertisingReport', this.onHciLeAdvertisingReport.bind(this));
 
   this._hci.on('leScanEnableSetCmd', this.onLeScanEnableSetCmd.bind(this));
-
-  this._hci.on(
-    'leAdvertisingParametersSet',
-    this.onHciLeAdvertisingParametersSet.bind(this)
-  );
-  this._hci.on(
-    'leAdvertisingDataSet',
-    this.onHciLeAdvertisingDataSet.bind(this)
-  );
-  this._hci.on(
-    'leScanResponseDataSet',
-    this.onHciLeScanResponseDataSet.bind(this)
-  );
-  this._hci.on(
-    'leAdvertiseEnableSet',
-    this.onHciLeAdvertiseEnableSet.bind(this)
-  );
 };
 
 util.inherits(Gap, events.EventEmitter);
@@ -35922,6 +35963,12 @@ Gap.prototype.startScanning = function(allowDuplicates) {
   // p106 - p107
   this._hci.setScanEnabled(false, true);
   this._hci.setScanParameters();
+
+  if (isChip) {
+    // work around for Next Thing Co. C.H.I.P, always allow duplicates, to get scan response
+    this._scanFilterDuplicates = false;
+  }
+
   this._hci.setScanEnabled(true, this._scanFilterDuplicates);
 };
 
@@ -36230,210 +36277,9 @@ Gap.prototype.onHciLeAdvertisingReport = function(
   }
 };
 
-Gap.prototype.startAdvertising = function(name, serviceUuids) {
-  debug(
-    'startAdvertising: name = ' +
-      name +
-      ', serviceUuids = ' +
-      JSON.stringify(serviceUuids, null, 2)
-  );
-
-  let advertisementDataLength = 3;
-  let scanDataLength = 0;
-
-  let serviceUuids16bit = [];
-  let serviceUuids128bit = [];
-  let i = 0;
-
-  if (name && name.length) {
-    scanDataLength += 2 + name.length;
-  }
-
-  if (serviceUuids && serviceUuids.length) {
-    for (i = 0; i < serviceUuids.length; i++) {
-      let serviceUuid = Buffer.from(
-        serviceUuids[i]
-          .match(/.{1,2}/g)
-          .reverse()
-          .join(''),
-        'hex'
-      );
-
-      if (serviceUuid.length === 2) {
-        serviceUuids16bit.push(serviceUuid);
-      } else if (serviceUuid.length === 16) {
-        serviceUuids128bit.push(serviceUuid);
-      }
-    }
-  }
-
-  if (serviceUuids16bit.length) {
-    advertisementDataLength += 2 + 2 * serviceUuids16bit.length;
-  }
-
-  if (serviceUuids128bit.length) {
-    advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
-  }
-
-  let advertisementData = Buffer.alloc(advertisementDataLength);
-  let scanData = Buffer.alloc(scanDataLength);
-
-  // flags
-  advertisementData.writeUInt8(2, 0);
-  advertisementData.writeUInt8(0x01, 1);
-  advertisementData.writeUInt8(0x06, 2);
-
-  let advertisementDataOffset = 3;
-
-  if (serviceUuids16bit.length) {
-    advertisementData.writeUInt8(
-      1 + 2 * serviceUuids16bit.length,
-      advertisementDataOffset
-    );
-    advertisementDataOffset++;
-
-    advertisementData.writeUInt8(0x03, advertisementDataOffset);
-    advertisementDataOffset++;
-
-    for (i = 0; i < serviceUuids16bit.length; i++) {
-      serviceUuids16bit[i].copy(advertisementData, advertisementDataOffset);
-      advertisementDataOffset += serviceUuids16bit[i].length;
-    }
-  }
-
-  if (serviceUuids128bit.length) {
-    advertisementData.writeUInt8(
-      1 + 16 * serviceUuids128bit.length,
-      advertisementDataOffset
-    );
-    advertisementDataOffset++;
-
-    advertisementData.writeUInt8(0x06, advertisementDataOffset);
-    advertisementDataOffset++;
-
-    for (i = 0; i < serviceUuids128bit.length; i++) {
-      serviceUuids128bit[i].copy(advertisementData, advertisementDataOffset);
-      advertisementDataOffset += serviceUuids128bit[i].length;
-    }
-  }
-
-  // name
-  if (name && name.length) {
-    let nameBuffer = Buffer.from(name);
-
-    scanData.writeUInt8(1 + nameBuffer.length, 0);
-    scanData.writeUInt8(0x08, 1);
-    nameBuffer.copy(scanData, 2);
-  }
-
-  this.startAdvertisingWithEIRData(advertisementData, scanData);
-};
-
-Gap.prototype.startAdvertisingIBeacon = function(data) {
-  debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
-
-  let dataLength = data.length;
-  let manufacturerDataLength = 4 + dataLength;
-  let advertisementDataLength = 5 + manufacturerDataLength;
-
-  let advertisementData = Buffer.alloc(advertisementDataLength);
-  let scanData = Buffer.alloc(0);
-
-  // flags
-  advertisementData.writeUInt8(2, 0);
-  advertisementData.writeUInt8(0x01, 1);
-  advertisementData.writeUInt8(0x06, 2);
-
-  advertisementData.writeUInt8(manufacturerDataLength + 1, 3);
-  advertisementData.writeUInt8(0xff, 4);
-  advertisementData.writeUInt16LE(0x004c, 5); // Apple Company Identifier LE (16 bit)
-  advertisementData.writeUInt8(0x02, 7); // type, 2 => iBeacon
-  advertisementData.writeUInt8(dataLength, 8);
-
-  data.copy(advertisementData, 9);
-
-  this.startAdvertisingWithEIRData(advertisementData, scanData);
-};
-
-Gap.prototype.startAdvertisingWithEIRData = function(
-  advertisementData,
-  scanData
-) {
-  advertisementData = advertisementData || Buffer.alloc(0);
-  scanData = scanData || Buffer.alloc(0);
-
-  debug(
-    'startAdvertisingWithEIRData: advertisement data = ' +
-      advertisementData.toString('hex') +
-      ', scan data = ' +
-      scanData.toString('hex')
-  );
-
-  let error = null;
-
-  if (advertisementData.length > 31) {
-    error = new Error('Advertisement data is over maximum limit of 31 bytes');
-  } else if (scanData.length > 31) {
-    error = new Error('Scan data is over maximum limit of 31 bytes');
-  }
-
-  if (error) {
-    this.emit('advertisingStart', error);
-  } else {
-    this._advertiseState = 'starting';
-
-    this._hci.setScanResponseData(scanData);
-    this._hci.setAdvertisingData(advertisementData);
-
-    this._hci.setAdvertiseEnable(true);
-    this._hci.setScanResponseData(scanData);
-    this._hci.setAdvertisingData(advertisementData);
-  }
-};
-
-Gap.prototype.restartAdvertising = function() {
-  this._advertiseState = 'restarting';
-
-  this._hci.setAdvertiseEnable(true);
-};
-
-Gap.prototype.stopAdvertising = function() {
-  this._advertiseState = 'stopping';
-
-  this._hci.setAdvertiseEnable(false);
-};
-
-Gap.prototype.onHciError = function(error) {};
-
-Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {};
-
-Gap.prototype.onHciLeAdvertisingDataSet = function(status) {};
-
-Gap.prototype.onHciLeScanResponseDataSet = function(status) {};
-
-Gap.prototype.onHciLeAdvertiseEnableSet = function(status) {
-  if (this._advertiseState === 'starting') {
-    this._advertiseState = 'started';
-
-    let error = null;
-
-    if (status) {
-      error = new Error(
-        Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
-      );
-    }
-
-    this.emit('advertisingStart', error);
-  } else if (this._advertiseState === 'stopping') {
-    this._advertiseState = 'stopped';
-
-    this.emit('advertisingStop');
-  }
-};
-
 module.exports = Gap;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -37987,7 +37833,7 @@ Hci.prototype.writeAclDataPkt = function(handle, cid, data) {
 };
 
 Hci.prototype.setAdvertisingParameters = function() {
-  let cmd = Buffer.alloc(19);
+  let cmd = new Buffer(19);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -38008,7 +37854,7 @@ Hci.prototype.setAdvertisingParameters = function() {
   cmd.writeUInt8(0x00, 8); // adv type
   cmd.writeUInt8(0x00, 9); // own addr typ
   cmd.writeUInt8(0x00, 10); // direct addr type
-  Buffer.from('000000000000', 'hex').copy(cmd, 11); // direct addr
+  new Buffer('000000000000', 'hex').copy(cmd, 11); // direct addr
   cmd.writeUInt8(0x07, 17);
   cmd.writeUInt8(0x00, 18);
 
@@ -38017,7 +37863,7 @@ Hci.prototype.setAdvertisingParameters = function() {
 };
 
 Hci.prototype.setAdvertisingData = function(data) {
-  let cmd = Buffer.alloc(36);
+  let cmd = new Buffer(36);
 
   cmd.fill(0x00);
 
@@ -38037,7 +37883,7 @@ Hci.prototype.setAdvertisingData = function(data) {
 };
 
 Hci.prototype.setScanResponseData = function(data) {
-  let cmd = Buffer.alloc(36);
+  let cmd = new Buffer(36);
 
   cmd.fill(0x00);
 
@@ -38057,7 +37903,7 @@ Hci.prototype.setScanResponseData = function(data) {
 };
 
 Hci.prototype.setAdvertiseEnable = function(enabled) {
-  let cmd = Buffer.alloc(5);
+  let cmd = new Buffer(5);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -38074,7 +37920,7 @@ Hci.prototype.setAdvertiseEnable = function(enabled) {
 };
 
 Hci.prototype.leReadBufferSize = function() {
-  let cmd = Buffer.alloc(4);
+  let cmd = new Buffer(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -38088,7 +37934,7 @@ Hci.prototype.leReadBufferSize = function() {
 };
 
 Hci.prototype.readBufferSize = function() {
-  let cmd = Buffer.alloc(4);
+  let cmd = new Buffer(4);
 
   // header
   cmd.writeUInt8(HCI_COMMAND_PKT, 0);
@@ -38104,7 +37950,7 @@ Hci.prototype.readBufferSize = function() {
 Hci.prototype.queueAclDataPkt = function(handle, cid, data) {
   let hf = handle | (ACL_START_NO_FLUSH << 12);
   // l2cap pdu may be fragmented on hci level
-  let l2capPdu = Buffer.alloc(4 + data.length);
+  let l2capPdu = new Buffer(4 + data.length);
   l2capPdu.writeUInt16LE(data.length, 0);
   l2capPdu.writeUInt16LE(cid, 2);
   data.copy(l2capPdu, 4);
@@ -38113,7 +37959,7 @@ Hci.prototype.queueAclDataPkt = function(handle, cid, data) {
   while (l2capPdu.length) {
     let frag = l2capPdu.slice(0, this._aclMtu);
     l2capPdu = l2capPdu.slice(frag.length);
-    let pkt = Buffer.alloc(5 + frag.length);
+    let pkt = new Buffer(5 + frag.length);
 
     // hci header
     pkt.writeUInt8(HCI_ACLDATA_PKT, 0);
