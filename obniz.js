@@ -38953,7 +38953,7 @@ function c1(k, r, pres, preq, iat, ia, rat, ra) {
   var p2 = Buffer.concat([
     ra,
     ia,
-    new Buffer('00000000', 'hex')
+    Buffer.from('00000000', 'hex')
   ]);
 
   var res = xor(r, p1);
@@ -38985,7 +38985,7 @@ function e(key, data) {
 }
 
 function xor(b1, b2) {
-  var result = new Buffer(b1.length);
+  var result = Buffer.alloc(b1.length);
 
   for (var i = 0; i < b1.length; i++) {
     result[i] = b1[i] ^ b2[i];
@@ -38995,7 +38995,7 @@ function xor(b1, b2) {
 }
 
 function swap(input) {
-  var output = new Buffer(input.length);
+  var output = Buffer.alloc(input.length);
 
   for (var i = 0; i < output.length; i++) {
     output[i] = input[input.length - i - 1];
@@ -39063,7 +39063,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   if (serviceUuids && serviceUuids.length) {
     for (i = 0; i < serviceUuids.length; i++) {
-      var serviceUuid = new Buffer(serviceUuids[i].match(/.{1,2}/g).reverse().join(''), 'hex');
+      var serviceUuid = Buffer.from(serviceUuids[i].match(/.{1,2}/g).reverse().join(''), 'hex');
 
       if (serviceUuid.length === 2) {
         serviceUuids16bit.push(serviceUuid);
@@ -39081,8 +39081,8 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
     advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
   }
 
-  var advertisementData = new Buffer(advertisementDataLength);
-  var scanData = new Buffer(scanDataLength);
+  var advertisementData = Buffer.alloc(advertisementDataLength);
+  var scanData = Buffer.alloc(scanDataLength);
 
   // flags
   advertisementData.writeUInt8(2, 0);
@@ -39119,7 +39119,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   // name
   if (name && name.length) {
-    var nameBuffer = new Buffer(name);
+    var nameBuffer = Buffer.alloc(name);
 
     scanData.writeUInt8(1 + nameBuffer.length, 0);
     scanData.writeUInt8(0x08, 1);
@@ -39138,8 +39138,8 @@ Gap.prototype.startAdvertisingIBeacon = function(data) {
   var advertisementDataLength = 5 + manufacturerDataLength;
   var scanDataLength = 0;
 
-  var advertisementData = new Buffer(advertisementDataLength);
-  var scanData = new Buffer(0);
+  var advertisementData = Buffer.alloc(advertisementDataLength);
+  var scanData = Buffer.alloc(0);
 
   // flags
   advertisementData.writeUInt8(2, 0);
@@ -39158,8 +39158,8 @@ Gap.prototype.startAdvertisingIBeacon = function(data) {
 };
 
 Gap.prototype.startAdvertisingWithEIRData = function(advertisementData, scanData) {
-  advertisementData = advertisementData || new Buffer(0);
-  scanData = scanData || new Buffer(0);
+  advertisementData = advertisementData || Buffer.alloc(0);
+  scanData = scanData || Buffer.alloc(0);
 
   debug('startAdvertisingWithEIRData: advertisement data = ' + advertisementData.toString('hex') + ', scan data = ' + scanData.toString('hex'));
 
@@ -39330,14 +39330,14 @@ Gatt.prototype.setServices = function(services) {
           uuid: '2a00',
           properties: ['read'],
           secure: [],
-          value: new Buffer(deviceName),
+          value: Buffer.from(deviceName),
           descriptors: []
         },
         {
           uuid: '2a01',
           properties: ['read'],
           secure: [],
-          value: new Buffer([0x80, 0x00]),
+          value: Buffer.from([0x80, 0x00]),
           descriptors: []
         }
       ]
@@ -39349,7 +39349,7 @@ Gatt.prototype.setServices = function(services) {
           uuid: '2a05',
           properties: ['indicate'],
           secure: [],
-          value: new Buffer([0x00, 0x00, 0x00, 0x00]),
+          value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
           descriptors: []
         }
       ]
@@ -39456,7 +39456,7 @@ Gatt.prototype.setServices = function(services) {
           attribute: characteristic,
           properties: (0x02 | 0x04 | 0x08), // read/write
           secure: (secure & 0x10) ? (0x02 | 0x04 | 0x08) : 0,
-          value: new Buffer([0x00, 0x00])
+          value: Buffer.from([0x00, 0x00])
         };
       }
 
@@ -39524,7 +39524,7 @@ Gatt.prototype.onAclStreamEnd = function() {
     if (this._handles[i] && this._handles[i].type === 'descriptor' &&
         this._handles[i].uuid === '2902' && this._handles[i].value.readUInt16LE(0) !== 0) {
 
-      this._handles[i].value = new Buffer([0x00, 0x00]);
+      this._handles[i].value = Buffer.from([0x00, 0x00]);
 
       if (this._handles[i].attribute && this._handles[i].attribute.emit) {
         this._handles[i].attribute.emit('unsubscribe');
@@ -39539,7 +39539,7 @@ Gatt.prototype.send = function(data) {
 };
 
 Gatt.prototype.errorResponse = function(opcode, handle, status) {
-  var buf = new Buffer(5);
+  var buf = Buffer.alloc(5);
 
   buf.writeUInt8(ATT_OP_ERROR, 0);
   buf.writeUInt8(opcode, 1);
@@ -39625,7 +39625,7 @@ Gatt.prototype.handleMtuRequest = function(request) {
 
   this.emit('mtuChange', this._mtu);
 
-  var response = new Buffer(3);
+  var response = Buffer.alloc(3);
 
   response.writeUInt8(ATT_OP_MTU_RESP, 0);
   response.writeUInt16LE(mtu, 1);
@@ -39687,7 +39687,7 @@ Gatt.prototype.handleFindInfoRequest = function(request) {
     var maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
     numInfo = Math.min(numInfo, maxInfo);
 
-    response = new Buffer(2 + numInfo * lengthPerInfo);
+    response = Buffer.alloc(2 + numInfo * lengthPerInfo);
 
     response[0] = ATT_OP_FIND_INFO_RESP;
     response[1] = (uuidSize === 2) ? 0x01 : 0x2;
@@ -39697,7 +39697,7 @@ Gatt.prototype.handleFindInfoRequest = function(request) {
 
       response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
 
-      uuid = new Buffer(info.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      uuid = Buffer.from(info.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
       for (var j = 0; j < uuid.length; j++) {
         response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
       }
@@ -39742,7 +39742,7 @@ Gatt.prototype.handleFindByTypeRequest = function(request) {
 
     numHandles = Math.min(numHandles, maxHandles);
 
-    response = new Buffer(1 + numHandles * lengthPerHandle);
+    response = Buffer.alloc(1 + numHandles * lengthPerHandle);
 
     response[0] = ATT_OP_FIND_BY_TYPE_RESP;
 
@@ -39800,7 +39800,7 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
       var maxServices = Math.floor((this._mtu - 2) / lengthPerService);
       numServices = Math.min(numServices, maxServices);
 
-      response = new Buffer(2 + numServices * lengthPerService);
+      response = Buffer.alloc(2 + numServices * lengthPerService);
 
       response[0] = ATT_OP_READ_BY_GROUP_RESP;
       response[1] = lengthPerService;
@@ -39811,7 +39811,7 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
         response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
         response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
 
-        var serviceUuid = new Buffer(service.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+        var serviceUuid = Buffer.from(service.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
         for (var j = 0; j < serviceUuid.length; j++) {
           response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
         }
@@ -39868,7 +39868,7 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
       var maxCharacteristics = Math.floor((this._mtu - 2) / lengthPerCharacteristic);
       numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
 
-      response = new Buffer(2 + numCharacteristics * lengthPerCharacteristic);
+      response = Buffer.alloc(2 + numCharacteristics * lengthPerCharacteristic);
 
       response[0] = ATT_OP_READ_BY_TYPE_RESP;
       response[1] = lengthPerCharacteristic;
@@ -39880,7 +39880,7 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
         response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
         response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
 
-        var characteristicUuid = new Buffer(characteristic.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+        var characteristicUuid = Buffer.from(characteristic.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
         for (var j = 0; j < characteristicUuid.length; j++) {
           response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
         }
@@ -39921,7 +39921,7 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
 
           if (ATT_ECODE_SUCCESS === result) {
             var dataLength = Math.min(data.length, this._mtu - 4);
-            callbackResponse = new Buffer(4 + dataLength);
+            callbackResponse = Buffer.alloc(4 + dataLength);
 
             callbackResponse[0] = ATT_OP_READ_BY_TYPE_RESP;
             callbackResponse[1] = dataLength + 2;
@@ -39977,7 +39977,7 @@ Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
 
         if (ATT_ECODE_SUCCESS === result) {
           var dataLength = Math.min(data.length, this._mtu - 1);
-          callbackResponse = new Buffer(1 + dataLength);
+          callbackResponse = Buffer.alloc(1 + dataLength);
 
           callbackResponse[0] = (requestType === ATT_OP_READ_BLOB_REQ) ? ATT_OP_READ_BLOB_RESP : ATT_OP_READ_RESP;
           for (i = 0; i < dataLength; i++) {
@@ -39995,12 +39995,12 @@ Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
 
     if (handleType === 'service' || handleType === 'includedService') {
       result = ATT_ECODE_SUCCESS;
-      data = new Buffer(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      data = Buffer.from(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
     } else if (handleType === 'characteristic') {
-      var uuid = new Buffer(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      var uuid = Buffer.from(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
 
       result = ATT_ECODE_SUCCESS;
-      data = new Buffer(3 + uuid.length);
+      data = Buffer.alloc(3 + uuid.length);
       data.writeUInt8(handle.properties, 0);
       data.writeUInt16LE(handle.valueHandle, 1);
 
@@ -40035,7 +40035,7 @@ Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
     }
 
     if (data && typeof data === 'string') {
-      data = new Buffer(data);
+      data = Buffer.alloc(data);
     }
 
     if (result === ATT_ECODE_SUCCESS && data && offset) {
@@ -40084,7 +40084,7 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
             var callbackResponse = null;
 
             if (ATT_ECODE_SUCCESS === result) {
-              callbackResponse = new Buffer([ATT_OP_WRITE_RESP]);
+              callbackResponse = Buffer.from([ATT_OP_WRITE_RESP]);
             } else {
               callbackResponse = this.errorResponse(requestType, valueHandle, result);
             }
@@ -40118,7 +40118,7 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
                 var i;
 
                 if (useNotify) {
-                  var notifyMessage = new Buffer(3 + dataLength);
+                  var notifyMessage = Buffer.alloc(3 + dataLength);
 
                   notifyMessage.writeUInt8(ATT_OP_HANDLE_NOTIFY, 0);
                   notifyMessage.writeUInt16LE(valueHandle, 1);
@@ -40132,7 +40132,7 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
 
                   attribute.emit('notify');
                 } else if (useIndicate) {
-                  var indicateMessage = new Buffer(3 + dataLength);
+                  var indicateMessage = Buffer.alloc(3 + dataLength);
 
                   indicateMessage.writeUInt8(ATT_OP_HANDLE_IND, 0);
                   indicateMessage.writeUInt16LE(valueHandle, 1);
@@ -40202,7 +40202,7 @@ Gatt.prototype.handlePrepareWriteRequest = function(request) {
               data
             ]);
 
-            response = new Buffer(request.length);
+            response = Buffer.alloc(request.length);
             request.copy(response);
             response[0] = ATT_OP_PREP_WRITE_RESP;
           } else {
@@ -40216,7 +40216,7 @@ Gatt.prototype.handlePrepareWriteRequest = function(request) {
             data: data
           };
 
-          response = new Buffer(request.length);
+          response = Buffer.alloc(request.length);
           request.copy(response);
           response[0] = ATT_OP_PREP_WRITE_RESP;
         }
@@ -40243,14 +40243,14 @@ Gatt.prototype.handleExecuteWriteRequest = function(request) {
     var valueHandle = this._preparedWriteRequest.valueHandle;
 
     if (flag === 0x00) {
-      response = new Buffer([ATT_OP_EXEC_WRITE_RESP]);
+      response = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
     } else if (flag === 0x01) {
       var callback = (function(requestType, valueHandle) {
         return function(result) {
           var callbackResponse = null;
 
           if (ATT_ECODE_SUCCESS === result) {
-            callbackResponse = new Buffer([ATT_OP_EXEC_WRITE_RESP]);
+            callbackResponse = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
           } else {
             callbackResponse = this.errorResponse(requestType, valueHandle, result);
           }
@@ -40318,10 +40318,10 @@ var SMP_UNSPECIFIED = 0x08;
 var Smp = function(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
   this._aclStream = aclStream;
 
-  this._iat = new Buffer([(remoteAddressType === 'random') ? 0x01 : 0x00]);
-  this._ia = new Buffer(remoteAddress.split(':').reverse().join(''), 'hex');
-  this._rat = new Buffer([(localAddressType === 'random') ? 0x01 : 0x00]);
-  this._ra = new Buffer(localAddress.split(':').reverse().join(''), 'hex');
+  this._iat = Buffer.from([(remoteAddressType === 'random') ? 0x01 : 0x00]);
+  this._ia = Buffer.from(remoteAddress.split(':').reverse().join(''), 'hex');
+  this._rat = Buffer.from([(localAddressType === 'random') ? 0x01 : 0x00]);
+  this._ra = Buffer.from(localAddress.split(':').reverse().join(''), 'hex');
 
   this._stk = null;
   this._random = null;
@@ -40362,12 +40362,12 @@ Smp.prototype.onAclStreamEncryptChange = function(encrypted) {
   if (encrypted) {
     if (this._stk && this._diversifier && this._random) {
       this.write(Buffer.concat([
-        new Buffer([SMP_ENCRYPT_INFO]),
+        Buffer.from([SMP_ENCRYPT_INFO]),
         this._stk
       ]));
 
       this.write(Buffer.concat([
-        new Buffer([SMP_MASTER_IDENT]),
+        Buffer.from([SMP_MASTER_IDENT]),
         this._diversifier,
         this._random
       ]));
@@ -40376,7 +40376,7 @@ Smp.prototype.onAclStreamEncryptChange = function(encrypted) {
 };
 
 Smp.prototype.onAclStreamLtkNegReply = function() {
-    this.write(new Buffer([
+    this.write(Buffer.from([
       SMP_PAIRING_FAILED,
       SMP_UNSPECIFIED
     ]));
@@ -40394,7 +40394,7 @@ Smp.prototype.onAclStreamEnd = function() {
 Smp.prototype.handlePairingRequest = function(data) {
   this._preq = data;
 
-  this._pres = new Buffer([
+  this._pres = Buffer.from([
     SMP_PAIRING_RESPONSE,
     0x03, // IO capability: NoInputNoOutput
     0x00, // OOB data: Authentication data not present
@@ -40410,11 +40410,11 @@ Smp.prototype.handlePairingRequest = function(data) {
 Smp.prototype.handlePairingConfirm = function(data) {
   this._pcnf = data;
 
-  this._tk = new Buffer('00000000000000000000000000000000', 'hex');
+  this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
   this._r = crypto.r();
 
   this.write(Buffer.concat([
-    new Buffer([SMP_PAIRING_CONFIRM]),
+    Buffer.from([SMP_PAIRING_CONFIRM]),
     crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
   ]));
 };
@@ -40423,13 +40423,13 @@ Smp.prototype.handlePairingRandom = function(data) {
   var r = data.slice(1);
 
   var pcnf = Buffer.concat([
-    new Buffer([SMP_PAIRING_CONFIRM]),
+    Buffer.from([SMP_PAIRING_CONFIRM]),
     crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
   ]);
 
   if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
-    this._diversifier = new Buffer('0000', 'hex');
-    this._random = new Buffer('0000000000000000', 'hex');
+    this._diversifier = Buffer.from('0000', 'hex');
+    this._random = Buffer.from('0000000000000000', 'hex');
     this._stk = crypto.s1(this._tk, this._r, r);
 
     // TODO
@@ -40437,11 +40437,11 @@ Smp.prototype.handlePairingRandom = function(data) {
     // mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
 
     this.write(Buffer.concat([
-      new Buffer([SMP_PAIRING_RANDOM]),
+      Buffer.from([SMP_PAIRING_RANDOM]),
       this._r
     ]));
   } else {
-    this.write(new Buffer([
+    this.write(Buffer.from([
       SMP_PAIRING_FAILED,
       SMP_PAIRING_CONFIRM
     ]));

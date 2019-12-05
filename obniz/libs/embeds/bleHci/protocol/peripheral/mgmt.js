@@ -31,7 +31,7 @@
 // };
 //
 // Mgmt.prototype.addLongTermKey = function(address, addressType, authenticated, master, ediv, rand, key) {
-//   var ltkInfo = new Buffer(LTK_INFO_SIZE);
+//   var ltkInfo = Buffer.from(LTK_INFO_SIZE);
 //
 //   address.copy(ltkInfo, 0);
 //   ltkInfo.writeUInt8(addressType.readUInt8(0) + 1, 6); // BDADDR_LE_PUBLIC = 0x01, BDADDR_LE_RANDOM 0x02, so add one
@@ -57,7 +57,7 @@
 //
 // Mgmt.prototype.loadLongTermKeys = function() {
 //   var numLongTermKeys = this._ltkInfos.length;
-//   var op = new Buffer(2 + numLongTermKeys * LTK_INFO_SIZE);
+//   var op = Buffer.alloc(2 + numLongTermKeys * LTK_INFO_SIZE);
 //
 //   op.writeUInt16LE(numLongTermKeys, 0);
 //
@@ -75,7 +75,7 @@
 //     length = data.length;
 //   }
 //
-//   var pkt = new Buffer(6 + length);
+//   var pkt = Buffer.alloc(6 + length);
 //
 //   pkt.writeUInt16LE(opcode, 0);
 //   pkt.writeUInt16LE(index, 2);
