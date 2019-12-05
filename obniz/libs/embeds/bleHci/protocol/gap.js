@@ -377,7 +377,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   if (serviceUuids && serviceUuids.length) {
     for (i = 0; i < serviceUuids.length; i++) {
-      let serviceUuid = new Buffer(
+      let serviceUuid = Buffer.from(
         serviceUuids[i]
           .match(/.{1,2}/g)
           .reverse()
@@ -401,8 +401,8 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
     advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
   }
 
-  let advertisementData = new Buffer(advertisementDataLength);
-  let scanData = new Buffer(scanDataLength);
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(scanDataLength);
 
   // flags
   advertisementData.writeUInt8(2, 0);
@@ -445,7 +445,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   // name
   if (name && name.length) {
-    let nameBuffer = new Buffer(name);
+    let nameBuffer = Buffer.from(name);
 
     scanData.writeUInt8(1 + nameBuffer.length, 0);
     scanData.writeUInt8(0x08, 1);
@@ -461,10 +461,9 @@ Gap.prototype.startAdvertisingIBeacon = function(data) {
   let dataLength = data.length;
   let manufacturerDataLength = 4 + dataLength;
   let advertisementDataLength = 5 + manufacturerDataLength;
-  let scanDataLength = 0;
 
-  let advertisementData = new Buffer(advertisementDataLength);
-  let scanData = new Buffer(0);
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(0);
 
   // flags
   advertisementData.writeUInt8(2, 0);
@@ -486,8 +485,8 @@ Gap.prototype.startAdvertisingWithEIRData = function(
   advertisementData,
   scanData
 ) {
-  advertisementData = advertisementData || new Buffer(0);
-  scanData = scanData || new Buffer(0);
+  advertisementData = advertisementData || Buffer.alloc(0);
+  scanData = scanData || Buffer.alloc(0);
 
   debug(
     'startAdvertisingWithEIRData: advertisement data = ' +
