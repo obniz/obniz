@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 let debug = require('debug')('acl-att-stream');
 
 let events = require('events');

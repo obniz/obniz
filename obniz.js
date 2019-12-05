@@ -32984,7 +32984,9 @@ module.exports = BleService;
 /* eslint-disable */
 
 const ObnizBLEHci = __webpack_require__("./obniz/libs/embeds/bleHci/hci.js");
-const Bindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/bindings.js");
+const CentralBindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/bindings.js");
+const PeripheralBindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js");
+const HciProtocol = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 const BlePeripheral = __webpack_require__("./obniz/libs/embeds/bleHci/blePeripheral.js");
@@ -33000,7 +33002,9 @@ class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.hci = new ObnizBLEHci(Obniz);
-    this.centralBindings = new Bindings(this.hci);
+    const hciProtocol = new HciProtocol(this.hci)
+    this.centralBindings = new CentralBindings(hciProtocol);
+    this.peripheralbindings = new PeripheralBindings(hciProtocol);
 
 
     this._initialized = false;
@@ -34854,9 +34858,9 @@ class BleSecurity {
     }
 
     if (
-        auth !== undefined &&
-        indicateSecurityLevel !== undefined &&
-        keys !== undefined
+      auth !== undefined &&
+      indicateSecurityLevel !== undefined &&
+      keys !== undefined
     ) {
       this.setAuth(auth);
       this.setIndicateSecurityLevel(indicateSecurityLevel);
@@ -34867,30 +34871,28 @@ class BleSecurity {
       throw new Error(msg);
     }
   }
-
   checkIntroducedFirmware(introducedVersion, functionName) {
     let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
     if (results) {
       let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
-          this.Obniz.firmware_ver
-          })`;
+        this.Obniz.firmware_ver
+      })`;
       this.Obniz.error(msg);
       throw new Error(msg);
     }
   }
-
   setAuth(authTypes) {
     this.checkIntroducedFirmware('1.1.0', 'setAuth');
     if (!Array.isArray(authTypes)) {
       authTypes = [authTypes];
     }
     let sendTypes = authTypes
-        .map(elm => {
-          return elm.toLowerCase();
-        })
-        .filter(elm => {
-          return ['mitm', 'secure_connection', 'bonding'].includes(elm);
-        });
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['mitm', 'secure_connection', 'bonding'].includes(elm);
+      });
 
     if (sendTypes.length !== authTypes.length) {
       throw new Error('unknown auth type');
@@ -34929,12 +34931,12 @@ class BleSecurity {
       keyTypes = [keyTypes];
     }
     let sendTypes = keyTypes
-        .map(elm => {
-          return elm.toLowerCase();
-        })
-        .filter(elm => {
-          return ['ltk', 'csrk', 'irk'].includes(elm);
-        });
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['ltk', 'csrk', 'irk'].includes(elm);
+      });
 
     if (sendTypes.length !== keyTypes.length) {
       throw new Error('unknown key type');
@@ -34977,8 +34979,7 @@ class BleSecurity {
     // });
   }
 
-  onerror() {
-  } //dummy
+  onerror() {} //dummy
 
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
@@ -35088,7 +35089,7 @@ module.exports = ObnizBLEHci;
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/protocol/acl-stream.js":
+/***/ "./obniz/libs/embeds/bleHci/protocol/central/acl-stream.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {// var debug = require('debug')('acl-att-stream');
@@ -35096,7 +35097,7 @@ module.exports = ObnizBLEHci;
 let events = __webpack_require__("./node_modules/events/events.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
-let Smp = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/smp.js");
+let Smp = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/smp.js");
 
 let AclStream = function(
   hci,
@@ -35171,21 +35172,21 @@ module.exports = AclStream;
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/protocol/bindings.js":
+/***/ "./obniz/libs/embeds/bleHci/protocol/central/bindings.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// var debug = require('debug')('bindings');
 
 let events = __webpack_require__("./node_modules/events/events.js");
 
-let AclStream = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/acl-stream.js");
-let Gatt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/gatt.js");
-let Gap = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/gap.js");
-let Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
-let Signaling = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/signaling.js");
+let AclStream = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/acl-stream.js");
+let Gatt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/gatt.js");
+let Gap = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/gap.js");
+let Signaling = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/signaling.js");
+let Hci = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './hci'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 class NobleBindings extends events.EventEmitter {
-  constructor(obnizHci) {
+  constructor(hciProtocol) {
     super();
     this._state = null;
 
@@ -35201,7 +35202,7 @@ class NobleBindings extends events.EventEmitter {
     this._aclStreams = {};
     this._signalings = {};
 
-    this._hci = new Hci(obnizHci);
+    this._hci = hciProtocol;
     this._gap = new Gap(this._hci);
   }
 
@@ -35858,10 +35859,12 @@ module.exports = NobleBindings;
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/protocol/crypto.js":
+/***/ "./obniz/libs/embeds/bleHci/protocol/central/crypto.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {let crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+
+let crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
 
 function r() {
   return crypto.randomBytes(16);
@@ -35925,7 +35928,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/protocol/gap.js":
+/***/ "./obniz/libs/embeds/bleHci/protocol/central/gap.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// let debug = require('debug')('gap');
@@ -36283,7 +36286,7 @@ module.exports = Gap;
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/protocol/gatt.js":
+/***/ "./obniz/libs/embeds/bleHci/protocol/central/gatt.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, Buffer) {/* eslint-disable no-unused-vars */
@@ -37405,6 +37408,277 @@ module.exports = Gatt;
 
 /***/ }),
 
+/***/ "./obniz/libs/embeds/bleHci/protocol/central/signaling.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {let debug = __webpack_require__("./node_modules/debug/src/browser.js")('signaling');
+
+let events = __webpack_require__("./node_modules/events/events.js");
+let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+
+let CONNECTION_PARAMETER_UPDATE_REQUEST = 0x12;
+let CONNECTION_PARAMETER_UPDATE_RESPONSE = 0x13;
+
+let SIGNALING_CID = 0x0005;
+
+let Signaling = function(handle, aclStream) {
+  this._handle = handle;
+  this._aclStream = aclStream;
+
+  this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
+  this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+
+  this._aclStream.on('data', this.onAclStreamDataBinded);
+  this._aclStream.on('end', this.onAclStreamEndBinded);
+};
+
+util.inherits(Signaling, events.EventEmitter);
+
+Signaling.prototype.onAclStreamData = function(cid, data) {
+  if (cid !== SIGNALING_CID) {
+    return;
+  }
+
+  debug('onAclStreamData: ' + data.toString('hex'));
+
+  let code = data.readUInt8(0);
+  let identifier = data.readUInt8(1);
+  let length = data.readUInt16LE(2);
+  let signalingData = data.slice(4);
+
+  debug('\tcode = ' + code);
+  debug('\tidentifier = ' + identifier);
+  debug('\tlength = ' + length);
+
+  if (code === CONNECTION_PARAMETER_UPDATE_REQUEST) {
+    this.processConnectionParameterUpdateRequest(identifier, signalingData);
+  }
+};
+
+Signaling.prototype.onAclStreamEnd = function() {
+  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
+};
+
+Signaling.prototype.processConnectionParameterUpdateRequest = function(
+  identifier,
+  data
+) {
+  let minInterval = data.readUInt16LE(0) * 1.25;
+  let maxInterval = data.readUInt16LE(2) * 1.25;
+  let latency = data.readUInt16LE(4);
+  let supervisionTimeout = data.readUInt16LE(6) * 10;
+
+  debug('\t\tmin interval = ', minInterval);
+  debug('\t\tmax interval = ', maxInterval);
+  debug('\t\tlatency = ', latency);
+  debug('\t\tsupervision timeout = ', supervisionTimeout);
+
+  let response = Buffer.alloc(6);
+
+  response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
+  response.writeUInt8(identifier, 1); // identifier
+  response.writeUInt16LE(2, 2); // length
+  response.writeUInt16LE(0, 4);
+
+  this._aclStream.write(SIGNALING_CID, response);
+
+  this.emit(
+    'connectionParameterUpdateRequest',
+    this._handle,
+    minInterval,
+    maxInterval,
+    latency,
+    supervisionTimeout
+  );
+};
+
+module.exports = Signaling;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/protocol/central/smp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {let events = __webpack_require__("./node_modules/events/events.js");
+let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+
+let crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/crypto.js");
+
+let SMP_CID = 0x0006;
+
+let SMP_PAIRING_REQUEST = 0x01;
+let SMP_PAIRING_RESPONSE = 0x02;
+let SMP_PAIRING_CONFIRM = 0x03;
+let SMP_PAIRING_RANDOM = 0x04;
+let SMP_PAIRING_FAILED = 0x05;
+let SMP_ENCRYPT_INFO = 0x06;
+let SMP_MASTER_IDENT = 0x07;
+
+let Smp = function(
+  aclStream,
+  localAddressType,
+  localAddress,
+  remoteAddressType,
+  remoteAddress
+) {
+  this._aclStream = aclStream;
+
+  this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
+  this._ia = Buffer.from(
+    localAddress
+      .split(':')
+      .reverse()
+      .join(''),
+    'hex'
+  );
+  this._rat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
+  this._ra = Buffer.from(
+    remoteAddress
+      .split(':')
+      .reverse()
+      .join(''),
+    'hex'
+  );
+
+  this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
+  this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+
+  this._aclStream.on('data', this.onAclStreamDataBinded);
+  this._aclStream.on('end', this.onAclStreamEndBinded);
+};
+
+util.inherits(Smp, events.EventEmitter);
+
+Smp.prototype.sendPairingRequest = function() {
+  this._preq = Buffer.from([
+    SMP_PAIRING_REQUEST,
+    0x03, // IO capability: NoInputNoOutput
+    0x00, // OOB data: Authentication data not present
+    0x01, // Authentication requirement: Bonding - No MITM
+    0x10, // Max encryption key size
+    0x00, // Initiator key distribution: <none>
+    0x01, // Responder key distribution: EncKey
+  ]);
+
+  this.write(this._preq);
+};
+
+Smp.prototype.onAclStreamData = function(cid, data) {
+  if (cid !== SMP_CID) {
+    return;
+  }
+
+  let code = data.readUInt8(0);
+
+  if (SMP_PAIRING_RESPONSE === code) {
+    this.handlePairingResponse(data);
+  } else if (SMP_PAIRING_CONFIRM === code) {
+    this.handlePairingConfirm(data);
+  } else if (SMP_PAIRING_RANDOM === code) {
+    this.handlePairingRandom(data);
+  } else if (SMP_PAIRING_FAILED === code) {
+    this.handlePairingFailed(data);
+  } else if (SMP_ENCRYPT_INFO === code) {
+    this.handleEncryptInfo(data);
+  } else if (SMP_MASTER_IDENT === code) {
+    this.handleMasterIdent(data);
+  }
+};
+
+Smp.prototype.onAclStreamEnd = function() {
+  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
+
+  this.emit('end');
+};
+
+Smp.prototype.handlePairingResponse = function(data) {
+  this._pres = data;
+
+  this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
+  this._r = crypto.r();
+
+  this.write(
+    Buffer.concat([
+      Buffer.from([SMP_PAIRING_CONFIRM]),
+      crypto.c1(
+        this._tk,
+        this._r,
+        this._pres,
+        this._preq,
+        this._iat,
+        this._ia,
+        this._rat,
+        this._ra
+      ),
+    ])
+  );
+};
+
+Smp.prototype.handlePairingConfirm = function(data) {
+  this._pcnf = data;
+
+  this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
+};
+
+Smp.prototype.handlePairingRandom = function(data) {
+  let r = data.slice(1);
+
+  let pcnf = Buffer.concat([
+    Buffer.from([SMP_PAIRING_CONFIRM]),
+    crypto.c1(
+      this._tk,
+      r,
+      this._pres,
+      this._preq,
+      this._iat,
+      this._ia,
+      this._rat,
+      this._ra
+    ),
+  ]);
+
+  if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
+    let stk = crypto.s1(this._tk, r, this._r);
+
+    this.emit('stk', stk);
+  } else {
+    this.write(Buffer.from([SMP_PAIRING_RANDOM, SMP_PAIRING_CONFIRM]));
+
+    this.emit('fail');
+  }
+};
+
+Smp.prototype.handlePairingFailed = function(data) {
+  this.emit('fail');
+};
+
+Smp.prototype.handleEncryptInfo = function(data) {
+  let ltk = data.slice(1);
+
+  this.emit('ltk', ltk);
+};
+
+Smp.prototype.handleMasterIdent = function(data) {
+  let ediv = data.slice(1, 3);
+  let rand = data.slice(3);
+
+  this.emit('masterIdent', ediv, rand);
+};
+
+Smp.prototype.write = function(data) {
+  this._aclStream.write(SMP_CID, data);
+};
+
+module.exports = Smp;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./obniz/libs/embeds/bleHci/protocol/hci-status.json":
 /***/ (function(module) {
 
@@ -38416,245 +38690,1905 @@ module.exports = Hci;
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/protocol/signaling.js":
+/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {let debug = __webpack_require__("./node_modules/debug/src/browser.js")('signaling');
+/* eslint-disable */
+
+let debug = __webpack_require__("./node_modules/debug/src/browser.js")('acl-att-stream');
 
 let events = __webpack_require__("./node_modules/events/events.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
-let CONNECTION_PARAMETER_UPDATE_REQUEST = 0x12;
-let CONNECTION_PARAMETER_UPDATE_RESPONSE = 0x13;
+let crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js");
+let Smp = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/smp.js");
 
-let SIGNALING_CID = 0x0005;
-
-let Signaling = function(handle, aclStream) {
-  this._handle = handle;
-  this._aclStream = aclStream;
-
-  this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-  this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
-
-  this._aclStream.on('data', this.onAclStreamDataBinded);
-  this._aclStream.on('end', this.onAclStreamEndBinded);
-};
-
-util.inherits(Signaling, events.EventEmitter);
-
-Signaling.prototype.onAclStreamData = function(cid, data) {
-  if (cid !== SIGNALING_CID) {
-    return;
-  }
-
-  debug('onAclStreamData: ' + data.toString('hex'));
-
-  let code = data.readUInt8(0);
-  let identifier = data.readUInt8(1);
-  let length = data.readUInt16LE(2);
-  let signalingData = data.slice(4);
-
-  debug('\tcode = ' + code);
-  debug('\tidentifier = ' + identifier);
-  debug('\tlength = ' + length);
-
-  if (code === CONNECTION_PARAMETER_UPDATE_REQUEST) {
-    this.processConnectionParameterUpdateRequest(identifier, signalingData);
-  }
-};
-
-Signaling.prototype.onAclStreamEnd = function() {
-  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
-  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
-};
-
-Signaling.prototype.processConnectionParameterUpdateRequest = function(
-  identifier,
-  data
-) {
-  let minInterval = data.readUInt16LE(0) * 1.25;
-  let maxInterval = data.readUInt16LE(2) * 1.25;
-  let latency = data.readUInt16LE(4);
-  let supervisionTimeout = data.readUInt16LE(6) * 10;
-
-  debug('\t\tmin interval = ', minInterval);
-  debug('\t\tmax interval = ', maxInterval);
-  debug('\t\tlatency = ', latency);
-  debug('\t\tsupervision timeout = ', supervisionTimeout);
-
-  let response = Buffer.alloc(6);
-
-  response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
-  response.writeUInt8(identifier, 1); // identifier
-  response.writeUInt16LE(2, 2); // length
-  response.writeUInt16LE(0, 4);
-
-  this._aclStream.write(SIGNALING_CID, response);
-
-  this.emit(
-    'connectionParameterUpdateRequest',
-    this._handle,
-    minInterval,
-    maxInterval,
-    latency,
-    supervisionTimeout
-  );
-};
-
-module.exports = Signaling;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
-/***/ "./obniz/libs/embeds/bleHci/protocol/smp.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(Buffer) {let events = __webpack_require__("./node_modules/events/events.js");
-let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
-
-let crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/crypto.js");
-
-let SMP_CID = 0x0006;
-
-let SMP_PAIRING_REQUEST = 0x01;
-let SMP_PAIRING_RESPONSE = 0x02;
-let SMP_PAIRING_CONFIRM = 0x03;
-let SMP_PAIRING_RANDOM = 0x04;
-let SMP_PAIRING_FAILED = 0x05;
-let SMP_ENCRYPT_INFO = 0x06;
-let SMP_MASTER_IDENT = 0x07;
-
-let Smp = function(
-  aclStream,
+let AclStream = function(
+  hci,
+  handle,
   localAddressType,
   localAddress,
   remoteAddressType,
   remoteAddress
 ) {
-  this._aclStream = aclStream;
+  this._hci = hci;
+  this._handle = handle;
+  this.encypted = false;
 
-  this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
-  this._ia = Buffer.from(
-    localAddress
-      .split(':')
-      .reverse()
-      .join(''),
-    'hex'
-  );
-  this._rat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
-  this._ra = Buffer.from(
+  this._smp = new Smp(
+    this,
+    localAddressType,
+    localAddress,
+    remoteAddressType,
     remoteAddress
-      .split(':')
-      .reverse()
-      .join(''),
-    'hex'
   );
+};
+
+util.inherits(AclStream, events.EventEmitter);
+
+AclStream.prototype.write = function(cid, data) {
+  this._hci.queueAclDataPkt(this._handle, cid, data);
+};
+
+AclStream.prototype.push = function(cid, data) {
+  if (data) {
+    this.emit('data', cid, data);
+  } else {
+    this.emit('end');
+  }
+};
+
+AclStream.prototype.pushEncrypt = function(encrypt) {
+  this.encrypted = encrypt ? true : false;
+
+  this.emit('encryptChange', this.encrypted);
+};
+
+AclStream.prototype.pushLtkNegReply = function() {
+  this.emit('ltkNegReply');
+};
+
+module.exports = AclStream;
+
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/* eslint-disable */
+
+var debug = __webpack_require__("./node_modules/debug/src/browser.js")('bindings');
+
+var events = __webpack_require__("./node_modules/events/events.js");
+var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+var os = __webpack_require__("./node_modules/os-browserify/browser.js");
+
+var AclStream = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js");
+var Hci = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './hci'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var Gap = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gap.js");
+var Gatt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js");
+
+var BlenoBindings = function(hciProtocol) {
+  this._state = null;
+
+  this._advertising = false;
+
+  this._hci = hciProtocol;
+  this._gap = new Gap(this._hci);
+  this._gatt = new Gatt(this._hci);
+
+  this._address = null;
+  this._handle = null;
+  this._aclStream = null;
+};
+
+util.inherits(BlenoBindings, events.EventEmitter);
+
+BlenoBindings.prototype.startAdvertising = function(name, serviceUuids) {
+  this._advertising = true;
+
+  this._gap.startAdvertising(name, serviceUuids);
+};
+
+BlenoBindings.prototype.startAdvertisingIBeacon = function(data) {
+  this._advertising = true;
+
+  this._gap.startAdvertisingIBeacon(data);
+};
+
+BlenoBindings.prototype.startAdvertisingWithEIRData = function(advertisementData, scanData) {
+  this._advertising = true;
+
+  this._gap.startAdvertisingWithEIRData(advertisementData, scanData);
+};
+
+BlenoBindings.prototype.stopAdvertising = function() {
+  this._advertising = false;
+
+  this._gap.stopAdvertising();
+};
+
+BlenoBindings.prototype.setServices = function(services) {
+  this._gatt.setServices(services);
+
+  this.emit('servicesSet');
+};
+
+BlenoBindings.prototype.disconnect = function() {
+  if (this._handle) {
+    debug('disconnect by server');
+
+    this._hci.disconnect(this._handle);
+  }
+};
+
+BlenoBindings.prototype.updateRssi = function() {
+  if (this._handle) {
+    this._hci.readRssi(this._handle);
+  }
+};
+
+BlenoBindings.prototype.init = function() {
+  this.onSigIntBinded = this.onSigInt.bind(this);
+
+  process.on('SIGINT', this.onSigIntBinded);
+  process.on('exit', this.onExit.bind(this));
+
+  this._gap.on('advertisingStart', this.onAdvertisingStart.bind(this));
+  this._gap.on('advertisingStop', this.onAdvertisingStop.bind(this));
+
+  this._gatt.on('mtuChange', this.onMtuChange.bind(this));
+
+  this._hci.on('stateChange', this.onStateChange.bind(this));
+  this._hci.on('addressChange', this.onAddressChange.bind(this));
+  this._hci.on('readLocalVersion', this.onReadLocalVersion.bind(this));
+
+  this._hci.on('leConnComplete', this.onLeConnComplete.bind(this));
+  this._hci.on('leConnUpdateComplete', this.onLeConnUpdateComplete.bind(this));
+  this._hci.on('rssiRead', this.onRssiRead.bind(this));
+  this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
+  this._hci.on('encryptChange', this.onEncryptChange.bind(this));
+  this._hci.on('leLtkNegReply', this.onLeLtkNegReply.bind(this));
+  this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+
+  this.emit('platform', os.platform());
+
+  this._hci.init();
+};
+
+BlenoBindings.prototype.onStateChange = function(state) {
+  if (this._state === state) {
+    return;
+  }
+  this._state = state;
+
+  if (state === 'unauthorized') {
+    console.log('bleno warning: adapter state unauthorized, please run as root or with sudo');
+    console.log('               or see README for information on running without root/sudo:');
+    console.log('               https://github.com/sandeepmistry/bleno#running-on-linux');
+  } else if (state === 'unsupported') {
+    console.log('bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
+    console.log('               Try to run with environment variable:');
+    console.log('               [sudo] BLENO_HCI_DEVICE_ID=x node ...');
+  }
+
+  this.emit('stateChange', state);
+};
+
+BlenoBindings.prototype.onAddressChange = function(address) {
+  this.emit('addressChange', address);
+};
+
+BlenoBindings.prototype.onReadLocalVersion = function(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) {
+};
+
+BlenoBindings.prototype.onAdvertisingStart = function(error) {
+  this.emit('advertisingStart', error);
+};
+
+BlenoBindings.prototype.onAdvertisingStop = function() {
+  this.emit('advertisingStop');
+};
+
+BlenoBindings.prototype.onLeConnComplete = function(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+  if (role !== 1) {
+    // not slave, ignore
+    return;
+  }
+
+  this._address = address;
+  this._handle = handle;
+  this._aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+  this._gatt.setAclStream(this._aclStream);
+
+  this.emit('accept', address);
+};
+
+BlenoBindings.prototype.onLeConnUpdateComplete = function(handle, interval, latency, supervisionTimeout) {
+  // no-op
+};
+
+BlenoBindings.prototype.onDisconnComplete = function(handle, reason) {
+  if (this._aclStream) {
+    this._aclStream.push(null, null);
+  }
+
+  var address = this._address;
+
+  this._address = null;
+  this._handle = null;
+  this._aclStream = null;
+
+  if (address) {
+    this.emit('disconnect', address); // TODO: use reason
+  }
+
+  if (this._advertising) {
+    this._gap.restartAdvertising();
+  }
+};
+
+BlenoBindings.prototype.onEncryptChange = function(handle, encrypt) {
+  if (this._handle === handle && this._aclStream) {
+    this._aclStream.pushEncrypt(encrypt);
+  }
+};
+
+BlenoBindings.prototype.onLeLtkNegReply = function(handle) {
+  if (this._handle === handle && this._aclStream) {
+    this._aclStream.pushLtkNegReply();
+  }
+};
+
+BlenoBindings.prototype.onMtuChange = function(mtu) {
+  this.emit('mtuChange', mtu);
+};
+
+BlenoBindings.prototype.onRssiRead = function(handle, rssi) {
+  this.emit('rssiUpdate', rssi);
+};
+
+BlenoBindings.prototype.onAclDataPkt = function(handle, cid, data) {
+  if (this._handle === handle && this._aclStream) {
+    this._aclStream.push(cid, data);
+  }
+};
+
+BlenoBindings.prototype.onSigInt = function() {
+  var sigIntListeners = process.listeners('SIGINT');
+
+  if (sigIntListeners[sigIntListeners.length - 1] === this.onSigIntBinded) {
+    // we are the last listener, so exit
+    // this will trigger onExit, and clean up
+    process.exit(1);
+  }
+};
+
+BlenoBindings.prototype.onExit = function() {
+  this._gap.stopAdvertising();
+
+  this.disconnect();
+};
+
+module.exports = BlenoBindings;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+
+var crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
+
+function r() {
+  return crypto.randomBytes(16);
+}
+
+function c1(k, r, pres, preq, iat, ia, rat, ra) {
+  var p1 = Buffer.concat([
+    iat,
+    rat,
+    preq,
+    pres
+  ]);
+
+  var p2 = Buffer.concat([
+    ra,
+    ia,
+    new Buffer('00000000', 'hex')
+  ]);
+
+  var res = xor(r, p1);
+  res = e(k, res);
+  res = xor(res, p2);
+  res = e(k, res);
+
+  return res;
+}
+
+function s1(k, r1, r2) {
+  return e(k, Buffer.concat([
+    r2.slice(0, 8),
+    r1.slice(0, 8)
+  ]));
+}
+
+function e(key, data) {
+  key = swap(key);
+  data = swap(data);
+
+  var cipher = crypto.createCipheriv('aes-128-ecb', key, '');
+  cipher.setAutoPadding(false);
+
+  return swap(Buffer.concat([
+    cipher.update(data),
+    cipher.final()
+  ]));
+}
+
+function xor(b1, b2) {
+  var result = new Buffer(b1.length);
+
+  for (var i = 0; i < b1.length; i++) {
+    result[i] = b1[i] ^ b2[i];
+  }
+
+  return result;
+}
+
+function swap(input) {
+  var output = new Buffer(input.length);
+
+  for (var i = 0; i < output.length; i++) {
+    output[i] = input[input.length - i - 1];
+  }
+
+  return output;
+}
+
+module.exports = {
+  r: r,
+  c1: c1,
+  s1: s1,
+  e: e
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/gap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+
+var debug = __webpack_require__("./node_modules/debug/src/browser.js")('gap');
+
+var events = __webpack_require__("./node_modules/events/events.js");
+var os = __webpack_require__("./node_modules/os-browserify/browser.js");
+var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+
+var Hci = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './hci'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+var isLinux = (os.platform() === 'linux');
+var isIntelEdison = isLinux && (os.release().indexOf('edison') !== -1);
+var isYocto = isLinux && (os.release().indexOf('yocto') !== -1);
+
+function Gap(hci) {
+  this._hci = hci;
+
+  this._advertiseState = null;
+
+  this._hci.on('error', this.onHciError.bind(this));
+
+  this._hci.on('leAdvertisingParametersSet', this.onHciLeAdvertisingParametersSet.bind(this));
+  this._hci.on('leAdvertisingDataSet', this.onHciLeAdvertisingDataSet.bind(this));
+  this._hci.on('leScanResponseDataSet', this.onHciLeScanResponseDataSet.bind(this));
+  this._hci.on('leAdvertiseEnableSet', this.onHciLeAdvertiseEnableSet.bind(this));
+}
+
+util.inherits(Gap, events.EventEmitter);
+
+Gap.prototype.startAdvertising = function(name, serviceUuids) {
+  debug('startAdvertising: name = ' + name + ', serviceUuids = ' + JSON.stringify(serviceUuids, null, 2));
+
+  var advertisementDataLength = 3;
+  var scanDataLength = 0;
+
+  var serviceUuids16bit = [];
+  var serviceUuids128bit = [];
+  var i = 0;
+
+  if (name && name.length) {
+    scanDataLength += 2 + name.length;
+  }
+
+  if (serviceUuids && serviceUuids.length) {
+    for (i = 0; i < serviceUuids.length; i++) {
+      var serviceUuid = new Buffer(serviceUuids[i].match(/.{1,2}/g).reverse().join(''), 'hex');
+
+      if (serviceUuid.length === 2) {
+        serviceUuids16bit.push(serviceUuid);
+      } else if (serviceUuid.length === 16) {
+        serviceUuids128bit.push(serviceUuid);
+      }
+    }
+  }
+
+  if (serviceUuids16bit.length) {
+    advertisementDataLength += 2 + 2 * serviceUuids16bit.length;
+  }
+
+  if (serviceUuids128bit.length) {
+    advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
+  }
+
+  var advertisementData = new Buffer(advertisementDataLength);
+  var scanData = new Buffer(scanDataLength);
+
+  // flags
+  advertisementData.writeUInt8(2, 0);
+  advertisementData.writeUInt8(0x01, 1);
+  advertisementData.writeUInt8(0x06, 2);
+
+  var advertisementDataOffset = 3;
+
+  if (serviceUuids16bit.length) {
+    advertisementData.writeUInt8(1 + 2 * serviceUuids16bit.length, advertisementDataOffset);
+    advertisementDataOffset++;
+
+    advertisementData.writeUInt8(0x03, advertisementDataOffset);
+    advertisementDataOffset++;
+
+    for (i = 0; i < serviceUuids16bit.length; i++) {
+      serviceUuids16bit[i].copy(advertisementData, advertisementDataOffset);
+      advertisementDataOffset += serviceUuids16bit[i].length;
+    }
+  }
+
+  if (serviceUuids128bit.length) {
+    advertisementData.writeUInt8(1 + 16 * serviceUuids128bit.length, advertisementDataOffset);
+    advertisementDataOffset++;
+
+    advertisementData.writeUInt8(0x06, advertisementDataOffset);
+    advertisementDataOffset++;
+
+    for (i = 0; i < serviceUuids128bit.length; i++) {
+      serviceUuids128bit[i].copy(advertisementData, advertisementDataOffset);
+      advertisementDataOffset += serviceUuids128bit[i].length;
+    }
+  }
+
+  // name
+  if (name && name.length) {
+    var nameBuffer = new Buffer(name);
+
+    scanData.writeUInt8(1 + nameBuffer.length, 0);
+    scanData.writeUInt8(0x08, 1);
+    nameBuffer.copy(scanData, 2);
+  }
+
+  this.startAdvertisingWithEIRData(advertisementData, scanData);
+};
+
+
+Gap.prototype.startAdvertisingIBeacon = function(data) {
+  debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
+
+  var dataLength = data.length;
+  var manufacturerDataLength = 4 + dataLength;
+  var advertisementDataLength = 5 + manufacturerDataLength;
+  var scanDataLength = 0;
+
+  var advertisementData = new Buffer(advertisementDataLength);
+  var scanData = new Buffer(0);
+
+  // flags
+  advertisementData.writeUInt8(2, 0);
+  advertisementData.writeUInt8(0x01, 1);
+  advertisementData.writeUInt8(0x06, 2);
+
+  advertisementData.writeUInt8(manufacturerDataLength + 1, 3);
+  advertisementData.writeUInt8(0xff, 4);
+  advertisementData.writeUInt16LE(0x004c, 5); // Apple Company Identifier LE (16 bit)
+  advertisementData.writeUInt8(0x02, 7); // type, 2 => iBeacon
+  advertisementData.writeUInt8(dataLength, 8);
+
+  data.copy(advertisementData, 9);
+
+  this.startAdvertisingWithEIRData(advertisementData, scanData);
+};
+
+Gap.prototype.startAdvertisingWithEIRData = function(advertisementData, scanData) {
+  advertisementData = advertisementData || new Buffer(0);
+  scanData = scanData || new Buffer(0);
+
+  debug('startAdvertisingWithEIRData: advertisement data = ' + advertisementData.toString('hex') + ', scan data = ' + scanData.toString('hex'));
+
+  var error = null;
+
+  if (advertisementData.length > 31) {
+    error = new Error('Advertisement data is over maximum limit of 31 bytes');
+  } else if (scanData.length > 31) {
+    error = new Error('Scan data is over maximum limit of 31 bytes');
+  }
+
+  if (error) {
+    this.emit('advertisingStart', error);
+  } else {
+    this._advertiseState = 'starting';
+
+    if (isIntelEdison || isYocto) {
+      // work around for Intel Edison
+      debug('skipping first set of scan response and advertisement data');
+    } else {
+      this._hci.setScanResponseData(scanData);
+      this._hci.setAdvertisingData(advertisementData);
+    }
+    this._hci.setAdvertiseEnable(true);
+    this._hci.setScanResponseData(scanData);
+    this._hci.setAdvertisingData(advertisementData);
+  }
+};
+
+Gap.prototype.restartAdvertising = function() {
+  this._advertiseState = 'restarting';
+
+  this._hci.setAdvertiseEnable(true);
+};
+
+Gap.prototype.stopAdvertising = function() {
+  this._advertiseState = 'stopping';
+
+  this._hci.setAdvertiseEnable(false);
+};
+
+Gap.prototype.onHciError = function(error) {
+};
+
+Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {
+};
+
+Gap.prototype.onHciLeAdvertisingDataSet = function(status) {
+};
+
+Gap.prototype.onHciLeScanResponseDataSet = function(status) {
+};
+
+Gap.prototype.onHciLeAdvertiseEnableSet = function(status) {
+  if (this._advertiseState === 'starting') {
+    this._advertiseState = 'started';
+
+    var error = null;
+
+    if (status) {
+      error = new Error(Hci.STATUS_MAPPER[status] || ('Unknown (' + status + ')'));
+    }
+
+    this.emit('advertisingStart', error);
+  } else if (this._advertiseState === 'stopping') {
+    this._advertiseState = 'stopped';
+
+    this.emit('advertisingStop');
+  }
+};
+
+module.exports = Gap;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process, Buffer) {/* eslint-disable */
+
+var debug = __webpack_require__("./node_modules/debug/src/browser.js")('gatt');
+
+var events = __webpack_require__("./node_modules/events/events.js");
+var os = __webpack_require__("./node_modules/os-browserify/browser.js");
+var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+
+var ATT_OP_ERROR                    = 0x01;
+var ATT_OP_MTU_REQ                  = 0x02;
+var ATT_OP_MTU_RESP                 = 0x03;
+var ATT_OP_FIND_INFO_REQ            = 0x04;
+var ATT_OP_FIND_INFO_RESP           = 0x05;
+var ATT_OP_FIND_BY_TYPE_REQ         = 0x06;
+var ATT_OP_FIND_BY_TYPE_RESP        = 0x07;
+var ATT_OP_READ_BY_TYPE_REQ         = 0x08;
+var ATT_OP_READ_BY_TYPE_RESP        = 0x09;
+var ATT_OP_READ_REQ                 = 0x0a;
+var ATT_OP_READ_RESP                = 0x0b;
+var ATT_OP_READ_BLOB_REQ            = 0x0c;
+var ATT_OP_READ_BLOB_RESP           = 0x0d;
+var ATT_OP_READ_MULTI_REQ           = 0x0e;
+var ATT_OP_READ_MULTI_RESP          = 0x0f;
+var ATT_OP_READ_BY_GROUP_REQ        = 0x10;
+var ATT_OP_READ_BY_GROUP_RESP       = 0x11;
+var ATT_OP_WRITE_REQ                = 0x12;
+var ATT_OP_WRITE_RESP               = 0x13;
+var ATT_OP_WRITE_CMD                = 0x52;
+var ATT_OP_PREP_WRITE_REQ           = 0x16;
+var ATT_OP_PREP_WRITE_RESP          = 0x17;
+var ATT_OP_EXEC_WRITE_REQ           = 0x18;
+var ATT_OP_EXEC_WRITE_RESP          = 0x19;
+var ATT_OP_HANDLE_NOTIFY            = 0x1b;
+var ATT_OP_HANDLE_IND               = 0x1d;
+var ATT_OP_HANDLE_CNF               = 0x1e;
+var ATT_OP_SIGNED_WRITE_CMD         = 0xd2;
+
+var GATT_PRIM_SVC_UUID              = 0x2800;
+var GATT_INCLUDE_UUID               = 0x2802;
+var GATT_CHARAC_UUID                = 0x2803;
+
+var GATT_CLIENT_CHARAC_CFG_UUID     = 0x2902;
+var GATT_SERVER_CHARAC_CFG_UUID     = 0x2903;
+
+var ATT_ECODE_SUCCESS               = 0x00;
+var ATT_ECODE_INVALID_HANDLE        = 0x01;
+var ATT_ECODE_READ_NOT_PERM         = 0x02;
+var ATT_ECODE_WRITE_NOT_PERM        = 0x03;
+var ATT_ECODE_INVALID_PDU           = 0x04;
+var ATT_ECODE_AUTHENTICATION        = 0x05;
+var ATT_ECODE_REQ_NOT_SUPP          = 0x06;
+var ATT_ECODE_INVALID_OFFSET        = 0x07;
+var ATT_ECODE_AUTHORIZATION         = 0x08;
+var ATT_ECODE_PREP_QUEUE_FULL       = 0x09;
+var ATT_ECODE_ATTR_NOT_FOUND        = 0x0a;
+var ATT_ECODE_ATTR_NOT_LONG         = 0x0b;
+var ATT_ECODE_INSUFF_ENCR_KEY_SIZE  = 0x0c;
+var ATT_ECODE_INVAL_ATTR_VALUE_LEN  = 0x0d;
+var ATT_ECODE_UNLIKELY              = 0x0e;
+var ATT_ECODE_INSUFF_ENC            = 0x0f;
+var ATT_ECODE_UNSUPP_GRP_TYPE       = 0x10;
+var ATT_ECODE_INSUFF_RESOURCES      = 0x11;
+
+var ATT_CID = 0x0004;
+
+var Gatt = function() {
+  this.maxMtu = 256;
+  this._mtu = 23;
+  this._preparedWriteRequest = null;
+
+  this.setServices([]);
 
   this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
   this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+};
+
+util.inherits(Gatt, events.EventEmitter);
+
+Gatt.prototype.setServices = function(services) {
+  var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
+
+  // base services and characteristics
+  var allServices = [
+    {
+      uuid: '1800',
+      characteristics: [
+        {
+          uuid: '2a00',
+          properties: ['read'],
+          secure: [],
+          value: new Buffer(deviceName),
+          descriptors: []
+        },
+        {
+          uuid: '2a01',
+          properties: ['read'],
+          secure: [],
+          value: new Buffer([0x80, 0x00]),
+          descriptors: []
+        }
+      ]
+    },
+    {
+      uuid: '1801',
+      characteristics: [
+        {
+          uuid: '2a05',
+          properties: ['indicate'],
+          secure: [],
+          value: new Buffer([0x00, 0x00, 0x00, 0x00]),
+          descriptors: []
+        }
+      ]
+    }
+  ].concat(services);
+
+  this._handles = [];
+
+  var handle = 0;
+  var i;
+  var j;
+
+  for (i = 0; i < allServices.length; i++) {
+    var service = allServices[i];
+
+    handle++;
+    var serviceHandle = handle;
+
+    this._handles[serviceHandle] = {
+      type: 'service',
+      uuid: service.uuid,
+      attribute: service,
+      startHandle: serviceHandle
+      // endHandle filled in below
+    };
+
+    for (j = 0; j < service.characteristics.length; j++) {
+      var characteristic = service.characteristics[j];
+
+      var properties = 0;
+      var secure = 0;
+
+      if (characteristic.properties.indexOf('read') !== -1) {
+        properties |= 0x02;
+
+        if (characteristic.secure.indexOf('read') !== -1) {
+          secure |= 0x02;
+        }
+      }
+
+      if (characteristic.properties.indexOf('writeWithoutResponse') !== -1) {
+        properties |= 0x04;
+
+        if (characteristic.secure.indexOf('writeWithoutResponse') !== -1) {
+          secure |= 0x04;
+        }
+      }
+
+      if (characteristic.properties.indexOf('write') !== -1) {
+        properties |= 0x08;
+
+        if (characteristic.secure.indexOf('write') !== -1) {
+          secure |= 0x08;
+        }
+      }
+
+      if (characteristic.properties.indexOf('notify') !== -1) {
+        properties |= 0x10;
+
+        if (characteristic.secure.indexOf('notify') !== -1) {
+          secure |= 0x10;
+        }
+      }
+
+      if (characteristic.properties.indexOf('indicate') !== -1) {
+        properties |= 0x20;
+
+        if (characteristic.secure.indexOf('indicate') !== -1) {
+          secure |= 0x20;
+        }
+      }
+
+      handle++;
+      var characteristicHandle = handle;
+
+      handle++;
+      var characteristicValueHandle = handle;
+
+      this._handles[characteristicHandle] = {
+        type: 'characteristic',
+        uuid: characteristic.uuid,
+        properties: properties,
+        secure: secure,
+        attribute: characteristic,
+        startHandle: characteristicHandle,
+        valueHandle: characteristicValueHandle
+      };
+
+      this._handles[characteristicValueHandle] = {
+        type: 'characteristicValue',
+        handle: characteristicValueHandle,
+        value: characteristic.value
+      };
+
+      if (properties & 0x30) { // notify or indicate
+        // add client characteristic configuration descriptor
+
+        handle++;
+        var clientCharacteristicConfigurationDescriptorHandle = handle;
+        this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
+          type: 'descriptor',
+          handle: clientCharacteristicConfigurationDescriptorHandle,
+          uuid: '2902',
+          attribute: characteristic,
+          properties: (0x02 | 0x04 | 0x08), // read/write
+          secure: (secure & 0x10) ? (0x02 | 0x04 | 0x08) : 0,
+          value: new Buffer([0x00, 0x00])
+        };
+      }
+
+      for (var k = 0; k < characteristic.descriptors.length; k++) {
+        var descriptor = characteristic.descriptors[k];
+
+        handle++;
+        var descriptorHandle = handle;
+
+        this._handles[descriptorHandle] = {
+          type: 'descriptor',
+          handle: descriptorHandle,
+          uuid: descriptor.uuid,
+          attribute: descriptor,
+          properties: 0x02, // read only
+          secure: 0x00,
+          value: descriptor.value
+        };
+      }
+    }
+
+    this._handles[serviceHandle].endHandle = handle;
+  }
+
+  var debugHandles = [];
+  for (i = 0; i < this._handles.length; i++) {
+    handle = this._handles[i];
+
+    debugHandles[i] = {};
+    for(j in handle) {
+      if (Buffer.isBuffer(handle[j])) {
+        debugHandles[i][j] = handle[j] ? 'Buffer(\'' + handle[j].toString('hex') + '\', \'hex\')' : null;
+      } else if (j !== 'attribute') {
+        debugHandles[i][j] = handle[j];
+      }
+    }
+  }
+
+  debug('handles = ' + JSON.stringify(debugHandles, null, 2));
+};
+
+Gatt.prototype.setAclStream = function(aclStream) {
+  this._mtu = 23;
+  this._preparedWriteRequest = null;
+
+  this._aclStream = aclStream;
 
   this._aclStream.on('data', this.onAclStreamDataBinded);
   this._aclStream.on('end', this.onAclStreamEndBinded);
 };
 
-util.inherits(Smp, events.EventEmitter);
+Gatt.prototype.onAclStreamData = function(cid, data) {
+  if (cid !== ATT_CID) {
+    return;
+  }
 
-Smp.prototype.sendPairingRequest = function() {
-  this._preq = Buffer.from([
-    SMP_PAIRING_REQUEST,
-    0x03, // IO capability: NoInputNoOutput
-    0x00, // OOB data: Authentication data not present
-    0x01, // Authentication requirement: Bonding - No MITM
-    0x10, // Max encryption key size
-    0x00, // Initiator key distribution: <none>
-    0x01, // Responder key distribution: EncKey
-  ]);
-
-  this.write(this._preq);
+  this.handleRequest(data);
 };
+
+Gatt.prototype.onAclStreamEnd = function() {
+  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
+
+  for (var i = 0; i < this._handles.length; i++) {
+    if (this._handles[i] && this._handles[i].type === 'descriptor' &&
+        this._handles[i].uuid === '2902' && this._handles[i].value.readUInt16LE(0) !== 0) {
+
+      this._handles[i].value = new Buffer([0x00, 0x00]);
+
+      if (this._handles[i].attribute && this._handles[i].attribute.emit) {
+        this._handles[i].attribute.emit('unsubscribe');
+      }
+    }
+  }
+};
+
+Gatt.prototype.send = function(data) {
+  debug('send: ' + data.toString('hex'));
+  this._aclStream.write(ATT_CID, data);
+};
+
+Gatt.prototype.errorResponse = function(opcode, handle, status) {
+  var buf = new Buffer(5);
+
+  buf.writeUInt8(ATT_OP_ERROR, 0);
+  buf.writeUInt8(opcode, 1);
+  buf.writeUInt16LE(handle, 2);
+  buf.writeUInt8(status, 4);
+
+  return buf;
+};
+
+Gatt.prototype.handleRequest = function(request) {
+  debug('handing request: ' + request.toString('hex'));
+
+  var requestType = request[0];
+  var response = null;
+
+  switch(requestType) {
+    case ATT_OP_MTU_REQ:
+      response = this.handleMtuRequest(request);
+      break;
+
+    case ATT_OP_FIND_INFO_REQ:
+      response = this.handleFindInfoRequest(request);
+      break;
+
+    case ATT_OP_FIND_BY_TYPE_REQ:
+      response = this.handleFindByTypeRequest(request);
+      break;
+
+    case ATT_OP_READ_BY_TYPE_REQ:
+      response = this.handleReadByTypeRequest(request);
+      break;
+
+    case ATT_OP_READ_REQ:
+    case ATT_OP_READ_BLOB_REQ:
+      response = this.handleReadOrReadBlobRequest(request);
+      break;
+
+    case ATT_OP_READ_BY_GROUP_REQ:
+      response = this.handleReadByGroupRequest(request);
+      break;
+
+    case ATT_OP_WRITE_REQ:
+    case ATT_OP_WRITE_CMD:
+      response = this.handleWriteRequestOrCommand(request);
+      break;
+
+    case ATT_OP_PREP_WRITE_REQ:
+      response = this.handlePrepareWriteRequest(request);
+      break;
+
+    case ATT_OP_EXEC_WRITE_REQ:
+      response = this.handleExecuteWriteRequest(request);
+      break;
+
+    case ATT_OP_HANDLE_CNF:
+      response = this.handleConfirmation(request);
+      break;
+
+    default:
+    case ATT_OP_READ_MULTI_REQ:
+    case ATT_OP_SIGNED_WRITE_CMD:
+      response = this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP);
+      break;
+  }
+
+  if (response) {
+    debug('response: ' + response.toString('hex'));
+
+    this.send(response);
+  }
+};
+
+Gatt.prototype.handleMtuRequest = function(request) {
+  var mtu = request.readUInt16LE(1);
+
+  if (mtu < 23) {
+    mtu = 23;
+  } else if (mtu > this.maxMtu) {
+    mtu = this.maxMtu;
+  }
+
+  this._mtu = mtu;
+
+  this.emit('mtuChange', this._mtu);
+
+  var response = new Buffer(3);
+
+  response.writeUInt8(ATT_OP_MTU_RESP, 0);
+  response.writeUInt16LE(mtu, 1);
+
+  return response;
+};
+
+Gatt.prototype.handleFindInfoRequest = function(request) {
+  var response = null;
+
+  var startHandle = request.readUInt16LE(1);
+  var endHandle = request.readUInt16LE(3);
+
+  var infos = [];
+  var uuid = null;
+  var i;
+
+  for (i = startHandle; i <= endHandle; i++) {
+    var handle = this._handles[i];
+
+    if (!handle) {
+      break;
+    }
+
+    uuid = null;
+
+    if ('service' === handle.type) {
+      uuid = '2800';
+    } else if ('includedService' === handle.type) {
+      uuid = '2802';
+    } else if ('characteristic' === handle.type) {
+      uuid = '2803';
+    } else if ('characteristicValue' === handle.type) {
+      uuid = this._handles[i - 1].uuid;
+    } else if ('descriptor' === handle.type) {
+      uuid = handle.uuid;
+    }
+
+    if (uuid) {
+      infos.push({
+        handle: i,
+        uuid: uuid
+      });
+    }
+  }
+
+  if (infos.length) {
+    var uuidSize = infos[0].uuid.length / 2;
+    var numInfo = 1;
+
+    for (i = 1; i < infos.length; i++) {
+      if (infos[0].uuid.length !== infos[i].uuid.length) {
+        break;
+      }
+      numInfo++;
+    }
+
+    var lengthPerInfo = (uuidSize === 2) ? 4 : 18;
+    var maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
+    numInfo = Math.min(numInfo, maxInfo);
+
+    response = new Buffer(2 + numInfo * lengthPerInfo);
+
+    response[0] = ATT_OP_FIND_INFO_RESP;
+    response[1] = (uuidSize === 2) ? 0x01 : 0x2;
+
+    for (i = 0; i < numInfo; i++) {
+      var info = infos[i];
+
+      response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
+
+      uuid = new Buffer(info.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      for (var j = 0; j < uuid.length; j++) {
+        response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
+      }
+    }
+  } else {
+    response = this.errorResponse(ATT_OP_FIND_INFO_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+  }
+
+  return response;
+};
+
+Gatt.prototype.handleFindByTypeRequest = function(request) {
+  var response = null;
+
+  var startHandle = request.readUInt16LE(1);
+  var endHandle = request.readUInt16LE(3);
+  var uuid = request.slice(5, 7).toString('hex').match(/.{1,2}/g).reverse().join('');
+  var value = request.slice(7).toString('hex').match(/.{1,2}/g).reverse().join('');
+
+  var handles = [];
+  var handle;
+
+  for (var i = startHandle; i <= endHandle; i++) {
+    handle = this._handles[i];
+
+    if (!handle) {
+      break;
+    }
+
+    if ('2800' === uuid && handle.type === 'service' && handle.uuid === value) {
+      handles.push({
+        start: handle.startHandle,
+        end: handle.endHandle
+      });
+    }
+  }
+
+  if (handles.length) {
+    var lengthPerHandle = 4;
+    var numHandles = handles.length;
+    var maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
+
+    numHandles = Math.min(numHandles, maxHandles);
+
+    response = new Buffer(1 + numHandles * lengthPerHandle);
+
+    response[0] = ATT_OP_FIND_BY_TYPE_RESP;
+
+    for (i = 0; i < numHandles; i++) {
+      handle = handles[i];
+
+      response.writeUInt16LE(handle.start, 1 + i * lengthPerHandle);
+      response.writeUInt16LE(handle.end, 1 + i * lengthPerHandle + 2);
+    }
+  } else {
+    response = this.errorResponse(ATT_OP_FIND_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+  }
+
+  return response;
+};
+
+Gatt.prototype.handleReadByGroupRequest = function(request) {
+  var response = null;
+
+  var startHandle = request.readUInt16LE(1);
+  var endHandle = request.readUInt16LE(3);
+  var uuid = request.slice(5).toString('hex').match(/.{1,2}/g).reverse().join('');
+
+  debug('read by group: startHandle = 0x' + startHandle.toString(16) + ', endHandle = 0x' + endHandle.toString(16) + ', uuid = 0x' + uuid.toString(16));
+
+  if ('2800' === uuid || '2802' === uuid) {
+    var services = [];
+    var type = ('2800' === uuid) ? 'service' : 'includedService';
+    var i;
+
+    for (i = startHandle; i <= endHandle; i++) {
+      var handle = this._handles[i];
+
+      if (!handle) {
+        break;
+      }
+
+      if (handle.type === type) {
+        services.push(handle);
+      }
+    }
+
+    if (services.length) {
+      var uuidSize = services[0].uuid.length / 2;
+      var numServices = 1;
+
+      for (i = 1; i < services.length; i++) {
+        if (services[0].uuid.length !== services[i].uuid.length) {
+          break;
+        }
+        numServices++;
+      }
+
+      var lengthPerService = (uuidSize === 2) ? 6 : 20;
+      var maxServices = Math.floor((this._mtu - 2) / lengthPerService);
+      numServices = Math.min(numServices, maxServices);
+
+      response = new Buffer(2 + numServices * lengthPerService);
+
+      response[0] = ATT_OP_READ_BY_GROUP_RESP;
+      response[1] = lengthPerService;
+
+      for (i = 0; i < numServices; i++) {
+        var service = services[i];
+
+        response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
+        response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
+
+        var serviceUuid = new Buffer(service.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+        for (var j = 0; j < serviceUuid.length; j++) {
+          response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
+        }
+      }
+    } else {
+      response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+    }
+  } else {
+    response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_UNSUPP_GRP_TYPE);
+  }
+
+  return response;
+};
+
+Gatt.prototype.handleReadByTypeRequest = function(request) {
+  var response = null;
+  var requestType = request[0];
+
+  var startHandle = request.readUInt16LE(1);
+  var endHandle = request.readUInt16LE(3);
+  var uuid = request.slice(5).toString('hex').match(/.{1,2}/g).reverse().join('');
+  var i;
+  var handle;
+
+  debug('read by type: startHandle = 0x' + startHandle.toString(16) + ', endHandle = 0x' + endHandle.toString(16) + ', uuid = 0x' + uuid.toString(16));
+
+  if ('2803' === uuid) {
+    var characteristics = [];
+
+    for (i = startHandle; i <= endHandle; i++) {
+      handle = this._handles[i];
+
+      if (!handle) {
+        break;
+      }
+
+      if (handle.type === 'characteristic') {
+        characteristics.push(handle);
+      }
+    }
+
+    if (characteristics.length) {
+      var uuidSize = characteristics[0].uuid.length / 2;
+      var numCharacteristics = 1;
+
+      for (i = 1; i < characteristics.length; i++) {
+        if (characteristics[0].uuid.length !== characteristics[i].uuid.length) {
+          break;
+        }
+        numCharacteristics++;
+      }
+
+      var lengthPerCharacteristic = (uuidSize === 2) ? 7 : 21;
+      var maxCharacteristics = Math.floor((this._mtu - 2) / lengthPerCharacteristic);
+      numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
+
+      response = new Buffer(2 + numCharacteristics * lengthPerCharacteristic);
+
+      response[0] = ATT_OP_READ_BY_TYPE_RESP;
+      response[1] = lengthPerCharacteristic;
+
+      for (i = 0; i < numCharacteristics; i++) {
+        var characteristic = characteristics[i];
+
+        response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
+        response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
+        response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
+
+        var characteristicUuid = new Buffer(characteristic.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+        for (var j = 0; j < characteristicUuid.length; j++) {
+          response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
+        }
+      }
+    } else {
+      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+    }
+  } else {
+    var handleAttribute = null;
+    var valueHandle = null;
+    var secure = false;
+
+    for (i = startHandle; i <= endHandle; i++) {
+      handle = this._handles[i];
+
+      if (!handle) {
+        break;
+      }
+
+      if (handle.type === 'characteristic' && handle.uuid === uuid) {
+        handleAttribute = handle.attribute;
+        valueHandle = handle.valueHandle;
+        secure = handle.secure & 0x02;
+        break;
+      } else if (handle.type === 'descriptor' && handle.uuid === uuid) {
+        valueHandle = i;
+        secure = handle.secure & 0x02;
+        break;
+      }
+    }
+
+    if (secure && !this._aclStream.encrypted) {
+      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_AUTHENTICATION);
+    } else if (valueHandle) {
+      var callback = (function(valueHandle) {
+        return function(result, data) {
+          var callbackResponse = null;
+
+          if (ATT_ECODE_SUCCESS === result) {
+            var dataLength = Math.min(data.length, this._mtu - 4);
+            callbackResponse = new Buffer(4 + dataLength);
+
+            callbackResponse[0] = ATT_OP_READ_BY_TYPE_RESP;
+            callbackResponse[1] = dataLength + 2;
+            callbackResponse.writeUInt16LE(valueHandle, 2);
+            for (i = 0; i < dataLength; i++) {
+              callbackResponse[4 + i] = data[i];
+            }
+          } else {
+            callbackResponse = this.errorResponse(requestType, valueHandle, result);
+          }
+
+          debug('read by type response: ' + callbackResponse.toString('hex'));
+
+          this.send(callbackResponse);
+        }.bind(this);
+      }.bind(this))(valueHandle);
+
+      var data = this._handles[valueHandle].value;
+
+      if (data) {
+        callback(ATT_ECODE_SUCCESS, data);
+      } else if (handleAttribute) {
+        handleAttribute.emit('readRequest', 0, callback);
+      } else {
+        callback(ATT_ECODE_UNLIKELY);
+      }
+    } else {
+      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+    }
+  }
+
+  return response;
+};
+
+Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
+  var response = null;
+
+  var requestType = request[0];
+  var valueHandle = request.readUInt16LE(1);
+  var offset = (requestType === ATT_OP_READ_BLOB_REQ) ? request.readUInt16LE(3) : 0;
+
+  var handle = this._handles[valueHandle];
+  var i;
+
+  if (handle) {
+    var result = null;
+    var data = null;
+    var handleType = handle.type;
+
+    var callback = (function(requestType, valueHandle) {
+      return function(result, data) {
+        var callbackResponse = null;
+
+        if (ATT_ECODE_SUCCESS === result) {
+          var dataLength = Math.min(data.length, this._mtu - 1);
+          callbackResponse = new Buffer(1 + dataLength);
+
+          callbackResponse[0] = (requestType === ATT_OP_READ_BLOB_REQ) ? ATT_OP_READ_BLOB_RESP : ATT_OP_READ_RESP;
+          for (i = 0; i < dataLength; i++) {
+            callbackResponse[1 + i] = data[i];
+          }
+        } else {
+          callbackResponse = this.errorResponse(requestType, valueHandle, result);
+        }
+
+        debug('read response: ' + callbackResponse.toString('hex'));
+
+        this.send(callbackResponse);
+      }.bind(this);
+    }.bind(this))(requestType, valueHandle);
+
+    if (handleType === 'service' || handleType === 'includedService') {
+      result = ATT_ECODE_SUCCESS;
+      data = new Buffer(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+    } else if (handleType === 'characteristic') {
+      var uuid = new Buffer(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+
+      result = ATT_ECODE_SUCCESS;
+      data = new Buffer(3 + uuid.length);
+      data.writeUInt8(handle.properties, 0);
+      data.writeUInt16LE(handle.valueHandle, 1);
+
+      for (i = 0; i < uuid.length; i++) {
+        data[i + 3] = uuid[i];
+      }
+    } else if (handleType === 'characteristicValue' || handleType === 'descriptor') {
+      var handleProperties = handle.properties;
+      var handleSecure = handle.secure;
+      var handleAttribute = handle.attribute;
+      if (handleType === 'characteristicValue') {
+        handleProperties = this._handles[valueHandle - 1].properties;
+        handleSecure = this._handles[valueHandle - 1].secure;
+        handleAttribute = this._handles[valueHandle - 1].attribute;
+      }
+
+      if (handleProperties & 0x02) {
+        if (handleSecure & 0x02 && !this._aclStream.encrypted) {
+          result = ATT_ECODE_AUTHENTICATION;
+        } else {
+          data = handle.value;
+
+          if (data) {
+            result = ATT_ECODE_SUCCESS;
+          } else {
+            handleAttribute.emit('readRequest', offset, callback);
+          }
+        }
+      } else {
+        result = ATT_ECODE_READ_NOT_PERM; // non-readable
+      }
+    }
+
+    if (data && typeof data === 'string') {
+      data = new Buffer(data);
+    }
+
+    if (result === ATT_ECODE_SUCCESS && data && offset) {
+      if (data.length < offset) {
+        result = ATT_ECODE_INVALID_OFFSET;
+        data = null;
+      } else {
+        data = data.slice(offset);
+      }
+    }
+
+    if (result !== null) {
+      callback(result, data);
+    }
+  } else {
+    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+  }
+
+  return response;
+};
+
+Gatt.prototype.handleWriteRequestOrCommand = function(request) {
+  var response = null;
+
+  var requestType = request[0];
+  var withoutResponse = (requestType === ATT_OP_WRITE_CMD);
+  var valueHandle = request.readUInt16LE(1);
+  var data = request.slice(3);
+  var offset = 0;
+
+  var handle = this._handles[valueHandle];
+
+  if (handle) {
+    if (handle.type === 'characteristicValue') {
+      handle = this._handles[valueHandle - 1];
+    }
+
+    var handleProperties = handle.properties;
+    var handleSecure = handle.secure;
+
+    if (handleProperties && (withoutResponse ? (handleProperties & 0x04) : (handleProperties & 0x08))) {
+
+      var callback = (function(requestType, valueHandle, withoutResponse) {
+        return function(result) {
+          if (!withoutResponse) {
+            var callbackResponse = null;
+
+            if (ATT_ECODE_SUCCESS === result) {
+              callbackResponse = new Buffer([ATT_OP_WRITE_RESP]);
+            } else {
+              callbackResponse = this.errorResponse(requestType, valueHandle, result);
+            }
+
+            debug('write response: ' + callbackResponse.toString('hex'));
+
+            this.send(callbackResponse);
+          }
+        }.bind(this);
+      }.bind(this))(requestType, valueHandle, withoutResponse);
+
+      if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !this._aclStream.encrypted) {
+        response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+      } else if (handle.type === 'descriptor' || handle.uuid === '2902') {
+        var result = null;
+
+        if (data.length !== 2) {
+          result = ATT_ECODE_INVAL_ATTR_VALUE_LEN;
+        } else {
+          var value = data.readUInt16LE(0);
+          var handleAttribute = handle.attribute;
+
+          handle.value = data;
+
+          if (value & 0x0003) {
+            var updateValueCallback = (function(valueHandle, attribute) {
+              return function(data) {
+                var dataLength = Math.min(data.length, this._mtu - 3);
+                var useNotify = attribute.properties.indexOf('notify') !== -1;
+                var useIndicate = attribute.properties.indexOf('indicate') !== -1;
+                var i;
+
+                if (useNotify) {
+                  var notifyMessage = new Buffer(3 + dataLength);
+
+                  notifyMessage.writeUInt8(ATT_OP_HANDLE_NOTIFY, 0);
+                  notifyMessage.writeUInt16LE(valueHandle, 1);
+
+                  for (i = 0; i < dataLength; i++) {
+                    notifyMessage[3 + i] = data[i];
+                  }
+
+                  debug('notify message: ' + notifyMessage.toString('hex'));
+                  this.send(notifyMessage);
+
+                  attribute.emit('notify');
+                } else if (useIndicate) {
+                  var indicateMessage = new Buffer(3 + dataLength);
+
+                  indicateMessage.writeUInt8(ATT_OP_HANDLE_IND, 0);
+                  indicateMessage.writeUInt16LE(valueHandle, 1);
+
+                  for (i = 0; i < dataLength; i++) {
+                    indicateMessage[3 + i] = data[i];
+                  }
+
+                  this._lastIndicatedAttribute = attribute;
+
+                  debug('indicate message: ' + indicateMessage.toString('hex'));
+                  this.send(indicateMessage);
+                }
+              }.bind(this);
+            }.bind(this))(valueHandle - 1, handleAttribute);
+
+            if (handleAttribute.emit) {
+              handleAttribute.emit('subscribe', this._mtu - 3, updateValueCallback);
+            }
+          } else {
+            handleAttribute.emit('unsubscribe');
+          }
+
+          result = ATT_ECODE_SUCCESS;
+        }
+
+        callback(result);
+      } else {
+        handle.attribute.emit('writeRequest', data, offset, withoutResponse, callback);
+      }
+    } else {
+      response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+    }
+  } else {
+    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+  }
+
+  return response;
+};
+
+Gatt.prototype.handlePrepareWriteRequest = function(request) {
+  var response = null;
+
+  var requestType = request[0];
+  var valueHandle = request.readUInt16LE(1);
+  var offset = request.readUInt16LE(3);
+  var data = request.slice(5);
+
+  var handle = this._handles[valueHandle];
+
+  if (handle) {
+    if (handle.type === 'characteristicValue') {
+      handle = this._handles[valueHandle - 1];
+
+      var handleProperties = handle.properties;
+      var handleSecure = handle.secure;
+
+      if (handleProperties && (handleProperties & 0x08)) {
+        if ((handleSecure & 0x08) && !this._aclStream.encrypted) {
+          response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+        } else if (this._preparedWriteRequest) {
+          if (this._preparedWriteRequest.handle !== handle) {
+            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_UNLIKELY);
+          } else if (offset === (this._preparedWriteRequest.offset + this._preparedWriteRequest.data.length)) {
+            this._preparedWriteRequest.data = Buffer.concat([
+              this._preparedWriteRequest.data,
+              data
+            ]);
+
+            response = new Buffer(request.length);
+            request.copy(response);
+            response[0] = ATT_OP_PREP_WRITE_RESP;
+          } else {
+            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_OFFSET);
+          }
+        } else {
+          this._preparedWriteRequest = {
+            handle: handle,
+            valueHandle: valueHandle,
+            offset: offset,
+            data: data
+          };
+
+          response = new Buffer(request.length);
+          request.copy(response);
+          response[0] = ATT_OP_PREP_WRITE_RESP;
+        }
+      } else {
+        response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+      }
+    } else {
+      response = this.errorResponse(requestType, valueHandle, ATT_ECODE_ATTR_NOT_LONG);
+    }
+  } else {
+    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+  }
+
+  return response;
+};
+
+Gatt.prototype.handleExecuteWriteRequest = function(request) {
+  var response = null;
+
+  var requestType = request[0];
+  var flag = request[1];
+
+  if (this._preparedWriteRequest) {
+    var valueHandle = this._preparedWriteRequest.valueHandle;
+
+    if (flag === 0x00) {
+      response = new Buffer([ATT_OP_EXEC_WRITE_RESP]);
+    } else if (flag === 0x01) {
+      var callback = (function(requestType, valueHandle) {
+        return function(result) {
+          var callbackResponse = null;
+
+          if (ATT_ECODE_SUCCESS === result) {
+            callbackResponse = new Buffer([ATT_OP_EXEC_WRITE_RESP]);
+          } else {
+            callbackResponse = this.errorResponse(requestType, valueHandle, result);
+          }
+
+          debug('execute write response: ' + callbackResponse.toString('hex'));
+
+          this.send(callbackResponse);
+        }.bind(this);
+      }.bind(this))(requestType, this._preparedWriteRequest.valueHandle);
+
+      this._preparedWriteRequest.handle.attribute.emit('writeRequest', this._preparedWriteRequest.data, this._preparedWriteRequest.offset, false, callback);
+    } else {
+      response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
+    }
+
+    this._preparedWriteRequest = null;
+  } else {
+    response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
+  }
+
+  return response;
+};
+
+Gatt.prototype.handleConfirmation = function(request) {
+  if (this._lastIndicatedAttribute) {
+    if (this._lastIndicatedAttribute.emit) {
+      this._lastIndicatedAttribute.emit('indicate');
+    }
+
+    this._lastIndicatedAttribute = null;
+  }
+};
+
+module.exports = Gatt;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+
+var debug = __webpack_require__("./node_modules/debug/src/browser.js")('mgmt');
+
+var events = __webpack_require__("./node_modules/events/events.js");
+var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+
+var BluetoothHciSocket = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'bluetooth-hci-socket'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+var LTK_INFO_SIZE = 36;
+
+var MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
+
+function Mgmt() {
+  this._socket = new BluetoothHciSocket();
+  this._ltkInfos = [];
+
+  this._socket.on('data', this.onSocketData.bind(this));
+  this._socket.on('error', this.onSocketError.bind(this));
+
+  this._socket.bindControl();
+  this._socket.start();
+}
+
+Mgmt.prototype.onSocketData = function(data) {
+  debug('on data ->' + data.toString('hex'));
+};
+
+Mgmt.prototype.onSocketError = function(error) {
+  debug('on error ->' + error.message);
+};
+
+Mgmt.prototype.addLongTermKey = function(address, addressType, authenticated, master, ediv, rand, key) {
+  var ltkInfo = new Buffer(LTK_INFO_SIZE);
+
+  address.copy(ltkInfo, 0);
+  ltkInfo.writeUInt8(addressType.readUInt8(0) + 1, 6); // BDADDR_LE_PUBLIC = 0x01, BDADDR_LE_RANDOM 0x02, so add one
+
+  ltkInfo.writeUInt8(authenticated, 7);
+  ltkInfo.writeUInt8(master, 8);
+  ltkInfo.writeUInt8(key.length, 9);
+
+  ediv.copy(ltkInfo, 10);
+  rand.copy(ltkInfo, 12);
+  key.copy(ltkInfo, 20);
+
+  this._ltkInfos.push(ltkInfo);
+
+  this.loadLongTermKeys();
+};
+
+Mgmt.prototype.clearLongTermKeys = function() {
+  this._ltkInfos = [];
+
+  this.loadLongTermKeys();
+};
+
+Mgmt.prototype.loadLongTermKeys = function() {
+  var numLongTermKeys = this._ltkInfos.length;
+  var op = new Buffer(2 + numLongTermKeys * LTK_INFO_SIZE);
+
+  op.writeUInt16LE(numLongTermKeys, 0);
+
+  for (var i = 0; i < numLongTermKeys; i++) {
+    this._ltkInfos[i].copy(op, 2 + i * LTK_INFO_SIZE);
+  }
+
+  this.write(MGMT_OP_LOAD_LONG_TERM_KEYS, 0, op);
+};
+
+Mgmt.prototype.write = function(opcode, index, data) {
+  var length = 0;
+
+  if (data) {
+    length = data.length;
+  }
+
+  var pkt = new Buffer(6 + length);
+
+  pkt.writeUInt16LE(opcode, 0);
+  pkt.writeUInt16LE(index, 2);
+  pkt.writeUInt16LE(length, 4);
+
+  if (length) {
+    data.copy(pkt, 6);
+  }
+
+  debug('writing -> ' + pkt.toString('hex'));
+  this._socket.write(pkt);
+};
+
+module.exports = new Mgmt();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/smp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+
+var debug = __webpack_require__("./node_modules/debug/src/browser.js")('smp');
+
+var events = __webpack_require__("./node_modules/events/events.js");
+var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+
+var crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js");
+var mgmt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js");
+
+var SMP_CID = 0x0006;
+
+var SMP_PAIRING_REQUEST = 0x01;
+var SMP_PAIRING_RESPONSE = 0x02;
+var SMP_PAIRING_CONFIRM = 0x03;
+var SMP_PAIRING_RANDOM = 0x04;
+var SMP_PAIRING_FAILED = 0x05;
+var SMP_ENCRYPT_INFO = 0x06;
+var SMP_MASTER_IDENT = 0x07;
+
+var SMP_UNSPECIFIED = 0x08;
+
+var Smp = function(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
+  this._aclStream = aclStream;
+
+  this._iat = new Buffer([(remoteAddressType === 'random') ? 0x01 : 0x00]);
+  this._ia = new Buffer(remoteAddress.split(':').reverse().join(''), 'hex');
+  this._rat = new Buffer([(localAddressType === 'random') ? 0x01 : 0x00]);
+  this._ra = new Buffer(localAddress.split(':').reverse().join(''), 'hex');
+
+  this._stk = null;
+  this._random = null;
+  this._diversifier = null;
+
+  this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
+  this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(this);
+  this.onAclStreamLtkNegReplyBinded = this.onAclStreamLtkNegReply.bind(this);
+  this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+
+  this._aclStream.on('data', this.onAclStreamDataBinded);
+  this._aclStream.on('encryptChange', this.onAclStreamEncryptChangeBinded);
+  this._aclStream.on('ltkNegReply', this.onAclStreamLtkNegReplyBinded);
+  this._aclStream.on('end', this.onAclStreamEndBinded);
+};
+
+util.inherits(Smp, events.EventEmitter);
 
 Smp.prototype.onAclStreamData = function(cid, data) {
   if (cid !== SMP_CID) {
     return;
   }
 
-  let code = data.readUInt8(0);
+  var code = data.readUInt8(0);
 
-  if (SMP_PAIRING_RESPONSE === code) {
-    this.handlePairingResponse(data);
+  if (SMP_PAIRING_REQUEST === code) {
+    this.handlePairingRequest(data);
   } else if (SMP_PAIRING_CONFIRM === code) {
     this.handlePairingConfirm(data);
   } else if (SMP_PAIRING_RANDOM === code) {
     this.handlePairingRandom(data);
   } else if (SMP_PAIRING_FAILED === code) {
     this.handlePairingFailed(data);
-  } else if (SMP_ENCRYPT_INFO === code) {
-    this.handleEncryptInfo(data);
-  } else if (SMP_MASTER_IDENT === code) {
-    this.handleMasterIdent(data);
   }
+};
+
+Smp.prototype.onAclStreamEncryptChange = function(encrypted) {
+  if (encrypted) {
+    if (this._stk && this._diversifier && this._random) {
+      this.write(Buffer.concat([
+        new Buffer([SMP_ENCRYPT_INFO]),
+        this._stk
+      ]));
+
+      this.write(Buffer.concat([
+        new Buffer([SMP_MASTER_IDENT]),
+        this._diversifier,
+        this._random
+      ]));
+    }
+  }
+};
+
+Smp.prototype.onAclStreamLtkNegReply = function() {
+    this.write(new Buffer([
+      SMP_PAIRING_FAILED,
+      SMP_UNSPECIFIED
+    ]));
+
+    this.emit('fail');
 };
 
 Smp.prototype.onAclStreamEnd = function() {
   this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+  this._aclStream.removeListener('encryptChange', this.onAclStreamEncryptChangeBinded);
+  this._aclStream.removeListener('ltkNegReply', this.onAclStreamLtkNegReplyBinded);
   this._aclStream.removeListener('end', this.onAclStreamEndBinded);
-
-  this.emit('end');
 };
 
-Smp.prototype.handlePairingResponse = function(data) {
-  this._pres = data;
+Smp.prototype.handlePairingRequest = function(data) {
+  this._preq = data;
 
-  this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
-  this._r = crypto.r();
+  this._pres = new Buffer([
+    SMP_PAIRING_RESPONSE,
+    0x03, // IO capability: NoInputNoOutput
+    0x00, // OOB data: Authentication data not present
+    0x01, // Authentication requirement: Bonding - No MITM
+    0x10, // Max encryption key size
+    0x00, // Initiator key distribution: <none>
+    0x01  // Responder key distribution: EncKey
+  ]);
 
-  this.write(
-    Buffer.concat([
-      Buffer.from([SMP_PAIRING_CONFIRM]),
-      crypto.c1(
-        this._tk,
-        this._r,
-        this._pres,
-        this._preq,
-        this._iat,
-        this._ia,
-        this._rat,
-        this._ra
-      ),
-    ])
-  );
+  this.write(this._pres);
 };
 
 Smp.prototype.handlePairingConfirm = function(data) {
   this._pcnf = data;
 
-  this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
+  this._tk = new Buffer('00000000000000000000000000000000', 'hex');
+  this._r = crypto.r();
+
+  this.write(Buffer.concat([
+    new Buffer([SMP_PAIRING_CONFIRM]),
+    crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
+  ]));
 };
 
 Smp.prototype.handlePairingRandom = function(data) {
-  let r = data.slice(1);
+  var r = data.slice(1);
 
-  let pcnf = Buffer.concat([
-    Buffer.from([SMP_PAIRING_CONFIRM]),
-    crypto.c1(
-      this._tk,
-      r,
-      this._pres,
-      this._preq,
-      this._iat,
-      this._ia,
-      this._rat,
-      this._ra
-    ),
+  var pcnf = Buffer.concat([
+    new Buffer([SMP_PAIRING_CONFIRM]),
+    crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
   ]);
 
   if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
-    let stk = crypto.s1(this._tk, r, this._r);
+    this._diversifier = new Buffer('0000', 'hex');
+    this._random = new Buffer('0000000000000000', 'hex');
+    this._stk = crypto.s1(this._tk, this._r, r);
 
-    this.emit('stk', stk);
+    mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
+
+    this.write(Buffer.concat([
+      new Buffer([SMP_PAIRING_RANDOM]),
+      this._r
+    ]));
   } else {
-    this.write(Buffer.from([SMP_PAIRING_RANDOM, SMP_PAIRING_CONFIRM]));
+    this.write(new Buffer([
+      SMP_PAIRING_FAILED,
+      SMP_PAIRING_CONFIRM
+    ]));
 
     this.emit('fail');
   }
@@ -38662,19 +40596,6 @@ Smp.prototype.handlePairingRandom = function(data) {
 
 Smp.prototype.handlePairingFailed = function(data) {
   this.emit('fail');
-};
-
-Smp.prototype.handleEncryptInfo = function(data) {
-  let ltk = data.slice(1);
-
-  this.emit('ltk', ltk);
-};
-
-Smp.prototype.handleMasterIdent = function(data) {
-  let ediv = data.slice(1, 3);
-  let rand = data.slice(3);
-
-  this.emit('masterIdent', ediv, rand);
 };
 
 Smp.prototype.write = function(data) {
