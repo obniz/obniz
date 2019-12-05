@@ -6,7 +6,7 @@ var events = require('events');
 var util = require('util');
 
 var crypto = require('./crypto');
-var mgmt = require('./mgmt');
+// var Mgmt = require('./mgmt');
 
 var SMP_CID = 0x0006;
 
@@ -137,7 +137,9 @@ Smp.prototype.handlePairingRandom = function(data) {
     this._random = new Buffer('0000000000000000', 'hex');
     this._stk = crypto.s1(this._tk, this._r, r);
 
-    mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
+    // TODO
+    throw new Error("TODO");
+    // mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
 
     this.write(Buffer.concat([
       new Buffer([SMP_PAIRING_RANDOM]),

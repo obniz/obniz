@@ -38765,7 +38765,7 @@ var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/ut
 var os = __webpack_require__("./node_modules/os-browserify/browser.js");
 
 var AclStream = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js");
-var Hci = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './hci'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
 var Gap = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gap.js");
 var Gatt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js");
 
@@ -39072,7 +39072,7 @@ var events = __webpack_require__("./node_modules/events/events.js");
 var os = __webpack_require__("./node_modules/os-browserify/browser.js");
 var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
-var Hci = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './hci'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
 
 var isLinux = (os.platform() === 'linux');
 var isIntelEdison = isLinux && (os.release().indexOf('edison') !== -1);
@@ -40336,106 +40336,6 @@ module.exports = Gatt;
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-var debug = __webpack_require__("./node_modules/debug/src/browser.js")('mgmt');
-
-var events = __webpack_require__("./node_modules/events/events.js");
-var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
-
-var BluetoothHciSocket = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'bluetooth-hci-socket'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-
-var LTK_INFO_SIZE = 36;
-
-var MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
-
-function Mgmt() {
-  this._socket = new BluetoothHciSocket();
-  this._ltkInfos = [];
-
-  this._socket.on('data', this.onSocketData.bind(this));
-  this._socket.on('error', this.onSocketError.bind(this));
-
-  this._socket.bindControl();
-  this._socket.start();
-}
-
-Mgmt.prototype.onSocketData = function(data) {
-  debug('on data ->' + data.toString('hex'));
-};
-
-Mgmt.prototype.onSocketError = function(error) {
-  debug('on error ->' + error.message);
-};
-
-Mgmt.prototype.addLongTermKey = function(address, addressType, authenticated, master, ediv, rand, key) {
-  var ltkInfo = new Buffer(LTK_INFO_SIZE);
-
-  address.copy(ltkInfo, 0);
-  ltkInfo.writeUInt8(addressType.readUInt8(0) + 1, 6); // BDADDR_LE_PUBLIC = 0x01, BDADDR_LE_RANDOM 0x02, so add one
-
-  ltkInfo.writeUInt8(authenticated, 7);
-  ltkInfo.writeUInt8(master, 8);
-  ltkInfo.writeUInt8(key.length, 9);
-
-  ediv.copy(ltkInfo, 10);
-  rand.copy(ltkInfo, 12);
-  key.copy(ltkInfo, 20);
-
-  this._ltkInfos.push(ltkInfo);
-
-  this.loadLongTermKeys();
-};
-
-Mgmt.prototype.clearLongTermKeys = function() {
-  this._ltkInfos = [];
-
-  this.loadLongTermKeys();
-};
-
-Mgmt.prototype.loadLongTermKeys = function() {
-  var numLongTermKeys = this._ltkInfos.length;
-  var op = new Buffer(2 + numLongTermKeys * LTK_INFO_SIZE);
-
-  op.writeUInt16LE(numLongTermKeys, 0);
-
-  for (var i = 0; i < numLongTermKeys; i++) {
-    this._ltkInfos[i].copy(op, 2 + i * LTK_INFO_SIZE);
-  }
-
-  this.write(MGMT_OP_LOAD_LONG_TERM_KEYS, 0, op);
-};
-
-Mgmt.prototype.write = function(opcode, index, data) {
-  var length = 0;
-
-  if (data) {
-    length = data.length;
-  }
-
-  var pkt = new Buffer(6 + length);
-
-  pkt.writeUInt16LE(opcode, 0);
-  pkt.writeUInt16LE(index, 2);
-  pkt.writeUInt16LE(length, 4);
-
-  if (length) {
-    data.copy(pkt, 6);
-  }
-
-  debug('writing -> ' + pkt.toString('hex'));
-  this._socket.write(pkt);
-};
-
-module.exports = new Mgmt();
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
-
-/***/ }),
-
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/smp.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -40447,7 +40347,7 @@ var events = __webpack_require__("./node_modules/events/events.js");
 var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
 var crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js");
-var mgmt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js");
+// var Mgmt = require('./mgmt');
 
 var SMP_CID = 0x0006;
 
@@ -40578,7 +40478,9 @@ Smp.prototype.handlePairingRandom = function(data) {
     this._random = new Buffer('0000000000000000', 'hex');
     this._stk = crypto.s1(this._tk, this._r, r);
 
-    mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
+    // TODO
+    throw new Error("TODO");
+    // mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
 
     this.write(Buffer.concat([
       new Buffer([SMP_PAIRING_RANDOM]),

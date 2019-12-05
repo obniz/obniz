@@ -6,7 +6,7 @@ var events = require('events');
 var os = require('os');
 var util = require('util');
 
-var Hci = require('./hci');
+var Hci = require('../hci');
 
 var isLinux = (os.platform() === 'linux');
 var isIntelEdison = isLinux && (os.release().indexOf('edison') !== -1);

@@ -7,7 +7,7 @@ var util = require('util');
 var os = require('os');
 
 var AclStream = require('./acl-stream');
-var Hci = require('./hci');
+var Hci = require('../hci');
 var Gap = require('./gap');
 var Gatt = require('./gatt');
 
