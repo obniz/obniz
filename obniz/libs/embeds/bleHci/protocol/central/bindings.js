@@ -5,11 +5,10 @@ let events = require('events');
 let AclStream = require('./acl-stream');
 let Gatt = require('./gatt');
 let Gap = require('./gap');
-let Hci = require('./hci');
 let Signaling = require('./signaling');
 
 class NobleBindings extends events.EventEmitter {
-  constructor(obnizHci) {
+  constructor(hciProtocol) {
     super();
     this._state = null;
 
@@ -25,7 +24,7 @@ class NobleBindings extends events.EventEmitter {
     this._aclStreams = {};
     this._signalings = {};
 
-    this._hci = new Hci(obnizHci);
+    this._hci = hciProtocol;
     this._gap = new Gap(this._hci);
   }
 

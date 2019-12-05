@@ -1,7 +1,9 @@
 /* eslint-disable */
 
 const ObnizBLEHci = require('./hci');
-const Bindings = require('./protocol/bindings');
+const CentralBindings = require('./protocol/central/bindings');
+const PeripheralBindings = require("./protocol/peripheral/bindings");
+const HciProtocol = require("./protocol/hci");
 const BleHelper = require("./bleHelper");
 
 const BlePeripheral = require('./blePeripheral');
@@ -17,7 +19,9 @@ class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.hci = new ObnizBLEHci(Obniz);
-    this._bindings = new Bindings(this.hci);
+    const hciProtocol = new HciProtocol(this.hci)
+    this.centralBindings = new CentralBindings(hciProtocol);
+    this.peripheralbindings = new PeripheralBindings(hciProtocol);
 
 
     this._initialized = false;
@@ -43,7 +47,7 @@ class ObnizBLE {
     if(!this._initialized){
       this._initialized = true;
 
-      this._bindings.init();
+      this.centralBindings.init();
     }
   }
 
@@ -246,29 +250,29 @@ class ObnizBLE {
   _bind() {
 
 
-    this._bindings.on('stateChange', this.onStateChange.bind(this));
-    this._bindings.on('addressChange', this.onAddressChange.bind(this));
-    this._bindings.on('scanStart', this.onScanStart.bind(this));
-    this._bindings.on('scanStop', this.onScanStop.bind(this));
-    this._bindings.on('discover', this.onDiscover.bind(this));
-    this._bindings.on('connect', this.onConnect.bind(this));
-    this._bindings.on('disconnect', this.onDisconnect.bind(this));
-    this._bindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
-    this._bindings.on('servicesDiscover', this.onServicesDiscover.bind(this));
-    this._bindings.on('includedServicesDiscover', this.onIncludedServicesDiscover.bind(this));
-    this._bindings.on('characteristicsDiscover', this.onCharacteristicsDiscover.bind(this));
+    this.centralBindings.on('stateChange', this.onStateChange.bind(this));
+    this.centralBindings.on('addressChange', this.onAddressChange.bind(this));
+    this.centralBindings.on('scanStart', this.onScanStart.bind(this));
+    this.centralBindings.on('scanStop', this.onScanStop.bind(this));
+    this.centralBindings.on('discover', this.onDiscover.bind(this));
+    this.centralBindings.on('connect', this.onConnect.bind(this));
+    this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
+    this.centralBindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
+    this.centralBindings.on('servicesDiscover', this.onServicesDiscover.bind(this));
+    this.centralBindings.on('includedServicesDiscover', this.onIncludedServicesDiscover.bind(this));
+    this.centralBindings.on('characteristicsDiscover', this.onCharacteristicsDiscover.bind(this));
 
 
-    this._bindings.on('read', this.onRead.bind(this));
-    this._bindings.on('write', this.onWrite.bind(this));
-    this._bindings.on('broadcast', this.onBroadcast.bind(this));
-    this._bindings.on('notify', this.onNotify.bind(this));
-    this._bindings.on('descriptorsDiscover', this.onDescriptorsDiscover.bind(this));
-    this._bindings.on('valueRead', this.onValueRead.bind(this));
-    this._bindings.on('valueWrite', this.onValueWrite.bind(this));
-    this._bindings.on('handleRead', this.onHandleRead.bind(this));
-    this._bindings.on('handleWrite', this.onHandleWrite.bind(this));
-    this._bindings.on('handleNotify', this.onHandleNotify.bind(this));
+    this.centralBindings.on('read', this.onRead.bind(this));
+    this.centralBindings.on('write', this.onWrite.bind(this));
+    this.centralBindings.on('broadcast', this.onBroadcast.bind(this));
+    this.centralBindings.on('notify', this.onNotify.bind(this));
+    this.centralBindings.on('descriptorsDiscover', this.onDescriptorsDiscover.bind(this));
+    this.centralBindings.on('valueRead', this.onValueRead.bind(this));
+    this.centralBindings.on('valueWrite', this.onValueWrite.bind(this));
+    this.centralBindings.on('handleRead', this.onHandleRead.bind(this));
+    this.centralBindings.on('handleWrite', this.onHandleWrite.bind(this));
+    this.centralBindings.on('handleNotify', this.onHandleNotify.bind(this));
   }
 }
 

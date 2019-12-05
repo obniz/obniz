@@ -29,7 +29,7 @@ class BleScan {
     this.scanedPeripherals = [];
 
 
-    this.obnizBle._bindings.startScanning(null, false);
+    this.obnizBle.centralBindings.startScanning(null, false);
 
     setTimeout(()=>{ this.end() },timeout * 1000);
   }
@@ -68,7 +68,7 @@ class BleScan {
   }
 
   end() {
-    this.obnizBle._bindings.stopScanning()
+    this.obnizBle.centralBindings.stopScanning()
   }
 
   isTarget(peripheral) {

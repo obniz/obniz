@@ -43,7 +43,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   registerNotify(callback) {
     this.onnotify = callback;
-    this.service.peripheral.obnizBle._bindings.notify(
+    this.service.peripheral.obnizBle.centralBindings.notify(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid,
@@ -54,7 +54,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   unregisterNotify() {
     this.onnotify = function() {};
 
-    this.service.peripheral.obnizBle._bindings.notify(
+    this.service.peripheral.obnizBle.centralBindings.notify(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid,
@@ -63,7 +63,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    this.service.peripheral.obnizBle._bindings.read(
+    this.service.peripheral.obnizBle.centralBindings.read(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid
@@ -74,7 +74,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     if (needResponse === undefined) {
       needResponse = true;
     }
-    this.service.peripheral.obnizBle._bindings.write(
+    this.service.peripheral.obnizBle.centralBindings.write(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid,
@@ -85,7 +85,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    this.service.peripheral.obnizBle._bindings.discoverDescriptors(
+    this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid

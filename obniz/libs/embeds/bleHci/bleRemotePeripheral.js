@@ -169,7 +169,7 @@ class BleRemotePeripheral {
   }
 
   connect() {
-    this.obnizBle._bindings.connect(this.address);
+    this.obnizBle.centralBindings.connect(this.address);
   }
 
   connectWait() {
@@ -182,7 +182,7 @@ class BleRemotePeripheral {
   }
 
   disconnect() {
-    this.obnizBle._bindings.disconnect(this.address);
+    this.obnizBle.centralBindings.disconnect(this.address);
   }
 
   disconnectWait() {
@@ -232,7 +232,7 @@ class BleRemotePeripheral {
   }
 
   discoverAllServices() {
-    this.obnizBle._bindings.discoverServices(this.address);
+    this.obnizBle.centralBindings.discoverServices(this.address);
   }
 
   discoverAllServicesWait() {

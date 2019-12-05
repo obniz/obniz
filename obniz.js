@@ -33000,7 +33000,7 @@ class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.hci = new ObnizBLEHci(Obniz);
-    this._bindings = new Bindings(this.hci);
+    this.centralBindings = new Bindings(this.hci);
 
 
     this._initialized = false;
@@ -33026,7 +33026,7 @@ class ObnizBLE {
     if(!this._initialized){
       this._initialized = true;
 
-      this._bindings.init();
+      this.centralBindings.init();
     }
   }
 
@@ -33229,29 +33229,29 @@ class ObnizBLE {
   _bind() {
 
 
-    this._bindings.on('stateChange', this.onStateChange.bind(this));
-    this._bindings.on('addressChange', this.onAddressChange.bind(this));
-    this._bindings.on('scanStart', this.onScanStart.bind(this));
-    this._bindings.on('scanStop', this.onScanStop.bind(this));
-    this._bindings.on('discover', this.onDiscover.bind(this));
-    this._bindings.on('connect', this.onConnect.bind(this));
-    this._bindings.on('disconnect', this.onDisconnect.bind(this));
-    this._bindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
-    this._bindings.on('servicesDiscover', this.onServicesDiscover.bind(this));
-    this._bindings.on('includedServicesDiscover', this.onIncludedServicesDiscover.bind(this));
-    this._bindings.on('characteristicsDiscover', this.onCharacteristicsDiscover.bind(this));
+    this.centralBindings.on('stateChange', this.onStateChange.bind(this));
+    this.centralBindings.on('addressChange', this.onAddressChange.bind(this));
+    this.centralBindings.on('scanStart', this.onScanStart.bind(this));
+    this.centralBindings.on('scanStop', this.onScanStop.bind(this));
+    this.centralBindings.on('discover', this.onDiscover.bind(this));
+    this.centralBindings.on('connect', this.onConnect.bind(this));
+    this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
+    this.centralBindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
+    this.centralBindings.on('servicesDiscover', this.onServicesDiscover.bind(this));
+    this.centralBindings.on('includedServicesDiscover', this.onIncludedServicesDiscover.bind(this));
+    this.centralBindings.on('characteristicsDiscover', this.onCharacteristicsDiscover.bind(this));
 
 
-    this._bindings.on('read', this.onRead.bind(this));
-    this._bindings.on('write', this.onWrite.bind(this));
-    this._bindings.on('broadcast', this.onBroadcast.bind(this));
-    this._bindings.on('notify', this.onNotify.bind(this));
-    this._bindings.on('descriptorsDiscover', this.onDescriptorsDiscover.bind(this));
-    this._bindings.on('valueRead', this.onValueRead.bind(this));
-    this._bindings.on('valueWrite', this.onValueWrite.bind(this));
-    this._bindings.on('handleRead', this.onHandleRead.bind(this));
-    this._bindings.on('handleWrite', this.onHandleWrite.bind(this));
-    this._bindings.on('handleNotify', this.onHandleNotify.bind(this));
+    this.centralBindings.on('read', this.onRead.bind(this));
+    this.centralBindings.on('write', this.onWrite.bind(this));
+    this.centralBindings.on('broadcast', this.onBroadcast.bind(this));
+    this.centralBindings.on('notify', this.onNotify.bind(this));
+    this.centralBindings.on('descriptorsDiscover', this.onDescriptorsDiscover.bind(this));
+    this.centralBindings.on('valueRead', this.onValueRead.bind(this));
+    this.centralBindings.on('valueWrite', this.onValueWrite.bind(this));
+    this.centralBindings.on('handleRead', this.onHandleRead.bind(this));
+    this.centralBindings.on('handleWrite', this.onHandleWrite.bind(this));
+    this.centralBindings.on('handleNotify', this.onHandleNotify.bind(this));
   }
 }
 
@@ -34130,7 +34130,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   registerNotify(callback) {
     this.onnotify = callback;
-    this.service.peripheral.obnizBle._bindings.notify(
+    this.service.peripheral.obnizBle.centralBindings.notify(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid,
@@ -34141,7 +34141,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   unregisterNotify() {
     this.onnotify = function() {};
 
-    this.service.peripheral.obnizBle._bindings.notify(
+    this.service.peripheral.obnizBle.centralBindings.notify(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid,
@@ -34150,7 +34150,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    this.service.peripheral.obnizBle._bindings.read(
+    this.service.peripheral.obnizBle.centralBindings.read(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid
@@ -34161,7 +34161,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     if (needResponse === undefined) {
       needResponse = true;
     }
-    this.service.peripheral.obnizBle._bindings.write(
+    this.service.peripheral.obnizBle.centralBindings.write(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid,
@@ -34172,7 +34172,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    this.service.peripheral.obnizBle._bindings.discoverDescriptors(
+    this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(
         this.service.peripheral.address,
         this.service.uuid,
         this.uuid
@@ -34281,7 +34281,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   read() {
-    this.characteristic.service.peripheral.obnizBle._bindings.readValue(
+    this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(
         this.characteristic.service.peripheral.address,
         this.characteristic.service.uuid,
         this.characteristic.uuid,
@@ -34291,7 +34291,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
 
   write(array) {
 
-    this.characteristic.service.peripheral.obnizBle._bindings.writeValue(
+    this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(
         this.characteristic.service.peripheral.address,
         this.characteristic.service.uuid,
         this.characteristic.uuid,
@@ -34482,7 +34482,7 @@ class BleRemotePeripheral {
   }
 
   connect() {
-    this.obnizBle._bindings.connect(this.address);
+    this.obnizBle.centralBindings.connect(this.address);
   }
 
   connectWait() {
@@ -34495,7 +34495,7 @@ class BleRemotePeripheral {
   }
 
   disconnect() {
-    this.obnizBle._bindings.disconnect(this.address);
+    this.obnizBle.centralBindings.disconnect(this.address);
   }
 
   disconnectWait() {
@@ -34545,7 +34545,7 @@ class BleRemotePeripheral {
   }
 
   discoverAllServices() {
-    this.obnizBle._bindings.discoverServices(this.address);
+    this.obnizBle.centralBindings.discoverServices(this.address);
   }
 
   discoverAllServicesWait() {
@@ -34662,7 +34662,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    this.parent.obnizBle._bindings.discoverCharacteristics(this.peripheral.address,this.uuid);
+    this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address,this.uuid);
   }
 
   ondiscover(characteristic) {
@@ -34717,7 +34717,7 @@ class BleScan {
     this.scanedPeripherals = [];
 
 
-    this.obnizBle._bindings.startScanning(null, false);
+    this.obnizBle.centralBindings.startScanning(null, false);
 
     setTimeout(()=>{ this.end() },timeout * 1000);
   }
@@ -34756,7 +34756,7 @@ class BleScan {
   }
 
   end() {
-    this.obnizBle._bindings.stopScanning()
+    this.obnizBle.centralBindings.stopScanning()
   }
 
   isTarget(peripheral) {

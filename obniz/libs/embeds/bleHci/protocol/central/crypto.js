@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 let crypto = require('crypto');
 
 function r() {
