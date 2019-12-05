@@ -61,8 +61,6 @@ class NobleBindings extends events.EventEmitter {
   }
 
   init() {
-    this.onSigIntBinded = this.onSigInt.bind(this);
-
     this._gap.on('scanStart', this.onScanStart.bind(this));
     this._gap.on('scanStop', this.onScanStop.bind(this));
     this._gap.on('discover', this.onDiscover.bind(this));
@@ -78,32 +76,6 @@ class NobleBindings extends events.EventEmitter {
     this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
     this._hci.on('encryptChange', this.onEncryptChange.bind(this));
     this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
-
-    this._hci.init();
-
-    /* Add exit handlers after `init()` has completed. If no adaptor
-    is present it can throw an exception - in which case we don't
-    want to try and clear up afterwards (issue #502) */
-    process.on('SIGINT', this.onSigIntBinded);
-    process.on('exit', this.onExit.bind(this));
-  }
-
-  onSigInt() {
-    let sigIntListeners = process.listeners('SIGINT');
-
-    if (sigIntListeners[sigIntListeners.length - 1] === this.onSigIntBinded) {
-      // we are the last listener, so exit
-      // this will trigger onExit, and clean up
-      process.exit(1);
-    }
-  }
-
-  onExit() {
-    this.stopScanning();
-
-    for (let handle in this._aclStreams) {
-      this._hci.disconnect(handle);
-    }
   }
 
   onStateChange(state) {

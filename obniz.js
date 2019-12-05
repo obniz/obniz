@@ -33002,9 +33002,9 @@ class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.hci = new ObnizBLEHci(Obniz);
-    const hciProtocol = new HciProtocol(this.hci)
-    this.centralBindings = new CentralBindings(hciProtocol);
-    this.peripheralbindings = new PeripheralBindings(hciProtocol);
+    this.hciProtocol = new HciProtocol(this.hci)
+    this.centralBindings = new CentralBindings( this.hciProtocol );
+    this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
 
 
     this._initialized = false;
@@ -33031,6 +33031,8 @@ class ObnizBLE {
       this._initialized = true;
 
       this.centralBindings.init();
+      this.peripheralBindings.init();
+      this.hciProtocol.init();
     }
   }
 
@@ -33267,23 +33269,23 @@ module.exports = ObnizBLE;
 /***/ "./obniz/libs/embeds/bleHci/bleAdvertisement.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
 
 const Builder = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
 
 class BleAdvertisement {
-  constructor(Obniz) {
-    this.Obniz = Obniz;
+  constructor(obnizBle) {
+    this.obnizBle = obnizBle;
     this.adv_data = [];
     this.scan_resp = [];
   }
 
   start() {
-    // todo
+    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data),Buffer.from(this.scan_resp));
   }
 
   end() {
-    // todo
+    this.obnizBle.peripheralBindings.stopAdvertising();
   }
 
   setAdvDataRaw(adv_data) {
@@ -33314,6 +33316,7 @@ class BleAdvertisement {
 
 module.exports = BleAdvertisement;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -35175,7 +35178,7 @@ module.exports = AclStream;
 /***/ "./obniz/libs/embeds/bleHci/protocol/central/bindings.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process) {// var debug = require('debug')('bindings');
+// var debug = require('debug')('bindings');
 
 let events = __webpack_require__("./node_modules/events/events.js");
 
@@ -35238,8 +35241,6 @@ class NobleBindings extends events.EventEmitter {
   }
 
   init() {
-    this.onSigIntBinded = this.onSigInt.bind(this);
-
     this._gap.on('scanStart', this.onScanStart.bind(this));
     this._gap.on('scanStop', this.onScanStop.bind(this));
     this._gap.on('discover', this.onDiscover.bind(this));
@@ -35255,32 +35256,6 @@ class NobleBindings extends events.EventEmitter {
     this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
     this._hci.on('encryptChange', this.onEncryptChange.bind(this));
     this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
-
-    this._hci.init();
-
-    /* Add exit handlers after `init()` has completed. If no adaptor
-    is present it can throw an exception - in which case we don't
-    want to try and clear up afterwards (issue #502) */
-    process.on('SIGINT', this.onSigIntBinded);
-    process.on('exit', this.onExit.bind(this));
-  }
-
-  onSigInt() {
-    let sigIntListeners = process.listeners('SIGINT');
-
-    if (sigIntListeners[sigIntListeners.length - 1] === this.onSigIntBinded) {
-      // we are the last listener, so exit
-      // this will trigger onExit, and clean up
-      process.exit(1);
-    }
-  }
-
-  onExit() {
-    this.stopScanning();
-
-    for (let handle in this._aclStreams) {
-      this._hci.disconnect(handle);
-    }
   }
 
   onStateChange(state) {
@@ -35855,7 +35830,6 @@ class NobleBindings extends events.EventEmitter {
 
 module.exports = NobleBindings;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -38756,7 +38730,7 @@ module.exports = AclStream;
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process) {/* eslint-disable */
+/* eslint-disable */
 
 var debug = __webpack_require__("./node_modules/debug/src/browser.js")('bindings');
 
@@ -38830,10 +38804,7 @@ BlenoBindings.prototype.updateRssi = function() {
 };
 
 BlenoBindings.prototype.init = function() {
-  this.onSigIntBinded = this.onSigInt.bind(this);
 
-  process.on('SIGINT', this.onSigIntBinded);
-  process.on('exit', this.onExit.bind(this));
 
   this._gap.on('advertisingStart', this.onAdvertisingStart.bind(this));
   this._gap.on('advertisingStop', this.onAdvertisingStop.bind(this));
@@ -38854,7 +38825,6 @@ BlenoBindings.prototype.init = function() {
 
   this.emit('platform', os.platform());
 
-  this._hci.init();
 };
 
 BlenoBindings.prototype.onStateChange = function(state) {
@@ -38955,25 +38925,9 @@ BlenoBindings.prototype.onAclDataPkt = function(handle, cid, data) {
   }
 };
 
-BlenoBindings.prototype.onSigInt = function() {
-  var sigIntListeners = process.listeners('SIGINT');
-
-  if (sigIntListeners[sigIntListeners.length - 1] === this.onSigIntBinded) {
-    // we are the last listener, so exit
-    // this will trigger onExit, and clean up
-    process.exit(1);
-  }
-};
-
-BlenoBindings.prototype.onExit = function() {
-  this._gap.stopAdvertising();
-
-  this.disconnect();
-};
 
 module.exports = BlenoBindings;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
 
 /***/ }),
 

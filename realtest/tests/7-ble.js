@@ -13,11 +13,10 @@ describe('7-ble', function() {
         resolve();
       });
     });
-    obnizB.ble.init();
+    obnizA.ble.init();
   });
 
   it('simple ad', async function() {
-    obnizB.ble.init();
     let service = new obnizA.ble.service({
       uuid: '0000',
     });
@@ -51,7 +50,6 @@ describe('7-ble', function() {
   });
 
   it('ad localname', async function() {
-    obnizB.ble.init();
     let service = new obnizA.ble.service({
       uuid: '0001',
     });

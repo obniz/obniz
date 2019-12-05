@@ -19,9 +19,9 @@ class ObnizBLE {
   constructor(Obniz) {
     this.Obniz = Obniz;
     this.hci = new ObnizBLEHci(Obniz);
-    const hciProtocol = new HciProtocol(this.hci)
-    this.centralBindings = new CentralBindings(hciProtocol);
-    this.peripheralbindings = new PeripheralBindings(hciProtocol);
+    this.hciProtocol = new HciProtocol(this.hci)
+    this.centralBindings = new CentralBindings( this.hciProtocol );
+    this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
 
 
     this._initialized = false;
@@ -48,6 +48,8 @@ class ObnizBLE {
       this._initialized = true;
 
       this.centralBindings.init();
+      this.peripheralBindings.init();
+      this.hciProtocol.init();
     }
   }
 

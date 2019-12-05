@@ -72,10 +72,7 @@ BlenoBindings.prototype.updateRssi = function() {
 };
 
 BlenoBindings.prototype.init = function() {
-  this.onSigIntBinded = this.onSigInt.bind(this);
 
-  process.on('SIGINT', this.onSigIntBinded);
-  process.on('exit', this.onExit.bind(this));
 
   this._gap.on('advertisingStart', this.onAdvertisingStart.bind(this));
   this._gap.on('advertisingStop', this.onAdvertisingStop.bind(this));
@@ -96,7 +93,6 @@ BlenoBindings.prototype.init = function() {
 
   this.emit('platform', os.platform());
 
-  this._hci.init();
 };
 
 BlenoBindings.prototype.onStateChange = function(state) {
@@ -197,20 +193,5 @@ BlenoBindings.prototype.onAclDataPkt = function(handle, cid, data) {
   }
 };
 
-BlenoBindings.prototype.onSigInt = function() {
-  var sigIntListeners = process.listeners('SIGINT');
-
-  if (sigIntListeners[sigIntListeners.length - 1] === this.onSigIntBinded) {
-    // we are the last listener, so exit
-    // this will trigger onExit, and clean up
-    process.exit(1);
-  }
-};
-
-BlenoBindings.prototype.onExit = function() {
-  this._gap.stopAdvertising();
-
-  this.disconnect();
-};
 
 module.exports = BlenoBindings;

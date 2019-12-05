@@ -3,18 +3,18 @@
 const Builder = require('./bleAdvertisementBuilder');
 
 class BleAdvertisement {
-  constructor(Obniz) {
-    this.Obniz = Obniz;
+  constructor(obnizBle) {
+    this.obnizBle = obnizBle;
     this.adv_data = [];
     this.scan_resp = [];
   }
 
   start() {
-    // todo
+    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data),Buffer.from(this.scan_resp));
   }
 
   end() {
-    // todo
+    this.obnizBle.peripheralBindings.stopAdvertising();
   }
 
   setAdvDataRaw(adv_data) {
