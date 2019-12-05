@@ -385,6 +385,13 @@ interface Obniz {
   close(): void;
   resetOnDisconnect(reset: boolean): void;
 
+  // systems
+  sleepSeconds(sec: number): void;
+  sleepMinute(sec: number): void;
+  sleep(date: Date): void;
+  sleepIoTrigger(trigger: boolean): void;
+  pingWait(): Promise<void>;
+
   // utils
   util: any;
   reset(): void;
