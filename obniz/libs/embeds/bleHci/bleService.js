@@ -1,10 +1,10 @@
 /* eslint-disable */
 
-const BleAttributeAbstract = require('./bleAttributeAbstract');
+const BleLocalAttributeAbstract = require('./bleLocalAttributeAbstract');
 const BleCharacteristic = require('./bleCharacteristic');
 const BleHelper = require('./bleHelper');
 
-class BleService extends BleAttributeAbstract {
+class BleService extends BleLocalAttributeAbstract {
   constructor(obj) {
     super(obj);
 
@@ -32,18 +32,10 @@ class BleService extends BleAttributeAbstract {
   }
 
   end() {
-    // todo
-    // this.peripheral.Obniz.send({
-    //   ble: {
-    //     peripheral: {
-    //       stop_service: {
-    //         service_uuid: BleHelper.uuidFilter(this.uuid),
-    //       },
-    //     },
-    //   },
-    // });
     this.peripheral.removeService(this.uuid);
   }
+
+  emit(name, ...params) {}
 
   notify(notifyName, params) {
     //nothing

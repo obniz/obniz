@@ -4,9 +4,15 @@ const BleService = require('./bleService');
 const BleHelper = require('./bleHelper');
 
 class BlePeripheral {
-  constructor(Obniz) {
-    this.Obniz = Obniz;
+  constructor(obnizBle) {
+    this.obnizBle = obnizBle;
     this.services = [];
+    this.currentConnectedDeviceAddress = null;
+  }
+
+  _updateServices(){
+    let bufData = this.services.map(e=>e.toBufferObj());
+    this.obnizBle.peripheralBindings.setServices(bufData);
   }
 
   addService(obj) {
@@ -16,9 +22,7 @@ class BlePeripheral {
     this.services.push(obj);
     obj.peripheral = this;
 
-    // todo
-
-    // this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
+    this._updateServices();
   }
 
   setJson(json) {
@@ -42,18 +46,16 @@ class BlePeripheral {
     this.services = this.services.filter(function(element) {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
+
+    this._updateServices();
   }
 
   stopAllService() {
-    // todo
-
-    // this.Obniz.send({
-    //   ble: {
-    //     peripheral: null,
-    //   },
-    // });
     this.services = [];
+    this._updateServices();
   }
+
+
 
   toJSON() {
     return {
@@ -81,7 +83,7 @@ class BlePeripheral {
   }
 
   end() {
-    // todo
+    this.stopAllService();
   }
 
   onconnectionupdates() {}

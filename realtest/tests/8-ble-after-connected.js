@@ -16,7 +16,7 @@ describe('8-ble', function() {
         resolve();
       });
     });
-    obnizB.ble.init();
+    obnizA.ble.init();
     let service = new obnizA.ble.service({ uuid: 'FFF0' });
     let characteristic = new obnizA.ble.characteristic({
       uuid: 'FFF1',
@@ -61,14 +61,14 @@ describe('8-ble', function() {
     let ad = service.advData;
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
-    //console.log('service created');
+    console.log('service created');
     await obnizA.pingWait();
-    //console.log('scannning');
+    console.log('scannning');
     let peripheral = await obnizB.ble.scan.startOneWait({ uuids: ['FFF0'] });
     if (!peripheral) {
       throw new Error('NOT FOUND');
     }
-    //console.log('FOUND');
+    console.log('FOUND');
 
     expect(obnizA.ble.advertisement.adv_data).to.be.deep.equal(
       peripheral.adv_data
@@ -103,35 +103,35 @@ describe('8-ble', function() {
     }
 
     expect(results).like([
-      {
-        characteristics: [
-          {
-            properties: ['indicate'],
-            uuid: '2a05',
-          },
-        ],
-        uuid: '1801',
-      },
-      {
-        characteristics: [
-          {
-            data: [],
-            properties: ['read'],
-            uuid: '2a00',
-          },
-          {
-            data: [0, 0],
-            properties: ['read'],
-            uuid: '2a01',
-          },
-          {
-            data: [0],
-            properties: ['read'],
-            uuid: '2aa6',
-          },
-        ],
-        uuid: '1800',
-      },
+      // {
+      //   characteristics: [
+      //     {
+      //       properties: ['indicate'],
+      //       uuid: '2a05',
+      //     },
+      //   ],
+      //   uuid: '1801',
+      // },
+      // {
+      //   characteristics: [
+      //     {
+      //       data: [],
+      //       properties: ['read'],
+      //       uuid: '2a00',
+      //     },
+      //     {
+      //       data: [0, 0],
+      //       properties: ['read'],
+      //       uuid: '2a01',
+      //     },
+      //     {
+      //       data: [0],
+      //       properties: ['read'],
+      //       uuid: '2aa6',
+      //     },
+      //   ],
+      //   uuid: '1800',
+      // },
       {
         characteristics: [
           {
@@ -181,9 +181,14 @@ describe('8-ble', function() {
             properties: ['read', 'write', 'notify'],
             data: [92],
             uuid: 'fff3',
+            descriptors: [
+              {
+                data: [0, 0],
+                uuid: '2902',
+              },
+            ],
           },
           {
-            data: [0, 1, 2, 3, 4],
             properties: ['write'],
             uuid: 'fff4',
           },

@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 const ObnizUtil = require('../../utils/util');
 const emitter = require('eventemitter3');
 const BleHelper = require('./bleHelper');
@@ -62,9 +60,11 @@ class BleAttributeAbstract {
   get childrenClass() {
     return Object;
   }
+
   get childrenName() {
     return null;
   }
+
   get parentName() {
     return null;
   }
@@ -94,7 +94,7 @@ class BleAttributeAbstract {
       uuid: BleHelper.uuidFilter(this.uuid),
     };
 
-    if (this.children.length > 0) {
+    if (this.childrenName) {
       let key = this.childrenName;
       obj[key] = this.children;
     }
@@ -109,6 +109,7 @@ class BleAttributeAbstract {
    */
 
   read() {}
+
   write() {}
 
   writeNumber(val, needResponse) {
@@ -179,8 +180,11 @@ class BleAttributeAbstract {
    * CALLBACKS
    */
   onwrite() {}
+
   onread() {}
+
   onwritefromremote() {}
+
   onreadfromremote() {}
 
   onerror(err) {

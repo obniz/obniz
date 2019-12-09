@@ -1,9 +1,6 @@
-/* eslint-disable */
+const BleLocalAttributeAbstract = require('./bleLocalAttributeAbstract');
 
-const BleAttributeAbstract = require('./bleAttributeAbstract');
-const BleHelper = require('./bleHelper');
-
-class BleDescriptor extends BleAttributeAbstract {
+class BleDescriptor extends BleLocalAttributeAbstract {
   constructor(obj) {
     super(obj);
 
@@ -36,14 +33,6 @@ class BleDescriptor extends BleAttributeAbstract {
       obj.permissions = this.permissions;
     }
     return obj;
-  }
-
-  write(dataArray) {
-    // todo
-  }
-
-  read() {
-    // todo
   }
 }
 

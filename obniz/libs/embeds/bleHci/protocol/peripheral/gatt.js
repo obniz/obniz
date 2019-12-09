@@ -77,41 +77,41 @@ var Gatt = function() {
 util.inherits(Gatt, events.EventEmitter);
 
 Gatt.prototype.setServices = function(services) {
-  var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
+  // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
 
   // base services and characteristics
   var allServices = [
-    {
-      uuid: '1800',
-      characteristics: [
-        {
-          uuid: '2a00',
-          properties: ['read'],
-          secure: [],
-          value: Buffer.from(deviceName),
-          descriptors: []
-        },
-        {
-          uuid: '2a01',
-          properties: ['read'],
-          secure: [],
-          value: Buffer.from([0x80, 0x00]),
-          descriptors: []
-        }
-      ]
-    },
-    {
-      uuid: '1801',
-      characteristics: [
-        {
-          uuid: '2a05',
-          properties: ['indicate'],
-          secure: [],
-          value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
-          descriptors: []
-        }
-      ]
-    }
+    // {
+    //   uuid: '1800',
+    //   characteristics: [
+    //     {
+    //       uuid: '2a00',
+    //       properties: ['read'],
+    //       secure: [],
+    //       value: Buffer.from(deviceName),
+    //       descriptors: []
+    //     },
+    //     {
+    //       uuid: '2a01',
+    //       properties: ['read'],
+    //       secure: [],
+    //       value: Buffer.from([0x80, 0x00]),
+    //       descriptors: []
+    //     }
+    //   ]
+    // },
+    // {
+    //   uuid: '1801',
+    //   characteristics: [
+    //     {
+    //       uuid: '2a05',
+    //       properties: ['indicate'],
+    //       secure: [],
+    //       value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
+    //       descriptors: []
+    //     }
+    //   ]
+    // }
   ].concat(services);
 
   this._handles = [];

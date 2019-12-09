@@ -1,5 +1,5 @@
-// let debug = require('debug')('hci');
-const debug = () => {};
+let debug = require('debug')('hci');
+// const debug = () => {};
 
 let events = require('events');
 let util = require('util');
@@ -563,10 +563,12 @@ Hci.prototype.queueAclDataPkt = function(handle, cid, data) {
 };
 
 Hci.prototype.pushAclOutQueue = function() {
+  debug('pushAclOutQueue');
   let inProgress = 0;
   for (let handle in this._handleAclsInProgress) {
     inProgress += this._handleAclsInProgress[handle];
   }
+  debug(inProgress, this._aclMaxInProgress, this._aclOutQueue.length);
   while (inProgress < this._aclMaxInProgress && this._aclOutQueue.length) {
     inProgress++;
     this.writeOneAclDataPkt();
@@ -580,6 +582,7 @@ Hci.prototype.pushAclOutQueue = function() {
 };
 
 Hci.prototype.writeOneAclDataPkt = function() {
+  debug('writeOneAclDataPkt');
   let pkt = this._aclOutQueue.shift();
   this._handleAclsInProgress[pkt.handle]++;
   debug(
@@ -904,6 +907,8 @@ Hci.prototype.processLeConnComplete = function(status, data) {
   debug('\t\t\tlatency = ' + latency);
   debug('\t\t\tsupervision timeout = ' + supervisionTimeout);
   debug('\t\t\tmaster clock accuracy = ' + masterClockAccuracy);
+
+  this._handleAclsInProgress[handle] = 0;
 
   this.emit(
     'leConnComplete',

@@ -51,6 +51,17 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     );
   }
 
+
+  registerNotifyWait(callback) {
+    return new Promise(resolve => {
+      this.emitter.once('onregisternotify', () => {
+        resolve();
+      });
+      this.registerNotify(callback);
+    });
+  }
+
+
   unregisterNotify() {
     this.onnotify = function() {};
 
@@ -60,6 +71,16 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
         this.uuid,
         false
     );
+  }
+
+
+  unregisterNotifyWait() {
+    return new Promise(resolve => {
+      this.emitter.once('onunregisternotify', () => {
+        resolve();
+      });
+      this.unregisterNotify();
+    });
   }
 
   read() {
@@ -145,21 +166,21 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   ondiscoverdescriptorfinished() {}
 
-  onregisternofity() {}
+  onregisternotify() {}
 
-  onunregisternofity() {}
+  onunregisternotify() {}
 
   onnotify() {}
 
   notifyFromServer(notifyName, params) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case 'onregisternofity': {
-        this.onregisternofity();
+      case 'onregisternotify': {
+        this.onregisternotify();
         break;
       }
-      case 'onunregisternofity': {
-        this.onunregisternofity();
+      case 'onunregisternotify': {
+        this.onunregisternotify();
         break;
       }
       case 'onnotify': {

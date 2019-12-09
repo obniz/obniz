@@ -1,12 +1,12 @@
-/* eslint-disable */
-
 const BleDescriptor = require('./bleDescriptor');
-const BleAttributeAbstract = require('./bleAttributeAbstract');
-const BleHelper = require('./bleHelper');
+const BleLocalAttributeAbstract = require('./bleLocalAttributeAbstract');
 
-class BleCharacteristic extends BleAttributeAbstract {
+class BleCharacteristic extends BleLocalAttributeAbstract {
   constructor(obj) {
     super(obj);
+
+    this._maxValueSize = null;
+    this._updateValueCallback = null;
 
     this.addDescriptor = this.addChild;
     this.getDescriptor = this.getChild;
@@ -47,6 +47,15 @@ class BleCharacteristic extends BleAttributeAbstract {
     return obj;
   }
 
+  toBufferObj() {
+    let obj = super.toBufferObj();
+
+    obj.properties = this.properties;
+    obj.secure = [];
+
+    return obj;
+  }
+
   addProperty(param) {
     if (!this.properties.includes(param)) {
       this.properties.push(param);
@@ -71,25 +80,48 @@ class BleCharacteristic extends BleAttributeAbstract {
     });
   }
 
-  write(data) {
-    // todo
+  emit(name, ...params) {
+    let result = super.emit(name, ...params);
+    if (result) {
+      return result;
+    }
+    switch (name) {
+      case 'subscribe':
+        this._onSubscribe(...params);
+        return true;
+      case 'unsubscribe':
+        this._onUnsubscribe(...params);
+        return true;
+      case 'notify':
+        this._onNotify(...params);
+        return true;
+      case 'indicate':
+        this._onIndicate(...params);
+        return true;
+      default:
+        throw new Error('unknown emit');
+    }
   }
 
-  read() {
-    // todo
+  _onSubscribe(maxValueSize, updateValueCallback) {
+    console.log('_onSubscribe');
+    this._maxValueSize = maxValueSize;
+    this._updateValueCallback = updateValueCallback;
   }
+
+  _onUnsubscribe() {
+    this._maxValueSize = null;
+    this._updateValueCallback = null;
+  }
+
+  _onNotify() {}
+
+  _onIndicate() {}
 
   notify() {
-    this.service.peripheral.Obniz.send({
-      ble: {
-        peripheral: {
-          notify_characteristic: {
-            service_uuid: BleHelper.uuidFilter(this.service.uuid),
-            characteristic_uuid: BleHelper.uuidFilter(this.uuid),
-          },
-        },
-      },
-    });
+    if (this._updateValueCallback) {
+      this._updateValueCallback(Buffer.from(this.data));
+    }
   }
 }
 
