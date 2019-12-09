@@ -252,23 +252,25 @@ describe('8-ble', function() {
     expect(targetChara.canNotify()).to.be.equal(true);
     expect(targetChara.canIndicate()).to.be.equal(false);
 
-    let p1 = new Promise(function(resolve) {
-      targetChara.registerNotify(function(data) {
+    let p1 = new Promise(async resolve => {
+      await targetChara.registerNotifyWait(function(data) {
         console.log('notify!' + data.join(','));
         if (data.length === 1 && data[0] === 92) {
           notifyed = true;
         }
         resolve();
       });
+      console.log('registerNotify');
+      await obnizB.pingWait();
+      await obnizA.pingWait();
+      console.log('start notify');
+      this.service.getCharacteristic('FFF3').notify();
     });
-    await obnizB.pingWait();
-    this.service.getCharacteristic('FFF3').notify();
-    await obnizA.pingWait();
     let p2 = new Promise(function(resolve) {
       setTimeout(function() {
         console.log('timeout!');
         resolve();
-      }, 10000);
+      }, 20000);
     });
     await Promise.race([p1, p2]);
     expect(notifyed).to.be.equal(true);
