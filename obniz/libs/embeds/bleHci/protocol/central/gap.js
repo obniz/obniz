@@ -3,7 +3,7 @@ const debug = () => {};
 
 let events = require('events');
 let util = require('util');
-let Hci = require('./hci');
+let Hci = require('../hci');
 
 let Gap = function(hci) {
   this._hci = hci;

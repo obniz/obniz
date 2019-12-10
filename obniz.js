@@ -33032,7 +33032,7 @@ const BleDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleDescrip
 const BleRemotePeripheral = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemotePeripheral.js");
 const BleAdvertisement = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisement.js");
 const BleScan = __webpack_require__("./obniz/libs/embeds/bleHci/bleScan.js");
-const BleSecurity = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './bleSecurity'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+const BleSecurity = __webpack_require__("./obniz/libs/embeds/bleHci/bleSecurity.js");
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -35051,6 +35051,191 @@ module.exports = BleScan;
 
 /***/ }),
 
+/***/ "./obniz/libs/embeds/bleHci/bleSecurity.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable */
+
+const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
+const semver = __webpack_require__("./node_modules/semver/semver.js");
+
+class BleSecurity {
+  constructor(Obniz) {
+    this.Obniz = Obniz;
+    this.emitter = new emitter();
+  }
+
+  setModeLevel(mode, level) {
+    let auth = undefined;
+    let keys = undefined;
+    let indicateSecurityLevel = undefined;
+
+    if (mode == 1) {
+      if (level == 1) {
+        auth = [];
+        indicateSecurityLevel = 0; //no pairing request
+        keys = ['LTK', 'IRK'];
+      } else if (level == 2) {
+        auth = ['bonding'];
+        indicateSecurityLevel = 2;
+        keys = ['LTK', 'IRK'];
+      } else if (level == 3) {
+        //TODO
+        // auth = ['bonding','mitm'];
+        // indicateSecurityLevel = 3;
+        // keys = ['LTK', 'IRK'];
+      }
+    } else if (mode == 2) {
+      if (level == 1) {
+        //TODO
+        // auth = [];
+        // keys = ['LTK', 'IRK','CSRK'];
+      } else if (level == 2) {
+        //TODO
+        // auth = ['bonding'];
+        // keys = ['LTK', 'IRK','CSRK'];
+      }
+    }
+
+    if (
+      auth !== undefined &&
+      indicateSecurityLevel !== undefined &&
+      keys !== undefined
+    ) {
+      this.setAuth(auth);
+      this.setIndicateSecurityLevel(indicateSecurityLevel);
+      this.setEnableKeyTypes(keys);
+    } else {
+      let msg = `BLE security mode${mode}, level${level} is not available.`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
+  checkIntroducedFirmware(introducedVersion, functionName) {
+    let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
+    if (results) {
+      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
+        this.Obniz.firmware_ver
+      })`;
+      this.Obniz.error(msg);
+      throw new Error(msg);
+    }
+  }
+  setAuth(authTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setAuth');
+    if (!Array.isArray(authTypes)) {
+      authTypes = [authTypes];
+    }
+    let sendTypes = authTypes
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['mitm', 'secure_connection', 'bonding'].includes(elm);
+      });
+
+    if (sendTypes.length !== authTypes.length) {
+      throw new Error('unknown auth type');
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       auth: authTypes,
+    //     },
+    //   },
+    // });
+  }
+
+  setIndicateSecurityLevel(level) {
+    this.checkIntroducedFirmware('1.1.0', 'setIndicateSecurityLevel');
+
+    if (typeof level !== 'number') {
+      throw new Error('unknown secrity level : ' + level);
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       indicate_security_level: level,
+    //     },
+    //   },
+    // });
+  }
+
+  setEnableKeyTypes(keyTypes) {
+    this.checkIntroducedFirmware('1.1.0', 'setEnableKeyTypes');
+    if (!Array.isArray(keyTypes)) {
+      keyTypes = [keyTypes];
+    }
+    let sendTypes = keyTypes
+      .map(elm => {
+        return elm.toLowerCase();
+      })
+      .filter(elm => {
+        return ['ltk', 'csrk', 'irk'].includes(elm);
+      });
+
+    if (sendTypes.length !== keyTypes.length) {
+      throw new Error('unknown key type');
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       key: { type: sendTypes },
+    //     },
+    //   },
+    // });
+  }
+
+  setKeyMaxSize(size) {
+    this.checkIntroducedFirmware('1.1.0', 'setKeyMaxSize');
+    if (typeof size !== 'number') {
+      throw new Error('please provide key size in number');
+    }
+
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       key: { max_size: size },
+    //     },
+    //   },
+    // });
+  }
+
+  clearBondingDevicesList() {
+    // todo
+    // this.Obniz.send({
+    //   ble: {
+    //     security: {
+    //       devices: { clear: true },
+    //     },
+    //   },
+    // });
+  }
+
+  onerror() {} //dummy
+
+  notifyFromServer(notifyName, params) {
+    switch (notifyName) {
+      case 'onerror': {
+        this.onerror(params);
+        break;
+      }
+    }
+  }
+}
+
+module.exports = BleSecurity;
+
+
+/***/ }),
+
 /***/ "./obniz/libs/embeds/bleHci/bleService.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35954,14 +36139,12 @@ module.exports = {
 /***/ "./obniz/libs/embeds/bleHci/protocol/central/gap.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process) {// let debug = require('debug')('gap');
+/* WEBPACK VAR INJECTION */(function(process, Buffer) {// let debug = require('debug')('gap');
 const debug = () => {};
 
 let events = __webpack_require__("./node_modules/events/events.js");
-let os = __webpack_require__("./node_modules/os-browserify/browser.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
-
-let isChip = os.platform() === 'linux' && os.release().indexOf('-ntc') !== -1;
+let Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
 
 let Gap = function(hci) {
   this._hci = hci;
@@ -35976,6 +36159,23 @@ let Gap = function(hci) {
   this._hci.on('leAdvertisingReport', this.onHciLeAdvertisingReport.bind(this));
 
   this._hci.on('leScanEnableSetCmd', this.onLeScanEnableSetCmd.bind(this));
+
+  this._hci.on(
+    'leAdvertisingParametersSet',
+    this.onHciLeAdvertisingParametersSet.bind(this)
+  );
+  this._hci.on(
+    'leAdvertisingDataSet',
+    this.onHciLeAdvertisingDataSet.bind(this)
+  );
+  this._hci.on(
+    'leScanResponseDataSet',
+    this.onHciLeScanResponseDataSet.bind(this)
+  );
+  this._hci.on(
+    'leAdvertiseEnableSet',
+    this.onHciLeAdvertiseEnableSet.bind(this)
+  );
 };
 
 util.inherits(Gap, events.EventEmitter);
@@ -35989,12 +36189,6 @@ Gap.prototype.startScanning = function(allowDuplicates) {
   // p106 - p107
   this._hci.setScanEnabled(false, true);
   this._hci.setScanParameters();
-
-  if (isChip) {
-    // work around for Next Thing Co. C.H.I.P, always allow duplicates, to get scan response
-    this._scanFilterDuplicates = false;
-  }
-
   this._hci.setScanEnabled(true, this._scanFilterDuplicates);
 };
 
@@ -36303,9 +36497,210 @@ Gap.prototype.onHciLeAdvertisingReport = function(
   }
 };
 
+Gap.prototype.startAdvertising = function(name, serviceUuids) {
+  debug(
+    'startAdvertising: name = ' +
+      name +
+      ', serviceUuids = ' +
+      JSON.stringify(serviceUuids, null, 2)
+  );
+
+  let advertisementDataLength = 3;
+  let scanDataLength = 0;
+
+  let serviceUuids16bit = [];
+  let serviceUuids128bit = [];
+  let i = 0;
+
+  if (name && name.length) {
+    scanDataLength += 2 + name.length;
+  }
+
+  if (serviceUuids && serviceUuids.length) {
+    for (i = 0; i < serviceUuids.length; i++) {
+      let serviceUuid = Buffer.from(
+        serviceUuids[i]
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
+
+      if (serviceUuid.length === 2) {
+        serviceUuids16bit.push(serviceUuid);
+      } else if (serviceUuid.length === 16) {
+        serviceUuids128bit.push(serviceUuid);
+      }
+    }
+  }
+
+  if (serviceUuids16bit.length) {
+    advertisementDataLength += 2 + 2 * serviceUuids16bit.length;
+  }
+
+  if (serviceUuids128bit.length) {
+    advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
+  }
+
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(scanDataLength);
+
+  // flags
+  advertisementData.writeUInt8(2, 0);
+  advertisementData.writeUInt8(0x01, 1);
+  advertisementData.writeUInt8(0x06, 2);
+
+  let advertisementDataOffset = 3;
+
+  if (serviceUuids16bit.length) {
+    advertisementData.writeUInt8(
+      1 + 2 * serviceUuids16bit.length,
+      advertisementDataOffset
+    );
+    advertisementDataOffset++;
+
+    advertisementData.writeUInt8(0x03, advertisementDataOffset);
+    advertisementDataOffset++;
+
+    for (i = 0; i < serviceUuids16bit.length; i++) {
+      serviceUuids16bit[i].copy(advertisementData, advertisementDataOffset);
+      advertisementDataOffset += serviceUuids16bit[i].length;
+    }
+  }
+
+  if (serviceUuids128bit.length) {
+    advertisementData.writeUInt8(
+      1 + 16 * serviceUuids128bit.length,
+      advertisementDataOffset
+    );
+    advertisementDataOffset++;
+
+    advertisementData.writeUInt8(0x06, advertisementDataOffset);
+    advertisementDataOffset++;
+
+    for (i = 0; i < serviceUuids128bit.length; i++) {
+      serviceUuids128bit[i].copy(advertisementData, advertisementDataOffset);
+      advertisementDataOffset += serviceUuids128bit[i].length;
+    }
+  }
+
+  // name
+  if (name && name.length) {
+    let nameBuffer = Buffer.from(name);
+
+    scanData.writeUInt8(1 + nameBuffer.length, 0);
+    scanData.writeUInt8(0x08, 1);
+    nameBuffer.copy(scanData, 2);
+  }
+
+  this.startAdvertisingWithEIRData(advertisementData, scanData);
+};
+
+Gap.prototype.startAdvertisingIBeacon = function(data) {
+  debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
+
+  let dataLength = data.length;
+  let manufacturerDataLength = 4 + dataLength;
+  let advertisementDataLength = 5 + manufacturerDataLength;
+
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(0);
+
+  // flags
+  advertisementData.writeUInt8(2, 0);
+  advertisementData.writeUInt8(0x01, 1);
+  advertisementData.writeUInt8(0x06, 2);
+
+  advertisementData.writeUInt8(manufacturerDataLength + 1, 3);
+  advertisementData.writeUInt8(0xff, 4);
+  advertisementData.writeUInt16LE(0x004c, 5); // Apple Company Identifier LE (16 bit)
+  advertisementData.writeUInt8(0x02, 7); // type, 2 => iBeacon
+  advertisementData.writeUInt8(dataLength, 8);
+
+  data.copy(advertisementData, 9);
+
+  this.startAdvertisingWithEIRData(advertisementData, scanData);
+};
+
+Gap.prototype.startAdvertisingWithEIRData = function(
+  advertisementData,
+  scanData
+) {
+  advertisementData = advertisementData || Buffer.alloc(0);
+  scanData = scanData || Buffer.alloc(0);
+
+  debug(
+    'startAdvertisingWithEIRData: advertisement data = ' +
+      advertisementData.toString('hex') +
+      ', scan data = ' +
+      scanData.toString('hex')
+  );
+
+  let error = null;
+
+  if (advertisementData.length > 31) {
+    error = new Error('Advertisement data is over maximum limit of 31 bytes');
+  } else if (scanData.length > 31) {
+    error = new Error('Scan data is over maximum limit of 31 bytes');
+  }
+
+  if (error) {
+    this.emit('advertisingStart', error);
+  } else {
+    this._advertiseState = 'starting';
+
+    this._hci.setScanResponseData(scanData);
+    this._hci.setAdvertisingData(advertisementData);
+
+    this._hci.setAdvertiseEnable(true);
+    this._hci.setScanResponseData(scanData);
+    this._hci.setAdvertisingData(advertisementData);
+  }
+};
+
+Gap.prototype.restartAdvertising = function() {
+  this._advertiseState = 'restarting';
+
+  this._hci.setAdvertiseEnable(true);
+};
+
+Gap.prototype.stopAdvertising = function() {
+  this._advertiseState = 'stopping';
+
+  this._hci.setAdvertiseEnable(false);
+};
+
+Gap.prototype.onHciError = function(error) {};
+
+Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {};
+
+Gap.prototype.onHciLeAdvertisingDataSet = function(status) {};
+
+Gap.prototype.onHciLeScanResponseDataSet = function(status) {};
+
+Gap.prototype.onHciLeAdvertiseEnableSet = function(status) {
+  if (this._advertiseState === 'starting') {
+    this._advertiseState = 'started';
+
+    let error = null;
+
+    if (status) {
+      error = new Error(
+        Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
+      );
+    }
+
+    this.emit('advertisingStart', error);
+  } else if (this._advertiseState === 'stopping') {
+    this._advertiseState = 'stopped';
+
+    this.emit('advertisingStop');
+  }
+};
+
 module.exports = Gap;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
