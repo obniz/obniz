@@ -343,6 +343,8 @@ let testUtil = {
       !semver.satisfies(process.versions.node, '>=7.6.0')
     ) {
       return false;
+    } else if (process && process.env.NO_BROWSER_TEST) {
+      return false;
     }
     return true;
   },
