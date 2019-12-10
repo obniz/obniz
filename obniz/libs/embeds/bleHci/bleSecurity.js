@@ -10,157 +10,29 @@ class BleSecurity {
   }
 
   setModeLevel(mode, level) {
-    let auth = undefined;
-    let keys = undefined;
-    let indicateSecurityLevel = undefined;
-
-    if (mode == 1) {
-      if (level == 1) {
-        auth = [];
-        indicateSecurityLevel = 0; //no pairing request
-        keys = ['LTK', 'IRK'];
-      } else if (level == 2) {
-        auth = ['bonding'];
-        indicateSecurityLevel = 2;
-        keys = ['LTK', 'IRK'];
-      } else if (level == 3) {
-        //TODO
-        // auth = ['bonding','mitm'];
-        // indicateSecurityLevel = 3;
-        // keys = ['LTK', 'IRK'];
-      }
-    } else if (mode == 2) {
-      if (level == 1) {
-        //TODO
-        // auth = [];
-        // keys = ['LTK', 'IRK','CSRK'];
-      } else if (level == 2) {
-        //TODO
-        // auth = ['bonding'];
-        // keys = ['LTK', 'IRK','CSRK'];
-      }
-    }
-
-    if (
-      auth !== undefined &&
-      indicateSecurityLevel !== undefined &&
-      keys !== undefined
-    ) {
-      this.setAuth(auth);
-      this.setIndicateSecurityLevel(indicateSecurityLevel);
-      this.setEnableKeyTypes(keys);
-    } else {
-      let msg = `BLE security mode${mode}, level${level} is not available.`;
-      this.Obniz.error(msg);
-      throw new Error(msg);
-    }
+    throw new Error("setModeLevel is deprecated method");
   }
   checkIntroducedFirmware(introducedVersion, functionName) {
-    let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
-    if (results) {
-      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
-        this.Obniz.firmware_ver
-      })`;
-      this.Obniz.error(msg);
-      throw new Error(msg);
-    }
+    throw new Error("checkIntroducedFirmware is deprecated method");
   }
   setAuth(authTypes) {
-    this.checkIntroducedFirmware('1.1.0', 'setAuth');
-    if (!Array.isArray(authTypes)) {
-      authTypes = [authTypes];
-    }
-    let sendTypes = authTypes
-      .map(elm => {
-        return elm.toLowerCase();
-      })
-      .filter(elm => {
-        return ['mitm', 'secure_connection', 'bonding'].includes(elm);
-      });
-
-    if (sendTypes.length !== authTypes.length) {
-      throw new Error('unknown auth type');
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       auth: authTypes,
-    //     },
-    //   },
-    // });
+    throw new Error("setAuth is deprecated method");
   }
 
   setIndicateSecurityLevel(level) {
-    this.checkIntroducedFirmware('1.1.0', 'setIndicateSecurityLevel');
-
-    if (typeof level !== 'number') {
-      throw new Error('unknown secrity level : ' + level);
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       indicate_security_level: level,
-    //     },
-    //   },
-    // });
+    throw new Error("setIndicateSecurityLevel is deprecated method");
   }
 
   setEnableKeyTypes(keyTypes) {
-    this.checkIntroducedFirmware('1.1.0', 'setEnableKeyTypes');
-    if (!Array.isArray(keyTypes)) {
-      keyTypes = [keyTypes];
-    }
-    let sendTypes = keyTypes
-      .map(elm => {
-        return elm.toLowerCase();
-      })
-      .filter(elm => {
-        return ['ltk', 'csrk', 'irk'].includes(elm);
-      });
-
-    if (sendTypes.length !== keyTypes.length) {
-      throw new Error('unknown key type');
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       key: { type: sendTypes },
-    //     },
-    //   },
-    // });
+    throw new Error("setEnableKeyTypes is deprecated method");
   }
 
   setKeyMaxSize(size) {
-    this.checkIntroducedFirmware('1.1.0', 'setKeyMaxSize');
-    if (typeof size !== 'number') {
-      throw new Error('please provide key size in number');
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       key: { max_size: size },
-    //     },
-    //   },
-    // });
+    throw new Error("setKeyMaxSize is deprecated method");
   }
 
   clearBondingDevicesList() {
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       devices: { clear: true },
-    //     },
-    //   },
-    // });
+    throw new Error("clearBondingDevicesList is deprecated method");
   }
 
   onerror() {} //dummy
