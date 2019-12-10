@@ -29549,7 +29549,7 @@ module.exports = class ObnizComponents extends ObnizParts {
 
     let ble = ObnizBLEHci;
 
-    // < 3.0.0 TODO:FIX
+    // < 3.0.0-beta
     if (semver.lt(this.firmware_ver, '3.0.0-beta')) {
       ble = ObnizBLE;
     }
