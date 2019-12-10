@@ -157,7 +157,7 @@ describe('8-ble', function() {
             properties: ['read', 'write', 'notify'],
             data: [92],
             uuid: 'fff3',
-            descriptors: [],
+            // descriptors: [],
           },
           {
             properties: ['write'],
