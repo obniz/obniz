@@ -30974,7 +30974,7 @@ class ObnizBLE {
   }
 
   //dummy
-  initWait() {}
+  async initWait() {}
 
   _reset() {}
 
