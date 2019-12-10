@@ -1,18 +1,12 @@
-/* eslint-disable */
+let debug = require('debug')('mgmt');
 
-var debug = require('debug')('mgmt');
+let LTK_INFO_SIZE = 36;
 
-var events = require('events');
-var util = require('util');
+let MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
 
-
-var LTK_INFO_SIZE = 36;
-
-var MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
-
-function Mgmt() {
+function Mgmt(hciProtocol) {
   this._ltkInfos = [];
-
+  this._hci = hciProtocol;
 }
 
 Mgmt.prototype.onSocketData = function(data) {
@@ -23,8 +17,16 @@ Mgmt.prototype.onSocketError = function(error) {
   debug('on error ->' + error.message);
 };
 
-Mgmt.prototype.addLongTermKey = function(address, addressType, authenticated, master, ediv, rand, key) {
-  var ltkInfo = Buffer.from(LTK_INFO_SIZE);
+Mgmt.prototype.addLongTermKey = function(
+  address,
+  addressType,
+  authenticated,
+  master,
+  ediv,
+  rand,
+  key
+) {
+  let ltkInfo = Buffer.from(LTK_INFO_SIZE);
 
   address.copy(ltkInfo, 0);
   ltkInfo.writeUInt8(addressType.readUInt8(0) + 1, 6); // BDADDR_LE_PUBLIC = 0x01, BDADDR_LE_RANDOM 0x02, so add one
@@ -49,12 +51,12 @@ Mgmt.prototype.clearLongTermKeys = function() {
 };
 
 Mgmt.prototype.loadLongTermKeys = function() {
-  var numLongTermKeys = this._ltkInfos.length;
-  var op = Buffer.alloc(2 + numLongTermKeys * LTK_INFO_SIZE);
+  let numLongTermKeys = this._ltkInfos.length;
+  let op = Buffer.alloc(2 + numLongTermKeys * LTK_INFO_SIZE);
 
   op.writeUInt16LE(numLongTermKeys, 0);
 
-  for (var i = 0; i < numLongTermKeys; i++) {
+  for (let i = 0; i < numLongTermKeys; i++) {
     this._ltkInfos[i].copy(op, 2 + i * LTK_INFO_SIZE);
   }
 
@@ -62,13 +64,13 @@ Mgmt.prototype.loadLongTermKeys = function() {
 };
 
 Mgmt.prototype.write = function(opcode, index, data) {
-  var length = 0;
+  let length = 0;
 
   if (data) {
     length = data.length;
   }
 
-  var pkt = Buffer.alloc(6 + length);
+  let pkt = Buffer.alloc(6 + length);
 
   pkt.writeUInt16LE(opcode, 0);
   pkt.writeUInt16LE(index, 2);
@@ -79,8 +81,7 @@ Mgmt.prototype.write = function(opcode, index, data) {
   }
 
   debug('writing -> ' + pkt.toString('hex'));
-  throw new Error("socket write");
-  // this._socket.write(pkt);
+  this._hci.write(pkt);
 };
 
-module.exports = new Mgmt();
+module.exports = Mgmt;

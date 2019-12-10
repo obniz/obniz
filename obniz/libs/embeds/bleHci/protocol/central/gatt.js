@@ -58,7 +58,6 @@ let GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
 let ATT_CID = 0x0004;
 
 /* eslint-enable no-unused-vars */
-
 let Gatt = function(address, aclStream) {
   this._address = address;
   this._aclStream = aclStream;

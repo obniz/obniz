@@ -1,11 +1,6 @@
-/* eslint-disable */
-
-let debug = require('debug')('acl-att-stream');
-
 let events = require('events');
 let util = require('util');
 
-let crypto = require('./crypto');
 let Smp = require('./smp');
 
 let AclStream = function(
@@ -25,7 +20,8 @@ let AclStream = function(
     localAddressType,
     localAddress,
     remoteAddressType,
-    remoteAddress
+    remoteAddress,
+    this._hci
   );
 };
 

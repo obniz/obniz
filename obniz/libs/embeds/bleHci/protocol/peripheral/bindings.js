@@ -1,17 +1,16 @@
-/* eslint-disable */
+// var debug = require('debug')('bindings');
+const debug = () => {};
 
-var debug = require('debug')('bindings');
+let events = require('events');
+let util = require('util');
+let os = require('os');
 
-var events = require('events');
-var util = require('util');
-var os = require('os');
+let AclStream = require('./acl-stream');
 
-var AclStream = require('./acl-stream');
-var Hci = require('../hci');
-var Gap = require('./gap');
-var Gatt = require('./gatt');
+let Gap = require('./gap');
+let Gatt = require('./gatt');
 
-var BlenoBindings = function(hciProtocol) {
+let BlenoBindings = function(hciProtocol) {
   this._state = null;
 
   this._advertising = false;
@@ -39,7 +38,10 @@ BlenoBindings.prototype.startAdvertisingIBeacon = function(data) {
   this._gap.startAdvertisingIBeacon(data);
 };
 
-BlenoBindings.prototype.startAdvertisingWithEIRData = function(advertisementData, scanData) {
+BlenoBindings.prototype.startAdvertisingWithEIRData = function(
+  advertisementData,
+  scanData
+) {
   this._advertising = true;
 
   this._gap.startAdvertisingWithEIRData(advertisementData, scanData);
@@ -72,8 +74,6 @@ BlenoBindings.prototype.updateRssi = function() {
 };
 
 BlenoBindings.prototype.init = function() {
-
-
   this._gap.on('advertisingStart', this.onAdvertisingStart.bind(this));
   this._gap.on('advertisingStop', this.onAdvertisingStop.bind(this));
 
@@ -92,7 +92,6 @@ BlenoBindings.prototype.init = function() {
   this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
 
   this.emit('platform', os.platform());
-
 };
 
 BlenoBindings.prototype.onStateChange = function(state) {
@@ -102,11 +101,19 @@ BlenoBindings.prototype.onStateChange = function(state) {
   this._state = state;
 
   if (state === 'unauthorized') {
-    console.log('bleno warning: adapter state unauthorized, please run as root or with sudo');
-    console.log('               or see README for information on running without root/sudo:');
-    console.log('               https://github.com/sandeepmistry/bleno#running-on-linux');
+    console.log(
+      'bleno warning: adapter state unauthorized, please run as root or with sudo'
+    );
+    console.log(
+      '               or see README for information on running without root/sudo:'
+    );
+    console.log(
+      '               https://github.com/sandeepmistry/bleno#running-on-linux'
+    );
   } else if (state === 'unsupported') {
-    console.log('bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
+    console.log(
+      'bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).'
+    );
     console.log('               Try to run with environment variable:');
     console.log('               [sudo] BLENO_HCI_DEVICE_ID=x node ...');
   }
@@ -118,8 +125,13 @@ BlenoBindings.prototype.onAddressChange = function(address) {
   this.emit('addressChange', address);
 };
 
-BlenoBindings.prototype.onReadLocalVersion = function(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) {
-};
+BlenoBindings.prototype.onReadLocalVersion = function(
+  hciVer,
+  hciRev,
+  lmpVer,
+  manufacturer,
+  lmpSubVer
+) {};
 
 BlenoBindings.prototype.onAdvertisingStart = function(error) {
   this.emit('advertisingStart', error);
@@ -129,7 +141,17 @@ BlenoBindings.prototype.onAdvertisingStop = function() {
   this.emit('advertisingStop');
 };
 
-BlenoBindings.prototype.onLeConnComplete = function(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+BlenoBindings.prototype.onLeConnComplete = function(
+  status,
+  handle,
+  role,
+  addressType,
+  address,
+  interval,
+  latency,
+  supervisionTimeout,
+  masterClockAccuracy
+) {
   if (role !== 1) {
     // not slave, ignore
     return;
@@ -137,13 +159,25 @@ BlenoBindings.prototype.onLeConnComplete = function(status, handle, role, addres
 
   this._address = address;
   this._handle = handle;
-  this._aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+  this._aclStream = new AclStream(
+    this._hci,
+    handle,
+    this._hci.addressType,
+    this._hci.address,
+    addressType,
+    address
+  );
   this._gatt.setAclStream(this._aclStream);
 
   this.emit('accept', address);
 };
 
-BlenoBindings.prototype.onLeConnUpdateComplete = function(handle, interval, latency, supervisionTimeout) {
+BlenoBindings.prototype.onLeConnUpdateComplete = function(
+  handle,
+  interval,
+  latency,
+  supervisionTimeout
+) {
   // no-op
 };
 
@@ -152,7 +186,7 @@ BlenoBindings.prototype.onDisconnComplete = function(handle, reason) {
     this._aclStream.push(null, null);
   }
 
-  var address = this._address;
+  let address = this._address;
 
   this._address = null;
   this._handle = null;
@@ -192,6 +226,5 @@ BlenoBindings.prototype.onAclDataPkt = function(handle, cid, data) {
     this._aclStream.push(cid, data);
   }
 };
-
 
 module.exports = BlenoBindings;

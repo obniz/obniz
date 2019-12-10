@@ -1,16 +1,15 @@
-/* eslint-disable */
+// var debug = require('debug')('gap');
+const debug = () => {};
 
-var debug = require('debug')('gap');
+let events = require('events');
+let os = require('os');
+let util = require('util');
 
-var events = require('events');
-var os = require('os');
-var util = require('util');
+let Hci = require('../hci');
 
-var Hci = require('../hci');
-
-var isLinux = (os.platform() === 'linux');
-var isIntelEdison = isLinux && (os.release().indexOf('edison') !== -1);
-var isYocto = isLinux && (os.release().indexOf('yocto') !== -1);
+let isLinux = os.platform() === 'linux';
+let isIntelEdison = isLinux && os.release().indexOf('edison') !== -1;
+let isYocto = isLinux && os.release().indexOf('yocto') !== -1;
 
 function Gap(hci) {
   this._hci = hci;
@@ -19,23 +18,40 @@ function Gap(hci) {
 
   this._hci.on('error', this.onHciError.bind(this));
 
-  this._hci.on('leAdvertisingParametersSet', this.onHciLeAdvertisingParametersSet.bind(this));
-  this._hci.on('leAdvertisingDataSet', this.onHciLeAdvertisingDataSet.bind(this));
-  this._hci.on('leScanResponseDataSet', this.onHciLeScanResponseDataSet.bind(this));
-  this._hci.on('leAdvertiseEnableSet', this.onHciLeAdvertiseEnableSet.bind(this));
+  this._hci.on(
+    'leAdvertisingParametersSet',
+    this.onHciLeAdvertisingParametersSet.bind(this)
+  );
+  this._hci.on(
+    'leAdvertisingDataSet',
+    this.onHciLeAdvertisingDataSet.bind(this)
+  );
+  this._hci.on(
+    'leScanResponseDataSet',
+    this.onHciLeScanResponseDataSet.bind(this)
+  );
+  this._hci.on(
+    'leAdvertiseEnableSet',
+    this.onHciLeAdvertiseEnableSet.bind(this)
+  );
 }
 
 util.inherits(Gap, events.EventEmitter);
 
 Gap.prototype.startAdvertising = function(name, serviceUuids) {
-  debug('startAdvertising: name = ' + name + ', serviceUuids = ' + JSON.stringify(serviceUuids, null, 2));
+  debug(
+    'startAdvertising: name = ' +
+      name +
+      ', serviceUuids = ' +
+      JSON.stringify(serviceUuids, null, 2)
+  );
 
-  var advertisementDataLength = 3;
-  var scanDataLength = 0;
+  let advertisementDataLength = 3;
+  let scanDataLength = 0;
 
-  var serviceUuids16bit = [];
-  var serviceUuids128bit = [];
-  var i = 0;
+  let serviceUuids16bit = [];
+  let serviceUuids128bit = [];
+  let i = 0;
 
   if (name && name.length) {
     scanDataLength += 2 + name.length;
@@ -43,7 +59,13 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   if (serviceUuids && serviceUuids.length) {
     for (i = 0; i < serviceUuids.length; i++) {
-      var serviceUuid = Buffer.from(serviceUuids[i].match(/.{1,2}/g).reverse().join(''), 'hex');
+      let serviceUuid = Buffer.from(
+        serviceUuids[i]
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
 
       if (serviceUuid.length === 2) {
         serviceUuids16bit.push(serviceUuid);
@@ -61,18 +83,21 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
     advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
   }
 
-  var advertisementData = Buffer.alloc(advertisementDataLength);
-  var scanData = Buffer.alloc(scanDataLength);
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(scanDataLength);
 
   // flags
   advertisementData.writeUInt8(2, 0);
   advertisementData.writeUInt8(0x01, 1);
   advertisementData.writeUInt8(0x06, 2);
 
-  var advertisementDataOffset = 3;
+  let advertisementDataOffset = 3;
 
   if (serviceUuids16bit.length) {
-    advertisementData.writeUInt8(1 + 2 * serviceUuids16bit.length, advertisementDataOffset);
+    advertisementData.writeUInt8(
+      1 + 2 * serviceUuids16bit.length,
+      advertisementDataOffset
+    );
     advertisementDataOffset++;
 
     advertisementData.writeUInt8(0x03, advertisementDataOffset);
@@ -85,7 +110,10 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
   }
 
   if (serviceUuids128bit.length) {
-    advertisementData.writeUInt8(1 + 16 * serviceUuids128bit.length, advertisementDataOffset);
+    advertisementData.writeUInt8(
+      1 + 16 * serviceUuids128bit.length,
+      advertisementDataOffset
+    );
     advertisementDataOffset++;
 
     advertisementData.writeUInt8(0x06, advertisementDataOffset);
@@ -99,7 +127,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   // name
   if (name && name.length) {
-    var nameBuffer = Buffer.alloc(name);
+    let nameBuffer = Buffer.alloc(name);
 
     scanData.writeUInt8(1 + nameBuffer.length, 0);
     scanData.writeUInt8(0x08, 1);
@@ -109,17 +137,16 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
   this.startAdvertisingWithEIRData(advertisementData, scanData);
 };
 
-
 Gap.prototype.startAdvertisingIBeacon = function(data) {
   debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
 
-  var dataLength = data.length;
-  var manufacturerDataLength = 4 + dataLength;
-  var advertisementDataLength = 5 + manufacturerDataLength;
-  var scanDataLength = 0;
+  let dataLength = data.length;
+  let manufacturerDataLength = 4 + dataLength;
+  let advertisementDataLength = 5 + manufacturerDataLength;
+  // let scanDataLength = 0;
 
-  var advertisementData = Buffer.alloc(advertisementDataLength);
-  var scanData = Buffer.alloc(0);
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(0);
 
   // flags
   advertisementData.writeUInt8(2, 0);
@@ -137,13 +164,21 @@ Gap.prototype.startAdvertisingIBeacon = function(data) {
   this.startAdvertisingWithEIRData(advertisementData, scanData);
 };
 
-Gap.prototype.startAdvertisingWithEIRData = function(advertisementData, scanData) {
+Gap.prototype.startAdvertisingWithEIRData = function(
+  advertisementData,
+  scanData
+) {
   advertisementData = advertisementData || Buffer.alloc(0);
   scanData = scanData || Buffer.alloc(0);
 
-  debug('startAdvertisingWithEIRData: advertisement data = ' + advertisementData.toString('hex') + ', scan data = ' + scanData.toString('hex'));
+  debug(
+    'startAdvertisingWithEIRData: advertisement data = ' +
+      advertisementData.toString('hex') +
+      ', scan data = ' +
+      scanData.toString('hex')
+  );
 
-  var error = null;
+  let error = null;
 
   if (advertisementData.length > 31) {
     error = new Error('Advertisement data is over maximum limit of 31 bytes');
@@ -181,26 +216,24 @@ Gap.prototype.stopAdvertising = function() {
   this._hci.setAdvertiseEnable(false);
 };
 
-Gap.prototype.onHciError = function(error) {
-};
+Gap.prototype.onHciError = function(error) {};
 
-Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {
-};
+Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {};
 
-Gap.prototype.onHciLeAdvertisingDataSet = function(status) {
-};
+Gap.prototype.onHciLeAdvertisingDataSet = function(status) {};
 
-Gap.prototype.onHciLeScanResponseDataSet = function(status) {
-};
+Gap.prototype.onHciLeScanResponseDataSet = function(status) {};
 
 Gap.prototype.onHciLeAdvertiseEnableSet = function(status) {
   if (this._advertiseState === 'starting') {
     this._advertiseState = 'started';
 
-    var error = null;
+    let error = null;
 
     if (status) {
-      error = new Error(Hci.STATUS_MAPPER[status] || ('Unknown (' + status + ')'));
+      error = new Error(
+        Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
+      );
     }
 
     this.emit('advertisingStart', error);

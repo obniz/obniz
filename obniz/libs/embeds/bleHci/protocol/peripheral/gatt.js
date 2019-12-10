@@ -1,69 +1,69 @@
-/* eslint-disable */
+// var debug = require('debug')('gatt');
+const debug = () => {};
 
-var debug = require('debug')('gatt');
+let events = require('events');
+let util = require('util');
 
-var events = require('events');
-var os = require('os');
-var util = require('util');
+/* eslint-disable no-unused-vars */
+let ATT_OP_ERROR = 0x01;
+let ATT_OP_MTU_REQ = 0x02;
+let ATT_OP_MTU_RESP = 0x03;
+let ATT_OP_FIND_INFO_REQ = 0x04;
+let ATT_OP_FIND_INFO_RESP = 0x05;
+let ATT_OP_FIND_BY_TYPE_REQ = 0x06;
+let ATT_OP_FIND_BY_TYPE_RESP = 0x07;
+let ATT_OP_READ_BY_TYPE_REQ = 0x08;
+let ATT_OP_READ_BY_TYPE_RESP = 0x09;
+let ATT_OP_READ_REQ = 0x0a;
+let ATT_OP_READ_RESP = 0x0b;
+let ATT_OP_READ_BLOB_REQ = 0x0c;
+let ATT_OP_READ_BLOB_RESP = 0x0d;
+let ATT_OP_READ_MULTI_REQ = 0x0e;
+let ATT_OP_READ_MULTI_RESP = 0x0f;
+let ATT_OP_READ_BY_GROUP_REQ = 0x10;
+let ATT_OP_READ_BY_GROUP_RESP = 0x11;
+let ATT_OP_WRITE_REQ = 0x12;
+let ATT_OP_WRITE_RESP = 0x13;
+let ATT_OP_WRITE_CMD = 0x52;
+let ATT_OP_PREP_WRITE_REQ = 0x16;
+let ATT_OP_PREP_WRITE_RESP = 0x17;
+let ATT_OP_EXEC_WRITE_REQ = 0x18;
+let ATT_OP_EXEC_WRITE_RESP = 0x19;
+let ATT_OP_HANDLE_NOTIFY = 0x1b;
+let ATT_OP_HANDLE_IND = 0x1d;
+let ATT_OP_HANDLE_CNF = 0x1e;
+let ATT_OP_SIGNED_WRITE_CMD = 0xd2;
 
-var ATT_OP_ERROR                    = 0x01;
-var ATT_OP_MTU_REQ                  = 0x02;
-var ATT_OP_MTU_RESP                 = 0x03;
-var ATT_OP_FIND_INFO_REQ            = 0x04;
-var ATT_OP_FIND_INFO_RESP           = 0x05;
-var ATT_OP_FIND_BY_TYPE_REQ         = 0x06;
-var ATT_OP_FIND_BY_TYPE_RESP        = 0x07;
-var ATT_OP_READ_BY_TYPE_REQ         = 0x08;
-var ATT_OP_READ_BY_TYPE_RESP        = 0x09;
-var ATT_OP_READ_REQ                 = 0x0a;
-var ATT_OP_READ_RESP                = 0x0b;
-var ATT_OP_READ_BLOB_REQ            = 0x0c;
-var ATT_OP_READ_BLOB_RESP           = 0x0d;
-var ATT_OP_READ_MULTI_REQ           = 0x0e;
-var ATT_OP_READ_MULTI_RESP          = 0x0f;
-var ATT_OP_READ_BY_GROUP_REQ        = 0x10;
-var ATT_OP_READ_BY_GROUP_RESP       = 0x11;
-var ATT_OP_WRITE_REQ                = 0x12;
-var ATT_OP_WRITE_RESP               = 0x13;
-var ATT_OP_WRITE_CMD                = 0x52;
-var ATT_OP_PREP_WRITE_REQ           = 0x16;
-var ATT_OP_PREP_WRITE_RESP          = 0x17;
-var ATT_OP_EXEC_WRITE_REQ           = 0x18;
-var ATT_OP_EXEC_WRITE_RESP          = 0x19;
-var ATT_OP_HANDLE_NOTIFY            = 0x1b;
-var ATT_OP_HANDLE_IND               = 0x1d;
-var ATT_OP_HANDLE_CNF               = 0x1e;
-var ATT_OP_SIGNED_WRITE_CMD         = 0xd2;
+let GATT_PRIM_SVC_UUID = 0x2800;
+let GATT_INCLUDE_UUID = 0x2802;
+let GATT_CHARAC_UUID = 0x2803;
 
-var GATT_PRIM_SVC_UUID              = 0x2800;
-var GATT_INCLUDE_UUID               = 0x2802;
-var GATT_CHARAC_UUID                = 0x2803;
+let GATT_CLIENT_CHARAC_CFG_UUID = 0x2902;
+let GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
 
-var GATT_CLIENT_CHARAC_CFG_UUID     = 0x2902;
-var GATT_SERVER_CHARAC_CFG_UUID     = 0x2903;
+let ATT_ECODE_SUCCESS = 0x00;
+let ATT_ECODE_INVALID_HANDLE = 0x01;
+let ATT_ECODE_READ_NOT_PERM = 0x02;
+let ATT_ECODE_WRITE_NOT_PERM = 0x03;
+let ATT_ECODE_INVALID_PDU = 0x04;
+let ATT_ECODE_AUTHENTICATION = 0x05;
+let ATT_ECODE_REQ_NOT_SUPP = 0x06;
+let ATT_ECODE_INVALID_OFFSET = 0x07;
+let ATT_ECODE_AUTHORIZATION = 0x08;
+let ATT_ECODE_PREP_QUEUE_FULL = 0x09;
+let ATT_ECODE_ATTR_NOT_FOUND = 0x0a;
+let ATT_ECODE_ATTR_NOT_LONG = 0x0b;
+let ATT_ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
+let ATT_ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
+let ATT_ECODE_UNLIKELY = 0x0e;
+let ATT_ECODE_INSUFF_ENC = 0x0f;
+let ATT_ECODE_UNSUPP_GRP_TYPE = 0x10;
+let ATT_ECODE_INSUFF_RESOURCES = 0x11;
 
-var ATT_ECODE_SUCCESS               = 0x00;
-var ATT_ECODE_INVALID_HANDLE        = 0x01;
-var ATT_ECODE_READ_NOT_PERM         = 0x02;
-var ATT_ECODE_WRITE_NOT_PERM        = 0x03;
-var ATT_ECODE_INVALID_PDU           = 0x04;
-var ATT_ECODE_AUTHENTICATION        = 0x05;
-var ATT_ECODE_REQ_NOT_SUPP          = 0x06;
-var ATT_ECODE_INVALID_OFFSET        = 0x07;
-var ATT_ECODE_AUTHORIZATION         = 0x08;
-var ATT_ECODE_PREP_QUEUE_FULL       = 0x09;
-var ATT_ECODE_ATTR_NOT_FOUND        = 0x0a;
-var ATT_ECODE_ATTR_NOT_LONG         = 0x0b;
-var ATT_ECODE_INSUFF_ENCR_KEY_SIZE  = 0x0c;
-var ATT_ECODE_INVAL_ATTR_VALUE_LEN  = 0x0d;
-var ATT_ECODE_UNLIKELY              = 0x0e;
-var ATT_ECODE_INSUFF_ENC            = 0x0f;
-var ATT_ECODE_UNSUPP_GRP_TYPE       = 0x10;
-var ATT_ECODE_INSUFF_RESOURCES      = 0x11;
+/* eslint-enable no-unused-vars */
+let ATT_CID = 0x0004;
 
-var ATT_CID = 0x0004;
-
-var Gatt = function() {
+let Gatt = function() {
   this.maxMtu = 256;
   this._mtu = 23;
   this._preparedWriteRequest = null;
@@ -80,7 +80,7 @@ Gatt.prototype.setServices = function(services) {
   // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
 
   // base services and characteristics
-  var allServices = [
+  let allServices = [
     // {
     //   uuid: '1800',
     //   characteristics: [
@@ -116,29 +116,29 @@ Gatt.prototype.setServices = function(services) {
 
   this._handles = [];
 
-  var handle = 0;
-  var i;
-  var j;
+  let handle = 0;
+  let i;
+  let j;
 
   for (i = 0; i < allServices.length; i++) {
-    var service = allServices[i];
+    let service = allServices[i];
 
     handle++;
-    var serviceHandle = handle;
+    let serviceHandle = handle;
 
     this._handles[serviceHandle] = {
       type: 'service',
       uuid: service.uuid,
       attribute: service,
-      startHandle: serviceHandle
+      startHandle: serviceHandle,
       // endHandle filled in below
     };
 
     for (j = 0; j < service.characteristics.length; j++) {
-      var characteristic = service.characteristics[j];
+      let characteristic = service.characteristics[j];
 
-      var properties = 0;
-      var secure = 0;
+      let properties = 0;
+      let secure = 0;
 
       if (characteristic.properties.indexOf('read') !== -1) {
         properties |= 0x02;
@@ -181,10 +181,10 @@ Gatt.prototype.setServices = function(services) {
       }
 
       handle++;
-      var characteristicHandle = handle;
+      let characteristicHandle = handle;
 
       handle++;
-      var characteristicValueHandle = handle;
+      let characteristicValueHandle = handle;
 
       this._handles[characteristicHandle] = {
         type: 'characteristic',
@@ -193,36 +193,37 @@ Gatt.prototype.setServices = function(services) {
         secure: secure,
         attribute: characteristic,
         startHandle: characteristicHandle,
-        valueHandle: characteristicValueHandle
+        valueHandle: characteristicValueHandle,
       };
 
       this._handles[characteristicValueHandle] = {
         type: 'characteristicValue',
         handle: characteristicValueHandle,
-        value: characteristic.value
+        value: characteristic.value,
       };
 
-      if (properties & 0x30) { // notify or indicate
+      if (properties & 0x30) {
+        // notify or indicate
         // add client characteristic configuration descriptor
 
         handle++;
-        var clientCharacteristicConfigurationDescriptorHandle = handle;
+        let clientCharacteristicConfigurationDescriptorHandle = handle;
         this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
           type: 'descriptor',
           handle: clientCharacteristicConfigurationDescriptorHandle,
           uuid: '2902',
           attribute: characteristic,
-          properties: (0x02 | 0x04 | 0x08), // read/write
-          secure: (secure & 0x10) ? (0x02 | 0x04 | 0x08) : 0,
-          value: Buffer.from([0x00, 0x00])
+          properties: 0x02 | 0x04 | 0x08, // read/write
+          secure: secure & 0x10 ? 0x02 | 0x04 | 0x08 : 0,
+          value: Buffer.from([0x00, 0x00]),
         };
       }
 
-      for (var k = 0; k < characteristic.descriptors.length; k++) {
-        var descriptor = characteristic.descriptors[k];
+      for (let k = 0; k < characteristic.descriptors.length; k++) {
+        let descriptor = characteristic.descriptors[k];
 
         handle++;
-        var descriptorHandle = handle;
+        let descriptorHandle = handle;
 
         this._handles[descriptorHandle] = {
           type: 'descriptor',
@@ -231,7 +232,7 @@ Gatt.prototype.setServices = function(services) {
           attribute: descriptor,
           properties: 0x02, // read only
           secure: 0x00,
-          value: descriptor.value
+          value: descriptor.value,
         };
       }
     }
@@ -239,14 +240,16 @@ Gatt.prototype.setServices = function(services) {
     this._handles[serviceHandle].endHandle = handle;
   }
 
-  var debugHandles = [];
+  let debugHandles = [];
   for (i = 0; i < this._handles.length; i++) {
     handle = this._handles[i];
 
     debugHandles[i] = {};
-    for(j in handle) {
+    for (j in handle) {
       if (Buffer.isBuffer(handle[j])) {
-        debugHandles[i][j] = handle[j] ? 'Buffer(\'' + handle[j].toString('hex') + '\', \'hex\')' : null;
+        debugHandles[i][j] = handle[j]
+          ? "Buffer('" + handle[j].toString('hex') + "', 'hex')"
+          : null;
       } else if (j !== 'attribute') {
         debugHandles[i][j] = handle[j];
       }
@@ -278,10 +281,13 @@ Gatt.prototype.onAclStreamEnd = function() {
   this._aclStream.removeListener('data', this.onAclStreamDataBinded);
   this._aclStream.removeListener('end', this.onAclStreamEndBinded);
 
-  for (var i = 0; i < this._handles.length; i++) {
-    if (this._handles[i] && this._handles[i].type === 'descriptor' &&
-        this._handles[i].uuid === '2902' && this._handles[i].value.readUInt16LE(0) !== 0) {
-
+  for (let i = 0; i < this._handles.length; i++) {
+    if (
+      this._handles[i] &&
+      this._handles[i].type === 'descriptor' &&
+      this._handles[i].uuid === '2902' &&
+      this._handles[i].value.readUInt16LE(0) !== 0
+    ) {
       this._handles[i].value = Buffer.from([0x00, 0x00]);
 
       if (this._handles[i].attribute && this._handles[i].attribute.emit) {
@@ -297,7 +303,7 @@ Gatt.prototype.send = function(data) {
 };
 
 Gatt.prototype.errorResponse = function(opcode, handle, status) {
-  var buf = Buffer.alloc(5);
+  let buf = Buffer.alloc(5);
 
   buf.writeUInt8(ATT_OP_ERROR, 0);
   buf.writeUInt8(opcode, 1);
@@ -310,10 +316,10 @@ Gatt.prototype.errorResponse = function(opcode, handle, status) {
 Gatt.prototype.handleRequest = function(request) {
   debug('handing request: ' + request.toString('hex'));
 
-  var requestType = request[0];
-  var response = null;
+  let requestType = request[0];
+  let response = null;
 
-  switch(requestType) {
+  switch (requestType) {
     case ATT_OP_MTU_REQ:
       response = this.handleMtuRequest(request);
       break;
@@ -359,7 +365,11 @@ Gatt.prototype.handleRequest = function(request) {
     default:
     case ATT_OP_READ_MULTI_REQ:
     case ATT_OP_SIGNED_WRITE_CMD:
-      response = this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP);
+      response = this.errorResponse(
+        requestType,
+        0x0000,
+        ATT_ECODE_REQ_NOT_SUPP
+      );
       break;
   }
 
@@ -371,7 +381,7 @@ Gatt.prototype.handleRequest = function(request) {
 };
 
 Gatt.prototype.handleMtuRequest = function(request) {
-  var mtu = request.readUInt16LE(1);
+  let mtu = request.readUInt16LE(1);
 
   if (mtu < 23) {
     mtu = 23;
@@ -383,7 +393,7 @@ Gatt.prototype.handleMtuRequest = function(request) {
 
   this.emit('mtuChange', this._mtu);
 
-  var response = Buffer.alloc(3);
+  let response = Buffer.alloc(3);
 
   response.writeUInt8(ATT_OP_MTU_RESP, 0);
   response.writeUInt16LE(mtu, 1);
@@ -392,17 +402,17 @@ Gatt.prototype.handleMtuRequest = function(request) {
 };
 
 Gatt.prototype.handleFindInfoRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
 
-  var infos = [];
-  var uuid = null;
-  var i;
+  let infos = [];
+  let uuid = null;
+  let i;
 
   for (i = startHandle; i <= endHandle; i++) {
-    var handle = this._handles[i];
+    let handle = this._handles[i];
 
     if (!handle) {
       break;
@@ -425,14 +435,14 @@ Gatt.prototype.handleFindInfoRequest = function(request) {
     if (uuid) {
       infos.push({
         handle: i,
-        uuid: uuid
+        uuid: uuid,
       });
     }
   }
 
   if (infos.length) {
-    var uuidSize = infos[0].uuid.length / 2;
-    var numInfo = 1;
+    let uuidSize = infos[0].uuid.length / 2;
+    let numInfo = 1;
 
     for (i = 1; i < infos.length; i++) {
       if (infos[0].uuid.length !== infos[i].uuid.length) {
@@ -441,44 +451,64 @@ Gatt.prototype.handleFindInfoRequest = function(request) {
       numInfo++;
     }
 
-    var lengthPerInfo = (uuidSize === 2) ? 4 : 18;
-    var maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
+    let lengthPerInfo = uuidSize === 2 ? 4 : 18;
+    let maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
     numInfo = Math.min(numInfo, maxInfo);
 
     response = Buffer.alloc(2 + numInfo * lengthPerInfo);
 
     response[0] = ATT_OP_FIND_INFO_RESP;
-    response[1] = (uuidSize === 2) ? 0x01 : 0x2;
+    response[1] = uuidSize === 2 ? 0x01 : 0x2;
 
     for (i = 0; i < numInfo; i++) {
-      var info = infos[i];
+      let info = infos[i];
 
       response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
 
-      uuid = Buffer.from(info.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
-      for (var j = 0; j < uuid.length; j++) {
+      uuid = Buffer.from(
+        info.uuid
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
+      for (let j = 0; j < uuid.length; j++) {
         response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
       }
     }
   } else {
-    response = this.errorResponse(ATT_OP_FIND_INFO_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+    response = this.errorResponse(
+      ATT_OP_FIND_INFO_REQ,
+      startHandle,
+      ATT_ECODE_ATTR_NOT_FOUND
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleFindByTypeRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
-  var uuid = request.slice(5, 7).toString('hex').match(/.{1,2}/g).reverse().join('');
-  var value = request.slice(7).toString('hex').match(/.{1,2}/g).reverse().join('');
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
+  let uuid = request
+    .slice(5, 7)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
+  let value = request
+    .slice(7)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
 
-  var handles = [];
-  var handle;
+  let handles = [];
+  let handle;
 
-  for (var i = startHandle; i <= endHandle; i++) {
+  for (let i = startHandle; i <= endHandle; i++) {
     handle = this._handles[i];
 
     if (!handle) {
@@ -488,15 +518,15 @@ Gatt.prototype.handleFindByTypeRequest = function(request) {
     if ('2800' === uuid && handle.type === 'service' && handle.uuid === value) {
       handles.push({
         start: handle.startHandle,
-        end: handle.endHandle
+        end: handle.endHandle,
       });
     }
   }
 
   if (handles.length) {
-    var lengthPerHandle = 4;
-    var numHandles = handles.length;
-    var maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
+    let lengthPerHandle = 4;
+    let numHandles = handles.length;
+    let maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
 
     numHandles = Math.min(numHandles, maxHandles);
 
@@ -504,35 +534,51 @@ Gatt.prototype.handleFindByTypeRequest = function(request) {
 
     response[0] = ATT_OP_FIND_BY_TYPE_RESP;
 
-    for (i = 0; i < numHandles; i++) {
+    for (let i = 0; i < numHandles; i++) {
       handle = handles[i];
 
       response.writeUInt16LE(handle.start, 1 + i * lengthPerHandle);
       response.writeUInt16LE(handle.end, 1 + i * lengthPerHandle + 2);
     }
   } else {
-    response = this.errorResponse(ATT_OP_FIND_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+    response = this.errorResponse(
+      ATT_OP_FIND_BY_TYPE_REQ,
+      startHandle,
+      ATT_ECODE_ATTR_NOT_FOUND
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleReadByGroupRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
-  var uuid = request.slice(5).toString('hex').match(/.{1,2}/g).reverse().join('');
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
+  let uuid = request
+    .slice(5)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
 
-  debug('read by group: startHandle = 0x' + startHandle.toString(16) + ', endHandle = 0x' + endHandle.toString(16) + ', uuid = 0x' + uuid.toString(16));
+  debug(
+    'read by group: startHandle = 0x' +
+      startHandle.toString(16) +
+      ', endHandle = 0x' +
+      endHandle.toString(16) +
+      ', uuid = 0x' +
+      uuid.toString(16)
+  );
 
   if ('2800' === uuid || '2802' === uuid) {
-    var services = [];
-    var type = ('2800' === uuid) ? 'service' : 'includedService';
-    var i;
+    let services = [];
+    let type = '2800' === uuid ? 'service' : 'includedService';
+    let i;
 
     for (i = startHandle; i <= endHandle; i++) {
-      var handle = this._handles[i];
+      let handle = this._handles[i];
 
       if (!handle) {
         break;
@@ -544,8 +590,8 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
     }
 
     if (services.length) {
-      var uuidSize = services[0].uuid.length / 2;
-      var numServices = 1;
+      let uuidSize = services[0].uuid.length / 2;
+      let numServices = 1;
 
       for (i = 1; i < services.length; i++) {
         if (services[0].uuid.length !== services[i].uuid.length) {
@@ -554,8 +600,8 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
         numServices++;
       }
 
-      var lengthPerService = (uuidSize === 2) ? 6 : 20;
-      var maxServices = Math.floor((this._mtu - 2) / lengthPerService);
+      let lengthPerService = uuidSize === 2 ? 6 : 20;
+      let maxServices = Math.floor((this._mtu - 2) / lengthPerService);
       numServices = Math.min(numServices, maxServices);
 
       response = Buffer.alloc(2 + numServices * lengthPerService);
@@ -564,40 +610,66 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
       response[1] = lengthPerService;
 
       for (i = 0; i < numServices; i++) {
-        var service = services[i];
+        let service = services[i];
 
         response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
         response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
 
-        var serviceUuid = Buffer.from(service.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
-        for (var j = 0; j < serviceUuid.length; j++) {
+        let serviceUuid = Buffer.from(
+          service.uuid
+            .match(/.{1,2}/g)
+            .reverse()
+            .join(''),
+          'hex'
+        );
+        for (let j = 0; j < serviceUuid.length; j++) {
           response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
         }
       }
     } else {
-      response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_GROUP_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
     }
   } else {
-    response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_UNSUPP_GRP_TYPE);
+    response = this.errorResponse(
+      ATT_OP_READ_BY_GROUP_REQ,
+      startHandle,
+      ATT_ECODE_UNSUPP_GRP_TYPE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleReadByTypeRequest = function(request) {
-  var response = null;
-  var requestType = request[0];
+  let response = null;
+  let requestType = request[0];
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
-  var uuid = request.slice(5).toString('hex').match(/.{1,2}/g).reverse().join('');
-  var i;
-  var handle;
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
+  let uuid = request
+    .slice(5)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
+  let i;
+  let handle;
 
-  debug('read by type: startHandle = 0x' + startHandle.toString(16) + ', endHandle = 0x' + endHandle.toString(16) + ', uuid = 0x' + uuid.toString(16));
+  debug(
+    'read by type: startHandle = 0x' +
+      startHandle.toString(16) +
+      ', endHandle = 0x' +
+      endHandle.toString(16) +
+      ', uuid = 0x' +
+      uuid.toString(16)
+  );
 
   if ('2803' === uuid) {
-    var characteristics = [];
+    let characteristics = [];
 
     for (i = startHandle; i <= endHandle; i++) {
       handle = this._handles[i];
@@ -612,8 +684,8 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
     }
 
     if (characteristics.length) {
-      var uuidSize = characteristics[0].uuid.length / 2;
-      var numCharacteristics = 1;
+      let uuidSize = characteristics[0].uuid.length / 2;
+      let numCharacteristics = 1;
 
       for (i = 1; i < characteristics.length; i++) {
         if (characteristics[0].uuid.length !== characteristics[i].uuid.length) {
@@ -622,8 +694,10 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
         numCharacteristics++;
       }
 
-      var lengthPerCharacteristic = (uuidSize === 2) ? 7 : 21;
-      var maxCharacteristics = Math.floor((this._mtu - 2) / lengthPerCharacteristic);
+      let lengthPerCharacteristic = uuidSize === 2 ? 7 : 21;
+      let maxCharacteristics = Math.floor(
+        (this._mtu - 2) / lengthPerCharacteristic
+      );
       numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
 
       response = Buffer.alloc(2 + numCharacteristics * lengthPerCharacteristic);
@@ -632,24 +706,44 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
       response[1] = lengthPerCharacteristic;
 
       for (i = 0; i < numCharacteristics; i++) {
-        var characteristic = characteristics[i];
+        let characteristic = characteristics[i];
 
-        response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
-        response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
-        response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
+        response.writeUInt16LE(
+          characteristic.startHandle,
+          2 + i * lengthPerCharacteristic
+        );
+        response.writeUInt8(
+          characteristic.properties,
+          2 + i * lengthPerCharacteristic + 2
+        );
+        response.writeUInt16LE(
+          characteristic.valueHandle,
+          2 + i * lengthPerCharacteristic + 3
+        );
 
-        var characteristicUuid = Buffer.from(characteristic.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
-        for (var j = 0; j < characteristicUuid.length; j++) {
-          response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
+        let characteristicUuid = Buffer.from(
+          characteristic.uuid
+            .match(/.{1,2}/g)
+            .reverse()
+            .join(''),
+          'hex'
+        );
+        for (let j = 0; j < characteristicUuid.length; j++) {
+          response[2 + i * lengthPerCharacteristic + 5 + j] =
+            characteristicUuid[j];
         }
       }
     } else {
-      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_TYPE_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
     }
   } else {
-    var handleAttribute = null;
-    var valueHandle = null;
-    var secure = false;
+    let handleAttribute = null;
+    let valueHandle = null;
+    let secure = false;
 
     for (i = startHandle; i <= endHandle; i++) {
       handle = this._handles[i];
@@ -671,14 +765,18 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
     }
 
     if (secure && !this._aclStream.encrypted) {
-      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_AUTHENTICATION);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_TYPE_REQ,
+        startHandle,
+        ATT_ECODE_AUTHENTICATION
+      );
     } else if (valueHandle) {
-      var callback = (function(valueHandle) {
+      let callback = function(valueHandle) {
         return function(result, data) {
-          var callbackResponse = null;
+          let callbackResponse = null;
 
           if (ATT_ECODE_SUCCESS === result) {
-            var dataLength = Math.min(data.length, this._mtu - 4);
+            let dataLength = Math.min(data.length, this._mtu - 4);
             callbackResponse = Buffer.alloc(4 + dataLength);
 
             callbackResponse[0] = ATT_OP_READ_BY_TYPE_RESP;
@@ -688,16 +786,20 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
               callbackResponse[4 + i] = data[i];
             }
           } else {
-            callbackResponse = this.errorResponse(requestType, valueHandle, result);
+            callbackResponse = this.errorResponse(
+              requestType,
+              valueHandle,
+              result
+            );
           }
 
           debug('read by type response: ' + callbackResponse.toString('hex'));
 
           this.send(callbackResponse);
         }.bind(this);
-      }.bind(this))(valueHandle);
+      }.bind(this)(valueHandle);
 
-      var data = this._handles[valueHandle].value;
+      let data = this._handles[valueHandle].value;
 
       if (data) {
         callback(ATT_ECODE_SUCCESS, data);
@@ -707,7 +809,11 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
         callback(ATT_ECODE_UNLIKELY);
       }
     } else {
-      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_TYPE_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
     }
   }
 
@@ -715,47 +821,67 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
 };
 
 Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var valueHandle = request.readUInt16LE(1);
-  var offset = (requestType === ATT_OP_READ_BLOB_REQ) ? request.readUInt16LE(3) : 0;
+  let requestType = request[0];
+  let valueHandle = request.readUInt16LE(1);
+  let offset =
+    requestType === ATT_OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
 
-  var handle = this._handles[valueHandle];
-  var i;
+  let handle = this._handles[valueHandle];
+  let i;
 
   if (handle) {
-    var result = null;
-    var data = null;
-    var handleType = handle.type;
+    let result = null;
+    let data = null;
+    let handleType = handle.type;
 
-    var callback = (function(requestType, valueHandle) {
+    let callback = function(requestType, valueHandle) {
       return function(result, data) {
-        var callbackResponse = null;
+        let callbackResponse = null;
 
         if (ATT_ECODE_SUCCESS === result) {
-          var dataLength = Math.min(data.length, this._mtu - 1);
+          let dataLength = Math.min(data.length, this._mtu - 1);
           callbackResponse = Buffer.alloc(1 + dataLength);
 
-          callbackResponse[0] = (requestType === ATT_OP_READ_BLOB_REQ) ? ATT_OP_READ_BLOB_RESP : ATT_OP_READ_RESP;
+          callbackResponse[0] =
+            requestType === ATT_OP_READ_BLOB_REQ
+              ? ATT_OP_READ_BLOB_RESP
+              : ATT_OP_READ_RESP;
           for (i = 0; i < dataLength; i++) {
             callbackResponse[1 + i] = data[i];
           }
         } else {
-          callbackResponse = this.errorResponse(requestType, valueHandle, result);
+          callbackResponse = this.errorResponse(
+            requestType,
+            valueHandle,
+            result
+          );
         }
 
         debug('read response: ' + callbackResponse.toString('hex'));
 
         this.send(callbackResponse);
       }.bind(this);
-    }.bind(this))(requestType, valueHandle);
+    }.bind(this)(requestType, valueHandle);
 
     if (handleType === 'service' || handleType === 'includedService') {
       result = ATT_ECODE_SUCCESS;
-      data = Buffer.from(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      data = Buffer.from(
+        handle.uuid
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
     } else if (handleType === 'characteristic') {
-      var uuid = Buffer.from(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      let uuid = Buffer.from(
+        handle.uuid
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
 
       result = ATT_ECODE_SUCCESS;
       data = Buffer.alloc(3 + uuid.length);
@@ -765,10 +891,13 @@ Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
       for (i = 0; i < uuid.length; i++) {
         data[i + 3] = uuid[i];
       }
-    } else if (handleType === 'characteristicValue' || handleType === 'descriptor') {
-      var handleProperties = handle.properties;
-      var handleSecure = handle.secure;
-      var handleAttribute = handle.attribute;
+    } else if (
+      handleType === 'characteristicValue' ||
+      handleType === 'descriptor'
+    ) {
+      let handleProperties = handle.properties;
+      let handleSecure = handle.secure;
+      let handleAttribute = handle.attribute;
       if (handleType === 'characteristicValue') {
         handleProperties = this._handles[valueHandle - 1].properties;
         handleSecure = this._handles[valueHandle - 1].secure;
@@ -809,42 +938,52 @@ Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
       callback(result, data);
     }
   } else {
-    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+    response = this.errorResponse(
+      requestType,
+      valueHandle,
+      ATT_ECODE_INVALID_HANDLE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleWriteRequestOrCommand = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var withoutResponse = (requestType === ATT_OP_WRITE_CMD);
-  var valueHandle = request.readUInt16LE(1);
-  var data = request.slice(3);
-  var offset = 0;
+  let requestType = request[0];
+  let withoutResponse = requestType === ATT_OP_WRITE_CMD;
+  let valueHandle = request.readUInt16LE(1);
+  let data = request.slice(3);
+  let offset = 0;
 
-  var handle = this._handles[valueHandle];
+  let handle = this._handles[valueHandle];
 
   if (handle) {
     if (handle.type === 'characteristicValue') {
       handle = this._handles[valueHandle - 1];
     }
 
-    var handleProperties = handle.properties;
-    var handleSecure = handle.secure;
+    let handleProperties = handle.properties;
+    let handleSecure = handle.secure;
 
-    if (handleProperties && (withoutResponse ? (handleProperties & 0x04) : (handleProperties & 0x08))) {
-
-      var callback = (function(requestType, valueHandle, withoutResponse) {
+    if (
+      handleProperties &&
+      (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)
+    ) {
+      let callback = function(requestType, valueHandle, withoutResponse) {
         return function(result) {
           if (!withoutResponse) {
-            var callbackResponse = null;
+            let callbackResponse = null;
 
             if (ATT_ECODE_SUCCESS === result) {
               callbackResponse = Buffer.from([ATT_OP_WRITE_RESP]);
             } else {
-              callbackResponse = this.errorResponse(requestType, valueHandle, result);
+              callbackResponse = this.errorResponse(
+                requestType,
+                valueHandle,
+                result
+              );
             }
 
             debug('write response: ' + callbackResponse.toString('hex'));
@@ -852,31 +991,39 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
             this.send(callbackResponse);
           }
         }.bind(this);
-      }.bind(this))(requestType, valueHandle, withoutResponse);
+      }.bind(this)(requestType, valueHandle, withoutResponse);
 
-      if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !this._aclStream.encrypted) {
-        response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+      if (
+        handleSecure & (withoutResponse ? 0x04 : 0x08) &&
+        !this._aclStream.encrypted
+      ) {
+        response = this.errorResponse(
+          requestType,
+          valueHandle,
+          ATT_ECODE_AUTHENTICATION
+        );
       } else if (handle.type === 'descriptor' || handle.uuid === '2902') {
-        var result = null;
+        let result = null;
 
         if (data.length !== 2) {
           result = ATT_ECODE_INVAL_ATTR_VALUE_LEN;
         } else {
-          var value = data.readUInt16LE(0);
-          var handleAttribute = handle.attribute;
+          let value = data.readUInt16LE(0);
+          let handleAttribute = handle.attribute;
 
           handle.value = data;
 
           if (value & 0x0003) {
-            var updateValueCallback = (function(valueHandle, attribute) {
+            let updateValueCallback = function(valueHandle, attribute) {
               return function(data) {
-                var dataLength = Math.min(data.length, this._mtu - 3);
-                var useNotify = attribute.properties.indexOf('notify') !== -1;
-                var useIndicate = attribute.properties.indexOf('indicate') !== -1;
-                var i;
+                let dataLength = Math.min(data.length, this._mtu - 3);
+                let useNotify = attribute.properties.indexOf('notify') !== -1;
+                let useIndicate =
+                  attribute.properties.indexOf('indicate') !== -1;
+                let i;
 
                 if (useNotify) {
-                  var notifyMessage = Buffer.alloc(3 + dataLength);
+                  let notifyMessage = Buffer.alloc(3 + dataLength);
 
                   notifyMessage.writeUInt8(ATT_OP_HANDLE_NOTIFY, 0);
                   notifyMessage.writeUInt16LE(valueHandle, 1);
@@ -890,7 +1037,7 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
 
                   attribute.emit('notify');
                 } else if (useIndicate) {
-                  var indicateMessage = Buffer.alloc(3 + dataLength);
+                  let indicateMessage = Buffer.alloc(3 + dataLength);
 
                   indicateMessage.writeUInt8(ATT_OP_HANDLE_IND, 0);
                   indicateMessage.writeUInt16LE(valueHandle, 1);
@@ -905,10 +1052,14 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
                   this.send(indicateMessage);
                 }
               }.bind(this);
-            }.bind(this))(valueHandle - 1, handleAttribute);
+            }.bind(this)(valueHandle - 1, handleAttribute);
 
             if (handleAttribute.emit) {
-              handleAttribute.emit('subscribe', this._mtu - 3, updateValueCallback);
+              handleAttribute.emit(
+                'subscribe',
+                this._mtu - 3,
+                updateValueCallback
+              );
             }
           } else {
             handleAttribute.emit('unsubscribe');
@@ -919,59 +1070,89 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
 
         callback(result);
       } else {
-        handle.attribute.emit('writeRequest', data, offset, withoutResponse, callback);
+        handle.attribute.emit(
+          'writeRequest',
+          data,
+          offset,
+          withoutResponse,
+          callback
+        );
       }
     } else {
-      response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+      response = this.errorResponse(
+        requestType,
+        valueHandle,
+        ATT_ECODE_WRITE_NOT_PERM
+      );
     }
   } else {
-    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+    response = this.errorResponse(
+      requestType,
+      valueHandle,
+      ATT_ECODE_INVALID_HANDLE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handlePrepareWriteRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var valueHandle = request.readUInt16LE(1);
-  var offset = request.readUInt16LE(3);
-  var data = request.slice(5);
+  let requestType = request[0];
+  let valueHandle = request.readUInt16LE(1);
+  let offset = request.readUInt16LE(3);
+  let data = request.slice(5);
 
-  var handle = this._handles[valueHandle];
+  let handle = this._handles[valueHandle];
 
   if (handle) {
     if (handle.type === 'characteristicValue') {
       handle = this._handles[valueHandle - 1];
 
-      var handleProperties = handle.properties;
-      var handleSecure = handle.secure;
+      let handleProperties = handle.properties;
+      let handleSecure = handle.secure;
 
-      if (handleProperties && (handleProperties & 0x08)) {
-        if ((handleSecure & 0x08) && !this._aclStream.encrypted) {
-          response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+      if (handleProperties && handleProperties & 0x08) {
+        if (handleSecure & 0x08 && !this._aclStream.encrypted) {
+          response = this.errorResponse(
+            requestType,
+            valueHandle,
+            ATT_ECODE_AUTHENTICATION
+          );
         } else if (this._preparedWriteRequest) {
           if (this._preparedWriteRequest.handle !== handle) {
-            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_UNLIKELY);
-          } else if (offset === (this._preparedWriteRequest.offset + this._preparedWriteRequest.data.length)) {
+            response = this.errorResponse(
+              requestType,
+              valueHandle,
+              ATT_ECODE_UNLIKELY
+            );
+          } else if (
+            offset ===
+            this._preparedWriteRequest.offset +
+              this._preparedWriteRequest.data.length
+          ) {
             this._preparedWriteRequest.data = Buffer.concat([
               this._preparedWriteRequest.data,
-              data
+              data,
             ]);
 
             response = Buffer.alloc(request.length);
             request.copy(response);
             response[0] = ATT_OP_PREP_WRITE_RESP;
           } else {
-            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_OFFSET);
+            response = this.errorResponse(
+              requestType,
+              valueHandle,
+              ATT_ECODE_INVALID_OFFSET
+            );
           }
         } else {
           this._preparedWriteRequest = {
             handle: handle,
             valueHandle: valueHandle,
             offset: offset,
-            data: data
+            data: data,
           };
 
           response = Buffer.alloc(request.length);
@@ -979,47 +1160,67 @@ Gatt.prototype.handlePrepareWriteRequest = function(request) {
           response[0] = ATT_OP_PREP_WRITE_RESP;
         }
       } else {
-        response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+        response = this.errorResponse(
+          requestType,
+          valueHandle,
+          ATT_ECODE_WRITE_NOT_PERM
+        );
       }
     } else {
-      response = this.errorResponse(requestType, valueHandle, ATT_ECODE_ATTR_NOT_LONG);
+      response = this.errorResponse(
+        requestType,
+        valueHandle,
+        ATT_ECODE_ATTR_NOT_LONG
+      );
     }
   } else {
-    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+    response = this.errorResponse(
+      requestType,
+      valueHandle,
+      ATT_ECODE_INVALID_HANDLE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleExecuteWriteRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var flag = request[1];
+  let requestType = request[0];
+  let flag = request[1];
 
   if (this._preparedWriteRequest) {
-    var valueHandle = this._preparedWriteRequest.valueHandle;
-
     if (flag === 0x00) {
       response = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
     } else if (flag === 0x01) {
-      var callback = (function(requestType, valueHandle) {
+      let callback = function(requestType, valueHandle) {
         return function(result) {
-          var callbackResponse = null;
+          let callbackResponse = null;
 
           if (ATT_ECODE_SUCCESS === result) {
             callbackResponse = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
           } else {
-            callbackResponse = this.errorResponse(requestType, valueHandle, result);
+            callbackResponse = this.errorResponse(
+              requestType,
+              valueHandle,
+              result
+            );
           }
 
           debug('execute write response: ' + callbackResponse.toString('hex'));
 
           this.send(callbackResponse);
         }.bind(this);
-      }.bind(this))(requestType, this._preparedWriteRequest.valueHandle);
+      }.bind(this)(requestType, this._preparedWriteRequest.valueHandle);
 
-      this._preparedWriteRequest.handle.attribute.emit('writeRequest', this._preparedWriteRequest.data, this._preparedWriteRequest.offset, false, callback);
+      this._preparedWriteRequest.handle.attribute.emit(
+        'writeRequest',
+        this._preparedWriteRequest.data,
+        this._preparedWriteRequest.offset,
+        false,
+        callback
+      );
     } else {
       response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
     }

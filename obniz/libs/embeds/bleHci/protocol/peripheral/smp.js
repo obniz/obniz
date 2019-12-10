@@ -1,39 +1,57 @@
-/* eslint-disable */
+let events = require('events');
+let util = require('util');
 
-var debug = require('debug')('smp');
+let crypto = require('./crypto');
+let Mgmt = require('./mgmt');
 
-var events = require('events');
-var util = require('util');
+let SMP_CID = 0x0006;
 
-var crypto = require('./crypto');
-var Mgmt = require('./mgmt');
+let SMP_PAIRING_REQUEST = 0x01;
+let SMP_PAIRING_RESPONSE = 0x02;
+let SMP_PAIRING_CONFIRM = 0x03;
+let SMP_PAIRING_RANDOM = 0x04;
+let SMP_PAIRING_FAILED = 0x05;
+let SMP_ENCRYPT_INFO = 0x06;
+let SMP_MASTER_IDENT = 0x07;
 
-var SMP_CID = 0x0006;
+let SMP_UNSPECIFIED = 0x08;
 
-var SMP_PAIRING_REQUEST = 0x01;
-var SMP_PAIRING_RESPONSE = 0x02;
-var SMP_PAIRING_CONFIRM = 0x03;
-var SMP_PAIRING_RANDOM = 0x04;
-var SMP_PAIRING_FAILED = 0x05;
-var SMP_ENCRYPT_INFO = 0x06;
-var SMP_MASTER_IDENT = 0x07;
-
-var SMP_UNSPECIFIED = 0x08;
-
-var Smp = function(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
+let Smp = function(
+  aclStream,
+  localAddressType,
+  localAddress,
+  remoteAddressType,
+  remoteAddress,
+  hciProtocol
+) {
   this._aclStream = aclStream;
+  this._mgmt = new Mgmt(hciProtocol);
 
-  this._iat = Buffer.from([(remoteAddressType === 'random') ? 0x01 : 0x00]);
-  this._ia = Buffer.from(remoteAddress.split(':').reverse().join(''), 'hex');
-  this._rat = Buffer.from([(localAddressType === 'random') ? 0x01 : 0x00]);
-  this._ra = Buffer.from(localAddress.split(':').reverse().join(''), 'hex');
+  this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
+  this._ia = Buffer.from(
+    remoteAddress
+      .split(':')
+      .reverse()
+      .join(''),
+    'hex'
+  );
+  this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
+  this._ra = Buffer.from(
+    localAddress
+      .split(':')
+      .reverse()
+      .join(''),
+    'hex'
+  );
 
   this._stk = null;
   this._random = null;
   this._diversifier = null;
 
   this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-  this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(this);
+  this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(
+    this
+  );
   this.onAclStreamLtkNegReplyBinded = this.onAclStreamLtkNegReply.bind(this);
   this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
@@ -50,7 +68,7 @@ Smp.prototype.onAclStreamData = function(cid, data) {
     return;
   }
 
-  var code = data.readUInt8(0);
+  let code = data.readUInt8(0);
 
   if (SMP_PAIRING_REQUEST === code) {
     this.handlePairingRequest(data);
@@ -66,39 +84,40 @@ Smp.prototype.onAclStreamData = function(cid, data) {
 Smp.prototype.onAclStreamEncryptChange = function(encrypted) {
   if (encrypted) {
     if (this._stk && this._diversifier && this._random) {
-      this.write(Buffer.concat([
-        Buffer.from([SMP_ENCRYPT_INFO]),
-        this._stk
-      ]));
+      this.write(Buffer.concat([Buffer.from([SMP_ENCRYPT_INFO]), this._stk]));
 
-      this.write(Buffer.concat([
-        Buffer.from([SMP_MASTER_IDENT]),
-        this._diversifier,
-        this._random
-      ]));
+      this.write(
+        Buffer.concat([
+          Buffer.from([SMP_MASTER_IDENT]),
+          this._diversifier,
+          this._random,
+        ])
+      );
     }
   }
 };
 
 Smp.prototype.onAclStreamLtkNegReply = function() {
-    this.write(Buffer.from([
-      SMP_PAIRING_FAILED,
-      SMP_UNSPECIFIED
-    ]));
+  this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_UNSPECIFIED]));
 
-    this.emit('fail');
+  this.emit('fail');
 };
 
 Smp.prototype.onAclStreamEnd = function() {
   this._aclStream.removeListener('data', this.onAclStreamDataBinded);
-  this._aclStream.removeListener('encryptChange', this.onAclStreamEncryptChangeBinded);
-  this._aclStream.removeListener('ltkNegReply', this.onAclStreamLtkNegReplyBinded);
+  this._aclStream.removeListener(
+    'encryptChange',
+    this.onAclStreamEncryptChangeBinded
+  );
+  this._aclStream.removeListener(
+    'ltkNegReply',
+    this.onAclStreamLtkNegReplyBinded
+  );
   this._aclStream.removeListener('end', this.onAclStreamEndBinded);
 };
 
 Smp.prototype.handlePairingRequest = function(data) {
   this._preq = data;
-
   this._pres = Buffer.from([
     SMP_PAIRING_RESPONSE,
     0x03, // IO capability: NoInputNoOutput
@@ -106,7 +125,7 @@ Smp.prototype.handlePairingRequest = function(data) {
     0x01, // Authentication requirement: Bonding - No MITM
     0x10, // Max encryption key size
     0x00, // Initiator key distribution: <none>
-    0x01  // Responder key distribution: EncKey
+    0x01, // Responder key distribution: EncKey
   ]);
 
   this.write(this._pres);
@@ -118,18 +137,38 @@ Smp.prototype.handlePairingConfirm = function(data) {
   this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
   this._r = crypto.r();
 
-  this.write(Buffer.concat([
-    Buffer.from([SMP_PAIRING_CONFIRM]),
-    crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
-  ]));
+  this.write(
+    Buffer.concat([
+      Buffer.from([SMP_PAIRING_CONFIRM]),
+      crypto.c1(
+        this._tk,
+        this._r,
+        this._pres,
+        this._preq,
+        this._iat,
+        this._ia,
+        this._rat,
+        this._ra
+      ),
+    ])
+  );
 };
 
 Smp.prototype.handlePairingRandom = function(data) {
-  var r = data.slice(1);
+  let r = data.slice(1);
 
-  var pcnf = Buffer.concat([
+  let pcnf = Buffer.concat([
     Buffer.from([SMP_PAIRING_CONFIRM]),
-    crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
+    crypto.c1(
+      this._tk,
+      r,
+      this._pres,
+      this._preq,
+      this._iat,
+      this._ia,
+      this._rat,
+      this._ra
+    ),
   ]);
 
   if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
@@ -137,19 +176,19 @@ Smp.prototype.handlePairingRandom = function(data) {
     this._random = Buffer.from('0000000000000000', 'hex');
     this._stk = crypto.s1(this._tk, this._r, r);
 
-    // TODO
-    throw new Error("TODO");
-    mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
+    this._mgmt.addLongTermKey(
+      this._ia,
+      this._iat,
+      0,
+      0,
+      this._diversifier,
+      this._random,
+      this._stk
+    );
 
-    this.write(Buffer.concat([
-      Buffer.from([SMP_PAIRING_RANDOM]),
-      this._r
-    ]));
+    this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
   } else {
-    this.write(Buffer.from([
-      SMP_PAIRING_FAILED,
-      SMP_PAIRING_CONFIRM
-    ]));
+    this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_PAIRING_CONFIRM]));
 
     this.emit('fail');
   }

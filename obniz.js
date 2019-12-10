@@ -33032,7 +33032,7 @@ const BleDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleDescrip
 const BleRemotePeripheral = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemotePeripheral.js");
 const BleAdvertisement = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisement.js");
 const BleScan = __webpack_require__("./obniz/libs/embeds/bleHci/bleScan.js");
-const BleSecurity = __webpack_require__("./obniz/libs/embeds/bleHci/bleSecurity.js");
+const BleSecurity = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module './bleSecurity'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -35051,191 +35051,6 @@ module.exports = BleScan;
 
 /***/ }),
 
-/***/ "./obniz/libs/embeds/bleHci/bleSecurity.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable */
-
-const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const semver = __webpack_require__("./node_modules/semver/semver.js");
-
-class BleSecurity {
-  constructor(Obniz) {
-    this.Obniz = Obniz;
-    this.emitter = new emitter();
-  }
-
-  setModeLevel(mode, level) {
-    let auth = undefined;
-    let keys = undefined;
-    let indicateSecurityLevel = undefined;
-
-    if (mode == 1) {
-      if (level == 1) {
-        auth = [];
-        indicateSecurityLevel = 0; //no pairing request
-        keys = ['LTK', 'IRK'];
-      } else if (level == 2) {
-        auth = ['bonding'];
-        indicateSecurityLevel = 2;
-        keys = ['LTK', 'IRK'];
-      } else if (level == 3) {
-        //TODO
-        // auth = ['bonding','mitm'];
-        // indicateSecurityLevel = 3;
-        // keys = ['LTK', 'IRK'];
-      }
-    } else if (mode == 2) {
-      if (level == 1) {
-        //TODO
-        // auth = [];
-        // keys = ['LTK', 'IRK','CSRK'];
-      } else if (level == 2) {
-        //TODO
-        // auth = ['bonding'];
-        // keys = ['LTK', 'IRK','CSRK'];
-      }
-    }
-
-    if (
-      auth !== undefined &&
-      indicateSecurityLevel !== undefined &&
-      keys !== undefined
-    ) {
-      this.setAuth(auth);
-      this.setIndicateSecurityLevel(indicateSecurityLevel);
-      this.setEnableKeyTypes(keys);
-    } else {
-      let msg = `BLE security mode${mode}, level${level} is not available.`;
-      this.Obniz.error(msg);
-      throw new Error(msg);
-    }
-  }
-  checkIntroducedFirmware(introducedVersion, functionName) {
-    let results = semver.lt(this.Obniz.firmware_ver, introducedVersion);
-    if (results) {
-      let msg = `${functionName} is available obniz firmware ${introducedVersion}.( your obniz version is ${
-        this.Obniz.firmware_ver
-      })`;
-      this.Obniz.error(msg);
-      throw new Error(msg);
-    }
-  }
-  setAuth(authTypes) {
-    this.checkIntroducedFirmware('1.1.0', 'setAuth');
-    if (!Array.isArray(authTypes)) {
-      authTypes = [authTypes];
-    }
-    let sendTypes = authTypes
-      .map(elm => {
-        return elm.toLowerCase();
-      })
-      .filter(elm => {
-        return ['mitm', 'secure_connection', 'bonding'].includes(elm);
-      });
-
-    if (sendTypes.length !== authTypes.length) {
-      throw new Error('unknown auth type');
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       auth: authTypes,
-    //     },
-    //   },
-    // });
-  }
-
-  setIndicateSecurityLevel(level) {
-    this.checkIntroducedFirmware('1.1.0', 'setIndicateSecurityLevel');
-
-    if (typeof level !== 'number') {
-      throw new Error('unknown secrity level : ' + level);
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       indicate_security_level: level,
-    //     },
-    //   },
-    // });
-  }
-
-  setEnableKeyTypes(keyTypes) {
-    this.checkIntroducedFirmware('1.1.0', 'setEnableKeyTypes');
-    if (!Array.isArray(keyTypes)) {
-      keyTypes = [keyTypes];
-    }
-    let sendTypes = keyTypes
-      .map(elm => {
-        return elm.toLowerCase();
-      })
-      .filter(elm => {
-        return ['ltk', 'csrk', 'irk'].includes(elm);
-      });
-
-    if (sendTypes.length !== keyTypes.length) {
-      throw new Error('unknown key type');
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       key: { type: sendTypes },
-    //     },
-    //   },
-    // });
-  }
-
-  setKeyMaxSize(size) {
-    this.checkIntroducedFirmware('1.1.0', 'setKeyMaxSize');
-    if (typeof size !== 'number') {
-      throw new Error('please provide key size in number');
-    }
-
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       key: { max_size: size },
-    //     },
-    //   },
-    // });
-  }
-
-  clearBondingDevicesList() {
-    // todo
-    // this.Obniz.send({
-    //   ble: {
-    //     security: {
-    //       devices: { clear: true },
-    //     },
-    //   },
-    // });
-  }
-
-  onerror() {} //dummy
-
-  notifyFromServer(notifyName, params) {
-    switch (notifyName) {
-      case 'onerror': {
-        this.onerror(params);
-        break;
-      }
-    }
-  }
-}
-
-module.exports = BleSecurity;
-
-
-/***/ }),
-
 /***/ "./obniz/libs/embeds/bleHci/bleService.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -36557,7 +36372,6 @@ let GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
 let ATT_CID = 0x0004;
 
 /* eslint-enable no-unused-vars */
-
 let Gatt = function(address, aclStream) {
   this._address = address;
   this._aclStream = aclStream;
@@ -38912,14 +38726,9 @@ module.exports = Hci;
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
-let debug = __webpack_require__("./node_modules/debug/src/browser.js")('acl-att-stream');
-
 let events = __webpack_require__("./node_modules/events/events.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
-let crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js");
 let Smp = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/smp.js");
 
 let AclStream = function(
@@ -38939,7 +38748,8 @@ let AclStream = function(
     localAddressType,
     localAddress,
     remoteAddressType,
-    remoteAddress
+    remoteAddress,
+    this._hci
   );
 };
 
@@ -38975,20 +38785,19 @@ module.exports = AclStream;
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
+// var debug = require('debug')('bindings');
+const debug = () => {};
 
-var debug = __webpack_require__("./node_modules/debug/src/browser.js")('bindings');
+let events = __webpack_require__("./node_modules/events/events.js");
+let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+let os = __webpack_require__("./node_modules/os-browserify/browser.js");
 
-var events = __webpack_require__("./node_modules/events/events.js");
-var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
-var os = __webpack_require__("./node_modules/os-browserify/browser.js");
+let AclStream = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js");
 
-var AclStream = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js");
-var Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
-var Gap = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gap.js");
-var Gatt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js");
+let Gap = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gap.js");
+let Gatt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js");
 
-var BlenoBindings = function(hciProtocol) {
+let BlenoBindings = function(hciProtocol) {
   this._state = null;
 
   this._advertising = false;
@@ -39016,7 +38825,10 @@ BlenoBindings.prototype.startAdvertisingIBeacon = function(data) {
   this._gap.startAdvertisingIBeacon(data);
 };
 
-BlenoBindings.prototype.startAdvertisingWithEIRData = function(advertisementData, scanData) {
+BlenoBindings.prototype.startAdvertisingWithEIRData = function(
+  advertisementData,
+  scanData
+) {
   this._advertising = true;
 
   this._gap.startAdvertisingWithEIRData(advertisementData, scanData);
@@ -39049,8 +38861,6 @@ BlenoBindings.prototype.updateRssi = function() {
 };
 
 BlenoBindings.prototype.init = function() {
-
-
   this._gap.on('advertisingStart', this.onAdvertisingStart.bind(this));
   this._gap.on('advertisingStop', this.onAdvertisingStop.bind(this));
 
@@ -39069,7 +38879,6 @@ BlenoBindings.prototype.init = function() {
   this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
 
   this.emit('platform', os.platform());
-
 };
 
 BlenoBindings.prototype.onStateChange = function(state) {
@@ -39079,11 +38888,19 @@ BlenoBindings.prototype.onStateChange = function(state) {
   this._state = state;
 
   if (state === 'unauthorized') {
-    console.log('bleno warning: adapter state unauthorized, please run as root or with sudo');
-    console.log('               or see README for information on running without root/sudo:');
-    console.log('               https://github.com/sandeepmistry/bleno#running-on-linux');
+    console.log(
+      'bleno warning: adapter state unauthorized, please run as root or with sudo'
+    );
+    console.log(
+      '               or see README for information on running without root/sudo:'
+    );
+    console.log(
+      '               https://github.com/sandeepmistry/bleno#running-on-linux'
+    );
   } else if (state === 'unsupported') {
-    console.log('bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).');
+    console.log(
+      'bleno warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).'
+    );
     console.log('               Try to run with environment variable:');
     console.log('               [sudo] BLENO_HCI_DEVICE_ID=x node ...');
   }
@@ -39095,8 +38912,13 @@ BlenoBindings.prototype.onAddressChange = function(address) {
   this.emit('addressChange', address);
 };
 
-BlenoBindings.prototype.onReadLocalVersion = function(hciVer, hciRev, lmpVer, manufacturer, lmpSubVer) {
-};
+BlenoBindings.prototype.onReadLocalVersion = function(
+  hciVer,
+  hciRev,
+  lmpVer,
+  manufacturer,
+  lmpSubVer
+) {};
 
 BlenoBindings.prototype.onAdvertisingStart = function(error) {
   this.emit('advertisingStart', error);
@@ -39106,7 +38928,17 @@ BlenoBindings.prototype.onAdvertisingStop = function() {
   this.emit('advertisingStop');
 };
 
-BlenoBindings.prototype.onLeConnComplete = function(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
+BlenoBindings.prototype.onLeConnComplete = function(
+  status,
+  handle,
+  role,
+  addressType,
+  address,
+  interval,
+  latency,
+  supervisionTimeout,
+  masterClockAccuracy
+) {
   if (role !== 1) {
     // not slave, ignore
     return;
@@ -39114,13 +38946,25 @@ BlenoBindings.prototype.onLeConnComplete = function(status, handle, role, addres
 
   this._address = address;
   this._handle = handle;
-  this._aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+  this._aclStream = new AclStream(
+    this._hci,
+    handle,
+    this._hci.addressType,
+    this._hci.address,
+    addressType,
+    address
+  );
   this._gatt.setAclStream(this._aclStream);
 
   this.emit('accept', address);
 };
 
-BlenoBindings.prototype.onLeConnUpdateComplete = function(handle, interval, latency, supervisionTimeout) {
+BlenoBindings.prototype.onLeConnUpdateComplete = function(
+  handle,
+  interval,
+  latency,
+  supervisionTimeout
+) {
   // no-op
 };
 
@@ -39129,7 +38973,7 @@ BlenoBindings.prototype.onDisconnComplete = function(handle, reason) {
     this._aclStream.push(null, null);
   }
 
-  var address = this._address;
+  let address = this._address;
 
   this._address = null;
   this._handle = null;
@@ -39170,7 +39014,6 @@ BlenoBindings.prototype.onAclDataPkt = function(handle, cid, data) {
   }
 };
 
-
 module.exports = BlenoBindings;
 
 
@@ -39179,29 +39022,18 @@ module.exports = BlenoBindings;
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-var crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {let crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
 
 function r() {
   return crypto.randomBytes(16);
 }
 
 function c1(k, r, pres, preq, iat, ia, rat, ra) {
-  var p1 = Buffer.concat([
-    iat,
-    rat,
-    preq,
-    pres
-  ]);
+  let p1 = Buffer.concat([iat, rat, preq, pres]);
 
-  var p2 = Buffer.concat([
-    ra,
-    ia,
-    Buffer.from('00000000', 'hex')
-  ]);
+  let p2 = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
 
-  var res = xor(r, p1);
+  let res = xor(r, p1);
   res = e(k, res);
   res = xor(res, p2);
   res = e(k, res);
@@ -39210,29 +39042,23 @@ function c1(k, r, pres, preq, iat, ia, rat, ra) {
 }
 
 function s1(k, r1, r2) {
-  return e(k, Buffer.concat([
-    r2.slice(0, 8),
-    r1.slice(0, 8)
-  ]));
+  return e(k, Buffer.concat([r2.slice(0, 8), r1.slice(0, 8)]));
 }
 
 function e(key, data) {
   key = swap(key);
   data = swap(data);
 
-  var cipher = crypto.createCipheriv('aes-128-ecb', key, '');
+  let cipher = crypto.createCipheriv('aes-128-ecb', key, '');
   cipher.setAutoPadding(false);
 
-  return swap(Buffer.concat([
-    cipher.update(data),
-    cipher.final()
-  ]));
+  return swap(Buffer.concat([cipher.update(data), cipher.final()]));
 }
 
 function xor(b1, b2) {
-  var result = Buffer.alloc(b1.length);
+  let result = Buffer.alloc(b1.length);
 
-  for (var i = 0; i < b1.length; i++) {
+  for (let i = 0; i < b1.length; i++) {
     result[i] = b1[i] ^ b2[i];
   }
 
@@ -39240,9 +39066,9 @@ function xor(b1, b2) {
 }
 
 function swap(input) {
-  var output = Buffer.alloc(input.length);
+  let output = Buffer.alloc(input.length);
 
-  for (var i = 0; i < output.length; i++) {
+  for (let i = 0; i < output.length; i++) {
     output[i] = input[input.length - i - 1];
   }
 
@@ -39253,7 +39079,7 @@ module.exports = {
   r: r,
   c1: c1,
   s1: s1,
-  e: e
+  e: e,
 };
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
@@ -39263,19 +39089,18 @@ module.exports = {
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/gap.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+/* WEBPACK VAR INJECTION */(function(Buffer) {// var debug = require('debug')('gap');
+const debug = () => {};
 
-var debug = __webpack_require__("./node_modules/debug/src/browser.js")('gap');
+let events = __webpack_require__("./node_modules/events/events.js");
+let os = __webpack_require__("./node_modules/os-browserify/browser.js");
+let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
-var events = __webpack_require__("./node_modules/events/events.js");
-var os = __webpack_require__("./node_modules/os-browserify/browser.js");
-var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+let Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
 
-var Hci = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/hci.js");
-
-var isLinux = (os.platform() === 'linux');
-var isIntelEdison = isLinux && (os.release().indexOf('edison') !== -1);
-var isYocto = isLinux && (os.release().indexOf('yocto') !== -1);
+let isLinux = os.platform() === 'linux';
+let isIntelEdison = isLinux && os.release().indexOf('edison') !== -1;
+let isYocto = isLinux && os.release().indexOf('yocto') !== -1;
 
 function Gap(hci) {
   this._hci = hci;
@@ -39284,23 +39109,40 @@ function Gap(hci) {
 
   this._hci.on('error', this.onHciError.bind(this));
 
-  this._hci.on('leAdvertisingParametersSet', this.onHciLeAdvertisingParametersSet.bind(this));
-  this._hci.on('leAdvertisingDataSet', this.onHciLeAdvertisingDataSet.bind(this));
-  this._hci.on('leScanResponseDataSet', this.onHciLeScanResponseDataSet.bind(this));
-  this._hci.on('leAdvertiseEnableSet', this.onHciLeAdvertiseEnableSet.bind(this));
+  this._hci.on(
+    'leAdvertisingParametersSet',
+    this.onHciLeAdvertisingParametersSet.bind(this)
+  );
+  this._hci.on(
+    'leAdvertisingDataSet',
+    this.onHciLeAdvertisingDataSet.bind(this)
+  );
+  this._hci.on(
+    'leScanResponseDataSet',
+    this.onHciLeScanResponseDataSet.bind(this)
+  );
+  this._hci.on(
+    'leAdvertiseEnableSet',
+    this.onHciLeAdvertiseEnableSet.bind(this)
+  );
 }
 
 util.inherits(Gap, events.EventEmitter);
 
 Gap.prototype.startAdvertising = function(name, serviceUuids) {
-  debug('startAdvertising: name = ' + name + ', serviceUuids = ' + JSON.stringify(serviceUuids, null, 2));
+  debug(
+    'startAdvertising: name = ' +
+      name +
+      ', serviceUuids = ' +
+      JSON.stringify(serviceUuids, null, 2)
+  );
 
-  var advertisementDataLength = 3;
-  var scanDataLength = 0;
+  let advertisementDataLength = 3;
+  let scanDataLength = 0;
 
-  var serviceUuids16bit = [];
-  var serviceUuids128bit = [];
-  var i = 0;
+  let serviceUuids16bit = [];
+  let serviceUuids128bit = [];
+  let i = 0;
 
   if (name && name.length) {
     scanDataLength += 2 + name.length;
@@ -39308,7 +39150,13 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   if (serviceUuids && serviceUuids.length) {
     for (i = 0; i < serviceUuids.length; i++) {
-      var serviceUuid = Buffer.from(serviceUuids[i].match(/.{1,2}/g).reverse().join(''), 'hex');
+      let serviceUuid = Buffer.from(
+        serviceUuids[i]
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
 
       if (serviceUuid.length === 2) {
         serviceUuids16bit.push(serviceUuid);
@@ -39326,18 +39174,21 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
     advertisementDataLength += 2 + 16 * serviceUuids128bit.length;
   }
 
-  var advertisementData = Buffer.alloc(advertisementDataLength);
-  var scanData = Buffer.alloc(scanDataLength);
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(scanDataLength);
 
   // flags
   advertisementData.writeUInt8(2, 0);
   advertisementData.writeUInt8(0x01, 1);
   advertisementData.writeUInt8(0x06, 2);
 
-  var advertisementDataOffset = 3;
+  let advertisementDataOffset = 3;
 
   if (serviceUuids16bit.length) {
-    advertisementData.writeUInt8(1 + 2 * serviceUuids16bit.length, advertisementDataOffset);
+    advertisementData.writeUInt8(
+      1 + 2 * serviceUuids16bit.length,
+      advertisementDataOffset
+    );
     advertisementDataOffset++;
 
     advertisementData.writeUInt8(0x03, advertisementDataOffset);
@@ -39350,7 +39201,10 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
   }
 
   if (serviceUuids128bit.length) {
-    advertisementData.writeUInt8(1 + 16 * serviceUuids128bit.length, advertisementDataOffset);
+    advertisementData.writeUInt8(
+      1 + 16 * serviceUuids128bit.length,
+      advertisementDataOffset
+    );
     advertisementDataOffset++;
 
     advertisementData.writeUInt8(0x06, advertisementDataOffset);
@@ -39364,7 +39218,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   // name
   if (name && name.length) {
-    var nameBuffer = Buffer.alloc(name);
+    let nameBuffer = Buffer.alloc(name);
 
     scanData.writeUInt8(1 + nameBuffer.length, 0);
     scanData.writeUInt8(0x08, 1);
@@ -39374,17 +39228,16 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
   this.startAdvertisingWithEIRData(advertisementData, scanData);
 };
 
-
 Gap.prototype.startAdvertisingIBeacon = function(data) {
   debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
 
-  var dataLength = data.length;
-  var manufacturerDataLength = 4 + dataLength;
-  var advertisementDataLength = 5 + manufacturerDataLength;
-  var scanDataLength = 0;
+  let dataLength = data.length;
+  let manufacturerDataLength = 4 + dataLength;
+  let advertisementDataLength = 5 + manufacturerDataLength;
+  // let scanDataLength = 0;
 
-  var advertisementData = Buffer.alloc(advertisementDataLength);
-  var scanData = Buffer.alloc(0);
+  let advertisementData = Buffer.alloc(advertisementDataLength);
+  let scanData = Buffer.alloc(0);
 
   // flags
   advertisementData.writeUInt8(2, 0);
@@ -39402,13 +39255,21 @@ Gap.prototype.startAdvertisingIBeacon = function(data) {
   this.startAdvertisingWithEIRData(advertisementData, scanData);
 };
 
-Gap.prototype.startAdvertisingWithEIRData = function(advertisementData, scanData) {
+Gap.prototype.startAdvertisingWithEIRData = function(
+  advertisementData,
+  scanData
+) {
   advertisementData = advertisementData || Buffer.alloc(0);
   scanData = scanData || Buffer.alloc(0);
 
-  debug('startAdvertisingWithEIRData: advertisement data = ' + advertisementData.toString('hex') + ', scan data = ' + scanData.toString('hex'));
+  debug(
+    'startAdvertisingWithEIRData: advertisement data = ' +
+      advertisementData.toString('hex') +
+      ', scan data = ' +
+      scanData.toString('hex')
+  );
 
-  var error = null;
+  let error = null;
 
   if (advertisementData.length > 31) {
     error = new Error('Advertisement data is over maximum limit of 31 bytes');
@@ -39446,26 +39307,24 @@ Gap.prototype.stopAdvertising = function() {
   this._hci.setAdvertiseEnable(false);
 };
 
-Gap.prototype.onHciError = function(error) {
-};
+Gap.prototype.onHciError = function(error) {};
 
-Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {
-};
+Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {};
 
-Gap.prototype.onHciLeAdvertisingDataSet = function(status) {
-};
+Gap.prototype.onHciLeAdvertisingDataSet = function(status) {};
 
-Gap.prototype.onHciLeScanResponseDataSet = function(status) {
-};
+Gap.prototype.onHciLeScanResponseDataSet = function(status) {};
 
 Gap.prototype.onHciLeAdvertiseEnableSet = function(status) {
   if (this._advertiseState === 'starting') {
     this._advertiseState = 'started';
 
-    var error = null;
+    let error = null;
 
     if (status) {
-      error = new Error(Hci.STATUS_MAPPER[status] || ('Unknown (' + status + ')'));
+      error = new Error(
+        Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
+      );
     }
 
     this.emit('advertisingStart', error);
@@ -39485,72 +39344,72 @@ module.exports = Gap;
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+/* WEBPACK VAR INJECTION */(function(Buffer) {// var debug = require('debug')('gatt');
+const debug = () => {};
 
-var debug = __webpack_require__("./node_modules/debug/src/browser.js")('gatt');
+let events = __webpack_require__("./node_modules/events/events.js");
+let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
-var events = __webpack_require__("./node_modules/events/events.js");
-var os = __webpack_require__("./node_modules/os-browserify/browser.js");
-var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+/* eslint-disable no-unused-vars */
+let ATT_OP_ERROR = 0x01;
+let ATT_OP_MTU_REQ = 0x02;
+let ATT_OP_MTU_RESP = 0x03;
+let ATT_OP_FIND_INFO_REQ = 0x04;
+let ATT_OP_FIND_INFO_RESP = 0x05;
+let ATT_OP_FIND_BY_TYPE_REQ = 0x06;
+let ATT_OP_FIND_BY_TYPE_RESP = 0x07;
+let ATT_OP_READ_BY_TYPE_REQ = 0x08;
+let ATT_OP_READ_BY_TYPE_RESP = 0x09;
+let ATT_OP_READ_REQ = 0x0a;
+let ATT_OP_READ_RESP = 0x0b;
+let ATT_OP_READ_BLOB_REQ = 0x0c;
+let ATT_OP_READ_BLOB_RESP = 0x0d;
+let ATT_OP_READ_MULTI_REQ = 0x0e;
+let ATT_OP_READ_MULTI_RESP = 0x0f;
+let ATT_OP_READ_BY_GROUP_REQ = 0x10;
+let ATT_OP_READ_BY_GROUP_RESP = 0x11;
+let ATT_OP_WRITE_REQ = 0x12;
+let ATT_OP_WRITE_RESP = 0x13;
+let ATT_OP_WRITE_CMD = 0x52;
+let ATT_OP_PREP_WRITE_REQ = 0x16;
+let ATT_OP_PREP_WRITE_RESP = 0x17;
+let ATT_OP_EXEC_WRITE_REQ = 0x18;
+let ATT_OP_EXEC_WRITE_RESP = 0x19;
+let ATT_OP_HANDLE_NOTIFY = 0x1b;
+let ATT_OP_HANDLE_IND = 0x1d;
+let ATT_OP_HANDLE_CNF = 0x1e;
+let ATT_OP_SIGNED_WRITE_CMD = 0xd2;
 
-var ATT_OP_ERROR                    = 0x01;
-var ATT_OP_MTU_REQ                  = 0x02;
-var ATT_OP_MTU_RESP                 = 0x03;
-var ATT_OP_FIND_INFO_REQ            = 0x04;
-var ATT_OP_FIND_INFO_RESP           = 0x05;
-var ATT_OP_FIND_BY_TYPE_REQ         = 0x06;
-var ATT_OP_FIND_BY_TYPE_RESP        = 0x07;
-var ATT_OP_READ_BY_TYPE_REQ         = 0x08;
-var ATT_OP_READ_BY_TYPE_RESP        = 0x09;
-var ATT_OP_READ_REQ                 = 0x0a;
-var ATT_OP_READ_RESP                = 0x0b;
-var ATT_OP_READ_BLOB_REQ            = 0x0c;
-var ATT_OP_READ_BLOB_RESP           = 0x0d;
-var ATT_OP_READ_MULTI_REQ           = 0x0e;
-var ATT_OP_READ_MULTI_RESP          = 0x0f;
-var ATT_OP_READ_BY_GROUP_REQ        = 0x10;
-var ATT_OP_READ_BY_GROUP_RESP       = 0x11;
-var ATT_OP_WRITE_REQ                = 0x12;
-var ATT_OP_WRITE_RESP               = 0x13;
-var ATT_OP_WRITE_CMD                = 0x52;
-var ATT_OP_PREP_WRITE_REQ           = 0x16;
-var ATT_OP_PREP_WRITE_RESP          = 0x17;
-var ATT_OP_EXEC_WRITE_REQ           = 0x18;
-var ATT_OP_EXEC_WRITE_RESP          = 0x19;
-var ATT_OP_HANDLE_NOTIFY            = 0x1b;
-var ATT_OP_HANDLE_IND               = 0x1d;
-var ATT_OP_HANDLE_CNF               = 0x1e;
-var ATT_OP_SIGNED_WRITE_CMD         = 0xd2;
+let GATT_PRIM_SVC_UUID = 0x2800;
+let GATT_INCLUDE_UUID = 0x2802;
+let GATT_CHARAC_UUID = 0x2803;
 
-var GATT_PRIM_SVC_UUID              = 0x2800;
-var GATT_INCLUDE_UUID               = 0x2802;
-var GATT_CHARAC_UUID                = 0x2803;
+let GATT_CLIENT_CHARAC_CFG_UUID = 0x2902;
+let GATT_SERVER_CHARAC_CFG_UUID = 0x2903;
 
-var GATT_CLIENT_CHARAC_CFG_UUID     = 0x2902;
-var GATT_SERVER_CHARAC_CFG_UUID     = 0x2903;
+let ATT_ECODE_SUCCESS = 0x00;
+let ATT_ECODE_INVALID_HANDLE = 0x01;
+let ATT_ECODE_READ_NOT_PERM = 0x02;
+let ATT_ECODE_WRITE_NOT_PERM = 0x03;
+let ATT_ECODE_INVALID_PDU = 0x04;
+let ATT_ECODE_AUTHENTICATION = 0x05;
+let ATT_ECODE_REQ_NOT_SUPP = 0x06;
+let ATT_ECODE_INVALID_OFFSET = 0x07;
+let ATT_ECODE_AUTHORIZATION = 0x08;
+let ATT_ECODE_PREP_QUEUE_FULL = 0x09;
+let ATT_ECODE_ATTR_NOT_FOUND = 0x0a;
+let ATT_ECODE_ATTR_NOT_LONG = 0x0b;
+let ATT_ECODE_INSUFF_ENCR_KEY_SIZE = 0x0c;
+let ATT_ECODE_INVAL_ATTR_VALUE_LEN = 0x0d;
+let ATT_ECODE_UNLIKELY = 0x0e;
+let ATT_ECODE_INSUFF_ENC = 0x0f;
+let ATT_ECODE_UNSUPP_GRP_TYPE = 0x10;
+let ATT_ECODE_INSUFF_RESOURCES = 0x11;
 
-var ATT_ECODE_SUCCESS               = 0x00;
-var ATT_ECODE_INVALID_HANDLE        = 0x01;
-var ATT_ECODE_READ_NOT_PERM         = 0x02;
-var ATT_ECODE_WRITE_NOT_PERM        = 0x03;
-var ATT_ECODE_INVALID_PDU           = 0x04;
-var ATT_ECODE_AUTHENTICATION        = 0x05;
-var ATT_ECODE_REQ_NOT_SUPP          = 0x06;
-var ATT_ECODE_INVALID_OFFSET        = 0x07;
-var ATT_ECODE_AUTHORIZATION         = 0x08;
-var ATT_ECODE_PREP_QUEUE_FULL       = 0x09;
-var ATT_ECODE_ATTR_NOT_FOUND        = 0x0a;
-var ATT_ECODE_ATTR_NOT_LONG         = 0x0b;
-var ATT_ECODE_INSUFF_ENCR_KEY_SIZE  = 0x0c;
-var ATT_ECODE_INVAL_ATTR_VALUE_LEN  = 0x0d;
-var ATT_ECODE_UNLIKELY              = 0x0e;
-var ATT_ECODE_INSUFF_ENC            = 0x0f;
-var ATT_ECODE_UNSUPP_GRP_TYPE       = 0x10;
-var ATT_ECODE_INSUFF_RESOURCES      = 0x11;
+/* eslint-enable no-unused-vars */
+let ATT_CID = 0x0004;
 
-var ATT_CID = 0x0004;
-
-var Gatt = function() {
+let Gatt = function() {
   this.maxMtu = 256;
   this._mtu = 23;
   this._preparedWriteRequest = null;
@@ -39567,7 +39426,7 @@ Gatt.prototype.setServices = function(services) {
   // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
 
   // base services and characteristics
-  var allServices = [
+  let allServices = [
     // {
     //   uuid: '1800',
     //   characteristics: [
@@ -39603,29 +39462,29 @@ Gatt.prototype.setServices = function(services) {
 
   this._handles = [];
 
-  var handle = 0;
-  var i;
-  var j;
+  let handle = 0;
+  let i;
+  let j;
 
   for (i = 0; i < allServices.length; i++) {
-    var service = allServices[i];
+    let service = allServices[i];
 
     handle++;
-    var serviceHandle = handle;
+    let serviceHandle = handle;
 
     this._handles[serviceHandle] = {
       type: 'service',
       uuid: service.uuid,
       attribute: service,
-      startHandle: serviceHandle
+      startHandle: serviceHandle,
       // endHandle filled in below
     };
 
     for (j = 0; j < service.characteristics.length; j++) {
-      var characteristic = service.characteristics[j];
+      let characteristic = service.characteristics[j];
 
-      var properties = 0;
-      var secure = 0;
+      let properties = 0;
+      let secure = 0;
 
       if (characteristic.properties.indexOf('read') !== -1) {
         properties |= 0x02;
@@ -39668,10 +39527,10 @@ Gatt.prototype.setServices = function(services) {
       }
 
       handle++;
-      var characteristicHandle = handle;
+      let characteristicHandle = handle;
 
       handle++;
-      var characteristicValueHandle = handle;
+      let characteristicValueHandle = handle;
 
       this._handles[characteristicHandle] = {
         type: 'characteristic',
@@ -39680,36 +39539,37 @@ Gatt.prototype.setServices = function(services) {
         secure: secure,
         attribute: characteristic,
         startHandle: characteristicHandle,
-        valueHandle: characteristicValueHandle
+        valueHandle: characteristicValueHandle,
       };
 
       this._handles[characteristicValueHandle] = {
         type: 'characteristicValue',
         handle: characteristicValueHandle,
-        value: characteristic.value
+        value: characteristic.value,
       };
 
-      if (properties & 0x30) { // notify or indicate
+      if (properties & 0x30) {
+        // notify or indicate
         // add client characteristic configuration descriptor
 
         handle++;
-        var clientCharacteristicConfigurationDescriptorHandle = handle;
+        let clientCharacteristicConfigurationDescriptorHandle = handle;
         this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
           type: 'descriptor',
           handle: clientCharacteristicConfigurationDescriptorHandle,
           uuid: '2902',
           attribute: characteristic,
-          properties: (0x02 | 0x04 | 0x08), // read/write
-          secure: (secure & 0x10) ? (0x02 | 0x04 | 0x08) : 0,
-          value: Buffer.from([0x00, 0x00])
+          properties: 0x02 | 0x04 | 0x08, // read/write
+          secure: secure & 0x10 ? 0x02 | 0x04 | 0x08 : 0,
+          value: Buffer.from([0x00, 0x00]),
         };
       }
 
-      for (var k = 0; k < characteristic.descriptors.length; k++) {
-        var descriptor = characteristic.descriptors[k];
+      for (let k = 0; k < characteristic.descriptors.length; k++) {
+        let descriptor = characteristic.descriptors[k];
 
         handle++;
-        var descriptorHandle = handle;
+        let descriptorHandle = handle;
 
         this._handles[descriptorHandle] = {
           type: 'descriptor',
@@ -39718,7 +39578,7 @@ Gatt.prototype.setServices = function(services) {
           attribute: descriptor,
           properties: 0x02, // read only
           secure: 0x00,
-          value: descriptor.value
+          value: descriptor.value,
         };
       }
     }
@@ -39726,14 +39586,16 @@ Gatt.prototype.setServices = function(services) {
     this._handles[serviceHandle].endHandle = handle;
   }
 
-  var debugHandles = [];
+  let debugHandles = [];
   for (i = 0; i < this._handles.length; i++) {
     handle = this._handles[i];
 
     debugHandles[i] = {};
-    for(j in handle) {
+    for (j in handle) {
       if (Buffer.isBuffer(handle[j])) {
-        debugHandles[i][j] = handle[j] ? 'Buffer(\'' + handle[j].toString('hex') + '\', \'hex\')' : null;
+        debugHandles[i][j] = handle[j]
+          ? "Buffer('" + handle[j].toString('hex') + "', 'hex')"
+          : null;
       } else if (j !== 'attribute') {
         debugHandles[i][j] = handle[j];
       }
@@ -39765,10 +39627,13 @@ Gatt.prototype.onAclStreamEnd = function() {
   this._aclStream.removeListener('data', this.onAclStreamDataBinded);
   this._aclStream.removeListener('end', this.onAclStreamEndBinded);
 
-  for (var i = 0; i < this._handles.length; i++) {
-    if (this._handles[i] && this._handles[i].type === 'descriptor' &&
-        this._handles[i].uuid === '2902' && this._handles[i].value.readUInt16LE(0) !== 0) {
-
+  for (let i = 0; i < this._handles.length; i++) {
+    if (
+      this._handles[i] &&
+      this._handles[i].type === 'descriptor' &&
+      this._handles[i].uuid === '2902' &&
+      this._handles[i].value.readUInt16LE(0) !== 0
+    ) {
       this._handles[i].value = Buffer.from([0x00, 0x00]);
 
       if (this._handles[i].attribute && this._handles[i].attribute.emit) {
@@ -39784,7 +39649,7 @@ Gatt.prototype.send = function(data) {
 };
 
 Gatt.prototype.errorResponse = function(opcode, handle, status) {
-  var buf = Buffer.alloc(5);
+  let buf = Buffer.alloc(5);
 
   buf.writeUInt8(ATT_OP_ERROR, 0);
   buf.writeUInt8(opcode, 1);
@@ -39797,10 +39662,10 @@ Gatt.prototype.errorResponse = function(opcode, handle, status) {
 Gatt.prototype.handleRequest = function(request) {
   debug('handing request: ' + request.toString('hex'));
 
-  var requestType = request[0];
-  var response = null;
+  let requestType = request[0];
+  let response = null;
 
-  switch(requestType) {
+  switch (requestType) {
     case ATT_OP_MTU_REQ:
       response = this.handleMtuRequest(request);
       break;
@@ -39846,7 +39711,11 @@ Gatt.prototype.handleRequest = function(request) {
     default:
     case ATT_OP_READ_MULTI_REQ:
     case ATT_OP_SIGNED_WRITE_CMD:
-      response = this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP);
+      response = this.errorResponse(
+        requestType,
+        0x0000,
+        ATT_ECODE_REQ_NOT_SUPP
+      );
       break;
   }
 
@@ -39858,7 +39727,7 @@ Gatt.prototype.handleRequest = function(request) {
 };
 
 Gatt.prototype.handleMtuRequest = function(request) {
-  var mtu = request.readUInt16LE(1);
+  let mtu = request.readUInt16LE(1);
 
   if (mtu < 23) {
     mtu = 23;
@@ -39870,7 +39739,7 @@ Gatt.prototype.handleMtuRequest = function(request) {
 
   this.emit('mtuChange', this._mtu);
 
-  var response = Buffer.alloc(3);
+  let response = Buffer.alloc(3);
 
   response.writeUInt8(ATT_OP_MTU_RESP, 0);
   response.writeUInt16LE(mtu, 1);
@@ -39879,17 +39748,17 @@ Gatt.prototype.handleMtuRequest = function(request) {
 };
 
 Gatt.prototype.handleFindInfoRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
 
-  var infos = [];
-  var uuid = null;
-  var i;
+  let infos = [];
+  let uuid = null;
+  let i;
 
   for (i = startHandle; i <= endHandle; i++) {
-    var handle = this._handles[i];
+    let handle = this._handles[i];
 
     if (!handle) {
       break;
@@ -39912,14 +39781,14 @@ Gatt.prototype.handleFindInfoRequest = function(request) {
     if (uuid) {
       infos.push({
         handle: i,
-        uuid: uuid
+        uuid: uuid,
       });
     }
   }
 
   if (infos.length) {
-    var uuidSize = infos[0].uuid.length / 2;
-    var numInfo = 1;
+    let uuidSize = infos[0].uuid.length / 2;
+    let numInfo = 1;
 
     for (i = 1; i < infos.length; i++) {
       if (infos[0].uuid.length !== infos[i].uuid.length) {
@@ -39928,44 +39797,64 @@ Gatt.prototype.handleFindInfoRequest = function(request) {
       numInfo++;
     }
 
-    var lengthPerInfo = (uuidSize === 2) ? 4 : 18;
-    var maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
+    let lengthPerInfo = uuidSize === 2 ? 4 : 18;
+    let maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
     numInfo = Math.min(numInfo, maxInfo);
 
     response = Buffer.alloc(2 + numInfo * lengthPerInfo);
 
     response[0] = ATT_OP_FIND_INFO_RESP;
-    response[1] = (uuidSize === 2) ? 0x01 : 0x2;
+    response[1] = uuidSize === 2 ? 0x01 : 0x2;
 
     for (i = 0; i < numInfo; i++) {
-      var info = infos[i];
+      let info = infos[i];
 
       response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
 
-      uuid = Buffer.from(info.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
-      for (var j = 0; j < uuid.length; j++) {
+      uuid = Buffer.from(
+        info.uuid
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
+      for (let j = 0; j < uuid.length; j++) {
         response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
       }
     }
   } else {
-    response = this.errorResponse(ATT_OP_FIND_INFO_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+    response = this.errorResponse(
+      ATT_OP_FIND_INFO_REQ,
+      startHandle,
+      ATT_ECODE_ATTR_NOT_FOUND
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleFindByTypeRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
-  var uuid = request.slice(5, 7).toString('hex').match(/.{1,2}/g).reverse().join('');
-  var value = request.slice(7).toString('hex').match(/.{1,2}/g).reverse().join('');
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
+  let uuid = request
+    .slice(5, 7)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
+  let value = request
+    .slice(7)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
 
-  var handles = [];
-  var handle;
+  let handles = [];
+  let handle;
 
-  for (var i = startHandle; i <= endHandle; i++) {
+  for (let i = startHandle; i <= endHandle; i++) {
     handle = this._handles[i];
 
     if (!handle) {
@@ -39975,15 +39864,15 @@ Gatt.prototype.handleFindByTypeRequest = function(request) {
     if ('2800' === uuid && handle.type === 'service' && handle.uuid === value) {
       handles.push({
         start: handle.startHandle,
-        end: handle.endHandle
+        end: handle.endHandle,
       });
     }
   }
 
   if (handles.length) {
-    var lengthPerHandle = 4;
-    var numHandles = handles.length;
-    var maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
+    let lengthPerHandle = 4;
+    let numHandles = handles.length;
+    let maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
 
     numHandles = Math.min(numHandles, maxHandles);
 
@@ -39991,35 +39880,51 @@ Gatt.prototype.handleFindByTypeRequest = function(request) {
 
     response[0] = ATT_OP_FIND_BY_TYPE_RESP;
 
-    for (i = 0; i < numHandles; i++) {
+    for (let i = 0; i < numHandles; i++) {
       handle = handles[i];
 
       response.writeUInt16LE(handle.start, 1 + i * lengthPerHandle);
       response.writeUInt16LE(handle.end, 1 + i * lengthPerHandle + 2);
     }
   } else {
-    response = this.errorResponse(ATT_OP_FIND_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+    response = this.errorResponse(
+      ATT_OP_FIND_BY_TYPE_REQ,
+      startHandle,
+      ATT_ECODE_ATTR_NOT_FOUND
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleReadByGroupRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
-  var uuid = request.slice(5).toString('hex').match(/.{1,2}/g).reverse().join('');
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
+  let uuid = request
+    .slice(5)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
 
-  debug('read by group: startHandle = 0x' + startHandle.toString(16) + ', endHandle = 0x' + endHandle.toString(16) + ', uuid = 0x' + uuid.toString(16));
+  debug(
+    'read by group: startHandle = 0x' +
+      startHandle.toString(16) +
+      ', endHandle = 0x' +
+      endHandle.toString(16) +
+      ', uuid = 0x' +
+      uuid.toString(16)
+  );
 
   if ('2800' === uuid || '2802' === uuid) {
-    var services = [];
-    var type = ('2800' === uuid) ? 'service' : 'includedService';
-    var i;
+    let services = [];
+    let type = '2800' === uuid ? 'service' : 'includedService';
+    let i;
 
     for (i = startHandle; i <= endHandle; i++) {
-      var handle = this._handles[i];
+      let handle = this._handles[i];
 
       if (!handle) {
         break;
@@ -40031,8 +39936,8 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
     }
 
     if (services.length) {
-      var uuidSize = services[0].uuid.length / 2;
-      var numServices = 1;
+      let uuidSize = services[0].uuid.length / 2;
+      let numServices = 1;
 
       for (i = 1; i < services.length; i++) {
         if (services[0].uuid.length !== services[i].uuid.length) {
@@ -40041,8 +39946,8 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
         numServices++;
       }
 
-      var lengthPerService = (uuidSize === 2) ? 6 : 20;
-      var maxServices = Math.floor((this._mtu - 2) / lengthPerService);
+      let lengthPerService = uuidSize === 2 ? 6 : 20;
+      let maxServices = Math.floor((this._mtu - 2) / lengthPerService);
       numServices = Math.min(numServices, maxServices);
 
       response = Buffer.alloc(2 + numServices * lengthPerService);
@@ -40051,40 +39956,66 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
       response[1] = lengthPerService;
 
       for (i = 0; i < numServices; i++) {
-        var service = services[i];
+        let service = services[i];
 
         response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
         response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
 
-        var serviceUuid = Buffer.from(service.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
-        for (var j = 0; j < serviceUuid.length; j++) {
+        let serviceUuid = Buffer.from(
+          service.uuid
+            .match(/.{1,2}/g)
+            .reverse()
+            .join(''),
+          'hex'
+        );
+        for (let j = 0; j < serviceUuid.length; j++) {
           response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
         }
       }
     } else {
-      response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_GROUP_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
     }
   } else {
-    response = this.errorResponse(ATT_OP_READ_BY_GROUP_REQ, startHandle, ATT_ECODE_UNSUPP_GRP_TYPE);
+    response = this.errorResponse(
+      ATT_OP_READ_BY_GROUP_REQ,
+      startHandle,
+      ATT_ECODE_UNSUPP_GRP_TYPE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleReadByTypeRequest = function(request) {
-  var response = null;
-  var requestType = request[0];
+  let response = null;
+  let requestType = request[0];
 
-  var startHandle = request.readUInt16LE(1);
-  var endHandle = request.readUInt16LE(3);
-  var uuid = request.slice(5).toString('hex').match(/.{1,2}/g).reverse().join('');
-  var i;
-  var handle;
+  let startHandle = request.readUInt16LE(1);
+  let endHandle = request.readUInt16LE(3);
+  let uuid = request
+    .slice(5)
+    .toString('hex')
+    .match(/.{1,2}/g)
+    .reverse()
+    .join('');
+  let i;
+  let handle;
 
-  debug('read by type: startHandle = 0x' + startHandle.toString(16) + ', endHandle = 0x' + endHandle.toString(16) + ', uuid = 0x' + uuid.toString(16));
+  debug(
+    'read by type: startHandle = 0x' +
+      startHandle.toString(16) +
+      ', endHandle = 0x' +
+      endHandle.toString(16) +
+      ', uuid = 0x' +
+      uuid.toString(16)
+  );
 
   if ('2803' === uuid) {
-    var characteristics = [];
+    let characteristics = [];
 
     for (i = startHandle; i <= endHandle; i++) {
       handle = this._handles[i];
@@ -40099,8 +40030,8 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
     }
 
     if (characteristics.length) {
-      var uuidSize = characteristics[0].uuid.length / 2;
-      var numCharacteristics = 1;
+      let uuidSize = characteristics[0].uuid.length / 2;
+      let numCharacteristics = 1;
 
       for (i = 1; i < characteristics.length; i++) {
         if (characteristics[0].uuid.length !== characteristics[i].uuid.length) {
@@ -40109,8 +40040,10 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
         numCharacteristics++;
       }
 
-      var lengthPerCharacteristic = (uuidSize === 2) ? 7 : 21;
-      var maxCharacteristics = Math.floor((this._mtu - 2) / lengthPerCharacteristic);
+      let lengthPerCharacteristic = uuidSize === 2 ? 7 : 21;
+      let maxCharacteristics = Math.floor(
+        (this._mtu - 2) / lengthPerCharacteristic
+      );
       numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
 
       response = Buffer.alloc(2 + numCharacteristics * lengthPerCharacteristic);
@@ -40119,24 +40052,44 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
       response[1] = lengthPerCharacteristic;
 
       for (i = 0; i < numCharacteristics; i++) {
-        var characteristic = characteristics[i];
+        let characteristic = characteristics[i];
 
-        response.writeUInt16LE(characteristic.startHandle, 2 + i * lengthPerCharacteristic);
-        response.writeUInt8(characteristic.properties, 2 + i * lengthPerCharacteristic + 2);
-        response.writeUInt16LE(characteristic.valueHandle, 2 + i * lengthPerCharacteristic + 3);
+        response.writeUInt16LE(
+          characteristic.startHandle,
+          2 + i * lengthPerCharacteristic
+        );
+        response.writeUInt8(
+          characteristic.properties,
+          2 + i * lengthPerCharacteristic + 2
+        );
+        response.writeUInt16LE(
+          characteristic.valueHandle,
+          2 + i * lengthPerCharacteristic + 3
+        );
 
-        var characteristicUuid = Buffer.from(characteristic.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
-        for (var j = 0; j < characteristicUuid.length; j++) {
-          response[2 + i * lengthPerCharacteristic + 5 + j] = characteristicUuid[j];
+        let characteristicUuid = Buffer.from(
+          characteristic.uuid
+            .match(/.{1,2}/g)
+            .reverse()
+            .join(''),
+          'hex'
+        );
+        for (let j = 0; j < characteristicUuid.length; j++) {
+          response[2 + i * lengthPerCharacteristic + 5 + j] =
+            characteristicUuid[j];
         }
       }
     } else {
-      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_TYPE_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
     }
   } else {
-    var handleAttribute = null;
-    var valueHandle = null;
-    var secure = false;
+    let handleAttribute = null;
+    let valueHandle = null;
+    let secure = false;
 
     for (i = startHandle; i <= endHandle; i++) {
       handle = this._handles[i];
@@ -40158,14 +40111,18 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
     }
 
     if (secure && !this._aclStream.encrypted) {
-      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_AUTHENTICATION);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_TYPE_REQ,
+        startHandle,
+        ATT_ECODE_AUTHENTICATION
+      );
     } else if (valueHandle) {
-      var callback = (function(valueHandle) {
+      let callback = function(valueHandle) {
         return function(result, data) {
-          var callbackResponse = null;
+          let callbackResponse = null;
 
           if (ATT_ECODE_SUCCESS === result) {
-            var dataLength = Math.min(data.length, this._mtu - 4);
+            let dataLength = Math.min(data.length, this._mtu - 4);
             callbackResponse = Buffer.alloc(4 + dataLength);
 
             callbackResponse[0] = ATT_OP_READ_BY_TYPE_RESP;
@@ -40175,16 +40132,20 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
               callbackResponse[4 + i] = data[i];
             }
           } else {
-            callbackResponse = this.errorResponse(requestType, valueHandle, result);
+            callbackResponse = this.errorResponse(
+              requestType,
+              valueHandle,
+              result
+            );
           }
 
           debug('read by type response: ' + callbackResponse.toString('hex'));
 
           this.send(callbackResponse);
         }.bind(this);
-      }.bind(this))(valueHandle);
+      }.bind(this)(valueHandle);
 
-      var data = this._handles[valueHandle].value;
+      let data = this._handles[valueHandle].value;
 
       if (data) {
         callback(ATT_ECODE_SUCCESS, data);
@@ -40194,7 +40155,11 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
         callback(ATT_ECODE_UNLIKELY);
       }
     } else {
-      response = this.errorResponse(ATT_OP_READ_BY_TYPE_REQ, startHandle, ATT_ECODE_ATTR_NOT_FOUND);
+      response = this.errorResponse(
+        ATT_OP_READ_BY_TYPE_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
     }
   }
 
@@ -40202,47 +40167,67 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
 };
 
 Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var valueHandle = request.readUInt16LE(1);
-  var offset = (requestType === ATT_OP_READ_BLOB_REQ) ? request.readUInt16LE(3) : 0;
+  let requestType = request[0];
+  let valueHandle = request.readUInt16LE(1);
+  let offset =
+    requestType === ATT_OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
 
-  var handle = this._handles[valueHandle];
-  var i;
+  let handle = this._handles[valueHandle];
+  let i;
 
   if (handle) {
-    var result = null;
-    var data = null;
-    var handleType = handle.type;
+    let result = null;
+    let data = null;
+    let handleType = handle.type;
 
-    var callback = (function(requestType, valueHandle) {
+    let callback = function(requestType, valueHandle) {
       return function(result, data) {
-        var callbackResponse = null;
+        let callbackResponse = null;
 
         if (ATT_ECODE_SUCCESS === result) {
-          var dataLength = Math.min(data.length, this._mtu - 1);
+          let dataLength = Math.min(data.length, this._mtu - 1);
           callbackResponse = Buffer.alloc(1 + dataLength);
 
-          callbackResponse[0] = (requestType === ATT_OP_READ_BLOB_REQ) ? ATT_OP_READ_BLOB_RESP : ATT_OP_READ_RESP;
+          callbackResponse[0] =
+            requestType === ATT_OP_READ_BLOB_REQ
+              ? ATT_OP_READ_BLOB_RESP
+              : ATT_OP_READ_RESP;
           for (i = 0; i < dataLength; i++) {
             callbackResponse[1 + i] = data[i];
           }
         } else {
-          callbackResponse = this.errorResponse(requestType, valueHandle, result);
+          callbackResponse = this.errorResponse(
+            requestType,
+            valueHandle,
+            result
+          );
         }
 
         debug('read response: ' + callbackResponse.toString('hex'));
 
         this.send(callbackResponse);
       }.bind(this);
-    }.bind(this))(requestType, valueHandle);
+    }.bind(this)(requestType, valueHandle);
 
     if (handleType === 'service' || handleType === 'includedService') {
       result = ATT_ECODE_SUCCESS;
-      data = Buffer.from(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      data = Buffer.from(
+        handle.uuid
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
     } else if (handleType === 'characteristic') {
-      var uuid = Buffer.from(handle.uuid.match(/.{1,2}/g).reverse().join(''), 'hex');
+      let uuid = Buffer.from(
+        handle.uuid
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
+      );
 
       result = ATT_ECODE_SUCCESS;
       data = Buffer.alloc(3 + uuid.length);
@@ -40252,10 +40237,13 @@ Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
       for (i = 0; i < uuid.length; i++) {
         data[i + 3] = uuid[i];
       }
-    } else if (handleType === 'characteristicValue' || handleType === 'descriptor') {
-      var handleProperties = handle.properties;
-      var handleSecure = handle.secure;
-      var handleAttribute = handle.attribute;
+    } else if (
+      handleType === 'characteristicValue' ||
+      handleType === 'descriptor'
+    ) {
+      let handleProperties = handle.properties;
+      let handleSecure = handle.secure;
+      let handleAttribute = handle.attribute;
       if (handleType === 'characteristicValue') {
         handleProperties = this._handles[valueHandle - 1].properties;
         handleSecure = this._handles[valueHandle - 1].secure;
@@ -40296,42 +40284,52 @@ Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
       callback(result, data);
     }
   } else {
-    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+    response = this.errorResponse(
+      requestType,
+      valueHandle,
+      ATT_ECODE_INVALID_HANDLE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleWriteRequestOrCommand = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var withoutResponse = (requestType === ATT_OP_WRITE_CMD);
-  var valueHandle = request.readUInt16LE(1);
-  var data = request.slice(3);
-  var offset = 0;
+  let requestType = request[0];
+  let withoutResponse = requestType === ATT_OP_WRITE_CMD;
+  let valueHandle = request.readUInt16LE(1);
+  let data = request.slice(3);
+  let offset = 0;
 
-  var handle = this._handles[valueHandle];
+  let handle = this._handles[valueHandle];
 
   if (handle) {
     if (handle.type === 'characteristicValue') {
       handle = this._handles[valueHandle - 1];
     }
 
-    var handleProperties = handle.properties;
-    var handleSecure = handle.secure;
+    let handleProperties = handle.properties;
+    let handleSecure = handle.secure;
 
-    if (handleProperties && (withoutResponse ? (handleProperties & 0x04) : (handleProperties & 0x08))) {
-
-      var callback = (function(requestType, valueHandle, withoutResponse) {
+    if (
+      handleProperties &&
+      (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)
+    ) {
+      let callback = function(requestType, valueHandle, withoutResponse) {
         return function(result) {
           if (!withoutResponse) {
-            var callbackResponse = null;
+            let callbackResponse = null;
 
             if (ATT_ECODE_SUCCESS === result) {
               callbackResponse = Buffer.from([ATT_OP_WRITE_RESP]);
             } else {
-              callbackResponse = this.errorResponse(requestType, valueHandle, result);
+              callbackResponse = this.errorResponse(
+                requestType,
+                valueHandle,
+                result
+              );
             }
 
             debug('write response: ' + callbackResponse.toString('hex'));
@@ -40339,31 +40337,39 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
             this.send(callbackResponse);
           }
         }.bind(this);
-      }.bind(this))(requestType, valueHandle, withoutResponse);
+      }.bind(this)(requestType, valueHandle, withoutResponse);
 
-      if (handleSecure & (withoutResponse ? 0x04 : 0x08) && !this._aclStream.encrypted) {
-        response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+      if (
+        handleSecure & (withoutResponse ? 0x04 : 0x08) &&
+        !this._aclStream.encrypted
+      ) {
+        response = this.errorResponse(
+          requestType,
+          valueHandle,
+          ATT_ECODE_AUTHENTICATION
+        );
       } else if (handle.type === 'descriptor' || handle.uuid === '2902') {
-        var result = null;
+        let result = null;
 
         if (data.length !== 2) {
           result = ATT_ECODE_INVAL_ATTR_VALUE_LEN;
         } else {
-          var value = data.readUInt16LE(0);
-          var handleAttribute = handle.attribute;
+          let value = data.readUInt16LE(0);
+          let handleAttribute = handle.attribute;
 
           handle.value = data;
 
           if (value & 0x0003) {
-            var updateValueCallback = (function(valueHandle, attribute) {
+            let updateValueCallback = function(valueHandle, attribute) {
               return function(data) {
-                var dataLength = Math.min(data.length, this._mtu - 3);
-                var useNotify = attribute.properties.indexOf('notify') !== -1;
-                var useIndicate = attribute.properties.indexOf('indicate') !== -1;
-                var i;
+                let dataLength = Math.min(data.length, this._mtu - 3);
+                let useNotify = attribute.properties.indexOf('notify') !== -1;
+                let useIndicate =
+                  attribute.properties.indexOf('indicate') !== -1;
+                let i;
 
                 if (useNotify) {
-                  var notifyMessage = Buffer.alloc(3 + dataLength);
+                  let notifyMessage = Buffer.alloc(3 + dataLength);
 
                   notifyMessage.writeUInt8(ATT_OP_HANDLE_NOTIFY, 0);
                   notifyMessage.writeUInt16LE(valueHandle, 1);
@@ -40377,7 +40383,7 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
 
                   attribute.emit('notify');
                 } else if (useIndicate) {
-                  var indicateMessage = Buffer.alloc(3 + dataLength);
+                  let indicateMessage = Buffer.alloc(3 + dataLength);
 
                   indicateMessage.writeUInt8(ATT_OP_HANDLE_IND, 0);
                   indicateMessage.writeUInt16LE(valueHandle, 1);
@@ -40392,10 +40398,14 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
                   this.send(indicateMessage);
                 }
               }.bind(this);
-            }.bind(this))(valueHandle - 1, handleAttribute);
+            }.bind(this)(valueHandle - 1, handleAttribute);
 
             if (handleAttribute.emit) {
-              handleAttribute.emit('subscribe', this._mtu - 3, updateValueCallback);
+              handleAttribute.emit(
+                'subscribe',
+                this._mtu - 3,
+                updateValueCallback
+              );
             }
           } else {
             handleAttribute.emit('unsubscribe');
@@ -40406,59 +40416,89 @@ Gatt.prototype.handleWriteRequestOrCommand = function(request) {
 
         callback(result);
       } else {
-        handle.attribute.emit('writeRequest', data, offset, withoutResponse, callback);
+        handle.attribute.emit(
+          'writeRequest',
+          data,
+          offset,
+          withoutResponse,
+          callback
+        );
       }
     } else {
-      response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+      response = this.errorResponse(
+        requestType,
+        valueHandle,
+        ATT_ECODE_WRITE_NOT_PERM
+      );
     }
   } else {
-    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+    response = this.errorResponse(
+      requestType,
+      valueHandle,
+      ATT_ECODE_INVALID_HANDLE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handlePrepareWriteRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var valueHandle = request.readUInt16LE(1);
-  var offset = request.readUInt16LE(3);
-  var data = request.slice(5);
+  let requestType = request[0];
+  let valueHandle = request.readUInt16LE(1);
+  let offset = request.readUInt16LE(3);
+  let data = request.slice(5);
 
-  var handle = this._handles[valueHandle];
+  let handle = this._handles[valueHandle];
 
   if (handle) {
     if (handle.type === 'characteristicValue') {
       handle = this._handles[valueHandle - 1];
 
-      var handleProperties = handle.properties;
-      var handleSecure = handle.secure;
+      let handleProperties = handle.properties;
+      let handleSecure = handle.secure;
 
-      if (handleProperties && (handleProperties & 0x08)) {
-        if ((handleSecure & 0x08) && !this._aclStream.encrypted) {
-          response = this.errorResponse(requestType, valueHandle, ATT_ECODE_AUTHENTICATION);
+      if (handleProperties && handleProperties & 0x08) {
+        if (handleSecure & 0x08 && !this._aclStream.encrypted) {
+          response = this.errorResponse(
+            requestType,
+            valueHandle,
+            ATT_ECODE_AUTHENTICATION
+          );
         } else if (this._preparedWriteRequest) {
           if (this._preparedWriteRequest.handle !== handle) {
-            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_UNLIKELY);
-          } else if (offset === (this._preparedWriteRequest.offset + this._preparedWriteRequest.data.length)) {
+            response = this.errorResponse(
+              requestType,
+              valueHandle,
+              ATT_ECODE_UNLIKELY
+            );
+          } else if (
+            offset ===
+            this._preparedWriteRequest.offset +
+              this._preparedWriteRequest.data.length
+          ) {
             this._preparedWriteRequest.data = Buffer.concat([
               this._preparedWriteRequest.data,
-              data
+              data,
             ]);
 
             response = Buffer.alloc(request.length);
             request.copy(response);
             response[0] = ATT_OP_PREP_WRITE_RESP;
           } else {
-            response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_OFFSET);
+            response = this.errorResponse(
+              requestType,
+              valueHandle,
+              ATT_ECODE_INVALID_OFFSET
+            );
           }
         } else {
           this._preparedWriteRequest = {
             handle: handle,
             valueHandle: valueHandle,
             offset: offset,
-            data: data
+            data: data,
           };
 
           response = Buffer.alloc(request.length);
@@ -40466,47 +40506,67 @@ Gatt.prototype.handlePrepareWriteRequest = function(request) {
           response[0] = ATT_OP_PREP_WRITE_RESP;
         }
       } else {
-        response = this.errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
+        response = this.errorResponse(
+          requestType,
+          valueHandle,
+          ATT_ECODE_WRITE_NOT_PERM
+        );
       }
     } else {
-      response = this.errorResponse(requestType, valueHandle, ATT_ECODE_ATTR_NOT_LONG);
+      response = this.errorResponse(
+        requestType,
+        valueHandle,
+        ATT_ECODE_ATTR_NOT_LONG
+      );
     }
   } else {
-    response = this.errorResponse(requestType, valueHandle, ATT_ECODE_INVALID_HANDLE);
+    response = this.errorResponse(
+      requestType,
+      valueHandle,
+      ATT_ECODE_INVALID_HANDLE
+    );
   }
 
   return response;
 };
 
 Gatt.prototype.handleExecuteWriteRequest = function(request) {
-  var response = null;
+  let response = null;
 
-  var requestType = request[0];
-  var flag = request[1];
+  let requestType = request[0];
+  let flag = request[1];
 
   if (this._preparedWriteRequest) {
-    var valueHandle = this._preparedWriteRequest.valueHandle;
-
     if (flag === 0x00) {
       response = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
     } else if (flag === 0x01) {
-      var callback = (function(requestType, valueHandle) {
+      let callback = function(requestType, valueHandle) {
         return function(result) {
-          var callbackResponse = null;
+          let callbackResponse = null;
 
           if (ATT_ECODE_SUCCESS === result) {
             callbackResponse = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
           } else {
-            callbackResponse = this.errorResponse(requestType, valueHandle, result);
+            callbackResponse = this.errorResponse(
+              requestType,
+              valueHandle,
+              result
+            );
           }
 
           debug('execute write response: ' + callbackResponse.toString('hex'));
 
           this.send(callbackResponse);
         }.bind(this);
-      }.bind(this))(requestType, this._preparedWriteRequest.valueHandle);
+      }.bind(this)(requestType, this._preparedWriteRequest.valueHandle);
 
-      this._preparedWriteRequest.handle.attribute.emit('writeRequest', this._preparedWriteRequest.data, this._preparedWriteRequest.offset, false, callback);
+      this._preparedWriteRequest.handle.attribute.emit(
+        'writeRequest',
+        this._preparedWriteRequest.data,
+        this._preparedWriteRequest.offset,
+        false,
+        callback
+      );
     } else {
       response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
     }
@@ -40538,21 +40598,15 @@ module.exports = Gatt;
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+/* WEBPACK VAR INJECTION */(function(Buffer) {let debug = __webpack_require__("./node_modules/debug/src/browser.js")('mgmt');
 
-var debug = __webpack_require__("./node_modules/debug/src/browser.js")('mgmt');
+let LTK_INFO_SIZE = 36;
 
-var events = __webpack_require__("./node_modules/events/events.js");
-var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+let MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
 
-
-var LTK_INFO_SIZE = 36;
-
-var MGMT_OP_LOAD_LONG_TERM_KEYS = 0x0013;
-
-function Mgmt() {
+function Mgmt(hciProtocol) {
   this._ltkInfos = [];
-
+  this._hci = hciProtocol;
 }
 
 Mgmt.prototype.onSocketData = function(data) {
@@ -40563,8 +40617,16 @@ Mgmt.prototype.onSocketError = function(error) {
   debug('on error ->' + error.message);
 };
 
-Mgmt.prototype.addLongTermKey = function(address, addressType, authenticated, master, ediv, rand, key) {
-  var ltkInfo = Buffer.from(LTK_INFO_SIZE);
+Mgmt.prototype.addLongTermKey = function(
+  address,
+  addressType,
+  authenticated,
+  master,
+  ediv,
+  rand,
+  key
+) {
+  let ltkInfo = Buffer.from(LTK_INFO_SIZE);
 
   address.copy(ltkInfo, 0);
   ltkInfo.writeUInt8(addressType.readUInt8(0) + 1, 6); // BDADDR_LE_PUBLIC = 0x01, BDADDR_LE_RANDOM 0x02, so add one
@@ -40589,12 +40651,12 @@ Mgmt.prototype.clearLongTermKeys = function() {
 };
 
 Mgmt.prototype.loadLongTermKeys = function() {
-  var numLongTermKeys = this._ltkInfos.length;
-  var op = Buffer.alloc(2 + numLongTermKeys * LTK_INFO_SIZE);
+  let numLongTermKeys = this._ltkInfos.length;
+  let op = Buffer.alloc(2 + numLongTermKeys * LTK_INFO_SIZE);
 
   op.writeUInt16LE(numLongTermKeys, 0);
 
-  for (var i = 0; i < numLongTermKeys; i++) {
+  for (let i = 0; i < numLongTermKeys; i++) {
     this._ltkInfos[i].copy(op, 2 + i * LTK_INFO_SIZE);
   }
 
@@ -40602,13 +40664,13 @@ Mgmt.prototype.loadLongTermKeys = function() {
 };
 
 Mgmt.prototype.write = function(opcode, index, data) {
-  var length = 0;
+  let length = 0;
 
   if (data) {
     length = data.length;
   }
 
-  var pkt = Buffer.alloc(6 + length);
+  let pkt = Buffer.alloc(6 + length);
 
   pkt.writeUInt16LE(opcode, 0);
   pkt.writeUInt16LE(index, 2);
@@ -40619,11 +40681,10 @@ Mgmt.prototype.write = function(opcode, index, data) {
   }
 
   debug('writing -> ' + pkt.toString('hex'));
-  throw new Error("socket write");
-  // this._socket.write(pkt);
+  this._hci.write(pkt);
 };
 
-module.exports = new Mgmt();
+module.exports = Mgmt;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -40632,42 +40693,60 @@ module.exports = new Mgmt();
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/smp.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
+/* WEBPACK VAR INJECTION */(function(Buffer) {let events = __webpack_require__("./node_modules/events/events.js");
+let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
 
-var debug = __webpack_require__("./node_modules/debug/src/browser.js")('smp');
+let crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js");
+let Mgmt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js");
 
-var events = __webpack_require__("./node_modules/events/events.js");
-var util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
+let SMP_CID = 0x0006;
 
-var crypto = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/crypto.js");
-var Mgmt = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js");
+let SMP_PAIRING_REQUEST = 0x01;
+let SMP_PAIRING_RESPONSE = 0x02;
+let SMP_PAIRING_CONFIRM = 0x03;
+let SMP_PAIRING_RANDOM = 0x04;
+let SMP_PAIRING_FAILED = 0x05;
+let SMP_ENCRYPT_INFO = 0x06;
+let SMP_MASTER_IDENT = 0x07;
 
-var SMP_CID = 0x0006;
+let SMP_UNSPECIFIED = 0x08;
 
-var SMP_PAIRING_REQUEST = 0x01;
-var SMP_PAIRING_RESPONSE = 0x02;
-var SMP_PAIRING_CONFIRM = 0x03;
-var SMP_PAIRING_RANDOM = 0x04;
-var SMP_PAIRING_FAILED = 0x05;
-var SMP_ENCRYPT_INFO = 0x06;
-var SMP_MASTER_IDENT = 0x07;
-
-var SMP_UNSPECIFIED = 0x08;
-
-var Smp = function(aclStream, localAddressType, localAddress, remoteAddressType, remoteAddress) {
+let Smp = function(
+  aclStream,
+  localAddressType,
+  localAddress,
+  remoteAddressType,
+  remoteAddress,
+  hciProtocol
+) {
   this._aclStream = aclStream;
+  this._mgmt = new Mgmt(hciProtocol);
 
-  this._iat = Buffer.from([(remoteAddressType === 'random') ? 0x01 : 0x00]);
-  this._ia = Buffer.from(remoteAddress.split(':').reverse().join(''), 'hex');
-  this._rat = Buffer.from([(localAddressType === 'random') ? 0x01 : 0x00]);
-  this._ra = Buffer.from(localAddress.split(':').reverse().join(''), 'hex');
+  this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
+  this._ia = Buffer.from(
+    remoteAddress
+      .split(':')
+      .reverse()
+      .join(''),
+    'hex'
+  );
+  this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
+  this._ra = Buffer.from(
+    localAddress
+      .split(':')
+      .reverse()
+      .join(''),
+    'hex'
+  );
 
   this._stk = null;
   this._random = null;
   this._diversifier = null;
 
   this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-  this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(this);
+  this.onAclStreamEncryptChangeBinded = this.onAclStreamEncryptChange.bind(
+    this
+  );
   this.onAclStreamLtkNegReplyBinded = this.onAclStreamLtkNegReply.bind(this);
   this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
@@ -40684,7 +40763,7 @@ Smp.prototype.onAclStreamData = function(cid, data) {
     return;
   }
 
-  var code = data.readUInt8(0);
+  let code = data.readUInt8(0);
 
   if (SMP_PAIRING_REQUEST === code) {
     this.handlePairingRequest(data);
@@ -40700,39 +40779,40 @@ Smp.prototype.onAclStreamData = function(cid, data) {
 Smp.prototype.onAclStreamEncryptChange = function(encrypted) {
   if (encrypted) {
     if (this._stk && this._diversifier && this._random) {
-      this.write(Buffer.concat([
-        Buffer.from([SMP_ENCRYPT_INFO]),
-        this._stk
-      ]));
+      this.write(Buffer.concat([Buffer.from([SMP_ENCRYPT_INFO]), this._stk]));
 
-      this.write(Buffer.concat([
-        Buffer.from([SMP_MASTER_IDENT]),
-        this._diversifier,
-        this._random
-      ]));
+      this.write(
+        Buffer.concat([
+          Buffer.from([SMP_MASTER_IDENT]),
+          this._diversifier,
+          this._random,
+        ])
+      );
     }
   }
 };
 
 Smp.prototype.onAclStreamLtkNegReply = function() {
-    this.write(Buffer.from([
-      SMP_PAIRING_FAILED,
-      SMP_UNSPECIFIED
-    ]));
+  this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_UNSPECIFIED]));
 
-    this.emit('fail');
+  this.emit('fail');
 };
 
 Smp.prototype.onAclStreamEnd = function() {
   this._aclStream.removeListener('data', this.onAclStreamDataBinded);
-  this._aclStream.removeListener('encryptChange', this.onAclStreamEncryptChangeBinded);
-  this._aclStream.removeListener('ltkNegReply', this.onAclStreamLtkNegReplyBinded);
+  this._aclStream.removeListener(
+    'encryptChange',
+    this.onAclStreamEncryptChangeBinded
+  );
+  this._aclStream.removeListener(
+    'ltkNegReply',
+    this.onAclStreamLtkNegReplyBinded
+  );
   this._aclStream.removeListener('end', this.onAclStreamEndBinded);
 };
 
 Smp.prototype.handlePairingRequest = function(data) {
   this._preq = data;
-
   this._pres = Buffer.from([
     SMP_PAIRING_RESPONSE,
     0x03, // IO capability: NoInputNoOutput
@@ -40740,7 +40820,7 @@ Smp.prototype.handlePairingRequest = function(data) {
     0x01, // Authentication requirement: Bonding - No MITM
     0x10, // Max encryption key size
     0x00, // Initiator key distribution: <none>
-    0x01  // Responder key distribution: EncKey
+    0x01, // Responder key distribution: EncKey
   ]);
 
   this.write(this._pres);
@@ -40752,18 +40832,38 @@ Smp.prototype.handlePairingConfirm = function(data) {
   this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
   this._r = crypto.r();
 
-  this.write(Buffer.concat([
-    Buffer.from([SMP_PAIRING_CONFIRM]),
-    crypto.c1(this._tk, this._r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
-  ]));
+  this.write(
+    Buffer.concat([
+      Buffer.from([SMP_PAIRING_CONFIRM]),
+      crypto.c1(
+        this._tk,
+        this._r,
+        this._pres,
+        this._preq,
+        this._iat,
+        this._ia,
+        this._rat,
+        this._ra
+      ),
+    ])
+  );
 };
 
 Smp.prototype.handlePairingRandom = function(data) {
-  var r = data.slice(1);
+  let r = data.slice(1);
 
-  var pcnf = Buffer.concat([
+  let pcnf = Buffer.concat([
     Buffer.from([SMP_PAIRING_CONFIRM]),
-    crypto.c1(this._tk, r, this._pres, this._preq, this._iat, this._ia, this._rat, this._ra)
+    crypto.c1(
+      this._tk,
+      r,
+      this._pres,
+      this._preq,
+      this._iat,
+      this._ia,
+      this._rat,
+      this._ra
+    ),
   ]);
 
   if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
@@ -40771,19 +40871,19 @@ Smp.prototype.handlePairingRandom = function(data) {
     this._random = Buffer.from('0000000000000000', 'hex');
     this._stk = crypto.s1(this._tk, this._r, r);
 
-    // TODO
-    throw new Error("TODO");
-    mgmt.addLongTermKey(this._ia, this._iat, 0, 0, this._diversifier, this._random, this._stk);
+    this._mgmt.addLongTermKey(
+      this._ia,
+      this._iat,
+      0,
+      0,
+      this._diversifier,
+      this._random,
+      this._stk
+    );
 
-    this.write(Buffer.concat([
-      Buffer.from([SMP_PAIRING_RANDOM]),
-      this._r
-    ]));
+    this.write(Buffer.concat([Buffer.from([SMP_PAIRING_RANDOM]), this._r]));
   } else {
-    this.write(Buffer.from([
-      SMP_PAIRING_FAILED,
-      SMP_PAIRING_CONFIRM
-    ]));
+    this.write(Buffer.from([SMP_PAIRING_FAILED, SMP_PAIRING_CONFIRM]));
 
     this.emit('fail');
   }
