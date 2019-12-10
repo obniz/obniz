@@ -35047,6 +35047,10 @@ class BleScan {
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
       case 'onfind': {
+        //duplicate filter
+        if(this.scanedPeripherals.find(e=>e.address === params.address)){
+          break;
+        }
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);
           this.emitter.emit(notifyName, params);
