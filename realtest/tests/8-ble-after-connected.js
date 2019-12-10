@@ -45,6 +45,7 @@ describe('8-ble', function() {
         {
           uuid: '2902',
           data: [0, 0],
+          permissions: ['read', 'write'],
         },
       ],
     });
