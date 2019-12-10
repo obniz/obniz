@@ -905,16 +905,18 @@ Gatt.prototype.notify = function(serviceUuid, characteristicUuid, notify) {
           this.writeRequest(handle, valueBuffer, false),
           function(data) {
             let opcode = data[0];
-
-            if (opcode === ATT_OP_WRITE_RESP) {
-              this.emit(
-                'notify',
-                this._address,
-                serviceUuid,
-                characteristicUuid,
-                notify
-              );
-            }
+            debug(
+              'set notify write results: ' + (opcode === ATT_OP_WRITE_RESP)
+            );
+            // if (opcode === ATT_OP_WRITE_RESP) {
+            this.emit(
+              'notify',
+              this._address,
+              serviceUuid,
+              characteristicUuid,
+              notify
+            );
+            // }
           }.bind(this)
         );
       }

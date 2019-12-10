@@ -205,8 +205,19 @@ class ObnizBLE {
 
   }
 
-  // notify when my device is peripheral?
-  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){}
+
+  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){
+    let peripheral = this.findPeripheral(peripheralUuid);
+    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+
+    if(state){
+      char.notifyFromServer("onregisternotify", {})
+    }else{
+      char.notifyFromServer("onunregisternotify", {})
+
+    }
+
+  }
 
 
   onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){
