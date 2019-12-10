@@ -30,6 +30,8 @@ class ObnizBLE {
     // this.centralBindings = new CentralBindings( dummy );
     // this.peripheralBindings = new PeripheralBindings( dummy );
 
+    this.centralBindings.init();
+    this.peripheralBindings.init();
 
     this._initialized = false;
 
@@ -53,9 +55,6 @@ class ObnizBLE {
   async initWait() {
     if(!this._initialized){
       this._initialized = true;
-
-      this.centralBindings.init();
-      this.peripheralBindings.init();
       await this.hciProtocol.initWait();
     }
   }

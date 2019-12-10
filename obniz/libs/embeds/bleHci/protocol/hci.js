@@ -99,13 +99,7 @@ let Hci = function(obnizHci) {
   this._handleBuffers = {};
 
   this.on('stateChange', this.onStateChange.bind(this));
-};
 
-util.inherits(Hci, events.EventEmitter);
-
-Hci.STATUS_MAPPER = STATUS_MAPPER;
-
-Hci.prototype.initWait = async function() {
   this._socket = {
     write: data => {
       let arr = Array.from(data);
@@ -113,7 +107,13 @@ Hci.prototype.initWait = async function() {
     },
   };
   this._obnizHci.onread = this.onSocketData.bind(this);
+};
 
+util.inherits(Hci, events.EventEmitter);
+
+Hci.STATUS_MAPPER = STATUS_MAPPER;
+
+Hci.prototype.initWait = async function() {
   this.reset();
   // this.setEventMask();
   // this.setLeEventMask();

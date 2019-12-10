@@ -33124,6 +33124,8 @@ class ObnizBLE {
     // this.centralBindings = new CentralBindings( dummy );
     // this.peripheralBindings = new PeripheralBindings( dummy );
 
+    this.centralBindings.init();
+    this.peripheralBindings.init();
 
     this._initialized = false;
 
@@ -33147,9 +33149,6 @@ class ObnizBLE {
   async initWait() {
     if(!this._initialized){
       this._initialized = true;
-
-      this.centralBindings.init();
-      this.peripheralBindings.init();
       await this.hciProtocol.initWait();
     }
   }
@@ -38177,13 +38176,7 @@ let Hci = function(obnizHci) {
   this._handleBuffers = {};
 
   this.on('stateChange', this.onStateChange.bind(this));
-};
 
-util.inherits(Hci, events.EventEmitter);
-
-Hci.STATUS_MAPPER = STATUS_MAPPER;
-
-Hci.prototype.initWait = async function() {
   this._socket = {
     write: data => {
       let arr = Array.from(data);
@@ -38191,7 +38184,13 @@ Hci.prototype.initWait = async function() {
     },
   };
   this._obnizHci.onread = this.onSocketData.bind(this);
+};
 
+util.inherits(Hci, events.EventEmitter);
+
+Hci.STATUS_MAPPER = STATUS_MAPPER;
+
+Hci.prototype.initWait = async function() {
   this.reset();
   // this.setEventMask();
   // this.setLeEventMask();
