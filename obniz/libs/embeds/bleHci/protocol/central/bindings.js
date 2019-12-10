@@ -174,6 +174,11 @@ class NobleBindings extends events.EventEmitter {
     supervisionTimeout,
     masterClockAccuracy
   ) {
+    if (role !== 0) {
+      // not master, ignore
+      return;
+    }
+
     let uuid = null;
 
     let error = null;

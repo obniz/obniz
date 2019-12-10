@@ -13,7 +13,8 @@ describe('7-ble', function() {
         resolve();
       });
     });
-    obnizA.ble.init();
+    await obnizA.ble.initWait();
+    await obnizB.ble.initWait();
   });
 
   it('simple ad', async function() {

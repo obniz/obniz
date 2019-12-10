@@ -16,7 +16,8 @@ describe('8-ble', function() {
         resolve();
       });
     });
-    obnizA.ble.init();
+    await obnizA.ble.initWait();
+    await obnizB.ble.initWait();
     let service = new obnizA.ble.service({ uuid: 'FFF0' });
     let characteristic = new obnizA.ble.characteristic({
       uuid: 'FFF1',
@@ -102,36 +103,11 @@ describe('8-ble', function() {
       results.push(JSON.parse(JSON.stringify(service)));
     }
 
-    expect(results).like([
-      // {
-      //   characteristics: [
-      //     {
-      //       properties: ['indicate'],
-      //       uuid: '2a05',
-      //     },
-      //   ],
-      //   uuid: '1801',
-      // },
-      // {
-      //   characteristics: [
-      //     {
-      //       data: [],
-      //       properties: ['read'],
-      //       uuid: '2a00',
-      //     },
-      //     {
-      //       data: [0, 0],
-      //       properties: ['read'],
-      //       uuid: '2a01',
-      //     },
-      //     {
-      //       data: [0],
-      //       properties: ['read'],
-      //       uuid: '2aa6',
-      //     },
-      //   ],
-      //   uuid: '1800',
-      // },
+    // remove device information (default added at ESP32)
+    let filteredResults = results.filter(
+      e => !['1801', '1800'].includes(e.uuid)
+    );
+    expect(filteredResults).like([
       {
         characteristics: [
           {
@@ -181,12 +157,7 @@ describe('8-ble', function() {
             properties: ['read', 'write', 'notify'],
             data: [92],
             uuid: 'fff3',
-            descriptors: [
-              {
-                data: [0, 0],
-                uuid: '2902',
-              },
-            ],
+            descriptors: [],
           },
           {
             properties: ['write'],
@@ -320,5 +291,11 @@ describe('8-ble', function() {
       .readWait();
     await obnizA.pingWait();
     expect(results).to.be.undefined;
+  });
+
+  it('close', async () => {
+    let results = await this.peripheral.disconnectWait();
+    expect(results).to.be.true;
+    expect(!!obnizB.ble.peripheral.currentConnectedDeviceAddress).to.be.false; //null(>=3.0.0) or undefined(<3.0.0)
   });
 });

@@ -25,6 +25,9 @@ class ObnizBLE {
     this._reset();
   }
 
+  //dummy
+  initWait() {}
+
   _reset() {}
 
   findPeripheral(address) {

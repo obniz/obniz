@@ -21,10 +21,7 @@ class ObnizBLE {
     this.hci = new ObnizBLEHci(Obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
-    let dummy =  {write : function(){}};
-    this.centralBindings = new CentralBindings(  new HciProtocol(dummy));
-
-    // this.centralBindings = new CentralBindings( this.hciProtocol );
+    this.centralBindings = new CentralBindings( this.hciProtocol );
     this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
 
 
@@ -47,13 +44,13 @@ class ObnizBLE {
     this._reset();
   }
 
-  init() {
+  async initWait() {
     if(!this._initialized){
       this._initialized = true;
 
       this.centralBindings.init();
       this.peripheralBindings.init();
-      this.hciProtocol.init();
+      await this.hciProtocol.initWait();
     }
   }
 

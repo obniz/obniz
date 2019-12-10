@@ -15,19 +15,70 @@ describe('ble-hci-central', function() {
     return testUtil.releaseObnizePromise(this, done);
   });
 
-  it('init', function() {
-    this.obniz.ble.init();
+  it('init', async function() {
+    this.obniz.ble.initWait();
 
     let commands = [
-      [0x01, 0x01, 0x0c, 0x08, 0xff, 0xff, 0xfb, 0xff, 0x07, 0xf8, 0xbf, 0x3d], //setEventMask
-      [0x01, 0x01, 0x20, 0x08, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], //setLeEventMask
-      [0x01, 0x01, 0x10, 0x00], //readLocalVersion
-      [0x01, 0x6d, 0x0c, 0x02, 0x01, 0x00], //writeLeHostSupported
-      [0x01, 0x6c, 0x0c, 0x00], //readLeHostSupported
-      [0x01, 0x09, 0x10, 0x00], //readBdAddr
+      [0x01, 0x03, 0x0c, 0x0], // reset
     ];
 
     for (let command of commands) {
+      expect(this.obniz).send([
+        {
+          ble: {
+            hci: {
+              write: command,
+            },
+          },
+        },
+      ]);
+    }
+
+    expect(this.obniz).to.be.finished;
+  });
+  it('init resp', async function() {
+    this.obniz.ble.initWait();
+    let commands = [
+      [0x01, 0x03, 0x0c, 0x0], // reset
+    ];
+
+    for (let command of commands) {
+      expect(this.obniz).send([
+        {
+          ble: {
+            hci: {
+              write: command,
+            },
+          },
+        },
+      ]);
+    }
+
+    expect(this.obniz).to.be.finished;
+
+    let results = [
+      {
+        ble: {
+          hci: {
+            read: {
+              data: [4, 14, 4, 5, 3, 12, 0],
+            },
+          },
+        },
+      },
+    ];
+    testUtil.receiveJson(this.obniz, results);
+    let secondCommands = [
+      [0x01, 0x01, 0x0c, 0x08, 0xff, 0xff, 0xfb, 0xff, 0x07, 0xf8, 0xbf, 0x3d], //setEventMask
+      [0x01, 0x01, 0x20, 0x08, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], //setLeEventMask
+      [0x01, 0x01, 0x10, 0x00], //readLocalVersion
+      [0x01, 0x09, 0x10, 0x00], //readBdAddr
+      [0x01, 0x6d, 0x0c, 0x02, 0x01, 0x00], //writeLeHostSupported
+      [0x01, 0x6c, 0x0c, 0x00], //readLeHostSupported
+      [0x01, 0x02, 0x20, 0x00], //leReadBufferSize
+    ];
+
+    for (let command of secondCommands) {
       expect(this.obniz).send([
         {
           ble: {

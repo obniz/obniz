@@ -105,7 +105,7 @@ util.inherits(Hci, events.EventEmitter);
 
 Hci.STATUS_MAPPER = STATUS_MAPPER;
 
-Hci.prototype.init = function() {
+Hci.prototype.initWait = async function() {
   this._socket = {
     write: data => {
       let arr = Array.from(data);
@@ -121,6 +121,13 @@ Hci.prototype.init = function() {
   // this.writeLeHostSupported();
   // this.readLeHostSupported();
   // this.readBdAddr();
+
+  return new Promise(resolve => {
+    this.once('stateChange', () => {
+      // console.log('te');
+      resolve();
+    });
+  });
 };
 
 Hci.prototype.setEventMask = function() {
@@ -783,7 +790,6 @@ Hci.prototype.processCmdCompleteEvent = function(cmd, status, result) {
     this.readBdAddr();
     this.writeLeHostSupported();
     this.readLeHostSupported();
-    this.readBdAddr();
     this.leReadBufferSize();
   } else if (cmd === READ_LE_HOST_SUPPORTED_CMD) {
     if (status === 0) {

@@ -30898,6 +30898,9 @@ class ObnizBLE {
     this._reset();
   }
 
+  //dummy
+  initWait() {}
+
   _reset() {}
 
   findPeripheral(address) {
@@ -33037,10 +33040,7 @@ class ObnizBLE {
     this.hci = new ObnizBLEHci(Obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
-    let dummy =  {write : function(){}};
-    this.centralBindings = new CentralBindings(  new HciProtocol(dummy));
-
-    // this.centralBindings = new CentralBindings( this.hciProtocol );
+    this.centralBindings = new CentralBindings( this.hciProtocol );
     this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
 
 
@@ -33063,13 +33063,13 @@ class ObnizBLE {
     this._reset();
   }
 
-  init() {
+  async initWait() {
     if(!this._initialized){
       this._initialized = true;
 
       this.centralBindings.init();
       this.peripheralBindings.init();
-      this.hciProtocol.init();
+      await this.hciProtocol.initWait();
     }
   }
 
@@ -35583,6 +35583,11 @@ class NobleBindings extends events.EventEmitter {
     supervisionTimeout,
     masterClockAccuracy
   ) {
+    if (role !== 0) {
+      // not master, ignore
+      return;
+    }
+
     let uuid = null;
 
     let error = null;
@@ -37999,7 +38004,7 @@ util.inherits(Hci, events.EventEmitter);
 
 Hci.STATUS_MAPPER = STATUS_MAPPER;
 
-Hci.prototype.init = function() {
+Hci.prototype.initWait = async function() {
   this._socket = {
     write: data => {
       let arr = Array.from(data);
@@ -38015,6 +38020,13 @@ Hci.prototype.init = function() {
   // this.writeLeHostSupported();
   // this.readLeHostSupported();
   // this.readBdAddr();
+
+  return new Promise(resolve => {
+    this.once('stateChange', () => {
+      // console.log('te');
+      resolve();
+    });
+  });
 };
 
 Hci.prototype.setEventMask = function() {
@@ -38677,7 +38689,6 @@ Hci.prototype.processCmdCompleteEvent = function(cmd, status, result) {
     this.readBdAddr();
     this.writeLeHostSupported();
     this.readLeHostSupported();
-    this.readBdAddr();
     this.leReadBufferSize();
   } else if (cmd === READ_LE_HOST_SUPPORTED_CMD) {
     if (status === 0) {
@@ -48399,7 +48410,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"2.5.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
+module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"2.5.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^2.2.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
 
 /***/ }),
 
