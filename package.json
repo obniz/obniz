@@ -61,7 +61,7 @@
     "json-loader": "^0.5.7",
     "lint-staged": "^9.4.1",
     "mocha": "^5.2.0",
-    "mocha-chrome": "^2.2.0",
+    "mocha-chrome": "^1.1.0",
     "mocha-directory": "^2.3.0",
     "mocha-sinon": "^2.1.0",
     "natives": "^1.1.6",
