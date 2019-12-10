@@ -33040,8 +33040,14 @@ class ObnizBLE {
     this.hci = new ObnizBLEHci(Obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
+
     this.centralBindings = new CentralBindings( this.hciProtocol );
     this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
+
+
+    // let dummy = {write : ()=>{}, on:()=>{}}
+    // this.centralBindings = new CentralBindings( dummy );
+    // this.peripheralBindings = new PeripheralBindings( dummy );
 
 
     this._initialized = false;

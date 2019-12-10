@@ -41,6 +41,12 @@ describe('8-ble', function() {
     let characteristic3 = new obnizA.ble.characteristic({
       uuid: 'FFF3',
       value: 92,
+      descriptors: [
+        {
+          uuid: '2902',
+          data: [0, 0],
+        },
+      ],
     });
     characteristic3.addProperty('read');
     characteristic3.addProperty('write');
@@ -157,7 +163,12 @@ describe('8-ble', function() {
             properties: ['read', 'write', 'notify'],
             data: [92],
             uuid: 'fff3',
-            // descriptors: [],
+            descriptors: [
+              {
+                data: [0, 0],
+                uuid: '2902',
+              },
+            ],
           },
           {
             properties: ['write'],
