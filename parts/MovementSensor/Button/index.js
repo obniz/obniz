@@ -25,7 +25,7 @@ class Button {
       this.io_signal.pull('3v');
     } else if (this.params.pull === '0v') {
       this.io_signal.pull('0v');
-    }else{
+    } else {
       this.io_signal.pull('5v');
     }
 

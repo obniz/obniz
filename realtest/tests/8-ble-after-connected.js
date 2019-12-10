@@ -1,6 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const config = require('../config.js');
+chai.use(require('chai-like'));
 
 let obnizA, obnizB;
 
@@ -15,6 +16,8 @@ describe('8-ble', function() {
         resolve();
       });
     });
+    await obnizA.ble.initWait();
+    await obnizB.ble.initWait();
     let service = new obnizA.ble.service({ uuid: 'FFF0' });
     let characteristic = new obnizA.ble.characteristic({
       uuid: 'FFF1',
@@ -38,28 +41,42 @@ describe('8-ble', function() {
     let characteristic3 = new obnizA.ble.characteristic({
       uuid: 'FFF3',
       value: 92,
+      descriptors: [
+        {
+          uuid: '2902',
+          data: [0, 0],
+          permissions: ['read', 'write'],
+        },
+      ],
     });
     characteristic3.addProperty('read');
     characteristic3.addProperty('write');
     characteristic3.addProperty('notify');
 
+    let characteristic4 = new obnizA.ble.characteristic({
+      uuid: 'FFF4',
+      data: [0, 1, 2, 3, 4],
+    });
+    characteristic4.addProperty('write');
+
     service.addCharacteristic(characteristic);
     characteristic.addDescriptor(descriptor);
     service.addCharacteristic(characteristic2);
     service.addCharacteristic(characteristic3);
+    service.addCharacteristic(characteristic4);
 
     obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
     obnizA.ble.advertisement.setAdvData(ad);
     obnizA.ble.advertisement.start();
-    //console.log('service created');
+    console.log('service created');
     await obnizA.pingWait();
-    //console.log('scannning');
+    console.log('scannning');
     let peripheral = await obnizB.ble.scan.startOneWait({ uuids: ['FFF0'] });
     if (!peripheral) {
       throw new Error('NOT FOUND');
     }
-    //console.log('FOUND');
+    console.log('FOUND');
 
     expect(obnizA.ble.advertisement.adv_data).to.be.deep.equal(
       peripheral.adv_data
@@ -93,36 +110,11 @@ describe('8-ble', function() {
       results.push(JSON.parse(JSON.stringify(service)));
     }
 
-    expect(results).to.be.deep.equal([
-      {
-        characteristics: [
-          {
-            properties: ['indicate'],
-            uuid: '2a05',
-          },
-        ],
-        uuid: '1801',
-      },
-      {
-        characteristics: [
-          {
-            data: [],
-            properties: ['read'],
-            uuid: '2a00',
-          },
-          {
-            data: [0, 0],
-            properties: ['read'],
-            uuid: '2a01',
-          },
-          {
-            data: [0],
-            properties: ['read'],
-            uuid: '2aa6',
-          },
-        ],
-        uuid: '1800',
-      },
+    // remove device information (default added at ESP32)
+    let filteredResults = results.filter(
+      e => !['1801', '1800'].includes(e.uuid)
+    );
+    expect(filteredResults).like([
       {
         characteristics: [
           {
@@ -172,6 +164,16 @@ describe('8-ble', function() {
             properties: ['read', 'write', 'notify'],
             data: [92],
             uuid: 'fff3',
+            descriptors: [
+              {
+                data: [0, 0],
+                uuid: '2902',
+              },
+            ],
+          },
+          {
+            properties: ['write'],
+            uuid: 'fff4',
           },
         ],
         uuid: 'fff0',
@@ -199,11 +201,27 @@ describe('8-ble', function() {
     expect(chara.canRead()).to.be.equal(true);
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
+    console.log('write');
     let result = await chara.writeTextWait('hello');
     expect(result).to.be.equal(false);
+    console.log('read');
     let data = await chara.readWait();
     expect(data).to.be.deep.equal([101, 51, 214]);
+    console.log('finished');
   });
+  //
+  // it('read error', async () => {
+  //   let chara = this.peripheral.getService('fff0').getCharacteristic('fff4');
+  //   expect(chara.canWrite()).to.be.equal(true);
+  //   expect(chara.canWriteWithoutResponse()).to.be.equal(false);
+  //   expect(chara.canRead()).to.be.equal(false);
+  //   expect(chara.canNotify()).to.be.equal(false);
+  //   expect(chara.canIndicate()).to.be.equal(false);
+  //
+  //   let data = await chara.readWait();
+  //   expect(data).to.be.deep.equal([0, 1, 2, 3, 4]);
+  //   console.log('finished');
+  // });
 
   it('nofify', async () => {
     console.log('start!');
@@ -217,23 +235,25 @@ describe('8-ble', function() {
     expect(targetChara.canNotify()).to.be.equal(true);
     expect(targetChara.canIndicate()).to.be.equal(false);
 
-    let p1 = new Promise(function(resolve) {
-      targetChara.registerNotify(function(data) {
+    let p1 = new Promise(async resolve => {
+      await targetChara.registerNotifyWait(function(data) {
         console.log('notify!' + data.join(','));
         if (data.length === 1 && data[0] === 92) {
           notifyed = true;
         }
         resolve();
       });
+      console.log('registerNotify');
+      await obnizB.pingWait();
+      await obnizA.pingWait();
+      console.log('start notify');
+      this.service.getCharacteristic('FFF3').notify();
     });
-    await obnizB.pingWait();
-    this.service.getCharacteristic('FFF3').notify();
-    await obnizA.pingWait();
     let p2 = new Promise(function(resolve) {
       setTimeout(function() {
         console.log('timeout!');
         resolve();
-      }, 10000);
+      }, 20000);
     });
     await Promise.race([p1, p2]);
     expect(notifyed).to.be.equal(true);
@@ -283,5 +303,11 @@ describe('8-ble', function() {
       .readWait();
     await obnizA.pingWait();
     expect(results).to.be.undefined;
+  });
+
+  it('close', async () => {
+    let results = await this.peripheral.disconnectWait();
+    expect(results).to.be.true;
+    expect(!!obnizB.ble.peripheral.currentConnectedDeviceAddress).to.be.false; //null(>=3.0.0) or undefined(<3.0.0)
   });
 });

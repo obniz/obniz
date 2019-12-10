@@ -7,7 +7,9 @@ chai.use(testUtil.obnizAssert);
 
 describe('ble', function() {
   beforeEach(function() {
-    testUtil.setupObnizPromise(this, function() {});
+    testUtil.setupObnizPromise(this, function() {}, {
+      __firmware_ver: '2.0.0',
+    });
     let stub = sinon.stub();
     this.obniz.ble.scan.onfind = stub;
     this.obniz.ble.scan.start();

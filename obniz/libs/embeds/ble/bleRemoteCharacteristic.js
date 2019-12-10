@@ -43,8 +43,11 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return newCharacteristic;
   }
 
-  registerNotify(callback) {
+  async registerNotify(callback) {
     this.onnotify = callback;
+    let cccd = this.getDescriptor('2902');
+    await cccd.writeWait([0x01, 0x00]);
+
     const obj = {
       ble: {
         register_notify_characteristic: {
@@ -55,6 +58,15 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       },
     };
     this.service.peripheral.Obniz.send(obj);
+  }
+
+  registerNotifyWait(callback) {
+    return new Promise(resolve => {
+      this.emitter.once('onregisternotify', () => {
+        resolve();
+      });
+      this.registerNotify(callback);
+    });
   }
 
   unregisterNotify() {
@@ -69,6 +81,15 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       },
     };
     this.service.peripheral.Obniz.send(obj);
+  }
+
+  unregisterNotifyWait() {
+    return new Promise(resolve => {
+      this.emitter.once('onunregisternotify', () => {
+        resolve();
+      });
+      this.unregisterNotify();
+    });
   }
 
   read() {
@@ -168,21 +189,21 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   ondiscoverdescriptorfinished() {}
 
-  onregisternofity() {}
+  onregisternotify() {}
 
-  onunregisternofity() {}
+  onunregisternotify() {}
 
   onnotify() {}
 
   notifyFromServer(notifyName, params) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case 'onregisternofity': {
-        this.onregisternofity();
+      case 'onregisternotify': {
+        this.onregisternotify();
         break;
       }
-      case 'onunregisternofity': {
-        this.onunregisternofity();
+      case 'onunregisternotify': {
+        this.onunregisternotify();
         break;
       }
       case 'onnotify': {

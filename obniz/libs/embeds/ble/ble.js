@@ -25,6 +25,9 @@ class ObnizBLE {
     this._reset();
   }
 
+  //dummy
+  async initWait() {}
+
   _reset() {}
 
   findPeripheral(address) {
@@ -93,10 +96,22 @@ class ObnizBLE {
         name: 'onregisternotify',
         obj: 'characteristic',
       },
+      //for typo
+      register_nofity_characteristic_result: {
+        name: 'onregisternotify',
+        obj: 'characteristic',
+      },
       unregister_notify_characteristic_result: {
         name: 'onunregisternotify',
         obj: 'characteristic',
       },
+      //for typo
+      unregister_nofity_characteristic_result: {
+        name: 'onunregisternotify',
+        obj: 'characteristic',
+      },
+      notify_characteristic: { name: 'onnotify', obj: 'characteristic' },
+      //for typo
       nofity_characteristic: { name: 'onnotify', obj: 'characteristic' },
       get_descriptor_result: { name: 'discover', obj: 'characteristic' },
       get_descriptor_result_finish: {

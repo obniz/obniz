@@ -1,6 +1,8 @@
 const ObnizBLE = require('./libs/embeds/ble/ble');
+const ObnizBLEHci = require('./libs/embeds/bleHci/ble');
 const Display = require('./libs/embeds/display');
 const ObnizSwitch = require('./libs/embeds/switch');
+const semver = require('semver');
 
 const LogicAnalyzer = require('./libs/measurements/logicanalyzer');
 const ObnizMeasure = require('./libs/measurements/measure');
@@ -67,10 +69,17 @@ module.exports = class ObnizComponents extends ObnizParts {
       pwm: PeripheralPWM,
     };
 
+    let ble = ObnizBLEHci;
+
+    // < 3.0.0-beta
+    if (semver.lt(this.firmware_ver, '3.0.0-beta')) {
+      ble = ObnizBLE;
+    }
+
     const embeds_map = {
       display: Display,
       switch: ObnizSwitch,
-      ble: ObnizBLE,
+      ble: ble,
     };
 
     const protocol_map = {
