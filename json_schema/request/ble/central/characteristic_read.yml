@@ -3,6 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/central/characteristic_read"
 related :  "/response/ble/central/characteristic_read"
+deprecated : 3.0.0
 
 type: object
 required : [read_characteristic]
