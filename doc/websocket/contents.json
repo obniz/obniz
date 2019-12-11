@@ -61,19 +61,9 @@
       "filename": "switch"
     },
     {
-      "title": "BLE use as central",
-      "title-ja": "BLEセントラル",
-      "filename": "ble_central"
-    },
-    {
-      "title": "BLE use as peripheral",
-      "title-ja": "BLEペリフェラル",
-      "filename": "ble_peripheral"
-    },
-    {
-      "title": "BLE security",
-      "title-ja": "BLEセキュリティ",
-      "filename": "ble_security"
+      "title": "BLE HCI",
+      "title-ja": "BLE HCI",
+      "filename": "ble_hci"
     },
     {
       "title": "Message",
