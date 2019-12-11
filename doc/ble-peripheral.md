@@ -3,13 +3,24 @@ You can use bluetooth Low Energy with obniz Board as peripheral/central
 
 # Use obniz Board as ble peripheral
 
+## \[await] initWait()
+
+Initialize BLE module.
+
+```Javascript
+// Javascript Example
+
+obniz.ble.initWait(); 
+
+```
+
 ## advertisement.start()
 This starts advertisement of BLE.
 Before calling this function, you should call setAdvData/setAdvDataRaw to set data.
 
 ```Javascript
 // Javascript Example
-// Javascript Example
+obniz.ble.initWait(); 
 var service = new obniz.ble.service({
   uuid : "FFF0"
 });
@@ -24,6 +35,7 @@ This stops advertisement of BLE.
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.start();
 obniz.ble.advertisement.end();
 ```
@@ -35,6 +47,7 @@ This sets advertise data from data array.
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x02, 0x01, 0x1A  => BLE type for 
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
@@ -49,7 +62,7 @@ This sets advertise data from json.
 ```Javascript
 // Javascript Example
 
-// Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
   manufacturerData:{
@@ -84,6 +97,7 @@ This sets scan response data from data array.
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
 
@@ -96,6 +110,7 @@ This sets scan response data from json data.
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setScanRespData({
   localName : "obniz BLE",
 });
@@ -125,6 +140,8 @@ This starts a service as peripheral with setting_json or service_obj.
 
 service_obj
 ```Javascript
+
+obniz.ble.initWait(); 
 /* Service without characteristics */
 var service = new obniz.ble.service({"uuid" : "FFF0"});
 obniz.ble.peripheral.addService(service);
@@ -145,6 +162,7 @@ obniz.ble.peripheral.addService(service); // call this after all descriptors and
 This is a callback function used when an external device gets connected or disconnected.
     
 ```Javascript
+obniz.ble.initWait(); 
 obniz.ble.peripheral.onconnectionupdates = function(data){
   console.log("remote device ", data.address, data.status)
 };
@@ -167,6 +185,7 @@ This creates service object
 uuid is required and characteristics is optional.
 
 ```Javascript
+obniz.ble.initWait(); 
 var service = new obniz.ble.service({
                 "uuid" : "FFF0",
                 "characteristics" : [{
@@ -187,6 +206,7 @@ obniz.ble.peripheral.addService(service);
 ## new characteristic(json)
 
 ```Javascript
+obniz.ble.initWait(); 
 var characteristic = new obniz.ble.characteristic({
         "uuid" : "FFF1",
         "properties" : ["read","write"],  // read, write, notify
@@ -292,19 +312,13 @@ characteristic.onreadfromremote = function(address){
 
 ## characteristic.notify()
 This sends notify to the connected central.
-It needs CCCD descriptor(0x2901).
 
 ```javascript
 var characteristic = new obniz.ble.characteristic({
   uuid: 'FFF1',
   data: [0x0e, 0x00],
   properties : ["read","write","notify"],  // add notify properties
-  descriptors: [
-    {
-      uuid: '2902', //CCCD
-      data: [0x00, 0x00],  //2byte
-    }, 
-  ],
+ 
 });
 
 var service = new obniz.ble.service({
@@ -324,6 +338,8 @@ characteristic.notify();
 This creates descriptor.
 
 ```Javascript
+
+obniz.ble.initWait(); 
 var descriptor = new obniz.ble.characteristic({
                       "uuid" : "2901",   //Characteristic User Description
                       "text" : "hello world characteristic",

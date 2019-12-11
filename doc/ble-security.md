@@ -1,7 +1,10 @@
+This Page Contains DEPRECATED INFORMATION!
+
+
 # BLE Security
 
 
-## security.setModeLevel(mode, level)
+## \[DEPRECATED] security.setModeLevel(mode, level)
 
 (ref : Core Spec 4.2 Vol.3 Part.C 10)
 This function use `setIndicateSecurityLevel`,`setAuth`,`setEnableKeyTypes`.
@@ -34,7 +37,7 @@ security.setModeLevel(1, 2); //LE Security Mode 1, Level 2
 
 ```
 
-## security.setIndicateSecurityLevel(level)
+## \[DEPRECATED] security.setIndicateSecurityLevel(level)
 
 When obniz Board is pheripheral mode and a central connected,
 obniz Board require to the central paring request include security level which want to use.
@@ -46,7 +49,7 @@ If set 0, don't send paring request.
 obniz.ble.security.setEncryptionLevel(1);
 ```
 
-## security.setAuth([auth_type1, auth_type2 ...])
+## \[DEPRECATED] security.setAuth([auth_type1, auth_type2 ...])
 
 Set authorization type.
 
@@ -66,7 +69,7 @@ obniz.ble.security.setAuth(['bonding','mitm','secure_connection']);
 
 
 
-## security.setEnableKeyTypes([key_type1, key_type2 ...])
+## \[DEPRECATED] security.setEnableKeyTypes([key_type1, key_type2 ...])
 
 Set security keys to use.
 
@@ -94,7 +97,7 @@ obniz.ble.security.setEnableKeyTypes(['IRK', 'LTK']);
 
 
 
-## security.setKeyMaxSize(num)
+## \[DEPRECATED] security.setKeyMaxSize(num)
 
 
 ```javascript
@@ -102,7 +105,7 @@ obniz.ble.security.setEnableKeyTypes(['IRK', 'LTK']);
 ```
 
 
-# security.onerror(param)
+# \[DEPRECATED] security.onerror(param)
 
 Call when error occured.
 

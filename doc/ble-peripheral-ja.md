@@ -1,11 +1,24 @@
 # obniz Boardをperipheralとして使う
 
+## \[await] initWait()
+
+BLEを初期化します
+
+```Javascript
+// Javascript Example
+
+obniz.ble.initWait(); 
+
+```
+
+
 ## advertisement.start()
 
 BLEのAdvertisementを開始します。setAdvData/setAdvDataRaw関数で何をAdvertiseするのか指定できます。
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 var service = new obniz.ble.service({
   uuid : "FFF0"
 });
@@ -21,6 +34,7 @@ BLEのAdvertisementを終了します
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.start();
 obniz.ble.advertisement.end();
 ```
@@ -35,6 +49,7 @@ Advertisementで出力するデータバイト列を生成するadvDataBuilder�
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x02, 0x01, 0x1A  => BLE type for 
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
@@ -49,6 +64,7 @@ settingに渡した引数に従って，BLEのAdvertisementで出力するデー
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
   manufacturerData:{
@@ -86,6 +102,7 @@ ScanResponseで出力するデータバイト列を生成するscanRespDataBuild
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
 
@@ -100,6 +117,7 @@ settingに渡した引数に従って，BLEのScan Responseで出力するデー
 
 ```Javascript
 // Javascript Example
+obniz.ble.initWait(); 
 obniz.ble.advertisement.setScanRespData({
   localName : "obniz BLE",
 });
@@ -127,6 +145,7 @@ peripheralとしてサービスを開始します
 引数にjsonデータもしくはサービスオブジェクトを渡します．
 
 ```Javascript
+obniz.ble.initWait(); 
 /* Service without characteristics */
 var service = new obniz.ble.service({"uuid" : "FFF0"});
 obniz.ble.peripheral.addService(service);
@@ -148,6 +167,7 @@ obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,ad
 外部デバイスが接続／切断されたときに呼ばれるコールバックです
     
 ```Javascript
+obniz.ble.initWait(); 
 obniz.ble.peripheral.onconnectionupdates = function(data){
   console.log("remote device ", data.address, data.status)
 };
@@ -159,6 +179,7 @@ obniz.ble.peripheral.onconnectionupdates = function(data){
 peripheralのサービスをすべて終了します
 ```Javascript
 
+obniz.ble.initWait(); 
 obniz.ble.peripheral.addService(service1);
 obniz.ble.peripheral.addService(service2);
 
@@ -193,6 +214,7 @@ obniz.ble.peripheral.addService(service);
 サービスを終了します
 ```Javascript
 
+obniz.ble.initWait(); 
 var service = new obniz.ble.service({   "uuid" : "FFF0" });
 obniz.ble.peripheral.addService(service); 
 
@@ -206,6 +228,7 @@ service.end();
 ## new characteristic(json)
 
 ```Javascript
+obniz.ble.initWait(); 
 var characteristic = new obniz.ble.characteristic({
     "uuid" : "FFF1",
     "properties" : ["read","write"],  // read, write, notify
@@ -313,19 +336,14 @@ characteristic.onreadfromremote = function(address){
 
 ## characteristic.notify()
 接続済みのcentralに対してnotifyを出します．
-BLEの仕様上，CCCDのdescriptor(0x2901)が必要です．
 
 ```javascript
+obniz.ble.initWait(); 
 var characteristic = new obniz.ble.characteristic({
   uuid: 'FFF1',
   data: [0x0e, 0x00],
   properties : ["read","write","notify"],  // add notify properties
-  descriptors: [
-    {
-      uuid: '2902', //CCCD
-      data: [0x00, 0x00],  //2byte
-    }, 
-  ],
+ 
 });
 
 var service = new obniz.ble.service({
@@ -348,6 +366,7 @@ characteristic.notify();
 
 
 ```Javascript
+obniz.ble.initWait(); 
 var descriptor = new obniz.ble.characteristic({
                       "uuid" : "2901",   //Characteristic User Description
                       "text" : "hello world characteristic",

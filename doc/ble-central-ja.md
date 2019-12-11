@@ -1,5 +1,17 @@
 # obniz Boardをcentralとして使う
 
+## \[await] initWait()
+
+BLEを初期化します
+
+```Javascript
+// Javascript Example
+
+obniz.ble.initWait(); 
+
+```
+
+
 ## scan.start( \[target, \[setting]])
 
 BLEのscanを開始します

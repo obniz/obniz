@@ -1,5 +1,18 @@
 # Use obniz Board as central
 
+
+## \[await] initWait()
+
+Initialize BLE module.
+
+```Javascript
+// Javascript Example
+
+obniz.ble.initWait(); 
+
+```
+
+
 ## scan.start( \[target, \[setting]])
 
 This starts scanning BLE.
