@@ -4,6 +4,7 @@
     "obnizA",
     "obnizB"
   ],
+  "sleep_test": false,
   "io": [
 
     {
