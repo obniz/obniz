@@ -35,10 +35,12 @@ describe('10-sleep', function() {
   //step2
   it('sleep', async function() {
     obnizA.sleepSeconds(5);
+    obnizB.getIO(0).pull('0v');
+    obnizB.getIO(0).drive('open-drain');
     await wait(3000); //sleep = Wait 3 seconds because we can't verify if the command was executed offline
     config.close(obnizA);
-    let valB = await obnizB.getIO(0).inputWait();
-    expect(valB, `expected io0 ${valB} is must be false`).to.be.equal(false);
+    let voltage = await obnizB.getAD(0).getWait();
+    expect(voltage, `expected io0 ${voltage} is  0 ~ 2`).to.be.within(0, 2);
   });
 
   //step3

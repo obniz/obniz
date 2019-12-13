@@ -3,6 +3,7 @@ const Obniz = require('../index.js');
 //const json = require('./board/esp32devkitc_check_io.json');
 //const json = require('./board/m5stickc_check_io.json');
 //const json = require('./board/obniz_check_io.json');
+//const json = require('./board/obniz_1y_check_io.json');
 //const json = require('./board/esp32lte_check_io.json');
 const json = require('./board/esp32pikokitv4_check_io.json');
 
@@ -141,4 +142,5 @@ module.exports = {
   check_io,
   getDevice,
   LOCAL_IP,
+  json,
 };
