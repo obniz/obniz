@@ -1,8 +1,9 @@
 {
-  "name": "obniz",
+  "name": "obniz board",
   "board": [
     "obnizA"
   ],
+  "sleep_test": false,
   "io": [
     {
       "board_io": 0,
