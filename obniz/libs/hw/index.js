@@ -10,6 +10,8 @@ module.exports = class HW {
       return require('./esp32w.json');
     } else if (hw === 'esp32p') {
       return require('./esp32p.json');
+    } else if (hw === 'encored') {
+      return require('./encored.json');
     }
     return undefined;
   }
