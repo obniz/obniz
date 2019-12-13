@@ -3,6 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/peripheral/characteristic_notify_read"
 description : "callback of external device read characteristic"
+deprecated : 3.0.0
 
 
 type: object

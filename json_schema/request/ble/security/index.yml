@@ -4,6 +4,8 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/security"
 basePath : "ble.security"
 description : "set obniz Board ble security"
+deprecated : 3.0.0
+
 
 "anyOf":
   -  {$ref : "/request/ble/security/indicate_security_level"}

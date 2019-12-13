@@ -1,7 +1,10 @@
+このページには古い情報が含まれています
+
+
 # セキュリティの設定をする
 
 
-## security.setModeLevel(mode, level)
+## \[DEPRECATED] security.setModeLevel(mode, level) 
 
 BLEの仕様に基づいたセキュリティを設定します。(Core Spec 4.2 Vol.3 Part.C 10)
 `setIndicateSecurityLevel`や`setAuth`、`setEnableKeyTypes`を一括で設定します
@@ -33,7 +36,7 @@ security.setModeLevel(1, 2); //LE Security Mode 1, Level 2
 
 ```
 
-## security.setIndicateSecurityLevel(level)
+## \[DEPRECATED] security.setIndicateSecurityLevel(level)
 
 ペアリング要求時のセキュリティレベルを設定します。
 0の場合、ペアリング要求を行いません
@@ -42,7 +45,7 @@ security.setModeLevel(1, 2); //LE Security Mode 1, Level 2
 obniz.ble.security.setEncryptionLevel(1);
 ```
 
-## security.setAuth([auth_type1, auth_type2 ...])
+## \[DEPRECATED] security.setAuth([auth_type1, auth_type2 ...])
 
 認証の設定をします
 
@@ -63,7 +66,7 @@ obniz.ble.security.setAuth(['bonding','mitm','secure_connection']);
 
 
 
-## security.setEnableKeyTypes([key_type1, key_type2 ...])
+## \[DEPRECATED] security.setEnableKeyTypes([key_type1, key_type2 ...])
 
 認証に使うキーの設定をします
 
@@ -91,7 +94,7 @@ obniz.ble.security.setEnableKeyTypes(['IRK', 'LTK']);
 
 
 
-## security.setKeyMaxSize(num)
+## \[DEPRECATED] security.setKeyMaxSize(num)
 
 
 ```javascript
@@ -99,7 +102,7 @@ obniz.ble.security.setEnableKeyTypes(['IRK', 'LTK']);
 ```
 
 
-# security.onerror(param)
+# \[DEPRECATED] security.onerror(param)
 
 エラーが発生したときに呼ばれます
 現状、発生しうるエラーはsecurity.setEnableKeyTypesが失敗したときのみです。

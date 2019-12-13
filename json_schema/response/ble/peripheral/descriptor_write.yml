@@ -3,7 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/peripheral/descriptor_write"
 description : "callback of write descriptor"
-
+deprecated : 3.0.0
 
 type: object
 required : [peripheral]
