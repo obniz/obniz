@@ -26,6 +26,9 @@ describe('10-sleep', function() {
 
   //step1
   it('setup', async function() {
+    if (obnizA.hw !== 'obnizb2') {
+      return;
+    }
     obnizA.getIO(0).output(true);
     await obnizA.pingWait();
     let valB = await obnizB.getIO(0).inputWait();
@@ -34,6 +37,9 @@ describe('10-sleep', function() {
 
   //step2
   it('sleep', async function() {
+    if (obnizA.hw !== 'obnizb2') {
+      return;
+    }
     obnizA.sleepSeconds(5);
     obnizB.getIO(0).pull('0v');
     obnizB.getIO(0).drive('open-drain');
@@ -45,6 +51,9 @@ describe('10-sleep', function() {
 
   //step3
   it('wakeup', async function() {
+    if (obnizA.hw !== 'obnizb2') {
+      return;
+    }
     await reconnect();
     await wait(1000);
     await obnizA.pingWait();
@@ -57,6 +66,9 @@ describe('10-sleep', function() {
 
   //step4
   it('sleepIO sleep', async function() {
+    if (obnizA.hw !== 'obnizb2') {
+      return;
+    }
     obnizA.sleepIoTrigger(true);
     config.close(obnizA);
     await wait(3000); //sleep = Wait 3 seconds because we can't verify if the command was executed offline
