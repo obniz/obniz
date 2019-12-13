@@ -5,14 +5,16 @@ let obnizA, obnizB;
 describe('7-ble', function() {
   this.timeout(30000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(async function() {
+    await new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         obnizB = config.obnizB;
         resolve();
       });
     });
+    await obnizA.ble.initWait();
+    await obnizB.ble.initWait();
   });
 
   it('simple ad', async function() {

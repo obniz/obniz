@@ -1,0 +1,8 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/hci"
+basePath : "ble"
+
+"anyOf":
+  -  {$ref : "/request/ble/hci/write"}

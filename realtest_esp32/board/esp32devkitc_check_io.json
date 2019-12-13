@@ -4,6 +4,7 @@
     "obnizA",
     "obnizB"
   ],
+  "sleep_test": false,
   "io": [
     {
       "//": "default pin (0:pullup,2:pulldown)",

@@ -225,6 +225,7 @@ module.exports = class ObnizConnection {
     let ws;
     if (this.isNode) {
       const wsClient = require('ws');
+
       ws = new wsClient(url);
       ws.on('open', () => {
         this.print_debug('connected to ' + url);

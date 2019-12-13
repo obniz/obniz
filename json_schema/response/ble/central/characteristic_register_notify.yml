@@ -3,6 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id:  "/response/ble/central/characteristic_register_notify"
 related :  "/request/ble/central/characteristic_register_notify"
+deprecated : 3.0.0
 
 type: object
 required : [characteristic_register_notify_result]

@@ -3,7 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/central/descriptor_write"
 related :  "/response/ble/central/descriptor_write"
-
+deprecated : 3.0.0
 
 type: object
 required : [write_descriptor]

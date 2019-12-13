@@ -3,6 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/security/indicate_security_level"
 description : "ble indicate security level settings"
+deprecated : 3.0.0
 
 
 type: object

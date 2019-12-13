@@ -3,7 +3,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/security/key_type"
 description : "ble encription key type settings"
-
+deprecated : 3.0.0
 
 type: object
 required : [security]

@@ -1,5 +1,6 @@
 const JsonBinaryConverter = require('./jsonBinaryConverter');
 const WSCommand = require('./WSCommand_.js');
+const WSCommand_BleHci = require('./WSCommand_BleHci');
 
 class WSCommand_Ble extends WSCommand {
   constructor() {
@@ -42,7 +43,7 @@ class WSCommand_Ble extends WSCommand {
     this._CommandServerReadDescriptorValue = 30;
     this._CommandServerNotifyWriteDescriptorValue = 31;
     this._CommandServerNotifyReadDescriptorValue = 32;
-    this._CommandServerNofityCharavteristic = 33;
+    this._CommandServerNotifyCharavteristic = 33;
     this._CommandServerStartStopService = 34;
 
     this._CommandSecuritySetAuth = 35;
@@ -116,6 +117,8 @@ class WSCommand_Ble extends WSCommand {
       0x02: 'irk',
       0x04: 'csrk',
     };
+
+    this.hciCommand = new WSCommand_BleHci(this);
   }
 
   /* CENTRAL   */
@@ -643,7 +646,7 @@ class WSCommand_Ble extends WSCommand {
       },
     ];
     let buf = JsonBinaryConverter.createSendBuffer(schema, params);
-    this.sendCommand(this._CommandServerNofityCharavteristic, buf);
+    this.sendCommand(this._CommandServerNotifyCharavteristic, buf);
   }
 
   peripheralDescriptorRead(params) {
@@ -867,6 +870,8 @@ class WSCommand_Ble extends WSCommand {
         onValid: this.clearBondingDevicesList,
       },
     ];
+
+    schemaData.push(...this.hciCommand.schemaData());
     let res = this.validateCommandSchema(schemaData, module, 'ble');
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {
@@ -943,6 +948,8 @@ class WSCommand_Ble extends WSCommand {
     funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(
       this
     );
+
+    Object.assign(funcList, this.hciCommand.notifyFunctionList());
 
     if (funcList[func]) {
       funcList[func](objToSend, payload);
@@ -1117,7 +1124,7 @@ class WSCommand_Ble extends WSCommand {
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(
       objToSend,
-      'ble.register_nofity_characteristic_result',
+      'ble.register_notify_characteristic_result',
       results
     );
   }
@@ -1135,7 +1142,7 @@ class WSCommand_Ble extends WSCommand {
       results.result === this._commandResults['success'] ? 'success' : 'failed';
     this._addRowForPath(
       objToSend,
-      'ble.unregister_nofity_characteristic_result',
+      'ble.unregister_notify_characteristic_result',
       results
     );
   }
@@ -1150,7 +1157,7 @@ class WSCommand_Ble extends WSCommand {
 
     let results = JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
     results.is_notify = results.is_notify === 1;
-    this._addRowForPath(objToSend, 'ble.nofity_characteristic', results);
+    this._addRowForPath(objToSend, 'ble.notify_characteristic', results);
   }
 
   notifyFromBinaryDescriptors(objToSend, payload) {

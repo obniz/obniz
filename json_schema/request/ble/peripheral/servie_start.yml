@@ -9,7 +9,7 @@ related :
   - "/response/ble/peripheral/descriptor_notify_read"
   - "/response/ble/peripheral/descriptor_notify_write"
 description : "callback of external device connected"
-
+deprecated : 3.0.0
 
 type: object
 required : [peripheral]

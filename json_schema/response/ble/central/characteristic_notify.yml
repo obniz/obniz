@@ -2,12 +2,12 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/central/characteristic_notify"
-
+deprecated : 3.0.0
 
 type: object
-required : [nofity_characteristic]
+required : [notify_characteristic]
 properties:
-    nofity_characteristic :
+  notify_characteristic :
             type : object
             required: [address,service_uuid,characteristic_uuid, data]
             additionalProperties: false

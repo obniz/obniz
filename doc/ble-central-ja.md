@@ -1,5 +1,17 @@
 # obniz Boardをcentralとして使う
 
+## \[await] initWait()
+
+BLEを初期化します
+
+```Javascript
+// Javascript Example
+
+obniz.ble.initWait(); 
+
+```
+
+
 ## scan.start( \[target, \[setting]])
 
 BLEのscanを開始します
@@ -450,9 +462,6 @@ obniz.ble.scan.start();
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).getDescriptor(uuid).registerNotify(func)
 
 peripheralからnotifyがきたときに受け取る関数を設定します．
-notifyを受け取るためには，BLEの仕様上，CCCD Descriptor(0x2902)を書き込む必要があります
-
-BLE/CCCDの仕様については[bluetooth公式ドキュメント](https://www.bluetooth.com/specifications/gatt/descriptors/)を確認ください
 
 
 
@@ -465,10 +474,6 @@ var peripheral = await obniz.ble.scan.startOneWait(target);
 var connected = await peripheral.connectWait();
 if(connected){
   let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
-  let cccd = char.getDescriptor("2902");
-  let result = await cccd.writeWait([0x01, 0x00]); // register cccd for remote peripheral 
-
-  console.log(await cccd.readWait()); // check cccd 
   
   char.registerNotify( function(data){
     console.log("notify with data " + data.join(','));

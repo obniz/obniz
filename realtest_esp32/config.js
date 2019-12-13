@@ -1,21 +1,26 @@
 const Obniz = require('../index.js');
 
-const json = require('./board/esp32devkitc_check_io.json');
+//const json = require('./board/esp32devkitc_check_io.json');
 //const json = require('./board/m5stickc_check_io.json');
 //const json = require('./board/obniz_check_io.json');
+//const json = require('./board/obniz_1y_check_io.json');
 //const json = require('./board/esp32lte_check_io.json');
+const json = require('./board/esp32pikokitv4_check_io.json');
+
 //test device
 //esp32
-const checkBoard_ID = '30109815';
+//const checkBoard_ID = '30109815';
 //m5stickc
 //const checkBoard_ID = '09130585';
 //obniz
 //const checkBoard_ID = '09643850';
 //LTE
 //const checkBoard_ID = '64188531';
+//pico
+const checkBoard_ID = '05094470';
 //check device
 const obnizA_ID = '07368634';
-const obnizB_ID = '51871280';
+const obnizB_ID = '75373579';
 
 //TCP Command Test
 //Express server used
@@ -137,4 +142,5 @@ module.exports = {
   check_io,
   getDevice,
   LOCAL_IP,
+  json,
 };

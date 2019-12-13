@@ -76,6 +76,8 @@ class obnizJsonValidator {
       let schema = tv4.getSchema(elm);
       if (schema['anyOf']) {
         return false;
+      } else if (schema['deprecated']) {
+        return false;
       } else {
         return true;
       }
@@ -127,10 +129,15 @@ class obnizJsonValidator {
     let useCommandUnique = this.useCommands[type].filter(function(x, i, self) {
       return self.indexOf(x) === i;
     });
-    useCommandUnique = useCommandUnique.sort();
+    let allCommands = this.commandAll();
+    useCommandUnique = useCommandUnique
+      .filter(elm => {
+        return allCommands.indexOf(elm) !== -1;
+      })
+      .sort();
 
     let unusedCommand = this.commandAll().filter(elm => {
-      return useCommandUnique.indexOf(elm) == -1;
+      return useCommandUnique.indexOf(elm) === -1;
     });
 
     results.push(
@@ -145,7 +152,7 @@ class obnizJsonValidator {
     );
 
     if (unusedCommand.length > 0) {
-      results.push('not tested:');
+      results.push('not tested(exclude:deprecated):');
       for (let command of unusedCommand) {
         results.push('\t' + command);
       }

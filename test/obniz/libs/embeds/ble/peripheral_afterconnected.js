@@ -6,7 +6,9 @@ chai.use(testUtil.obnizAssert);
 
 describe('ble', function() {
   beforeEach(function() {
-    testUtil.setupObnizPromise(this, function() {});
+    testUtil.setupObnizPromise(this, function() {}, {
+      __firmware_ver: '2.0.0',
+    });
     let service = new this.obniz.ble.service({ uuid: 'FFF0' });
     let characteristic = new this.obniz.ble.characteristic({
       uuid: 'FFF1',
