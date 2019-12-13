@@ -20,6 +20,9 @@ describe('9-ble-security', function() {
   it('dummy for reboot', async function() {});
 
   it('security', async function() {
+    if (obnizA.ble.hci) {
+      return;
+    }
     obnizA.ble.security.setModeLevel(1, 2);
 
     let SPDIService = new obnizA.ble.service({
