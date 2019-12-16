@@ -1,6 +1,6 @@
 # Peripherals IO
 General purpose IO
-io0からio11まで利用できます。
+利用できるioは利用するデバイスによります。obniz Boardシリーズならio0~io11の12個となります
 
 #### 特徴
 ##### output
@@ -10,8 +10,8 @@ io0からio11まで利用できます。
 
 タイプ | 電圧 | 最大電流 | 最大周波数 | 詳細
 :---: | :---: | :---: | :---: | ---
-push-pull | `5v` | <=1A | <=250khz(推奨) | 標準。過電流/ドライバ高温保護付き
-push-pull | `3v` | <=1mA(推奨) | <=80Mhz | io.output()使用時の過電流自動停止と警告
+push-pull | `5v(vcc)` | <=1A | <=250khz(推奨) | 標準。(obniz Boardでは過電流/ドライバ高温保護付き)
+push-pull | `3v` | <=1mA(推奨) | <=80Mhz | (obniz Boardではio.output()使用時の過電流自動停止と警告)
 open-drain | `<=5v` | <=1mA(推奨) | <=80Mhz | 
 
 上記出力方法はIOごとに設定できます。
@@ -49,10 +49,10 @@ obniz.io1.output(true); // io1 is 5V
 
 ## drive(type)
 出力するときのドライブ方法を変更します。
-デフォルトでは"5v"となっていて、モータードライバを使った5vのプッシュプルで、最大電流が1Aのモードとなっています。
+デフォルトでは"5v(vcc)"となっていて、モータードライバを使った5vのプッシュプルで、最大電流が1Aのモードとなっています。
 
 1. "5v"
-  - push-pull 5v モード. 最大1A
+  - push-pull 5v(vcc) モード. 最大1A
 2. "3v"
   - push-pull 3v モード. 最大約 1mA. 電圧は電流を流すほど低下していきます。
 3. "open-drain"
@@ -76,7 +76,7 @@ obniz.io2.output(true); // output open-drain with 5v pull-up
 IOの内部プルアップ・プルダウンを変更します。
 
 1. null (default) 
-2. "5v"  5vに内部プルアップします。
+2. "5v"  5v(vcc)に内部プルアップします。
 3. "3v"  3vに内部プルアップします。
 4. "0v"  gndにプルダウンします。
 
