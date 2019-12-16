@@ -2,14 +2,14 @@ const config = require('../config.js');
 
 let obnizA, obnizB;
 
-describe('4-uart', function() {
+describe('4-uart-exchange', function() {
   this.timeout(10000);
 
   before(function() {
     return new Promise(resolve => {
       config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        obnizB = config.obnizB;
+        obnizB = config.obnizA;
+        obnizA = config.obnizB; //exchange A<->B
         resolve();
       });
     });
