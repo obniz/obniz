@@ -88,6 +88,10 @@ describe('8-ble', function() {
     }
     //console.log('CONNECTED');
 
+    await new Promise(r => {
+      setTimeout(r, 1000);
+    });
+
     this.peripheral = peripheral;
     this.service = service;
   });
