@@ -41058,7 +41058,7 @@ Mgmt.prototype.write = function(opcode, index, data) {
   }
 
   debug('writing -> ' + pkt.toString('hex'));
-  this._hci.write(pkt);
+  this._hci._socket.write(pkt);
 };
 
 module.exports = Mgmt;
