@@ -20,6 +20,11 @@
       "filename": "utils"
     },
     {
+      "title": "Sleep",
+      "title-ja": "スリープ",
+      "filename": "sleep"
+    },
+    {
       "title": "Messaging",
       "title-ja": "メッセージング",
       "filename": "messaging"
