@@ -7,7 +7,7 @@ BLEを初期化します
 ```Javascript
 // Javascript Example
 
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 
 ```
 
