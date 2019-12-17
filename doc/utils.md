@@ -82,32 +82,32 @@ Action only with obniz Board 1Y.
 Obniz Board sleeps for the value specified in Date type.
 
 Sleep for up to 45 days (64800 minutes).
-`` `Javascript
+```Javascript
 // JavaScript example
 let dt = new Date ();
 dt.setHours (dt.getHours () + 1,0,0,0); 
 obniz.sleep (dt);
-`` `
+```
 ## sleepSeconds (seconds)
 Action only with obniz Board 1Y.
 
 Obniz Board sleeps for the value specified in seconds.
 
 Sleep up to 18 hours (64800 seconds).
-`` `Javascript
+```Javascript
 // JavaScript example
 obniz.sleepSeconds (60); // 60 seconds
-`` `
+```
 ## sleepMinute (minutes)
 Action only with obniz Board 1Y.
 
 Obniz Board sleeps for the value specified in minutes.
 
 Sleep for up to 45 days (64800 minutes).
-`` `Javascript
+```Javascript
 // JavaScript example
 obniz.sleepMinute （60）; // 60 minutes
-`` `
+```
 ## sleepIoTrigger (Trigger)
 Action only with obniz Board 1Y.
 
@@ -116,7 +116,7 @@ It returns from sleep depending on the pin state of IO0.
 true: Rise
 false: Falling
 
-`` `Javascript
+```Javascript
 // JavaScript example
 obniz.sleepIoTrigger (true);
-`` `
+```
