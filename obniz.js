@@ -39340,6 +39340,9 @@ BlenoBindings.prototype.onLeConnUpdateComplete = function(
 };
 
 BlenoBindings.prototype.onDisconnComplete = function(handle, reason) {
+  if (this._handle !== handle) {
+    return; //not peripheral
+  }
   if (this._aclStream) {
     this._aclStream.push(null, null);
   }
@@ -39919,7 +39922,8 @@ Gatt.prototype.setServices = function(services) {
         value: characteristic.value,
       };
 
-      if (properties & 0x30) {
+      let hasCCCD = characteristic.descriptors.find(e => e.uuid === '2902');
+      if (hasCCCD || properties & 0x30) {
         // notify or indicate
         // add client characteristic configuration descriptor
 
@@ -39938,7 +39942,9 @@ Gatt.prototype.setServices = function(services) {
 
       for (let k = 0; k < characteristic.descriptors.length; k++) {
         let descriptor = characteristic.descriptors[k];
-
+        if (descriptor.uuid === '2902') {
+          continue;
+        }
         handle++;
         let descriptorHandle = handle;
 
