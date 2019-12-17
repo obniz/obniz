@@ -34888,8 +34888,8 @@ class BleRemotePeripheral {
   }
 
   async discoverAllHandlesWait(){
-    if (!Array.prototype.flat) {
-      Array.prototype.flat = function(depth) {
+
+      let ArrayFlat = function(array, depth) {
         var flattend = [];
         (function flat(array, depth) {
           for (let el of array) {
@@ -34899,16 +34899,15 @@ class BleRemotePeripheral {
               flattend.push(el);
             }
           }
-        })(this, Math.floor(depth) || 1);
+        })(array, Math.floor(depth) || 1);
         return flattend;
       };
-    }
 
     let services = await this.discoverAllServicesWait();
     let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
-    let chars = charsNest.flat();
+    let chars =  ArrayFlat(charsNest);
     let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
-    let descriptors = descriptorsNest.flat();
+    let descriptors = ArrayFlat(descriptorsNest)
 
   }
 
