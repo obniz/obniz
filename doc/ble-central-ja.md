@@ -31,6 +31,8 @@ var target = {
 var setting = {
     duration : 10   //scanをする期間を秒で指定．指定なしではデフォルト30秒
 }
+
+await obniz.ble.initWait(); 
 obniz.ble.scan.start(target, setting);
 
 ```
@@ -39,6 +41,7 @@ obniz.ble.scan.start(target, setting);
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 obniz.ble.scan.start();  // 引数なしも可能
 
 ```
@@ -51,6 +54,7 @@ var target = {
     uuids: ["FFF0"],
 };
 
+await obniz.ble.initWait(); 
 obniz.ble.scan.start(target);
 
 ```
@@ -61,6 +65,7 @@ BLEのscanを停止します
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 obniz.ble.scan.start();
 await obniz.wait(5000);
 obniz.ble.scan.end();
@@ -76,6 +81,7 @@ scanでperipheralを発見すると呼ばれます
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 obniz.ble.scan.onfind = function(peripheral){
    console.log(peripheral)
 };
@@ -91,6 +97,7 @@ obniz.ble.scan.start();
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 obniz.ble.scan.onfind = function(peripheral){
    console.log(peripheral)
 };
@@ -111,6 +118,7 @@ scanし，targetで指定された対象のうち，一番最初に見つかっ�
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -128,6 +136,7 @@ scanし，targetで指定された対象すべてのperipheralを返します．
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -147,6 +156,8 @@ advertise dataの生データを返します
 
 ```Javascript
 // Javascript Example
+
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -162,6 +173,7 @@ advertise dataの中にlocal Name情報があればそれを返します
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -188,6 +200,8 @@ advertise dataの中にiBeacon情報があればそれを返します．なけ�
 
 ```Javascript
 // Javascript Example
+
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -222,6 +236,7 @@ peripheralに接続します
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -241,6 +256,8 @@ if(connected){
 
 ```Javascript
 // Javascript Example
+
+await obniz.ble.initWait(); 
 obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
@@ -261,6 +278,7 @@ peripheralから切断します
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -289,6 +307,8 @@ if(peripheral){
 
 ```Javascript
 // Javascript Example
+
+await obniz.ble.initWait(); 
 obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
@@ -310,6 +330,8 @@ characteristicにdataArrayを書き込みます
 
 ```Javascript
 // Javascript Example
+
+await obniz.ble.initWait(); 
 
 var target = {
     uuids: ["FFF0"],
@@ -340,6 +362,7 @@ characteristicに数字を1byteとしてを書き込みます
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -368,6 +391,7 @@ characteristicに文字列を書き込みます
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -417,7 +441,8 @@ characteristicからデータを読み込みます
 
 ```Javascript
 // Javascript Example
-// Javascript Example
+
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -466,6 +491,8 @@ peripheralからnotifyがきたときに受け取る関数を設定します．
 
 
 ```javascript
+
+await obniz.ble.initWait(); 
 var target = {
   localName: "obniz-notify"
 };
@@ -497,6 +524,7 @@ descriptorにdataArrayを書き込みます
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -526,6 +554,7 @@ descriptorに数字を1byteとしてを書き込みます
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -555,6 +584,7 @@ descriptorに文字列を書き込みます
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -603,6 +633,7 @@ descriptorからデータを読み込みます
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -667,6 +698,7 @@ obniz.ble.scan.start();
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
