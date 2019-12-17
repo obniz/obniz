@@ -8611,7 +8611,7 @@ module.exports = verify
 /* WEBPACK VAR INJECTION */(function(global) {/*!
  * The buffer module from node.js, for the browser.
  *
- * @author   Feross Aboukhadijeh <http://feross.org>
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
  * @license  MIT
  */
 /* eslint-disable no-proto */
@@ -11727,8 +11727,9 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
 var assert = __webpack_require__("./node_modules/minimalistic-assert/index.js");
 var inherits = __webpack_require__("./node_modules/inherits/inherits_browser.js");
 
-var utils = __webpack_require__("./node_modules/des.js/lib/des/utils.js");
-var Cipher = __webpack_require__("./node_modules/des.js/lib/des/cipher.js");
+var des = __webpack_require__("./node_modules/des.js/lib/des.js");
+var utils = des.utils;
+var Cipher = des.Cipher;
 
 function DESState() {
   this.tmp = new Array(2);
@@ -11877,8 +11878,9 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
 var assert = __webpack_require__("./node_modules/minimalistic-assert/index.js");
 var inherits = __webpack_require__("./node_modules/inherits/inherits_browser.js");
 
-var Cipher = __webpack_require__("./node_modules/des.js/lib/des/cipher.js");
-var DES = __webpack_require__("./node_modules/des.js/lib/des/des.js");
+var des = __webpack_require__("./node_modules/des.js/lib/des.js");
+var Cipher = des.Cipher;
+var DES = des.DES;
 
 function EDEState(type, key) {
   assert.equal(key.length, 24, 'Invalid key length');
@@ -12590,8 +12592,6 @@ function BaseCurve(type, conf) {
   this._wnafT3 = new Array(4);
   this._wnafT4 = new Array(4);
 
-  this._bitLength = this.n ? this.n.bitLength() : 0;
-
   // Generalized Greg Maxwell's trick
   var adjustCount = this.n && this.p.div(this.n);
   if (!adjustCount || adjustCount.cmpn(100) > 0) {
@@ -12615,7 +12615,7 @@ BaseCurve.prototype._fixedNafMul = function _fixedNafMul(p, k) {
   assert(p.precomputed);
   var doubles = p._getDoubles();
 
-  var naf = getNAF(k, 1, this._bitLength);
+  var naf = getNAF(k, 1);
   var I = (1 << (doubles.step + 1)) - (doubles.step % 2 === 0 ? 2 : 1);
   I /= 3;
 
@@ -12652,7 +12652,7 @@ BaseCurve.prototype._wnafMul = function _wnafMul(p, k) {
   var wnd = nafPoints.points;
 
   // Get NAF form
-  var naf = getNAF(k, w, this._bitLength);
+  var naf = getNAF(k, w);
 
   // Add `this`*(N+1) for every w-NAF index
   var acc = this.jpoint(null, null, null);
@@ -12708,8 +12708,8 @@ BaseCurve.prototype._wnafMulAdd = function _wnafMulAdd(defW,
     var a = i - 1;
     var b = i;
     if (wndWidth[a] !== 1 || wndWidth[b] !== 1) {
-      naf[a] = getNAF(coeffs[a], wndWidth[a], this._bitLength);
-      naf[b] = getNAF(coeffs[b], wndWidth[b], this._bitLength);
+      naf[a] = getNAF(coeffs[a], wndWidth[a]);
+      naf[b] = getNAF(coeffs[b], wndWidth[b]);
       max = Math.max(naf[a].length, max);
       max = Math.max(naf[b].length, max);
       continue;
@@ -16365,17 +16365,14 @@ utils.toHex = minUtils.toHex;
 utils.encode = minUtils.encode;
 
 // Represent num in a w-NAF form
-function getNAF(num, w, bits) {
-  var naf = new Array(Math.max(num.bitLength(), bits) + 1);
-  naf.fill(0);
-
+function getNAF(num, w) {
+  var naf = [];
   var ws = 1 << (w + 1);
   var k = num.clone();
-
-  for (var i = 0; i < naf.length; i++) {
+  while (k.cmpn(1) >= 0) {
     var z;
-    var mod = k.andln(ws - 1);
     if (k.isOdd()) {
+      var mod = k.andln(ws - 1);
       if (mod > (ws >> 1) - 1)
         z = (ws >> 1) - mod;
       else
@@ -16384,9 +16381,13 @@ function getNAF(num, w, bits) {
     } else {
       z = 0;
     }
+    naf.push(z);
 
-    naf[i] = z;
-    k.iushrn(1);
+    // Optimization, shift by word if possible
+    var shift = (k.cmpn(0) !== 0 && k.andln(ws - 1) === 0) ? (w + 1) : 1;
+    for (var i = 1; i < shift; i++)
+      naf.push(0);
+    k.iushrn(shift);
   }
 
   return naf;
@@ -16477,7 +16478,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"bundleDependencies\":false,\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"deprecated\":false,\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.2\"}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
 
 /***/ }),
 
@@ -48933,7 +48934,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.0.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
+module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.0.1\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
 
 /***/ }),
 
