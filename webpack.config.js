@@ -27,6 +27,16 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /package.json$/,
+        use: [
+          {
+            loader: require.resolve(
+              './obniz/libs/webpackReplace/packagejson-loader'
+            ),
+          },
+        ],
+      },
     ],
   },
   externals: [

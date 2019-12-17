@@ -1,6 +1,6 @@
 # Peripherals IO
 General purpose IO
-This is available on each io (io0 to io11)
+This is available on each io (for obniz Board series, it's io0 to io11)
 
 #### Feature
 ##### output
@@ -10,7 +10,7 @@ Drive methods can be selected from the three below.
 
 Type | Voltage | max A | max Freq | Details
 :---: | :---: | :---: | :---: | ---
-push-pull | `5v` | <=1A | <=250khz(recommend) | Default. Overcurrent protection
+push-pull | `5v(vcc)` | <=1A | <=250khz(recommend) | Default. Overcurrent protection
 push-pull | `3v` | <=1mA(recommend) | <=80Mhz | over current detection when using io.output().
 open-drain | `<=5v` | <=1mA(recommend) | <=80Mhz | 
 
@@ -37,7 +37,7 @@ There are four types as below.
 Type | Pull to | Detail
 :---: | :---: | :---:
 floating | &nbsp; | Default
-pull-up | `5v` | 
+pull-up | `5v(vcc)` | 
 pull-up | `3v` | 
 pull-down | `gnd` | 
 

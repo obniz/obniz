@@ -182,6 +182,9 @@ BlenoBindings.prototype.onLeConnUpdateComplete = function(
 };
 
 BlenoBindings.prototype.onDisconnComplete = function(handle, reason) {
+  if (this._handle !== handle) {
+    return; //not peripheral
+  }
   if (this._aclStream) {
     this._aclStream.push(null, null);
   }

@@ -26,7 +26,7 @@ Mgmt.prototype.addLongTermKey = function(
   rand,
   key
 ) {
-  let ltkInfo = Buffer.from(LTK_INFO_SIZE);
+  let ltkInfo = Buffer.alloc(LTK_INFO_SIZE);
 
   address.copy(ltkInfo, 0);
   ltkInfo.writeUInt8(addressType.readUInt8(0) + 1, 6); // BDADDR_LE_PUBLIC = 0x01, BDADDR_LE_RANDOM 0x02, so add one
@@ -81,7 +81,7 @@ Mgmt.prototype.write = function(opcode, index, data) {
   }
 
   debug('writing -> ' + pkt.toString('hex'));
-  this._hci.write(pkt);
+  this._hci._socket.write(pkt);
 };
 
 module.exports = Mgmt;

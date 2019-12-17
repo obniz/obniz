@@ -16478,7 +16478,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.1\",\"/Users/kido/Documents/extra/obniz/obnizjs\"]],\"_development\":true,\"_from\":\"elliptic@6.5.1\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.1\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.1\",\"saveSpec\":null,\"fetchSpec\":\"6.5.1\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_spec\":\"6.5.1\",\"_where\":\"/Users/kido/Documents/extra/obniz/obnizjs\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
 
 /***/ }),
 
@@ -34888,11 +34888,26 @@ class BleRemotePeripheral {
   }
 
   async discoverAllHandlesWait(){
+
+      let ArrayFlat = function(array, depth) {
+        var flattend = [];
+        (function flat(array, depth) {
+          for (let el of array) {
+            if (Array.isArray(el) && depth > 0) {
+              flat(el, depth - 1);
+            } else {
+              flattend.push(el);
+            }
+          }
+        })(array, Math.floor(depth) || 1);
+        return flattend;
+      };
+
     let services = await this.discoverAllServicesWait();
     let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
-    let chars = charsNest.flat();
+    let chars =  ArrayFlat(charsNest);
     let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
-    let descriptors = descriptorsNest.flat();
+    let descriptors = ArrayFlat(descriptorsNest)
 
   }
 
@@ -39325,6 +39340,9 @@ BlenoBindings.prototype.onLeConnUpdateComplete = function(
 };
 
 BlenoBindings.prototype.onDisconnComplete = function(handle, reason) {
+  if (this._handle !== handle) {
+    return; //not peripheral
+  }
   if (this._aclStream) {
     this._aclStream.push(null, null);
   }
@@ -39904,7 +39922,8 @@ Gatt.prototype.setServices = function(services) {
         value: characteristic.value,
       };
 
-      if (properties & 0x30) {
+      let hasCCCD = characteristic.descriptors.find(e => e.uuid === '2902');
+      if (hasCCCD || properties & 0x30) {
         // notify or indicate
         // add client characteristic configuration descriptor
 
@@ -39923,7 +39942,9 @@ Gatt.prototype.setServices = function(services) {
 
       for (let k = 0; k < characteristic.descriptors.length; k++) {
         let descriptor = characteristic.descriptors[k];
-
+        if (descriptor.uuid === '2902') {
+          continue;
+        }
         handle++;
         let descriptorHandle = handle;
 
@@ -40982,7 +41003,7 @@ Mgmt.prototype.addLongTermKey = function(
   rand,
   key
 ) {
-  let ltkInfo = Buffer.from(LTK_INFO_SIZE);
+  let ltkInfo = Buffer.alloc(LTK_INFO_SIZE);
 
   address.copy(ltkInfo, 0);
   ltkInfo.writeUInt8(addressType.readUInt8(0) + 1, 6); // BDADDR_LE_PUBLIC = 0x01, BDADDR_LE_RANDOM 0x02, so add one
@@ -41037,7 +41058,7 @@ Mgmt.prototype.write = function(opcode, index, data) {
   }
 
   debug('writing -> ' + pkt.toString('hex'));
-  this._hci.write(pkt);
+  this._hci._socket.write(pkt);
 };
 
 module.exports = Mgmt;
@@ -48913,7 +48934,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.0.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
+module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.0.1\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
 
 /***/ }),
 

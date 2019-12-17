@@ -5,14 +5,14 @@ chai.use(require('chai-like'));
 
 let obnizA, obnizB;
 
-describe('8-ble', function() {
+describe('8-ble-exchange', function() {
   this.timeout(120000);
 
   before(async () => {
     await new Promise(resolve => {
       config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        obnizB = config.obnizB;
+        obnizB = config.obnizA;
+        obnizA = config.obnizB; //exchange A<->B
         resolve();
       });
     });
