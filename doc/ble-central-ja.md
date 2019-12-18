@@ -323,6 +323,77 @@ obniz.ble.scan.onfind = function(peripheral){
 obniz.ble.scan.start();
 ```
 
+## peripheral.discoverAllServices()
+
+接続中ペリフェラルに登録されているサービス一覧を取得します。
+サービスは１つ見つけるごとに`ondiscoverservice`に設定した関数呼ばれ、完了すると`ondiscoverservicefinished`に設定した関数が１度呼ばれる。
+
+```Javascript
+// Javascript Example
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (peripheral) => {
+    console.log(peripheral.localName)
+    if (peripheral.localName === 'my peripheral') {
+      
+        peripheral.onconnect = function(){
+            console.log("connected");
+            peripheral.discoverAllServices();
+            peripheral.ondiscoverservice = function (service) {
+                console.log('service UUID: ' + service.uuid);
+            }
+            peripheral.ondiscoverservicefinished = function (service) {
+                console.log("service discovery finished")
+            }
+        }
+      
+        peripheral.ondisconnect = function(){
+            console.log("disconnected");
+        }
+      
+        obniz.ble.scan.end();
+        peripheral.connect();
+    }
+};
+
+obniz.ble.scan.start();
+```
+
+## ondiscoverservice = (service) => {}
+
+`discoverAllServices()`によりサービスが見つかったときに呼び出される関数を設定する。引数にはサービスオブジェクトが含まれる。
+
+## ondiscoverservicefinished = () => {}
+
+`discoverAllServices()`によるサービス検索が完了したときに呼び出される関数を設定する。
+
+## \[await] peripheral.discoverAllServicesWait()
+
+`discoverAllServices()`が完了するまで待機し、検索した結果見つかったサービス一覧を取得する。
+
+```Javascript
+// Javascript Example
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+    console.log(peripheral.localName)
+    if (peripheral.localName === 'my peripheral') {
+      obniz.ble.scan.end();
+      var connected = await peripheral.connectWait();
+
+      if(connected){
+          var services = await peripheral.discoverAllServicesWait();
+          console.log("service discovery finish");
+          for (var i=0; i<services.length; i++) {
+              console.log('service UUID: ' + services[i].uuid)
+          }
+      }else{
+          console.log("failed");
+      }
+    }
+};
+
+obniz.ble.scan.start();
+```
+
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).writeWait(dataArray)
 characteristicにdataArrayを書き込みます

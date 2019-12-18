@@ -317,6 +317,77 @@ obniz.ble.scan.start();
 ```
 
 
+## peripheral.discoverAllServices()
+
+Discover all services in connected peripheral.
+A function set to `ondiscoverservice` will be called for each found service. And a function set to `ondiscoverservicefinished` will be called when discovery finished.
+
+```Javascript
+// Javascript Example
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = (peripheral) => {
+    console.log(peripheral.localName)
+    if (peripheral.localName === 'my peripheral') {
+      
+        peripheral.onconnect = function(){
+            console.log("connected");
+            peripheral.discoverAllServices();
+            peripheral.ondiscoverservice = function (service) {
+                console.log('service UUID: ' + service.uuid);
+            }
+            peripheral.ondiscoverservicefinished = function (service) {
+                console.log("service discovery finished")
+            }
+        }
+      
+        peripheral.ondisconnect = function(){
+            console.log("disconnected");
+        }
+      
+        obniz.ble.scan.end();
+        peripheral.connect();
+    }
+};
+
+obniz.ble.scan.start();
+```
+
+## ondiscoverservice = (service) => {}
+
+A function set to this property will be called when a service found after `discoverAllServices()` is called. 1st param is service object.
+
+## ondiscoverservicefinished = () => {}
+
+A function set to this property will be called when service discovery  `discoverAllServices()` was finshed.
+
+## \[await] peripheral.discoverAllServicesWait()
+
+This function is async version of `discoverAllServices()`.
+It will return all found services as array.
+
+```Javascript
+// Javascript Example
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+    console.log(peripheral.localName)
+    if (peripheral.localName === 'my peripheral') {
+      obniz.ble.scan.end();
+      var connected = await peripheral.connectWait();
+
+      if(connected){
+          var services = await peripheral.discoverAllServicesWait();
+          console.log("service discovery finish");
+          for (var i=0; i<services.length; i++) {
+              console.log('service UUID: ' + services[i].uuid)
+          }
+      }else{
+          console.log("failed");
+      }
+    }
+};
+
+obniz.ble.scan.start();
+```
 
 
 ## \[await] peripheral.getService(uuid).getCharacteristic(uuid).writeWait(dataArray)
