@@ -1,5 +1,5 @@
-let debug = require('debug')('hci');
-// const debug = () => {};
+// let debug = require('debug')('hci');
+const debug = () => {};
 
 let events = require('events');
 let util = require('util');

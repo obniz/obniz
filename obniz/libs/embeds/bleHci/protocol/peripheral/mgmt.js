@@ -1,4 +1,5 @@
-let debug = require('debug')('mgmt');
+// let debug = require('debug')('mgmt');
+const debug = () => {};
 
 let LTK_INFO_SIZE = 36;
 

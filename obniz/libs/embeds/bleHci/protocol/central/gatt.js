@@ -1,6 +1,7 @@
-/* eslint-disable no-unused-vars */
 // let debug = require('debug')('att');
 const debug = () => {};
+
+/* eslint-disable no-unused-vars */
 
 let events = require('events');
 let util = require('util');
