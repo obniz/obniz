@@ -309,3 +309,66 @@ if(connected){
 }
     
 ```
+
+
+
+## characteristics.descriptors
+
+It contains descriptors in a characteristic.
+It was discovered when connection automatically.
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["fff0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  var c = service.getCharacteristic("fff0")
+  for (var d of c.descriptors) {
+    console.log(d.uuid)
+  }
+} catch(e) {
+  console.error(e);
+}
+```
+
+## characteristics.getDescriptor(uuid: string)
+
+It returns a descriptors which having specified uuid in a characteristic.
+Return value is null when not matched.
+
+Case is ignored. So `aa00` and `AA00` are the same.
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["fff0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  var c = service.getCharacteristic("fff0")
+  var d = c.getDescriptor("fff0")
+  console.log(d.uuid)
+} catch(e) {
+  console.error(e);
+}
+```

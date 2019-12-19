@@ -316,7 +316,7 @@ if(connected){
 
 
 
-## service.descriptors
+## characteristics.descriptors
 
 キャラクタリスティクスに含まれるディスクリプタの一覧の配列です。
 接続時に自動検索され、代入されています。
@@ -346,9 +346,9 @@ try {
 }
 ```
 
-## service.getCharacteristic(uuid: string)
+## characteristics.getDescriptor(uuid: string)
 
-サービスに含まれるキャラクタリスティクスのうち、uuidで文字列で指定したキャラクタリスティクスを取得します。存在しない場合はnullが返ります。
+キャラクタリスティクスに含まれるディスクリプタのうち、uuidで文字列で指定したディスクリプタを取得します。存在しない場合はnullが返ります。
 
 uuidの大文字と小文字は区別されません。`aa00`と`AA00`は同じです。
 
@@ -370,7 +370,7 @@ try {
   var service = peripheral.getService("1800")
   var c = service.getCharacteristic("fff0")
   var d = c.getDescriptor("fff0")
-  console.log(c.uuid)
+  console.log(d.uuid)
 } catch(e) {
   console.error(e);
 }
