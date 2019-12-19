@@ -3,7 +3,7 @@
 気圧センサDPS310です。センサで取得した気圧を取得することができます。
 
 (DPSの画像）
-![DPS310 Shield 2Go](./image.png =100x)
+![DPS310 Shield 2Go](./image.png)
 
 
 ## wired(obniz, {sda, scl, gnd})

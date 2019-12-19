@@ -1,6 +1,6 @@
 # Pressure Sensor - DPS310
 
-![DPS310 Shield 2Go](./image.png =100x)
+![DPS310 Shield 2Go](./image.png)
 
 ## wired(obniz, {sda, scl, gnd})
 
