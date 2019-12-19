@@ -93,30 +93,14 @@ console.log(peripheral.iBeacon)
 
 
 
-<!-- ## peripheral.connect() -->
-<!-- peripheralに接続します -->
-
-<!-- ```Javascript -->
-<!-- // Javascript Example -->
-
-<!-- var target = { -->
-    <!-- uuids: ["FFF0"], -->
-<!-- }; -->
-<!-- var peripheral = await obniz.ble.scan.startOneWait(target); -->
-
-<!-- peripheral.connect(); -->
-
-<!-- ``` -->
-
-
-
-
 ## \[await] peripheral.connectWait()
 
 peripheralに接続します。
 接続とスキャンは同時に利用できないため、scan中の場合にはscanは停止されます。
+接続に失敗した場合はthrowとなります。
 
-また、接続に失敗した場合はthrowとなります。
+接続に成功するとペリフェラルの持つサービスとそれに紐づくキャラクタリスティクスとそれに紐づディスクリプタのdiscoveryを自動的に行います。
+すべてが完了した段階でconnectWait()の完了となります。
 
 ```Javascript
 // Javascript Example
@@ -139,6 +123,31 @@ try {
 ```
 
 
+## peripheral.connect()
+
+peripheralに接続します。
+接続とスキャンは同時に利用できないため、scan中の場合にはscanは停止されます。
+接続完了すると`onconnect`に設定された関数が呼び出され、接続できない場合は`ondisconnect`が呼ばれます。
+
+接続に成功するとペリフェラルの持つサービスとそれに紐づくキャラクタリスティクスとそれに紐づディスクリプタのdiscoveryを自動的に行います。
+すべてが完了した段階で`onconnect`が呼び出されます。
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+obniz.ble.scan.onfind = function(peripheral){
+    if(peripheral.localName == "my peripheral"){
+        peripheral.onconnect = function(){
+            console.log("success");
+        }
+        peripheral.connect();
+    }
+}
+obniz.ble.scan.start();
+```
+
+
 ## peripheral.onconnect
 接続が成功したときに呼ばれます
 
@@ -151,13 +160,33 @@ obniz.ble.scan.onfind = function(peripheral){
         peripheral.onconnect = function(){
             console.log("success");
         }
-        obniz.ble.scan.end();
         peripheral.connect();
     }
 }
 obniz.ble.scan.start();
 ```
 
+## peripheral.ondisconnect
+
+切断されたとき、又は接続に失敗したときに呼ばれます 
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+obniz.ble.scan.onfind = function(peripheral){
+    if(peripheral.localName == "my peripheral"){
+        peripheral.onconnect = function(){
+            console.log("success");
+        }
+        peripheral.ondisconnect = function(){
+            console.log("closed");
+        }
+        peripheral.connect();
+    }
+}
+obniz.ble.scan.start();
+```
 
 ## \[await] peripheral.disconnectWait()
 peripheralから切断します
@@ -186,27 +215,7 @@ try {
 }
 ```
 
-## peripheral.ondisconnect
-切断されたときに呼ばれます 
-
-```Javascript
-// Javascript Example
-
-await obniz.ble.initWait(); 
-obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName == "my peripheral"){
-        peripheral.onconnect = function(){
-            console.log("success");
-        }
-        peripheral.ondisconnect = function(){
-            console.log("closed");
-        }
-        peripheral.connect();
-    }
-}
-obniz.ble.scan.start();
-```
-
+<!--
 ## peripheral.discoverAllServices()
 
 接続中ペリフェラルに登録されているサービス一覧を取得します。
@@ -234,7 +243,6 @@ obniz.ble.scan.onfind = (peripheral) => {
             console.log("disconnected");
         }
       
-        obniz.ble.scan.end();
         peripheral.connect();
     }
 };
@@ -262,7 +270,6 @@ await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
     console.log(peripheral.localName)
     if (peripheral.localName === 'my peripheral') {
-      obniz.ble.scan.end();
       var connected = await peripheral.connectWait();
 
       if(connected){
@@ -279,7 +286,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 obniz.ble.scan.start();
 ```
-
+-->
 
 
 ## peripheral.onerror

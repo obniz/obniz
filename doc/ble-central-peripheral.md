@@ -110,6 +110,8 @@ If ble scannning is undergoing, scan will be terminated immidiately.
 
 It throws when connection establish failed.
 
+when connection established, all service/characteristics/desriptors will be discovered automatically. This function will wait until all discovery done.
+
 ```Javascript
 // Javascript Example
 
@@ -130,6 +132,29 @@ try {
 }
 ```
 
+
+## peripheral.connect()
+This function will try to connect a peripheral. `onconnect` will be caled when connected or `ondisconnect` will be called when failed.
+
+If ble scannning is undergoing, scan will be terminated immidiately.
+
+when connection established, all service/characteristics/desriptors will be discovered automatically. `onconnect` will be called after all discovery done.
+
+```Javascript
+// Javascript Example
+await obniz.ble.initWait(); 
+obniz.ble.scan.onfind = function(peripheral){
+    if(peripheral.localName == "my peripheral"){
+        peripheral.onconnect = function(){
+            console.log("success");
+        }
+        peripheral.connect();
+    }
+}
+obniz.ble.scan.start();
+```
+
+
 ## peripheral.onconnect
 This function is called when connection succeeds.
 
@@ -141,7 +166,6 @@ obniz.ble.scan.onfind = function(peripheral){
         peripheral.onconnect = function(){
             console.log("success");
         }
-        obniz.ble.scan.end();
         peripheral.connect();
     }
 }
@@ -170,6 +194,25 @@ obniz.ble.startScan({duration : 10});
 -->
 
 
+## peripheral.ondisconnect
+This function is called when a connected peripheral is disconnected or first connection establish was failed.
+
+```Javascript
+// Javascript Example
+await obniz.ble.initWait(); 
+obniz.ble.scan.onfind = function(peripheral){
+    if(peripheral.localName == "my peripheral"){
+        peripheral.onconnect = function(){
+            console.log("success");
+        }
+        peripheral.ondisconnect = function(){
+            console.log("closed");
+        }
+        peripheral.connect();
+    }
+}
+obniz.ble.scan.start();
+```
 
 ## \[await] peripheral.disconnectWait()
 This disconnects obniz from peripheral.
@@ -198,28 +241,7 @@ try {
 }
 ```
 
-
-## peripheral.ondisconnect
-This function is called when obniz is disconnected.
-
-```Javascript
-// Javascript Example
-await obniz.ble.initWait(); 
-obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName == "my peripheral"){
-        peripheral.onconnect = function(){
-            console.log("success");
-        }
-        peripheral.ondisconnect = function(){
-            console.log("closed");
-        }
-        peripheral.connect();
-    }
-}
-obniz.ble.scan.start();
-```
-
-
+<!--
 ## peripheral.discoverAllServices()
 
 Discover all services in connected peripheral.
@@ -248,7 +270,6 @@ obniz.ble.scan.onfind = (peripheral) => {
             console.log("disconnected");
         }
       
-        obniz.ble.scan.end();
         peripheral.connect();
     }
 };
@@ -294,7 +315,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 obniz.ble.scan.start();
 ```
-
+-->
 
 
 ## peripheral.onerror

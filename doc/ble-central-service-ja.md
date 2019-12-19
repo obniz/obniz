@@ -19,7 +19,6 @@ await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
     console.log(peripheral.localName)
     if (peripheral.localName === 'my peripheral') {
-      obniz.ble.scan.end();
       var connected = await peripheral.connectWait();
 
       if(connected){
