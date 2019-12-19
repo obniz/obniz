@@ -34867,10 +34867,7 @@ class BleRemotePeripheral {
         return this._services[key];
       }
     }
-    let newService = new BleRemoteService({ uuid });
-    newService.parent = this;
-    this._services.push(newService);
-    return newService;
+    return undefined;
   }
 
   findService(param) {
@@ -34964,7 +34961,14 @@ class BleRemotePeripheral {
         break;
       }
       case 'discover': {
-        let child = this.getService(params.service_uuid);
+        let uuid = params.service_uuid;
+        let child = this.getService(uuid);
+        if (!child) {
+          let newService = new BleRemoteService({ uuid });
+          newService.parent = this;
+          this._services.push(newService);
+          child = newService;
+        }
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
