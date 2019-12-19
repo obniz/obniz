@@ -33222,9 +33222,9 @@ class ObnizBLE {
 
   async onConnect(peripheralUuid, error){
     let peripheral = this.findPeripheral(peripheralUuid);
-    if(!error){
-      await peripheral.discoverAllHandlesWait();
-    }
+    // if(!error){
+    //   await peripheral.discoverAllHandlesWait();
+    // }
     peripheral.notifyFromServer("statusupdate", {status: error ? "disconnected" : "connected"})
   }
 
@@ -34942,6 +34942,7 @@ class BleRemotePeripheral {
 
   notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
+    console.log("notifyFromServer " + notifyName);
     switch (notifyName) {
       case 'statusupdate': {
         if (params.status === 'connected') {
@@ -35063,6 +35064,8 @@ class BleScan {
   start(target, settings) {
 
     let timeout = (settings || {} ).duration || 30;
+    target = target || {};
+    target.duplicate = target.duplicate || false;
     this.scanTarget = target;
     if (
       this.scanTarget &&
@@ -35145,9 +35148,11 @@ class BleScan {
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
       case 'onfind': {
-        //duplicate filter
-        if(this.scanedPeripherals.find(e=>e.address === params.address)){
-          break;
+        if(this.scanTarget.duplicate === false) {
+          //duplicate filter
+          if (this.scanedPeripherals.find(e => e.address === params.address)) {
+            break;
+          }
         }
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);

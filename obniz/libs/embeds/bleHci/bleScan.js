@@ -16,6 +16,8 @@ class BleScan {
   start(target, settings) {
 
     let timeout = (settings || {} ).duration || 30;
+    target = target || {};
+    target.duplicate = target.duplicate || false;
     this.scanTarget = target;
     if (
       this.scanTarget &&
@@ -98,9 +100,11 @@ class BleScan {
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
       case 'onfind': {
-        //duplicate filter
-        if(this.scanedPeripherals.find(e=>e.address === params.address)){
-          break;
+        if(this.scanTarget.duplicate === false) {
+          //duplicate filter
+          if (this.scanedPeripherals.find(e => e.address === params.address)) {
+            break;
+          }
         }
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);
