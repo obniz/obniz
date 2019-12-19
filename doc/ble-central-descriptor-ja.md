@@ -10,7 +10,7 @@ descriptorにdataArrayを書き込みます
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -40,7 +40,7 @@ descriptorに数字を1byteとしてを書き込みます
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -70,7 +70,7 @@ descriptorに文字列を書き込みます
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -119,7 +119,7 @@ descriptorからデータを読み込みます
 // Javascript Example
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){

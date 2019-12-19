@@ -25,7 +25,7 @@ Before calling this function, you should call setAdvData/setAdvDataRaw to set da
 // Javascript Example
 await obniz.ble.initWait(); 
 var service = new obniz.ble.service({
-  uuid : "FFF0"
+  uuid : "fff0"
 });
 obniz.ble.peripheral.addService(service); 
 obniz.ble.advertisement.setAdvData(service.advData);
@@ -146,11 +146,11 @@ service_obj
 
 await obniz.ble.initWait(); 
 /* Service without characteristics */
-var service = new obniz.ble.service({"uuid" : "FFF0"});
+var service = new obniz.ble.service({"uuid" : "fff0"});
 obniz.ble.peripheral.addService(service);
 
 /* Service with characteristics/descriptor */
-var service = new obniz.ble.service({"uuid" : "FFF0"});
+var service = new obniz.ble.service({"uuid" : "fff0"});
 var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
 var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello world characteristic"});
 

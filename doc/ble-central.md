@@ -39,7 +39,7 @@ You can filter uuids or localName using the target param.
 // Javascript Example
 
 var target = {
-    uuids: ["FFF0","FFF1"],     //scan only has uuids "FFF0" and "FFF1"
+    uuids: ["fff0","FFF1"],     //scan only has uuids "fff0" and "FFF1"
     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
 };
 
@@ -65,7 +65,7 @@ obniz.ble.scan.start();
 // Javascript Example
 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 
 await obniz.ble.initWait(); 
@@ -132,7 +132,7 @@ This scans and returns the first peripheral that was found among the objects spe
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 
 var peripheral = await obniz.ble.scan.startOneWait(target);
@@ -149,7 +149,7 @@ If you want to change the default duration, you can do so with the duration para
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var setting = {
     duration : 10  

@@ -18,7 +18,7 @@ var characteristic = new obniz.ble.characteristic({
                   });
 
 var service = new obniz.ble.service({
-                  "uuid" : "FFF0",
+                  "uuid" : "fff0",
                   "characteristics" : [ characteristic ]
 });
 obniz.ble.peripheral.addService(service); 

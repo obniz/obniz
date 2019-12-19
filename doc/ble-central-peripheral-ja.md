@@ -9,7 +9,7 @@
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -40,7 +40,7 @@ advertise dataの生データを返します
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -56,7 +56,7 @@ advertise dataの中にlocal Name情報があればそれを返します
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -84,7 +84,7 @@ advertise dataの中にiBeacon情報があればそれを返します．なけ�
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -106,7 +106,7 @@ peripheralに接続します。
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -197,7 +197,7 @@ peripheralから切断します
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -297,7 +297,7 @@ connect後に発見されたサービスの一覧が入っています。connect
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -326,7 +326,7 @@ try {
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -370,7 +370,7 @@ try {
 // Javascript Example
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 

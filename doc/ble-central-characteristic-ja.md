@@ -26,7 +26,7 @@ characteristicにdataArrayを書き込みます
 await obniz.ble.initWait(); 
 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -56,7 +56,7 @@ characteristicに数字を1byteとしてを書き込みます
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -83,7 +83,7 @@ characteristicに文字列を書き込みます
 // Javascript Example
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -134,7 +134,7 @@ characteristicからデータを読み込みます
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -313,3 +313,66 @@ if(connected){
 }
     
 ```
+
+
+
+## service.descriptors
+
+キャラクタリスティクスに含まれるディスクリプタの一覧の配列です。
+接続時に自動検索され、代入されています。
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["fff0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  var c = service.getCharacteristic("fff0")
+  for (var d of c.descriptors) {
+    console.log(d.uuid)
+  }
+} catch(e) {
+  console.error(e);
+}
+```
+
+## service.getCharacteristic(uuid: string)
+
+サービスに含まれるキャラクタリスティクスのうち、uuidで文字列で指定したキャラクタリスティクスを取得します。存在しない場合はnullが返ります。
+
+uuidの大文字と小文字は区別されません。`aa00`と`AA00`は同じです。
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["fff0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  var c = service.getCharacteristic("fff0")
+  var d = c.getDescriptor("fff0")
+  console.log(c.uuid)
+} catch(e) {
+  console.error(e);
+}
+```
+

@@ -241,7 +241,7 @@ describe('ble', function() {
 
     this.obniz.ble.scan.onfind = stub;
     let target = {
-      uuids: ['FFF0'], //scan only has uuids "FFF0" and "FFF1"
+      uuids: ['FFF0'], //scan only has uuids "fff0" and "FFF1"
       localName: 'obniz-BLE', //scan only has localName "obniz-BLE"
     };
 
@@ -345,7 +345,7 @@ describe('ble', function() {
 
     this.obniz.ble.scan.onfind = stub;
     let target = {
-      uuids: ['713d0000-503e-4c75-ba94-3148f18d9400'], //scan only has uuids "FFF0" and "FFF1"
+      uuids: ['713d0000-503e-4c75-ba94-3148f18d9400'], //scan only has uuids "fff0" and "FFF1"
     };
 
     let setting = {

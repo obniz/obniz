@@ -9,7 +9,7 @@ This returns connection state as boolean.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -38,7 +38,7 @@ This returns raw advertise data.
 // Javascript Example
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -53,7 +53,7 @@ This returns local name if the peripheral has it.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -82,7 +82,7 @@ The return values are shown below.
 // Javascript Example
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 
@@ -117,7 +117,7 @@ when connection established, all service/characteristics/desriptors will be disc
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -224,7 +224,7 @@ It throws when failed
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -327,7 +327,7 @@ It contains all discovered services in a peripheral as an array. It is discovere
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -356,7 +356,7 @@ Case is ignored. So `aa00` and `AA00` are the same.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -397,7 +397,7 @@ This gets called with an error message when some kind of error occurs.
 // Javascript Example
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 

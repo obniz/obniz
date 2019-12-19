@@ -43,7 +43,7 @@ settingに渡した引数に従って
 // Javascript Example
 
 var target = {
-    uuids: ["FFF0","FFF1"],     //対象のuuidを含むperipheralをスキャンします
+    uuids: ["fff0","FFF1"],     //対象のuuidを含むperipheralをスキャンします
     localName: "obniz-BLE",     //対象のlocalNameを含むperipheralをスキャンします
 };
 
@@ -72,7 +72,7 @@ obniz.ble.scan.start();  // 引数なしも可能
 // Javascript Example
 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 
 await obniz.ble.initWait(); 
@@ -141,7 +141,7 @@ scanし，targetで指定された対象のうち，一番最初に見つかっ�
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 
 var peripheral = await obniz.ble.scan.startOneWait(target);
@@ -159,7 +159,7 @@ scanし，targetで指定された対象すべてのperipheralを返します．
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var setting = {
     duration : 10  

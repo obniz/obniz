@@ -110,7 +110,7 @@ It was discovered when connection automatically.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -141,7 +141,7 @@ Case is ignored. So `aa00` and `AA00` are the same.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -152,7 +152,7 @@ try {
   await peripheral.connectWait();
   console.log("connected");
   var service = peripheral.getService("1800")
-  var c = service.getCharacteristic("FFF0")
+  var c = service.getCharacteristic("fff0")
   console.log(c.uuid)
 } catch(e) {
   console.error(e);

@@ -8,7 +8,7 @@ This writes dataArray to descriptor.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -60,7 +60,7 @@ This writes a number to descriptor as 1byte.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -91,7 +91,7 @@ It returns true when it succeeds and false when it fails.
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
@@ -117,7 +117,7 @@ The return value appears in the callback function (onread). If reading succeeds 
 // Javascript Example
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){

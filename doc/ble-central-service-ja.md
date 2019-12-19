@@ -109,7 +109,7 @@ obniz.ble.scan.start();
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -139,7 +139,7 @@ uuidの大文字と小文字は区別されません。`aa00`と`AA00`は同じ�
 
 await obniz.ble.initWait(); 
 var target = {
-    uuids: ["FFF0"],
+    uuids: ["fff0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(!peripheral) {
@@ -150,7 +150,7 @@ try {
   await peripheral.connectWait();
   console.log("connected");
   var service = peripheral.getService("1800")
-  var c = service.getCharacteristic("FFF0")
+  var c = service.getCharacteristic("fff0")
   console.log(c.uuid)
 } catch(e) {
   console.error(e);
