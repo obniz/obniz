@@ -3,15 +3,14 @@
 
 ## \[await] initWait()
 
-Initialize BLE module.
+Initialize BLE module. You need call this first everything before.
 
 ```Javascript
 // Javascript Example
 
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 
 ```
-
 
 ## scan.start( \[target, \[setting]])
 
@@ -27,8 +26,10 @@ var target = {
 };
 
 var setting = {
-    duration : 10  
+    duration : 10  //scan duration time in seconds. default is 30 sec.
 }
+
+await obniz.ble.initWait(); 
 obniz.ble.scan.start(target, setting);
 
 ```
@@ -49,6 +50,7 @@ var target = {
     uuids: ["FFF0"],
 };
 
+await obniz.ble.initWait(); 
 obniz.ble.scan.start(target);
 
 ```
@@ -59,6 +61,7 @@ This stops scanning BLE.
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 obniz.ble.scan.start();
 await obniz.wait(5000);
 obniz.ble.scan.end();
@@ -76,6 +79,7 @@ obniz.ble.scan.onfind = function(peripheral){
    console.log(peripheral)
 };
 
+await obniz.ble.initWait(); 
 obniz.ble.scan.start();
 ```
 
@@ -95,6 +99,7 @@ obniz.ble.scan.onfinish = function(peripheral){
    console.log("scan timeout!")
 };
 
+await obniz.ble.initWait(); 
 obniz.ble.scan.start();
 ```
 
@@ -111,6 +116,7 @@ var target = {
     uuids: ["FFF0"],
 };
 
+await obniz.ble.initWait(); 
 var peripheral = await obniz.ble.scan.startOneWait(target);
 console.log(peripheral);
 ```
@@ -130,6 +136,7 @@ var setting = {
     duration : 10  
 }
 
+await obniz.ble.initWait(); 
 var peripherals = await obniz.ble.scan.startAllWait(target,setting);
 
 for(var peripheral of peripherals){

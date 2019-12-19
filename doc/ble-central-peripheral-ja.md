@@ -1,5 +1,21 @@
 # BLE Central ペリフェラル
 
+## peripheral.connected
+
+接続中かどうかを返します
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+
+console.log(peripheral.connected) // => false
+```
+
 
 ## peripheral.adv_data
 advertise dataの生データを返します
@@ -151,8 +167,6 @@ if(peripheral){
 }
 ```
 
-
-
 ## peripheral.ondisconnect
 切断されたときに呼ばれます 
 
@@ -173,7 +187,6 @@ obniz.ble.scan.onfind = function(peripheral){
 }
 obniz.ble.scan.start();
 ```
-
 
 ## peripheral.discoverAllServices()
 

@@ -2,7 +2,7 @@
 
 ## \[await] initWait()
 
-BLEを初期化します
+BLEを初期化します。すべての操作を行う前に１度のみ呼び出す必要があります。
 
 ```Javascript
 // Javascript Example
@@ -37,7 +37,7 @@ obniz.ble.scan.start(target, setting);
 
 ```
 
-引数なしや,ターゲットのみ指定も可能です．
+引数なしではすべての検索となります。
 
 ```Javascript
 // Javascript Example
@@ -45,6 +45,8 @@ await obniz.ble.initWait();
 obniz.ble.scan.start();  // 引数なしも可能
 
 ```
+
+探索したいサービスを持つペリフェラルのみを探すことも可能です。
 
 
 ```Javascript

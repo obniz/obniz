@@ -1,5 +1,21 @@
 # BLE Central Peripheral
 
+## peripheral.connected
+
+This returns connection state as boolean.
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+
+console.log(peripheral.connected) // => false
+```
+
 ## peripheral.adv_data
 This returns raw advertise data.
 
