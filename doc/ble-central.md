@@ -33,7 +33,7 @@ You can filter uuids or localName using the target param.
 | property | type | default | description |
 |:--:|:--:|:--:|:--:|
 | duration | `number` | `30` | Timeout of scannning.
-| duplicate | `boolean` | `false` | Specifiying `onfind` will be called or not when an advertisment received from already known peripheral. Defualt is never called again. Now obniz.js only accept `false`.
+| duplicate | `boolean` | `false` | Specifying `onfind` will be called or not when an advertisement received from already known peripheral. Default is never called again. 
 
 ```Javascript
 // Javascript Example
