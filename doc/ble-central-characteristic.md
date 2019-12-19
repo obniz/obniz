@@ -1,4 +1,4 @@
-# BLE Central Characteristics
+# BLE Central Characteristic
 
 ## characteristics.uuid
 
@@ -23,6 +23,7 @@ It returns true when it succeeds and false when it fails.
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -50,6 +51,7 @@ It writes data to the characteristic as 1byte.
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -77,6 +79,7 @@ It returns true when it succeeds and false when it fails.
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -126,7 +129,7 @@ The returned value appears in the callback function (onread). If reading succeed
 
 ```Javascript
 // Javascript Example
-// Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -183,7 +186,6 @@ await obniz.ble.initWait();
 var target = {
   localName: "obniz-notify"
 };
-
 var peripheral = await obniz.ble.scan.startOneWait(target);
 var connected = await peripheral.connectWait();
 if(connected){
@@ -219,7 +221,6 @@ await obniz.ble.initWait();
 var target = {
   localName: "obniz-notify"
 };
-
 var peripheral = await obniz.ble.scan.startOneWait(target);
 var connected = await peripheral.connectWait();
 if(connected){
@@ -249,7 +250,6 @@ await obniz.ble.initWait();
 var target = {
   localName: "obniz-notify"
 };
-
 var peripheral = await obniz.ble.scan.startOneWait(target);
 var connected = await peripheral.connectWait();
 if(connected){

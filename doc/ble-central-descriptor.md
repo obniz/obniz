@@ -6,6 +6,7 @@ This writes dataArray to descriptor.
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -57,6 +58,7 @@ This writes a number to descriptor as 1byte.
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -87,6 +89,7 @@ It returns true when it succeeds and false when it fails.
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -112,6 +115,7 @@ The return value appears in the callback function (onread). If reading succeeds 
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };

@@ -36,6 +36,7 @@ This returns raw advertise data.
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -50,6 +51,7 @@ This returns local name if the peripheral has it.
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -78,6 +80,7 @@ The return values are shown below.
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -132,6 +135,7 @@ This function is called when connection succeeds.
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){
@@ -200,6 +204,7 @@ This function is called when obniz is disconnected.
 
 ```Javascript
 // Javascript Example
+await obniz.ble.initWait(); 
 obniz.ble.scan.onfind = function(peripheral){
     if(peripheral.localName == "my peripheral"){
         peripheral.onconnect = function(){

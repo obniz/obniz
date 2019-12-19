@@ -126,11 +126,11 @@ This scans and returns the first peripheral that was found among the objects spe
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
 
-await obniz.ble.initWait(); 
 var peripheral = await obniz.ble.scan.startOneWait(target);
 console.log(peripheral);
 ```
@@ -143,6 +143,7 @@ If you want to change the default duration, you can do so with the duration para
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
@@ -150,7 +151,6 @@ var setting = {
     duration : 10  
 }
 
-await obniz.ble.initWait(); 
 var peripherals = await obniz.ble.scan.startAllWait(target,setting);
 
 for(var peripheral of peripherals){
