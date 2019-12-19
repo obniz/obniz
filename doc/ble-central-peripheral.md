@@ -16,6 +16,21 @@ var peripheral = await obniz.ble.scan.startOneWait(target);
 console.log(peripheral.connected) // => false
 ```
 
+## peripheral.rssi
+
+This returns RSSI(dbm) as number.
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+    console.log(peripheral.localName, peripheral.rssi); // null, -80
+};
+
+obniz.ble.scan.start();
+```
+
 ## peripheral.adv_data
 This returns raw advertise data.
 
@@ -88,21 +103,27 @@ obniz.ble.startScan({duration : 10});
 -->
 ## \[await] peripheral.connectWait()
 This connects obniz to the peripheral.
-It returns true when it succeeds and false when it fails.
+If ble scannning is undergoing, scan will be terminated immidiately.
+
+It throws when connection establish failed.
 
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-}else{
-    console.log("failed");
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+} catch(e) {
+  console.log("can't connect");
 }
 ```
 
@@ -148,29 +169,28 @@ obniz.ble.startScan({duration : 10});
 
 ## \[await] peripheral.disconnectWait()
 This disconnects obniz from peripheral.
-It returns true when it succeeds and false when it fails.
+
+It throws when failed
 
 ```Javascript
 // Javascript Example
 
+await obniz.ble.initWait(); 
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-
-if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        await obniz.wait(1000);
-        var disconnected = await peripheral.disconnectWait();
-    
-        if(disconnected){
-            console.log("disconnected");
-        }else{
-            console.log("disconnect failed");
-        }
-    }
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+    await peripheral.connectWait();
+    console.log("connected");
+    await peripheral.disconnectWait();
+    console.log("disconnected");
+} catch(e) {
+    console.log("can't connect / can't disconnect");
 }
 ```
 
@@ -286,27 +306,14 @@ This gets called with an error message when some kind of error occurs.
 
 ```Javascript
 // Javascript Example
-obniz.ble.scan.onfind = function(peripheral){
-    if(peripheral.localName == "my peripheral"){
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
 
-        peripheral.onconnect = function(){
-            peripheral.getService("FF00").getCharacteristic("FF01").read();
-        }
-        peripheral.onreadcharacteristic = function(service, characteristic, dataArray){
-            if(service.uuid === "FF00" && characteristic.uuid === "FF01" ){
-                console.log("value : " + dataArray);
-            }
-        }
-        peripheral.onerror = function(err){
-            console.log("error : " + err.message);
-        }
-        peripheral.connect();
-    }
+peripheral.onerror = function(err){
+    console.log("error : " + err.message);
 }
-obniz.ble.startScan({duration : 10});
+
 ```
-
-
-
-
-

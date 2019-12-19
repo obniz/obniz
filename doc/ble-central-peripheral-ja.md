@@ -16,6 +16,21 @@ var peripheral = await obniz.ble.scan.startOneWait(target);
 console.log(peripheral.connected) // => false
 ```
 
+## peripheral.rssi
+
+電波強度(dBm)を数値で表示します。
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait();
+obniz.ble.scan.onfind = async (peripheral) => {
+    console.log(peripheral.localName, peripheral.rssi); // null, -80
+};
+
+obniz.ble.scan.start();
+```
+
 
 ## peripheral.adv_data
 advertise dataの生データを返します
@@ -97,8 +112,11 @@ console.log(peripheral.iBeacon)
 
 
 ## \[await] peripheral.connectWait()
-peripheralに接続します
-接続に成功するとtrue，失敗するとfalseを返します
+
+peripheralに接続します。
+接続とスキャンは同時に利用できないため、scan中の場合にはscanは停止されます。
+
+また、接続に失敗した場合はthrowとなります。
 
 ```Javascript
 // Javascript Example
@@ -108,12 +126,15 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-}else{
-    console.log("failed");
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+} catch(e) {
+  console.log("can't connect");
 }
 ```
 
@@ -140,7 +161,8 @@ obniz.ble.scan.start();
 
 ## \[await] peripheral.disconnectWait()
 peripheralから切断します
-切断に成功するとtrue，失敗するとfalseを返します
+
+切断に失敗するとthrowします。
 
 ```Javascript
 // Javascript Example
@@ -150,20 +172,17 @@ var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-
-if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        await obniz.wait(1000);
-        var disconnected = await peripheral.disconnectWait();
-    
-        if(disconnected){
-            console.log("disconnected");
-        }else{
-            console.log("disconnect failed");
-        }
-    }
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+    await peripheral.connectWait();
+    console.log("connected");
+    await peripheral.disconnectWait();
+    console.log("disconnected");
+} catch(e) {
+    console.log("can't connect / can't disconnect");
 }
 ```
 
@@ -262,7 +281,8 @@ obniz.ble.scan.start();
 
 
 ## peripheral.onerror
-何かしらエラーが発生したときに呼ばれます.
+
+ペリフェラルに関するエラーが発生したときに呼ばれます.
 引数にエラー内容がわたされます
 
 引数に渡されるのは次の内容です
@@ -289,17 +309,5 @@ var peripheral = await obniz.ble.scan.startOneWait(target);
 peripheral.onerror = function(err){
     console.log("error : " + err.message);
 }
-
-var connected = await peripheral.connectWait();
-
-if(connected){
-    console.log("connected");
-    await obniz.wait(1000);
-
-    var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
-    console.log(dataArray);
-    
-}
-
 
 ```

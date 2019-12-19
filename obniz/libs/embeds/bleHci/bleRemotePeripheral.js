@@ -169,13 +169,22 @@ class BleRemotePeripheral {
   }
 
   connect() {
+    this.obnizBle.scan.end();
     this.obnizBle.centralBindings.connect(this.address);
   }
 
   connectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+      // if (this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'connected');
+        if (params.status === 'connected') {
+          resolve();
+        } else {
+          reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+        }
       });
       this.connect();
     });
@@ -186,9 +195,17 @@ class BleRemotePeripheral {
   }
 
   disconnectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+      // if (!this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'disconnected');
+        if (params.status === 'disconnected') {
+          resolve();
+        } else {
+          reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+        }
       });
       this.disconnect();
     });
