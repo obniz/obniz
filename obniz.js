@@ -34073,7 +34073,7 @@ class BleRemotePeripheral {
       'scan_resp',
     ];
 
-    this.services = [];
+    this._services = [];
     this.emitter = new emitter();
   }
 
@@ -34259,19 +34259,19 @@ class BleRemotePeripheral {
   }
 
   get services(){
-    return this.services;
+    return this._services;
   }
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    for (let key in this.services) {
-      if (this.services[key].uuid === uuid) {
-        return this.services[key];
+    for (let key in this._services) {
+      if (this._services[key].uuid === uuid) {
+        return this._services[key];
       }
     }
     let newService = new BleRemoteService({ uuid });
     newService.parent = this;
-    this.services.push(newService);
+    this._services.push(newService);
     return newService;
   }
 
@@ -34306,7 +34306,7 @@ class BleRemotePeripheral {
   discoverAllServicesWait() {
     return new Promise(resolve => {
       this.emitter.once('discoverfinished', () => {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
@@ -34372,7 +34372,7 @@ class BleRemotePeripheral {
         break;
       }
       case 'discoverfinished': {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverservicefinished(children);
