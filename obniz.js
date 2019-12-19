@@ -34815,6 +34815,10 @@ class BleRemotePeripheral {
 
   connectWait() {
     return new Promise((resolve, reject) => {
+      // if (this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
         if (params.status === 'connected') {
           resolve();
@@ -34832,8 +34836,16 @@ class BleRemotePeripheral {
 
   disconnectWait() {
     return new Promise((resolve, reject) => {
+      // if (!this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'disconnected');
+        if (params.status === 'disconnected') {
+          resolve();
+        } else {
+          reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+        }
       });
       this.disconnect();
     });

@@ -14,11 +14,26 @@ await obniz.ble.initWait();
 
 ## scan.start( \[target, \[setting]])
 
-BLEのscanを開始します
+BLEのscanを開始します。
 targetにuuidやlocalNameを設定すると，該当のperipheralのみscanします
 settingに渡した引数に従って
 
 設定できるパラメータフォーマットは下記のとおりです．
+
+### target
+
+| property | type | default | description |
+|:--:|:--:|:--:|:--:|
+| uuids | `array` | `[]` | サービスUUIDの配列。この中のいずれかをadvertisementに持つペリフェラルを探します。
+| localName | `string` | null | デバイス名での探索を行います。
+
+### target
+
+| property | type | default | description |
+|:--:|:--:|:--:|:--:|
+| duration | `number` | `30` | スキャンのタイムアウトまでの時間
+| duplicate | `boolean` | `false` | 同一ペリフェラルからのadvertisementを受け取るかどうかを指定します。デフォルトでは同一ペリフェラルの場合はonfindが二度呼ばれることはありません。現在falseにのみ対応しています。
+
 
 ```Javascript
 // Javascript Example

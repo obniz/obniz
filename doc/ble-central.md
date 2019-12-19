@@ -17,6 +17,20 @@ await obniz.ble.initWait();
 This starts scanning BLE.
 You can filter uuids or localName using the target param.
 
+### target
+
+| property | type | default | description |
+|:--:|:--:|:--:|:--:|
+| uuids | `array` | `[]` | an array of scan target service uuids. If a peripheral has a one of listed uuid, then found.
+| localName | `string` | null | scan target device localName
+
+### target
+
+| property | type | default | description |
+|:--:|:--:|:--:|:--:|
+| duration | `number` | `30` | Timeout of scannning.
+| duplicate | `boolean` | `false` | Specifiying `onfind` will be called or not when an advertisment received from already known peripheral. Defualt is never called again. Now obniz.js only accept `false`.
+
 ```Javascript
 // Javascript Example
 
