@@ -254,6 +254,8 @@ obniz.ble.scan.start();
 
 `discoverAllServices()`が完了するまで待機し、検索した結果見つかったサービス一覧を取得する。
 
+この関数は並列で呼び出さないでください。この関数は１つを実行中にもう１つ並列で実行すると動作が不安定となります。
+
 ```Javascript
 // Javascript Example
 await obniz.ble.initWait();

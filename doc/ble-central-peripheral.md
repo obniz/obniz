@@ -220,6 +220,7 @@ obniz.ble.scan.start();
 Discover all services in connected peripheral.
 A function set to `ondiscoverservice` will be called for each found service. And a function set to `ondiscoverservicefinished` will be called when discovery finished.
 
+
 ```Javascript
 // Javascript Example
 await obniz.ble.initWait();
@@ -262,6 +263,8 @@ A function set to this property will be called when service discovery  `discover
 
 This function is async version of `discoverAllServices()`.
 It will return all found services as array.
+
+Please do not call this function in paralell.
 
 ```Javascript
 // Javascript Example
