@@ -2,6 +2,8 @@
 
 You can use bluetooth Low Energy with obniz Board as a peripheral device
 
+If you have obnizOS 1.X.X or 2.X.X, we recommend you to use obniz.js 2.X.X. [https://github.com/obniz/obniz/releases/tag/v2.5.0](https://github.com/obniz/obniz/releases/tag/v2.5.0)
+
 # Use obniz Board as ble peripheral
 
 ## \[await] initWait()

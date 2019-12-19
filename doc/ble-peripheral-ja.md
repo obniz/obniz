@@ -2,6 +2,8 @@
 
 BLE ペリフェラルを使うことでデバイスをBLEのペリフェラルデバイスとして利用することができます。
 
+obnizOS 1.X.Xまたは2.X.Xのデバイスを操作する場合はobniz.js 2.X.Xの利用を推奨します. [https://github.com/obniz/obniz/releases/tag/v2.5.0](https://github.com/obniz/obniz/releases/tag/v2.5.0)
+
 ## \[await] initWait()
 
 BLEを初期化します
