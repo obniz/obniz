@@ -7,7 +7,7 @@
 ```javascript
 console.log(service.uuid); // => '4C84'
 ```
-
+<!--
 ## service.discoverAllCharacteristics()
 
 サービスに登録されているキャラクタリスティクスを検索します。
@@ -97,32 +97,63 @@ obniz.ble.scan.onfind = async (peripheral) => {
 
 obniz.ble.scan.start();
 ```
+-->
 
-## getCharacteristic(uuid)
+## service.characteristics
 
-uuidで指定したキャラクタリスティクスを取得します。
+サービスに含まれるキャラクタリスティクスの一覧の配列です。
+接続時に自動検索され、代入されています。
 
 ```Javascript
 // Javascript Example
 
 await obniz.ble.initWait(); 
-
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = [0x02, 0xFF];
-        var char = await peripheral.getService("FF00").getCharacteristic("FF01");
-        console.log(char ? char.uuid : null)
-    }
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
 }
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  for (var c of service.characteristics) {
+    console.log(c.uuid)
+  }
+} catch(e) {
+  console.error(e);
+}
+```
 
+## service.getCharacteristic(uuid: string)
+
+サービスに含まれるキャラクタリスティクスのうち、uuidで文字列で指定したキャラクタリスティクスを取得します。存在しない場合はnullが返ります。
+
+uuidの大文字と小文字は区別されません。`aa00`と`AA00`は同じです。
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  var c = service.getCharacteristic("FFF0")
+  console.log(c.uuid)
+} catch(e) {
+  console.error(e);
+}
 ```
 

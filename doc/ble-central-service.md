@@ -9,6 +9,7 @@ It is uuid as string.
 console.log(service.uuid); // => '4C84'
 ```
 
+<!--
 ## service.discoverAllCharacteristics()
 
 Searching characteristics in a service.
@@ -97,32 +98,65 @@ obniz.ble.scan.onfind = async (peripheral) => {
 obniz.ble.scan.start();
 ```
 
-## getCharacteristic(uuid)
+-->
 
-return specified already found characteristics object.
+## service.characteristics
+
+It contains characteristics in a service.
+It was discovered when connection automatically.
 
 ```Javascript
 // Javascript Example
 
 await obniz.ble.initWait(); 
-
 var target = {
     uuids: ["FFF0"],
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = [0x02, 0xFF];
-        var char = await peripheral.getService("FF00").getCharacteristic("FF01");
-        console.log(char ? char.uuid : null)
-    }
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
 }
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  for (var c of service.characteristics) {
+    console.log(c.uuid)
+  }
+} catch(e) {
+  console.error(e);
+}
+```
 
+## service.getCharacteristic(uuid: string)
+
+It returns a characteristic which having specified uuid in a service.
+Return value is null when not matched.
+
+Case is ignored. So `aa00` and `AA00` are the same.
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  var c = service.getCharacteristic("FFF0")
+  console.log(c.uuid)
+} catch(e) {
+  console.error(e);
+}
 ```
 
 
