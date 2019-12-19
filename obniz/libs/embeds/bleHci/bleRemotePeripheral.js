@@ -211,6 +211,10 @@ class BleRemotePeripheral {
     });
   }
 
+  get services(){
+    return this.services;
+  }
+
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
     for (let key in this.services) {

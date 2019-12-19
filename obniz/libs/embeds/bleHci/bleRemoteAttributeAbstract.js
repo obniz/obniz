@@ -21,9 +21,6 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
 
   getChild(uuid) {
     let obj = super.getChild(uuid);
-    if (!obj) {
-      obj = this.addChild({ uuid });
-    }
     return obj;
   }
 
