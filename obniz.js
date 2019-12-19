@@ -33769,7 +33769,11 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case 'discover': {
-        let child = this.getChild(params[this.wsChildUuidName]);
+        let uuid = params[this.wsChildUuidName];
+        let child = this.getChild(uuid);
+        if(!child){
+          child = this.addChild({uuid})
+        }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
         this.ondiscover(child);
@@ -34269,10 +34273,7 @@ class BleRemotePeripheral {
         return this._services[key];
       }
     }
-    let newService = new BleRemoteService({ uuid });
-    newService.parent = this;
-    this._services.push(newService);
-    return newService;
+    return undefined;
   }
 
   findService(param) {
@@ -34366,7 +34367,14 @@ class BleRemotePeripheral {
         break;
       }
       case 'discover': {
-        let child = this.getService(params.service_uuid);
+        let uuid = params.service_uuid;
+        let child = this.getService(uuid);
+        if (!child) {
+          let newService = new BleRemoteService({ uuid });
+          newService.parent = this;
+          this._services.push(newService);
+          child = newService;
+        }
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
