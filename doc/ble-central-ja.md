@@ -36,7 +36,7 @@ settingに渡した引数に従って
 | property | type | default | description |
 |:--:|:--:|:--:|:--:|
 | duration | `number` | `30` | スキャンのタイムアウトまでの時間
-| duplicate | `boolean` | `false` | 同一ペリフェラルからのadvertisementを受け取るかどうかを指定します。デフォルトでは同一ペリフェラルの場合はonfindが二度呼ばれることはありません。現在falseにのみ対応しています。
+| duplicate | `boolean` | `false` | 同一ペリフェラルからのadvertisementを受け取るかどうかを指定します。デフォルトでは同一ペリフェラルの場合はonfindが二度呼ばれることはありません。
 
 
 ```Javascript
