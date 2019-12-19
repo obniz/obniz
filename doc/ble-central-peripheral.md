@@ -318,6 +318,66 @@ obniz.ble.scan.start();
 -->
 
 
+## peripheral.services
+
+It contains all discovered services in a peripheral as an array. It is discovered when connection automatically.
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  for (var service of peripheral.services) {
+      console.log(service.uuid)
+  }
+} catch(e) {
+  console.error(e);
+}
+```
+
+## peripheral.getService(uuid: string)
+
+It returns a service which having specified uuid in `peripheral.services`.
+
+Case is ignored. So `aa00` and `AA00` are the same.
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  if (!service) {
+      console.log("service not found")
+      return;
+  }
+  console.log(service.uuid) // => 1800 or 
+} catch(e) {
+  console.error(e);
+}
+```
+
+
 ## peripheral.onerror
 This gets called with an error message when some kind of error occurs.
 

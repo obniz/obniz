@@ -92,7 +92,6 @@ console.log(peripheral.iBeacon)
 ```
 
 
-
 ## \[await] peripheral.connectWait()
 
 peripheralに接続します。
@@ -287,6 +286,66 @@ obniz.ble.scan.onfind = async (peripheral) => {
 obniz.ble.scan.start();
 ```
 -->
+
+
+## peripheral.services
+
+connect後に発見されたサービスの一覧が入っています。connectしたあとに利用できます。
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  for (var service of peripheral.services) {
+      console.log(service.uuid)
+  }
+} catch(e) {
+  console.error(e);
+}
+```
+
+## peripheral.getService(uuid: string)
+
+引数の文字列で指定したUUIDを持つサービスを返します。通信は発生せず、connect時の自動discoverの結果に含まれるかどうかが判定されます。
+
+英語の大文字小文字は区別されません。`aa00`の指定と`AA00`の指定は同じになります。
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var target = {
+    uuids: ["FFF0"],
+};
+var peripheral = await obniz.ble.scan.startOneWait(target);
+if(!peripheral) {
+    console.log('no such peripheral')
+    return;
+}
+try {
+  await peripheral.connectWait();
+  console.log("connected");
+  var service = peripheral.getService("1800")
+  if (!service) {
+      console.log("service not found")
+      return;
+  }
+  console.log(service.uuid) // => 1800 or 
+} catch(e) {
+  console.error(e);
+}
+```
 
 
 ## peripheral.onerror
