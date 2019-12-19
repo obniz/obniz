@@ -1,4 +1,4 @@
-# BLE Peripheral - Service
+# BLE Peripheral - サービス
 
 ## new service(json)
 

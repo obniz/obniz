@@ -1,5 +1,5 @@
 
-# BLE Central Descriptor
+# BLE Central ディスクリプタ
 
 ## \[await] descriptor.writeWait(dataArray)
 descriptorにdataArrayを書き込みます

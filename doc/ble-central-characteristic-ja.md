@@ -1,4 +1,4 @@
-# BLE Central Characteristic
+# BLE Central キャラクタリスティク
 
 ## characteristics.uuid
 

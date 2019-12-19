@@ -1,4 +1,4 @@
-# BLE Central Service
+# BLE Central サービス
 
 ## service.uuid
 

@@ -1,4 +1,4 @@
-# obniz Boardをcentralとして使う
+# BLE Central
 
 ## \[await] initWait()
 

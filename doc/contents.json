@@ -111,7 +111,7 @@
       "filename": "ble-central-descriptor"
     },
     {
-      "title": "BLE use as peripheral",
+      "title": "BLE Peripheral",
       "title-ja": "BLEペリフェラル",
       "filename": "ble-peripheral"
     },

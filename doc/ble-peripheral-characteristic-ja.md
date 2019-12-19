@@ -1,4 +1,4 @@
-# BLE Peripheral - Characteristic
+# BLE Peripheral - キャラクタリスティク
 
 
 

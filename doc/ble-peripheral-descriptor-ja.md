@@ -1,4 +1,4 @@
-# BLE Peripheral - Descriptor
+# BLE Peripheral - ディスクリプタ
 
 
 ## new descriptor(json)
