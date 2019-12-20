@@ -55,7 +55,7 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
   }
 
   _onWriteRequest(data, offset, withoutResponse, callback) {
-    console.log('onWriteRequest');
+    // console.log('onWriteRequest');
     this.data = Array.from(data);
     callback(this.RESULT_SUCCESS);
     let address = null;

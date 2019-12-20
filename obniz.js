@@ -33436,7 +33436,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   _onSubscribe(maxValueSize, updateValueCallback) {
-    console.log('_onSubscribe');
+    // console.log('_onSubscribe');
     this._maxValueSize = maxValueSize;
     this._updateValueCallback = updateValueCallback;
   }
@@ -33597,7 +33597,7 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
   }
 
   _onWriteRequest(data, offset, withoutResponse, callback) {
-    console.log('onWriteRequest');
+    // console.log('onWriteRequest');
     this.data = Array.from(data);
     callback(this.RESULT_SUCCESS);
     let address = null;
