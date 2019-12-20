@@ -6,7 +6,7 @@ let testUtil = require('../../../../testUtil.js');
 chai.use(require('chai-like'));
 chai.use(testUtil.obnizAssert);
 
-describe('ble', function() {
+describe.skip('ble', function() {
   beforeEach(function(done) {
     return testUtil.setupObnizPromise(this, done, { __firmware_ver: '2.0.0' });
   });
@@ -550,6 +550,8 @@ describe('ble', function() {
 
     testUtil.receiveJson(this.obniz, results1);
 
+    expect(this.obniz).send([{ ble: { scan: { duration: 30 } } }]);
+
     sinon.assert.callCount(stub1, 1);
     sinon.assert.callCount(stub2, 0);
 
@@ -579,7 +581,7 @@ describe('ble', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('connect', function() {
+  it.skip('connect', function() {
     let stub = sinon.stub();
 
     this.obniz.ble.scan.onfind = stub;

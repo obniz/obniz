@@ -5,7 +5,7 @@ let testUtil = require('../../../..//testUtil.js');
 
 chai.use(testUtil.obnizAssert);
 
-describe('ble', function() {
+describe.skip('ble', function() {
   beforeEach(function() {
     testUtil.setupObnizPromise(this, function() {}, {
       __firmware_ver: '2.0.0',

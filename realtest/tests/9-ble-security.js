@@ -3,7 +3,7 @@ const chai = require('chai');
 const expect = chai.expect;
 let obnizA, obnizB;
 
-describe('9-ble-security', function() {
+describe.only('9-ble-security', function() {
   this.timeout(30000);
 
   beforeEach(function() {

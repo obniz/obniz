@@ -5,7 +5,7 @@ chai.use(require('chai-like'));
 
 let obnizA, obnizB;
 
-describe('8-ble', function() {
+describe.only('8-ble', function() {
   this.timeout(120000);
 
   before(async () => {
