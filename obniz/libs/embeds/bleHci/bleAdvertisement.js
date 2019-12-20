@@ -10,6 +10,8 @@ class BleAdvertisement {
   }
 
   start() {
+
+    this.obnizBle.warningIfNotInitialize();
     this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data),Buffer.from(this.scan_resp));
   }
 

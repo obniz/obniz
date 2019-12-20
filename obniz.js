@@ -32546,6 +32546,7 @@ class ObnizBLE {
     this.peripheralBindings.init();
 
     this._initialized = false;
+    this._initializeWarning = true;
 
     this.remotePeripherals = [];
 
@@ -32568,6 +32569,15 @@ class ObnizBLE {
     if(!this._initialized){
       this._initialized = true;
       await this.hciProtocol.initWait();
+    }
+  }
+  warningIfNotInitialize(){
+    if(!this._initialized && this._initializeWarning){
+      this._initializeWarning  = true;
+      this.Obniz.warning({
+        alert: 'warning',
+        message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+      });
     }
   }
 
@@ -32889,6 +32899,8 @@ class BleAdvertisement {
   }
 
   start() {
+
+    this.obnizBle.warningIfNotInitialize();
     this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data),Buffer.from(this.scan_resp));
   }
 
@@ -33456,7 +33468,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   _onSubscribe(maxValueSize, updateValueCallback) {
-    console.log('_onSubscribe');
+    // console.log('_onSubscribe');
     this._maxValueSize = maxValueSize;
     this._updateValueCallback = updateValueCallback;
   }
@@ -33617,7 +33629,7 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
   }
 
   _onWriteRequest(data, offset, withoutResponse, callback) {
-    console.log('onWriteRequest');
+    // console.log('onWriteRequest');
     this.data = Array.from(data);
     callback(this.RESULT_SUCCESS);
     let address = null;
@@ -33667,6 +33679,7 @@ class BlePeripheral {
   }
 
   addService(obj) {
+    this.obnizBle.warningIfNotInitialize();
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
@@ -34517,6 +34530,7 @@ class BleScan {
   }
 
   start(target, settings) {
+    this.obnizBle.warningIfNotInitialize();
 
     if (!settings) {
       settings = {};
@@ -35163,9 +35177,10 @@ class NobleBindings extends events.EventEmitter {
 
       this.emit('disconnect', uuid); // TODO: handle reason?
     } else {
-      console.warn(
-        'noble warning: unknown handle ' + handle + ' disconnected!'
-      );
+      // maybe disconnect as peripheral
+      // console.warn(
+      //   'noble warning: unknown handle ' + handle + ' disconnected!'
+      // );
     }
   }
 

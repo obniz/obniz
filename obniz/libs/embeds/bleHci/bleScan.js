@@ -15,6 +15,7 @@ class BleScan {
   }
 
   start(target, settings) {
+    this.obnizBle.warningIfNotInitialize();
 
     if (!settings) {
       settings = {};

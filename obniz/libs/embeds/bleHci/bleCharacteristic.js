@@ -104,7 +104,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   _onSubscribe(maxValueSize, updateValueCallback) {
-    console.log('_onSubscribe');
+    // console.log('_onSubscribe');
     this._maxValueSize = maxValueSize;
     this._updateValueCallback = updateValueCallback;
   }
