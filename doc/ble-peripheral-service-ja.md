@@ -20,17 +20,36 @@ var service = new obniz.ble.service({
 obniz.ble.peripheral.addService(service); 
 ```
 
+## service.advData
+
+作成されたサービスをadvertisementするときに使用するobjectが代入されています。
+
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+var service = new obniz.ble.service({ uuid : "1234" });
+var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+service.addCharacteristic(characteristic);
+obniz.ble.peripheral.addService(service);
+
+obniz.ble.advertisement.setAdvData(service.advData);
+obniz.ble.advertisement.setScanRespData({
+localName : "obniz BLE",
+});
+obniz.ble.advertisement.start();
+```
+
 ## service.end()
 
 サービスを終了します
-```Javascript
-
-await obniz.ble.initWait(); 
-var service = new obniz.ble.service({   "uuid" : "fff0" });
-obniz.ble.peripheral.addService(service); 
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+var service = new obniz.ble.service({ uuid : "1234" });
+var characteristic = new obniz.ble.characteristic({ uuid : "7777", data: [1, 2, 3]});
+service.addCharacteristic(characteristic);
+obniz.ble.peripheral.addService(service);
 
 service.end();
-
 ```
-
 
