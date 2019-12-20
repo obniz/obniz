@@ -35127,9 +35127,10 @@ class NobleBindings extends events.EventEmitter {
 
       this.emit('disconnect', uuid); // TODO: handle reason?
     } else {
-      console.warn(
-        'noble warning: unknown handle ' + handle + ' disconnected!'
-      );
+      // maybe disconnect as peripheral
+      // console.warn(
+      //   'noble warning: unknown handle ' + handle + ' disconnected!'
+      // );
     }
   }
 
