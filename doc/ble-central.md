@@ -31,7 +31,7 @@ You can filter uuids or localName using the target param.
 | property | type | default | description |
 |:--:|:--:|:--:|:--:|
 | duration | `number` | `30` | Timeout of scannning.
-| duplicate | `boolean` | `false` | Specifying `onfind` will be called or not when an advertisement received from already known peripheral. Default is never called again. 
+| duplicate | `boolean` | `false` | (obnizOS 3 or later only) Specifying `onfind` will be called or not when an advertisement received from already known peripheral. Default is never called again. 
 
 ```Javascript
 // Javascript Example
