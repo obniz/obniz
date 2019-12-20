@@ -70,7 +70,7 @@ if(peripheral){
 
 
 ## \[await] characteristics.writeTextWait(str)
-It writes data to the characteristic as string.
+It convert string to UTF-8 and write binary array to a characteristics.
 It throws an error when failed.
 
 ```Javascript
@@ -116,6 +116,7 @@ obniz.ble.startScan({duration : 10});
 
 ## \[await] characteristics.readWait()
 It reads data from the characteristic.
+Even you wrote string or number, it returns binary array.
 The returned value appears in the callback function (onread). If reading succeeds an Array with data will be returned.
 It throws an error when failed.
 

@@ -49,7 +49,7 @@ if(peripheral){
 
 
 ## \[await] characteristics.writeNumberWait(value)
-characteristicに数字を1byteとしてを書き込みます
+characteristicに数字を1byteに変換して書き込みます。
 失敗した場合はエラーがthrowされます。
 
 ```Javascript
@@ -72,7 +72,7 @@ if(peripheral){
 
 
 ## \[await] characteristics.writeTextWait(str)
-characteristicに文字列を書き込みます
+characteristicに文字列をUTF-8で変換したバイト列として保存します。
 失敗した場合はエラーがthrowされます。
 
 ```Javascript
@@ -117,7 +117,8 @@ obniz.ble.scan.start();
 
 
 ## \[await] characteristics.readWait()
-characteristicからデータを読み込みます
+characteristicからデータ(バイト列)を読み込みます。
+書き込み時に数字や文字列で書き込んだ場合もバイト列でのみ読み取ります。
 読み込みに成功するとデータの入ったArrayが,失敗するとエラーがthrowされます
 
 ```Javascript
