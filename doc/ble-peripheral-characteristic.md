@@ -82,6 +82,10 @@ console.log("data: " , data );
 ## characteristic.onwritefromremote(address, newvalue)
 This is a callback function used when characteristic gets changed by an external device.
 
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
+| `newvalue` |  array  | written data |
 
 ```Javascript 
 
@@ -94,6 +98,10 @@ characteristic.onwritefromremote = function(address, newvalue){
 
 ## characteristic.onreadfromremote(address)
 This is a callback function used when characteristic is read by an external device.
+
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
 
 ```Javascript 
 

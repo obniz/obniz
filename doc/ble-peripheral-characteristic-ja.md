@@ -89,6 +89,11 @@ console.log("data: " , data );
 ## characteristic.onwritefromremote(address, newvalue)
 characteristicが外部から変更されたときのコールバックです
 
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
+| `newvalue` |  array  | written data |
+
 ```Javascript 
 
 characteristic.onwritefromremote = function(address, newvalue){
@@ -100,6 +105,10 @@ characteristic.onwritefromremote = function(address, newvalue){
 
 ## characteristic.onreadfromremote(address)
 characteristicが外部からよまれたときのコールバックです
+
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
 
 ```Javascript 
 
