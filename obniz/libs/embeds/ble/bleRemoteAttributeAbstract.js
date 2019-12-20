@@ -17,14 +17,6 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     return childName + '_uuid';
   }
 
-  getChild(uuid) {
-    let obj = super.getChild(uuid);
-    if (!obj) {
-      obj = this.addChild({ uuid });
-    }
-    return obj;
-  }
-
   discoverChildren() {}
 
   discoverChildrenWait() {
@@ -50,7 +42,11 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case 'discover': {
-        let child = this.getChild(params[this.wsChildUuidName]);
+        let uuid = params[this.wsChildUuidName];
+        let child = this.getChild(uuid);
+        if (!child) {
+          child = this.addChild({ uuid });
+        }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
         this.ondiscover(child);

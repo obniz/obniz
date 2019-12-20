@@ -1,8 +1,5 @@
-/* eslint-disable */
-
 const BleLocalAttributeAbstract = require('./bleLocalAttributeAbstract');
 const BleCharacteristic = require('./bleCharacteristic');
-const BleHelper = require('./bleHelper');
 
 class BleService extends BleLocalAttributeAbstract {
   constructor(obj) {
@@ -24,6 +21,10 @@ class BleService extends BleLocalAttributeAbstract {
     return BleCharacteristic;
   }
 
+  get characteristics() {
+    return this.children;
+  }
+
   get advData() {
     return {
       flags: ['general_discoverable_mode', 'br_edr_not_supported'],
@@ -43,4 +44,3 @@ class BleService extends BleLocalAttributeAbstract {
 }
 
 module.exports = BleService;
-

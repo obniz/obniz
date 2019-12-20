@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 const BleHelper = require('./bleHelper');
 
 class BleAdvertisementBuilder {

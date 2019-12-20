@@ -1,8 +1,5 @@
-/* eslint-disable */
-
 const BleRemoteDescriptor = require('./bleRemoteDescriptor');
 const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
-const BleHelper = require('./bleHelper');
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -26,14 +23,13 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return 'descriptors';
   }
 
-  get descriptors(){
+  get descriptors() {
     return this.children;
   }
 
   addDescriptor(params) {
     return this.addChild(params);
   }
-
 
   getDescriptor(uuid) {
     let obj = this.getChild(uuid);
@@ -48,13 +44,12 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   registerNotify(callback) {
     this.onnotify = callback;
     this.service.peripheral.obnizBle.centralBindings.notify(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        true
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      true
     );
   }
-
 
   registerNotifyWait(callback) {
     return new Promise(resolve => {
@@ -65,18 +60,16 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     });
   }
 
-
   unregisterNotify() {
     this.onnotify = function() {};
 
     this.service.peripheral.obnizBle.centralBindings.notify(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        false
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      false
     );
   }
-
 
   unregisterNotifyWait() {
     return new Promise(resolve => {
@@ -89,9 +82,9 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   read() {
     this.service.peripheral.obnizBle.centralBindings.read(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid
     );
   }
 
@@ -100,20 +93,19 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       needResponse = true;
     }
     this.service.peripheral.obnizBle.centralBindings.write(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        Buffer.from(array),
-        !needResponse
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      Buffer.from(array),
+      !needResponse
     );
-
   }
 
   discoverChildren() {
     this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid
     );
   }
 

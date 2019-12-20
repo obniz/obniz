@@ -31125,6 +31125,10 @@ class BleCharacteristic extends BleAttributeAbstract {
     return 'descriptors';
   }
 
+  get descriptors() {
+    return this.children;
+  }
+
   toJSON() {
     let obj = super.toJSON();
 
@@ -31311,14 +31315,18 @@ const BleHelper = __webpack_require__("./obniz/libs/embeds/ble/bleHelper.js");
 class BlePeripheral {
   constructor(Obniz) {
     this.Obniz = Obniz;
-    this.services = [];
+    this._services = [];
+  }
+
+  get services() {
+    return this._services;
   }
 
   addService(obj) {
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
-    this.services.push(obj);
+    this._services.push(obj);
     obj.peripheral = this;
     this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
   }
@@ -31333,7 +31341,7 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    return this.services
+    return this._services
       .filter(function(element) {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
@@ -31341,7 +31349,7 @@ class BlePeripheral {
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function(element) {
+    this._services = this._services.filter(function(element) {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }
@@ -31352,12 +31360,12 @@ class BlePeripheral {
         peripheral: null,
       },
     });
-    this.services = [];
+    this._services = [];
   }
 
   toJSON() {
     return {
-      services: this.services,
+      services: this._services,
     };
   }
 
@@ -31416,14 +31424,6 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     return childName + '_uuid';
   }
 
-  getChild(uuid) {
-    let obj = super.getChild(uuid);
-    if (!obj) {
-      obj = this.addChild({ uuid });
-    }
-    return obj;
-  }
-
   discoverChildren() {}
 
   discoverChildrenWait() {
@@ -31449,7 +31449,11 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case 'discover': {
-        let child = this.getChild(params[this.wsChildUuidName]);
+        let uuid = params[this.wsChildUuidName];
+        let child = this.getChild(uuid);
+        if (!child) {
+          child = this.addChild({ uuid });
+        }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
         this.ondiscover(child);
@@ -31498,6 +31502,10 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   get childrenName() {
     return 'descriptors';
+  }
+
+  get descriptors() {
+    return this.children;
   }
 
   addDescriptor(params) {
@@ -31778,8 +31786,12 @@ class BleRemotePeripheral {
       'scan_resp',
     ];
 
-    this.services = [];
+    this._services = [];
     this.emitter = new emitter();
+  }
+
+  get services() {
+    return this._services;
   }
 
   /**
@@ -31958,7 +31970,7 @@ class BleRemotePeripheral {
   disconnectWait() {
     return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        if (params.status === 'connected') {
+        if (params.status === 'disconnected') {
           resolve(true);
         } else {
           reject(new Error('disconnectWait failed'));
@@ -31970,15 +31982,12 @@ class BleRemotePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    for (let key in this.services) {
-      if (this.services[key].uuid === uuid) {
-        return this.services[key];
+    for (let key in this._services) {
+      if (this._services[key].uuid === uuid) {
+        return this._services[key];
       }
     }
-    let newService = new BleRemoteService({ uuid });
-    newService.parent = this;
-    this.services.push(newService);
-    return newService;
+    return undefined;
   }
 
   findService(param) {
@@ -32019,13 +32028,40 @@ class BleRemotePeripheral {
   discoverAllServicesWait() {
     return new Promise(resolve => {
       this.emitter.once('discoverfinished', () => {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
       });
       this.discoverAllServices();
     });
+  }
+
+  async discoverAllHandlesWait() {
+    let ArrayFlat = function(array, depth) {
+      let flattend = [];
+      (function flat(array, depth) {
+        for (let el of array) {
+          if (Array.isArray(el) && depth > 0) {
+            flat(el, depth - 1);
+          } else {
+            flattend.push(el);
+          }
+        }
+      })(array, Math.floor(depth) || 1);
+      return flattend;
+    };
+
+    let services = await this.discoverAllServicesWait();
+    let charsNest = await Promise.all(
+      services.map(s => s.discoverAllCharacteristicsWait())
+    );
+    let chars = ArrayFlat(charsNest);
+    let descriptorsNest = await Promise.all(
+      chars.map(c => c.discoverAllDescriptorsWait())
+    );
+    // eslint-disable-next-line no-unused-vars
+    let descriptors = ArrayFlat(descriptorsNest);
   }
 
   onconnect() {}
@@ -32040,12 +32076,14 @@ class BleRemotePeripheral {
 
   ondiscoverfinished() {}
 
-  notifyFromServer(notifyName, params) {
+  async notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case 'statusupdate': {
         if (params.status === 'connected') {
           this.connected = true;
+          await this.discoverAllHandlesWait();
+
           this.onconnect();
         }
         if (params.status === 'disconnected') {
@@ -32055,13 +32093,20 @@ class BleRemotePeripheral {
         break;
       }
       case 'discover': {
-        let child = this.getService(params.service_uuid);
+        let uuid = params.service_uuid;
+        let child = this.getService(uuid);
+        if (!child) {
+          let newService = new BleRemoteService({ uuid });
+          newService.parent = this;
+          this._services.push(newService);
+          child = newService;
+        }
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
       }
       case 'discoverfinished': {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverservicefinished(children);
@@ -32100,6 +32145,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
 
   get childrenName() {
     return 'characteristics';
+  }
+
+  get characteristics() {
+    return this.children;
   }
 
   addCharacteristic(params) {
@@ -32510,8 +32559,6 @@ module.exports = BleService;
 /***/ "./obniz/libs/embeds/bleHci/ble.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const ObnizBLEHci = __webpack_require__("./obniz/libs/embeds/bleHci/hci.js");
 const CentralBindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/bindings.js");
 const PeripheralBindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js");
@@ -32533,10 +32580,8 @@ class ObnizBLE {
     this.hci = new ObnizBLEHci(Obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
-
-    this.centralBindings = new CentralBindings( this.hciProtocol );
-    this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
-
+    this.centralBindings = new CentralBindings(this.hciProtocol);
+    this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
 
     // let dummy = {write : ()=>{}, on:()=>{}}
     // this.centralBindings = new CentralBindings( dummy );
@@ -32566,14 +32611,15 @@ class ObnizBLE {
   }
 
   async initWait() {
-    if(!this._initialized){
+    if (!this._initialized) {
       this._initialized = true;
       await this.hciProtocol.initWait();
     }
   }
-  warningIfNotInitialize(){
-    if(!this._initialized && this._initializeWarning){
-      this._initializeWarning  = true;
+
+  warningIfNotInitialize() {
+    if (!this._initialized && this._initializeWarning) {
+      this._initializeWarning = true;
       this.Obniz.warning({
         alert: 'warning',
         message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
@@ -32622,18 +32668,17 @@ class ObnizBLE {
     return str;
   }
 
+  onStateChange() {}
 
-  onStateChange(){}
-  onAddressChange(){}
+  onAddressChange() {}
 
-  onScanStart(){}
+  onScanStart() {}
 
-  onScanStop (){
+  onScanStop() {
     this.scan.notifyFromServer('onfinish');
   }
 
   onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
-
     let val = this.findPeripheral(uuid);
     if (!val) {
       val = new BleRemotePeripheral(this, uuid);
@@ -32642,12 +32687,14 @@ class ObnizBLE {
     val.discoverdOnRemote = true;
 
     let peripheralData = {
-      'device_type': "ble",
-      'address_type': addressType,
-      'ble_event_type': connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
-      'rssi': rssi,
-      'adv_data': advertisement.advertisementRaw,
-      'scan_resp': advertisement.scanResponseRaw,
+      device_type: 'ble',
+      address_type: addressType,
+      ble_event_type: connectable
+        ? 'connectable_advertisemnt'
+        : 'non_connectable_advertising',
+      rssi: rssi,
+      adv_data: advertisement.advertisementRaw,
+      scan_resp: advertisement.scanResponseRaw,
     };
 
     val.setParams(peripheralData);
@@ -32656,137 +32703,172 @@ class ObnizBLE {
     this.scan.notifyFromServer('onfind', val);
   }
 
-  async onConnect(peripheralUuid, error){
+  async onConnect(peripheralUuid, error) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    if(!error){
+    if (!error) {
       await peripheral.discoverAllHandlesWait();
     }
-    peripheral.notifyFromServer("statusupdate", {status: error ? "disconnected" : "connected"})
+    peripheral.notifyFromServer('statusupdate', {
+      status: error ? 'disconnected' : 'connected',
+    });
   }
 
-  onDisconnect(peripheralUuid){
+  onDisconnect(peripheralUuid) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    peripheral.notifyFromServer("statusupdate", {status: "disconnected"})
+    peripheral.notifyFromServer('statusupdate', { status: 'disconnected' });
   }
 
-  onRssiUpdate(){}
+  onRssiUpdate() {}
 
-
-  onServicesDiscover(peripheralUuid, serviceUuids){
+  onServicesDiscover(peripheralUuid, serviceUuids) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    for( let serviceUuid of serviceUuids){
-      peripheral.notifyFromServer("discover", {service_uuid: serviceUuid})
+    for (let serviceUuid of serviceUuids) {
+      peripheral.notifyFromServer('discover', { service_uuid: serviceUuid });
     }
-    peripheral.notifyFromServer("discoverfinished", {});
+    peripheral.notifyFromServer('discoverfinished', {});
   }
-  onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids){
 
-  }
-  onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics){
+  onIncludedServicesDiscover(
+    peripheralUuid,
+    serviceUuid,
+    includedServiceUuids
+  ) {}
 
+  onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
-    for( let char of characteristics){
+    let service = peripheral.findService({ service_uuid: serviceUuid });
+    for (let char of characteristics) {
       let obj = {
-        properties : char.properties.map(e=>BleHelper.toSnakeCase(e)),
-        characteristic_uuid : char.uuid
+        properties: char.properties.map(e => BleHelper.toSnakeCase(e)),
+        characteristic_uuid: char.uuid,
       };
-      service.notifyFromServer("discover", obj)
+      service.notifyFromServer('discover', obj);
     }
-    service.notifyFromServer("discoverfinished", {});
+    service.notifyFromServer('discoverfinished', {});
   }
 
-
-
-  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
+  onRead(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    data,
+    isNotification,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    let characteristic = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
 
-    if(isNotification){
+    if (isNotification) {
       let obj = {
-        data : Array.from(data)
+        data: Array.from(data),
       };
-      characteristic.notifyFromServer("onnotify", obj)
-    }else {
+      characteristic.notifyFromServer('onnotify', obj);
+    } else {
       let obj = {
-        result : isSuccess ? "success" : "failed",
-        data : Array.from(data)
+        result: isSuccess ? 'success' : 'failed',
+        data: Array.from(data),
       };
-      characteristic.notifyFromServer("onread", obj)
+      characteristic.notifyFromServer('onread', obj);
     }
   }
 
-  onWrite(peripheralUuid, serviceUuid, characteristicUuid,isSuccess){
+  onWrite(peripheralUuid, serviceUuid, characteristicUuid, isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    characteristic.notifyFromServer("onwrite", {result : isSuccess ? "success" : "failed"})
+    let characteristic = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
+    characteristic.notifyFromServer('onwrite', {
+      result: isSuccess ? 'success' : 'failed',
+    });
   }
 
-  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state){
+  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {}
 
-  }
-
-
-  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){
+  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    let char = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
 
-    if(state){
-      char.notifyFromServer("onregisternotify", {})
-    }else{
-      char.notifyFromServer("onunregisternotify", {})
-
+    if (state) {
+      char.notifyFromServer('onregisternotify', {});
+    } else {
+      char.notifyFromServer('onunregisternotify', {});
     }
-
   }
 
-
-  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){
+  onDescriptorsDiscover(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptors
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    for( let descr of descriptors){
+    let char = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
+    for (let descr of descriptors) {
       let obj = {
-        descriptor_uuid : descr
+        descriptor_uuid: descr,
       };
-      char.notifyFromServer("discover", obj)
+      char.notifyFromServer('discover', obj);
     }
-    char.notifyFromServer("discoverfinished", {});
+    char.notifyFromServer('discoverfinished', {});
   }
 
-
-  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess) {
+  onValueRead(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    data,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid
+      descriptor_uuid: descriptorUuid,
     });
 
     let obj = {
-      result:  isSuccess ? "success" : "failed",
-      data: Array.from(data)
+      result: isSuccess ? 'success' : 'failed',
+      data: Array.from(data),
     };
-    descriptor.notifyFromServer("onread", obj)
+    descriptor.notifyFromServer('onread', obj);
   }
 
-  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
+  onValueWrite(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid
+      descriptor_uuid: descriptorUuid,
     });
 
     let obj = {
-      result: isSuccess ? "success" : "failed",
+      result: isSuccess ? 'success' : 'failed',
     };
-    descriptor.notifyFromServer("onwrite", obj)
-
+    descriptor.notifyFromServer('onwrite', obj);
   }
-  onHandleRead(peripheralUuid, handle, data){}
-  onHandleWrite(peripheralUuid, handle){}
-  onHandleNotify(peripheralUuid, handle, data){}
 
+  onHandleRead(peripheralUuid, handle, data) {}
+
+  onHandleWrite(peripheralUuid, handle) {}
+
+  onHandleNotify(peripheralUuid, handle, data) {}
 
   onPeripheralStateChange(state) {
     // console.error("onPeripheralStateChange")
@@ -32814,7 +32896,10 @@ class ObnizBLE {
 
   onPeripheralAccept(clientAddress) {
     this.peripheral.currentConnectedDeviceAddress = clientAddress;
-    this.peripheral.onconnectionupdates({address:clientAddress, status:"connected"});
+    this.peripheral.onconnectionupdates({
+      address: clientAddress,
+      status: 'connected',
+    });
   }
 
   onPeripheralMtuChange(mtu) {
@@ -32823,7 +32908,10 @@ class ObnizBLE {
 
   onPeripheralDisconnect(clientAddress) {
     this.peripheral.currentConnectedDeviceAddress = null;
-    this.peripheral.onconnectionupdates({address:clientAddress, status:"disconnected"});
+    this.peripheral.onconnectionupdates({
+      address: clientAddress,
+      status: 'disconnected',
+    });
   }
 
   onPeripheralRssiUpdate(rssi) {
@@ -32831,8 +32919,6 @@ class ObnizBLE {
   }
 
   _bind() {
-
-
     this.centralBindings.on('stateChange', this.onStateChange.bind(this));
 
     this.centralBindings.on('addressChange', this.onAddressChange.bind(this));
@@ -32843,39 +32929,71 @@ class ObnizBLE {
     this.centralBindings.on('connect', this.onConnect.bind(this));
     this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
     this.centralBindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
-    this.centralBindings.on('servicesDiscover', this.onServicesDiscover.bind(this));
-    this.centralBindings.on('includedServicesDiscover', this.onIncludedServicesDiscover.bind(this));
-    this.centralBindings.on('characteristicsDiscover', this.onCharacteristicsDiscover.bind(this));
-
+    this.centralBindings.on(
+      'servicesDiscover',
+      this.onServicesDiscover.bind(this)
+    );
+    this.centralBindings.on(
+      'includedServicesDiscover',
+      this.onIncludedServicesDiscover.bind(this)
+    );
+    this.centralBindings.on(
+      'characteristicsDiscover',
+      this.onCharacteristicsDiscover.bind(this)
+    );
 
     this.centralBindings.on('read', this.onRead.bind(this));
     this.centralBindings.on('write', this.onWrite.bind(this));
     this.centralBindings.on('broadcast', this.onBroadcast.bind(this));
     this.centralBindings.on('notify', this.onNotify.bind(this));
-    this.centralBindings.on('descriptorsDiscover', this.onDescriptorsDiscover.bind(this));
+    this.centralBindings.on(
+      'descriptorsDiscover',
+      this.onDescriptorsDiscover.bind(this)
+    );
     this.centralBindings.on('valueRead', this.onValueRead.bind(this));
     this.centralBindings.on('valueWrite', this.onValueWrite.bind(this));
     this.centralBindings.on('handleRead', this.onHandleRead.bind(this));
     this.centralBindings.on('handleWrite', this.onHandleWrite.bind(this));
     this.centralBindings.on('handleNotify', this.onHandleNotify.bind(this));
 
-
-
-
-
-    this.peripheralBindings.on('stateChange', this.onPeripheralStateChange.bind(this));
-    this.peripheralBindings.on('addressChange', this.onPeripheralAddressChange.bind(this));
-    this.peripheralBindings.on('platform', this.onPeripheralPlatform.bind(this));
-    this.peripheralBindings.on('advertisingStart', this.onPeripheralAdvertisingStart.bind(this));
-    this.peripheralBindings.on('advertisingStop', this.onPeripheralAdvertisingStop.bind(this));
-    this.peripheralBindings.on('servicesSet', this.onPeripheralServicesSet.bind(this));
+    this.peripheralBindings.on(
+      'stateChange',
+      this.onPeripheralStateChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'addressChange',
+      this.onPeripheralAddressChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'platform',
+      this.onPeripheralPlatform.bind(this)
+    );
+    this.peripheralBindings.on(
+      'advertisingStart',
+      this.onPeripheralAdvertisingStart.bind(this)
+    );
+    this.peripheralBindings.on(
+      'advertisingStop',
+      this.onPeripheralAdvertisingStop.bind(this)
+    );
+    this.peripheralBindings.on(
+      'servicesSet',
+      this.onPeripheralServicesSet.bind(this)
+    );
     this.peripheralBindings.on('accept', this.onPeripheralAccept.bind(this));
-    this.peripheralBindings.on('mtuChange', this.onPeripheralMtuChange.bind(this));
-    this.peripheralBindings.on('disconnect', this.onPeripheralDisconnect.bind(this));
+    this.peripheralBindings.on(
+      'mtuChange',
+      this.onPeripheralMtuChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'disconnect',
+      this.onPeripheralDisconnect.bind(this)
+    );
 
-    this.peripheralBindings.on('rssiUpdate', this.onPeripheralRssiUpdate.bind(this));
-
-
+    this.peripheralBindings.on(
+      'rssiUpdate',
+      this.onPeripheralRssiUpdate.bind(this)
+    );
   }
 }
 
@@ -32887,9 +33005,7 @@ module.exports = ObnizBLE;
 /***/ "./obniz/libs/embeds/bleHci/bleAdvertisement.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-const Builder = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const Builder = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
 
 class BleAdvertisement {
   constructor(obnizBle) {
@@ -32899,9 +33015,11 @@ class BleAdvertisement {
   }
 
   start() {
-
     this.obnizBle.warningIfNotInitialize();
-    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data),Buffer.from(this.scan_resp));
+    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(
+      Buffer.from(this.adv_data),
+      Buffer.from(this.scan_resp)
+    );
   }
 
   end() {
@@ -32942,8 +33060,6 @@ module.exports = BleAdvertisement;
 
 /***/ "./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js":
 /***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable */
 
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
@@ -33398,6 +33514,10 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
     return 'descriptors';
   }
 
+  get descriptors() {
+    return this.children;
+  }
+
   toJSON() {
     let obj = super.toJSON();
 
@@ -33661,20 +33781,18 @@ module.exports = BleLocalAttributeAbstract;
 /***/ "./obniz/libs/embeds/bleHci/blePeripheral.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleService = __webpack_require__("./obniz/libs/embeds/bleHci/bleService.js");
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BlePeripheral {
   constructor(obnizBle) {
     this.obnizBle = obnizBle;
-    this.services = [];
+    this._services = [];
     this.currentConnectedDeviceAddress = null;
   }
 
-  _updateServices(){
-    let bufData = this.services.map(e=>e.toBufferObj());
+  _updateServices() {
+    let bufData = this._services.map(e => e.toBufferObj());
     this.obnizBle.peripheralBindings.setServices(bufData);
   }
 
@@ -33683,7 +33801,7 @@ class BlePeripheral {
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
-    this.services.push(obj);
+    this._services.push(obj);
     obj.peripheral = this;
 
     this._updateServices();
@@ -33699,7 +33817,7 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    return this.services
+    return this._services
       .filter(function(element) {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
@@ -33707,7 +33825,7 @@ class BlePeripheral {
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function(element) {
+    this._services = this._services.filter(function(element) {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
 
@@ -33715,15 +33833,13 @@ class BlePeripheral {
   }
 
   stopAllService() {
-    this.services = [];
+    this._services = [];
     this._updateServices();
   }
 
-
-
   toJSON() {
     return {
-      services: this.services,
+      services: this._services,
     };
   }
 
@@ -33763,8 +33879,6 @@ module.exports = BlePeripheral;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
 
 class BleRemoteAttributeAbstract extends BleAttributeAbstract {
@@ -33782,11 +33896,6 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     }
     let childName = childrenName.slice(0, -1);
     return childName + '_uuid';
-  }
-
-  getChild(uuid) {
-    let obj = super.getChild(uuid);
-    return obj;
   }
 
   discoverChildren() {}
@@ -33816,8 +33925,8 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
       case 'discover': {
         let uuid = params[this.wsChildUuidName];
         let child = this.getChild(uuid);
-        if(!child){
-          child = this.addChild({uuid})
+        if (!child) {
+          child = this.addChild({ uuid });
         }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
@@ -33843,11 +33952,8 @@ module.exports = BleRemoteAttributeAbstract;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-const BleRemoteDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const BleRemoteDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js");
 const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -33871,14 +33977,13 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return 'descriptors';
   }
 
-  get descriptors(){
+  get descriptors() {
     return this.children;
   }
 
   addDescriptor(params) {
     return this.addChild(params);
   }
-
 
   getDescriptor(uuid) {
     let obj = this.getChild(uuid);
@@ -33893,13 +33998,12 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   registerNotify(callback) {
     this.onnotify = callback;
     this.service.peripheral.obnizBle.centralBindings.notify(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        true
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      true
     );
   }
-
 
   registerNotifyWait(callback) {
     return new Promise(resolve => {
@@ -33910,18 +34014,16 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     });
   }
 
-
   unregisterNotify() {
     this.onnotify = function() {};
 
     this.service.peripheral.obnizBle.centralBindings.notify(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        false
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      false
     );
   }
-
 
   unregisterNotifyWait() {
     return new Promise(resolve => {
@@ -33934,9 +34036,9 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   read() {
     this.service.peripheral.obnizBle.centralBindings.read(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid
     );
   }
 
@@ -33945,20 +34047,19 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       needResponse = true;
     }
     this.service.peripheral.obnizBle.centralBindings.write(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        Buffer.from(array),
-        !needResponse
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      Buffer.from(array),
+      !needResponse
     );
-
   }
 
   discoverChildren() {
     this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid
     );
   }
 
@@ -34049,10 +34150,7 @@ module.exports = BleRemoteCharacteristic;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
 
 class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -34065,23 +34163,21 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
 
   read() {
     this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(
-        this.characteristic.service.peripheral.address,
-        this.characteristic.service.uuid,
-        this.characteristic.uuid,
-        this.uuid
+      this.characteristic.service.peripheral.address,
+      this.characteristic.service.uuid,
+      this.characteristic.uuid,
+      this.uuid
     );
   }
 
   write(array) {
-
     this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(
-        this.characteristic.service.peripheral.address,
-        this.characteristic.service.uuid,
-        this.characteristic.uuid,
-        this.uuid,
-        Buffer.from(array)
+      this.characteristic.service.peripheral.address,
+      this.characteristic.service.uuid,
+      this.characteristic.uuid,
+      this.uuid,
+      Buffer.from(array)
     );
-
   }
 }
 
@@ -34093,8 +34189,6 @@ module.exports = BleRemoteDescriptor;
 
 /***/ "./obniz/libs/embeds/bleHci/bleRemotePeripheral.js":
 /***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable */
 
 const BleRemoteService = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteService.js");
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
@@ -34279,7 +34373,13 @@ class BleRemotePeripheral {
         if (params.status === 'connected') {
           resolve(true); // for compatibility
         } else {
-          reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+          reject(
+            new Error(
+              `connection to peripheral name=${this.localName} address=${
+                this.address
+              } can't be established`
+            )
+          );
         }
       });
       this.connect();
@@ -34300,14 +34400,20 @@ class BleRemotePeripheral {
         if (params.status === 'disconnected') {
           resolve(true); // for compatibility
         } else {
-          reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+          reject(
+            new Error(
+              `cutting connection to peripheral name=${
+                this.localName
+              } address=${this.address} was failed`
+            )
+          );
         }
       });
       this.disconnect();
     });
   }
 
-  get services(){
+  get services() {
     return this._services;
   }
 
@@ -34361,28 +34467,32 @@ class BleRemotePeripheral {
     });
   }
 
-  async discoverAllHandlesWait(){
-
-      let ArrayFlat = function(array, depth) {
-        var flattend = [];
-        (function flat(array, depth) {
-          for (let el of array) {
-            if (Array.isArray(el) && depth > 0) {
-              flat(el, depth - 1);
-            } else {
-              flattend.push(el);
-            }
+  async discoverAllHandlesWait() {
+    let ArrayFlat = function(array, depth) {
+      let flattend = [];
+      (function flat(array, depth) {
+        for (let el of array) {
+          if (Array.isArray(el) && depth > 0) {
+            flat(el, depth - 1);
+          } else {
+            flattend.push(el);
           }
-        })(array, Math.floor(depth) || 1);
-        return flattend;
-      };
+        }
+      })(array, Math.floor(depth) || 1);
+      return flattend;
+    };
 
     let services = await this.discoverAllServicesWait();
-    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
-    let chars =  ArrayFlat(charsNest);
-    let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
-    let descriptors = ArrayFlat(descriptorsNest)
+    let charsNest = await Promise.all(
+      services.map(s => s.discoverAllCharacteristicsWait())
+    );
+    let chars = ArrayFlat(charsNest);
+    let descriptorsNest = await Promise.all(
+      chars.map(c => c.discoverAllDescriptorsWait())
+    );
 
+    // eslint-disable-next-line no-unused-vars
+    let descriptors = ArrayFlat(descriptorsNest);
   }
 
   onconnect() {}
@@ -34445,11 +34555,8 @@ module.exports = BleRemotePeripheral;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteService.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleRemoteCharacteristic = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js");
 const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -34468,7 +34575,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
     return 'characteristics';
   }
 
-  get characteristics(){
+  get characteristics() {
     return this.children;
   }
 
@@ -34489,7 +34596,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address,this.uuid);
+    this.parent.obnizBle.centralBindings.discoverCharacteristics(
+      this.peripheral.address,
+      this.uuid
+    );
   }
 
   ondiscover(characteristic) {
@@ -34513,8 +34623,6 @@ module.exports = BleRemoteService;
 /***/ "./obniz/libs/embeds/bleHci/bleScan.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
@@ -34536,7 +34644,7 @@ class BleScan {
       settings = {};
     }
     let timeout = settings.duration || 30;
-    settings.duplicate = (settings.duplicate === true) ? true : false;
+    settings.duplicate = settings.duplicate === true ? true : false;
     this.scanSettings = settings;
     target = target || {};
     this.scanTarget = target;
@@ -34551,14 +34659,13 @@ class BleScan {
     }
     this.scanedPeripherals = [];
 
-
     this.obnizBle.centralBindings.startScanning(null, false);
 
     this.clearTimeoutTimer();
-    this._timeoutTimer = setTimeout(()=>{
+    this._timeoutTimer = setTimeout(() => {
       this._timeoutTimer = null;
-      this.end()
-    },timeout * 1000);
+      this.end();
+    }, timeout * 1000);
   }
 
   startOneWait(target, settings) {
@@ -34596,7 +34703,7 @@ class BleScan {
 
   end() {
     this.clearTimeoutTimer();
-    this.obnizBle.centralBindings.stopScanning()
+    this.obnizBle.centralBindings.stopScanning();
   }
 
   isTarget(peripheral) {
@@ -34650,7 +34757,7 @@ class BleScan {
 
   clearTimeoutTimer() {
     if (this._timeoutTimer) {
-      clearTimeout(this._timeoutTimer)
+      clearTimeout(this._timeoutTimer);
       this._timeoutTimer = null;
     }
   }
@@ -34664,10 +34771,7 @@ module.exports = BleScan;
 /***/ "./obniz/libs/embeds/bleHci/bleSecurity.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const semver = __webpack_require__("./node_modules/semver/semver.js");
 
 class BleSecurity {
   constructor(Obniz) {
@@ -34676,29 +34780,31 @@ class BleSecurity {
   }
 
   setModeLevel(mode, level) {
-    throw new Error("setModeLevel is deprecated method");
+    throw new Error('setModeLevel is deprecated method');
   }
+
   checkIntroducedFirmware(introducedVersion, functionName) {
-    throw new Error("checkIntroducedFirmware is deprecated method");
+    throw new Error('checkIntroducedFirmware is deprecated method');
   }
+
   setAuth(authTypes) {
-    throw new Error("setAuth is deprecated method");
+    throw new Error('setAuth is deprecated method');
   }
 
   setIndicateSecurityLevel(level) {
-    throw new Error("setIndicateSecurityLevel is deprecated method");
+    throw new Error('setIndicateSecurityLevel is deprecated method');
   }
 
   setEnableKeyTypes(keyTypes) {
-    throw new Error("setEnableKeyTypes is deprecated method");
+    throw new Error('setEnableKeyTypes is deprecated method');
   }
 
   setKeyMaxSize(size) {
-    throw new Error("setKeyMaxSize is deprecated method");
+    throw new Error('setKeyMaxSize is deprecated method');
   }
 
   clearBondingDevicesList() {
-    throw new Error("clearBondingDevicesList is deprecated method");
+    throw new Error('clearBondingDevicesList is deprecated method');
   }
 
   onerror() {} //dummy
@@ -34721,11 +34827,8 @@ module.exports = BleSecurity;
 /***/ "./obniz/libs/embeds/bleHci/bleService.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleLocalAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js");
 const BleCharacteristic = __webpack_require__("./obniz/libs/embeds/bleHci/bleCharacteristic.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BleService extends BleLocalAttributeAbstract {
   constructor(obj) {
@@ -34747,6 +34850,10 @@ class BleService extends BleLocalAttributeAbstract {
     return BleCharacteristic;
   }
 
+  get characteristics() {
+    return this.children;
+  }
+
   get advData() {
     return {
       flags: ['general_discoverable_mode', 'br_edr_not_supported'],
@@ -34766,7 +34873,6 @@ class BleService extends BleLocalAttributeAbstract {
 }
 
 module.exports = BleService;
-
 
 
 /***/ }),
@@ -35553,9 +35659,7 @@ module.exports = NobleBindings;
 /***/ "./obniz/libs/embeds/bleHci/protocol/central/crypto.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-let crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {let crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
 
 function r() {
   return crypto.randomBytes(16);

@@ -23,6 +23,8 @@ describe('9-ble-security', function() {
     if (obnizA.ble.hci) {
       return;
     }
+    await obnizA.ble.initWait();
+    await obnizB.ble.initWait();
     obnizA.ble.security.setModeLevel(1, 2);
 
     let SPDIService = new obnizA.ble.service({

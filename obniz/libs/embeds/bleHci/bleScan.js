@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 const emitter = require('eventemitter3');
 const BleHelper = require('./bleHelper');
 
@@ -21,7 +19,7 @@ class BleScan {
       settings = {};
     }
     let timeout = settings.duration || 30;
-    settings.duplicate = (settings.duplicate === true) ? true : false;
+    settings.duplicate = settings.duplicate === true ? true : false;
     this.scanSettings = settings;
     target = target || {};
     this.scanTarget = target;
@@ -36,14 +34,13 @@ class BleScan {
     }
     this.scanedPeripherals = [];
 
-
     this.obnizBle.centralBindings.startScanning(null, false);
 
     this.clearTimeoutTimer();
-    this._timeoutTimer = setTimeout(()=>{
+    this._timeoutTimer = setTimeout(() => {
       this._timeoutTimer = null;
-      this.end()
-    },timeout * 1000);
+      this.end();
+    }, timeout * 1000);
   }
 
   startOneWait(target, settings) {
@@ -81,7 +78,7 @@ class BleScan {
 
   end() {
     this.clearTimeoutTimer();
-    this.obnizBle.centralBindings.stopScanning()
+    this.obnizBle.centralBindings.stopScanning();
   }
 
   isTarget(peripheral) {
@@ -135,7 +132,7 @@ class BleScan {
 
   clearTimeoutTimer() {
     if (this._timeoutTimer) {
-      clearTimeout(this._timeoutTimer)
+      clearTimeout(this._timeoutTimer);
       this._timeoutTimer = null;
     }
   }

@@ -4,14 +4,18 @@ const BleHelper = require('./bleHelper');
 class BlePeripheral {
   constructor(Obniz) {
     this.Obniz = Obniz;
-    this.services = [];
+    this._services = [];
+  }
+
+  get services() {
+    return this._services;
   }
 
   addService(obj) {
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
-    this.services.push(obj);
+    this._services.push(obj);
     obj.peripheral = this;
     this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
   }
@@ -26,7 +30,7 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    return this.services
+    return this._services
       .filter(function(element) {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
@@ -34,7 +38,7 @@ class BlePeripheral {
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function(element) {
+    this._services = this._services.filter(function(element) {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }
@@ -45,12 +49,12 @@ class BlePeripheral {
         peripheral: null,
       },
     });
-    this.services = [];
+    this._services = [];
   }
 
   toJSON() {
     return {
-      services: this.services,
+      services: this._services,
     };
   }
 

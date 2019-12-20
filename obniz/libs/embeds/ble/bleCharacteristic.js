@@ -32,6 +32,10 @@ class BleCharacteristic extends BleAttributeAbstract {
     return 'descriptors';
   }
 
+  get descriptors() {
+    return this.children;
+  }
+
   toJSON() {
     let obj = super.toJSON();
 

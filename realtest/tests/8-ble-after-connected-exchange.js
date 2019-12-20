@@ -85,7 +85,7 @@ describe('8-ble-exchange', function() {
     await peripheral.connectWait();
 
     await new Promise(r => {
-      setTimeout(r, 1000);
+      setTimeout(r, 2000);
     });
 
     this.peripheral = peripheral;
@@ -100,8 +100,9 @@ describe('8-ble-exchange', function() {
       let charas = await service.discoverAllCharacteristicsWait();
 
       for (let chara of charas) {
-        chara.data = await chara.readWait();
-
+        if (chara.canRead()) {
+          chara.data = await chara.readWait();
+        }
         let descrs = await chara.discoverAllDescriptorsWait();
         for (let descr of descrs) {
           descr.data = await descr.readWait();
@@ -202,8 +203,13 @@ describe('8-ble-exchange', function() {
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
     console.log('write');
-    let result = await chara.writeTextWait('hello');
-    expect(result).to.be.equal(false);
+    let isErrored = false;
+    try {
+      await chara.writeTextWait('hello');
+    } catch (e) {
+      isErrored = true;
+    }
+    expect(isErrored).to.be.equal(true);
     console.log('read');
     let data = await chara.readWait();
     expect(data).to.be.deep.equal([101, 51, 214]);
@@ -260,19 +266,17 @@ describe('8-ble-exchange', function() {
   });
 
   it('unknown service error', async () => {
-    let service = await this.peripheral.getService('FF00');
+    let service = this.peripheral.getService('FF00');
     expect(service).to.be.undefined;
   });
 
   it('unknown char error', async () => {
-    let char = await this.peripheral
-      .getService('FFF0')
-      .getCharacteristic('FF00');
+    let char = this.peripheral.getService('FFF0').getCharacteristic('FF00');
     expect(char).to.be.undefined;
   });
 
   it('unknown desc error', async () => {
-    let desc = await this.peripheral
+    let desc = this.peripheral
       .getService('fff0')
       .getCharacteristic('fff1')
       .getDescriptor('2902');
@@ -280,7 +284,7 @@ describe('8-ble-exchange', function() {
   });
 
   it('close', async () => {
-    this.peripheral.disconnectWait();
+    await this.peripheral.disconnectWait();
     expect(!!obnizB.ble.peripheral.currentConnectedDeviceAddress).to.be.false; //null(>=3.0.0) or undefined(<3.0.0)
   });
 });

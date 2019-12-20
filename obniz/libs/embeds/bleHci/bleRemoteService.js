@@ -1,8 +1,5 @@
-/* eslint-disable */
-
 const BleRemoteCharacteristic = require('./bleRemoteCharacteristic');
 const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
-const BleHelper = require('./bleHelper');
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -21,7 +18,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
     return 'characteristics';
   }
 
-  get characteristics(){
+  get characteristics() {
     return this.children;
   }
 
@@ -42,7 +39,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address,this.uuid);
+    this.parent.obnizBle.centralBindings.discoverCharacteristics(
+      this.peripheral.address,
+      this.uuid
+    );
   }
 
   ondiscover(characteristic) {

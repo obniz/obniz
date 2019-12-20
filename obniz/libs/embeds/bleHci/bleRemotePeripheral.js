@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 const BleRemoteService = require('./bleRemoteService');
 const emitter = require('eventemitter3');
 const BleHelper = require('./bleHelper');
@@ -183,7 +181,13 @@ class BleRemotePeripheral {
         if (params.status === 'connected') {
           resolve(true); // for compatibility
         } else {
-          reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
+          reject(
+            new Error(
+              `connection to peripheral name=${this.localName} address=${
+                this.address
+              } can't be established`
+            )
+          );
         }
       });
       this.connect();
@@ -204,14 +208,20 @@ class BleRemotePeripheral {
         if (params.status === 'disconnected') {
           resolve(true); // for compatibility
         } else {
-          reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
+          reject(
+            new Error(
+              `cutting connection to peripheral name=${
+                this.localName
+              } address=${this.address} was failed`
+            )
+          );
         }
       });
       this.disconnect();
     });
   }
 
-  get services(){
+  get services() {
     return this._services;
   }
 
@@ -265,28 +275,32 @@ class BleRemotePeripheral {
     });
   }
 
-  async discoverAllHandlesWait(){
-
-      let ArrayFlat = function(array, depth) {
-        var flattend = [];
-        (function flat(array, depth) {
-          for (let el of array) {
-            if (Array.isArray(el) && depth > 0) {
-              flat(el, depth - 1);
-            } else {
-              flattend.push(el);
-            }
+  async discoverAllHandlesWait() {
+    let ArrayFlat = function(array, depth) {
+      let flattend = [];
+      (function flat(array, depth) {
+        for (let el of array) {
+          if (Array.isArray(el) && depth > 0) {
+            flat(el, depth - 1);
+          } else {
+            flattend.push(el);
           }
-        })(array, Math.floor(depth) || 1);
-        return flattend;
-      };
+        }
+      })(array, Math.floor(depth) || 1);
+      return flattend;
+    };
 
     let services = await this.discoverAllServicesWait();
-    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
-    let chars =  ArrayFlat(charsNest);
-    let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
-    let descriptors = ArrayFlat(descriptorsNest)
+    let charsNest = await Promise.all(
+      services.map(s => s.discoverAllCharacteristicsWait())
+    );
+    let chars = ArrayFlat(charsNest);
+    let descriptorsNest = await Promise.all(
+      chars.map(c => c.discoverAllDescriptorsWait())
+    );
 
+    // eslint-disable-next-line no-unused-vars
+    let descriptors = ArrayFlat(descriptorsNest);
   }
 
   onconnect() {}

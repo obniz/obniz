@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 const BleAttributeAbstract = require('./bleAttributeAbstract');
 
 class BleRemoteAttributeAbstract extends BleAttributeAbstract {
@@ -17,11 +15,6 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     }
     let childName = childrenName.slice(0, -1);
     return childName + '_uuid';
-  }
-
-  getChild(uuid) {
-    let obj = super.getChild(uuid);
-    return obj;
   }
 
   discoverChildren() {}
@@ -51,8 +44,8 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
       case 'discover': {
         let uuid = params[this.wsChildUuidName];
         let child = this.getChild(uuid);
-        if(!child){
-          child = this.addChild({uuid})
+        if (!child) {
+          child = this.addChild({ uuid });
         }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
