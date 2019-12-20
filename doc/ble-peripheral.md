@@ -21,6 +21,8 @@ await obniz.ble.initWait();
 This starts advertisement of BLE.
 Before calling this function, you should call setAdvData/setAdvDataRaw to set data.
 
+advertisement interval is 1.28sec fixed.
+
 ```Javascript
 // Javascript Example
 await obniz.ble.initWait(); 

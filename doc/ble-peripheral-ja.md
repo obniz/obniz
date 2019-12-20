@@ -19,6 +19,8 @@ await obniz.ble.initWait();
 
 BLEのAdvertisementを開始します。setAdvData/setAdvDataRaw関数で何をAdvertiseするのか指定できます。
 
+advertisement の間隔は 1.28sec で固定です。
+
 ```Javascript
 // Javascript Example
 await obniz.ble.initWait(); 
@@ -29,6 +31,7 @@ obniz.ble.peripheral.addService(service);
 obniz.ble.advertisement.setAdvData(service.advData);
 obniz.ble.advertisement.start();
 ```
+
 
 
 ## advertisement.end()
