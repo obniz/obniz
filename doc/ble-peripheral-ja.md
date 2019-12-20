@@ -1,4 +1,8 @@
-# obniz Boardをperipheralとして使う
+# BLE ペリフェラル
+
+BLE ペリフェラルを使うことでデバイスをBLEのペリフェラルデバイスとして利用することができます。
+
+obnizOS 1.X.Xまたは2.X.Xのデバイスを操作する場合はobniz.js 2.X.Xの利用を推奨します. [https://github.com/obniz/obniz/releases/tag/v2.5.0](https://github.com/obniz/obniz/releases/tag/v2.5.0)
 
 ## \[await] initWait()
 
@@ -11,21 +15,23 @@ await obniz.ble.initWait();
 
 ```
 
-
 ## advertisement.start()
 
 BLEのAdvertisementを開始します。setAdvData/setAdvDataRaw関数で何をAdvertiseするのか指定できます。
+
+advertisement の間隔は 1.28sec で固定です。
 
 ```Javascript
 // Javascript Example
 await obniz.ble.initWait(); 
 var service = new obniz.ble.service({
-  uuid : "FFF0"
+  uuid : "fff0"
 });
 obniz.ble.peripheral.addService(service); 
 obniz.ble.advertisement.setAdvData(service.advData);
 obniz.ble.advertisement.start();
 ```
+
 
 
 ## advertisement.end()
@@ -147,11 +153,11 @@ peripheralとしてサービスを開始します
 ```Javascript
 await obniz.ble.initWait(); 
 /* Service without characteristics */
-var service = new obniz.ble.service({"uuid" : "FFF0"});
+var service = new obniz.ble.service({"uuid" : "fff0"});
 obniz.ble.peripheral.addService(service);
 
 /* Service with characteristics/descriptor */
-var service = new obniz.ble.service({"uuid" : "FFF0"});
+var service = new obniz.ble.service({"uuid" : "fff0"});
 var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
 var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello world characteristic"});
 
@@ -161,10 +167,17 @@ characteristic.addDescriptor(descriptor);
 obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
 ```
 
-## peripheral.onconnectionupdates
 
+## peripheral.onconnectionupdates = (data) => {}
 
 外部デバイスが接続／切断されたときに呼ばれるコールバックです
+
+引数に渡されるdataには2つのプロパティがあります。
+
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
+| `status` |  string  | `connected` or `disconnected` |
     
 ```Javascript
 await obniz.ble.initWait(); 
@@ -187,293 +200,4 @@ obniz.ble.peripheral.addService(service2);
 obniz.ble.peripheral.end();  //service1 and service2 end.
 
 ```
-
-
-## new service(json)
-
-サービスオブジェクトを作成します
-jsonにはuuid（必須）およびcharacteristics（オプション）を設定できます
-
-```Javascript
-var service = new obniz.ble.service({
-    "uuid" : "FFF0",
-    "characteristics" : [{
-        "uuid" : "FFF1",
-        "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
-        "descriptors" : [{
-            "uuid" : "2901",   //Characteristic User Description
-            "text" : "hello world characteristic", //data for dataArray or  text for string
-        }]
-    }]
-});
-obniz.ble.peripheral.addService(service); 
-```
-
-## service.end()
-
-サービスを終了します
-```Javascript
-
-await obniz.ble.initWait(); 
-var service = new obniz.ble.service({   "uuid" : "FFF0" });
-obniz.ble.peripheral.addService(service); 
-
-service.end();
-
-```
-
-
-
-
-## new characteristic(json)
-
-```Javascript
-await obniz.ble.initWait(); 
-var characteristic = new obniz.ble.characteristic({
-    "uuid" : "FFF1",
-    "properties" : ["read","write"],  // read, write, notify
-    "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
-    "descriptors" : [{
-        "uuid" : "2901",   //Characteristic User Description
-        "text" : "hello world characteristic",    //data for dataArray or  text for string
-    }]
-});
-
-var service = new obniz.ble.service({
-                  "uuid" : "FFF0",
-                  "characteristics" : [ characteristic ]
-});
-obniz.ble.peripheral.addService(service); 
-   
-```
-
-<!--
-## characteristic.write(data)
-characteristicに値を書き込みます
-
-
-## characteristic.onwrite(data)
-characteristic.witeのコールバックです
-
-
-```Javascript 
-
-characteristic.write([0xf0,0x27]);
-characteristic.onwrite = function(val){
-    console.log("write :",val.result);
-}
-
-
-```
--->
-
-## \[await] characteristic.writeWait(data)
-characteristicに値を書き込みます
-成功するとtrue,失敗するとfalseが返ります
-
-```Javascript 
-let result =  await characteristic.writeWait([0xf0,0x27]);
-
-if(result){
-    console.log("write success");
-}
-
-```
-
-<!--
-## characteristic.read(data)
-characteristicの値を読み込みます
-
-## characteristic.onread(data)
-characteristic.readのコールバックです
-
-```Javascript 
-
-characteristic.read();
-characteristic.onread = function(val){
-    console.log("read data :",val.data);
-}
-
-
-```
-
--->
-
-## \[await] characteristic.readWait()
-characteristicの値を読み込みます
-成功するとdataのはいったArrayが,失敗するとundefinedが返ります
-
-```Javascript 
-let data =  await characteristic.readWait()
-
-console.log("data: " , data );
-
-
-```
-
-## characteristic.onwritefromremote(address, newvalue)
-characteristicが外部から変更されたときのコールバックです
-
-```Javascript 
-
-characteristic.onwritefromremote = function(address, newvalue){
-    console.log("remote address :",address);
-    console.log("remote data :",newvalue);
-}
-
-```
-
-## characteristic.onreadfromremote(address)
-characteristicが外部からよまれたときのコールバックです
-
-```Javascript 
-
-characteristic.onreadfromremote = function(address){
-    console.log("remote address :",address);	
-}
-
-```
-
-## characteristic.notify()
-接続済みのcentralに対してnotifyを出します．
-
-```javascript
-await obniz.ble.initWait(); 
-var characteristic = new obniz.ble.characteristic({
-  uuid: 'FFF1',
-  data: [0x0e, 0x00],
-  properties : ["read","write","notify"],  // add notify properties
- 
-});
-
-var service = new obniz.ble.service({
-  uuid: 'FFF0',
-  characteristics: [characteristic],
-});
-obniz.ble.peripheral.addService(service);
-
-
-// after central connected
-characteristic.notify();
-
-```
-
-
-
-## new descriptor(json)
-
-ディスクリプタを作成します
-
-
-```Javascript
-await obniz.ble.initWait(); 
-var descriptor = new obniz.ble.characteristic({
-                      "uuid" : "2901",   //Characteristic User Description
-                      "text" : "hello world characteristic",
-                  });
-
-var characteristic = new obniz.ble.characteristic({
-                    "uuid" : "FFF1",
-                    "text" : "Hi",
-                    "descriptors" : [ descriptor ]
-                  });
-
-var service = new obniz.ble.service({
-                  "uuid" : "FFF0",
-                  "characteristics" : [ characteristic ]
-});
-obniz.ble.peripheral.addService(service); 
-   
-```
-
-<!--
-## descriptor.write(data)
-descriptorに値を書き込みます
-
-## descriptor.onwrite(data)
-descriptor.witeのコールバックです
-
-
-
-```Javascript 
-
-descriptor.write([0xf0,0x27]);
-descriptor.onwrite = function(val){
-    console.log("write :",val.result);
-}
-
-
-```
--->
-
-
-## descriptor.writeWait(data)
-descriptorに値を書き込みます
-成功するとtrue,失敗するとfalseが返ります
-
-```Javascript 
-let result =  await descriptor.writeWait([0xf0,0x27]);
-
-if(result){
-    console.log("write success");
-}
-
-```
-<!--
-
-## descriptor.read(data)
-descriptorの値を読み込みます
-
-## descriptor.onread(data)
-descriptor.readのコールバックです
-
-
-```Javascript 
-
-descriptor.read();
-descriptor.onread = function(val){
-    console.log("read data :",val.data);
-}
-
-
-```
--->
-
-## \[await] descriptor.readWait()
-descriptorに値を読み込みます
-成功するとdataのはいったArrayが,失敗するとundefinedが返ります
-
-```Javascript 
-let data =  await descriptor.readWait()
-
-console.log("data: " , data );
-
-
-```
-
-## descriptor.onwritefromremote
-descriptorが外部から変更されたときのコールバックです
-
-
-```Javascript 
-
-descriptor.onwritefromremote = function(val){
-    console.log("remote address :",val.address);
-    console.log("remote data :",val.data);
-}
-
-```
-
-## descriptor.onreadfromremote
-descriptorが外部からよまれたときのコールバックです
-
-```Javascript 
-
-descriptor.onreadfromremote = function(val){
-    console.log("remote address :",val.address);	
-}
-
-```
-
-
 

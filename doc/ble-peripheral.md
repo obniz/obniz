@@ -1,5 +1,8 @@
-# BLE
-You can use bluetooth Low Energy with obniz Board as peripheral/central
+# BLE Peripheral
+
+You can use bluetooth Low Energy with obniz Board as a peripheral device
+
+If you have obnizOS 1.X.X or 2.X.X, we recommend you to use obniz.js 2.X.X. [https://github.com/obniz/obniz/releases/tag/v2.5.0](https://github.com/obniz/obniz/releases/tag/v2.5.0)
 
 # Use obniz Board as ble peripheral
 
@@ -10,7 +13,7 @@ Initialize BLE module.
 ```Javascript
 // Javascript Example
 
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 
 ```
 
@@ -18,11 +21,13 @@ obniz.ble.initWait();
 This starts advertisement of BLE.
 Before calling this function, you should call setAdvData/setAdvDataRaw to set data.
 
+advertisement interval is 1.28sec fixed.
+
 ```Javascript
 // Javascript Example
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 var service = new obniz.ble.service({
-  uuid : "FFF0"
+  uuid : "fff0"
 });
 obniz.ble.peripheral.addService(service); 
 obniz.ble.advertisement.setAdvData(service.advData);
@@ -35,7 +40,7 @@ This stops advertisement of BLE.
 
 ```Javascript
 // Javascript Example
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 obniz.ble.advertisement.start();
 obniz.ble.advertisement.end();
 ```
@@ -47,7 +52,7 @@ This sets advertise data from data array.
 
 ```Javascript
 // Javascript Example
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 obniz.ble.advertisement.setAdvDataRaw([0x02, 0x01, 0x1A, 0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x02, 0x01, 0x1A  => BLE type for 
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
@@ -62,7 +67,7 @@ This sets advertise data from json.
 ```Javascript
 // Javascript Example
 
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 obniz.ble.advertisement.setAdvData({
   flags: ["general_discoverable_mode","br_edr_not_supported"],
   manufacturerData:{
@@ -97,7 +102,7 @@ This sets scan response data from data array.
 
 ```Javascript
 // Javascript Example
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 obniz.ble.advertisement.setScanRespDataRaw([0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65 ]);
 //0x07, 0x09, 0x53, 0x61, 0x6D, 0x70, 0x6C, 0x65  => Set name
 
@@ -110,7 +115,7 @@ This sets scan response data from json data.
 
 ```Javascript
 // Javascript Example
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 obniz.ble.advertisement.setScanRespData({
   localName : "obniz BLE",
 });
@@ -141,13 +146,13 @@ This starts a service as peripheral with setting_json or service_obj.
 service_obj
 ```Javascript
 
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 /* Service without characteristics */
-var service = new obniz.ble.service({"uuid" : "FFF0"});
+var service = new obniz.ble.service({"uuid" : "fff0"});
 obniz.ble.peripheral.addService(service);
 
 /* Service with characteristics/descriptor */
-var service = new obniz.ble.service({"uuid" : "FFF0"});
+var service = new obniz.ble.service({"uuid" : "fff0"});
 var characteristic = new obniz.ble.characteristic({"uuid" : "FFF1", "text": "Hi"});
 var descriptor = new obniz.ble.descriptor({"uuid" : "2901", "text" : "hello world characteristic"});
 
@@ -157,12 +162,19 @@ characteristic.addDescriptor(descriptor);
 obniz.ble.peripheral.addService(service); // call this after all descriptors and characteristics added to service.
 ```
 
-## peripheral.onconnectionupdates
+## peripheral.onconnectionupdates = (data) => {}
 
 This is a callback function used when an external device gets connected or disconnected.
+
+data has two property
+
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
+| `status` |  string  | `connected` or `disconnected` |
     
 ```Javascript
-obniz.ble.initWait(); 
+await obniz.ble.initWait(); 
 obniz.ble.peripheral.onconnectionupdates = function(data){
   console.log("remote device ", data.address, data.status)
 };
@@ -178,280 +190,3 @@ obniz.ble.peripheral.addService(setting);
 
 obniz.ble.peripheral.end();
 ```
-
-## new service(json)
-
-This creates service object
-uuid is required and characteristics is optional.
-
-```Javascript
-obniz.ble.initWait(); 
-var service = new obniz.ble.service({
-                "uuid" : "FFF0",
-                "characteristics" : [{
-                "uuid" : "FFF1",
-                "data" : [0x0e, 0x00, ...], //data for dataArray or  text for string
-                "descriptors" : [{
-                    "uuid" : "2901",   //Characteristic User Description
-                    "text" : "hello world characteristic", //data for dataArray or  text for string
-                }]
-                }]
-            });
-obniz.ble.peripheral.addService(service); 
-```
-
-
-
-
-## new characteristic(json)
-
-```Javascript
-obniz.ble.initWait(); 
-var characteristic = new obniz.ble.characteristic({
-        "uuid" : "FFF1",
-        "properties" : ["read","write"],  // read, write, notify
-        "data" : [0x0e, 0x00, ...],     //data for dataArray or  text for string
-        "descriptors" : [{
-            "uuid" : "2901",   //Characteristic User Description
-            "text" : "hello world characteristic",    //data for dataArray or  text for string
-        }]
-});
-
-var service = new obniz.ble.service({
-                  "uuid" : "FFF0",
-                  "characteristics" : [ characteristic ]
-});
-obniz.ble.peripheral.addService(service); 
-   
-```
-
-<!--
-## characteristic.write(data)
-write data on characteristic
-
-## characteristic.onwrite(data)
-callback of characteristic.wite
-
-
-```Javascript 
-
-characteristic.write([0xf0,0x27]);
-characteristic.onwrite = function(val){
-    console.log("write :",val.result);
-}
-
-
-```
--->
-
-## \[await] characteristic.writeWait(data)
-This writes data on characteristic.
-It returns true when it is successful and false when it fails.
-
-```Javascript 
-let result =  await characteristic.writeWait([0xf0,0x27]);
-
-if(result){
-    console.log("write success");
-}
-
-```
-<!--
-## characteristic.read(data)
-read data on characteristic
-
-## characteristic.onread(data)
-callback of characteristic.read
-
-```Javascript 
-
-characteristic.read();
-characteristic.onread = function(val){
-    console.log("read data :",val.data);
-}
-
-
-```
--->
-## \[await] characteristic.readWait()
-This reads data on characteristic.
-It returns data array when it successds and undefined when it fails.
-
-```Javascript 
-let data =  await characteristic.readWait()
-
-console.log("data: " , data );
-
-
-```
-
-## characteristic.onwritefromremote(address, newvalue)
-This is a callback function used when characteristic gets changed by an external device.
-
-
-```Javascript 
-
-characteristic.onwritefromremote = function(address, newvalue){
-    console.log("remote address :",address);
-    console.log("remote data :",newvalue);
-}
-
-```
-
-## characteristic.onreadfromremote(address)
-This is a callback function used when characteristic is read by an external device.
-
-```Javascript 
-
-characteristic.onreadfromremote = function(address){
-    console.log("remote address :",address);	
-}
-
-```
-
-
-## characteristic.notify()
-This sends notify to the connected central.
-
-```javascript
-var characteristic = new obniz.ble.characteristic({
-  uuid: 'FFF1',
-  data: [0x0e, 0x00],
-  properties : ["read","write","notify"],  // add notify properties
- 
-});
-
-var service = new obniz.ble.service({
-  uuid: 'FFF0',
-  characteristics: [characteristic],
-});
-obniz.ble.peripheral.addService(service);
-
-
-// after central connected
-characteristic.notify();
-
-```
-
-
-## new descriptor(json)
-This creates descriptor.
-
-```Javascript
-
-obniz.ble.initWait(); 
-var descriptor = new obniz.ble.characteristic({
-                      "uuid" : "2901",   //Characteristic User Description
-                      "text" : "hello world characteristic",
-                  });
-
-var characteristic = new obniz.ble.characteristic({
-                    "uuid" : "FFF1",
-                    "text" : "Hi",
-                    "descriptors" : [ descriptor ]
-                  });
-
-var service = new obniz.ble.service({
-                  "uuid" : "FFF0",
-                  "characteristics" : [ characteristic ]
-});
-obniz.ble.peripheral.addService(service); 
-   
-```
-
-<!--
-## descriptor.write(data)
-write on descriptor
-
-## descriptor.onwrite(data)
-callback of descriptor.wite
-
-
-
-```Javascript 
-
-descriptor.write([0xf0,0x27]);
-descriptor.onwrite = function(val){
-    console.log("write :",val.result);
-}
-
-
-```
--->
-
-## descriptor.writeWait(data)
-This writes data on descriptor.
-It returns true when it succeeds and false when it fails.
-
-```Javascript 
-let result =  await descriptor.writeWait([0xf0,0x27]);
-
-if(result){
-    console.log("write success");
-}
-
-```
-<!--
-## descriptor.read(data)
-read data on descriptor
-
-## descriptor.onread(data)
-callback of descriptor.read
-
-
-```Javascript 
-
-descriptor.read();
-descriptor.onread = function(val){
-    console.log("read data :",val.data);
-}
-
-
-```
--->
-
-## \[await] descriptor.readWait()
-This reads data on descriptor.
-It returns data array when it succeeds and undefined when it fails.
-
-
-```Javascript 
-let data =  await descriptor.readWait()
-
-console.log("data: " , data );
-
-
-```
-
-
-## descriptor.onwritefromremote
-
-This is a callback function used when the descriptor gets changed by an external device.
-
-
-```Javascript 
-
-descriptor.onwritefromremote = function(val){
-    console.log("remote address :",val.address);
-    console.log("remote data :",val.data);
-}
-
-```
-
-## descriptor.onreadfromremote
-This is a callback function used when the descriptor is read by an external device.
-
-```Javascript 
-
-descriptor.onreadfromremote = function(val){
-    console.log("remote address :",val.address);	
-}
-
-```
-
-
-
-
-
-
-

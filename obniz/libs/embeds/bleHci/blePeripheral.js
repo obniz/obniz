@@ -16,6 +16,7 @@ class BlePeripheral {
   }
 
   addService(obj) {
+    this.obnizBle.warningIfNotInitialize();
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }

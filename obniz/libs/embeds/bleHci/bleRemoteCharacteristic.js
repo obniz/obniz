@@ -26,6 +26,10 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return 'descriptors';
   }
 
+  get descriptors(){
+    return this.children;
+  }
+
   addDescriptor(params) {
     return this.addChild(params);
   }

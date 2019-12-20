@@ -82,11 +82,9 @@ describe('8-ble', function() {
       peripheral.adv_data
     );
 
-    let connected = await peripheral.connectWait();
-    if (!connected) {
-      throw new Error('DISCONNECTED');
-    }
-    //console.log('CONNECTED');
+    await peripheral.connectWait();
+
+    console.log('CONNECTED');
 
     await new Promise(r => {
       setTimeout(r, 1000);
@@ -264,54 +262,27 @@ describe('8-ble', function() {
   });
 
   it('unknown service error', async () => {
-    let results = await this.peripheral
-      .getService('FF00')
-      .getCharacteristic('FF00')
-      .writeWait([10]);
-    await obnizA.pingWait();
-    expect(results).to.be.false;
-  });
-  it('unknown char error read', async () => {
-    let val = await this.peripheral
-      .getService('FFF0')
-      .getCharacteristic('FF00')
-      .readWait();
-    await obnizA.pingWait();
-    expect(val).to.be.undefined;
+    let service = await this.peripheral.getService('FF00');
+    expect(service).to.be.undefined;
   });
 
   it('unknown char error', async () => {
-    let results = await this.peripheral
+    let char = await this.peripheral
       .getService('FFF0')
-      .getCharacteristic('FF00')
-      .writeWait([10]);
-    await obnizA.pingWait();
-    expect(results).to.be.false;
+      .getCharacteristic('FF00');
+    expect(char).to.be.undefined;
   });
 
   it('unknown desc error', async () => {
-    let results = await this.peripheral
+    let desc = await this.peripheral
       .getService('fff0')
       .getCharacteristic('fff1')
-      .getDescriptor('2902')
-      .writeWait([10]);
-    await obnizA.pingWait();
-    expect(results).to.be.false;
-  });
-
-  it('unknown desc error read', async () => {
-    let results = await this.peripheral
-      .getService('fff0')
-      .getCharacteristic('fff1')
-      .getDescriptor('2902')
-      .readWait();
-    await obnizA.pingWait();
-    expect(results).to.be.undefined;
+      .getDescriptor('2902');
+    expect(desc).to.be.undefined;
   });
 
   it('close', async () => {
-    let results = await this.peripheral.disconnectWait();
-    expect(results).to.be.true;
+    await this.peripheral.disconnectWait();
     expect(!!obnizB.ble.peripheral.currentConnectedDeviceAddress).to.be.false; //null(>=3.0.0) or undefined(<3.0.0)
   });
 });
