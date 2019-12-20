@@ -34,6 +34,7 @@ class ObnizBLE {
     this.peripheralBindings.init();
 
     this._initialized = false;
+    this._initializeWarning = true;
 
     this.remotePeripherals = [];
 
@@ -56,6 +57,15 @@ class ObnizBLE {
     if(!this._initialized){
       this._initialized = true;
       await this.hciProtocol.initWait();
+    }
+  }
+  warningIfNotInitialize(){
+    if(!this._initialized && this._initializeWarning){
+      this._initializeWarning  = true;
+      this.Obniz.warning({
+        alert: 'warning',
+        message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+      });
     }
   }
 

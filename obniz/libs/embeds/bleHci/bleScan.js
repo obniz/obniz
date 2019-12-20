@@ -14,6 +14,7 @@ class BleScan {
   }
 
   start(target, settings) {
+    this.obnizBle.warningIfNotInitialize();
 
     let timeout = (settings || {} ).duration || 30;
     target = target || {};
