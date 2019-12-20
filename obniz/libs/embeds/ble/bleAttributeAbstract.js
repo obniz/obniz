@@ -118,12 +118,12 @@ class BleAttributeAbstract {
   }
 
   readWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onread', params => {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          resolve(undefined);
+          reject();
         }
       });
       this.read();
@@ -131,27 +131,39 @@ class BleAttributeAbstract {
   }
 
   writeWait(data, needResponse) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.write(data, needResponse);
     });
   }
 
   writeTextWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.writeText(data);
     });
   }
 
   writeNumberWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.writeNumber(data);
     });

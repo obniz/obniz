@@ -19,11 +19,8 @@ await obniz.ble.initWait();
 obniz.ble.scan.onfind = async (peripheral) => {
     console.log(peripheral.localName)
     if (peripheral.localName === 'my peripheral') {
-      var connected = await peripheral.connectWait();
-
-      if(connected){
-        
-          peripheral.ondiscoverservice = function (service) {
+      await peripheral.connectWait();
+      peripheral.ondiscoverservice = function (service) {
             console.log('service UUID:' + service.uuid);
 
             if (service.uuid === 'my service'){
@@ -46,9 +43,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
           }
         
           peripheral.discoverAllServices();
-      }else{
-          console.log("connection failed");
-      }
     }
 };
 
@@ -75,11 +69,8 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(peripheral.localName)
     if (peripheral.localName === 'my peripheral') {
       obniz.ble.scan.end();
-      var connected = await peripheral.connectWait();
-
-      if(connected){
-        
-          var services = await peripheral.discoverAllServicesWait();
+      await peripheral.connectWait();
+var services = await peripheral.discoverAllServicesWait();
           for (var service of services) {
             console.log('service UUID: ' + service.uuid)
             if (service.uuid === 'my srevice uuid'){
@@ -89,9 +80,6 @@ obniz.ble.scan.onfind = async (peripheral) => {
               }
             }
           }
-      }else{
-          console.log("connection failed");
-      }
     }
 };
 

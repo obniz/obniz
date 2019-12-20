@@ -3,7 +3,7 @@
 
 ## \[await] descriptor.writeWait(dataArray)
 descriptorにdataArrayを書き込みます
-成功すればtrue，失敗したらfalseが返ります
+失敗するとエラーがthrowされます。
 
 ```Javascript
 // Javascript Example
@@ -14,18 +14,13 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = [0x02, 0xFF];
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    var dataArray = [0x02, 0xFF];
+    await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
+    console.log("write success");
 }
 
 ```
@@ -33,7 +28,7 @@ if(peripheral){
 
 ## \[await] descriptor.writeNumber(value)
 descriptorに数字を1byteとしてを書き込みます
-成功すればtrue，失敗したらfalseが返ります
+失敗するとエラーがthrowされます。
 
 ```Javascript
 // Javascript Example
@@ -44,17 +39,12 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(100);
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(100);
+    console.log("write success");
 }
 ```
 
@@ -62,7 +52,7 @@ if(peripheral){
 
 ## \[await] descriptor.writeText(str)
 descriptorに文字列を書き込みます
-成功すればtrue，失敗したらfalseが返ります
+失敗するとエラーがthrowされます。
 
 
 ```Javascript
@@ -74,17 +64,12 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeTextWait("My Name");
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeTextWait("My Name");
+    console.log("write success");
 }
 ```
 <!-- 
@@ -113,7 +98,8 @@ obniz.ble.scan.start();
 
 ## \[await] descriptor.readWait()
 descriptorからデータを読み込みます
-読み込みに成功するとデータの入ったArrayが,失敗するとundefinedが返ります
+読み込みに成功するとデータの入ったArrayが返ります。
+失敗するとエラーがthrowされます。
 
 ```Javascript
 // Javascript Example
@@ -123,16 +109,12 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
-        console.log(dataArray);
-        
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+    console.log(dataArray);
 }
 ```
 

@@ -30977,12 +30977,12 @@ class BleAttributeAbstract {
   }
 
   readWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onread', params => {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          resolve(undefined);
+          reject();
         }
       });
       this.read();
@@ -30990,27 +30990,39 @@ class BleAttributeAbstract {
   }
 
   writeWait(data, needResponse) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.write(data, needResponse);
     });
   }
 
   writeTextWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.writeText(data);
     });
   }
 
   writeNumberWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.writeNumber(data);
     });
@@ -31920,9 +31932,13 @@ class BleRemotePeripheral {
   }
 
   connectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'connected');
+        if (params.status === 'connected') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.connect();
     });
@@ -31940,9 +31956,13 @@ class BleRemotePeripheral {
   }
 
   disconnectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'disconnected');
+        if (params.status === 'connected') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.disconnect();
     });
@@ -33213,12 +33233,12 @@ class BleAttributeAbstract {
   }
 
   readWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onread', params => {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          resolve(undefined);
+          reject();
         }
       });
       this.read();
@@ -33226,27 +33246,39 @@ class BleAttributeAbstract {
   }
 
   writeWait(data, needResponse) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.write(data, needResponse);
     });
   }
 
   writeTextWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.writeText(data);
     });
   }
 
   writeNumberWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.writeNumber(data);
     });
@@ -34232,7 +34264,7 @@ class BleRemotePeripheral {
       // }
       this.emitter.once('statusupdate', params => {
         if (params.status === 'connected') {
-          resolve();
+          resolve(true); // for compatibility
         } else {
           reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
         }
@@ -34253,7 +34285,7 @@ class BleRemotePeripheral {
       // }
       this.emitter.once('statusupdate', params => {
         if (params.status === 'disconnected') {
-          resolve();
+          resolve(true); // for compatibility
         } else {
           reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
         }

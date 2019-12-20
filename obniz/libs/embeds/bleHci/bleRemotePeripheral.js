@@ -181,7 +181,7 @@ class BleRemotePeripheral {
       // }
       this.emitter.once('statusupdate', params => {
         if (params.status === 'connected') {
-          resolve();
+          resolve(true); // for compatibility
         } else {
           reject(new Error(`connection to peripheral name=${this.localName} address=${this.address} can't be established`));
         }
@@ -202,7 +202,7 @@ class BleRemotePeripheral {
       // }
       this.emitter.once('statusupdate', params => {
         if (params.status === 'disconnected') {
-          resolve();
+          resolve(true); // for compatibility
         } else {
           reject(new Error(`cutting connection to peripheral name=${this.localName} address=${this.address} was failed`));
         }

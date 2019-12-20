@@ -299,17 +299,12 @@ obniz.ble.scan.onfind = async (peripheral) => {
     console.log(peripheral.localName)
     if (peripheral.localName === 'my peripheral') {
       obniz.ble.scan.end();
-      var connected = await peripheral.connectWait();
-
-      if(connected){
-          var services = await peripheral.discoverAllServicesWait();
-          console.log("service discovery finish");
-          for (var i=0; i<services.length; i++) {
-              console.log('service UUID: ' + services[i].uuid)
-          }
-      }else{
-          console.log("failed");
-      }
+      await peripheral.connectWait();
+        var services = await peripheral.discoverAllServicesWait();
+        console.log("service discovery finish");
+        for (var i=0; i<services.length; i++) {
+            console.log('service UUID: ' + services[i].uuid)
+        }
     }
 };
 

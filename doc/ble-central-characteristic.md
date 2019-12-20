@@ -15,10 +15,15 @@ It is an array of properties of a characteristics. It contains some of belows.
 
 `broadcast`, `notify`, `read`, `write`, `write_without_response`, `indicate`
 
+```javascript
+console.log(characteristics.properties); // => ['read', 'write', 'notify']
+```
+
+See how works at [https://www.bluetooth.com/ja-jp/specifications/bluetooth-core-specification/](https://www.bluetooth.com/ja-jp/specifications/bluetooth-core-specification/)
 
 ## \[await] characteristics.writeWait(dataArray)
 This writes dataArray to the characteristic.
-It returns true when it succeeds and false when it fails.
+It throws an error when failed.
 
 ```Javascript
 // Javascript Example
@@ -29,24 +34,20 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = [0x02, 0xFF];
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    var dataArray = [0x02, 0xFF];
+    await peripheral.getService("FF00").getCharacteristic("FF01").writeWait(dataArray);
+    console.log("write success");
 }
 
 ```
 
 ## \[await] characteristics.writeNumberWait(value)
 It writes data to the characteristic as 1byte.
+It throws an error when failed.
 
 ```Javascript
 // Javascript Example
@@ -57,17 +58,12 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);c
-    
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeNumberWait(100);
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);c
+
+    await peripheral.getService("FF00").getCharacteristic("FF01").writeNumberWait(100);
+    console.log("write success");
 }
 ```
 
@@ -75,7 +71,7 @@ if(peripheral){
 
 ## \[await] characteristics.writeTextWait(str)
 It writes data to the characteristic as string.
-It returns true when it succeeds and false when it fails.
+It throws an error when failed.
 
 ```Javascript
 // Javascript Example
@@ -85,17 +81,12 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").writeTextWait("My Name");
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    await peripheral.getService("FF00").getCharacteristic("FF01").writeTextWait("My Name");
+    console.log("write success");
 }
 ```
 <!--
@@ -125,7 +116,8 @@ obniz.ble.startScan({duration : 10});
 
 ## \[await] characteristics.readWait()
 It reads data from the characteristic.
-The returned value appears in the callback function (onread). If reading succeeds an Array with data will be returned, but if it fails undefined will be returned.
+The returned value appears in the callback function (onread). If reading succeeds an Array with data will be returned.
+It throws an error when failed.
 
 ```Javascript
 // Javascript Example
@@ -135,16 +127,12 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
-        console.log(dataArray);
-        
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+    console.log(dataArray);
 }
 ```
 <!--
@@ -187,23 +175,16 @@ var target = {
   localName: "obniz-notify"
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-if(connected){
-  let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+await peripheral.connectWait();
+let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
   
-  char.onregisternotify = function() {
-    console.log("register finshed")
-  }
-
-  char.registerNotify( function(data){
-    console.log("notify with data " + data.join(','));
-  });
-
-
-}else{
-  console.log("cannnot connected");
-
+char.onregisternotify = function() {
+  console.log("register finshed")
 }
+
+char.registerNotify( function(data){
+  console.log("notify with data " + data.join(','));
+});
     
 ```
 
@@ -222,19 +203,12 @@ var target = {
   localName: "obniz-notify"
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-if(connected){
-  let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+await peripheral.connectWait();
+let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
   
-  await char.registerNotifyWait( function(data){
-    console.log("notify with data " + data.join(','));
-  });
-
-
-}else{
-  console.log("cannnot connected");
-
-}
+await char.registerNotifyWait( function(data){
+  console.log("notify with data " + data.join(','));
+});
     
 ```
 
@@ -251,28 +225,21 @@ var target = {
   localName: "obniz-notify"
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-if(connected){
-  let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+await peripheral.connectWait();
+let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
   
-  char.onregisternotify = function() {
-    console.log("register finshed")
-    char.unregisterNotify();
-  }
-
-  char.onunregisternotify = function() {
-    console.log("unregistrated")
-  }
-
-  char.registerNotify( function(data){
-    console.log("notify with data " + data.join(','));
-  });
-
-
-}else{
-  console.log("cannnot connected");
-
+char.onregisternotify = function() {
+  console.log("register finshed")
+  char.unregisterNotify();
 }
+
+char.onunregisternotify = function() {
+  console.log("unregistrated")
+}
+
+char.registerNotify( function(data){
+  console.log("notify with data " + data.join(','));
+});
     
 ```
 
@@ -292,21 +259,14 @@ var target = {
 };
 
 var peripheral = await obniz.ble.scan.startOneWait(target);
-var connected = await peripheral.connectWait();
-if(connected){
-  let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
+await peripheral.connectWait();
+let char = peripheral.getService('fff0').getCharacteristic( 'fff1');
   
-  await char.registerNotifyWait( function(data){
-    console.log("notify with data " + data.join(','));
-  });
-  await char.unregisterNotifyWait();
-  console.log("unregistrated")
-
-
-}else{
-  console.log("cannnot connected");
-
-}
+await char.registerNotifyWait( function(data){
+  console.log("notify with data " + data.join(','));
+});
+await char.unregisterNotifyWait();
+console.log("unregistrated")
     
 ```
 

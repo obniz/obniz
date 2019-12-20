@@ -163,7 +163,7 @@ You can set timeout(sec) param. False will be returned when connection is not es
 ```javascript
 var obniz = new Obniz('1234-5678');
 
-var connected = await obniz.connectWait({timeout:10});  //timeout 10sec
+await obniz.connectWait({timeout:10});  //timeout 10sec
 
 if(connected){
     obniz.io0.output(true);

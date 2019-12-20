@@ -2,6 +2,7 @@
 
 ## \[await] descriptor.writeWait(dataArray)
 This writes dataArray to descriptor.
+It throws an error when failed.
 
 ```Javascript
 // Javascript Example
@@ -12,18 +13,13 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = [0x02, 0xFF];
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    var dataArray = [0x02, 0xFF];
+    await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeWait(dataArray);
+    console.log("write success");
 }
 
 ```
@@ -55,6 +51,8 @@ obniz.ble.startScan({duration : 10});
 ## \[await] descriptor.writeNumber(value)
 This writes a number to descriptor as 1byte.
 
+It throws an error when failed.
+
 ```Javascript
 // Javascript Example
 
@@ -64,17 +62,12 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(100);
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeNumberWait(100);
+    console.log("write success");
 }
 ```
 
@@ -82,7 +75,7 @@ if(peripheral){
 
 ## \[await] descriptor.writeText(str)
 This writes data to the descriptor as string.
-It returns true when it succeeds and false when it fails.
+It throws an error when failed.
 
 
 
@@ -95,23 +88,19 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var result = await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeTextWait("My Name");
-        if(result){
-            console.log("write success");
-        }
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    await peripheral.getService("FF00").getCharacteristic("FF01").getDescriptor("2901").writeTextWait("My Name");
+    console.log("write success");
 }
 ```
 
 ## \[await] descriptor.readWait()
 It reads data from descriptor.
-The return value appears in the callback function (onread). If reading succeeds an Array with data will be returned, but if it fails undefined will be returned.
+The return value appears in the callback function (onread). If reading succeeds an Array with data will be returned.
+It throws an error when failed.
 
 ```Javascript
 // Javascript Example
@@ -121,15 +110,11 @@ var target = {
 };
 var peripheral = await obniz.ble.scan.startOneWait(target);
 if(peripheral){
-    var connected = await peripheral.connectWait();
-    
-    if(connected){
-        console.log("connected");
-        await obniz.wait(1000);
-    
-        var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
-        console.log(dataArray);
-        
-    }
+    await peripheral.connectWait();
+    console.log("connected");
+    await obniz.wait(1000);
+
+    var dataArray = await peripheral.getService("FF00").getCharacteristic("FF01").readWait();
+    console.log(dataArray);
 }
 ```

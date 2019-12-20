@@ -178,9 +178,13 @@ class BleRemotePeripheral {
   }
 
   connectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'connected');
+        if (params.status === 'connected') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.connect();
     });
@@ -198,9 +202,13 @@ class BleRemotePeripheral {
   }
 
   disconnectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'disconnected');
+        if (params.status === 'connected') {
+          resolve(true);
+        } else {
+          reject();
+        }
       });
       this.disconnect();
     });
