@@ -30982,7 +30982,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          reject();
+          reject(new Error('readWait failed'));
         }
       });
       this.read();
@@ -30995,7 +30995,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeWait failed'));
         }
       });
       this.write(data, needResponse);
@@ -31008,7 +31008,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeTextWait failed'));
         }
       });
       this.writeText(data);
@@ -31021,7 +31021,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeNumberWait failed'));
         }
       });
       this.writeNumber(data);
@@ -31937,7 +31937,7 @@ class BleRemotePeripheral {
         if (params.status === 'connected') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('connection not established'));
         }
       });
       this.connect();
@@ -31961,7 +31961,7 @@ class BleRemotePeripheral {
         if (params.status === 'connected') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('disconnectWait failed'));
         }
       });
       this.disconnect();
@@ -33250,7 +33250,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          reject();
+          reject(new Error('readWait failed'));
         }
       });
       this.read();
@@ -33263,7 +33263,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeWait failed'));
         }
       });
       this.write(data, needResponse);
@@ -33276,7 +33276,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeTextWait failed'));
         }
       });
       this.writeText(data);
@@ -33289,7 +33289,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeNumberWait failed'));
         }
       });
       this.writeNumber(data);
@@ -41257,7 +41257,7 @@ class Directive {
 
   _reset() {
     for (let i = 0; i < this.observers.length; i++) {
-      this.observers[i].reject();
+      this.observers[i].reject(new Error('reset called'));
     }
     this.observers = [];
     this._animationIdentifier = 0;

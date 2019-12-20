@@ -123,7 +123,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          reject();
+          reject(new Error('readWait failed'));
         }
       });
       this.read();
@@ -136,7 +136,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeWait failed'));
         }
       });
       this.write(data, needResponse);
@@ -149,7 +149,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeTextWait failed'));
         }
       });
       this.writeText(data);
@@ -162,7 +162,7 @@ class BleAttributeAbstract {
         if (params.result === 'success') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('writeNumberWait failed'));
         }
       });
       this.writeNumber(data);

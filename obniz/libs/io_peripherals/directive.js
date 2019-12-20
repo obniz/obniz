@@ -9,7 +9,7 @@ class Directive {
 
   _reset() {
     for (let i = 0; i < this.observers.length; i++) {
-      this.observers[i].reject();
+      this.observers[i].reject(new Error('reset called'));
     }
     this.observers = [];
     this._animationIdentifier = 0;

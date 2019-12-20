@@ -183,7 +183,7 @@ class BleRemotePeripheral {
         if (params.status === 'connected') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('connection not established'));
         }
       });
       this.connect();
@@ -207,7 +207,7 @@ class BleRemotePeripheral {
         if (params.status === 'connected') {
           resolve(true);
         } else {
-          reject();
+          reject(new Error('disconnectWait failed'));
         }
       });
       this.disconnect();
