@@ -2,7 +2,7 @@ const config = require('../config.js');
 
 let obnizA, obnizB;
 
-describe('7-ble-exchange', function() {
+describe.only('7-ble-exchange', function() {
   this.timeout(30000);
 
   before(async function() {

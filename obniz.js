@@ -11046,441 +11046,6 @@ exports.constants = {
 
 /***/ }),
 
-/***/ "./node_modules/debug/src/browser.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * This is the web browser implementation of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = __webpack_require__("./node_modules/debug/src/debug.js");
-exports.log = log;
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.storage = 'undefined' != typeof chrome
-               && 'undefined' != typeof chrome.storage
-                  ? chrome.storage.local
-                  : localstorage();
-
-/**
- * Colors.
- */
-
-exports.colors = [
-  '#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC',
-  '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF',
-  '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC',
-  '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF',
-  '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC',
-  '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033',
-  '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366',
-  '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933',
-  '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC',
-  '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF',
-  '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'
-];
-
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-
-function useColors() {
-  // NB: In an Electron preload script, document will be defined but not fully
-  // initialized. Since we know we're in Chrome, we'll just detect this case
-  // explicitly
-  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
-    return true;
-  }
-
-  // Internet Explorer and Edge do not support colors.
-  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-    return false;
-  }
-
-  // is webkit? http://stackoverflow.com/a/16459606/376773
-  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
-    // is firebug? http://stackoverflow.com/a/398120/376773
-    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
-    // is firefox >= v31?
-    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
-    // double check webkit in userAgent just in case we are in a worker
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
-}
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-exports.formatters.j = function(v) {
-  try {
-    return JSON.stringify(v);
-  } catch (err) {
-    return '[UnexpectedJSONParseError]: ' + err.message;
-  }
-};
-
-
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
-
-function formatArgs(args) {
-  var useColors = this.useColors;
-
-  args[0] = (useColors ? '%c' : '')
-    + this.namespace
-    + (useColors ? ' %c' : ' ')
-    + args[0]
-    + (useColors ? '%c ' : ' ')
-    + '+' + exports.humanize(this.diff);
-
-  if (!useColors) return;
-
-  var c = 'color: ' + this.color;
-  args.splice(1, 0, c, 'color: inherit')
-
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-  var index = 0;
-  var lastC = 0;
-  args[0].replace(/%[a-zA-Z%]/g, function(match) {
-    if ('%%' === match) return;
-    index++;
-    if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
-    }
-  });
-
-  args.splice(lastC, 0, c);
-}
-
-/**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
- *
- * @api public
- */
-
-function log() {
-  // this hackery is required for IE8/9, where
-  // the `console.log` function doesn't have 'apply'
-  return 'object' === typeof console
-    && console.log
-    && Function.prototype.apply.call(console.log, console, arguments);
-}
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-
-function save(namespaces) {
-  try {
-    if (null == namespaces) {
-      exports.storage.removeItem('debug');
-    } else {
-      exports.storage.debug = namespaces;
-    }
-  } catch(e) {}
-}
-
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
-function load() {
-  var r;
-  try {
-    r = exports.storage.debug;
-  } catch(e) {}
-
-  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
-  if (!r && typeof process !== 'undefined' && 'env' in process) {
-    r = process.env.DEBUG;
-  }
-
-  return r;
-}
-
-/**
- * Enable namespaces listed in `localStorage.debug` initially.
- */
-
-exports.enable(load());
-
-/**
- * Localstorage attempts to return the localstorage.
- *
- * This is necessary because safari throws
- * when a user disables cookies/localstorage
- * and you attempt to access it.
- *
- * @return {LocalStorage}
- * @api private
- */
-
-function localstorage() {
-  try {
-    return window.localStorage;
-  } catch (e) {}
-}
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "./node_modules/debug/src/debug.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
-exports.coerce = coerce;
-exports.disable = disable;
-exports.enable = enable;
-exports.enabled = enabled;
-exports.humanize = __webpack_require__("./node_modules/ms/index.js");
-
-/**
- * Active `debug` instances.
- */
-exports.instances = [];
-
-/**
- * The currently active debug mode names, and names to skip.
- */
-
-exports.names = [];
-exports.skips = [];
-
-/**
- * Map of special "%n" handling functions, for the debug "format" argument.
- *
- * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
- */
-
-exports.formatters = {};
-
-/**
- * Select a color.
- * @param {String} namespace
- * @return {Number}
- * @api private
- */
-
-function selectColor(namespace) {
-  var hash = 0, i;
-
-  for (i in namespace) {
-    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
-    hash |= 0; // Convert to 32bit integer
-  }
-
-  return exports.colors[Math.abs(hash) % exports.colors.length];
-}
-
-/**
- * Create a debugger with the given `namespace`.
- *
- * @param {String} namespace
- * @return {Function}
- * @api public
- */
-
-function createDebug(namespace) {
-
-  var prevTime;
-
-  function debug() {
-    // disabled?
-    if (!debug.enabled) return;
-
-    var self = debug;
-
-    // set `diff` timestamp
-    var curr = +new Date();
-    var ms = curr - (prevTime || curr);
-    self.diff = ms;
-    self.prev = prevTime;
-    self.curr = curr;
-    prevTime = curr;
-
-    // turn the `arguments` into a proper Array
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-
-    args[0] = exports.coerce(args[0]);
-
-    if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %O
-      args.unshift('%O');
-    }
-
-    // apply any `formatters` transformations
-    var index = 0;
-    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
-      // if we encounter an escaped % then don't increase the array index
-      if (match === '%%') return match;
-      index++;
-      var formatter = exports.formatters[format];
-      if ('function' === typeof formatter) {
-        var val = args[index];
-        match = formatter.call(self, val);
-
-        // now we need to remove `args[index]` since it's inlined in the `format`
-        args.splice(index, 1);
-        index--;
-      }
-      return match;
-    });
-
-    // apply env-specific formatting (colors, etc.)
-    exports.formatArgs.call(self, args);
-
-    var logFn = debug.log || exports.log || console.log.bind(console);
-    logFn.apply(self, args);
-  }
-
-  debug.namespace = namespace;
-  debug.enabled = exports.enabled(namespace);
-  debug.useColors = exports.useColors();
-  debug.color = selectColor(namespace);
-  debug.destroy = destroy;
-
-  // env-specific initialization logic for debug instances
-  if ('function' === typeof exports.init) {
-    exports.init(debug);
-  }
-
-  exports.instances.push(debug);
-
-  return debug;
-}
-
-function destroy () {
-  var index = exports.instances.indexOf(this);
-  if (index !== -1) {
-    exports.instances.splice(index, 1);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
- * Enables a debug mode by namespaces. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} namespaces
- * @api public
- */
-
-function enable(namespaces) {
-  exports.save(namespaces);
-
-  exports.names = [];
-  exports.skips = [];
-
-  var i;
-  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
-  var len = split.length;
-
-  for (i = 0; i < len; i++) {
-    if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/\*/g, '.*?');
-    if (namespaces[0] === '-') {
-      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-    } else {
-      exports.names.push(new RegExp('^' + namespaces + '$'));
-    }
-  }
-
-  for (i = 0; i < exports.instances.length; i++) {
-    var instance = exports.instances[i];
-    instance.enabled = exports.enabled(instance.namespace);
-  }
-}
-
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-function disable() {
-  exports.enable('');
-}
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-function enabled(name) {
-  if (name[name.length - 1] === '*') {
-    return true;
-  }
-  var i, len;
-  for (i = 0, len = exports.skips.length; i < len; i++) {
-    if (exports.skips[i].test(name)) {
-      return false;
-    }
-  }
-  for (i = 0, len = exports.names.length; i < len; i++) {
-    if (exports.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Coerce `val`.
- *
- * @param {Mixed} val
- * @return {Mixed}
- * @api private
- */
-
-function coerce(val) {
-  if (val instanceof Error) return val.stack || val.message;
-  return val;
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/des.js/lib/des.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19409,165 +18974,6 @@ utils.encode = function encode(arr, enc) {
   else
     return arr;
 };
-
-
-/***/ }),
-
-/***/ "./node_modules/ms/index.js":
-/***/ (function(module, exports) {
-
-/**
- * Helpers.
- */
-
-var s = 1000;
-var m = s * 60;
-var h = m * 60;
-var d = h * 24;
-var y = d * 365.25;
-
-/**
- * Parse or format the given `val`.
- *
- * Options:
- *
- *  - `long` verbose formatting [false]
- *
- * @param {String|Number} val
- * @param {Object} [options]
- * @throws {Error} throw an error if val is not a non-empty string or a number
- * @return {String|Number}
- * @api public
- */
-
-module.exports = function(val, options) {
-  options = options || {};
-  var type = typeof val;
-  if (type === 'string' && val.length > 0) {
-    return parse(val);
-  } else if (type === 'number' && isNaN(val) === false) {
-    return options.long ? fmtLong(val) : fmtShort(val);
-  }
-  throw new Error(
-    'val is not a non-empty string or a valid number. val=' +
-      JSON.stringify(val)
-  );
-};
-
-/**
- * Parse the given `str` and return milliseconds.
- *
- * @param {String} str
- * @return {Number}
- * @api private
- */
-
-function parse(str) {
-  str = String(str);
-  if (str.length > 100) {
-    return;
-  }
-  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(
-    str
-  );
-  if (!match) {
-    return;
-  }
-  var n = parseFloat(match[1]);
-  var type = (match[2] || 'ms').toLowerCase();
-  switch (type) {
-    case 'years':
-    case 'year':
-    case 'yrs':
-    case 'yr':
-    case 'y':
-      return n * y;
-    case 'days':
-    case 'day':
-    case 'd':
-      return n * d;
-    case 'hours':
-    case 'hour':
-    case 'hrs':
-    case 'hr':
-    case 'h':
-      return n * h;
-    case 'minutes':
-    case 'minute':
-    case 'mins':
-    case 'min':
-    case 'm':
-      return n * m;
-    case 'seconds':
-    case 'second':
-    case 'secs':
-    case 'sec':
-    case 's':
-      return n * s;
-    case 'milliseconds':
-    case 'millisecond':
-    case 'msecs':
-    case 'msec':
-    case 'ms':
-      return n;
-    default:
-      return undefined;
-  }
-}
-
-/**
- * Short format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function fmtShort(ms) {
-  if (ms >= d) {
-    return Math.round(ms / d) + 'd';
-  }
-  if (ms >= h) {
-    return Math.round(ms / h) + 'h';
-  }
-  if (ms >= m) {
-    return Math.round(ms / m) + 'm';
-  }
-  if (ms >= s) {
-    return Math.round(ms / s) + 's';
-  }
-  return ms + 'ms';
-}
-
-/**
- * Long format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function fmtLong(ms) {
-  return plural(ms, d, 'day') ||
-    plural(ms, h, 'hour') ||
-    plural(ms, m, 'minute') ||
-    plural(ms, s, 'second') ||
-    ms + ' ms';
-}
-
-/**
- * Pluralization helper.
- */
-
-function plural(ms, n, name) {
-  if (ms < n) {
-    return;
-  }
-  if (ms < n * 1.5) {
-    return Math.floor(ms / n) + ' ' + name;
-  }
-  return Math.ceil(ms / n) + ' ' + name + 's';
-}
 
 
 /***/ }),
@@ -31571,12 +30977,12 @@ class BleAttributeAbstract {
   }
 
   readWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onread', params => {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          resolve(undefined);
+          reject(new Error('readWait failed'));
         }
       });
       this.read();
@@ -31584,27 +30990,39 @@ class BleAttributeAbstract {
   }
 
   writeWait(data, needResponse) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject(new Error('writeWait failed'));
+        }
       });
       this.write(data, needResponse);
     });
   }
 
   writeTextWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject(new Error('writeTextWait failed'));
+        }
       });
       this.writeText(data);
     });
   }
 
   writeNumberWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject(new Error('writeNumberWait failed'));
+        }
       });
       this.writeNumber(data);
     });
@@ -31705,6 +31123,10 @@ class BleCharacteristic extends BleAttributeAbstract {
 
   get childrenName() {
     return 'descriptors';
+  }
+
+  get descriptors() {
+    return this.children;
   }
 
   toJSON() {
@@ -31893,14 +31315,18 @@ const BleHelper = __webpack_require__("./obniz/libs/embeds/ble/bleHelper.js");
 class BlePeripheral {
   constructor(Obniz) {
     this.Obniz = Obniz;
-    this.services = [];
+    this._services = [];
+  }
+
+  get services() {
+    return this._services;
   }
 
   addService(obj) {
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
-    this.services.push(obj);
+    this._services.push(obj);
     obj.peripheral = this;
     this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
   }
@@ -31915,7 +31341,7 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    return this.services
+    return this._services
       .filter(function(element) {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
@@ -31923,7 +31349,7 @@ class BlePeripheral {
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function(element) {
+    this._services = this._services.filter(function(element) {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }
@@ -31934,12 +31360,12 @@ class BlePeripheral {
         peripheral: null,
       },
     });
-    this.services = [];
+    this._services = [];
   }
 
   toJSON() {
     return {
-      services: this.services,
+      services: this._services,
     };
   }
 
@@ -31998,14 +31424,6 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     return childName + '_uuid';
   }
 
-  getChild(uuid) {
-    let obj = super.getChild(uuid);
-    if (!obj) {
-      obj = this.addChild({ uuid });
-    }
-    return obj;
-  }
-
   discoverChildren() {}
 
   discoverChildrenWait() {
@@ -32031,7 +31449,11 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case 'discover': {
-        let child = this.getChild(params[this.wsChildUuidName]);
+        let uuid = params[this.wsChildUuidName];
+        let child = this.getChild(uuid);
+        if (!child) {
+          child = this.addChild({ uuid });
+        }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
         this.ondiscover(child);
@@ -32080,6 +31502,10 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   get childrenName() {
     return 'descriptors';
+  }
+
+  get descriptors() {
+    return this.children;
   }
 
   addDescriptor(params) {
@@ -32360,8 +31786,12 @@ class BleRemotePeripheral {
       'scan_resp',
     ];
 
-    this.services = [];
+    this._services = [];
     this.emitter = new emitter();
+  }
+
+  get services() {
+    return this._services;
   }
 
   /**
@@ -32503,6 +31933,7 @@ class BleRemotePeripheral {
   }
 
   connect() {
+    this.Obniz.ble.scan.end();
     let obj = {
       ble: {
         connect: {
@@ -32514,9 +31945,13 @@ class BleRemotePeripheral {
   }
 
   connectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'connected');
+        if (params.status === 'connected') {
+          resolve(true);
+        } else {
+          reject(new Error('connection not established'));
+        }
       });
       this.connect();
     });
@@ -32534,9 +31969,13 @@ class BleRemotePeripheral {
   }
 
   disconnectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'disconnected');
+        if (params.status === 'disconnected') {
+          resolve(true);
+        } else {
+          reject(new Error('disconnectWait failed'));
+        }
       });
       this.disconnect();
     });
@@ -32544,15 +31983,12 @@ class BleRemotePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    for (let key in this.services) {
-      if (this.services[key].uuid === uuid) {
-        return this.services[key];
+    for (let key in this._services) {
+      if (this._services[key].uuid === uuid) {
+        return this._services[key];
       }
     }
-    let newService = new BleRemoteService({ uuid });
-    newService.parent = this;
-    this.services.push(newService);
-    return newService;
+    return undefined;
   }
 
   findService(param) {
@@ -32593,13 +32029,40 @@ class BleRemotePeripheral {
   discoverAllServicesWait() {
     return new Promise(resolve => {
       this.emitter.once('discoverfinished', () => {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
       });
       this.discoverAllServices();
     });
+  }
+
+  async discoverAllHandlesWait() {
+    let ArrayFlat = function(array, depth) {
+      let flattend = [];
+      (function flat(array, depth) {
+        for (let el of array) {
+          if (Array.isArray(el) && depth > 0) {
+            flat(el, depth - 1);
+          } else {
+            flattend.push(el);
+          }
+        }
+      })(array, Math.floor(depth) || 1);
+      return flattend;
+    };
+
+    let services = await this.discoverAllServicesWait();
+    let charsNest = await Promise.all(
+      services.map(s => s.discoverAllCharacteristicsWait())
+    );
+    let chars = ArrayFlat(charsNest);
+    let descriptorsNest = await Promise.all(
+      chars.map(c => c.discoverAllDescriptorsWait())
+    );
+    // eslint-disable-next-line no-unused-vars
+    let descriptors = ArrayFlat(descriptorsNest);
   }
 
   onconnect() {}
@@ -32614,12 +32077,14 @@ class BleRemotePeripheral {
 
   ondiscoverfinished() {}
 
-  notifyFromServer(notifyName, params) {
+  async notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case 'statusupdate': {
         if (params.status === 'connected') {
           this.connected = true;
+          await this.discoverAllHandlesWait();
+
           this.onconnect();
         }
         if (params.status === 'disconnected') {
@@ -32629,13 +32094,20 @@ class BleRemotePeripheral {
         break;
       }
       case 'discover': {
-        let child = this.getService(params.service_uuid);
+        let uuid = params.service_uuid;
+        let child = this.getService(uuid);
+        if (!child) {
+          let newService = new BleRemoteService({ uuid });
+          newService.parent = this;
+          this._services.push(newService);
+          child = newService;
+        }
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
       }
       case 'discoverfinished': {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverservicefinished(children);
@@ -32674,6 +32146,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
 
   get childrenName() {
     return 'characteristics';
+  }
+
+  get characteristics() {
+    return this.children;
   }
 
   addCharacteristic(params) {
@@ -32745,6 +32221,11 @@ class BleScan {
       //    "interval" : settings && settings.interval ? settings.interval : 30,
       duration: settings && settings.duration ? settings.duration : 30,
     };
+    if (settings && settings.duplicate) {
+      throw new Error(
+        `duplicate property can only be used with obnizOS3 or later`
+      );
+    }
 
     this.scanTarget = target;
     if (
@@ -33084,8 +32565,6 @@ module.exports = BleService;
 /***/ "./obniz/libs/embeds/bleHci/ble.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const ObnizBLEHci = __webpack_require__("./obniz/libs/embeds/bleHci/hci.js");
 const CentralBindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/central/bindings.js");
 const PeripheralBindings = __webpack_require__("./obniz/libs/embeds/bleHci/protocol/peripheral/bindings.js");
@@ -33107,10 +32586,8 @@ class ObnizBLE {
     this.hci = new ObnizBLEHci(Obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
-
-    this.centralBindings = new CentralBindings( this.hciProtocol );
-    this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
-
+    this.centralBindings = new CentralBindings(this.hciProtocol);
+    this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
 
     // let dummy = {write : ()=>{}, on:()=>{}}
     // this.centralBindings = new CentralBindings( dummy );
@@ -33120,6 +32597,7 @@ class ObnizBLE {
     this.peripheralBindings.init();
 
     this._initialized = false;
+    this._initializeWarning = true;
 
     this.remotePeripherals = [];
 
@@ -33139,9 +32617,19 @@ class ObnizBLE {
   }
 
   async initWait() {
-    if(!this._initialized){
+    if (!this._initialized) {
       this._initialized = true;
       await this.hciProtocol.initWait();
+    }
+  }
+
+  warningIfNotInitialize() {
+    if (!this._initialized && this._initializeWarning) {
+      this._initializeWarning = true;
+      this.Obniz.warning({
+        alert: 'warning',
+        message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+      });
     }
   }
 
@@ -33186,18 +32674,17 @@ class ObnizBLE {
     return str;
   }
 
+  onStateChange() {}
 
-  onStateChange(){}
-  onAddressChange(){}
+  onAddressChange() {}
 
-  onScanStart(){}
+  onScanStart() {}
 
-  onScanStop (){
+  onScanStop() {
     this.scan.notifyFromServer('onfinish');
   }
 
   onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
-
     let val = this.findPeripheral(uuid);
     if (!val) {
       val = new BleRemotePeripheral(this, uuid);
@@ -33206,12 +32693,14 @@ class ObnizBLE {
     val.discoverdOnRemote = true;
 
     let peripheralData = {
-      'device_type': "ble",
-      'address_type': addressType,
-      'ble_event_type': connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
-      'rssi': rssi,
-      'adv_data': advertisement.advertisementRaw,
-      'scan_resp': advertisement.scanResponseRaw,
+      device_type: 'ble',
+      address_type: addressType,
+      ble_event_type: connectable
+        ? 'connectable_advertisemnt'
+        : 'non_connectable_advertising',
+      rssi: rssi,
+      adv_data: advertisement.advertisementRaw,
+      scan_resp: advertisement.scanResponseRaw,
     };
 
     val.setParams(peripheralData);
@@ -33220,137 +32709,172 @@ class ObnizBLE {
     this.scan.notifyFromServer('onfind', val);
   }
 
-  async onConnect(peripheralUuid, error){
+  async onConnect(peripheralUuid, error) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    if(!error){
+    if (!error) {
       await peripheral.discoverAllHandlesWait();
     }
-    peripheral.notifyFromServer("statusupdate", {status: error ? "disconnected" : "connected"})
+    peripheral.notifyFromServer('statusupdate', {
+      status: error ? 'disconnected' : 'connected',
+    });
   }
 
-  onDisconnect(peripheralUuid){
+  onDisconnect(peripheralUuid) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    peripheral.notifyFromServer("statusupdate", {status: "disconnected"})
+    peripheral.notifyFromServer('statusupdate', { status: 'disconnected' });
   }
 
-  onRssiUpdate(){}
+  onRssiUpdate() {}
 
-
-  onServicesDiscover(peripheralUuid, serviceUuids){
+  onServicesDiscover(peripheralUuid, serviceUuids) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    for( let serviceUuid of serviceUuids){
-      peripheral.notifyFromServer("discover", {service_uuid: serviceUuid})
+    for (let serviceUuid of serviceUuids) {
+      peripheral.notifyFromServer('discover', { service_uuid: serviceUuid });
     }
-    peripheral.notifyFromServer("discoverfinished", {});
+    peripheral.notifyFromServer('discoverfinished', {});
   }
-  onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids){
 
-  }
-  onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics){
+  onIncludedServicesDiscover(
+    peripheralUuid,
+    serviceUuid,
+    includedServiceUuids
+  ) {}
 
+  onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
-    for( let char of characteristics){
+    let service = peripheral.findService({ service_uuid: serviceUuid });
+    for (let char of characteristics) {
       let obj = {
-        properties : char.properties.map(e=>BleHelper.toSnakeCase(e)),
-        characteristic_uuid : char.uuid
+        properties: char.properties.map(e => BleHelper.toSnakeCase(e)),
+        characteristic_uuid: char.uuid,
       };
-      service.notifyFromServer("discover", obj)
+      service.notifyFromServer('discover', obj);
     }
-    service.notifyFromServer("discoverfinished", {});
+    service.notifyFromServer('discoverfinished', {});
   }
 
-
-
-  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
+  onRead(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    data,
+    isNotification,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    let characteristic = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
 
-    if(isNotification){
+    if (isNotification) {
       let obj = {
-        data : Array.from(data)
+        data: Array.from(data),
       };
-      characteristic.notifyFromServer("onnotify", obj)
-    }else {
+      characteristic.notifyFromServer('onnotify', obj);
+    } else {
       let obj = {
-        result : isSuccess ? "success" : "failed",
-        data : Array.from(data)
+        result: isSuccess ? 'success' : 'failed',
+        data: Array.from(data),
       };
-      characteristic.notifyFromServer("onread", obj)
+      characteristic.notifyFromServer('onread', obj);
     }
   }
 
-  onWrite(peripheralUuid, serviceUuid, characteristicUuid,isSuccess){
+  onWrite(peripheralUuid, serviceUuid, characteristicUuid, isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    characteristic.notifyFromServer("onwrite", {result : isSuccess ? "success" : "failed"})
+    let characteristic = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
+    characteristic.notifyFromServer('onwrite', {
+      result: isSuccess ? 'success' : 'failed',
+    });
   }
 
-  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state){
+  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {}
 
-  }
-
-
-  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){
+  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    let char = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
 
-    if(state){
-      char.notifyFromServer("onregisternotify", {})
-    }else{
-      char.notifyFromServer("onunregisternotify", {})
-
+    if (state) {
+      char.notifyFromServer('onregisternotify', {});
+    } else {
+      char.notifyFromServer('onunregisternotify', {});
     }
-
   }
 
-
-  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){
+  onDescriptorsDiscover(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptors
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    for( let descr of descriptors){
+    let char = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
+    for (let descr of descriptors) {
       let obj = {
-        descriptor_uuid : descr
+        descriptor_uuid: descr,
       };
-      char.notifyFromServer("discover", obj)
+      char.notifyFromServer('discover', obj);
     }
-    char.notifyFromServer("discoverfinished", {});
+    char.notifyFromServer('discoverfinished', {});
   }
 
-
-  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess) {
+  onValueRead(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    data,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid
+      descriptor_uuid: descriptorUuid,
     });
 
     let obj = {
-      result:  isSuccess ? "success" : "failed",
-      data: Array.from(data)
+      result: isSuccess ? 'success' : 'failed',
+      data: Array.from(data),
     };
-    descriptor.notifyFromServer("onread", obj)
+    descriptor.notifyFromServer('onread', obj);
   }
 
-  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
+  onValueWrite(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid
+      descriptor_uuid: descriptorUuid,
     });
 
     let obj = {
-      result: isSuccess ? "success" : "failed",
+      result: isSuccess ? 'success' : 'failed',
     };
-    descriptor.notifyFromServer("onwrite", obj)
-
+    descriptor.notifyFromServer('onwrite', obj);
   }
-  onHandleRead(peripheralUuid, handle, data){}
-  onHandleWrite(peripheralUuid, handle){}
-  onHandleNotify(peripheralUuid, handle, data){}
 
+  onHandleRead(peripheralUuid, handle, data) {}
+
+  onHandleWrite(peripheralUuid, handle) {}
+
+  onHandleNotify(peripheralUuid, handle, data) {}
 
   onPeripheralStateChange(state) {
     // console.error("onPeripheralStateChange")
@@ -33378,7 +32902,10 @@ class ObnizBLE {
 
   onPeripheralAccept(clientAddress) {
     this.peripheral.currentConnectedDeviceAddress = clientAddress;
-    this.peripheral.onconnectionupdates({address:clientAddress, status:"connected"});
+    this.peripheral.onconnectionupdates({
+      address: clientAddress,
+      status: 'connected',
+    });
   }
 
   onPeripheralMtuChange(mtu) {
@@ -33387,7 +32914,10 @@ class ObnizBLE {
 
   onPeripheralDisconnect(clientAddress) {
     this.peripheral.currentConnectedDeviceAddress = null;
-    this.peripheral.onconnectionupdates({address:clientAddress, status:"disconnected"});
+    this.peripheral.onconnectionupdates({
+      address: clientAddress,
+      status: 'disconnected',
+    });
   }
 
   onPeripheralRssiUpdate(rssi) {
@@ -33395,8 +32925,6 @@ class ObnizBLE {
   }
 
   _bind() {
-
-
     this.centralBindings.on('stateChange', this.onStateChange.bind(this));
 
     this.centralBindings.on('addressChange', this.onAddressChange.bind(this));
@@ -33407,39 +32935,71 @@ class ObnizBLE {
     this.centralBindings.on('connect', this.onConnect.bind(this));
     this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
     this.centralBindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
-    this.centralBindings.on('servicesDiscover', this.onServicesDiscover.bind(this));
-    this.centralBindings.on('includedServicesDiscover', this.onIncludedServicesDiscover.bind(this));
-    this.centralBindings.on('characteristicsDiscover', this.onCharacteristicsDiscover.bind(this));
-
+    this.centralBindings.on(
+      'servicesDiscover',
+      this.onServicesDiscover.bind(this)
+    );
+    this.centralBindings.on(
+      'includedServicesDiscover',
+      this.onIncludedServicesDiscover.bind(this)
+    );
+    this.centralBindings.on(
+      'characteristicsDiscover',
+      this.onCharacteristicsDiscover.bind(this)
+    );
 
     this.centralBindings.on('read', this.onRead.bind(this));
     this.centralBindings.on('write', this.onWrite.bind(this));
     this.centralBindings.on('broadcast', this.onBroadcast.bind(this));
     this.centralBindings.on('notify', this.onNotify.bind(this));
-    this.centralBindings.on('descriptorsDiscover', this.onDescriptorsDiscover.bind(this));
+    this.centralBindings.on(
+      'descriptorsDiscover',
+      this.onDescriptorsDiscover.bind(this)
+    );
     this.centralBindings.on('valueRead', this.onValueRead.bind(this));
     this.centralBindings.on('valueWrite', this.onValueWrite.bind(this));
     this.centralBindings.on('handleRead', this.onHandleRead.bind(this));
     this.centralBindings.on('handleWrite', this.onHandleWrite.bind(this));
     this.centralBindings.on('handleNotify', this.onHandleNotify.bind(this));
 
-
-
-
-
-    this.peripheralBindings.on('stateChange', this.onPeripheralStateChange.bind(this));
-    this.peripheralBindings.on('addressChange', this.onPeripheralAddressChange.bind(this));
-    this.peripheralBindings.on('platform', this.onPeripheralPlatform.bind(this));
-    this.peripheralBindings.on('advertisingStart', this.onPeripheralAdvertisingStart.bind(this));
-    this.peripheralBindings.on('advertisingStop', this.onPeripheralAdvertisingStop.bind(this));
-    this.peripheralBindings.on('servicesSet', this.onPeripheralServicesSet.bind(this));
+    this.peripheralBindings.on(
+      'stateChange',
+      this.onPeripheralStateChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'addressChange',
+      this.onPeripheralAddressChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'platform',
+      this.onPeripheralPlatform.bind(this)
+    );
+    this.peripheralBindings.on(
+      'advertisingStart',
+      this.onPeripheralAdvertisingStart.bind(this)
+    );
+    this.peripheralBindings.on(
+      'advertisingStop',
+      this.onPeripheralAdvertisingStop.bind(this)
+    );
+    this.peripheralBindings.on(
+      'servicesSet',
+      this.onPeripheralServicesSet.bind(this)
+    );
     this.peripheralBindings.on('accept', this.onPeripheralAccept.bind(this));
-    this.peripheralBindings.on('mtuChange', this.onPeripheralMtuChange.bind(this));
-    this.peripheralBindings.on('disconnect', this.onPeripheralDisconnect.bind(this));
+    this.peripheralBindings.on(
+      'mtuChange',
+      this.onPeripheralMtuChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'disconnect',
+      this.onPeripheralDisconnect.bind(this)
+    );
 
-    this.peripheralBindings.on('rssiUpdate', this.onPeripheralRssiUpdate.bind(this));
-
-
+    this.peripheralBindings.on(
+      'rssiUpdate',
+      this.onPeripheralRssiUpdate.bind(this)
+    );
   }
 }
 
@@ -33451,9 +33011,7 @@ module.exports = ObnizBLE;
 /***/ "./obniz/libs/embeds/bleHci/bleAdvertisement.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-const Builder = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const Builder = __webpack_require__("./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js");
 
 class BleAdvertisement {
   constructor(obnizBle) {
@@ -33463,7 +33021,11 @@ class BleAdvertisement {
   }
 
   start() {
-    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(Buffer.from(this.adv_data),Buffer.from(this.scan_resp));
+    this.obnizBle.warningIfNotInitialize();
+    this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(
+      Buffer.from(this.adv_data),
+      Buffer.from(this.scan_resp)
+    );
   }
 
   end() {
@@ -33504,8 +33066,6 @@ module.exports = BleAdvertisement;
 
 /***/ "./obniz/libs/embeds/bleHci/bleAdvertisementBuilder.js":
 /***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable */
 
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
@@ -33807,12 +33367,12 @@ class BleAttributeAbstract {
   }
 
   readWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onread', params => {
         if (params.result === 'success') {
           resolve(params.data);
         } else {
-          resolve(undefined);
+          reject(new Error('readWait failed'));
         }
       });
       this.read();
@@ -33820,27 +33380,39 @@ class BleAttributeAbstract {
   }
 
   writeWait(data, needResponse) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject(new Error('writeWait failed'));
+        }
       });
       this.write(data, needResponse);
     });
   }
 
   writeTextWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject(new Error('writeTextWait failed'));
+        }
       });
       this.writeText(data);
     });
   }
 
   writeNumberWait(data) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.emitter.once('onwrite', params => {
-        resolve(params.result === 'success');
+        if (params.result === 'success') {
+          resolve(true);
+        } else {
+          reject(new Error('writeNumberWait failed'));
+        }
       });
       this.writeNumber(data);
     });
@@ -33948,6 +33520,10 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
     return 'descriptors';
   }
 
+  get descriptors() {
+    return this.children;
+  }
+
   toJSON() {
     let obj = super.toJSON();
 
@@ -34018,7 +33594,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   _onSubscribe(maxValueSize, updateValueCallback) {
-    console.log('_onSubscribe');
+    // console.log('_onSubscribe');
     this._maxValueSize = maxValueSize;
     this._updateValueCallback = updateValueCallback;
   }
@@ -34179,7 +33755,7 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
   }
 
   _onWriteRequest(data, offset, withoutResponse, callback) {
-    console.log('onWriteRequest');
+    // console.log('onWriteRequest');
     this.data = Array.from(data);
     callback(this.RESULT_SUCCESS);
     let address = null;
@@ -34211,28 +33787,27 @@ module.exports = BleLocalAttributeAbstract;
 /***/ "./obniz/libs/embeds/bleHci/blePeripheral.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleService = __webpack_require__("./obniz/libs/embeds/bleHci/bleService.js");
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BlePeripheral {
   constructor(obnizBle) {
     this.obnizBle = obnizBle;
-    this.services = [];
+    this._services = [];
     this.currentConnectedDeviceAddress = null;
   }
 
-  _updateServices(){
-    let bufData = this.services.map(e=>e.toBufferObj());
+  _updateServices() {
+    let bufData = this._services.map(e => e.toBufferObj());
     this.obnizBle.peripheralBindings.setServices(bufData);
   }
 
   addService(obj) {
+    this.obnizBle.warningIfNotInitialize();
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
-    this.services.push(obj);
+    this._services.push(obj);
     obj.peripheral = this;
 
     this._updateServices();
@@ -34248,7 +33823,7 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    return this.services
+    return this._services
       .filter(function(element) {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
@@ -34256,7 +33831,7 @@ class BlePeripheral {
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function(element) {
+    this._services = this._services.filter(function(element) {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
 
@@ -34264,15 +33839,13 @@ class BlePeripheral {
   }
 
   stopAllService() {
-    this.services = [];
+    this._services = [];
     this._updateServices();
   }
 
-
-
   toJSON() {
     return {
-      services: this.services,
+      services: this._services,
     };
   }
 
@@ -34312,8 +33885,6 @@ module.exports = BlePeripheral;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleAttributeAbstract.js");
 
 class BleRemoteAttributeAbstract extends BleAttributeAbstract {
@@ -34331,14 +33902,6 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     }
     let childName = childrenName.slice(0, -1);
     return childName + '_uuid';
-  }
-
-  getChild(uuid) {
-    let obj = super.getChild(uuid);
-    if (!obj) {
-      obj = this.addChild({ uuid });
-    }
-    return obj;
   }
 
   discoverChildren() {}
@@ -34366,7 +33929,11 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case 'discover': {
-        let child = this.getChild(params[this.wsChildUuidName]);
+        let uuid = params[this.wsChildUuidName];
+        let child = this.getChild(uuid);
+        if (!child) {
+          child = this.addChild({ uuid });
+        }
         child.discoverdOnRemote = true;
         child.properties = params.properties || [];
         this.ondiscover(child);
@@ -34391,11 +33958,8 @@ module.exports = BleRemoteAttributeAbstract;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-const BleRemoteDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const BleRemoteDescriptor = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js");
 const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -34419,10 +33983,13 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     return 'descriptors';
   }
 
+  get descriptors() {
+    return this.children;
+  }
+
   addDescriptor(params) {
     return this.addChild(params);
   }
-
 
   getDescriptor(uuid) {
     let obj = this.getChild(uuid);
@@ -34437,13 +34004,12 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   registerNotify(callback) {
     this.onnotify = callback;
     this.service.peripheral.obnizBle.centralBindings.notify(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        true
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      true
     );
   }
-
 
   registerNotifyWait(callback) {
     return new Promise(resolve => {
@@ -34454,18 +34020,16 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     });
   }
 
-
   unregisterNotify() {
     this.onnotify = function() {};
 
     this.service.peripheral.obnizBle.centralBindings.notify(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        false
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      false
     );
   }
-
 
   unregisterNotifyWait() {
     return new Promise(resolve => {
@@ -34478,9 +34042,9 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   read() {
     this.service.peripheral.obnizBle.centralBindings.read(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid
     );
   }
 
@@ -34489,20 +34053,19 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       needResponse = true;
     }
     this.service.peripheral.obnizBle.centralBindings.write(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid,
-        Buffer.from(array),
-        !needResponse
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid,
+      Buffer.from(array),
+      !needResponse
     );
-
   }
 
   discoverChildren() {
     this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(
-        this.service.peripheral.address,
-        this.service.uuid,
-        this.uuid
+      this.service.peripheral.address,
+      this.service.uuid,
+      this.uuid
     );
   }
 
@@ -34593,10 +34156,7 @@ module.exports = BleRemoteCharacteristic;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteDescriptor.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
 
 class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -34609,23 +34169,21 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
 
   read() {
     this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(
-        this.characteristic.service.peripheral.address,
-        this.characteristic.service.uuid,
-        this.characteristic.uuid,
-        this.uuid
+      this.characteristic.service.peripheral.address,
+      this.characteristic.service.uuid,
+      this.characteristic.uuid,
+      this.uuid
     );
   }
 
   write(array) {
-
     this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(
-        this.characteristic.service.peripheral.address,
-        this.characteristic.service.uuid,
-        this.characteristic.uuid,
-        this.uuid,
-        Buffer.from(array)
+      this.characteristic.service.peripheral.address,
+      this.characteristic.service.uuid,
+      this.characteristic.uuid,
+      this.uuid,
+      Buffer.from(array)
     );
-
   }
 }
 
@@ -34637,8 +34195,6 @@ module.exports = BleRemoteDescriptor;
 
 /***/ "./obniz/libs/embeds/bleHci/bleRemotePeripheral.js":
 /***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable */
 
 const BleRemoteService = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteService.js");
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
@@ -34666,7 +34222,7 @@ class BleRemotePeripheral {
       'scan_resp',
     ];
 
-    this.services = [];
+    this._services = [];
     this.emitter = new emitter();
   }
 
@@ -34809,13 +34365,28 @@ class BleRemotePeripheral {
   }
 
   connect() {
+    this.obnizBle.scan.end();
     this.obnizBle.centralBindings.connect(this.address);
   }
 
   connectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+      // if (this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'connected');
+        if (params.status === 'connected') {
+          resolve(true); // for compatibility
+        } else {
+          reject(
+            new Error(
+              `connection to peripheral name=${this.localName} address=${
+                this.address
+              } can't be established`
+            )
+          );
+        }
       });
       this.connect();
     });
@@ -34826,25 +34397,40 @@ class BleRemotePeripheral {
   }
 
   disconnectWait() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+      // if (!this.connected) {
+      //   resolve();
+      //   return;
+      // }
       this.emitter.once('statusupdate', params => {
-        resolve(params.status === 'disconnected');
+        if (params.status === 'disconnected') {
+          resolve(true); // for compatibility
+        } else {
+          reject(
+            new Error(
+              `cutting connection to peripheral name=${
+                this.localName
+              } address=${this.address} was failed`
+            )
+          );
+        }
       });
       this.disconnect();
     });
   }
 
+  get services() {
+    return this._services;
+  }
+
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    for (let key in this.services) {
-      if (this.services[key].uuid === uuid) {
-        return this.services[key];
+    for (let key in this._services) {
+      if (this._services[key].uuid === uuid) {
+        return this._services[key];
       }
     }
-    let newService = new BleRemoteService({ uuid });
-    newService.parent = this;
-    this.services.push(newService);
-    return newService;
+    return undefined;
   }
 
   findService(param) {
@@ -34878,7 +34464,7 @@ class BleRemotePeripheral {
   discoverAllServicesWait() {
     return new Promise(resolve => {
       this.emitter.once('discoverfinished', () => {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
@@ -34887,28 +34473,32 @@ class BleRemotePeripheral {
     });
   }
 
-  async discoverAllHandlesWait(){
-
-      let ArrayFlat = function(array, depth) {
-        var flattend = [];
-        (function flat(array, depth) {
-          for (let el of array) {
-            if (Array.isArray(el) && depth > 0) {
-              flat(el, depth - 1);
-            } else {
-              flattend.push(el);
-            }
+  async discoverAllHandlesWait() {
+    let ArrayFlat = function(array, depth) {
+      let flattend = [];
+      (function flat(array, depth) {
+        for (let el of array) {
+          if (Array.isArray(el) && depth > 0) {
+            flat(el, depth - 1);
+          } else {
+            flattend.push(el);
           }
-        })(array, Math.floor(depth) || 1);
-        return flattend;
-      };
+        }
+      })(array, Math.floor(depth) || 1);
+      return flattend;
+    };
 
     let services = await this.discoverAllServicesWait();
-    let charsNest = await Promise.all(services.map(s => s.discoverAllCharacteristicsWait()));
-    let chars =  ArrayFlat(charsNest);
-    let descriptorsNest =  await Promise.all(chars.map(c => c.discoverAllDescriptorsWait()));
-    let descriptors = ArrayFlat(descriptorsNest)
+    let charsNest = await Promise.all(
+      services.map(s => s.discoverAllCharacteristicsWait())
+    );
+    let chars = ArrayFlat(charsNest);
+    let descriptorsNest = await Promise.all(
+      chars.map(c => c.discoverAllDescriptorsWait())
+    );
 
+    // eslint-disable-next-line no-unused-vars
+    let descriptors = ArrayFlat(descriptorsNest);
   }
 
   onconnect() {}
@@ -34938,13 +34528,20 @@ class BleRemotePeripheral {
         break;
       }
       case 'discover': {
-        let child = this.getService(params.service_uuid);
+        let uuid = params.service_uuid;
+        let child = this.getService(uuid);
+        if (!child) {
+          let newService = new BleRemoteService({ uuid });
+          newService.parent = this;
+          this._services.push(newService);
+          child = newService;
+        }
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
       }
       case 'discoverfinished': {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverservicefinished(children);
@@ -34964,11 +34561,8 @@ module.exports = BleRemotePeripheral;
 /***/ "./obniz/libs/embeds/bleHci/bleRemoteService.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleRemoteCharacteristic = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteCharacteristic.js");
 const BleRemoteAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleRemoteAttributeAbstract.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -34985,6 +34579,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
 
   get childrenName() {
     return 'characteristics';
+  }
+
+  get characteristics() {
+    return this.children;
   }
 
   addCharacteristic(params) {
@@ -35004,7 +34602,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   discoverChildren() {
-    this.parent.obnizBle.centralBindings.discoverCharacteristics(this.peripheral.address,this.uuid);
+    this.parent.obnizBle.centralBindings.discoverCharacteristics(
+      this.peripheral.address,
+      this.uuid
+    );
   }
 
   ondiscover(characteristic) {
@@ -35028,24 +34629,30 @@ module.exports = BleRemoteService;
 /***/ "./obniz/libs/embeds/bleHci/bleScan.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
 const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BleScan {
   constructor(obnizBle) {
     this.scanTarget = null;
+    this.scanSettings = {};
     this.obnizBle = obnizBle;
     this.emitter = new emitter();
 
     this.scanedPeripherals = [];
-
+    this._timeoutTimer = null;
   }
 
   start(target, settings) {
+    this.obnizBle.warningIfNotInitialize();
 
-    let timeout = (settings || {} ).duration || 30;
+    if (!settings) {
+      settings = {};
+    }
+    let timeout = settings.duration || 30;
+    settings.duplicate = settings.duplicate === true ? true : false;
+    this.scanSettings = settings;
+    target = target || {};
     this.scanTarget = target;
     if (
       this.scanTarget &&
@@ -35058,10 +34665,13 @@ class BleScan {
     }
     this.scanedPeripherals = [];
 
-
     this.obnizBle.centralBindings.startScanning(null, false);
 
-    setTimeout(()=>{ this.end() },timeout * 1000);
+    this.clearTimeoutTimer();
+    this._timeoutTimer = setTimeout(() => {
+      this._timeoutTimer = null;
+      this.end();
+    }, timeout * 1000);
   }
 
   startOneWait(target, settings) {
@@ -35098,7 +34708,8 @@ class BleScan {
   }
 
   end() {
-    this.obnizBle.centralBindings.stopScanning()
+    this.clearTimeoutTimer();
+    this.obnizBle.centralBindings.stopScanning();
   }
 
   isTarget(peripheral) {
@@ -35128,9 +34739,11 @@ class BleScan {
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
       case 'onfind': {
-        //duplicate filter
-        if(this.scanedPeripherals.find(e=>e.address === params.address)){
-          break;
+        if (this.scanSettings.duplicate === false) {
+          //duplicate filter
+          if (this.scanedPeripherals.find(e => e.address === params.address)) {
+            break;
+          }
         }
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);
@@ -35140,10 +34753,18 @@ class BleScan {
         break;
       }
       case 'onfinish': {
+        this.clearTimeoutTimer();
         this.emitter.emit(notifyName, this.scanedPeripherals);
         this.onfinish(this.scanedPeripherals);
         break;
       }
+    }
+  }
+
+  clearTimeoutTimer() {
+    if (this._timeoutTimer) {
+      clearTimeout(this._timeoutTimer);
+      this._timeoutTimer = null;
     }
   }
 }
@@ -35156,10 +34777,7 @@ module.exports = BleScan;
 /***/ "./obniz/libs/embeds/bleHci/bleSecurity.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const emitter = __webpack_require__("./node_modules/eventemitter3/index.js");
-const semver = __webpack_require__("./node_modules/semver/semver.js");
 
 class BleSecurity {
   constructor(Obniz) {
@@ -35168,29 +34786,31 @@ class BleSecurity {
   }
 
   setModeLevel(mode, level) {
-    throw new Error("setModeLevel is deprecated method");
+    throw new Error('setModeLevel is deprecated method');
   }
+
   checkIntroducedFirmware(introducedVersion, functionName) {
-    throw new Error("checkIntroducedFirmware is deprecated method");
+    throw new Error('checkIntroducedFirmware is deprecated method');
   }
+
   setAuth(authTypes) {
-    throw new Error("setAuth is deprecated method");
+    throw new Error('setAuth is deprecated method');
   }
 
   setIndicateSecurityLevel(level) {
-    throw new Error("setIndicateSecurityLevel is deprecated method");
+    throw new Error('setIndicateSecurityLevel is deprecated method');
   }
 
   setEnableKeyTypes(keyTypes) {
-    throw new Error("setEnableKeyTypes is deprecated method");
+    throw new Error('setEnableKeyTypes is deprecated method');
   }
 
   setKeyMaxSize(size) {
-    throw new Error("setKeyMaxSize is deprecated method");
+    throw new Error('setKeyMaxSize is deprecated method');
   }
 
   clearBondingDevicesList() {
-    throw new Error("clearBondingDevicesList is deprecated method");
+    throw new Error('clearBondingDevicesList is deprecated method');
   }
 
   onerror() {} //dummy
@@ -35213,11 +34833,8 @@ module.exports = BleSecurity;
 /***/ "./obniz/libs/embeds/bleHci/bleService.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* eslint-disable */
-
 const BleLocalAttributeAbstract = __webpack_require__("./obniz/libs/embeds/bleHci/bleLocalAttributeAbstract.js");
 const BleCharacteristic = __webpack_require__("./obniz/libs/embeds/bleHci/bleCharacteristic.js");
-const BleHelper = __webpack_require__("./obniz/libs/embeds/bleHci/bleHelper.js");
 
 class BleService extends BleLocalAttributeAbstract {
   constructor(obj) {
@@ -35239,6 +34856,10 @@ class BleService extends BleLocalAttributeAbstract {
     return BleCharacteristic;
   }
 
+  get characteristics() {
+    return this.children;
+  }
+
   get advData() {
     return {
       flags: ['general_discoverable_mode', 'br_edr_not_supported'],
@@ -35258,7 +34879,6 @@ class BleService extends BleLocalAttributeAbstract {
 }
 
 module.exports = BleService;
-
 
 
 /***/ }),
@@ -35669,9 +35289,10 @@ class NobleBindings extends events.EventEmitter {
 
       this.emit('disconnect', uuid); // TODO: handle reason?
     } else {
-      console.warn(
-        'noble warning: unknown handle ' + handle + ' disconnected!'
-      );
+      // maybe disconnect as peripheral
+      // console.warn(
+      //   'noble warning: unknown handle ' + handle + ' disconnected!'
+      // );
     }
   }
 
@@ -36044,9 +35665,7 @@ module.exports = NobleBindings;
 /***/ "./obniz/libs/embeds/bleHci/protocol/central/crypto.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* eslint-disable */
-
-let crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
+/* WEBPACK VAR INJECTION */(function(Buffer) {let crypto = __webpack_require__("./node_modules/crypto-browserify/index.js");
 
 function r() {
   return crypto.randomBytes(16);
@@ -36681,9 +36300,10 @@ module.exports = Gap;
 /***/ "./obniz/libs/embeds/bleHci/protocol/central/gatt.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {/* eslint-disable no-unused-vars */
-// let debug = require('debug')('att');
+/* WEBPACK VAR INJECTION */(function(process, Buffer) {// let debug = require('debug')('att');
 const debug = () => {};
+
+/* eslint-disable no-unused-vars */
 
 let events = __webpack_require__("./node_modules/events/events.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
@@ -37804,7 +37424,8 @@ module.exports = Gatt;
 /***/ "./obniz/libs/embeds/bleHci/protocol/central/signaling.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {let debug = __webpack_require__("./node_modules/debug/src/browser.js")('signaling');
+/* WEBPACK VAR INJECTION */(function(Buffer) {// let debug = require('debug')('signaling');
+let debug = () => {};
 
 let events = __webpack_require__("./node_modules/events/events.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
@@ -38082,8 +37703,8 @@ module.exports = JSON.parse("[\"Success\",\"Unknown HCI Command\",\"Unknown Conn
 /***/ "./obniz/libs/embeds/bleHci/protocol/hci.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer, process) {let debug = __webpack_require__("./node_modules/debug/src/browser.js")('hci');
-// const debug = () => {};
+/* WEBPACK VAR INJECTION */(function(Buffer, process) {// let debug = require('debug')('hci');
+const debug = () => {};
 
 let events = __webpack_require__("./node_modules/events/events.js");
 let util = __webpack_require__("./node_modules/node-libs-browser/node_modules/util/util.js");
@@ -40975,7 +40596,8 @@ module.exports = Gatt;
 /***/ "./obniz/libs/embeds/bleHci/protocol/peripheral/mgmt.js":
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {let debug = __webpack_require__("./node_modules/debug/src/browser.js")('mgmt');
+/* WEBPACK VAR INJECTION */(function(Buffer) {// let debug = require('debug')('mgmt');
+const debug = () => {};
 
 let LTK_INFO_SIZE = 36;
 
@@ -41745,7 +41367,7 @@ class Directive {
 
   _reset() {
     for (let i = 0; i < this.observers.length; i++) {
-      this.observers[i].reject();
+      this.observers[i].reject(new Error('reset called'));
     }
     this.observers = [];
     this._animationIdentifier = 0;
@@ -48934,7 +48556,7 @@ module.exports = JsonBinaryConverter;
 /***/ "./package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.0.1\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
+module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.1.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"index.js\",\"types\":\"obniz.d.ts\",\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"tsc --project ./test\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile ./_tools/server.js --cwd .\",\"build\":\"npm run lint && gulp --gulpfile ./_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"eslint --fix . --rulesdir eslint/rule\",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"typescript\":\"^3.6.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"ws\":\"./obniz/libs/webpackReplace/ws.js\",\"canvas\":\"./obniz/libs/webpackReplace/canvas.js\",\"./obniz/libs/webpackReplace/require-context.js\":\"./obniz/libs/webpackReplace/require-context-browser.js\"}}");
 
 /***/ }),
 

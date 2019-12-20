@@ -34,6 +34,10 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
     return 'descriptors';
   }
 
+  get descriptors() {
+    return this.children;
+  }
+
   toJSON() {
     let obj = super.toJSON();
 
@@ -104,7 +108,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   _onSubscribe(maxValueSize, updateValueCallback) {
-    console.log('_onSubscribe');
+    // console.log('_onSubscribe');
     this._maxValueSize = maxValueSize;
     this._updateValueCallback = updateValueCallback;
   }

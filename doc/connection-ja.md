@@ -98,6 +98,22 @@ access_token | `string` | null | access_tokenが発行されているobniz Board
 reset_obniz_on_ws_disconnection | `boolean` | true | 同一のobniz Boardに対してのwebsocket接続が0本になった時にクラウド側がobniz Boardをリセットするかどうか
 
 
+### obnizOS version and obniz.js version
+
+obnizクラウドは接続してきたobniz.jsと接続先のobnizOSのバージョンを比較します。
+js sdkのメジャー番号がOSのそれよりも低い場合(例 obniz.js is 2.0.0 and obnizOS is 3.0.0) にはobniz cloudが接続時に警告を送ります。
+およそ機能するものの互換性がない部分があるため、obniz.jsのアップデートが必要です。
+
+### １つのデバイスに複数プログラム
+
+obniz Cloudは複数のobniz.jsからの同時websocket接続を受け付けます。
+すべてのコマンドはデバイスへ届き、デバイスからのデータは全てのjsに届きます。
+
+ただしある1つのobniz.jsからデバイスにlocal connectが張られているときにはデバイスはローカルコネクト側にのみデータを送るため他のobniz.jsはデータを送ることはできても受け取ることができません。
+
+全てのobniz.jsでデータを受け取れるようにうするには、すべてのobniz.jsにおいて `local_connect: false` を設定することでlocal connectしないようにする必要があります。
+
+
 ## connect()
 optionのauto_connectをfalseにしている場合に利用できます。connectを呼ぶことでobniz Boardとの接続を試みます。
 

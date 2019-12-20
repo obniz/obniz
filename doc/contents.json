@@ -20,6 +20,11 @@
       "filename": "utils"
     },
     {
+      "title": "Sleep",
+      "title-ja": "スリープ",
+      "filename": "sleep"
+    },
+    {
       "title": "Messaging",
       "title-ja": "メッセージング",
       "filename": "messaging"
@@ -81,14 +86,49 @@
       "filename": "tcp"
     },
     {
-      "title": "BLE use as central",
+      "title": "BLE Central",
       "title-ja": "BLEセントラル",
       "filename": "ble-central"
     },
     {
-      "title": "BLE use as peripheral",
+      "title": "BLE Central - Peripheral",
+      "title-ja": "BLEセントラル - ペリフェラル",
+      "filename": "ble-central-peripheral"
+    },
+    {
+      "title": "BLE Central - Service",
+      "title-ja": "BLEセントラル - サービス",
+      "filename": "ble-central-service"
+    },
+    {
+      "title": "BLE Central - Characteristic",
+      "title-ja": "BLEセントラル - キャラクタリスティク",
+      "filename": "ble-central-characteristic"
+    },
+    {
+      "title": "BLE Central - Descriptor",
+      "title-ja": "BLEセントラル - ディスクリプタ",
+      "filename": "ble-central-descriptor"
+    },
+    {
+      "title": "BLE Peripheral",
       "title-ja": "BLEペリフェラル",
       "filename": "ble-peripheral"
+    },
+    {
+      "title": "BLE Peripheral - Service",
+      "title-ja": "BLEペリフェラル - サービス",
+      "filename": "ble-peripheral-service"
+    },
+    {
+      "title": "BLE Peripheral - Characteristic",
+      "title-ja": "BLEペリフェラル - キャラクタリスティク",
+      "filename": "ble-peripheral-characteristic"
+    },
+    {
+      "title": "BLE Peripheral - Descriptor",
+      "title-ja": "BLEペリフェラル - ディスクリプタ",
+      "filename": "ble-peripheral-descriptor"
     }
   ]
 }

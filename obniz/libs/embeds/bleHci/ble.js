@@ -1,10 +1,8 @@
-/* eslint-disable */
-
 const ObnizBLEHci = require('./hci');
 const CentralBindings = require('./protocol/central/bindings');
-const PeripheralBindings = require("./protocol/peripheral/bindings");
-const HciProtocol = require("./protocol/hci");
-const BleHelper = require("./bleHelper");
+const PeripheralBindings = require('./protocol/peripheral/bindings');
+const HciProtocol = require('./protocol/hci');
+const BleHelper = require('./bleHelper');
 
 const BlePeripheral = require('./blePeripheral');
 const BleService = require('./bleService');
@@ -21,10 +19,8 @@ class ObnizBLE {
     this.hci = new ObnizBLEHci(Obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
-
-    this.centralBindings = new CentralBindings( this.hciProtocol );
-    this.peripheralBindings = new PeripheralBindings( this.hciProtocol );
-
+    this.centralBindings = new CentralBindings(this.hciProtocol);
+    this.peripheralBindings = new PeripheralBindings(this.hciProtocol);
 
     // let dummy = {write : ()=>{}, on:()=>{}}
     // this.centralBindings = new CentralBindings( dummy );
@@ -34,6 +30,7 @@ class ObnizBLE {
     this.peripheralBindings.init();
 
     this._initialized = false;
+    this._initializeWarning = true;
 
     this.remotePeripherals = [];
 
@@ -53,9 +50,19 @@ class ObnizBLE {
   }
 
   async initWait() {
-    if(!this._initialized){
+    if (!this._initialized) {
       this._initialized = true;
       await this.hciProtocol.initWait();
+    }
+  }
+
+  warningIfNotInitialize() {
+    if (!this._initialized && this._initializeWarning) {
+      this._initializeWarning = true;
+      this.Obniz.warning({
+        alert: 'warning',
+        message: `BLE is not initialized. Please call 'await obniz.ble.initWait()'`,
+      });
     }
   }
 
@@ -100,18 +107,17 @@ class ObnizBLE {
     return str;
   }
 
+  onStateChange() {}
 
-  onStateChange(){}
-  onAddressChange(){}
+  onAddressChange() {}
 
-  onScanStart(){}
+  onScanStart() {}
 
-  onScanStop (){
+  onScanStop() {
     this.scan.notifyFromServer('onfinish');
   }
 
   onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
-
     let val = this.findPeripheral(uuid);
     if (!val) {
       val = new BleRemotePeripheral(this, uuid);
@@ -120,12 +126,14 @@ class ObnizBLE {
     val.discoverdOnRemote = true;
 
     let peripheralData = {
-      'device_type': "ble",
-      'address_type': addressType,
-      'ble_event_type': connectable ? "connectable_advertisemnt" : "non_connectable_advertising",
-      'rssi': rssi,
-      'adv_data': advertisement.advertisementRaw,
-      'scan_resp': advertisement.scanResponseRaw,
+      device_type: 'ble',
+      address_type: addressType,
+      ble_event_type: connectable
+        ? 'connectable_advertisemnt'
+        : 'non_connectable_advertising',
+      rssi: rssi,
+      adv_data: advertisement.advertisementRaw,
+      scan_resp: advertisement.scanResponseRaw,
     };
 
     val.setParams(peripheralData);
@@ -134,137 +142,172 @@ class ObnizBLE {
     this.scan.notifyFromServer('onfind', val);
   }
 
-  async onConnect(peripheralUuid, error){
+  async onConnect(peripheralUuid, error) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    if(!error){
+    if (!error) {
       await peripheral.discoverAllHandlesWait();
     }
-    peripheral.notifyFromServer("statusupdate", {status: error ? "disconnected" : "connected"})
+    peripheral.notifyFromServer('statusupdate', {
+      status: error ? 'disconnected' : 'connected',
+    });
   }
 
-  onDisconnect(peripheralUuid){
+  onDisconnect(peripheralUuid) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    peripheral.notifyFromServer("statusupdate", {status: "disconnected"})
+    peripheral.notifyFromServer('statusupdate', { status: 'disconnected' });
   }
 
-  onRssiUpdate(){}
+  onRssiUpdate() {}
 
-
-  onServicesDiscover(peripheralUuid, serviceUuids){
+  onServicesDiscover(peripheralUuid, serviceUuids) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    for( let serviceUuid of serviceUuids){
-      peripheral.notifyFromServer("discover", {service_uuid: serviceUuid})
+    for (let serviceUuid of serviceUuids) {
+      peripheral.notifyFromServer('discover', { service_uuid: serviceUuid });
     }
-    peripheral.notifyFromServer("discoverfinished", {});
+    peripheral.notifyFromServer('discoverfinished', {});
   }
-  onIncludedServicesDiscover(peripheralUuid, serviceUuid, includedServiceUuids){
 
-  }
-  onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics){
+  onIncludedServicesDiscover(
+    peripheralUuid,
+    serviceUuid,
+    includedServiceUuids
+  ) {}
 
+  onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
-    for( let char of characteristics){
+    let service = peripheral.findService({ service_uuid: serviceUuid });
+    for (let char of characteristics) {
       let obj = {
-        properties : char.properties.map(e=>BleHelper.toSnakeCase(e)),
-        characteristic_uuid : char.uuid
+        properties: char.properties.map(e => BleHelper.toSnakeCase(e)),
+        characteristic_uuid: char.uuid,
       };
-      service.notifyFromServer("discover", obj)
+      service.notifyFromServer('discover', obj);
     }
-    service.notifyFromServer("discoverfinished", {});
+    service.notifyFromServer('discoverfinished', {});
   }
 
-
-
-  onRead(peripheralUuid, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
+  onRead(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    data,
+    isNotification,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    let characteristic = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
 
-    if(isNotification){
+    if (isNotification) {
       let obj = {
-        data : Array.from(data)
+        data: Array.from(data),
       };
-      characteristic.notifyFromServer("onnotify", obj)
-    }else {
+      characteristic.notifyFromServer('onnotify', obj);
+    } else {
       let obj = {
-        result : isSuccess ? "success" : "failed",
-        data : Array.from(data)
+        result: isSuccess ? 'success' : 'failed',
+        data: Array.from(data),
       };
-      characteristic.notifyFromServer("onread", obj)
+      characteristic.notifyFromServer('onread', obj);
     }
   }
 
-  onWrite(peripheralUuid, serviceUuid, characteristicUuid,isSuccess){
+  onWrite(peripheralUuid, serviceUuid, characteristicUuid, isSuccess) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let characteristic = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    characteristic.notifyFromServer("onwrite", {result : isSuccess ? "success" : "failed"})
+    let characteristic = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
+    characteristic.notifyFromServer('onwrite', {
+      result: isSuccess ? 'success' : 'failed',
+    });
   }
 
-  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state){
+  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {}
 
-  }
-
-
-  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state){
+  onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
+    let char = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
 
-    if(state){
-      char.notifyFromServer("onregisternotify", {})
-    }else{
-      char.notifyFromServer("onunregisternotify", {})
-
+    if (state) {
+      char.notifyFromServer('onregisternotify', {});
+    } else {
+      char.notifyFromServer('onunregisternotify', {});
     }
-
   }
 
-
-  onDescriptorsDiscover(peripheralUuid, serviceUuid, characteristicUuid,  descriptors){
+  onDescriptorsDiscover(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptors
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let char = peripheral.findCharacteristic({service_uuid: serviceUuid,characteristic_uuid: characteristicUuid});
-    for( let descr of descriptors){
+    let char = peripheral.findCharacteristic({
+      service_uuid: serviceUuid,
+      characteristic_uuid: characteristicUuid,
+    });
+    for (let descr of descriptors) {
       let obj = {
-        descriptor_uuid : descr
+        descriptor_uuid: descr,
       };
-      char.notifyFromServer("discover", obj)
+      char.notifyFromServer('discover', obj);
     }
-    char.notifyFromServer("discoverfinished", {});
+    char.notifyFromServer('discoverfinished', {});
   }
 
-
-  onValueRead(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, data,isSuccess) {
+  onValueRead(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    data,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid
+      descriptor_uuid: descriptorUuid,
     });
 
     let obj = {
-      result:  isSuccess ? "success" : "failed",
-      data: Array.from(data)
+      result: isSuccess ? 'success' : 'failed',
+      data: Array.from(data),
     };
-    descriptor.notifyFromServer("onread", obj)
+    descriptor.notifyFromServer('onread', obj);
   }
 
-  onValueWrite(peripheralUuid, serviceUuid, characteristicUuid, descriptorUuid, isSuccess) {
+  onValueWrite(
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    isSuccess
+  ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
-      descriptor_uuid: descriptorUuid
+      descriptor_uuid: descriptorUuid,
     });
 
     let obj = {
-      result: isSuccess ? "success" : "failed",
+      result: isSuccess ? 'success' : 'failed',
     };
-    descriptor.notifyFromServer("onwrite", obj)
-
+    descriptor.notifyFromServer('onwrite', obj);
   }
-  onHandleRead(peripheralUuid, handle, data){}
-  onHandleWrite(peripheralUuid, handle){}
-  onHandleNotify(peripheralUuid, handle, data){}
 
+  onHandleRead(peripheralUuid, handle, data) {}
+
+  onHandleWrite(peripheralUuid, handle) {}
+
+  onHandleNotify(peripheralUuid, handle, data) {}
 
   onPeripheralStateChange(state) {
     // console.error("onPeripheralStateChange")
@@ -292,7 +335,10 @@ class ObnizBLE {
 
   onPeripheralAccept(clientAddress) {
     this.peripheral.currentConnectedDeviceAddress = clientAddress;
-    this.peripheral.onconnectionupdates({address:clientAddress, status:"connected"});
+    this.peripheral.onconnectionupdates({
+      address: clientAddress,
+      status: 'connected',
+    });
   }
 
   onPeripheralMtuChange(mtu) {
@@ -301,7 +347,10 @@ class ObnizBLE {
 
   onPeripheralDisconnect(clientAddress) {
     this.peripheral.currentConnectedDeviceAddress = null;
-    this.peripheral.onconnectionupdates({address:clientAddress, status:"disconnected"});
+    this.peripheral.onconnectionupdates({
+      address: clientAddress,
+      status: 'disconnected',
+    });
   }
 
   onPeripheralRssiUpdate(rssi) {
@@ -309,8 +358,6 @@ class ObnizBLE {
   }
 
   _bind() {
-
-
     this.centralBindings.on('stateChange', this.onStateChange.bind(this));
 
     this.centralBindings.on('addressChange', this.onAddressChange.bind(this));
@@ -321,39 +368,71 @@ class ObnizBLE {
     this.centralBindings.on('connect', this.onConnect.bind(this));
     this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
     this.centralBindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
-    this.centralBindings.on('servicesDiscover', this.onServicesDiscover.bind(this));
-    this.centralBindings.on('includedServicesDiscover', this.onIncludedServicesDiscover.bind(this));
-    this.centralBindings.on('characteristicsDiscover', this.onCharacteristicsDiscover.bind(this));
-
+    this.centralBindings.on(
+      'servicesDiscover',
+      this.onServicesDiscover.bind(this)
+    );
+    this.centralBindings.on(
+      'includedServicesDiscover',
+      this.onIncludedServicesDiscover.bind(this)
+    );
+    this.centralBindings.on(
+      'characteristicsDiscover',
+      this.onCharacteristicsDiscover.bind(this)
+    );
 
     this.centralBindings.on('read', this.onRead.bind(this));
     this.centralBindings.on('write', this.onWrite.bind(this));
     this.centralBindings.on('broadcast', this.onBroadcast.bind(this));
     this.centralBindings.on('notify', this.onNotify.bind(this));
-    this.centralBindings.on('descriptorsDiscover', this.onDescriptorsDiscover.bind(this));
+    this.centralBindings.on(
+      'descriptorsDiscover',
+      this.onDescriptorsDiscover.bind(this)
+    );
     this.centralBindings.on('valueRead', this.onValueRead.bind(this));
     this.centralBindings.on('valueWrite', this.onValueWrite.bind(this));
     this.centralBindings.on('handleRead', this.onHandleRead.bind(this));
     this.centralBindings.on('handleWrite', this.onHandleWrite.bind(this));
     this.centralBindings.on('handleNotify', this.onHandleNotify.bind(this));
 
-
-
-
-
-    this.peripheralBindings.on('stateChange', this.onPeripheralStateChange.bind(this));
-    this.peripheralBindings.on('addressChange', this.onPeripheralAddressChange.bind(this));
-    this.peripheralBindings.on('platform', this.onPeripheralPlatform.bind(this));
-    this.peripheralBindings.on('advertisingStart', this.onPeripheralAdvertisingStart.bind(this));
-    this.peripheralBindings.on('advertisingStop', this.onPeripheralAdvertisingStop.bind(this));
-    this.peripheralBindings.on('servicesSet', this.onPeripheralServicesSet.bind(this));
+    this.peripheralBindings.on(
+      'stateChange',
+      this.onPeripheralStateChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'addressChange',
+      this.onPeripheralAddressChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'platform',
+      this.onPeripheralPlatform.bind(this)
+    );
+    this.peripheralBindings.on(
+      'advertisingStart',
+      this.onPeripheralAdvertisingStart.bind(this)
+    );
+    this.peripheralBindings.on(
+      'advertisingStop',
+      this.onPeripheralAdvertisingStop.bind(this)
+    );
+    this.peripheralBindings.on(
+      'servicesSet',
+      this.onPeripheralServicesSet.bind(this)
+    );
     this.peripheralBindings.on('accept', this.onPeripheralAccept.bind(this));
-    this.peripheralBindings.on('mtuChange', this.onPeripheralMtuChange.bind(this));
-    this.peripheralBindings.on('disconnect', this.onPeripheralDisconnect.bind(this));
+    this.peripheralBindings.on(
+      'mtuChange',
+      this.onPeripheralMtuChange.bind(this)
+    );
+    this.peripheralBindings.on(
+      'disconnect',
+      this.onPeripheralDisconnect.bind(this)
+    );
 
-    this.peripheralBindings.on('rssiUpdate', this.onPeripheralRssiUpdate.bind(this));
-
-
+    this.peripheralBindings.on(
+      'rssiUpdate',
+      this.onPeripheralRssiUpdate.bind(this)
+    );
   }
 }
 

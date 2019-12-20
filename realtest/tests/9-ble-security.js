@@ -3,7 +3,7 @@ const chai = require('chai');
 const expect = chai.expect;
 let obnizA, obnizB;
 
-describe('9-ble-security', function() {
+describe.only('9-ble-security', function() {
   this.timeout(30000);
 
   beforeEach(function() {
@@ -23,6 +23,8 @@ describe('9-ble-security', function() {
     if (obnizA.ble.hci) {
       return;
     }
+    await obnizA.ble.initWait();
+    await obnizB.ble.initWait();
     obnizA.ble.security.setModeLevel(1, 2);
 
     let SPDIService = new obnizA.ble.service({
