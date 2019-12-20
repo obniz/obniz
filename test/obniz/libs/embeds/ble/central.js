@@ -614,6 +614,8 @@ describe('ble', function() {
     peripheral.onconnect = connectStub;
     peripheral.connect();
 
+    expect(this.obniz).send([{ ble: { scan: null } }]);
+
     expect(this.obniz).send([
       { ble: { connect: { address: 'e5f678800700' } } },
     ]);
@@ -672,6 +674,8 @@ describe('ble', function() {
     peripheral.onconnect = connectStub;
     peripheral.ondisconnect = disconnectStub;
     peripheral.connect();
+
+    expect(this.obniz).send([{ ble: { scan: null } }]);
 
     expect(this.obniz).send([
       { ble: { connect: { address: 'e5f678800700' } } },

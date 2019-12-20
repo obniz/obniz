@@ -35,7 +35,7 @@ settingに渡した引数に従って
 | property | type | default | description |
 |:--:|:--:|:--:|:--:|
 | duration | `number` | `30` | スキャンのタイムアウトまでの時間
-| duplicate | `boolean` | `false` | 同一ペリフェラルからのadvertisementを受け取るかどうかを指定します。デフォルトでは同一ペリフェラルの場合はonfindが二度呼ばれることはありません。
+| duplicate | `boolean` | `false` | (obnizOS 3 かそれ以降) 同一ペリフェラルからのadvertisementを受け取るかどうかを指定します。デフォルトでは同一ペリフェラルの場合はonfindが二度呼ばれることはありません。
 
 
 ```Javascript

@@ -171,6 +171,7 @@ class BleRemotePeripheral {
   }
 
   connect() {
+    this.Obniz.ble.scan.end();
     let obj = {
       ble: {
         connect: {

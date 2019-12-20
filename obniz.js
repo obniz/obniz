@@ -31933,6 +31933,7 @@ class BleRemotePeripheral {
   }
 
   connect() {
+    this.Obniz.ble.scan.end();
     let obj = {
       ble: {
         connect: {
@@ -32220,6 +32221,11 @@ class BleScan {
       //    "interval" : settings && settings.interval ? settings.interval : 30,
       duration: settings && settings.duration ? settings.duration : 30,
     };
+    if (settings && settings.duplicate) {
+      throw new Error(
+        `duplicate property can only be used with obnizOS3 or later`
+      );
+    }
 
     this.scanTarget = target;
     if (
