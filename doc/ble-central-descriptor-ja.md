@@ -1,6 +1,14 @@
 
 # BLE Central ディスクリプタ
 
+## descriptor.uuid
+
+ディスクリプタのIDの文字列です
+
+```javascript
+console.log(descriptor.uuid); // => 'ff00'
+```
+
 ## \[await] descriptor.writeWait(dataArray)
 descriptorにdataArrayを書き込みます
 失敗するとエラーがthrowされます。

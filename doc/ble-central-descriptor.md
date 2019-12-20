@@ -1,5 +1,13 @@
 # BLE Central Descriptor
 
+## descriptor.uuid
+
+descriptors's UUID string.
+
+```javascript
+console.log(descriptor.uuid); // => 'ff00'
+```
+
 ## \[await] descriptor.writeWait(dataArray)
 This writes dataArray to descriptor.
 It throws an error when failed.
