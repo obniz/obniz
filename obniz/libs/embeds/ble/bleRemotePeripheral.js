@@ -24,8 +24,12 @@ class BleRemotePeripheral {
       'scan_resp',
     ];
 
-    this.services = [];
+    this._services = [];
     this.emitter = new emitter();
+  }
+
+  get services() {
+    return this._services;
   }
 
   /**
@@ -205,7 +209,7 @@ class BleRemotePeripheral {
   disconnectWait() {
     return new Promise((resolve, reject) => {
       this.emitter.once('statusupdate', params => {
-        if (params.status === 'connected') {
+        if (params.status === 'disconnected') {
           resolve(true);
         } else {
           reject(new Error('disconnectWait failed'));
@@ -217,15 +221,12 @@ class BleRemotePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    for (let key in this.services) {
-      if (this.services[key].uuid === uuid) {
-        return this.services[key];
+    for (let key in this._services) {
+      if (this._services[key].uuid === uuid) {
+        return this._services[key];
       }
     }
-    let newService = new BleRemoteService({ uuid });
-    newService.parent = this;
-    this.services.push(newService);
-    return newService;
+    return undefined;
   }
 
   findService(param) {
@@ -266,13 +267,40 @@ class BleRemotePeripheral {
   discoverAllServicesWait() {
     return new Promise(resolve => {
       this.emitter.once('discoverfinished', () => {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
       });
       this.discoverAllServices();
     });
+  }
+
+  async discoverAllHandlesWait() {
+    let ArrayFlat = function(array, depth) {
+      let flattend = [];
+      (function flat(array, depth) {
+        for (let el of array) {
+          if (Array.isArray(el) && depth > 0) {
+            flat(el, depth - 1);
+          } else {
+            flattend.push(el);
+          }
+        }
+      })(array, Math.floor(depth) || 1);
+      return flattend;
+    };
+
+    let services = await this.discoverAllServicesWait();
+    let charsNest = await Promise.all(
+      services.map(s => s.discoverAllCharacteristicsWait())
+    );
+    let chars = ArrayFlat(charsNest);
+    let descriptorsNest = await Promise.all(
+      chars.map(c => c.discoverAllDescriptorsWait())
+    );
+    // eslint-disable-next-line no-unused-vars
+    let descriptors = ArrayFlat(descriptorsNest);
   }
 
   onconnect() {}
@@ -287,12 +315,14 @@ class BleRemotePeripheral {
 
   ondiscoverfinished() {}
 
-  notifyFromServer(notifyName, params) {
+  async notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
       case 'statusupdate': {
         if (params.status === 'connected') {
           this.connected = true;
+          await this.discoverAllHandlesWait();
+
           this.onconnect();
         }
         if (params.status === 'disconnected') {
@@ -302,13 +332,20 @@ class BleRemotePeripheral {
         break;
       }
       case 'discover': {
-        let child = this.getService(params.service_uuid);
+        let uuid = params.service_uuid;
+        let child = this.getService(uuid);
+        if (!child) {
+          let newService = new BleRemoteService({ uuid });
+          newService.parent = this;
+          this._services.push(newService);
+          child = newService;
+        }
         child.discoverdOnRemote = true;
         this.ondiscoverservice(child);
         break;
       }
       case 'discoverfinished': {
-        let children = this.services.filter(elm => {
+        let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverservicefinished(children);

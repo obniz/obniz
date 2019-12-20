@@ -1,17 +1,15 @@
-/* eslint-disable */
-
 const BleService = require('./bleService');
 const BleHelper = require('./bleHelper');
 
 class BlePeripheral {
   constructor(obnizBle) {
     this.obnizBle = obnizBle;
-    this.services = [];
+    this._services = [];
     this.currentConnectedDeviceAddress = null;
   }
 
-  _updateServices(){
-    let bufData = this.services.map(e=>e.toBufferObj());
+  _updateServices() {
+    let bufData = this._services.map(e => e.toBufferObj());
     this.obnizBle.peripheralBindings.setServices(bufData);
   }
 
@@ -20,7 +18,7 @@ class BlePeripheral {
     if (!(obj instanceof BleService)) {
       obj = new BleService(obj);
     }
-    this.services.push(obj);
+    this._services.push(obj);
     obj.peripheral = this;
 
     this._updateServices();
@@ -36,7 +34,7 @@ class BlePeripheral {
 
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
-    return this.services
+    return this._services
       .filter(function(element) {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
@@ -44,7 +42,7 @@ class BlePeripheral {
   }
 
   removeService(uuid) {
-    this.services = this.services.filter(function(element) {
+    this._services = this._services.filter(function(element) {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
 
@@ -52,15 +50,13 @@ class BlePeripheral {
   }
 
   stopAllService() {
-    this.services = [];
+    this._services = [];
     this._updateServices();
   }
 
-
-
   toJSON() {
     return {
-      services: this.services,
+      services: this._services,
     };
   }
 

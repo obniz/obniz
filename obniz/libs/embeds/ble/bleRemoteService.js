@@ -19,6 +19,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
     return 'characteristics';
   }
 
+  get characteristics() {
+    return this.children;
+  }
+
   addCharacteristic(params) {
     return this.addChild(params);
   }

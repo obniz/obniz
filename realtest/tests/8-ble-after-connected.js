@@ -5,7 +5,7 @@ chai.use(require('chai-like'));
 
 let obnizA, obnizB;
 
-describe('8-ble', function() {
+describe.only('8-ble', function() {
   this.timeout(120000);
 
   before(async () => {
@@ -102,8 +102,9 @@ describe('8-ble', function() {
       let charas = await service.discoverAllCharacteristicsWait();
 
       for (let chara of charas) {
-        chara.data = await chara.readWait();
-
+        if (chara.canRead()) {
+          chara.data = await chara.readWait();
+        }
         let descrs = await chara.discoverAllDescriptorsWait();
         for (let descr of descrs) {
           descr.data = await descr.readWait();
@@ -204,8 +205,13 @@ describe('8-ble', function() {
     expect(chara.canNotify()).to.be.equal(false);
     expect(chara.canIndicate()).to.be.equal(false);
     console.log('write');
-    let result = await chara.writeTextWait('hello');
-    expect(result).to.be.equal(false);
+    let isErrored = false;
+    try {
+      await chara.writeTextWait('hello');
+    } catch (e) {
+      isErrored = true;
+    }
+    expect(isErrored).to.be.equal(true);
     console.log('read');
     let data = await chara.readWait();
     expect(data).to.be.deep.equal([101, 51, 214]);
