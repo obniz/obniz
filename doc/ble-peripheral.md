@@ -162,9 +162,16 @@ characteristic.addDescriptor(descriptor);
 obniz.ble.peripheral.addService(service); // call this after all descriptors and characteristics added to service.
 ```
 
-## peripheral.onconnectionupdates
+## peripheral.onconnectionupdates = (data) => {}
 
 This is a callback function used when an external device gets connected or disconnected.
+
+data has two property
+
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
+| `status` |  string  | `connected` or `disconnected` |
     
 ```Javascript
 await obniz.ble.initWait(); 

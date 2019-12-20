@@ -50,14 +50,11 @@ descriptor.onwrite = function(val){
 
 ## descriptor.writeWait(data)
 descriptorに値を書き込みます
-成功するとtrue,失敗するとfalseが返ります
+失敗するとエラーがthrowされます
 
 ```Javascript 
-let result =  await descriptor.writeWait([0xf0,0x27]);
-
-if(result){
-    console.log("write success");
-}
+await descriptor.writeWait([0xf0,0x27]);
+console.log("write success");
 
 ```
 <!--
@@ -81,12 +78,12 @@ descriptor.onread = function(val){
 -->
 
 ## \[await] descriptor.readWait()
-descriptorに値を読み込みます
-成功するとdataのはいったArrayが,失敗するとundefinedが返ります
+descriptorに値を読み込みます。
+成功するとdataのはいったArrayが返ります。
+失敗するとエラーがthrowされます。
 
 ```Javascript 
 let data =  await descriptor.readWait()
-
 console.log("data: " , data );
 
 

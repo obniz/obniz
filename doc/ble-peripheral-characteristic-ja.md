@@ -46,14 +46,11 @@ characteristic.onwrite = function(val){
 
 ## \[await] characteristic.writeWait(data)
 characteristicに値を書き込みます
-成功するとtrue,失敗するとfalseが返ります
+失敗するとエラーがthrowされます
 
 ```Javascript 
-let result =  await characteristic.writeWait([0xf0,0x27]);
-
-if(result){
-    console.log("write success");
-}
+await characteristic.writeWait([0xf0,0x27]);
+console.log("write success");
 
 ```
 
@@ -77,8 +74,9 @@ characteristic.onread = function(val){
 -->
 
 ## \[await] characteristic.readWait()
-characteristicの値を読み込みます
-成功するとdataのはいったArrayが,失敗するとundefinedが返ります
+characteristicの値を読み込みます。
+成功するとdataのはいったArrayが返ります。
+失敗するとエラーがthrowされます。
 
 ```Javascript 
 let data =  await characteristic.readWait()

@@ -167,10 +167,17 @@ characteristic.addDescriptor(descriptor);
 obniz.ble.peripheral.addService(service);   // addServiceはaddCharacteristic,addDescriptorよりもあとに来る必要があります
 ```
 
-## peripheral.onconnectionupdates
 
+## peripheral.onconnectionupdates = (data) => {}
 
 外部デバイスが接続／切断されたときに呼ばれるコールバックです
+
+引数に渡されるdataには2つのプロパティがあります。
+
+| property | type | description |
+|:---- |:---- |:---- |
+| `address` |  array  | central device address |
+| `status` |  string  | `connected` or `disconnected` |
     
 ```Javascript
 await obniz.ble.initWait(); 
