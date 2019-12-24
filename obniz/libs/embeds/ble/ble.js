@@ -30,6 +30,12 @@ class ObnizBLE {
 
   _reset() {}
 
+  directConnect(uuid, addressType) {
+    throw new Error(
+      'directConnect cannot use obnizOS < 3.0.0. Please update obnizOS'
+    );
+  }
+
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
