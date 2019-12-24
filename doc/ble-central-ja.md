@@ -30,7 +30,7 @@ settingに渡した引数に従って
 | uuids | `array` | `[]` | サービスUUIDの配列。この中のいずれかをadvertisementに持つペリフェラルを探します。
 | localName | `string` | null | デバイス名での探索を行います。
 
-### target
+### setting
 
 | property | type | default | description |
 |:--:|:--:|:--:|:--:|
@@ -170,3 +170,27 @@ for(var peripheral of peripherals){
   console.log(peripheral);
 }
 ```
+
+
+## directConnect( address, addressType)
+スキャンせずにperipheralに接続します。
+peripheralインスタンスを返しますが、scanしていないのでlocalNameなどのadvertisement情報はnullになっています。
+
+### address
+peripheralのアドレスを指定します
+
+### addressType
+"random"もしくは"public"を指定します。
+
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var peripheral = obniz.ble.directConnect("e4b9efb29218","random");
+peripheral.onconnect = ()=>{
+  console.log("connected");
+
+}
+```
+
