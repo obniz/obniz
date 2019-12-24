@@ -6,7 +6,7 @@ let testUtil = require('../../../..//testUtil.js');
 chai.use(testUtil.obnizAssert);
 
 describe('ble', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
     testUtil.setupObnizPromise(this, function() {}, {
       __firmware_ver: '2.0.0',
     });
@@ -41,16 +41,47 @@ describe('ble', function() {
       { ble: { connect: { address: 'e5f678800700' } } },
     ]);
     sinon.assert.callCount(connectStub, 0);
-    testUtil.receiveJson(this.obniz, [
-      {
-        ble: {
-          status_update: {
-            address: 'e5f678800700',
-            status: 'connected',
-          },
-        },
-      },
-    ]);
+
+    /* eslint-disable */
+    /* @formatter:off */
+    let connectionCommunication = [
+      {type:"recv",data:[{ ble: { status_update: { address: 'e5f678800700', status: 'connected'} } }]},
+      {type:"send",data:[{"ble":{"get_services":{"address":"e5f678800700"}}}]},
+      {type:"recv",data:[{"ble":{"get_service_result":{"address":"e5f678800700","service_uuid":"1800"}}}]},
+      {type:"recv",data:[{"ble":{"get_service_result":{"address":"e5f678800700","service_uuid":"3000"}}}]},
+      {type:"recv",data:[{"ble":{"get_service_result_finish":{"address":"e5f678800700"}}}]},
+      {type:"send",data:[{"ble":{"get_characteristics":{"address":"e5f678800700","service_uuid":"1800"}}}]},
+      {type:"send",data:[{"ble":{"get_characteristics":{"address":"e5f678800700","service_uuid":"3000"}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a00","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a01","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result_finish":{"address":"e5f678800700","service_uuid":"1800"}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001","properties":["read"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002","properties":["write"]}}}]},
+      {type:"recv",data:[{"ble":{"get_characteristic_result_finish":{"address":"e5f678800700","service_uuid":"3000"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a00"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a01"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}}]},
+      {type:"send",data:[{"ble":{"get_descriptors":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a00"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"1800","characteristic_uuid":"2a01"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3000"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3001"}}}]},
+      {type:"recv",data:[{"ble":{"get_descriptor_result_finish":{"address":"e5f678800700","service_uuid":"3000","characteristic_uuid":"3002"}}}]},
+    ];
+    /* @formatter:on */
+    /* eslint-enable */
+
+    for (let one of connectionCommunication) {
+      if (one.type === 'send') {
+        expect(this.obniz).send(one.data);
+      } else if (one.type === 'recv') {
+        testUtil.receiveJson(this.obniz, one.data);
+        await wait(1); // waiting for process receiveJson
+      }
+    }
+
     sinon.assert.callCount(connectStub, 1);
     this.peripheral = peripheral;
   });
@@ -829,3 +860,9 @@ describe('ble', function() {
     expect(this.obniz).to.be.finished;
   });
 });
+
+function wait(ms) {
+  return new Promise(r => {
+    setTimeout(r, ms);
+  });
+}
