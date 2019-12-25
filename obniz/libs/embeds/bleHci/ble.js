@@ -90,6 +90,12 @@ class ObnizBLE {
     return peripheral;
   }
 
+  async directConnectWait(uuid, addressType) {
+    let peripheral = this.directConnect(uuid, addressType);
+    await peripheral.connectWait();
+    return peripheral;
+  }
+
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {

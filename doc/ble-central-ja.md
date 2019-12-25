@@ -194,3 +194,30 @@ peripheral.onconnect = ()=>{
 }
 ```
 
+
+
+## \[await] directConnectWait( address, addressType)
+スキャンせずにperipheralに接続し、接続完了を待ちます。接続に失敗した場合はthrowされます。
+peripheralインスタンスを返しますが、scanしていないのでlocalNameなどのadvertisement情報はnullになっています。
+
+### address
+peripheralのアドレスを指定します
+
+### addressType
+"random"もしくは"public"を指定します。
+
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+try {
+  var peripheral = await obniz.ble.directConnectWait("e4b9efb29218","random");
+  console.log("connected");
+} catch(e) {
+  console.log("can't connect");
+}
+
+}
+```
+
