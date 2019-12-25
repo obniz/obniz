@@ -521,7 +521,7 @@ describe('ble', function() {
     expect(this.obniz).to.be.finished;
   });
 
-  it('on scan finished2', function() {
+  it('on scan finished2', async function() {
     let stub1 = sinon.stub();
     let stub2 = sinon.stub();
 
@@ -549,8 +549,7 @@ describe('ble', function() {
     ];
 
     testUtil.receiveJson(this.obniz, results1);
-
-    expect(this.obniz).send([{ ble: { scan: { duration: 30 } } }]);
+    await wait(1);
 
     sinon.assert.callCount(stub1, 1);
     sinon.assert.callCount(stub2, 0);
