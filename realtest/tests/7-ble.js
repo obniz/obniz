@@ -17,6 +17,14 @@ describe.only('7-ble', function() {
     await obnizB.ble.initWait();
   });
 
+  beforeEach(async function() {
+    obnizA.reset();
+    obnizB.reset();
+    await Promise.all([obnizA.pingWait(), obnizB.pingWait()]);
+    await obnizA.ble.initWait();
+    await obnizB.ble.initWait();
+  });
+
   it('simple ad', async function() {
     let service = new obnizA.ble.service({
       uuid: '0000',

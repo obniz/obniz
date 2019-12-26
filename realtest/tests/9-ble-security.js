@@ -18,6 +18,7 @@ describe.only('9-ble-security', function() {
     });
   });
   it('dummy for reboot', async function() {});
+  it('dummy for reboot 2', async function() {});
 
   it('security', async function() {
     if (obnizA.ble.hci) {

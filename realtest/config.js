@@ -49,6 +49,9 @@ function connectTwoObniz(done, params) {
   // if (process.env.DEBUG) {
   obnizA.debugprint = true;
   // }
+  obnizA.onclose = () => {
+    throw new Error('obnizA ' + obnizA_ID + ' closed');
+  };
   obnizA.onconnect = () => {
     if (obnizB) {
       done();
@@ -57,6 +60,9 @@ function connectTwoObniz(done, params) {
     obnizB = new Obniz(obnizB_ID, {
       local_connect: local_connect,
     });
+    obnizB.onclose = () => {
+      throw new Error('obnizB ' + obnizB_ID + ' closed');
+    };
     console.log('B local_connect : ' + local_connect);
     if (process.env.DEBUG) {
       obnizB.debugprint = true;
