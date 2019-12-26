@@ -98,7 +98,7 @@ describe('all', function() {
           this.timeout(60000);
           it('runs ' + relativePath, () => {
             return testUtil.browser(file).then(results => {
-              expect(results.passes).to.be.at.least(0);
+              expect(results.passes).to.be.at.least(1);
               expect(results.failures).to.equal(0);
             });
           });

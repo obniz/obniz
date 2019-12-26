@@ -4,7 +4,7 @@ let sinon = require('sinon');
 let testUtil = require('../../../..//testUtil.js');
 chai.use(testUtil.obnizAssert);
 
-describe.skip('ble', function() {
+describe('ble', function() {
   beforeEach(function() {
     testUtil.setupObnizPromise(this, function() {}, {
       __firmware_ver: '2.0.0',

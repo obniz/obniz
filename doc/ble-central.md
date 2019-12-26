@@ -26,7 +26,7 @@ You can filter uuids or localName using the target param.
 | uuids | `array` | `[]` | an array of scan target service uuids. If a peripheral has a one of listed uuid, then found.
 | localName | `string` | null | scan target device localName
 
-### target
+### setting
 
 | property | type | default | description |
 |:--:|:--:|:--:|:--:|
@@ -157,6 +157,58 @@ var peripherals = await obniz.ble.scan.startAllWait(target,setting);
 
 for(var peripheral of peripherals){
   console.log(peripheral);
+}
+```
+
+
+
+## directConnect( address, addressType)
+Connect to peripheral without scanning.
+Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+
+### address
+peripheral device address
+
+### addressType
+"random" or "public"
+
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+var peripheral = obniz.ble.directConnect("e4b9efb29218","random");
+peripheral.onconnect = ()=>{
+  console.log("connected");
+
+}
+```
+
+
+
+
+## \[await] directConnectWait( address, addressType)
+Connect to peripheral without scanning, and wait to finish connecting.
+It throws when connection establish failed.
+Returns a peripheral instance, but the advertisement information such as localName is null because it has not been scanned.
+
+### address
+peripheral device address
+
+### addressType
+"random" or "public"
+
+
+
+```Javascript
+// Javascript Example
+
+await obniz.ble.initWait(); 
+try {
+  var peripheral = await obniz.ble.directConnectWait("e4b9efb29218","random");
+  console.log("connected");
+} catch(e) {
+  console.log("can't connect");
 }
 ```
 
