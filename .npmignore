@@ -11,6 +11,8 @@ coverage
 test/**/*.html
 /test*.js
 /test*.html
+/test/test*.html
+/test/test*.js
 
 .idea/modules.xml
 .idea/obnizjs.iml
@@ -26,13 +28,10 @@ log
 *.jpg
 *.png
 *.gif
-/fritzing/
 /doc/
-/_tools/
+/devloots/
 *.fzz
 
 
 ### remove test
 /test/
-/realtest/
-/realtest_esp32/

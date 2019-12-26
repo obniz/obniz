@@ -5,7 +5,7 @@ This is obniz Fritzing parts
 The obniz borad.
 You can use it with [fritzing](http://fritzing.org/home/).
 
-![](./obniz_breadboard.png)
+![](obniz_breadboard.png)
 
 
 ## How to use

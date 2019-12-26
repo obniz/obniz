@@ -5,3 +5,4 @@ node_modules/*
 temp/*
 test.js
 test-*.js
+test/test-*.js
