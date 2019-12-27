@@ -44,7 +44,7 @@ const obnizPath = path.join(__dirname, '../../src/obniz/**/*.js');
 const partsPath = path.join(__dirname, '../../src/parts/');
 const packageJsonPath = path.join(__dirname, '../../package.json');
 const schemaSrcPath = path.join(__dirname, '../../src/json_schema/**/*.yml');
-const docPath = path.join(__dirname, '../doc');
+const docPath = path.join(__dirname, '../../doc');
 const tv4Path = require.resolve('tv4', {
   path: path.resolve(__dirname, '../../src/'),
 });

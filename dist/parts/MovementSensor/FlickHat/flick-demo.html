@@ -1,0 +1,198 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+  <script src="https://unpkg.com/obniz@1.12.2/obniz.js" crossorigin="anonymous"></script>
+  <!--<script src="https://obniz.io/users/340/repo/FlickHat.js"></script>-->
+  <script src="https://nak435.github.io/DisplayExtend/DisplayExtend.js"></script>
+  <style>
+html {
+  font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue","游ゴシック Medium",YuGothic,YuGothicM,"Hiragino Kaku Gothic ProN","メイリオ",Meiryo,sans-serif;
+  font-size: 14px;
+}
+  </style>
+</head>
+<body>
+
+<div id="obniz-debug"></div>
+<h1>Flick HAT demo</h1>
+<div>
+<table>
+  <tr><td width="150">firmware version</td><td><span id="fwVersion"></span></td></tr>
+  <tr><td><hr></td><td><hr></td></tr>
+  <tr><td>xyz</td><td><span id="xyz"></span></td></tr>
+  <tr><td>gesture</td><td><span id="gesture"></span></td></tr>
+  <tr><td>touch</td><td><span id="touch"></span></td></tr>
+  <tr><td>tap</td><td><span id="tap"></span></td></tr>
+  <tr><td>double tap</td><td><span id="doubletap"></span></td></tr>
+  <tr><td>air wheel</td><td><span id="airwheel"></span></td></tr>
+  <tr><td><hr></td><td><hr></td></tr>
+  <tr><td>polling# / seq</td><td><span id="polling"></span> / <span id="seq"></span></td></tr>
+</table>
+</div>
+<div id="error" style="margin: 16px 0px; font-size:150%; background-color: red;"></div>
+
+<script>
+'use strict';
+
+const obniz = new Obniz("OBNIZ_ID_HERE");
+const displayEx = new DisplayExtend(obniz);
+displayEx.autoClear = 1000;
+displayEx.lineSize = 10;
+  
+obniz.onconnect = async function() {
+
+  var
+    seq = 0,
+    spinny = 0,
+    pollingCount = 0;
+
+  function clearDiv() {
+    $('#xyz').text('');
+    $('#gesture').text('');
+    $('#touch').text('');
+    $('#tap').text('');
+    $('#doubletap').text('');
+    $('#airwheel').text('');
+  }
+
+  displayEx.onclear = function() {
+    spinny = 0;
+    clearDiv();
+  }
+
+//Obniz.PartsRegistrate(FlickHat);
+//const flick = obniz.wired('FlickHat', { /*vcc:7,*/ sda:0, scl:1, gnd:3, reset:4, ts:5 }); //for flick Hat
+  const flick = obniz.wired("FlickHat", { /*vcc:0,*/ sda:1, scl:2, reset:3, ts:4, gnd:5, led1:6, led2:7 }); //for flick large
+
+//obniz.debugprint = true;
+//flick.debugprint = true;
+
+  flick.onxyz = function(xyz) {
+//console.log(xyz);
+    seq = xyz.seq;
+    $('#seq').text(seq);
+    $('#xyz').text(`x: ${xyz.x.toFixed(3)}, y: ${xyz.y.toFixed(3)}, z: ${xyz.z.toFixed(3)}`);
+  }
+  flick.ongesture = function(gesture) {
+//  console.log(gesture);
+    seq = gesture.seq;
+    $('#seq').text(seq);
+    $('#gesture').text(`form: ${gesture.from}, to: ${gesture.to}`);
+    if (typeof flick.led1 !== 'undefined') {
+      flick.led1.blink(100);
+      setTimeout(function(){ flick.led1.off(); }, 500);
+    }
+    displayEx.drawImmediately = false;
+    switch (gesture.raw[0]) {
+    case 2: //→
+        displayEx.line(30, 32,  98, 32);
+        displayEx.line(78, 12, 103, 32);
+        displayEx.drawImmediately = true;
+        displayEx.line(78, 52, 103, 32);
+      break;
+    case 3: //←
+        displayEx.line(30, 32,  98, 32);
+        displayEx.line(25, 32,  50, 12);
+        displayEx.drawImmediately = true;
+        displayEx.line(25, 32,  50, 52);
+      break;
+    case 4: //↑
+        displayEx.line(64, 64, 64, 10);
+        displayEx.line(44, 30, 64, 10);
+        displayEx.drawImmediately = true;
+        displayEx.line(84, 30, 64, 10);
+      break;
+    case 5: //↓
+        displayEx.line(64,  0, 64, 54);
+        displayEx.line(64, 54, 44, 34);
+        displayEx.drawImmediately = true;
+        displayEx.line(64, 54, 84, 34);
+      break;
+
+    default:
+    }
+
+  }
+  flick.ontouch = function(touch) {
+//console.log(touch);
+    seq = touch.seq;
+    $('#seq').text(seq);
+    $('#touch').text(`[ ${touch.positions.toString().replace(',', ', ')} ]`);
+    if (typeof flick.led2 !== 'undefined') {
+      flick.led2.blink(100);
+      setTimeout(function(){ flick.led2.off(); }, 500);
+    }
+    touch.positions.forEach(function(pos) {
+      switch (pos) {
+      case 'south':
+        displayEx.line(20, 59, 104, 59);
+        break;
+      case 'west':
+          displayEx.line(5, 5, 5, 59);
+        break;
+      case 'north':
+        displayEx.line(20, 5, 104, 5);
+        break;
+      case 'east':
+        displayEx.line(118, 5, 118, 59);
+        break;
+      case 'center':
+        displayEx.roundRect(39, 14, 50, 36, 10, true);
+        break;
+      default:
+      }
+    });
+  }
+  flick.ontap = function(tap) {
+//console.log(tap);
+    seq = tap.seq;
+    $('#seq').text(seq);
+    $('#tap').text(`[ ${tap.positions.toString().replace(',', ', ')} ]`);
+  }
+  flick.ondoubletap = function(doubletap) {
+//console.log(doubletap);
+    seq = doubletap.seq;
+    $('#seq').text(seq);
+    $('#doubletap').text(`[ ${doubletap.positions.toString().replace(',', ', ')} ]`);
+  }
+  flick.onairwheel = function(wheel) {
+//console.log(wheel);
+    seq = wheel.seq;
+    $('#seq').text(seq);
+    $('#airwheel').text(`${wheel.delta} / ${wheel.rotation}`);
+    displayEx.arc(64, 32, 27, spinny / 180 * Math.PI, wheel.delta / 180 * Math.PI, wheel.delta < 0, false);
+    spinny = wheel.delta;
+  }
+
+  obniz.error = async function(obj) {
+    displayEx.autoClear = 0;
+    displayEx.clear();
+    displayEx.print("error!");
+
+    $('#error').text(obj.message);
+    console.log('error occerred.');
+    console.error(obj);
+  }
+
+  displayEx.clear();
+  displayEx.font('Meiryo', 24);
+  displayEx.print("ready");
+
+  console.log("start");
+  await flick.start(function(fwinfo) {
+    console.log(fwinfo);
+    $('#fwVersion').text(fwinfo.fwVersion);
+  });
+
+  obniz.repeat(async function() {
+    $('#polling').text(++pollingCount);
+    await flick.polling();
+    await obniz.wait(1);
+  }, 100);
+
+}
+</script>
+</body>
+</html>
