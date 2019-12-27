@@ -5,7 +5,7 @@ export interface I2cPartsOptions {
     gnd?: number;
     sda?: number;
     scl?: number;
-    i2c?: I2C
+    i2c?: I2C;
 }
 
 export interface I2cPartsAbstruct {

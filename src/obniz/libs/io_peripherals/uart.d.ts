@@ -1,4 +1,4 @@
-import { DriveType, PullType, StopBitType, BitType, ParityType, FlowControlType } from './common';
+import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from "./common";
 
 export interface UART {
   onreceive: (data: any, text: string) => void;

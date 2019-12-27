@@ -19,13 +19,20 @@
     "realtest-esp32": "mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build-ts": "tsc && copyfiles -u 1 -f src/**/*.yml -f src/**/*.json dist/",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
-    "lint": "devtools/eslint --fix . --rulesdir eslint/rule",
+    "lint": "npm run lint-js && npm run lint-ts ",
+    "lint-js": "eslint --fix ./src ./test --rulesdir ./devtools/eslint/rule ",
+    "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
     "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js"
   },
   "lint-staged": {
     "*.js": [
       "eslint --rulesdir eslint/rule --fix ",
+      "git add"
+    ],
+    "*.ts": [
+      "tslint -c tslint.json --fix ",
       "git add"
     ]
   },
@@ -45,6 +52,7 @@
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
     "concat-with-sourcemaps": "^1.1.0",
+    "copyfiles": "^2.1.1",
     "ejs": "^2.6.2",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^3.6.0",
@@ -81,6 +89,7 @@
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
+    "tslint": "^5.20.1",
     "typescript": "^3.7.4",
     "uglifyjs-webpack-plugin": "^1.3.0",
     "vinyl": "^2.2.0",
@@ -91,6 +100,7 @@
     "yaml-loader": "^0.5.0"
   },
   "dependencies": {
+    "@types/chai-like": "^1.1.0",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "node-dir": "^0.1.17",

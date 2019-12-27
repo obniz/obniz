@@ -1,12 +1,12 @@
 import {SPI} from "../../../obniz/libs/io_peripherals/spi";
 
-export interface ST7735SOptions {    
+export interface ST7735SOptions {
   sclk?: number;
   mosi?: number;
   cs?: number;
   res?: number;
   dc?: number;
-  spi?: SPI
+  spi?: SPI;
 }
 
 export type RGB16 = number;
@@ -180,7 +180,7 @@ export interface ST7735S {
     color: RGB16,
     backgroundColor: RGB16,
     size?: number,
-    wrap?: boolean
+    wrap?: boolean,
   ): [number, number];
   drawContextBound(
     context: any,
@@ -190,7 +190,7 @@ export interface ST7735S {
     height: number,
     x1: number,
     y1: number,
-    gray: boolean
+    gray: boolean,
   ): void;
   draw(context: CanvasRenderingContext2D, gray: boolean): void;
   setRotation(dir: number): void;

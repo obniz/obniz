@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface Grove_3AxisAccelerometerOptions {
   gnd?: number;
   vcc?: number;

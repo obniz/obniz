@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface Grove_GPSOptions {
   vcc?: number;
   gnd?: number;

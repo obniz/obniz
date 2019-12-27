@@ -1,3 +1,5 @@
+/* tslint:disable:class-name  */
+
 export interface _7SegmentLEDOptions {
   a: number;
   b: number;

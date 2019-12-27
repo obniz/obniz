@@ -1,3 +1,5 @@
+
+/* tslint:disable:class-name  */
 export interface OMRON_2JCIEOptions {}
 
 export interface OMRON_2JCIE_Data {

@@ -1,4 +1,4 @@
-import { DisplayCommon } from '../../../obniz/libs/embeds/display_common';
+import { DisplayCommon } from "../../../obniz/libs/embeds/display_common";
 export interface SharpMemoryTFTOptions {
   vcc?: number;
   gnd?: number;

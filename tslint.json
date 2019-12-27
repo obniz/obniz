@@ -1,0 +1,24 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-console": [
+      false
+    ],
+    "no-empty-interface": false,
+    "indent": [true, "spaces", 2],
+    "interface-name": [false],
+    "no-bitwise": [false],
+    "variable-name": false,
+    "object-literal-sort-keys" : false
+  },
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+      "src/webpack-replace/*.js"
+    ]
+  }
+}

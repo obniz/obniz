@@ -1,22 +1,24 @@
-import assert = require('assert');
+import assert = require("assert");
+import chai = require("chai");
+import chaiLike = require("chai-like");
 import sinon = require("sinon");
-
-import chai = require('chai');
-const expect = chai.expect;
 import testUtil = require("../testUtil");
-chai.use(require('chai-like'));
+
+const expect = chai.expect;
+
+chai.use(chaiLike);
 chai.use(testUtil.obnizAssert);
 
-describe('Moneyクラスのテスト', () => {
-    it('test', function () {
-        let error = sinon.stub(console, 'error');
-        let log = sinon.stub(console, 'log');
-        let obniz = testUtil.createObniz(3000, 'OBNIZ_ID_HERE');
-        expect(obniz).to.be.obniz;
-        sinon.assert.calledOnce(error) ;
-        sinon.assert.calledWith(error, 'invalid obniz id');
-        error.restore(); // Unwraps the spy
-        log.restore(); // Unwraps the spy
-    });
+describe("Moneyクラスのテスト", () => {
+  it("test", () => {
+    const error = sinon.stub(console, "error");
+    const log = sinon.stub(console, "log");
+    const obniz = testUtil.createObniz(3000, "OBNIZ_ID_HERE");
+    expect(obniz).to.be.obniz();
+    sinon.assert.calledOnce(error);
+    sinon.assert.calledWith(error, "invalid obniz id");
+    error.restore(); // Unwraps the spy
+    log.restore(); // Unwraps the spy
+  });
 
 });

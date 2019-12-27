@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface KXR94_2050Options {
   x: number;
   y: number;

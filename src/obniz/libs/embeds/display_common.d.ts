@@ -1,4 +1,4 @@
-export type CorrectionType = 'L' | 'M' | 'Q' | 'H';
+export type CorrectionType = "L" | "M" | "Q" | "H";
 export interface DisplayCommon {
   readonly width: number;
   readonly height: number;

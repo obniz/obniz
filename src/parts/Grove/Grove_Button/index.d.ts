@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface Grove_ButtonOptions {
   signal: number;
   vcc?: number;

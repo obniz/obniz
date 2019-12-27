@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface _7SegmentLED_MAX7219Options {
   clk: number;
   cs: number;
@@ -6,7 +7,7 @@ export interface _7SegmentLED_MAX7219Options {
   vcc?: number;
 }
 
-export type MAX7219NumberType = 'on' | 'off' | '-' | 'e' | 'h' | 'l' | 'p';
+export type MAX7219NumberType = "on" | "off" | "-" | "e" | "h" | "l" | "p";
 export interface _7SegmentLED_MAX7219 {
   init(numberOfDisplays: number, digits: number): void;
   brightness(display: number, value: number): void;

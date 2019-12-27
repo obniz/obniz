@@ -6,7 +6,7 @@ export interface StepperMotorOptions {
   common?: number;
 }
 
-export type StepType = '1' | '2' | '1-2';
+export type StepType = "1" | "2" | "1-2";
 export interface StepperMotor {
   currentStep: number;
   rotationStepCount: number;

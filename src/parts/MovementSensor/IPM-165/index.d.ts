@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface IPM_165Options {
   signal: number;
   vcc?: number;

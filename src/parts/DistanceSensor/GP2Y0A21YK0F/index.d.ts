@@ -4,7 +4,7 @@ export interface GP2Y0A21YK0FOptions {
   signal: number;
 }
 
-export type GP2Y0A21YK0FUnitType = 'mm' | 'inch';
+export type GP2Y0A21YK0FUnitType = "mm" | "inch";
 export interface GP2Y0A21YK0F {
   start(callback: (distance: number) => void): void;
   getWait(): Promise<number>;

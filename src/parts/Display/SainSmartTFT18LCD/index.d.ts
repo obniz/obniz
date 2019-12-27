@@ -179,7 +179,7 @@ export interface SainSmartTFT18LCD {
     color: RGB16,
     backgroundColor: RGB16,
     size?: number,
-    wrap?: boolean
+    wrap?: boolean,
   ): [number, number];
   drawContextBound(
     context: any,
@@ -189,7 +189,7 @@ export interface SainSmartTFT18LCD {
     height: number,
     x1: number,
     y1: number,
-    gray: boolean
+    gray: boolean,
   ): void;
   drawContext(context: CanvasRenderingContext2D, gray: boolean): void;
   setRotation(dir: number): void;

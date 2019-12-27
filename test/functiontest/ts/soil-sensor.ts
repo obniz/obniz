@@ -1,27 +1,29 @@
-import Obniz from '../../../obniz';
 
-const OBNIZ_ID = '1234-5678';
+/* tslint:disable:class-name max-classes-per-file */
+import Obniz from "../../../obniz";
+
+const OBNIZ_ID = "1234-5678";
 
 /**
  * https://obniz.io/ja/sdk/parts/SEN0114/README.md
  */
 class SEN0114Test {
-  onchange() {
+  public onchange() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      var sensor = obniz.wired('SEN0114', { vcc: 0, gnd: 1, output: 2 });
-      sensor.onchange = function(value) {
+      const sensor = obniz.wired("SEN0114", { vcc: 0, gnd: 1, output: 2 });
+      sensor.onchange = (value) => {
         console.log(value);
       };
     };
   }
 
-  getHumidityWait() {
+  public getHumidityWait() {
     const obniz = new Obniz(OBNIZ_ID);
     obniz.onconnect = async () => {
-      var sensor = obniz.wired('SEN0114', { vcc: 0, gnd: 1, output: 2 });
-      var value = await sensor.getHumidityWait();
-      console.log('Humidity Level:' + value);
+      const sensor = obniz.wired("SEN0114", { vcc: 0, gnd: 1, output: 2 });
+      const value = await sensor.getHumidityWait();
+      console.log("Humidity Level:" + value);
     };
   }
 }

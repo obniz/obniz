@@ -1,10 +1,9 @@
 import {I2cPartsOptions} from "../../i2cParts";
 
-export interface MPU6886Options  extends  I2cPartsOptions{}
-
+export interface MPU6886Options  extends  I2cPartsOptions {}
 
 export interface MPU6886 {
-  whoamiWait() : Promise<number>;
+  whoamiWait(): Promise<number>;
   setConfig(accel_range: number, gyro_range: number): void;
   getAllDataWait(): Promise<{
     accelerometer: {
@@ -17,7 +16,7 @@ export interface MPU6886 {
       x: number,
       y: number,
       z: number,
-    }
+    },
   }>;
   getTempWait(): Promise<number>;
   getAccelWait(): Promise<{

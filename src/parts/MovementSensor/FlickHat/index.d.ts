@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface FlickHatOptions {
   vcc?: number;
   sda: number;
@@ -9,8 +10,8 @@ export interface FlickHatOptions {
   led2?: number;
 }
 
-export type FlickHat_Direction = 'west' | 'east' | 'north' | 'south';
-export type FlickHat_Direction2 = 'west' | 'east' | 'north' | 'south' | 'center';
+export type FlickHat_Direction = "west" | "east" | "north" | "south";
+export type FlickHat_Direction2 = "west" | "east" | "north" | "south" | "center";
 
 export interface FlickHat_XYZ {
   x: number;
@@ -20,7 +21,7 @@ export interface FlickHat_XYZ {
 }
 
 export interface FlickHat_Gesture {
-  action: 'gesture';
+  action: "gesture";
   from: FlickHat_Direction;
   to: FlickHat_Direction;
   seq: number;
@@ -28,21 +29,21 @@ export interface FlickHat_Gesture {
 }
 
 export interface FlickHat_Touch {
-  action: 'touch';
+  action: "touch";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
 export interface FlickHat_Tap {
-  action: 'tap';
+  action: "tap";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;
 }
 
 export interface FlickHat_DoubleTap {
-  action: 'doubletap';
+  action: "doubletap";
   positions: FlickHat_Direction2[];
   seq: number;
   raw: any;

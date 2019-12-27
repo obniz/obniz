@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface MatrixLED_MAX7219Options {
   clk: number;
   cs: number;

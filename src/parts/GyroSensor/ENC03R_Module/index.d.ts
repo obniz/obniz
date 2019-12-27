@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface ENC03R_ModuleOptions {
   gnd?: number;
   vcc?: number;

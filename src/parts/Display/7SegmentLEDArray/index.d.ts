@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface _7SegmentLEDArrayOptions {
   segments: any[];
 }

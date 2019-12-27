@@ -1,8 +1,8 @@
-import { DriveType, PullType } from './common';
+import { DriveType, PullType } from "./common";
 
 export interface SPI {
   start(options: {
-    mode: 'master';
+    mode: "master";
     clk?: number;
     mosi?: number;
     miso?: number;

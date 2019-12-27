@@ -1,3 +1,4 @@
+/* tslint:disable:class-name  */
 export interface Grove_MP3Options {
   vcc?: number;
   gnd?: number;

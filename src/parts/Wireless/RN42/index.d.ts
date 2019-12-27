@@ -5,15 +5,15 @@ export interface RN42Options {
 }
 
 export type RN42Config_Mode =
-  | 'slave'
-  | 'master'
-  | 'trigger'
-  | 'auto-connect-master'
-  | 'auto-connect-dtr'
-  | 'auto-connect-any'
-  | 'pairing';
-export type RN42Config_Profile = 'SPP' | 'DUN-DCE' | 'DUN-DTE' | 'MDM-SPP' | 'SPP-DUN-DCE' | 'APL' | 'HID';
-export type RN42Config_Auth = 'open' | 'ssp-keyboard' | 'just-work' | 'pincode';
+  | "slave"
+  | "master"
+  | "trigger"
+  | "auto-connect-master"
+  | "auto-connect-dtr"
+  | "auto-connect-any"
+  | "pairing";
+export type RN42Config_Profile = "SPP" | "DUN-DCE" | "DUN-DTE" | "MDM-SPP" | "SPP-DUN-DCE" | "APL" | "HID";
+export type RN42Config_Auth = "open" | "ssp-keyboard" | "just-work" | "pincode";
 export type RN43Config_Power = 16 | 12 | 8 | 4 | 0 | -4 | -8;
 
 export interface RN42Config {

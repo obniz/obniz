@@ -1,11 +1,11 @@
-import { PullType } from './common';
+import { PullType } from "./common";
 
 export interface I2C {
   onwritten: (data: any) => void;
   onerror: (err: any) => void;
 
   start(options: {
-    mode: 'master' | 'slave';
+    mode: "master" | "slave";
     sda: number;
     scl: number;
     clock?: number;

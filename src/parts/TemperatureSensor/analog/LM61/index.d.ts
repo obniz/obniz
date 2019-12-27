@@ -1,4 +1,4 @@
-import { AnalogTemperatureSensor, AnalogTemperatureSensorOptions } from '../AnalogTemperatureSensor';
+import { AnalogTemperatureSensor, AnalogTemperatureSensorOptions } from "../AnalogTemperatureSensor";
 
 export interface LM61Options extends AnalogTemperatureSensorOptions {}
 

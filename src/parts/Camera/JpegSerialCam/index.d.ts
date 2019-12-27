@@ -5,7 +5,7 @@ export interface JpegSerialCamOptions {
   gnd?: number;
 }
 
-export type JpegSerialCamSize = '640x480' | '320x240' | '160x120';
+export type JpegSerialCamSize = "640x480" | "320x240" | "160x120";
 export type JpegSerialCamBaud = 9600 | 19200 | 38400 | 57600 | 115200;
 export interface JpegSerialCam {
   startWait(params: { baud: JpegSerialCamBaud }): Promise<void>;

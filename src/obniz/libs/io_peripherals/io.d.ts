@@ -1,4 +1,4 @@
-import { DriveType, PullType, AnimationStatus } from './common';
+import { AnimationStatus, DriveType, PullType } from "./common";
 
 export interface IO {
   output(value: boolean | 0 | 1): void;
