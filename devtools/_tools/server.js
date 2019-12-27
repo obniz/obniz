@@ -12,6 +12,8 @@ const gulp_yaml = require('gulp-yaml');
 const concatWith = require('./concatWith');
 const gulp_sort = require('gulp-sort');
 const docGenerator = require('./wsDocGenerator');
+const ts = require('gulp-typescript');
+const tsProject = ts.createProject('tsconfig.json');
 
 const app = express();
 const port = 3100;
@@ -26,7 +28,7 @@ gulp.task('server', function jsonSchemaForVar() {
     response.header('Expires', '0');
     response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
     response.header('Access-Control-Allow-Origin', '*');
-    response.sendFile(path.join(__dirname, '../obniz.js'));
+    response.sendFile(path.join(__dirname, '../../obniz.js'));
   });
 
   app.listen(port, err => {
@@ -37,21 +39,24 @@ gulp.task('server', function jsonSchemaForVar() {
   });
 });
 
-const obnizMain = path.join(__dirname, '../obniz/index.js');
-const obnizPath = path.join(__dirname, '../obniz/**/*.js');
-const partsPath = path.join(__dirname, '../parts/');
-const packageJsonPath = path.join(__dirname, '../package.json');
-const schemaSrcPath = path.join(__dirname, '../json_schema/**/*.yml');
+const obnizMain = path.join(__dirname, '../../src/obniz/index.js');
+const obnizPath = path.join(__dirname, '../../src/obniz/**/*.js');
+const partsPath = path.join(__dirname, '../../src/parts/');
+const packageJsonPath = path.join(__dirname, '../../package.json');
+const schemaSrcPath = path.join(__dirname, '../../src/json_schema/**/*.yml');
 const docPath = path.join(__dirname, '../doc');
 const tv4Path = require.resolve('tv4', {
-  path: path.resolve(__dirname, '../'),
+  path: path.resolve(__dirname, '../../src/'),
 });
 if (!tv4Path) {
   throw new Error('tv4 not found.npm install please');
 }
 
 gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
-  const baseSchemaSrcPath = path.join(__dirname, '../json_schema/index.yml');
+  const baseSchemaSrcPath = path.join(
+    __dirname,
+    '../../src/json_schema/index.yml'
+  );
 
   let list = [
     'ws',
@@ -87,7 +92,10 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
   }
 
   for (let one of list) {
-    const srcPath = path.join(__dirname, '../json_schema/*/' + one + '/*.yml');
+    const srcPath = path.join(
+      __dirname,
+      '../../src/json_schema/*/' + one + '/*.yml'
+    );
 
     gulp
       .src([srcPath, baseSchemaSrcPath])
@@ -136,31 +144,55 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
 const webpackConfig = require('../webpack.config.js');
 const webpackConfigProduction = require('../webpack.production.js');
 
-gulp.task('obniz.js', function obnizJsBuild() {
+gulp.task('tsc:copy', function(done) {
+  return gulp
+    .src(path.join(__dirname, '../../src/**/*.*[^ts]'))
+    .pipe(gulp.dest(path.join(__dirname, '../../dist')))
+    .on('end', function() {
+      console.log('static file copy compiled!');
+      done();
+    });
+});
+gulp.task('tsc:compile', function(done) {
+  return tsProject
+    .src()
+    .pipe(tsProject())
+    .js.pipe(gulp.dest('dist'))
+    .on('end', function() {
+      console.log('tsc ompiled!');
+      done();
+    });
+});
+
+gulp.task('tsc', gulp.parallel('tsc:compile', 'tsc:copy'));
+
+gulp.task('obniz.js', function obnizJsBuild(done) {
   return gulp
     .src(obnizMain)
     .pipe(plumber({ errorHandler: reportError }))
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(rename('obniz.js'))
-    .pipe(gulp.dest(path.join(__dirname, '../')))
+    .pipe(gulp.dest(path.join(__dirname, '../../')))
     .on('end', function() {
       console.log('obniz.js compiled!');
+      done();
     });
 });
 
-gulp.task('obniz.min.js', function obnizJsBuild() {
+gulp.task('obniz.min.js', function obnizJsBuild(done) {
   return gulp
     .src(obnizMain)
     .pipe(plumber({ errorHandler: reportError }))
     .pipe(webpackStream(webpackConfigProduction, webpack))
     .pipe(rename('obniz.min.js'))
-    .pipe(gulp.dest(path.join(__dirname, '../')))
+    .pipe(gulp.dest(path.join(__dirname, '../../')))
     .on('end', function() {
       console.log('obniz.min.js compiled!');
+      done();
     });
 });
 
-gulp.task('readMe', function readMeBuild() {
+gulp.task('readMe', function readMeBuild(done) {
   return gulp
     .src(path.join(partsPath, '/**/README*.ejs'))
     .pipe(plumber({ errorHandler: reportError }))
@@ -169,6 +201,7 @@ gulp.task('readMe', function readMeBuild() {
     .pipe(gulp.dest(partsPath))
     .on('end', function() {
       console.log('ejs compiled!');
+      done();
     });
 });
 

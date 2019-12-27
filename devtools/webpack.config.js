@@ -3,7 +3,7 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 module.exports = {
   mode: 'development',
-  entry: './obniz/index.js',
+  entry: './dist/obniz/index.js',
   output: {
     filename: 'obniz.js',
     path: path.join(__dirname),
@@ -22,7 +22,7 @@ module.exports = {
           {
             // loader: require.resolve('yaml-loader')
             loader: require.resolve(
-              './obniz/libs/webpackReplace/yaml-schema-loader'
+              '../src/obniz/libs/webpackReplace/yaml-schema-loader'
             ),
           },
         ],
@@ -32,7 +32,7 @@ module.exports = {
         use: [
           {
             loader: require.resolve(
-              './obniz/libs/webpackReplace/packagejson-loader'
+              '../src/obniz/libs/webpackReplace/packagejson-loader'
             ),
           },
         ],

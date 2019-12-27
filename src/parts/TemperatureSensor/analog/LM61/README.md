@@ -5,7 +5,7 @@ Temperature sensor LM61BIZ/LM61CIZ
 
 
 
-![photo of AnalogTemperatureSensor](wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 

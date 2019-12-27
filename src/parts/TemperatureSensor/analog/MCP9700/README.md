@@ -4,7 +4,7 @@ Tempe# Temperature Sensor - MCP9700
 
 
 
-![photo of AnalogTemperatureSensor](wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 

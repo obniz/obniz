@@ -4,7 +4,7 @@ Temperature and Humidity sensor LMT87
 
 
 
-![photo of AnalogTemperatureSensor](wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 

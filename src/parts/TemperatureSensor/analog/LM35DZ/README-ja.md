@@ -3,7 +3,7 @@
 
 
 
-![photo of AnalogTemperatureSensor](wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 

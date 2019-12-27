@@ -1,10 +1,10 @@
 # Temperature Sensor - LM60
 温度センサLM60BIZ/LM60CIMです。センサで取得した温度を知ることができます。
 
-![](image.jpg)
+![](./image.jpg)
 
 
-![photo of AnalogTemperatureSensor](wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 

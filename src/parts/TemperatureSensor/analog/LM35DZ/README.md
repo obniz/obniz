@@ -4,7 +4,7 @@ Temperature and Humidity sensor LM35DZ
 
 
 
-![photo of AnalogTemperatureSensor](wired.png)
+![photo of AnalogTemperatureSensor](./wired.png)
 
 
 

@@ -439,29 +439,32 @@ function _checkSchema(schema, path, required, results, needDefs) {
   throw Error('unknown json schema type');
 }
 
-//test
-const gulp_yaml = require('gulp-yaml');
-const gulp = require('gulp');
-const concatWith = require('./concatWith');
-const path = require('path');
-const target = 'ble/security';
-const schemaSrcPath = path.join(
-  __dirname,
-  '../json_schema/*/' + target + '/*.yml'
-);
-const baseSchemaSrcPath = path.join(__dirname, '../json_schema/index.yml');
-
-gulp
-  .src([schemaSrcPath, baseSchemaSrcPath])
-  .pipe(gulp_yaml({ safe: true }))
-  .pipe(
-    concatWith('schema.md', {
-      header: 'let wsSchema = [',
-      separator: ',',
-      footer: '];',
-    })
-  )
-  .pipe(
-    module.exports(path.resolve(__dirname, 'doctemplate/doc-one.ejs'), target)
-  )
-  .pipe(gulp.dest(__dirname));
+// //test
+// const gulp_yaml = require('gulp-yaml');
+// const gulp = require('gulp');
+// const concatWith = require('./concatWith');
+// const path = require('path');
+// const target = 'ble/security';
+// const schemaSrcPath = path.join(
+//   __dirname,
+//   '../../src/json_schema/*/' + target + '/*.yml'
+// );
+// const baseSchemaSrcPath = path.join(
+//   __dirname,
+//   '../../src/json_schema/index.yml'
+// );
+//
+// gulp
+//   .src([schemaSrcPath, baseSchemaSrcPath])
+//   .pipe(gulp_yaml({ safe: true }))
+//   .pipe(
+//     concatWith('schema.md', {
+//       header: 'let wsSchema = [',
+//       separator: ',',
+//       footer: '];',
+//     })
+//   )
+//   .pipe(
+//     module.exports(path.resolve(__dirname, 'doctemplate/doc-one.ejs'), target)
+//   )
+//   .pipe(gulp.dest(__dirname));

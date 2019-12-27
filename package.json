@@ -19,7 +19,7 @@
     "realtest-esp32": "mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "build-ts": "tsc && copyfiles -u 1 -f src/**/*.yml -f src/**/*.json dist/",
+    "build-ts": "npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . tsc",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-js && npm run lint-ts ",
     "lint-js": "eslint --fix ./src ./test --rulesdir ./devtools/eslint/rule ",
@@ -52,7 +52,6 @@
     "chai-like": "^1.1.1",
     "child_process": "^1.0.2",
     "concat-with-sourcemaps": "^1.1.0",
-    "copyfiles": "^2.1.1",
     "ejs": "^2.6.2",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^3.6.0",
@@ -70,6 +69,7 @@
     "gulp-plumber": "^1.2.0",
     "gulp-rename": "^1.4.0",
     "gulp-sort": "^2.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-util": "^3.0.8",
     "gulp-yaml": "^2.0.2",
     "husky": "^0.14.3",
@@ -114,8 +114,8 @@
   },
   "private": false,
   "browser": {
-    "ws": "./obniz/libs/webpackReplace/ws.js",
-    "canvas": "./obniz/libs/webpackReplace/canvas.js",
-    "./obniz/libs/webpackReplace/require-context.js": "./obniz/libs/webpackReplace/require-context-browser.js"
+    "ws": "./dist/obniz/libs/webpackReplace/ws.js",
+    "canvas": "./dist/obniz/libs/webpackReplace/canvas.js",
+    "./dist/obniz/libs/webpackReplace/require-context.js": "./dist/obniz/libs/webpackReplace/require-context-browser.js"
   }
 }
