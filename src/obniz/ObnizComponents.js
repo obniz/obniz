@@ -6,7 +6,6 @@ const semver = require('semver');
 
 const LogicAnalyzer = require('./libs/measurements/logicanalyzer');
 const ObnizMeasure = require('./libs/measurements/measure');
-
 const PeripheralAD = require('./libs/io_peripherals/ad');
 const PeripheralI2C = require('./libs/io_peripherals/i2c');
 const PeripheralIO = require('./libs/io_peripherals/io');

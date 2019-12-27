@@ -13,7 +13,6 @@ const concatWith = require('./concatWith');
 const gulp_sort = require('gulp-sort');
 const docGenerator = require('./wsDocGenerator');
 const ts = require('gulp-typescript');
-const tsProject = ts.createProject('tsconfig.json');
 
 const app = express();
 const port = 3100;
@@ -44,6 +43,7 @@ const obnizPath = path.join(__dirname, '../../src/obniz/**/*.js');
 const partsPath = path.join(__dirname, '../../src/parts/');
 const packageJsonPath = path.join(__dirname, '../../package.json');
 const schemaSrcPath = path.join(__dirname, '../../src/json_schema/**/*.yml');
+const tsConfigPath = path.join(__dirname, '../../tsconfig.json');
 const docPath = path.join(__dirname, '../../doc');
 const tv4Path = require.resolve('tv4', {
   path: path.resolve(__dirname, '../../src/'),
@@ -51,6 +51,8 @@ const tv4Path = require.resolve('tv4', {
 if (!tv4Path) {
   throw new Error('tv4 not found.npm install please');
 }
+
+const tsProject = ts.createProject(tsConfigPath);
 
 gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
   const baseSchemaSrcPath = path.join(
@@ -242,6 +244,9 @@ gulp.task('watch', () => {
 
 gulp.task(
   'build',
-  gulp.parallel('jsonSchemaDoc', 'obniz.js', 'obniz.min.js', 'readMe')
+  gulp.series(
+    'tsc',
+    gulp.parallel('jsonSchemaDoc', 'obniz.js', 'obniz.min.js', 'readMe')
+  )
 );
 gulp.task('default', gulp.parallel('server', 'build', 'watch'));
