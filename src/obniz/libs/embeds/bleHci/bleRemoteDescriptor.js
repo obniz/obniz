@@ -1,4 +1,4 @@
-const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
+const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
 
 class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -6,25 +6,25 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   get parentName() {
-    return 'characteristic';
+    return "characteristic";
   }
 
   read() {
     this.characteristic.service.peripheral.obnizBle.centralBindings.readValue(
-      this.characteristic.service.peripheral.address,
-      this.characteristic.service.uuid,
-      this.characteristic.uuid,
-      this.uuid
+        this.characteristic.service.peripheral.address,
+        this.characteristic.service.uuid,
+        this.characteristic.uuid,
+        this.uuid,
     );
   }
 
   write(array) {
     this.characteristic.service.peripheral.obnizBle.centralBindings.writeValue(
-      this.characteristic.service.peripheral.address,
-      this.characteristic.service.uuid,
-      this.characteristic.uuid,
-      this.uuid,
-      Buffer.from(array)
+        this.characteristic.service.peripheral.address,
+        this.characteristic.service.uuid,
+        this.characteristic.uuid,
+        this.uuid,
+        Buffer.from(array),
     );
   }
 }

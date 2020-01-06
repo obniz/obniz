@@ -1,6 +1,6 @@
-const BleRemoteService = require('./bleRemoteService');
-const emitter = require('eventemitter3');
-const BleHelper = require('./bleHelper');
+const BleRemoteService = require("./bleRemoteService");
+const emitter = require("eventemitter3");
+const BleHelper = require("./bleHelper");
 
 class BleRemotePeripheral {
   constructor(Obniz, address) {
@@ -16,12 +16,12 @@ class BleRemotePeripheral {
     this.scan_resp = null;
 
     this.keys = [
-      'device_type',
-      'address_type',
-      'ble_event_type',
-      'rssi',
-      'adv_data',
-      'scan_resp',
+      "device_type",
+      "address_type",
+      "ble_event_type",
+      "rssi",
+      "adv_data",
+      "scan_resp",
     ];
 
     this._services = [];
@@ -124,16 +124,16 @@ class BleRemotePeripheral {
       return;
     }
     let uuidData = data.slice(4, 20);
-    let uuid = '';
+    let uuid = "";
     for (let i = 0; i < uuidData.length; i++) {
-      uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+      uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
       if (
         i === 4 - 1 ||
         i === 4 + 2 - 1 ||
         i === 4 + 2 * 2 - 1 ||
         i === 4 + 2 * 3 - 1
       ) {
-        uuid += '-';
+        uuid += "-";
       }
     }
 
@@ -151,7 +151,7 @@ class BleRemotePeripheral {
   }
 
   _addServiceUuids(results, data, bit) {
-    if (!data) return;
+    if (!data) { return; }
     let uuidLength = bit / 4;
     for (let i = 0; i < data.length; i = i + uuidLength) {
       let one = data.slice(i, i + uuidLength);
@@ -184,11 +184,11 @@ class BleRemotePeripheral {
 
   connectWait() {
     return new Promise((resolve, reject) => {
-      this.emitter.once('statusupdate', params => {
-        if (params.status === 'connected') {
+      this.emitter.once("statusupdate", params => {
+        if (params.status === "connected") {
           resolve(true);
         } else {
-          reject(new Error('connection not established'));
+          reject(new Error("connection not established"));
         }
       });
       this.connect();
@@ -208,11 +208,11 @@ class BleRemotePeripheral {
 
   disconnectWait() {
     return new Promise((resolve, reject) => {
-      this.emitter.once('statusupdate', params => {
-        if (params.status === 'disconnected') {
+      this.emitter.once("statusupdate", params => {
+        if (params.status === "disconnected") {
           resolve(true);
         } else {
-          reject(new Error('disconnectWait failed'));
+          reject(new Error("disconnectWait failed"));
         }
       });
       this.disconnect();
@@ -266,7 +266,7 @@ class BleRemotePeripheral {
 
   discoverAllServicesWait() {
     return new Promise(resolve => {
-      this.emitter.once('discoverfinished', () => {
+      this.emitter.once("discoverfinished", () => {
         let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });
@@ -293,11 +293,11 @@ class BleRemotePeripheral {
 
     let services = await this.discoverAllServicesWait();
     let charsNest = await Promise.all(
-      services.map(s => s.discoverAllCharacteristicsWait())
+      services.map(s => s.discoverAllCharacteristicsWait()),
     );
     let chars = ArrayFlat(charsNest);
     let descriptorsNest = await Promise.all(
-      chars.map(c => c.discoverAllDescriptorsWait())
+      chars.map(c => c.discoverAllDescriptorsWait()),
     );
     // eslint-disable-next-line no-unused-vars
     let descriptors = ArrayFlat(descriptorsNest);
@@ -318,20 +318,20 @@ class BleRemotePeripheral {
   async notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
-      case 'statusupdate': {
-        if (params.status === 'connected') {
+      case "statusupdate": {
+        if (params.status === "connected") {
           this.connected = true;
           await this.discoverAllHandlesWait();
 
           this.onconnect();
         }
-        if (params.status === 'disconnected') {
+        if (params.status === "disconnected") {
           this.connected = false;
           this.ondisconnect();
         }
         break;
       }
-      case 'discover': {
+      case "discover": {
         let uuid = params.service_uuid;
         let child = this.getService(uuid);
         if (!child) {
@@ -344,7 +344,7 @@ class BleRemotePeripheral {
         this.ondiscoverservice(child);
         break;
       }
-      case 'discoverfinished': {
+      case "discoverfinished": {
         let children = this._services.filter(elm => {
           return elm.discoverdOnRemote;
         });

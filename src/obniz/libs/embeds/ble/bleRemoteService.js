@@ -1,6 +1,6 @@
-const BleRemoteCharacteristic = require('./bleRemoteCharacteristic');
-const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
-const BleHelper = require('./bleHelper');
+const BleRemoteCharacteristic = require("./bleRemoteCharacteristic");
+const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
+const BleHelper = require("./bleHelper");
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   constructor(obj) {
@@ -8,7 +8,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   get parentName() {
-    return 'peripheral';
+    return "peripheral";
   }
 
   get childrenClass() {
@@ -16,7 +16,7 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 
   get childrenName() {
-    return 'characteristics';
+    return "characteristics";
   }
 
   get characteristics() {

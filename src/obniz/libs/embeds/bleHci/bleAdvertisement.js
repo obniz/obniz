@@ -1,4 +1,4 @@
-const Builder = require('./bleAdvertisementBuilder');
+const Builder = require("./bleAdvertisementBuilder");
 
 class BleAdvertisement {
   constructor(obnizBle) {
@@ -10,8 +10,8 @@ class BleAdvertisement {
   start() {
     this.obnizBle.warningIfNotInitialize();
     this.obnizBle.peripheralBindings.startAdvertisingWithEIRData(
-      Buffer.from(this.adv_data),
-      Buffer.from(this.scan_resp)
+        Buffer.from(this.adv_data),
+        Buffer.from(this.scan_resp),
     );
   }
 

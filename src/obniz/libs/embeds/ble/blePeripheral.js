@@ -1,5 +1,5 @@
-const BleService = require('./bleService');
-const BleHelper = require('./bleHelper');
+const BleService = require("./bleService");
+const BleHelper = require("./bleHelper");
 
 class BlePeripheral {
   constructor(Obniz) {
@@ -21,8 +21,8 @@ class BlePeripheral {
   }
 
   setJson(json) {
-    if (json['services']) {
-      for (let service of json['services']) {
+    if (json.services) {
+      for (let service of json.services) {
         this.addService(service);
       }
     }

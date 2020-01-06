@@ -3,8 +3,8 @@ const debug = () => {};
 
 /* eslint-disable no-unused-vars */
 
-let events = require('events');
-let util = require('util');
+let events = require("events");
+let util = require("util");
 
 let ATT_OP_ERROR = 0x01;
 let ATT_OP_MTU_REQ = 0x02;
@@ -71,17 +71,17 @@ let Gatt = function(address, aclStream) {
   this._commandQueue = [];
 
   this._mtu = 23;
-  this._security = 'low';
+  this._security = "low";
 
   this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
   this.onAclStreamEncryptBinded = this.onAclStreamEncrypt.bind(this);
   this.onAclStreamEncryptFailBinded = this.onAclStreamEncryptFail.bind(this);
   this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
-  this._aclStream.on('data', this.onAclStreamDataBinded);
-  this._aclStream.on('encrypt', this.onAclStreamEncryptBinded);
-  this._aclStream.on('encryptFail', this.onAclStreamEncryptFailBinded);
-  this._aclStream.on('end', this.onAclStreamEndBinded);
+  this._aclStream.on("data", this.onAclStreamDataBinded);
+  this._aclStream.on("encrypt", this.onAclStreamEncryptBinded);
+  this._aclStream.on("encryptFail", this.onAclStreamEncryptFailBinded);
+  this._aclStream.on("end", this.onAclStreamEndBinded);
 };
 
 util.inherits(Gatt, events.EventEmitter);
@@ -93,24 +93,24 @@ Gatt.prototype.onAclStreamData = function(cid, data) {
 
   if (
     this._currentCommand &&
-    data.toString('hex') === this._currentCommand.buffer.toString('hex')
+    data.toString("hex") === this._currentCommand.buffer.toString("hex")
   ) {
-    debug(this._address + ': echo ... echo ... echo ...');
+    debug(this._address + ": echo ... echo ... echo ...");
   } else if (data[0] % 2 === 0) {
     if (process.env.NOBLE_MULTI_ROLE) {
       debug(
         this._address +
-          ': multi-role flag in use, ignoring command meant for peripheral role.'
+          ": multi-role flag in use, ignoring command meant for peripheral role.",
       );
     } else {
       let requestType = data[0];
       debug(
         this._address +
-          ': replying with REQ_NOT_SUPP to 0x' +
-          requestType.toString(16)
+          ": replying with REQ_NOT_SUPP to 0x" +
+          requestType.toString(16),
       );
       this.writeAtt(
-        this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP)
+        this.errorResponse(requestType, 0x0000, ATT_ECODE_REQ_NOT_SUPP),
       );
     }
   } else if (
@@ -120,15 +120,15 @@ Gatt.prototype.onAclStreamData = function(cid, data) {
     let valueHandle = data.readUInt16LE(1);
     let valueData = data.slice(3);
 
-    this.emit('handleNotify', this._address, valueHandle, valueData);
+    this.emit("handleNotify", this._address, valueHandle, valueData);
 
     if (data[0] === ATT_OP_HANDLE_IND) {
       this._queueCommand(
         this.handleConfirmation(),
         null,
         function() {
-          this.emit('handleConfirmation', this._address, valueHandle);
-        }.bind(this)
+          this.emit("handleConfirmation", this._address, valueHandle);
+        }.bind(this),
       );
     }
 
@@ -139,30 +139,30 @@ Gatt.prototype.onAclStreamData = function(cid, data) {
           valueHandle
         ) {
           this.emit(
-            'notification',
+            "notification",
             this._address,
             serviceUuid,
             characteristicUuid,
-            valueData
+            valueData,
           );
         }
       }
     }
   } else if (!this._currentCommand) {
-    debug(this._address + ': uh oh, no current command');
+    debug(this._address + ": uh oh, no current command");
   } else {
     if (
       data[0] === ATT_OP_ERROR &&
       (data[4] === ATT_ECODE_AUTHENTICATION ||
         data[4] === ATT_ECODE_AUTHORIZATION ||
         data[4] === ATT_ECODE_INSUFF_ENC) &&
-      this._security !== 'medium'
+      this._security !== "medium"
     ) {
       this._aclStream.encrypt();
       return;
     }
 
-    debug(this._address + ': read: ' + data.toString('hex'));
+    debug(this._address + ": read: " + data.toString("hex"));
 
     this._currentCommand.callback(data);
 
@@ -186,7 +186,7 @@ Gatt.prototype.onAclStreamData = function(cid, data) {
 
 Gatt.prototype.onAclStreamEncrypt = function(encrypt) {
   if (encrypt) {
-    this._security = 'medium';
+    this._security = "medium";
 
     this.writeAtt(this._currentCommand.buffer);
   }
@@ -195,17 +195,17 @@ Gatt.prototype.onAclStreamEncrypt = function(encrypt) {
 Gatt.prototype.onAclStreamEncryptFail = function() {};
 
 Gatt.prototype.onAclStreamEnd = function() {
-  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
-  this._aclStream.removeListener('encrypt', this.onAclStreamEncryptBinded);
+  this._aclStream.removeListener("data", this.onAclStreamDataBinded);
+  this._aclStream.removeListener("encrypt", this.onAclStreamEncryptBinded);
   this._aclStream.removeListener(
-    'encryptFail',
-    this.onAclStreamEncryptFailBinded
+    "encryptFail",
+    this.onAclStreamEncryptFailBinded,
   );
-  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
+  this._aclStream.removeListener("end", this.onAclStreamEndBinded);
 };
 
 Gatt.prototype.writeAtt = function(data) {
-  debug(this._address + ': write: ' + data.toString('hex'));
+  debug(this._address + ": write: " + data.toString("hex"));
 
   this._aclStream.write(ATT_CID, data);
 };
@@ -257,7 +257,7 @@ Gatt.prototype.mtuRequest = function(mtu) {
 Gatt.prototype.readByGroupRequest = function(
   startHandle,
   endHandle,
-  groupUuid
+  groupUuid,
 ) {
   let buf = Buffer.alloc(7);
 
@@ -362,13 +362,13 @@ Gatt.prototype.exchangeMtu = function(mtu) {
       if (opcode === ATT_OP_MTU_RESP) {
         let newMtu = data.readUInt16LE(1);
 
-        debug(this._address + ': new MTU is ' + newMtu);
+        debug(this._address + ": new MTU is " + newMtu);
 
         this._mtu = newMtu;
       }
 
-      this.emit('mtu', this._address, this._mtu);
-    }.bind(this)
+      this.emit("mtu", this._address, this._mtu);
+    }.bind(this),
   );
 };
 
@@ -393,10 +393,10 @@ Gatt.prototype.discoverServices = function(uuids) {
               : data
                   .slice(2 + i * type + 4)
                   .slice(0, 16)
-                  .toString('hex')
+                  .toString("hex")
                   .match(/.{1,2}/g)
                   .reverse()
-                  .join(''),
+                  .join(""),
         });
       }
     }
@@ -413,22 +413,22 @@ Gatt.prototype.discoverServices = function(uuids) {
 
         this._services[services[i].uuid] = services[i];
       }
-      this.emit('servicesDiscover', this._address, serviceUuids);
+      this.emit("servicesDiscover", this._address, serviceUuids);
     } else {
       this._queueCommand(
         this.readByGroupRequest(
           services[services.length - 1].endHandle + 1,
           0xffff,
-          GATT_PRIM_SVC_UUID
+          GATT_PRIM_SVC_UUID,
         ),
-        callback
+        callback,
       );
     }
   }.bind(this);
 
   this._queueCommand(
     this.readByGroupRequest(0x0001, 0xffff, GATT_PRIM_SVC_UUID),
-    callback
+    callback,
   );
 };
 
@@ -454,10 +454,10 @@ Gatt.prototype.discoverIncludedServices = function(serviceUuid, uuids) {
               : data
                   .slice(2 + i * type + 6)
                   .slice(0, 16)
-                  .toString('hex')
+                  .toString("hex")
                   .match(/.{1,2}/g)
                   .reverse()
-                  .join(''),
+                  .join(""),
         });
       }
     }
@@ -479,19 +479,19 @@ Gatt.prototype.discoverIncludedServices = function(serviceUuid, uuids) {
       }
 
       this.emit(
-        'includedServicesDiscover',
+        "includedServicesDiscover",
         this._address,
         service.uuid,
-        includedServiceUuids
+        includedServiceUuids,
       );
     } else {
       this._queueCommand(
         this.readByTypeRequest(
           includedServices[includedServices.length - 1].endHandle + 1,
           service.endHandle,
-          GATT_INCLUDE_UUID
+          GATT_INCLUDE_UUID,
         ),
-        callback
+        callback,
       );
     }
   }.bind(this);
@@ -500,15 +500,15 @@ Gatt.prototype.discoverIncludedServices = function(serviceUuid, uuids) {
     this.readByTypeRequest(
       service.startHandle,
       service.endHandle,
-      GATT_INCLUDE_UUID
+      GATT_INCLUDE_UUID,
     ),
-    callback
+    callback,
   );
 };
 
 Gatt.prototype.discoverCharacteristics = function(
   serviceUuid,
-  characteristicUuids
+  characteristicUuids,
 ) {
   let service = this._services[serviceUuid];
   let characteristics = [];
@@ -535,10 +535,10 @@ Gatt.prototype.discoverCharacteristics = function(
               : data
                   .slice(2 + i * type + 5)
                   .slice(0, 16)
-                  .toString('hex')
+                  .toString("hex")
                   .match(/.{1,2}/g)
                   .reverse()
-                  .join(''),
+                  .join(""),
         });
       }
     }
@@ -569,35 +569,35 @@ Gatt.prototype.discoverCharacteristics = function(
           characteristics[i];
 
         if (properties & 0x01) {
-          characteristic.properties.push('broadcast');
+          characteristic.properties.push("broadcast");
         }
 
         if (properties & 0x02) {
-          characteristic.properties.push('read');
+          characteristic.properties.push("read");
         }
 
         if (properties & 0x04) {
-          characteristic.properties.push('writeWithoutResponse');
+          characteristic.properties.push("writeWithoutResponse");
         }
 
         if (properties & 0x08) {
-          characteristic.properties.push('write');
+          characteristic.properties.push("write");
         }
 
         if (properties & 0x10) {
-          characteristic.properties.push('notify');
+          characteristic.properties.push("notify");
         }
 
         if (properties & 0x20) {
-          characteristic.properties.push('indicate');
+          characteristic.properties.push("indicate");
         }
 
         if (properties & 0x40) {
-          characteristic.properties.push('authenticatedSignedWrites');
+          characteristic.properties.push("authenticatedSignedWrites");
         }
 
         if (properties & 0x80) {
-          characteristic.properties.push('extendedProperties');
+          characteristic.properties.push("extendedProperties");
         }
 
         if (
@@ -609,19 +609,19 @@ Gatt.prototype.discoverCharacteristics = function(
       }
 
       this.emit(
-        'characteristicsDiscover',
+        "characteristicsDiscover",
         this._address,
         serviceUuid,
-        characteristicsDiscovered
+        characteristicsDiscovered,
       );
     } else {
       this._queueCommand(
         this.readByTypeRequest(
           characteristics[characteristics.length - 1].valueHandle + 1,
           service.endHandle,
-          GATT_CHARAC_UUID
+          GATT_CHARAC_UUID,
         ),
-        callback
+        callback,
       );
     }
   }.bind(this);
@@ -630,9 +630,9 @@ Gatt.prototype.discoverCharacteristics = function(
     this.readByTypeRequest(
       service.startHandle,
       service.endHandle,
-      GATT_CHARAC_UUID
+      GATT_CHARAC_UUID,
     ),
-    callback
+    callback,
   );
 };
 
@@ -642,12 +642,12 @@ Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
     !this._characteristics[serviceUuid][characteristicUuid]
   ) {
     this.emit(
-      'read',
+      "read",
       this._address,
       serviceUuid,
       characteristicUuid,
       Buffer.alloc(0),
-      false
+      false,
     );
     return;
   }
@@ -661,42 +661,42 @@ Gatt.prototype.read = function(serviceUuid, characteristicUuid) {
 
     if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_READ_BLOB_RESP) {
       readData = Buffer.from(
-        readData.toString('hex') + data.slice(1).toString('hex'),
-        'hex'
+        readData.toString("hex") + data.slice(1).toString("hex"),
+        "hex",
       );
 
       if (data.length === this._mtu) {
         this._queueCommand(
           this.readBlobRequest(characteristic.valueHandle, readData.length),
-          callback
+          callback,
         );
       } else {
         this.emit(
-          'read',
+          "read",
           this._address,
           serviceUuid,
           characteristicUuid,
           readData,
-          true
+          true,
         );
       }
     } else if (opcode === ATT_OP_ERROR) {
       this.emit(
-        'read',
+        "read",
         this._address,
         serviceUuid,
         characteristicUuid,
         Buffer.alloc(0),
-        false
+        false,
       );
     } else {
       this.emit(
-        'read',
+        "read",
         this._address,
         serviceUuid,
         characteristicUuid,
         readData,
-        true
+        true,
       );
     }
   }.bind(this);
@@ -708,13 +708,13 @@ Gatt.prototype.write = function(
   serviceUuid,
   characteristicUuid,
   data,
-  withoutResponse
+  withoutResponse,
 ) {
   if (
     !this._characteristics[serviceUuid] ||
     !this._characteristics[serviceUuid][characteristicUuid]
   ) {
-    this.emit('write', this._address, serviceUuid, characteristicUuid, false);
+    this.emit("write", this._address, serviceUuid, characteristicUuid, false);
     return;
   }
 
@@ -724,15 +724,15 @@ Gatt.prototype.write = function(
       this.writeRequest(characteristic.valueHandle, data, true),
       null,
       function() {
-        this.emit('write', this._address, serviceUuid, characteristicUuid);
-      }.bind(this)
+        this.emit("write", this._address, serviceUuid, characteristicUuid);
+      }.bind(this),
     );
   } else if (data.length + 3 > this._mtu) {
     return this.longWrite(
       serviceUuid,
       characteristicUuid,
       data,
-      withoutResponse
+      withoutResponse,
     );
   } else {
     this._queueCommand(
@@ -742,14 +742,14 @@ Gatt.prototype.write = function(
 
         if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
           this.emit(
-            'write',
+            "write",
             this._address,
             serviceUuid,
             characteristicUuid,
-            opcode === ATT_OP_WRITE_RESP
+            opcode === ATT_OP_WRITE_RESP,
           );
         }
-      }.bind(this)
+      }.bind(this),
     );
   }
 };
@@ -759,7 +759,7 @@ Gatt.prototype.longWrite = function(
   serviceUuid,
   characteristicUuid,
   data,
-  withoutResponse
+  withoutResponse,
 ) {
   let characteristic = this._characteristics[serviceUuid][characteristicUuid];
   let limit = this._mtu - 5;
@@ -771,8 +771,8 @@ Gatt.prototype.longWrite = function(
       if (opcode != ATT_OP_PREPARE_WRITE_RESP) {
         debug(
           this._address +
-            ': unexpected reply opcode %d (expecting ATT_OP_PREPARE_WRITE_RESP)',
-          opcode
+            ": unexpected reply opcode %d (expecting ATT_OP_PREPARE_WRITE_RESP)",
+          opcode,
         );
       } else {
         let expected_length = data_chunk.length + 5;
@@ -781,9 +781,9 @@ Gatt.prototype.longWrite = function(
           /* the response should contain the data packet echoed back to the caller */
           debug(
             this._address +
-              ': unexpected prepareWriteResponse length %d (expecting %d)',
+              ": unexpected prepareWriteResponse length %d (expecting %d)",
             resp.length,
-            expected_length
+            expected_length,
           );
         }
       }
@@ -798,7 +798,7 @@ Gatt.prototype.longWrite = function(
     let chunk = data.slice(offset, end);
     this._queueCommand(
       this.prepareWriteRequest(characteristic.valueHandle, offset, chunk),
-      prepareWriteCallback(chunk)
+      prepareWriteCallback(chunk),
     );
     offset = end;
   }
@@ -810,16 +810,16 @@ Gatt.prototype.longWrite = function(
       let opcode = resp[0];
 
       if (opcode === ATT_OP_EXECUTE_WRITE_RESP && !withoutResponse) {
-        this.emit('write', this._address, serviceUuid, characteristicUuid);
+        this.emit("write", this._address, serviceUuid, characteristicUuid);
       }
-    }.bind(this)
+    }.bind(this),
   );
 };
 
 Gatt.prototype.broadcast = function(
   serviceUuid,
   characteristicUuid,
-  broadcast
+  broadcast,
 ) {
   let characteristic = this._characteristics[serviceUuid][characteristicUuid];
 
@@ -827,7 +827,7 @@ Gatt.prototype.broadcast = function(
     this.readByTypeRequest(
       characteristic.startHandle,
       characteristic.endHandle,
-      GATT_SERVER_CHARAC_CFG_UUID
+      GATT_SERVER_CHARAC_CFG_UUID,
     ),
     function(data) {
       let opcode = data[0];
@@ -852,17 +852,17 @@ Gatt.prototype.broadcast = function(
 
             if (opcode === ATT_OP_WRITE_RESP) {
               this.emit(
-                'broadcast',
+                "broadcast",
                 this._address,
                 serviceUuid,
                 characteristicUuid,
-                broadcast
+                broadcast,
               );
             }
-          }.bind(this)
+          }.bind(this),
         );
       }
-    }.bind(this)
+    }.bind(this),
   );
 };
 
@@ -873,7 +873,7 @@ Gatt.prototype.notify = function(serviceUuid, characteristicUuid, notify) {
     this.readByTypeRequest(
       characteristic.startHandle,
       characteristic.endHandle,
-      GATT_CLIENT_CHARAC_CFG_UUID
+      GATT_CLIENT_CHARAC_CFG_UUID,
     ),
     function(data) {
       let opcode = data[0];
@@ -907,21 +907,21 @@ Gatt.prototype.notify = function(serviceUuid, characteristicUuid, notify) {
           function(data) {
             let opcode = data[0];
             debug(
-              'set notify write results: ' + (opcode === ATT_OP_WRITE_RESP)
+              "set notify write results: " + (opcode === ATT_OP_WRITE_RESP),
             );
             // if (opcode === ATT_OP_WRITE_RESP) {
             this.emit(
-              'notify',
+              "notify",
               this._address,
               serviceUuid,
               characteristicUuid,
-              notify
+              notify,
             );
             // }
-          }.bind(this)
+          }.bind(this),
         );
       }
-    }.bind(this)
+    }.bind(this),
   );
 };
 
@@ -960,19 +960,19 @@ Gatt.prototype.discoverDescriptors = function(serviceUuid, characteristicUuid) {
       }
 
       this.emit(
-        'descriptorsDiscover',
+        "descriptorsDiscover",
         this._address,
         serviceUuid,
         characteristicUuid,
-        descriptorUuids
+        descriptorUuids,
       );
     } else {
       this._queueCommand(
         this.findInfoRequest(
           descriptors[descriptors.length - 1].handle + 1,
-          characteristic.endHandle
+          characteristic.endHandle,
         ),
-        callback
+        callback,
       );
     }
   }.bind(this);
@@ -980,16 +980,16 @@ Gatt.prototype.discoverDescriptors = function(serviceUuid, characteristicUuid) {
   this._queueCommand(
     this.findInfoRequest(
       characteristic.valueHandle + 1,
-      characteristic.endHandle
+      characteristic.endHandle,
     ),
-    callback
+    callback,
   );
 };
 
 Gatt.prototype.readValue = function(
   serviceUuid,
   characteristicUuid,
-  descriptorUuid
+  descriptorUuid,
 ) {
   if (
     !this._descriptors[serviceUuid] ||
@@ -997,13 +997,13 @@ Gatt.prototype.readValue = function(
     !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]
   ) {
     this.emit(
-      'valueRead',
+      "valueRead",
       this._address,
       serviceUuid,
       characteristicUuid,
       descriptorUuid,
       Buffer.alloc(0),
-      false
+      false,
     );
     return;
   }
@@ -1019,16 +1019,16 @@ Gatt.prototype.readValue = function(
 
       if (opcode === ATT_OP_READ_RESP || opcode === ATT_OP_ERROR) {
         this.emit(
-          'valueRead',
+          "valueRead",
           this._address,
           serviceUuid,
           characteristicUuid,
           descriptorUuid,
           data.slice(1),
-          opcode === ATT_OP_READ_RESP
+          opcode === ATT_OP_READ_RESP,
         );
       }
-    }.bind(this)
+    }.bind(this),
   );
 };
 
@@ -1036,7 +1036,7 @@ Gatt.prototype.writeValue = function(
   serviceUuid,
   characteristicUuid,
   descriptorUuid,
-  data
+  data,
 ) {
   if (
     !this._descriptors[serviceUuid] ||
@@ -1044,12 +1044,12 @@ Gatt.prototype.writeValue = function(
     !this._descriptors[serviceUuid][characteristicUuid][descriptorUuid]
   ) {
     this.emit(
-      'valueWrite',
+      "valueWrite",
       this._address,
       serviceUuid,
       characteristicUuid,
       descriptorUuid,
-      false
+      false,
     );
     return;
   }
@@ -1065,15 +1065,15 @@ Gatt.prototype.writeValue = function(
 
       if (opcode === ATT_OP_WRITE_RESP || opcode === ATT_OP_ERROR) {
         this.emit(
-          'valueWrite',
+          "valueWrite",
           this._address,
           serviceUuid,
           characteristicUuid,
           descriptorUuid,
-          opcode === ATT_OP_WRITE_RESP
+          opcode === ATT_OP_WRITE_RESP,
         );
       }
-    }.bind(this)
+    }.bind(this),
   );
 };
 
@@ -1084,9 +1084,9 @@ Gatt.prototype.readHandle = function(handle) {
       let opcode = data[0];
 
       if (opcode === ATT_OP_READ_RESP) {
-        this.emit('handleRead', this._address, handle, data.slice(1));
+        this.emit("handleRead", this._address, handle, data.slice(1));
       }
-    }.bind(this)
+    }.bind(this),
   );
 };
 
@@ -1096,8 +1096,8 @@ Gatt.prototype.writeHandle = function(handle, data, withoutResponse) {
       this.writeRequest(handle, data, true),
       null,
       function() {
-        this.emit('handleWrite', this._address, handle);
-      }.bind(this)
+        this.emit("handleWrite", this._address, handle);
+      }.bind(this),
     );
   } else {
     this._queueCommand(
@@ -1106,9 +1106,9 @@ Gatt.prototype.writeHandle = function(handle, data, withoutResponse) {
         let opcode = data[0];
 
         if (opcode === ATT_OP_WRITE_RESP) {
-          this.emit('handleWrite', this._address, handle);
+          this.emit("handleWrite", this._address, handle);
         }
-      }.bind(this)
+      }.bind(this),
     );
   }
 };

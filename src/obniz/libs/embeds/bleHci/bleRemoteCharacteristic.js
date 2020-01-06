@@ -1,5 +1,5 @@
-const BleRemoteDescriptor = require('./bleRemoteDescriptor');
-const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
+const BleRemoteDescriptor = require("./bleRemoteDescriptor");
+const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
 
 class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -12,7 +12,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   get parentName() {
-    return 'service';
+    return "service";
   }
 
   get childrenClass() {
@@ -20,7 +20,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   get childrenName() {
-    return 'descriptors';
+    return "descriptors";
   }
 
   get descriptors() {
@@ -44,16 +44,16 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   registerNotify(callback) {
     this.onnotify = callback;
     this.service.peripheral.obnizBle.centralBindings.notify(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-      true
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        true,
     );
   }
 
   registerNotifyWait(callback) {
     return new Promise(resolve => {
-      this.emitter.once('onregisternotify', () => {
+      this.emitter.once("onregisternotify", () => {
         resolve();
       });
       this.registerNotify(callback);
@@ -61,19 +61,20 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   unregisterNotify() {
-    this.onnotify = function() {};
+    this.onnotify = function() {
+    };
 
     this.service.peripheral.obnizBle.centralBindings.notify(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-      false
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        false,
     );
   }
 
   unregisterNotifyWait() {
     return new Promise(resolve => {
-      this.emitter.once('onunregisternotify', () => {
+      this.emitter.once("onunregisternotify", () => {
         resolve();
       });
       this.unregisterNotify();
@@ -82,9 +83,9 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
 
   read() {
     this.service.peripheral.obnizBle.centralBindings.read(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
     );
   }
 
@@ -93,19 +94,19 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
       needResponse = true;
     }
     this.service.peripheral.obnizBle.centralBindings.write(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid,
-      Buffer.from(array),
-      !needResponse
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
+        Buffer.from(array),
+        !needResponse,
     );
   }
 
   discoverChildren() {
     this.service.peripheral.obnizBle.centralBindings.discoverDescriptors(
-      this.service.peripheral.address,
-      this.service.uuid,
-      this.uuid
+        this.service.peripheral.address,
+        this.service.uuid,
+        this.uuid,
     );
   }
 
@@ -127,27 +128,27 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   canBroadcast() {
-    return this.properties.includes('broadcast');
+    return this.properties.includes("broadcast");
   }
 
   canNotify() {
-    return this.properties.includes('notify');
+    return this.properties.includes("notify");
   }
 
   canRead() {
-    return this.properties.includes('read');
+    return this.properties.includes("read");
   }
 
   canWrite() {
-    return this.properties.includes('write');
+    return this.properties.includes("write");
   }
 
   canWriteWithoutResponse() {
-    return this.properties.includes('write_without_response');
+    return this.properties.includes("write_without_response");
   }
 
   canIndicate() {
-    return this.properties.includes('indicate');
+    return this.properties.includes("indicate");
   }
 
   ondiscover(descriptor) {
@@ -158,28 +159,33 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     this.ondiscoverdescriptorfinished(descriptors);
   }
 
-  ondiscoverdescriptor() {}
+  ondiscoverdescriptor() {
+  }
 
-  ondiscoverdescriptorfinished() {}
+  ondiscoverdescriptorfinished() {
+  }
 
-  onregisternotify() {}
+  onregisternotify() {
+  }
 
-  onunregisternotify() {}
+  onunregisternotify() {
+  }
 
-  onnotify() {}
+  onnotify() {
+  }
 
   notifyFromServer(notifyName, params) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case 'onregisternotify': {
+      case "onregisternotify": {
         this.onregisternotify();
         break;
       }
-      case 'onunregisternotify': {
+      case "onunregisternotify": {
         this.onunregisternotify();
         break;
       }
-      case 'onnotify': {
+      case "onnotify": {
         this.onnotify(params.data || undefined);
         break;
       }

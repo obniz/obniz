@@ -1,5 +1,5 @@
-const BleRemoteAttributeAbstract = require('./bleRemoteAttributeAbstract');
-const BleHelper = require('./bleHelper');
+const BleRemoteAttributeAbstract = require("./bleRemoteAttributeAbstract");
+const BleHelper = require("./bleHelper");
 
 class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   constructor(params) {
@@ -7,7 +7,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
   }
 
   get parentName() {
-    return 'characteristic';
+    return "characteristic";
   }
 
   read() {

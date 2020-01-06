@@ -1,5 +1,5 @@
-const BleDescriptor = require('./bleDescriptor');
-const BleLocalAttributeAbstract = require('./bleLocalAttributeAbstract');
+const BleDescriptor = require("./bleDescriptor");
+const BleLocalAttributeAbstract = require("./bleLocalAttributeAbstract");
 
 class BleCharacteristic extends BleLocalAttributeAbstract {
   constructor(obj) {
@@ -23,7 +23,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   get parentName() {
-    return 'service';
+    return "service";
   }
 
   get childrenClass() {
@@ -31,7 +31,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   get childrenName() {
-    return 'descriptors';
+    return "descriptors";
   }
 
   get descriptors() {
@@ -90,20 +90,20 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
       return result;
     }
     switch (name) {
-      case 'subscribe':
+      case "subscribe":
         this._onSubscribe(...params);
         return true;
-      case 'unsubscribe':
+      case "unsubscribe":
         this._onUnsubscribe(...params);
         return true;
-      case 'notify':
+      case "notify":
         this._onNotify(...params);
         return true;
-      case 'indicate':
+      case "indicate":
         this._onIndicate(...params);
         return true;
       default:
-        throw new Error('unknown emit');
+        throw new Error("unknown emit");
     }
   }
 
@@ -118,9 +118,11 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
     this._updateValueCallback = null;
   }
 
-  _onNotify() {}
+  _onNotify() {
+  }
 
-  _onIndicate() {}
+  _onIndicate() {
+  }
 
   notify() {
     if (this._updateValueCallback) {

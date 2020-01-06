@@ -1,5 +1,5 @@
-const BleService = require('./bleService');
-const BleHelper = require('./bleHelper');
+const BleService = require("./bleService");
+const BleHelper = require("./bleHelper");
 
 class BlePeripheral {
   constructor(obnizBle) {
@@ -25,8 +25,8 @@ class BlePeripheral {
   }
 
   setJson(json) {
-    if (json['services']) {
-      for (let service of json['services']) {
+    if (json.services) {
+      for (let service of json.services) {
         this.addService(service);
       }
     }
@@ -35,10 +35,10 @@ class BlePeripheral {
   getService(uuid) {
     uuid = BleHelper.uuidFilter(uuid);
     return this._services
-      .filter(function(element) {
-        return BleHelper.uuidFilter(element.uuid) === uuid;
-      })
-      .shift();
+        .filter(function(element) {
+          return BleHelper.uuidFilter(element.uuid) === uuid;
+        })
+        .shift();
   }
 
   removeService(uuid) {
@@ -83,9 +83,11 @@ class BlePeripheral {
     this.stopAllService();
   }
 
-  onconnectionupdates() {}
+  onconnectionupdates() {
+  }
 
-  onerror() {}
+  onerror() {
+  }
 }
 
 module.exports = BlePeripheral;

@@ -1,5 +1,5 @@
-const BleLocalAttributeAbstract = require('./bleLocalAttributeAbstract');
-const BleCharacteristic = require('./bleCharacteristic');
+const BleLocalAttributeAbstract = require("./bleLocalAttributeAbstract");
+const BleCharacteristic = require("./bleCharacteristic");
 
 class BleService extends BleLocalAttributeAbstract {
   constructor(obj) {
@@ -10,11 +10,11 @@ class BleService extends BleLocalAttributeAbstract {
   }
 
   get parentName() {
-    return 'peripheral';
+    return "peripheral";
   }
 
   get childrenName() {
-    return 'characteristics';
+    return "characteristics";
   }
 
   get childrenClass() {
@@ -27,7 +27,7 @@ class BleService extends BleLocalAttributeAbstract {
 
   get advData() {
     return {
-      flags: ['general_discoverable_mode', 'br_edr_not_supported'],
+      flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid],
     };
   }
@@ -36,7 +36,8 @@ class BleService extends BleLocalAttributeAbstract {
     this.peripheral.removeService(this.uuid);
   }
 
-  emit(name, ...params) {}
+  emit(name, ...params) {
+  }
 
   notify(notifyName, params) {
     //nothing

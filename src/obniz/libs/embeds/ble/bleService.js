@@ -1,6 +1,6 @@
-const BleAttributeAbstract = require('./bleAttributeAbstract');
-const BleCharacteristic = require('./bleCharacteristic');
-const BleHelper = require('./bleHelper');
+const BleAttributeAbstract = require("./bleAttributeAbstract");
+const BleCharacteristic = require("./bleCharacteristic");
+const BleHelper = require("./bleHelper");
 
 class BleService extends BleAttributeAbstract {
   constructor(obj) {
@@ -11,11 +11,11 @@ class BleService extends BleAttributeAbstract {
   }
 
   get parentName() {
-    return 'peripheral';
+    return "peripheral";
   }
 
   get childrenName() {
-    return 'characteristics';
+    return "characteristics";
   }
 
   get childrenClass() {
@@ -24,7 +24,7 @@ class BleService extends BleAttributeAbstract {
 
   get advData() {
     return {
-      flags: ['general_discoverable_mode', 'br_edr_not_supported'],
+      flags: ["general_discoverable_mode", "br_edr_not_supported"],
       serviceUuids: [this.uuid],
     };
   }

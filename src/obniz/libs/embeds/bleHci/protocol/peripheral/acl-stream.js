@@ -1,27 +1,27 @@
-let events = require('events');
-let util = require('util');
+let events = require("events");
+let util = require("util");
 
-let Smp = require('./smp');
+let Smp = require("./smp");
 
 let AclStream = function(
-  hci,
-  handle,
-  localAddressType,
-  localAddress,
-  remoteAddressType,
-  remoteAddress
+    hci,
+    handle,
+    localAddressType,
+    localAddress,
+    remoteAddressType,
+    remoteAddress,
 ) {
   this._hci = hci;
   this._handle = handle;
   this.encypted = false;
 
   this._smp = new Smp(
-    this,
-    localAddressType,
-    localAddress,
-    remoteAddressType,
-    remoteAddress,
-    this._hci
+      this,
+      localAddressType,
+      localAddress,
+      remoteAddressType,
+      remoteAddress,
+      this._hci,
   );
 };
 
@@ -33,20 +33,20 @@ AclStream.prototype.write = function(cid, data) {
 
 AclStream.prototype.push = function(cid, data) {
   if (data) {
-    this.emit('data', cid, data);
+    this.emit("data", cid, data);
   } else {
-    this.emit('end');
+    this.emit("end");
   }
 };
 
 AclStream.prototype.pushEncrypt = function(encrypt) {
   this.encrypted = encrypt ? true : false;
 
-  this.emit('encryptChange', this.encrypted);
+  this.emit("encryptChange", this.encrypted);
 };
 
 AclStream.prototype.pushLtkNegReply = function() {
-  this.emit('ltkNegReply');
+  this.emit("ltkNegReply");
 };
 
 module.exports = AclStream;

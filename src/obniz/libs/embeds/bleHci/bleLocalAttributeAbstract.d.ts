@@ -19,6 +19,7 @@ declare namespace BleLocalAttributeAbstract.prototype {
     emit(name: any, ...params: any): boolean;
   }
 }
+
 /**
  *
  */

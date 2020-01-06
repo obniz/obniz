@@ -2,22 +2,6 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-declare namespace BleAdvertisementBuilder.prototype {
-  // BleAdvertisementBuilder.prototype.getRow.!ret
-  type GetRowRet = number[];
-}
-declare namespace BleAdvertisementBuilder.prototype {
-  // BleAdvertisementBuilder.prototype.build.!ret
-  type BuildRet = number[];
-}
-declare namespace BleAdvertisementBuilder.prototype {
-  // BleAdvertisementBuilder.prototype.setManufacturerSpecificData.!1
-  type SetManufacturerSpecificData1 = number[];
-}
-declare namespace BleAdvertisementBuilder.prototype {
-  // BleAdvertisementBuilder.prototype.convertUuid.!ret
-  type ConvertUuidRet = number[];
-}
 
 /**
  *
@@ -43,13 +27,13 @@ declare interface BleAdvertisementBuilder {
    * @param type
    * @return
    */
-  getRow(type: number): BleAdvertisementBuilder.prototype.GetRowRet;
+  getRow(type: number): number[];
 
   /**
    *
    * @return
    */
-  build(): BleAdvertisementBuilder.prototype.BuildRet;
+  build(): any;
 
   /**
    *
@@ -75,7 +59,7 @@ declare interface BleAdvertisementBuilder {
    * @param companyCode
    * @param data
    */
-  setManufacturerSpecificData(companyCode: number, data: BleAdvertisementBuilder.prototype.SetManufacturerSpecificData1): void;
+  setManufacturerSpecificData(companyCode: number, data: number[]): void;
 
   /**
    *
@@ -88,7 +72,7 @@ declare interface BleAdvertisementBuilder {
    * @param uuid
    * @return
    */
-  convertUuid(uuid: any): BleAdvertisementBuilder.prototype.ConvertUuidRet;
+  convertUuid(uuid: any): any;
 
   /**
    *

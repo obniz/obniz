@@ -1,12 +1,12 @@
 // var debug = require('debug')('bindings');
 
-let events = require('events');
+let events = require("events");
 
-let AclStream = require('./acl-stream');
-let Gatt = require('./gatt');
-let Gap = require('./gap');
-let Signaling = require('./signaling');
-let Hci = require('../hci');
+let AclStream = require("./acl-stream");
+let Gatt = require("./gatt");
+let Gap = require("./gap");
+let Signaling = require("./signaling");
+let Hci = require("../hci");
 
 class NobleBindings extends events.EventEmitter {
   constructor(hciProtocol) {
@@ -61,21 +61,21 @@ class NobleBindings extends events.EventEmitter {
   }
 
   init() {
-    this._gap.on('scanStart', this.onScanStart.bind(this));
-    this._gap.on('scanStop', this.onScanStop.bind(this));
-    this._gap.on('discover', this.onDiscover.bind(this));
+    this._gap.on("scanStart", this.onScanStart.bind(this));
+    this._gap.on("scanStop", this.onScanStop.bind(this));
+    this._gap.on("discover", this.onDiscover.bind(this));
 
-    this._hci.on('stateChange', this.onStateChange.bind(this));
-    this._hci.on('addressChange', this.onAddressChange.bind(this));
-    this._hci.on('leConnComplete', this.onLeConnComplete.bind(this));
+    this._hci.on("stateChange", this.onStateChange.bind(this));
+    this._hci.on("addressChange", this.onAddressChange.bind(this));
+    this._hci.on("leConnComplete", this.onLeConnComplete.bind(this));
     this._hci.on(
-      'leConnUpdateComplete',
-      this.onLeConnUpdateComplete.bind(this)
+        "leConnUpdateComplete",
+        this.onLeConnUpdateComplete.bind(this),
     );
-    this._hci.on('rssiRead', this.onRssiRead.bind(this));
-    this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
-    this._hci.on('encryptChange', this.onEncryptChange.bind(this));
-    this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+    this._hci.on("rssiRead", this.onRssiRead.bind(this));
+    this._hci.on("disconnComplete", this.onDisconnComplete.bind(this));
+    this._hci.on("encryptChange", this.onEncryptChange.bind(this));
+    this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
   }
 
   onStateChange(state) {
@@ -84,37 +84,37 @@ class NobleBindings extends events.EventEmitter {
     }
     this._state = state;
 
-    if (state === 'unauthorized') {
+    if (state === "unauthorized") {
       console.log(
-        'noble warning: adapter state unauthorized, please run as root or with sudo'
+          "noble warning: adapter state unauthorized, please run as root or with sudo",
       );
       console.log(
-        '               or see README for information on running without root/sudo:'
+          "               or see README for information on running without root/sudo:",
       );
       console.log(
-        '               https://github.com/sandeepmistry/noble#running-on-linux'
+          "               https://github.com/sandeepmistry/noble#running-on-linux",
       );
-    } else if (state === 'unsupported') {
+    } else if (state === "unsupported") {
       console.log(
-        'noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).'
+          "noble warning: adapter does not support Bluetooth Low Energy (BLE, Bluetooth Smart).",
       );
-      console.log('               Try to run with environment variable:');
-      console.log('               [sudo] NOBLE_HCI_DEVICE_ID=x node ...');
+      console.log("               Try to run with environment variable:");
+      console.log("               [sudo] NOBLE_HCI_DEVICE_ID=x node ...");
     }
 
-    this.emit('stateChange', state);
+    this.emit("stateChange", state);
   }
 
   onAddressChange(address) {
-    this.emit('addressChange', address);
+    this.emit("addressChange", address);
   }
 
   onScanStart(filterDuplicates) {
-    this.emit('scanStart', filterDuplicates);
+    this.emit("scanStart", filterDuplicates);
   }
 
   onScanStop() {
-    this.emit('scanStop');
+    this.emit("scanStop");
   }
 
   onDiscover(status, address, addressType, connectable, advertisement, rssi) {
@@ -137,7 +137,7 @@ class NobleBindings extends events.EventEmitter {
 
       for (i in serviceUuids) {
         hasScanServiceUuids =
-          this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
+            this._scanServiceUuids.indexOf(serviceUuids[i]) !== -1;
 
         if (hasScanServiceUuids) {
           break;
@@ -146,33 +146,33 @@ class NobleBindings extends events.EventEmitter {
     }
 
     if (hasScanServiceUuids) {
-      let uuid = address.split(':').join('');
+      let uuid = address.split(":").join("");
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = connectable;
 
       this.emit(
-        'discover',
-        uuid,
-        address,
-        addressType,
-        connectable,
-        advertisement,
-        rssi
+          "discover",
+          uuid,
+          address,
+          addressType,
+          connectable,
+          advertisement,
+          rssi,
       );
     }
   }
 
   onLeConnComplete(
-    status,
-    handle,
-    role,
-    addressType,
-    address,
-    interval,
-    latency,
-    supervisionTimeout,
-    masterClockAccuracy
+      status,
+      handle,
+      role,
+      addressType,
+      address,
+      interval,
+      latency,
+      supervisionTimeout,
+      masterClockAccuracy,
   ) {
     if (role !== 0) {
       // not master, ignore
@@ -185,17 +185,17 @@ class NobleBindings extends events.EventEmitter {
 
     if (status === 0) {
       uuid = address
-        .split(':')
-        .join('')
-        .toLowerCase();
+          .split(":")
+          .join("")
+          .toLowerCase();
 
       let aclStream = new AclStream(
-        this._hci,
-        handle,
-        this._hci.addressType,
-        this._hci.address,
-        addressType,
-        address
+          this._hci,
+          handle,
+          this._hci.addressType,
+          this._hci.address,
+          addressType,
+          address,
       );
       let gatt = new Gatt(address, aclStream);
       let signaling = new Signaling(handle, aclStream);
@@ -206,49 +206,49 @@ class NobleBindings extends events.EventEmitter {
       this._handles[uuid] = handle;
       this._handles[handle] = uuid;
 
-      this._gatts[handle].on('mtu', this.onMtu.bind(this));
+      this._gatts[handle].on("mtu", this.onMtu.bind(this));
       this._gatts[handle].on(
-        'servicesDiscover',
-        this.onServicesDiscovered.bind(this)
+          "servicesDiscover",
+          this.onServicesDiscovered.bind(this),
       );
       this._gatts[handle].on(
-        'includedServicesDiscover',
-        this.onIncludedServicesDiscovered.bind(this)
+          "includedServicesDiscover",
+          this.onIncludedServicesDiscovered.bind(this),
       );
       this._gatts[handle].on(
-        'characteristicsDiscover',
-        this.onCharacteristicsDiscovered.bind(this)
+          "characteristicsDiscover",
+          this.onCharacteristicsDiscovered.bind(this),
       );
-      this._gatts[handle].on('read', this.onRead.bind(this));
-      this._gatts[handle].on('write', this.onWrite.bind(this));
-      this._gatts[handle].on('broadcast', this.onBroadcast.bind(this));
-      this._gatts[handle].on('notify', this.onNotify.bind(this));
-      this._gatts[handle].on('notification', this.onNotification.bind(this));
+      this._gatts[handle].on("read", this.onRead.bind(this));
+      this._gatts[handle].on("write", this.onWrite.bind(this));
+      this._gatts[handle].on("broadcast", this.onBroadcast.bind(this));
+      this._gatts[handle].on("notify", this.onNotify.bind(this));
+      this._gatts[handle].on("notification", this.onNotification.bind(this));
       this._gatts[handle].on(
-        'descriptorsDiscover',
-        this.onDescriptorsDiscovered.bind(this)
+          "descriptorsDiscover",
+          this.onDescriptorsDiscovered.bind(this),
       );
-      this._gatts[handle].on('valueRead', this.onValueRead.bind(this));
-      this._gatts[handle].on('valueWrite', this.onValueWrite.bind(this));
-      this._gatts[handle].on('handleRead', this.onHandleRead.bind(this));
-      this._gatts[handle].on('handleWrite', this.onHandleWrite.bind(this));
-      this._gatts[handle].on('handleNotify', this.onHandleNotify.bind(this));
+      this._gatts[handle].on("valueRead", this.onValueRead.bind(this));
+      this._gatts[handle].on("valueWrite", this.onValueWrite.bind(this));
+      this._gatts[handle].on("handleRead", this.onHandleRead.bind(this));
+      this._gatts[handle].on("handleWrite", this.onHandleWrite.bind(this));
+      this._gatts[handle].on("handleNotify", this.onHandleNotify.bind(this));
 
       this._signalings[handle].on(
-        'connectionParameterUpdateRequest',
-        this.onConnectionParameterUpdateRequest.bind(this)
+          "connectionParameterUpdateRequest",
+          this.onConnectionParameterUpdateRequest.bind(this),
       );
 
       this._gatts[handle].exchangeMtu(256);
     } else {
       uuid = this._pendingConnectionUuid;
-      let statusMessage = Hci.STATUS_MAPPER[status] || 'HCI Error: Unknown';
-      let errorCode = ' (0x' + status.toString(16) + ')';
+      let statusMessage = Hci.STATUS_MAPPER[status] || "HCI Error: Unknown";
+      let errorCode = " (0x" + status.toString(16) + ")";
       statusMessage = statusMessage + errorCode;
       error = new Error(statusMessage);
     }
 
-    this.emit('connect', uuid, error);
+    this.emit("connect", uuid, error);
 
     if (this._connectionQueue.length > 0) {
       let peripheralUuid = this._connectionQueue.shift();
@@ -284,7 +284,7 @@ class NobleBindings extends events.EventEmitter {
       delete this._handles[uuid];
       delete this._handles[handle];
 
-      this.emit('disconnect', uuid); // TODO: handle reason?
+      this.emit("disconnect", uuid); // TODO: handle reason?
     } else {
       // maybe disconnect as peripheral
       // console.warn(
@@ -301,10 +301,11 @@ class NobleBindings extends events.EventEmitter {
     }
   }
 
-  onMtu(address, mtu) {}
+  onMtu(address, mtu) {
+  }
 
   onRssiRead(handle, rssi) {
-    this.emit('rssiUpdate', this._handles[handle], rssi);
+    this.emit("rssiUpdate", this._handles[handle], rssi);
   }
 
   onAclDataPkt(handle, cid, data) {
@@ -322,17 +323,17 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.discoverServices(uuids || []);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onServicesDiscovered(address, serviceUuids) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('servicesDiscover', uuid, serviceUuids);
+    this.emit("servicesDiscover", uuid, serviceUuids);
   }
 
   discoverIncludedServices(peripheralUuid, serviceUuid, serviceUuids) {
@@ -342,21 +343,21 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.discoverIncludedServices(serviceUuid, serviceUuids || []);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onIncludedServicesDiscovered(address, serviceUuid, includedServiceUuids) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
     this.emit(
-      'includedServicesDiscover',
-      uuid,
-      serviceUuid,
-      includedServiceUuids
+        "includedServicesDiscover",
+        uuid,
+        serviceUuid,
+        includedServiceUuids,
     );
   }
 
@@ -367,17 +368,17 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.discoverCharacteristics(serviceUuid, characteristicUuids || []);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onCharacteristicsDiscovered(address, serviceUuid, characteristics) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('characteristicsDiscover', uuid, serviceUuid, characteristics);
+    this.emit("characteristicsDiscover", uuid, serviceUuid, characteristics);
   }
 
   read(peripheralUuid, serviceUuid, characteristicUuid) {
@@ -387,33 +388,33 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.read(serviceUuid, characteristicUuid);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onRead(address, serviceUuid, characteristicUuid, data, isSuccess) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
     this.emit(
-      'read',
-      uuid,
-      serviceUuid,
-      characteristicUuid,
-      data,
-      false,
-      isSuccess
+        "read",
+        uuid,
+        serviceUuid,
+        characteristicUuid,
+        data,
+        false,
+        isSuccess,
     );
   }
 
   write(
-    peripheralUuid,
-    serviceUuid,
-    characteristicUuid,
-    data,
-    withoutResponse
+      peripheralUuid,
+      serviceUuid,
+      characteristicUuid,
+      data,
+      withoutResponse,
   ) {
     let handle = this._handles[peripheralUuid];
     let gatt = this._gatts[handle];
@@ -421,17 +422,17 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.write(serviceUuid, characteristicUuid, data, withoutResponse);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onWrite(address, serviceUuid, characteristicUuid, isSuccess) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('write', uuid, serviceUuid, characteristicUuid, isSuccess);
+    this.emit("write", uuid, serviceUuid, characteristicUuid, isSuccess);
   }
 
   broadcast(peripheralUuid, serviceUuid, characteristicUuid, broadcast) {
@@ -441,17 +442,17 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.broadcast(serviceUuid, characteristicUuid, broadcast);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onBroadcast(address, serviceUuid, characteristicUuid, state) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('broadcast', uuid, serviceUuid, characteristicUuid, state);
+    this.emit("broadcast", uuid, serviceUuid, characteristicUuid, state);
   }
 
   notify(peripheralUuid, serviceUuid, characteristicUuid, notify) {
@@ -461,26 +462,26 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.notify(serviceUuid, characteristicUuid, notify);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onNotify(address, serviceUuid, characteristicUuid, state) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('notify', uuid, serviceUuid, characteristicUuid, state);
+    this.emit("notify", uuid, serviceUuid, characteristicUuid, state);
   }
 
   onNotification(address, serviceUuid, characteristicUuid, data) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('read', uuid, serviceUuid, characteristicUuid, data, true, true);
+    this.emit("read", uuid, serviceUuid, characteristicUuid, data, true, true);
   }
 
   discoverDescriptors(peripheralUuid, serviceUuid, characteristicUuid) {
@@ -490,27 +491,27 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.discoverDescriptors(serviceUuid, characteristicUuid);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onDescriptorsDiscovered(
-    address,
-    serviceUuid,
-    characteristicUuid,
-    descriptorUuids
-  ) {
-    let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
-
-    this.emit(
-      'descriptorsDiscover',
-      uuid,
+      address,
       serviceUuid,
       characteristicUuid,
-      descriptorUuids
+      descriptorUuids,
+  ) {
+    let uuid = address
+        .split(":")
+        .join("")
+        .toLowerCase();
+
+    this.emit(
+        "descriptorsDiscover",
+        uuid,
+        serviceUuid,
+        characteristicUuid,
+        descriptorUuids,
     );
   }
 
@@ -521,40 +522,40 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.readValue(serviceUuid, characteristicUuid, descriptorUuid);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onValueRead(
-    address,
-    serviceUuid,
-    characteristicUuid,
-    descriptorUuid,
-    data,
-    isSuccess
-  ) {
-    let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
-
-    this.emit(
-      'valueRead',
-      uuid,
+      address,
       serviceUuid,
       characteristicUuid,
       descriptorUuid,
       data,
-      isSuccess
+      isSuccess,
+  ) {
+    let uuid = address
+        .split(":")
+        .join("")
+        .toLowerCase();
+
+    this.emit(
+        "valueRead",
+        uuid,
+        serviceUuid,
+        characteristicUuid,
+        descriptorUuid,
+        data,
+        isSuccess,
     );
   }
 
   writeValue(
-    peripheralUuid,
-    serviceUuid,
-    characteristicUuid,
-    descriptorUuid,
-    data
+      peripheralUuid,
+      serviceUuid,
+      characteristicUuid,
+      descriptorUuid,
+      data,
   ) {
     let handle = this._handles[peripheralUuid];
     let gatt = this._gatts[handle];
@@ -562,29 +563,29 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.writeValue(serviceUuid, characteristicUuid, descriptorUuid, data);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onValueWrite(
-    address,
-    serviceUuid,
-    characteristicUuid,
-    descriptorUuid,
-    isSuccess
-  ) {
-    let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
-
-    this.emit(
-      'valueWrite',
-      uuid,
+      address,
       serviceUuid,
       characteristicUuid,
       descriptorUuid,
-      isSuccess
+      isSuccess,
+  ) {
+    let uuid = address
+        .split(":")
+        .join("")
+        .toLowerCase();
+
+    this.emit(
+        "valueWrite",
+        uuid,
+        serviceUuid,
+        characteristicUuid,
+        descriptorUuid,
+        isSuccess,
     );
   }
 
@@ -595,17 +596,17 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.readHandle(attHandle);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onHandleRead(address, handle, data) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('handleRead', uuid, handle, data);
+    this.emit("handleRead", uuid, handle, data);
   }
 
   writeHandle(peripheralUuid, attHandle, data, withoutResponse) {
@@ -615,41 +616,41 @@ class NobleBindings extends events.EventEmitter {
     if (gatt) {
       gatt.writeHandle(attHandle, data, withoutResponse);
     } else {
-      console.warn('noble warning: unknown peripheral ' + peripheralUuid);
+      console.warn("noble warning: unknown peripheral " + peripheralUuid);
     }
   }
 
   onHandleWrite(address, handle) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('handleWrite', uuid, handle);
+    this.emit("handleWrite", uuid, handle);
   }
 
   onHandleNotify(address, handle, data) {
     let uuid = address
-      .split(':')
-      .join('')
-      .toLowerCase();
+        .split(":")
+        .join("")
+        .toLowerCase();
 
-    this.emit('handleNotify', uuid, handle, data);
+    this.emit("handleNotify", uuid, handle, data);
   }
 
   onConnectionParameterUpdateRequest(
-    handle,
-    minInterval,
-    maxInterval,
-    latency,
-    supervisionTimeout
-  ) {
-    this._hci.connUpdateLe(
       handle,
       minInterval,
       maxInterval,
       latency,
-      supervisionTimeout
+      supervisionTimeout,
+  ) {
+    this._hci.connUpdateLe(
+        handle,
+        minInterval,
+        maxInterval,
+        latency,
+        supervisionTimeout,
     );
   }
 }

@@ -1,5 +1,6 @@
 // let debug = require('debug')('mgmt');
-const debug = () => {};
+const debug = () => {
+};
 
 let LTK_INFO_SIZE = 36;
 
@@ -11,21 +12,21 @@ function Mgmt(hciProtocol) {
 }
 
 Mgmt.prototype.onSocketData = function(data) {
-  debug('on data ->' + data.toString('hex'));
+  debug("on data ->" + data.toString("hex"));
 };
 
 Mgmt.prototype.onSocketError = function(error) {
-  debug('on error ->' + error.message);
+  debug("on error ->" + error.message);
 };
 
 Mgmt.prototype.addLongTermKey = function(
-  address,
-  addressType,
-  authenticated,
-  master,
-  ediv,
-  rand,
-  key
+    address,
+    addressType,
+    authenticated,
+    master,
+    ediv,
+    rand,
+    key,
 ) {
   let ltkInfo = Buffer.alloc(LTK_INFO_SIZE);
 
@@ -81,7 +82,7 @@ Mgmt.prototype.write = function(opcode, index, data) {
     data.copy(pkt, 6);
   }
 
-  debug('writing -> ' + pkt.toString('hex'));
+  debug("writing -> " + pkt.toString("hex"));
   this._hci._socket.write(pkt);
 };
 

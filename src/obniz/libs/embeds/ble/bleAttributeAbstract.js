@@ -1,6 +1,6 @@
-const ObnizUtil = require('../../utils/util');
-const emitter = require('eventemitter3');
-const BleHelper = require('./bleHelper');
+const ObnizUtil = require("../../utils/util");
+const emitter = require("eventemitter3");
+const BleHelper = require("./bleHelper");
 
 class BleAttributeAbstract {
   constructor(params) {
@@ -37,10 +37,10 @@ class BleAttributeAbstract {
         childrenName.charAt(0).toUpperCase() + childrenName.slice(1);
       let childName = childrenName.slice(0, -1);
 
-      let funcName = 'add' + childName;
+      let funcName = "add" + childName;
       this[funcName] = this.addChild;
 
-      funcName = 'get' + childName;
+      funcName = "get" + childName;
       this[funcName] = this.getChild;
     }
 
@@ -60,9 +60,11 @@ class BleAttributeAbstract {
   get childrenClass() {
     return Object;
   }
+
   get childrenName() {
     return null;
   }
+
   get parentName() {
     return null;
   }
@@ -107,6 +109,7 @@ class BleAttributeAbstract {
    */
 
   read() {}
+
   write() {}
 
   writeNumber(val, needResponse) {
@@ -119,11 +122,11 @@ class BleAttributeAbstract {
 
   readWait() {
     return new Promise((resolve, reject) => {
-      this.emitter.once('onread', params => {
-        if (params.result === 'success') {
+      this.emitter.once("onread", params => {
+        if (params.result === "success") {
           resolve(params.data);
         } else {
-          reject(new Error('readWait failed'));
+          reject(new Error("readWait failed"));
         }
       });
       this.read();
@@ -132,11 +135,11 @@ class BleAttributeAbstract {
 
   writeWait(data, needResponse) {
     return new Promise((resolve, reject) => {
-      this.emitter.once('onwrite', params => {
-        if (params.result === 'success') {
+      this.emitter.once("onwrite", params => {
+        if (params.result === "success") {
           resolve(true);
         } else {
-          reject(new Error('writeWait failed'));
+          reject(new Error("writeWait failed"));
         }
       });
       this.write(data, needResponse);
@@ -145,11 +148,11 @@ class BleAttributeAbstract {
 
   writeTextWait(data) {
     return new Promise((resolve, reject) => {
-      this.emitter.once('onwrite', params => {
-        if (params.result === 'success') {
+      this.emitter.once("onwrite", params => {
+        if (params.result === "success") {
           resolve(true);
         } else {
-          reject(new Error('writeTextWait failed'));
+          reject(new Error("writeTextWait failed"));
         }
       });
       this.writeText(data);
@@ -158,11 +161,11 @@ class BleAttributeAbstract {
 
   writeNumberWait(data) {
     return new Promise((resolve, reject) => {
-      this.emitter.once('onwrite', params => {
-        if (params.result === 'success') {
+      this.emitter.once("onwrite", params => {
+        if (params.result === "success") {
           resolve(true);
         } else {
-          reject(new Error('writeNumberWait failed'));
+          reject(new Error("writeNumberWait failed"));
         }
       });
       this.writeNumber(data);
@@ -171,7 +174,7 @@ class BleAttributeAbstract {
 
   readFromRemoteWait() {
     return new Promise(resolve => {
-      this.emitter.once('onreadfromremote', () => {
+      this.emitter.once("onreadfromremote", () => {
         resolve();
       });
     });
@@ -179,7 +182,7 @@ class BleAttributeAbstract {
 
   writeFromRemoteWait() {
     return new Promise(resolve => {
-      this.emitter.once('onreadfromremote', params => {
+      this.emitter.once("onreadfromremote", params => {
         resolve(params.data);
       });
     });
@@ -189,8 +192,11 @@ class BleAttributeAbstract {
    * CALLBACKS
    */
   onwrite() {}
+
   onread() {}
+
   onwritefromremote() {}
+
   onreadfromremote() {}
 
   onerror(err) {
@@ -200,23 +206,23 @@ class BleAttributeAbstract {
   notifyFromServer(notifyName, params) {
     this.emitter.emit(notifyName, params);
     switch (notifyName) {
-      case 'onerror': {
+      case "onerror": {
         this.onerror(params);
         break;
       }
-      case 'onwrite': {
+      case "onwrite": {
         this.onwrite(params.result);
         break;
       }
-      case 'onread': {
+      case "onread": {
         this.onread(params.data);
         break;
       }
-      case 'onwritefromremote': {
+      case "onwritefromremote": {
         this.onwritefromremote(params.address, params.data);
         break;
       }
-      case 'onreadfromremote': {
+      case "onreadfromremote": {
         this.onreadfromremote(params.address);
         break;
       }

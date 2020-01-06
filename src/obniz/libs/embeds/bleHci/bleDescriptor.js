@@ -1,4 +1,4 @@
-const BleLocalAttributeAbstract = require('./bleLocalAttributeAbstract');
+const BleLocalAttributeAbstract = require("./bleLocalAttributeAbstract");
 
 class BleDescriptor extends BleLocalAttributeAbstract {
   constructor(obj) {
@@ -11,7 +11,7 @@ class BleDescriptor extends BleLocalAttributeAbstract {
   }
 
   get parentName() {
-    return 'characteristic';
+    return "characteristic";
   }
 
   addPermission(param) {

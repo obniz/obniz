@@ -1,5 +1,5 @@
-const BleHelper = require('./bleHelper');
-const BleAttributeAbstract = require('./bleAttributeAbstract');
+const BleHelper = require("./bleHelper");
+const BleAttributeAbstract = require("./bleAttributeAbstract");
 
 class BleLocalAttributeAbstract extends BleAttributeAbstract {
   constructor(params) {
@@ -28,10 +28,10 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
 
   emit(name, ...params) {
     switch (name) {
-      case 'readRequest':
+      case "readRequest":
         this._onReadRequest(...params);
         return true;
-      case 'writeRequest':
+      case "writeRequest":
         this._onWriteRequest(...params);
         return true;
     }
@@ -42,13 +42,13 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
     if (this.data.length >= offset) {
       callback(this.RESULT_SUCCESS, Buffer.from(this.data.slice(offset)));
       let address = null;
-      if (this.parentName === 'characteristic') {
+      if (this.parentName === "characteristic") {
         address = this.characteristic.service.peripheral
-          .currentConnectedDeviceAddress;
-      } else if (this.parentName === 'service') {
+            .currentConnectedDeviceAddress;
+      } else if (this.parentName === "service") {
         address = this.service.peripheral.currentConnectedDeviceAddress;
       }
-      this.notifyFromServer('onreadfromremote', { address });
+      this.notifyFromServer("onreadfromremote", {address});
     } else {
       callback(this.RESULT_UNLIKELY_ERROR, null);
     }
@@ -59,22 +59,22 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
     this.data = Array.from(data);
     callback(this.RESULT_SUCCESS);
     let address = null;
-    if (this.parentName === 'characteristic') {
+    if (this.parentName === "characteristic") {
       address = this.characteristic.service.peripheral
-        .currentConnectedDeviceAddress;
-    } else if (this.parentName === 'service') {
+          .currentConnectedDeviceAddress;
+    } else if (this.parentName === "service") {
       address = this.service.peripheral.currentConnectedDeviceAddress;
     }
-    this.notifyFromServer('onwritefromremote', { address, data });
+    this.notifyFromServer("onwritefromremote", {address, data});
   }
 
   write(dataArray) {
     this.data = dataArray;
-    this.notifyFromServer('onwrite', { result: 'success' });
+    this.notifyFromServer("onwrite", {result: "success"});
   }
 
   read() {
-    this.notifyFromServer('onread', { data: this.data });
+    this.notifyFromServer("onread", {data: this.data});
   }
 }
 

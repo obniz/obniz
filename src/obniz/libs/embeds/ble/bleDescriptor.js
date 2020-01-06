@@ -1,5 +1,5 @@
-const BleAttributeAbstract = require('./bleAttributeAbstract');
-const BleHelper = require('./bleHelper');
+const BleAttributeAbstract = require("./bleAttributeAbstract");
+const BleHelper = require("./bleHelper");
 
 class BleDescriptor extends BleAttributeAbstract {
   constructor(obj) {
@@ -12,7 +12,7 @@ class BleDescriptor extends BleAttributeAbstract {
   }
 
   get parentName() {
-    return 'characteristic';
+    return "characteristic";
   }
 
   addPermission(param) {
@@ -42,7 +42,7 @@ class BleDescriptor extends BleAttributeAbstract {
         peripheral: {
           write_descriptor: {
             service_uuid: BleHelper.uuidFilter(
-              this.characteristic.service.uuid
+              this.characteristic.service.uuid,
             ),
             characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid,
@@ -59,7 +59,7 @@ class BleDescriptor extends BleAttributeAbstract {
         peripheral: {
           read_descriptor: {
             service_uuid: BleHelper.uuidFilter(
-              this.characteristic.service.uuid
+              this.characteristic.service.uuid,
             ),
             characteristic_uuid: BleHelper.uuidFilter(this.characteristic.uuid),
             descriptor_uuid: this.uuid,

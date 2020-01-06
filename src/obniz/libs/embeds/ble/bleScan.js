@@ -1,5 +1,5 @@
-const emitter = require('eventemitter3');
-const BleHelper = require('./bleHelper');
+const emitter = require("eventemitter3");
+const BleHelper = require("./bleHelper");
 
 class BleScan {
   constructor(Obniz) {
@@ -12,15 +12,15 @@ class BleScan {
 
   start(target, settings) {
     let obj = {};
-    obj['ble'] = {};
-    obj['ble']['scan'] = {
+    obj.ble = {};
+    obj.ble.scan = {
       //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
       //    "interval" : settings && settings.interval ? settings.interval : 30,
       duration: settings && settings.duration ? settings.duration : 30,
     };
     if (settings && settings.duplicate) {
       throw new Error(
-        `duplicate property can only be used with obnizOS3 or later`
+        `duplicate property can only be used with obnizOS3 or later`,
       );
     }
 
@@ -42,7 +42,7 @@ class BleScan {
     let state = 0;
 
     return new Promise(resolve => {
-      this.emitter.once('onfind', param => {
+      this.emitter.once("onfind", param => {
         if (state === 0) {
           state = 1;
           this.end();
@@ -50,7 +50,7 @@ class BleScan {
         }
       });
 
-      this.emitter.once('onfinish', () => {
+      this.emitter.once("onfinish", () => {
         if (state === 0) {
           state = 1;
           resolve(null);
@@ -63,7 +63,7 @@ class BleScan {
 
   startAllWait(target, settings) {
     return new Promise(resolve => {
-      this.emitter.once('onfinish', () => {
+      this.emitter.once("onfinish", () => {
         resolve(this.scanedPeripherals);
       });
 
@@ -73,8 +73,8 @@ class BleScan {
 
   end() {
     let obj = {};
-    obj['ble'] = {};
-    obj['ble']['scan'] = null;
+    obj.ble = {};
+    obj.ble.scan = null;
     this.Obniz.send(obj);
   }
 
@@ -104,7 +104,7 @@ class BleScan {
 
   notifyFromServer(notifyName, params) {
     switch (notifyName) {
-      case 'onfind': {
+      case "onfind": {
         if (this.isTarget(params)) {
           this.scanedPeripherals.push(params);
           this.emitter.emit(notifyName, params);
@@ -112,7 +112,7 @@ class BleScan {
         }
         break;
       }
-      case 'onfinish': {
+      case "onfinish": {
         this.emitter.emit(notifyName, this.scanedPeripherals);
         this.onfinish(this.scanedPeripherals);
         break;

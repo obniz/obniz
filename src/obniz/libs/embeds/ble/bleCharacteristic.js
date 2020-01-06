@@ -1,6 +1,6 @@
-const BleDescriptor = require('./bleDescriptor');
-const BleAttributeAbstract = require('./bleAttributeAbstract');
-const BleHelper = require('./bleHelper');
+const BleDescriptor = require("./bleDescriptor");
+const BleAttributeAbstract = require("./bleAttributeAbstract");
+const BleHelper = require("./bleHelper");
 
 class BleCharacteristic extends BleAttributeAbstract {
   constructor(obj) {
@@ -21,7 +21,7 @@ class BleCharacteristic extends BleAttributeAbstract {
   }
 
   get parentName() {
-    return 'service';
+    return "service";
   }
 
   get childrenClass() {
@@ -29,7 +29,7 @@ class BleCharacteristic extends BleAttributeAbstract {
   }
 
   get childrenName() {
-    return 'descriptors';
+    return "descriptors";
   }
 
   get descriptors() {
