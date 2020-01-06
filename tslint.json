@@ -8,6 +8,9 @@
     "no-console": [
       false
     ],
+    "no-misused-new": false,
+    "no-namespace": false,
+    "max-line-length" : false,
     "no-empty-interface": false,
     "indent": [true, "spaces", 2],
     "interface-name": [false],
