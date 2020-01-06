@@ -8,19 +8,19 @@ class BleAdvertisement {
     }
     start() {
         let obj = {};
-        obj['ble'] = {};
-        obj['ble']['advertisement'] = {
+        obj.ble = {};
+        obj.ble.advertisement = {
             adv_data: this.adv_data,
         };
         if (this.scan_resp.length > 0) {
-            obj['ble']['advertisement']['scan_resp'] = this.scan_resp;
+            obj.ble.advertisement.scan_resp = this.scan_resp;
         }
         this.Obniz.send(obj);
     }
     end() {
         let obj = {};
-        obj['ble'] = {};
-        obj['ble']['advertisement'] = null;
+        obj.ble = {};
+        obj.ble.advertisement = null;
         this.Obniz.send(obj);
     }
     setAdvDataRaw(adv_data) {

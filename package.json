@@ -2,8 +2,13 @@
   "name": "obniz",
   "version": "3.1.0",
   "description": "obniz sdk for javascript",
-  "main": "index.js",
-  "types": "obniz.d.ts",
+  "main": "./dist/obniz/index.js",
+  "types": "./dist/obniz/index.d.ts",
+  "files": [
+    "dist",
+    "obniz.js",
+    "obniz.min.js"
+  ],
   "engines": {
     "node": ">=7.6.0"
   },
@@ -19,12 +24,13 @@
     "realtest-esp32": "mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "build": "npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build",
-    "build-ts": "npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . tsc",
+    "build-ts": "npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && git add obniz.js && git add obniz.min.js",
     "lint": "npm run lint-js && npm run lint-ts ",
     "lint-js": "eslint --fix ./src ./test --rulesdir ./devtools/eslint/rule ",
     "lint-ts": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' ",
-    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js"
+    "precommit": "lint-staged && npm run build && git add obniz.js && git add obniz.min.js",
+    "clean": "rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts"
   },
   "lint-staged": {
     "*.js": [

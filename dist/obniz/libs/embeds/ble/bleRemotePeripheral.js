@@ -144,8 +144,9 @@ class BleRemotePeripheral {
         };
     }
     _addServiceUuids(results, data, bit) {
-        if (!data)
+        if (!data) {
             return;
+        }
         let uuidLength = bit / 4;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             let one = data.slice(i, i + uuidLength);

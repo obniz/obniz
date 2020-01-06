@@ -2,7 +2,6 @@
 const debug = () => {};
 
 let events = require('events');
-let util = require('util');
 
 /* eslint-disable no-unused-vars */
 let ATT_OP_ERROR = 0x01;
@@ -63,521 +62,355 @@ let ATT_ECODE_INSUFF_RESOURCES = 0x11;
 /* eslint-enable no-unused-vars */
 let ATT_CID = 0x0004;
 
-let Gatt = function() {
-  this.maxMtu = 256;
-  this._mtu = 23;
-  this._preparedWriteRequest = null;
+class Gatt extends events.EventEmitter {
+  constructor() {
+    super();
+    this.maxMtu = 256;
+    this._mtu = 23;
+    this._preparedWriteRequest = null;
 
-  this.setServices([]);
+    this.setServices([]);
 
-  this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
-  this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
-};
+    this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
+    this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
+  }
 
-util.inherits(Gatt, events.EventEmitter);
+  setServices(services) {
+    // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
 
-Gatt.prototype.setServices = function(services) {
-  // var deviceName = process.env.BLENO_DEVICE_NAME || os.hostname();
+    // base services and characteristics
+    let allServices = [
+      // {
+      //   uuid: '1800',
+      //   characteristics: [
+      //     {
+      //       uuid: '2a00',
+      //       properties: ['read'],
+      //       secure: [],
+      //       value: Buffer.from(deviceName),
+      //       descriptors: []
+      //     },
+      //     {
+      //       uuid: '2a01',
+      //       properties: ['read'],
+      //       secure: [],
+      //       value: Buffer.from([0x80, 0x00]),
+      //       descriptors: []
+      //     }
+      //   ]
+      // },
+      // {
+      //   uuid: '1801',
+      //   characteristics: [
+      //     {
+      //       uuid: '2a05',
+      //       properties: ['indicate'],
+      //       secure: [],
+      //       value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
+      //       descriptors: []
+      //     }
+      //   ]
+      // }
+    ].concat(services);
 
-  // base services and characteristics
-  let allServices = [
-    // {
-    //   uuid: '1800',
-    //   characteristics: [
-    //     {
-    //       uuid: '2a00',
-    //       properties: ['read'],
-    //       secure: [],
-    //       value: Buffer.from(deviceName),
-    //       descriptors: []
-    //     },
-    //     {
-    //       uuid: '2a01',
-    //       properties: ['read'],
-    //       secure: [],
-    //       value: Buffer.from([0x80, 0x00]),
-    //       descriptors: []
-    //     }
-    //   ]
-    // },
-    // {
-    //   uuid: '1801',
-    //   characteristics: [
-    //     {
-    //       uuid: '2a05',
-    //       properties: ['indicate'],
-    //       secure: [],
-    //       value: Buffer.from([0x00, 0x00, 0x00, 0x00]),
-    //       descriptors: []
-    //     }
-    //   ]
-    // }
-  ].concat(services);
+    this._handles = [];
 
-  this._handles = [];
+    let handle = 0;
+    let i;
+    let j;
 
-  let handle = 0;
-  let i;
-  let j;
-
-  for (i = 0; i < allServices.length; i++) {
-    let service = allServices[i];
-
-    handle++;
-    let serviceHandle = handle;
-
-    this._handles[serviceHandle] = {
-      type: 'service',
-      uuid: service.uuid,
-      attribute: service,
-      startHandle: serviceHandle,
-      // endHandle filled in below
-    };
-
-    for (j = 0; j < service.characteristics.length; j++) {
-      let characteristic = service.characteristics[j];
-
-      let properties = 0;
-      let secure = 0;
-
-      if (characteristic.properties.indexOf('read') !== -1) {
-        properties |= 0x02;
-
-        if (characteristic.secure.indexOf('read') !== -1) {
-          secure |= 0x02;
-        }
-      }
-
-      if (characteristic.properties.indexOf('writeWithoutResponse') !== -1) {
-        properties |= 0x04;
-
-        if (characteristic.secure.indexOf('writeWithoutResponse') !== -1) {
-          secure |= 0x04;
-        }
-      }
-
-      if (characteristic.properties.indexOf('write') !== -1) {
-        properties |= 0x08;
-
-        if (characteristic.secure.indexOf('write') !== -1) {
-          secure |= 0x08;
-        }
-      }
-
-      if (characteristic.properties.indexOf('notify') !== -1) {
-        properties |= 0x10;
-
-        if (characteristic.secure.indexOf('notify') !== -1) {
-          secure |= 0x10;
-        }
-      }
-
-      if (characteristic.properties.indexOf('indicate') !== -1) {
-        properties |= 0x20;
-
-        if (characteristic.secure.indexOf('indicate') !== -1) {
-          secure |= 0x20;
-        }
-      }
+    for (i = 0; i < allServices.length; i++) {
+      let service = allServices[i];
 
       handle++;
-      let characteristicHandle = handle;
+      let serviceHandle = handle;
 
-      handle++;
-      let characteristicValueHandle = handle;
-
-      this._handles[characteristicHandle] = {
-        type: 'characteristic',
-        uuid: characteristic.uuid,
-        properties: properties,
-        secure: secure,
-        attribute: characteristic,
-        startHandle: characteristicHandle,
-        valueHandle: characteristicValueHandle,
+      this._handles[serviceHandle] = {
+        type: 'service',
+        uuid: service.uuid,
+        attribute: service,
+        startHandle: serviceHandle,
+        // endHandle filled in below
       };
 
-      this._handles[characteristicValueHandle] = {
-        type: 'characteristicValue',
-        handle: characteristicValueHandle,
-        value: characteristic.value,
-      };
+      for (j = 0; j < service.characteristics.length; j++) {
+        let characteristic = service.characteristics[j];
 
-      let hasCCCD = characteristic.descriptors.find(e => e.uuid === '2902');
-      if (hasCCCD || properties & 0x30) {
-        // notify or indicate
-        // add client characteristic configuration descriptor
+        let properties = 0;
+        let secure = 0;
+
+        if (characteristic.properties.indexOf('read') !== -1) {
+          properties |= 0x02;
+
+          if (characteristic.secure.indexOf('read') !== -1) {
+            secure |= 0x02;
+          }
+        }
+
+        if (characteristic.properties.indexOf('writeWithoutResponse') !== -1) {
+          properties |= 0x04;
+
+          if (characteristic.secure.indexOf('writeWithoutResponse') !== -1) {
+            secure |= 0x04;
+          }
+        }
+
+        if (characteristic.properties.indexOf('write') !== -1) {
+          properties |= 0x08;
+
+          if (characteristic.secure.indexOf('write') !== -1) {
+            secure |= 0x08;
+          }
+        }
+
+        if (characteristic.properties.indexOf('notify') !== -1) {
+          properties |= 0x10;
+
+          if (characteristic.secure.indexOf('notify') !== -1) {
+            secure |= 0x10;
+          }
+        }
+
+        if (characteristic.properties.indexOf('indicate') !== -1) {
+          properties |= 0x20;
+
+          if (characteristic.secure.indexOf('indicate') !== -1) {
+            secure |= 0x20;
+          }
+        }
 
         handle++;
-        let clientCharacteristicConfigurationDescriptorHandle = handle;
-        this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
-          type: 'descriptor',
-          handle: clientCharacteristicConfigurationDescriptorHandle,
-          uuid: '2902',
+        let characteristicHandle = handle;
+
+        handle++;
+        let characteristicValueHandle = handle;
+
+        this._handles[characteristicHandle] = {
+          type: 'characteristic',
+          uuid: characteristic.uuid,
+          properties: properties,
+          secure: secure,
           attribute: characteristic,
-          properties: 0x02 | 0x04 | 0x08, // read/write
-          secure: secure & 0x10 ? 0x02 | 0x04 | 0x08 : 0,
-          value: Buffer.from([0x00, 0x00]),
+          startHandle: characteristicHandle,
+          valueHandle: characteristicValueHandle,
         };
-      }
 
-      for (let k = 0; k < characteristic.descriptors.length; k++) {
-        let descriptor = characteristic.descriptors[k];
-        if (descriptor.uuid === '2902') {
-          continue;
+        this._handles[characteristicValueHandle] = {
+          type: 'characteristicValue',
+          handle: characteristicValueHandle,
+          value: characteristic.value,
+        };
+
+        let hasCCCD = characteristic.descriptors.find(e => e.uuid === '2902');
+        if (hasCCCD || properties & 0x30) {
+          // notify or indicate
+          // add client characteristic configuration descriptor
+
+          handle++;
+          let clientCharacteristicConfigurationDescriptorHandle = handle;
+          this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
+            type: 'descriptor',
+            handle: clientCharacteristicConfigurationDescriptorHandle,
+            uuid: '2902',
+            attribute: characteristic,
+            properties: 0x02 | 0x04 | 0x08, // read/write
+            secure: secure & 0x10 ? 0x02 | 0x04 | 0x08 : 0,
+            value: Buffer.from([0x00, 0x00]),
+          };
         }
-        handle++;
-        let descriptorHandle = handle;
 
-        this._handles[descriptorHandle] = {
-          type: 'descriptor',
-          handle: descriptorHandle,
-          uuid: descriptor.uuid,
-          attribute: descriptor,
-          properties: 0x02, // read only
-          secure: 0x00,
-          value: descriptor.value,
-        };
+        for (let k = 0; k < characteristic.descriptors.length; k++) {
+          let descriptor = characteristic.descriptors[k];
+          if (descriptor.uuid === '2902') {
+            continue;
+          }
+          handle++;
+          let descriptorHandle = handle;
+
+          this._handles[descriptorHandle] = {
+            type: 'descriptor',
+            handle: descriptorHandle,
+            uuid: descriptor.uuid,
+            attribute: descriptor,
+            properties: 0x02, // read only
+            secure: 0x00,
+            value: descriptor.value,
+          };
+        }
+      }
+
+      this._handles[serviceHandle].endHandle = handle;
+    }
+
+    let debugHandles = [];
+    for (i = 0; i < this._handles.length; i++) {
+      handle = this._handles[i];
+
+      debugHandles[i] = {};
+      for (j in handle) {
+        if (Buffer.isBuffer(handle[j])) {
+          debugHandles[i][j] = handle[j]
+            ? "Buffer('" + handle[j].toString('hex') + "', 'hex')"
+            : null;
+        } else if (j !== 'attribute') {
+          debugHandles[i][j] = handle[j];
+        }
       }
     }
 
-    this._handles[serviceHandle].endHandle = handle;
+    debug('handles = ' + JSON.stringify(debugHandles, null, 2));
   }
 
-  let debugHandles = [];
-  for (i = 0; i < this._handles.length; i++) {
-    handle = this._handles[i];
+  setAclStream(aclStream) {
+    this._mtu = 23;
+    this._preparedWriteRequest = null;
 
-    debugHandles[i] = {};
-    for (j in handle) {
-      if (Buffer.isBuffer(handle[j])) {
-        debugHandles[i][j] = handle[j]
-          ? "Buffer('" + handle[j].toString('hex') + "', 'hex')"
-          : null;
-      } else if (j !== 'attribute') {
-        debugHandles[i][j] = handle[j];
+    this._aclStream = aclStream;
+
+    this._aclStream.on('data', this.onAclStreamDataBinded);
+    this._aclStream.on('end', this.onAclStreamEndBinded);
+  }
+
+  onAclStreamData(cid, data) {
+    if (cid !== ATT_CID) {
+      return;
+    }
+
+    this.handleRequest(data);
+  }
+
+  onAclStreamEnd() {
+    this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+    this._aclStream.removeListener('end', this.onAclStreamEndBinded);
+
+    for (let i = 0; i < this._handles.length; i++) {
+      if (
+        this._handles[i] &&
+        this._handles[i].type === 'descriptor' &&
+        this._handles[i].uuid === '2902' &&
+        this._handles[i].value.readUInt16LE(0) !== 0
+      ) {
+        this._handles[i].value = Buffer.from([0x00, 0x00]);
+
+        if (this._handles[i].attribute && this._handles[i].attribute.emit) {
+          this._handles[i].attribute.emit('unsubscribe');
+        }
       }
     }
   }
 
-  debug('handles = ' + JSON.stringify(debugHandles, null, 2));
-};
-
-Gatt.prototype.setAclStream = function(aclStream) {
-  this._mtu = 23;
-  this._preparedWriteRequest = null;
-
-  this._aclStream = aclStream;
-
-  this._aclStream.on('data', this.onAclStreamDataBinded);
-  this._aclStream.on('end', this.onAclStreamEndBinded);
-};
-
-Gatt.prototype.onAclStreamData = function(cid, data) {
-  if (cid !== ATT_CID) {
-    return;
+  send(data) {
+    debug('send: ' + data.toString('hex'));
+    this._aclStream.write(ATT_CID, data);
   }
 
-  this.handleRequest(data);
-};
+  errorResponse(opcode, handle, status) {
+    let buf = Buffer.alloc(5);
 
-Gatt.prototype.onAclStreamEnd = function() {
-  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
-  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
+    buf.writeUInt8(ATT_OP_ERROR, 0);
+    buf.writeUInt8(opcode, 1);
+    buf.writeUInt16LE(handle, 2);
+    buf.writeUInt8(status, 4);
 
-  for (let i = 0; i < this._handles.length; i++) {
-    if (
-      this._handles[i] &&
-      this._handles[i].type === 'descriptor' &&
-      this._handles[i].uuid === '2902' &&
-      this._handles[i].value.readUInt16LE(0) !== 0
-    ) {
-      this._handles[i].value = Buffer.from([0x00, 0x00]);
-
-      if (this._handles[i].attribute && this._handles[i].attribute.emit) {
-        this._handles[i].attribute.emit('unsubscribe');
-      }
-    }
-  }
-};
-
-Gatt.prototype.send = function(data) {
-  debug('send: ' + data.toString('hex'));
-  this._aclStream.write(ATT_CID, data);
-};
-
-Gatt.prototype.errorResponse = function(opcode, handle, status) {
-  let buf = Buffer.alloc(5);
-
-  buf.writeUInt8(ATT_OP_ERROR, 0);
-  buf.writeUInt8(opcode, 1);
-  buf.writeUInt16LE(handle, 2);
-  buf.writeUInt8(status, 4);
-
-  return buf;
-};
-
-Gatt.prototype.handleRequest = function(request) {
-  debug('handing request: ' + request.toString('hex'));
-
-  let requestType = request[0];
-  let response = null;
-
-  switch (requestType) {
-    case ATT_OP_MTU_REQ:
-      response = this.handleMtuRequest(request);
-      break;
-
-    case ATT_OP_FIND_INFO_REQ:
-      response = this.handleFindInfoRequest(request);
-      break;
-
-    case ATT_OP_FIND_BY_TYPE_REQ:
-      response = this.handleFindByTypeRequest(request);
-      break;
-
-    case ATT_OP_READ_BY_TYPE_REQ:
-      response = this.handleReadByTypeRequest(request);
-      break;
-
-    case ATT_OP_READ_REQ:
-    case ATT_OP_READ_BLOB_REQ:
-      response = this.handleReadOrReadBlobRequest(request);
-      break;
-
-    case ATT_OP_READ_BY_GROUP_REQ:
-      response = this.handleReadByGroupRequest(request);
-      break;
-
-    case ATT_OP_WRITE_REQ:
-    case ATT_OP_WRITE_CMD:
-      response = this.handleWriteRequestOrCommand(request);
-      break;
-
-    case ATT_OP_PREP_WRITE_REQ:
-      response = this.handlePrepareWriteRequest(request);
-      break;
-
-    case ATT_OP_EXEC_WRITE_REQ:
-      response = this.handleExecuteWriteRequest(request);
-      break;
-
-    case ATT_OP_HANDLE_CNF:
-      response = this.handleConfirmation(request);
-      break;
-
-    default:
-    case ATT_OP_READ_MULTI_REQ:
-    case ATT_OP_SIGNED_WRITE_CMD:
-      response = this.errorResponse(
-        requestType,
-        0x0000,
-        ATT_ECODE_REQ_NOT_SUPP
-      );
-      break;
+    return buf;
   }
 
-  if (response) {
-    debug('response: ' + response.toString('hex'));
+  handleRequest(request) {
+    debug('handing request: ' + request.toString('hex'));
 
-    this.send(response);
-  }
-};
+    let requestType = request[0];
+    let response = null;
 
-Gatt.prototype.handleMtuRequest = function(request) {
-  let mtu = request.readUInt16LE(1);
-
-  if (mtu < 23) {
-    mtu = 23;
-  } else if (mtu > this.maxMtu) {
-    mtu = this.maxMtu;
-  }
-
-  this._mtu = mtu;
-
-  this.emit('mtuChange', this._mtu);
-
-  let response = Buffer.alloc(3);
-
-  response.writeUInt8(ATT_OP_MTU_RESP, 0);
-  response.writeUInt16LE(mtu, 1);
-
-  return response;
-};
-
-Gatt.prototype.handleFindInfoRequest = function(request) {
-  let response = null;
-
-  let startHandle = request.readUInt16LE(1);
-  let endHandle = request.readUInt16LE(3);
-
-  let infos = [];
-  let uuid = null;
-  let i;
-
-  for (i = startHandle; i <= endHandle; i++) {
-    let handle = this._handles[i];
-
-    if (!handle) {
-      break;
-    }
-
-    uuid = null;
-
-    if ('service' === handle.type) {
-      uuid = '2800';
-    } else if ('includedService' === handle.type) {
-      uuid = '2802';
-    } else if ('characteristic' === handle.type) {
-      uuid = '2803';
-    } else if ('characteristicValue' === handle.type) {
-      uuid = this._handles[i - 1].uuid;
-    } else if ('descriptor' === handle.type) {
-      uuid = handle.uuid;
-    }
-
-    if (uuid) {
-      infos.push({
-        handle: i,
-        uuid: uuid,
-      });
-    }
-  }
-
-  if (infos.length) {
-    let uuidSize = infos[0].uuid.length / 2;
-    let numInfo = 1;
-
-    for (i = 1; i < infos.length; i++) {
-      if (infos[0].uuid.length !== infos[i].uuid.length) {
+    switch (requestType) {
+      case ATT_OP_MTU_REQ:
+        response = this.handleMtuRequest(request);
         break;
-      }
-      numInfo++;
+
+      case ATT_OP_FIND_INFO_REQ:
+        response = this.handleFindInfoRequest(request);
+        break;
+
+      case ATT_OP_FIND_BY_TYPE_REQ:
+        response = this.handleFindByTypeRequest(request);
+        break;
+
+      case ATT_OP_READ_BY_TYPE_REQ:
+        response = this.handleReadByTypeRequest(request);
+        break;
+
+      case ATT_OP_READ_REQ:
+      case ATT_OP_READ_BLOB_REQ:
+        response = this.handleReadOrReadBlobRequest(request);
+        break;
+
+      case ATT_OP_READ_BY_GROUP_REQ:
+        response = this.handleReadByGroupRequest(request);
+        break;
+
+      case ATT_OP_WRITE_REQ:
+      case ATT_OP_WRITE_CMD:
+        response = this.handleWriteRequestOrCommand(request);
+        break;
+
+      case ATT_OP_PREP_WRITE_REQ:
+        response = this.handlePrepareWriteRequest(request);
+        break;
+
+      case ATT_OP_EXEC_WRITE_REQ:
+        response = this.handleExecuteWriteRequest(request);
+        break;
+
+      case ATT_OP_HANDLE_CNF:
+        response = this.handleConfirmation(request);
+        break;
+
+      default:
+      case ATT_OP_READ_MULTI_REQ:
+      case ATT_OP_SIGNED_WRITE_CMD:
+        response = this.errorResponse(
+          requestType,
+          0x0000,
+          ATT_ECODE_REQ_NOT_SUPP
+        );
+        break;
     }
 
-    let lengthPerInfo = uuidSize === 2 ? 4 : 18;
-    let maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
-    numInfo = Math.min(numInfo, maxInfo);
+    if (response) {
+      debug('response: ' + response.toString('hex'));
 
-    response = Buffer.alloc(2 + numInfo * lengthPerInfo);
-
-    response[0] = ATT_OP_FIND_INFO_RESP;
-    response[1] = uuidSize === 2 ? 0x01 : 0x2;
-
-    for (i = 0; i < numInfo; i++) {
-      let info = infos[i];
-
-      response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
-
-      uuid = Buffer.from(
-        info.uuid
-          .match(/.{1,2}/g)
-          .reverse()
-          .join(''),
-        'hex'
-      );
-      for (let j = 0; j < uuid.length; j++) {
-        response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
-      }
-    }
-  } else {
-    response = this.errorResponse(
-      ATT_OP_FIND_INFO_REQ,
-      startHandle,
-      ATT_ECODE_ATTR_NOT_FOUND
-    );
-  }
-
-  return response;
-};
-
-Gatt.prototype.handleFindByTypeRequest = function(request) {
-  let response = null;
-
-  let startHandle = request.readUInt16LE(1);
-  let endHandle = request.readUInt16LE(3);
-  let uuid = request
-    .slice(5, 7)
-    .toString('hex')
-    .match(/.{1,2}/g)
-    .reverse()
-    .join('');
-  let value = request
-    .slice(7)
-    .toString('hex')
-    .match(/.{1,2}/g)
-    .reverse()
-    .join('');
-
-  let handles = [];
-  let handle;
-
-  for (let i = startHandle; i <= endHandle; i++) {
-    handle = this._handles[i];
-
-    if (!handle) {
-      break;
-    }
-
-    if ('2800' === uuid && handle.type === 'service' && handle.uuid === value) {
-      handles.push({
-        start: handle.startHandle,
-        end: handle.endHandle,
-      });
+      this.send(response);
     }
   }
 
-  if (handles.length) {
-    let lengthPerHandle = 4;
-    let numHandles = handles.length;
-    let maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
+  handleMtuRequest(request) {
+    let mtu = request.readUInt16LE(1);
 
-    numHandles = Math.min(numHandles, maxHandles);
-
-    response = Buffer.alloc(1 + numHandles * lengthPerHandle);
-
-    response[0] = ATT_OP_FIND_BY_TYPE_RESP;
-
-    for (let i = 0; i < numHandles; i++) {
-      handle = handles[i];
-
-      response.writeUInt16LE(handle.start, 1 + i * lengthPerHandle);
-      response.writeUInt16LE(handle.end, 1 + i * lengthPerHandle + 2);
+    if (mtu < 23) {
+      mtu = 23;
+    } else if (mtu > this.maxMtu) {
+      mtu = this.maxMtu;
     }
-  } else {
-    response = this.errorResponse(
-      ATT_OP_FIND_BY_TYPE_REQ,
-      startHandle,
-      ATT_ECODE_ATTR_NOT_FOUND
-    );
+
+    this._mtu = mtu;
+
+    this.emit('mtuChange', this._mtu);
+
+    let response = Buffer.alloc(3);
+
+    response.writeUInt8(ATT_OP_MTU_RESP, 0);
+    response.writeUInt16LE(mtu, 1);
+
+    return response;
   }
 
-  return response;
-};
+  handleFindInfoRequest(request) {
+    let response = null;
 
-Gatt.prototype.handleReadByGroupRequest = function(request) {
-  let response = null;
+    let startHandle = request.readUInt16LE(1);
+    let endHandle = request.readUInt16LE(3);
 
-  let startHandle = request.readUInt16LE(1);
-  let endHandle = request.readUInt16LE(3);
-  let uuid = request
-    .slice(5)
-    .toString('hex')
-    .match(/.{1,2}/g)
-    .reverse()
-    .join('');
-
-  debug(
-    'read by group: startHandle = 0x' +
-      startHandle.toString(16) +
-      ', endHandle = 0x' +
-      endHandle.toString(16) +
-      ', uuid = 0x' +
-      uuid.toString(16)
-  );
-
-  if ('2800' === uuid || '2802' === uuid) {
-    let services = [];
-    let type = '2800' === uuid ? 'service' : 'includedService';
+    let infos = [];
+    let uuid = null;
     let i;
 
     for (i = startHandle; i <= endHandle; i++) {
@@ -587,206 +420,449 @@ Gatt.prototype.handleReadByGroupRequest = function(request) {
         break;
       }
 
-      if (handle.type === type) {
-        services.push(handle);
+      uuid = null;
+
+      if ('service' === handle.type) {
+        uuid = '2800';
+      } else if ('includedService' === handle.type) {
+        uuid = '2802';
+      } else if ('characteristic' === handle.type) {
+        uuid = '2803';
+      } else if ('characteristicValue' === handle.type) {
+        uuid = this._handles[i - 1].uuid;
+      } else if ('descriptor' === handle.type) {
+        uuid = handle.uuid;
+      }
+
+      if (uuid) {
+        infos.push({
+          handle: i,
+          uuid: uuid,
+        });
       }
     }
 
-    if (services.length) {
-      let uuidSize = services[0].uuid.length / 2;
-      let numServices = 1;
+    if (infos.length) {
+      let uuidSize = infos[0].uuid.length / 2;
+      let numInfo = 1;
 
-      for (i = 1; i < services.length; i++) {
-        if (services[0].uuid.length !== services[i].uuid.length) {
+      for (i = 1; i < infos.length; i++) {
+        if (infos[0].uuid.length !== infos[i].uuid.length) {
           break;
         }
-        numServices++;
+        numInfo++;
       }
 
-      let lengthPerService = uuidSize === 2 ? 6 : 20;
-      let maxServices = Math.floor((this._mtu - 2) / lengthPerService);
-      numServices = Math.min(numServices, maxServices);
+      let lengthPerInfo = uuidSize === 2 ? 4 : 18;
+      let maxInfo = Math.floor((this._mtu - 2) / lengthPerInfo);
+      numInfo = Math.min(numInfo, maxInfo);
 
-      response = Buffer.alloc(2 + numServices * lengthPerService);
+      response = Buffer.alloc(2 + numInfo * lengthPerInfo);
 
-      response[0] = ATT_OP_READ_BY_GROUP_RESP;
-      response[1] = lengthPerService;
+      response[0] = ATT_OP_FIND_INFO_RESP;
+      response[1] = uuidSize === 2 ? 0x01 : 0x2;
 
-      for (i = 0; i < numServices; i++) {
-        let service = services[i];
+      for (i = 0; i < numInfo; i++) {
+        let info = infos[i];
 
-        response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
-        response.writeUInt16LE(service.endHandle, 2 + i * lengthPerService + 2);
+        response.writeUInt16LE(info.handle, 2 + i * lengthPerInfo);
 
-        let serviceUuid = Buffer.from(
-          service.uuid
+        uuid = Buffer.from(
+          info.uuid
             .match(/.{1,2}/g)
             .reverse()
             .join(''),
           'hex'
         );
-        for (let j = 0; j < serviceUuid.length; j++) {
-          response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
+        for (let j = 0; j < uuid.length; j++) {
+          response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
         }
+      }
+    } else {
+      response = this.errorResponse(
+        ATT_OP_FIND_INFO_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
+    }
+
+    return response;
+  }
+
+  handleFindByTypeRequest(request) {
+    let response = null;
+
+    let startHandle = request.readUInt16LE(1);
+    let endHandle = request.readUInt16LE(3);
+    let uuid = request
+      .slice(5, 7)
+      .toString('hex')
+      .match(/.{1,2}/g)
+      .reverse()
+      .join('');
+    let value = request
+      .slice(7)
+      .toString('hex')
+      .match(/.{1,2}/g)
+      .reverse()
+      .join('');
+
+    let handles = [];
+    let handle;
+
+    for (let i = startHandle; i <= endHandle; i++) {
+      handle = this._handles[i];
+
+      if (!handle) {
+        break;
+      }
+
+      if (
+        '2800' === uuid &&
+        handle.type === 'service' &&
+        handle.uuid === value
+      ) {
+        handles.push({
+          start: handle.startHandle,
+          end: handle.endHandle,
+        });
+      }
+    }
+
+    if (handles.length) {
+      let lengthPerHandle = 4;
+      let numHandles = handles.length;
+      let maxHandles = Math.floor((this._mtu - 1) / lengthPerHandle);
+
+      numHandles = Math.min(numHandles, maxHandles);
+
+      response = Buffer.alloc(1 + numHandles * lengthPerHandle);
+
+      response[0] = ATT_OP_FIND_BY_TYPE_RESP;
+
+      for (let i = 0; i < numHandles; i++) {
+        handle = handles[i];
+
+        response.writeUInt16LE(handle.start, 1 + i * lengthPerHandle);
+        response.writeUInt16LE(handle.end, 1 + i * lengthPerHandle + 2);
+      }
+    } else {
+      response = this.errorResponse(
+        ATT_OP_FIND_BY_TYPE_REQ,
+        startHandle,
+        ATT_ECODE_ATTR_NOT_FOUND
+      );
+    }
+
+    return response;
+  }
+
+  handleReadByGroupRequest(request) {
+    let response = null;
+
+    let startHandle = request.readUInt16LE(1);
+    let endHandle = request.readUInt16LE(3);
+    let uuid = request
+      .slice(5)
+      .toString('hex')
+      .match(/.{1,2}/g)
+      .reverse()
+      .join('');
+
+    debug(
+      'read by group: startHandle = 0x' +
+        startHandle.toString(16) +
+        ', endHandle = 0x' +
+        endHandle.toString(16) +
+        ', uuid = 0x' +
+        uuid.toString(16)
+    );
+
+    if ('2800' === uuid || '2802' === uuid) {
+      let services = [];
+      let type = '2800' === uuid ? 'service' : 'includedService';
+      let i;
+
+      for (i = startHandle; i <= endHandle; i++) {
+        let handle = this._handles[i];
+
+        if (!handle) {
+          break;
+        }
+
+        if (handle.type === type) {
+          services.push(handle);
+        }
+      }
+
+      if (services.length) {
+        let uuidSize = services[0].uuid.length / 2;
+        let numServices = 1;
+
+        for (i = 1; i < services.length; i++) {
+          if (services[0].uuid.length !== services[i].uuid.length) {
+            break;
+          }
+          numServices++;
+        }
+
+        let lengthPerService = uuidSize === 2 ? 6 : 20;
+        let maxServices = Math.floor((this._mtu - 2) / lengthPerService);
+        numServices = Math.min(numServices, maxServices);
+
+        response = Buffer.alloc(2 + numServices * lengthPerService);
+
+        response[0] = ATT_OP_READ_BY_GROUP_RESP;
+        response[1] = lengthPerService;
+
+        for (i = 0; i < numServices; i++) {
+          let service = services[i];
+
+          response.writeUInt16LE(service.startHandle, 2 + i * lengthPerService);
+          response.writeUInt16LE(
+            service.endHandle,
+            2 + i * lengthPerService + 2
+          );
+
+          let serviceUuid = Buffer.from(
+            service.uuid
+              .match(/.{1,2}/g)
+              .reverse()
+              .join(''),
+            'hex'
+          );
+          for (let j = 0; j < serviceUuid.length; j++) {
+            response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
+          }
+        }
+      } else {
+        response = this.errorResponse(
+          ATT_OP_READ_BY_GROUP_REQ,
+          startHandle,
+          ATT_ECODE_ATTR_NOT_FOUND
+        );
       }
     } else {
       response = this.errorResponse(
         ATT_OP_READ_BY_GROUP_REQ,
         startHandle,
-        ATT_ECODE_ATTR_NOT_FOUND
+        ATT_ECODE_UNSUPP_GRP_TYPE
       );
     }
-  } else {
-    response = this.errorResponse(
-      ATT_OP_READ_BY_GROUP_REQ,
-      startHandle,
-      ATT_ECODE_UNSUPP_GRP_TYPE
-    );
+
+    return response;
   }
 
-  return response;
-};
+  handleReadByTypeRequest(request) {
+    let response = null;
+    let requestType = request[0];
 
-Gatt.prototype.handleReadByTypeRequest = function(request) {
-  let response = null;
-  let requestType = request[0];
+    let startHandle = request.readUInt16LE(1);
+    let endHandle = request.readUInt16LE(3);
+    let uuid = request
+      .slice(5)
+      .toString('hex')
+      .match(/.{1,2}/g)
+      .reverse()
+      .join('');
+    let i;
+    let handle;
 
-  let startHandle = request.readUInt16LE(1);
-  let endHandle = request.readUInt16LE(3);
-  let uuid = request
-    .slice(5)
-    .toString('hex')
-    .match(/.{1,2}/g)
-    .reverse()
-    .join('');
-  let i;
-  let handle;
+    debug(
+      'read by type: startHandle = 0x' +
+        startHandle.toString(16) +
+        ', endHandle = 0x' +
+        endHandle.toString(16) +
+        ', uuid = 0x' +
+        uuid.toString(16)
+    );
 
-  debug(
-    'read by type: startHandle = 0x' +
-      startHandle.toString(16) +
-      ', endHandle = 0x' +
-      endHandle.toString(16) +
-      ', uuid = 0x' +
-      uuid.toString(16)
-  );
+    if ('2803' === uuid) {
+      let characteristics = [];
 
-  if ('2803' === uuid) {
-    let characteristics = [];
+      for (i = startHandle; i <= endHandle; i++) {
+        handle = this._handles[i];
 
-    for (i = startHandle; i <= endHandle; i++) {
-      handle = this._handles[i];
-
-      if (!handle) {
-        break;
-      }
-
-      if (handle.type === 'characteristic') {
-        characteristics.push(handle);
-      }
-    }
-
-    if (characteristics.length) {
-      let uuidSize = characteristics[0].uuid.length / 2;
-      let numCharacteristics = 1;
-
-      for (i = 1; i < characteristics.length; i++) {
-        if (characteristics[0].uuid.length !== characteristics[i].uuid.length) {
+        if (!handle) {
           break;
         }
-        numCharacteristics++;
-      }
 
-      let lengthPerCharacteristic = uuidSize === 2 ? 7 : 21;
-      let maxCharacteristics = Math.floor(
-        (this._mtu - 2) / lengthPerCharacteristic
-      );
-      numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
-
-      response = Buffer.alloc(2 + numCharacteristics * lengthPerCharacteristic);
-
-      response[0] = ATT_OP_READ_BY_TYPE_RESP;
-      response[1] = lengthPerCharacteristic;
-
-      for (i = 0; i < numCharacteristics; i++) {
-        let characteristic = characteristics[i];
-
-        response.writeUInt16LE(
-          characteristic.startHandle,
-          2 + i * lengthPerCharacteristic
-        );
-        response.writeUInt8(
-          characteristic.properties,
-          2 + i * lengthPerCharacteristic + 2
-        );
-        response.writeUInt16LE(
-          characteristic.valueHandle,
-          2 + i * lengthPerCharacteristic + 3
-        );
-
-        let characteristicUuid = Buffer.from(
-          characteristic.uuid
-            .match(/.{1,2}/g)
-            .reverse()
-            .join(''),
-          'hex'
-        );
-        for (let j = 0; j < characteristicUuid.length; j++) {
-          response[2 + i * lengthPerCharacteristic + 5 + j] =
-            characteristicUuid[j];
+        if (handle.type === 'characteristic') {
+          characteristics.push(handle);
         }
       }
+
+      if (characteristics.length) {
+        let uuidSize = characteristics[0].uuid.length / 2;
+        let numCharacteristics = 1;
+
+        for (i = 1; i < characteristics.length; i++) {
+          if (
+            characteristics[0].uuid.length !== characteristics[i].uuid.length
+          ) {
+            break;
+          }
+          numCharacteristics++;
+        }
+
+        let lengthPerCharacteristic = uuidSize === 2 ? 7 : 21;
+        let maxCharacteristics = Math.floor(
+          (this._mtu - 2) / lengthPerCharacteristic
+        );
+        numCharacteristics = Math.min(numCharacteristics, maxCharacteristics);
+
+        response = Buffer.alloc(
+          2 + numCharacteristics * lengthPerCharacteristic
+        );
+
+        response[0] = ATT_OP_READ_BY_TYPE_RESP;
+        response[1] = lengthPerCharacteristic;
+
+        for (i = 0; i < numCharacteristics; i++) {
+          let characteristic = characteristics[i];
+
+          response.writeUInt16LE(
+            characteristic.startHandle,
+            2 + i * lengthPerCharacteristic
+          );
+          response.writeUInt8(
+            characteristic.properties,
+            2 + i * lengthPerCharacteristic + 2
+          );
+          response.writeUInt16LE(
+            characteristic.valueHandle,
+            2 + i * lengthPerCharacteristic + 3
+          );
+
+          let characteristicUuid = Buffer.from(
+            characteristic.uuid
+              .match(/.{1,2}/g)
+              .reverse()
+              .join(''),
+            'hex'
+          );
+          for (let j = 0; j < characteristicUuid.length; j++) {
+            response[2 + i * lengthPerCharacteristic + 5 + j] =
+              characteristicUuid[j];
+          }
+        }
+      } else {
+        response = this.errorResponse(
+          ATT_OP_READ_BY_TYPE_REQ,
+          startHandle,
+          ATT_ECODE_ATTR_NOT_FOUND
+        );
+      }
     } else {
-      response = this.errorResponse(
-        ATT_OP_READ_BY_TYPE_REQ,
-        startHandle,
-        ATT_ECODE_ATTR_NOT_FOUND
-      );
-    }
-  } else {
-    let handleAttribute = null;
-    let valueHandle = null;
-    let secure = false;
+      let handleAttribute = null;
+      let valueHandle = null;
+      let secure = false;
 
-    for (i = startHandle; i <= endHandle; i++) {
-      handle = this._handles[i];
+      for (i = startHandle; i <= endHandle; i++) {
+        handle = this._handles[i];
 
-      if (!handle) {
-        break;
+        if (!handle) {
+          break;
+        }
+
+        if (handle.type === 'characteristic' && handle.uuid === uuid) {
+          handleAttribute = handle.attribute;
+          valueHandle = handle.valueHandle;
+          secure = handle.secure & 0x02;
+          break;
+        } else if (handle.type === 'descriptor' && handle.uuid === uuid) {
+          valueHandle = i;
+          secure = handle.secure & 0x02;
+          break;
+        }
       }
 
-      if (handle.type === 'characteristic' && handle.uuid === uuid) {
-        handleAttribute = handle.attribute;
-        valueHandle = handle.valueHandle;
-        secure = handle.secure & 0x02;
-        break;
-      } else if (handle.type === 'descriptor' && handle.uuid === uuid) {
-        valueHandle = i;
-        secure = handle.secure & 0x02;
-        break;
+      if (secure && !this._aclStream.encrypted) {
+        response = this.errorResponse(
+          ATT_OP_READ_BY_TYPE_REQ,
+          startHandle,
+          ATT_ECODE_AUTHENTICATION
+        );
+      } else if (valueHandle) {
+        let callback = function(valueHandle) {
+          return function(result, data) {
+            let callbackResponse = null;
+
+            if (ATT_ECODE_SUCCESS === result) {
+              let dataLength = Math.min(data.length, this._mtu - 4);
+              callbackResponse = Buffer.alloc(4 + dataLength);
+
+              callbackResponse[0] = ATT_OP_READ_BY_TYPE_RESP;
+              callbackResponse[1] = dataLength + 2;
+              callbackResponse.writeUInt16LE(valueHandle, 2);
+              for (i = 0; i < dataLength; i++) {
+                callbackResponse[4 + i] = data[i];
+              }
+            } else {
+              callbackResponse = this.errorResponse(
+                requestType,
+                valueHandle,
+                result
+              );
+            }
+
+            debug('read by type response: ' + callbackResponse.toString('hex'));
+
+            this.send(callbackResponse);
+          }.bind(this);
+        }.bind(this)(valueHandle);
+
+        let data = this._handles[valueHandle].value;
+
+        if (data) {
+          callback(ATT_ECODE_SUCCESS, data);
+        } else if (handleAttribute) {
+          handleAttribute.emit('readRequest', 0, callback);
+        } else {
+          callback(ATT_ECODE_UNLIKELY);
+        }
+      } else {
+        response = this.errorResponse(
+          ATT_OP_READ_BY_TYPE_REQ,
+          startHandle,
+          ATT_ECODE_ATTR_NOT_FOUND
+        );
       }
     }
 
-    if (secure && !this._aclStream.encrypted) {
-      response = this.errorResponse(
-        ATT_OP_READ_BY_TYPE_REQ,
-        startHandle,
-        ATT_ECODE_AUTHENTICATION
-      );
-    } else if (valueHandle) {
-      let callback = function(valueHandle) {
+    return response;
+  }
+
+  handleReadOrReadBlobRequest(request) {
+    let response = null;
+
+    let requestType = request[0];
+    let valueHandle = request.readUInt16LE(1);
+    let offset =
+      requestType === ATT_OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
+
+    let handle = this._handles[valueHandle];
+    let i;
+
+    if (handle) {
+      let result = null;
+      let data = null;
+      let handleType = handle.type;
+
+      let callback = function(requestType, valueHandle) {
         return function(result, data) {
           let callbackResponse = null;
 
           if (ATT_ECODE_SUCCESS === result) {
-            let dataLength = Math.min(data.length, this._mtu - 4);
-            callbackResponse = Buffer.alloc(4 + dataLength);
+            let dataLength = Math.min(data.length, this._mtu - 1);
+            callbackResponse = Buffer.alloc(1 + dataLength);
 
-            callbackResponse[0] = ATT_OP_READ_BY_TYPE_RESP;
-            callbackResponse[1] = dataLength + 2;
-            callbackResponse.writeUInt16LE(valueHandle, 2);
+            callbackResponse[0] =
+              requestType === ATT_OP_READ_BLOB_REQ
+                ? ATT_OP_READ_BLOB_RESP
+                : ATT_OP_READ_RESP;
             for (i = 0; i < dataLength; i++) {
-              callbackResponse[4 + i] = data[i];
+              callbackResponse[1 + i] = data[i];
             }
           } else {
             callbackResponse = this.errorResponse(
@@ -796,371 +872,226 @@ Gatt.prototype.handleReadByTypeRequest = function(request) {
             );
           }
 
-          debug('read by type response: ' + callbackResponse.toString('hex'));
+          debug('read response: ' + callbackResponse.toString('hex'));
 
           this.send(callbackResponse);
         }.bind(this);
-      }.bind(this)(valueHandle);
+      }.bind(this)(requestType, valueHandle);
 
-      let data = this._handles[valueHandle].value;
+      if (handleType === 'service' || handleType === 'includedService') {
+        result = ATT_ECODE_SUCCESS;
+        data = Buffer.from(
+          handle.uuid
+            .match(/.{1,2}/g)
+            .reverse()
+            .join(''),
+          'hex'
+        );
+      } else if (handleType === 'characteristic') {
+        let uuid = Buffer.from(
+          handle.uuid
+            .match(/.{1,2}/g)
+            .reverse()
+            .join(''),
+          'hex'
+        );
 
-      if (data) {
-        callback(ATT_ECODE_SUCCESS, data);
-      } else if (handleAttribute) {
-        handleAttribute.emit('readRequest', 0, callback);
-      } else {
-        callback(ATT_ECODE_UNLIKELY);
-      }
-    } else {
-      response = this.errorResponse(
-        ATT_OP_READ_BY_TYPE_REQ,
-        startHandle,
-        ATT_ECODE_ATTR_NOT_FOUND
-      );
-    }
-  }
+        result = ATT_ECODE_SUCCESS;
+        data = Buffer.alloc(3 + uuid.length);
+        data.writeUInt8(handle.properties, 0);
+        data.writeUInt16LE(handle.valueHandle, 1);
 
-  return response;
-};
-
-Gatt.prototype.handleReadOrReadBlobRequest = function(request) {
-  let response = null;
-
-  let requestType = request[0];
-  let valueHandle = request.readUInt16LE(1);
-  let offset =
-    requestType === ATT_OP_READ_BLOB_REQ ? request.readUInt16LE(3) : 0;
-
-  let handle = this._handles[valueHandle];
-  let i;
-
-  if (handle) {
-    let result = null;
-    let data = null;
-    let handleType = handle.type;
-
-    let callback = function(requestType, valueHandle) {
-      return function(result, data) {
-        let callbackResponse = null;
-
-        if (ATT_ECODE_SUCCESS === result) {
-          let dataLength = Math.min(data.length, this._mtu - 1);
-          callbackResponse = Buffer.alloc(1 + dataLength);
-
-          callbackResponse[0] =
-            requestType === ATT_OP_READ_BLOB_REQ
-              ? ATT_OP_READ_BLOB_RESP
-              : ATT_OP_READ_RESP;
-          for (i = 0; i < dataLength; i++) {
-            callbackResponse[1 + i] = data[i];
-          }
-        } else {
-          callbackResponse = this.errorResponse(
-            requestType,
-            valueHandle,
-            result
-          );
+        for (i = 0; i < uuid.length; i++) {
+          data[i + 3] = uuid[i];
         }
-
-        debug('read response: ' + callbackResponse.toString('hex'));
-
-        this.send(callbackResponse);
-      }.bind(this);
-    }.bind(this)(requestType, valueHandle);
-
-    if (handleType === 'service' || handleType === 'includedService') {
-      result = ATT_ECODE_SUCCESS;
-      data = Buffer.from(
-        handle.uuid
-          .match(/.{1,2}/g)
-          .reverse()
-          .join(''),
-        'hex'
-      );
-    } else if (handleType === 'characteristic') {
-      let uuid = Buffer.from(
-        handle.uuid
-          .match(/.{1,2}/g)
-          .reverse()
-          .join(''),
-        'hex'
-      );
-
-      result = ATT_ECODE_SUCCESS;
-      data = Buffer.alloc(3 + uuid.length);
-      data.writeUInt8(handle.properties, 0);
-      data.writeUInt16LE(handle.valueHandle, 1);
-
-      for (i = 0; i < uuid.length; i++) {
-        data[i + 3] = uuid[i];
-      }
-    } else if (
-      handleType === 'characteristicValue' ||
-      handleType === 'descriptor'
-    ) {
-      let handleProperties = handle.properties;
-      let handleSecure = handle.secure;
-      let handleAttribute = handle.attribute;
-      if (handleType === 'characteristicValue') {
-        handleProperties = this._handles[valueHandle - 1].properties;
-        handleSecure = this._handles[valueHandle - 1].secure;
-        handleAttribute = this._handles[valueHandle - 1].attribute;
-      }
-
-      if (handleProperties & 0x02) {
-        if (handleSecure & 0x02 && !this._aclStream.encrypted) {
-          result = ATT_ECODE_AUTHENTICATION;
-        } else {
-          data = handle.value;
-
-          if (data) {
-            result = ATT_ECODE_SUCCESS;
-          } else {
-            handleAttribute.emit('readRequest', offset, callback);
-          }
-        }
-      } else {
-        result = ATT_ECODE_READ_NOT_PERM; // non-readable
-      }
-    }
-
-    if (data && typeof data === 'string') {
-      data = Buffer.alloc(data);
-    }
-
-    if (result === ATT_ECODE_SUCCESS && data && offset) {
-      if (data.length < offset) {
-        result = ATT_ECODE_INVALID_OFFSET;
-        data = null;
-      } else {
-        data = data.slice(offset);
-      }
-    }
-
-    if (result !== null) {
-      callback(result, data);
-    }
-  } else {
-    response = this.errorResponse(
-      requestType,
-      valueHandle,
-      ATT_ECODE_INVALID_HANDLE
-    );
-  }
-
-  return response;
-};
-
-Gatt.prototype.handleWriteRequestOrCommand = function(request) {
-  let response = null;
-
-  let requestType = request[0];
-  let withoutResponse = requestType === ATT_OP_WRITE_CMD;
-  let valueHandle = request.readUInt16LE(1);
-  let data = request.slice(3);
-  let offset = 0;
-
-  let handle = this._handles[valueHandle];
-
-  if (handle) {
-    if (handle.type === 'characteristicValue') {
-      handle = this._handles[valueHandle - 1];
-    }
-
-    let handleProperties = handle.properties;
-    let handleSecure = handle.secure;
-
-    if (
-      handleProperties &&
-      (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)
-    ) {
-      let callback = function(requestType, valueHandle, withoutResponse) {
-        return function(result) {
-          if (!withoutResponse) {
-            let callbackResponse = null;
-
-            if (ATT_ECODE_SUCCESS === result) {
-              callbackResponse = Buffer.from([ATT_OP_WRITE_RESP]);
-            } else {
-              callbackResponse = this.errorResponse(
-                requestType,
-                valueHandle,
-                result
-              );
-            }
-
-            debug('write response: ' + callbackResponse.toString('hex'));
-
-            this.send(callbackResponse);
-          }
-        }.bind(this);
-      }.bind(this)(requestType, valueHandle, withoutResponse);
-
-      if (
-        handleSecure & (withoutResponse ? 0x04 : 0x08) &&
-        !this._aclStream.encrypted
+      } else if (
+        handleType === 'characteristicValue' ||
+        handleType === 'descriptor'
       ) {
-        response = this.errorResponse(
-          requestType,
-          valueHandle,
-          ATT_ECODE_AUTHENTICATION
-        );
-      } else if (handle.type === 'descriptor' || handle.uuid === '2902') {
-        let result = null;
-
-        if (data.length !== 2) {
-          result = ATT_ECODE_INVAL_ATTR_VALUE_LEN;
-        } else {
-          let value = data.readUInt16LE(0);
-          let handleAttribute = handle.attribute;
-
-          handle.value = data;
-
-          if (value & 0x0003) {
-            let updateValueCallback = function(valueHandle, attribute) {
-              return function(data) {
-                let dataLength = Math.min(data.length, this._mtu - 3);
-                let useNotify = attribute.properties.indexOf('notify') !== -1;
-                let useIndicate =
-                  attribute.properties.indexOf('indicate') !== -1;
-                let i;
-
-                if (useNotify) {
-                  let notifyMessage = Buffer.alloc(3 + dataLength);
-
-                  notifyMessage.writeUInt8(ATT_OP_HANDLE_NOTIFY, 0);
-                  notifyMessage.writeUInt16LE(valueHandle, 1);
-
-                  for (i = 0; i < dataLength; i++) {
-                    notifyMessage[3 + i] = data[i];
-                  }
-
-                  debug('notify message: ' + notifyMessage.toString('hex'));
-                  this.send(notifyMessage);
-
-                  attribute.emit('notify');
-                } else if (useIndicate) {
-                  let indicateMessage = Buffer.alloc(3 + dataLength);
-
-                  indicateMessage.writeUInt8(ATT_OP_HANDLE_IND, 0);
-                  indicateMessage.writeUInt16LE(valueHandle, 1);
-
-                  for (i = 0; i < dataLength; i++) {
-                    indicateMessage[3 + i] = data[i];
-                  }
-
-                  this._lastIndicatedAttribute = attribute;
-
-                  debug('indicate message: ' + indicateMessage.toString('hex'));
-                  this.send(indicateMessage);
-                }
-              }.bind(this);
-            }.bind(this)(valueHandle - 1, handleAttribute);
-
-            if (handleAttribute.emit) {
-              handleAttribute.emit(
-                'subscribe',
-                this._mtu - 3,
-                updateValueCallback
-              );
-            }
-          } else {
-            handleAttribute.emit('unsubscribe');
-          }
-
-          result = ATT_ECODE_SUCCESS;
+        let handleProperties = handle.properties;
+        let handleSecure = handle.secure;
+        let handleAttribute = handle.attribute;
+        if (handleType === 'characteristicValue') {
+          handleProperties = this._handles[valueHandle - 1].properties;
+          handleSecure = this._handles[valueHandle - 1].secure;
+          handleAttribute = this._handles[valueHandle - 1].attribute;
         }
 
-        callback(result);
-      } else {
-        handle.attribute.emit(
-          'writeRequest',
-          data,
-          offset,
-          withoutResponse,
-          callback
-        );
+        if (handleProperties & 0x02) {
+          if (handleSecure & 0x02 && !this._aclStream.encrypted) {
+            result = ATT_ECODE_AUTHENTICATION;
+          } else {
+            data = handle.value;
+
+            if (data) {
+              result = ATT_ECODE_SUCCESS;
+            } else {
+              handleAttribute.emit('readRequest', offset, callback);
+            }
+          }
+        } else {
+          result = ATT_ECODE_READ_NOT_PERM; // non-readable
+        }
+      }
+
+      if (data && typeof data === 'string') {
+        data = Buffer.alloc(data);
+      }
+
+      if (result === ATT_ECODE_SUCCESS && data && offset) {
+        if (data.length < offset) {
+          result = ATT_ECODE_INVALID_OFFSET;
+          data = null;
+        } else {
+          data = data.slice(offset);
+        }
+      }
+
+      if (result !== null) {
+        callback(result, data);
       }
     } else {
       response = this.errorResponse(
         requestType,
         valueHandle,
-        ATT_ECODE_WRITE_NOT_PERM
+        ATT_ECODE_INVALID_HANDLE
       );
     }
-  } else {
-    response = this.errorResponse(
-      requestType,
-      valueHandle,
-      ATT_ECODE_INVALID_HANDLE
-    );
+
+    return response;
   }
 
-  return response;
-};
+  handleWriteRequestOrCommand(request) {
+    let response = null;
 
-Gatt.prototype.handlePrepareWriteRequest = function(request) {
-  let response = null;
+    let requestType = request[0];
+    let withoutResponse = requestType === ATT_OP_WRITE_CMD;
+    let valueHandle = request.readUInt16LE(1);
+    let data = request.slice(3);
+    let offset = 0;
 
-  let requestType = request[0];
-  let valueHandle = request.readUInt16LE(1);
-  let offset = request.readUInt16LE(3);
-  let data = request.slice(5);
+    let handle = this._handles[valueHandle];
 
-  let handle = this._handles[valueHandle];
-
-  if (handle) {
-    if (handle.type === 'characteristicValue') {
-      handle = this._handles[valueHandle - 1];
+    if (handle) {
+      if (handle.type === 'characteristicValue') {
+        handle = this._handles[valueHandle - 1];
+      }
 
       let handleProperties = handle.properties;
       let handleSecure = handle.secure;
 
-      if (handleProperties && handleProperties & 0x08) {
-        if (handleSecure & 0x08 && !this._aclStream.encrypted) {
+      if (
+        handleProperties &&
+        (withoutResponse ? handleProperties & 0x04 : handleProperties & 0x08)
+      ) {
+        let callback = function(requestType, valueHandle, withoutResponse) {
+          return function(result) {
+            if (!withoutResponse) {
+              let callbackResponse = null;
+
+              if (ATT_ECODE_SUCCESS === result) {
+                callbackResponse = Buffer.from([ATT_OP_WRITE_RESP]);
+              } else {
+                callbackResponse = this.errorResponse(
+                  requestType,
+                  valueHandle,
+                  result
+                );
+              }
+
+              debug('write response: ' + callbackResponse.toString('hex'));
+
+              this.send(callbackResponse);
+            }
+          }.bind(this);
+        }.bind(this)(requestType, valueHandle, withoutResponse);
+
+        if (
+          handleSecure & (withoutResponse ? 0x04 : 0x08) &&
+          !this._aclStream.encrypted
+        ) {
           response = this.errorResponse(
             requestType,
             valueHandle,
             ATT_ECODE_AUTHENTICATION
           );
-        } else if (this._preparedWriteRequest) {
-          if (this._preparedWriteRequest.handle !== handle) {
-            response = this.errorResponse(
-              requestType,
-              valueHandle,
-              ATT_ECODE_UNLIKELY
-            );
-          } else if (
-            offset ===
-            this._preparedWriteRequest.offset +
-              this._preparedWriteRequest.data.length
-          ) {
-            this._preparedWriteRequest.data = Buffer.concat([
-              this._preparedWriteRequest.data,
-              data,
-            ]);
+        } else if (handle.type === 'descriptor' || handle.uuid === '2902') {
+          let result = null;
 
-            response = Buffer.alloc(request.length);
-            request.copy(response);
-            response[0] = ATT_OP_PREP_WRITE_RESP;
+          if (data.length !== 2) {
+            result = ATT_ECODE_INVAL_ATTR_VALUE_LEN;
           } else {
-            response = this.errorResponse(
-              requestType,
-              valueHandle,
-              ATT_ECODE_INVALID_OFFSET
-            );
-          }
-        } else {
-          this._preparedWriteRequest = {
-            handle: handle,
-            valueHandle: valueHandle,
-            offset: offset,
-            data: data,
-          };
+            let value = data.readUInt16LE(0);
+            let handleAttribute = handle.attribute;
 
-          response = Buffer.alloc(request.length);
-          request.copy(response);
-          response[0] = ATT_OP_PREP_WRITE_RESP;
+            handle.value = data;
+
+            if (value & 0x0003) {
+              let updateValueCallback = function(valueHandle, attribute) {
+                return function(data) {
+                  let dataLength = Math.min(data.length, this._mtu - 3);
+                  let useNotify = attribute.properties.indexOf('notify') !== -1;
+                  let useIndicate =
+                    attribute.properties.indexOf('indicate') !== -1;
+                  let i;
+
+                  if (useNotify) {
+                    let notifyMessage = Buffer.alloc(3 + dataLength);
+
+                    notifyMessage.writeUInt8(ATT_OP_HANDLE_NOTIFY, 0);
+                    notifyMessage.writeUInt16LE(valueHandle, 1);
+
+                    for (i = 0; i < dataLength; i++) {
+                      notifyMessage[3 + i] = data[i];
+                    }
+
+                    debug('notify message: ' + notifyMessage.toString('hex'));
+                    this.send(notifyMessage);
+
+                    attribute.emit('notify');
+                  } else if (useIndicate) {
+                    let indicateMessage = Buffer.alloc(3 + dataLength);
+
+                    indicateMessage.writeUInt8(ATT_OP_HANDLE_IND, 0);
+                    indicateMessage.writeUInt16LE(valueHandle, 1);
+
+                    for (i = 0; i < dataLength; i++) {
+                      indicateMessage[3 + i] = data[i];
+                    }
+
+                    this._lastIndicatedAttribute = attribute;
+
+                    debug(
+                      'indicate message: ' + indicateMessage.toString('hex')
+                    );
+                    this.send(indicateMessage);
+                  }
+                }.bind(this);
+              }.bind(this)(valueHandle - 1, handleAttribute);
+
+              if (handleAttribute.emit) {
+                handleAttribute.emit(
+                  'subscribe',
+                  this._mtu - 3,
+                  updateValueCallback
+                );
+              }
+            } else {
+              handleAttribute.emit('unsubscribe');
+            }
+
+            result = ATT_ECODE_SUCCESS;
+          }
+
+          callback(result);
+        } else {
+          handle.attribute.emit(
+            'writeRequest',
+            data,
+            offset,
+            withoutResponse,
+            callback
+          );
         }
       } else {
         response = this.errorResponse(
@@ -1173,77 +1104,161 @@ Gatt.prototype.handlePrepareWriteRequest = function(request) {
       response = this.errorResponse(
         requestType,
         valueHandle,
-        ATT_ECODE_ATTR_NOT_LONG
+        ATT_ECODE_INVALID_HANDLE
       );
     }
-  } else {
-    response = this.errorResponse(
-      requestType,
-      valueHandle,
-      ATT_ECODE_INVALID_HANDLE
-    );
+
+    return response;
   }
 
-  return response;
-};
+  handlePrepareWriteRequest(request) {
+    let response = null;
 
-Gatt.prototype.handleExecuteWriteRequest = function(request) {
-  let response = null;
+    let requestType = request[0];
+    let valueHandle = request.readUInt16LE(1);
+    let offset = request.readUInt16LE(3);
+    let data = request.slice(5);
 
-  let requestType = request[0];
-  let flag = request[1];
+    let handle = this._handles[valueHandle];
 
-  if (this._preparedWriteRequest) {
-    if (flag === 0x00) {
-      response = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
-    } else if (flag === 0x01) {
-      let callback = function(requestType, valueHandle) {
-        return function(result) {
-          let callbackResponse = null;
+    if (handle) {
+      if (handle.type === 'characteristicValue') {
+        handle = this._handles[valueHandle - 1];
 
-          if (ATT_ECODE_SUCCESS === result) {
-            callbackResponse = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
-          } else {
-            callbackResponse = this.errorResponse(
+        let handleProperties = handle.properties;
+        let handleSecure = handle.secure;
+
+        if (handleProperties && handleProperties & 0x08) {
+          if (handleSecure & 0x08 && !this._aclStream.encrypted) {
+            response = this.errorResponse(
               requestType,
               valueHandle,
-              result
+              ATT_ECODE_AUTHENTICATION
             );
+          } else if (this._preparedWriteRequest) {
+            if (this._preparedWriteRequest.handle !== handle) {
+              response = this.errorResponse(
+                requestType,
+                valueHandle,
+                ATT_ECODE_UNLIKELY
+              );
+            } else if (
+              offset ===
+              this._preparedWriteRequest.offset +
+                this._preparedWriteRequest.data.length
+            ) {
+              this._preparedWriteRequest.data = Buffer.concat([
+                this._preparedWriteRequest.data,
+                data,
+              ]);
+
+              response = Buffer.alloc(request.length);
+              request.copy(response);
+              response[0] = ATT_OP_PREP_WRITE_RESP;
+            } else {
+              response = this.errorResponse(
+                requestType,
+                valueHandle,
+                ATT_ECODE_INVALID_OFFSET
+              );
+            }
+          } else {
+            this._preparedWriteRequest = {
+              handle: handle,
+              valueHandle: valueHandle,
+              offset: offset,
+              data: data,
+            };
+
+            response = Buffer.alloc(request.length);
+            request.copy(response);
+            response[0] = ATT_OP_PREP_WRITE_RESP;
           }
-
-          debug('execute write response: ' + callbackResponse.toString('hex'));
-
-          this.send(callbackResponse);
-        }.bind(this);
-      }.bind(this)(requestType, this._preparedWriteRequest.valueHandle);
-
-      this._preparedWriteRequest.handle.attribute.emit(
-        'writeRequest',
-        this._preparedWriteRequest.data,
-        this._preparedWriteRequest.offset,
-        false,
-        callback
+        } else {
+          response = this.errorResponse(
+            requestType,
+            valueHandle,
+            ATT_ECODE_WRITE_NOT_PERM
+          );
+        }
+      } else {
+        response = this.errorResponse(
+          requestType,
+          valueHandle,
+          ATT_ECODE_ATTR_NOT_LONG
+        );
+      }
+    } else {
+      response = this.errorResponse(
+        requestType,
+        valueHandle,
+        ATT_ECODE_INVALID_HANDLE
       );
+    }
+
+    return response;
+  }
+
+  handleExecuteWriteRequest(request) {
+    let response = null;
+
+    let requestType = request[0];
+    let flag = request[1];
+
+    if (this._preparedWriteRequest) {
+      if (flag === 0x00) {
+        response = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
+      } else if (flag === 0x01) {
+        let callback = function(requestType, valueHandle) {
+          return function(result) {
+            let callbackResponse = null;
+
+            if (ATT_ECODE_SUCCESS === result) {
+              callbackResponse = Buffer.from([ATT_OP_EXEC_WRITE_RESP]);
+            } else {
+              callbackResponse = this.errorResponse(
+                requestType,
+                valueHandle,
+                result
+              );
+            }
+
+            debug(
+              'execute write response: ' + callbackResponse.toString('hex')
+            );
+
+            this.send(callbackResponse);
+          }.bind(this);
+        }.bind(this)(requestType, this._preparedWriteRequest.valueHandle);
+
+        this._preparedWriteRequest.handle.attribute.emit(
+          'writeRequest',
+          this._preparedWriteRequest.data,
+          this._preparedWriteRequest.offset,
+          false,
+          callback
+        );
+      } else {
+        response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
+      }
+
+      this._preparedWriteRequest = null;
     } else {
       response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
     }
 
-    this._preparedWriteRequest = null;
-  } else {
-    response = this.errorResponse(requestType, 0x0000, ATT_ECODE_UNLIKELY);
+    return response;
   }
 
-  return response;
-};
+  handleConfirmation(request) {
+    if (this._lastIndicatedAttribute) {
+      if (this._lastIndicatedAttribute.emit) {
+        this._lastIndicatedAttribute.emit('indicate');
+      }
 
-Gatt.prototype.handleConfirmation = function(request) {
-  if (this._lastIndicatedAttribute) {
-    if (this._lastIndicatedAttribute.emit) {
-      this._lastIndicatedAttribute.emit('indicate');
+      this._lastIndicatedAttribute = null;
     }
-
-    this._lastIndicatedAttribute = null;
   }
-};
+}
 
 module.exports = Gatt;

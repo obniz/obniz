@@ -148,7 +148,10 @@ const webpackConfigProduction = require('../webpack.production.js');
 
 gulp.task('tsc:copy', function(done) {
   return gulp
-    .src(path.join(__dirname, '../../src/**/*.*[^ts]'))
+    .src([
+      path.join(__dirname, '../../src/**/*.yml'),
+      path.join(__dirname, '../../src/**/*.json'),
+    ])
     .pipe(gulp.dest(path.join(__dirname, '../../dist')))
     .on('end', function() {
       console.log('static file copy compiled!');

@@ -5,7 +5,7 @@
     "outDir": "./dist",
     "strict": true,
     "allowJs": true,
-//    "declaration" : true,
+    "declaration" : true,
     "esModuleInterop": true
   },
   "include": [

@@ -18,8 +18,8 @@ class BlePeripheral {
         this.Obniz.send({ ble: { peripheral: { services: [obj] } } });
     }
     setJson(json) {
-        if (json['services']) {
-            for (let service of json['services']) {
+        if (json.services) {
+            for (let service of json.services) {
                 this.addService(service);
             }
         }

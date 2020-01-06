@@ -1,52 +1,52 @@
 let events = require('events');
-let util = require('util');
 
 let Smp = require('./smp');
 
-let AclStream = function(
-  hci,
-  handle,
-  localAddressType,
-  localAddress,
-  remoteAddressType,
-  remoteAddress
-) {
-  this._hci = hci;
-  this._handle = handle;
-  this.encypted = false;
-
-  this._smp = new Smp(
-    this,
+class AclStream extends events.EventEmitter {
+  constructor(
+    hci,
+    handle,
     localAddressType,
     localAddress,
     remoteAddressType,
-    remoteAddress,
-    this._hci
-  );
-};
+    remoteAddress
+  ) {
+    super();
+    this._hci = hci;
+    this._handle = handle;
+    this.encypted = false;
 
-util.inherits(AclStream, events.EventEmitter);
-
-AclStream.prototype.write = function(cid, data) {
-  this._hci.queueAclDataPkt(this._handle, cid, data);
-};
-
-AclStream.prototype.push = function(cid, data) {
-  if (data) {
-    this.emit('data', cid, data);
-  } else {
-    this.emit('end');
+    this._smp = new Smp(
+      this,
+      localAddressType,
+      localAddress,
+      remoteAddressType,
+      remoteAddress,
+      this._hci
+    );
   }
-};
 
-AclStream.prototype.pushEncrypt = function(encrypt) {
-  this.encrypted = encrypt ? true : false;
+  rite(cid, data) {
+    this._hci.queueAclDataPkt(this._handle, cid, data);
+  }
 
-  this.emit('encryptChange', this.encrypted);
-};
+  ush(cid, data) {
+    if (data) {
+      this.emit('data', cid, data);
+    } else {
+      this.emit('end');
+    }
+  }
 
-AclStream.prototype.pushLtkNegReply = function() {
-  this.emit('ltkNegReply');
-};
+  ushEncrypt(encrypt) {
+    this.encrypted = encrypt ? true : false;
+
+    this.emit('encryptChange', this.encrypted);
+  }
+
+  ushLtkNegReply() {
+    this.emit('ltkNegReply');
+  }
+}
 
 module.exports = AclStream;

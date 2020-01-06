@@ -10,8 +10,8 @@ class BleScan {
     }
     start(target, settings) {
         let obj = {};
-        obj['ble'] = {};
-        obj['ble']['scan'] = {
+        obj.ble = {};
+        obj.ble.scan = {
             //    "targetUuid" : settings && settings.targetUuid ? settings.targetUuid : null,
             //    "interval" : settings && settings.interval ? settings.interval : 30,
             duration: settings && settings.duration ? settings.duration : 30,
@@ -59,8 +59,8 @@ class BleScan {
     }
     end() {
         let obj = {};
-        obj['ble'] = {};
-        obj['ble']['scan'] = null;
+        obj.ble = {};
+        obj.ble.scan = null;
         this.Obniz.send(obj);
     }
     isTarget(peripheral) {

@@ -72,8 +72,7 @@ class ObnizBLE {
     }
   }
 
-  _reset() {
-  }
+  _reset() {}
 
   directConnect(uuid, addressType) {
     let peripheral = this.findPeripheral(uuid);
@@ -117,27 +116,24 @@ class ObnizBLE {
     let str = uuid.join('');
     if (uuid.length >= 16) {
       str =
-          str.slice(0, 8) +
-          '-' +
-          str.slice(8, 12) +
-          '-' +
-          str.slice(12, 16) +
-          '-' +
-          str.slice(16, 20) +
-          '-' +
-          str.slice(20);
+        str.slice(0, 8) +
+        '-' +
+        str.slice(8, 12) +
+        '-' +
+        str.slice(12, 16) +
+        '-' +
+        str.slice(16, 20) +
+        '-' +
+        str.slice(20);
     }
     return str;
   }
 
-  onStateChange() {
-  }
+  onStateChange() {}
 
-  onAddressChange() {
-  }
+  onAddressChange() {}
 
-  onScanStart() {
-  }
+  onScanStart() {}
 
   onScanStop() {
     this.scan.notifyFromServer('onfinish');
@@ -155,8 +151,8 @@ class ObnizBLE {
       device_type: 'ble',
       address_type: addressType,
       ble_event_type: connectable
-          ? 'connectable_advertisemnt'
-          : 'non_connectable_advertising',
+        ? 'connectable_advertisemnt'
+        : 'non_connectable_advertising',
       rssi: rssi,
       adv_data: advertisement.advertisementRaw,
       scan_resp: advertisement.scanResponseRaw,
@@ -180,30 +176,28 @@ class ObnizBLE {
 
   onDisconnect(peripheralUuid) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    peripheral.notifyFromServer('statusupdate', {status: 'disconnected'});
+    peripheral.notifyFromServer('statusupdate', { status: 'disconnected' });
   }
 
-  onRssiUpdate() {
-  }
+  onRssiUpdate() {}
 
   onServicesDiscover(peripheralUuid, serviceUuids) {
     let peripheral = this.findPeripheral(peripheralUuid);
     for (let serviceUuid of serviceUuids) {
-      peripheral.notifyFromServer('discover', {service_uuid: serviceUuid});
+      peripheral.notifyFromServer('discover', { service_uuid: serviceUuid });
     }
     peripheral.notifyFromServer('discoverfinished', {});
   }
 
   onIncludedServicesDiscover(
-      peripheralUuid,
-      serviceUuid,
-      includedServiceUuids
-  ) {
-  }
+    peripheralUuid,
+    serviceUuid,
+    includedServiceUuids
+  ) {}
 
   onCharacteristicsDiscover(peripheralUuid, serviceUuid, characteristics) {
     let peripheral = this.findPeripheral(peripheralUuid);
-    let service = peripheral.findService({service_uuid: serviceUuid});
+    let service = peripheral.findService({ service_uuid: serviceUuid });
     for (let char of characteristics) {
       let obj = {
         properties: char.properties.map(e => BleHelper.toSnakeCase(e)),
@@ -215,12 +209,12 @@ class ObnizBLE {
   }
 
   onRead(
-      peripheralUuid,
-      serviceUuid,
-      characteristicUuid,
-      data,
-      isNotification,
-      isSuccess
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    data,
+    isNotification,
+    isSuccess
   ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let characteristic = peripheral.findCharacteristic({
@@ -253,8 +247,7 @@ class ObnizBLE {
     });
   }
 
-  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {
-  }
+  onBroadcast(peripheralUuid, serviceUuid, characteristicUuid, state) {}
 
   onNotify(peripheralUuid, serviceUuid, characteristicUuid, state) {
     let peripheral = this.findPeripheral(peripheralUuid);
@@ -271,10 +264,10 @@ class ObnizBLE {
   }
 
   onDescriptorsDiscover(
-      peripheralUuid,
-      serviceUuid,
-      characteristicUuid,
-      descriptors
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptors
   ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let char = peripheral.findCharacteristic({
@@ -291,12 +284,12 @@ class ObnizBLE {
   }
 
   onValueRead(
-      peripheralUuid,
-      serviceUuid,
-      characteristicUuid,
-      descriptorUuid,
-      data,
-      isSuccess
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    data,
+    isSuccess
   ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
@@ -313,11 +306,11 @@ class ObnizBLE {
   }
 
   onValueWrite(
-      peripheralUuid,
-      serviceUuid,
-      characteristicUuid,
-      descriptorUuid,
-      isSuccess
+    peripheralUuid,
+    serviceUuid,
+    characteristicUuid,
+    descriptorUuid,
+    isSuccess
   ) {
     let peripheral = this.findPeripheral(peripheralUuid);
     let descriptor = peripheral.findDescriptor({
@@ -332,14 +325,11 @@ class ObnizBLE {
     descriptor.notifyFromServer('onwrite', obj);
   }
 
-  onHandleRead(peripheralUuid, handle, data) {
-  }
+  onHandleRead(peripheralUuid, handle, data) {}
 
-  onHandleWrite(peripheralUuid, handle) {
-  }
+  onHandleWrite(peripheralUuid, handle) {}
 
-  onHandleNotify(peripheralUuid, handle, data) {
-  }
+  onHandleNotify(peripheralUuid, handle, data) {}
 
   onPeripheralStateChange(state) {
     // console.error("onPeripheralStateChange")
@@ -401,16 +391,16 @@ class ObnizBLE {
     this.centralBindings.on('disconnect', this.onDisconnect.bind(this));
     this.centralBindings.on('rssiUpdate', this.onRssiUpdate.bind(this));
     this.centralBindings.on(
-        'servicesDiscover',
-        this.onServicesDiscover.bind(this)
+      'servicesDiscover',
+      this.onServicesDiscover.bind(this)
     );
     this.centralBindings.on(
-        'includedServicesDiscover',
-        this.onIncludedServicesDiscover.bind(this)
+      'includedServicesDiscover',
+      this.onIncludedServicesDiscover.bind(this)
     );
     this.centralBindings.on(
-        'characteristicsDiscover',
-        this.onCharacteristicsDiscover.bind(this)
+      'characteristicsDiscover',
+      this.onCharacteristicsDiscover.bind(this)
     );
 
     this.centralBindings.on('read', this.onRead.bind(this));
@@ -418,8 +408,8 @@ class ObnizBLE {
     this.centralBindings.on('broadcast', this.onBroadcast.bind(this));
     this.centralBindings.on('notify', this.onNotify.bind(this));
     this.centralBindings.on(
-        'descriptorsDiscover',
-        this.onDescriptorsDiscover.bind(this)
+      'descriptorsDiscover',
+      this.onDescriptorsDiscover.bind(this)
     );
     this.centralBindings.on('valueRead', this.onValueRead.bind(this));
     this.centralBindings.on('valueWrite', this.onValueWrite.bind(this));
@@ -428,42 +418,42 @@ class ObnizBLE {
     this.centralBindings.on('handleNotify', this.onHandleNotify.bind(this));
 
     this.peripheralBindings.on(
-        'stateChange',
-        this.onPeripheralStateChange.bind(this)
+      'stateChange',
+      this.onPeripheralStateChange.bind(this)
     );
     this.peripheralBindings.on(
-        'addressChange',
-        this.onPeripheralAddressChange.bind(this)
+      'addressChange',
+      this.onPeripheralAddressChange.bind(this)
     );
     this.peripheralBindings.on(
-        'platform',
-        this.onPeripheralPlatform.bind(this)
+      'platform',
+      this.onPeripheralPlatform.bind(this)
     );
     this.peripheralBindings.on(
-        'advertisingStart',
-        this.onPeripheralAdvertisingStart.bind(this)
+      'advertisingStart',
+      this.onPeripheralAdvertisingStart.bind(this)
     );
     this.peripheralBindings.on(
-        'advertisingStop',
-        this.onPeripheralAdvertisingStop.bind(this)
+      'advertisingStop',
+      this.onPeripheralAdvertisingStop.bind(this)
     );
     this.peripheralBindings.on(
-        'servicesSet',
-        this.onPeripheralServicesSet.bind(this)
+      'servicesSet',
+      this.onPeripheralServicesSet.bind(this)
     );
     this.peripheralBindings.on('accept', this.onPeripheralAccept.bind(this));
     this.peripheralBindings.on(
-        'mtuChange',
-        this.onPeripheralMtuChange.bind(this)
+      'mtuChange',
+      this.onPeripheralMtuChange.bind(this)
     );
     this.peripheralBindings.on(
-        'disconnect',
-        this.onPeripheralDisconnect.bind(this)
+      'disconnect',
+      this.onPeripheralDisconnect.bind(this)
     );
 
     this.peripheralBindings.on(
-        'rssiUpdate',
-        this.onPeripheralRssiUpdate.bind(this)
+      'rssiUpdate',
+      this.onPeripheralRssiUpdate.bind(this)
     );
   }
 }

@@ -58,7 +58,7 @@
   "Host Busy - Pairing",
   "Connection Rejected due to No Suitable Channel Found",
   "Controller Busy",
-  "Unacceptable Connection Parameters" ,
+  "Unacceptable Connection Parameters",
   "Directed Advertising Timeout",
   "Connection Terminated due to MIC Failure",
   "Connection Failed to be Established",

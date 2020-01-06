@@ -67,8 +67,9 @@ class ObnizBLE {
         }
         let remotePeripheralCallbackFunc = function (val, func, type) {
             let obj = null;
-            if (val === undefined)
+            if (val === undefined) {
                 return;
+            }
             let p = this.findPeripheral(val.address);
             if (!p) {
                 return;
@@ -140,8 +141,9 @@ class ObnizBLE {
         }
         let callbackFunc = function (val, func, type) {
             let obj = null;
-            if (val === undefined)
+            if (val === undefined) {
                 return;
+            }
             if (type === 'peripheral') {
                 obj = this.peripheral;
             }
