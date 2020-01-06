@@ -121,7 +121,7 @@ module.exports = class ObnizComponents extends ObnizParts {
         for (const key of this._allComponentKeys) {
             if (key === 'logicAnalyzer') {
                 if (obj.hasOwnProperty('logic_analyzer')) {
-                    this.logicAnalyzer.notified(obj['logic_analyzer']);
+                    this.logicAnalyzer.notified(obj.logic_analyzer);
                 }
                 continue;
             }

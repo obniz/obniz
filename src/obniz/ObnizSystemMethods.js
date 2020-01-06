@@ -19,15 +19,19 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
     this.send({ system: { reset: true } });
     this._resetComponents();
   }
+
   reboot() {
     this.send({ system: { reboot: true } });
   }
+
   selfCheck() {
     this.send({ system: { self_check: true } });
   }
+
   keepWorkingAtOffline(working) {
     this.send({ system: { keep_working_at_offline: working } });
   }
+
   resetOnDisconnect(reset) {
     this.send({ ws: { reset_obniz_on_ws_disconnection: reset } });
   }

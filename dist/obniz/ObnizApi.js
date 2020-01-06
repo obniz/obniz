@@ -25,14 +25,14 @@ class ObnizApi {
         let headers = {};
         headers['Content-Type'] = 'application/json';
         if (this.options.access_token) {
-            headers['authorization'] = 'Bearer ' + this.options.access_token;
+            headers.authorization = 'Bearer ' + this.options.access_token;
         }
         let fetchParams = {
             method: 'POST',
             headers,
         };
         if (params) {
-            fetchParams['body'] = JSON.stringify(params);
+            fetchParams.body = JSON.stringify(params);
         }
         return fetch(url, fetchParams)
             .then(res => {

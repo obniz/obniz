@@ -171,4 +171,5 @@ class PeripheralUART {
     this.used = false;
   }
 }
+
 module.exports = PeripheralUART;

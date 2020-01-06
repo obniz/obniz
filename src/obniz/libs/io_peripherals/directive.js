@@ -42,7 +42,9 @@ class Directive {
     if (typeof repeat == 'number') {
       obj.io.animation.repeat = repeat;
     }
-    if (!array) array = [];
+    if (!array) {
+      array = [];
+    }
 
     let states = [];
     for (let i = 0; i < array.length; i++) {

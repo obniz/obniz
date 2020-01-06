@@ -61,4 +61,5 @@ class ObnizMeasure {
     }
   }
 }
+
 module.exports = ObnizMeasure;

@@ -139,4 +139,5 @@ class PeripheralIO {
     }
   }
 }
+
 module.exports = PeripheralIO;

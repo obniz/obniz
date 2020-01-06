@@ -1,4 +1,4 @@
-import { DriveType, PullType } from "./common";
+import {DriveType, PullType} from "./common";
 
 export interface SPI {
   start(options: {
@@ -13,6 +13,8 @@ export interface SPI {
   }): void;
 
   writeWait(data: any[]): Promise<any>;
+
   write(data: any): void;
+
   end(): void;
 }

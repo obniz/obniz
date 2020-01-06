@@ -1,19 +1,19 @@
-const WSCommand = require('./WSCommand_');
+const WSCommand = require('./WSCommand');
 
 /* eslint-disable */
-WSCommand.addCommandClass('WSCommand_System', require('./WSCommand_System'));
-WSCommand.addCommandClass('WSCommand_Directive', require('./WSCommand_Directive'));
-WSCommand.addCommandClass('WSCommand_IO', require('./WSCommand_IO'));
-WSCommand.addCommandClass('WSCommand_PWM', require('./WSCommand_PWM'));
-WSCommand.addCommandClass('WSCommand_UART', require('./WSCommand_UART'));
-WSCommand.addCommandClass('WSCommand_AD', require('./WSCommand_AD'));
-WSCommand.addCommandClass('WSCommand_SPI', require('./WSCommand_SPI'));
-WSCommand.addCommandClass('WSCommand_I2C', require('./WSCommand_I2C'));
-WSCommand.addCommandClass('WSCommand_LogicAnalyzer', require('./WSCommand_LogicAnalyzer'));
-WSCommand.addCommandClass('WSCommand_Display', require('./WSCommand_Display'));
-WSCommand.addCommandClass('WSCommand_Switch', require('./WSCommand_Switch'));
-WSCommand.addCommandClass('WSCommand_Ble', require('./WSCommand_Ble'));
-WSCommand.addCommandClass('WSCommand_Measurement', require('./WSCommand_Measurement'));
-WSCommand.addCommandClass('WSCommand_Tcp', require('./WSCommand_Tcp'));
+WSCommand.addCommandClass("WSCommandSystem", require("./WSCommandSystem"));
+WSCommand.addCommandClass("WSCommandDirective", require("./WSCommandDirective"));
+WSCommand.addCommandClass("WSCommandIO", require("./WSCommandIO"));
+WSCommand.addCommandClass("WSCommandPWM", require("./WSCommandPWM"));
+WSCommand.addCommandClass("WSCommandUart", require("./WSCommandUart"));
+WSCommand.addCommandClass("WSCommandAD", require("./WSCommandAD"));
+WSCommand.addCommandClass("WSCommandSPI", require("./WSCommandSPI"));
+WSCommand.addCommandClass("WSCommandI2C", require("./WSCommandI2C"));
+WSCommand.addCommandClass("WSCommandLogicAnalyzer", require("./WSCommandLogicAnalyzer"));
+WSCommand.addCommandClass("WSCommandDisplay", require("./WSCommandDisplay"));
+WSCommand.addCommandClass("WSCommandSwitch", require("./WSCommandSwitch"));
+WSCommand.addCommandClass("WSCommandBle", require("./WSCommandBle"));
+WSCommand.addCommandClass("WSCommandMeasurement", require("./WSCommandMeasurement"));
+WSCommand.addCommandClass("WSCommandTcp", require("./WSCommandTcp"));
 
 module.exports = WSCommand;

@@ -10,8 +10,9 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
         }
         str = str.replace('-', '');
         let id = parseInt(str);
-        if (isNaN(id))
+        if (isNaN(id)) {
             id = null;
+        }
         return id != null;
     }
     wsconnect(desired_server) {

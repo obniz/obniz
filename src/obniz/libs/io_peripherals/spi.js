@@ -58,35 +58,47 @@ class PeripheralSPI {
     }
 
     if (this.params.drive) {
-      if (this.params.clk !== undefined)
+      if (this.params.clk !== undefined) {
         this.Obniz.getIO(this.params.clk).drive(this.params.drive);
-      if (this.params.mosi !== undefined)
+      }
+      if (this.params.mosi !== undefined) {
         this.Obniz.getIO(this.params.mosi).drive(this.params.drive);
-      if (this.params.miso !== undefined)
+      }
+      if (this.params.miso !== undefined) {
         this.Obniz.getIO(this.params.miso).drive(this.params.drive);
+      }
     } else {
-      if (this.params.clk !== undefined)
+      if (this.params.clk !== undefined) {
         this.Obniz.getIO(this.params.clk).drive('5v');
-      if (this.params.mosi !== undefined)
+      }
+      if (this.params.mosi !== undefined) {
         this.Obniz.getIO(this.params.mosi).drive('5v');
-      if (this.params.miso !== undefined)
+      }
+      if (this.params.miso !== undefined) {
         this.Obniz.getIO(this.params.miso).drive('5v');
+      }
     }
 
     if (this.params.pull) {
-      if (this.params.clk !== undefined)
+      if (this.params.clk !== undefined) {
         this.Obniz.getIO(this.params.clk).pull(this.params.pull);
-      if (this.params.mosi !== undefined)
+      }
+      if (this.params.mosi !== undefined) {
         this.Obniz.getIO(this.params.mosi).pull(this.params.pull);
-      if (this.params.miso !== undefined)
+      }
+      if (this.params.miso !== undefined) {
         this.Obniz.getIO(this.params.miso).pull(this.params.pull);
+      }
     } else {
-      if (this.params.clk !== undefined)
+      if (this.params.clk !== undefined) {
         this.Obniz.getIO(this.params.clk).pull(null);
-      if (this.params.mosi !== undefined)
+      }
+      if (this.params.mosi !== undefined) {
         this.Obniz.getIO(this.params.mosi).pull(null);
-      if (this.params.miso !== undefined)
+      }
+      if (this.params.miso !== undefined) {
         this.Obniz.getIO(this.params.miso).pull(null);
+      }
     }
 
     if (this.params.gnd !== undefined) {
@@ -171,4 +183,5 @@ class PeripheralSPI {
     }
   }
 }
+
 module.exports = PeripheralSPI;

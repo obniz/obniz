@@ -1,4 +1,4 @@
-import { BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType } from "./common";
+import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
 
 export interface UART {
   onreceive: (data: any, text: string) => void;
@@ -19,9 +19,14 @@ export interface UART {
   }): void;
 
   send(data: any): void;
+
   end(): void;
+
   isDataExists(): boolean;
+
   readByte(): any;
+
   readBytes(): any[];
+
   readText(): string;
 }

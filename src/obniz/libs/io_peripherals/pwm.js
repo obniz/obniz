@@ -117,4 +117,5 @@ class PeripheralPWM {
     });
   }
 }
+
 module.exports = PeripheralPWM;

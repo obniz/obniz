@@ -89,7 +89,7 @@ class Display {
         }
         else {
             let obj = {};
-            obj['display'] = {
+            obj.display = {
                 clear: true,
             };
             this.Obniz.send(obj);
@@ -114,7 +114,7 @@ class Display {
         }
         else {
             let obj = {};
-            obj['display'] = {
+            obj.display = {
                 text: '' + text,
             };
             this.Obniz.send(obj);
@@ -167,28 +167,28 @@ class Display {
     }
     qr(text, correction) {
         let obj = {};
-        obj['display'] = {
+        obj.display = {
             qr: {
                 text,
             },
         };
         if (correction) {
-            obj['display'].qr.correction = correction;
+            obj.display.qr.correction = correction;
         }
         this.Obniz.send(obj);
     }
     raw(data) {
         let obj = {};
-        obj['display'] = {
+        obj.display = {
             raw: data,
         };
         this.Obniz.send(obj);
     }
     setPinName(io, moduleName, funcName) {
         let obj = {};
-        obj['display'] = {};
-        obj['display']['pin_assign'] = {};
-        obj['display']['pin_assign'][io] = {
+        obj.display = {};
+        obj.display.pin_assign = {};
+        obj.display.pin_assign[io] = {
             module_name: moduleName,
             pin_name: funcName,
         };
@@ -196,12 +196,12 @@ class Display {
     }
     setPinNames(moduleName, data) {
         let obj = {};
-        obj['display'] = {};
-        obj['display']['pin_assign'] = {};
+        obj.display = {};
+        obj.display.pin_assign = {};
         let noAssignee = true;
         for (let key in data) {
             noAssignee = false;
-            obj['display']['pin_assign'][key] = {
+            obj.display.pin_assign[key] = {
                 module_name: moduleName,
                 pin_name: data[key],
             };
@@ -221,10 +221,12 @@ class Display {
             let line = parseInt(index / this.width);
             let col = parseInt((index - line * this.width) / 8);
             let bits = parseInt(index - line * this.width) % 8;
-            if (bits == 0)
+            if (bits == 0) {
                 vram[line * stride + col] = 0x00;
-            if (brightness > 0x7f)
+            }
+            if (brightness > 0x7f) {
                 vram[line * stride + col] |= 0x80 >> bits;
+            }
         }
         this.raw(vram);
     }

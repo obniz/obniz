@@ -261,8 +261,9 @@ module.exports = class ObnizConnection {
         }
     }
     clearSocket(socket) {
-        if (!socket)
+        if (!socket) {
             return;
+        }
         /* send queue */
         if (this._sendQueueTimer) {
             delete this._sendQueue;
@@ -423,8 +424,9 @@ module.exports = class ObnizConnection {
         }
     }
     _drainQueued() {
-        if (!this._sendQueue)
+        if (!this._sendQueue) {
             return;
+        }
         let expectSize = 0;
         for (let i = 0; i < this._sendQueue.length; i++) {
             expectSize += this._sendQueue[i].length;
@@ -444,12 +446,12 @@ module.exports = class ObnizConnection {
         if (this.debugprint) {
             this.print_debug(JSON.stringify(obj));
         }
-        if (obj['ws']) {
-            this.handleWSCommand(obj['ws']);
+        if (obj.ws) {
+            this.handleWSCommand(obj.ws);
             return;
         }
-        if (obj['system']) {
-            this.handleSystemCommand(obj['system']);
+        if (obj.system) {
+            this.handleSystemCommand(obj.system);
             return;
         }
     }
@@ -515,8 +517,9 @@ module.exports = class ObnizConnection {
         let json = [];
         while (data !== null) {
             const frame = WSCommand.dequeueOne(data);
-            if (!frame)
+            if (!frame) {
                 break;
+            }
             let obj = {};
             for (let i = 0; i < this.wscommands.length; i++) {
                 const command = this.wscommands[i];

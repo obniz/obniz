@@ -65,11 +65,13 @@ var qrcode = (function () {
         };
         var setupPositionProbePattern = function (row, col) {
             for (var r = -1; r <= 7; r += 1) {
-                if (row + r <= -1 || _moduleCount <= row + r)
+                if (row + r <= -1 || _moduleCount <= row + r) {
                     continue;
+                }
                 for (var c = -1; c <= 7; c += 1) {
-                    if (col + c <= -1 || _moduleCount <= col + c)
+                    if (col + c <= -1 || _moduleCount <= col + c) {
                         continue;
+                    }
                     if ((0 <= r && r <= 6 && (c == 0 || c == 6)) ||
                         (0 <= c && c <= 6 && (r == 0 || r == 6)) ||
                         (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
@@ -184,8 +186,9 @@ var qrcode = (function () {
             var byteIndex = 0;
             var maskFunc = QRUtil.getMaskFunction(maskPattern);
             for (var col = _moduleCount - 1; col > 0; col -= 2) {
-                if (col == 6)
+                if (col == 6) {
                     col -= 1;
+                }
                 while (true) {
                     for (var c = 0; c < 2; c += 1) {
                         if (_modules[row][col - c] == null) {
@@ -278,11 +281,11 @@ var qrcode = (function () {
                 totalDataCount += rsBlocks[i].dataCount;
             }
             if (buffer.getLengthInBits() > totalDataCount * 8) {
-                throw 'code length overflow. (' +
+                throw new Error("code length overflow. (" +
                     buffer.getLengthInBits() +
-                    '>' +
+                    ">" +
                     totalDataCount * 8 +
-                    ')';
+                    ")");
             }
             // end code
             if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
@@ -306,23 +309,23 @@ var qrcode = (function () {
             return createBytes(buffer, rsBlocks);
         };
         _this.addData = function (data, mode) {
-            mode = mode || 'Byte';
+            mode = mode || "Byte";
             var newData = null;
             switch (mode) {
-                case 'Numeric':
+                case "Numeric":
                     newData = qrNumber(data);
                     break;
-                case 'Alphanumeric':
+                case "Alphanumeric":
                     newData = qrAlphaNum(data);
                     break;
-                case 'Byte':
+                case "Byte":
                     newData = qr8BitByte(data);
                     break;
-                case 'Kanji':
+                case "Kanji":
                     newData = qrKanji(data);
                     break;
                 default:
-                    throw 'mode:' + mode;
+                    throw new Error("mode:" + mode);
             }
             _dataList.push(newData);
             _dataCache = null;
@@ -332,7 +335,7 @@ var qrcode = (function () {
         };
         _this.isDark = function (row, col) {
             if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
-                throw row + ',' + col;
+                throw new Error(row + "," + col);
             }
             return _modules[row][col];
         };
@@ -365,32 +368,32 @@ var qrcode = (function () {
         };
         _this.createTableTag = function (cellSize, margin) {
             cellSize = cellSize || 2;
-            margin = typeof margin == 'undefined' ? cellSize * 4 : margin;
-            var qrHtml = '';
+            margin = typeof margin == "undefined" ? cellSize * 4 : margin;
+            var qrHtml = "";
             qrHtml += '<table style="';
-            qrHtml += ' border-width: 0px; border-style: none;';
-            qrHtml += ' border-collapse: collapse;';
-            qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+            qrHtml += " border-width: 0px; border-style: none;";
+            qrHtml += " border-collapse: collapse;";
+            qrHtml += " padding: 0px; margin: " + margin + "px;";
             qrHtml += '">';
-            qrHtml += '<tbody>';
+            qrHtml += "<tbody>";
             for (var r = 0; r < _this.getModuleCount(); r += 1) {
-                qrHtml += '<tr>';
+                qrHtml += "<tr>";
                 for (var c = 0; c < _this.getModuleCount(); c += 1) {
                     qrHtml += '<td style="';
-                    qrHtml += ' border-width: 0px; border-style: none;';
-                    qrHtml += ' border-collapse: collapse;';
-                    qrHtml += ' padding: 0px; margin: 0px;';
-                    qrHtml += ' width: ' + cellSize + 'px;';
-                    qrHtml += ' height: ' + cellSize + 'px;';
-                    qrHtml += ' background-color: ';
-                    qrHtml += _this.isDark(r, c) ? '#000000' : '#ffffff';
-                    qrHtml += ';';
+                    qrHtml += " border-width: 0px; border-style: none;";
+                    qrHtml += " border-collapse: collapse;";
+                    qrHtml += " padding: 0px; margin: 0px;";
+                    qrHtml += " width: " + cellSize + "px;";
+                    qrHtml += " height: " + cellSize + "px;";
+                    qrHtml += " background-color: ";
+                    qrHtml += _this.isDark(r, c) ? "#000000" : "#ffffff";
+                    qrHtml += ";";
                     qrHtml += '"/>';
                 }
-                qrHtml += '</tr>';
+                qrHtml += "</tr>";
             }
-            qrHtml += '</tbody>';
-            qrHtml += '</table>';
+            qrHtml += "</tbody>";
+            qrHtml += "</table>";
             return qrHtml;
         };
         _this.renderTo2dContext = function (context, cellSize) {
@@ -398,7 +401,7 @@ var qrcode = (function () {
             var length = _this.getModuleCount();
             for (var row = 0; row < length; row++) {
                 for (var col = 0; col < length; col++) {
-                    context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+                    context.fillStyle = _this.isDark(row, col) ? "black" : "white";
                     context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
                 }
             }
@@ -418,7 +421,7 @@ var qrcode = (function () {
             return bytes;
         },
     };
-    qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+    qrcode.stringToBytes = qrcode.stringToBytesFuncs.default;
     //---------------------------------------------------------------------
     // qrcode.createStringToBytes
     //---------------------------------------------------------------------
@@ -433,16 +436,18 @@ var qrcode = (function () {
             var bin = base64DecodeInputStream(unicodeData);
             var read = function () {
                 var b = bin.read();
-                if (b == -1)
-                    throw 'eof';
+                if (b == -1) {
+                    throw new Error("eof");
+                }
                 return b;
             };
             var count = 0;
             var unicodeMap = {};
             while (true) {
                 var b0 = bin.read();
-                if (b0 == -1)
+                if (b0 == -1) {
                     break;
+                }
                 var b1 = read();
                 var b2 = read();
                 var b3 = read();
@@ -452,11 +457,11 @@ var qrcode = (function () {
                 count += 1;
             }
             if (count != numChars) {
-                throw count + ' != ' + numChars;
+                throw new Error(count + " != " + numChars);
             }
             return unicodeMap;
         })();
-        var unknownChar = '?'.charCodeAt(0);
+        var unknownChar = "?".charCodeAt(0);
         return function (s) {
             var bytes = [];
             for (var i = 0; i < s.length; i += 1) {
@@ -466,7 +471,7 @@ var qrcode = (function () {
                 }
                 else {
                     var b = unicodeMap[s.charAt(i)];
-                    if (typeof b == 'number') {
+                    if (typeof b == "number") {
                         if ((b & 0xff) == b) {
                             // 1byte
                             bytes.push(b);
@@ -639,7 +644,7 @@ var qrcode = (function () {
                         return ((i * j) % 3 + (i + j) % 2) % 2 == 0;
                     };
                 default:
-                    throw 'bad maskPattern:' + maskPattern;
+                    throw new Error("bad maskPattern:" + maskPattern);
             }
         };
         _this.getErrorCorrectPolynomial = function (errorCorrectLength) {
@@ -662,7 +667,7 @@ var qrcode = (function () {
                     case QRMode.MODE_KANJI:
                         return 8;
                     default:
-                        throw 'mode:' + mode;
+                        throw new Error("mode:" + mode);
                 }
             }
             else if (type < 27) {
@@ -677,7 +682,7 @@ var qrcode = (function () {
                     case QRMode.MODE_KANJI:
                         return 10;
                     default:
-                        throw 'mode:' + mode;
+                        throw new Error("mode:" + mode);
                 }
             }
             else if (type < 41) {
@@ -692,11 +697,11 @@ var qrcode = (function () {
                     case QRMode.MODE_KANJI:
                         return 12;
                     default:
-                        throw 'mode:' + mode;
+                        throw new Error("mode:" + mode);
                 }
             }
             else {
-                throw 'type:' + type;
+                throw new Error("type:" + type);
             }
         };
         _this.getLostPoint = function (qrcode) {
@@ -732,14 +737,18 @@ var qrcode = (function () {
             for (var row = 0; row < moduleCount - 1; row += 1) {
                 for (var col = 0; col < moduleCount - 1; col += 1) {
                     var count = 0;
-                    if (qrcode.isDark(row, col))
+                    if (qrcode.isDark(row, col)) {
                         count += 1;
-                    if (qrcode.isDark(row + 1, col))
+                    }
+                    if (qrcode.isDark(row + 1, col)) {
                         count += 1;
-                    if (qrcode.isDark(row, col + 1))
+                    }
+                    if (qrcode.isDark(row, col + 1)) {
                         count += 1;
-                    if (qrcode.isDark(row + 1, col + 1))
+                    }
+                    if (qrcode.isDark(row + 1, col + 1)) {
                         count += 1;
+                    }
                     if (count == 0 || count == 4) {
                         lostPoint += 3;
                     }
@@ -810,7 +819,7 @@ var qrcode = (function () {
         var _this = {};
         _this.glog = function (n) {
             if (n < 1) {
-                throw 'glog(' + n + ')';
+                throw new Error("glog(" + n + ")");
             }
             return LOG_TABLE[n];
         };
@@ -829,8 +838,8 @@ var qrcode = (function () {
     // qrPolynomial
     //---------------------------------------------------------------------
     function qrPolynomial(num, shift) {
-        if (typeof num.length == 'undefined') {
-            throw num.length + '/' + shift;
+        if (typeof num.length == "undefined") {
+            throw new Error(num.length + "/" + shift);
         }
         var _num = (function () {
             var offset = 0;
@@ -1109,11 +1118,11 @@ var qrcode = (function () {
         };
         _this.getRSBlocks = function (typeNumber, errorCorrectionLevel) {
             var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
-            if (typeof rsBlock == 'undefined') {
-                throw 'bad rs block @ typeNumber:' +
+            if (typeof rsBlock == "undefined") {
+                throw new Error("bad rs block @ typeNumber:" +
                     typeNumber +
-                    '/errorCorrectionLevel:' +
-                    errorCorrectionLevel;
+                    "/errorCorrectionLevel:" +
+                    errorCorrectionLevel);
             }
             var length = rsBlock.length / 3;
             var list = [];
@@ -1200,10 +1209,10 @@ var qrcode = (function () {
             return num;
         };
         var chatToNum = function (c) {
-            if ('0' <= c && c <= '9') {
-                return c.charCodeAt(0) - '0'.charCodeAt(0);
+            if ("0" <= c && c <= "9") {
+                return c.charCodeAt(0) - "0".charCodeAt(0);
             }
-            throw 'illegal char :' + c;
+            throw new Error("illegal char :" + c);
         };
         return _this;
     };
@@ -1232,34 +1241,34 @@ var qrcode = (function () {
             }
         };
         var getCode = function (c) {
-            if ('0' <= c && c <= '9') {
-                return c.charCodeAt(0) - '0'.charCodeAt(0);
+            if ("0" <= c && c <= "9") {
+                return c.charCodeAt(0) - "0".charCodeAt(0);
             }
-            else if ('A' <= c && c <= 'Z') {
-                return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+            else if ("A" <= c && c <= "Z") {
+                return c.charCodeAt(0) - "A".charCodeAt(0) + 10;
             }
             else {
                 switch (c) {
-                    case ' ':
+                    case " ":
                         return 36;
-                    case '$':
+                    case "$":
                         return 37;
-                    case '%':
+                    case "%":
                         return 38;
-                    case '*':
+                    case "*":
                         return 39;
-                    case '+':
+                    case "+":
                         return 40;
-                    case '-':
+                    case "-":
                         return 41;
-                    case '.':
+                    case ".":
                         return 42;
-                    case '/':
+                    case "/":
                         return 43;
-                    case ':':
+                    case ":":
                         return 44;
                     default:
-                        throw 'illegal char :' + c;
+                        throw new Error("illegal char :" + c);
                 }
             }
         };
@@ -1292,17 +1301,17 @@ var qrcode = (function () {
     var qrKanji = function (data) {
         var _mode = QRMode.MODE_KANJI;
         var _data = data;
-        var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+        var stringToBytes = qrcode.stringToBytesFuncs.SJIS;
         if (!stringToBytes) {
-            throw 'sjis not supported.';
+            throw new Error("sjis not supported.");
         }
         !(function (c, code) {
             // self test for sjis support.
             var test = stringToBytes(c);
             if (test.length != 2 || ((test[0] << 8) | test[1]) != code) {
-                throw 'sjis not supported.';
+                throw new Error("sjis not supported.");
             }
-        })('\u53cb', 0x9746);
+        })("\u53cb", 0x9746);
         var _bytes = stringToBytes(data);
         var _this = {};
         _this.getMode = function () {
@@ -1323,14 +1332,14 @@ var qrcode = (function () {
                     c -= 0xc140;
                 }
                 else {
-                    throw 'illegal char at ' + (i + 1) + '/' + c;
+                    throw new Error("illegal char at " + (i + 1) + "/" + c);
                 }
                 c = ((c >>> 8) & 0xff) * 0xc0 + (c & 0xff);
                 buffer.put(c, 13);
                 i += 2;
             }
             if (i < data.length) {
-                throw 'illegal char at ' + (i + 1);
+                throw new Error("illegal char at " + (i + 1));
             }
         };
         return _this;
@@ -1367,15 +1376,15 @@ var qrcode = (function () {
             return _bytes;
         };
         _this.toString = function () {
-            var s = '';
-            s += '[';
+            var s = "";
+            s += "[";
             for (var i = 0; i < _bytes.length; i += 1) {
                 if (i > 0) {
-                    s += ',';
+                    s += ",";
                 }
                 s += _bytes[i];
             }
-            s += ']';
+            s += "]";
             return s;
         };
         return _this;
@@ -1387,7 +1396,7 @@ var qrcode = (function () {
         var _buffer = 0;
         var _buflen = 0;
         var _length = 0;
-        var _base64 = '';
+        var _base64 = "";
         var _this = {};
         var writeEncoded = function (b) {
             _base64 += String.fromCharCode(encode(b & 0x3f));
@@ -1411,7 +1420,7 @@ var qrcode = (function () {
             else if (n == 63) {
                 return 0x2f;
             }
-            throw 'n:' + n;
+            throw new Error("n:" + n);
         };
         _this.writeByte = function (n) {
             _buffer = (_buffer << 8) | (n & 0xff);
@@ -1432,7 +1441,7 @@ var qrcode = (function () {
                 // padding
                 var padlen = 3 - _length % 3;
                 for (var i = 0; i < padlen; i += 1) {
-                    _base64 += '=';
+                    _base64 += "=";
                 }
             }
         };
@@ -1456,11 +1465,11 @@ var qrcode = (function () {
                     if (_buflen == 0) {
                         return -1;
                     }
-                    throw 'unexpected end of file./' + _buflen;
+                    throw new Error("unexpected end of file./" + _buflen);
                 }
                 var c = _str.charAt(_pos);
                 _pos += 1;
-                if (c == '=') {
+                if (c == "=") {
                     _buflen = 0;
                     return -1;
                 }
@@ -1492,7 +1501,7 @@ var qrcode = (function () {
                 return 63;
             }
             else {
-                throw 'c:' + c;
+                throw new Error("c:" + c);
             }
         };
         return _this;
@@ -1503,21 +1512,21 @@ var qrcode = (function () {
 })();
 // multibyte support
 !(function () {
-    qrcode.stringToBytesFuncs['UTF-8'] = function (s) {
+    qrcode.stringToBytesFuncs["UTF-8"] = function (s) {
         // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
         function toUTF8Array(str) {
             var utf8 = [];
             for (var i = 0; i < str.length; i++) {
                 var charcode = str.charCodeAt(i);
-                if (charcode < 0x80)
+                if (charcode < 0x80) {
                     utf8.push(charcode);
+                }
                 else if (charcode < 0x800) {
                     utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
                 }
                 else if (charcode < 0xd800 || charcode >= 0xe000) {
                     utf8.push(0xe0 | (charcode >> 12), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
                 }
-                // surrogate pair
                 else {
                     i++;
                     // UTF-16 encodes 0x10000-0x10FFFF by

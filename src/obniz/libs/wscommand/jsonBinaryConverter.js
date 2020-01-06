@@ -172,8 +172,12 @@ class JsonBinaryConverter {
     if (path === '' || path === undefined) {
       return object;
     }
-    if (typeof path === 'string') path = path.split('.');
-    if (!Array.isArray(path)) path = [path];
+    if (typeof path === 'string') {
+      path = path.split('.');
+    }
+    if (!Array.isArray(path)) {
+      path = [path];
+    }
 
     let index = 0,
       length = path.length;

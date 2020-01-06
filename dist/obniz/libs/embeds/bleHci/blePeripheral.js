@@ -21,8 +21,8 @@ class BlePeripheral {
         this._updateServices();
     }
     setJson(json) {
-        if (json['services']) {
-            for (let service of json['services']) {
+        if (json.services) {
+            for (let service of json.services) {
                 this.addService(service);
             }
         }

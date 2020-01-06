@@ -1,4 +1,4 @@
-import { PullType } from "./common";
+import {PullType} from "./common";
 
 export interface I2C {
   onwritten: (data: any) => void;
@@ -15,6 +15,8 @@ export interface I2C {
   }): void;
 
   write(address: any, data: any): void;
+
   readWait(address: any, length: any): Promise<any>;
+
   end(): void;
 }

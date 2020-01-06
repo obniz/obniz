@@ -11,7 +11,9 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
     }
     str = str.replace('-', '');
     let id = parseInt(str);
-    if (isNaN(id)) id = null;
+    if (isNaN(id)) {
+      id = null;
+    }
     return id != null;
   }
 

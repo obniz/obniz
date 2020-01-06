@@ -201,4 +201,5 @@ class Smp extends events.EventEmitter {
     this._aclStream.write(SMP_CID, data);
   }
 }
+
 module.exports = Smp;

@@ -23,9 +23,10 @@ function pascalCase(str) {
   return camel.charAt(0).toUpperCase() + camel.slice(1);
 }
 
-(async function() {
-  const relativePath = '/src/obniz/libs/embeds/ble/';
-  const root_directory = __dirname + relativePath;
+const relativePath = './src/';
+
+async function createDtsOnDir(relativePath) {
+  const root_directory = path.resolve(__dirname, '../../', relativePath);
 
   let file_list = fs.readdirSync(root_directory);
 
@@ -35,16 +36,14 @@ function pascalCase(str) {
       return file.match(/.*\.js$/);
     })
     .each(function(file) {
-      let fullpath = relativePath + file;
-      let isExistDtsFile = false;
+      let fullpath = path.resolve(__dirname, '../../', relativePath, file);
       let dtsFilePath = fullpath.replace('.js', '.d.ts');
       try {
         if (fs.existsSync(dtsFilePath)) {
-          isExistDtsFile = true;
           return;
         }
       } catch (err) {
-        isExistDtsFile = false;
+        //nothing
       }
 
       let moduleName = path.basename(file, path.extname(file));
@@ -55,4 +54,17 @@ function pascalCase(str) {
 
   //refresh
   file_list = fs.readdirSync(root_directory);
-})();
+
+  // Recurse on directories
+  _.chain(file_list)
+    .filter(function(file) {
+      let file_path = path.resolve(root_directory, file);
+      return fs.lstatSync(file_path).isDirectory();
+    })
+    .each(function(file) {
+      let file_path = path.resolve(root_directory, file);
+      createDtsOnDir(file_path);
+    });
+}
+
+createDtsOnDir(relativePath);

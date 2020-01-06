@@ -32,8 +32,9 @@ class BleAdvertisementBuilder {
     build() {
         let data = [];
         for (let key in this.rows) {
-            if (this.rows[key].length === 0)
+            if (this.rows[key].length === 0) {
                 continue;
+            }
             data.push(this.rows[key].length + 1);
             data.push(parseInt(key));
             Array.prototype.push.apply(data, this.rows[key]);
@@ -97,16 +98,21 @@ class BleAdvertisementBuilder {
     extendEvalJson(json) {
         if (json) {
             if (json.flags) {
-                if (json.flags.includes('limited_discoverable_mode'))
+                if (json.flags.includes('limited_discoverable_mode')) {
                     this.setLeLimitedDiscoverableModeFlag();
-                if (json.flags.includes('general_discoverable_mode'))
+                }
+                if (json.flags.includes('general_discoverable_mode')) {
                     this.setLeGeneralDiscoverableModeFlag();
-                if (json.flags.includes('br_edr_not_supported'))
+                }
+                if (json.flags.includes('br_edr_not_supported')) {
                     this.setBrEdrNotSupportedFlag();
-                if (json.flags.includes('le_br_edr_controller'))
+                }
+                if (json.flags.includes('le_br_edr_controller')) {
                     this.setLeBrEdrControllerFlag();
-                if (json.flags.includes('le_br_edr_host'))
+                }
+                if (json.flags.includes('le_br_edr_host')) {
                     this.setLeBrEdrHostFlag();
+                }
             }
         }
     }
