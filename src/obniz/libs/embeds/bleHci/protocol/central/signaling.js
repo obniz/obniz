@@ -1,9 +1,8 @@
 // let debug = require('debug')('signaling');
-let debug = () => {
-};
+let debug = () => {};
 
-let events = require("events");
-let util = require("util");
+let events = require('events');
+let util = require('util');
 
 let CONNECTION_PARAMETER_UPDATE_REQUEST = 0x12;
 let CONNECTION_PARAMETER_UPDATE_RESPONSE = 0x13;
@@ -17,8 +16,8 @@ let Signaling = function(handle, aclStream) {
   this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
   this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
-  this._aclStream.on("data", this.onAclStreamDataBinded);
-  this._aclStream.on("end", this.onAclStreamEndBinded);
+  this._aclStream.on('data', this.onAclStreamDataBinded);
+  this._aclStream.on('end', this.onAclStreamEndBinded);
 };
 
 util.inherits(Signaling, events.EventEmitter);
@@ -28,16 +27,16 @@ Signaling.prototype.onAclStreamData = function(cid, data) {
     return;
   }
 
-  debug("onAclStreamData: " + data.toString("hex"));
+  debug('onAclStreamData: ' + data.toString('hex'));
 
   let code = data.readUInt8(0);
   let identifier = data.readUInt8(1);
   let length = data.readUInt16LE(2);
   let signalingData = data.slice(4);
 
-  debug("\tcode = " + code);
-  debug("\tidentifier = " + identifier);
-  debug("\tlength = " + length);
+  debug('\tcode = ' + code);
+  debug('\tidentifier = ' + identifier);
+  debug('\tlength = ' + length);
 
   if (code === CONNECTION_PARAMETER_UPDATE_REQUEST) {
     this.processConnectionParameterUpdateRequest(identifier, signalingData);
@@ -45,23 +44,23 @@ Signaling.prototype.onAclStreamData = function(cid, data) {
 };
 
 Signaling.prototype.onAclStreamEnd = function() {
-  this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-  this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
 };
 
 Signaling.prototype.processConnectionParameterUpdateRequest = function(
-    identifier,
-    data,
+  identifier,
+  data
 ) {
   let minInterval = data.readUInt16LE(0) * 1.25;
   let maxInterval = data.readUInt16LE(2) * 1.25;
   let latency = data.readUInt16LE(4);
   let supervisionTimeout = data.readUInt16LE(6) * 10;
 
-  debug("\t\tmin interval = ", minInterval);
-  debug("\t\tmax interval = ", maxInterval);
-  debug("\t\tlatency = ", latency);
-  debug("\t\tsupervision timeout = ", supervisionTimeout);
+  debug('\t\tmin interval = ', minInterval);
+  debug('\t\tmax interval = ', maxInterval);
+  debug('\t\tlatency = ', latency);
+  debug('\t\tsupervision timeout = ', supervisionTimeout);
 
   let response = Buffer.alloc(6);
 
@@ -73,12 +72,12 @@ Signaling.prototype.processConnectionParameterUpdateRequest = function(
   this._aclStream.write(SIGNALING_CID, response);
 
   this.emit(
-      "connectionParameterUpdateRequest",
-      this._handle,
-      minInterval,
-      maxInterval,
-      latency,
-      supervisionTimeout,
+    'connectionParameterUpdateRequest',
+    this._handle,
+    minInterval,
+    maxInterval,
+    latency,
+    supervisionTimeout
   );
 };
 

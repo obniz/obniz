@@ -1,39 +1,38 @@
 // var debug = require('debug')('gap');
-const debug = () => {
-};
+const debug = () => {};
 
-let events = require("events");
-let os = require("os");
-let util = require("util");
+let events = require('events');
+let os = require('os');
+let util = require('util');
 
-let Hci = require("../hci");
+let Hci = require('../hci');
 
-let isLinux = os.platform() === "linux";
-let isIntelEdison = isLinux && os.release().indexOf("edison") !== -1;
-let isYocto = isLinux && os.release().indexOf("yocto") !== -1;
+let isLinux = os.platform() === 'linux';
+let isIntelEdison = isLinux && os.release().indexOf('edison') !== -1;
+let isYocto = isLinux && os.release().indexOf('yocto') !== -1;
 
 function Gap(hci) {
   this._hci = hci;
 
   this._advertiseState = null;
 
-  this._hci.on("error", this.onHciError.bind(this));
+  this._hci.on('error', this.onHciError.bind(this));
 
   this._hci.on(
-      "leAdvertisingParametersSet",
-      this.onHciLeAdvertisingParametersSet.bind(this),
+    'leAdvertisingParametersSet',
+    this.onHciLeAdvertisingParametersSet.bind(this)
   );
   this._hci.on(
-      "leAdvertisingDataSet",
-      this.onHciLeAdvertisingDataSet.bind(this),
+    'leAdvertisingDataSet',
+    this.onHciLeAdvertisingDataSet.bind(this)
   );
   this._hci.on(
-      "leScanResponseDataSet",
-      this.onHciLeScanResponseDataSet.bind(this),
+    'leScanResponseDataSet',
+    this.onHciLeScanResponseDataSet.bind(this)
   );
   this._hci.on(
-      "leAdvertiseEnableSet",
-      this.onHciLeAdvertiseEnableSet.bind(this),
+    'leAdvertiseEnableSet',
+    this.onHciLeAdvertiseEnableSet.bind(this)
   );
 }
 
@@ -41,10 +40,10 @@ util.inherits(Gap, events.EventEmitter);
 
 Gap.prototype.startAdvertising = function(name, serviceUuids) {
   debug(
-      "startAdvertising: name = " +
+    'startAdvertising: name = ' +
       name +
-      ", serviceUuids = " +
-      JSON.stringify(serviceUuids, null, 2),
+      ', serviceUuids = ' +
+      JSON.stringify(serviceUuids, null, 2)
   );
 
   let advertisementDataLength = 3;
@@ -61,11 +60,11 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
   if (serviceUuids && serviceUuids.length) {
     for (i = 0; i < serviceUuids.length; i++) {
       let serviceUuid = Buffer.from(
-          serviceUuids[i]
-              .match(/.{1,2}/g)
-              .reverse()
-              .join(""),
-          "hex",
+        serviceUuids[i]
+          .match(/.{1,2}/g)
+          .reverse()
+          .join(''),
+        'hex'
       );
 
       if (serviceUuid.length === 2) {
@@ -96,8 +95,8 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   if (serviceUuids16bit.length) {
     advertisementData.writeUInt8(
-        1 + 2 * serviceUuids16bit.length,
-        advertisementDataOffset,
+      1 + 2 * serviceUuids16bit.length,
+      advertisementDataOffset
     );
     advertisementDataOffset++;
 
@@ -112,8 +111,8 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 
   if (serviceUuids128bit.length) {
     advertisementData.writeUInt8(
-        1 + 16 * serviceUuids128bit.length,
-        advertisementDataOffset,
+      1 + 16 * serviceUuids128bit.length,
+      advertisementDataOffset
     );
     advertisementDataOffset++;
 
@@ -139,7 +138,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 };
 
 Gap.prototype.startAdvertisingIBeacon = function(data) {
-  debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
+  debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
 
   let dataLength = data.length;
   let manufacturerDataLength = 4 + dataLength;
@@ -166,35 +165,35 @@ Gap.prototype.startAdvertisingIBeacon = function(data) {
 };
 
 Gap.prototype.startAdvertisingWithEIRData = function(
-    advertisementData,
-    scanData,
+  advertisementData,
+  scanData
 ) {
   advertisementData = advertisementData || Buffer.alloc(0);
   scanData = scanData || Buffer.alloc(0);
 
   debug(
-      "startAdvertisingWithEIRData: advertisement data = " +
-      advertisementData.toString("hex") +
-      ", scan data = " +
-      scanData.toString("hex"),
+    'startAdvertisingWithEIRData: advertisement data = ' +
+      advertisementData.toString('hex') +
+      ', scan data = ' +
+      scanData.toString('hex')
   );
 
   let error = null;
 
   if (advertisementData.length > 31) {
-    error = new Error("Advertisement data is over maximum limit of 31 bytes");
+    error = new Error('Advertisement data is over maximum limit of 31 bytes');
   } else if (scanData.length > 31) {
-    error = new Error("Scan data is over maximum limit of 31 bytes");
+    error = new Error('Scan data is over maximum limit of 31 bytes');
   }
 
   if (error) {
-    this.emit("advertisingStart", error);
+    this.emit('advertisingStart', error);
   } else {
-    this._advertiseState = "starting";
+    this._advertiseState = 'starting';
 
     if (isIntelEdison || isYocto) {
       // work around for Intel Edison
-      debug("skipping first set of scan response and advertisement data");
+      debug('skipping first set of scan response and advertisement data');
     } else {
       this._hci.setScanResponseData(scanData);
       this._hci.setAdvertisingData(advertisementData);
@@ -206,46 +205,42 @@ Gap.prototype.startAdvertisingWithEIRData = function(
 };
 
 Gap.prototype.restartAdvertising = function() {
-  this._advertiseState = "restarting";
+  this._advertiseState = 'restarting';
 
   this._hci.setAdvertiseEnable(true);
 };
 
 Gap.prototype.stopAdvertising = function() {
-  this._advertiseState = "stopping";
+  this._advertiseState = 'stopping';
 
   this._hci.setAdvertiseEnable(false);
 };
 
-Gap.prototype.onHciError = function(error) {
-};
+Gap.prototype.onHciError = function(error) {};
 
-Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {
-};
+Gap.prototype.onHciLeAdvertisingParametersSet = function(status) {};
 
-Gap.prototype.onHciLeAdvertisingDataSet = function(status) {
-};
+Gap.prototype.onHciLeAdvertisingDataSet = function(status) {};
 
-Gap.prototype.onHciLeScanResponseDataSet = function(status) {
-};
+Gap.prototype.onHciLeScanResponseDataSet = function(status) {};
 
 Gap.prototype.onHciLeAdvertiseEnableSet = function(status) {
-  if (this._advertiseState === "starting") {
-    this._advertiseState = "started";
+  if (this._advertiseState === 'starting') {
+    this._advertiseState = 'started';
 
     let error = null;
 
     if (status) {
       error = new Error(
-          Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")",
+        Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
       );
     }
 
-    this.emit("advertisingStart", error);
-  } else if (this._advertiseState === "stopping") {
-    this._advertiseState = "stopped";
+    this.emit('advertisingStart', error);
+  } else if (this._advertiseState === 'stopping') {
+    this._advertiseState = 'stopped';
 
-    this.emit("advertisingStop");
+    this.emit('advertisingStop');
   }
 };
 

@@ -1,4 +1,4 @@
-let crypto = require("crypto");
+let crypto = require('crypto');
 
 function r() {
   return crypto.randomBytes(16);
@@ -7,7 +7,7 @@ function r() {
 function c1(k, r, pres, preq, iat, ia, rat, ra) {
   let p1 = Buffer.concat([iat, rat, preq, pres]);
 
-  let p2 = Buffer.concat([ra, ia, Buffer.from("00000000", "hex")]);
+  let p2 = Buffer.concat([ra, ia, Buffer.from('00000000', 'hex')]);
 
   let res = xor(r, p1);
   res = e(k, res);
@@ -25,7 +25,7 @@ function e(key, data) {
   key = swap(key);
   data = swap(data);
 
-  let cipher = crypto.createCipheriv("aes-128-ecb", key, "");
+  let cipher = crypto.createCipheriv('aes-128-ecb', key, '');
   cipher.setAutoPadding(false);
 
   return swap(Buffer.concat([cipher.update(data), cipher.final()]));

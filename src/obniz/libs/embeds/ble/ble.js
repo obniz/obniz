@@ -1,11 +1,11 @@
-const BlePeripheral = require("./blePeripheral");
-const BleService = require("./bleService");
-const BleCharacteristic = require("./bleCharacteristic");
-const BleDescriptor = require("./bleDescriptor");
-const BleRemotePeripheral = require("./bleRemotePeripheral");
-const BleAdvertisement = require("./bleAdvertisement");
-const BleScan = require("./bleScan");
-const BleSecurity = require("./bleSecurity");
+const BlePeripheral = require('./blePeripheral');
+const BleService = require('./bleService');
+const BleCharacteristic = require('./bleCharacteristic');
+const BleDescriptor = require('./bleDescriptor');
+const BleRemotePeripheral = require('./bleRemotePeripheral');
+const BleAdvertisement = require('./bleAdvertisement');
+const BleScan = require('./bleScan');
+const BleSecurity = require('./bleSecurity');
 
 class ObnizBLE {
   constructor(Obniz) {
@@ -32,13 +32,13 @@ class ObnizBLE {
 
   directConnect(uuid, addressType) {
     throw new Error(
-      "directConnect cannot use obnizOS < 3.0.0. Please update obnizOS",
+      'directConnect cannot use obnizOS < 3.0.0. Please update obnizOS'
     );
   }
 
   async directConnectWait(uuid, addressType) {
     throw new Error(
-      "directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS",
+      'directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS'
     );
   }
 
@@ -61,27 +61,29 @@ class ObnizBLE {
       val.discoverdOnRemote = true;
       val.setParams(obj.scan_result);
 
-      this.scan.notifyFromServer("onfind", val);
+      this.scan.notifyFromServer('onfind', val);
     }
 
     if (obj.scan_result_finish) {
-      this.scan.notifyFromServer("onfinish");
+      this.scan.notifyFromServer('onfinish');
     }
 
     let remotePeripheralCallbackFunc = function(val, func, type) {
       let obj = null;
-      if (val === undefined) { return; }
+      if (val === undefined) {
+        return;
+      }
       let p = this.findPeripheral(val.address);
       if (!p) {
         return;
       }
-      if (type === "peripheral") {
+      if (type === 'peripheral') {
         obj = p;
-      } else if (type === "service") {
+      } else if (type === 'service') {
         obj = p.findService(val);
-      } else if (type === "characteristic") {
+      } else if (type === 'characteristic') {
         obj = p.findCharacteristic(val);
-      } else if (type === "descriptor") {
+      } else if (type === 'descriptor') {
         obj = p.findDescriptor(val);
       }
       if (!obj) {
@@ -91,47 +93,47 @@ class ObnizBLE {
     }.bind(this);
 
     const paramList = {
-      status_update: { name: "statusupdate", obj: "peripheral" },
-      get_service_result: { name: "discover", obj: "peripheral" },
+      status_update: { name: 'statusupdate', obj: 'peripheral' },
+      get_service_result: { name: 'discover', obj: 'peripheral' },
       get_service_result_finish: {
-        name: "discoverfinished",
-        obj: "peripheral",
+        name: 'discoverfinished',
+        obj: 'peripheral',
       },
-      get_characteristic_result: { name: "discover", obj: "service" },
+      get_characteristic_result: { name: 'discover', obj: 'service' },
       get_characteristic_result_finish: {
-        name: "discoverfinished",
-        obj: "service",
+        name: 'discoverfinished',
+        obj: 'service',
       },
-      write_characteristic_result: { name: "onwrite", obj: "characteristic" },
-      read_characteristic_result: { name: "onread", obj: "characteristic" },
+      write_characteristic_result: { name: 'onwrite', obj: 'characteristic' },
+      read_characteristic_result: { name: 'onread', obj: 'characteristic' },
       register_notify_characteristic_result: {
-        name: "onregisternotify",
-        obj: "characteristic",
+        name: 'onregisternotify',
+        obj: 'characteristic',
       },
       //for typo
       register_nofity_characteristic_result: {
-        name: "onregisternotify",
-        obj: "characteristic",
+        name: 'onregisternotify',
+        obj: 'characteristic',
       },
       unregister_notify_characteristic_result: {
-        name: "onunregisternotify",
-        obj: "characteristic",
+        name: 'onunregisternotify',
+        obj: 'characteristic',
       },
       //for typo
       unregister_nofity_characteristic_result: {
-        name: "onunregisternotify",
-        obj: "characteristic",
+        name: 'onunregisternotify',
+        obj: 'characteristic',
       },
-      notify_characteristic: { name: "onnotify", obj: "characteristic" },
+      notify_characteristic: { name: 'onnotify', obj: 'characteristic' },
       //for typo
-      nofity_characteristic: { name: "onnotify", obj: "characteristic" },
-      get_descriptor_result: { name: "discover", obj: "characteristic" },
+      nofity_characteristic: { name: 'onnotify', obj: 'characteristic' },
+      get_descriptor_result: { name: 'discover', obj: 'characteristic' },
       get_descriptor_result_finish: {
-        name: "discoverfinished",
-        obj: "characteristic",
+        name: 'discoverfinished',
+        obj: 'characteristic',
       },
-      write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-      read_descriptor_result: { name: "onread", obj: "descriptor" },
+      write_descriptor_result: { name: 'onwrite', obj: 'descriptor' },
+      read_descriptor_result: { name: 'onread', obj: 'descriptor' },
     };
 
     for (let key in paramList) {
@@ -140,20 +142,22 @@ class ObnizBLE {
         function(val, bleobj) {
           bleobj.notifyFromServer(paramList[key].name, val);
         }.bind(this),
-        paramList[key].obj,
+        paramList[key].obj
       );
     }
 
     let callbackFunc = function(val, func, type) {
       let obj = null;
-      if (val === undefined) { return; }
-      if (type === "peripheral") {
+      if (val === undefined) {
+        return;
+      }
+      if (type === 'peripheral') {
         obj = this.peripheral;
-      } else if (type === "service") {
+      } else if (type === 'service') {
         obj = this.peripheral.getService(val);
-      } else if (type === "characteristic") {
+      } else if (type === 'characteristic') {
         obj = this.peripheral.findCharacteristic(val);
-      } else if (type === "descriptor") {
+      } else if (type === 'descriptor') {
         obj = this.peripheral.findDescriptor(val);
       }
       if (!obj) {
@@ -168,26 +172,26 @@ class ObnizBLE {
         function(val) {
           this.peripheral.onconnectionupdates(val);
         }.bind(this),
-        "peripheral",
+        'peripheral'
       );
 
       const paramList = {
-        read_characteristic_result: { name: "onread", obj: "characteristic" },
-        write_characteristic_result: { name: "onwrite", obj: "characteristic" },
+        read_characteristic_result: { name: 'onread', obj: 'characteristic' },
+        write_characteristic_result: { name: 'onwrite', obj: 'characteristic' },
         notify_read_characteristic: {
-          name: "onreadfromremote",
-          obj: "characteristic",
+          name: 'onreadfromremote',
+          obj: 'characteristic',
         },
         notify_write_characteristic: {
-          name: "onwritefromremote",
-          obj: "characteristic",
+          name: 'onwritefromremote',
+          obj: 'characteristic',
         },
-        read_descriptor_result: { name: "onread", obj: "descriptor" },
-        write_descriptor_result: { name: "onwrite", obj: "descriptor" },
-        notify_read_descriptor: { name: "onreadfromremote", obj: "descriptor" },
+        read_descriptor_result: { name: 'onread', obj: 'descriptor' },
+        write_descriptor_result: { name: 'onwrite', obj: 'descriptor' },
+        notify_read_descriptor: { name: 'onreadfromremote', obj: 'descriptor' },
         notify_write_descriptor: {
-          name: "onwritefromremote",
-          obj: "descriptor",
+          name: 'onwritefromremote',
+          obj: 'descriptor',
         },
       };
 
@@ -197,7 +201,7 @@ class ObnizBLE {
           function(val, bleobj) {
             bleobj.notifyFromServer(paramList[key].name, val);
           }.bind(this),
-          paramList[key].obj,
+          paramList[key].obj
         );
       }
     }
@@ -225,7 +229,7 @@ class ObnizBLE {
           target = peripheral.findService(params);
         }
         if (target) {
-          target.notifyFromServer("onerror", params);
+          target.notifyFromServer('onerror', params);
           handled = true;
         } else {
           peripheral.onerror(params);
@@ -243,7 +247,7 @@ class ObnizBLE {
             params.service_uuid
           } characteristic_uuid=${params.characteristic_uuid} descriptor_uuid=${
             params.descriptor_uuid
-          }`,
+          }`
         );
       }
     }
@@ -252,22 +256,22 @@ class ObnizBLE {
   static _dataArray2uuidHex(data, reverse) {
     let uuid = [];
     for (let i = 0; i < data.length; i++) {
-      uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
+      uuid.push(('00' + data[i].toString(16).toLowerCase()).slice(-2));
     }
     if (reverse) {
       uuid = uuid.reverse();
     }
-    let str = uuid.join("");
+    let str = uuid.join('');
     if (uuid.length >= 16) {
       str =
         str.slice(0, 8) +
-        "-" +
+        '-' +
         str.slice(8, 12) +
-        "-" +
+        '-' +
         str.slice(12, 16) +
-        "-" +
+        '-' +
         str.slice(16, 20) +
-        "-" +
+        '-' +
         str.slice(20);
     }
     return str;

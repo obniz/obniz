@@ -6,8 +6,7 @@ class ObnizSwitch {
 
   _reset() {
     this.observers = [];
-    this.onChangeForStateWait = function() {
-    };
+    this.onChangeForStateWait = function() {};
   }
 
   addObserver(callback) {
@@ -20,7 +19,7 @@ class ObnizSwitch {
     let self = this;
     return new Promise(function(resolve, reject) {
       let obj = {};
-      obj.switch = "get";
+      obj['switch'] = 'get';
       self.Obniz.send(obj);
       self.addObserver(resolve);
     });
@@ -31,8 +30,7 @@ class ObnizSwitch {
     return new Promise(function(resolve, reject) {
       self.onChangeForStateWait = function(pressed) {
         if (isPressed == pressed) {
-          self.onChangeForStateWait = function() {
-          };
+          self.onChangeForStateWait = function() {};
           resolve();
         }
       };

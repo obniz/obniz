@@ -1,4 +1,4 @@
-const BleHelper = require("./bleHelper");
+const BleHelper = require('./bleHelper');
 
 class BleAdvertisementBuilder {
   constructor(Obniz, json) {
@@ -10,13 +10,13 @@ class BleAdvertisementBuilder {
         this.setCompleteLocalName(json.localName);
       }
       if (
-          json.manufacturerData &&
-          json.manufacturerData.companyCode &&
-          json.manufacturerData.data
+        json.manufacturerData &&
+        json.manufacturerData.companyCode &&
+        json.manufacturerData.data
       ) {
         this.setManufacturerSpecificData(
-            json.manufacturerData.companyCode,
-            json.manufacturerData.data,
+          json.manufacturerData.companyCode,
+          json.manufacturerData.data
         );
       }
       if (json.serviceUuids) {
@@ -25,7 +25,7 @@ class BleAdvertisementBuilder {
         }
       }
     }
-    if (typeof this.extendEvalJson === "function") {
+    if (typeof this.extendEvalJson === 'function') {
       this.extendEvalJson(json);
     }
   }
@@ -41,7 +41,7 @@ class BleAdvertisementBuilder {
   build() {
     let data = [];
     for (let key in this.rows) {
-      if (this.rows[key].length === 0) { continue; }
+      if (this.rows[key].length === 0) continue;
 
       data.push(this.rows[key].length + 1);
       data.push(parseInt(key));
@@ -49,7 +49,7 @@ class BleAdvertisementBuilder {
     }
     if (data.length > 31) {
       this.Obniz.error(
-          "Too large data. Advertise/ScanResponse data are must be less than 32 byte.",
+        'Too large data. Advertise/ScanResponse data are must be less than 32 byte.'
       );
     }
 
@@ -84,19 +84,19 @@ class BleAdvertisementBuilder {
 
   setUuid(uuid) {
     let uuidData = this.convertUuid(uuid);
-    let type = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length];
+    let type = { 16: 0x06, 4: 0x04, 2: 0x02 }[uuidData.length];
     this.setRow(type, uuidData);
   }
 
   convertUuid(uuid) {
     let uuidNumeric = BleHelper.uuidFilter(uuid);
     if (
-        uuidNumeric.length !== 32 &&
-        uuidNumeric.length !== 8 &&
-        uuidNumeric.length !== 4
+      uuidNumeric.length !== 32 &&
+      uuidNumeric.length !== 8 &&
+      uuidNumeric.length !== 4
     ) {
       this.Obniz.error(
-          "BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)",
+        'BLE uuid must be 16/32/128 bit . (example: c28f0ad5-a7fd-48be-9fd0-eae9ffd3a8bb for 128bit)'
       );
     }
 
@@ -127,19 +127,15 @@ class BleAdvertisementBuilder {
   extendEvalJson(json) {
     if (json) {
       if (json.flags) {
-        if (json.flags.includes("limited_discoverable_mode")) {
+        if (json.flags.includes('limited_discoverable_mode'))
           this.setLeLimitedDiscoverableModeFlag();
-        }
-        if (json.flags.includes("general_discoverable_mode")) {
+        if (json.flags.includes('general_discoverable_mode'))
           this.setLeGeneralDiscoverableModeFlag();
-        }
-        if (json.flags.includes("br_edr_not_supported")) {
+        if (json.flags.includes('br_edr_not_supported'))
           this.setBrEdrNotSupportedFlag();
-        }
-        if (json.flags.includes("le_br_edr_controller")) {
+        if (json.flags.includes('le_br_edr_controller'))
           this.setLeBrEdrControllerFlag();
-        }
-        if (json.flags.includes("le_br_edr_host")) { this.setLeBrEdrHostFlag(); }
+        if (json.flags.includes('le_br_edr_host')) this.setLeBrEdrHostFlag();
       }
     }
   }

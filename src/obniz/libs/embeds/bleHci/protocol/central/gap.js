@@ -1,9 +1,9 @@
 // let debug = require('debug')('gap');
 const debug = () => {};
 
-let events = require("events");
-let util = require("util");
-let Hci = require("../hci");
+let events = require('events');
+let util = require('util');
+let Hci = require('../hci');
 
 let Gap = function(hci) {
   this._hci = hci;
@@ -12,35 +12,35 @@ let Gap = function(hci) {
   this._scanFilterDuplicates = null;
   this._discoveries = {};
 
-  this._hci.on("error", this.onHciError.bind(this));
-  this._hci.on("leScanParametersSet", this.onHciLeScanParametersSet.bind(this));
-  this._hci.on("leScanEnableSet", this.onHciLeScanEnableSet.bind(this));
-  this._hci.on("leAdvertisingReport", this.onHciLeAdvertisingReport.bind(this));
+  this._hci.on('error', this.onHciError.bind(this));
+  this._hci.on('leScanParametersSet', this.onHciLeScanParametersSet.bind(this));
+  this._hci.on('leScanEnableSet', this.onHciLeScanEnableSet.bind(this));
+  this._hci.on('leAdvertisingReport', this.onHciLeAdvertisingReport.bind(this));
 
-  this._hci.on("leScanEnableSetCmd", this.onLeScanEnableSetCmd.bind(this));
+  this._hci.on('leScanEnableSetCmd', this.onLeScanEnableSetCmd.bind(this));
 
   this._hci.on(
-    "leAdvertisingParametersSet",
-    this.onHciLeAdvertisingParametersSet.bind(this),
+    'leAdvertisingParametersSet',
+    this.onHciLeAdvertisingParametersSet.bind(this)
   );
   this._hci.on(
-    "leAdvertisingDataSet",
-    this.onHciLeAdvertisingDataSet.bind(this),
+    'leAdvertisingDataSet',
+    this.onHciLeAdvertisingDataSet.bind(this)
   );
   this._hci.on(
-    "leScanResponseDataSet",
-    this.onHciLeScanResponseDataSet.bind(this),
+    'leScanResponseDataSet',
+    this.onHciLeScanResponseDataSet.bind(this)
   );
   this._hci.on(
-    "leAdvertiseEnableSet",
-    this.onHciLeAdvertiseEnableSet.bind(this),
+    'leAdvertiseEnableSet',
+    this.onHciLeAdvertiseEnableSet.bind(this)
   );
 };
 
 util.inherits(Gap, events.EventEmitter);
 
 Gap.prototype.startScanning = function(allowDuplicates) {
-  this._scanState = "starting";
+  this._scanState = 'starting';
   this._scanFilterDuplicates = !allowDuplicates;
 
   // Always set scan parameters before scanning
@@ -52,7 +52,7 @@ Gap.prototype.startScanning = function(allowDuplicates) {
 };
 
 Gap.prototype.stopScanning = function() {
-  this._scanState = "stopping";
+  this._scanState = 'stopping';
 
   this._hci.setScanEnabled(false, true);
 };
@@ -70,14 +70,14 @@ Gap.prototype.onHciLeScanEnableSet = function(status) {
     return;
   }
 
-  if (this._scanState === "starting") {
-    this._scanState = "started";
+  if (this._scanState === 'starting') {
+    this._scanState = 'started';
 
-    this.emit("scanStart", this._scanFilterDuplicates);
-  } else if (this._scanState === "stopping") {
-    this._scanState = "stopped";
+    this.emit('scanStart', this._scanFilterDuplicates);
+  } else if (this._scanState === 'stopping') {
+    this._scanState = 'stopped';
 
-    this.emit("scanStop");
+    this.emit('scanStop');
   }
 };
 
@@ -87,20 +87,20 @@ Gap.prototype.onLeScanEnableSetCmd = function(enable, filterDuplicates) {
   // If we are scanning, then a change happens if the new command stops
   // scanning or if duplicate filtering changes.
   // If we are not scanning, then a change happens if scanning was enabled.
-  if (this._scanState == "starting" || this._scanState == "started") {
+  if (this._scanState == 'starting' || this._scanState == 'started') {
     if (!enable) {
-      this.emit("scanStop");
+      this.emit('scanStop');
     } else if (this._scanFilterDuplicates !== filterDuplicates) {
       this._scanFilterDuplicates = filterDuplicates;
 
-      this.emit("scanStart", this._scanFilterDuplicates);
+      this.emit('scanStart', this._scanFilterDuplicates);
     }
   } else if (
-    (this._scanState == "stopping" || this._scanState == "stopped") &&
+    (this._scanState == 'stopping' || this._scanState == 'stopped') &&
     enable
   ) {
     // Someone started scanning on us.
-    this.emit("scanStart", this._scanFilterDuplicates);
+    this.emit('scanStart', this._scanFilterDuplicates);
   }
 };
 
@@ -110,7 +110,7 @@ Gap.prototype.onHciLeAdvertisingReport = function(
   address,
   addressType,
   eir,
-  rssi,
+  rssi
 ) {
   let previouslyDiscovered = !!this._discoveries[address];
   let advertisement = previouslyDiscovered
@@ -162,14 +162,14 @@ Gap.prototype.onHciLeAdvertisingReport = function(
     let length = eir.readUInt8(i);
 
     if (length < 1) {
-      debug("invalid EIR data, length = " + length);
+      debug('invalid EIR data, length = ' + length);
       break;
     }
 
     let eirType = eir.readUInt8(i + 1); // https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
 
     if (i + length + 1 > eir.length) {
-      debug("invalid EIR data, out of range of buffer length");
+      debug('invalid EIR data, out of range of buffer length');
       break;
     }
 
@@ -191,10 +191,10 @@ Gap.prototype.onHciLeAdvertisingReport = function(
         for (j = 0; j < bytes.length; j += 16) {
           serviceUuid = bytes
             .slice(j, j + 16)
-            .toString("hex")
+            .toString('hex')
             .match(/.{1,2}/g)
             .reverse()
-            .join("");
+            .join('');
           if (advertisement.serviceUuids.indexOf(serviceUuid) === -1) {
             advertisement.serviceUuids.push(serviceUuid);
           }
@@ -203,7 +203,7 @@ Gap.prototype.onHciLeAdvertisingReport = function(
 
       case 0x08: // Shortened Local Name
       case 0x09: // Complete Local Name
-        advertisement.localName = bytes.toString("utf8");
+        advertisement.localName = bytes.toString('utf8');
         break;
 
       case 0x0a: {
@@ -217,11 +217,11 @@ Gap.prototype.onHciLeAdvertisingReport = function(
           serviceSolicitationUuid = bytes.readUInt16LE(j).toString(16);
           if (
             advertisement.serviceSolicitationUuids.indexOf(
-              serviceSolicitationUuid,
+              serviceSolicitationUuid
             ) === -1
           ) {
             advertisement.serviceSolicitationUuids.push(
-              serviceSolicitationUuid,
+              serviceSolicitationUuid
             );
           }
         }
@@ -232,17 +232,17 @@ Gap.prototype.onHciLeAdvertisingReport = function(
         for (j = 0; j < bytes.length; j += 16) {
           serviceSolicitationUuid = bytes
             .slice(j, j + 16)
-            .toString("hex")
+            .toString('hex')
             .match(/.{1,2}/g)
             .reverse()
-            .join("");
+            .join('');
           if (
             advertisement.serviceSolicitationUuids.indexOf(
-              serviceSolicitationUuid,
+              serviceSolicitationUuid
             ) === -1
           ) {
             advertisement.serviceSolicitationUuids.push(
-              serviceSolicitationUuid,
+              serviceSolicitationUuid
             );
           }
         }
@@ -252,10 +252,10 @@ Gap.prototype.onHciLeAdvertisingReport = function(
         // 16-bit Service Data, there can be multiple occurences
         let serviceDataUuid = bytes
           .slice(0, 2)
-          .toString("hex")
+          .toString('hex')
           .match(/.{1,2}/g)
           .reverse()
-          .join("");
+          .join('');
         let serviceData = bytes.slice(2, bytes.length);
 
         advertisement.serviceData.push({
@@ -268,10 +268,10 @@ Gap.prototype.onHciLeAdvertisingReport = function(
         // 32-bit Service Data, there can be multiple occurences
         let serviceData32Uuid = bytes
           .slice(0, 4)
-          .toString("hex")
+          .toString('hex')
           .match(/.{1,2}/g)
           .reverse()
-          .join("");
+          .join('');
         let serviceData32 = bytes.slice(4, bytes.length);
 
         advertisement.serviceData.push({
@@ -285,10 +285,10 @@ Gap.prototype.onHciLeAdvertisingReport = function(
 
         let serviceData128Uuid = bytes
           .slice(0, 16)
-          .toString("hex")
+          .toString('hex')
           .match(/.{1,2}/g)
           .reverse()
-          .join("");
+          .join('');
         let serviceData128 = bytes.slice(16, bytes.length);
 
         advertisement.serviceData.push({
@@ -302,11 +302,11 @@ Gap.prototype.onHciLeAdvertisingReport = function(
           serviceSolicitationUuid = bytes.readUInt32LE(j).toString(16);
           if (
             advertisement.serviceSolicitationUuids.indexOf(
-              serviceSolicitationUuid,
+              serviceSolicitationUuid
             ) === -1
           ) {
             advertisement.serviceSolicitationUuids.push(
-              serviceSolicitationUuid,
+              serviceSolicitationUuid
             );
           }
         }
@@ -320,7 +320,7 @@ Gap.prototype.onHciLeAdvertisingReport = function(
     i += length + 1;
   }
 
-  debug("advertisement = " + JSON.stringify(advertisement, null, 0));
+  debug('advertisement = ' + JSON.stringify(advertisement, null, 0));
 
   let connectable =
     type === 0x04 && previouslyDiscovered
@@ -345,23 +345,23 @@ Gap.prototype.onHciLeAdvertisingReport = function(
     process.env.NOBLE_REPORT_ALL_HCI_EVENTS
   ) {
     this.emit(
-      "discover",
+      'discover',
       status,
       address,
       addressType,
       connectable,
       advertisement,
-      rssi,
+      rssi
     );
   }
 };
 
 Gap.prototype.startAdvertising = function(name, serviceUuids) {
   debug(
-    "startAdvertising: name = " +
+    'startAdvertising: name = ' +
       name +
-      ", serviceUuids = " +
-      JSON.stringify(serviceUuids, null, 2),
+      ', serviceUuids = ' +
+      JSON.stringify(serviceUuids, null, 2)
   );
 
   let advertisementDataLength = 3;
@@ -381,8 +381,8 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
         serviceUuids[i]
           .match(/.{1,2}/g)
           .reverse()
-          .join(""),
-        "hex",
+          .join(''),
+        'hex'
       );
 
       if (serviceUuid.length === 2) {
@@ -414,7 +414,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
   if (serviceUuids16bit.length) {
     advertisementData.writeUInt8(
       1 + 2 * serviceUuids16bit.length,
-      advertisementDataOffset,
+      advertisementDataOffset
     );
     advertisementDataOffset++;
 
@@ -430,7 +430,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
   if (serviceUuids128bit.length) {
     advertisementData.writeUInt8(
       1 + 16 * serviceUuids128bit.length,
-      advertisementDataOffset,
+      advertisementDataOffset
     );
     advertisementDataOffset++;
 
@@ -456,7 +456,7 @@ Gap.prototype.startAdvertising = function(name, serviceUuids) {
 };
 
 Gap.prototype.startAdvertisingIBeacon = function(data) {
-  debug("startAdvertisingIBeacon: data = " + data.toString("hex"));
+  debug('startAdvertisingIBeacon: data = ' + data.toString('hex'));
 
   let dataLength = data.length;
   let manufacturerDataLength = 4 + dataLength;
@@ -483,30 +483,30 @@ Gap.prototype.startAdvertisingIBeacon = function(data) {
 
 Gap.prototype.startAdvertisingWithEIRData = function(
   advertisementData,
-  scanData,
+  scanData
 ) {
   advertisementData = advertisementData || Buffer.alloc(0);
   scanData = scanData || Buffer.alloc(0);
 
   debug(
-    "startAdvertisingWithEIRData: advertisement data = " +
-      advertisementData.toString("hex") +
-      ", scan data = " +
-      scanData.toString("hex"),
+    'startAdvertisingWithEIRData: advertisement data = ' +
+      advertisementData.toString('hex') +
+      ', scan data = ' +
+      scanData.toString('hex')
   );
 
   let error = null;
 
   if (advertisementData.length > 31) {
-    error = new Error("Advertisement data is over maximum limit of 31 bytes");
+    error = new Error('Advertisement data is over maximum limit of 31 bytes');
   } else if (scanData.length > 31) {
-    error = new Error("Scan data is over maximum limit of 31 bytes");
+    error = new Error('Scan data is over maximum limit of 31 bytes');
   }
 
   if (error) {
-    this.emit("advertisingStart", error);
+    this.emit('advertisingStart', error);
   } else {
-    this._advertiseState = "starting";
+    this._advertiseState = 'starting';
 
     this._hci.setScanResponseData(scanData);
     this._hci.setAdvertisingData(advertisementData);
@@ -518,13 +518,13 @@ Gap.prototype.startAdvertisingWithEIRData = function(
 };
 
 Gap.prototype.restartAdvertising = function() {
-  this._advertiseState = "restarting";
+  this._advertiseState = 'restarting';
 
   this._hci.setAdvertiseEnable(true);
 };
 
 Gap.prototype.stopAdvertising = function() {
-  this._advertiseState = "stopping";
+  this._advertiseState = 'stopping';
 
   this._hci.setAdvertiseEnable(false);
 };
@@ -538,22 +538,22 @@ Gap.prototype.onHciLeAdvertisingDataSet = function(status) {};
 Gap.prototype.onHciLeScanResponseDataSet = function(status) {};
 
 Gap.prototype.onHciLeAdvertiseEnableSet = function(status) {
-  if (this._advertiseState === "starting") {
-    this._advertiseState = "started";
+  if (this._advertiseState === 'starting') {
+    this._advertiseState = 'started';
 
     let error = null;
 
     if (status) {
       error = new Error(
-        Hci.STATUS_MAPPER[status] || "Unknown (" + status + ")",
+        Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')'
       );
     }
 
-    this.emit("advertisingStart", error);
-  } else if (this._advertiseState === "stopping") {
-    this._advertiseState = "stopped";
+    this.emit('advertisingStart', error);
+  } else if (this._advertiseState === 'stopping') {
+    this._advertiseState = 'stopped';
 
-    this.emit("advertisingStop");
+    this.emit('advertisingStop');
   }
 };
 

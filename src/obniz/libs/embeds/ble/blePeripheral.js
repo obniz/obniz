@@ -1,5 +1,5 @@
-const BleService = require("./bleService");
-const BleHelper = require("./bleHelper");
+const BleService = require('./bleService');
+const BleHelper = require('./bleHelper');
 
 class BlePeripheral {
   constructor(Obniz) {

@@ -1,4 +1,4 @@
-const BleAttributeAbstract = require("./bleAttributeAbstract");
+const BleAttributeAbstract = require('./bleAttributeAbstract');
 
 class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   constructor(params) {
@@ -14,14 +14,14 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
       return null;
     }
     let childName = childrenName.slice(0, -1);
-    return childName + "_uuid";
+    return childName + '_uuid';
   }
 
   discoverChildren() {}
 
   discoverChildrenWait() {
     return new Promise(resolve => {
-      this.emitter.once("discoverfinished", () => {
+      this.emitter.once('discoverfinished', () => {
         let children = this.children.filter(elm => {
           return elm.discoverdOnRemote;
         });
@@ -41,7 +41,7 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   notifyFromServer(notifyName, params) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
-      case "discover": {
+      case 'discover': {
         let uuid = params[this.wsChildUuidName];
         let child = this.getChild(uuid);
         if (!child) {
@@ -52,7 +52,7 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
         this.ondiscover(child);
         break;
       }
-      case "discoverfinished": {
+      case 'discoverfinished': {
         let children = this.children.filter(elm => {
           return elm.discoverdOnRemote;
         });

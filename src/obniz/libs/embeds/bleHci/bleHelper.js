@@ -1,6 +1,6 @@
 const BleHelper = {
   uuidFilter: function(uuid) {
-    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, "");
+    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
   },
 
   toCamelCase: function(str) {
@@ -13,7 +13,7 @@ const BleHelper = {
   toSnakeCase: function(str) {
     let camel = this.toCamelCase(str);
     return camel.replace(/[A-Z]/g, function(s) {
-      return "_" + s.charAt(0).toLowerCase();
+      return '_' + s.charAt(0).toLowerCase();
     });
   },
 };

@@ -1,4 +1,4 @@
-const Builder = require("./bleAdvertisementBuilder");
+const Builder = require('./bleAdvertisementBuilder');
 
 class BleAdvertisement {
   constructor(Obniz) {

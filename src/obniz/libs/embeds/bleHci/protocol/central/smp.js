@@ -1,7 +1,7 @@
-let events = require("events");
-let util = require("util");
+let events = require('events');
+let util = require('util');
 
-let crypto = require("./crypto");
+let crypto = require('./crypto');
 
 let SMP_CID = 0x0006;
 
@@ -18,32 +18,32 @@ let Smp = function(
   localAddressType,
   localAddress,
   remoteAddressType,
-  remoteAddress,
+  remoteAddress
 ) {
   this._aclStream = aclStream;
 
-  this._iat = Buffer.from([localAddressType === "random" ? 0x01 : 0x00]);
+  this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
   this._ia = Buffer.from(
     localAddress
-      .split(":")
+      .split(':')
       .reverse()
-      .join(""),
-    "hex",
+      .join(''),
+    'hex'
   );
-  this._rat = Buffer.from([remoteAddressType === "random" ? 0x01 : 0x00]);
+  this._rat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
   this._ra = Buffer.from(
     remoteAddress
-      .split(":")
+      .split(':')
       .reverse()
-      .join(""),
-    "hex",
+      .join(''),
+    'hex'
   );
 
   this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
   this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
 
-  this._aclStream.on("data", this.onAclStreamDataBinded);
-  this._aclStream.on("end", this.onAclStreamEndBinded);
+  this._aclStream.on('data', this.onAclStreamDataBinded);
+  this._aclStream.on('end', this.onAclStreamEndBinded);
 };
 
 util.inherits(Smp, events.EventEmitter);
@@ -85,16 +85,16 @@ Smp.prototype.onAclStreamData = function(cid, data) {
 };
 
 Smp.prototype.onAclStreamEnd = function() {
-  this._aclStream.removeListener("data", this.onAclStreamDataBinded);
-  this._aclStream.removeListener("end", this.onAclStreamEndBinded);
+  this._aclStream.removeListener('data', this.onAclStreamDataBinded);
+  this._aclStream.removeListener('end', this.onAclStreamEndBinded);
 
-  this.emit("end");
+  this.emit('end');
 };
 
 Smp.prototype.handlePairingResponse = function(data) {
   this._pres = data;
 
-  this._tk = Buffer.from("00000000000000000000000000000000", "hex");
+  this._tk = Buffer.from('00000000000000000000000000000000', 'hex');
   this._r = crypto.r();
 
   this.write(
@@ -108,9 +108,9 @@ Smp.prototype.handlePairingResponse = function(data) {
         this._iat,
         this._ia,
         this._rat,
-        this._ra,
+        this._ra
       ),
-    ]),
+    ])
   );
 };
 
@@ -133,36 +133,36 @@ Smp.prototype.handlePairingRandom = function(data) {
       this._iat,
       this._ia,
       this._rat,
-      this._ra,
+      this._ra
     ),
   ]);
 
-  if (this._pcnf.toString("hex") === pcnf.toString("hex")) {
+  if (this._pcnf.toString('hex') === pcnf.toString('hex')) {
     let stk = crypto.s1(this._tk, r, this._r);
 
-    this.emit("stk", stk);
+    this.emit('stk', stk);
   } else {
     this.write(Buffer.from([SMP_PAIRING_RANDOM, SMP_PAIRING_CONFIRM]));
 
-    this.emit("fail");
+    this.emit('fail');
   }
 };
 
 Smp.prototype.handlePairingFailed = function(data) {
-  this.emit("fail");
+  this.emit('fail');
 };
 
 Smp.prototype.handleEncryptInfo = function(data) {
   let ltk = data.slice(1);
 
-  this.emit("ltk", ltk);
+  this.emit('ltk', ltk);
 };
 
 Smp.prototype.handleMasterIdent = function(data) {
   let ediv = data.slice(1, 3);
   let rand = data.slice(3);
 
-  this.emit("masterIdent", ediv, rand);
+  this.emit('masterIdent', ediv, rand);
 };
 
 Smp.prototype.write = function(data) {
