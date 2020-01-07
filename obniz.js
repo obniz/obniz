@@ -30382,6 +30382,12 @@ class ObnizBLE {
     );
   }
 
+  async directConnectWait(uuid, addressType) {
+    throw new Error(
+      'directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS'
+    );
+  }
+
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
@@ -32660,6 +32666,12 @@ class ObnizBLE {
       this.centralBindings._connectable[uuid] = true;
     }
     peripheral.connect();
+    return peripheral;
+  }
+
+  async directConnectWait(uuid, addressType) {
+    let peripheral = this.directConnect(uuid, addressType);
+    await peripheral.connectWait();
     return peripheral;
   }
 

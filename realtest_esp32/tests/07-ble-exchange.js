@@ -2,33 +2,33 @@ const config = require('../config.js');
 
 let obnizA, checkBoard;
 
-describe('7-ble', function() {
+describe('7-ble-exchange', function() {
   this.timeout(30000);
 
   before(async function() {
     await new Promise(resolve => {
       config.waitForConenct(() => {
-        obnizA = config.obnizA;
+        obnizA = config.obnizA; //exchange A<->B
         checkBoard = config.checkBoard;
         resolve();
       });
     });
-    await checkBoard.ble.initWait();
     await obnizA.ble.initWait();
+    await checkBoard.ble.initWait();
   });
 
   it('simple ad', async function() {
-    let service = new checkBoard.ble.service({
+    let service = new obnizA.ble.service({
       uuid: '0000',
     });
-    checkBoard.ble.peripheral.addService(service);
+    obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
-    checkBoard.ble.advertisement.setAdvData(ad);
-    checkBoard.ble.advertisement.start();
+    obnizA.ble.advertisement.setAdvData(ad);
+    obnizA.ble.advertisement.start();
 
     let found = false;
     let expectedValue = [2, 1, 6, 3, 2, 0, 0];
-    obnizA.ble.scan.onfind = function(peripheral) {
+    checkBoard.ble.scan.onfind = function(peripheral) {
       // console.log(peripheral.adv_data.length + ": " + peripheral.localName());
       if (peripheral.adv_data.length === expectedValue.length) {
         // console.log(peripheral.adv_data);
@@ -40,43 +40,43 @@ describe('7-ble', function() {
         found = true;
       }
     };
-    obnizA.ble.scan.start(null, { duration: 30 });
+    checkBoard.ble.scan.start(null, { duration: 30 });
 
     while (!found) {
       await wait(1);
     }
 
-    checkBoard.ble.advertisement.end();
-    checkBoard.ble.peripheral.end();
+    obnizA.ble.advertisement.end();
+    obnizA.ble.peripheral.end();
   });
 
   it('ad localname', async function() {
-    let service = new checkBoard.ble.service({
+    let service = new obnizA.ble.service({
       uuid: '0001',
     });
-    checkBoard.ble.peripheral.addService(service);
+    obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
     const localName = '' + new Date().getTime();
-    checkBoard.ble.advertisement.setScanRespData({
+    obnizA.ble.advertisement.setScanRespData({
       localName: localName,
     });
-    checkBoard.ble.advertisement.setAdvData(ad);
-    checkBoard.ble.advertisement.start();
+    obnizA.ble.advertisement.setAdvData(ad);
+    obnizA.ble.advertisement.start();
 
     let found = false;
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
-    obnizA.ble.scan.onfind = function(peripheral) {
+    checkBoard.ble.scan.onfind = function(peripheral) {
       if (peripheral.localName === localName) {
         found = true;
       }
     };
-    obnizA.ble.scan.start(null, { duration: 30 });
+    checkBoard.ble.scan.start(null, { duration: 30 });
 
     while (!found) {
       await wait(1);
     }
-    checkBoard.ble.advertisement.end();
-    checkBoard.ble.peripheral.end();
+    obnizA.ble.advertisement.end();
+    obnizA.ble.peripheral.end();
   });
 });
 

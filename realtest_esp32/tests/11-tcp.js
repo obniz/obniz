@@ -50,7 +50,6 @@ describe('10-tcp', function() {
   it('tcp connect error', async function() {
     let res = await checkBoard.tcp0.connectWait(80, 'obniz.i');
     expect(res).to.deep.within(3, 4);
-    checkBoard.tcp0.close();
     await checkBoard.pingWait();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
