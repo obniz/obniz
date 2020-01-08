@@ -145,10 +145,10 @@ describe('6-i2c-exchange', function() {
     }
     receiver.end();
     sender.end();
-    checkBoard.getIO(check_io[0].obniz_io).pull(null);
-    checkBoard.getIO(check_io[1].obniz_io).pull(null);
-    obnizA.getIO(check_io[0].board_io).pull(null);
-    obnizA.getIO(check_io[1].board_io).pull(null);
+    checkBoard.getIO(check_io[0].board_io).pull(null);
+    checkBoard.getIO(check_io[1].board_io).pull(null);
+    obnizA.getIO(check_io[0].obniz_io).pull(null);
+    obnizA.getIO(check_io[1].obniz_io).pull(null);
   });
 });
 
