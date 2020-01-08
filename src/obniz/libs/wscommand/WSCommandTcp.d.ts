@@ -2,6 +2,8 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandTcp.prototype {
   // WSCommandTcp.prototype.connect.!0
 
@@ -35,79 +37,67 @@ declare namespace WSCommandTcp.prototype {
 /**
  *
  */
-declare interface WSCommandTcp {
+export  default class WSCommandTcp extends WSCommand {
+  public module: number;
+
+  private _MaxPort: number;
 
   /**
    *
    */
-  module: number;
+  private _CommandConnect: number;
 
   /**
    *
    */
-  _MaxPort: number;
-
-  /**
-   *
-   */
-  _CommandConnect: number;
-
-  /**
-   *
-   */
-  _CommandClose: number;
+  private _CommandClose: number;
 
   /**
    * Notification
    */
-  _CommandConnection: number;
+  private _CommandConnection: number;
 
   /**
    *
    */
-  _CommandWrite: number;
+  private _CommandWrite: number;
 
   /**
    * Notification
    */
-  _CommandRead: number;
-
-  /**
-   *
-   */
-  Float32Array: {
+  private _CommandRead: number;
 
     /**
      *
      */
-    new(): WSCommandTcp;
+    public new(): WSCommandTcp;
 
     /**
      *
      * @param params
      * @param index
      */
-    connect(params: WSCommandTcp.prototype.Connect0, index: any): void;
+    public connect(params: WSCommandTcp.prototype.Connect0, index: any): void;
 
     /**
      *
      * @param params
      * @param index
      */
-    disconnect(params: any, index: any): void;
+    public disconnect(params: any, index: any): void;
 
     /**
      *
      * @param params
      * @param index
      */
-    write(params: /* WSCommandTcp.prototype.+WSCommandTcp */ any, index: any): void;
+    public  write(params: /* WSCommandTcp.prototype.+WSCommandTcp */ any, index: any): void;
 
     /**
      *
      * @param json
      */
-    parseFromJson(json: any): void;
+    public parseFromJson(json: any): void;
 
     /**
      *
@@ -115,15 +105,6 @@ declare interface WSCommandTcp {
      * @param func
      * @param payload
      */
-    notifyFromBinary(objToSend: WSCommandTcp.prototype.NotifyFromBinary0, func: any, payload: any): void;
+    public notifyFromBinary(objToSend: WSCommandTcp.prototype.NotifyFromBinary0, func: any, payload: any): void;
 
-    /**
-     *
-     */
-  };
-}
-
-declare module "WSCommandTcp" {
-
-  export default WSCommandTcp;    // es6 style module export
 }

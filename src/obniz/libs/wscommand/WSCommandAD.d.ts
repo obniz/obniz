@@ -2,6 +2,8 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandAD.prototype {
   // WSCommandAD.prototype.notifyFromBinary.!0
 
@@ -15,32 +17,33 @@ declare namespace WSCommandAD.prototype {
 /**
  *
  */
-declare interface WSCommandAD {
+export default class WSCommandAD extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  new(): WSCommandAD;
+  public new(): WSCommandAD;
 
   /**
    * Commands
    * @param params
    * @param no
    */
-  get(params: any, no: any): void;
+  public get(params: any, no: any): void;
 
   /**
    *
    * @param params
    * @param no
    */
-  deinit(params: any, no: any): void;
+  public deinit(params: any, no: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: any): void;
+  public  parseFromJson(json: any): void;
 
   /**
    *
@@ -48,10 +51,5 @@ declare interface WSCommandAD {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: WSCommandAD.prototype.NotifyFromBinary0, func: any, payload: any): void;
-}
-
-declare module "WSCommandAD" {
-
-  export default WSCommandAD;    // es6 style module export
+  public notifyFromBinary(objToSend: WSCommandAD.prototype.NotifyFromBinary0, func: any, payload: any): void;
 }

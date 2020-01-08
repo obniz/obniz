@@ -2,152 +2,122 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-declare namespace WSCommandSystem.prototype {
-  // WSCommandSystem.prototype.parseFromJson.!0
-
-  /**
-   *
-   */
-  interface ParseFromJson0 {
-
-    /**
-     *
-     */
-    system: {
-
-      /**
-       *
-       */
-      pong: {
-
-        /**
-         *
-         */
-        pongServerTime: number;
-      },
-    };
-  }
-}
+import WSCommand from "./WSCommand";
 
 /**
  *
  */
-declare interface WSCommandSystem {
+export default class WSCommandSystem extends WSCommand {
+  protected module: number;
+  /**
+   *
+   */
+  private  _CommandReboot: number;
 
   /**
    *
    */
-  module: number;
+  private _CommandReset: number;
 
   /**
    *
    */
-  _CommandReboot: number;
+  private _CommandSelfCheck: number;
 
   /**
    *
    */
-  _CommandReset: number;
+  private _CommandWait: number;
 
   /**
    *
    */
-  _CommandSelfCheck: number;
+  private _CommandResetOnDisconnect: number;
 
   /**
    *
    */
-  _CommandWait: number;
+  private _CommandPingPong: number;
 
   /**
    *
    */
-  _CommandResetOnDisconnect: number;
+  private _CommandVCC: number;
 
   /**
    *
    */
-  _CommandPingPong: number;
+  private _CommandSleepSeconds: number;
 
   /**
    *
    */
-  _CommandVCC: number;
+  private _CommandSleepMinute: number;
 
   /**
    *
    */
-  _CommandSleepSeconds: number;
+  private _CommandSleepIoTrigger: number;
 
   /**
    *
    */
-  _CommandSleepMinute: number;
-
-  /**
-   *
-   */
-  _CommandSleepIoTrigger: number;
-
-  /**
-   *
-   */
-  new(): WSCommandSystem;
+  public new(): WSCommandSystem;
 
   /**
    * Commands
    * @param params
    */
-  reboot(params: any): void;
+  public reboot(params: any): void;
 
   /**
    *
    * @param params
    */
-  reset(params: any): void;
+  public reset(params: any): void;
 
   /**
    *
    * @param params
    */
-  selfCheck(params: any): void;
+  public  selfCheck(params: any): void;
 
   /**
    *
    * @param params
    */
-  wait(params: /* WSCommandSystem.prototype.+WSCommandSystem */ any): void;
+  public wait(params: /* WSCommandSystem.prototype.+WSCommandSystem */ any): void;
 
   /**
    *
    * @param params
    */
-  keepWorkingAtOffline(params: any): void;
+  public keepWorkingAtOffline(params: any): void;
 
   /**
    *
    * @param params
    */
-  ping(params: any): void;
+  public  ping(params: any): void;
 
   /**
    *
    * @param mustReset
    */
-  resetOnDisconnect(mustReset: boolean): void;
+  public resetOnDisconnect(mustReset: boolean): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: WSCommandSystem.prototype.ParseFromJson0): void;
+  public parseFromJson(json: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  pong(objToSend: /* WSCommandSystem.prototype.parseFromJson.!0 */ any, payload: any): void;
+  public pong(objToSend: /* WSCommandSystem.prototype.parseFromJson.!0 */ any, payload: any): void;
 
   /**
    *
@@ -155,28 +125,24 @@ declare interface WSCommandSystem {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: any, func: any, payload: any): void;
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 
   /**
    *
    * @param params
    */
-  sleepSeconds(params: any): void;
+  public sleepSeconds(params: any): void;
 
   /**
    *
    * @param params
    */
-  sleepMinute(params: any): void;
+  public sleepMinute(params: any): void;
 
   /**
    *
    * @param params
    */
-  sleepIoTrigger(params: any): void;
-}
+  public sleepIoTrigger(params: any): void;
 
-declare module "WSCommandSystem" {
-
-  export default WSCommandSystem;    // es6 style module export
 }

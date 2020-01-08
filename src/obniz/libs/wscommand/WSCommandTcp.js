@@ -1,4 +1,4 @@
-const WSCommand = require('./WSCommand_.js');
+const WSCommand = require('./WSCommand.js').default;
 
 class WSCommandTcp extends WSCommand {
   constructor() {

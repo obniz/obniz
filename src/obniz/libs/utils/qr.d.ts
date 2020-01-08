@@ -95,7 +95,7 @@ declare namespace QrcodeRet {
  * @param errorCorrectionLevel
  * @return
  */
-declare function qrcode(typeNumber: any, errorCorrectionLevel: any): Ret;
+declare function qrcode(typeNumber?: any, errorCorrectionLevel?: any): Ret;
 
 /**
  *

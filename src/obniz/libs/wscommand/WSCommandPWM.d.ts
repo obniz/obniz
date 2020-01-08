@@ -2,133 +2,93 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-declare namespace WSCommandPWM.prototype {
-  // WSCommandPWM.prototype.init.!0
-
-  /**
-   *
-   */
-  interface Init0 {
-
-    /**
-     *
-     */
-    pulseUSec: number;
-  }
-}
-declare namespace WSCommandPWM {
-  // WSCommandPWM.pwms.<i>
-
-  /**
-   *
-   */
-  interface PwmsI {
-
-    /**
-     *
-     */
-    pulseUSec: number;
-  }
-}
+import WSCommand from "./WSCommand";
 
 /**
  *
  */
-declare interface WSCommandPWM {
+export default class WSCommandPWM extends WSCommand {
+  public ModuleNum: number;
 
   /**
    *
    */
-  module: number;
+  public pwms: any;
+  protected module: number;
 
   /**
    *
    */
-  ModuleNum: number;
+  private _CommandInit: number;
 
   /**
    *
    */
-  _CommandInit: number;
+  private _CommandDeinit: number;
 
   /**
    *
    */
-  _CommandDeinit: number;
+  private _CommandSetFreq: number;
 
   /**
    *
    */
-  _CommandSetFreq: number;
+  private _CommandSetDuty: number;
 
   /**
    *
    */
-  _CommandSetDuty: number;
+  private _CommandAMModulate: number;
 
   /**
    *
    */
-  _CommandAMModulate: number;
+  public new(): WSCommandPWM;
 
   /**
    *
    */
-  pwms: WSCommandPWM.PwmsI[];
-
-  /**
-   *
-   */
-  new(): WSCommandPWM;
-
-  /**
-   *
-   */
-  resetInternalStatus(): void;
+  public resetInternalStatus(): void;
 
   /**
    * Commands
    * @param params
    * @param module
    */
-  init(params: WSCommandPWM.prototype.Init0, module: any): void;
+  public init(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  deinit(params: any, module: any): void;
+  public deinit(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  freq(params: /* WSCommandPWM.prototype.+WSCommandPWM */ any, module: any): void;
+  public  freq(params: /* WSCommandPWM.prototype.+WSCommandPWM */ any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  pulse(params: any, module: any): void;
+  public pulse(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  amModulate(params: any, module: any): void;
+  public amModulate(params: any, module: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: any): void;
-}
-
-declare module "WSCommandPWM" {
-
-  export default WSCommandPWM;    // es6 style module export
+  public parseFromJson(json: any): void;
 }

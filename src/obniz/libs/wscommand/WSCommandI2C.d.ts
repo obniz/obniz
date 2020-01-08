@@ -2,6 +2,9 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import {extendConfigurationFile} from "tslint/lib/configuration";
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandI2C.prototype {
   // WSCommandI2C.prototype.notifyFromBinary.!0
 
@@ -15,53 +18,54 @@ declare namespace WSCommandI2C.prototype {
 /**
  *
  */
-declare interface WSCommandI2C {
+export default class WSCommandI2C extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  new(): WSCommandI2C;
+  public new(): WSCommandI2C;
 
   /**
    * Commands
    * @param params
    * @param module
    */
-  initMaster(params: any, module: any): void;
+  public initMaster(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  initSlave(params: any, module: any): void;
+  public initSlave(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  deinit(params: any, module: any): void;
+  public deinit(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  write(params: any, module: any): void;
+  public write(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  read(params: any, module: any): void;
+  public read(params: any, module: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: any): void;
+  public parseFromJson(json: any): void;
 
   /**
    *
@@ -69,10 +73,5 @@ declare interface WSCommandI2C {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: WSCommandI2C.prototype.NotifyFromBinary0, func: any, payload: any): void;
-}
-
-declare module "WSCommandI2C" {
-
-  export default WSCommandI2C;    // es6 style module export
+  public notifyFromBinary(objToSend: WSCommandI2C.prototype.NotifyFromBinary0, func: any, payload: any): void;
 }

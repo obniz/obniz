@@ -3,6 +3,8 @@
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandMeasurement.prototype.Echo0 {
   // WSCommandMeasurement.prototype.echo.!0.echo.<i>
 
@@ -40,24 +42,25 @@ declare namespace WSCommandMeasurement.prototype {
 /**
  *
  */
-declare interface WSCommandMeasurement {
+export  default  class WSCommandMeasurement extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  new(): WSCommandMeasurement;
+  public new(): WSCommandMeasurement;
 
   /**
    * Commands
    * @param params
    */
-  echo(params: any): void;
+  public echo(params: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: WSCommandMeasurement.prototype.ParseFromJson0): void;
+  public parseFromJson(json: WSCommandMeasurement.prototype.ParseFromJson0): void;
 
   /**
    *
@@ -65,10 +68,5 @@ declare interface WSCommandMeasurement {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: /* WSCommandMeasurement.prototype.parseFromJson.!0 */ any, func: any, payload: any): void;
-}
-
-declare module "WSCommandMeasurement" {
-
-  export default WSCommandMeasurement;    // es6 style module export
+  public notifyFromBinary(objToSend: /* WSCommandMeasurement.prototype.parseFromJson.!0 */ any, func: any, payload: any): void;
 }

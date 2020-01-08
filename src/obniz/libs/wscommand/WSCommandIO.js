@@ -1,4 +1,4 @@
-const WSCommand = require('./WSCommand_.js');
+const WSCommand = require('./WSCommand.js').default;
 
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;

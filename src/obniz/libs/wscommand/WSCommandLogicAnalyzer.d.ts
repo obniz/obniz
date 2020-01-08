@@ -2,6 +2,8 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandLogicAnalyzer.prototype {
   // WSCommandLogicAnalyzer.prototype.parseFromJson.!0
 
@@ -26,30 +28,31 @@ declare namespace WSCommandLogicAnalyzer.prototype {
 /**
  *
  */
-declare interface WSCommandLogicAnalyzer {
+export default class WSCommandLogicAnalyzer extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  new(): WSCommandLogicAnalyzer;
+  public new(): WSCommandLogicAnalyzer;
 
   /**
    * Commands
    * @param params
    */
-  init(params: any): void;
+  public init(params: any): void;
 
   /**
    *
    * @param params
    */
-  deinit(params: any): void;
+  public deinit(params: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: WSCommandLogicAnalyzer.prototype.ParseFromJson0): void;
+  public parseFromJson(json: WSCommandLogicAnalyzer.prototype.ParseFromJson0): void;
 
   /**
    *
@@ -57,10 +60,5 @@ declare interface WSCommandLogicAnalyzer {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: /* WSCommandLogicAnalyzer.prototype.parseFromJson.!0 */ any, func: any, payload: any): void;
-}
-
-declare module "WSCommandLogicAnalyzer" {
-
-  export default WSCommandLogicAnalyzer;    // es6 style module export
+  public notifyFromBinary(objToSend: /* WSCommandLogicAnalyzer.prototype.parseFromJson.!0 */ any, func: any, payload: any): void;
 }

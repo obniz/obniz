@@ -1,5 +1,5 @@
 const JsonBinaryConverter = require('./jsonBinaryConverter');
-const WSCommand = require('./WSCommand_.js');
+const WSCommand = require('./WSCommand.js').default;
 const WSCommandBleHci = require('./WSCommandBleHci');
 
 class WSCommandBle extends WSCommand {

@@ -3,134 +3,123 @@
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
+import WSCommand from "./WSCommand";
+
 /**
  *
  */
-declare interface WSCommandDisplay {
+export default class WSCommandDisplay extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  module: number;
+  public _CommandClear: number;
 
   /**
    *
    */
-  _CommandClear: number;
+  public _CommandDrawCampusHorizonalBytes: number;
 
   /**
    *
    */
-  _CommandPrint: number;
+  private _CommandPrint: number;
 
   /**
    *
    */
-  _CommandDrawCampusVerticalBytes: number;
+
+  private _CommandDrawCampusVerticalBytes: number;
 
   /**
    *
    */
-  _CommandDrawCampusHorizonalBytes: number;
+
+  private _CommandDrawIOState: number;
 
   /**
    *
    */
-  _CommandDrawIOState: number;
+  private _CommandSetPinName: number;
 
   /**
    *
    */
-  _CommandSetPinName: number;
+  public new(): WSCommandDisplay;
+
+  /**
+   * Commands
+   * @param params
+   */
+  public clear(params: any): void;
 
   /**
    *
+   * @param buf
    */
-  Float32Array: {
+  public print(buf: Float32Array): void;
 
-    /**
-     *
-     */
-    new(): WSCommandDisplay;
+  /**
+   *
+   * @param text
+   */
+  public printText(text: any): void;
 
-    /**
-     * Commands
-     * @param params
-     */
-    clear(params: any): void;
+  /**
+   *
+   * @param params
+   */
+  public text(params: /* WSCommandDisplay.prototype.+WSCommandDisplay */ any): void;
 
-    /**
-     *
-     * @param buf
-     */
-    print(buf: Float32Array): void;
+  /**
+   *
+   * @param params
+   */
+  public raw(params: any): void;
 
-    /**
-     *
-     * @param text
-     */
-    printText(text: any): void;
+  /**
+   *
+   * @param params
+   */
+  public qr(params: any): void;
 
-    /**
-     *
-     * @param params
-     */
-    text(params: /* WSCommandDisplay.prototype.+WSCommandDisplay */ any): void;
+  /**
+   *
+   * @param params
+   */
+  public pinName(params: any): void;
 
-    /**
-     *
-     * @param params
-     */
-    raw(params: any): void;
+  /**
+   *
+   * @param buf
+   */
+  public drawVertically(buf: any): void;
 
-    /**
-     *
-     * @param params
-     */
-    qr(params: any): void;
+  /**
+   *
+   * @param buf
+   */
+  public drawHorizonally(buf: Float32Array): void;
 
-    /**
-     *
-     * @param params
-     */
-    pinName(params: any): void;
+  /**
+   *
+   * @param val
+   */
+  public drawIOState(val: any): void;
 
-    /**
-     *
-     * @param buf
-     */
-    drawVertically(buf: any): void;
+  /**
+   *
+   * @param no
+   * @param moduleName
+   * @param pinName
+   */
+  public setPinName(no: number, moduleName: string, pinName: string): void;
 
-    /**
-     *
-     * @param buf
-     */
-    drawHorizonally(buf: Float32Array): void;
+  /**
+   *
+   * @param json
+   */
+  public parseFromJson(json: any): void;
 
-    /**
-     *
-     * @param val
-     */
-    drawIOState(val: any): void;
-
-    /**
-     *
-     * @param no
-     * @param moduleName
-     * @param pinName
-     */
-    setPinName(no: number, moduleName: string, pinName: string): void;
-
-    /**
-     *
-     * @param json
-     */
-    parseFromJson(json: any): void;
-
-  };
-}
-
-declare module "WSCommandDisplay" {
-
-  export default WSCommandDisplay;    // es6 style module export
 }

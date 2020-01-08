@@ -1,4 +1,4 @@
-const WSCommand = require('./WSCommand_.js');
+const WSCommand = require('./WSCommand.js').default;
 const ObnizUtil = require('../utils/util');
 const semver = require('semver');
 

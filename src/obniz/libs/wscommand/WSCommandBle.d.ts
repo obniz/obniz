@@ -2,6 +2,8 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandBle.prototype {
   // WSCommandBle.prototype.parseFromJson.!0
 
@@ -30,185 +32,186 @@ declare namespace WSCommandBle.prototype {
 /**
  *
  */
-declare interface WSCommandBle {
+export default class WSCommandBle extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  new(): WSCommandBle;
+  public new(): WSCommandBle;
 
   /**
    * CENTRAL
    * @param params
    */
-  centralScanStart(params: any): void;
+  public centralScanStart(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralScanStop(params: any): void;
+  public centralScanStop(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralConnect(params: any): void;
+  public centralConnect(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralDisconnect(params: any): void;
+  public centralDisconnect(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralServiceGet(params: any): void;
+  public centralServiceGet(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralCharacteristicGet(params: any): void;
+  public centralCharacteristicGet(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralCharacteristicRead(params: any): void;
+  public centralCharacteristicRead(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralCharacteristicWrite(params: any): void;
+  public centralCharacteristicWrite(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralCharacteristicRegisterNotify(params: any): void;
+  public centralCharacteristicRegisterNotify(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralCharacteristicUnregisterNotify(params: any): void;
+  public centralCharacteristicUnregisterNotify(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralDescriptorGet(params: any): void;
+  public centralDescriptorGet(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralDescriptorRead(params: any): void;
+  public centralDescriptorRead(params: any): void;
 
   /**
    *
    * @param params
    */
-  centralDescriptorWrite(params: any): void;
+  public centralDescriptorWrite(params: any): void;
 
   /**
    * PERIPHERAL
    * @param params
    */
-  peripheralAdvertisementStart(params: any): void;
+  public peripheralAdvertisementStart(params: any): void;
 
   /**
    *
    * @param params
    */
-  peripheralAdvertisementStop(params: any): void;
+  public peripheralAdvertisementStop(params: any): void;
 
   /**
    *
    * @param params
    */
-  peripheralServiceStart(params: any): void;
+  public peripheralServiceStart(params: any): void;
 
   /**
    *
    * @param params
    */
-  peripheralServiceStop(params: any): void;
+  public peripheralServiceStop(params: any): void;
 
   /**
    *
    */
-  peripheralServiceStopAll(): void;
-
-  /**
-   *
-   * @param params
-   */
-  peripheralCharacteristicRead(params: any): void;
+  public peripheralServiceStopAll(): void;
 
   /**
    *
    * @param params
    */
-  peripheralCharacteristicWrite(params: any): void;
+  public peripheralCharacteristicRead(params: any): void;
 
   /**
    *
    * @param params
    */
-  peripheralCharacteristicNotify(params: any): void;
+  public peripheralCharacteristicWrite(params: any): void;
 
   /**
    *
    * @param params
    */
-  peripheralDescriptorRead(params: any): void;
+  public peripheralCharacteristicNotify(params: any): void;
 
   /**
    *
    * @param params
    */
-  peripheralDescriptorWrite(params: any): void;
+  public peripheralDescriptorRead(params: any): void;
 
   /**
    *
    * @param params
    */
-  securityAuth(params: any): void;
+  public peripheralDescriptorWrite(params: any): void;
 
   /**
    *
    * @param params
    */
-  securityIndicateLevel(params: any): void;
+  public securityAuth(params: any): void;
 
   /**
    *
    * @param params
    */
-  securityKeyType(params: any): void;
+  public securityIndicateLevel(params: any): void;
 
   /**
    *
    * @param params
    */
-  securityKeySize(params: any): void;
+  public securityKeyType(params: any): void;
 
   /**
    *
    * @param params
    */
-  clearBondingDevicesList(params: any): void;
+  public securityKeySize(params: any): void;
+
+  /**
+   *
+   * @param params
+   */
+  public clearBondingDevicesList(params: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: WSCommandBle.prototype.ParseFromJson0): void;
+  public parseFromJson(json: WSCommandBle.prototype.ParseFromJson0): void;
 
   /**
    *
@@ -216,161 +219,161 @@ declare interface WSCommandBle {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: any, func: any, payload: any): void;
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryScanResponse(objToSend: any, payload: any): void;
+  public notifyFromBinaryScanResponse(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryConnect(objToSend: any, payload: any): void;
+  public notifyFromBinaryConnect(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServices(objToSend: any, payload: any): void;
+  public notifyFromBinaryServices(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryChacateristics(objToSend: any, payload: any): void;
+  public notifyFromBinaryChacateristics(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryReadChacateristics(objToSend: any, payload: any): void;
+  public notifyFromBinaryReadChacateristics(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryWriteChacateristics(objToSend: any, payload: any): void;
+  public notifyFromBinaryWriteChacateristics(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryRegisterNotifyChacateristic(objToSend: any, payload: any): void;
+  public notifyFromBinaryRegisterNotifyChacateristic(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryUnregisterNotifyChacateristic(objToSend: any, payload: any): void;
+  public notifyFromBinaryUnregisterNotifyChacateristic(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryNotifyChacateristic(objToSend: any, payload: any): void;
+  public notifyFromBinaryNotifyChacateristic(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryDescriptors(objToSend: any, payload: any): void;
+  public notifyFromBinaryDescriptors(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryReadDescriptor(objToSend: any, payload: any): void;
+  public notifyFromBinaryReadDescriptor(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryWriteDescriptor(objToSend: any, payload: any): void;
+  public notifyFromBinaryWriteDescriptor(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerConnectionState(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerConnectionState(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerWriteCharavteristicValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerWriteCharavteristicValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerReadCharavteristicValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerReadCharavteristicValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerNotifyReadCharavteristicValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerReadDescriptorValue(objToSend: any, payload: any): void;
+  public  notifyFromBinaryServerReadDescriptorValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerWriteDescriptorValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerWriteDescriptorValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerNotifyReadDescriptorValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerNotifyReadDescriptorValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend: any, payload: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  notifyFromBinaryError(objToSend: any, payload: any): void;
+  public notifyFromBinaryError(objToSend: any, payload: any): void;
 
   /**
    *
@@ -378,10 +381,5 @@ declare interface WSCommandBle {
    * @param path
    * @param row
    */
-  _addRowForPath(sendObj: /* WSCommandBle.prototype._addRowForPath0 */ any, path: string, row: any): void;
-}
-
-declare module "WSCommandBle" {
-
-  export default WSCommandBle;    // es6 style module export
+  private _addRowForPath(sendObj: /* WSCommandBle.prototype._addRowForPath0 */ any, path: string, row: any): void;
 }

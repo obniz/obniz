@@ -2,6 +2,8 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandUart.prototype {
   // WSCommandUart.prototype.send.!0
 
@@ -29,39 +31,40 @@ declare namespace WSCommandUart.prototype {
 /**
  *
  */
-declare interface WSCommandUart {
+export default class WSCommandUart extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  new(): WSCommandUart;
+  public new(): WSCommandUart;
 
   /**
    * Commands
    * @param params
    * @param module
    */
-  init(params: any, module: any): void;
+  public init(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  deinit(params: any, module: any): void;
+  public deinit(params: any, module: any): void;
 
   /**
    *
    * @param params
    * @param module
    */
-  send(params: WSCommandUart.prototype.Send0, module: any): void;
+  public send(params: WSCommandUart.prototype.Send0, module: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: any): void;
+  public parseFromJson(json: any): void;
 
   /**
    *
@@ -69,10 +72,5 @@ declare interface WSCommandUart {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: WSCommandUart.prototype.NotifyFromBinary0, func: any, payload: any): void;
-}
-
-declare module "WSCommandUart" {
-
-  export default WSCommandUart;    // es6 style module export
+  public notifyFromBinary(objToSend: WSCommandUart.prototype.NotifyFromBinary0, func: any, payload: any): void;
 }

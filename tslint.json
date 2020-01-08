@@ -8,6 +8,8 @@
     "no-console": [
       false
     ],
+    "prefer-for-of" : false, //後で消したい
+    "forin": false, //後で消したい
     "no-misused-new": false, //後で消したい
     "no-namespace": false, //後で消したい
     "max-line-length" : false, //後で消したい

@@ -13,6 +13,7 @@ const concatWith = require('./concatWith');
 const gulp_sort = require('gulp-sort');
 const docGenerator = require('./wsDocGenerator');
 const ts = require('gulp-typescript');
+let sourcemaps = require('gulp-sourcemaps');
 
 const app = express();
 const port = 3100;
@@ -161,8 +162,10 @@ gulp.task('tsc:copy', function(done) {
 gulp.task('tsc:compile', function(done) {
   return tsProject
     .src()
+    .pipe(sourcemaps.init())
     .pipe(tsProject())
-    .js.pipe(gulp.dest('dist'))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('dist'))
     .on('end', function() {
       console.log('tsc ompiled!');
       done();

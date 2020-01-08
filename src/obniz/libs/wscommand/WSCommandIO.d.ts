@@ -2,6 +2,8 @@
 // Project: [LIBRARY_URL_HERE]
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import WSCommand from "./WSCommand";
+
 declare namespace WSCommandIO.prototype {
   // WSCommandIO.prototype.notifyFromBinary.!0
 
@@ -50,48 +52,41 @@ declare var COMMAND_IO_MUTEX_NAMES: {};
 /**
  *
  */
-declare interface WSCommandIO {
+export default class WSCommandIO extends WSCommand {
+  public module: number;
 
   /**
    *
    */
-  new(): WSCommandIO;
+  public new(): WSCommandIO;
 
   /**
    * Commands
    * @param value
    * @param id
    */
-  output(value: any, id: any): void;
+  public output(value: any, id: any): void;
 
   /**
    *
    * @param params
    * @param id
    */
-  outputDetail(params: any, id: any): void;
+  public outputDetail(params: any, id: any): void;
 
   /**
    *
    * @param params
    * @param id
    */
-  input(params: any, id: any): void;
+  public input(params: any, id: any): void;
 
   /**
    *
    * @param params
    * @param id
    */
-  inputDetail(params: any, id: any): void;
-
-  /**
-   *
-   * @param params
-   * @param id
-   * @return
-   */
-  outputType(params: any, id: any): string;
+  public inputDetail(params: any, id: any): void;
 
   /**
    *
@@ -99,20 +94,28 @@ declare interface WSCommandIO {
    * @param id
    * @return
    */
-  pullType(params: any, id: any): string;
+  public outputType(params: any, id: any): string;
+
+  /**
+   *
+   * @param params
+   * @param id
+   * @return
+   */
+  public pullType(params: any, id: any): string;
 
   /**
    *
    * @param params
    * @param id
    */
-  deinit(params: any, id: any): void;
+  public deinit(params: any, id: any): void;
 
   /**
    *
    * @param json
    */
-  parseFromJson(json: any): void;
+  public parseFromJson(json: any): void;
 
   /**
    *
@@ -120,10 +123,5 @@ declare interface WSCommandIO {
    * @param func
    * @param payload
    */
-  notifyFromBinary(objToSend: WSCommandIO.prototype.NotifyFromBinary0, func: any, payload: any): void;
-}
-
-declare module "WSCommandIO" {
-
-  export default WSCommandIO;    // es6 style module export
+  public notifyFromBinary(objToSend: WSCommandIO.prototype.NotifyFromBinary0, func: any, payload: any): void;
 }

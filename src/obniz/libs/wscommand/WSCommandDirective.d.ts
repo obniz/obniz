@@ -3,7 +3,10 @@
 // Definitions by: [YOUR_NAME_HERE] <[YOUR_URL_HERE]>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-declare module "WSCommandDirective" {
+import WSCommand from "./WSCommand";
 
-  export default WSCommandDirective;    // es6 style module export
+export default class WSCommandDirective extends WSCommand {
+  public module: number;
+
+  public parseFromJson(json: object): void;
 }

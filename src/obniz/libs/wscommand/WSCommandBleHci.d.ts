@@ -120,42 +120,37 @@ declare namespace WSCommandBleHci.prototype.schemaData.RetI {
 /**
  *
  */
-declare interface WSCommandBleHci {
+export default class WSCommandBleHci {
 
   /**
    *
    * @param delegate
    */
-  new(delegate: any): WSCommandBleHci;
+  public new(delegate: any): WSCommandBleHci;
 
   /**
    *
    * @return
    */
-  schemaData(): WSCommandBleHci.prototype.SchemaDataRet;
+  public schemaData(): WSCommandBleHci.prototype.SchemaDataRet;
 
   /**
    *
    * @return
    */
-  notifyFunctionList(): WSCommandBleHci.prototype.NotifyFunctionListRet;
+  public notifyFunctionList(): WSCommandBleHci.prototype.NotifyFunctionListRet;
 
   /**
    *
    * @param params
    * @param module
    */
-  send(params: WSCommandBleHci.prototype.Send0, module: any): void;
+  public send(params: WSCommandBleHci.prototype.Send0, module: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  recv(objToSend: WSCommandBleHci.prototype.Recv0, payload: any): void;
-}
-
-declare module "WSCommandBleHci" {
-
-  export default WSCommandBleHci;    // es6 style module export
+  public recv(objToSend: WSCommandBleHci.prototype.Recv0, payload: any): void;
 }
