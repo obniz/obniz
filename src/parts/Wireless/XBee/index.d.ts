@@ -10,6 +10,8 @@ export interface XBeeConfig {
 
 export interface XBee {
   onreceive: (data: any, text: string) => void;
+
   configWait(json: XBeeConfig): Promise<void>;
+
   send(data: any): void;
 }

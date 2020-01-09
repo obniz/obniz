@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/spi"
-basePath : "spi0"
+basePath: "spi0"
 
 "anyOf":
-  -  {$ref : "/response/spi/read"}
+  - {$ref: "/response/spi/read"}

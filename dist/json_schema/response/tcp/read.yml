@@ -2,16 +2,16 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/tcp/read"
-desccription : "value changes are always notified."
+desccription: "value changes are always notified."
 
 type: object
-required : [read]
+required: [read]
 properties:
-    read :
-        type: object
-        required: [data]
-        properties:
-            data : 
-                $ref : "/dataArray"
-                description : "TCP data"
+  read:
+    type: object
+    required: [data]
+    properties:
+      data:
+        $ref: "/dataArray"
+        description: "TCP data"
 

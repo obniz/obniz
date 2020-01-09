@@ -52,7 +52,7 @@ export default class WSCommandLogicAnalyzer extends WSCommand {
    *
    * @param json
    */
-  public parseFromJson(json: WSCommandLogicAnalyzer.prototype.ParseFromJson0): void;
+  public parseFromJson(json: any): void;
 
   /**
    *

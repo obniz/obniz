@@ -42,7 +42,7 @@ declare namespace WSCommandMeasurement.prototype {
 /**
  *
  */
-export  default  class WSCommandMeasurement extends WSCommand {
+export default class WSCommandMeasurement extends WSCommand {
   public module: number;
 
   /**
@@ -60,7 +60,7 @@ export  default  class WSCommandMeasurement extends WSCommand {
    *
    * @param json
    */
-  public parseFromJson(json: WSCommandMeasurement.prototype.ParseFromJson0): void;
+  public parseFromJson(json: any): void;
 
   /**
    *

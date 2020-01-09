@@ -11,5 +11,6 @@ export interface S5851AOptions {
 
 export interface S5851A {
   getTempWait(): Promise<number>;
+
   getHumdWait(): Promise<number>;
 }

@@ -1,4 +1,5 @@
-import { I2C } from "../../../../obniz/libs/io_peripherals/i2c";
+import {I2C} from "../../../../obniz/libs/io_peripherals/i2c";
+
 export interface AM2320ptions {
   vcc?: number;
   gnd?: number;
@@ -9,6 +10,8 @@ export interface AM2320ptions {
 
 export interface AM2320 {
   getAllWait(): Promise<{ temperature: number; humidity: number }>;
+
   getTempWait(): Promise<number>;
+
   getHumdWait(): Promise<number>;
 }

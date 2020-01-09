@@ -6,5 +6,6 @@ export interface SEN0114Options {
 
 export interface SEN0114 {
   onchange: (value: number) => void;
+
   getHumidityWait(): Promise<number>;
 }

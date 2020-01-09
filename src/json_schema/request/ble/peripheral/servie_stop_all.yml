@@ -2,11 +2,11 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/peripheral/service_stop_all"
-deprecated : 3.0.0
+deprecated: 3.0.0
 
 
 type: object
-required : [peripheral]
+required: [peripheral]
 properties:
-    peripheral :
-        type : "null"
+  peripheral:
+    type: "null"

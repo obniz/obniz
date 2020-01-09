@@ -5,8 +5,8 @@ id: "/request/tcp/disconnect"
 
 
 type: object
-required : [disconnect]
+required: [disconnect]
 properties:
-    disconnect :
-        type : boolean
-        additionalProperties: false    
+  disconnect:
+    type: boolean
+    additionalProperties: false

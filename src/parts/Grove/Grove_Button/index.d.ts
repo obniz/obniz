@@ -7,6 +7,8 @@ export interface Grove_ButtonOptions {
 
 export interface Grove_Button {
   onchange: (pressed: boolean) => void;
+
   isPressedWait(): Promise<boolean>;
+
   stateWait(pressed: boolean): Promise<void>;
 }

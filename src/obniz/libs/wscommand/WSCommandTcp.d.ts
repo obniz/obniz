@@ -37,7 +37,7 @@ declare namespace WSCommandTcp.prototype {
 /**
  *
  */
-export  default class WSCommandTcp extends WSCommand {
+export default class WSCommandTcp extends WSCommand {
   public module: number;
 
   private _MaxPort: number;
@@ -67,44 +67,44 @@ export  default class WSCommandTcp extends WSCommand {
    */
   private _CommandRead: number;
 
-    /**
-     *
-     */
-    public new(): WSCommandTcp;
+  /**
+   *
+   */
+  public new(): WSCommandTcp;
 
-    /**
-     *
-     * @param params
-     * @param index
-     */
-    public connect(params: WSCommandTcp.prototype.Connect0, index: any): void;
+  /**
+   *
+   * @param params
+   * @param index
+   */
+  public connect(params: any, index: any): void;
 
-    /**
-     *
-     * @param params
-     * @param index
-     */
-    public disconnect(params: any, index: any): void;
+  /**
+   *
+   * @param params
+   * @param index
+   */
+  public disconnect(params: any, index: any): void;
 
-    /**
-     *
-     * @param params
-     * @param index
-     */
-    public  write(params: /* WSCommandTcp.prototype.+WSCommandTcp */ any, index: any): void;
+  /**
+   *
+   * @param params
+   * @param index
+   */
+  public write(params: /* WSCommandTcp.prototype.+WSCommandTcp */ any, index: any): void;
 
-    /**
-     *
-     * @param json
-     */
-    public parseFromJson(json: any): void;
+  /**
+   *
+   * @param json
+   */
+  public parseFromJson(json: any): void;
 
-    /**
-     *
-     * @param objToSend
-     * @param func
-     * @param payload
-     */
-    public notifyFromBinary(objToSend: WSCommandTcp.prototype.NotifyFromBinary0, func: any, payload: any): void;
+  /**
+   *
+   * @param objToSend
+   * @param func
+   * @param payload
+   */
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 
 }

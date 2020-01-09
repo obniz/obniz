@@ -17,37 +17,37 @@ declare namespace WSCommandIO.prototype {
 /**
  *
  */
-export declare var COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH: number;
+export declare var COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH: any;
 
 /**
  *
  */
-export declare var COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW: number;
+export declare var COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW: any;
 
 /**
  *
  */
-export declare var COMMAND_IO_ERRORS_IO_TOO_LOW: number;
+export declare var COMMAND_IO_ERRORS_IO_TOO_LOW: any;
 
 /**
  *
  */
-export declare var COMMAND_IO_ERRORS_IO_TOO_HIGH: number;
+export declare var COMMAND_IO_ERRORS_IO_TOO_HIGH: any;
 
 /**
  *
  */
-export declare var COMMAND_IO_ERRORS_IO_FORCE_RELEASED: number;
+export declare var COMMAND_IO_ERRORS_IO_FORCE_RELEASED: any;
 
 /**
  *
  */
-declare var COMMAND_IO_ERROR_MESSAGES: {};
+declare var COMMAND_IO_ERROR_MESSAGES: any;
 
 /**
  *
  */
-declare var COMMAND_IO_MUTEX_NAMES: {};
+declare var COMMAND_IO_MUTEX_NAMES: any;
 
 /**
  *
@@ -123,5 +123,5 @@ export default class WSCommandIO extends WSCommand {
    * @param func
    * @param payload
    */
-  public notifyFromBinary(objToSend: WSCommandIO.prototype.NotifyFromBinary0, func: any, payload: any): void;
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 }

@@ -5,4 +5,4 @@ id: "/response/uart/receive"
 
 type: object
 properties:
-    data : {$ref: "/dataArray"}
+  data: {$ref: "/dataArray"}

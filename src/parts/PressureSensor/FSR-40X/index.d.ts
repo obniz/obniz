@@ -5,5 +5,6 @@ export interface FSR40XOptions {
 
 export interface FSR40X {
   onchange: (temp: number) => void;
+
   getWait(): Promise<number>;
 }

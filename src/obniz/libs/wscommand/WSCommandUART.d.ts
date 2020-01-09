@@ -58,7 +58,7 @@ export default class WSCommandUart extends WSCommand {
    * @param params
    * @param module
    */
-  public send(params: WSCommandUart.prototype.Send0, module: any): void;
+  public send(params: any, module: any): void;
 
   /**
    *
@@ -72,5 +72,5 @@ export default class WSCommandUart extends WSCommand {
    * @param func
    * @param payload
    */
-  public notifyFromBinary(objToSend: WSCommandUart.prototype.NotifyFromBinary0, func: any, payload: any): void;
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 }

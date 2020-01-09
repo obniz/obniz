@@ -73,5 +73,5 @@ export default class WSCommandI2C extends WSCommand {
    * @param func
    * @param payload
    */
-  public notifyFromBinary(objToSend: WSCommandI2C.prototype.NotifyFromBinary0, func: any, payload: any): void;
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 }

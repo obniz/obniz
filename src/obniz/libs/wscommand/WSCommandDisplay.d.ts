@@ -58,7 +58,7 @@ export default class WSCommandDisplay extends WSCommand {
    *
    * @param buf
    */
-  public print(buf: Float32Array): void;
+  public print(buf: any): void;
 
   /**
    *
@@ -100,7 +100,7 @@ export default class WSCommandDisplay extends WSCommand {
    *
    * @param buf
    */
-  public drawHorizonally(buf: Float32Array): void;
+  public drawHorizonally(buf: any): void;
 
   /**
    *
@@ -114,7 +114,7 @@ export default class WSCommandDisplay extends WSCommand {
    * @param moduleName
    * @param pinName
    */
-  public setPinName(no: number, moduleName: string, pinName: string): void;
+  public setPinName(no: any, moduleName: any, pinName: any): void;
 
   /**
    *

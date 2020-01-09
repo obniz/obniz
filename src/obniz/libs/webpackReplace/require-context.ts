@@ -1,17 +1,17 @@
-let baseDir: string;
+let baseDir: any;
 import fs = require("fs");
 import yaml = require("js-yaml");
 
-module.exports =  (directory: string, recursive: boolean, regExp: RegExp): any => {
-  const nodeDir = require("node-dir");
-  const path = require("path");
+module.exports = (directory: string, recursive: boolean, regExp: RegExp): any => {
+  const nodeDir: any = require("node-dir");
+  const path: any = require("path");
 
   // Assume absolute path by default
-  let basepath = directory;
+  let basepath: any = directory;
 
   if (directory[0] === ".") {
     // Relative path
-    let dir = __dirname;
+    let dir: any = __dirname;
     if (baseDir) {
       dir = baseDir;
     }
@@ -21,20 +21,20 @@ module.exports =  (directory: string, recursive: boolean, regExp: RegExp): any =
     basepath = require.resolve(directory);
   }
 
-  const keys = nodeDir
+  const keys: any = nodeDir
     .files(basepath, {
       sync: true,
       recursive: recursive || false,
     })
-    .filter( (file: string) => {
+    .filter((file: string) => {
       return file.match(regExp || /\.(json|js)$/);
     })
-    .map( (file: string ) => {
+    .map((file: string) => {
       return path.join(".", file.slice(basepath.length + 1));
     });
 
-  const context =  (key: string) => {
-    const modulePath = context.resolve(key);
+  const context: any = (key: string) => {
+    const modulePath: any = context.resolve(key);
     if (/\.(json|js)$/.test(modulePath)) {
       return require(modulePath);
     } else if (/\.(yaml|yml)$/.test(modulePath)) {

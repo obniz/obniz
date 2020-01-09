@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ad"
-basePath : "ad0"
+basePath: "ad0"
 
 "anyOf":
-  -  {$ref : "/response/ad/get"}
+  - {$ref: "/response/ad/get"}

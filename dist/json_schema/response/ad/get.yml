@@ -4,7 +4,7 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ad/get"
 
 type: number
-example : 3.300
-minimum : 0
-maximum : 5
-description : "current value (volt)"
+example: 3.300
+minimum: 0
+maximum: 5
+description: "current value (volt)"

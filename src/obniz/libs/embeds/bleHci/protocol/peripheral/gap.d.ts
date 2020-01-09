@@ -11,17 +11,17 @@ declare function debug(): void;
 /**
  *
  */
-export declare var isLinux: boolean;
+export declare var isLinux: any;
 
 /**
  *
  */
-export declare var isIntelEdison: boolean;
+export declare var isIntelEdison: any;
 
 /**
  *
  */
-export declare var isYocto: boolean;
+export declare var isYocto: any;
 
 /**
  *

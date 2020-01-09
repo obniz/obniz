@@ -2,10 +2,10 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/spi"
-basePath : "spi0"
-description : "available spi0, spi1"
+basePath: "spi0"
+description: "available spi0, spi1"
 
 "anyOf":
-  -  {$ref : "/request/spi/init_master"}
-  -  {$ref : "/request/spi/deinit"}
-  -  {$ref : "/request/spi/write"}
+  - {$ref: "/request/spi/init_master"}
+  - {$ref: "/request/spi/deinit"}
+  - {$ref: "/request/spi/write"}

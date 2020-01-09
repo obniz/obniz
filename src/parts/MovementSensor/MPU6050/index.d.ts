@@ -1,4 +1,5 @@
-import { I2C } from "../../../obniz/libs/io_peripherals/i2c";
+import {I2C} from "../../../obniz/libs/io_peripherals/i2c";
+
 export interface MPU6050Options {
   gnd?: number;
   vcc?: number;
@@ -12,6 +13,7 @@ export interface MPU6050Options {
 
 export interface MPU6050 {
   setConfig(accel_range: number, gyro_range: number): void;
+
   getWait(): Promise<{
     accelerometer: {
       x: number,

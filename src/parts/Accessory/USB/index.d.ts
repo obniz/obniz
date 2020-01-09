@@ -5,5 +5,6 @@ export interface USBOptions {
 
 export interface USB {
   on(): void;
+
   off(): void;
 }

@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/measure"
-basePath : "measure"
+basePath: "measure"
 
 "anyOf":
-  -  {$ref : "/request/measure/echo"}
+  - {$ref: "/request/measure/echo"}

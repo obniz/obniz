@@ -63,6 +63,8 @@ export interface FlickHat {
   ontap: (tap: FlickHat_Tap) => void;
   ondoubletap: (doubletap: FlickHat_DoubleTap) => void;
   onairwheel: (airwheel: FlickHat_AirWheel) => void;
+
   start(callback: (fwInfo: any) => void): Promise<void>;
+
   polling(timeout: number): Promise<void>;
 }

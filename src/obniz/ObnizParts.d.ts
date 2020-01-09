@@ -6,7 +6,7 @@
 /**
  *
  */
-export declare var _parts: /*no type*/{};
+export declare var _parts: /*no type*/any;
 
 declare module "ObnizParts" {
 

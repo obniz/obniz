@@ -20,7 +20,7 @@
 //
 // ---------------------------------------------------------------------
 
-const _qrcode = (() => {
+const _qrcode: any = (() => {
   // --------------------------------------------------------------------
   // qrcode
   // ---------------------------------------------------------------------
@@ -30,22 +30,22 @@ const _qrcode = (() => {
    * @param typeNumber 1 to 40
    * @param errorCorrectionLevel 'L','M','Q','H'
    */
-  const qrcode = (_typeNumber: number, errorCorrectionLevelStr: "L" | "M" | "Q" | "H") => {
-    const PAD0 = 0xec;
-    const PAD1 = 0x11;
+  const qrcode: any = (_typeNumber: number, errorCorrectionLevelStr: "L" | "M" | "Q" | "H") => {
+    const PAD0: any = 0xec;
+    const PAD1: any = 0x11;
 
-    const _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevelStr];
+    const _errorCorrectionLevel: any = QRErrorCorrectionLevel[errorCorrectionLevelStr];
     let _modules: any = null;
-    let _moduleCount = 0;
+    let _moduleCount: any = 0;
     let _dataCache: any = null;
     const _dataList: any = [];
 
     const _this: any = {};
 
-    const makeImpl = (test: any, maskPattern: any) => {
+    const makeImpl: any = (test: any, maskPattern: any) => {
       _moduleCount = _typeNumber * 4 + 17;
       _modules = ((moduleCount) => {
-        const modules = new Array(moduleCount);
+        const modules: any = new Array(moduleCount);
         for (let row = 0; row < moduleCount; row += 1) {
           modules[row] = new Array(moduleCount);
           for (let col = 0; col < moduleCount; col += 1) {
@@ -73,7 +73,7 @@ const _qrcode = (() => {
       mapData(_dataCache, maskPattern);
     };
 
-    const setupPositionProbePattern = (row: number, col: number) => {
+    const setupPositionProbePattern: any = (row: number, col: number) => {
       for (let r = -1; r <= 7; r += 1) {
         if (row + r <= -1 || _moduleCount <= row + r) {
           continue;
@@ -97,14 +97,14 @@ const _qrcode = (() => {
       }
     };
 
-    const getBestMaskPattern = () => {
-      let minLostPoint = 0;
-      let pattern = 0;
+    const getBestMaskPattern: any = () => {
+      let minLostPoint: any = 0;
+      let pattern: any = 0;
 
       for (let i = 0; i < 8; i += 1) {
         makeImpl(true, i);
 
-        const lostPoint = QRUtil.getLostPoint(_this);
+        const lostPoint: any = QRUtil.getLostPoint(_this);
 
         if (i === 0 || minLostPoint > lostPoint) {
           minLostPoint = lostPoint;
@@ -115,31 +115,31 @@ const _qrcode = (() => {
       return pattern;
     };
 
-    const setupTimingPattern = () => {
+    const setupTimingPattern: any = () => {
       for (let r = 8; r < _moduleCount - 8; r += 1) {
-        if (_modules[r][6] != null) {
+        if (_modules[r][6] !== null) {
           continue;
         }
         _modules[r][6] = r % 2 === 0;
       }
 
       for (let c = 8; c < _moduleCount - 8; c += 1) {
-        if (_modules[6][c] != null) {
+        if (_modules[6][c] !== null) {
           continue;
         }
         _modules[6][c] = c % 2 === 0;
       }
     };
 
-    const setupPositionAdjustPattern = () => {
-      const pos = QRUtil.getPatternPosition(_typeNumber);
+    const setupPositionAdjustPattern: any = () => {
+      const pos: any = QRUtil.getPatternPosition(_typeNumber);
 
       for (let i = 0; i < pos.length; i += 1) {
         for (let j = 0; j < pos.length; j += 1) {
-          const row = pos[i];
-          const col = pos[j];
+          const row: any = pos[i];
+          const col: any = pos[j];
 
-          if (_modules[row][col] != null) {
+          if (_modules[row][col] !== null) {
             continue;
           }
 
@@ -162,27 +162,27 @@ const _qrcode = (() => {
       }
     };
 
-    const setupTypeNumber = (test: any) => {
-      const bits = QRUtil.getBCHTypeNumber(_typeNumber);
+    const setupTypeNumber: any = (test: any) => {
+      const bits: any = QRUtil.getBCHTypeNumber(_typeNumber);
 
       for (let i = 0; i < 18; i += 1) {
-        const mod = !test && ((bits >> i) & 1) === 1;
+        const mod: any = !test && ((bits >> i) & 1) === 1;
         _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
       }
 
       for (let i = 0; i < 18; i += 1) {
-        const mod = !test && ((bits >> i) & 1) === 1;
+        const mod: any = !test && ((bits >> i) & 1) === 1;
         _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
       }
     };
 
-    const setupTypeInfo = (test: any, maskPattern: any) => {
-      const data = (_errorCorrectionLevel << 3) | maskPattern;
-      const bits = QRUtil.getBCHTypeInfo(data);
+    const setupTypeInfo: any = (test: any, maskPattern: any) => {
+      const data: any = (_errorCorrectionLevel << 3) | maskPattern;
+      const bits: any = QRUtil.getBCHTypeInfo(data);
 
       // vertical
       for (let i = 0; i < 15; i += 1) {
-        const mod = !test && ((bits >> i) & 1) === 1;
+        const mod: any = !test && ((bits >> i) & 1) === 1;
 
         if (i < 6) {
           _modules[i][8] = mod;
@@ -195,7 +195,7 @@ const _qrcode = (() => {
 
       // horizontal
       for (let i = 0; i < 15; i += 1) {
-        const mod = !test && ((bits >> i) & 1) === 1;
+        const mod: any = !test && ((bits >> i) & 1) === 1;
 
         if (i < 8) {
           _modules[8][_moduleCount - i - 1] = mod;
@@ -210,12 +210,12 @@ const _qrcode = (() => {
       _modules[_moduleCount - 8][8] = !test;
     };
 
-    const mapData = (data: any, maskPattern: any) => {
-      let inc = -1;
-      let row = _moduleCount - 1;
-      let bitIndex = 7;
-      let byteIndex = 0;
-      const maskFunc = QRUtil.getMaskFunction(maskPattern);
+    const mapData: any = (data: any, maskPattern: any) => {
+      let inc: any = -1;
+      let row: any = _moduleCount - 1;
+      let bitIndex: any = 7;
+      let byteIndex: any = 0;
+      const maskFunc: any = QRUtil.getMaskFunction(maskPattern);
 
       for (let col = _moduleCount - 1; col > 0; col -= 2) {
         if (col === 6) {
@@ -225,13 +225,13 @@ const _qrcode = (() => {
         while (true) {
           for (let c = 0; c < 2; c += 1) {
             if (_modules[row][col - c] === null) {
-              let dark = false;
+              let dark: any = false;
 
               if (byteIndex < data.length) {
                 dark = ((data[byteIndex] >>> bitIndex) & 1) === 1;
               }
 
-              const mask = maskFunc(row, col - c);
+              const mask: any = maskFunc(row, col - c);
 
               if (mask) {
                 dark = !dark;
@@ -258,18 +258,18 @@ const _qrcode = (() => {
       }
     };
 
-    const createBytes = (buffer: any, rsBlocks: any) => {
-      let offset = 0;
+    const createBytes: any = (buffer: any, rsBlocks: any) => {
+      let offset: any = 0;
 
-      let maxDcCount = 0;
-      let maxEcCount = 0;
+      let maxDcCount: any = 0;
+      let maxEcCount: any = 0;
 
-      const dcdata = new Array(rsBlocks.length);
-      const ecdata = new Array(rsBlocks.length);
+      const dcdata: any = new Array(rsBlocks.length);
+      const ecdata: any = new Array(rsBlocks.length);
 
       for (let r = 0; r < rsBlocks.length; r += 1) {
-        const dcCount = rsBlocks[r].dataCount;
-        const ecCount = rsBlocks[r].totalCount - dcCount;
+        const dcCount: any = rsBlocks[r].dataCount;
+        const ecCount: any = rsBlocks[r].totalCount - dcCount;
 
         maxDcCount = Math.max(maxDcCount, dcCount);
         maxEcCount = Math.max(maxEcCount, ecCount);
@@ -281,24 +281,24 @@ const _qrcode = (() => {
         }
         offset += dcCount;
 
-        const rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-        const rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1) as any;
+        const rsPoly: any = QRUtil.getErrorCorrectPolynomial(ecCount);
+        const rawPoly: any = qrPolynomial(dcdata[r], rsPoly.getLength() - 1) as any;
 
-        const modPoly = rawPoly.mod(rsPoly);
+        const modPoly: any = rawPoly.mod(rsPoly);
         ecdata[r] = new Array(rsPoly.getLength() - 1);
         for (let i = 0; i < ecdata[r].length; i += 1) {
-          const modIndex = i + modPoly.getLength() - ecdata[r].length;
+          const modIndex: any = i + modPoly.getLength() - ecdata[r].length;
           ecdata[r][i] = modIndex >= 0 ? modPoly.getAt(modIndex) : 0;
         }
       }
 
-      let totalCodeCount = 0;
+      let totalCodeCount: any = 0;
       for (let i = 0; i < rsBlocks.length; i += 1) {
         totalCodeCount += rsBlocks[i].totalCount;
       }
 
-      const data = new Array(totalCodeCount);
-      let index = 0;
+      const data: any = new Array(totalCodeCount);
+      let index: any = 0;
 
       for (let i = 0; i < maxDcCount; i += 1) {
         for (let r = 0; r < rsBlocks.length; r += 1) {
@@ -321,13 +321,13 @@ const _qrcode = (() => {
       return data;
     };
 
-    const createData = (typeNumber: any, errorCorrectionLevel: any, dataList: any) => {
-      const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+    const createData: any = (typeNumber: any, errorCorrectionLevel: any, dataList: any) => {
+      const rsBlocks: any = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
 
-      const buffer = qrBitBuffer();
+      const buffer: any = qrBitBuffer();
 
       for (let i = 0; i < dataList.length; i += 1) {
-        const data = dataList[i];
+        const data: any = dataList[i];
         buffer.put(data.getMode(), 4);
         buffer.put(
           data.getLength(),
@@ -337,7 +337,7 @@ const _qrcode = (() => {
       }
 
       // calc num max data.
-      let totalDataCount = 0;
+      let totalDataCount: any = 0;
       for (let i = 0; i < rsBlocks.length; i += 1) {
         totalDataCount += rsBlocks[i].dataCount;
       }
@@ -379,7 +379,7 @@ const _qrcode = (() => {
     _this.addData = (data: any, mode: any) => {
       mode = mode || "Byte";
 
-      let newData = null;
+      let newData: any = null;
 
       switch (mode) {
         case "Numeric":
@@ -419,17 +419,17 @@ const _qrcode = (() => {
 
     _this.make = () => {
       if (_typeNumber < 1) {
-        let typeNumber = 1;
+        let typeNumber: any = 1;
 
         for (; typeNumber < 40; typeNumber++) {
-          const rsBlocks = QRRSBlock.getRSBlocks(
+          const rsBlocks: any = QRRSBlock.getRSBlocks(
             typeNumber,
             _errorCorrectionLevel,
           );
-          const buffer = qrBitBuffer();
+          const buffer: any = qrBitBuffer();
 
           for (let i = 0; i < _dataList.length; i++) {
-            const data = _dataList[i];
+            const data: any = _dataList[i];
             buffer.put(data.getMode(), 4);
             buffer.put(
               data.getLength(),
@@ -438,7 +438,7 @@ const _qrcode = (() => {
             data.write(buffer);
           }
 
-          let totalDataCount = 0;
+          let totalDataCount: any = 0;
           for (let i = 0; i < rsBlocks.length; i++) {
             totalDataCount += rsBlocks[i].dataCount;
           }
@@ -458,7 +458,7 @@ const _qrcode = (() => {
       cellSize = cellSize || 2;
       margin = typeof margin === "undefined" ? cellSize * 4 : margin;
 
-      let qrHtml = "";
+      let qrHtml: any = "";
 
       qrHtml += '<table style="';
       qrHtml += " border-width: 0px; border-style: none;";
@@ -494,7 +494,7 @@ const _qrcode = (() => {
 
     _this.renderTo2dContext = (context: any, cellSize: any) => {
       cellSize = cellSize || 2;
-      const length = _this.getModuleCount();
+      const length: any = _this.getModuleCount();
       for (let row = 0; row < length; row++) {
         for (let col = 0; col < length; col++) {
           context.fillStyle = _this.isDark(row, col) ? "black" : "white";
@@ -511,10 +511,10 @@ const _qrcode = (() => {
   // ---------------------------------------------------------------------
 
   qrcode.stringToBytesFuncs = {
-    default(s: any) {
-      const bytes = [];
+    public default(s: any) {
+      const bytes: any = [];
       for (let i = 0; i < s.length; i += 1) {
-        const c = s.charCodeAt(i);
+        const c: any = s.charCodeAt(i);
         bytes.push(c & 0xff);
       }
       return bytes;
@@ -535,48 +535,48 @@ const _qrcode = (() => {
   qrcode.createStringToBytes = (unicodeData: any, numChars: any) => {
     // create conversion map.
 
-    const unicodeMap = (() => {
-      const bin = base64DecodeInputStream(unicodeData);
-      const read = () => {
-        const b = bin.read();
+    const unicodeMap: any = (() => {
+      const bin: any = base64DecodeInputStream(unicodeData);
+      const read: any = () => {
+        const b: any = bin.read();
         if (b === -1) {
           throw new Error("eof");
         }
         return b;
       };
 
-      let count = 0;
+      let count: any = 0;
       const result: any = {};
       while (true) {
-        const b0 = bin.read();
+        const b0: any = bin.read();
         if (b0 === -1) {
           break;
         }
-        const b1 = read();
-        const b2 = read();
-        const b3 = read();
-        const k = String.fromCharCode((b0 << 8) | b1);
-        const v = (b2 << 8) | b3;
+        const b1: any = read();
+        const b2: any = read();
+        const b3: any = read();
+        const k: any = String.fromCharCode((b0 << 8) | b1);
+        const v: any = (b2 << 8) | b3;
         result[k] = v;
         count += 1;
       }
       if (count !== numChars) {
-        throw new Error(count + " != " + numChars);
+        throw new Error(count + " !==" + numChars);
       }
 
       return result;
     })();
 
-    const unknownChar = "?".charCodeAt(0);
+    const unknownChar: any = "?".charCodeAt(0);
 
     return (s: any) => {
-      const bytes = [];
+      const bytes: any = [];
       for (let i = 0; i < s.length; i += 1) {
-        const c = s.charCodeAt(i);
+        const c: any = s.charCodeAt(i);
         if (c < 128) {
           bytes.push(c);
         } else {
-          const b = unicodeMap[s.charAt(i)];
+          const b: any = unicodeMap[s.charAt(i)];
           if (typeof b === "number") {
             if ((b & 0xff) === b) {
               // 1byte
@@ -599,7 +599,7 @@ const _qrcode = (() => {
   // QRMode
   // ---------------------------------------------------------------------
 
-  const QRMode = {
+  const QRMode: any = {
     MODE_NUMBER: 1 << 0,
     MODE_ALPHA_NUM: 1 << 1,
     MODE_8BIT_BYTE: 1 << 2,
@@ -610,7 +610,7 @@ const _qrcode = (() => {
   // QRErrorCorrectionLevel
   // ---------------------------------------------------------------------
 
-  const QRErrorCorrectionLevel = {
+  const QRErrorCorrectionLevel: any = {
     L: 1,
     M: 0,
     Q: 3,
@@ -621,7 +621,7 @@ const _qrcode = (() => {
   // QRMaskPattern
   // ---------------------------------------------------------------------
 
-  const QRMaskPattern = {
+  const QRMaskPattern: any = {
     PATTERN000: 0,
     PATTERN001: 1,
     PATTERN010: 2,
@@ -636,8 +636,8 @@ const _qrcode = (() => {
   // QRUtil
   // ---------------------------------------------------------------------
 
-  const QRUtil = (() => {
-    const PATTERN_POSITION_TABLE = [
+  const QRUtil: any = (() => {
+    const PATTERN_POSITION_TABLE: any = [
       [],
       [6, 18],
       [6, 22],
@@ -679,7 +679,7 @@ const _qrcode = (() => {
       [6, 26, 54, 82, 110, 138, 166],
       [6, 30, 58, 86, 114, 142, 170],
     ];
-    const G15 =
+    const G15: any =
       (1 << 10) |
       (1 << 8) |
       (1 << 5) |
@@ -687,7 +687,7 @@ const _qrcode = (() => {
       (1 << 2) |
       (1 << 1) |
       (1 << 0);
-    const G18 =
+    const G18: any =
       (1 << 12) |
       (1 << 11) |
       (1 << 10) |
@@ -696,12 +696,12 @@ const _qrcode = (() => {
       (1 << 5) |
       (1 << 2) |
       (1 << 0);
-    const G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+    const G15_MASK: any = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
     const _this: any = {};
 
-    const getBCHDigit = (data: any) => {
-      let digit = 0;
+    const getBCHDigit: any = (data: any) => {
+      let digit: any = 0;
       while (data !== 0) {
         digit += 1;
         data >>>= 1;
@@ -710,7 +710,7 @@ const _qrcode = (() => {
     };
 
     _this.getBCHTypeInfo = (data: any) => {
-      let d = data << 10;
+      let d: any = data << 10;
       while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
         d ^= G15 << (getBCHDigit(d) - getBCHDigit(G15));
       }
@@ -718,7 +718,7 @@ const _qrcode = (() => {
     };
 
     _this.getBCHTypeNumber = (data: any) => {
-      let d = data << 12;
+      let d: any = data << 12;
       while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
         d ^= G18 << (getBCHDigit(d) - getBCHDigit(G18));
       }
@@ -770,7 +770,7 @@ const _qrcode = (() => {
     };
 
     _this.getErrorCorrectPolynomial = (errorCorrectLength: any) => {
-      let a = qrPolynomial([1], 0) as any;
+      let a: any = qrPolynomial([1], 0) as any;
       for (let i = 0; i < errorCorrectLength; i += 1) {
         a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0));
       }
@@ -829,16 +829,16 @@ const _qrcode = (() => {
     };
 
     _this.getLostPoint = (__qrcode: any) => {
-      const moduleCount = __qrcode.getModuleCount();
+      const moduleCount: any = __qrcode.getModuleCount();
 
-      let lostPoint = 0;
+      let lostPoint: any = 0;
 
       // LEVEL1
 
       for (let row = 0; row < moduleCount; row += 1) {
         for (let col = 0; col < moduleCount; col += 1) {
-          let sameCount = 0;
-          const dark = __qrcode.isDark(row, col);
+          let sameCount: any = 0;
+          const dark: any = __qrcode.isDark(row, col);
 
           for (let r = -1; r <= 1; r += 1) {
             if (row + r < 0 || moduleCount <= row + r) {
@@ -870,7 +870,7 @@ const _qrcode = (() => {
 
       for (let row = 0; row < moduleCount - 1; row += 1) {
         for (let col = 0; col < moduleCount - 1; col += 1) {
-          let count = 0;
+          let count: any = 0;
           if (__qrcode.isDark(row, col)) {
             count += 1;
           }
@@ -925,7 +925,7 @@ const _qrcode = (() => {
 
       // LEVEL4
 
-      let darkCount = 0;
+      let darkCount: any = 0;
 
       for (let col = 0; col < moduleCount; col += 1) {
         for (let row = 0; row < moduleCount; row += 1) {
@@ -935,7 +935,7 @@ const _qrcode = (() => {
         }
       }
 
-      const ratio =
+      const ratio: any =
         Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
       lostPoint += ratio * 10;
 
@@ -949,9 +949,9 @@ const _qrcode = (() => {
   // QRMath
   // ---------------------------------------------------------------------
 
-  const QRMath = (() => {
-    const EXP_TABLE = new Array(256);
-    const LOG_TABLE = new Array(256);
+  const QRMath: any = (() => {
+    const EXP_TABLE: any = new Array(256);
+    const LOG_TABLE: any = new Array(256);
 
     // initialize tables
     for (let i = 0; i < 8; i += 1) {
@@ -997,17 +997,17 @@ const _qrcode = (() => {
   // qrPolynomial
   // ---------------------------------------------------------------------
 
-  function qrPolynomial(num: any, shift: any) {
+  function qrPolynomial(num?: any, shift?: any) {
     if (typeof num.length === "undefined") {
       throw new Error(num.length + "/" + shift);
     }
 
-    const _num = (() => {
-      let offset = 0;
+    const _num: any = (() => {
+      let offset: any = 0;
       while (offset < num.length && num[offset] === 0) {
         offset += 1;
       }
-      const __num = new Array(num.length - offset + shift);
+      const __num: any = new Array(num.length - offset + shift);
       for (let i = 0; i < num.length - offset; i += 1) {
         __num[i] = num[i + offset];
       }
@@ -1025,10 +1025,10 @@ const _qrcode = (() => {
     };
 
     _this.multiply = (e: any) => {
-      const ___num = new Array(_this.getLength() + e.getLength() - 1);
+      const ___num: any = new Array(_this.getLength() + e.getLength() - 1);
 
-      for (let i = 0; i < _this.getLength(); i += 1) {
-        for (let j = 0; j < e.getLength(); j += 1) {
+      for (let i: any = 0; i < _this.getLength(); i += 1) {
+        for (let j: any = 0; j < e.getLength(); j += 1) {
           ___num[i + j] ^= QRMath.gexp(
             QRMath.glog(_this.getAt(i)) + QRMath.glog(e.getAt(j)),
           );
@@ -1043,14 +1043,14 @@ const _qrcode = (() => {
         return _this;
       }
 
-      const ratio = QRMath.glog(_this.getAt(0)) - QRMath.glog(e.getAt(0));
+      const ratio: any = QRMath.glog(_this.getAt(0)) - QRMath.glog(e.getAt(0));
 
-      const __num = new Array(_this.getLength());
-      for (let i = 0; i < _this.getLength(); i += 1) {
+      const __num: any = new Array(_this.getLength());
+      for (let i: any = 0; i < _this.getLength(); i += 1) {
         __num[i] = _this.getAt(i);
       }
 
-      for (let i = 0; i < e.getLength(); i += 1) {
+      for (let i: any = 0; i < e.getLength(); i += 1) {
         __num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i)) + ratio);
       }
 
@@ -1065,8 +1065,8 @@ const _qrcode = (() => {
 // QRRSBlock
 // ---------------------------------------------------------------------
 
-  const QRRSBlock = (() => {
-    const RS_BLOCK_TABLE = [
+  const QRRSBlock: any = (() => {
+    const RS_BLOCK_TABLE: any = [
       // L
       // M
       // Q
@@ -1313,7 +1313,7 @@ const _qrcode = (() => {
       [20, 45, 15, 61, 46, 16],
     ];
 
-    const qrRSBlock = (totalCount: any, dataCount: any) => {
+    const qrRSBlock: any = (totalCount: any, dataCount: any) => {
       const result: any = {};
       result.totalCount = totalCount;
       result.dataCount = dataCount;
@@ -1322,7 +1322,7 @@ const _qrcode = (() => {
 
     const _this: any = {};
 
-    const getRsBlockTable = (typeNumber: any, errorCorrectionLevel: any) => {
+    const getRsBlockTable: any = (typeNumber: any, errorCorrectionLevel: any) => {
       switch (errorCorrectionLevel) {
         case QRErrorCorrectionLevel.L:
           return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
@@ -1338,7 +1338,7 @@ const _qrcode = (() => {
     };
 
     _this.getRSBlocks = (typeNumber: any, errorCorrectionLevel: any) => {
-      const rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+      const rsBlock: any = getRsBlockTable(typeNumber, errorCorrectionLevel);
 
       if (typeof rsBlock === "undefined") {
         throw new Error("bad rs block @ typeNumber:" +
@@ -1347,16 +1347,16 @@ const _qrcode = (() => {
           errorCorrectionLevel);
       }
 
-      const length = rsBlock.length / 3;
+      const length: any = rsBlock.length / 3;
 
-      const list = [];
+      const list: any = [];
 
-      for (let i = 0; i < length; i += 1) {
-        const count = rsBlock[i * 3 + 0];
-        const totalCount = rsBlock[i * 3 + 1];
-        const dataCount = rsBlock[i * 3 + 2];
+      for (let i: any = 0; i < length; i += 1) {
+        const count: any = rsBlock[i * 3 + 0];
+        const totalCount: any = rsBlock[i * 3 + 1];
+        const dataCount: any = rsBlock[i * 3 + 2];
 
-        for (let j = 0; j < count; j += 1) {
+        for (let j: any = 0; j < count; j += 1) {
           list.push(qrRSBlock(totalCount, dataCount));
         }
       }
@@ -1371,9 +1371,9 @@ const _qrcode = (() => {
 // qrBitBuffer
 // ---------------------------------------------------------------------
 
-  const qrBitBuffer: () => any = () => {
+  const qrBitBuffer: any = () => {
     const _buffer: any = [];
-    let _length = 0;
+    let _length: any = 0;
 
     const _this: any = {};
 
@@ -1382,12 +1382,12 @@ const _qrcode = (() => {
     };
 
     _this.getAt = (index: number) => {
-      const bufIndex = Math.floor(index / 8);
+      const bufIndex: any = Math.floor(index / 8);
       return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) === 1;
     };
 
     _this.put = (num: number, length: number) => {
-      for (let i = 0; i < length; i += 1) {
+      for (let i: any = 0; i < length; i += 1) {
         _this.putBit(((num >>> (length - i - 1)) & 1) === 1);
       }
     };
@@ -1397,7 +1397,7 @@ const _qrcode = (() => {
     };
 
     _this.putBit = (bit: any) => {
-      const bufIndex = Math.floor(_length / 8);
+      const bufIndex: any = Math.floor(_length / 8);
       if (_buffer.length <= bufIndex) {
         _buffer.push(0);
       }
@@ -1416,8 +1416,8 @@ const _qrcode = (() => {
 // qrNumber
 // ---------------------------------------------------------------------
 
-  const qrNumber = (_data: any) => {
-      const _mode = QRMode.MODE_NUMBER;
+  const qrNumber: any = (_data: any) => {
+      const _mode: any = QRMode.MODE_NUMBER;
 
       const _this: any = {};
 
@@ -1433,7 +1433,7 @@ const _qrcode = (() => {
       _this.write = (buffer: any) => {
         const data: any = _data;
 
-        let i = 0;
+        let i: any = 0;
 
         while (i + 2 < data.length) {
           buffer.put(strToNum(data.substring(i, i + 3)), 10);
@@ -1450,16 +1450,16 @@ const _qrcode = (() => {
       }
       ;
 
-      const strToNum = (s: any) => {
-          let num = 0;
-          for (let i = 0; i < s.length; i += 1) {
+      const strToNum: any = (s: any) => {
+          let num: any = 0;
+          for (let i: any = 0; i < s.length; i += 1) {
             num = num * 10 + chatToNum(s.charAt(i));
           }
           return num;
         }
       ;
 
-      const chatToNum = (c: any) => {
+      const chatToNum: any = (c: any) => {
           if ("0" <= c && c <= "9") {
             return c.charCodeAt(0) - "0".charCodeAt(0);
           }
@@ -1475,9 +1475,9 @@ const _qrcode = (() => {
 // qrAlphaNum
 // ---------------------------------------------------------------------
 
-  const qrAlphaNum = (data: any) => {
-      const _mode = QRMode.MODE_ALPHA_NUM;
-      const _data = data;
+  const qrAlphaNum: any = (data: any) => {
+      const _mode: any = QRMode.MODE_ALPHA_NUM;
+      const _data: any = data;
 
       const _this: any = {};
 
@@ -1491,9 +1491,9 @@ const _qrcode = (() => {
       ;
 
       _this.write = (buffer: any) => {
-        const s = _data;
+        const s: any = _data;
 
-        let i = 0;
+        let i: any = 0;
 
         while (i + 1 < s.length) {
           buffer.put(getCode(s.charAt(i)) * 45 + getCode(s.charAt(i + 1)), 11);
@@ -1506,7 +1506,7 @@ const _qrcode = (() => {
       }
       ;
 
-      const getCode = (c: any) => {
+      const getCode: any = (c: any) => {
         if ("0" <= c && c <= "9") {
           return c.charCodeAt(0) - "0".charCodeAt(0);
         } else if ("A" <= c && c <= "Z") {
@@ -1545,10 +1545,10 @@ const _qrcode = (() => {
 // qr8BitByte
 // ---------------------------------------------------------------------
 
-  const qr8BitByte = (data: any) => {
-    const _mode = QRMode.MODE_8BIT_BYTE;
-    const _data = data;
-    const _bytes = qrcode.stringToBytes(data);
+  const qr8BitByte: any = (data: any) => {
+    const _mode: any = QRMode.MODE_8BIT_BYTE;
+    const _data: any = data;
+    const _bytes: any = qrcode.stringToBytes(data);
 
     const _this: any = {};
 
@@ -1561,7 +1561,7 @@ const _qrcode = (() => {
     };
 
     _this.write = (buffer: any) => {
-      for (let i = 0; i < _bytes.length; i += 1) {
+      for (let i: any = 0; i < _bytes.length; i += 1) {
         buffer.put(_bytes[i], 8);
       }
     };
@@ -1573,11 +1573,11 @@ const _qrcode = (() => {
 // qrKanji
 // ---------------------------------------------------------------------
 
-  const qrKanji = (data: any) => {
-    const _mode = QRMode.MODE_KANJI;
-    const _data = data;
+  const qrKanji: any = (data: any) => {
+    const _mode: any = QRMode.MODE_KANJI;
+    const _data: any = data;
 
-    const stringToBytes = (qrcode.stringToBytesFuncs as any).SJIS;
+    const stringToBytes: any = (qrcode.stringToBytesFuncs as any).SJIS;
     if (!stringToBytes) {
       throw new Error("sjis not supported.");
     }
@@ -1586,14 +1586,14 @@ const _qrcode = (() => {
     // @ts-ignore
     !((c: string, code: number) => {
       // self test for sjis support.
-      const test = stringToBytes(c);
+      const test: any = stringToBytes(c);
       if (test.length !== 2 || ((test[0] << 8) | test[1]) !== code) {
         throw new Error("sjis not supported.");
       }
     })("\u53cb", 0x9746);
     // tslint:enable:no-unused-expression
 
-    const _bytes = stringToBytes(data);
+    const _bytes: any = stringToBytes(data);
 
     const _this: any = {};
 
@@ -1606,12 +1606,12 @@ const _qrcode = (() => {
     };
 
     _this.write = (buffer: any) => {
-      const __data = _bytes;
+      const __data: any = _bytes;
 
-      let i = 0;
+      let i: any = 0;
 
       while (i + 1 < __data.length) {
-        let c = ((0xff & __data[i]) << 8) | (0xff & __data[i + 1]);
+        let c: any = ((0xff & __data[i]) << 8) | (0xff & __data[i + 1]);
 
         if (0x8140 <= c && c <= 0x9ffc) {
           c -= 0x8140;
@@ -1644,7 +1644,7 @@ const _qrcode = (() => {
 // byteArrayOutputStream
 // ---------------------------------------------------------------------
 
-  const byteArrayOutputStream = () => {
+  const byteArrayOutputStream: any = () => {
     const _bytes: any = [];
 
     const _this: any = {};
@@ -1661,13 +1661,13 @@ const _qrcode = (() => {
     _this.writeBytes = (b: any, off: any, len: any) => {
       off = off || 0;
       len = len || b.length;
-      for (let i = 0; i < len; i += 1) {
+      for (let i: any = 0; i < len; i += 1) {
         _this.writeByte(b[i + off]);
       }
     };
 
     _this.writeString = (s: any) => {
-      for (let i = 0; i < s.length; i += 1) {
+      for (let i: any = 0; i < s.length; i += 1) {
         _this.writeByte(s.charCodeAt(i));
       }
     }
@@ -1678,9 +1678,9 @@ const _qrcode = (() => {
     };
 
     _this.toString = () => {
-      let s = "";
+      let s: any = "";
       s += "[";
-      for (let i = 0; i < _bytes.length; i += 1) {
+      for (let i: any = 0; i < _bytes.length; i += 1) {
         if (i > 0) {
           s += ",";
         }
@@ -1697,7 +1697,7 @@ const _qrcode = (() => {
 // base64EncodeOutputStream
 // ---------------------------------------------------------------------
 
-  const base64EncodeOutputStream = () => {
+  const base64EncodeOutputStream: any = () => {
     let _buffer: any = 0;
     let _buflen: any = 0;
     let _length: any = 0;
@@ -1705,11 +1705,11 @@ const _qrcode = (() => {
 
     const _this: any = {};
 
-    const writeEncoded = (b: any) => {
+    const writeEncoded: any = (b: any) => {
       _base64 += String.fromCharCode(encode(b & 0x3f));
     };
 
-    const encode = (n: any) => {
+    const encode: any = (n: any) => {
         if (n < 0) {
           // error.
         } else if (n < 26) {
@@ -1747,8 +1747,8 @@ const _qrcode = (() => {
 
       if (_length % 3 !== 0) {
         // padding
-        const padlen = 3 - _length % 3;
-        for (let i = 0; i < padlen; i += 1) {
+        const padlen: any = 3 - _length % 3;
+        for (let i: any = 0; i < padlen; i += 1) {
           _base64 += "=";
         }
       }
@@ -1765,11 +1765,11 @@ const _qrcode = (() => {
 // base64DecodeInputStream
 // ---------------------------------------------------------------------
 
-  const base64DecodeInputStream = (str: any) => {
-      const _str = str;
-      let _pos = 0;
-      let _buffer = 0;
-      let _buflen = 0;
+  const base64DecodeInputStream: any = (str: any) => {
+      const _str: any = str;
+      let _pos: any = 0;
+      let _buffer: any = 0;
+      let _buflen: any = 0;
 
       const _this: any = {};
 
@@ -1782,7 +1782,7 @@ const _qrcode = (() => {
             throw new Error("unexpected end of file./" + _buflen);
           }
 
-          const c = _str.charAt(_pos);
+          const c: any = _str.charAt(_pos);
           _pos += 1;
 
           if (c === "=") {
@@ -1797,12 +1797,12 @@ const _qrcode = (() => {
           _buflen += 6;
         }
 
-        const n = (_buffer >>> (_buflen - 8)) & 0xff;
+        const n: any = (_buffer >>> (_buflen - 8)) & 0xff;
         _buflen -= 8;
         return n;
       };
 
-      const decode = (c: any) => {
+      const decode: any = (c: any) => {
           if (0x41 <= c && c <= 0x5a) {
             return c - 0x41;
           } else if (0x61 <= c && c <= 0x7a) {
@@ -1838,9 +1838,9 @@ const _qrcode = (() => {
   _qrcode.stringToBytesFuncs["UTF-8"] = (s: any) => {
     // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
     function toUTF8Array(str: any) {
-      const utf8 = [];
-      for (let i = 0; i < str.length; i++) {
-        let charcode = str.charCodeAt(i);
+      const utf8: any = [];
+      for (let i: any = 0; i < str.length; i++) {
+        let charcode: any = str.charCodeAt(i);
         if (charcode < 0x80) {
           utf8.push(charcode);
         } else if (charcode < 0x800) {

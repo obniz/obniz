@@ -1,4 +1,5 @@
-import { I2C } from "../../../obniz/libs/io_peripherals/i2c";
+import {I2C} from "../../../obniz/libs/io_peripherals/i2c";
+
 export interface AK8963Options {
   gnd?: number;
   vcc?: number;
@@ -11,6 +12,7 @@ export interface AK8963Options {
 
 export interface AK8963 {
   setConfig(ADC_cycle: number): void;
+
   getWait(): Promise<{
     x: number,
     y: number,

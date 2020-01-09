@@ -15,8 +15,12 @@ export interface _7SegmentLEDOptions {
 
 export interface _7SegmentLED {
   print(number: number): void;
+
   printRaw(number: number): void;
+
   off(): void;
+
   on(): void;
+
   dpState(show: boolean): void;
 }

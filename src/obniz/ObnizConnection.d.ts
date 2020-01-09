@@ -6,7 +6,7 @@
 /**
  *
  */
-export declare var isNode: boolean;
+export declare var isNode: any;
 
 declare module "ObnizConnection" {
 

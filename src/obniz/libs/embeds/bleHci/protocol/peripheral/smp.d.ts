@@ -6,47 +6,47 @@
 /**
  *
  */
-export declare var SMP_CID: number;
+export declare var SMP_CID: any;
 
 /**
  *
  */
-export declare var SMP_PAIRING_REQUEST: number;
+export declare var SMP_PAIRING_REQUEST: any;
 
 /**
  *
  */
-export declare var SMP_PAIRING_RESPONSE: number;
+export declare var SMP_PAIRING_RESPONSE: any;
 
 /**
  *
  */
-export declare var SMP_PAIRING_CONFIRM: number;
+export declare var SMP_PAIRING_CONFIRM: any;
 
 /**
  *
  */
-export declare var SMP_PAIRING_RANDOM: number;
+export declare var SMP_PAIRING_RANDOM: any;
 
 /**
  *
  */
-export declare var SMP_PAIRING_FAILED: number;
+export declare var SMP_PAIRING_FAILED: any;
 
 /**
  *
  */
-export declare var SMP_ENCRYPT_INFO: number;
+export declare var SMP_ENCRYPT_INFO: any;
 
 /**
  *
  */
-export declare var SMP_MASTER_IDENT: number;
+export declare var SMP_MASTER_IDENT: any;
 
 /**
  *
  */
-export declare var SMP_UNSPECIFIED: number;
+export declare var SMP_UNSPECIFIED: any;
 
 /**
  *

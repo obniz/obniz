@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/hci"
-basePath : "ble"
+basePath: "ble"
 
 "anyOf":
-  -  {$ref :  "/response/ble/hci/read"}
+  - {$ref:  "/response/ble/hci/read"}

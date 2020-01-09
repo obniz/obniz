@@ -14,6 +14,8 @@ export interface KXR94_2050 {
   onChangeX: (x: number) => void;
   onChangeY: (y: number) => void;
   onChangeZ: (z: number) => void;
+
   get(): { x: number; y: number; z: number };
+
   getWait(): Promise<{ x: number; y: number; z: number }>;
 }

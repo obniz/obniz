@@ -19,6 +19,7 @@ declare namespace WSCommandSPI.prototype {
  */
 export default class WSCommandSPI extends WSCommand {
   protected module: number;
+
   /**
    *
    */
@@ -57,5 +58,5 @@ export default class WSCommandSPI extends WSCommand {
    * @param func
    * @param payload
    */
-  public notifyFromBinary(objToSend: WSCommandSPI.prototype.NotifyFromBinary0, func: any, payload: any): void;
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 }

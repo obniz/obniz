@@ -8,6 +8,10 @@
     "no-console": [
       false
     ],
+    "class-name": false,//後で消したい
+    "radix": false, //後で消したい
+    "no-empty": false, //後で消したい
+    "no-var-requires": false, //後で消したい
     "prefer-for-of" : false, //後で消したい
     "forin": false, //後で消したい
     "no-misused-new": false, //後で消したい

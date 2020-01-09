@@ -7,5 +7,6 @@ export interface IPM_165Options {
 
 export interface IPM_165 {
   onchange: (value: number) => void;
+
   getWait(): Promise<number>;
 }

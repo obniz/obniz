@@ -12,6 +12,8 @@ export interface IRModule {
   cutTail: boolean;
   output_pullup: boolean;
   ondetect: (array: number[]) => void;
+
   start(callback?: (array: number[]) => void): void;
+
   send(array: number[]): void;
 }

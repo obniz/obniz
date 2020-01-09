@@ -7,5 +7,6 @@ export interface Grove_BuzzerOprions {
 
 export interface Grove_Buzzer {
   play(frequency: number): void;
+
   stop(): void;
 }

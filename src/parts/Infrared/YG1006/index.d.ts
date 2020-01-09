@@ -6,5 +6,6 @@ export interface YG1006Options {
 
 export interface YG1006 {
   onchange: (value: number) => void;
+
   getWait(): Promise<number>;
 }

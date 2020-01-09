@@ -1,4 +1,5 @@
-import { I2C } from "../../../obniz/libs/io_peripherals/i2c";
+import {I2C} from "../../../obniz/libs/io_peripherals/i2c";
+
 export interface MPU9250Options {
   gnd?: number;
   vcc?: number;
@@ -10,6 +11,7 @@ export interface MPU9250Options {
 
 export interface MPU9250 {
   setConfig(accel_range: number, gyro_range: number, ADC_cycle: number): void;
+
   getAllWait(): Promise<{
     accelerometer: {
       x: number,

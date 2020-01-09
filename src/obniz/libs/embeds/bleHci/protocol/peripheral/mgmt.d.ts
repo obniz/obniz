@@ -11,12 +11,12 @@ declare function debug(): void;
 /**
  *
  */
-export declare var LTK_INFO_SIZE: number;
+export declare var LTK_INFO_SIZE: any;
 
 /**
  *
  */
-export declare var MGMT_OP_LOAD_LONG_TERM_KEYS: number;
+export declare var MGMT_OP_LOAD_LONG_TERM_KEYS: any;
 
 /**
  *

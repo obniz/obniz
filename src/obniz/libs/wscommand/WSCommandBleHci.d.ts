@@ -145,12 +145,12 @@ export default class WSCommandBleHci {
    * @param params
    * @param module
    */
-  public send(params: WSCommandBleHci.prototype.Send0, module: any): void;
+  public send(params: any, module: any): void;
 
   /**
    *
    * @param objToSend
    * @param payload
    */
-  public recv(objToSend: WSCommandBleHci.prototype.Recv0, payload: any): void;
+  public recv(objToSend: any, payload: any): void;
 }

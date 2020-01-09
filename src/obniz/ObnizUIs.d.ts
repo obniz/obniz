@@ -7,7 +7,7 @@
  *
  * @param name
  */
-declare function _ReadCookie(name: string): void;
+declare function _ReadCookie(name: any): void;
 
 declare module "ObnizUIs" {
 

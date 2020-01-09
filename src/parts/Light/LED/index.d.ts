@@ -5,8 +5,12 @@ export interface LEDOptions {
 
 export interface LED {
   on(): void;
+
   off(): void;
+
   output(value: boolean): void;
+
   blink(interval_ms?: number): void;
+
   endBlink(): void;
 }

@@ -43,7 +43,7 @@ export default class WSCommandAD extends WSCommand {
    *
    * @param json
    */
-  public  parseFromJson(json: any): void;
+  public parseFromJson(json: any): void;
 
   /**
    *
@@ -51,5 +51,5 @@ export default class WSCommandAD extends WSCommand {
    * @param func
    * @param payload
    */
-  public notifyFromBinary(objToSend: WSCommandAD.prototype.NotifyFromBinary0, func: any, payload: any): void;
+  public notifyFromBinary(objToSend: any, func: any, payload: any): void;
 }

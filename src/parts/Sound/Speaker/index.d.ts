@@ -5,5 +5,6 @@ export interface SpeakerOptions {
 
 export interface Speaker {
   play(frequency: number): void;
+
   stop(): void;
 }

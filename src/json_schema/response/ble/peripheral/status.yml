@@ -2,22 +2,22 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/peripheral/status"
-deprecated : 3.0.0
+deprecated: 3.0.0
 
 type: object
-required : [peripheral]
+required: [peripheral]
 properties:
-        peripheral:
-            type : object
-            additionalProperties: false
-            required : [connection_status]
-            properties:
-                connection_status :
-                        type : object
-                        required: [address, status]
-                        additionalProperties: false
-                        properties:
-                            address : {$ref : "/deviceAddress"}
-                            status :
-                                type : string
-                                enum : [connected , disconnected]
+  peripheral:
+    type: object
+    additionalProperties: false
+    required: [connection_status]
+    properties:
+      connection_status:
+        type: object
+        required: [address, status]
+        additionalProperties: false
+        properties:
+          address: {$ref: "/deviceAddress"}
+          status:
+            type: string
+            enum: [connected , disconnected]

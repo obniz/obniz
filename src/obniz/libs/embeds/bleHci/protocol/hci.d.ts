@@ -11,317 +11,317 @@ declare function debug(): void;
 /**
  *
  */
-export declare var HCI_COMMAND_PKT: number;
+export declare var HCI_COMMAND_PKT: any;
 
 /**
  *
  */
-export declare var HCI_ACLDATA_PKT: number;
+export declare var HCI_ACLDATA_PKT: any;
 
 /**
  *
  */
-export declare var HCI_EVENT_PKT: number;
+export declare var HCI_EVENT_PKT: any;
 
 /**
  *
  */
-export declare var ACL_START_NO_FLUSH: number;
+export declare var ACL_START_NO_FLUSH: any;
 
 /**
  *
  */
-export declare var ACL_CONT: number;
+export declare var ACL_CONT: any;
 
 /**
  *
  */
-export declare var ACL_START: number;
+export declare var ACL_START: any;
 
 /**
  *
  */
-export declare var EVT_DISCONN_COMPLETE: number;
+export declare var EVT_DISCONN_COMPLETE: any;
 
 /**
  *
  */
-export declare var EVT_ENCRYPT_CHANGE: number;
+export declare var EVT_ENCRYPT_CHANGE: any;
 
 /**
  *
  */
-export declare var EVT_CMD_COMPLETE: number;
+export declare var EVT_CMD_COMPLETE: any;
 
 /**
  *
  */
-export declare var EVT_CMD_STATUS: number;
+export declare var EVT_CMD_STATUS: any;
 
 /**
  *
  */
-export declare var EVT_NUMBER_OF_COMPLETED_PACKETS: number;
+export declare var EVT_NUMBER_OF_COMPLETED_PACKETS: any;
 
 /**
  *
  */
-export declare var EVT_LE_META_EVENT: number;
+export declare var EVT_LE_META_EVENT: any;
 
 /**
  *
  */
-export declare var EVT_LE_CONN_COMPLETE: number;
+export declare var EVT_LE_CONN_COMPLETE: any;
 
 /**
  *
  */
-export declare var EVT_LE_ADVERTISING_REPORT: number;
+export declare var EVT_LE_ADVERTISING_REPORT: any;
 
 /**
  *
  */
-export declare var EVT_LE_CONN_UPDATE_COMPLETE: number;
+export declare var EVT_LE_CONN_UPDATE_COMPLETE: any;
 
 /**
  *
  */
-export declare var OGF_LINK_CTL: number;
+export declare var OGF_LINK_CTL: any;
 
 /**
  *
  */
-export declare var OCF_DISCONNECT: number;
+export declare var OCF_DISCONNECT: any;
 
 /**
  *
  */
-export declare var OGF_HOST_CTL: number;
+export declare var OGF_HOST_CTL: any;
 
 /**
  *
  */
-export declare var OCF_SET_EVENT_MASK: number;
+export declare var OCF_SET_EVENT_MASK: any;
 
 /**
  *
  */
-export declare var OCF_RESET: number;
+export declare var OCF_RESET: any;
 
 /**
  *
  */
-export declare var OCF_READ_LE_HOST_SUPPORTED: number;
+export declare var OCF_READ_LE_HOST_SUPPORTED: any;
 
 /**
  *
  */
-export declare var OCF_WRITE_LE_HOST_SUPPORTED: number;
+export declare var OCF_WRITE_LE_HOST_SUPPORTED: any;
 
 /**
  *
  */
-export declare var OGF_INFO_PARAM: number;
+export declare var OGF_INFO_PARAM: any;
 
 /**
  *
  */
-export declare var OCF_READ_LOCAL_VERSION: number;
+export declare var OCF_READ_LOCAL_VERSION: any;
 
 /**
  *
  */
-export declare var OCF_READ_BUFFER_SIZE: number;
+export declare var OCF_READ_BUFFER_SIZE: any;
 
 /**
  *
  */
-export declare var OCF_READ_BD_ADDR: number;
+export declare var OCF_READ_BD_ADDR: any;
 
 /**
  *
  */
-export declare var OGF_STATUS_PARAM: number;
+export declare var OGF_STATUS_PARAM: any;
 
 /**
  *
  */
-export declare var OCF_READ_RSSI: number;
+export declare var OCF_READ_RSSI: any;
 
 /**
  *
  */
-export declare var OGF_LE_CTL: number;
+export declare var OGF_LE_CTL: any;
 
 /**
  *
  */
-export declare var OCF_LE_SET_EVENT_MASK: number;
+export declare var OCF_LE_SET_EVENT_MASK: any;
 
 /**
  *
  */
-export declare var OCF_LE_READ_BUFFER_SIZE: number;
+export declare var OCF_LE_READ_BUFFER_SIZE: any;
 
 /**
  *
  */
-export declare var OCF_LE_SET_ADVERTISING_PARAMETERS: number;
+export declare var OCF_LE_SET_ADVERTISING_PARAMETERS: any;
 
 /**
  *
  */
-export declare var OCF_LE_SET_ADVERTISING_DATA: number;
+export declare var OCF_LE_SET_ADVERTISING_DATA: any;
 
 /**
  *
  */
-export declare var OCF_LE_SET_SCAN_RESPONSE_DATA: number;
+export declare var OCF_LE_SET_SCAN_RESPONSE_DATA: any;
 
 /**
  *
  */
-export declare var OCF_LE_SET_ADVERTISE_ENABLE: number;
+export declare var OCF_LE_SET_ADVERTISE_ENABLE: any;
 
 /**
  *
  */
-export declare var OCF_LE_SET_SCAN_PARAMETERS: number;
+export declare var OCF_LE_SET_SCAN_PARAMETERS: any;
 
 /**
  *
  */
-export declare var OCF_LE_SET_SCAN_ENABLE: number;
+export declare var OCF_LE_SET_SCAN_ENABLE: any;
 
 /**
  *
  */
-export declare var OCF_LE_CREATE_CONN: number;
+export declare var OCF_LE_CREATE_CONN: any;
 
 /**
  *
  */
-export declare var OCF_LE_CONN_UPDATE: number;
+export declare var OCF_LE_CONN_UPDATE: any;
 
 /**
  *
  */
-export declare var OCF_LE_START_ENCRYPTION: number;
+export declare var OCF_LE_START_ENCRYPTION: any;
 
 /**
  *
  */
-export declare var OCF_LE_LTK_NEG_REPLY: number;
+export declare var OCF_LE_LTK_NEG_REPLY: any;
 
 /**
  *
  */
-export declare var DISCONNECT_CMD: number;
+export declare var DISCONNECT_CMD: any;
 
 /**
  *
  */
-export declare var SET_EVENT_MASK_CMD: number;
+export declare var SET_EVENT_MASK_CMD: any;
 
 /**
  *
  */
-export declare var RESET_CMD: number;
+export declare var RESET_CMD: any;
 
 /**
  *
  */
-export declare var READ_LE_HOST_SUPPORTED_CMD: number;
+export declare var READ_LE_HOST_SUPPORTED_CMD: any;
 
 /**
  *
  */
-export declare var WRITE_LE_HOST_SUPPORTED_CMD: number;
+export declare var WRITE_LE_HOST_SUPPORTED_CMD: any;
 
 /**
  *
  */
-export declare var READ_LOCAL_VERSION_CMD: number;
+export declare var READ_LOCAL_VERSION_CMD: any;
 
 /**
  *
  */
-export declare var READ_BUFFER_SIZE_CMD: number;
+export declare var READ_BUFFER_SIZE_CMD: any;
 
 /**
  *
  */
-export declare var READ_BD_ADDR_CMD: number;
+export declare var READ_BD_ADDR_CMD: any;
 
 /**
  *
  */
-export declare var READ_RSSI_CMD: number;
+export declare var READ_RSSI_CMD: any;
 
 /**
  *
  */
-export declare var LE_SET_EVENT_MASK_CMD: number;
+export declare var LE_SET_EVENT_MASK_CMD: any;
 
 /**
  *
  */
-export declare var LE_READ_BUFFER_SIZE_CMD: number;
+export declare var LE_READ_BUFFER_SIZE_CMD: any;
 
 /**
  *
  */
-export declare var LE_SET_SCAN_PARAMETERS_CMD: number;
+export declare var LE_SET_SCAN_PARAMETERS_CMD: any;
 
 /**
  *
  */
-export declare var LE_SET_SCAN_ENABLE_CMD: number;
+export declare var LE_SET_SCAN_ENABLE_CMD: any;
 
 /**
  *
  */
-export declare var LE_CREATE_CONN_CMD: number;
+export declare var LE_CREATE_CONN_CMD: any;
 
 /**
  *
  */
-export declare var LE_CONN_UPDATE_CMD: number;
+export declare var LE_CONN_UPDATE_CMD: any;
 
 /**
  *
  */
-export declare var LE_START_ENCRYPTION_CMD: number;
+export declare var LE_START_ENCRYPTION_CMD: any;
 
 /**
  *
  */
-export declare var LE_SET_ADVERTISING_PARAMETERS_CMD: number;
+export declare var LE_SET_ADVERTISING_PARAMETERS_CMD: any;
 
 /**
  *
  */
-export declare var LE_SET_ADVERTISING_DATA_CMD: number;
+export declare var LE_SET_ADVERTISING_DATA_CMD: any;
 
 /**
  *
  */
-export declare var LE_SET_SCAN_RESPONSE_DATA_CMD: number;
+export declare var LE_SET_SCAN_RESPONSE_DATA_CMD: any;
 
 /**
  *
  */
-export declare var LE_SET_ADVERTISE_ENABLE_CMD: number;
+export declare var LE_SET_ADVERTISE_ENABLE_CMD: any;
 
 /**
  *
  */
-export declare var LE_LTK_NEG_REPLY_CMD: number;
+export declare var LE_LTK_NEG_REPLY_CMD: any;
 
 /**
  *
  */
-export declare var HCI_OE_USER_ENDED_CONNECTION: number;
+export declare var HCI_OE_USER_ENDED_CONNECTION: any;
 
 /**
  *

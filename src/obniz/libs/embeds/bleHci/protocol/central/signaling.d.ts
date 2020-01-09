@@ -11,17 +11,17 @@ declare function debug(): void;
 /**
  *
  */
-export declare var CONNECTION_PARAMETER_UPDATE_REQUEST: number;
+export declare var CONNECTION_PARAMETER_UPDATE_REQUEST: any;
 
 /**
  *
  */
-export declare var CONNECTION_PARAMETER_UPDATE_RESPONSE: number;
+export declare var CONNECTION_PARAMETER_UPDATE_RESPONSE: any;
 
 /**
  *
  */
-export declare var SIGNALING_CID: number;
+export declare var SIGNALING_CID: any;
 
 /**
  *

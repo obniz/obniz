@@ -12,7 +12,7 @@ export default class WSCommandSystem extends WSCommand {
   /**
    *
    */
-  private  _CommandReboot: number;
+  private _CommandReboot: number;
 
   /**
    *
@@ -80,7 +80,7 @@ export default class WSCommandSystem extends WSCommand {
    *
    * @param params
    */
-  public  selfCheck(params: any): void;
+  public selfCheck(params: any): void;
 
   /**
    *
@@ -98,13 +98,13 @@ export default class WSCommandSystem extends WSCommand {
    *
    * @param params
    */
-  public  ping(params: any): void;
+  public ping(params: any): void;
 
   /**
    *
    * @param mustReset
    */
-  public resetOnDisconnect(mustReset: boolean): void;
+  public resetOnDisconnect(mustReset: any): void;
 
   /**
    *

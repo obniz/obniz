@@ -144,9 +144,6 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
   }
 });
 
-const webpackConfig = require('../webpack.config.js');
-const webpackConfigProduction = require('../webpack.production.js');
-
 gulp.task('tsc:copy', function(done) {
   return gulp
     .src([
@@ -175,6 +172,7 @@ gulp.task('tsc:compile', function(done) {
 gulp.task('tsc', gulp.parallel('tsc:compile', 'tsc:copy'));
 
 gulp.task('obniz.js', function obnizJsBuild(done) {
+  const webpackConfig = require('../webpack.config.js');
   return gulp
     .src(obnizMain)
     .pipe(plumber({ errorHandler: reportError }))
@@ -188,6 +186,7 @@ gulp.task('obniz.js', function obnizJsBuild(done) {
 });
 
 gulp.task('obniz.min.js', function obnizJsBuild(done) {
+  const webpackConfigProduction = require('../webpack.production.js');
   return gulp
     .src(obnizMain)
     .pipe(plumber({ errorHandler: reportError }))

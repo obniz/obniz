@@ -7,5 +7,6 @@ export interface Puls08M5stickcSOptions {
 
 export interface Puls08M5stickcS {
   onbpmupdate(bpm: number): void;
+
   onrawupdate(values: [number]): void;
 }

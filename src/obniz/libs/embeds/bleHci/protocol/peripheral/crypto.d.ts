@@ -27,7 +27,7 @@ declare function r(): void;
  * @param ra
  * @return
  */
-declare function c1(k: 0, r: any, pres: any, preq: any, iat: any, ia: any, rat: any, ra: any): /* xor.!ret */ any;
+declare function c1(k: any, r: any, pres: any, preq: any, iat: any, ia: any, rat: any, ra: any): /* xor.!ret */ any;
 
 /**
  *

@@ -4,8 +4,8 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/system/reset"
 
 type: object
-required : [reset]
+required: [reset]
 properties:
-    reset :
-        type: boolean
-        enum : [true]
+  reset:
+    type: boolean
+    enum: [true]

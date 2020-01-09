@@ -156,7 +156,7 @@ declare namespace JsonBinaryConverter {
    * @param path
    * @return
    */
-  function getProperty(object: any, path: JsonBinaryConverter.GetProperty1): any;
+  function getProperty(object: any, path: any): any;
 
   /**
    *
@@ -185,7 +185,7 @@ declare namespace JsonBinaryConverter {
    * @param data
    * @return
    */
-  function dataArrayToBinary(data: JsonBinaryConverter.DataArrayToBinary0): any[];
+  function dataArrayToBinary(data: any): any[];
 
   /**
    *
@@ -200,7 +200,7 @@ declare namespace JsonBinaryConverter {
    * @param schema
    * @return
    */
-  function enumToBinary(data: any, schema: JsonBinaryConverter.EnumToBinary1): JsonBinaryConverter.EnumToBinaryRet;
+  function enumToBinary(data: any, schema: any): JsonBinaryConverter.EnumToBinaryRet;
 
   /**
    *
@@ -208,7 +208,7 @@ declare namespace JsonBinaryConverter {
    * @param schema
    * @return
    */
-  function flagToBinary(data: JsonBinaryConverter.FlagToBinary0, schema: any): JsonBinaryConverter.FlagToBinaryRet;
+  function flagToBinary(data: any, schema: any): JsonBinaryConverter.FlagToBinaryRet;
 
   /**
    *

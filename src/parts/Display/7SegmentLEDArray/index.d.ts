@@ -5,6 +5,8 @@ export interface _7SegmentLEDArrayOptions {
 
 export interface _7SegmentLEDArray {
   print(number: number): void;
+
   off(): void;
+
   on(): void;
 }

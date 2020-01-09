@@ -4,8 +4,8 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/system/wait"
 
 type: object
-required : [wait]
+required: [wait]
 properties:
-    wait :
-        type: integer
-        description : "wait time (ms)"
+  wait:
+    type: integer
+    description: "wait time (ms)"

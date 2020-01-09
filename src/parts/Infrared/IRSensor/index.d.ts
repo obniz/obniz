@@ -11,5 +11,6 @@ export interface IRSensor {
   cutTail: boolean;
   output_pullup: boolean;
   ondetect: (array: number[]) => void;
+
   start(callback?: (array: number[]) => void): void;
 }

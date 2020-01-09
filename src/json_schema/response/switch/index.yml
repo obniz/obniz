@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/switch"
-basePath : "switch"
+basePath: "switch"
 
 "anyOf":
-  -  {$ref :  "/response/switch/change"}
+  - {$ref:  "/response/switch/change"}

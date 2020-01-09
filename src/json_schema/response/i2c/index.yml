@@ -2,8 +2,8 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/i2c"
-basePath : "i2c0"
+basePath: "i2c0"
 
 "anyOf":
-  -  {$ref : "/response/i2c/master"}
-  -  {$ref : "/response/i2c/slave"}
+  - {$ref: "/response/i2c/master"}
+  - {$ref: "/response/i2c/slave"}

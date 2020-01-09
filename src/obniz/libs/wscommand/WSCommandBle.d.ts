@@ -211,7 +211,7 @@ export default class WSCommandBle extends WSCommand {
    *
    * @param json
    */
-  public parseFromJson(json: WSCommandBle.prototype.ParseFromJson0): void;
+  public parseFromJson(json: any): void;
 
   /**
    *
@@ -345,7 +345,7 @@ export default class WSCommandBle extends WSCommand {
    * @param objToSend
    * @param payload
    */
-  public  notifyFromBinaryServerReadDescriptorValue(objToSend: any, payload: any): void;
+  public notifyFromBinaryServerReadDescriptorValue(objToSend: any, payload: any): void;
 
   /**
    *
@@ -381,5 +381,5 @@ export default class WSCommandBle extends WSCommand {
    * @param path
    * @param row
    */
-  private _addRowForPath(sendObj: /* WSCommandBle.prototype._addRowForPath0 */ any, path: string, row: any): void;
+  public _addRowForPath(sendObj: /* WSCommandBle.prototype._addRowForPath0 */ any, path: any, row: any): void;
 }

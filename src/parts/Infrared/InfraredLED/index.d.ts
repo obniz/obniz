@@ -5,5 +5,6 @@ export interface InfraredLEDOptions {
 
 export interface InfraredLED {
   dataSymbolLength: number;
+
   send(array: number[]): void;
 }

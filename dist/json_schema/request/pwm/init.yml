@@ -4,6 +4,6 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/pwm/init"
 
 type: object
-required : [io]
+required: [io]
 properties:
-    io : {$ref: "/pinSetting"}
+  io: {$ref: "/pinSetting"}

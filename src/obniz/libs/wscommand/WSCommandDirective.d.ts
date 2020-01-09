@@ -8,5 +8,5 @@ import WSCommand from "./WSCommand";
 export default class WSCommandDirective extends WSCommand {
   public module: number;
 
-  public parseFromJson(json: object): void;
+  public parseFromJson(json: any): void;
 }

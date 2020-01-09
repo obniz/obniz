@@ -33,7 +33,7 @@ declare namespace WSCommandSwitch.prototype {
 /**
  *
  */
-export default class WSCommandSwitch  extends WSCommand {
+export default class WSCommandSwitch extends WSCommand {
   protected module: number;
 
   /**
@@ -51,7 +51,7 @@ export default class WSCommandSwitch  extends WSCommand {
    *
    * @param json
    */
-  public parseFromJson(json: WSCommandSwitch.prototype.ParseFromJson0): void;
+  public parseFromJson(json: any): void;
 
   /**
    *

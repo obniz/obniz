@@ -6,5 +6,6 @@ export interface HCSR505Options {
 
 export interface HCSR505 {
   onchange: (value: boolean) => void;
+
   getWait(): Promise<boolean>;
 }

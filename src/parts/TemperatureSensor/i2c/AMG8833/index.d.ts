@@ -8,5 +8,6 @@ export interface AMG8833Options {
 
 export interface AMG8833 {
   getAllPixWait(): Promise<number[]>;
+
   getOnePixWait(pixel: number): Promise<number>;
 }

@@ -8,5 +8,6 @@ export interface D6T44LOptions {
 
 export interface D6T44L {
   getAllPixWait(): Promise<number[]>;
+
   getOnePixWait(pixel: number): Promise<number>;
 }

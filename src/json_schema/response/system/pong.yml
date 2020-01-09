@@ -2,13 +2,13 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/system/pong"
-desccription : "pong response with same key of ping request"
+desccription: "pong response with same key of ping request"
 
 type: object
-required : [pong]
+required: [pong]
 properties:
-    pong :
-      type: object
-      required : [key]
-      properties:
-        key : {$ref : "/dataArray"}
+  pong:
+    type: object
+    required: [key]
+    properties:
+      key: {$ref: "/dataArray"}

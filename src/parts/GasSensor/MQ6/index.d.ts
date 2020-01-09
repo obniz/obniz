@@ -10,6 +10,8 @@ export interface MQ6 {
   onchangeanalog: (voltage: number) => void;
   onexceedvoltage: (voltage: number) => void;
   onchangedigital: (voltage: number) => void;
+
   startHeating(): void;
+
   heatWait(sec?: number): Promise<void>;
 }

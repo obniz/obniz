@@ -5,8 +5,8 @@ id: "/request/display/clear"
 
 
 type: object
-required : [clear]
+required: [clear]
 properties:
-    clear:
-        type: boolean
-        enum: [true]
+  clear:
+    type: boolean
+    enum: [true]

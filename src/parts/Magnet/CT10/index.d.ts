@@ -6,6 +6,8 @@ export interface CT10Options {
 
 export interface CT10 {
   onchange: (near: boolean) => void;
+
   isNearWait(): Promise<boolean>;
+
   stateWait(isNear: boolean): Promise<void>;
 }

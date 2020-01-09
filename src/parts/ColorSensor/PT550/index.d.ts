@@ -6,5 +6,6 @@ export interface PT550Options {
 
 export interface PT550 {
   onchange: (value: number) => void;
+
   getWait(): Promise<number>;
 }

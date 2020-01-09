@@ -1,6 +1,6 @@
-
 /* tslint:disable:class-name  */
-export interface OMRON_2JCIEOptions {}
+export interface OMRON_2JCIEOptions {
+}
 
 export interface OMRON_2JCIE_Data {
   row_number: number;
@@ -17,7 +17,10 @@ export interface OMRON_2JCIE_Data {
 
 export interface OMRON_2JCIE {
   findWait(): Promise<any>;
+
   connectWait(): Promise<void>;
+
   disconnectWait(): Promise<void>;
+
   getLatestData(): Promise<OMRON_2JCIE_Data>;
 }

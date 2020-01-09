@@ -5,17 +5,17 @@ id: "/request/display/qr"
 
 
 type: object
-required : [qr]
+required: [qr]
 properties:
-    qr :
-        type: object
-        required: [text]
-        additionalProperties: false
-        properties:
-            text :
-                type : string
-                example : "Hello, obniz!"
-            correction :
-                type : string
-                enum : [L, M, Q, H]
-                default : M
+  qr:
+    type: object
+    required: [text]
+    additionalProperties: false
+    properties:
+      text:
+        type: string
+        example: "Hello, obniz!"
+      correction:
+        type: string
+        enum: [L, M, Q, H]
+        default: M

@@ -70,7 +70,7 @@ export default class WSCommandPWM extends WSCommand {
    * @param params
    * @param module
    */
-  public  freq(params: /* WSCommandPWM.prototype.+WSCommandPWM */ any, module: any): void;
+  public freq(params: /* WSCommandPWM.prototype.+WSCommandPWM */ any, module: any): void;
 
   /**
    *

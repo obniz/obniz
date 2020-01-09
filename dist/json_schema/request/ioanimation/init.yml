@@ -2,60 +2,60 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ioAnimation/init"
-commandExample : {"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}
+commandExample: {"io":{"animation":{"name":"animation-1","status":"loop","states":[{"duration":500,"state":{"io0":true}},{"duration":500,"state":{"io0":false}}]}}}
 
 
 type: object
-required : [animation]
+required: [animation]
 properties:
-    animation :
-        type: object
-        required : [name, status, states]
-        additionalProperties: false
-        properties:
-            name :
-                type: string
-                description : "Animation name to use pause/resume"
-                example : "animation-1"
-                minLength: 1
-                maxLength: 254
+  animation:
+    type: object
+    required: [name, status, states]
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+        description: "Animation name to use pause/resume"
+        example: "animation-1"
+        minLength: 1
+        maxLength: 254
 
-            repeat :
-                type: integer
-                description : "The limitation number of transitions of states"
-                example : 1000
-                minLength: 1
-                maxLength: 4294967295
-                default: undefined
+      repeat:
+        type: integer
+        description: "The limitation number of transitions of states"
+        example: 1000
+        minLength: 1
+        maxLength: 4294967295
+        default: undefined
 
-            status :
-                type: string
-                default : loop
-                enum :
-                   - loop
-                   - registrate
+      status:
+        type: string
+        default: loop
+        enum:
+          - loop
+          - registrate
 
-            states:
-                type: array
-                default : []
-                items:
-                    type : object
-                    required : [duration, state]
-                    additionalProperties: false
-                    properties :
-                        duration :
-                            type: integer
-                            description : "State duration time(ms)"
-                            minimum : 0
-                            maximum : 60000
-                            example : 500
-                        state :
-                            type: [object, array]
-                            description : "io/pwm commands."
-                            filter : pass_all
-                            example :
-                              - {io0: true}
-                              - [{io0: false}, {io0: true}]
+      states:
+        type: array
+        default: []
+        items:
+          type: object
+          required: [duration, state]
+          additionalProperties: false
+          properties:
+            duration:
+              type: integer
+              description: "State duration time(ms)"
+              minimum: 0
+              maximum: 60000
+              example: 500
+            state:
+              type: [object, array]
+              description: "io/pwm commands."
+              filter: pass_all
+              example:
+                - {io0: true}
+                - [{io0: false}, {io0: true}]
 #                       エラーがわかりにくくなるのでソースコードで実施
 #                            additionalProperties: false
 #                            patternProperties :

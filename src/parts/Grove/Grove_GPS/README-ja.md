@@ -157,7 +157,7 @@ let d = gps.getEditedData();
 if (d.enable) {
   if (d.GPGGA) {
     let p = d.GPGGA;
-    if (p[6] != "0") {
+    if (p[6] !=="0") {
       //経度
       let longitude = gps.nmea2dd(p[2]);
       //緯度

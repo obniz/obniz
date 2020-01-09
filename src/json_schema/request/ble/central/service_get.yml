@@ -2,15 +2,15 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/central/service_get"
-related :  "/response/ble/central/service_get"
-deprecated : 3.0.0
+related:  "/response/ble/central/service_get"
+deprecated: 3.0.0
 
 type: object
-required : [get_services]
+required: [get_services]
 properties:
-    get_services :
-        type : object
-        required: [address]
-        additionalProperties: false
-        properties:
-            address : {$ref : "/deviceAddress"}
+  get_services:
+    type: object
+    required: [address]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress"}

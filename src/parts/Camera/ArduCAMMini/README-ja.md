@@ -112,7 +112,7 @@ var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:
 await cam.spi_pingpongWait();
 cam.setMode('MCU2LCD');
 const chipid = await cam.getChipIdWait();
-if (chipid != 0x2642) {
+if (chipid !==0x2642) {
   throw new Error('unknown chip ' + chipid)
 }
 cam.init();
@@ -204,7 +204,7 @@ I2Cに問題があるかや、チップがサポートされているものか�
 obniz.io11.output(true);
 var cam = obniz.wired("ArduCAMMini", { cs:0, mosi:1, miso:2, sclk:3, gnd:4, vcc:5, sda:6, scl:7 });
 const chipid = await cam.getChipIdWait();
-if (chipid != 0x2642) {
+if (chipid !==0x2642) {
   throw new Error('unknown chip ' + chipid)
 }
 ```

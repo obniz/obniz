@@ -28,15 +28,26 @@ export type ArduCAMMiniSize =
 
 export interface ArduCAMMini {
   startupWait(): Promise<void>;
+
   takeWait(size: ArduCAMMiniSize): Promise<any[]>;
+
   arrayToBase64(bytearray: any[]): string;
+
   setMode(mode: ArduCAMMiniMode): void;
+
   spi_pingpongWait(): Promise<void>;
+
   getChipIdWait(): Promise<number>;
+
   init(): void;
+
   setSize(size: ArduCAMMiniSize): void;
+
   flushFIFO(): void;
+
   startCapture(): void;
+
   isCaptureDoneWait(): Promise<boolean>;
+
   readFIFOWait(): Promise<any[]>;
 }

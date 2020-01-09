@@ -2,21 +2,21 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/peripheral/characteristic_notify"
-description : "notify characteristic for connected device"
-deprecated : 3.0.0
+description: "notify characteristic for connected device"
+deprecated: 3.0.0
 
 type: object
-required : [peripheral]
+required: [peripheral]
 properties:
-    peripheral :
-        type : object
-        required : [notify_characteristic]
+  peripheral:
+    type: object
+    required: [notify_characteristic]
+    properties:
+      notify_characteristic:
+        type: object
+        required: [service_uuid,characteristic_uuid]
+        additionalProperties: false
         properties:
-            notify_characteristic :
-                type : object
-                required: [service_uuid,characteristic_uuid]
-                additionalProperties: false
-                properties:
-                    service_uuid : {$ref : "/uuid"}
-                    characteristic_uuid : {$ref : "/uuid"}
+          service_uuid: {$ref: "/uuid"}
+          characteristic_uuid: {$ref: "/uuid"}
 

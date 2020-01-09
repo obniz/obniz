@@ -2,14 +2,14 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/request/ble/central/disconnect"
-deprecated : 3.0.0
+deprecated: 3.0.0
 
 type: object
-required : [disconnect]
+required: [disconnect]
 properties:
-    disconnect :
-        type : object
-        required: [address]
-        additionalProperties: false
-        properties:
-            address : {$ref : "/deviceAddress" }
+  disconnect:
+    type: object
+    required: [address]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress" }

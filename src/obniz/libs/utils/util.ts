@@ -1,7 +1,7 @@
 class ObnizUtil {
 
   public static _keyFilter(params: any, keys: any) {
-    let filterdParams = {};
+    let filterdParams: any = {};
     if (typeof params !== "object") {
       return filterdParams;
     }
@@ -32,21 +32,21 @@ class ObnizUtil {
     return null;
   }
 
-  public static dataArray2string(data: number[]) {
-    let string = null;
+  public static dataArray2string(data: any) {
+    let string: any = null;
     try {
-      const StringDecoder = require("string_decoder").StringDecoder;
+      const StringDecoder: any = require("string_decoder").StringDecoder;
       if (StringDecoder) {
         string = new StringDecoder("utf8").write(Buffer.from(data));
       }
-    } catch (e) {
+    } catch (e: any) {
       // this.obniz.error(e);
     }
     return string;
   }
 
-  public static string2dataArray(str: string) {
-    const buf = Buffer.from(str);
+  public static string2dataArray(str: any) {
+    const buf: any = Buffer.from(str);
     return [...buf];
   }
 
@@ -59,25 +59,25 @@ class ObnizUtil {
     this.obniz = obniz;
   }
 
-  public createCanvasContext(width: number, height: number) {
+  public createCanvasContext(width: any, height: any) {
     if (this.obniz.isNode) {
       try {
         const {createCanvas} = require("canvas");
         return createCanvas(this.width, this.height);
-      } catch (e) {
+      } catch (e: any) {
         throw new Error(
           "obniz.js require node-canvas to draw rich contents. see more detail on docs",
         );
       }
     } else {
-      const canvas = document.createElement("canvas");
+      const canvas: any = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
       (canvas.style as any)["-webkit-font-smoothing"] = "none";
-      const body = document.getElementsByTagName("body")[0];
+      const body: any = document.getElementsByTagName("body")[0];
       body.appendChild(canvas);
 
-      const ctx = canvas.getContext("2d");
+      const ctx: any = canvas.getContext("2d");
       return ctx;
     }
   }

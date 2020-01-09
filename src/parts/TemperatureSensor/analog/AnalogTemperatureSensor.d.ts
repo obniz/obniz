@@ -6,5 +6,6 @@ export interface AnalogTemperatureSensorOptions {
 
 export interface AnalogTemperatureSensor {
   onchange: (temp: number) => void;
+
   getWait(): Promise<number>;
 }

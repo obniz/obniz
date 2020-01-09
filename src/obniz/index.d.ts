@@ -29,7 +29,7 @@ declare namespace Obniz.prototype {
 /**
  * global showObnizDebugError
  */
-export declare var isNode: boolean;
+export declare var isNode: any;
 
 /**
  *

@@ -4,10 +4,10 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/pwm/freq"
 
 type: object
-required : [freq]
+required: [freq]
 properties:
-      freq :
-          type: integer
-          description : "frequency (Hz)"
-          minimum : 1
-          maximum : 80000000
+  freq:
+    type: integer
+    description: "frequency (Hz)"
+    minimum: 1
+    maximum: 80000000

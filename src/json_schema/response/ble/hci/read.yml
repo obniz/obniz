@@ -4,17 +4,17 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ble/hci/read"
 
 type: object
-required : [hci]
+required: [hci]
 properties:
-    hci :
+  hci:
+    type: object
+    required: [read]
+    properties:
+      read:
         type: object
-        required: [read]
+        required: [data]
         properties:
-            read:
-                type: object
-                required: [data]
-                properties:
-                    data :
-                        $ref : "/dataArray"
-                        description : "HCI data"
+          data:
+            $ref: "/dataArray"
+            description: "HCI data"
 

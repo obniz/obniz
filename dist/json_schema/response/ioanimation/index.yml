@@ -2,7 +2,7 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/ioAnimation"
-basePath : "io"
+basePath: "io"
 
 "anyOf":
-  -  {$ref : "/response/ioAnimation/notify"}
+  - {$ref: "/response/ioAnimation/notify"}

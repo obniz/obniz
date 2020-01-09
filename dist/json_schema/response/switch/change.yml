@@ -2,16 +2,16 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/switch/change"
-desccription : "value changes are always notified."
+desccription: "value changes are always notified."
 
 type: object
-required : [state]
+required: [state]
 properties:
-    state :
-        type: string
-        enum : [none, push, left, right]
+  state:
+    type: string
+    enum: [none, push, left, right]
 
-    action :
-        type : string
-        enum : [get]
-        description : "this is optional and added when user request"
+  action:
+    type: string
+    enum: [get]
+    description: "this is optional and added when user request"

@@ -10,6 +10,7 @@ export interface SainSmartTFT18LCDOptions {
 
 export type RGB16 = number;
 export type RGB24 = number;
+
 export interface PresetColor {
   AliceBlue: RGB16;
   AntiqueWhite: RGB16;
@@ -158,20 +159,35 @@ export interface SainSmartTFT18LCD {
   readonly width: number;
   readonly height: number;
   readonly color: PresetColor;
+
   color16(r: number, g: number, b: number): RGB16;
+
   fillScreen(color: RGB16): void;
+
   drawRect(x: number, y: number, width: number, height: number, color: RGB16): void;
+
   fillRect(x: number, y: number, width: number, height: number, color: RGB16): void;
+
   drawRoundRect(x: number, y: number, width: number, height: number, round: number, color: RGB16): void;
+
   fillRoundRect(x: number, y: number, width: number, height: number, round: number, color: RGB16): void;
+
   drawCircle(x: number, y: number, radius: number, color: RGB16): void;
+
   fillCircle(x: number, y: number, radius: number, color: RGB16): void;
+
   drawTriangle(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, color: RGB16): void;
+
   fillTriangle(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, color: RGB16): void;
+
   drawVLine(x: number, y: number, height: number, color: RGB16): void;
+
   drawHLine(x: number, y: number, width: number, color: RGB16): void;
+
   drawLine(x0: number, y0: number, x1: number, y1: number, color: RGB16): void;
+
   drawChar(x: number, y: number, char: string, color: RGB16, backgroundColor: RGB16, size?: number): void;
+
   drawString(
     x: number,
     y: number,
@@ -181,6 +197,7 @@ export interface SainSmartTFT18LCD {
     size?: number,
     wrap?: boolean,
   ): [number, number];
+
   drawContextBound(
     context: any,
     x0: number,
@@ -191,11 +208,18 @@ export interface SainSmartTFT18LCD {
     y1: number,
     gray: boolean,
   ): void;
+
   drawContext(context: CanvasRenderingContext2D, gray: boolean): void;
+
   setRotation(dir: number): void;
+
   setInversionOn(): void;
+
   setInversionOff(): void;
+
   setInversion(inversion: boolean): void;
+
   rawBound(x: number, y: number, width: number, height: number, pixels: RGB24[]): void;
+
   raw(pixels: RGB24[]): void;
 }

@@ -27,10 +27,16 @@ export interface RN42Config {
 
 export interface RN42 {
   onreceive: (data: any, text: string) => void;
+
   send(data: any): void;
+
   config(json: RN42Config): void;
+
   enterCommandMode(): void;
+
   sendCommand(data: any): void;
+
   config_get_setting(): void;
+
   config_get_extendSetting(): void;
 }

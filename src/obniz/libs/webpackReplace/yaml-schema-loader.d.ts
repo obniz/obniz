@@ -10,7 +10,7 @@
  * @param excludeKeys
  * @return
  */
-declare function filter(target: 0, excludeKeys: 1): 0;
+declare function filter(target: any, excludeKeys: any): 0;
 
 declare module "yaml-schema-loader" {
 

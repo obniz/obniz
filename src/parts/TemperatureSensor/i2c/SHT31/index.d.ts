@@ -11,5 +11,6 @@ export interface SHT31Options {
 
 export interface SHT31 {
   getTempWait(): Promise<number>;
+
   getHumdWait(): Promise<number>;
 }

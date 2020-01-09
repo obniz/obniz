@@ -4,13 +4,13 @@ $schema: http://json-schema.org/draft-04/schema#
 id: "/request/tcp/write"
 
 type: object
-required : [write]
+required: [write]
 properties:
-    write :
-        type: object
-        required: [data]
-        additionalProperties: false
-        properties:
-            data :
-                $ref : "/dataArray"
-                description : "TCP data"
+  write:
+    type: object
+    required: [data]
+    additionalProperties: false
+    properties:
+      data:
+        $ref: "/dataArray"
+        description: "TCP data"

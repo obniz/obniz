@@ -5,15 +5,15 @@ id: "/response/i2c/master"
 
 
 type: object
-required : [mode, address, data]
+required: [mode, address, data]
 properties:
-    mode :
-        type : string
-        enum : [master]
+  mode:
+    type: string
+    enum: [master]
 
-    address :
-        type: integer
-        minimum : 0
-        maximum : 1023
+  address:
+    type: integer
+    minimum: 0
+    maximum: 1023
 
-    data : {$ref : "/dataArray" }
+  data: {$ref: "/dataArray" }

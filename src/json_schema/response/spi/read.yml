@@ -5,6 +5,6 @@ id: "/response/spi/read"
 
 
 type: object
-required : [data]
+required: [data]
 properties:
-    data : {$ref : "/dataArray"}
+  data: {$ref: "/dataArray"}

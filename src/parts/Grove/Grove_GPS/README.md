@@ -163,7 +163,7 @@ let d = gps.getEditedData();
 if (d.enable) {
   if (d.GPGGA) {
     let p = d.GPGGA;
-    if (p[6] != "0") {
+    if (p[6] !=="0") {
       //Longitude
       let longitude = gps.nmea2dd(p[2]);
       //Latitude

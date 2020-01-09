@@ -2,18 +2,18 @@
 ##---
 $schema: http://json-schema.org/draft-04/schema#
 id: "/response/debug/warning"
-desccription : "global warnings"
+desccription: "global warnings"
 
 type: object
-required : [warning]
+required: [warning]
 properties:
 
-    warning :
-        type : object
+  warning:
+    type: object
 
-        additionalProperties: true
-        properties:
-            message :
-                description : "readable message"
-                type : string
-                example : "unknown command"
+    additionalProperties: true
+    properties:
+      message:
+        description: "readable message"
+        type: string
+        example: "unknown command"
