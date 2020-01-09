@@ -213,5 +213,5 @@ class RN42 {
 }
 
 if (typeof module === "object") {
-  module.exports = RN42;
+  export default RN42;
 }

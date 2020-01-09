@@ -40,4 +40,4 @@ class AnalogTemperatureSensor {
   }
 }
 
-module.exports = AnalogTemperatureSensor;
+export default AnalogTemperatureSensor;

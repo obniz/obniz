@@ -98,5 +98,5 @@ class MQ7 {
 }
 
 if (typeof module === "object") {
-  module.exports = MQ7;
+  export default MQ7;
 }

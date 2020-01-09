@@ -178,5 +178,5 @@ class Grove_3AxisAccelerometer {
 }
 
 if (typeof module === "object") {
-  module.exports = Grove_3AxisAccelerometer;
+  export default Grove_3AxisAccelerometer;
 }

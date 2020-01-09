@@ -429,5 +429,5 @@ class FlickHat {
 }
 
 if (typeof module === "object") {
-  module.exports = FlickHat;
+  export default FlickHat;
 }

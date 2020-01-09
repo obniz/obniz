@@ -126,5 +126,5 @@ class KXR94_2050 {
 }
 
 if (typeof module === "object") {
-  module.exports = KXR94_2050;
+  export default KXR94_2050;
 }

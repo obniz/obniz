@@ -43,5 +43,5 @@ class Speaker {
 }
 
 if (typeof module === "object") {
-  module.exports = Speaker;
+  export default Speaker;
 }

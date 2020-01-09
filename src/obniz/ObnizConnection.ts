@@ -1,9 +1,35 @@
 import emitter = require("eventemitter3");
+import packageJson from "../../package.json";
 import WSCommand from "./libs/wscommand";
-
 const isNode: any = typeof window === "undefined";
 
 export default class ObnizConnection {
+
+  public isNode: boolean;
+  public id: any;
+  public socket: any;
+  public socket_local: any;
+  public debugprint: boolean;
+  public debugprintBinary: boolean;
+  public debugs: any;
+  public onConnectCalled: boolean;
+  public hw: any;
+  public firmware_ver: any;
+  public connectionState: "closed" | "connecting" | "connected" | "closing";
+  public bufferdAmoundWarnBytes: number;
+  public emitter: any;
+  public options: any;
+  public wscommand: any;
+  public wscommands: any;
+  public _sendQueueTimer: any;
+  public _sendQueue: any;
+  public _waitForLocalConnectReadyTimer: any;
+  public _connectionRetryCount: number;
+  public onopen: any;
+  public onclose: any;
+  public onconnect: any;
+  public sendPool: any;
+
   constructor(id: any, options: any) {
     this.isNode = isNode;
     this.id = id;
@@ -35,8 +61,8 @@ export default class ObnizConnection {
         options.reset_obniz_on_ws_disconnection === false ? false : true,
     };
     if (this.options.binary) {
-      this.wscommand = this.constructor.WSCommand;
-      const classes: any = this.constructor.WSCommand.CommandClasses;
+      this.wscommand = (this.constructor as typeof ObnizConnection).WSCommand;
+      const classes: any = (this.constructor as typeof ObnizConnection).WSCommand.CommandClasses;
       this.wscommands = [];
       for (const class_name in classes) {
         this.wscommands.push(
@@ -63,7 +89,7 @@ export default class ObnizConnection {
   }
 
   static get version() {
-    import packageJson from "../../package.json";
+
     return packageJson.version;
   }
 
@@ -181,8 +207,8 @@ export default class ObnizConnection {
     let url: any = server + "/obniz/" + this.id + "/ws/1";
 
     const query: any = [];
-    if (this.constructor.version) {
-      query.push("obnizjs=" + this.constructor.version);
+    if ((this.constructor as typeof ObnizConnection).version) {
+      query.push("obnizjs=" + (this.constructor as typeof ObnizConnection).version);
     }
     if (this.options.access_token) {
       query.push("access_token=" + this.options.access_token);
@@ -197,6 +223,8 @@ export default class ObnizConnection {
 
     let socket: any;
     if (this.isNode) {
+
+      // @ts-ignore
       import wsClient = require("ws");
       socket = new wsClient(url);
       socket.on("open", this.wsOnOpen.bind(this));
@@ -208,7 +236,7 @@ export default class ObnizConnection {
       socket = new WebSocket(url);
       socket.binaryType = "arraybuffer";
       socket.onopen = this.wsOnOpen.bind(this);
-      socket.onmessage = (event: any ) => {
+      socket.onmessage = (event: any) => {
         this.wsOnMessage(event.data);
       };
       socket.onclose = this.wsOnClose.bind(this);
@@ -224,6 +252,8 @@ export default class ObnizConnection {
     this.print_debug("local connect to " + url);
     let ws: any;
     if (this.isNode) {
+
+      // @ts-ignore
       import wsClient = require("ws");
 
       ws = new wsClient(url);
@@ -231,19 +261,19 @@ export default class ObnizConnection {
         this.print_debug("connected to " + url);
         this._callOnConnect();
       });
-      ws.on("message", (data: any ) => {
+      ws.on("message", (data: any) => {
         this.print_debug("recvd via local");
         this.wsOnMessage(data);
       });
-      ws.on("close", (event: any ) => {
+      ws.on("close", (event: any) => {
         console.log("local websocket closed");
         this._disconnectLocal();
       });
-      ws.on("error", (err: any ) => {
+      ws.on("error", (err: any) => {
         console.error("local websocket error.", err);
         this._disconnectLocal();
       });
-      ws.on("unexpected-response", (event: any ) => {
+      ws.on("unexpected-response", (event: any) => {
         console.log("local websocket closed");
         this._disconnectLocal();
       });
@@ -254,15 +284,15 @@ export default class ObnizConnection {
         this.print_debug("connected to " + url);
         this._callOnConnect();
       };
-      ws.onmessage = (event: any ) => {
+      ws.onmessage = (event: any) => {
         this.print_debug("recvd via local");
         this.wsOnMessage(event.data);
       };
-      ws.onclose = (event: any ) => {
+      ws.onclose = (event: any) => {
         console.log("local websocket closed");
         this._disconnectLocal();
       };
-      ws.onerror = (err: any ) => {
+      ws.onerror = (err: any) => {
         console.log("local websocket error.", err);
         this._disconnectLocal();
       };
@@ -360,7 +390,7 @@ export default class ObnizConnection {
       if (typeof this.onconnect === "function") {
         const promise: any = this.onconnect(this);
         if (promise instanceof Promise) {
-          promise.catch ((err: any ) => {
+          promise.catch((err: any) => {
             console.error(err);
           });
         }
@@ -525,7 +555,7 @@ export default class ObnizConnection {
         }
       }
       if (this.options.reset_obniz_on_ws_disconnection) {
-        this.resetOnDisconnect(true);
+        (this as any).resetOnDisconnect(true);
       }
       if (
         wsObj.local_connect &&

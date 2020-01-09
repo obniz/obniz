@@ -67,5 +67,5 @@ class Grove_EarHeartRate {
 }
 
 if (typeof module === "object") {
-  module.exports = Grove_EarHeartRate;
+  export default Grove_EarHeartRate;
 }

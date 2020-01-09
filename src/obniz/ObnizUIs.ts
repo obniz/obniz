@@ -46,7 +46,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
       obj.alert === "warning" ? "#ffee35" : "#ff7b34"
     }">${obj.message}</div>`;
     document
-      .getElementById(this.options.debug_dom_id)
+      .getElementById(this.options.debug_dom_id)!
       .insertAdjacentHTML("beforeend", dom);
   }
 

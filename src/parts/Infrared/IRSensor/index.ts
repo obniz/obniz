@@ -78,5 +78,5 @@ class IRSensor {
 }
 
 if (typeof module === "object") {
-  module.exports = IRSensor;
+  export default IRSensor;
 }

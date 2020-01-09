@@ -42,5 +42,5 @@ class Potentiometer {
 }
 
 if (typeof module === "object") {
-  module.exports = Potentiometer;
+  export default Potentiometer;
 }

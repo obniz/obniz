@@ -236,10 +236,10 @@ class Display {
 
     for (let i = 0; i < data.length; i += 4) {
       const brightness: any = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      const index: any = parseInt(i / 4);
-      const line: any = parseInt(index / this.width);
-      const col: any = parseInt((index - line * this.width) / 8);
-      const bits: any = parseInt(index - line * this.width) % 8;
+      const index: any = Math.floor(i / 4);
+      const line: any = Math.floor(index / this.width);
+      const col: any = Math.floor((index - line * this.width) / 8);
+      const bits: any = Math.floor(index - line * this.width) % 8;
       if (bits === 0) {
         vram[line * stride + col] = 0x00;
       }

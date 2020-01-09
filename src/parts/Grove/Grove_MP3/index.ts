@@ -115,5 +115,5 @@ class Grove_MP3 {
 }
 
 if (typeof module === "object") {
-  module.exports = Grove_MP3;
+  export default Grove_MP3;
 }

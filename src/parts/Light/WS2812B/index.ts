@@ -132,5 +132,5 @@ class WS2812B {
 }
 
 if (typeof module === "object") {
-  module.exports = WS2812B;
+  export default WS2812B;
 }

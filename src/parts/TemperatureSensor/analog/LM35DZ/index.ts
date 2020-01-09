@@ -1,4 +1,4 @@
-const AnalogTemperatureSensor: any = require("../AnalogTemperatureSensor");
+import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 
 class LM35DZ extends AnalogTemperatureSensor {
   public static info() {
@@ -13,5 +13,5 @@ class LM35DZ extends AnalogTemperatureSensor {
 }
 
 if (typeof module === "object") {
-  module.exports = LM35DZ;
+  export default LM35DZ;
 }

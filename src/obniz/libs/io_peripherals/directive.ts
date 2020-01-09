@@ -79,7 +79,7 @@ class Directive {
     if (typeof repeat !== "number" || repeat < 1) {
       throw new Error("please specify repeat count > 0");
     }
-    if (parseInt(repeat) !== repeat) {
+    if (Math.floor(repeat) !== repeat) {
       throw new Error("please provide integer number like 1, 2, 3,,,");
     }
 

@@ -78,5 +78,5 @@ class IRModule {
 }
 
 if (typeof module === "object") {
-  module.exports = IRModule;
+  export default IRModule;
 }

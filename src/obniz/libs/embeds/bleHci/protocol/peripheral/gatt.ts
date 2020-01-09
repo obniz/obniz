@@ -74,8 +74,6 @@ class Gatt extends events.EventEmitter {
   public emit: any;
   public _lastIndicatedAttribute: any;
 
-  public public;
-
   constructor() {
     super();
     this.maxMtu = 256;

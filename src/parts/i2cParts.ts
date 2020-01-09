@@ -63,4 +63,4 @@ class I2cPartsAbstruct {
   }
 }
 
-module.exports = I2cPartsAbstruct;
+export default I2cPartsAbstruct;

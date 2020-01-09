@@ -58,5 +58,5 @@ class Solenoid {
 }
 
 if (typeof module === "object") {
-  module.exports = Solenoid;
+  export default Solenoid;
 }

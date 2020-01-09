@@ -84,5 +84,5 @@ class JoyStick {
 }
 
 if (typeof module === "object") {
-  module.exports = JoyStick;
+  export default JoyStick;
 }

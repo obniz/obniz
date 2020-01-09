@@ -51,10 +51,10 @@ class GP2Y0A21YK0F {
     }
     let distance: any = 19988.34 * Math.pow((val / 5.0) * 1024, -1.25214) * 10;
     if (this._unit === "mm") {
-      distance = parseInt(distance * 10) / 10;
+      distance = Math.floor(distance * 10) / 10;
     } else {
       distance *= 0.0393701;
-      distance = parseInt(distance * 1000) / 1000;
+      distance = Math.floor(distance * 1000) / 1000;
     }
     return distance;
   }
@@ -79,5 +79,5 @@ class GP2Y0A21YK0F {
 }
 
 if (typeof module === "object") {
-  module.exports = GP2Y0A21YK0F;
+  export default GP2Y0A21YK0F;
 }

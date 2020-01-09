@@ -62,7 +62,7 @@ class BleRemotePeripheral {
     this.advertise_data_rows = null;
     for (const key in dic) {
       if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-        this[key] = dic[key];
+        (this as any)[key] = dic[key];
       }
     }
     this.analyseAdvertisement();
@@ -330,7 +330,7 @@ class BleRemotePeripheral {
   public ondiscoverservice(child: any) {
   }
 
-  public ondiscoverservicefinished() {
+  public ondiscoverservicefinished(children: any) {
   }
 
   public ondiscover() {

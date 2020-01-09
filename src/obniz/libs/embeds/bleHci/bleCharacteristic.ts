@@ -78,7 +78,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   public removeProperty(param: any) {
-    this.properties = this.properties.filter ((elm: any ) => {
+    this.properties = this.properties.filter((elm: any) => {
       return elm !== param;
     });
   }
@@ -90,7 +90,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   public removePermission(param: any) {
-    this.permissions = this.permissions.filter ((elm: any ) => {
+    this.permissions = this.permissions.filter((elm: any) => {
       return elm !== param;
     });
   }
@@ -102,16 +102,16 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
     }
     switch (name) {
       case "subscribe":
-        this._onSubscribe(...params);
+        this._onSubscribe(...params as [any, any]);
         return true;
       case "unsubscribe":
-        this._onUnsubscribe(...params);
+        this._onUnsubscribe();
         return true;
       case "notify":
-        this._onNotify(...params);
+        this._onNotify();
         return true;
       case "indicate":
-        this._onIndicate(...params);
+        this._onIndicate();
         return true;
       default:
         throw new Error("unknown emit");

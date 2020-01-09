@@ -68,5 +68,5 @@ class CT10 {
 }
 
 if (typeof module === "object") {
-  module.exports = CT10;
+  export default CT10;
 }

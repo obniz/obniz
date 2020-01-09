@@ -930,7 +930,7 @@ class SainSmartTFT18LCD {
 }
 
 if (typeof module === "object") {
-  module.exports = SainSmartTFT18LCD;
+  export default SainSmartTFT18LCD;
 }
 
 // ----------------------------------------------------------

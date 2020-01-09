@@ -36,5 +36,5 @@ class IPM_165 {
 }
 
 if (typeof module === "object") {
-  module.exports = IPM_165;
+  export default IPM_165;
 }

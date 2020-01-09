@@ -109,5 +109,5 @@ class S5851A {
 }
 
 if (typeof module === "object") {
-  module.exports = S5851A;
+  export default S5851A;
 }

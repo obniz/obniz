@@ -5,6 +5,7 @@ import CommandIO from "./WSCommandIO";
 import CommandPWM from "./WSCommandPWM";
 
 export default class WSCommandDirective extends WSCommand {
+  public  availableCommands: any;
 
   protected module: number;
   protected _CommandRegistrate: number;
@@ -73,7 +74,7 @@ export default class WSCommandDirective extends WSCommand {
 
     for (let i = 0; i < commandJsonArray.length; i++) {
       const obj: any = commandJsonArray[i];
-      const duration: any = parseInt(obj.duration * 1000);
+      const duration: any = Math.floor(obj.duration * 1000);
       const state: any = obj.state;
 
       // Dry run commands
@@ -162,7 +163,7 @@ export default class WSCommandDirective extends WSCommand {
     let parentCommandNotFound: any = false;
     try {
       super.parseFromJson(json);
-    } catch (err: any) {
+    } catch (err) {
       if (err instanceof this.WSCommandNotFoundError) {
         parentCommandNotFound = true;
       } else {

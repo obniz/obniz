@@ -19,7 +19,7 @@ class WSCommandMeasurement extends WSCommand {
   public echo(params: any) {
     const triggerIO: any = params.echo.io_pulse;
     const triggerPosNeg: any = params.echo.pulse === "negative" ? false : true;
-    const triggerWidthUs: any = parseInt(params.echo.pulse_width * 1000);
+    const triggerWidthUs: any = Math.floor(params.echo.pulse_width * 1000);
     const echoIO: any = params.echo.io_echo;
     const responseCount: any = params.echo.measure_edges;
     let timeoutUs: any = params.echo.timeout * 1000;

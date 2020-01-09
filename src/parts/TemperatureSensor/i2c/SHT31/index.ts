@@ -98,5 +98,5 @@ class SHT31 {
 }
 
 if (typeof module === "object") {
-  module.exports = SHT31;
+  export default SHT31;
 }

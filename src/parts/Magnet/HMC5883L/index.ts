@@ -58,5 +58,5 @@ class HMC5883L {
 }
 
 if (typeof module === "object") {
-  module.exports = HMC5883L;
+  export default HMC5883L;
 }

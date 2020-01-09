@@ -4,10 +4,13 @@ import ObnizUIs from "./ObnizUIs";
 
 declare global {
   var showObnizDebugError: any;
+  var MozWebSocket: any;
 
   interface Window {
     userAppLoaded?: any;
     logger?: any;
+    WebSocket: any;
+    MozWebSocket: any;
   }
 }
 

@@ -47,5 +47,5 @@ class DHT12 extends i2cParts {
 }
 
 if (typeof module === "object") {
-  module.exports = DHT12;
+  export default DHT12;
 }

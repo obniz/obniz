@@ -98,5 +98,5 @@ class MQ4 {
 }
 
 if (typeof module === "object") {
-  module.exports = MQ4;
+  export default MQ4;
 }

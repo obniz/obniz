@@ -64,5 +64,5 @@ class AK8963 {
 }
 
 if (typeof module === "object") {
-  module.exports = AK8963;
+  export default AK8963;
 }

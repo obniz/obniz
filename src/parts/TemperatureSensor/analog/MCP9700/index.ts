@@ -1,4 +1,4 @@
-const AnalogTemperatureSensor: any = require("../AnalogTemperatureSensor");
+import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 
 class MCP9700 extends AnalogTemperatureSensor {
 
@@ -14,5 +14,5 @@ class MCP9700 extends AnalogTemperatureSensor {
 }
 
 if (typeof module === "object") {
-  module.exports = MCP9700;
+  export default MCP9700;
 }

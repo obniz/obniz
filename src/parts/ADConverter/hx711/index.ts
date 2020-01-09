@@ -141,5 +141,5 @@ class Hx711 {
 }
 
 if (typeof module === "object") {
-  module.exports = Hx711;
+  export default Hx711;
 }

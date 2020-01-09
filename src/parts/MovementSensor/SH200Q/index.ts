@@ -181,5 +181,5 @@ class SH200Q extends i2cParts {
 }
 
 if (typeof module === "object") {
-  module.exports = SH200Q;
+  export default SH200Q;
 }

@@ -32,6 +32,10 @@ export default class ObnizParts extends ObnizConnection {
     super(id, options);
   }
 
+  public isValidIO(io: any) {
+    return typeof io === "number" && (this as any)["io" + io] !== null;
+  }
+
   public wired(partsname: any) {
     const parts: any = ObnizParts.Parts(partsname);
     if (!parts) {
@@ -67,7 +71,10 @@ export default class ObnizParts extends ObnizConnection {
           ioNames[io] = pinName;
         }
       }
-      this.display.setPinNames(displayPartsName, ioNames);
+      const display = (this as any).display;
+      if (display) {
+        display.setPinNames(displayPartsName, ioNames);
+      }
     }
     return parts;
   }

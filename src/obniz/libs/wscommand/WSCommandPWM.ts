@@ -75,7 +75,7 @@ class WSCommandPWM extends WSCommand {
 
   public amModulate(params: any, module: any) {
     const bitLength: any = params.modulate.data.length;
-    const byteLength: any = parseInt((bitLength + 7) / 8);
+    const byteLength: any = Math.floor((bitLength + 7) / 8);
     const buf: any = new Uint8Array(5 + byteLength);
     const symbol_length_usec: any = params.modulate.symbol_length * 1000;
     buf[0] = module;

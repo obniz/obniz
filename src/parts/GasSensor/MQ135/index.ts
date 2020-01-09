@@ -98,5 +98,5 @@ class MQ135 {
 }
 
 if (typeof module === "object") {
-  module.exports = MQ135;
+  export default MQ135;
 }

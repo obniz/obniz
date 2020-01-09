@@ -88,5 +88,5 @@ class Puls08M5stickcS {
 }
 
 if (typeof module === "object") {
-  module.exports = Puls08M5stickcS;
+  export default Puls08M5stickcS;
 }

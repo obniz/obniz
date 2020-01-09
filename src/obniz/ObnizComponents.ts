@@ -21,6 +21,9 @@ import ObnizParts from "./ObnizParts";
 import HW from "./libs/hw";
 
 export default class ObnizComponents extends ObnizParts {
+  public pongObservers: any;
+  public _allComponentKeys: any;
+
   constructor(id: any, options: any) {
     super(id, options);
     this.pongObservers = [];
@@ -87,7 +90,7 @@ export default class ObnizComponents extends ObnizParts {
 
     for (const key in shared_map) {
       const Class: any = shared_map[key];
-      this[key] = new Class(this);
+      (this as any)[key] = new Class(this);
       this._allComponentKeys.push(key);
     }
 
@@ -96,10 +99,10 @@ export default class ObnizComponents extends ObnizParts {
         if (hw_peripherals[key]) {
           const units: any = hw_peripherals[key].units;
           const Class: any = peripheral_map[key];
-          for (let unitId in units) {
-            unitId = parseInt(unitId);
-            this[key + unitId] = new Class(this, unitId);
-            this._allComponentKeys.push(key + unitId);
+          for (const unitId in units) {
+            const unitIdNumber = parseInt(unitId);
+            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber);
+            this._allComponentKeys.push(key + unitIdNumber);
           }
         }
       }
@@ -109,7 +112,7 @@ export default class ObnizComponents extends ObnizParts {
       for (const key in embeds_map) {
         if (hw_embeds[key]) {
           const Class: any = embeds_map[key];
-          this[key] = new Class(this);
+          (this as any)[key] = new Class(this);
           this._allComponentKeys.push(key);
         }
       }
@@ -120,10 +123,10 @@ export default class ObnizComponents extends ObnizParts {
         if (hw_protocol[key]) {
           const units: any = hw_protocol[key].units;
           const Class: any = protocol_map[key];
-          for (let unitId in units) {
-            unitId = parseInt(unitId);
-            this[key + unitId] = new Class(this, unitId);
-            this._allComponentKeys.push(key + unitId);
+          for (const unitId in units) {
+            const unitIdNumber = parseInt(unitId);
+            (this as any)[key + unitIdNumber] = new Class(this, unitIdNumber);
+            this._allComponentKeys.push(key + unitIdNumber);
           }
         }
       }
@@ -133,7 +136,7 @@ export default class ObnizComponents extends ObnizParts {
   public _resetComponents() {
     this.print_debug("components state resets");
     for (const key of this._allComponentKeys) {
-      this[key]._reset();
+      (this as any)[key]._reset();
     }
   }
 
@@ -142,13 +145,13 @@ export default class ObnizComponents extends ObnizParts {
     for (const key of this._allComponentKeys) {
       if (key === "logicAnalyzer") {
         if (obj.hasOwnProperty("logic_analyzer")) {
-          this.logicAnalyzer.notified(obj.logic_analyzer);
+          (this as any).logicAnalyzer.notified(obj.logic_analyzer);
         }
         continue;
       }
       if (obj.hasOwnProperty(key)) {
         /* because of nullable */
-        this[key].notified(obj[key]);
+        (this as any)[key].notified(obj[key]);
       }
     }
   }
@@ -176,10 +179,6 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
-  public isValidIO(io: any) {
-    return typeof io === "number" && this["io" + io] !== null;
-  }
-
   public setVccGnd(vcc: any, gnd: any, drive: any) {
     if (this.isValidIO(vcc)) {
       if (drive) {
@@ -200,21 +199,21 @@ export default class ObnizComponents extends ObnizParts {
     if (!this.isValidIO(io)) {
       throw new Error("io " + io + " is not valid io");
     }
-    return this["io" + io];
+    return (this as any)["io" + io];
   }
 
   public getAD(io: any) {
     if (!this.isValidIO(io)) {
       throw new Error("ad " + io + " is not valid io");
     }
-    return this["ad" + io];
+    return (this as any)["ad" + io];
   }
 
   public _getFreePeripheralUnit(peripheral: any) {
     for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */
-        const obj: any = this[key];
+        const obj: any = (this as any)[key];
         if (typeof obj === "object" && !obj.isUsed()) {
           obj.used = true;
           return obj;

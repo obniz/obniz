@@ -1,5 +1,5 @@
-import fetch = require("node-fetch");
-
+import fetch from "node-fetch";
+import packageJson from "../../package.json";
 class ObnizApi {
   public id: any;
   public options: any;
@@ -16,7 +16,7 @@ class ObnizApi {
   }
 
   get apiVersion() {
-    import packageJson from "../../package.json";
+
     const versionString: any = packageJson.version;
     return versionString.split(".").shift();
   }

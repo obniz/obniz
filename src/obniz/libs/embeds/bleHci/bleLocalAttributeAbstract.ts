@@ -43,10 +43,10 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
   public emit(name: any, ...params: any) {
     switch (name) {
       case "readRequest":
-        this._onReadRequest(...params);
+        this._onReadRequest(...params as [any, any]);
         return true;
       case "writeRequest":
-        this._onWriteRequest(...params);
+        this._onWriteRequest(...params as [any, any]);
         return true;
     }
     return false;

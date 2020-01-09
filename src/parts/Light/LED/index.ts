@@ -87,5 +87,5 @@ class LED {
 }
 
 if (typeof module === "object") {
-  module.exports = LED;
+  export default LED;
 }

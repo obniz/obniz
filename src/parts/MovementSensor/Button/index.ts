@@ -69,5 +69,5 @@ class Button {
 }
 
 if (typeof module === "object") {
-  module.exports = Button;
+  export default Button;
 }

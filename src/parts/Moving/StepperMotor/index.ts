@@ -211,5 +211,5 @@ class StepperMotor {
 }
 
 if (typeof module === "object") {
-  module.exports = StepperMotor;
+  export default StepperMotor;
 }

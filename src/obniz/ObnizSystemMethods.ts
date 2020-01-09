@@ -62,7 +62,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
     if (!(date instanceof Date)) {
       throw new Error("Date instance argument required");
     }
-    let sleepTime: any = Math.floor((date - new Date()) / 1000);
+    let sleepTime: any = Math.floor(((date as any) - (new Date() as any)) / 1000);
     this.print_debug(`sleep time : ${sleepTime}s`);
     if (sleepTime <= 0) {
       throw new Error(`past sleep time : ${sleepTime}s`);

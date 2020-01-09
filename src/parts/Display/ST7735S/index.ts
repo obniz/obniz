@@ -958,7 +958,7 @@ class ST7735S {
 }
 
 if (typeof module === "object") {
-  module.exports = ST7735S;
+  export default ST7735S;
 }
 
 // ----------------------------------------------------------

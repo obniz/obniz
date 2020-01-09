@@ -68,5 +68,5 @@ class Grove_Button {
 }
 
 if (typeof module === "object") {
-  module.exports = Grove_Button;
+  export default Grove_Button;
 }

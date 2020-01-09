@@ -50,5 +50,5 @@ class ADT7410 {
 }
 
 if (typeof module === "object") {
-  module.exports = ADT7410;
+  export default ADT7410;
 }

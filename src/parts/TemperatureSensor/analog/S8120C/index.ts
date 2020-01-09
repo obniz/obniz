@@ -1,4 +1,4 @@
-const AnalogTemperatureSensor: any = require("../AnalogTemperatureSensor");
+import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 
 // this not work, but sometimes good
 // resason1:too low of obniz input Impedance ?
@@ -17,5 +17,5 @@ class S8120C extends AnalogTemperatureSensor {
 }
 
 if (typeof module === "object") {
-  module.exports = S8120C;
+  export default S8120C;
 }

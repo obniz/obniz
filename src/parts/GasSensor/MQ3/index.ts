@@ -98,5 +98,5 @@ class MQ3 {
 }
 
 if (typeof module === "object") {
-  module.exports = MQ3;
+  export default MQ3;
 }

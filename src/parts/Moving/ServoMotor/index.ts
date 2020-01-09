@@ -66,5 +66,5 @@ class ServoMotor {
 }
 
 if (typeof module === "object") {
-  module.exports = ServoMotor;
+  export default ServoMotor;
 }

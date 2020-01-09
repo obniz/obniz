@@ -511,7 +511,7 @@ const _qrcode: any = (() => {
   // ---------------------------------------------------------------------
 
   qrcode.stringToBytesFuncs = {
-    public default(s: any) {
+    default(s: any) {
       const bytes: any = [];
       for (let i = 0; i < s.length; i += 1) {
         const c: any = s.charCodeAt(i);

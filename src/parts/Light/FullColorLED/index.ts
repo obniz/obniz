@@ -144,5 +144,5 @@ class FullColorLED {
 }
 
 if (typeof module === "object") {
-  module.exports = FullColorLED;
+  export default FullColorLED;
 }

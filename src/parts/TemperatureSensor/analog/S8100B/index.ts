@@ -1,4 +1,4 @@
-const AnalogTemperatureSensor: any = require("../AnalogTemperatureSensor");
+import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 
 // sensor resopnse not found
 
@@ -15,5 +15,5 @@ class S8100B extends AnalogTemperatureSensor {
 }
 
 if (typeof module === "object") {
-  module.exports = S8100B;
+  export default S8100B;
 }

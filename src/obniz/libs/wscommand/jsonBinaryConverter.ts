@@ -269,7 +269,7 @@ class JsonBinaryConverter {
   }
 
   public static stringToBinary(data: any) {
-    return new Uint8Array(Buffer(data, "utf8"));
+    return new Uint8Array(Buffer.from(data, "utf8"));
   }
 }
 

@@ -50,5 +50,5 @@ class FSR40X {
 }
 
 if (typeof module === "object") {
-  module.exports = FSR40X;
+  export default FSR40X;
 }

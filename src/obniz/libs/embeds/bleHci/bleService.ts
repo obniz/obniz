@@ -44,7 +44,7 @@ class BleService extends BleLocalAttributeAbstract {
     this.peripheral.removeService(this.uuid);
   }
 
-  public emit(name: any, ...params: any) {
+  public emit(name: any, ...params: any): any {
   }
 
   public notify(notifyName: any, params: any) {

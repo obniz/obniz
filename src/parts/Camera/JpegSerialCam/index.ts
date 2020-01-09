@@ -232,5 +232,5 @@ class JpegSerialCam {
 }
 
 if (typeof module === "object") {
-  module.exports = JpegSerialCam;
+  export default JpegSerialCam;
 }

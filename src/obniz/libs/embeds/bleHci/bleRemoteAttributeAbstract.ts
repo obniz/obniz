@@ -53,7 +53,7 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case "discover": {
-        const uuid: any = params[this.wsChildUuidName];
+        const uuid: any = params[this.wsChildUuidName!];
         let child: any = this.getChild(uuid);
         if (!child) {
           child = this.addChild({uuid});

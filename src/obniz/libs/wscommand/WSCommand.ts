@@ -114,11 +114,12 @@ export default abstract class WSCommand {
     return ret;
   }
 
+  public _hw: any;
+  public ioNotUsed: number;
+  public COMMAND_FUNC_ID_ERROR: number;
+
   protected abstract module: number;
   private parsed?: (module: number, func: number, payload: Uint8Array) => void;
-  private ioNotUsed: number;
-  private COMMAND_FUNC_ID_ERROR: number;
-  private _hw: object;
 
   constructor() {
     this._hw = {

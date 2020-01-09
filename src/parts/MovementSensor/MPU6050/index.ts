@@ -117,5 +117,5 @@ class MPU6050 {
 }
 
 if (typeof module === "object") {
-  module.exports = MPU6050;
+  export default MPU6050;
 }
