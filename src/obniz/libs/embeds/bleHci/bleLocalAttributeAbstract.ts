@@ -33,7 +33,7 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
 
     if (this.childrenName) {
       const key: any = this.childrenName;
-      obj[key] = this.children.map((e) => e.toBufferObj());
+      obj[key] = this.children.map((e: any) => e.toBufferObj());
     }
 
     obj.emit = this.emit.bind(this);

@@ -21,7 +21,7 @@ import ObnizParts from "./ObnizParts";
 import HW from "./libs/hw";
 
 export default class ObnizComponents extends ObnizParts {
-  constructor(id, options) {
+  constructor(id: any, options: any) {
     super(id, options);
     this.pongObservers = [];
     this._allComponentKeys = [];

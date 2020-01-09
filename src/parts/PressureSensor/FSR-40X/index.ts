@@ -32,7 +32,7 @@ class FSR40X {
     this.io_pwr.output(true);
 
     const self: any = this;
-    this.ad.start((value) => {
+    this.ad.start((value: any) => {
       const pressure: any = value * 100;
       self.press = pressure;
       if (self.onchange) {

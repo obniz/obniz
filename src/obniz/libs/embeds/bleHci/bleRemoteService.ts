@@ -14,15 +14,15 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
     super(obj);
   }
 
-  get parentName() {
+  get parentName(): string | null {
     return "peripheral";
   }
 
-  get childrenClass() {
+  get childrenClass(): any {
     return BleRemoteCharacteristic;
   }
 
-  get childrenName() {
+  get childrenName(): string | null {
     return "characteristics";
   }
 
@@ -61,10 +61,10 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
     this.ondiscovercharacteristicfinished(characteristics);
   }
 
-  public ondiscovercharacteristic() {
+  public ondiscovercharacteristic(characteristic: any) {
   }
 
-  public ondiscovercharacteristicfinished() {
+  public ondiscovercharacteristicfinished(characteristics: any[]) {
   }
 }
 

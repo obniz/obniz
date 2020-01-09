@@ -1,5 +1,5 @@
 import JsonBinaryConverter from "./jsonBinaryConverter";
-const WSCommand: any = require("./WSCommand.js").default;
+import WSCommand from "./WSCommand";
 import WSCommandBleHci from "./WSCommandBleHci";
 
 class WSCommandBle extends WSCommand {

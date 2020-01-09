@@ -28,7 +28,7 @@ export default class ObnizParts extends ObnizConnection {
     return new _parts[name]();
   }
 
-  constructor(id, options) {
+  constructor(id: any, options: any) {
     super(id, options);
   }
 

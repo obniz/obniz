@@ -1,5 +1,5 @@
-const WSCommand: any = require("./WSCommand.js").default;
 import qrcode from "../utils/qr";
+import WSCommand from "./WSCommand";
 
 class WSCommandDisplay extends WSCommand {
   public module: any;
@@ -67,23 +67,23 @@ class WSCommandDisplay extends WSCommand {
 
       for (let row = 0; row < 2; row++) {
         for (let col = 0; col < size + 4; col++) {
-          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
-          vram[parseInt((row + size + 2) * 16 + col / 8)] |= 0x80 >> col % 8;
+          vram[Math.floor(row * 16 + col / 8)] |= 0x80 >> col % 8;
+          vram[Math.floor((row + size + 2) * 16 + col / 8)] |= 0x80 >> col % 8;
         }
       }
       for (let row = 2; row < size + 2; row++) {
         for (let col = 0; col < 2; col++) {
-          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
+          vram[Math.floor(row * 16 + col / 8)] |= 0x80 >> col % 8;
         }
         for (let col = size + 2; col < size + 4; col++) {
-          vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
+          vram[Math.floor(row * 16 + col / 8)] |= 0x80 >> col % 8;
         }
       }
 
       for (let row = 0; row < size; row++) {
         for (let col = 0; col < size; col++) {
-          if (!modules[parseInt(row / 2)][parseInt(col / 2)]) {
-            vram[parseInt((row + 2) * 16 + (col + 2) / 8)] |=
+          if (!modules[Math.floor(row / 2)][Math.floor(col / 2)]) {
+            vram[Math.floor((row + 2) * 16 + (col + 2) / 8)] |=
               0x80 >> (col + 2) % 8;
           }
         }
@@ -112,8 +112,8 @@ class WSCommandDisplay extends WSCommand {
     this.sendCommand(this._CommandDrawCampusHorizonalBytes, buf);
   }
 
-  public drawIOState(val: any) {
-    const buf: any = new Uint8Array([!val]);
+  public drawIOState(val: boolean) {
+    const buf: any = new Uint8Array([!val ? 1 : 0]);
     this.sendCommand(this._CommandDrawIOState, buf);
   }
 
@@ -124,7 +124,7 @@ class WSCommandDisplay extends WSCommand {
     const buf: any = new Uint8Array(1);
     buf[0] = no;
 
-    const stringarray: any = new Uint8Array(Buffer(str, "utf8"));
+    const stringarray: any = new Uint8Array(Buffer.from(str, "utf8"));
     const combined: any = new Uint8Array(buf.length + stringarray.length);
     combined.set(buf, 0);
     combined.set(stringarray, 1);

@@ -37,7 +37,7 @@ class BleSecurity {
     throw new Error("clearBondingDevicesList is deprecated method");
   }
 
-  public onerror() {
+  public onerror(params: any) {
   } // dummy
 
   public notifyFromServer(notifyName: any, params: any) {

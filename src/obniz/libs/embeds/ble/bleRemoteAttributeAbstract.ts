@@ -16,7 +16,7 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     this.discoverdOnRemote = false;
   }
 
-  get wsChildUuidName() {
+  get wsChildUuidName(): string | null {
     const childrenName: any = this.childrenName;
     if (!childrenName) {
       return null;
@@ -29,9 +29,9 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   }
 
   public discoverChildrenWait() {
-    return new Promise((resolve) => {
+    return new Promise ((resolve: any ) => {
       this.emitter.once("discoverfinished", () => {
-        const children: any = this.children.filter((elm) => {
+        const children: any = this.children.filter ((elm: any ) => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
@@ -43,17 +43,17 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   /**
    * CALLBACKS
    */
-  public ondiscover() {
+  public ondiscover(child: any) {
   }
 
-  public ondiscoverfinished() {
+  public ondiscoverfinished(children: any) {
   }
 
   public notifyFromServer(notifyName: any, params: any) {
     super.notifyFromServer(notifyName, params);
     switch (notifyName) {
       case "discover": {
-        const uuid: any = params[this.wsChildUuidName];
+        const uuid: any = params[this.wsChildUuidName!];
         let child: any = this.getChild(uuid);
         if (!child) {
           child = this.addChild({uuid});
@@ -64,7 +64,7 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
         break;
       }
       case "discoverfinished": {
-        const children: any = this.children.filter((elm) => {
+        const children: any = this.children.filter ((elm: any ) => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverfinished(children);

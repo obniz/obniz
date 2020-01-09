@@ -24,7 +24,7 @@ class ObnizSwitch {
 
   public getWait() {
     const self: any = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       const obj: any = {};
       obj.switch = "get";
       self.Obniz.send(obj);
@@ -34,8 +34,8 @@ class ObnizSwitch {
 
   public stateWait(isPressed: any) {
     const self: any = this;
-    return new Promise((resolve, reject) => {
-      self.onChangeForStateWait = (pressed) => {
+    return new Promise((resolve: any, reject: any) => {
+      self.onChangeForStateWait = (pressed: any ) => {
         if (isPressed === pressed) {
           self.onChangeForStateWait = () => {
           };

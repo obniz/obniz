@@ -55,7 +55,7 @@ class JpegSerialCam {
 
   public _seekTail(search: any, src: any) {
     let f: any = 0;
-    for (let i: any = 0; i < src.length; i++) {
+    for (let i = 0; i < src.length; i++) {
       if (src[i] === search[f]) {
         f++;
         if (f === search.length) {

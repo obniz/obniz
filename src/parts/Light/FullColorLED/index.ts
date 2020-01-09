@@ -125,7 +125,7 @@ class FullColorLED {
     const frames: any = [];
     const max: any = 36 / 2;
     const duration: any = Math.round(cycletime_ms / max);
-    for (let i: any = 0; i < max; i++) {
+    for (let i = 0; i < max; i++) {
       const oneFrame: any = {
         duration,
         state: (index) => {

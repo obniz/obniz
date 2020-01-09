@@ -45,7 +45,7 @@ class HMC5883L {
 
     const obj: any = {};
     const keys: any = ["x", "y", "z"];
-    for (let i: any = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
       let val: any = (readed[i * 2] << 8) | readed[i * 2 + 1];
       if (val & 0x8000) {
         val = val - 65536;

@@ -83,7 +83,7 @@ class Directive {
       throw new Error("please provide integer number like 1, 2, 3,,,");
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       const name: any = "_repeatwait" + Date.now() + this._animationIdentifier;
       if (++this._animationIdentifier > 1000) {
         this._animationIdentifier = 0;

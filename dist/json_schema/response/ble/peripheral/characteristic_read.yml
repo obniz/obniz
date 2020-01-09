@@ -1,24 +1,26 @@
 ## YAML Template.
 ##---
 $schema: http://json-schema.org/draft-04/schema#
-id: "/request/ble/peripheral/characteristic_write"
-description: "write characteristic on own service"
-related: "/response/ble/peripheral/characteristic_write"
+id: "/response/ble/peripheral/characteristic_read"
+description: "callback of read characteristic"
 deprecated: 3.0.0
-
 
 type: object
 required: [peripheral]
 properties:
   peripheral:
     type: object
-    required: [write_characteristic]
+    additionalProperties: false
+    required: [read_characteristic_result]
     properties:
-      write_characteristic:
+      read_characteristic_result:
         type: object
-        required: [service_uuid,characteristic_uuid,data]
+        required: [service_uuid, characteristic_uuid, data, result]
         additionalProperties: false
         properties:
           service_uuid: {$ref: "/uuid"}
           characteristic_uuid: {$ref: "/uuid"}
           data: {$ref: "/dataArray"}
+          result:
+            type: string
+            enum: [success, failed]

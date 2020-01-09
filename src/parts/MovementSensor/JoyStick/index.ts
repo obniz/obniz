@@ -43,21 +43,21 @@ class JoyStick {
     this.io_sig_sw.pull("5v");
 
     const self: any = this;
-    this.ad_x.start((value) => {
+    this.ad_x.start((value: any) => {
       self.positionX = value / 5.0;
       if (self.onchangex) {
         self.onchangex(self.positionX * 2 - 1);
       }
     });
 
-    this.ad_y.start((value) => {
+    this.ad_y.start((value: any) => {
       self.positionY = value / 5.0;
       if (self.onchangey) {
         self.onchangey(self.positionY * 2 - 1);
       }
     });
 
-    this.io_sig_sw.input((value) => {
+    this.io_sig_sw.input((value: any) => {
       self.isPressed = value === false;
       if (self.onchangesw) {
         self.onchangesw(value === false);

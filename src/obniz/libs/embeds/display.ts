@@ -40,7 +40,7 @@ class Display {
       try {
         const {createCanvas} = require("canvas");
         this._canvas = createCanvas(this.width, this.height);
-      } catch (e: any) {
+      } catch (e) {
         // this.warnCanvasAvailability();
         return null;
       }

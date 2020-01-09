@@ -22,15 +22,15 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     }
   }
 
-  get parentName() {
+  get parentName(): string | null {
     return "service";
   }
 
-  get childrenClass() {
+  get childrenClass(): any {
     return BleRemoteDescriptor;
   }
 
-  get childrenName() {
+  get childrenName(): string | null {
     return "descriptors";
   }
 
@@ -48,13 +48,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   // }
 
   public getDescriptor(uuid: any) {
-    const obj: any = this.getChild(uuid);
-    if (obj) {
-      return obj;
-    }
-    const newCharacteristic: any = new BleRemoteDescriptor(this.Obniz, this, uuid);
-    this.addChild(newCharacteristic);
-    return newCharacteristic;
+    return this.getChild(uuid);
   }
 
   public async registerNotify(callback: any) {
@@ -75,7 +69,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   public registerNotifyWait(callback: any) {
-    return new Promise((resolve) => {
+    return new Promise((resolve: any) => {
       this.emitter.once("onregisternotify", () => {
         resolve();
       });
@@ -99,7 +93,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   }
 
   public unregisterNotifyWait() {
-    return new Promise((resolve) => {
+    return new Promise((resolve: any) => {
       this.emitter.once("onunregisternotify", () => {
         resolve();
       });
@@ -200,10 +194,10 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
     this.ondiscoverdescriptorfinished(descriptors);
   }
 
-  public ondiscoverdescriptor() {
+  public ondiscoverdescriptor(descriptors: any) {
   }
 
-  public ondiscoverdescriptorfinished() {
+  public ondiscoverdescriptorfinished(descriptors: any[]) {
   }
 
   public onregisternotify() {
@@ -212,7 +206,7 @@ class BleRemoteCharacteristic extends BleRemoteAttributeAbstract {
   public onunregisternotify() {
   }
 
-  public onnotify() {
+  public onnotify(data: any) {
   }
 
   public notifyFromServer(notifyName: any, params: any) {

@@ -106,7 +106,7 @@ class SNx4HC595 {
     if (typeof num === "number" && this._io_num !== num) {
       this._io_num = num;
       this.io = [];
-      for (let i: any = 0; i < num; i++) {
+      for (let i = 0; i < num; i++) {
         this.io.push(new SNx4HC595_IO(this, i));
       }
       this.flush();
@@ -155,7 +155,7 @@ class SNx4HC595 {
   public flush() {
     /* this code will works with 5v. But you should pay more attention when 3v. Timing is more tight. see chip reference */
     this.io_rclk.output(false);
-    for (let i: any = this.io.length - 1; i >= 0; i--) {
+    for (let i = this.io.length - 1; i >= 0; i--) {
       this.io_ser.output(this.io[i].value);
       this.io_srclk.output(true);
       this.io_srclk.output(false);

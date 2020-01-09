@@ -28,11 +28,11 @@ class Potentiometer {
 
     const self: any = this;
 
-    obniz.getAD(this.params.pin0).start((value) => {
+    obniz.getAD(this.params.pin0).start((value: any) => {
       self.vcc_voltage = value;
     });
 
-    this.ad.start((value) => {
+    this.ad.start((value: any) => {
       self.position = value / self.vcc_voltage;
       if (self.onchange) {
         self.onchange(self.position);

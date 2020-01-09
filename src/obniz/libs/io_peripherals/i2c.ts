@@ -173,7 +173,7 @@ class PeripheralI2C {
       throw new Error("i2c: data length should be under 1024 bytes");
     }
     const self: any = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       self.addObserver(resolve);
       const obj: any = {};
       obj["i2c" + self.id] = {

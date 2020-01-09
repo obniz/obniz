@@ -21,7 +21,7 @@ class ObnizBLEHci {
     }
   }
 
-  public onread() {
+  public onread(data: any) {
   }
 }
 

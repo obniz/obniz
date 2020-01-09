@@ -82,7 +82,7 @@ class SharpMemoryTFT {
 
   public _reverseBits(data: any) {
     let revData: any = 0;
-    for (let i: any = 0; i < 8; i++) {
+    for (let i = 0; i < 8; i++) {
       revData += data & 0x01;
       data >>= 1;
       if (i < 7) {
@@ -302,7 +302,7 @@ class SharpMemoryTFT {
     const imageData: any = ctx.getImageData(0, 0, this.width, this.height);
     const data: any = imageData.data;
 
-    for (let i: any = 0; i < data.length; i += 4) {
+    for (let i = 0; i < data.length; i += 4) {
       const brightness: any = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
       const index: any = Math.floor(i / 4);
       const line: any = Math.floor(index / this.width);

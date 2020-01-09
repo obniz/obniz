@@ -42,7 +42,7 @@ class Grove_EarHeartRate {
 
     this.obniz.logicAnalyzer.onmeasured = (array) => {
       const edges: any = [];
-      for (let i: any = 0; i < array.length - 1; i++) {
+      for (let i = 0; i < array.length - 1; i++) {
         if (array[i] === 0 && array[i + 1] === 1) {
           edges.push(i);
         }
@@ -58,8 +58,8 @@ class Grove_EarHeartRate {
   }
 
   public getWait() {
-    return new Promise((resolve) => {
-      this.start((rate) => {
+    return new Promise((resolve: any) => {
+      this.start((rate: any) => {
         resolve(rate);
       });
     });

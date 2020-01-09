@@ -1,8 +1,17 @@
-const WSCommand: any = require("./WSCommand.js").default;
 import semver = require("semver");
 import ObnizUtil from "../utils/util";
+import WSCommand from "./WSCommand";
+import CommandIO from "./WSCommandIO";
+import CommandPWM from "./WSCommandPWM";
 
 export default class WSCommandDirective extends WSCommand {
+
+  protected module: number;
+  protected _CommandRegistrate: number;
+  protected _CommandPause: number;
+  protected _CommandResume: number;
+  protected _CommandNotify: number;
+
   constructor() {
     super();
     this.module = 1;
@@ -11,9 +20,6 @@ export default class WSCommandDirective extends WSCommand {
     this._CommandPause = 1;
     this._CommandResume = 2;
     this._CommandNotify = 3;
-
-    import CommandIO from "./WSCommandIO";
-    import CommandPWM from "./WSCommandPWM";
 
     this.availableCommands = [new CommandIO(), new CommandPWM()];
   }

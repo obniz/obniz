@@ -107,7 +107,7 @@ class RN42 {
         "auto-connect-any",
         "pairing",
       ];
-      for (let i: any = 0; i < modes.length; i++) {
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -144,7 +144,7 @@ class RN42 {
         "APL",
         "HID",
       ];
-      for (let i: any = 0; i < modes.length; i++) {
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;
@@ -168,7 +168,7 @@ class RN42 {
       val = mode;
     } else if (typeof mode === "string") {
       const modes: any = ["open", "ssp-keyboard", "just-work", "pincode"];
-      for (let i: any = 0; i < modes.length; i++) {
+      for (let i = 0; i < modes.length; i++) {
         if (modes[i] === mode) {
           val = i;
           break;

@@ -74,10 +74,10 @@ class BleSecurity {
       authTypes = [authTypes];
     }
     const sendTypes: any = authTypes
-      .map((elm) => {
+      .map ((elm: any) => {
         return elm.toLowerCase();
       })
-      .filter((elm) => {
+      .filter((elm: any ) => {
         return ["mitm", "secure_connection", "bonding"].includes(elm);
       });
 
@@ -115,10 +115,10 @@ class BleSecurity {
       keyTypes = [keyTypes];
     }
     const sendTypes: any = keyTypes
-      .map((elm) => {
+      .map ((elm: any) => {
         return elm.toLowerCase();
       })
-      .filter((elm) => {
+      .filter((elm: any ) => {
         return ["ltk", "csrk", "irk"].includes(elm);
       });
 
@@ -159,7 +159,7 @@ class BleSecurity {
     });
   }
 
-  public onerror() {
+  public onerror(params: any) {
   } // dummy
 
   public notifyFromServer(notifyName: any, params: any) {

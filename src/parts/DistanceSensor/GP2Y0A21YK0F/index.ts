@@ -37,7 +37,7 @@ class GP2Y0A21YK0F {
   }
 
   public start(callback: any) {
-    this.ad_signal.start((val) => {
+    this.ad_signal.start((val: any) => {
       const distance: any = this._volt2distance(val);
       if (typeof callback === "function") {
         callback(distance);

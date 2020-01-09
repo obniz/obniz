@@ -190,12 +190,12 @@ class BleRemotePeripheral {
   }
 
   public connectWait() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       // if (this.connected) {
       //   resolve();
       //   return;
       // }
-      this.emitter.once("statusupdate", (params) => {
+      this.emitter.once("statusupdate", (params: any ) => {
         if (params.status === "connected") {
           resolve(true); // for compatibility
         } else {
@@ -217,12 +217,12 @@ class BleRemotePeripheral {
   }
 
   public disconnectWait() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       // if (!this.connected) {
       //   resolve();
       //   return;
       // }
-      this.emitter.once("statusupdate", (params) => {
+      this.emitter.once("statusupdate", (params: any ) => {
         if (params.status === "disconnected") {
           resolve(true); // for compatibility
         } else {
@@ -282,9 +282,9 @@ class BleRemotePeripheral {
   }
 
   public discoverAllServicesWait() {
-    return new Promise((resolve) => {
+    return new Promise ((resolve: any ) => {
       this.emitter.once("discoverfinished", () => {
-        const children: any = this._services.filter((elm) => {
+        const children: any = this._services.filter ((elm: any ) => {
           return elm.discoverdOnRemote;
         });
         resolve(children);

@@ -723,7 +723,7 @@ class ArduCAMMini {
   }
 
   public i2c_regs_write(regs: any) {
-    for (let i: any = 0; i < regs.length; i++) {
+    for (let i = 0; i < regs.length; i++) {
       this.i2c.write(this.sensor_addr, regs[i]);
     }
   }

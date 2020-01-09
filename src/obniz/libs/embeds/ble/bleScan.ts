@@ -35,7 +35,7 @@ class BleScan {
       this.scanTarget.uuids &&
       Array.isArray(this.scanTarget.uuids)
     ) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map((elm) => {
+      this.scanTarget.uuids = this.scanTarget.uuids.map ((elm: any ) => {
         return BleHelper.uuidFilter(elm);
       });
     }
@@ -46,8 +46,8 @@ class BleScan {
   public startOneWait(target: any, settings: any) {
     let state: any = 0;
 
-    return new Promise((resolve) => {
-      this.emitter.once("onfind", (param) => {
+    return new Promise ((resolve: any ) => {
+      this.emitter.once("onfind", (param: any ) => {
         if (state === 0) {
           state = 1;
           this.end();
@@ -67,7 +67,7 @@ class BleScan {
   }
 
   public startAllWait(target: any, settings: any) {
-    return new Promise((resolve) => {
+    return new Promise ((resolve: any ) => {
       this.emitter.once("onfinish", () => {
         resolve(this.scanedPeripherals);
       });
@@ -92,7 +92,7 @@ class BleScan {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
-      const uuids: any = peripheral.advertisementServiceUuids().map((e) => {
+      const uuids: any = peripheral.advertisementServiceUuids().map ((e: any ) => {
         return BleHelper.uuidFilter(e);
       });
       for (const uuid of this.scanTarget.uuids) {
@@ -104,9 +104,9 @@ class BleScan {
     return true;
   }
 
-  public onfinish() {
+  public onfinish(scanedPeripherals: any) {
   } // dummy
-  public onfind() {
+  public onfind(params: any) {
   } // dummy
 
   public notifyFromServer(notifyName: any, params: any) {

@@ -15,7 +15,7 @@ class BleDescriptor extends BleAttributeAbstract {
     }
   }
 
-  get parentName() {
+  get parentName(): string | null {
     return "characteristic";
   }
 
@@ -26,7 +26,7 @@ class BleDescriptor extends BleAttributeAbstract {
   }
 
   public removePermission(param: any) {
-    this.permissions = this.permissions.filter((elm) => {
+    this.permissions = this.permissions.filter ((elm: any ) => {
       return elm !== param;
     });
   }

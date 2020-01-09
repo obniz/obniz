@@ -39,7 +39,7 @@ class ObnizUtil {
       if (StringDecoder) {
         string = new StringDecoder("utf8").write(Buffer.from(data));
       }
-    } catch (e: any) {
+    } catch (e) {
       // this.obniz.error(e);
     }
     return string;
@@ -64,7 +64,7 @@ class ObnizUtil {
       try {
         const {createCanvas} = require("canvas");
         return createCanvas(this.width, this.height);
-      } catch (e: any) {
+      } catch (e) {
         throw new Error(
           "obniz.js require node-canvas to draw rich contents. see more detail on docs",
         );

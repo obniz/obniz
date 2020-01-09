@@ -67,7 +67,7 @@ class MatrixLED_MAX7219 {
   }
 
   public passingCommands() {
-    for (let i: any = 8; i < this.width; i += 8) {
+    for (let i = 8; i < this.width; i += 8) {
       // this needed for number of unit
       this.write([0x00, 0x00]);
     }
@@ -80,9 +80,9 @@ class MatrixLED_MAX7219 {
 
   public preparevram(width: any, height: any) {
     this.vram = [];
-    for (let i: any = 0; i < height; i++) {
+    for (let i = 0; i < height; i++) {
       const dots: any = new Array(width / 8);
-      for (let ii: any = 0; ii < dots.length; ii++) {
+      for (let ii = 0; ii < dots.length; ii++) {
         dots[ii] = 0x00;
       }
       this.vram.push(dots);
@@ -96,11 +96,11 @@ class MatrixLED_MAX7219 {
   }
 
   public writeVram() {
-    for (let line_num: any = 0; line_num < this.height; line_num++) {
+    for (let line_num = 0; line_num < this.height; line_num++) {
       const addr: any = line_num + 1;
       const line: any = this.vram[line_num];
       const data: any = [];
-      for (let col: any = 0; col < line.length; col++) {
+      for (let col = 0; col < line.length; col++) {
         data.push(addr);
         data.push(line[col]);
       }
@@ -109,9 +109,9 @@ class MatrixLED_MAX7219 {
   }
 
   public clear() {
-    for (let line_num: any = 0; line_num < this.height; line_num++) {
+    for (let line_num = 0; line_num < this.height; line_num++) {
       const line: any = this.vram[line_num];
-      for (let col: any = 0; col < line.length; col++) {
+      for (let col = 0; col < line.length; col++) {
         this.vram[line_num][col] = 0x00;
       }
       this.writeVram();
@@ -122,12 +122,12 @@ class MatrixLED_MAX7219 {
     const imageData: any = ctx.getImageData(0, 0, this.width, this.height);
     const data: any = imageData.data;
 
-    for (let i: any = 0; i < data.length; i += 4) {
+    for (let i = 0; i < data.length; i += 4) {
       const brightness: any = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      const index: any = parseInt(i / 4);
-      const line: any = parseInt(index / this.width);
-      const col: any = parseInt((index - line * this.width) / 8);
-      const bits: any = parseInt(index - line * this.width) % 8;
+      const index: any = Math.floor(i / 4);
+      const line: any = Math.floor(index / this.width);
+      const col: any = Math.floor((index - line * this.width) / 8);
+      const bits: any = Math.floor(index - line * this.width) % 8;
       if (bits === 0) {
         this.vram[line][col] = 0x00;
       }

@@ -46,41 +46,35 @@ class BleAttributeAbstract {
       const childName: any = childrenName.slice(0, -1);
 
       let funcName: any = "add" + childName;
-      this[funcName] = this.addChild;
+      (this as any)[funcName] = this.addChild;
 
       funcName = "get" + childName;
-      this[funcName] = this.getChild;
+      (this as any)[funcName] = this.getChild;
     }
 
     const parentName: any = this.parentName;
     if (parentName) {
       Object.defineProperty(this, parentName, {
-        public get() {
-        return this.parent;
-      }
-    ,
-    public
-      set(newValue
-    :
-      any,
-    ) {
-        this.parent = newValue;
-      }
-    ,
-    })
-      ;
+        get() {
+          return this.parent;
+        },
+        set(newValue: any) {
+          this.parent = newValue;
+        }
+        ,
+      });
     }
   }
 
-  get childrenClass() {
+  get childrenClass(): any {
     return Object;
   }
 
-  get childrenName() {
+  get childrenName(): any {
     return null;
   }
 
-  get parentName() {
+  get parentName(): any {
     return null;
   }
 
@@ -98,7 +92,7 @@ class BleAttributeAbstract {
   public getChild(uuid: any) {
     uuid = BleHelper.uuidFilter(uuid);
     return this.children
-      .filter((element) => {
+      .filter((element: any) => {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
       .shift();
@@ -126,7 +120,7 @@ class BleAttributeAbstract {
   public read() {
   }
 
-  public write() {
+  public write(val: any, needResponse?: any) {
   }
 
   public writeNumber(val: any, needResponse?: any) {
@@ -138,8 +132,8 @@ class BleAttributeAbstract {
   }
 
   public readWait() {
-    return new Promise((resolve, reject) => {
-      this.emitter.once("onread", (params) => {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onread", (params: any) => {
         if (params.result === "success") {
           resolve(params.data);
         } else {
@@ -151,8 +145,8 @@ class BleAttributeAbstract {
   }
 
   public writeWait(data: any, needResponse: any) {
-    return new Promise((resolve, reject) => {
-      this.emitter.once("onwrite", (params) => {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onwrite", (params: any) => {
         if (params.result === "success") {
           resolve(true);
         } else {
@@ -164,8 +158,8 @@ class BleAttributeAbstract {
   }
 
   public writeTextWait(data: any) {
-    return new Promise((resolve, reject) => {
-      this.emitter.once("onwrite", (params) => {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onwrite", (params: any) => {
         if (params.result === "success") {
           resolve(true);
         } else {
@@ -177,8 +171,8 @@ class BleAttributeAbstract {
   }
 
   public writeNumberWait(data: any) {
-    return new Promise((resolve, reject) => {
-      this.emitter.once("onwrite", (params) => {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("onwrite", (params: any) => {
         if (params.result === "success") {
           resolve(true);
         } else {
@@ -190,7 +184,7 @@ class BleAttributeAbstract {
   }
 
   public readFromRemoteWait() {
-    return new Promise((resolve) => {
+    return new Promise ((resolve: any ) => {
       this.emitter.once("onreadfromremote", () => {
         resolve();
       });
@@ -198,8 +192,8 @@ class BleAttributeAbstract {
   }
 
   public writeFromRemoteWait() {
-    return new Promise((resolve) => {
-      this.emitter.once("onreadfromremote", (params) => {
+    return new Promise ((resolve: any ) => {
+      this.emitter.once("onreadfromremote", (params: any) => {
         resolve(params.data);
       });
     });
@@ -208,16 +202,16 @@ class BleAttributeAbstract {
   /**
    * CALLBACKS
    */
-  public onwrite() {
+  public onwrite(result: any) {
   }
 
-  public onread() {
+  public onread(data: any) {
   }
 
-  public onwritefromremote() {
+  public onwritefromremote(address: any, data: any) {
   }
 
-  public onreadfromremote() {
+  public onreadfromremote(address: any) {
   }
 
   public onerror(err: any) {

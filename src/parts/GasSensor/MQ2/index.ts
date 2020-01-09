@@ -40,7 +40,7 @@ class MQ2 {
 
     if (this.obniz.isValidIO(this.params.ao)) {
       this.ad = obniz.getAD(this.params.ao);
-      this.ad.start((voltage) => {
+      this.ad.start((voltage: any) => {
         // this.level = this.calc(voltage);
         if (typeof this.onchangeanalog === "function") {
           this.onchangeanalog(voltage);
@@ -57,7 +57,7 @@ class MQ2 {
 
     if (this.obniz.isValidIO(this.params.do)) {
       this.do = obniz.getIO(this.params.do);
-      this.do.input((value) => {
+      this.do.input((value: any) => {
         if (typeof this.onchangedigital === "function") {
           this.onchangedigital(value);
         }
@@ -76,7 +76,7 @@ class MQ2 {
     } else {
       seconds = 2 * 60 * 1000;
     }
-    return new Promise((resolve) => {
+    return new Promise((resolve: any) => {
       setTimeout(resolve, seconds);
     });
   }

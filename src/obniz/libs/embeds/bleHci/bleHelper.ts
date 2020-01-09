@@ -5,14 +5,14 @@ const BleHelper: any = {
 
   toCamelCase(str) {
     str = str.charAt(0).toLowerCase() + str.slice(1);
-    return str.replace(/[-_](.)/g, (match, group1) => {
+    return str.replace(/[-_](.)/g, (match, group1: any ) => {
       return group1.toUpperCase();
     });
   },
 
   toSnakeCase(str) {
     const camel: any = this.toCamelCase(str);
-    return camel.replace(/[A-Z]/g, (s) => {
+    return camel.replace(/[A-Z]/g, (s: any ) => {
       return "_" + s.charAt(0).toLowerCase();
     });
   },

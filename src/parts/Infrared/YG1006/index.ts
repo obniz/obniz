@@ -22,7 +22,7 @@ class YG1006 {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.signal = this.obniz.getAD(this.params.signal);
-    this.signal.start((value) => {
+    this.signal.start((value: any) => {
       if (this.onchange) {
         this.onchange(value);
       }

@@ -1,4 +1,4 @@
-const WSCommand: any = require("./WSCommand.js").default;
+import WSCommand from "./WSCommand";
 
 class WSCommandAD extends WSCommand {
   public module: any;

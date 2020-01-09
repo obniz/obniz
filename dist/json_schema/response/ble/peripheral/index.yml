@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/ble/peripheral"
+basePath: "ble"
+
+"anyOf":
+  - {$ref: "/response/ble/peripheral/status"}
+  - {$ref: "/response/ble/peripheral/characteristic_read"}
+  - {$ref: "/response/ble/peripheral/characteristic_write"}
+  - {$ref: "/response/ble/peripheral/characteristic_notify_read"}
+  - {$ref: "/response/ble/peripheral/characteristic_notify_write"}
+  - {$ref: "/response/ble/peripheral/descriptor_read"}
+  - {$ref: "/response/ble/peripheral/descriptor_write"}
+  - {$ref: "/response/ble/peripheral/descriptor_notify_read"}
+  - {$ref: "/response/ble/peripheral/descriptor_notify_write"}

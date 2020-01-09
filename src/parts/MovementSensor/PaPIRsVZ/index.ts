@@ -25,7 +25,7 @@ class PaPIRsVZ {
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
-    this.io_signal.input((value) => {
+    this.io_signal.input((value: any) => {
       if (this.onchange) {
         this.onchange(value);
       }

@@ -83,14 +83,14 @@ class StepperMotor {
       currentPhase = instruction_length - currentPhase * -1;
     }
     if (step_count > 0) {
-      for (let i: any = 0; i < instructions.length; i++) {
+      for (let i = 0; i < instructions.length; i++) {
         if (++currentPhase >= instruction_length) {
           currentPhase = 0;
         }
         array.push(instructions[currentPhase]);
       }
     } else {
-      for (let i: any = 0; i < instructions.length; i++) {
+      for (let i = 0; i < instructions.length; i++) {
         if (--currentPhase < 0) {
           currentPhase = instruction_length - 1;
         }
@@ -105,12 +105,12 @@ class StepperMotor {
     }
     const state: any = (index) => {
       const instruction: any = array[index];
-      for (let i: any = 0; i < this.ios.length; i++) {
+      for (let i = 0; i < this.ios.length; i++) {
         this.ios[i].output(instruction[i]);
       }
     };
     const states: any = [];
-    for (let i: any = 0; i < instruction_length; i++) {
+    for (let i = 0; i < instruction_length; i++) {
       states.push({
         duration: msec,
         state,
@@ -135,14 +135,14 @@ class StepperMotor {
       currentPhase = instruction_length - currentPhase * -1;
     }
 
-    for (let i: any = 0; i < this.ios.length; i++) {
+    for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(instructions[currentPhase][i]);
     }
     await this.obniz.pingWait();
   }
 
   public async freeWait() {
-    for (let i: any = 0; i < this.ios.length; i++) {
+    for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(true);
     }
     await this.obniz.pingWait();
@@ -167,7 +167,7 @@ class StepperMotor {
 
   public currentAngle() {
     // => degree
-    let angle: any = (parseInt(this.currentRotation() * 1000) % 360000) / 1000;
+    let angle: any = (Math.flMoor(this.currentRotation() * 1000) % 360000) / 1000;
     if (angle < 0) {
       angle = 360 - angle;
     }

@@ -317,12 +317,12 @@ class MFRC522 {
     const dataArray: any = [];
     if (addr instanceof Array) {
       // Multiple addresses(If addr is Array)
-      for (let i: any = 0; i < addr.length; i++) {
+      for (let i = 0; i < addr.length; i++) {
         dataArray.push(((addr[i] << 1) & 0x7e) | 0x80);
       }
     } else {
       // Single address & read n times
-      for (let i: any = 0; i < n; i++) {
+      for (let i = 0; i < n; i++) {
         dataArray.push(((addr << 1) & 0x7e) | 0x80);
       }
     }
@@ -610,7 +610,7 @@ class MFRC522 {
   public async getSectorDataWait(address: any) {
     const response: any = [];
     const blockData: any = [];
-    for (let i: any = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       let request: any = [this.PICC_READ, address * 4 + i];
       request = request.concat(await this.calculateCRCWait(request));
       response[i] = await this.toCard(this.PCD_Transceive, request);

@@ -147,7 +147,7 @@ class PCA9685 {
 
   public _preparePWM(num: any) {
 
-    for (let i: any = 0; i < num; i++) {
+    for (let i = 0; i < num; i++) {
       this.pwms.push(new PCA9685_PWM(this, i));
     }
   }
@@ -178,7 +178,7 @@ class PCA9685 {
     prescaleval /= frequency * 0.9;
     prescaleval -= 1.0;
 
-    const prescale: any = parseInt(Math.floor(prescaleval + 0.5));
+    const prescale: any = Math.floor(Math.floor(prescaleval + 0.5));
     const mode1: any = this._regs[this._commands.MODE1];
 
     this.i2c.write(this.address, [
@@ -192,7 +192,7 @@ class PCA9685 {
 
     // save
     this._freq = frequency;
-    for (let i: any = 0; i < this.pwms.length; i++) {
+    for (let i = 0; i < this.pwms.length; i++) {
       this.pwms[i].state.freq = this._freq;
     }
   }

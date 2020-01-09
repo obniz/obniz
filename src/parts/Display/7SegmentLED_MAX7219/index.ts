@@ -55,14 +55,14 @@ class _7SegmentLED_MAX7219 {
   }
 
   public clear(disp: any) {
-    for (let i: any = 0; i < this.digits; i++) {
+    for (let i = 0; i < this.digits; i++) {
       this.writeOneDisp(disp, [i + 1, 0x0f]);
     }
   }
 
   public clearAll() {
-    for (let i: any = 0; i < this.numOfDisp; i++) {
-      for (let j: any = 0; j < this.digits; j++) {
+    for (let i = 0; i < this.numOfDisp; i++) {
+      for (let j = 0; j < this.digits; j++) {
         this.writeAllDisp([j + 1, 0x0f]);
       }
     }
@@ -81,18 +81,18 @@ class _7SegmentLED_MAX7219 {
   }
 
   public writeAllDisp(data: any) {
-    for (let i: any = 0; i < this.numOfDisp; i++) {
+    for (let i = 0; i < this.numOfDisp; i++) {
       this.writeOneDisp(i, data);
     }
   }
 
   public writeOneDisp(disp: any, data: any) {
     this.cs.output(false);
-    for (let i: any = 0; i < disp; i++) {
+    for (let i = 0; i < disp; i++) {
       this.spi.write([0x00, 0x00]);
     }
     this.spi.write(data);
-    for (let i: any = 0; i < this.numOfDisp - (disp + 1); i++) {
+    for (let i = 0; i < this.numOfDisp - (disp + 1); i++) {
       this.spi.write([0x00, 0x00]);
     }
     this.cs.output(true);

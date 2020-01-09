@@ -16,7 +16,7 @@ class WS2811 {
     const zero: any = 0x8;
     const one: any = 0xe;
     const ret: any = [];
-    for (let i: any = 0; i < 8; i += 2) {
+    for (let i = 0; i < 8; i += 2) {
       let byte: any = 0;
       if (val & (0x80 >> i)) {
         byte = one << 4;
@@ -111,7 +111,7 @@ class WS2811 {
 
   public rgbs(array: any) {
     let bytes: any = [];
-    for (let i: any = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray: any = array[i];
       bytes = bytes.concat(
         WS2811._generateColor(oneArray[0], oneArray[1], oneArray[2]),
@@ -122,7 +122,7 @@ class WS2811 {
 
   public hsvs(array: any) {
     let bytes: any = [];
-    for (let i: any = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray: any = array[i];
       bytes = bytes.concat(
         WS2811._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]),

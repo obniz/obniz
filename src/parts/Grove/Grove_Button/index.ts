@@ -40,7 +40,7 @@ class Grove_Button {
     this.io_signal.pull("5v");
 
     const self: any = this;
-    this.io_signal.input((value) => {
+    this.io_signal.input((value: any) => {
       self.isPressed = value;
       if (self.onchange) {
         self.onchange(value);

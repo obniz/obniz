@@ -41,7 +41,7 @@ class Button {
     }
 
     const self: any = this;
-    this.io_signal.input((value) => {
+    this.io_signal.input((value: any) => {
       self.isPressed = value === false;
       if (self.onchange) {
         self.onchange(value === false);

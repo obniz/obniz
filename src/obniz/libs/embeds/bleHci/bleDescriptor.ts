@@ -12,7 +12,7 @@ class BleDescriptor extends BleLocalAttributeAbstract {
     }
   }
 
-  get parentName() {
+  get parentName(): string | null {
     return "characteristic";
   }
 
@@ -23,7 +23,7 @@ class BleDescriptor extends BleLocalAttributeAbstract {
   }
 
   public removePermission(param: any) {
-    this.permissions = this.permissions.filter((elm) => {
+    this.permissions = this.permissions.filter ((elm: any ) => {
       return elm !== param;
     });
   }

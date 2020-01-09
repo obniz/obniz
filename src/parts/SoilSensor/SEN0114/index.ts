@@ -24,7 +24,7 @@ class SEN0114 {
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.ad = obniz.getAD(this.params.output);
 
-    this.ad.start((value) => {
+    this.ad.start((value: any) => {
       this.value = value;
       if (this.onchange) {
         this.onchange(this.value);

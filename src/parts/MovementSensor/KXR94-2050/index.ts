@@ -50,7 +50,7 @@ class KXR94_2050 {
 
     this.changeVccVoltage(5);
 
-    this.ad_x.start((value) => {
+    this.ad_x.start((value: any) => {
       this._x_val = value;
       if (this.onChangeX) {
         this.onChangeX(this.voltage2gravity(value));
@@ -60,7 +60,7 @@ class KXR94_2050 {
       }
     });
 
-    this.ad_y.start((value) => {
+    this.ad_y.start((value: any) => {
       this._y_val = value;
       if (this.onChangeY) {
         this.onChangeY(this.voltage2gravity(value));
@@ -70,7 +70,7 @@ class KXR94_2050 {
       }
     });
 
-    this.ad_z.start((value) => {
+    this.ad_z.start((value: any) => {
       this._z_val = value;
       if (this.onChangeZ) {
         this.onChangeZ(this.voltage2gravity(value));
@@ -81,7 +81,7 @@ class KXR94_2050 {
     });
 
     if (this.obniz.isValidIO(this.params.vcc)) {
-      this.obniz.getAD(this.params.vcc).start((value) => {
+      this.obniz.getAD(this.params.vcc).start((value: any) => {
         this.changeVccVoltage(value);
       });
     }

@@ -39,21 +39,21 @@ class KXSC7_2050 {
     const offsetVoltage: any = horizontalZ - sensitivity; // Set offset voltage (Output voltage at 0g, unit:V)
 
     const self: any = this;
-    this.ad_x.start((value) => {
+    this.ad_x.start((value: any) => {
       self.gravity = (value - offsetVoltage) / sensitivity;
       if (self.onchangex) {
         self.onchangex(self.gravity);
       }
     });
 
-    this.ad_y.start((value) => {
+    this.ad_y.start((value: any) => {
       self.gravity = (value - offsetVoltage) / sensitivity;
       if (self.onchangey) {
         self.onchangey(self.gravity);
       }
     });
 
-    this.ad_z.start((value) => {
+    this.ad_z.start((value: any) => {
       self.gravity = (value - offsetVoltage) / sensitivity;
       if (self.onchangez) {
         self.onchangez(self.gravity);

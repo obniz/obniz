@@ -17,15 +17,15 @@ class BleService extends BleLocalAttributeAbstract {
     this.getCharacteristic = this.getChild;
   }
 
-  get parentName() {
+  get parentName(): string | null {
     return "peripheral";
   }
 
-  get childrenName() {
+  get childrenName(): string | null {
     return "characteristics";
   }
 
-  get childrenClass() {
+  get childrenClass(): any {
     return BleCharacteristic;
   }
 

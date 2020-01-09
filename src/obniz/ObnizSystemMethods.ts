@@ -117,7 +117,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
 
     this.send(obj, {local_connect: forceGlobalNetwork ? false : true});
 
-    return new Promise((resolve) => {
+    return new Promise ((resolve: any ) => {
       const callback: any = (systemObj: any) => {
         for (let i = 0; i < buf.length; i++) {
           if (buf[i] !== systemObj.pong.key[i]) {

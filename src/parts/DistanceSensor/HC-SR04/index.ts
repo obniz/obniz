@@ -50,7 +50,7 @@ class HCSR04 {
       pulse_width: 0.011,
       measure_edges: 3,
       timeout: (10 / 340) * 1000,
-      callback: async (edges) => {
+      callback: async (edges: any) => {
         if (this.reset_alltime) {
           this.vccIO.output(false);
           this.obniz.wait(100);
@@ -58,7 +58,7 @@ class HCSR04 {
           this.obniz.wait(100);
         }
         let distance: any;
-        for (let i: any = 0; i < edges.length - 1; i++) {
+        for (let i = 0; i < edges.length - 1; i++) {
           // HCSR04's output of io_echo is initially high when trigger is finshed
           if (edges[i].edge === true) {
             const time: any = (edges[i + 1].timing - edges[i].timing) / 1000; // (1/4000 * 8) + is needed??
@@ -77,8 +77,8 @@ class HCSR04 {
   }
 
   public async measureWait() {
-    return new Promise((resolve) => {
-      this.measure((distance) => {
+    return new Promise((resolve: any) => {
+      this.measure((distance: any) => {
         resolve(distance);
       });
     });

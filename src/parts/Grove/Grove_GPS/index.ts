@@ -167,7 +167,7 @@ class Grove_GPS {
         this.gpsInfo.sentences.add(this.gpsInfo._sentenceType.GPGGA);
       }
       if (editedData.GPGSV) {
-        for (let n: any = 0; n < editedData.GPGSV.length; n++) {
+        for (let n = 0; n < editedData.GPGSV.length; n++) {
           if (editedData.GPGSV[n]) {
             const gsv: any = editedData.GPGSV[n].map((v: any) => parseFloat(v));
             const pack_count: any = gsv[1]; const pack_index: any = gsv[2]; const sat_count: any = gsv[3];
@@ -182,7 +182,7 @@ class Grove_GPS {
                 ? sat_count - nsat
                 : NMEA_SATINSENTENCE;
 
-            for (let isat: any = 0; isat < nsat; ++isat) {
+            for (let isat = 0; isat < nsat; ++isat) {
               const isi: any = (pack_index - 1) * NMEA_SATINSENTENCE + isat;
               if (this.gpsInfo.satelliteInfo.satellites.length <= isi) {
                 this.gpsInfo.satelliteInfo.satellites.push({});
@@ -207,8 +207,8 @@ class Grove_GPS {
         this.gpsInfo.pdop = parseFloat(gsa[15]); // PDOP: Position Dilution of Precision
         this.gpsInfo.hdop = parseFloat(gsa[16]); // HDOP: Horizontal Dilution of Precision
         this.gpsInfo.vdop = parseFloat(gsa[17]); // VDOP: Vertical Dilution of Position
-        for (let i: any = 0; i < NMEA_MAXSAT; ++i) {
-          for (let j: any = 0; j < this.gpsInfo.satelliteInfo.inView; ++j) {
+        for (let i = 0; i < NMEA_MAXSAT; ++i) {
+          for (let j = 0; j < this.gpsInfo.satelliteInfo.inView; ++j) {
             if (
               this.gpsInfo.satelliteInfo.satellites[j] &&
               gsa[i + 3] === this.gpsInfo.satelliteInfo.satellites[j].id

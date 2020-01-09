@@ -29,9 +29,9 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   }
 
   public discoverChildrenWait() {
-    return new Promise((resolve) => {
+    return new Promise((resolve: any) => {
       this.emitter.once("discoverfinished", () => {
-        const children: any = this.children.filter((elm) => {
+        const children: any = this.children.filter((elm: any) => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
@@ -43,10 +43,10 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
   /**
    * CALLBACKS
    */
-  public ondiscover() {
+  public ondiscover(child: any) {
   }
 
-  public ondiscoverfinished() {
+  public ondiscoverfinished(children: any) {
   }
 
   public notifyFromServer(notifyName: any, params: any) {
@@ -64,7 +64,7 @@ class BleRemoteAttributeAbstract extends BleAttributeAbstract {
         break;
       }
       case "discoverfinished": {
-        const children: any = this.children.filter((elm) => {
+        const children: any = this.children.filter((elm: any) => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverfinished(children);

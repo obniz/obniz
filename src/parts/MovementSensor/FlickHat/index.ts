@@ -144,7 +144,7 @@ class FlickHat {
 
   public _dataArray2string(data: any) {
     let result: any = "";
-    for (const n: any of data) {
+    for (const n of data) {
       result += String.fromCharCode(n);
     }
     return result;
@@ -242,7 +242,7 @@ class FlickHat {
                 ["wave", "y", ""],
                 ["hold", "", ""],
               ];
-              for (const index: any in gestures) {
+              for (const index in gestures) {
                 if (
                   index === gesture[0] &&
                   typeof this.ongestureall === "function"
@@ -306,7 +306,7 @@ class FlickHat {
               this.lastTouch = touchAction;
 
               let comp: any = 1;
-              for (const index: any in actions) {
+              for (const index in actions) {
                 const value: any = actions[index];
                 if (touchAction & comp) {
                   // console.log(`touchAction:${touchAction.toString(16)}, comp:${comp.toString(16)}, index:${index}, group:${group}`);
@@ -417,7 +417,7 @@ class FlickHat {
             console.error(
               `unknown message: 0x${msgID.toString(16)}, data:${data
                 .slice(0, size)
-                .map((v) => "0x" + v.toString(16))}`,
+                .map((v: any) => "0x" + v.toString(16))}`,
             );
         }
       }

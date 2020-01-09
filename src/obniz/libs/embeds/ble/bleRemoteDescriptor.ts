@@ -9,7 +9,7 @@ class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
     super(params);
   }
 
-  get parentName() {
+  get parentName(): string | null {
     return "characteristic";
   }
 

@@ -18,7 +18,7 @@ class WS2812B {
     const zero: any = 0x8;
     const one: any = 0xe;
     const ret: any = [];
-    for (let i: any = 0; i < 8; i += 2) {
+    for (let i = 0; i < 8; i += 2) {
       let byte: any = 0;
       if (val & (0x80 >> i)) {
         byte = one << 4;
@@ -94,7 +94,7 @@ class WS2812B {
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
     this.params.mode = "master";
-    this.params.frequency = parseInt(3.33 * 1000 * 1000);
+    this.params.frequency = Math.floor(3.33 * 1000 * 1000);
     this.params.mosi = this.params.din;
     this.params.drive = "5v"; // It over spec for frequency. But VIN-HI require 0.7VCC<=.
     this.spi = this.obniz.getSpiWithConfig(this.params);
@@ -110,7 +110,7 @@ class WS2812B {
 
   public rgbs(array: any) {
     let bytes: any = [];
-    for (let i: any = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray: any = array[i];
       bytes = bytes.concat(
         WS2812B._generateColor(oneArray[0], oneArray[1], oneArray[2]),
@@ -121,7 +121,7 @@ class WS2812B {
 
   public hsvs(array: any) {
     let bytes: any = [];
-    for (let i: any = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const oneArray: any = array[i];
       bytes = bytes.concat(
         WS2812B._generateHsvColor(oneArray[0], oneArray[1], oneArray[2]),

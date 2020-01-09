@@ -117,7 +117,7 @@ class Hci extends events.EventEmitter {
     this.on("stateChange", this.onStateChange.bind(this));
 
     this._socket = {
-      write: (data) => {
+      write: (data: any ) => {
         const arr: any = Array.from(data);
         this._obnizHci.write(arr);
       },
@@ -134,7 +134,7 @@ class Hci extends events.EventEmitter {
     // this.readLeHostSupported();
     // this.readBdAddr();
 
-    return new Promise((resolve) => {
+    return new Promise ((resolve: any ) => {
       this.once("stateChange", () => {
         // console.log('te');
         resolve();

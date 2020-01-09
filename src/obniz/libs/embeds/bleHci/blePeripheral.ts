@@ -13,7 +13,7 @@ class BlePeripheral {
   }
 
   public _updateServices() {
-    const bufData: any = this._services.map((e) => e.toBufferObj());
+    const bufData: any = this._services.map((e: any) => e.toBufferObj());
     this.obnizBle.peripheralBindings.setServices(bufData);
   }
 
@@ -39,14 +39,14 @@ class BlePeripheral {
   public getService(uuid: any) {
     uuid = BleHelper.uuidFilter(uuid);
     return this._services
-      .filter((element) => {
+      .filter ((element: any ) => {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
       .shift();
   }
 
   public removeService(uuid: any) {
-    this._services = this._services.filter((element) => {
+    this._services = this._services.filter ((element: any ) => {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
 

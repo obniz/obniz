@@ -56,7 +56,7 @@ class OMRON_2JCIE {
   public signedNumberFromBinary(data: any) {
     // little adian
     let val: any = data[data.length - 1] & 0x7f;
-    for (let i: any = data.length - 2; i >= 0; i--) {
+    for (let i = data.length - 2; i >= 0; i--) {
       val = val * 256 + data[i];
     }
     if ((data[data.length - 1] & 0x80) !== 0) {
@@ -68,7 +68,7 @@ class OMRON_2JCIE {
   public unsignedNumberFromBinary(data: any) {
     // little adian
     let val: any = data[data.length - 1];
-    for (let i: any = data.length - 2; i >= 0; i--) {
+    for (let i = data.length - 2; i >= 0; i--) {
       val = val * 256 + data[i];
     }
     return val;

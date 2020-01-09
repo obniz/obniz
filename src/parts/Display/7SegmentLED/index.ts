@@ -90,7 +90,7 @@ class _7SegmentLED {
 
     this.isCathodeCommon = this.params.commonType === "anode" ? false : true;
 
-    for (let i: any = 0; i < this.ios.length; i++) {
+    for (let i = 0; i < this.ios.length; i++) {
       this.ios[i].output(this.isCathodeCommon ? false : true);
     }
 
@@ -106,10 +106,10 @@ class _7SegmentLED {
 
   public print(data: any) {
     if (typeof data === "number") {
-      data = parseInt(data);
+      data = Math.floor(data);
       data = data % 10;
 
-      for (let i: any = 0; i < 7; i++) {
+      for (let i = 0; i < 7; i++) {
         if (this.ios[i]) {
           let val: any = this.digits[data] & (1 << i) ? true : false;
           if (!this.isCathodeCommon) {
@@ -124,7 +124,7 @@ class _7SegmentLED {
 
   public printRaw(data: any) {
     if (typeof data === "number") {
-      for (let i: any = 0; i < 7; i++) {
+      for (let i = 0; i < 7; i++) {
         if (this.ios[i]) {
           let val: any = data & (1 << i) ? true : false;
           if (!this.isCathodeCommon) {

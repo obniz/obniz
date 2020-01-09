@@ -75,7 +75,7 @@ class JsonBinaryConverter {
   }
 
   public static keyForVal(enumvals: any, val: any) {
-    return Object.keys(enumvals).filter((k) => {
+    return Object.keys(enumvals).filter ((k: any ) => {
       return enumvals[k] === val;
     })[0];
   }

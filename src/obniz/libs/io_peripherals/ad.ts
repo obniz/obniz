@@ -34,7 +34,7 @@ class PeripheralAD {
 
   public getWait() {
     const self: any = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       self.addObserver(resolve);
       const obj: any = {};
       obj["ad" + self.id] = {

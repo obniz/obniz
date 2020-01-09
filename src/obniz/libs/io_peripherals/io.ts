@@ -102,7 +102,7 @@ class PeripheralIO {
 
   public inputWait() {
     const self: any = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       self.addObserver(resolve);
       const obj: any = {};
       obj["io" + self.id] = {

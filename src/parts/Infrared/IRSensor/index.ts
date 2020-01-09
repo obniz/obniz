@@ -55,14 +55,14 @@ class IRSensor {
       if (typeof this.ondetect === "function") {
         if (this.dataInverted) {
           const arr: any = new Uint8Array(levels);
-          for (let i: any = 0; i < arr.length; i++) {
+          for (let i = 0; i < arr.length; i++) {
             arr[i] = arr[i] ? 0 : 1;
           }
           levels = Array.from(arr);
         }
 
         if (this.cutTail) {
-          for (let i: any = levels.length - 1; i > 1; i--) {
+          for (let i = levels.length - 1; i > 1; i--) {
             if (levels[i] === 0 && levels[i - 1] === 0) {
               levels.splice(i, 1);
             } else {

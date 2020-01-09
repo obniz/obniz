@@ -40,7 +40,7 @@ class CT10 {
     this.io_signal.pull("0v");
 
     const self: any = this;
-    this.io_signal.input((value) => {
+    this.io_signal.input((value: any) => {
       self.isNear = value;
       if (self.onchange) {
         self.onchange(value);

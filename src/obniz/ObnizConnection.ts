@@ -4,7 +4,7 @@ import WSCommand from "./libs/wscommand";
 const isNode: any = typeof window === "undefined";
 
 export default class ObnizConnection {
-  constructor(id, options) {
+  constructor(id: any, options: any) {
     this.isNode = isNode;
     this.id = id;
     this.socket = null;
@@ -112,7 +112,7 @@ export default class ObnizConnection {
     option = option || {};
     const timeout: any = option.timeout || null;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       if (this.onConnectCalled) {
         resolve(true);
         return;
@@ -208,7 +208,7 @@ export default class ObnizConnection {
       socket = new WebSocket(url);
       socket.binaryType = "arraybuffer";
       socket.onopen = this.wsOnOpen.bind(this);
-      socket.onmessage = (event) => {
+      socket.onmessage = (event: any ) => {
         this.wsOnMessage(event.data);
       };
       socket.onclose = this.wsOnClose.bind(this);
@@ -231,19 +231,19 @@ export default class ObnizConnection {
         this.print_debug("connected to " + url);
         this._callOnConnect();
       });
-      ws.on("message", (data) => {
+      ws.on("message", (data: any ) => {
         this.print_debug("recvd via local");
         this.wsOnMessage(data);
       });
-      ws.on("close", (event) => {
+      ws.on("close", (event: any ) => {
         console.log("local websocket closed");
         this._disconnectLocal();
       });
-      ws.on("error", (err) => {
+      ws.on("error", (err: any ) => {
         console.error("local websocket error.", err);
         this._disconnectLocal();
       });
-      ws.on("unexpected-response", (event) => {
+      ws.on("unexpected-response", (event: any ) => {
         console.log("local websocket closed");
         this._disconnectLocal();
       });
@@ -254,15 +254,15 @@ export default class ObnizConnection {
         this.print_debug("connected to " + url);
         this._callOnConnect();
       };
-      ws.onmessage = (event) => {
+      ws.onmessage = (event: any ) => {
         this.print_debug("recvd via local");
         this.wsOnMessage(event.data);
       };
-      ws.onclose = (event) => {
+      ws.onclose = (event: any ) => {
         console.log("local websocket closed");
         this._disconnectLocal();
       };
-      ws.onerror = (err) => {
+      ws.onerror = (err: any ) => {
         console.log("local websocket error.", err);
         this._disconnectLocal();
       };
@@ -360,7 +360,7 @@ export default class ObnizConnection {
       if (typeof this.onconnect === "function") {
         const promise: any = this.onconnect(this);
         if (promise instanceof Promise) {
-          promise.catch((err) => {
+          promise.catch ((err: any ) => {
             console.error(err);
           });
         }
@@ -416,7 +416,7 @@ export default class ObnizConnection {
               );
             }
           }
-        } catch (e: any) {
+        } catch (e) {
           this.error("------ errored json -------");
           this.error(sendData);
           throw e;
@@ -435,7 +435,7 @@ export default class ObnizConnection {
           this._sendQueueTimer = setTimeout(this._drainQueued.bind(this), 0);
         }
       }
-    } catch (e: any) {
+    } catch (e) {
       console.log(e);
     }
   }

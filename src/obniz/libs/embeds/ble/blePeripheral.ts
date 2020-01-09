@@ -41,7 +41,7 @@ class BlePeripheral {
   }
 
   public removeService(uuid: any) {
-    this._services = this._services.filter((element) => {
+    this._services = this._services.filter ((element: any ) => {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
   }

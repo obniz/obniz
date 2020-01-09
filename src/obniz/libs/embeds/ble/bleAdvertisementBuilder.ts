@@ -88,12 +88,20 @@ class BleAdvertisementBuilder {
   }
 
   public setUuid(uuid: any) {
-    const uuidData: any = this.convertUuid(uuid);
-    const type: any = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length];
+    const uuidData: number[] = this.convertUuid(uuid);
+    let type: any;
+    if (uuidData.length === 16) {
+      type = 0x06;
+    } else if (uuidData.length === 4) {
+      type = 0x04;
+
+    } else if (uuidData.length === 2) {
+      type = 0x02;
+    }
     this.setRow(type, uuidData);
   }
 
-  public convertUuid(uuid: any) {
+  public convertUuid(uuid: any): number[] {
     const uuidNumeric: any = BleHelper.uuidFilter(uuid);
     if (
       uuidNumeric.length !== 32 &&

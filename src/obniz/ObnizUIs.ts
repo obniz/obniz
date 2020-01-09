@@ -26,7 +26,7 @@ export default class ObnizUIs extends ObnizSystemMethods {
         const filled: any = _ReadCookie("obniz-last-used") || "";
         this.prompt(
           filled,
-          (obnizid) => {
+          (obnizid: any ) => {
             this.id = obnizid;
             this.wsconnect(desired_server);
           },

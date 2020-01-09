@@ -33,15 +33,15 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
     }
   }
 
-  get parentName() {
+  get parentName(): string | null {
     return "service";
   }
 
-  get childrenClass() {
+  get childrenClass(): any {
     return BleDescriptor;
   }
 
-  get childrenName() {
+  get childrenName(): string | null {
     return "descriptors";
   }
 
@@ -78,7 +78,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   public removeProperty(param: any) {
-    this.properties = this.properties.filter((elm) => {
+    this.properties = this.properties.filter ((elm: any ) => {
       return elm !== param;
     });
   }
@@ -90,7 +90,7 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 
   public removePermission(param: any) {
-    this.permissions = this.permissions.filter((elm) => {
+    this.permissions = this.permissions.filter ((elm: any ) => {
       return elm !== param;
     });
   }

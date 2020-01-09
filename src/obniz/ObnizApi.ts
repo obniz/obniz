@@ -45,14 +45,14 @@ class ObnizApi {
     }
 
     return fetch(url, fetchParams)
-      .then((res) => {
+      .then ((res: any) => {
         return res.json();
       })
-      .then((json) => {
+      .then((json: any) => {
         if (typeof callback === "function") {
           callback(json);
         }
-        return new Promise((resolve) => {
+        return new Promise((resolve: any ) => {
           resolve(json);
         });
       });

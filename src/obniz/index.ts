@@ -2,7 +2,14 @@ import ObnizUtil from "./libs/utils/util";
 import ObnizApi from "./ObnizApi";
 import ObnizUIs from "./ObnizUIs";
 
-/* global showObnizDebugError  */
+declare global {
+  var showObnizDebugError: any;
+
+  interface Window {
+    userAppLoaded?: any;
+    logger?: any;
+  }
+}
 
 const isNode: any = typeof window === "undefined";
 
@@ -148,7 +155,7 @@ try {
       }
     }
   }
-} catch (e: any) {
+} catch (e) {
   if (e instanceof DOMException) {
     // cross origin iframe
   } else {
@@ -161,8 +168,8 @@ try {
 /*===================*/
 
 require.context = require("./libs/webpackReplace/require-context");
-if (require.context && require.context.setBaseDir) {
-  require.context.setBaseDir(__dirname);
+if (require.context && (require.context as any).setBaseDir) {
+  (require.context as any).setBaseDir(__dirname);
 }
 
 const context: any = require.context("../parts", true, /\.js$/);

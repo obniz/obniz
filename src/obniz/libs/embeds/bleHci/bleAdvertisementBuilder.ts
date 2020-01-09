@@ -89,7 +89,7 @@ class BleAdvertisementBuilder {
 
   public setUuid(uuid: any) {
     const uuidData: any = this.convertUuid(uuid);
-    const type: any = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length];
+    const type: any = {16: 0x06, 4: 0x04, 2: 0x02}[uuidData.length as (16 | 4 | 2)];
     this.setRow(type, uuidData);
   }
 

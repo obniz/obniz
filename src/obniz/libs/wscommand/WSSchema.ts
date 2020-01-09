@@ -14,7 +14,7 @@ tv4.defineKeyword("uniqueKeys", (data: any, value: any, schema: tv4.JsonSchema):
       targets.push(data[key]);
     }
   }
-  const duplicated: any = targets.filter((x, i, self) => {
+  const duplicated: any = targets.filter((x: any, i: any, self: any) => {
     return self.indexOf(x) !== self.lastIndexOf(x);
   });
   if (duplicated.length > 0) {

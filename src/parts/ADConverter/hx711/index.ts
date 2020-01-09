@@ -29,7 +29,7 @@ class Hx711 {
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
     const ioKeys: any = ["clk", "dout"];
-    for (const key: any of ioKeys) {
+    for (const key of ioKeys) {
       if (this.params[key] && !this.obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");
       }
@@ -96,11 +96,11 @@ class Hx711 {
 
   public async readAverageWait(times: any) {
     const results: any = [];
-    for (let i: any = 0; i < times; i++) {
+    for (let i = 0; i < times; i++) {
       results.push(await this.readWait());
     }
     return (
-      results.reduce((prev, current, i) => {
+      results.reduce((prev: any, current: any, i: any) => {
         return prev + current;
       }, 0) / results.length
     );

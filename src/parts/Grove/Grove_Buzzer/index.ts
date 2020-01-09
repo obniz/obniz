@@ -28,7 +28,7 @@ class Grove_Buzzer {
     if (typeof freq !== "number") {
       throw new Error("freq must be a number");
     }
-    freq = parseInt(freq);
+    freq = Math.floor(freq);
     if (freq > 0) {
       this.pwm.freq(freq);
       this.pwm.pulse((1 / freq / 2) * 1000);

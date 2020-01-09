@@ -214,7 +214,7 @@ class Gatt extends events.EventEmitter {
           value: characteristic.value,
         };
 
-        const hasCCCD: any = characteristic.descriptors.find((e) => e.uuid === "2902");
+        const hasCCCD: any = characteristic.descriptors.find((e: any) => e.uuid === "2902");
         if (hasCCCD || properties & 0x30) {
           // notify or indicate
           // add client characteristic configuration descriptor

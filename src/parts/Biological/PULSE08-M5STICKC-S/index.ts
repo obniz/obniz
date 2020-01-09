@@ -38,9 +38,9 @@ class Puls08M5stickcS {
 
     this.init();
 
-    this.uart.onreceive = (data, text) => {
+    this.uart.onreceive = (data: any, text: any) => {
       const dataToCallback: any = [];
-      data.forEach((e) => {
+      data.forEach((e: any) => {
         if (e !== this.delimiter) {
           this.receivingData.push(e);
           return;

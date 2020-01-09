@@ -224,7 +224,7 @@ class ObnizBLE {
     const service: any = peripheral.findService({service_uuid: serviceUuid});
     for (const char of characteristics) {
       const obj: any = {
-        properties: char.properties.map((e) => BleHelper.toSnakeCase(e)),
+        properties: char.properties.map((e: any) => BleHelper.toSnakeCase(e)),
         characteristic_uuid: char.uuid,
       };
       service.notifyFromServer("discover", obj);

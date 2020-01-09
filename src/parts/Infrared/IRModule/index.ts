@@ -64,19 +64,15 @@ class IRModule {
 
   public setGetterSetter(partsName: any, varName: any) {
     Object.defineProperty(this, varName, {
-      public get() {
-      return this[partsName][varName];
-    }
-  ,
-  public
-    set(x
-  :
-    any,
-  ) {
-      this[partsName][varName] = x;
-    }
-  ,
-  })
+      get() {
+        return this[partsName][varName];
+      }
+      ,
+      set(x: any) {
+        this[partsName][varName] = x;
+      }
+      ,
+    })
     ;
   }
 }

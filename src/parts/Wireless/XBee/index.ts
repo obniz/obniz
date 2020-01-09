@@ -140,7 +140,7 @@ class XBee {
         };
         const highLowKeys: any = ["destination_address"];
         this.enterAtMode();
-        for (const key: any in config) {
+        for (const key in config) {
           if (key.length === 2) {
             this.addCommand(key, config[key]);
           } else if (standaloneKeys[key]) {

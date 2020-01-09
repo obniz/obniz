@@ -655,9 +655,9 @@ class ST7735S {
     }
 
     const c: any = ch.charCodeAt(0);
-    for (let i: any = 0; i < 6; i++) {
+    for (let i = 0; i < 6; i++) {
       let line: any = i === 5 ? 0 : font[c * 5 + i];
-      for (let j: any = 0; j < 8; j++) {
+      for (let j = 0; j < 8; j++) {
         if (line & 0x1) {
           if (size === 1) {
             // default size
@@ -694,12 +694,12 @@ class ST7735S {
 
     const pixels: any = new Array(6 * 8 * size * size);
     const c: any = ch.charCodeAt(0);
-    for (let i: any = 0; i < 6; i++) {
+    for (let i = 0; i < 6; i++) {
       let line: any = i === 5 ? 0 : font[c * 5 + i];
-      for (let j: any = 0; j < 8; j++) {
+      for (let j = 0; j < 8; j++) {
         const cl: any = line & 0x1 ? color : bg;
-        for (let w: any = 0; w < size; w++) {
-          for (let h: any = 0; h < size; h++) {
+        for (let w = 0; w < size; w++) {
+          for (let h = 0; h < size; h++) {
             pixels[
             i * (1 * size) + w + (j * (6 * size * size) + h * (6 * size))
               ] = cl;
@@ -713,7 +713,7 @@ class ST7735S {
 
   public rawBound16(x: any, y: any, width: any, height: any, pixels: any, flush?: any) {
     const rgb: any = [];
-    pixels.forEach((v) => {
+    pixels.forEach((v: any) => {
       const v2: any = ((v & 0xf800) >> 11) | (v & 0x7e0) | ((v & 0x1f) << 11);
       rgb.push((v2 & 0xff00) >> 8);
       rgb.push(v2 & 0xff);
@@ -731,7 +731,7 @@ class ST7735S {
     //  bg = bg || color;
     size = size || 1;
     //  wrap = wrap || true;
-    for (let n: any = 0; n < str.length; n++) {
+    for (let n = 0; n < str.length; n++) {
       const c: any = str.charAt(n);
       if (c === "\n") {
         y += size * 8;
@@ -761,7 +761,7 @@ class ST7735S {
     this.write(ST7735_COLMOD, [ST7735_18bit]); // 18bit/pixel
     const imageData: any = context.getImageData(x0, y0, width, height).data;
     const rgb: any = [];
-    for (let n: any = 0; n < imageData.length; n += 4) {
+    for (let n = 0; n < imageData.length; n += 4) {
       const r: any = imageData[n + 0];
       const g: any = imageData[n + 1];
       const b: any = imageData[n + 2];
@@ -794,7 +794,7 @@ class ST7735S {
 
   public rawBound(x: any, y: any, width: any, height: any, pixels: any) {
     const rgb: any = [];
-    pixels.forEach((v) => {
+    pixels.forEach((v: any) => {
       rgb.push(v & 0xff);
       rgb.push((v & 0xff00) >> 8);
       rgb.push((v & 0xff0000) >> 16);

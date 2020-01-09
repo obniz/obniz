@@ -54,7 +54,7 @@ class Tcp {
 
     this.connectObservers = [];
     this.used = true;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       this._addConnectObserver(resolve);
       const obj: any = {};
       obj["tcp" + this.id] = {
@@ -111,7 +111,7 @@ class Tcp {
     if (!this.used) {
       throw new Error(`tcp${this.id} is not started`);
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: any, reject: any) => {
       this._addReadObserver(resolve);
     });
   }

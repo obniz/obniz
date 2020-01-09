@@ -66,7 +66,7 @@ class BleRemotePeripheral {
     this.advertise_data_rows = null;
     for (const key in dic) {
       if (dic.hasOwnProperty(key) && this.keys.includes(key)) {
-        this[key] = dic[key];
+        (this as any) [key] = dic[key];
       }
     }
     this.analyseAdvertisement();
@@ -201,8 +201,8 @@ class BleRemotePeripheral {
   }
 
   public connectWait() {
-    return new Promise((resolve, reject) => {
-      this.emitter.once("statusupdate", (params) => {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("statusupdate", (params: any) => {
         if (params.status === "connected") {
           resolve(true);
         } else {
@@ -225,8 +225,8 @@ class BleRemotePeripheral {
   }
 
   public disconnectWait() {
-    return new Promise((resolve, reject) => {
-      this.emitter.once("statusupdate", (params) => {
+    return new Promise((resolve: any, reject: any) => {
+      this.emitter.once("statusupdate", (params: any) => {
         if (params.status === "disconnected") {
           resolve(true);
         } else {
@@ -283,9 +283,9 @@ class BleRemotePeripheral {
   }
 
   public discoverAllServicesWait() {
-    return new Promise((resolve) => {
+    return new Promise((resolve: any) => {
       this.emitter.once("discoverfinished", () => {
-        const children: any = this._services.filter((elm) => {
+        const children: any = this._services.filter((elm: any) => {
           return elm.discoverdOnRemote;
         });
         resolve(children);
@@ -312,11 +312,11 @@ class BleRemotePeripheral {
 
     const services: any = await this.discoverAllServicesWait();
     const charsNest: any = await Promise.all(
-      services.map((s) => s.discoverAllCharacteristicsWait()),
+      services.map((s: any) => s.discoverAllCharacteristicsWait()),
     );
     const chars: any = ArrayFlat(charsNest);
     const descriptorsNest: any = await Promise.all(
-      chars.map((c) => c.discoverAllDescriptorsWait()),
+      chars.map((c: any) => c.discoverAllDescriptorsWait()),
     );
     // eslint-disable-next-line no-unused-vars
     const descriptors: any = ArrayFlat(descriptorsNest);
@@ -328,10 +328,10 @@ class BleRemotePeripheral {
   public ondisconnect() {
   }
 
-  public ondiscoverservice() {
+  public ondiscoverservice(child: any) {
   }
 
-  public ondiscoverservicefinished() {
+  public ondiscoverservicefinished(children: any) {
   }
 
   public ondiscover() {
@@ -370,7 +370,7 @@ class BleRemotePeripheral {
         break;
       }
       case "discoverfinished": {
-        const children: any = this._services.filter((elm) => {
+        const children: any = this._services.filter((elm: any) => {
           return elm.discoverdOnRemote;
         });
         this.ondiscoverservicefinished(children);

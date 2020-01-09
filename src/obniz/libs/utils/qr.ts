@@ -44,7 +44,7 @@ const _qrcode: any = (() => {
 
     const makeImpl: any = (test: any, maskPattern: any) => {
       _moduleCount = _typeNumber * 4 + 17;
-      _modules = ((moduleCount) => {
+      _modules = ((moduleCount: any ) => {
         const modules: any = new Array(moduleCount);
         for (let row = 0; row < moduleCount; row += 1) {
           modules[row] = new Array(moduleCount);

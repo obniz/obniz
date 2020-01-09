@@ -28,12 +28,12 @@ class _7SegmentLEDArray {
 
   public print(data: any) {
     if (typeof data === "number") {
-      data = parseInt(data);
+      data = Math.floor(data);
 
-      const print: any = (index) => {
+      const print: any = (index: any) => {
         let val: any = data;
 
-        for (let i: any = 0; i < this.segments.length; i++) {
+        for (let i = 0; i < this.segments.length; i++) {
           if (index === i) {
             this.segments[i].print(val % 10);
           } else {
@@ -44,7 +44,7 @@ class _7SegmentLEDArray {
       };
 
       const animations: any = [];
-      for (let i: any = 0; i < this.segments.length; i++) {
+      for (let i = 0; i < this.segments.length; i++) {
         animations.push({
           duration: 3,
           state: print,
@@ -61,7 +61,7 @@ class _7SegmentLEDArray {
 
   public off() {
     this.obniz.io.animation(this.identifier, "pause");
-    for (let i: any = 0; i < this.segments.length; i++) {
+    for (let i = 0; i < this.segments.length; i++) {
       this.segments[i].off();
     }
   }
