@@ -1,4 +1,4 @@
-const ObnizUtil: any = require("../utils/util");
+import ObnizUtil from "../utils/util";
 
 class ObnizMeasure {
   public obniz: any;
@@ -66,4 +66,4 @@ class ObnizMeasure {
   }
 }
 
-module.exports = ObnizMeasure;
+export default ObnizMeasure;

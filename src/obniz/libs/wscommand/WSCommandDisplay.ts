@@ -1,5 +1,5 @@
 const WSCommand: any = require("./WSCommand.js").default;
-const qrcode: any = require("../utils/qr");
+import qrcode from "../utils/qr";
 
 class WSCommandDisplay extends WSCommand {
   public module: any;
@@ -65,23 +65,23 @@ class WSCommandDisplay extends WSCommand {
       const vram: any = new Uint8Array(1024);
       vram.fill(0);
 
-      for (let row: any = 0; row < 2; row++) {
-        for (let col: any = 0; col < size + 4; col++) {
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < size + 4; col++) {
           vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
           vram[parseInt((row + size + 2) * 16 + col / 8)] |= 0x80 >> col % 8;
         }
       }
-      for (let row: any = 2; row < size + 2; row++) {
-        for (let col: any = 0; col < 2; col++) {
+      for (let row = 2; row < size + 2; row++) {
+        for (let col = 0; col < 2; col++) {
           vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
         }
-        for (let col: any = size + 2; col < size + 4; col++) {
+        for (let col = size + 2; col < size + 4; col++) {
           vram[parseInt(row * 16 + col / 8)] |= 0x80 >> col % 8;
         }
       }
 
-      for (let row: any = 0; row < size; row++) {
-        for (let col: any = 0; col < size; col++) {
+      for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
           if (!modules[parseInt(row / 2)][parseInt(col / 2)]) {
             vram[parseInt((row + 2) * 16 + (col + 2) / 8)] |=
               0x80 >> (col + 2) % 8;
@@ -93,7 +93,7 @@ class WSCommandDisplay extends WSCommand {
   }
 
   public pinName(params: any) {
-    for (let i: any = 0; i < 40; i++) {
+    for (let i = 0; i < 40; i++) {
       if (typeof params.pin_assign[i] === "object") {
         this.setPinName(
           i,
@@ -157,4 +157,4 @@ class WSCommandDisplay extends WSCommand {
   }
 }
 
-module.exports = WSCommandDisplay;
+export default WSCommandDisplay;

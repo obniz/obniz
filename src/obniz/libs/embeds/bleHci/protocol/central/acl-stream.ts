@@ -1,8 +1,8 @@
 // var debug = require('debug')('acl-att-stream');
 
-let events: any = require("events");
+const events: any = require("events");
 
-let Smp: any = require("./smp");
+const Smp: any = require("./smp");
 
 class AclStream extends events.EventEmitter {
   public _hci: any;
@@ -80,4 +80,4 @@ class AclStream extends events.EventEmitter {
   }
 }
 
-module.exports = AclStream;
+export default AclStream;

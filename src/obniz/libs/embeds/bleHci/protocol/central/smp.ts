@@ -1,16 +1,16 @@
-let events: any = require("events");
+const events: any = require("events");
 
-let crypto: any = require("./crypto");
+const crypto: any = require("./crypto");
 
-let SMP_CID: any = 0x0006;
+const SMP_CID: any = 0x0006;
 
-let SMP_PAIRING_REQUEST: any = 0x01;
-let SMP_PAIRING_RESPONSE: any = 0x02;
-let SMP_PAIRING_CONFIRM: any = 0x03;
-let SMP_PAIRING_RANDOM: any = 0x04;
-let SMP_PAIRING_FAILED: any = 0x05;
-let SMP_ENCRYPT_INFO: any = 0x06;
-let SMP_MASTER_IDENT: any = 0x07;
+const SMP_PAIRING_REQUEST: any = 0x01;
+const SMP_PAIRING_RESPONSE: any = 0x02;
+const SMP_PAIRING_CONFIRM: any = 0x03;
+const SMP_PAIRING_RANDOM: any = 0x04;
+const SMP_PAIRING_FAILED: any = 0x05;
+const SMP_ENCRYPT_INFO: any = 0x06;
+const SMP_MASTER_IDENT: any = 0x07;
 
 class Smp extends events.EventEmitter {
   public _aclStream: any;
@@ -183,4 +183,4 @@ class Smp extends events.EventEmitter {
   }
 }
 
-module.exports = Smp;
+export default Smp;

@@ -9,7 +9,7 @@ tv4.defineKeyword("uniqueKeys", (data: any, value: any, schema: tv4.JsonSchema):
     return null;
   }
   const targets: any = [];
-  for (const key: any of value) {
+  for (const key of value) {
     if (data[key] !== null && data[key] !== undefined) {
       targets.push(data[key]);
     }
@@ -27,7 +27,7 @@ tv4.defineKeyword("uniqueKeys", (data: any, value: any, schema: tv4.JsonSchema):
 });
 
 const wsSchema: any = [];
-import replaceContext = require("../webpackReplace/require-context");
+import replaceContext from "../webpackReplace/require-context";
 
 // @ts-ignore
 require.context = replaceContext;
@@ -39,7 +39,7 @@ if (require.context && require.context.setBaseDir) {
   require.context.setBaseDir(__dirname);
 }
 const context: any = require.context("../../../json_schema", true, /\.yml$/);
-for (const path: any of context.keys()) {
+for (const path of context.keys()) {
   const oneSchema: any = context(path);
   wsSchema.push(oneSchema);
 }

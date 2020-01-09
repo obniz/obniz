@@ -1,5 +1,5 @@
-const BleRemoteCharacteristic: any = require("./bleRemoteCharacteristic");
-const BleRemoteAttributeAbstract: any = require("./bleRemoteAttributeAbstract");
+import BleRemoteAttributeAbstract from "./bleRemoteAttributeAbstract";
+import BleRemoteCharacteristic from "./bleRemoteCharacteristic";
 
 class BleRemoteService extends BleRemoteAttributeAbstract {
   public children: any;
@@ -68,4 +68,4 @@ class BleRemoteService extends BleRemoteAttributeAbstract {
   }
 }
 
-module.exports = BleRemoteService;
+export default BleRemoteService;

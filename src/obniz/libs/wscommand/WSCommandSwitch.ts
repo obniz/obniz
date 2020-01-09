@@ -59,4 +59,4 @@ class WSCommandSwitch extends WSCommand {
   }
 }
 
-module.exports = WSCommandSwitch;
+export default WSCommandSwitch;

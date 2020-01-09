@@ -86,7 +86,7 @@ class WSCommandUart extends WSCommand {
 
   public parseFromJson(json: any) {
     // 0~2
-    for (let i: any = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
       const module: any = json["uart" + i];
       if (module === undefined) {
         continue;
@@ -112,7 +112,7 @@ class WSCommandUart extends WSCommand {
     if (func === this._CommandRecv && payload.byteLength > 1) {
       const module_index: any = payload[0];
       const arr: any = new Array(payload.byteLength - 1);
-      for (let i: any = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
 
@@ -125,4 +125,4 @@ class WSCommandUart extends WSCommand {
   }
 }
 
-module.exports = WSCommandUart;
+export default WSCommandUart;

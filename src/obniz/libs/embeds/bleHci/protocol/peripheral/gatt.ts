@@ -2,66 +2,66 @@
 const debug: any = () => {
 };
 
-let events: any = require("events");
+const events: any = require("events");
 
 /* eslint-disable no-unused-vars */
-let ATT_OP_ERROR: any = 0x01;
-let ATT_OP_MTU_REQ: any = 0x02;
-let ATT_OP_MTU_RESP: any = 0x03;
-let ATT_OP_FIND_INFO_REQ: any = 0x04;
-let ATT_OP_FIND_INFO_RESP: any = 0x05;
-let ATT_OP_FIND_BY_TYPE_REQ: any = 0x06;
-let ATT_OP_FIND_BY_TYPE_RESP: any = 0x07;
-let ATT_OP_READ_BY_TYPE_REQ: any = 0x08;
-let ATT_OP_READ_BY_TYPE_RESP: any = 0x09;
-let ATT_OP_READ_REQ: any = 0x0a;
-let ATT_OP_READ_RESP: any = 0x0b;
-let ATT_OP_READ_BLOB_REQ: any = 0x0c;
-let ATT_OP_READ_BLOB_RESP: any = 0x0d;
-let ATT_OP_READ_MULTI_REQ: any = 0x0e;
-let ATT_OP_READ_MULTI_RESP: any = 0x0f;
-let ATT_OP_READ_BY_GROUP_REQ: any = 0x10;
-let ATT_OP_READ_BY_GROUP_RESP: any = 0x11;
-let ATT_OP_WRITE_REQ: any = 0x12;
-let ATT_OP_WRITE_RESP: any = 0x13;
-let ATT_OP_WRITE_CMD: any = 0x52;
-let ATT_OP_PREP_WRITE_REQ: any = 0x16;
-let ATT_OP_PREP_WRITE_RESP: any = 0x17;
-let ATT_OP_EXEC_WRITE_REQ: any = 0x18;
-let ATT_OP_EXEC_WRITE_RESP: any = 0x19;
-let ATT_OP_HANDLE_NOTIFY: any = 0x1b;
-let ATT_OP_HANDLE_IND: any = 0x1d;
-let ATT_OP_HANDLE_CNF: any = 0x1e;
-let ATT_OP_SIGNED_WRITE_CMD: any = 0xd2;
+const ATT_OP_ERROR: any = 0x01;
+const ATT_OP_MTU_REQ: any = 0x02;
+const ATT_OP_MTU_RESP: any = 0x03;
+const ATT_OP_FIND_INFO_REQ: any = 0x04;
+const ATT_OP_FIND_INFO_RESP: any = 0x05;
+const ATT_OP_FIND_BY_TYPE_REQ: any = 0x06;
+const ATT_OP_FIND_BY_TYPE_RESP: any = 0x07;
+const ATT_OP_READ_BY_TYPE_REQ: any = 0x08;
+const ATT_OP_READ_BY_TYPE_RESP: any = 0x09;
+const ATT_OP_READ_REQ: any = 0x0a;
+const ATT_OP_READ_RESP: any = 0x0b;
+const ATT_OP_READ_BLOB_REQ: any = 0x0c;
+const ATT_OP_READ_BLOB_RESP: any = 0x0d;
+const ATT_OP_READ_MULTI_REQ: any = 0x0e;
+const ATT_OP_READ_MULTI_RESP: any = 0x0f;
+const ATT_OP_READ_BY_GROUP_REQ: any = 0x10;
+const ATT_OP_READ_BY_GROUP_RESP: any = 0x11;
+const ATT_OP_WRITE_REQ: any = 0x12;
+const ATT_OP_WRITE_RESP: any = 0x13;
+const ATT_OP_WRITE_CMD: any = 0x52;
+const ATT_OP_PREP_WRITE_REQ: any = 0x16;
+const ATT_OP_PREP_WRITE_RESP: any = 0x17;
+const ATT_OP_EXEC_WRITE_REQ: any = 0x18;
+const ATT_OP_EXEC_WRITE_RESP: any = 0x19;
+const ATT_OP_HANDLE_NOTIFY: any = 0x1b;
+const ATT_OP_HANDLE_IND: any = 0x1d;
+const ATT_OP_HANDLE_CNF: any = 0x1e;
+const ATT_OP_SIGNED_WRITE_CMD: any = 0xd2;
 
-let GATT_PRIM_SVC_UUID: any = 0x2800;
-let GATT_INCLUDE_UUID: any = 0x2802;
-let GATT_CHARAC_UUID: any = 0x2803;
+const GATT_PRIM_SVC_UUID: any = 0x2800;
+const GATT_INCLUDE_UUID: any = 0x2802;
+const GATT_CHARAC_UUID: any = 0x2803;
 
-let GATT_CLIENT_CHARAC_CFG_UUID: any = 0x2902;
-let GATT_SERVER_CHARAC_CFG_UUID: any = 0x2903;
+const GATT_CLIENT_CHARAC_CFG_UUID: any = 0x2902;
+const GATT_SERVER_CHARAC_CFG_UUID: any = 0x2903;
 
-let ATT_ECODE_SUCCESS: any = 0x00;
-let ATT_ECODE_INVALID_HANDLE: any = 0x01;
-let ATT_ECODE_READ_NOT_PERM: any = 0x02;
-let ATT_ECODE_WRITE_NOT_PERM: any = 0x03;
-let ATT_ECODE_INVALID_PDU: any = 0x04;
-let ATT_ECODE_AUTHENTICATION: any = 0x05;
-let ATT_ECODE_REQ_NOT_SUPP: any = 0x06;
-let ATT_ECODE_INVALID_OFFSET: any = 0x07;
-let ATT_ECODE_AUTHORIZATION: any = 0x08;
-let ATT_ECODE_PREP_QUEUE_FULL: any = 0x09;
-let ATT_ECODE_ATTR_NOT_FOUND: any = 0x0a;
-let ATT_ECODE_ATTR_NOT_LONG: any = 0x0b;
-let ATT_ECODE_INSUFF_ENCR_KEY_SIZE: any = 0x0c;
-let ATT_ECODE_INVAL_ATTR_VALUE_LEN: any = 0x0d;
-let ATT_ECODE_UNLIKELY: any = 0x0e;
-let ATT_ECODE_INSUFF_ENC: any = 0x0f;
-let ATT_ECODE_UNSUPP_GRP_TYPE: any = 0x10;
-let ATT_ECODE_INSUFF_RESOURCES: any = 0x11;
+const ATT_ECODE_SUCCESS: any = 0x00;
+const ATT_ECODE_INVALID_HANDLE: any = 0x01;
+const ATT_ECODE_READ_NOT_PERM: any = 0x02;
+const ATT_ECODE_WRITE_NOT_PERM: any = 0x03;
+const ATT_ECODE_INVALID_PDU: any = 0x04;
+const ATT_ECODE_AUTHENTICATION: any = 0x05;
+const ATT_ECODE_REQ_NOT_SUPP: any = 0x06;
+const ATT_ECODE_INVALID_OFFSET: any = 0x07;
+const ATT_ECODE_AUTHORIZATION: any = 0x08;
+const ATT_ECODE_PREP_QUEUE_FULL: any = 0x09;
+const ATT_ECODE_ATTR_NOT_FOUND: any = 0x0a;
+const ATT_ECODE_ATTR_NOT_LONG: any = 0x0b;
+const ATT_ECODE_INSUFF_ENCR_KEY_SIZE: any = 0x0c;
+const ATT_ECODE_INVAL_ATTR_VALUE_LEN: any = 0x0d;
+const ATT_ECODE_UNLIKELY: any = 0x0e;
+const ATT_ECODE_INSUFF_ENC: any = 0x0f;
+const ATT_ECODE_UNSUPP_GRP_TYPE: any = 0x10;
+const ATT_ECODE_INSUFF_RESOURCES: any = 0x11;
 
 /* eslint-enable no-unused-vars */
-let ATT_CID: any = 0x0004;
+const ATT_CID: any = 0x0004;
 
 class Gatt extends events.EventEmitter {
   public maxMtu: any;
@@ -232,7 +232,7 @@ class Gatt extends events.EventEmitter {
           };
         }
 
-        for (let k: any = 0; k < characteristic.descriptors.length; k++) {
+        for (let k = 0; k < characteristic.descriptors.length; k++) {
           const descriptor: any = characteristic.descriptors[k];
           if (descriptor.uuid === "2902") {
             continue;
@@ -296,7 +296,7 @@ class Gatt extends events.EventEmitter {
     this._aclStream.removeListener("data", this.onAclStreamDataBinded);
     this._aclStream.removeListener("end", this.onAclStreamEndBinded);
 
-    for (let i: any = 0; i < this._handles.length; i++) {
+    for (let i = 0; i < this._handles.length; i++) {
       if (
         this._handles[i] &&
         this._handles[i].type === "descriptor" &&
@@ -487,7 +487,7 @@ class Gatt extends events.EventEmitter {
             .join(""),
           "hex",
         );
-        for (let j: any = 0; j < uuid.length; j++) {
+        for (let j = 0; j < uuid.length; j++) {
           response[2 + i * lengthPerInfo + 2 + j] = uuid[j];
         }
       }
@@ -523,7 +523,7 @@ class Gatt extends events.EventEmitter {
     const handles: any = [];
     let handle: any;
 
-    for (let i: any = startHandle; i <= endHandle; i++) {
+    for (let i = startHandle; i <= endHandle; i++) {
       handle = this._handles[i];
 
       if (!handle) {
@@ -553,7 +553,7 @@ class Gatt extends events.EventEmitter {
 
       response[0] = ATT_OP_FIND_BY_TYPE_RESP;
 
-      for (let i: any = 0; i < numHandles; i++) {
+      for (let i = 0; i < numHandles; i++) {
         handle = handles[i];
 
         response.writeUInt16LE(handle.start, 1 + i * lengthPerHandle);
@@ -644,7 +644,7 @@ class Gatt extends events.EventEmitter {
               .join(""),
             "hex",
           );
-          for (let j: any = 0; j < serviceUuid.length; j++) {
+          for (let j = 0; j < serviceUuid.length; j++) {
             response[2 + i * lengthPerService + 4 + j] = serviceUuid[j];
           }
         }
@@ -754,7 +754,7 @@ class Gatt extends events.EventEmitter {
               .join(""),
             "hex",
           );
-          for (let j: any = 0; j < characteristicUuid.length; j++) {
+          for (let j = 0; j < characteristicUuid.length; j++) {
             response[2 + i * lengthPerCharacteristic + 5 + j] =
               characteristicUuid[j];
           }
@@ -1274,4 +1274,4 @@ class Gatt extends events.EventEmitter {
   }
 }
 
-module.exports = Gatt;
+export default Gatt;

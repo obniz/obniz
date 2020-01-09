@@ -273,4 +273,4 @@ class JsonBinaryConverter {
   }
 }
 
-module.exports = JsonBinaryConverter;
+export default JsonBinaryConverter;

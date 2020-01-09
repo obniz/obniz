@@ -187,4 +187,4 @@ class WSCommandIO extends WSCommand {
   }
 }
 
-module.exports = WSCommandIO;
+export default WSCommandIO;

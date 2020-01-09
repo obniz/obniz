@@ -1,4 +1,4 @@
-const ObnizUtil: any = require("../utils/util");
+import ObnizUtil from "../utils/util";
 
 class LogicAnalyzer {
   public obniz: any;
@@ -67,4 +67,4 @@ class LogicAnalyzer {
   }
 }
 
-module.exports = LogicAnalyzer;
+export default LogicAnalyzer;

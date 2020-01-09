@@ -1,4 +1,4 @@
-const BleHelper: any = require("./bleHelper");
+import BleHelper from "./bleHelper";
 
 class BleAdvertisementBuilder {
   public Obniz: any;
@@ -23,7 +23,7 @@ class BleAdvertisementBuilder {
         );
       }
       if (json.serviceUuids) {
-        for (const uuid: any of json.serviceUuids) {
+        for (const uuid of json.serviceUuids) {
           this.setUuid(uuid);
         }
       }
@@ -43,7 +43,7 @@ class BleAdvertisementBuilder {
 
   public build() {
     const data: any = [];
-    for (const key: any in this.rows) {
+    for (const key in this.rows) {
       if (this.rows[key].length === 0) {
         continue;
       }
@@ -64,7 +64,7 @@ class BleAdvertisementBuilder {
   public setStringData(type: any, string: any) {
     const data: any = [];
 
-    for (let i: any = 0; i < string.length; i++) {
+    for (let i = 0; i < string.length; i++) {
       data.push(string.charCodeAt(i));
     }
 
@@ -106,7 +106,7 @@ class BleAdvertisementBuilder {
     }
 
     const data: any = [];
-    for (let i: any = uuidNumeric.length; i > 1; i -= 2) {
+    for (let i = uuidNumeric.length; i > 1; i -= 2) {
       data.push(parseInt(uuidNumeric[i - 2] + uuidNumeric[i - 1], 16));
     }
     return data;
@@ -178,4 +178,4 @@ class BleAdvertisementBuilder {
   }
 }
 
-module.exports = BleAdvertisementBuilder;
+export default BleAdvertisementBuilder;

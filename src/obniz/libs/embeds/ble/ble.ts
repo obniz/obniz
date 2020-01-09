@@ -1,17 +1,17 @@
-const BlePeripheral: any = require("./blePeripheral");
-const BleService: any = require("./bleService");
-const BleCharacteristic: any = require("./bleCharacteristic");
-const BleDescriptor: any = require("./bleDescriptor");
-const BleRemotePeripheral: any = require("./bleRemotePeripheral");
-const BleAdvertisement: any = require("./bleAdvertisement");
-const BleScan: any = require("./bleScan");
-const BleSecurity: any = require("./bleSecurity");
+import BleAdvertisement from "./bleAdvertisement";
+import BleCharacteristic from "./bleCharacteristic";
+import BleDescriptor from "./bleDescriptor";
+import BlePeripheral from "./blePeripheral";
+import BleRemotePeripheral from "./bleRemotePeripheral";
+import BleScan from "./bleScan";
+import BleSecurity from "./bleSecurity";
+import BleService from "./bleService";
 
 class ObnizBLE {
 
   public static _dataArray2uuidHex(data: any, reverse: any) {
     let uuid: any = [];
-    for (let i: any = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
     }
     if (reverse) {
@@ -293,4 +293,4 @@ class ObnizBLE {
   }
 }
 
-module.exports = ObnizBLE;
+export default ObnizBLE;

@@ -1,4 +1,4 @@
-const ObnizUtil: any = require("../utils/util");
+import ObnizUtil from "../utils/util";
 
 class PeripheralPWM {
   public Obniz: any;
@@ -124,4 +124,4 @@ class PeripheralPWM {
   }
 }
 
-module.exports = PeripheralPWM;
+export default PeripheralPWM;

@@ -146,4 +146,4 @@ class PeripheralIO {
   }
 }
 
-module.exports = PeripheralIO;
+export default PeripheralIO;

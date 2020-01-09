@@ -1,11 +1,11 @@
-const ObnizSystemMethods: any = require("./ObnizSystemMethods");
+import ObnizSystemMethods from "./ObnizSystemMethods";
 
-module.exports = class ObnizUIs extends ObnizSystemMethods {
-  constructor(id, options) {
+export default class ObnizUIs extends ObnizSystemMethods {
+  constructor(id: any, options: any) {
     super(id, options);
   }
 
-  public isValidObnizId(str: any) {
+  public isValidObnizId(str: string ) {
     if (typeof str !== "string" || str.length < 8) {
       return null;
     }
@@ -138,7 +138,7 @@ module.exports = class ObnizUIs extends ObnizSystemMethods {
       doms.statusDom.innerHTML = this.id ? "offline : " + this.id : "offline";
     }
   }
-};
+}
 
 function _ReadCookie(name: any) {
   const nameEQ: any = name + "=";

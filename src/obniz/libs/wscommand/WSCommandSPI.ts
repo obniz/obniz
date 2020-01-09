@@ -84,7 +84,7 @@ class WSCommandSPI extends WSCommand {
   }
 
   public parseFromJson(json: any) {
-    for (let i: any = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i++) {
       const module: any = json["spi" + i];
       if (module === undefined) {
         continue;
@@ -113,7 +113,7 @@ class WSCommandSPI extends WSCommand {
       // var received = payload.slice(1);
 
       const arr: any = new Array(payload.byteLength - 1);
-      for (let i: any = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 1];
       }
       objToSend["spi" + module_index] = {
@@ -125,4 +125,4 @@ class WSCommandSPI extends WSCommand {
   }
 }
 
-module.exports = WSCommandSPI;
+export default WSCommandSPI;

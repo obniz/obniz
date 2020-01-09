@@ -112,7 +112,7 @@ class WSCommandI2C extends WSCommand {
 
   public parseFromJson(json: any) {
     // 0
-    for (let i: any = 0; i < 1; i++) {
+    for (let i = 0; i < 1; i++) {
       const module: any = json["i2c" + i];
       if (module === undefined) {
         continue;
@@ -143,7 +143,7 @@ class WSCommandI2C extends WSCommand {
       const address: any = (payload[1] << 8) + payload[2];
 
       const arr: any = new Array(payload.byteLength - 3);
-      for (let i: any = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 3];
       }
 
@@ -158,7 +158,7 @@ class WSCommandI2C extends WSCommand {
       const address: any = (payload[2] << 8) + payload[3];
 
       const arr: any = new Array(payload.byteLength - 4);
-      for (let i: any = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         arr[i] = payload[i + 4];
       }
 
@@ -197,4 +197,4 @@ class WSCommandI2C extends WSCommand {
   }
 }
 
-module.exports = WSCommandI2C;
+export default WSCommandI2C;

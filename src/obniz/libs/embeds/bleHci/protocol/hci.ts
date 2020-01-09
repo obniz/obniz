@@ -2,95 +2,95 @@
 const debug: any = () => {
 };
 
-let events: any = require("events");
+const events: any = require("events");
 
-let HCI_COMMAND_PKT: any = 0x01;
-let HCI_ACLDATA_PKT: any = 0x02;
-let HCI_EVENT_PKT: any = 0x04;
+const HCI_COMMAND_PKT: any = 0x01;
+const HCI_ACLDATA_PKT: any = 0x02;
+const HCI_EVENT_PKT: any = 0x04;
 
-let ACL_START_NO_FLUSH: any = 0x00;
-let ACL_CONT: any = 0x01;
-let ACL_START: any = 0x02;
+const ACL_START_NO_FLUSH: any = 0x00;
+const ACL_CONT: any = 0x01;
+const ACL_START: any = 0x02;
 
-let EVT_DISCONN_COMPLETE: any = 0x05;
-let EVT_ENCRYPT_CHANGE: any = 0x08;
-let EVT_CMD_COMPLETE: any = 0x0e;
-let EVT_CMD_STATUS: any = 0x0f;
-let EVT_NUMBER_OF_COMPLETED_PACKETS: any = 0x13;
-let EVT_LE_META_EVENT: any = 0x3e;
+const EVT_DISCONN_COMPLETE: any = 0x05;
+const EVT_ENCRYPT_CHANGE: any = 0x08;
+const EVT_CMD_COMPLETE: any = 0x0e;
+const EVT_CMD_STATUS: any = 0x0f;
+const EVT_NUMBER_OF_COMPLETED_PACKETS: any = 0x13;
+const EVT_LE_META_EVENT: any = 0x3e;
 
-let EVT_LE_CONN_COMPLETE: any = 0x01;
-let EVT_LE_ADVERTISING_REPORT: any = 0x02;
-let EVT_LE_CONN_UPDATE_COMPLETE: any = 0x03;
+const EVT_LE_CONN_COMPLETE: any = 0x01;
+const EVT_LE_ADVERTISING_REPORT: any = 0x02;
+const EVT_LE_CONN_UPDATE_COMPLETE: any = 0x03;
 
-let OGF_LINK_CTL: any = 0x01;
-let OCF_DISCONNECT: any = 0x0006;
+const OGF_LINK_CTL: any = 0x01;
+const OCF_DISCONNECT: any = 0x0006;
 
-let OGF_HOST_CTL: any = 0x03;
-let OCF_SET_EVENT_MASK: any = 0x0001;
-let OCF_RESET: any = 0x0003;
-let OCF_READ_LE_HOST_SUPPORTED: any = 0x006c;
-let OCF_WRITE_LE_HOST_SUPPORTED: any = 0x006d;
+const OGF_HOST_CTL: any = 0x03;
+const OCF_SET_EVENT_MASK: any = 0x0001;
+const OCF_RESET: any = 0x0003;
+const OCF_READ_LE_HOST_SUPPORTED: any = 0x006c;
+const OCF_WRITE_LE_HOST_SUPPORTED: any = 0x006d;
 
-let OGF_INFO_PARAM: any = 0x04;
-let OCF_READ_LOCAL_VERSION: any = 0x0001;
-let OCF_READ_BUFFER_SIZE: any = 0x0005;
-let OCF_READ_BD_ADDR: any = 0x0009;
+const OGF_INFO_PARAM: any = 0x04;
+const OCF_READ_LOCAL_VERSION: any = 0x0001;
+const OCF_READ_BUFFER_SIZE: any = 0x0005;
+const OCF_READ_BD_ADDR: any = 0x0009;
 
-let OGF_STATUS_PARAM: any = 0x05;
-let OCF_READ_RSSI: any = 0x0005;
+const OGF_STATUS_PARAM: any = 0x05;
+const OCF_READ_RSSI: any = 0x0005;
 
-let OGF_LE_CTL: any = 0x08;
-let OCF_LE_SET_EVENT_MASK: any = 0x0001;
-let OCF_LE_READ_BUFFER_SIZE: any = 0x0002;
-let OCF_LE_SET_ADVERTISING_PARAMETERS: any = 0x0006;
-let OCF_LE_SET_ADVERTISING_DATA: any = 0x0008;
-let OCF_LE_SET_SCAN_RESPONSE_DATA: any = 0x0009;
-let OCF_LE_SET_ADVERTISE_ENABLE: any = 0x000a;
-let OCF_LE_SET_SCAN_PARAMETERS: any = 0x000b;
-let OCF_LE_SET_SCAN_ENABLE: any = 0x000c;
-let OCF_LE_CREATE_CONN: any = 0x000d;
-let OCF_LE_CONN_UPDATE: any = 0x0013;
-let OCF_LE_START_ENCRYPTION: any = 0x0019;
-let OCF_LE_LTK_NEG_REPLY: any = 0x001b;
+const OGF_LE_CTL: any = 0x08;
+const OCF_LE_SET_EVENT_MASK: any = 0x0001;
+const OCF_LE_READ_BUFFER_SIZE: any = 0x0002;
+const OCF_LE_SET_ADVERTISING_PARAMETERS: any = 0x0006;
+const OCF_LE_SET_ADVERTISING_DATA: any = 0x0008;
+const OCF_LE_SET_SCAN_RESPONSE_DATA: any = 0x0009;
+const OCF_LE_SET_ADVERTISE_ENABLE: any = 0x000a;
+const OCF_LE_SET_SCAN_PARAMETERS: any = 0x000b;
+const OCF_LE_SET_SCAN_ENABLE: any = 0x000c;
+const OCF_LE_CREATE_CONN: any = 0x000d;
+const OCF_LE_CONN_UPDATE: any = 0x0013;
+const OCF_LE_START_ENCRYPTION: any = 0x0019;
+const OCF_LE_LTK_NEG_REPLY: any = 0x001b;
 
-let DISCONNECT_CMD: any = OCF_DISCONNECT | (OGF_LINK_CTL << 10);
+const DISCONNECT_CMD: any = OCF_DISCONNECT | (OGF_LINK_CTL << 10);
 
-let SET_EVENT_MASK_CMD: any = OCF_SET_EVENT_MASK | (OGF_HOST_CTL << 10);
-let RESET_CMD: any = OCF_RESET | (OGF_HOST_CTL << 10);
-let READ_LE_HOST_SUPPORTED_CMD: any =
+const SET_EVENT_MASK_CMD: any = OCF_SET_EVENT_MASK | (OGF_HOST_CTL << 10);
+const RESET_CMD: any = OCF_RESET | (OGF_HOST_CTL << 10);
+const READ_LE_HOST_SUPPORTED_CMD: any =
   OCF_READ_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
-let WRITE_LE_HOST_SUPPORTED_CMD: any =
+const WRITE_LE_HOST_SUPPORTED_CMD: any =
   OCF_WRITE_LE_HOST_SUPPORTED | (OGF_HOST_CTL << 10);
 
-let READ_LOCAL_VERSION_CMD: any = OCF_READ_LOCAL_VERSION | (OGF_INFO_PARAM << 10);
-let READ_BUFFER_SIZE_CMD: any = OCF_READ_BUFFER_SIZE | (OGF_INFO_PARAM << 10);
-let READ_BD_ADDR_CMD: any = OCF_READ_BD_ADDR | (OGF_INFO_PARAM << 10);
+const READ_LOCAL_VERSION_CMD: any = OCF_READ_LOCAL_VERSION | (OGF_INFO_PARAM << 10);
+const READ_BUFFER_SIZE_CMD: any = OCF_READ_BUFFER_SIZE | (OGF_INFO_PARAM << 10);
+const READ_BD_ADDR_CMD: any = OCF_READ_BD_ADDR | (OGF_INFO_PARAM << 10);
 
-let READ_RSSI_CMD: any = OCF_READ_RSSI | (OGF_STATUS_PARAM << 10);
+const READ_RSSI_CMD: any = OCF_READ_RSSI | (OGF_STATUS_PARAM << 10);
 
-let LE_SET_EVENT_MASK_CMD: any = OCF_LE_SET_EVENT_MASK | (OGF_LE_CTL << 10);
-let LE_READ_BUFFER_SIZE_CMD: any = OCF_LE_READ_BUFFER_SIZE | (OGF_LE_CTL << 10);
-let LE_SET_SCAN_PARAMETERS_CMD: any =
+const LE_SET_EVENT_MASK_CMD: any = OCF_LE_SET_EVENT_MASK | (OGF_LE_CTL << 10);
+const LE_READ_BUFFER_SIZE_CMD: any = OCF_LE_READ_BUFFER_SIZE | (OGF_LE_CTL << 10);
+const LE_SET_SCAN_PARAMETERS_CMD: any =
   OCF_LE_SET_SCAN_PARAMETERS | (OGF_LE_CTL << 10);
-let LE_SET_SCAN_ENABLE_CMD: any = OCF_LE_SET_SCAN_ENABLE | (OGF_LE_CTL << 10);
-let LE_CREATE_CONN_CMD: any = OCF_LE_CREATE_CONN | (OGF_LE_CTL << 10);
-let LE_CONN_UPDATE_CMD: any = OCF_LE_CONN_UPDATE | (OGF_LE_CTL << 10);
-let LE_START_ENCRYPTION_CMD: any = OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
-let LE_SET_ADVERTISING_PARAMETERS_CMD: any =
+const LE_SET_SCAN_ENABLE_CMD: any = OCF_LE_SET_SCAN_ENABLE | (OGF_LE_CTL << 10);
+const LE_CREATE_CONN_CMD: any = OCF_LE_CREATE_CONN | (OGF_LE_CTL << 10);
+const LE_CONN_UPDATE_CMD: any = OCF_LE_CONN_UPDATE | (OGF_LE_CTL << 10);
+const LE_START_ENCRYPTION_CMD: any = OCF_LE_START_ENCRYPTION | (OGF_LE_CTL << 10);
+const LE_SET_ADVERTISING_PARAMETERS_CMD: any =
   OCF_LE_SET_ADVERTISING_PARAMETERS | (OGF_LE_CTL << 10);
 
-let LE_SET_ADVERTISING_DATA_CMD: any =
+const LE_SET_ADVERTISING_DATA_CMD: any =
   OCF_LE_SET_ADVERTISING_DATA | (OGF_LE_CTL << 10);
-let LE_SET_SCAN_RESPONSE_DATA_CMD: any =
+const LE_SET_SCAN_RESPONSE_DATA_CMD: any =
   OCF_LE_SET_SCAN_RESPONSE_DATA | (OGF_LE_CTL << 10);
-let LE_SET_ADVERTISE_ENABLE_CMD: any =
+const LE_SET_ADVERTISE_ENABLE_CMD: any =
   OCF_LE_SET_ADVERTISE_ENABLE | (OGF_LE_CTL << 10);
-let LE_LTK_NEG_REPLY_CMD: any = OCF_LE_LTK_NEG_REPLY | (OGF_LE_CTL << 10);
+const LE_LTK_NEG_REPLY_CMD: any = OCF_LE_LTK_NEG_REPLY | (OGF_LE_CTL << 10);
 
-let HCI_OE_USER_ENDED_CONNECTION: any = 0x13;
+const HCI_OE_USER_ENDED_CONNECTION: any = 0x13;
 
-let STATUS_MAPPER: any = require("./hci-status");
+const STATUS_MAPPER: any = require("./hci-status");
 
 class Hci extends events.EventEmitter {
   public _obnizHci: any;
@@ -578,7 +578,7 @@ class Hci extends events.EventEmitter {
   public pushAclOutQueue() {
     debug("pushAclOutQueue");
     let inProgress: any = 0;
-    for (const handle: any in this._handleAclsInProgress) {
+    for (const handle in this._handleAclsInProgress) {
       inProgress += this._handleAclsInProgress[handle];
     }
     debug(inProgress, this._aclMaxInProgress, this._aclOutQueue.length);
@@ -632,7 +632,7 @@ class Hci extends events.EventEmitter {
         delete this._handleAclsInProgress[handle];
         const aclOutQueue: any = [];
         let discarded: any = 0;
-        for (const i: any in this._aclOutQueue) {
+        for (const i in this._aclOutQueue) {
           if (this._aclOutQueue[i].handle !== handle) {
             aclOutQueue.push(this._aclOutQueue[i]);
           } else {
@@ -690,7 +690,7 @@ class Hci extends events.EventEmitter {
         );
       } else if (subEventType === EVT_NUMBER_OF_COMPLETED_PACKETS) {
         const handles: any = data.readUInt8(3);
-        for (let i: any = 0; i < handles; i++) {
+        for (let i = 0; i < handles; i++) {
           const handle: any = data.readUInt16LE(4 + i * 4);
           const pkts: any = data.readUInt16LE(6 + i * 4);
           debug("\thandle = " + handle);
@@ -937,7 +937,7 @@ class Hci extends events.EventEmitter {
   }
 
   public processLeAdvertisingReport(count: any, data: any) {
-    for (let i: any = 0; i < count; i++) {
+    for (let i = 0; i < count; i++) {
       const type: any = data.readUInt8(0);
       const addressType: any = data.readUInt8(1) === 0x01 ? "random" : "public";
       const address: any = data
@@ -1020,4 +1020,4 @@ class Hci extends events.EventEmitter {
 }
 
 Hci.STATUS_MAPPER = STATUS_MAPPER;
-module.exports = Hci;
+export default Hci;

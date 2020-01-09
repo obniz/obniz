@@ -1,15 +1,15 @@
-const ObnizConnection: any = require("./ObnizConnection");
-const ObnizUtil: any = require("./libs/utils/util");
+import ObnizUtil from "./libs/utils/util";
+import ObnizConnection from "./ObnizConnection";
 
-let _parts: any = {};
+const _parts: any = {};
 
-module.exports = class ObnizParts extends ObnizConnection {
+export default class ObnizParts extends ObnizConnection {
 
   public static _parts() {
     return _parts;
   }
 
-  public static PartsRegistrate(arg0: any, arg1: any) {
+  public static PartsRegistrate(arg0: any, arg1?: any) {
     if (
       arg0 &&
       typeof arg0.info === "function" &&
@@ -57,7 +57,7 @@ module.exports = class ObnizParts extends ObnizConnection {
       const keys: any = parts.ioKeys || parts.keys;
       const displayPartsName: any = parts.displayName || partsname;
       const ioNames: any = {};
-      for (const index: any in keys) {
+      for (const index in keys) {
         let pinName: any = keys[index];
         const io: any = args[1][pinName];
         if (this.isValidIO(io)) {
@@ -71,4 +71,4 @@ module.exports = class ObnizParts extends ObnizConnection {
     }
     return parts;
   }
-};
+}

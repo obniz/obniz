@@ -1,5 +1,5 @@
 // load from webpack
 
-let canvas: any;
+const canvas: any = "canvas";
 
-module.exports = canvas;
+export default canvas;

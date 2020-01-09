@@ -32,7 +32,7 @@ class WSCommandTcp extends WSCommand {
     buf[0] = index;
     buf[1] = 0xff && params.connect.port >> 8;
     buf[2] = 0xff && params.connect.port;
-    for (let i: any = 0; i < domain.length; i++) {
+    for (let i = 0; i < domain.length; i++) {
       buf[3 + i] = domain[i];
     }
     this.sendCommand(this._CommandConnect, buf);
@@ -46,14 +46,14 @@ class WSCommandTcp extends WSCommand {
   public write(params: any, index: any) {
     const buf: any = new Uint8Array(params.write.data.length + 1);
     buf[0] = index;
-    for (let i: any = 0; i < params.write.data.length; i++) {
+    for (let i = 0; i < params.write.data.length; i++) {
       buf[1 + i] = params.write.data[i];
     }
     this.sendCommand(this._CommandWrite, buf);
   }
 
   public parseFromJson(json: any) {
-    for (let i: any = 0; i < this._MaxPort; i++) {
+    for (let i = 0; i < this._MaxPort; i++) {
       const module: any = json["tcp" + i];
       if (module === undefined) {
         continue;
@@ -127,7 +127,7 @@ class WSCommandTcp extends WSCommand {
         if (payload.length >= 1) {
           const module_index: any = payload[0];
           const arr: any = new Array(payload.byteLength - 1);
-          for (let i: any = 0; i < arr.length; i++) {
+          for (let i = 0; i < arr.length; i++) {
             arr[i] = payload[i + 1];
           }
           objToSend["tcp" + module_index] = {
@@ -141,4 +141,4 @@ class WSCommandTcp extends WSCommand {
   }
 }
 
-module.exports = WSCommandTcp;
+export default WSCommandTcp;

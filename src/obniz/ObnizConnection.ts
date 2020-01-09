@@ -1,9 +1,9 @@
-const WSCommand: any = require("./libs/wscommand");
-const emitter: any = require("eventemitter3");
+import emitter = require("eventemitter3");
+import WSCommand from "./libs/wscommand";
 
 const isNode: any = typeof window === "undefined";
 
-module.exports = class ObnizConnection {
+export default class ObnizConnection {
   constructor(id, options) {
     this.isNode = isNode;
     this.id = id;
@@ -63,7 +63,7 @@ module.exports = class ObnizConnection {
   }
 
   static get version() {
-    const packageJson: any = require("../../package.json");
+    import packageJson from "../../package.json";
     return packageJson.version;
   }
 
@@ -197,7 +197,7 @@ module.exports = class ObnizConnection {
 
     let socket: any;
     if (this.isNode) {
-      const wsClient: any = require("ws");
+      import wsClient = require("ws");
       socket = new wsClient(url);
       socket.on("open", this.wsOnOpen.bind(this));
       socket.on("message", this.wsOnMessage.bind(this));
@@ -224,7 +224,7 @@ module.exports = class ObnizConnection {
     this.print_debug("local connect to " + url);
     let ws: any;
     if (this.isNode) {
-      const wsClient: any = require("ws");
+      import wsClient = require("ws");
 
       ws = new wsClient(url);
       ws.on("open", () => {
@@ -593,4 +593,4 @@ module.exports = class ObnizConnection {
   public error(msg: any) {
     console.error("error:" + msg);
   }
-};
+}

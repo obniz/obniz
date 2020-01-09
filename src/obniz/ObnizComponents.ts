@@ -1,26 +1,26 @@
-const ObnizBLE: any = require("./libs/embeds/ble/ble");
-const ObnizBLEHci: any = require("./libs/embeds/bleHci/ble");
-const Display: any = require("./libs/embeds/display");
-const ObnizSwitch: any = require("./libs/embeds/switch");
-const semver: any = require("semver");
+import semver = require("semver");
+import ObnizBLE from "./libs/embeds/ble/ble";
+import ObnizBLEHci from "./libs/embeds/bleHci/ble";
+import Display from "./libs/embeds/display";
+import ObnizSwitch from "./libs/embeds/switch";
 
-const LogicAnalyzer: any = require("./libs/measurements/logicanalyzer");
-const ObnizMeasure: any = require("./libs/measurements/measure");
-const PeripheralAD: any = require("./libs/io_peripherals/ad");
-const PeripheralI2C: any = require("./libs/io_peripherals/i2c");
-const PeripheralIO: any = require("./libs/io_peripherals/io");
-const PeripheralDirective: any = require("./libs/io_peripherals/directive");
-const PeripheralPWM: any = require("./libs/io_peripherals/pwm");
-const PeripheralSPI: any = require("./libs/io_peripherals/spi");
-const PeripheralUART: any = require("./libs/io_peripherals/uart");
+import PeripheralAD from "./libs/io_peripherals/ad";
+import PeripheralDirective from "./libs/io_peripherals/directive";
+import PeripheralI2C from "./libs/io_peripherals/i2c";
+import PeripheralIO from "./libs/io_peripherals/io";
+import PeripheralPWM from "./libs/io_peripherals/pwm";
+import PeripheralSPI from "./libs/io_peripherals/spi";
+import PeripheralUART from "./libs/io_peripherals/uart";
+import LogicAnalyzer from "./libs/measurements/logicanalyzer";
+import ObnizMeasure from "./libs/measurements/measure";
 
-const TCP: any = require("./libs/protocol/tcp");
+import TCP from "./libs/protocol/tcp";
 
-const ObnizParts: any = require("./ObnizParts");
+import ObnizParts from "./ObnizParts";
 
-const HW: any = require("./libs/hw");
+import HW from "./libs/hw";
 
-module.exports = class ObnizComponents extends ObnizParts {
+export default class ObnizComponents extends ObnizParts {
   constructor(id, options) {
     super(id, options);
     this.pongObservers = [];
@@ -157,7 +157,7 @@ module.exports = class ObnizComponents extends ObnizParts {
     super.handleSystemCommand(wsObj);
     // ping pong
     if (wsObj.pong) {
-      for (const callback: any of this.pongObservers) {
+      for (const callback of this.pongObservers) {
         callback(wsObj);
       }
     }
@@ -211,7 +211,7 @@ module.exports = class ObnizComponents extends ObnizParts {
   }
 
   public _getFreePeripheralUnit(peripheral: any) {
-    for (const key: any of this._allComponentKeys) {
+    for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */
         const obj: any = this[key];
@@ -267,4 +267,4 @@ module.exports = class ObnizComponents extends ObnizParts {
   public getFreeTcp() {
     return this._getFreePeripheralUnit("tcp");
   }
-};
+}

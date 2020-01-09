@@ -64,4 +64,4 @@ class PeripheralAD {
   }
 }
 
-module.exports = PeripheralAD;
+export default PeripheralAD;

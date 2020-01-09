@@ -1,12 +1,12 @@
 // var debug = require('debug')('bindings');
 
-let events: any = require("events");
+const events: any = require("events");
 
-let AclStream: any = require("./acl-stream");
-let Gatt: any = require("./gatt");
-let Gap: any = require("./gap");
-let Signaling: any = require("./signaling");
-let Hci: any = require("../hci");
+const AclStream: any = require("./acl-stream");
+const Gatt: any = require("./gatt");
+const Gap: any = require("./gap");
+const Signaling: any = require("./signaling");
+const Hci: any = require("../hci");
 
 class NobleBindings extends events.EventEmitter {
   public _state: any;
@@ -670,4 +670,4 @@ class NobleBindings extends events.EventEmitter {
   }
 }
 
-module.exports = NobleBindings;
+export default NobleBindings;

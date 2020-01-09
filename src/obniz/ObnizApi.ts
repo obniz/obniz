@@ -1,4 +1,4 @@
-const fetch: any = require("node-fetch");
+import fetch = require("node-fetch");
 
 class ObnizApi {
   public id: any;
@@ -16,7 +16,7 @@ class ObnizApi {
   }
 
   get apiVersion() {
-    const packageJson: any = require("../../package.json");
+    import packageJson from "../../package.json";
     const versionString: any = packageJson.version;
     return versionString.split(".").shift();
   }
@@ -67,4 +67,4 @@ class ObnizApi {
   }
 }
 
-module.exports = ObnizApi;
+export default ObnizApi;

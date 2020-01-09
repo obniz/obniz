@@ -1,6 +1,6 @@
-const BleRemoteService: any = require("./bleRemoteService");
-const emitter: any = require("eventemitter3");
-const BleHelper: any = require("./bleHelper");
+import emitter = require("eventemitter3");
+import BleHelper from "./bleHelper";
+import BleRemoteService from "./bleRemoteService";
 
 class BleRemotePeripheral {
   public Obniz: any;
@@ -76,10 +76,10 @@ class BleRemotePeripheral {
     if (!this.advertise_data_rows) {
       this.advertise_data_rows = [];
       if (this.adv_data) {
-        for (let i: any = 0; i < this.adv_data.length; i++) {
+        for (let i = 0; i < this.adv_data.length; i++) {
           const length: any = this.adv_data[i];
           const arr: any = new Array(length);
-          for (let j: any = 0; j < length; j++) {
+          for (let j = 0; j < length; j++) {
             arr[j] = this.adv_data[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -87,10 +87,10 @@ class BleRemotePeripheral {
         }
       }
       if (this.scan_resp) {
-        for (let i: any = 0; i < this.scan_resp.length; i++) {
+        for (let i = 0; i < this.scan_resp.length; i++) {
           const length: any = this.scan_resp[i];
           const arr: any = new Array(length);
-          for (let j: any = 0; j < length; j++) {
+          for (let j = 0; j < length; j++) {
             arr[j] = this.scan_resp[i + j + 1];
           }
           this.advertise_data_rows.push(arr);
@@ -104,7 +104,7 @@ class BleRemotePeripheral {
 
   public searchTypeVal(type: any) {
     this.analyseAdvertisement();
-    for (let i: any = 0; i < this.advertise_data_rows.length; i++) {
+    for (let i = 0; i < this.advertise_data_rows.length; i++) {
       if (this.advertise_data_rows[i][0] === type) {
         const results: any = [].concat(this.advertise_data_rows[i]);
         results.shift();
@@ -141,7 +141,7 @@ class BleRemotePeripheral {
     }
     const uuidData: any = data.slice(4, 20);
     let uuid: any = "";
-    for (let i: any = 0; i < uuidData.length; i++) {
+    for (let i = 0; i < uuidData.length; i++) {
       uuid = uuid + ("00" + uuidData[i].toString(16)).slice(-2);
       if (
         i === 4 - 1 ||
@@ -171,7 +171,7 @@ class BleRemotePeripheral {
       return;
     }
     const uuidLength: any = bit / 4;
-    for (let i: any = 0; i < data.length; i = i + uuidLength) {
+    for (let i = 0; i < data.length; i = i + uuidLength) {
       const one: any = data.slice(i, i + uuidLength);
       results.push(this.Obniz.ble.constructor._dataArray2uuidHex(one, true));
     }
@@ -239,7 +239,7 @@ class BleRemotePeripheral {
 
   public getService(uuid: any) {
     uuid = BleHelper.uuidFilter(uuid);
-    for (const key: any in this._services) {
+    for (const key in this._services) {
       if (this._services[key].uuid === uuid) {
         return this._services[key];
       }
@@ -383,4 +383,4 @@ class BleRemotePeripheral {
   }
 }
 
-module.exports = BleRemotePeripheral;
+export default BleRemotePeripheral;

@@ -1,5 +1,5 @@
-const BleHelper: any = require("./bleHelper");
-const BleAttributeAbstract: any = require("./bleAttributeAbstract");
+import BleAttributeAbstract from "./bleAttributeAbstract";
+import BleHelper from "./bleHelper";
 
 class BleLocalAttributeAbstract extends BleAttributeAbstract {
   public RESULT_SUCCESS: any;
@@ -92,4 +92,4 @@ class BleLocalAttributeAbstract extends BleAttributeAbstract {
   }
 }
 
-module.exports = BleLocalAttributeAbstract;
+export default BleLocalAttributeAbstract;

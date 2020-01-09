@@ -1,4 +1,4 @@
-const BleLocalAttributeAbstract: any = require("./bleLocalAttributeAbstract");
+import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 
 class BleDescriptor extends BleLocalAttributeAbstract {
   public permissions: any;
@@ -38,4 +38,4 @@ class BleDescriptor extends BleLocalAttributeAbstract {
   }
 }
 
-module.exports = BleDescriptor;
+export default BleDescriptor;

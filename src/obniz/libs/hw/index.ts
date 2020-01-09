@@ -1,4 +1,4 @@
-module.exports = class HW {
+export default class HW {
 
   public static getDefinitionFor(hw: any) {
     if (hw === "obnizb1") {
@@ -14,4 +14,4 @@ module.exports = class HW {
     }
     return undefined;
   }
-};
+}

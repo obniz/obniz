@@ -18,4 +18,4 @@ const BleHelper: any = {
   },
 };
 
-module.exports = BleHelper;
+export default BleHelper;

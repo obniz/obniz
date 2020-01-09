@@ -1,5 +1,5 @@
-const BleService: any = require("./bleService");
-const BleHelper: any = require("./bleHelper");
+import BleHelper from "./bleHelper";
+import BleService from "./bleService";
 
 class BlePeripheral {
   public obnizBle: any;
@@ -30,7 +30,7 @@ class BlePeripheral {
 
   public setJson(json: any) {
     if (json.services) {
-      for (const service: any of json.services) {
+      for (const service of json.services) {
         this.addService(service);
       }
     }
@@ -94,4 +94,4 @@ class BlePeripheral {
   }
 }
 
-module.exports = BlePeripheral;
+export default BlePeripheral;

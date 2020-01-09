@@ -1,23 +1,23 @@
-const ObnizBLEHci: any = require("./hci");
-const CentralBindings: any = require("./protocol/central/bindings");
-const PeripheralBindings: any = require("./protocol/peripheral/bindings");
-const HciProtocol: any = require("./protocol/hci");
-const BleHelper: any = require("./bleHelper");
+import BleHelper from "./bleHelper";
+import ObnizBLEHci from "./hci";
+import CentralBindings from "./protocol/central/bindings";
+import HciProtocol from "./protocol/hci";
+import PeripheralBindings from "./protocol/peripheral/bindings";
 
-const BlePeripheral: any = require("./blePeripheral");
-const BleService: any = require("./bleService");
-const BleCharacteristic: any = require("./bleCharacteristic");
-const BleDescriptor: any = require("./bleDescriptor");
-const BleRemotePeripheral: any = require("./bleRemotePeripheral");
-const BleAdvertisement: any = require("./bleAdvertisement");
-const BleScan: any = require("./bleScan");
-const BleSecurity: any = require("./bleSecurity");
+import BleAdvertisement from "./bleAdvertisement";
+import BleCharacteristic from "./bleCharacteristic";
+import BleDescriptor from "./bleDescriptor";
+import BlePeripheral from "./blePeripheral";
+import BleRemotePeripheral from "./bleRemotePeripheral";
+import BleScan from "./bleScan";
+import BleSecurity from "./bleSecurity";
+import BleService from "./bleService";
 
 class ObnizBLE {
 
   public static _dataArray2uuidHex(data: any, reverse: any) {
     let uuid: any = [];
-    for (let i: any = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
     }
     if (reverse) {
@@ -140,7 +140,7 @@ class ObnizBLE {
   }
 
   public findPeripheral(address: any) {
-    for (const key: any in this.remotePeripherals) {
+    for (const key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
         return this.remotePeripherals[key];
       }
@@ -206,7 +206,7 @@ class ObnizBLE {
 
   public onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
-    for (const serviceUuid: any of serviceUuids) {
+    for (const serviceUuid of serviceUuids) {
       peripheral.notifyFromServer("discover", {service_uuid: serviceUuid});
     }
     peripheral.notifyFromServer("discoverfinished", {});
@@ -222,7 +222,7 @@ class ObnizBLE {
   public onCharacteristicsDiscover(peripheralUuid: any, serviceUuid?: any, characteristics?: any) {
     const peripheral: any = this.findPeripheral(peripheralUuid);
     const service: any = peripheral.findService({service_uuid: serviceUuid});
-    for (const char: any of characteristics) {
+    for (const char of characteristics) {
       const obj: any = {
         properties: char.properties.map((e) => BleHelper.toSnakeCase(e)),
         characteristic_uuid: char.uuid,
@@ -299,7 +299,7 @@ class ObnizBLE {
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,
     });
-    for (const descr: any of descriptors) {
+    for (const descr of descriptors) {
       const obj: any = {
         descriptor_uuid: descr,
       };
@@ -486,4 +486,4 @@ class ObnizBLE {
   }
 }
 
-module.exports = ObnizBLE;
+export default ObnizBLE;

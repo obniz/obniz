@@ -85,4 +85,4 @@ class WSCommandAD extends WSCommand {
   }
 }
 
-module.exports = WSCommandAD;
+export default WSCommandAD;

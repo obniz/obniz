@@ -1,5 +1,5 @@
-const BleDescriptor: any = require("./bleDescriptor");
-const BleLocalAttributeAbstract: any = require("./bleLocalAttributeAbstract");
+import BleDescriptor from "./bleDescriptor";
+import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 
 class BleCharacteristic extends BleLocalAttributeAbstract {
   public _maxValueSize: any;
@@ -142,4 +142,4 @@ class BleCharacteristic extends BleLocalAttributeAbstract {
   }
 }
 
-module.exports = BleCharacteristic;
+export default BleCharacteristic;

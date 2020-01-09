@@ -2,13 +2,13 @@
 const debug: any = () => {
 };
 
-let events: any = require("events");
-let os: any = require("os");
+const events: any = require("events");
+const os: any = require("os");
 
-let AclStream: any = require("./acl-stream");
+const AclStream: any = require("./acl-stream");
 
-let Gap: any = require("./gap");
-let Gatt: any = require("./gatt");
+const Gap: any = require("./gap");
+const Gatt: any = require("./gatt");
 
 class BlenoBindings extends events.EventEmitter {
   public _state: any;
@@ -231,4 +231,4 @@ class BlenoBindings extends events.EventEmitter {
   }
 }
 
-module.exports = BlenoBindings;
+export default BlenoBindings;

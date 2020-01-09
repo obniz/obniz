@@ -1,4 +1,4 @@
-const Builder: any = require("./bleAdvertisementBuilder");
+import Builder from "./bleAdvertisementBuilder";
 
 class BleAdvertisement {
   public Obniz: any;
@@ -58,4 +58,4 @@ class BleAdvertisement {
   }
 }
 
-module.exports = BleAdvertisement;
+export default BleAdvertisement;

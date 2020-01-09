@@ -25,4 +25,4 @@ class ObnizBLEHci {
   }
 }
 
-module.exports = ObnizBLEHci;
+export default ObnizBLEHci;

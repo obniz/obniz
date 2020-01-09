@@ -1,5 +1,5 @@
-const BleLocalAttributeAbstract: any = require("./bleLocalAttributeAbstract");
-const BleCharacteristic: any = require("./bleCharacteristic");
+import BleCharacteristic from "./bleCharacteristic";
+import BleLocalAttributeAbstract from "./bleLocalAttributeAbstract";
 
 class BleService extends BleLocalAttributeAbstract {
   public addCharacteristic: any;
@@ -52,4 +52,4 @@ class BleService extends BleLocalAttributeAbstract {
   }
 }
 
-module.exports = BleService;
+export default BleService;

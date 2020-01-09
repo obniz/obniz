@@ -1,4 +1,4 @@
-const emitter: any = require("eventemitter3");
+import emitter = require("eventemitter3");
 
 class BleSecurity {
   public Obniz: any;
@@ -50,4 +50,4 @@ class BleSecurity {
   }
 }
 
-module.exports = BleSecurity;
+export default BleSecurity;

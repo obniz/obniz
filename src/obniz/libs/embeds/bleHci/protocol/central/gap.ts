@@ -2,8 +2,8 @@
 const debug: any = () => {
 };
 
-let events: any = require("events");
-let Hci: any = require("../hci");
+const events: any = require("events");
+const Hci: any = require("../hci");
 
 class Gap extends events.EventEmitter {
   public _hci: any;
@@ -564,4 +564,4 @@ class Gap extends events.EventEmitter {
   }
 }
 
-module.exports = Gap;
+export default Gap;

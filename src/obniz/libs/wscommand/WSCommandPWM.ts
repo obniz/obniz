@@ -122,4 +122,4 @@ class WSCommandPWM extends WSCommand {
   }
 }
 
-module.exports = WSCommandPWM;
+export default WSCommandPWM;

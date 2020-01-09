@@ -1,6 +1,6 @@
-const JsonBinaryConverter: any = require("./jsonBinaryConverter");
+import JsonBinaryConverter from "./jsonBinaryConverter";
 const WSCommand: any = require("./WSCommand.js").default;
-const WSCommandBleHci: any = require("./WSCommandBleHci");
+import WSCommandBleHci from "./WSCommandBleHci";
 
 class WSCommandBle extends WSCommand {
   public module: any;
@@ -571,7 +571,7 @@ class WSCommandBle extends WSCommand {
     const sendBufs: any = [];
     const startServiceBufs: any = [];
     let buf: any;
-    for (const serviceIndex: any in val.services) {
+    for (const serviceIndex in val.services) {
       const service: any = val.services[serviceIndex];
       buf = JsonBinaryConverter.createSendBuffer(
         schema.service.schema,
@@ -591,7 +591,7 @@ class WSCommandBle extends WSCommand {
         buffer: buf,
       });
 
-      for (const charaIndex: any in service.characteristics) {
+      for (const charaIndex in service.characteristics) {
         const chara: any = service.characteristics[charaIndex];
         chara.service_uuid = service.uuid;
         buf = JsonBinaryConverter.createSendBuffer(
@@ -606,7 +606,7 @@ class WSCommandBle extends WSCommand {
           buffer: buf,
         });
 
-        for (const descIndex: any in chara.descriptors) {
+        for (const descIndex in chara.descriptors) {
           const desc: any = chara.descriptors[descIndex];
           desc.service_uuid = service.uuid;
           desc.characteristic_uuid = chara.uuid;
@@ -621,10 +621,10 @@ class WSCommandBle extends WSCommand {
         }
       }
     }
-    for (const index: any in sendBufs) {
+    for (const index in sendBufs) {
       this.sendCommand(sendBufs[index].command, sendBufs[index].buffer);
     }
-    for (const index: any in startServiceBufs) {
+    for (const index in startServiceBufs) {
       this.sendCommand(
         startServiceBufs[index].command,
         startServiceBufs[index].buffer,
@@ -1499,7 +1499,7 @@ class WSCommandBle extends WSCommand {
   public _addRowForPath(sendObj: any, path: any, row: any) {
     const keys: any = path.split(".");
     let target: any = sendObj;
-    for (let index: any = 0; index < keys.length - 1; index++) {
+    for (let index = 0; index < keys.length - 1; index++) {
       target[keys[index]] = target[keys[index]] || {};
       target = target[keys[index]];
     }
@@ -1507,4 +1507,4 @@ class WSCommandBle extends WSCommand {
   }
 }
 
-module.exports = WSCommandBle;
+export default WSCommandBle;

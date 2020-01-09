@@ -1,5 +1,5 @@
-const emitter: any = require("eventemitter3");
-const semver: any = require("semver");
+import emitter = require("eventemitter3");
+import semver = require("semver");
 
 class BleSecurity {
   public Obniz: any;
@@ -172,4 +172,4 @@ class BleSecurity {
   }
 }
 
-module.exports = BleSecurity;
+export default BleSecurity;

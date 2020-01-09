@@ -1,4 +1,4 @@
-const ObnizUtil: any = require("../utils/util");
+import ObnizUtil from "../utils/util";
 const isNode: any = typeof window === "undefined";
 
 class PeripheralUART {
@@ -179,4 +179,4 @@ class PeripheralUART {
   }
 }
 
-module.exports = PeripheralUART;
+export default PeripheralUART;

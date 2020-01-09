@@ -1,6 +1,6 @@
-const BleDescriptor: any = require("./bleDescriptor");
-const BleAttributeAbstract: any = require("./bleAttributeAbstract");
-const BleHelper: any = require("./bleHelper");
+import BleAttributeAbstract from "./bleAttributeAbstract";
+import BleDescriptor from "./bleDescriptor";
+import BleHelper from "./bleHelper";
 
 class BleCharacteristic extends BleAttributeAbstract {
   public addDescriptor: any;
@@ -124,4 +124,4 @@ class BleCharacteristic extends BleAttributeAbstract {
   }
 }
 
-module.exports = BleCharacteristic;
+export default BleCharacteristic;

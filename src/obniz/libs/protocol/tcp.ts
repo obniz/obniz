@@ -1,5 +1,5 @@
 const isNode: any = typeof window === "undefined";
-const semver: any = require("semver");
+import semver = require("semver");
 
 class Tcp {
   public Obniz: any;
@@ -157,4 +157,4 @@ class Tcp {
   }
 }
 
-module.exports = Tcp;
+export default Tcp;

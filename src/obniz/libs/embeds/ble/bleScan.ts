@@ -1,5 +1,5 @@
-const emitter: any = require("eventemitter3");
-const BleHelper: any = require("./bleHelper");
+import emitter = require("eventemitter3");
+import BleHelper from "./bleHelper";
 
 class BleScan {
   public scanTarget: any;
@@ -95,7 +95,7 @@ class BleScan {
       const uuids: any = peripheral.advertisementServiceUuids().map((e) => {
         return BleHelper.uuidFilter(e);
       });
-      for (const uuid: any of this.scanTarget.uuids) {
+      for (const uuid of this.scanTarget.uuids) {
         if (!uuids.includes(uuid)) {
           return false;
         }
@@ -128,4 +128,4 @@ class BleScan {
   }
 }
 
-module.exports = BleScan;
+export default BleScan;

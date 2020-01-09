@@ -1,13 +1,13 @@
 // let debug = require('debug')('signaling');
-let debug: any = () => {
+const debug: any = () => {
 };
 
-let events: any = require("events");
+const events: any = require("events");
 
-let CONNECTION_PARAMETER_UPDATE_REQUEST: any = 0x12;
-let CONNECTION_PARAMETER_UPDATE_RESPONSE: any = 0x13;
+const CONNECTION_PARAMETER_UPDATE_REQUEST: any = 0x12;
+const CONNECTION_PARAMETER_UPDATE_RESPONSE: any = 0x13;
 
-let SIGNALING_CID: any = 0x0005;
+const SIGNALING_CID: any = 0x0005;
 
 class Signaling extends events.EventEmitter {
   public _handle: any;
@@ -85,4 +85,4 @@ class Signaling extends events.EventEmitter {
   }
 }
 
-module.exports = Signaling;
+export default Signaling;

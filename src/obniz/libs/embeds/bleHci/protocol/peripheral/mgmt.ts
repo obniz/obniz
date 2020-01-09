@@ -2,9 +2,9 @@
 const debug: any = () => {
 };
 
-let LTK_INFO_SIZE: any = 36;
+const LTK_INFO_SIZE: any = 36;
 
-let MGMT_OP_LOAD_LONG_TERM_KEYS: any = 0x0013;
+const MGMT_OP_LOAD_LONG_TERM_KEYS: any = 0x0013;
 
 class Mgmt {
   public _ltkInfos: any;
@@ -56,7 +56,7 @@ class Mgmt {
 
     op.writeUInt16LE(numLongTermKeys, 0);
 
-    for (let i: any = 0; i < numLongTermKeys; i++) {
+    for (let i = 0; i < numLongTermKeys; i++) {
       this._ltkInfos[i].copy(op, 2 + i * LTK_INFO_SIZE);
     }
 
@@ -85,4 +85,4 @@ class Mgmt {
   }
 }
 
-module.exports = Mgmt;
+export default Mgmt;

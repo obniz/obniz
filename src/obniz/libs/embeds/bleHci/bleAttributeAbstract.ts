@@ -1,6 +1,6 @@
-const ObnizUtil: any = require("../../utils/util");
-const emitter: any = require("eventemitter3");
-const BleHelper: any = require("./bleHelper");
+import emitter = require("eventemitter3");
+import ObnizUtil from "../../utils/util";
+import BleHelper from "./bleHelper";
 
 class BleAttributeAbstract {
   public uuid: any;
@@ -28,7 +28,7 @@ class BleAttributeAbstract {
     }
 
     if (params[this.childrenName]) {
-      for (const child: any of params[this.childrenName]) {
+      for (const child of params[this.childrenName]) {
         this.addChild(child);
       }
     }
@@ -251,4 +251,4 @@ class BleAttributeAbstract {
   }
 }
 
-module.exports = BleAttributeAbstract;
+export default BleAttributeAbstract;

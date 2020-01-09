@@ -2,14 +2,14 @@
 const debug: any = () => {
 };
 
-let events: any = require("events");
-let os: any = require("os");
+const events: any = require("events");
+const os: any = require("os");
 
-let Hci: any = require("../hci");
+const Hci: any = require("../hci");
 
-let isLinux: any = os.platform() === "linux";
-let isIntelEdison: any = isLinux && os.release().indexOf("edison") !== -1;
-let isYocto: any = isLinux && os.release().indexOf("yocto") !== -1;
+const isLinux: any = os.platform() === "linux";
+const isIntelEdison: any = isLinux && os.release().indexOf("edison") !== -1;
+const isYocto: any = isLinux && os.release().indexOf("yocto") !== -1;
 
 class Gap extends events.EventEmitter {
   public _hci: any;
@@ -250,4 +250,4 @@ class Gap extends events.EventEmitter {
   }
 }
 
-module.exports = Gap;
+export default Gap;

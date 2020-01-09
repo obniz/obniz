@@ -1,4 +1,4 @@
-let crypto: any = require("crypto");
+const crypto: any = require("crypto");
 
 function r() {
   return crypto.randomBytes(16);
@@ -34,7 +34,7 @@ function e(key: any, data: any) {
 function xor(b1: any, b2: any) {
   const result: any = Buffer.alloc(b1.length);
 
-  for (let i: any = 0; i < b1.length; i++) {
+  for (let i = 0; i < b1.length; i++) {
     result[i] = b1[i] ^ b2[i];
   }
 
@@ -44,14 +44,14 @@ function xor(b1: any, b2: any) {
 function swap(input: any) {
   const output: any = Buffer.alloc(input.length);
 
-  for (let i: any = 0; i < output.length; i++) {
+  for (let i = 0; i < output.length; i++) {
     output[i] = input[input.length - i - 1];
   }
 
   return output;
 }
 
-module.exports = {
+export default {
   r,
   c1,
   s1,

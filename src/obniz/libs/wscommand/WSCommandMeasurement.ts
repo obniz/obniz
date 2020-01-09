@@ -64,7 +64,7 @@ class WSCommandMeasurement extends WSCommand {
       let index: any = 0;
       const count: any = parseInt(payload[index++]);
       const array: any = [];
-      for (let i: any = 0; i < count; i++) {
+      for (let i = 0; i < count; i++) {
         let timing: any;
         const edge: any = payload[index++] > 0 ? true : false;
         timing = payload[index++] << (8 * 3);
@@ -86,4 +86,4 @@ class WSCommandMeasurement extends WSCommand {
   }
 }
 
-module.exports = WSCommandMeasurement;
+export default WSCommandMeasurement;

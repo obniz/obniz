@@ -74,9 +74,9 @@ class WSCommandLogicAnalyzer extends WSCommand {
     if (func === this._CommandRecv) {
       const arr: any = new Array(payload.byteLength * 8);
       let offset: any = 0;
-      for (let i: any = 0; i < payload.byteLength; i++) {
+      for (let i = 0; i < payload.byteLength; i++) {
         const byte: any = payload[i];
-        for (let bit: any = 0; bit < 8; bit++) {
+        for (let bit = 0; bit < 8; bit++) {
           arr[offset] = byte & (0x80 >>> bit) ? 1 : 0;
           offset++;
         }
@@ -90,4 +90,4 @@ class WSCommandLogicAnalyzer extends WSCommand {
   }
 }
 
-module.exports = WSCommandLogicAnalyzer;
+export default WSCommandLogicAnalyzer;

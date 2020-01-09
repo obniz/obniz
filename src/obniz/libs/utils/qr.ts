@@ -1027,8 +1027,8 @@ const _qrcode: any = (() => {
     _this.multiply = (e: any) => {
       const ___num: any = new Array(_this.getLength() + e.getLength() - 1);
 
-      for (let i: any = 0; i < _this.getLength(); i += 1) {
-        for (let j: any = 0; j < e.getLength(); j += 1) {
+      for (let i = 0; i < _this.getLength(); i += 1) {
+        for (let j = 0; j < e.getLength(); j += 1) {
           ___num[i + j] ^= QRMath.gexp(
             QRMath.glog(_this.getAt(i)) + QRMath.glog(e.getAt(j)),
           );
@@ -1046,11 +1046,11 @@ const _qrcode: any = (() => {
       const ratio: any = QRMath.glog(_this.getAt(0)) - QRMath.glog(e.getAt(0));
 
       const __num: any = new Array(_this.getLength());
-      for (let i: any = 0; i < _this.getLength(); i += 1) {
+      for (let i = 0; i < _this.getLength(); i += 1) {
         __num[i] = _this.getAt(i);
       }
 
-      for (let i: any = 0; i < e.getLength(); i += 1) {
+      for (let i = 0; i < e.getLength(); i += 1) {
         __num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i)) + ratio);
       }
 
@@ -1351,12 +1351,12 @@ const _qrcode: any = (() => {
 
       const list: any = [];
 
-      for (let i: any = 0; i < length; i += 1) {
+      for (let i = 0; i < length; i += 1) {
         const count: any = rsBlock[i * 3 + 0];
         const totalCount: any = rsBlock[i * 3 + 1];
         const dataCount: any = rsBlock[i * 3 + 2];
 
-        for (let j: any = 0; j < count; j += 1) {
+        for (let j = 0; j < count; j += 1) {
           list.push(qrRSBlock(totalCount, dataCount));
         }
       }
@@ -1387,7 +1387,7 @@ const _qrcode: any = (() => {
     };
 
     _this.put = (num: number, length: number) => {
-      for (let i: any = 0; i < length; i += 1) {
+      for (let i = 0; i < length; i += 1) {
         _this.putBit(((num >>> (length - i - 1)) & 1) === 1);
       }
     };
@@ -1452,7 +1452,7 @@ const _qrcode: any = (() => {
 
       const strToNum: any = (s: any) => {
           let num: any = 0;
-          for (let i: any = 0; i < s.length; i += 1) {
+          for (let i = 0; i < s.length; i += 1) {
             num = num * 10 + chatToNum(s.charAt(i));
           }
           return num;
@@ -1561,7 +1561,7 @@ const _qrcode: any = (() => {
     };
 
     _this.write = (buffer: any) => {
-      for (let i: any = 0; i < _bytes.length; i += 1) {
+      for (let i = 0; i < _bytes.length; i += 1) {
         buffer.put(_bytes[i], 8);
       }
     };
@@ -1661,13 +1661,13 @@ const _qrcode: any = (() => {
     _this.writeBytes = (b: any, off: any, len: any) => {
       off = off || 0;
       len = len || b.length;
-      for (let i: any = 0; i < len; i += 1) {
+      for (let i = 0; i < len; i += 1) {
         _this.writeByte(b[i + off]);
       }
     };
 
     _this.writeString = (s: any) => {
-      for (let i: any = 0; i < s.length; i += 1) {
+      for (let i = 0; i < s.length; i += 1) {
         _this.writeByte(s.charCodeAt(i));
       }
     }
@@ -1680,7 +1680,7 @@ const _qrcode: any = (() => {
     _this.toString = () => {
       let s: any = "";
       s += "[";
-      for (let i: any = 0; i < _bytes.length; i += 1) {
+      for (let i = 0; i < _bytes.length; i += 1) {
         if (i > 0) {
           s += ",";
         }
@@ -1748,7 +1748,7 @@ const _qrcode: any = (() => {
       if (_length % 3 !== 0) {
         // padding
         const padlen: any = 3 - _length % 3;
-        for (let i: any = 0; i < padlen; i += 1) {
+        for (let i = 0; i < padlen; i += 1) {
           _base64 += "=";
         }
       }
@@ -1839,7 +1839,7 @@ const _qrcode: any = (() => {
     // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
     function toUTF8Array(str: any) {
       const utf8: any = [];
-      for (let i: any = 0; i < str.length; i++) {
+      for (let i = 0; i < str.length; i++) {
         let charcode: any = str.charCodeAt(i);
         if (charcode < 0x80) {
           utf8.push(charcode);
@@ -1874,4 +1874,4 @@ const _qrcode: any = (() => {
   };
 })
 ();
-module.exports = _qrcode;
+export default _qrcode;

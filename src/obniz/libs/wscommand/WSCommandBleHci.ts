@@ -41,4 +41,4 @@ class WSCommandBleHci {
   }
 }
 
-module.exports = WSCommandBleHci;
+export default WSCommandBleHci;

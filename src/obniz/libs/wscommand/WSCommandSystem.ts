@@ -72,7 +72,7 @@ class WSCommandSystem extends WSCommand {
     buf[5] = lower >> (8 * 2);
     buf[6] = lower >> (8 * 1);
     buf[7] = lower >> (8 * 0);
-    for (let i: any = 0; i < params.ping.key.length; i++) {
+    for (let i = 0; i < params.ping.key.length; i++) {
       buf[8 + i] = params.ping.key[i];
     }
 
@@ -126,7 +126,7 @@ class WSCommandSystem extends WSCommand {
       const pingServerTime: any =
         payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
       const key: any = [];
-      for (let i: any = 16; i < payload.length; i++) {
+      for (let i = 16; i < payload.length; i++) {
         key.push(payload[i]);
       }
       objToSend.system.pong = {
@@ -189,4 +189,4 @@ class WSCommandSystem extends WSCommand {
   }
 }
 
-module.exports = WSCommandSystem;
+export default WSCommandSystem;

@@ -2,9 +2,9 @@ let baseDir: any;
 import fs = require("fs");
 import yaml = require("js-yaml");
 
-module.exports = (directory: string, recursive: boolean, regExp: RegExp): any => {
-  const nodeDir: any = require("node-dir");
-  const path: any = require("path");
+export default (directory: string, recursive: boolean, regExp: RegExp): any => {
+  import nodeDir = require("node-dir");
+  import path = require("path");
 
   // Assume absolute path by default
   let basepath: any = directory;

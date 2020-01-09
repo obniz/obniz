@@ -1,6 +1,6 @@
-const ObnizComponents: any = require("./ObnizComponents");
+import ObnizComponents from "./ObnizComponents";
 
-module.exports = class ObnizSystemMethods extends ObnizComponents {
+export default class ObnizSystemMethods extends ObnizComponents {
   constructor(id: any, options: any) {
     super(id, options);
   }
@@ -152,4 +152,4 @@ module.exports = class ObnizSystemMethods extends ObnizComponents {
       this.addPongObserver(callback);
     });
   }
-};
+}

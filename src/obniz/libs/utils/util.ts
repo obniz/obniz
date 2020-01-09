@@ -83,4 +83,4 @@ class ObnizUtil {
   }
 }
 
-module.exports = ObnizUtil;
+export default ObnizUtil;

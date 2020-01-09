@@ -1,6 +1,6 @@
-let yaml: any = require("js-yaml");
+const yaml: any = require("js-yaml");
 
-module.exports = (source: any) => {
+export default (source: any) => {
 
   // @ts-ignore
   const self: any = this;

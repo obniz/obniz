@@ -1,8 +1,8 @@
 const WSCommand: any = require("./WSCommand.js").default;
-const ObnizUtil: any = require("../utils/util");
-const semver: any = require("semver");
+import semver = require("semver");
+import ObnizUtil from "../utils/util";
 
-module.exports = class WSCommandDirective extends WSCommand {
+export default class WSCommandDirective extends WSCommand {
   constructor() {
     super();
     this.module = 1;
@@ -12,8 +12,8 @@ module.exports = class WSCommandDirective extends WSCommand {
     this._CommandResume = 2;
     this._CommandNotify = 3;
 
-    const CommandIO: any = require("./WSCommandIO");
-    const CommandPWM: any = require("./WSCommandPWM");
+    import CommandIO from "./WSCommandIO";
+    import CommandPWM from "./WSCommandPWM";
 
     this.availableCommands = [new CommandIO(), new CommandPWM()];
   }
@@ -65,7 +65,7 @@ module.exports = class WSCommandDirective extends WSCommand {
 
     const commandJsonArray: any = params.animation.states;
 
-    for (let i: any = 0; i < commandJsonArray.length; i++) {
+    for (let i = 0; i < commandJsonArray.length; i++) {
       const obj: any = commandJsonArray[i];
       const duration: any = parseInt(obj.duration * 1000);
       const state: any = obj.state;
@@ -201,4 +201,4 @@ module.exports = class WSCommandDirective extends WSCommand {
       super.notifyFromBinary(objToSend, func, payload);
     }
   }
-};
+}

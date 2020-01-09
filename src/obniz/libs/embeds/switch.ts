@@ -59,4 +59,4 @@ class ObnizSwitch {
   }
 }
 
-module.exports = ObnizSwitch;
+export default ObnizSwitch;

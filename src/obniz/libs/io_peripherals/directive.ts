@@ -1,4 +1,4 @@
-const semver: any = require("semver");
+import semver = require("semver");
 
 class Directive {
   public Obniz: any;
@@ -12,7 +12,7 @@ class Directive {
   }
 
   public _reset() {
-    for (let i: any = 0; i < this.observers.length; i++) {
+    for (let i = 0; i < this.observers.length; i++) {
       this.observers[i].reject(new Error("reset called"));
     }
     this.observers = [];
@@ -51,7 +51,7 @@ class Directive {
     }
 
     const states: any = [];
-    for (let i: any = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       const state: any = array[i];
       const duration: any = state.duration;
       const operation: any = state.state;
@@ -96,7 +96,7 @@ class Directive {
 
   public notified(obj: any) {
     if (obj.animation.status === "finish") {
-      for (let i: any = this.observers.length - 1; i >= 0; i--) {
+      for (let i = this.observers.length - 1; i >= 0; i--) {
         if (obj.animation.name === this.observers[i].name) {
           this.observers[i].resolve();
           this.observers.splice(i, 1);
@@ -106,4 +106,4 @@ class Directive {
   }
 }
 
-module.exports = Directive;
+export default Directive;

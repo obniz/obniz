@@ -1,4 +1,4 @@
-const ObnizUtil: any = require("../utils/util");
+import ObnizUtil from "../utils/util";
 
 class PeripheralI2C {
   public Obniz: any;
@@ -43,7 +43,7 @@ class PeripheralI2C {
     ]);
 
     const ioKeys: any = ["sda", "scl", "gnd"];
-    for (const key: any of ioKeys) {
+    for (const key of ioKeys) {
       if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
         throw new Error("i2c start param '" + key + "' are to be valid io no");
       }
@@ -230,4 +230,4 @@ class PeripheralI2C {
   }
 }
 
-module.exports = PeripheralI2C;
+export default PeripheralI2C;

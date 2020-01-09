@@ -107,7 +107,7 @@ export default abstract class WSCommand {
       }
     }
 
-    for (const wscommand: any of wscommands) {
+    for (const wscommand of wscommands) {
       wscommand.parsed = append;
       wscommand.parseFromJson(json);
     }
@@ -197,7 +197,7 @@ export default abstract class WSCommand {
 
   public validateCommandSchema(uriList: any, json: any, rootPath: any, customArg: any) {
     const res: any = {valid: 0, invalid: 0, results: [], invalidButLike: []};
-    for (const oneRow: any of uriList) {
+    for (const oneRow of uriList) {
       const errors: any = this.validate(oneRow.uri, json);
       res.results.push(errors);
       if (errors.valid) {
@@ -244,7 +244,7 @@ export default abstract class WSCommand {
       WSSchema.errorCodes.UNKNOWN_PROPERTY,
     ];
     const messages: any = [];
-    for (const error: any of validateError.errors) {
+    for (const error of validateError.errors) {
       if (error.code === WSSchema.errorCodes.INVALID_TYPE) {
         if (
           (error as any).params.type === "object" ||
@@ -290,7 +290,7 @@ export default abstract class WSCommand {
 
     if (schema.type === "array") {
       const results: any = [];
-      for (const key: any in json) {
+      for (const key in json) {
         results[key] = this._filterSchema(schema.items, json[key]);
       }
       return results;
@@ -298,13 +298,13 @@ export default abstract class WSCommand {
 
     if (schema.type === "object") {
       const results: any = {};
-      for (const key: any in schema.properties) {
+      for (const key in schema.properties) {
         results[key] = this._filterSchema(schema.properties[key], json[key]);
       }
 
-      for (const pattern: any in schema.patternProperties) {
+      for (const pattern in schema.patternProperties) {
         const reg: any = new RegExp(pattern);
-        for (const key: any of Object.keys(json)) {
+        for (const key of Object.keys(json)) {
           if (reg.test(key)) {
             results[key] = this._filterSchema(
               schema.patternProperties[pattern],

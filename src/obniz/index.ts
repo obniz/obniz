@@ -1,6 +1,6 @@
-const ObnizUIs: any = require("./ObnizUIs");
-const ObnizApi: any = require("./ObnizApi");
-const ObnizUtil: any = require("./libs/utils/util");
+import ObnizUtil from "./libs/utils/util";
+import ObnizApi from "./ObnizApi";
+import ObnizUIs from "./ObnizUIs";
 
 /* global showObnizDebugError  */
 
@@ -131,7 +131,7 @@ class Obniz extends ObnizUIs {
   }
 }
 
-module.exports = Obniz;
+export default Obniz;
 
 /*===================*/
 /* Utils */
@@ -165,7 +165,7 @@ if (require.context && require.context.setBaseDir) {
   require.context.setBaseDir(__dirname);
 }
 
-let context: any = require.context("../parts", true, /\.js$/);
+const context: any = require.context("../parts", true, /\.js$/);
 /* webpack loader */
 for (const path of context.keys()) {
   const anParts: any = context(path);

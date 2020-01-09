@@ -1,5 +1,5 @@
-const ObnizUtil: any = require("../utils/util");
-const semver: any = require("semver");
+import semver = require("semver");
+import ObnizUtil from "../utils/util";
 
 class PeripheralSPI {
   public Obniz: any;
@@ -43,7 +43,7 @@ class PeripheralSPI {
     const obj: any = {};
 
     const ioKeys: any = ["clk", "mosi", "miso", "gnd"];
-    for (const key: any of ioKeys) {
+    for (const key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");
       }
@@ -190,4 +190,4 @@ class PeripheralSPI {
   }
 }
 
-module.exports = PeripheralSPI;
+export default PeripheralSPI;
