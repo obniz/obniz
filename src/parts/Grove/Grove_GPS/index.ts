@@ -351,6 +351,4 @@ class Grove_GPS {
   }
 }
 
-if (typeof module === "object") {
-  export default Grove_GPS;
-}
+export default Grove_GPS;

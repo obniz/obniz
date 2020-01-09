@@ -14,6 +14,4 @@ class S8100B extends AnalogTemperatureSensor {
   }
 }
 
-if (typeof module === "object") {
-  export default S8100B;
-}
+export default S8100B;

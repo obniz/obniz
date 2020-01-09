@@ -12,6 +12,4 @@ class LM61 extends AnalogTemperatureSensor {
   }
 }
 
-if (typeof module === "object") {
-  export default LM61;
-}
+export default LM61;

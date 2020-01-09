@@ -35,6 +35,4 @@ class YG1006 {
   }
 }
 
-if (typeof module === "object") {
-  export default YG1006;
-}
+export default YG1006;

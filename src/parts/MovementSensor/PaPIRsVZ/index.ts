@@ -33,6 +33,4 @@ class PaPIRsVZ {
   }
 }
 
-if (typeof module === "object") {
-  export default PaPIRsVZ;
-}
+export default PaPIRsVZ;

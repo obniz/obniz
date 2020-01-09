@@ -164,6 +164,4 @@ class SNx4HC595 {
   }
 }
 
-if (typeof module === "object") {
-  export default SNx4HC595;
-}
+export default SNx4HC595;

@@ -43,6 +43,4 @@ class _24LC256 {
   }
 }
 
-if (typeof module === "object") {
-  export default _24LC256;
-}
+export default _24LC256;

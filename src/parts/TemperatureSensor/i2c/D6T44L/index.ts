@@ -58,6 +58,4 @@ class D6T44L {
   }
 }
 
-if (typeof module === "object") {
-  export default D6T44L;
-}
+export default D6T44L;

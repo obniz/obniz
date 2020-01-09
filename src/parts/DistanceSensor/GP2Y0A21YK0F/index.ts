@@ -78,6 +78,4 @@ class GP2Y0A21YK0F {
   }
 }
 
-if (typeof module === "object") {
-  export default GP2Y0A21YK0F;
-}
+export default GP2Y0A21YK0F;

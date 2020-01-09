@@ -167,7 +167,7 @@ class FlickHat {
 
     const startTime: any = new Date();
     let ts: any = true;
-    while (ts && new Date() - startTime < timeout) {
+    while (ts && (new Date() as any) - startTime < timeout) {
       ts = await this.io_ts.inputWait();
     }
     if (!ts) {
@@ -428,6 +428,4 @@ class FlickHat {
   }
 }
 
-if (typeof module === "object") {
-  export default FlickHat;
-}
+export default FlickHat;

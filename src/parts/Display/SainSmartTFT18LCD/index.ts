@@ -74,7 +74,7 @@ class SainSmartTFT18LCD {
 
   public _deadSleep(waitMsec: any) {
     const startMsec: any = new Date();
-    while (new Date() - startMsec < waitMsec) {
+    while ((new Date() as any) - startMsec < waitMsec) {
     }
   }
 
@@ -779,7 +779,7 @@ class SainSmartTFT18LCD {
   }
 
   public raw(pixels: any) {
-    this.raw(0, 0, this.width, this.height, pixels);
+    this.rawBound(0, 0, this.width, this.height, pixels);
   }
 
   public _setPresetColor() {
@@ -929,9 +929,7 @@ class SainSmartTFT18LCD {
   }
 }
 
-if (typeof module === "object") {
-  export default SainSmartTFT18LCD;
-}
+export default SainSmartTFT18LCD;
 
 // ----------------------------------------------------------
 

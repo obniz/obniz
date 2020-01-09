@@ -108,6 +108,4 @@ class S5851A {
   }
 }
 
-if (typeof module === "object") {
-  export default S5851A;
-}
+export default S5851A;

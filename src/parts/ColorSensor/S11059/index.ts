@@ -55,6 +55,4 @@ class S11059 {
   }
 }
 
-if (typeof module === "object") {
-  export default S11059;
-}
+export default S11059;

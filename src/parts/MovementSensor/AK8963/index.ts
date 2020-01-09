@@ -62,7 +62,4 @@ class AK8963 {
     return dv.getInt16(0, false);
   }
 }
-
-if (typeof module === "object") {
-  export default AK8963;
-}
+export default AK8963;

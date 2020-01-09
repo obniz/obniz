@@ -95,6 +95,4 @@ class HCSR04 {
   }
 }
 
-if (typeof module === "object") {
-  export default HCSR04;
-}
+export default HCSR04;

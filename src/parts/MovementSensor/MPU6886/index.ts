@@ -177,6 +177,4 @@ class MPU6886 extends i2cParts {
   }
 }
 
-if (typeof module === "object") {
-  export default MPU6886;
-}
+export default MPU6886;

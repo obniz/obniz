@@ -38,6 +38,4 @@ class SEN0114 {
   }
 }
 
-if (typeof module === "object") {
-  export default SEN0114;
-}
+export default SEN0114;

@@ -57,6 +57,4 @@ class Solenoid {
   }
 }
 
-if (typeof module === "object") {
-  export default Solenoid;
-}
+export default Solenoid;

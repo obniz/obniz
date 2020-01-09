@@ -62,6 +62,4 @@ class KXSC7_2050 {
   }
 }
 
-if (typeof module === "object") {
-  export default KXSC7_2050;
-}
+export default KXSC7_2050;

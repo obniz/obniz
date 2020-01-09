@@ -36,6 +36,4 @@ class HCSR505 {
   }
 }
 
-if (typeof module === "object") {
-  export default HCSR505;
-}
+export default HCSR505;

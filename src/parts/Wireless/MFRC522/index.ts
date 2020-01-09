@@ -659,6 +659,4 @@ class MFRC522 {
   }
 }
 
-if (typeof module === "object") {
-  export default MFRC522;
-}
+export default MFRC522;

@@ -280,6 +280,4 @@ class BME280 {
   }
 }
 
-if (typeof module === "object") {
-  export default BME280;
-}
+export default BME280;

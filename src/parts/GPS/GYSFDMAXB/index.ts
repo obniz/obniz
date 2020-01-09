@@ -387,6 +387,4 @@ class GYSFDMAXB {
   }
 }
 
-if (typeof module === "object") {
-  export default GYSFDMAXB;
-}
+export default GYSFDMAXB;

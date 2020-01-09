@@ -32,7 +32,7 @@ class RN42 {
       drive: "3v",
     });
     const self: any = this;
-    this.uart.onreceive = (data, text) => {
+    this.uart.onreceive = (data: any, text: any) => {
       // this is not perfect. separation is possible.
       if (text.indexOf("CONNECT") >= 0) {
         console.log("connected");
@@ -212,6 +212,4 @@ class RN42 {
   }
 }
 
-if (typeof module === "object") {
-  export default RN42;
-}
+export default RN42;

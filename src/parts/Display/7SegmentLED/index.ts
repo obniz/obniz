@@ -152,6 +152,4 @@ class _7SegmentLED {
   }
 }
 
-if (typeof module === "object") {
-  export default _7SegmentLED;
-}
+export default _7SegmentLED;

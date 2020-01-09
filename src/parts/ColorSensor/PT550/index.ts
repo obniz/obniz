@@ -34,6 +34,4 @@ class PT550 {
   }
 }
 
-if (typeof module === "object") {
-  export default PT550;
-}
+export default PT550;

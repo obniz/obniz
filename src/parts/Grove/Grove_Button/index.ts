@@ -56,7 +56,7 @@ class Grove_Button {
 
   public stateWait(isPressed: any) {
     return new Promise((resolve, reject) => {
-      this.onChangeForStateWait = (pressed) => {
+      this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
           this.onChangeForStateWait = () => {
           };
@@ -67,6 +67,4 @@ class Grove_Button {
   }
 }
 
-if (typeof module === "object") {
-  export default Grove_Button;
-}
+export default Grove_Button;

@@ -16,6 +16,4 @@ class S8120C extends AnalogTemperatureSensor {
   }
 }
 
-if (typeof module === "object") {
-  export default S8120C;
-}
+export default S8120C;

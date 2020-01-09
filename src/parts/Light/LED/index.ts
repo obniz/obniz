@@ -68,14 +68,14 @@ class LED {
     const frames: any = [
       {
         duration: interval,
-        state: (index) => {
+        state: (index: any) => {
           // index = 0
           this.io_anode.output(true); // on
         },
       },
       {
         duration: interval,
-        state: (index) => {
+        state: (index: any) => {
           // index = 0
           this.io_anode.output(false); // off
         },
@@ -86,6 +86,4 @@ class LED {
   }
 }
 
-if (typeof module === "object") {
-  export default LED;
-}
+export default LED;

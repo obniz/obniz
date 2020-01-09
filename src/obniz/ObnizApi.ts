@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
-import packageJson from "../../package.json";
+import packageJson = require( "../../package.json");
+
 class ObnizApi {
   public id: any;
   public options: any;

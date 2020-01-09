@@ -111,9 +111,7 @@ class AXP192 {
   }
 }
 
-if (typeof module === "object") {
-  export default AXP192;
-}
+export default AXP192;
 
 const AXP192_ADDRESS: any = 0x34;
 

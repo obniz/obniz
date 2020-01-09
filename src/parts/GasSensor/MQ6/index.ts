@@ -97,6 +97,4 @@ class MQ6 {
   // }
 }
 
-if (typeof module === "object") {
-  export default MQ6;
-}
+export default MQ6;

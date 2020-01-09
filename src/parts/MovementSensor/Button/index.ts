@@ -57,7 +57,7 @@ class Button {
 
   public stateWait(isPressed: any) {
     return new Promise((resolve, reject) => {
-      this.onChangeForStateWait = (pressed) => {
+      this.onChangeForStateWait = (pressed: any) => {
         if (isPressed === pressed) {
           this.onChangeForStateWait = () => {
           };
@@ -68,6 +68,4 @@ class Button {
   }
 }
 
-if (typeof module === "object") {
-  export default Button;
-}
+export default Button;

@@ -12,6 +12,4 @@ class LM35DZ extends AnalogTemperatureSensor {
   }
 }
 
-if (typeof module === "object") {
-  export default LM35DZ;
-}
+export default LM35DZ;

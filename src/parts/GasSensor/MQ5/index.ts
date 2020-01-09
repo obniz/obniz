@@ -98,6 +98,4 @@ class MQ5 {
   // }
 }
 
-if (typeof module === "object") {
-  export default MQ5;
-}
+export default MQ5;

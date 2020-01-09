@@ -97,6 +97,4 @@ class MQ2 {
   // }
 }
 
-if (typeof module === "object") {
-  export default MQ2;
-}
+export default MQ2;

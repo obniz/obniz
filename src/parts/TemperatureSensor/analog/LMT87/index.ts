@@ -12,6 +12,4 @@ class LMT87 extends AnalogTemperatureSensor {
   }
 }
 
-if (typeof module === "object") {
-  export default LMT87;
-}
+export default LMT87;

@@ -47,6 +47,4 @@ class InfraredLED {
   }
 }
 
-if (typeof module === "object") {
-  export default InfraredLED;
-}
+export default InfraredLED;

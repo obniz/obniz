@@ -67,6 +67,4 @@ class _7SegmentLEDArray {
   }
 }
 
-if (typeof module === "object") {
-  export default _7SegmentLEDArray;
-}
+export default _7SegmentLEDArray;

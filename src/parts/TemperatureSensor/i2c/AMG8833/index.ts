@@ -110,6 +110,4 @@ class AMG8833 {
   }
 }
 
-if (typeof module === "object") {
-  export default AMG8833;
-}
+export default AMG8833;

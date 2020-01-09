@@ -69,7 +69,7 @@ class ST7735S {
 
   public _deadSleep(waitMsec: any) {
     const startMsec: any = new Date();
-    while (new Date() - startMsec < waitMsec) {
+    while ((new Date() as any) - startMsec < waitMsec) {
     }
   }
 
@@ -957,9 +957,7 @@ class ST7735S {
   }
 }
 
-if (typeof module === "object") {
-  export default ST7735S;
-}
+export default ST7735S;
 
 // ----------------------------------------------------------
 

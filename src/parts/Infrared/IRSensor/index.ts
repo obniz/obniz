@@ -51,7 +51,7 @@ class IRSensor {
       triggerValue: this.dataInverted ? false : true,
       triggerValueSamples: this.triggerSampleCount,
     });
-    this.obniz.logicAnalyzer.onmeasured = (levels) => {
+    this.obniz.logicAnalyzer.onmeasured = (levels: any) => {
       if (typeof this.ondetect === "function") {
         if (this.dataInverted) {
           const arr: any = new Uint8Array(levels);
@@ -77,6 +77,4 @@ class IRSensor {
   }
 }
 
-if (typeof module === "object") {
-  export default IRSensor;
-}
+export default IRSensor;

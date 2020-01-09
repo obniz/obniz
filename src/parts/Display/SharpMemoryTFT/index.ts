@@ -333,6 +333,4 @@ class SharpMemoryTFT {
   }
 }
 
-if (typeof module === "object") {
-  export default SharpMemoryTFT;
-}
+export default SharpMemoryTFT;

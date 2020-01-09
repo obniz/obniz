@@ -35,6 +35,4 @@ class IPM_165 {
   }
 }
 
-if (typeof module === "object") {
-  export default IPM_165;
-}
+export default IPM_165;

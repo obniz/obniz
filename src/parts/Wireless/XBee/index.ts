@@ -165,6 +165,4 @@ class XBee {
   }
 }
 
-if (typeof module === "object") {
-  export default XBee;
-}
+export default XBee;

@@ -19,7 +19,7 @@ class AnalogTemperatureSensor {
     this.ad = obniz.getAD(this.params.output);
 
     this.ad.start(
-      (voltage) => {
+      (voltage: any) => {
         this.temp = this.calc(voltage);
         this.onchange(this.temp);
       },

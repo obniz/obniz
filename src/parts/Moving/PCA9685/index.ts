@@ -240,6 +240,4 @@ class PCA9685 {
   }
 }
 
-if (typeof module === "object") {
-  export default PCA9685;
-}
+export default PCA9685;

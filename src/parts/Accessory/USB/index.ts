@@ -41,6 +41,4 @@ class USB {
   }
 }
 
-if (typeof module === "object") {
-  export default USB;
-}
+export default USB;

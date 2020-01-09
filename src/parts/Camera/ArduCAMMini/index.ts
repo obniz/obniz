@@ -892,6 +892,4 @@ class ArduCAMMini {
   }
 }
 
-if (typeof module === "object") {
-  export default ArduCAMMini;
-}
+export default ArduCAMMini;

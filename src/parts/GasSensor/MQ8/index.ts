@@ -97,6 +97,4 @@ class MQ8 {
   // }
 }
 
-if (typeof module === "object") {
-  export default MQ8;
-}
+export default MQ8;

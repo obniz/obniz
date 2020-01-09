@@ -94,6 +94,4 @@ class DCMotor {
   }
 }
 
-if (typeof module === "object") {
-  export default DCMotor;
-}
+export default DCMotor;

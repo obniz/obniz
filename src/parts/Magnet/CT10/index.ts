@@ -56,7 +56,7 @@ class CT10 {
 
   public stateWait(isNear: any) {
     return new Promise((resolve, reject) => {
-      this.onChangeForStateWait = (near) => {
+      this.onChangeForStateWait = (near: any) => {
         if (isNear === near) {
           this.onChangeForStateWait = () => {
           };
@@ -67,6 +67,4 @@ class CT10 {
   }
 }
 
-if (typeof module === "object") {
-  export default CT10;
-}
+export default CT10;

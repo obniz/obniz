@@ -57,6 +57,4 @@ class AM2320 {
   }
 }
 
-if (typeof module === "object") {
-  export default AM2320;
-}
+export default AM2320;

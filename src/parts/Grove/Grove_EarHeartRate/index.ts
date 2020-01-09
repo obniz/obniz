@@ -40,7 +40,7 @@ class Grove_EarHeartRate {
       duration: this.duration,
     });
 
-    this.obniz.logicAnalyzer.onmeasured = (array) => {
+    this.obniz.logicAnalyzer.onmeasured = (array: any) => {
       const edges: any = [];
       for (let i = 0; i < array.length - 1; i++) {
         if (array[i] === 0 && array[i + 1] === 1) {
@@ -66,6 +66,4 @@ class Grove_EarHeartRate {
   }
 }
 
-if (typeof module === "object") {
-  export default Grove_EarHeartRate;
-}
+export default Grove_EarHeartRate;

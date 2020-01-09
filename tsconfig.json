@@ -4,6 +4,7 @@
     "module": "commonjs",
     "lib": ["es2018", "dom"],
     "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "allowJs": true,
     "declaration" : true,
@@ -13,8 +14,7 @@
   },
   "include": [
     "./src/**/*",
-    "./src/**/*.js",
-    "./package.json"
+    "./src/**/*.js"
   ],
   "exclude": [
     "./node_modules/*"

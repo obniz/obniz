@@ -38,14 +38,12 @@ class DHT12 extends i2cParts {
   }
 
   public async getTempWait() {
-    return (await this.getAllDataWait()).temperature;
+    return (await this.getAllDataWait() as any).temperature;
   }
 
   public async getHumdWait() {
-    return (await this.getAllDataWait()).humidity;
+    return (await this.getAllDataWait() as any ).humidity;
   }
 }
 
-if (typeof module === "object") {
-  export default DHT12;
-}
+export default DHT12;

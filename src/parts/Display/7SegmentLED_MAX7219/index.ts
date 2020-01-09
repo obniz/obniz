@@ -134,6 +134,4 @@ class _7SegmentLED_MAX7219 {
   }
 }
 
-if (typeof module === "object") {
-  export default _7SegmentLED_MAX7219;
-}
+export default _7SegmentLED_MAX7219;

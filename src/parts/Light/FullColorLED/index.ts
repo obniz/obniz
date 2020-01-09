@@ -128,7 +128,7 @@ class FullColorLED {
     for (let i = 0; i < max; i++) {
       const oneFrame: any = {
         duration,
-        state: (index) => {
+        state: (index: any) => {
           // index = 0
           this.hsv(index * 10 * 2, 1, 1);
         },
@@ -143,6 +143,4 @@ class FullColorLED {
   }
 }
 
-if (typeof module === "object") {
-  export default FullColorLED;
-}
+export default FullColorLED;

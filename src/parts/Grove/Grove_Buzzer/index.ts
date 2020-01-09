@@ -42,6 +42,4 @@ class Grove_Buzzer {
   }
 }
 
-if (typeof module === "object") {
-  export default Grove_Buzzer;
-}
+export default Grove_Buzzer;

@@ -140,6 +140,4 @@ class Hx711 {
   }
 }
 
-if (typeof module === "object") {
-  export default Hx711;
-}
+export default Hx711;

@@ -62,6 +62,4 @@ class ENC03R_Module {
   }
 }
 
-if (typeof module === "object") {
-  export default ENC03R_Module;
-}
+export default ENC03R_Module;

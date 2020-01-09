@@ -116,6 +116,4 @@ class MPU6050 {
   }
 }
 
-if (typeof module === "object") {
-  export default MPU6050;
-}
+export default MPU6050;

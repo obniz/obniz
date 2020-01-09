@@ -103,7 +103,7 @@ class StepperMotor {
     if (msec < 1) {
       msec = 1;
     }
-    const state: any = (index) => {
+    const state: any = (index: any) => {
       const instruction: any = array[index];
       for (let i = 0; i < this.ios.length; i++) {
         this.ios[i].output(instruction[i]);
@@ -167,7 +167,7 @@ class StepperMotor {
 
   public currentAngle() {
     // => degree
-    let angle: any = (Math.flMoor(this.currentRotation() * 1000) % 360000) / 1000;
+    let angle: any = (Math.floor(this.currentRotation() * 1000) % 360000) / 1000;
     if (angle < 0) {
       angle = 360 - angle;
     }
@@ -210,6 +210,4 @@ class StepperMotor {
   }
 }
 
-if (typeof module === "object") {
-  export default StepperMotor;
-}
+export default StepperMotor;

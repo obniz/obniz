@@ -100,6 +100,4 @@ class OMRON_2JCIE {
   }
 }
 
-if (typeof module === "object") {
-  export default OMRON_2JCIE;
-}
+export default OMRON_2JCIE;

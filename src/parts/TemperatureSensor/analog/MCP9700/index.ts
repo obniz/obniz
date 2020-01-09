@@ -13,6 +13,4 @@ class MCP9700 extends AnalogTemperatureSensor {
   }
 }
 
-if (typeof module === "object") {
-  export default MCP9700;
-}
+export default MCP9700;

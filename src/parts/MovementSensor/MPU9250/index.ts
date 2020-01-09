@@ -71,6 +71,4 @@ class MPU9250 {
   }
 }
 
-if (typeof module === "object") {
-  export default MPU9250;
-}
+export default MPU9250;

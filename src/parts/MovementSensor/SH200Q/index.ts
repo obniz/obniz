@@ -180,6 +180,4 @@ class SH200Q extends i2cParts {
   }
 }
 
-if (typeof module === "object") {
-  export default SH200Q;
-}
+export default SH200Q;
