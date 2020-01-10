@@ -17,3 +17,4 @@ log
 /test*.html
 /test/test*.html
 /test/test*.js
+/test/test*.ts
