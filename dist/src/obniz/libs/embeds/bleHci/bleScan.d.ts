@@ -7,8 +7,8 @@ declare class BleScan {
     _timeoutTimer: any;
     constructor(obnizBle: any);
     start(target: any, settings: any): void;
-    startOneWait(target: any, settings: any): Promise<{}>;
-    startAllWait(target: any, settings: any): Promise<{}>;
+    startOneWait(target: any, settings: any): Promise<unknown>;
+    startAllWait(target: any, settings: any): Promise<unknown>;
     end(): void;
     isTarget(peripheral: any): boolean;
     onfinish(data: any): void;

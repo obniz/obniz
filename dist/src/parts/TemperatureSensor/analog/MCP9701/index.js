@@ -15,4 +15,5 @@ class MCP9701 extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = MCP9701;
+
 //# sourceMappingURL=index.js.map

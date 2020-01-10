@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED {
-    static info() {
-        return {
-            name: "7SegmentLED",
-        };
-    }
     constructor() {
         this.keys = [
             "a",
@@ -43,6 +38,11 @@ class _7SegmentLED {
             g: "g",
             dp: "dp",
             common: "com",
+        };
+    }
+    static info() {
+        return {
+            name: "7SegmentLED",
         };
     }
     wired(obniz) {
@@ -127,4 +127,5 @@ class _7SegmentLED {
     }
 }
 exports.default = _7SegmentLED;
+
 //# sourceMappingURL=index.js.map

@@ -19,11 +19,6 @@ class PCA9685_PWM {
 }
 // tslint:disable-next-line:max-classes-per-file
 class PCA9685 {
-    static info() {
-        return {
-            name: "PCA9685",
-        };
-    }
     constructor() {
         /* https://www.nxp.com/docs/en/data-sheet/PCA9685.pdf */
         this.keys = [
@@ -61,6 +56,11 @@ class PCA9685 {
         this.pwmNum = 16;
         this.pwms = [];
         this._preparePWM(this.pwmNum);
+    }
+    static info() {
+        return {
+            name: "PCA9685",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -184,4 +184,5 @@ class PCA9685 {
     }
 }
 exports.default = PCA9685;
+
 //# sourceMappingURL=index.js.map

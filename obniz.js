@@ -90,7 +90,7 @@ var Obniz =
 /***/ "./dist/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.1.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"./dist/obniz/index.js\",\"types\":\"./dist/obniz/index.d.ts\",\"files\":[\"dist\",\"obniz.js\",\"obniz.min.js\"],\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"mocha --require espower-typescript/guess test/functiontest/obniz-ts/**/*.ts\",\"tsExampleTest\":\"tsc --project ./test/functiontest\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile devtools/_tools/server.js --cwd .\",\"build\":\"npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build\",\"build-ts\":\"npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"npm run lint-ts \",\"lint-ts\":\"tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' \",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\",\"clean\":\"rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"],\"*.ts\":[\"tslint -c tslint.json --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"@types/chai\":\"^4.2.7\",\"@types/chai-like\":\"^1.1.0\",\"@types/eventemitter3\":\"^1.2.0\",\"@types/events\":\"^3.0.0\",\"@types/glob\":\"^7.1.1\",\"@types/js-yaml\":\"^3.12.1\",\"@types/minimatch\":\"^3.0.3\",\"@types/mocha\":\"^5.2.7\",\"@types/node\":\"^13.1.5\",\"@types/node-dir\":\"0.0.33\",\"@types/node-fetch\":\"^2.5.4\",\"@types/semver\":\"^6.2.0\",\"@types/sinon\":\"^7.5.1\",\"@types/tv4\":\"^1.2.29\",\"@types/webpack-env\":\"^1.15.0\",\"@types/window-or-global\":\"^1.0.0\",\"@types/ws\":\"^6.0.4\",\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"espower-typescript\":\"^9.0.2\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-sourcemaps\":\"^2.6.5\",\"gulp-typescript\":\"^6.0.0-alpha.1\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"power-assert\":\"^1.6.1\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"tslint\":\"^5.20.1\",\"typescript\":\"^3.7.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"fs\":false,\"ws\":\"./src/obniz/libs/webpackReplace/ws\",\"canvas\":\"./src/obniz/libs/webpackReplace/canvas\",\"./src/obniz/libs/webpackReplace/require-context\":\"./src/obniz/libs/webpackReplace/require-context-browser\"}}");
+module.exports = JSON.parse("{\"name\":\"obniz\",\"version\":\"3.1.0\",\"description\":\"obniz sdk for javascript\",\"main\":\"./dist/src/obniz/index.js\",\"types\":\"./dist/src/obniz/index.d.ts\",\"files\":[\"dist\",\"obniz.js\",\"obniz.min.js\"],\"engines\":{\"node\":\">=7.6.0\"},\"engineStrict\":true,\"scripts\":{\"test\":\"npm run tstest && nyc --reporter=text --reporter=html mocha $NODE_DEBUG_OPTION  ./test/functiontest/index.js -b 1\",\"testOnlyNodejs\":\"NO_BROWSER_TEST=1 npm test\",\"buildAndtest\":\"npm run build && npm test\",\"tstest\":\"mocha --require espower-typescript/guess test/functiontest/obniz-ts/**/*.ts\",\"tsExampleTest\":\"tsc --project ./test/functiontest\",\"realtest\":\"mocha $NODE_DEBUG_OPTION ./realtest/index.js\",\"realtest-debug\":\"DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./realtest/index.js\",\"realtest-esp32\":\"mocha $NODE_DEBUG_OPTION ./realtest_esp32/index.js\",\"local\":\"gulp --gulpfile devtools/_tools/server.js --cwd .\",\"build\":\"npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build\",\"build-ts\":\"npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build\",\"version\":\"npm run build && git add obniz.js && git add obniz.min.js\",\"lint\":\"npm run lint-ts \",\"lint-ts\":\"tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' \",\"precommit\":\"lint-staged && npm run build && git add obniz.js && git add obniz.min.js\",\"clean\":\"rm -rf ./dist ./obniz.js ./obniz.min.js ./obniz.d.ts\"},\"lint-staged\":{\"*.js\":[\"eslint --rulesdir eslint/rule --fix \",\"git add\"],\"*.ts\":[\"tslint -c tslint.json --fix \",\"git add\"]},\"keywords\":[\"obniz\"],\"repository\":\"obniz/obniz\",\"author\":\"yukisato <yuki@yuki-sato.com>\",\"homepage\":\"https://obniz.io/\",\"license\":\"SEE LICENSE IN LICENSE.txt\",\"devDependencies\":{\"@types/chai\":\"^4.2.7\",\"@types/chai-like\":\"^1.1.0\",\"@types/eventemitter3\":\"^1.2.0\",\"@types/events\":\"^3.0.0\",\"@types/glob\":\"^7.1.1\",\"@types/js-yaml\":\"^3.12.1\",\"@types/minimatch\":\"^3.0.3\",\"@types/mocha\":\"^5.2.7\",\"@types/node\":\"^13.1.5\",\"@types/node-dir\":\"0.0.33\",\"@types/node-fetch\":\"^2.5.4\",\"@types/semver\":\"^6.2.0\",\"@types/sinon\":\"^7.5.1\",\"@types/tv4\":\"^1.2.29\",\"@types/webpack-env\":\"^1.15.0\",\"@types/window-or-global\":\"^1.0.0\",\"@types/ws\":\"^6.0.4\",\"chai\":\"^4.2.0\",\"chai-like\":\"^1.1.1\",\"child_process\":\"^1.0.2\",\"concat-with-sourcemaps\":\"^1.1.0\",\"ejs\":\"^2.6.2\",\"eslint\":\"^5.16.0\",\"eslint-config-prettier\":\"^3.6.0\",\"eslint-plugin-jasmine\":\"^2.10.1\",\"eslint-plugin-prettier\":\"^2.7.0\",\"espower-typescript\":\"^9.0.2\",\"express\":\"^4.17.1\",\"get-port\":\"^4.0.0\",\"glob\":\"^7.1.3\",\"gulp\":\"^4.0.2\",\"gulp-concat\":\"^2.6.1\",\"gulp-ejs\":\"^3.2.0\",\"gulp-filter\":\"^5.1.0\",\"gulp-notify\":\"^3.2.0\",\"gulp-plumber\":\"^1.2.0\",\"gulp-rename\":\"^1.4.0\",\"gulp-sort\":\"^2.0.0\",\"gulp-sourcemaps\":\"^2.6.5\",\"gulp-typescript\":\"^6.0.0-alpha.1\",\"gulp-util\":\"^3.0.8\",\"gulp-yaml\":\"^2.0.2\",\"husky\":\"^0.14.3\",\"json-loader\":\"^0.5.7\",\"lint-staged\":\"^9.4.1\",\"mocha\":\"^5.2.0\",\"mocha-chrome\":\"^1.1.0\",\"mocha-directory\":\"^2.3.0\",\"mocha-sinon\":\"^2.1.0\",\"natives\":\"^1.1.6\",\"ncp\":\"^2.0.0\",\"node-notifier\":\"^5.3.0\",\"nyc\":\"^14.1.1\",\"path\":\"^0.12.7\",\"power-assert\":\"^1.6.1\",\"prettier\":\"^1.14.3\",\"sinon\":\"^7.5.0\",\"text-encoding\":\"^0.7.0\",\"through2\":\"^2.0.3\",\"tslint\":\"^5.20.1\",\"typescript\":\"^3.7.4\",\"uglifyjs-webpack-plugin\":\"^1.3.0\",\"vinyl\":\"^2.2.0\",\"webpack\":\"^4.34.0\",\"webpack-cli\":\"^3.3.4\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stream\":\"^5.2.1\",\"yaml-loader\":\"^0.5.0\"},\"dependencies\":{\"eventemitter3\":\"^3.1.2\",\"js-yaml\":\"^3.13.1\",\"node-dir\":\"^0.1.17\",\"node-fetch\":\"^2.3.0\",\"semver\":\"^5.7.0\",\"tv4\":\"^1.3.0\",\"ws\":\"^6.1.4\"},\"bugs\":{\"url\":\"https://forum.obniz.io\"},\"private\":false,\"browser\":{\"fs\":false,\"ws\":\"./src/obniz/libs/webpackReplace/ws\",\"canvas\":\"./src/obniz/libs/webpackReplace/canvas\",\"./src/obniz/libs/webpackReplace/require-context\":\"./src/obniz/libs/webpackReplace/require-context-browser\"}}");
 
 /***/ }),
 
@@ -2891,6 +2891,9 @@ for (const path of context.keys()) {
     const anParts = context(path);
     if (anParts.info) {
         Obniz.PartsRegistrate(anParts);
+    }
+    else if (anParts.default.info) { // for ts "export default"
+        Obniz.PartsRegistrate(anParts.default);
     }
 }
 module.exports = Obniz;
@@ -7201,13 +7204,16 @@ exports.default = AclStream;
 "use strict";
 
 // var debug = require('debug')('bindings');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const events = __webpack_require__("./node_modules/events/events.js");
-const AclStream = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js");
-const Gatt = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js");
-const Gap = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js");
-const Signaling = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/signaling.js");
-const Hci = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js");
+const hci_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/hci.js"));
+const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/acl-stream.js"));
+const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gap.js"));
+const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/gatt.js"));
+const signaling_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/central/signaling.js"));
 class NobleBindings extends events.EventEmitter {
     constructor(hciProtocol) {
         super();
@@ -7222,7 +7228,7 @@ class NobleBindings extends events.EventEmitter {
         this._aclStreams = {};
         this._signalings = {};
         this._hci = hciProtocol;
-        this._gap = new Gap(this._hci);
+        this._gap = new gap_1.default(this._hci);
     }
     startScanning(serviceUuids, allowDuplicates) {
         this._scanServiceUuids = serviceUuids || [];
@@ -7328,9 +7334,9 @@ class NobleBindings extends events.EventEmitter {
                 .split(":")
                 .join("")
                 .toLowerCase();
-            const aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
-            const gatt = new Gatt(address, aclStream);
-            const signaling = new Signaling(handle, aclStream);
+            const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+            const gatt = new gatt_1.default(address, aclStream);
+            const signaling = new signaling_1.default(handle, aclStream);
             this._gatts[uuid] = this._gatts[handle] = gatt;
             this._signalings[uuid] = this._signalings[handle] = signaling;
             this._aclStreams[handle] = aclStream;
@@ -7356,7 +7362,7 @@ class NobleBindings extends events.EventEmitter {
         }
         else {
             uuid = this._pendingConnectionUuid;
-            let statusMessage = Hci.STATUS_MAPPER[status] || "HCI Error: Unknown";
+            let statusMessage = hci_1.default.STATUS_MAPPER[status] || "HCI Error: Unknown";
             const errorCode = " (0x" + status.toString(16) + ")";
             statusMessage = statusMessage + errorCode;
             error = new Error(statusMessage);
@@ -9875,23 +9881,26 @@ exports.default = AclStream;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // var debug = require('debug')('bindings');
 const debug = () => {
 };
-const events = __webpack_require__("./node_modules/events/events.js");
-const os = __webpack_require__("./node_modules/os-browserify/browser.js");
-const AclStream = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js");
-const Gap = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js");
-const Gatt = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js");
-class BlenoBindings extends events.EventEmitter {
+const events_1 = __importDefault(__webpack_require__("./node_modules/events/events.js"));
+const os_1 = __importDefault(__webpack_require__("./node_modules/os-browserify/browser.js"));
+const acl_stream_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/acl-stream.js"));
+const gap_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gap.js"));
+const gatt_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/embeds/bleHci/protocol/peripheral/gatt.js"));
+class BlenoBindings extends events_1.default.EventEmitter {
     constructor(hciProtocol) {
         super();
         this._state = null;
         this._advertising = false;
         this._hci = hciProtocol;
-        this._gap = new Gap(this._hci);
-        this._gatt = new Gatt(this._hci);
+        this._gap = new gap_1.default(this._hci);
+        this._gatt = new gatt_1.default();
         this._address = null;
         this._handle = null;
         this._aclStream = null;
@@ -9941,7 +9950,7 @@ class BlenoBindings extends events.EventEmitter {
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-        this.emit("platform", os.platform());
+        this.emit("platform", os_1.default.platform());
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -9978,7 +9987,7 @@ class BlenoBindings extends events.EventEmitter {
         }
         this._address = address;
         this._handle = handle;
-        this._aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        this._aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         this._gatt.setAclStream(this._aclStream);
         this.emit("accept", address);
     }
@@ -12237,7 +12246,7 @@ class PeripheralIO {
         }
     }
     output(value) {
-        value = value === true;
+        value = !!value;
         const obj = {};
         obj["io" + this.id] = value;
         this.value = value;

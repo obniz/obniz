@@ -3,10 +3,10 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   mode: 'production',
-  entry: './dist/src/obniz/index.js',
+  entry: path.join(__dirname, '../dist/src/obniz/index.js'),
   output: {
     filename: 'obniz.js',
-    path: path.join(__dirname),
+    path: path.join(__dirname, '../'),
 
     library: 'Obniz',
   },
@@ -21,7 +21,7 @@ module.exports = {
           {
             // loader: require.resolve('yaml-loader')
             loader: require.resolve(
-              './dist/src/obniz/libs/webpackReplace/yaml-schema-loader'
+              '../dist/src/obniz/libs/webpackReplace/yaml-schema-loader'
             ),
           },
         ],
@@ -31,7 +31,7 @@ module.exports = {
         use: [
           {
             loader: require.resolve(
-              './dist/src/obniz/libs/webpackReplace/packagejson-loader'
+              '../dist/src/obniz/libs/webpackReplace/packagejson-loader'
             ),
           },
         ],

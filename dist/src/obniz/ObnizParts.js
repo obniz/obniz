@@ -74,4 +74,5 @@ class ObnizParts extends ObnizConnection_1.default {
     }
 }
 exports.default = ObnizParts;
+
 //# sourceMappingURL=ObnizParts.js.map

@@ -8,7 +8,7 @@ declare class PeripheralAD {
     _reset(): void;
     addObserver(callback: any): void;
     start(callback: any): any;
-    getWait(): Promise<{}>;
+    getWait(): Promise<unknown>;
     end(): void;
     notified(obj: any): void;
 }

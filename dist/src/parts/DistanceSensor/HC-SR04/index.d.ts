@@ -15,7 +15,7 @@ declare class HCSR04 {
     constructor();
     wired(obniz: any): void;
     measure(callback: any): void;
-    measureWait(): Promise<{}>;
+    measureWait(): Promise<unknown>;
     unit(unit: any): void;
 }
 export default HCSR04;

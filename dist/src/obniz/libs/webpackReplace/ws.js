@@ -12,4 +12,5 @@ else {
     ws = window.WebSocket || window.MozWebSocket;
 }
 exports.default = ws;
+
 //# sourceMappingURL=ws.js.map

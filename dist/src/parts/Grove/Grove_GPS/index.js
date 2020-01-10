@@ -1,6 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_GPS {
+    constructor() {
+        this.keys = ["tx", "rx", "vcc", "gnd"];
+        this.requiredKeys = ["tx", "rx"];
+        this.ioKeys = this.keys;
+        this.displayName = "gps";
+        this.displayIoNames = { tx: "tx", rx: "rx" };
+    }
     // -------------------
     get latitude() {
         return this.nmea2dd(this._latitude);
@@ -12,13 +19,6 @@ class Grove_GPS {
         return {
             name: "Grove_GPS",
         };
-    }
-    constructor() {
-        this.keys = ["tx", "rx", "vcc", "gnd"];
-        this.requiredKeys = ["tx", "rx"];
-        this.ioKeys = this.keys;
-        this.displayName = "gps";
-        this.displayIoNames = { tx: "tx", rx: "rx" };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -316,4 +316,5 @@ class Grove_GPS {
     }
 }
 exports.default = Grove_GPS;
+
 //# sourceMappingURL=index.js.map

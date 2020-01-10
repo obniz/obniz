@@ -1,23 +1,24 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class ENC03R_Module {
-    static info() {
-        return {
-            name: "ENC03R_Module",
-        };
-    }
     constructor() {
         this.keys = ["vcc", "out1", "out2", "gnd"];
         this.required = ["out1", "out2"];
         this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
+    }
+    static info() {
+        return {
+            name: "ENC03R_Module",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -53,4 +54,5 @@ class ENC03R_Module {
     }
 }
 exports.default = ENC03R_Module;
+
 //# sourceMappingURL=index.js.map

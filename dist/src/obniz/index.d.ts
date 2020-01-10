@@ -32,6 +32,6 @@ declare class Obniz extends ObnizUIs {
      *
      * @returns {ObnizApi}
      */
-    static readonly api: typeof ObnizApi;
+    static get api(): typeof ObnizApi;
 }
 export = Obniz;

@@ -1,6 +1,6 @@
 declare class Grove_GPS {
-    readonly latitude: number;
-    readonly longitude: number;
+    get latitude(): number;
+    get longitude(): number;
     static info(): {
         name: string;
     };

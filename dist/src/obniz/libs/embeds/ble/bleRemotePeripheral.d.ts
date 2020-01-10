@@ -15,7 +15,7 @@ declare class BleRemotePeripheral {
     localName: any;
     iBeacon: any;
     constructor(Obniz: any, address: any);
-    readonly services: any;
+    get services(): any;
     /**
      *
      * @return {String} json value
@@ -29,15 +29,15 @@ declare class BleRemotePeripheral {
     _addServiceUuids(results: any, data: any, bit: any): void;
     advertisementServiceUuids(): any;
     connect(): void;
-    connectWait(): Promise<{}>;
+    connectWait(): Promise<unknown>;
     disconnect(): void;
-    disconnectWait(): Promise<{}>;
+    disconnectWait(): Promise<unknown>;
     getService(uuid: any): any;
     findService(param: any): any;
     findCharacteristic(param: any): any;
     findDescriptor(param: any): any;
     discoverAllServices(): void;
-    discoverAllServicesWait(): Promise<{}>;
+    discoverAllServicesWait(): Promise<unknown>;
     discoverAllHandlesWait(): Promise<void>;
     onconnect(): void;
     ondisconnect(): void;

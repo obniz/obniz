@@ -12,11 +12,6 @@ class SNx4HC595_IO {
 }
 // tslint:disable-next-line:max-classes-per-file
 class SNx4HC595 {
-    static info() {
-        return {
-            name: "SNx4HC595",
-        };
-    }
     constructor() {
         /* http://www.ti.com/lit/ds/symlink/sn74hc595.pdf */
         this.keys = [
@@ -32,6 +27,11 @@ class SNx4HC595 {
         ];
         this.requiredKeys = ["ser", "srclk", "rclk"];
         this.autoFlash = true;
+    }
+    static info() {
+        return {
+            name: "SNx4HC595",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -122,4 +122,5 @@ class SNx4HC595 {
     }
 }
 exports.default = SNx4HC595;
+
 //# sourceMappingURL=index.js.map

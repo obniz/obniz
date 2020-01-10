@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR505 {
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
     static info() {
         return {
             name: "HC-SR505",
         };
-    }
-    constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -25,4 +25,5 @@ class HCSR505 {
     }
 }
 exports.default = HCSR505;
+
 //# sourceMappingURL=index.js.map

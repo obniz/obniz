@@ -163,4 +163,5 @@ class PeripheralSPI {
     }
 }
 exports.default = PeripheralSPI;
+
 //# sourceMappingURL=spi.js.map
