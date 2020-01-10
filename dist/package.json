@@ -133,8 +133,8 @@
   "private": false,
   "browser": {
     "fs": false,
-    "ws": "./dist/obniz/libs/webpackReplace/ws.js",
-    "canvas": "./dist/obniz/libs/webpackReplace/canvas.js",
-    "./dist/obniz/libs/webpackReplace/require-context.js": "./dist/obniz/libs/webpackReplace/require-context-browser.js"
+    "ws": "./src/obniz/libs/webpackReplace/ws",
+    "canvas": "./src/obniz/libs/webpackReplace/canvas",
+    "./src/obniz/libs/webpackReplace/require-context": "./src/obniz/libs/webpackReplace/require-context-browser"
   }
 }
