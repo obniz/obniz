@@ -14,6 +14,6 @@ declare class CT10 {
     constructor();
     wired(obniz: any): void;
     isNearWait(): Promise<any>;
-    stateWait(isNear: any): Promise<unknown>;
+    stateWait(isNear: any): Promise<{}>;
 }
 export default CT10;

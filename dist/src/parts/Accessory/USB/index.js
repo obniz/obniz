@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class USB {
+    static info() {
+        return {
+            name: "USB",
+        };
+    }
     constructor() {
         this.keys = ["vcc", "gnd"];
         this.requiredKeys = ["vcc", "gnd"];
         this.displayIoNames = {
             vcc: "vcc",
             gnd: "gnd",
-        };
-    }
-    static info() {
-        return {
-            name: "USB",
         };
     }
     wired(obniz) {
@@ -28,5 +28,4 @@ class USB {
     }
 }
 exports.default = USB;
-
 //# sourceMappingURL=index.js.map

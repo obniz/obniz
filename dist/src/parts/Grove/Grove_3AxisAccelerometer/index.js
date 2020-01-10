@@ -1,15 +1,19 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_3AxisAccelerometer {
+    static info() {
+        return {
+            name: "Grove_3AxisAccelerometer",
+        };
+    }
     constructor() {
         this.keys = ["gnd", "vcc", "sda", "scl"];
         this.requiredKeys = ["sda", "scl"];
@@ -47,11 +51,6 @@ class Grove_3AxisAccelerometer {
         this.constVal.gainZ = 0.00349265;
         this.constVal.INT1_PIN = 0x00;
         this.constVal.INT2_PIN = 0x01;
-    }
-    static info() {
-        return {
-            name: "Grove_3AxisAccelerometer",
-        };
     }
     wired(obniz) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -152,5 +151,4 @@ class Grove_3AxisAccelerometer {
     }
 }
 exports.default = Grove_3AxisAccelerometer;
-
 //# sourceMappingURL=index.js.map

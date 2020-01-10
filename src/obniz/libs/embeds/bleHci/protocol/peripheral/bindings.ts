@@ -2,13 +2,12 @@
 const debug: any = () => {
 };
 
-const events: any = require("events");
-const os: any = require("os");
+import events from "events";
+import os from "os";
+import AclStream from "./acl-stream";
+import Gap from "./gap";
+import Gatt from "./gatt";
 
-const AclStream: any = require("./acl-stream");
-
-const Gap: any = require("./gap");
-const Gatt: any = require("./gatt");
 
 class BlenoBindings extends events.EventEmitter {
   public _state: any;
@@ -29,7 +28,7 @@ class BlenoBindings extends events.EventEmitter {
 
     this._hci = hciProtocol;
     this._gap = new Gap(this._hci);
-    this._gatt = new Gatt(this._hci);
+    this._gatt = new Gatt();
 
     this._address = null;
     this._handle = null;

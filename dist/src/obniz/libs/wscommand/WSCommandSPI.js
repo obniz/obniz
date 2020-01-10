@@ -106,5 +106,4 @@ class WSCommandSPI extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandSPI;
-
 //# sourceMappingURL=WSCommandSPI.js.map

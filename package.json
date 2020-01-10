@@ -2,8 +2,8 @@
   "name": "obniz",
   "version": "3.1.0",
   "description": "obniz sdk for javascript",
-  "main": "./dist/obniz/index.js",
-  "types": "./dist/obniz/index.d.ts",
+  "main": "./dist/src/obniz/index.js",
+  "types": "./dist/src/obniz/index.d.ts",
   "files": [
     "dist",
     "obniz.js",

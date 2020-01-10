@@ -11,10 +11,10 @@ declare class BleCharacteristic extends BleLocalAttributeAbstract {
     children: any;
     data: any;
     constructor(obj: any);
-    get parentName(): string | null;
-    get childrenClass(): any;
-    get childrenName(): string | null;
-    get descriptors(): any;
+    readonly parentName: string | null;
+    readonly childrenClass: any;
+    readonly childrenName: string | null;
+    readonly descriptors: any;
     toJSON(): any;
     toBufferObj(): any;
     addProperty(param: any): void;

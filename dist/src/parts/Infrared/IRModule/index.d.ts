@@ -1,6 +1,5 @@
 declare class IRModule {
-    get dataSymbolLength(): any;
-    set dataSymbolLength(x: any);
+    dataSymbolLength: any;
     static info(): {
         name: string;
     };

@@ -1,4 +1,4 @@
-declare const events: any;
+import events from "events";
 declare class BlenoBindings extends events.EventEmitter {
     _state: any;
     _advertising: any;

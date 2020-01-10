@@ -17,6 +17,6 @@ declare class MQ2 {
     constructor();
     wired(obniz: any): void;
     startHeating(): void;
-    heatWait(seconds: any): Promise<unknown>;
+    heatWait(seconds: any): Promise<{}>;
 }
 export default MQ2;

@@ -23,7 +23,7 @@ class PeripheralIO {
   }
 
   public output(value: any) {
-    value = value === true;
+    value = !!value;
     const obj: any = {};
     obj["io" + this.id] = value;
     this.value = value;

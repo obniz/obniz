@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MQ135 {
+    static info() {
+        return {
+            name: "MQ135",
+        };
+    }
     constructor() {
         this.keys = ["gnd", "vcc", "do", "ao"];
         this.requiredKeys = [];
@@ -10,11 +15,6 @@ class MQ135 {
         this.voltageLimit = undefined;
         // this.RL = 2 * 1000;
         // this.RO = 20 * 1000;
-    }
-    static info() {
-        return {
-            name: "MQ135",
-        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -60,5 +60,4 @@ class MQ135 {
     }
 }
 exports.default = MQ135;
-
 //# sourceMappingURL=index.js.map

@@ -1,21 +1,24 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // var debug = require('debug')('bindings');
 const debug = () => {
 };
-const events = require("events");
-const os = require("os");
-const AclStream = require("./acl-stream");
-const Gap = require("./gap");
-const Gatt = require("./gatt");
-class BlenoBindings extends events.EventEmitter {
+const events_1 = __importDefault(require("events"));
+const os_1 = __importDefault(require("os"));
+const acl_stream_1 = __importDefault(require("./acl-stream"));
+const gap_1 = __importDefault(require("./gap"));
+const gatt_1 = __importDefault(require("./gatt"));
+class BlenoBindings extends events_1.default.EventEmitter {
     constructor(hciProtocol) {
         super();
         this._state = null;
         this._advertising = false;
         this._hci = hciProtocol;
-        this._gap = new Gap(this._hci);
-        this._gatt = new Gatt(this._hci);
+        this._gap = new gap_1.default(this._hci);
+        this._gatt = new gatt_1.default();
         this._address = null;
         this._handle = null;
         this._aclStream = null;
@@ -65,7 +68,7 @@ class BlenoBindings extends events.EventEmitter {
         this._hci.on("encryptChange", this.onEncryptChange.bind(this));
         this._hci.on("leLtkNegReply", this.onLeLtkNegReply.bind(this));
         this._hci.on("aclDataPkt", this.onAclDataPkt.bind(this));
-        this.emit("platform", os.platform());
+        this.emit("platform", os_1.default.platform());
     }
     onStateChange(state) {
         if (this._state === state) {
@@ -102,7 +105,7 @@ class BlenoBindings extends events.EventEmitter {
         }
         this._address = address;
         this._handle = handle;
-        this._aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        this._aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         this._gatt.setAclStream(this._aclStream);
         this.emit("accept", address);
     }
@@ -150,5 +153,4 @@ class BlenoBindings extends events.EventEmitter {
     }
 }
 exports.default = BlenoBindings;
-
 //# sourceMappingURL=bindings.js.map

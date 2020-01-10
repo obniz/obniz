@@ -16,7 +16,7 @@ class PeripheralIO {
         }
     }
     output(value) {
-        value = value === true;
+        value = !!value;
         const obj = {};
         obj["io" + this.id] = value;
         this.value = value;
@@ -132,5 +132,4 @@ class PeripheralIO {
     }
 }
 exports.default = PeripheralIO;
-
 //# sourceMappingURL=io.js.map

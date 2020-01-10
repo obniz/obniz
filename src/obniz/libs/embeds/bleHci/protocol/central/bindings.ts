@@ -2,11 +2,11 @@
 
 const events: any = require("events");
 
-const AclStream: any = require("./acl-stream");
-const Gatt: any = require("./gatt");
-const Gap: any = require("./gap");
-const Signaling: any = require("./signaling");
-const Hci: any = require("../hci");
+import Hci from "../hci";
+import AclStream from "./acl-stream";
+import Gap from "./gap";
+import Gatt from "./gatt";
+import Signaling from "./signaling";
 
 class NobleBindings extends events.EventEmitter {
   public _state: any;

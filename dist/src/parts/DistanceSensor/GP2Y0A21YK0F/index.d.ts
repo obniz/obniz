@@ -14,7 +14,7 @@ declare class GP2Y0A21YK0F {
     wired(obniz: any): void;
     start(callback: any): void;
     _volt2distance(val: any): any;
-    getWait(): Promise<unknown>;
+    getWait(): Promise<{}>;
     unit(unit: any): void;
 }
 export default GP2Y0A21YK0F;

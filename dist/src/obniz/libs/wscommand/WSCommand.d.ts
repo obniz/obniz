@@ -1,9 +1,9 @@
 /// <reference types="tv4" />
 import WSSchema from "./WSSchema";
 export default abstract class WSCommand {
-    static get schema(): WSSchema.TV4;
-    static get CommandClasses(): any;
-    get WSCommandNotFoundError(): typeof WSCommandNotFoundError;
+    static readonly schema: WSSchema.TV4;
+    static readonly CommandClasses: any;
+    readonly WSCommandNotFoundError: typeof WSCommandNotFoundError;
     static addCommandClass(name: any, classObj: any): void;
     static framed(module: any, func: any, payload: any): Uint8Array;
     static dequeueOne(buf: any): {

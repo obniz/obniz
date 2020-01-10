@@ -182,5 +182,7 @@ for (const path of context.keys()) {
   const anParts: any = context(path);
   if (anParts.info) {
     Obniz.PartsRegistrate(anParts);
+  } else if (anParts.default.info) { // for ts "export default"
+    Obniz.PartsRegistrate(anParts.default);
   }
 }

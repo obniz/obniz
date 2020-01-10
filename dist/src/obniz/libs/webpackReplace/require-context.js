@@ -54,5 +54,4 @@ exports.default = (directory, recursive, regExp) => {
 exports.setBaseDir = (base) => {
     baseDir = base;
 };
-
 //# sourceMappingURL=require-context.js.map

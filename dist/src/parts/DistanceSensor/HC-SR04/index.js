@@ -1,26 +1,25 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class HCSR04 {
+    static info() {
+        return {
+            name: "HC-SR04",
+        };
+    }
     constructor() {
         this.keys = ["vcc", "trigger", "echo", "gnd"];
         this.requiredKeys = ["vcc", "trigger", "echo"];
         this._unit = "mm";
         this.reset_alltime = false;
         this.temp = 15;
-    }
-    static info() {
-        return {
-            name: "HC-SR04",
-        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -88,5 +87,4 @@ class HCSR04 {
     }
 }
 exports.default = HCSR04;
-
 //# sourceMappingURL=index.js.map

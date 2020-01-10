@@ -1,12 +1,15 @@
 "use strict";
 // var debug = require('debug')('bindings');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const events = require("events");
-const AclStream = require("./acl-stream");
-const Gatt = require("./gatt");
-const Gap = require("./gap");
-const Signaling = require("./signaling");
-const Hci = require("../hci");
+const hci_1 = __importDefault(require("../hci"));
+const acl_stream_1 = __importDefault(require("./acl-stream"));
+const gap_1 = __importDefault(require("./gap"));
+const gatt_1 = __importDefault(require("./gatt"));
+const signaling_1 = __importDefault(require("./signaling"));
 class NobleBindings extends events.EventEmitter {
     constructor(hciProtocol) {
         super();
@@ -21,7 +24,7 @@ class NobleBindings extends events.EventEmitter {
         this._aclStreams = {};
         this._signalings = {};
         this._hci = hciProtocol;
-        this._gap = new Gap(this._hci);
+        this._gap = new gap_1.default(this._hci);
     }
     startScanning(serviceUuids, allowDuplicates) {
         this._scanServiceUuids = serviceUuids || [];
@@ -127,9 +130,9 @@ class NobleBindings extends events.EventEmitter {
                 .split(":")
                 .join("")
                 .toLowerCase();
-            const aclStream = new AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
-            const gatt = new Gatt(address, aclStream);
-            const signaling = new Signaling(handle, aclStream);
+            const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+            const gatt = new gatt_1.default(address, aclStream);
+            const signaling = new signaling_1.default(handle, aclStream);
             this._gatts[uuid] = this._gatts[handle] = gatt;
             this._signalings[uuid] = this._signalings[handle] = signaling;
             this._aclStreams[handle] = aclStream;
@@ -155,7 +158,7 @@ class NobleBindings extends events.EventEmitter {
         }
         else {
             uuid = this._pendingConnectionUuid;
-            let statusMessage = Hci.STATUS_MAPPER[status] || "HCI Error: Unknown";
+            let statusMessage = hci_1.default.STATUS_MAPPER[status] || "HCI Error: Unknown";
             const errorCode = " (0x" + status.toString(16) + ")";
             statusMessage = statusMessage + errorCode;
             error = new Error(statusMessage);
@@ -437,5 +440,4 @@ class NobleBindings extends events.EventEmitter {
     }
 }
 exports.default = NobleBindings;
-
 //# sourceMappingURL=bindings.js.map
