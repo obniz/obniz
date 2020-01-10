@@ -21,7 +21,7 @@ module.exports = {
           {
             // loader: require.resolve('yaml-loader')
             loader: require.resolve(
-              '../dist/src/obniz/libs/webpackReplace/yaml-schema-loader'
+              './dist/src/obniz/libs/webpackReplace/yaml-schema-loader'
             ),
           },
         ],
@@ -31,7 +31,7 @@ module.exports = {
         use: [
           {
             loader: require.resolve(
-              '../dist/src/obniz/libs/webpackReplace/packagejson-loader'
+              './dist/src/obniz/libs/webpackReplace/packagejson-loader'
             ),
           },
         ],

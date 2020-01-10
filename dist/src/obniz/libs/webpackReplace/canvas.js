@@ -4,4 +4,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const canvas = "canvas";
 exports.default = canvas;
 
-//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uL3NyYy9vYm5pei9saWJzL3dlYnBhY2tSZXBsYWNlL2NhbnZhcy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsb0JBQW9COztBQUVwQixNQUFNLE1BQU0sR0FBUSxRQUFRLENBQUM7QUFFN0Isa0JBQWUsTUFBTSxDQUFDIiwiZmlsZSI6InNyYy9vYm5pei9saWJzL3dlYnBhY2tSZXBsYWNlL2NhbnZhcy5qcyIsInNvdXJjZXNDb250ZW50IjpbIi8vIGxvYWQgZnJvbSB3ZWJwYWNrXG5cbmNvbnN0IGNhbnZhczogYW55ID0gXCJjYW52YXNcIjtcblxuZXhwb3J0IGRlZmF1bHQgY2FudmFzO1xuIl19
+//# sourceMappingURL=canvas.js.map

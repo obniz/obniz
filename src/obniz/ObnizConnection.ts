@@ -1,6 +1,5 @@
 import emitter = require("eventemitter3");
-
-// @ts-ignore
+import wsClient = require("ws");
 import packageJson from "../../package.json";
 import WSCommand from "./libs/wscommand";
 const isNode: any = typeof window === "undefined";
@@ -226,8 +225,6 @@ export default class ObnizConnection {
     let socket: any;
     if (this.isNode) {
 
-      // @ts-ignore
-      import wsClient = require("ws");
       socket = new wsClient(url);
       socket.on("open", this.wsOnOpen.bind(this));
       socket.on("message", this.wsOnMessage.bind(this));
@@ -254,10 +251,6 @@ export default class ObnizConnection {
     this.print_debug("local connect to " + url);
     let ws: any;
     if (this.isNode) {
-
-      // @ts-ignore
-      import wsClient = require("ws");
-
       ws = new wsClient(url);
       ws.on("open", () => {
         this.print_debug("connected to " + url);
