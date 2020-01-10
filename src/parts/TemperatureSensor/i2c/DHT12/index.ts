@@ -1,4 +1,4 @@
-const i2cParts: any = require("../../../i2cParts");
+import i2cParts from "../../../i2cParts";
 
 class DHT12 extends i2cParts {
 

@@ -5,8 +5,7 @@
     "lib": ["es2018", "dom"],
     "outDir": "./dist",
     "strict": true,
-    "allowJs": true,
-//    "declaration" : true,
+    "declaration" : true,
     "esModuleInterop": true,
     "sourceMap": true,
     "resolveJsonModule": true
@@ -16,6 +15,6 @@
     "./package.json"
   ],
   "exclude": [
-    "./node_modules/*"
+    "node_modules"
   ]
 }

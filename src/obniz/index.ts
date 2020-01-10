@@ -141,7 +141,7 @@ class Obniz extends ObnizUIs {
   }
 }
 
-export default Obniz;
+export = Obniz;
 
 /*===================*/
 /* Utils */
@@ -169,10 +169,11 @@ try {
 /*===================*/
 /* ReadParts */
 /*===================*/
+import requireContext = require( "./libs/webpackReplace/require-context");
 
-require.context = require("./libs/webpackReplace/require-context");
-if (require.context && (require.context as any).setBaseDir) {
-  (require.context as any).setBaseDir(__dirname);
+require.context = requireContext.default;
+if (requireContext.setBaseDir) {
+  requireContext.setBaseDir(__dirname);
 }
 
 const context: any = require.context("../parts", true, /\.js$/);

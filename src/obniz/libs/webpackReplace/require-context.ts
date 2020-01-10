@@ -55,6 +55,6 @@ export default (directory: string, recursive: boolean, regExp: RegExp): any => {
   return context;
 };
 
-module.exports.setBaseDir = (base: string) => {
+export let setBaseDir = (base: string) => {
   baseDir = base;
 };

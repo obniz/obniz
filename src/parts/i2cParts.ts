@@ -1,4 +1,4 @@
-class I2cPartsAbstruct {
+export default class I2cPartsAbstruct {
   public keys: any;
   public requiredKeys: any;
   public i2cinfo: any;
@@ -62,5 +62,3 @@ class I2cPartsAbstruct {
     this.i2c.write(this.address, [command, ...buf]);
   }
 }
-
-export default I2cPartsAbstruct;

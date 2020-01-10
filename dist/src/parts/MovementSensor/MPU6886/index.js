@@ -8,9 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts = require("../../i2cParts");
-class MPU6886 extends i2cParts {
+const i2cParts_1 = __importDefault(require("../../i2cParts"));
+class MPU6886 extends i2cParts_1.default {
     constructor() {
         super();
         this.commands = {};

@@ -2740,7 +2740,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const ObnizApi_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizApi.js"));
 const ObnizUIs_1 = __importDefault(__webpack_require__("./dist/src/obniz/ObnizUIs.js"));
@@ -2855,7 +2854,6 @@ class Obniz extends ObnizUIs_1.default {
         return ObnizApi_1.default;
     }
 }
-exports.default = Obniz;
 /*===================*/
 /* Utils */
 /*===================*/
@@ -2882,9 +2880,10 @@ catch (e) {
 /*===================*/
 /* ReadParts */
 /*===================*/
-__webpack_require__("./dist/src/obniz sync recursive").context = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
-if (__webpack_require__("./dist/src/obniz sync recursive").context && __webpack_require__("./dist/src/obniz sync recursive").context.setBaseDir) {
-    __webpack_require__("./dist/src/obniz sync recursive").context.setBaseDir(__dirname);
+const requireContext = __webpack_require__("./dist/src/obniz/libs/webpackReplace/require-context-browser.js");
+__webpack_require__("./dist/src/obniz sync recursive").context = requireContext.default;
+if (requireContext.setBaseDir) {
+    requireContext.setBaseDir(__dirname);
 }
 const context = __webpack_require__("./dist/src/parts sync recursive \\.js$");
 /* webpack loader */
@@ -2894,6 +2893,7 @@ for (const path of context.keys()) {
         Obniz.PartsRegistrate(anParts);
     }
 }
+module.exports = Obniz;
 
 //# sourceMappingURL=index.js.map
 
@@ -29513,9 +29513,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts = __webpack_require__("./dist/src/parts/i2cParts.js");
-class MPU6886 extends i2cParts {
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class MPU6886 extends i2cParts_1.default {
     constructor() {
         super();
         this.commands = {};
@@ -29848,9 +29851,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts = __webpack_require__("./dist/src/parts/i2cParts.js");
-class SH200Q extends i2cParts {
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class SH200Q extends i2cParts_1.default {
     constructor() {
         super();
         this.commands = {};
@@ -31795,9 +31801,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const i2cParts = __webpack_require__("./dist/src/parts/i2cParts.js");
-class DHT12 extends i2cParts {
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class DHT12 extends i2cParts_1.default {
     static info() {
         return {
             name: "DHT12",

@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(require("./libs/utils/util"));
 const ObnizApi_1 = __importDefault(require("./ObnizApi"));
 const ObnizUIs_1 = __importDefault(require("./ObnizUIs"));
@@ -126,7 +125,6 @@ class Obniz extends ObnizUIs_1.default {
         return ObnizApi_1.default;
     }
 }
-exports.default = Obniz;
 /*===================*/
 /* Utils */
 /*===================*/
@@ -153,9 +151,10 @@ catch (e) {
 /*===================*/
 /* ReadParts */
 /*===================*/
-require.context = require("./libs/webpackReplace/require-context");
-if (require.context && require.context.setBaseDir) {
-    require.context.setBaseDir(__dirname);
+const requireContext = require("./libs/webpackReplace/require-context");
+require.context = requireContext.default;
+if (requireContext.setBaseDir) {
+    requireContext.setBaseDir(__dirname);
 }
 const context = require.context("../parts", true, /\.js$/);
 /* webpack loader */
@@ -165,5 +164,6 @@ for (const path of context.keys()) {
         Obniz.PartsRegistrate(anParts);
     }
 }
+module.exports = Obniz;
 
 //# sourceMappingURL=index.js.map

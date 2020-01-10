@@ -1,0 +1,30 @@
+declare class Display {
+    Obniz: any;
+    width: any;
+    height: any;
+    _canvas: any;
+    _pos: any;
+    autoFlush: any;
+    fontSize: any;
+    createCanvas: any;
+    constructor(Obniz: any);
+    _reset(): void;
+    warnCanvasAvailability(): void;
+    _preparedCanvas(): any;
+    _ctx(): any;
+    font(font: any, size: any): void;
+    clear(): void;
+    pos(x: any, y: any): any;
+    print(text: any): void;
+    line(x_0: any, y_0: any, x_1: any, y_1: any): void;
+    rect(x: any, y: any, width: any, height: any, mustFill: any): void;
+    circle(x: any, y: any, r: any, mustFill: any): void;
+    qr(text: any, correction: any): void;
+    raw(data: any): void;
+    setPinName(io: any, moduleName: any, funcName: any): void;
+    setPinNames(moduleName: any, data: any): void;
+    _draw(ctx: any): void;
+    draw(ctx: any): void;
+    drawing(autoFlush: any): void;
+}
+export default Display;
