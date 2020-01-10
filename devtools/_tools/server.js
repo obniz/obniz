@@ -39,11 +39,14 @@ gulp.task('server', function jsonSchemaForVar() {
   });
 });
 
-const obnizMain = path.join(__dirname, '../../src/obniz/index.js');
-const obnizPath = path.join(__dirname, '../../src/obniz/**/*.js');
-const partsPath = path.join(__dirname, '../../src/parts/');
+const obnizMain = path.join(__dirname, '../../dist/src/obniz/index.js');
+const obnizPath = path.join(__dirname, '../../dist/src/obniz/**/*.js');
+const partsPath = path.join(__dirname, '../../dist/src/parts/');
 const packageJsonPath = path.join(__dirname, '../../package.json');
-const schemaSrcPath = path.join(__dirname, '../../src/json_schema/**/*.yml');
+const schemaSrcPath = path.join(
+  __dirname,
+  '../../dist/src/json_schema/**/*.yml'
+);
 const tsConfigPath = path.join(__dirname, '../../tsconfig.json');
 const docPath = path.join(__dirname, '../../doc');
 const tv4Path = require.resolve('tv4', {
@@ -144,18 +147,33 @@ gulp.task('jsonSchemaDoc', function jsonSchemaForVar(callback) {
   }
 });
 
-gulp.task('tsc:copy', function(done) {
+gulp.task('tsc:copy:statics', function(done) {
   return gulp
     .src([
       path.join(__dirname, '../../src/**/*.yml'),
       path.join(__dirname, '../../src/**/*.json'),
     ])
+    .pipe(gulp.dest(path.join(__dirname, '../../dist/src')))
+    .on('end', function() {
+      console.log('static file copy compiled!');
+      done();
+    });
+});
+
+gulp.task('tsc:copy:package.json', function(done) {
+  return gulp
+    .src([path.join(__dirname, '../../package.json')])
     .pipe(gulp.dest(path.join(__dirname, '../../dist')))
     .on('end', function() {
       console.log('static file copy compiled!');
       done();
     });
 });
+gulp.task(
+  'tsc:copy',
+  gulp.parallel('tsc:copy:statics', 'tsc:copy:package.json')
+);
+
 gulp.task('tsc:compile', function(done) {
   return tsProject
     .src()
@@ -164,7 +182,7 @@ gulp.task('tsc:compile', function(done) {
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist'))
     .on('end', function() {
-      console.log('tsc ompiled!');
+      console.log('tsc compiled!');
       done();
     });
 });

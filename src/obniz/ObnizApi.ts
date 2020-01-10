@@ -1,4 +1,6 @@
 import fetch from "node-fetch";
+
+// @ts-ignore
 import packageJson = require( "../../package.json");
 
 class ObnizApi {

@@ -1,4 +1,6 @@
 import emitter = require("eventemitter3");
+
+// @ts-ignore
 import packageJson from "../../package.json";
 import WSCommand from "./libs/wscommand";
 const isNode: any = typeof window === "undefined";
