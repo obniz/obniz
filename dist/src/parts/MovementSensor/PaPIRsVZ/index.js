@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class PaPIRsVZ {
-    constructor() {
-        this.keys = ["vcc", "gnd", "signal"];
-        this.requiredKeys = ["signal"];
-    }
     static info() {
         return {
             name: "PaPIRsVZ",
         };
+    }
+    constructor() {
+        this.keys = ["vcc", "gnd", "signal"];
+        this.requiredKeys = ["signal"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -23,5 +23,4 @@ class PaPIRsVZ {
     }
 }
 exports.default = PaPIRsVZ;
-
 //# sourceMappingURL=index.js.map

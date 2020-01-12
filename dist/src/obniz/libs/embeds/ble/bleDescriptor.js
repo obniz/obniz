@@ -62,5 +62,4 @@ class BleDescriptor extends bleAttributeAbstract_1.default {
     }
 }
 exports.default = BleDescriptor;
-
 //# sourceMappingURL=bleDescriptor.js.map

@@ -5,7 +5,7 @@ const _parts: any = {};
 
 export default class ObnizParts extends ObnizConnection {
 
-  public static _parts() {
+  public static _parts(): any {
     return _parts;
   }
 
@@ -21,7 +21,7 @@ export default class ObnizParts extends ObnizConnection {
     }
   }
 
-  public static Parts(name: any) {
+  public static Parts(name: any): any {
     if (!_parts[name]) {
       throw new Error(`unknown parts [${name}]`);
     }
@@ -32,11 +32,11 @@ export default class ObnizParts extends ObnizConnection {
     super(id, options);
   }
 
-  public isValidIO(io: any) {
+  public isValidIO(io: any): boolean {
     return typeof io === "number" && (this as any)["io" + io] !== null;
   }
 
-  public wired(partsname: any) {
+  public wired(partsname: any): any {
     const parts: any = ObnizParts.Parts(partsname);
     if (!parts) {
       throw new Error("No such a parts [" + partsname + "] found");

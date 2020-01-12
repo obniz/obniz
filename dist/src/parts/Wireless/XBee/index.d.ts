@@ -21,6 +21,6 @@ declare class XBee {
     sendCommand(): void;
     enterAtMode(): void;
     exitAtMode(): void;
-    configWait(config: any): Promise<unknown>;
+    configWait(config: any): Promise<{}>;
 }
 export default XBee;

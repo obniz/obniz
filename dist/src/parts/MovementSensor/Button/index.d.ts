@@ -13,6 +13,6 @@ declare class Button {
     constructor();
     wired(obniz: any): void;
     isPressedWait(): Promise<boolean>;
-    stateWait(isPressed: any): Promise<unknown>;
+    stateWait(isPressed: any): Promise<{}>;
 }
 export default Button;

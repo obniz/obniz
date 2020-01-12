@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLEDArray {
-    constructor() {
-        this.identifier = "" + new Date().getTime();
-        this.keys = ["segments"];
-        this.requiredKeys = this.keys;
-    }
     static info() {
         return {
             name: "7SegmentLEDArray",
         };
+    }
+    constructor() {
+        this.identifier = "" + new Date().getTime();
+        this.keys = ["segments"];
+        this.requiredKeys = this.keys;
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -51,5 +51,4 @@ class _7SegmentLEDArray {
     }
 }
 exports.default = _7SegmentLEDArray;
-
 //# sourceMappingURL=index.js.map

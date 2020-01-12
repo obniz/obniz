@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class MatrixLED_MAX7219 {
-    constructor() {
-        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-        this.requiredKeys = ["din", "cs", "clk"];
-    }
     static info() {
         return {
             name: "MatrixLED_MAX7219",
         };
+    }
+    constructor() {
+        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
+        this.requiredKeys = ["din", "cs", "clk"];
     }
     wired(obniz) {
         this.cs = obniz.getIO(this.params.cs);
@@ -115,5 +115,4 @@ class MatrixLED_MAX7219 {
     }
 }
 exports.default = MatrixLED_MAX7219;
-
 //# sourceMappingURL=index.js.map

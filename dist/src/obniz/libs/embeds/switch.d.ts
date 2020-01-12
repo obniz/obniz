@@ -7,8 +7,8 @@ declare class ObnizSwitch {
     constructor(Obniz: any);
     _reset(): void;
     addObserver(callback: any): void;
-    getWait(): Promise<unknown>;
-    stateWait(isPressed: any): Promise<unknown>;
+    getWait(): Promise<{}>;
+    stateWait(isPressed: any): Promise<{}>;
     notified(obj: any): void;
 }
 export default ObnizSwitch;

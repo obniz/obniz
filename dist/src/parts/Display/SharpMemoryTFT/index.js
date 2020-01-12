@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class SharpMemoryTFT {
+    static info() {
+        return {
+            name: "SharpMemoryTFT",
+        };
+    }
     constructor() {
         this.keys = [
             "vcc",
@@ -23,11 +28,6 @@ class SharpMemoryTFT {
         this.commands.vcom = 0x40;
         this._canvas = null;
         this._reset();
-    }
-    static info() {
-        return {
-            name: "SharpMemoryTFT",
-        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -294,5 +294,4 @@ class SharpMemoryTFT {
     }
 }
 exports.default = SharpMemoryTFT;
-
 //# sourceMappingURL=index.js.map

@@ -39,5 +39,4 @@ class BleService extends bleLocalAttributeAbstract_1.default {
     }
 }
 exports.default = BleService;
-
 //# sourceMappingURL=bleService.js.map

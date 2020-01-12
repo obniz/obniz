@@ -8,7 +8,7 @@ declare class PeripheralSPI {
     _reset(): void;
     addObserver(callback: any): void;
     start(params: any): void;
-    writeWait(data: any): Promise<unknown>;
+    writeWait(data: any): Promise<{}>;
     write(data: any): void;
     notified(obj: any): void;
     isUsed(): any;

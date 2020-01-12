@@ -26,11 +26,11 @@ export default class ObnizConnection {
     sendPool: any;
     constructor(id: any, options: any);
     prompt(filled: any, callback: any): void;
-    static get version(): string;
+    static readonly version: string;
     wsOnOpen(): void;
     wsOnMessage(data: any): void;
     wsOnClose(event: any): void;
-    connectWait(option: any): Promise<unknown>;
+    connectWait(option: any): Promise<{}>;
     _reconnect(): void;
     wsOnError(event: any): void;
     wsOnUnexpectedResponse(req: any, res?: any): void;
@@ -49,7 +49,7 @@ export default class ObnizConnection {
     _canConnectToInsecure(): boolean;
     handleWSCommand(wsObj: any): void;
     handleSystemCommand(wsObj: any): void;
-    static get WSCommand(): typeof WSCommand;
+    static readonly WSCommand: typeof WSCommand;
     binary2Json(binary: any): any;
     warning(msg: any): void;
     error(msg: any): void;

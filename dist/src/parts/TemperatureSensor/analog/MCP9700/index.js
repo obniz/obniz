@@ -15,5 +15,4 @@ class MCP9700 extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = MCP9700;
-
 //# sourceMappingURL=index.js.map

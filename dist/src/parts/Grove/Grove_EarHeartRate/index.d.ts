@@ -12,6 +12,6 @@ declare class Grove_EarHeartRate {
     constructor();
     wired(obniz: any): void;
     start(callback: any): void;
-    getWait(): Promise<unknown>;
+    getWait(): Promise<{}>;
 }
 export default Grove_EarHeartRate;

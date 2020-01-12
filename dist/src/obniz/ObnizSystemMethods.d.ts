@@ -1,7 +1,7 @@
 import ObnizComponents from "./ObnizComponents";
 export default class ObnizSystemMethods extends ObnizComponents {
     constructor(id: any, options: any);
-    wait(msec: any): Promise<unknown>;
+    wait(msec: any): Promise<{}>;
     reset(): void;
     reboot(): void;
     selfCheck(): void;
@@ -11,5 +11,5 @@ export default class ObnizSystemMethods extends ObnizComponents {
     sleepMinute(minute: any): void;
     sleep(date: any): void;
     sleepIoTrigger(trigger: any): void;
-    pingWait(unixtime: any, rand: any, forceGlobalNetwork: any): Promise<unknown>;
+    pingWait(unixtime: any, rand: any, forceGlobalNetwork: any): Promise<{}>;
 }

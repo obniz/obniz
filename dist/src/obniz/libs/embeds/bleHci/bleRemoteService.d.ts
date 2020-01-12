@@ -8,10 +8,10 @@ declare class BleRemoteService extends BleRemoteAttributeAbstract {
     peripheral: any;
     uuid: any;
     constructor(obj: any);
-    get parentName(): string | null;
-    get childrenClass(): any;
-    get childrenName(): string | null;
-    get characteristics(): any;
+    readonly parentName: string | null;
+    readonly childrenClass: any;
+    readonly childrenName: string | null;
+    readonly characteristics: any;
     addCharacteristic(params: any): any;
     getCharacteristic(params: any): any;
     discoverAllCharacteristics(): void;

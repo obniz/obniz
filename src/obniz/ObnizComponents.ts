@@ -20,9 +20,88 @@ import ObnizParts from "./ObnizParts";
 
 import HW from "./libs/hw";
 
+interface ObnizComponentsObnizBoard {
+
+  // onconnect: () => Promise<void>;
+  // onclose: () => Promise<void>;
+  // wired<K extends keyof WiredNameMap>(name: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K];
+  //
+  // // connect
+  // connectionState: ConnectionState;
+  // debugprint: boolean;
+  // connect(): void;
+  // connectWait(options?: ConnectOptions): Promise<boolean>;
+  // close(): void;
+  // resetOnDisconnect(reset: boolean): void;
+  //
+  // // systems
+  // sleepSeconds(sec: number): void;
+  // sleepMinute(sec: number): void;
+  // sleep(date: Date): void;
+  // sleepIoTrigger(trigger: boolean): void;
+  // pingWait(): Promise<void>;
+  //
+  // // utils
+  // util: any;
+  // reset(): void;
+  // repeat(callback: () => void): void;
+  // wait(time: number): Promise<void>;
+  // keepWorkingAtOffline(working: boolean): void;
+  // setVccGnd(vcc: number, gnd: number, drive: DriveType): void;
+  // isValidIO(io: any): io is PeripheralIO;
+
+}
+
 export default class ObnizComponents extends ObnizParts {
+
   public pongObservers: any;
   public _allComponentKeys: any;
+
+  /* board peripherals */
+  public io?: PeripheralDirective;
+  public io0?: PeripheralIO;
+  public io1?: PeripheralIO;
+  public io2?: PeripheralIO;
+  public io3?: PeripheralIO;
+  public io4?: PeripheralIO;
+  public io5?: PeripheralIO;
+  public io6?: PeripheralIO;
+  public io7?: PeripheralIO;
+  public io8?: PeripheralIO;
+  public io9?: PeripheralIO;
+  public io10?: PeripheralIO;
+  public io11?: PeripheralIO;
+
+  public ad0?: PeripheralAD;
+  public ad1?: PeripheralAD;
+  public ad2?: PeripheralAD;
+  public ad3?: PeripheralAD;
+  public ad4?: PeripheralAD;
+  public ad5?: PeripheralAD;
+  public ad6?: PeripheralAD;
+  public ad7?: PeripheralAD;
+  public ad8?: PeripheralAD;
+  public ad9?: PeripheralAD;
+  public ad10?: PeripheralAD;
+  public ad11?: PeripheralAD;
+
+  public pwm0?: PeripheralPWM;
+  public pwm1?: PeripheralPWM;
+  public pwm2?: PeripheralPWM;
+  public pwm3?: PeripheralPWM;
+  public pwm4?: PeripheralPWM;
+  public pwm5?: PeripheralPWM;
+
+  public uart0?: PeripheralUART;
+  public uart1?: PeripheralUART;
+  public spi0?: PeripheralSPI;
+  public spi1?: PeripheralSPI;
+  public i2c0?: PeripheralI2C;
+  public logicAnalyzer?: LogicAnalyzer;
+  public measure?: ObnizMeasure;
+  public display?: Display;
+  public switch?: ObnizSwitch;
+  public ble?: ObnizBLE | ObnizBLEHci;
 
   constructor(id: any, options: any) {
     super(id, options);
@@ -195,21 +274,21 @@ export default class ObnizComponents extends ObnizParts {
     }
   }
 
-  public getIO(io: any) {
+  public getIO(io: any): PeripheralIO {
     if (!this.isValidIO(io)) {
       throw new Error("io " + io + " is not valid io");
     }
     return (this as any)["io" + io];
   }
 
-  public getAD(io: any) {
+  public getAD(io: any): PeripheralAD {
     if (!this.isValidIO(io)) {
       throw new Error("ad " + io + " is not valid io");
     }
     return (this as any)["ad" + io];
   }
 
-  public _getFreePeripheralUnit(peripheral: any) {
+  public _getFreePeripheralUnit(peripheral: any): any {
     for (const key of this._allComponentKeys) {
       if (key.indexOf(peripheral) === 0) {
         /* "io" for "io0" */
@@ -223,15 +302,15 @@ export default class ObnizComponents extends ObnizParts {
     throw new Error(`No More ${peripheral} Available.`);
   }
 
-  public getFreePwm() {
+  public getFreePwm(): PeripheralPWM {
     return this._getFreePeripheralUnit("pwm");
   }
 
-  public getFreeI2C() {
+  public getFreeI2C(): PeripheralI2C {
     return this._getFreePeripheralUnit("i2c");
   }
 
-  public getI2CWithConfig(config: any) {
+  public getI2CWithConfig(config: any): PeripheralI2C {
     if (typeof config !== "object") {
       throw new Error("getI2CWithConfig need config arg");
     }
@@ -243,11 +322,11 @@ export default class ObnizComponents extends ObnizParts {
     return i2c;
   }
 
-  public getFreeSpi() {
+  public getFreeSpi(): PeripheralSPI {
     return this._getFreePeripheralUnit("spi");
   }
 
-  public getSpiWithConfig(config: any) {
+  public getSpiWithConfig(config: any): PeripheralSPI {
     if (typeof config !== "object") {
       throw new Error("getSpiWithConfig need config arg");
     }
@@ -259,7 +338,7 @@ export default class ObnizComponents extends ObnizParts {
     return spi;
   }
 
-  public getFreeUart() {
+  public getFreeUart(): PeripheralUART {
     return this._getFreePeripheralUnit("uart");
   }
 

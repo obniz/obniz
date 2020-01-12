@@ -15,5 +15,4 @@ class LMT87 extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = LMT87;
-
 //# sourceMappingURL=index.js.map

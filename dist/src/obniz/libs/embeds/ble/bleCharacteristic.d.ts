@@ -10,10 +10,10 @@ declare class BleCharacteristic extends BleAttributeAbstract {
     service: any;
     uuid: any;
     constructor(obj: any);
-    get parentName(): string;
-    get childrenClass(): any;
-    get childrenName(): string;
-    get descriptors(): any;
+    readonly parentName: string;
+    readonly childrenClass: any;
+    readonly childrenName: string;
+    readonly descriptors: any;
     toJSON(): any;
     addProperty(param: any): void;
     removeProperty(param: any): void;
