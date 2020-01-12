@@ -56,7 +56,7 @@ export default class ObnizComponents extends ObnizParts {
     display?: Display;
     switch?: ObnizSwitch;
     ble?: ObnizBLE | ObnizBLEHci;
-    constructor(id: any, options: any);
+    constructor(id: any, options?: any);
     close(): void;
     _callOnConnect(): void;
     _prepareComponents(): void;

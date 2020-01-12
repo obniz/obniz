@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Solenoid {
+    constructor() {
+        this.keys = ["gnd", "signal"];
+        this.requiredKeys = ["signal"];
+    }
     static info() {
         return {
             name: "Solenoid",
         };
-    }
-    constructor() {
-        this.keys = ["gnd", "signal"];
-        this.requiredKeys = ["signal"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -43,4 +43,5 @@ class Solenoid {
     }
 }
 exports.default = Solenoid;
+
 //# sourceMappingURL=index.js.map

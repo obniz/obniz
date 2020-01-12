@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Speaker {
+    constructor(obniz) {
+        this.keys = ["signal", "gnd"];
+        this.requiredKeys = ["signal"];
+    }
     static info() {
         return {
             name: "Speaker",
         };
-    }
-    constructor(obniz) {
-        this.keys = ["signal", "gnd"];
-        this.requiredKeys = ["signal"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -34,4 +34,5 @@ class Speaker {
     }
 }
 exports.default = Speaker;
+
 //# sourceMappingURL=index.js.map

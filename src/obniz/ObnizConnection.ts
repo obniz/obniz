@@ -31,7 +31,7 @@ export default class ObnizConnection {
   public onconnect: any;
   public sendPool: any;
 
-  constructor(id: any, options: any) {
+  constructor(id: any, options?: any) {
     this.isNode = isNode;
     this.id = id;
     this.socket = null;

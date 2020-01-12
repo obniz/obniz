@@ -3,7 +3,7 @@ declare class BleRemoteDescriptor extends BleRemoteAttributeAbstract {
     characteristic: any;
     uuid: any;
     constructor(params: any);
-    readonly parentName: string | null;
+    get parentName(): string | null;
     read(): void;
     write(array: any, needResponse: any): void;
 }

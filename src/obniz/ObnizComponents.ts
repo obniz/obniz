@@ -103,7 +103,7 @@ export default class ObnizComponents extends ObnizParts {
   public switch?: ObnizSwitch;
   public ble?: ObnizBLE | ObnizBLEHci;
 
-  constructor(id: any, options: any) {
+  constructor(id: any, options?: any) {
     super(id, options);
     this.pongObservers = [];
     this._allComponentKeys = [];

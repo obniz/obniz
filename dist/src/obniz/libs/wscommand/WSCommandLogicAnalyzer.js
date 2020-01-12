@@ -78,4 +78,5 @@ class WSCommandLogicAnalyzer extends WSCommand_1.default {
     }
 }
 exports.default = WSCommandLogicAnalyzer;
+
 //# sourceMappingURL=WSCommandLogicAnalyzer.js.map

@@ -14,6 +14,6 @@ declare class Grove_Button {
     constructor();
     wired(obniz: any): void;
     isPressedWait(): Promise<any>;
-    stateWait(isPressed: any): Promise<{}>;
+    stateWait(isPressed: any): Promise<unknown>;
 }
 export default Grove_Button;

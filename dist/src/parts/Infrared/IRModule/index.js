@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRModule {
+    constructor() {
+        this.keys = ["recv", "vcc", "send", "gnd"];
+        this.requiredKeys = ["recv", "send"];
+    }
     get dataSymbolLength() {
         return this.sensor.dataSymbolLength;
     }
@@ -12,10 +16,6 @@ class IRModule {
         return {
             name: "IRModule",
         };
-    }
-    constructor() {
-        this.keys = ["recv", "vcc", "send", "gnd"];
-        this.requiredKeys = ["recv", "send"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -57,4 +57,5 @@ class IRModule {
     }
 }
 exports.default = IRModule;
+
 //# sourceMappingURL=index.js.map

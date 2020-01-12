@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -20,6 +21,19 @@ const bleScan_1 = __importDefault(require("./bleScan"));
 const bleSecurity_1 = __importDefault(require("./bleSecurity"));
 const bleService_1 = __importDefault(require("./bleService"));
 class ObnizBLE {
+    constructor(Obniz) {
+        this.Obniz = Obniz;
+        this.remotePeripherals = [];
+        this.service = bleService_1.default;
+        this.characteristic = bleCharacteristic_1.default;
+        this.descriptor = bleDescriptor_1.default;
+        this.peripheral = new blePeripheral_1.default(Obniz);
+        this.scanTarget = null;
+        this.advertisement = new bleAdvertisement_1.default(Obniz);
+        this.scan = new bleScan_1.default(Obniz);
+        this.security = new bleSecurity_1.default(Obniz);
+        this._reset();
+    }
     static _dataArray2uuidHex(data, reverse) {
         let uuid = [];
         for (let i = 0; i < data.length; i++) {
@@ -42,19 +56,6 @@ class ObnizBLE {
                     str.slice(20);
         }
         return str;
-    }
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.remotePeripherals = [];
-        this.service = bleService_1.default;
-        this.characteristic = bleCharacteristic_1.default;
-        this.descriptor = bleDescriptor_1.default;
-        this.peripheral = new blePeripheral_1.default(Obniz);
-        this.scanTarget = null;
-        this.advertisement = new bleAdvertisement_1.default(Obniz);
-        this.scan = new bleScan_1.default(Obniz);
-        this.security = new bleSecurity_1.default(Obniz);
-        this._reset();
     }
     // dummy
     initWait() {
@@ -261,4 +262,5 @@ class ObnizBLE {
     }
 }
 exports.default = ObnizBLE;
+
 //# sourceMappingURL=ble.js.map

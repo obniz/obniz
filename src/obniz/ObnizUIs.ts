@@ -1,7 +1,7 @@
 import ObnizSystemMethods from "./ObnizSystemMethods";
 
 export default class ObnizUIs extends ObnizSystemMethods {
-  constructor(id: any, options: any) {
+  constructor(id: any, options?: any) {
     super(id, options);
   }
 

@@ -17,6 +17,6 @@ declare class MQ4 {
     constructor();
     wired(obniz: any): void;
     startHeating(): void;
-    heatWait(seconds: any): Promise<{}>;
+    heatWait(seconds: any): Promise<unknown>;
 }
 export default MQ4;

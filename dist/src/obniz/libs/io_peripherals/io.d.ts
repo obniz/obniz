@@ -11,7 +11,7 @@ declare class PeripheralIO {
     drive(drive: any): void;
     pull(updown: any): void;
     input(callback: any): any;
-    inputWait(): Promise<{}>;
+    inputWait(): Promise<unknown>;
     end(): void;
     notified(obj: any): void;
 }

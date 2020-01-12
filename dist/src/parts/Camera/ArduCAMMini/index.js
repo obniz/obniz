@@ -1,19 +1,15 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class ArduCAMMini {
-    static info() {
-        return {
-            name: "ArduCAMMini",
-        };
-    }
     constructor() {
         this.keys = [
             "cs",
@@ -644,6 +640,11 @@ class ArduCAMMini {
             ],
         };
     }
+    static info() {
+        return {
+            name: "ArduCAMMini",
+        };
+    }
     wired(obniz) {
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
         this.io_cs = obniz.getIO(this.params.cs);
@@ -849,4 +850,5 @@ class ArduCAMMini {
     }
 }
 exports.default = ArduCAMMini;
+
 //# sourceMappingURL=index.js.map

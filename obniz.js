@@ -2369,7 +2369,7 @@ class ObnizParts extends ObnizConnection_1.default {
     isValidIO(io) {
         return typeof io === "number" && this["io" + io] !== null;
     }
-    wired(partsname) {
+    wired(partsname, options) {
         const parts = ObnizParts.Parts(partsname);
         if (!parts) {
             throw new Error("No such a parts [" + partsname + "] found");

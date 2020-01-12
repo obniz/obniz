@@ -8,9 +8,9 @@ declare class BleAttributeAbstract {
     emitter: any;
     constructor(params: any);
     setFunctions(): void;
-    readonly childrenClass: any;
-    readonly childrenName: string | null;
-    readonly parentName: string | null;
+    get childrenClass(): any;
+    get childrenName(): string | null;
+    get parentName(): string | null;
     addChild(child: any): any;
     getChild(uuid: any): any;
     toJSON(): any;
@@ -21,12 +21,12 @@ declare class BleAttributeAbstract {
     write(data: any, needResponse?: boolean): void;
     writeNumber(val: any, needResponse?: any): void;
     writeText(str: any, needResponse?: any): void;
-    readWait(): Promise<{}>;
-    writeWait(data: any, needResponse: any): Promise<{}>;
-    writeTextWait(data: any): Promise<{}>;
-    writeNumberWait(data: any): Promise<{}>;
-    readFromRemoteWait(): Promise<{}>;
-    writeFromRemoteWait(): Promise<{}>;
+    readWait(): Promise<unknown>;
+    writeWait(data: any, needResponse: any): Promise<unknown>;
+    writeTextWait(data: any): Promise<unknown>;
+    writeNumberWait(data: any): Promise<unknown>;
+    readFromRemoteWait(): Promise<unknown>;
+    writeFromRemoteWait(): Promise<unknown>;
     /**
      * CALLBACKS
      */

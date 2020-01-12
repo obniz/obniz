@@ -1,5 +1,6 @@
 import ObnizUtil from "./libs/utils/util";
 import ObnizConnection from "./ObnizConnection";
+import {WiredNameMap, WiredNameOptionsMap} from "./ObnizPartsList";
 
 const _parts: any = {};
 
@@ -28,7 +29,7 @@ export default class ObnizParts extends ObnizConnection {
     return new _parts[name]();
   }
 
-  constructor(id: any, options: any) {
+  constructor(id: any, options?: any) {
     super(id, options);
   }
 
@@ -36,7 +37,7 @@ export default class ObnizParts extends ObnizConnection {
     return typeof io === "number" && (this as any)["io" + io] !== null;
   }
 
-  public wired(partsname: any): any {
+  public wired<K extends keyof WiredNameMap>(partsname: K, options?: WiredNameOptionsMap[K]): WiredNameMap[K] {
     const parts: any = ObnizParts.Parts(partsname);
     if (!parts) {
       throw new Error("No such a parts [" + partsname + "] found");

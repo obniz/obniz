@@ -14,7 +14,7 @@ declare class Hci extends events.EventEmitter {
     addressType: any;
     address: any;
     constructor(obnizHci: any);
-    initWait(): Promise<{}>;
+    initWait(): Promise<unknown>;
     setEventMask(): void;
     reset(): void;
     resetBuffers(): void;

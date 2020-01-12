@@ -440,4 +440,5 @@ class NobleBindings extends events.EventEmitter {
     }
 }
 exports.default = NobleBindings;
+
 //# sourceMappingURL=bindings.js.map

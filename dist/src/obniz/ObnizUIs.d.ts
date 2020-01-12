@@ -1,6 +1,6 @@
 import ObnizSystemMethods from "./ObnizSystemMethods";
 export default class ObnizUIs extends ObnizSystemMethods {
-    constructor(id: any, options: any);
+    constructor(id: any, options?: any);
     isValidObnizId(str: string): boolean | null;
     wsconnect(desired_server: any): void;
     showAlertUI(obj: any): void;

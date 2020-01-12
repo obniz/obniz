@@ -1,4 +1,9 @@
-declare class DCMotor {
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface DCMotorOptions {
+    forward: number;
+    back: number;
+}
+declare class DCMotor implements ObnizPartsInterface {
     static info(): {
         name: string;
     };

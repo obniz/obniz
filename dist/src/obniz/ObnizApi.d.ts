@@ -3,9 +3,9 @@ declare class ObnizApi {
     options: any;
     urlBase: any;
     constructor(obnizId: any, options: any);
-    readonly apiVersion: any;
-    post(path: any, params: any, callback: any): Promise<{}>;
-    getState(callback: any): Promise<{}>;
-    postJson(json: any, callback: any): Promise<{}>;
+    get apiVersion(): any;
+    post(path: any, params: any, callback: any): Promise<unknown>;
+    getState(callback: any): Promise<unknown>;
+    postJson(json: any, callback: any): Promise<unknown>;
 }
 export default ObnizApi;

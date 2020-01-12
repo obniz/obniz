@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class InfraredLED {
-    static info() {
-        return {
-            name: "InfraredLED",
-        };
-    }
     constructor() {
         this.keys = ["anode", "cathode"];
         this.requiredKeys = ["anode"];
         this.dataSymbolLength = 0.07;
+    }
+    static info() {
+        return {
+            name: "InfraredLED",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -36,4 +36,5 @@ class InfraredLED {
     }
 }
 exports.default = InfraredLED;
+
 //# sourceMappingURL=index.js.map

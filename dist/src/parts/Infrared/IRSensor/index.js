@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class IRSensor {
-    static info() {
-        return {
-            name: "IRSensor",
-        };
-    }
     constructor() {
         this.keys = ["output", "vcc", "gnd"];
         this.requiredKeys = ["output"];
@@ -15,6 +10,11 @@ class IRSensor {
         this.triggerSampleCount = 16; // If Signal arrives more than this count. then treat as signal
         this.cutTail = false;
         this.output_pullup = true;
+    }
+    static info() {
+        return {
+            name: "IRSensor",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -60,4 +60,5 @@ class IRSensor {
     }
 }
 exports.default = IRSensor;
+
 //# sourceMappingURL=index.js.map

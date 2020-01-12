@@ -1,4 +1,12 @@
-class LED {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface LEDOptions {
+  anode: number;
+  cathode?: number;
+}
+
+class LED implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +14,9 @@ class LED {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz?: Obniz;
   public io_anode: any;
   public params: any;
   public io_cathode: any;
@@ -32,7 +40,7 @@ class LED {
     this.obniz = obniz;
     this.io_anode = getIO(this.params.anode);
     this.io_anode.output(false);
-    if (this.obniz.isValidIO(this.params.cathode)) {
+    if (this.obniz!.isValidIO(this.params.cathode)) {
       this.io_cathode = getIO(this.params.cathode);
       this.io_cathode.output(false);
     }
@@ -58,7 +66,7 @@ class LED {
   }
 
   public endBlink() {
-    this.obniz.io.animation(this.animationName, "pause");
+    this.obniz!.io!.animation(this.animationName, "pause");
   }
 
   public blink(interval: any) {
@@ -82,7 +90,7 @@ class LED {
       },
     ];
 
-    this.obniz.io.animation(this.animationName, "loop", frames);
+    this.obniz!.io!.animation(this.animationName, "loop", frames);
   }
 }
 

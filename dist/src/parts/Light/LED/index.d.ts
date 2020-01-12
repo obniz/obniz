@@ -1,10 +1,16 @@
-declare class LED {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface LEDOptions {
+    anode: number;
+    cathode?: number;
+}
+declare class LED implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    obniz: any;
+    keys: string[];
+    requiredKeys: string[];
+    obniz?: Obniz;
     io_anode: any;
     params: any;
     io_cathode: any;

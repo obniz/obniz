@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Grove_EarHeartRate {
-    static info() {
-        return {
-            name: "Grove_EarHeartRate",
-        };
-    }
     constructor() {
         this.keys = ["vcc", "gnd", "signal"];
         this.requiredKeys = ["vcc", "gnd"];
@@ -16,6 +11,11 @@ class Grove_EarHeartRate {
         };
         this.interval = 5;
         this.duration = 2.5 * 1000;
+    }
+    static info() {
+        return {
+            name: "Grove_EarHeartRate",
+        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -52,4 +52,5 @@ class Grove_EarHeartRate {
     }
 }
 exports.default = Grove_EarHeartRate;
+
 //# sourceMappingURL=index.js.map

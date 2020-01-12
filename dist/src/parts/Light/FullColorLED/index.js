@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class FullColorLED {
-    static info() {
-        return {
-            name: "FullColorLED",
-        };
-    }
     constructor() {
         this.COMMON_TYPE_ANODE = 1;
         this.COMMON_TYPE_CATHODE = 0;
@@ -14,6 +9,11 @@ class FullColorLED {
         this.animationName = "FullColorLED-" + Math.round(Math.random() * 1000);
         this.keys = ["r", "g", "b", "common", "commonType"];
         this.requiredKeys = ["r", "g", "b", "common", "commonType"];
+    }
+    static info() {
+        return {
+            name: "FullColorLED",
+        };
     }
     wired(obniz) {
         const r = this.params.r;
@@ -113,4 +113,5 @@ class FullColorLED {
     }
 }
 exports.default = FullColorLED;
+
 //# sourceMappingURL=index.js.map

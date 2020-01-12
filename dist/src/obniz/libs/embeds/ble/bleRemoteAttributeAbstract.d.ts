@@ -8,9 +8,9 @@ declare class BleRemoteAttributeAbstract extends BleAttributeAbstract {
     getChild: any;
     addChild: any;
     constructor(params: any);
-    readonly wsChildUuidName: string | null;
+    get wsChildUuidName(): string | null;
     discoverChildren(): void;
-    discoverChildrenWait(): Promise<{}>;
+    discoverChildrenWait(): Promise<unknown>;
     /**
      * CALLBACKS
      */

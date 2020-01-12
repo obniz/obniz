@@ -15,7 +15,7 @@ declare class ENC03R_Module {
     onchange2: any;
     constructor();
     wired(obniz: any): void;
-    get1Wait(): Promise<{}>;
-    get2Wait(): Promise<{}>;
+    get1Wait(): Promise<unknown>;
+    get2Wait(): Promise<unknown>;
 }
 export default ENC03R_Module;

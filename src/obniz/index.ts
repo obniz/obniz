@@ -27,7 +27,7 @@ class Obniz extends ObnizUIs {
   public isNode: any;
   public showAlertUI: any;
 
-  constructor(id: any, options: any) {
+  constructor(id: any, options?: any) {
     super(id, options);
     this.util = new ObnizUtil(this);
   }

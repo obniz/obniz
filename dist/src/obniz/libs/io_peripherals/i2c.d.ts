@@ -11,7 +11,7 @@ declare class PeripheralI2C {
     addObserver(callback: any): void;
     start(arg: any): void;
     write(address: any, data: any): void;
-    readWait(address: any, length: any): Promise<{}>;
+    readWait(address: any, length: any): Promise<unknown>;
     notified(obj: any): void;
     isUsed(): any;
     end(): void;

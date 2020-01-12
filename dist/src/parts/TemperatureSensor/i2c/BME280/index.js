@@ -1,20 +1,15 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class BME280 {
-    static info() {
-        return {
-            name: "BME280",
-            datasheet: "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf",
-        };
-    }
     constructor() {
         this.requiredKeys = [];
         this.keys = [
@@ -49,6 +44,12 @@ class BME280 {
             config: 0xf5,
             ctrl_meas: 0xf4,
             ctrl_hum: 0xf2,
+        };
+    }
+    static info() {
+        return {
+            name: "BME280",
+            datasheet: "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-12.pdf",
         };
     }
     wired(obniz) {
@@ -258,4 +259,5 @@ class BME280 {
     }
 }
 exports.default = BME280;
+
 //# sourceMappingURL=index.js.map

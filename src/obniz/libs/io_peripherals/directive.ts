@@ -29,7 +29,7 @@ class Directive {
     }
   }
 
-  public animation(name: any, status: any, array: any, repeat: any) {
+  public animation(name: any, status: any, array?: any, repeat?: any) {
     if (
       (typeof repeat === "number" || status === "registrate") &&
       semver.lt(this.Obniz.firmware_ver, "2.0.0")
