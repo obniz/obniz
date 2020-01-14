@@ -1,6 +1,6 @@
 class DPS310 {
   constructor() {
-    this.requiredKeys = ['sda', 'scl', 'gnd'];
+    this.requiredKeys = ['sda', 'scl'];
     this.keys = ['gpio3', 'vcc', 'gnd', 'scl', 'sda'];
     this.ioKeys = ['gpio3', 'vcc', 'gnd', 'scl', 'sda'];
     this.configration = {
