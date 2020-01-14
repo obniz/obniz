@@ -51,6 +51,7 @@ describe('10-tcp', function() {
     let res = await checkBoard.tcp0.connectWait(80, 'obniz.i');
     expect(res).to.deep.within(3, 4);
     await checkBoard.pingWait();
+    checkBoard.tcp0.close();
     //close wait
     while (checkBoard.tcp0.isUsed()) {
       await wait(10);
