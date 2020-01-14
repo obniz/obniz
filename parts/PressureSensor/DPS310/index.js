@@ -469,3 +469,6 @@ class DPS310 {
 }
 
 
+if (typeof module === 'object') {
+  module.exports = DPS310;
+}
