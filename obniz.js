@@ -35811,6 +35811,7 @@ Gap.prototype.startScanning = function(allowDuplicates) {
   this._scanState = 'starting';
   this._scanFilterDuplicates = !allowDuplicates;
 
+  this._discoveries = {};
   // Always set scan parameters before scanning
   // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
   // p106 - p107

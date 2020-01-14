@@ -15,7 +15,7 @@ let checkBoard;
 const MAX_TCP_CONNECTION = 8;
 let tcpArray = [];
 
-describe('10-tcp', function() {
+describe('11-tcp', function() {
   this.timeout(30000);
 
   before(function() {
