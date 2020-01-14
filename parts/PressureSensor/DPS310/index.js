@@ -269,10 +269,8 @@ class DPS310 {
   }
 
   async readCoeffs() {
-    console.log('readCoeffs');
     let buffer = await this.readBlock(this.dataBlock.DPS310__REG_ADR_COEF);
 
-    console.log('readCoeffs finished');
     this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
     if (this.coeffs.m_c0Half & (1 << 11)) {
       this.coeffs.m_c0Half -= 1 << 12;
@@ -320,21 +318,17 @@ class DPS310 {
   }
 
   async init() {
-    console.log('start init');
     let prodId = await this.readByteBitfield(
         this.bitFileds.DPS310__REG_INFO_PROD_ID
     );
     if (prodId != 0) {
-      console.error('prodId');
+      throw new Error("invalid prodId")
       return;
     }
-    console.log('prodId OK');
-    console.log('reading bits...');
     await this.readByteBitfield(this.bitFileds.DPS310__REG_INFO_REV_ID);
 
     await this.readByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
 
-    console.log('setting bits...');
     await this.writeByteBitfield(
         this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
         0
@@ -473,4 +467,5 @@ class DPS310 {
     return result;
   }
 }
-  
+
+
