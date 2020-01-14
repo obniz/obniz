@@ -74,11 +74,10 @@ class BlePeripheral {
     end() {
         this.stopAllService();
     }
-    onconnectionupdates() {
+    onconnectionupdates(param) {
     }
-    onerror() {
+    onerror(error) {
     }
 }
 exports.default = BlePeripheral;
-
 //# sourceMappingURL=blePeripheral.js.map

@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -26,31 +25,6 @@ const bleScan_1 = __importDefault(require("./bleScan"));
 const bleSecurity_1 = __importDefault(require("./bleSecurity"));
 const bleService_1 = __importDefault(require("./bleService"));
 class ObnizBLE {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
-        this.hci = new hci_1.default(Obniz);
-        this.hciProtocol = new hci_2.default(this.hci);
-        this.centralBindings = new bindings_1.default(this.hciProtocol);
-        this.peripheralBindings = new bindings_2.default(this.hciProtocol);
-        // let dummy = {write : ()=>{}, on:()=>{}}
-        // this.centralBindings = new CentralBindings( dummy );
-        // this.peripheralBindings = new PeripheralBindings( dummy );
-        this.centralBindings.init();
-        this.peripheralBindings.init();
-        this._initialized = false;
-        this._initializeWarning = true;
-        this.remotePeripherals = [];
-        this.service = bleService_1.default;
-        this.characteristic = bleCharacteristic_1.default;
-        this.descriptor = bleDescriptor_1.default;
-        this.peripheral = new blePeripheral_1.default(this);
-        this.scanTarget = null;
-        this.advertisement = new bleAdvertisement_1.default(this);
-        this.scan = new bleScan_1.default(this);
-        this.security = new bleSecurity_1.default(this);
-        this._bind();
-        this._reset();
-    }
     static _dataArray2uuidHex(data, reverse) {
         let uuid = [];
         for (let i = 0; i < data.length; i++) {
@@ -73,6 +47,30 @@ class ObnizBLE {
                     str.slice(20);
         }
         return str;
+    }
+    constructor(obniz) {
+        this.Obniz = obniz;
+        this.hci = new hci_1.default(obniz);
+        this.hciProtocol = new hci_2.default(this.hci);
+        this.centralBindings = new bindings_1.default(this.hciProtocol);
+        this.peripheralBindings = new bindings_2.default(this.hciProtocol);
+        // let dummy = {write : ()=>{}, on:()=>{}}
+        // this.centralBindings = new CentralBindings( dummy );
+        // this.peripheralBindings = new PeripheralBindings( dummy );
+        this.centralBindings.init();
+        this.peripheralBindings.init();
+        this._initialized = false;
+        this._initializeWarning = true;
+        this.remotePeripherals = [];
+        this.service = bleService_1.default;
+        this.characteristic = bleCharacteristic_1.default;
+        this.descriptor = bleDescriptor_1.default;
+        this.peripheral = new blePeripheral_1.default(this);
+        this.advertisement = new bleAdvertisement_1.default(this);
+        this.scan = new bleScan_1.default(this);
+        this.security = new bleSecurity_1.default(this);
+        this._bind();
+        this._reset();
     }
     initWait() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -135,7 +133,7 @@ class ObnizBLE {
     onScanStart() {
     }
     onScanStop() {
-        this.scan.notifyFromServer("onfinish");
+        this.scan.notifyFromServer("onfinish", null);
     }
     onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
         let val = this.findPeripheral(uuid);
@@ -359,5 +357,4 @@ class ObnizBLE {
     }
 }
 exports.default = ObnizBLE;
-
 //# sourceMappingURL=ble.js.map

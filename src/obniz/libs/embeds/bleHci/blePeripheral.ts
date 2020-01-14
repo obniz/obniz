@@ -39,14 +39,14 @@ class BlePeripheral {
   public getService(uuid: any) {
     uuid = BleHelper.uuidFilter(uuid);
     return this._services
-      .filter ((element: any ) => {
+      .filter((element: any) => {
         return BleHelper.uuidFilter(element.uuid) === uuid;
       })
       .shift();
   }
 
   public removeService(uuid: any) {
-    this._services = this._services.filter ((element: any ) => {
+    this._services = this._services.filter((element: any) => {
       return BleHelper.uuidFilter(element.uuid) !== uuid;
     });
 
@@ -87,10 +87,10 @@ class BlePeripheral {
     this.stopAllService();
   }
 
-  public onconnectionupdates() {
+  public onconnectionupdates(param: any) {
   }
 
-  public onerror() {
+  public onerror(error: any) {
   }
 }
 

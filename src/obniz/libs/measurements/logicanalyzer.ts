@@ -1,12 +1,26 @@
+import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 
-class LogicAnalyzer {
-  public obniz: any;
-  public onmeasured: any;
-  public params: any;
-  public measured: any;
+interface LogicAnalyzerOptions {
+  "io": number;
+  "interval": number;
+  "duration": number;
+  "triggerValue": boolean;
+  "triggerValueSamples": number;
+}
 
-  constructor(obniz: any) {
+interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {
+  "triggerValue": boolean;
+  "triggerValueSamples": number;
+}
+
+class LogicAnalyzer {
+  public obniz: Obniz;
+  public onmeasured?: (array: number[]) => void;
+  public params: any;
+  public measured?: number[];
+
+  constructor(obniz: Obniz) {
     this.obniz = obniz;
     this._reset();
   }
@@ -15,7 +29,7 @@ class LogicAnalyzer {
     this.onmeasured = undefined;
   }
 
-  public start(params: any) {
+  public start(params: LogicAnalyzerOptions | LogicAnalyzerOptionsExt) {
     const err: any = ObnizUtil._requiredKeys(params, ["io", "interval", "duration"]);
     if (err) {
       throw new Error(

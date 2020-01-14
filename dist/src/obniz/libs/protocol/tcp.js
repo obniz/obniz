@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const isNode = typeof window === "undefined";
 const semver = require("semver");
 class Tcp {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
@@ -139,5 +139,4 @@ class Tcp {
     }
 }
 exports.default = Tcp;
-
 //# sourceMappingURL=tcp.js.map

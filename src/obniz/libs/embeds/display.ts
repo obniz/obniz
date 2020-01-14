@@ -1,19 +1,21 @@
-class Display {
-  public Obniz: any;
-  public width: any;
-  public height: any;
-  public _canvas: any;
-  public _pos: any;
-  public autoFlush: any;
-  public fontSize: any;
-  public createCanvas: any;
+import Obniz from "../../index";
 
-  constructor(Obniz: any) {
-    this.Obniz = Obniz;
+class Display {
+  public Obniz: Obniz;
+  public width: number;
+  public height: number;
+  public autoFlush!: boolean;
+  public fontSize!: number;
+  public createCanvas: any;
+  private _canvas?: HTMLCanvasElement;
+  private _pos!: { x: number, y: number };
+
+  constructor(obniz: any) {
+    this.Obniz = obniz;
     this.width = 128;
     this.height = 64;
 
-    this._canvas = null;
+    this._canvas = undefined;
     this._reset();
   }
 
@@ -59,7 +61,7 @@ class Display {
       }
       this._canvas = canvas;
     }
-    const ctx: any = this._canvas.getContext("2d");
+    const ctx: any = this._canvas!.getContext("2d");
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, this.width, this.height);
     ctx.fillStyle = "#FFF";
@@ -120,7 +122,7 @@ class Display {
     return this._pos;
   }
 
-  public print(text: any) {
+  public print(text: string) {
     const ctx: any = this._ctx();
     if (ctx) {
       ctx.fillText(text, this._pos.x, this._pos.y + this.fontSize);
@@ -135,7 +137,7 @@ class Display {
     }
   }
 
-  public line(x_0: any, y_0: any, x_1: any, y_1: any) {
+  public line(x_0: number, y_0: number, x_1: number, y_1: number) {
     const ctx: any = this._ctx();
     if (ctx) {
       ctx.beginPath();
@@ -148,7 +150,7 @@ class Display {
     }
   }
 
-  public rect(x: any, y: any, width: any, height: any, mustFill: any) {
+  public rect(x: number, y: number, width: number, height: number, mustFill: boolean) {
     const ctx: any = this._ctx();
     if (ctx) {
       if (mustFill) {
@@ -162,7 +164,7 @@ class Display {
     }
   }
 
-  public circle(x: any, y: any, r: any, mustFill: any) {
+  public circle(x: number, y: number, r: number, mustFill: boolean) {
     const ctx: any = this._ctx();
     if (ctx) {
       ctx.beginPath();
@@ -178,7 +180,7 @@ class Display {
     }
   }
 
-  public qr(text: any, correction: any) {
+  public qr(text: string, correction: "L" | "M" | "Q" | "H") {
     const obj: any = {};
     obj.display = {
       qr: {
@@ -199,7 +201,7 @@ class Display {
     this.Obniz.send(obj);
   }
 
-  public setPinName(io: any, moduleName: any, funcName: any) {
+  public setPinName(io: number, moduleName: string, funcName: string) {
     const obj: any = {};
     obj.display = {};
     obj.display.pin_assign = {};
@@ -211,7 +213,7 @@ class Display {
     this.Obniz.send(obj);
   }
 
-  public setPinNames(moduleName: any, data: any) {
+  public setPinNames(moduleName: string, data: any) {
     const obj: any = {};
     obj.display = {};
     obj.display.pin_assign = {};
@@ -228,7 +230,7 @@ class Display {
     }
   }
 
-  public _draw(ctx: any) {
+  public _draw(ctx: CanvasRenderingContext2D) {
     const stride: any = this.width / 8;
     const vram: any = new Array(stride * 64);
     const imageData: any = ctx.getImageData(0, 0, this.width, this.height);
@@ -250,14 +252,14 @@ class Display {
     this.raw(vram);
   }
 
-  public draw(ctx: any) {
+  public draw(ctx: CanvasRenderingContext2D) {
     if (this.autoFlush) {
       this._draw(ctx);
     }
   }
 
   public drawing(autoFlush: any) {
-    this.autoFlush = autoFlush === true;
+    this.autoFlush = !!autoFlush;
     const ctx: any = this._ctx();
     if (ctx) {
       this.draw(ctx);

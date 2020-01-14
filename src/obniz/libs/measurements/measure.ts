@@ -1,11 +1,29 @@
+import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
 
-class ObnizMeasure {
-  public obniz: any;
-  public observers: any;
-  public params: any;
+interface ObnizMeasureResult {
+  edge: boolean;
+  timing: number;
+}
 
-  constructor(obniz: any) {
+type ObnizMeasureResultArray = [ObnizMeasureResult, ObnizMeasureResult];
+
+interface ObnizMeasureOptions {
+  "io_pulse": number;
+  "pulse": "positive" | "negative";
+  "pulse_width": number;
+  "io_echo": number;
+  "measure_edges": number;
+  "timeout"?: number;
+  "callback"?: (edges: ObnizMeasureResultArray) => void;
+}
+
+class ObnizMeasure {
+  public obniz: Obniz;
+  public observers!: Array<(edges: ObnizMeasureResultArray) => void>;
+  public params?: ObnizMeasureOptions;
+
+  constructor(obniz: Obniz) {
     this.obniz = obniz;
     this._reset();
   }
@@ -14,7 +32,7 @@ class ObnizMeasure {
     this.observers = [];
   }
 
-  public echo(params: any) {
+  public echo(params: ObnizMeasureOptions) {
     const err: any = ObnizUtil._requiredKeys(params, [
       "io_pulse",
       "pulse",
@@ -35,7 +53,7 @@ class ObnizMeasure {
       "measure_edges",
       "timeout",
       "callback",
-    ]);
+    ]) as ObnizMeasureOptions;
 
     const echo: any = {};
     echo.io_pulse = this.params.io_pulse;

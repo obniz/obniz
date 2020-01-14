@@ -15,7 +15,7 @@ declare class BlePeripheral {
     findCharacteristic(param: any): any;
     findDescriptor(param: any): any;
     end(): void;
-    onconnectionupdates(): void;
-    onerror(): void;
+    onconnectionupdates(param: any): void;
+    onerror(error: any): void;
 }
 export default BlePeripheral;

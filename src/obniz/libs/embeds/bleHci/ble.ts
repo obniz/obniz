@@ -4,6 +4,7 @@ import CentralBindings from "./protocol/central/bindings";
 import HciProtocol from "./protocol/hci";
 import PeripheralBindings from "./protocol/peripheral/bindings";
 
+import Obniz from "../../../index";
 import BleAdvertisement from "./bleAdvertisement";
 import BleCharacteristic from "./bleCharacteristic";
 import BleDescriptor from "./bleDescriptor";
@@ -12,10 +13,11 @@ import BleRemotePeripheral from "./bleRemotePeripheral";
 import BleScan from "./bleScan";
 import BleSecurity from "./bleSecurity";
 import BleService from "./bleService";
+import {BleDeviceAddressType, UUID} from "./bleTypes";
 
 class ObnizBLE {
 
-  public static _dataArray2uuidHex(data: any, reverse: any) {
+  public static _dataArray2uuidHex(data: number[], reverse: boolean): UUID {
     let uuid: any = [];
     for (let i = 0; i < data.length; i++) {
       uuid.push(("00" + data[i].toString(16).toLowerCase()).slice(-2));
@@ -39,26 +41,25 @@ class ObnizBLE {
     return str;
   }
 
-  public Obniz: any;
-  public hci: any;
-  public hciProtocol: any;
-  public centralBindings: any;
-  public peripheralBindings: any;
-  public _initialized: any;
-  public _initializeWarning: any;
-  public remotePeripherals: any;
-  public service: any;
-  public characteristic: any;
-  public descriptor: any;
-  public peripheral: any;
-  public scanTarget: any;
+  public Obniz: Obniz;
+  public hci: ObnizBLEHci;
+  public hciProtocol: HciProtocol;
+  public centralBindings: CentralBindings;
+  public peripheralBindings: PeripheralBindings;
+  public _initialized: boolean;
+  public _initializeWarning: boolean;
+  public remotePeripherals: BleRemotePeripheral[];
+  public service: typeof BleService;
+  public characteristic: typeof BleCharacteristic;
+  public descriptor: typeof BleDescriptor;
+  public peripheral: BlePeripheral;
   public advertisement: any;
-  public scan: any;
+  public scan: BleScan;
   public security: any;
 
-  constructor(Obniz: any) {
-    this.Obniz = Obniz;
-    this.hci = new ObnizBLEHci(Obniz);
+  constructor(obniz: Obniz) {
+    this.Obniz = obniz;
+    this.hci = new ObnizBLEHci(obniz);
     this.hciProtocol = new HciProtocol(this.hci);
 
     this.centralBindings = new CentralBindings(this.hciProtocol);
@@ -81,8 +82,6 @@ class ObnizBLE {
     this.descriptor = BleDescriptor;
     this.peripheral = new BlePeripheral(this);
 
-    this.scanTarget = null;
-
     this.advertisement = new BleAdvertisement(this);
     this.scan = new BleScan(this);
     this.security = new BleSecurity(this);
@@ -91,7 +90,7 @@ class ObnizBLE {
     this._reset();
   }
 
-  public async initWait() {
+  public async initWait(): Promise<void> {
     if (!this._initialized) {
       this._initialized = true;
       await this.hciProtocol.initWait();
@@ -117,14 +116,14 @@ class ObnizBLE {
   public _reset() {
   }
 
-  public directConnect(uuid: any, addressType: any) {
+  public directConnect(uuid: UUID, addressType: BleDeviceAddressType) {
     let peripheral: any = this.findPeripheral(uuid);
     if (!peripheral) {
       peripheral = new BleRemotePeripheral(this, uuid);
       this.remotePeripherals.push(peripheral);
     }
     if (!this.centralBindings._addresses[uuid]) {
-      const address: any = uuid.match(/.{1,2}/g).join(":");
+      const address: any = uuid.match(/.{1,2}/g)!.join(":");
       this.centralBindings._addresses[uuid] = address;
       this.centralBindings._addresseTypes[uuid] = addressType;
       this.centralBindings._connectable[uuid] = true;
@@ -158,7 +157,7 @@ class ObnizBLE {
   }
 
   public onScanStop() {
-    this.scan.notifyFromServer("onfinish");
+    this.scan.notifyFromServer("onfinish", null);
   }
 
   public onDiscover(uuid: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any) {

@@ -1,18 +1,22 @@
+import Obniz from "../../index";
+
 const isNode: any = typeof window === "undefined";
 import semver = require("semver");
 
+type TCPCallbackFunction = (data: number[]) => void;
+
 class Tcp {
-  public Obniz: any;
-  public id: any;
+  public Obniz: Obniz;
+  public id: number;
   public connectObservers: any;
-  public readObservers: any;
-  public used: any;
+  public readObservers!: TCPCallbackFunction[];
+  public used!: boolean;
   public onconnection: any;
   public onreceive: any;
   public onerror: any;
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+  constructor(obniz: Obniz, id: number) {
+    this.Obniz = obniz;
     this.id = id;
     this._reset();
   }
@@ -29,13 +33,13 @@ class Tcp {
     }
   }
 
-  public _addReadObserver(callback: any) {
+  public _addReadObserver(callback: TCPCallbackFunction) {
     if (callback) {
       this.readObservers.push(callback);
     }
   }
 
-  public connectWait(port: any, domain: any) {
+  public connectWait(port: number, domain: string) {
     if (semver.lt(this.Obniz.firmware_ver, "2.1.0")) {
       throw new Error(`Please update obniz firmware >= 2.1.0`);
     }
@@ -78,7 +82,7 @@ class Tcp {
     this.Obniz.send(obj);
   }
 
-  public write(data: any) {
+  public write(data: number | number[] | Buffer | string) {
     if (!this.used) {
       throw new Error(`tcp${this.id} is not started`);
     }
@@ -107,7 +111,7 @@ class Tcp {
     this.Obniz.send(obj);
   }
 
-  public readWait() {
+  public readWait(): Promise<number[]> {
     if (!this.used) {
       throw new Error(`tcp${this.id} is not started`);
     }

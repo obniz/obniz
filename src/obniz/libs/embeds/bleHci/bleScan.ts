@@ -1,32 +1,46 @@
 import emitter = require("eventemitter3");
+import ObnizBLE from "./ble";
 import BleHelper from "./bleHelper";
+import BlePeripheral from "./blePeripheral";
+import {UUID} from "./bleTypes";
+import ObnizBLEHci from "./hci";
+
+export interface BleScanTarget {
+  uuids?: UUID[];
+  localName?: string;
+}
+
+export interface BleScanSetting {
+  duration?: number;
+  duplicate?: boolean;
+}
 
 class BleScan {
-  public scanTarget: any;
-  public scanSettings: any;
-  public obnizBle: any;
-  public emitter: any;
-  public scanedPeripherals: any;
-  public _timeoutTimer: any;
+  public scanTarget: BleScanTarget;
+  public scanSettings: BleScanSetting;
+  public obnizBle: ObnizBLE;
+  public emitter: emitter;
+  public scanedPeripherals: BlePeripheral[];
+  private _timeoutTimer?: NodeJS.Timeout;
 
-  constructor(obnizBle: any) {
-    this.scanTarget = null;
+  constructor(obnizBle: ObnizBLE) {
+    this.scanTarget = {};
     this.scanSettings = {};
     this.obnizBle = obnizBle;
     this.emitter = new emitter();
 
     this.scanedPeripherals = [];
-    this._timeoutTimer = null;
+    this._timeoutTimer = undefined;
   }
 
-  public start(target: any, settings: any) {
+  public start(target?: BleScanTarget, settings?: BleScanSetting) {
     this.obnizBle.warningIfNotInitialize();
 
     if (!settings) {
       settings = {};
     }
-    const timeout: any = settings.duration || 30;
-    settings.duplicate = settings.duplicate === true ? true : false;
+    const timeout: number = settings.duration || 30;
+    settings.duplicate = !!settings.duplicate;
     this.scanSettings = settings;
     target = target || {};
     this.scanTarget = target;
@@ -35,7 +49,7 @@ class BleScan {
       this.scanTarget.uuids &&
       Array.isArray(this.scanTarget.uuids)
     ) {
-      this.scanTarget.uuids = this.scanTarget.uuids.map ((elm: any ) => {
+      this.scanTarget.uuids = this.scanTarget.uuids.map((elm: UUID) => {
         return BleHelper.uuidFilter(elm);
       });
     }
@@ -45,16 +59,16 @@ class BleScan {
 
     this.clearTimeoutTimer();
     this._timeoutTimer = setTimeout(() => {
-      this._timeoutTimer = null;
+      this._timeoutTimer = undefined;
       this.end();
     }, timeout * 1000);
   }
 
-  public startOneWait(target: any, settings: any) {
+  public startOneWait(target: BleScanTarget, settings: BleScanSetting): Promise<BlePeripheral> {
     let state: any = 0;
 
-    return new Promise ((resolve: any ) => {
-      this.emitter.once("onfind", (param: any ) => {
+    return new Promise((resolve: any) => {
+      this.emitter.once("onfind", (param: any) => {
         if (state === 0) {
           state = 1;
           this.end();
@@ -73,8 +87,8 @@ class BleScan {
     });
   }
 
-  public startAllWait(target: any, settings: any) {
-    return new Promise ((resolve: any ) => {
+  public startAllWait(target: BleScanTarget, settings: BleScanSetting): Promise<BlePeripheral[]> {
+    return new Promise((resolve: any) => {
       this.emitter.once("onfinish", () => {
         resolve(this.scanedPeripherals);
       });
@@ -97,7 +111,7 @@ class BleScan {
       return false;
     }
     if (this.scanTarget && this.scanTarget.uuids) {
-      const uuids: any = peripheral.advertisementServiceUuids().map ((e: any ) => {
+      const uuids: any = peripheral.advertisementServiceUuids().map((e: any) => {
         return BleHelper.uuidFilter(e);
       });
       for (const uuid of this.scanTarget.uuids) {
@@ -114,7 +128,7 @@ class BleScan {
   public onfind(params: any) {
   } // dummy
 
-  public notifyFromServer(notifyName: any, params: any) {
+  public notifyFromServer(notifyName: string, params: any) {
     switch (notifyName) {
       case "onfind": {
         if (this.scanSettings.duplicate === false) {
@@ -142,7 +156,7 @@ class BleScan {
   public clearTimeoutTimer() {
     if (this._timeoutTimer) {
       clearTimeout(this._timeoutTimer);
-      this._timeoutTimer = null;
+      this._timeoutTimer = undefined;
     }
   }
 }

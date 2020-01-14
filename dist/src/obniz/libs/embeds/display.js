@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Display {
-    constructor(Obniz) {
-        this.Obniz = Obniz;
+    constructor(obniz) {
+        this.Obniz = obniz;
         this.width = 128;
         this.height = 64;
-        this._canvas = null;
+        this._canvas = undefined;
         this._reset();
     }
     _reset() {
@@ -237,7 +237,7 @@ class Display {
         }
     }
     drawing(autoFlush) {
-        this.autoFlush = autoFlush === true;
+        this.autoFlush = !!autoFlush;
         const ctx = this._ctx();
         if (ctx) {
             this.draw(ctx);

@@ -7,12 +7,12 @@ const emitter = require("eventemitter3");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 class BleScan {
     constructor(obnizBle) {
-        this.scanTarget = null;
+        this.scanTarget = {};
         this.scanSettings = {};
         this.obnizBle = obnizBle;
         this.emitter = new emitter();
         this.scanedPeripherals = [];
-        this._timeoutTimer = null;
+        this._timeoutTimer = undefined;
     }
     start(target, settings) {
         this.obnizBle.warningIfNotInitialize();
@@ -20,7 +20,7 @@ class BleScan {
             settings = {};
         }
         const timeout = settings.duration || 30;
-        settings.duplicate = settings.duplicate === true ? true : false;
+        settings.duplicate = !!settings.duplicate;
         this.scanSettings = settings;
         target = target || {};
         this.scanTarget = target;
@@ -35,7 +35,7 @@ class BleScan {
         this.obnizBle.centralBindings.startScanning(null, false);
         this.clearTimeoutTimer();
         this._timeoutTimer = setTimeout(() => {
-            this._timeoutTimer = null;
+            this._timeoutTimer = undefined;
             this.end();
         }, timeout * 1000);
     }
@@ -119,10 +119,9 @@ class BleScan {
     clearTimeoutTimer() {
         if (this._timeoutTimer) {
             clearTimeout(this._timeoutTimer);
-            this._timeoutTimer = null;
+            this._timeoutTimer = undefined;
         }
     }
 }
 exports.default = BleScan;
-
 //# sourceMappingURL=bleScan.js.map

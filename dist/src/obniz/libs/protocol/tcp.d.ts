@@ -1,22 +1,24 @@
+import Obniz from "../../index";
+declare type TCPCallbackFunction = (data: number[]) => void;
 declare class Tcp {
-    Obniz: any;
-    id: any;
+    Obniz: Obniz;
+    id: number;
     connectObservers: any;
-    readObservers: any;
-    used: any;
+    readObservers: TCPCallbackFunction[];
+    used: boolean;
     onconnection: any;
     onreceive: any;
     onerror: any;
-    constructor(Obniz: any, id: any);
+    constructor(obniz: Obniz, id: number);
     _reset(): void;
     _addConnectObserver(callback: any): void;
-    _addReadObserver(callback: any): void;
-    connectWait(port: any, domain: any): Promise<unknown>;
+    _addReadObserver(callback: TCPCallbackFunction): void;
+    connectWait(port: number, domain: string): Promise<{}>;
     close(): void;
-    write(data: any): void;
-    readWait(): Promise<unknown>;
+    write(data: number | number[] | Buffer | string): void;
+    readWait(): Promise<number[]>;
     end(): void;
     notified(obj: any): void;
-    isUsed(): any;
+    isUsed(): boolean;
 }
 export default Tcp;
