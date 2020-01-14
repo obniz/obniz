@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class PeripheralAD {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
@@ -36,7 +36,7 @@ class PeripheralAD {
         });
     }
     end() {
-        this.onchange = null;
+        this.onchange = undefined;
         const obj = {};
         obj["ad" + this.id] = null;
         this.Obniz.send(obj);

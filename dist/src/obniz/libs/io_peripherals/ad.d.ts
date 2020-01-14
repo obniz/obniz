@@ -1,15 +1,16 @@
+import Obniz from "../../index";
 declare class PeripheralAD {
-    Obniz: any;
-    id: any;
-    value: any;
-    observers: any;
-    onchange: any;
-    constructor(Obniz: any, id: any);
+    Obniz: Obniz;
+    id: number;
+    value: number;
+    observers: Array<(value: number) => void>;
+    onchange?: (value: number) => void;
+    constructor(obniz: Obniz, id: number);
     _reset(): void;
-    addObserver(callback: any): void;
-    start(callback: any): any;
-    getWait(): Promise<unknown>;
+    addObserver(callback: (value: number) => void): void;
+    start(callback: any): number;
+    getWait(): Promise<number>;
     end(): void;
-    notified(obj: any): void;
+    notified(obj: number): void;
 }
 export default PeripheralAD;

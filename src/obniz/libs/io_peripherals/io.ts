@@ -1,18 +1,21 @@
-class PeripheralIO {
-  public Obniz: any;
-  public id: any;
-  public value: any;
-  public observers: any;
-  public onchange: any;
+import Obniz from "../../index";
+import {DriveType, PullType} from "./common";
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+class PeripheralIO {
+  public Obniz: Obniz;
+  public id: number;
+  public value!: boolean;
+  public observers!: Array<(value: boolean) => void>;
+  public onchange?: (value: boolean) => void;
+
+  constructor(obniz: any, id: any) {
+    this.Obniz = obniz;
     this.id = id;
     this._reset();
   }
 
   public _reset() {
-    this.value = 0;
+    this.value = false;
     this.observers = [];
   }
 
@@ -22,7 +25,7 @@ class PeripheralIO {
     }
   }
 
-  public output(value: any) {
+  public output(value: boolean) {
     value = !!value;
     const obj: any = {};
     obj["io" + this.id] = value;
@@ -30,7 +33,7 @@ class PeripheralIO {
     this.Obniz.send(obj);
   }
 
-  public drive(drive: any) {
+  public drive(drive: DriveType) {
     if (typeof drive !== "string") {
       throw new Error("please specify drive methods in string");
     }
@@ -56,26 +59,22 @@ class PeripheralIO {
     this.Obniz.send(obj);
   }
 
-  public pull(updown: any) {
+  public pull(updown: PullType) {
     if (typeof updown !== "string" && updown !== null) {
       throw new Error("please specify pull methods in string");
     }
     let pull_type: any = "";
     switch (updown) {
       case "5v":
-      case "pull-up5v":
         pull_type = "pull-up5v";
         break;
       case "3v":
-      case "pull-up3v":
         pull_type = "pull-up3v";
         break;
       case "0v":
-      case "pull-down":
         pull_type = "pull-down";
         break;
       case null:
-      case "float":
         pull_type = "float";
         break;
       default:
@@ -100,7 +99,7 @@ class PeripheralIO {
     return this.value;
   }
 
-  public inputWait() {
+  public inputWait(): Promise<boolean> {
     const self: any = this;
     return new Promise((resolve: any, reject: any) => {
       self.addObserver(resolve);

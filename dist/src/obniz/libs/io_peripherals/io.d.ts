@@ -1,17 +1,19 @@
+import Obniz from "../../index";
+import { DriveType, PullType } from "./common";
 declare class PeripheralIO {
-    Obniz: any;
-    id: any;
-    value: any;
-    observers: any;
-    onchange: any;
-    constructor(Obniz: any, id: any);
+    Obniz: Obniz;
+    id: number;
+    value: boolean;
+    observers: Array<(value: boolean) => void>;
+    onchange?: (value: boolean) => void;
+    constructor(obniz: any, id: any);
     _reset(): void;
     addObserver(callback: any): void;
-    output(value: any): void;
-    drive(drive: any): void;
-    pull(updown: any): void;
-    input(callback: any): any;
-    inputWait(): Promise<unknown>;
+    output(value: boolean): void;
+    drive(drive: DriveType): void;
+    pull(updown: PullType): void;
+    input(callback: any): boolean;
+    inputWait(): Promise<boolean>;
     end(): void;
     notified(obj: any): void;
 }

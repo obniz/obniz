@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class PeripheralIO {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
     _reset() {
-        this.value = 0;
+        this.value = false;
         this.observers = [];
     }
     addObserver(callback) {
@@ -53,19 +53,15 @@ class PeripheralIO {
         let pull_type = "";
         switch (updown) {
             case "5v":
-            case "pull-up5v":
                 pull_type = "pull-up5v";
                 break;
             case "3v":
-            case "pull-up3v":
                 pull_type = "pull-up3v";
                 break;
             case "0v":
-            case "pull-down":
                 pull_type = "pull-down";
                 break;
             case null:
-            case "float":
                 pull_type = "float";
                 break;
             default:

@@ -1,12 +1,14 @@
-class PeripheralAD {
-  public Obniz: any;
-  public id: any;
-  public value: any;
-  public observers: any;
-  public onchange: any;
+import Obniz from "../../index";
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+class PeripheralAD {
+  public Obniz: Obniz;
+  public id: number;
+  public value!: number;
+  public observers!: Array<(value: number) => void>;
+  public onchange?: (value: number) => void;
+
+  constructor(obniz: Obniz, id: number) {
+    this.Obniz = obniz;
     this.id = id;
     this._reset();
   }
@@ -16,7 +18,7 @@ class PeripheralAD {
     this.observers = [];
   }
 
-  public addObserver(callback: any) {
+  public addObserver(callback: (value: number) => void) {
     if (callback) {
       this.observers.push(callback);
     }
@@ -32,7 +34,7 @@ class PeripheralAD {
     return this.value;
   }
 
-  public getWait() {
+  public getWait(): Promise<number> {
     const self: any = this;
     return new Promise((resolve: any, reject: any) => {
       self.addObserver(resolve);
@@ -45,14 +47,14 @@ class PeripheralAD {
   }
 
   public end() {
-    this.onchange = null;
+    this.onchange = undefined;
     const obj: any = {};
     obj["ad" + this.id] = null;
     this.Obniz.send(obj);
     return;
   }
 
-  public notified(obj: any) {
+  public notified(obj: number) {
     this.value = obj;
     if (this.onchange) {
       this.onchange(obj);
