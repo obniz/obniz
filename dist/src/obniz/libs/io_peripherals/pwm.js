@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(require("../utils/util"));
 class PeripheralPWM {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }

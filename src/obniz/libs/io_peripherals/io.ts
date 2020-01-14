@@ -8,7 +8,7 @@ class PeripheralIO {
   public observers!: Array<(value: boolean) => void>;
   public onchange?: (value: boolean) => void;
 
-  constructor(obniz: any, id: any) {
+  constructor(obniz: Obniz, id: number) {
     this.Obniz = obniz;
     this.id = id;
     this._reset();
@@ -88,7 +88,7 @@ class PeripheralIO {
     this.Obniz.send(obj);
   }
 
-  public input(callback: any) {
+  public input(callback: (value: boolean) => void) {
     this.onchange = callback;
     const obj: any = {};
     obj["io" + this.id] = {

@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver = require("semver");
 class Directive {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.observers = [];
         this._reset();
     }

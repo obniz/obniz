@@ -1,15 +1,28 @@
 import semver = require("semver");
+import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
+import {DriveType, PullType} from "./common";
+
+interface PeripheralSPIOptions {
+  mode: "master";
+  clk?: number;
+  mosi?: number;
+  miso?: number;
+  frequency: number;
+  drive?: DriveType;
+  pull?: PullType;
+  gnd?: number;
+}
 
 class PeripheralSPI {
-  public Obniz: any;
-  public id: any;
-  public observers: any;
-  public used: any;
-  public params: any;
+  public Obniz: Obniz;
+  public id: number;
+  public observers!: any[];
+  public used!: boolean;
+  public params!: PeripheralSPIOptions | null;
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+  constructor(obniz: Obniz, id: number) {
+    this.Obniz = obniz;
     this.id = id;
     this._reset();
   }
@@ -17,6 +30,7 @@ class PeripheralSPI {
   public _reset() {
     this.observers = [];
     this.used = false;
+    this.params = null;
   }
 
   public addObserver(callback: any) {
@@ -25,7 +39,7 @@ class PeripheralSPI {
     }
   }
 
-  public start(params: any) {
+  public start(params: PeripheralSPIOptions) {
     const err: any = ObnizUtil._requiredKeys(params, ["mode", "frequency"]);
     if (err) {
       throw new Error("spi start param '" + err + "' required, but not found ");
@@ -39,10 +53,10 @@ class PeripheralSPI {
       "drive",
       "pull",
       "gnd",
-    ]);
+    ]) as PeripheralSPIOptions;
     const obj: any = {};
 
-    const ioKeys: any = ["clk", "mosi", "miso", "gnd"];
+    const ioKeys: Array<keyof PeripheralSPIOptions> = ["clk", "mosi", "miso", "gnd"];
     for (const key of ioKeys) {
       if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
         throw new Error("spi start param '" + key + "' are to be valid io no");
@@ -111,13 +125,15 @@ class PeripheralSPI {
       this.Obniz.getIO(this.params.gnd).output(false);
       const ioNames: any = {};
       ioNames[this.params.gnd] = "gnd";
-      this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+      if (this.Obniz.display) {
+        this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+      }
     }
     this.used = true;
     this.Obniz.send(obj);
   }
 
-  public writeWait(data: any) {
+  public writeWait(data: number[]): Promise<number[]> {
     if (!this.used) {
       throw new Error(`spi${this.id} is not started`);
     }
@@ -143,7 +159,7 @@ class PeripheralSPI {
     });
   }
 
-  public write(data: any) {
+  public write(data: number[]) {
     if (!this.used) {
       throw new Error(`spi${this.id} is not started`);
     }

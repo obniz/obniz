@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(require("../utils/util"));
 const isNode = typeof window === "undefined";
 class PeripheralUART {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
@@ -60,7 +60,9 @@ class PeripheralUART {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
             ioNames[this.params.gnd] = "gnd";
-            this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+            if (this.Obniz.display) {
+                this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+            }
         }
         const obj = {};
         const sendParams = util_1.default._keyFilter(this.params, [

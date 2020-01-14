@@ -8,7 +8,7 @@ declare class PeripheralAD {
     constructor(obniz: Obniz, id: number);
     _reset(): void;
     addObserver(callback: (value: number) => void): void;
-    start(callback: any): number;
+    start(callback?: (voltage: number) => void): number;
     getWait(): Promise<number>;
     end(): void;
     notified(obj: number): void;

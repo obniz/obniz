@@ -1,16 +1,23 @@
+import Obniz from "../../index";
+import { DriveType, PullType } from "./common";
+interface PeripheralPWMOptions {
+    io: number;
+    drive?: DriveType;
+    pull?: PullType;
+}
 declare class PeripheralPWM {
-    Obniz: any;
-    id: any;
+    Obniz: Obniz;
+    id: number;
     state: any;
     used: any;
     params: any;
-    constructor(Obniz: any, id: any);
+    constructor(obniz: Obniz, id: number);
     _reset(): void;
     sendWS(obj: any): void;
-    start(params: any): void;
-    freq(freq: any): void;
-    pulse(pulse_width: any): void;
-    duty(duty: any): void;
+    start(params: PeripheralPWMOptions): void;
+    freq(freq: number): void;
+    pulse(pulse_width: number): void;
+    duty(duty: number): void;
     isUsed(): any;
     end(): void;
     modulate(type: any, symbol_length: any, data: any): void;

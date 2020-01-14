@@ -6,14 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const semver = require("semver");
 const util_1 = __importDefault(require("../utils/util"));
 class PeripheralSPI {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
     _reset() {
         this.observers = [];
         this.used = false;
+        this.params = null;
     }
     addObserver(callback) {
         if (callback) {
@@ -103,7 +104,9 @@ class PeripheralSPI {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
             ioNames[this.params.gnd] = "gnd";
-            this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+            if (this.Obniz.display) {
+                this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+            }
         }
         this.used = true;
         this.Obniz.send(obj);

@@ -11907,8 +11907,8 @@ exports.default = PeripheralAD;
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 class Directive {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.observers = [];
         this._reset();
     }
@@ -12014,8 +12014,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 class PeripheralI2C {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
         this.onerror = undefined;
@@ -12050,12 +12050,12 @@ class PeripheralI2C {
             }
         }
         const mode = this.state.mode;
-        const clock = typeof arg.clock === "number" ? parseInt(arg.clock) : null;
+        const clock = typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
         const slave_address = typeof arg.slave_address === "number"
-            ? parseInt(arg.slave_address)
+            ? Math.floor(arg.slave_address)
             : null;
         const slave_address_length = typeof arg.slave_address_length === "number"
-            ? parseInt(arg.slave_address_length)
+            ? Math.floor(arg.slave_address_length)
             : null;
         if (mode !== "master" && mode !== "slave") {
             throw new Error("i2c: invalid mode " + mode);
@@ -12102,7 +12102,9 @@ class PeripheralI2C {
             this.Obniz.getIO(this.state.gnd).output(false);
             const ioNames = {};
             ioNames[this.state.gnd] = "gnd";
-            this.Obniz.display.setPinNames("i2c" + this.id, ioNames);
+            if (this.Obniz.display) {
+                this.Obniz.display.setPinNames("i2c" + this.id, ioNames);
+            }
         }
         const startObj = util_1.default._keyFilter(this.state, ["mode", "sda", "scl"]);
         if (mode === "master") {
@@ -12375,8 +12377,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 class PeripheralPWM {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
@@ -12497,14 +12499,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const semver = __webpack_require__("./node_modules/semver/semver.js");
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 class PeripheralSPI {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
     _reset() {
         this.observers = [];
         this.used = false;
+        this.params = null;
     }
     addObserver(callback) {
         if (callback) {
@@ -12594,7 +12597,9 @@ class PeripheralSPI {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
             ioNames[this.params.gnd] = "gnd";
-            this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+            if (this.Obniz.display) {
+                this.Obniz.display.setPinNames("spi" + this.id, ioNames);
+            }
         }
         this.used = true;
         this.Obniz.send(obj);
@@ -12672,8 +12677,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/utils/util.js"));
 const isNode = typeof window === "undefined";
 class PeripheralUART {
-    constructor(Obniz, id) {
-        this.Obniz = Obniz;
+    constructor(obniz, id) {
+        this.Obniz = obniz;
         this.id = id;
         this._reset();
     }
@@ -12726,7 +12731,9 @@ class PeripheralUART {
             this.Obniz.getIO(this.params.gnd).output(false);
             const ioNames = {};
             ioNames[this.params.gnd] = "gnd";
-            this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+            if (this.Obniz.display) {
+                this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+            }
         }
         const obj = {};
         const sendParams = util_1.default._keyFilter(this.params, [

@@ -1,12 +1,13 @@
 import semver = require("semver");
+import Obniz from "../../index";
 
 class Directive {
-  public Obniz: any;
+  public Obniz: Obniz;
   public observers: any;
   public _animationIdentifier: any;
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+  constructor(obniz: Obniz, id: number) {
+    this.Obniz = obniz;
     this.observers = [];
     this._reset();
   }

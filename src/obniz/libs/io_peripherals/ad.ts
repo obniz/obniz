@@ -24,7 +24,7 @@ class PeripheralAD {
     }
   }
 
-  public start(callback: any) {
+  public start(callback?: (voltage: number) => void) {
     this.onchange = callback;
     const obj: any = {};
     obj["ad" + this.id] = {

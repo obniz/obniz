@@ -1,14 +1,22 @@
+import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
+import {DriveType, PullType} from "./common";
+
+interface PeripheralPWMOptions {
+  io: number;
+  drive?: DriveType;
+  pull?: PullType;
+}
 
 class PeripheralPWM {
-  public Obniz: any;
-  public id: any;
+  public Obniz: Obniz;
+  public id: number;
   public state: any;
   public used: any;
   public params: any;
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+  constructor(obniz: Obniz, id: number) {
+    this.Obniz = obniz;
     this.id = id;
     this._reset();
   }
@@ -24,7 +32,7 @@ class PeripheralPWM {
     this.Obniz.send(wsObj);
   }
 
-  public start(params: any) {
+  public start(params: PeripheralPWMOptions) {
     const err: any = ObnizUtil._requiredKeys(params, ["io"]);
     if (err) {
       throw new Error("pwm start param '" + err + "' required, but not found ");
@@ -47,7 +55,7 @@ class PeripheralPWM {
     this.used = true;
   }
 
-  public freq(freq: any) {
+  public freq(freq: number) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
     }
@@ -64,7 +72,7 @@ class PeripheralPWM {
     }
   }
 
-  public pulse(pulse_width: any) {
+  public pulse(pulse_width: number) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
     }
@@ -76,7 +84,7 @@ class PeripheralPWM {
     });
   }
 
-  public duty(duty: any) {
+  public duty(duty: number) {
     if (!this.used) {
       throw new Error(`pwm${this.id} is not started`);
     }

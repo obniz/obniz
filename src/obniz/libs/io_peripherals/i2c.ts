@@ -1,16 +1,37 @@
+import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
+import {PullType} from "./common";
+
+type I2CMode = "master" | "slave";
+
+interface PeripheralI2CState {
+  "mode"?: I2CMode;
+  "sda"?: number;
+  "scl"?: number;
+  "pull"?: PullType;
+  "gnd"?: number;
+}
+
+interface PeripheralI2COptions extends PeripheralI2CState {
+  "mode": I2CMode;
+  "sda": number;
+  "scl": number;
+  clock?: number;
+  slave_address?: any;
+  slave_address_length?: number;
+}
 
 class PeripheralI2C {
-  public Obniz: any;
-  public id: any;
-  public onerror: any;
+  public Obniz: Obniz;
+  public id: number;
+  public onerror?: (error: any) => void;
   public observers: any;
-  public state: any;
-  public used: any;
-  public onwritten: any;
+  public state!: PeripheralI2CState;
+  public used!: boolean;
+  public onwritten?: (data: any[], address: string) => void;
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+  constructor(obniz: Obniz, id: number) {
+    this.Obniz = obniz;
     this.id = id;
     this._reset();
     this.onerror = undefined;
@@ -29,7 +50,7 @@ class PeripheralI2C {
     }
   }
 
-  public start(arg: any) {
+  public start(arg: PeripheralI2COptions) {
     const err: any = ObnizUtil._requiredKeys(arg, ["mode", "sda", "scl"]);
     if (err) {
       throw new Error("I2C start param '" + err + "' required, but not found ");
@@ -42,22 +63,22 @@ class PeripheralI2C {
       "gnd",
     ]);
 
-    const ioKeys: any = ["sda", "scl", "gnd"];
+    const ioKeys: Array<keyof PeripheralI2CState> = ["sda", "scl", "gnd"];
     for (const key of ioKeys) {
       if (this.state[key] && !this.Obniz.isValidIO(this.state[key])) {
         throw new Error("i2c start param '" + key + "' are to be valid io no");
       }
     }
 
-    const mode: any = this.state.mode;
-    const clock: any = typeof arg.clock === "number" ? parseInt(arg.clock) : null;
-    const slave_address: any =
+    const mode: I2CMode = this.state.mode!;
+    const clock: number | null = typeof arg.clock === "number" ? Math.floor(arg.clock) : null;
+    const slave_address: number | null =
       typeof arg.slave_address === "number"
-        ? parseInt(arg.slave_address)
+        ? Math.floor(arg.slave_address)
         : null;
-    const slave_address_length: any =
+    const slave_address_length: number | null =
       typeof arg.slave_address_length === "number"
-        ? parseInt(arg.slave_address_length)
+        ? Math.floor(arg.slave_address_length)
         : null;
 
     if (mode !== "master" && mode !== "slave") {
@@ -110,7 +131,9 @@ class PeripheralI2C {
       this.Obniz.getIO(this.state.gnd).output(false);
       const ioNames: any = {};
       ioNames[this.state.gnd] = "gnd";
-      this.Obniz.display.setPinNames("i2c" + this.id, ioNames);
+      if (this.Obniz.display) {
+        this.Obniz.display.setPinNames("i2c" + this.id, ioNames);
+      }
     }
 
     const startObj: any = ObnizUtil._keyFilter(this.state, ["mode", "sda", "scl"]);
@@ -154,7 +177,7 @@ class PeripheralI2C {
     this.Obniz.send(obj);
   }
 
-  public readWait(address: any, length: any) {
+  public readWait(address: any, length: any): Promise<number[]> {
     if (!this.used) {
       throw new Error(`i2c${this.id} is not started`);
     }

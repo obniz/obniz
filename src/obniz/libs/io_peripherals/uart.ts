@@ -1,16 +1,34 @@
+import Obniz from "../../index";
 import ObnizUtil from "../utils/util";
+import {BitType, DriveType, FlowControlType, ParityType, PullType, StopBitType} from "./common";
+
 const isNode: any = typeof window === "undefined";
 
-class PeripheralUART {
-  public Obniz: any;
-  public id: any;
-  public received: any;
-  public used: any;
-  public params: any;
-  public onreceive: any;
+interface PeripheralUARTOptions {
+  tx: number;
+  rx: number;
+  gnd?: number;
+  baud?: number;
+  stop?: StopBitType;
+  bits?: BitType;
+  parity?: ParityType;
+  flowcontrol?: FlowControlType;
+  rts?: number;
+  cts?: number;
+  drive?: DriveType;
+  pull?: PullType;
+}
 
-  constructor(Obniz: any, id: any) {
-    this.Obniz = Obniz;
+class PeripheralUART {
+  public Obniz: Obniz;
+  public id: number;
+  public received: any;
+  public used!: boolean;
+  public params: any;
+  public onreceive?: (data: any, text: string) => void;
+
+  constructor(obniz: Obniz, id: number) {
+    this.Obniz = obniz;
     this.id = id;
     this._reset();
   }
@@ -20,7 +38,7 @@ class PeripheralUART {
     this.used = false;
   }
 
-  public start(params: any) {
+  public start(params: PeripheralUARTOptions) {
     const err: any = ObnizUtil._requiredKeys(params, ["tx", "rx"]);
     if (err) {
       throw new Error(
@@ -69,7 +87,9 @@ class PeripheralUART {
       this.Obniz.getIO(this.params.gnd).output(false);
       const ioNames: any = {};
       ioNames[this.params.gnd] = "gnd";
-      this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+      if (this.Obniz.display) {
+        this.Obniz.display.setPinNames("uart" + this.id, ioNames);
+      }
     }
 
     const obj: any = {};
@@ -116,12 +136,12 @@ class PeripheralUART {
     this.Obniz.send(obj);
   }
 
-  public isDataExists() {
+  public isDataExists(): boolean {
     return this.received && this.received.length > 0;
   }
 
-  public readBytes() {
-    const results: any = [];
+  public readBytes(): number[] {
+    const results: number[] = [];
     if (this.isDataExists()) {
       for (let i = 0; i < this.received.length; i++) {
         results.push(this.received[i]);
@@ -131,7 +151,7 @@ class PeripheralUART {
     return results;
   }
 
-  public readByte() {
+  public readByte(): number | null {
     const results: any = [];
     if (this.isDataExists()) {
       return results.unshift();
@@ -139,8 +159,8 @@ class PeripheralUART {
     return null;
   }
 
-  public readText() {
-    let string: any = null;
+  public readText(): string | null {
+    let string: string | null = null;
     if (this.isDataExists()) {
       const data: any = this.readBytes();
       string = this.tryConvertString(data);
@@ -166,7 +186,7 @@ class PeripheralUART {
     }
   }
 
-  public isUsed() {
+  public isUsed(): boolean {
     return this.used;
   }
 
