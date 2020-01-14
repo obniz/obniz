@@ -288,7 +288,15 @@ describe('8-ble', function() {
   });
 
   it('close', async () => {
+    let p = new Promise(resolve => {
+      checkBoard.ble.peripheral.onconnectionupdates = (data)=>{
+        if(data.status === "disconnected"){
+          resolve();
+        }
+      }
+    })
     await this.peripheral.disconnectWait();
-    expect(!!obnizA.ble.peripheral.currentConnectedDeviceAddress).to.be.false; //null(>=3.0.0) or undefined(<3.0.0)
+    await p;
+    console.log("disconnected")
   });
 });
