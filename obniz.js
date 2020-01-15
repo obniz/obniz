@@ -30376,6 +30376,12 @@ class ObnizBLE {
 
   _reset() {}
 
+  directConnect(uuid, addressType) {
+    throw new Error(
+      'directConnect cannot use obnizOS < 3.0.0. Please update obnizOS'
+    );
+  }
+
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
@@ -32640,6 +32646,22 @@ class ObnizBLE {
   }
 
   _reset() {}
+
+  directConnect(uuid, addressType) {
+    let peripheral = this.findPeripheral(uuid);
+    if (!peripheral) {
+      peripheral = new BleRemotePeripheral(this, uuid);
+      this.remotePeripherals.push(peripheral);
+    }
+    if (!this.centralBindings._addresses[uuid]) {
+      let address = uuid.match(/.{1,2}/g).join(':');
+      this.centralBindings._addresses[uuid] = address;
+      this.centralBindings._addresseTypes[uuid] = addressType;
+      this.centralBindings._connectable[uuid] = true;
+    }
+    peripheral.connect();
+    return peripheral;
+  }
 
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
