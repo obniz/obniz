@@ -52,7 +52,7 @@ class Gap extends events.EventEmitter {
     );
   }
 
-  public startScanning(allowDuplicates: any) {
+  public startScanning(allowDuplicates: boolean) {
     this._scanState = "starting";
     this._scanFilterDuplicates = !allowDuplicates;
 
@@ -60,8 +60,19 @@ class Gap extends events.EventEmitter {
     // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
     // p106 - p107
     this._hci.setScanEnabled(false, true);
-    this._hci.setScanParameters();
-    this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+
+    this._hci.once("leScanEnableSet", (scanStopStatus: number) => {
+      this._hci.setScanParameters();
+      this._hci.once("leScanParametersSet", (setParamStatus: number) => {
+        setTimeout(() => {
+          this._hci.setScanEnabled(true, this._scanFilterDuplicates);
+          this._hci.once("leScanEnableSet", (scanStartStatus: number) => {
+            console.log("stan start ", scanStopStatus, setParamStatus, scanStartStatus);
+          });
+        }, 10);
+      });
+    });
+
   }
 
   public stopScanning() {
