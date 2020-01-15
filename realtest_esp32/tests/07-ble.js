@@ -2,7 +2,7 @@ const config = require('../config.js');
 
 let obnizA, checkBoard;
 
-describe.only('7-ble', function() {
+describe('7-ble', function() {
   this.timeout(30000);
 
   before(async function() {
