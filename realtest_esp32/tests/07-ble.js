@@ -5,14 +5,16 @@ let obnizA, checkBoard;
 describe('7-ble', function() {
   this.timeout(30000);
 
-  before(function() {
-    return new Promise(resolve => {
+  before(async function() {
+    await new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
         resolve();
       });
     });
+    await checkBoard.ble.initWait();
+    await obnizA.ble.initWait();
   });
 
   it('simple ad', async function() {

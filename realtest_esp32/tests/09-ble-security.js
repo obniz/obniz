@@ -20,6 +20,11 @@ describe('9-ble-security', function() {
   it('dummy for reboot', async function() {});
 
   it('security', async function() {
+    if (checkBoard.ble.hci) {
+      return;
+    }
+    await checkBoard.ble.initWait();
+    await obnizA.ble.initWait();
     checkBoard.ble.security.setModeLevel(1, 2);
 
     let SPDIService = new checkBoard.ble.service({

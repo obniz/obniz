@@ -30382,6 +30382,12 @@ class ObnizBLE {
     );
   }
 
+  async directConnectWait(uuid, addressType) {
+    throw new Error(
+      'directConnectWait cannot use obnizOS < 3.0.0. Please update obnizOS'
+    );
+  }
+
   findPeripheral(address) {
     for (let key in this.remotePeripherals) {
       if (this.remotePeripherals[key].address === address) {
@@ -32660,6 +32666,12 @@ class ObnizBLE {
       this.centralBindings._connectable[uuid] = true;
     }
     peripheral.connect();
+    return peripheral;
+  }
+
+  async directConnectWait(uuid, addressType) {
+    let peripheral = this.directConnect(uuid, addressType);
+    await peripheral.connectWait();
     return peripheral;
   }
 
@@ -35799,20 +35811,13 @@ Gap.prototype.startScanning = function(allowDuplicates) {
   this._scanState = 'starting';
   this._scanFilterDuplicates = !allowDuplicates;
 
+  this._discoveries = {};
   // Always set scan parameters before scanning
   // https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=229737
   // p106 - p107
-  this._hci.once('leScanEnableSet', scanStopStatus => {
-    this._hci.setScanParameters();
-    this._hci.once('leScanParametersSet', setParamStatus => {
-      setTimeout(() => {
-        this._hci.setScanEnabled(true, this._scanFilterDuplicates);
-        this._hci.once('leScanEnableSet', scanStartStatus => {
-          debug('stan start ', scanStopStatus, setParamStatus, scanStartStatus);
-        });
-      }, 10);
-    });
-  });
+  this._hci.setScanEnabled(false, true);
+  this._hci.setScanParameters();
+  this._hci.setScanEnabled(true, this._scanFilterDuplicates);
 };
 
 Gap.prototype.stopScanning = function() {
