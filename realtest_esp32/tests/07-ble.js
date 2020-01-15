@@ -2,7 +2,7 @@ const config = require('../config.js');
 
 let obnizA, checkBoard;
 
-describe('7-ble', function() {
+describe.only('7-ble', function() {
   this.timeout(30000);
 
   before(async function() {
@@ -37,7 +37,7 @@ describe('7-ble', function() {
             return;
           }
         }
-        console.log("FOUND! " + peripheral.address);
+        console.log('FOUND! ' + peripheral.address);
         found = true;
       }
     };
@@ -69,7 +69,9 @@ describe('7-ble', function() {
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
     obnizA.ble.scan.onfind = function(peripheral) {
       if (peripheral.localName === localName) {
-        console.log("FOUND! " + peripheral.address + " " +  peripheral.localName);
+        console.log(
+          'FOUND! ' + peripheral.address + ' ' + peripheral.localName
+        );
         found = true;
       }
     };

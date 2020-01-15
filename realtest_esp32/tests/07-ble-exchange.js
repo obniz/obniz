@@ -37,7 +37,7 @@ describe('7-ble-exchange', function() {
             return;
           }
         }
-        console.log("FOUND! " + peripheral.address);
+        console.log('FOUND! ' + peripheral.address);
         found = true;
       }
     };
@@ -68,11 +68,13 @@ describe('7-ble-exchange', function() {
     // let expectedValue = [2, 1, 6, 3, 2, 1, 0];
     checkBoard.ble.scan.onfind = function(peripheral) {
       if (peripheral.localName === localName) {
-        console.log("FOUND! " + peripheral.address + " " +  peripheral.localName);
+        console.log(
+          'FOUND! ' + peripheral.address + ' ' + peripheral.localName
+        );
         found = true;
       }
     };
-    console.log("scan sart at 07")
+    console.log('scan sart at 07');
     checkBoard.ble.scan.start(null, { duration: 30 });
 
     while (!found) {
