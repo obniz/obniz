@@ -5,7 +5,7 @@ chai.use(require('chai-like'));
 
 let obnizA, checkBoard;
 
-describe('8-ble', function() {
+describe.only('8-ble', function() {
   this.timeout(120000);
 
   before(async () => {
@@ -289,14 +289,14 @@ describe('8-ble', function() {
 
   it('close', async () => {
     let p = new Promise(resolve => {
-      checkBoard.ble.peripheral.onconnectionupdates = (data)=>{
-        if(data.status === "disconnected"){
+      checkBoard.ble.peripheral.onconnectionupdates = data => {
+        if (data.status === 'disconnected') {
           resolve();
         }
-      }
-    })
+      };
+    });
     await this.peripheral.disconnectWait();
     await p;
-    console.log("disconnected")
+    console.log('disconnected');
   });
 });
