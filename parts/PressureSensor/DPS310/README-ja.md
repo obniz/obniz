@@ -17,7 +17,7 @@ Pin0, 1, 2, 9, 11を下図のように配線してください。
 
 ```javascript
 //JavaScript example
-obniz.setVccGnd(11, 9, '5v'); //vcc:11, drain:9
+obniz.setVccGnd(11, 9, '5v'); //vcc:11, gnd:9
 var sensor = obniz.wired("DPS310", { sda:0, scl:1, gnd:2 });
 ```
 
