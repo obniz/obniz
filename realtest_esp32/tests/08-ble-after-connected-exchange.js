@@ -5,25 +5,25 @@ chai.use(require('chai-like'));
 
 let obnizA, checkBoard;
 
-describe('8-ble', function() {
+describe('8-ble-exchange', function () {
   this.timeout(120000);
 
   before(async () => {
     await new Promise(resolve => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
+        checkBoard = config.checkBoard; //exchange A<->B
         resolve();
       });
     });
-    await checkBoard.ble.initWait();
     await obnizA.ble.initWait();
-    let service = new checkBoard.ble.service({ uuid: 'FFF0' });
-    let characteristic = new checkBoard.ble.characteristic({
+    await checkBoard.ble.initWait();
+    let service = new obnizA.ble.service({uuid: 'FFF0'});
+    let characteristic = new obnizA.ble.characteristic({
       uuid: 'FFF1',
       text: 'Hi',
     });
-    let descriptor = new checkBoard.ble.descriptor({
+    let descriptor = new obnizA.ble.descriptor({
       uuid: '2901',
       text: 'hello wrold characteristic',
     });
@@ -31,14 +31,14 @@ describe('8-ble', function() {
     characteristic.addProperty('write');
     characteristic.addPermission('read');
     characteristic.addPermission('write');
-    let characteristic2 = new checkBoard.ble.characteristic({
+    let characteristic2 = new obnizA.ble.characteristic({
       uuid: 'FFF2',
       data: [101, 51, 214],
     });
     characteristic2.addProperty('read');
     characteristic2.addPermission('read');
 
-    let characteristic3 = new checkBoard.ble.characteristic({
+    let characteristic3 = new obnizA.ble.characteristic({
       uuid: 'FFF3',
       value: 92,
       descriptors: [
@@ -53,7 +53,7 @@ describe('8-ble', function() {
     characteristic3.addProperty('write');
     characteristic3.addProperty('notify');
 
-    let characteristic4 = new checkBoard.ble.characteristic({
+    let characteristic4 = new obnizA.ble.characteristic({
       uuid: 'FFF4',
       data: [0, 1, 2, 3, 4],
     });
@@ -65,29 +65,29 @@ describe('8-ble', function() {
     service.addCharacteristic(characteristic3);
     service.addCharacteristic(characteristic4);
 
-    checkBoard.ble.peripheral.addService(service);
+    obnizA.ble.peripheral.addService(service);
     let ad = service.advData;
-    checkBoard.ble.advertisement.setAdvData(ad);
-    checkBoard.ble.advertisement.start();
+    obnizA.ble.advertisement.setAdvData(ad);
+    obnizA.ble.advertisement.start();
     console.log('service created');
-    await checkBoard.pingWait();
+    await obnizA.pingWait();
     console.log('scannning');
-    let peripheral = await obnizA.ble.scan.startOneWait({ uuids: ['FFF0'] });
+    let peripheral = await checkBoard.ble.scan.startOneWait({
+      uuids: ['FFF0'],
+    });
     if (!peripheral) {
       throw new Error('NOT FOUND');
     }
     console.log('FOUND');
 
-    expect(checkBoard.ble.advertisement.adv_data).to.be.deep.equal(
-      peripheral.adv_data
+    expect(obnizA.ble.advertisement.adv_data).to.be.deep.equal(
+        peripheral.adv_data
     );
 
     await peripheral.connectWait();
 
-    console.log('CONNECTED');
-
     await new Promise(r => {
-      setTimeout(r, 1000);
+      setTimeout(r, 2000);
     });
 
     this.peripheral = peripheral;
@@ -115,7 +115,7 @@ describe('8-ble', function() {
 
     // remove device information (default added at ESP32)
     let filteredResults = results.filter(
-      e => !['1801', '1800'].includes(e.uuid)
+        e => !['1801', '1800'].includes(e.uuid)
     );
     expect(filteredResults).like([
       {
@@ -235,8 +235,8 @@ describe('8-ble', function() {
     console.log('start!');
     let notifyed = false;
     let targetChara = this.peripheral
-      .getService('FFF0')
-      .getCharacteristic('FFF3');
+        .getService('FFF0')
+        .getCharacteristic('FFF3');
     expect(targetChara.canWrite()).to.be.equal(true);
     expect(targetChara.canWriteWithoutResponse()).to.be.equal(false);
     expect(targetChara.canRead()).to.be.equal(true);
@@ -244,7 +244,7 @@ describe('8-ble', function() {
     expect(targetChara.canIndicate()).to.be.equal(false);
 
     let p1 = new Promise(async resolve => {
-      await targetChara.registerNotifyWait(function(data) {
+      await targetChara.registerNotifyWait(function (data) {
         console.log('notify!' + data.join(','));
         if (data.length === 1 && data[0] === 92) {
           notifyed = true;
@@ -252,13 +252,13 @@ describe('8-ble', function() {
         resolve();
       });
       console.log('registerNotify');
-      await obnizA.pingWait();
       await checkBoard.pingWait();
+      await obnizA.pingWait();
       console.log('start notify');
       this.service.getCharacteristic('FFF3').notify();
     });
-    let p2 = new Promise(function(resolve) {
-      setTimeout(function() {
+    let p2 = new Promise(function (resolve) {
+      setTimeout(function () {
         console.log('timeout!');
         resolve();
       }, 20000);
@@ -268,29 +268,28 @@ describe('8-ble', function() {
   });
 
   it('unknown service error', async () => {
-    let service = await this.peripheral.getService('FF00');
+    let service = this.peripheral.getService('FF00');
     expect(service).to.be.undefined;
   });
 
   it('unknown char error', async () => {
-    let char = await this.peripheral
-      .getService('FFF0')
-      .getCharacteristic('FF00');
+    let char = this.peripheral.getService('FFF0').getCharacteristic('FF00');
     expect(char).to.be.undefined;
   });
 
   it('unknown desc error', async () => {
-    let desc = await this.peripheral
-      .getService('fff0')
-      .getCharacteristic('fff1')
-      .getDescriptor('2902');
+    let desc = this.peripheral
+        .getService('fff0')
+        .getCharacteristic('fff1')
+        .getDescriptor('2902');
     expect(desc).to.be.undefined;
   });
 
   it('close', async () => {
     let p = new Promise(resolve => {
-      checkBoard.ble.peripheral.onconnectionupdates = (data)=>{
-        if(data.status === "disconnected"){
+      obnizA.ble.peripheral.onconnectionupdates = (data) => {
+        console.log("onconnectionupdates " + data)
+        if (data.status === "disconnected") {
           resolve();
         }
       }
