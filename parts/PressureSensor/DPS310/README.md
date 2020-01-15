@@ -20,6 +20,16 @@ var sensor = obniz.wired("DPS310", { sda:0, scl:1, gnd:2 });
 ```
 
 
+
+## [await] initWait();
+Initialize DPS310.
+
+```javascript
+//JavaScript example
+var sensor = obniz.wired("DPS310", { sda:0, scl:1, gnd:2 });
+await sensor.initWait(); 
+```
+
 ## [await] measurePressureOnceWait();
 Get pressure value once.
 
