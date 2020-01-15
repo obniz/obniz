@@ -117,7 +117,7 @@ class Hci extends events.EventEmitter {
     this.on("stateChange", this.onStateChange.bind(this));
 
     this._socket = {
-      write: (data: any ) => {
+      write: (data: any) => {
         const arr: any = Array.from(data);
         this._obnizHci.write(arr);
       },
@@ -277,7 +277,7 @@ class Hci extends events.EventEmitter {
     this._socket.write(cmd);
   }
 
-  public setScanEnabled(enabled: any, filterDuplicates: any) {
+  public setScanEnabled(enabled: boolean, filterDuplicates: boolean) {
     const cmd: any = Buffer.alloc(6);
 
     // header
@@ -841,7 +841,7 @@ class Hci extends events.EventEmitter {
     } else if (cmd === LE_SET_SCAN_PARAMETERS_CMD) {
       this.emit("stateChange", "poweredOn");
 
-      this.emit("leScanParametersSet");
+      this.emit("leScanParametersSet", status);
     } else if (cmd === LE_SET_SCAN_ENABLE_CMD) {
       this.emit("leScanEnableSet", status);
     } else if (cmd === LE_SET_ADVERTISING_PARAMETERS_CMD) {
