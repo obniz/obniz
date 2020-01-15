@@ -1,4 +1,8 @@
-class Grove_GPS {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface Grove_GPSOptions { }
+class Grove_GPS implements ObnizPartsInterface {
   // -------------------
   get latitude() {
     return this.nmea2dd(this._latitude);
@@ -14,12 +18,12 @@ class Grove_GPS {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public ioKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public ioKeys: string[];
   public displayName: any;
   public displayIoNames: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public uart: any;
   public editedData: any;
@@ -39,7 +43,7 @@ class Grove_GPS {
     this.displayIoNames = {tx: "tx", rx: "rx"};
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -85,7 +89,9 @@ class Grove_GPS {
   }
 
   public getEditedData() {
-    let n: any; let utc: any; let format: any;
+    let n: any;
+    let utc: any;
+    let format: any;
     let sentence: any = this.readSentence();
     this.editedData.enable = false;
     this.editedData.GPGSV = new Array(4);
@@ -151,7 +157,8 @@ class Grove_GPS {
   }
 
   public getGpsInfo(editedData: any) {
-    const NMEA_SATINSENTENCE: any = 4; const NMEA_MAXSAT: any = 12;
+    const NMEA_SATINSENTENCE: any = 4;
+    const NMEA_MAXSAT: any = 12;
     editedData = editedData || this.getEditedData();
     this.gpsInfo.status = "V";
     if (editedData.enable) {
@@ -170,7 +177,9 @@ class Grove_GPS {
         for (let n = 0; n < editedData.GPGSV.length; n++) {
           if (editedData.GPGSV[n]) {
             const gsv: any = editedData.GPGSV[n].map((v: any) => parseFloat(v));
-            const pack_count: any = gsv[1]; const pack_index: any = gsv[2]; const sat_count: any = gsv[3];
+            const pack_count: any = gsv[1];
+            const pack_index: any = gsv[2];
+            const sat_count: any = gsv[3];
             if (pack_index > pack_count) {
               continue;
             }

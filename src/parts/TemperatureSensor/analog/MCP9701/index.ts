@@ -1,6 +1,10 @@
 import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 
-class MCP9701 extends AnalogTemperatureSensor {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface MCP9701Options { }
+class MCP9701 extends AnalogTemperatureSensor implements ObnizPartsInterface {
   public static info() {
     return {
       name: "MCP9701",

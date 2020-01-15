@@ -1,6 +1,12 @@
 import i2cParts from "../../i2cParts";
 
-class SH200Q extends i2cParts {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface SH200QOptions {
+}
+
+class SH200Q extends i2cParts implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -9,9 +15,8 @@ class SH200Q extends i2cParts {
   }
 
   public commands: any;
-  public readWait: any;
   public writeFlagWait: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public clearFlagWait: any;
   public write: any;
   public _accel_range: any;
@@ -39,7 +44,7 @@ class SH200Q extends i2cParts {
     this.commands.reset = 0x75;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     super.wired(obniz);
   }
 
@@ -51,8 +56,9 @@ class SH200Q extends i2cParts {
     };
   }
 
-  public whoamiWait() {
-    return this.readWait(this.commands.whoami, 1)[0];
+  public async whoamiWait() {
+    const result = await this.readWait(this.commands.whoami, 1);
+    return result[0];
   }
 
   public async initWait() {

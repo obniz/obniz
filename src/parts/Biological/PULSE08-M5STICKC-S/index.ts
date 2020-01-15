@@ -1,4 +1,8 @@
-class Puls08M5stickcS {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface Puls08M5stickcSOptions { }
+class Puls08M5stickcS implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,10 +10,10 @@ class Puls08M5stickcS {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public delimiter: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public uart: any;
   public receivingData: any;
@@ -28,7 +32,7 @@ class Puls08M5stickcS {
     return;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

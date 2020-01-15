@@ -1,4 +1,8 @@
-class Grove_MP3 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface Grove_MP3Options { }
+class Grove_MP3 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class Grove_MP3 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public ioKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public ioKeys: string[];
   public displayName: any;
   public displayIoNames: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public my_tx: any;
   public my_rx: any;
@@ -26,7 +30,7 @@ class Grove_MP3 {
     this.displayIoNames = {mp3_rx: "MP3Rx", mp3_tx: "MP3Tx"};
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 

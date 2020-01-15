@@ -1,4 +1,8 @@
-class SharpMemoryTFT {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface SharpMemoryTFTOptions { }
+class SharpMemoryTFT implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,11 +10,11 @@ class SharpMemoryTFT {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public commands: any;
   public _canvas: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public io_cs: any;
   public params: any;
   public io_disp: any;
@@ -51,7 +55,7 @@ class SharpMemoryTFT {
     this._reset();
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.io_cs = obniz.getIO(this.params.cs);
@@ -103,7 +107,8 @@ class SharpMemoryTFT {
   }
 
   public raw(rawData: any) {
-    let oldline: any; let  currentline: any;
+    let oldline: any;
+    let currentline: any;
     const totalbytes: any = (this.width * this.height) / 8;
     let array: any = new Array(1024);
     let index: any = 0;

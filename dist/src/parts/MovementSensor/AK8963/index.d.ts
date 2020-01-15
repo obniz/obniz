@@ -1,16 +1,20 @@
-declare class AK8963 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface AK8963Options {
+}
+declare class AK8963 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    required: any;
-    obniz: any;
+    keys: string[];
+    requiredKeys: string[];
+    obniz: Obniz;
     params: any;
     _address: any;
     i2c: any;
     _adc_cycle: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     setConfig(ADC_cycle: any): void;
     getWait(): Promise<{
         x: any;

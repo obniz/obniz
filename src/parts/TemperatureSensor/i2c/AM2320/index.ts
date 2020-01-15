@@ -1,4 +1,8 @@
-class AM2320 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface AM2320Options { }
+class AM2320 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class AM2320 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public address: any;
   public i2c: any;
@@ -18,7 +22,7 @@ class AM2320 {
     this.requiredKeys = [];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.address = 0x5c;

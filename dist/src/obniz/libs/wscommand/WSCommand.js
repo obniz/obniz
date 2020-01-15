@@ -6,15 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const WSSchema_1 = __importDefault(require("./WSSchema"));
 const commandClasses = {};
 class WSCommand {
-    constructor() {
-        this._hw = {
-            hw: undefined,
-            firmware: undefined,
-        };
-        // constants
-        this.COMMAND_FUNC_ID_ERROR = 0xff;
-        this.ioNotUsed = 0xff;
-    }
     static get schema() {
         return WSSchema_1.default;
     }
@@ -116,6 +107,15 @@ class WSCommand {
             wscommand.parseFromJson(json);
         }
         return ret;
+    }
+    constructor() {
+        this._hw = {
+            hw: undefined,
+            firmware: undefined,
+        };
+        // constants
+        this.COMMAND_FUNC_ID_ERROR = 0xff;
+        this.ioNotUsed = 0xff;
     }
     setHw(obj) {
         this._hw = obj;
@@ -281,5 +281,4 @@ exports.default = WSCommand;
 // tslint:disable-next-line:max-classes-per-file
 class WSCommandNotFoundError extends Error {
 }
-
 //# sourceMappingURL=WSCommand.js.map

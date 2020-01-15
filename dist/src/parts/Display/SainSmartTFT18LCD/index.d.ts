@@ -1,12 +1,16 @@
-declare class SainSmartTFT18LCD {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface SainSmartTFT18LCDOptions {
+}
+declare class SainSmartTFT18LCD implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    required: any;
+    keys: string[];
+    requiredKeys: string[];
     displayIoNames: any;
     debugprint: any;
-    obniz: any;
+    obniz: Obniz;
     io_dc: any;
     params: any;
     io_res: any;
@@ -17,7 +21,7 @@ declare class SainSmartTFT18LCD {
     writeBuffer: any;
     color: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     print_debug(v: any): void;
     _deadSleep(waitMsec: any): void;
     _reset(): void;

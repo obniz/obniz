@@ -1,4 +1,8 @@
-class ArduCAMMini {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface ArduCAMMiniOptions { }
+class ArduCAMMini implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,13 +10,13 @@ class ArduCAMMini {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public ioKeys: any;
-  public displayName: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public ioKeys: string[];
+  public displayName: string;
   public regs: any;
   public configs: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_cs: any;
   public sensor_addr: any;
@@ -674,7 +678,7 @@ class ArduCAMMini {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
     this.io_cs = obniz.getIO(this.params.cs);

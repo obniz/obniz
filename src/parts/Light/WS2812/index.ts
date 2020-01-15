@@ -1,4 +1,8 @@
-class WS2812 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface WS2812Options { }
+class WS2812 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -47,7 +51,9 @@ class WS2812 {
     const Hp: any = h / 60;
     const X: any = C * (1 - Math.abs((Hp % 2) - 1));
 
-    let R: any; let G: any; let B: any;
+    let R: any;
+    let G: any;
+    let B: any;
     if (0 <= Hp && Hp < 1) {
       [R, G, B] = [C, X, 0];
     }
@@ -77,9 +83,9 @@ class WS2812 {
     return WS2812._generateColor(R, G, B);
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public spi: any;
 
@@ -88,7 +94,7 @@ class WS2812 {
     this.requiredKeys = ["din"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

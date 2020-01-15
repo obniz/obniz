@@ -1,10 +1,14 @@
-declare class KXR94_2050 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface KXR94_2050Options {
+}
+declare class KXR94_2050 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    obniz: any;
+    keys: string[];
+    requiredKeys: string[];
+    obniz: Obniz;
     params: any;
     ad_x: any;
     ad_y: any;
@@ -19,7 +23,7 @@ declare class KXR94_2050 {
     sensitivity: any;
     offsetVoltage: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     changeVccVoltage(pwrVoltage: any): void;
     voltage2gravity(volt: any): number;
     get(): {

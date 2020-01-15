@@ -1,19 +1,23 @@
-declare class JpegSerialCam {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface JpegSerialCamOptions {
+}
+declare class JpegSerialCam implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    ioKeys: any;
+    keys: string[];
+    requiredKeys: string[];
+    ioKeys: string[];
     displayName: any;
     displayIoNames: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     my_tx: any;
     my_rx: any;
     uart: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     _drainUntil(uart: any, search: any, recv?: any): Promise<any>;
     _seekTail(search: any, src: any): number;
     arrayToBase64(array: any): string;

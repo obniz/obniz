@@ -1,4 +1,8 @@
-class JoyStick {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface JoyStickOptions { }
+class JoyStick implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class JoyStick {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public pins: any;
   public pinname: any;
   public shortName: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_sig_sw: any;
   public ad_x: any;
@@ -31,7 +35,7 @@ class JoyStick {
     this.shortName = "joyS";
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

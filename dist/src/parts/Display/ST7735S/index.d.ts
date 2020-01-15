@@ -1,11 +1,15 @@
-declare class ST7735S {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface ST7735SOptions {
+}
+declare class ST7735S implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    required: any;
+    keys: string[];
+    requiredKeys: string[];
     debugprint: any;
-    obniz: any;
+    obniz: Obniz;
     io_dc: any;
     params: any;
     io_res: any;
@@ -19,7 +23,7 @@ declare class ST7735S {
     writeBuffer: any;
     color: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     print_debug(v: any): void;
     _deadSleep(waitMsec: any): void;
     _reset(): void;

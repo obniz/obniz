@@ -1,9 +1,12 @@
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
 
-class PCA9685_PWM {
+class PCA9685_PWM  {
   public chip: any;
   public id: any;
   public value: any;
   public state: any;
+
   constructor(chip: any, id: any) {
     this.chip = chip;
     this.id = id;
@@ -24,8 +27,9 @@ class PCA9685_PWM {
   }
 }
 
+export interface PCA9685Options { }
 // tslint:disable-next-line:max-classes-per-file
-class PCA9685 {
+class PCA9685 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -33,14 +37,14 @@ class PCA9685 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public address: any;
   public _commands: any;
   public _regs: any;
   public pwmNum: any;
   public pwms: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_oe: any;
   public i2c: any;
@@ -95,7 +99,7 @@ class PCA9685 {
     this._preparePWM(this.pwmNum);
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     if (obniz.isValidIO(this.params.oe)) {

@@ -1,4 +1,8 @@
-class SEN0114 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface SEN0114Options { }
+class SEN0114 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class SEN0114 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public ad: any;
   public value: any;
@@ -19,7 +23,7 @@ class SEN0114 {
     this.requiredKeys = ["output"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.ad = obniz.getAD(this.params.output);

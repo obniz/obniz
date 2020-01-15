@@ -1,14 +1,18 @@
-declare class BME280 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface BME280Options {
+}
+declare class BME280 implements ObnizPartsInterface {
     static info(): {
         name: string;
         datasheet: string;
     };
-    requiredKeys: any;
-    keys: any;
-    ioKeys: any;
+    requiredKeys: string[];
+    keys: string[];
+    ioKeys: string[];
     configration: any;
     commands: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     io_csb: any;
     address: any;
@@ -17,7 +21,7 @@ declare class BME280 {
     _calibrated: any;
     _t_fine: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     config(): Promise<void>;
     setIIRStrength(strengh: any): Promise<void>;
     applyCalibration(): Promise<void>;

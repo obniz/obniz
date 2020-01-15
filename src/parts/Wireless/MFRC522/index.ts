@@ -8,7 +8,11 @@
 const OK: any = true;
 const ERROR: any = false;
 
-class MFRC522 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface MFRC522Options { }
+class MFRC522 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -108,9 +112,9 @@ class MFRC522 {
   public TestDAC1Reg: any;
   public TestDAC2Reg: any;
   public TestADCReg: any;
-  public keys: any;
-  public required: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public rst: any;
   public cs: any;
@@ -255,10 +259,10 @@ class MFRC522 {
       "spi",
       "spi_frequency",
     ];
-    this.required = ["cs", "mosi", "miso", "rst"];
+    this.requiredKeys = ["cs", "mosi", "miso", "rst"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     // IO pin settings
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -386,7 +390,8 @@ class MFRC522 {
       await this.setRegisterBitMask(this.BitFramingReg, 0x80); // StartSend=1, transmission of data starts
     }
 
-    let TryingTimes: any = 10; let n: any = 0;
+    let TryingTimes: any = 10;
+    let n: any = 0;
     do {
       // Wait for the received data complete
       n = await this.readRegister(this.ComIrqReg);
@@ -472,7 +477,8 @@ class MFRC522 {
     this.writeRegister(this.FIFODataReg, data); // Write data to the FIFO
     this.writeRegister(this.CommandReg, this.PCD_CalcCRC); // Start the calculation
 
-    let i: any = 0xff; let n: any;
+    let i: any = 0xff;
+    let n: any;
     // Wait for the CRC calculation to complete
     do {
       n = await this.readRegister(this.DivIrqReg);

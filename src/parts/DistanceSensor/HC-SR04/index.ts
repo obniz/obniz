@@ -1,4 +1,8 @@
-class HCSR04 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface HCSR04Options { }
+class HCSR04 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class HCSR04 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public _unit: any;
   public reset_alltime: any;
   public temp: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public vccIO: any;
   public trigger: any;
@@ -27,7 +31,7 @@ class HCSR04 {
     this.temp = 15;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(null, this.params.gnd, "5v");
@@ -43,7 +47,7 @@ class HCSR04 {
 
   public measure(callback: any) {
     const self: any = this;
-    this.obniz.measure.echo({
+    this.obniz.measure!.echo({
       io_pulse: this.trigger,
       io_echo: this.echo,
       pulse: "positive",

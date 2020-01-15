@@ -1,4 +1,8 @@
-class Button {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface ButtonOptions { }
+class Button implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,8 +10,8 @@ class Button {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public onChangeForStateWait: any;
   public io_signal: any;
   public params: any;
@@ -23,7 +27,7 @@ class Button {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.io_signal = obniz.getIO(this.params.signal);
 
     if (obniz.isValidIO(this.params.gnd)) {

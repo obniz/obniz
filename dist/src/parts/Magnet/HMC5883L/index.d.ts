@@ -1,14 +1,19 @@
-declare class HMC5883L {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface HMC5883LOptions {
+}
+declare class HMC5883L implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
+    keys: string[];
+    requiredKeys: string[];
     address: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     i2c: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     init(): void;
     get(): Promise<any>;
 }

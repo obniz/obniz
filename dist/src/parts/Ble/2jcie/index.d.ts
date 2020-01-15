@@ -1,13 +1,17 @@
-declare class OMRON_2JCIE {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface OMRON_2JCIEOptions {
+}
+declare class OMRON_2JCIE implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     periperal: any;
-    obniz: any;
+    obniz: Obniz;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     findWait(): Promise<any>;
     omron_uuid(uuid: any): string;
     connectWait(): Promise<void>;

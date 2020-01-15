@@ -1,19 +1,23 @@
-declare class _7SegmentLED {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface _7SegmentLEDOptions {
+}
+declare class _7SegmentLED implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     digits: any;
     displayIoNames: any;
-    obniz: any;
+    obniz: Obniz;
     ios: any;
     params: any;
     isCathodeCommon: any;
     dp: any;
     common: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     print(data: any): void;
     printRaw(data: any): void;
     dpState(show: any): void;

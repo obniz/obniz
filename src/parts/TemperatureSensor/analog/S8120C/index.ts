@@ -4,7 +4,11 @@ import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
 // resason1:too low of obniz input Impedance ?
 // resoson2:Is the sensor oscillating?
 
-class S8120C extends AnalogTemperatureSensor {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface S8120COptions { }
+class S8120C extends AnalogTemperatureSensor implements ObnizPartsInterface {
   public static info() {
     return {
       name: "S8120C",

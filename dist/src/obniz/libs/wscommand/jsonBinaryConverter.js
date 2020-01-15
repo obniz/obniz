@@ -244,5 +244,4 @@ class JsonBinaryConverter {
     }
 }
 exports.default = JsonBinaryConverter;
-
 //# sourceMappingURL=jsonBinaryConverter.js.map

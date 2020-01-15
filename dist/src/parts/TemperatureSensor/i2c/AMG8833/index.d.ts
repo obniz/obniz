@@ -1,17 +1,21 @@
-declare class AMG8833 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface AMG8833Options {
+}
+declare class AMG8833 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    requiredKeys: any;
-    keys: any;
-    ioKeys: any;
+    requiredKeys: string[];
+    keys: string[];
+    ioKeys: string[];
     commands: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     address: any;
     i2c: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     getOnePixWait(pixel: any): Promise<number>;
     getAllPixWait(): Promise<any>;
 }

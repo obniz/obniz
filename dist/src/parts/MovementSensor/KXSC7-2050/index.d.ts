@@ -1,10 +1,14 @@
-declare class KXSC7_2050 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface KXSC7_2050Options {
+}
+declare class KXSC7_2050 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    obniz: any;
+    keys: string[];
+    requiredKeys: string[];
+    obniz: Obniz;
     params: any;
     ad_x: any;
     ad_y: any;

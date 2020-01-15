@@ -1,11 +1,18 @@
-export default class I2cPartsAbstruct {
-  public keys: any;
-  public requiredKeys: any;
+import Obniz from "../obniz";
+import ObnizPartsInterface from "../obniz/ObnizPartsInterface";
+import PeripheralI2C from "../obniz/libs/io_peripherals/i2c";
+
+export interface I2cPartsAbstructOptions {
+}
+
+export default class I2cPartsAbstruct implements ObnizPartsInterface {
+  public keys: string[];
+  public requiredKeys: string[];
   public i2cinfo: any;
   public address: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
-  public i2c: any;
+  public i2c!: PeripheralI2C;
 
   constructor() {
     this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "vcc"];
@@ -26,7 +33,7 @@ export default class I2cPartsAbstruct {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.i2cinfo.voltage);
@@ -37,7 +44,7 @@ export default class I2cPartsAbstruct {
     this.i2c = this.obniz.getI2CWithConfig(this.params);
   }
 
-  public char2short(val1: any, val2: any) {
+  public char2short(val1: number, val2: number) {
     const buffer: any = new ArrayBuffer(2);
     const dv: any = new DataView(buffer);
     dv.setUint8(0, val1);
@@ -45,15 +52,15 @@ export default class I2cPartsAbstruct {
     return dv.getInt16(0, false);
   }
 
-  public async readWait(command: any, length: any) {
+  public async readWait(command: number, length: number): Promise<number[]> {
     this.i2c.write(this.address, [command]);
     return await this.i2c.readWait(this.address, length);
   }
 
-  public async readUint16Wait(command: any, length: any) {
-    this.i2c.write(this.address, [command]);
-    return await this.i2c.readWait(this.address, length);
-  }
+  // public async readUint16Wait(command: number, length: number): Promise<number[]> {
+  //   this.i2c.write(this.address, [command]);
+  //   return await this.i2c.readWait(this.address, length);
+  // }
 
   public write(command: any, buf: any) {
     if (!Array.isArray(buf)) {

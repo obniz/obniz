@@ -1,4 +1,8 @@
-class _7SegmentLEDArray {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface _7SegmentLEDArrayOptions { }
+class _7SegmentLEDArray implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -7,9 +11,9 @@ class _7SegmentLEDArray {
   }
 
   public identifier: any;
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public segments: any;
   public params: any;
 
@@ -20,7 +24,7 @@ class _7SegmentLEDArray {
     this.requiredKeys = this.keys;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.segments = this.params.segments;
@@ -51,16 +55,16 @@ class _7SegmentLEDArray {
         });
       }
 
-      this.obniz.io.animation(this.identifier, "loop", animations);
+      this.obniz.io!.animation(this.identifier, "loop", animations);
     }
   }
 
   public on() {
-    this.obniz.io.animation(this.identifier, "resume");
+    this.obniz.io!.animation(this.identifier, "resume");
   }
 
   public off() {
-    this.obniz.io.animation(this.identifier, "pause");
+    this.obniz.io!.animation(this.identifier, "pause");
     for (let i = 0; i < this.segments.length; i++) {
       this.segments[i].off();
     }

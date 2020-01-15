@@ -1,4 +1,8 @@
-class StepperMotor {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface StepperMotorOptions { }
+class StepperMotor implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,8 +10,8 @@ class StepperMotor {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public _stepInstructions: any;
   public type: any;
   public currentStep: any;
@@ -15,7 +19,7 @@ class StepperMotor {
   public frequency: any;
   public rotationStepCount: any;
   public milliMeterStepCount: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public common: any;
   public ios: any;
@@ -48,7 +52,7 @@ class StepperMotor {
     this.milliMeterStepCount = 1;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     if (obniz.isValidIO(this.params.common)) {
@@ -117,7 +121,7 @@ class StepperMotor {
       });
     }
     // execute and wait
-    await this.obniz.io.repeatWait(states, step_count_abs);
+    await this.obniz.io!.repeatWait(states, step_count_abs);
     this.currentStep += step_count;
   }
 

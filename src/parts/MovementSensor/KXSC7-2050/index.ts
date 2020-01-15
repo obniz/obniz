@@ -1,4 +1,8 @@
-class KXSC7_2050 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface KXSC7_2050Options { }
+class KXSC7_2050 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class KXSC7_2050 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public ad_x: any;
   public ad_y: any;

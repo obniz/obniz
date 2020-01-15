@@ -5,8 +5,6 @@ interface LogicAnalyzerOptions {
   "io": number;
   "interval": number;
   "duration": number;
-  "triggerValue": boolean;
-  "triggerValueSamples": number;
 }
 
 interface LogicAnalyzerOptionsExt extends LogicAnalyzerOptions {

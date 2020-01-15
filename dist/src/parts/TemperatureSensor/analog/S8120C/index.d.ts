@@ -1,5 +1,8 @@
 import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
-declare class S8120C extends AnalogTemperatureSensor {
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface S8120COptions {
+}
+declare class S8120C extends AnalogTemperatureSensor implements ObnizPartsInterface {
     static info(): {
         name: string;
     };

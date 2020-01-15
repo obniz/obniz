@@ -1,9 +1,13 @@
-declare class XBee {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface XBeeOptions {
+}
+declare class XBee implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     displayIoNames: any;
     uart: any;
     currentCommand: any;
@@ -12,15 +16,15 @@ declare class XBee {
     onFinishAtModeCallback: any;
     params: any;
     onreceive: any;
-    obniz: any;
+    obniz: Obniz;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     send(text: any): void;
     onAtResultsRecieve(data: any, text: any): void;
     addCommand(command: any, value?: any): void;
     sendCommand(): void;
     enterAtMode(): void;
     exitAtMode(): void;
-    configWait(config: any): Promise<unknown>;
+    configWait(config: any): Promise<{}>;
 }
 export default XBee;

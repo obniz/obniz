@@ -1,4 +1,8 @@
-class AMG8833 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface AMG8833Options { }
+class AMG8833 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,11 +10,11 @@ class AMG8833 {
     };
   }
 
-  public requiredKeys: any;
-  public keys: any;
-  public ioKeys: any;
+  public requiredKeys: string[];
+  public keys: string[];
+  public ioKeys: string[];
   public commands: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public address: any;
   public i2c: any;
@@ -36,7 +40,7 @@ class AMG8833 {
     this.commands.average_enable = [0x07, 0x10];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 
@@ -55,10 +59,10 @@ class AMG8833 {
     this.i2c = obniz.getI2CWithConfig(this.params);
     this.obniz.wait(50);
 
-    obniz.i2c0.write(this.address, this.commands.mode_normal);
-    obniz.i2c0.write(this.address, this.commands.reset_flag);
-    obniz.i2c0.write(this.address, this.commands.frameRate_10fps);
-    obniz.i2c0.write(this.address, this.commands.int_disable);
+    this.i2c.write(this.address, this.commands.mode_normal);
+    this.i2c.write(this.address, this.commands.reset_flag);
+    this.i2c.write(this.address, this.commands.frameRate_10fps);
+    this.i2c.write(this.address, this.commands.int_disable);
   }
 
   public async getOnePixWait(pixel: any) {

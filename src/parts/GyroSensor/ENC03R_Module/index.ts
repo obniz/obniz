@@ -1,4 +1,8 @@
-class ENC03R_Module {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface ENC03R_ModuleOptions { }
+class ENC03R_Module implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,10 +10,10 @@ class ENC03R_Module {
     };
   }
 
-  public keys: any;
-  public required: any;
+  public keys: string[];
+  public requiredKeys: any;
   public Sens: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public ad0: any;
   public ad1: any;
@@ -20,11 +24,11 @@ class ENC03R_Module {
 
   constructor() {
     this.keys = ["vcc", "out1", "out2", "gnd"];
-    this.required = ["out1", "out2"];
+    this.requiredKeys = ["out1", "out2"];
     this.Sens = 0.00067; // Sensitivity, 0.67mV / deg/sec
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.ad0 = obniz.getAD(this.params.out1);

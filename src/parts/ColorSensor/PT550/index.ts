@@ -1,4 +1,8 @@
-class PT550 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface PT550Options { }
+class PT550 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class PT550 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public signal: any;
   public onchange: any;
@@ -18,7 +22,7 @@ class PT550 {
     this.requiredKeys = ["signal"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.signal = this.obniz.getAD(this.params.signal);

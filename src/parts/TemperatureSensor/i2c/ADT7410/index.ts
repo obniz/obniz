@@ -1,4 +1,8 @@
-class ADT7410 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface ADT7410Options { }
+class ADT7410 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class ADT7410 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public address: any;
   public i2c: any;
@@ -18,7 +22,7 @@ class ADT7410 {
     this.requiredKeys = ["addressMode"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 

@@ -1,4 +1,10 @@
-class ADT7310 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface ADT7310Options {
+  
+}
+export class ADT7310 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +12,9 @@ class ADT7310 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public spi: any;
 
@@ -17,7 +23,7 @@ class ADT7310 {
     this.requiredKeys = [];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

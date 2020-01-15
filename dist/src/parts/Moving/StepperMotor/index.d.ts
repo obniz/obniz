@@ -1,9 +1,13 @@
-declare class StepperMotor {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface StepperMotorOptions {
+}
+declare class StepperMotor implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     _stepInstructions: any;
     type: any;
     currentStep: any;
@@ -11,12 +15,12 @@ declare class StepperMotor {
     frequency: any;
     rotationStepCount: any;
     milliMeterStepCount: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     common: any;
     ios: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     stepWait(step_count: any): Promise<void>;
     stepToWait(destination: any): Promise<void>;
     holdWait(): Promise<void>;

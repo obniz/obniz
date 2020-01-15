@@ -1,8 +1,12 @@
-class AnalogTemperatureSensor {
-  public keys: any;
-  public requiredKeys: any;
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface AnalogTemperatureSensorOptions { }
+class AnalogTemperatureSensor implements ObnizPartsInterface {
+  public keys: string[];
+  public requiredKeys: string[];
   public drive: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public ad: any;
   public temp: any;
@@ -13,7 +17,7 @@ class AnalogTemperatureSensor {
     this.drive = "5v";
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, this.drive);
     this.ad = obniz.getAD(this.params.output);

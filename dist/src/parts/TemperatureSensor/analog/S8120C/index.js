@@ -4,9 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(require("../AnalogTemperatureSensor"));
-// this not work, but sometimes good
-// resason1:too low of obniz input Impedance ?
-// resoson2:Is the sensor oscillating?
 class S8120C extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -18,5 +15,4 @@ class S8120C extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = S8120C;
-
 //# sourceMappingURL=index.js.map

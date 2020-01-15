@@ -1,25 +1,28 @@
 import i2cParts from "../../i2cParts";
-declare class SH200Q extends i2cParts {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface SH200QOptions {
+}
+declare class SH200Q extends i2cParts implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
     commands: any;
-    readWait: any;
     writeFlagWait: any;
-    obniz: any;
+    obniz: Obniz;
     clearFlagWait: any;
     write: any;
     _accel_range: any;
     _gyro_range: any;
     char2short: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     i2cInfo(): {
         address: number;
         clock: number;
         voltage: string;
     };
-    whoamiWait(): any;
+    whoamiWait(): Promise<number>;
     initWait(): Promise<void>;
     setConfig(accelerometer_range: any, gyroscope_range: any): void;
     resetAdcWait(): Promise<void>;

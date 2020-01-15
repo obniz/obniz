@@ -1,4 +1,8 @@
-class Grove_Buzzer {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface Grove_BuzzerOptions { }
+class Grove_Buzzer implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class Grove_Buzzer {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public pwm: any;
 
@@ -17,7 +21,7 @@ class Grove_Buzzer {
     this.requiredKeys = ["signal"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.pwm = obniz.getFreePwm();

@@ -1,6 +1,10 @@
 import i2cParts from "../../../i2cParts";
 
-class DHT12 extends i2cParts {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface DHT12Options { }
+class DHT12 extends i2cParts implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -8,7 +12,6 @@ class DHT12 extends i2cParts {
     };
   }
 
-  public readWait: any;
 
   public i2cInfo() {
     return {
@@ -42,7 +45,7 @@ class DHT12 extends i2cParts {
   }
 
   public async getHumdWait() {
-    return (await this.getAllDataWait() as any ).humidity;
+    return (await this.getAllDataWait() as any).humidity;
   }
 }
 

@@ -1,6 +1,12 @@
 import i2cParts from "../../i2cParts";
 
-class MPU6886 extends i2cParts {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface MPU6886Options {
+}
+
+class MPU6886 extends i2cParts implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -9,9 +15,8 @@ class MPU6886 extends i2cParts {
   }
 
   public commands: any;
-  public readWait: any;
   public write: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public _accel_range: any;
   public _gyro_range: any;
@@ -52,7 +57,7 @@ class MPU6886 extends i2cParts {
     this.commands.fifoEn = 0x23;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     super.wired(obniz);
 
     this.init();
@@ -66,8 +71,9 @@ class MPU6886 extends i2cParts {
     };
   }
 
-  public whoamiWait() {
-    return this.readWait(this.commands.whoami, 1)[0];
+  public async whoamiWait() {
+    const result = await this.readWait(this.commands.whoami, 1);
+    return result[0];
   }
 
   public init() {

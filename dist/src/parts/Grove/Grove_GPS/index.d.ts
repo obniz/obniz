@@ -1,15 +1,19 @@
-declare class Grove_GPS {
-    get latitude(): number;
-    get longitude(): number;
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface Grove_GPSOptions {
+}
+declare class Grove_GPS implements ObnizPartsInterface {
+    readonly latitude: number;
+    readonly longitude: number;
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    ioKeys: any;
+    keys: string[];
+    requiredKeys: string[];
+    ioKeys: string[];
     displayName: any;
     displayIoNames: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     uart: any;
     editedData: any;
@@ -20,7 +24,7 @@ declare class Grove_GPS {
     fixMode: any;
     gpsQuality: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     readSentence(): any;
     getEditedData(): any;
     getGpsInfo(editedData: any): any;

@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const AnalogTemperatureSensor_1 = __importDefault(require("../AnalogTemperatureSensor"));
-// sensor resopnse not found
 class S8100B extends AnalogTemperatureSensor_1.default {
     static info() {
         return {
@@ -16,5 +15,4 @@ class S8100B extends AnalogTemperatureSensor_1.default {
     }
 }
 exports.default = S8100B;
-
 //# sourceMappingURL=index.js.map

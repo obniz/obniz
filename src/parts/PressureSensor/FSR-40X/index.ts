@@ -1,6 +1,10 @@
 // Todo: add weight and calc pressure(kg)
 
-class FSR40X {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface FSR40XOptions { }
+class FSR40X implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -8,9 +12,9 @@ class FSR40X {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public io_pwr: any;
   public params: any;
   public ad: any;
@@ -22,7 +26,7 @@ class FSR40X {
     this.requiredKeys = ["pin0", "pin1"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.io_pwr = obniz.getIO(this.params.pin0);

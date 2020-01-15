@@ -1,5 +1,9 @@
 // SainSmart ST7735 1.8" TFT LCD 128x160 pixel
-class ST7735S {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface ST7735SOptions { }
+class ST7735S implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -7,10 +11,10 @@ class ST7735S {
     };
   }
 
-  public keys: any;
-  public required: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public debugprint: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public io_dc: any;
   public params: any;
   public io_res: any;
@@ -26,10 +30,10 @@ class ST7735S {
 
   constructor() {
     this.keys = ["sclk", "mosi", "cs", "res", "dc"];
-    this.required = [];
+    this.requiredKeys = [];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.debugprint = false;
     this.obniz = obniz;
 

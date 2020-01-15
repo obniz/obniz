@@ -1,4 +1,8 @@
-class _7SegmentLED {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface _7SegmentLEDOptions { }
+class _7SegmentLED implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,11 +10,11 @@ class _7SegmentLED {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public digits: any;
   public displayIoNames: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public ios: any;
   public params: any;
   public isCathodeCommon: any;
@@ -59,7 +63,7 @@ class _7SegmentLED {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     function getIO(io: any) {
       if (io && typeof io === "object") {
         if (typeof io.output === "function") {

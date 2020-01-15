@@ -1,5 +1,8 @@
 import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
-declare class MCP9700 extends AnalogTemperatureSensor {
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface MCP9700Options {
+}
+declare class MCP9700 extends AnalogTemperatureSensor implements ObnizPartsInterface {
     static info(): {
         name: string;
     };

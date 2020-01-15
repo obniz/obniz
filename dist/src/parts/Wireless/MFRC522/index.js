@@ -4,11 +4,10 @@
  * Created by Zjalic
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -17,6 +16,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const OK = true;
 const ERROR = false;
 class MFRC522 {
+    static info() {
+        return {
+            name: "MFRC522",
+        };
+    }
     constructor() {
         // PCD commands. Described in chapter 10 of the datasheet.
         // PCD(Proximity Coupling Device): NXP MFRC522 Contactless Reader IC.
@@ -148,12 +152,7 @@ class MFRC522 {
             "spi",
             "spi_frequency",
         ];
-        this.required = ["cs", "mosi", "miso", "rst"];
-    }
-    static info() {
-        return {
-            name: "MFRC522",
-        };
+        this.requiredKeys = ["cs", "mosi", "miso", "rst"];
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -569,5 +568,4 @@ class MFRC522 {
     }
 }
 exports.default = MFRC522;
-
 //# sourceMappingURL=index.js.map

@@ -1,9 +1,11 @@
 import i2cParts from "../../../i2cParts";
-declare class DHT12 extends i2cParts {
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface DHT12Options {
+}
+declare class DHT12 extends i2cParts implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    readWait: any;
     i2cInfo(): {
         address: number;
         clock: number;

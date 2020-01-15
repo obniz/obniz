@@ -1,21 +1,25 @@
-declare class Hx711 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface Hx711Options {
+}
+declare class Hx711 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     _offset: any;
     _scale: any;
-    obniz: any;
+    obniz: Obniz;
     spi: any;
     params: any;
     sck: any;
     dout: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     readWait(): Promise<number>;
     doubleBit2singleBit(a: any, b: any): number;
-    bit(a: any, n: any): 1 | 0;
+    bit(a: any, n: any): 0 | 1;
     readAverageWait(times: any): Promise<number>;
     powerDown(): void;
     powerUp(): void;

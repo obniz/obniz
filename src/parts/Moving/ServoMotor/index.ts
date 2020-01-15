@@ -1,4 +1,8 @@
-class ServoMotor {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface ServoMotorOptions { }
+class ServoMotor implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,10 +10,10 @@ class ServoMotor {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public range: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_vcc: any;
   public pwm: any;
@@ -25,7 +29,7 @@ class ServoMotor {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

@@ -1,15 +1,19 @@
-declare class PCA9685 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface PCA9685Options {
+}
+declare class PCA9685 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     address: any;
     _commands: any;
     _regs: any;
     pwmNum: any;
     pwms: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     io_oe: any;
     i2c: any;
@@ -20,7 +24,7 @@ declare class PCA9685 {
     state: any;
     _freq: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     _preparePWM(num: any): void;
     isValidPWM(id: any): boolean;
     getPWM(id: any): any;

@@ -87,7 +87,7 @@ export default class ObnizSystemMethods extends ObnizComponents {
     this.send({system: {sleep_io_trigger: trigger}});
   }
 
-  public pingWait(unixtime: any, rand: any, forceGlobalNetwork: any) {
+  public pingWait(unixtime?: any, rand?: any, forceGlobalNetwork?: any) {
     unixtime = unixtime || new Date().getTime();
     const upper: any = Math.floor(unixtime / Math.pow(2, 32));
     const lower: any = unixtime - upper * Math.pow(2, 32);

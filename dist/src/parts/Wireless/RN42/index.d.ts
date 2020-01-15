@@ -1,15 +1,19 @@
-declare class RN42 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface RN42Options {
+}
+declare class RN42 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     params: any;
     uart: any;
-    obniz: any;
+    obniz: Obniz;
     onreceive: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     send(data: any): void;
     sendCommand(data: any): void;
     enterCommandMode(): void;

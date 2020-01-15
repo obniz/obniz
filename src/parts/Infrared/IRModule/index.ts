@@ -1,4 +1,8 @@
-class IRModule {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface IRModuleOptions { }
+class IRModule implements ObnizPartsInterface {
 
   get dataSymbolLength() {
     return this.sensor.dataSymbolLength;
@@ -15,9 +19,9 @@ class IRModule {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public sensor: any;
   public led: any;
@@ -27,7 +31,7 @@ class IRModule {
     this.requiredKeys = ["recv", "send"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 

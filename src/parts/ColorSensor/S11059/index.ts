@@ -1,4 +1,8 @@
-class S11059 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface S11059Options { }
+class S11059 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,11 +10,11 @@ class S11059 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public address: any;
   public regAdrs: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public i2c: any;
 
@@ -25,7 +29,7 @@ class S11059 {
     this.regAdrs.sensorRed = 0x03;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "3v");
     this.obniz.wait(100);

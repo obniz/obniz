@@ -1,4 +1,8 @@
-class SHT31 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface SHT31Options { }
+class SHT31 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class SHT31 {
     };
   }
 
-  public requiredKeys: any;
-  public keys: any;
-  public ioKeys: any;
+  public requiredKeys: string[];
+  public keys: string[];
+  public ioKeys: string[];
   public commands: any;
   public waitTime: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_adr: any;
   public address: any;
@@ -51,7 +55,7 @@ class SHT31 {
     this.commands.readStatus = [0xf3, 0x2d];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.io_adr = obniz.getIO(this.params.adr);
@@ -68,7 +72,7 @@ class SHT31 {
     this.params.mode = this.params.mode || "master"; // for i2c
     this.params.pull = this.params.pull || "5v"; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
-    obniz.i2c0.write(this.address, this.commands.softReset);
+    this.i2c.write(this.address, this.commands.softReset);
   }
 
   public async getData() {

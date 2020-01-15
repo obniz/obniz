@@ -1,19 +1,23 @@
-declare class Grove_MP3 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface Grove_MP3Options {
+}
+declare class Grove_MP3 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    ioKeys: any;
+    keys: string[];
+    requiredKeys: string[];
+    ioKeys: string[];
     displayName: any;
     displayIoNames: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     my_tx: any;
     my_rx: any;
     uart: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     initWait(strage: any): Promise<void>;
     setVolume(vol: any): void;
     volUp(): void;

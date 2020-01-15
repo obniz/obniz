@@ -1,4 +1,8 @@
-class AK8963 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface AK8963Options { }
+class AK8963 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class AK8963 {
     };
   }
 
-  public keys: any;
-  public required: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public _address: any;
   public i2c: any;
@@ -16,10 +20,10 @@ class AK8963 {
 
   constructor() {
     this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address", "adb_cycle"];
-    this.required = [];
+    this.requiredKeys = [];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.params.clock = 100000;
@@ -62,4 +66,5 @@ class AK8963 {
     return dv.getInt16(0, false);
   }
 }
+
 export default AK8963;

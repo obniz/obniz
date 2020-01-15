@@ -1,15 +1,19 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class AMG8833 {
+    static info() {
+        return {
+            name: "AMG8833",
+        };
+    }
     constructor() {
         this.requiredKeys = [];
         this.keys = ["vcc", "gnd", "sda", "scl", "address"];
@@ -29,11 +33,6 @@ class AMG8833 {
         this.commands.average_disable = [0x07, 0x00];
         this.commands.average_enable = [0x07, 0x10];
     }
-    static info() {
-        return {
-            name: "AMG8833",
-        };
-    }
     wired(obniz) {
         this.obniz = obniz;
         this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -52,10 +51,10 @@ class AMG8833 {
         this.params.pull = this.params.pull || null; // for i2c
         this.i2c = obniz.getI2CWithConfig(this.params);
         this.obniz.wait(50);
-        obniz.i2c0.write(this.address, this.commands.mode_normal);
-        obniz.i2c0.write(this.address, this.commands.reset_flag);
-        obniz.i2c0.write(this.address, this.commands.frameRate_10fps);
-        obniz.i2c0.write(this.address, this.commands.int_disable);
+        this.i2c.write(this.address, this.commands.mode_normal);
+        this.i2c.write(this.address, this.commands.reset_flag);
+        this.i2c.write(this.address, this.commands.frameRate_10fps);
+        this.i2c.write(this.address, this.commands.int_disable);
     }
     getOnePixWait(pixel) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -110,5 +109,4 @@ class AMG8833 {
     }
 }
 exports.default = AMG8833;
-
 //# sourceMappingURL=index.js.map

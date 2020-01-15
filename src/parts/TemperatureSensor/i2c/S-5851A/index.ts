@@ -1,5 +1,9 @@
 // sensor response not found
-class S5851A {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface S5851AOptions { }
+class S5851A implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -7,12 +11,12 @@ class S5851A {
     };
   }
 
-  public requiredKeys: any;
-  public keys: any;
+  public requiredKeys: string[];
+  public keys: string[];
   public io_adr0: any;
   public params: any;
   public io_adr1: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public address: any;
   public i2c: any;
   public i2c0: any;
@@ -22,7 +26,7 @@ class S5851A {
     this.keys = ["sda", "scl", "adr0", "adr1", "adr_select", "i2c"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     // params: pwr, gnd, sda, scl, adr0, adr1, adr_select
     this.io_adr0 = obniz.getIO(this.params.adr0);
     this.io_adr1 = obniz.getIO(this.params.adr1);

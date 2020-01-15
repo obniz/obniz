@@ -1,4 +1,8 @@
-class JpegSerialCam {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface JpegSerialCamOptions { }
+class JpegSerialCam implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class JpegSerialCam {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public ioKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public ioKeys: string[];
   public displayName: any;
   public displayIoNames: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public my_tx: any;
   public my_rx: any;
@@ -26,7 +30,7 @@ class JpegSerialCam {
     this.displayIoNames = {cam_tx: "camTx", cam_rx: "camRx"};
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.my_tx = this.params.cam_rx;
@@ -81,8 +85,8 @@ class JpegSerialCam {
       rx: this.my_rx,
       baud: obj.baud || 38400,
     });
-    this.obniz.display.setPinName(this.my_tx, "JpegSerialCam", "camRx");
-    this.obniz.display.setPinName(this.my_rx, "JpegSerialCam", "camTx");
+    this.obniz.display!.setPinName(this.my_tx, "JpegSerialCam", "camRx");
+    this.obniz.display!.setPinName(this.my_rx, "JpegSerialCam", "camTx");
     await this.obniz.wait(2500);
   }
 

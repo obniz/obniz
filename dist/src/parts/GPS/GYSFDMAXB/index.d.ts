@@ -1,15 +1,19 @@
-declare class GYSFDMAXB {
-    get latitude(): number;
-    get longitude(): number;
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface GYSFDMAXBOptions {
+}
+declare class GYSFDMAXB implements ObnizPartsInterface {
+    readonly latitude: number;
+    readonly longitude: number;
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    ioKeys: any;
+    keys: string[];
+    requiredKeys: string[];
+    ioKeys: string[];
     displayName: any;
     displayIoNames: any;
-    obniz: any;
+    obniz: Obniz;
     tx: any;
     params: any;
     rx: any;
@@ -28,7 +32,7 @@ declare class GYSFDMAXB {
     fixMode: any;
     gpsQuality: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     start1pps(callback: any): void;
     readSentence(): any;
     getEditedData(): any;

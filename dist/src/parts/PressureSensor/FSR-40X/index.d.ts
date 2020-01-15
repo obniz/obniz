@@ -1,17 +1,21 @@
-declare class FSR40X {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface FSR40XOptions {
+}
+declare class FSR40X implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    obniz: any;
+    keys: string[];
+    requiredKeys: string[];
+    obniz: Obniz;
     io_pwr: any;
     params: any;
     ad: any;
     press: any;
     onchange: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     getWait(): Promise<any>;
 }
 export default FSR40X;

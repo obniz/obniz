@@ -1,4 +1,8 @@
-class GYSFDMAXB {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface GYSFDMAXBOptions { }
+class GYSFDMAXB implements ObnizPartsInterface {
   // -------------------
   get latitude() {
     return this.nmea2dd(this._latitude);
@@ -14,12 +18,12 @@ class GYSFDMAXB {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public ioKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public ioKeys: string[];
   public displayName: any;
   public displayIoNames: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public tx: any;
   public params: any;
   public rx: any;
@@ -47,7 +51,7 @@ class GYSFDMAXB {
     this.displayIoNames = {txd: "txd", rxd: "rxd", Opps: "1pps"};
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.tx = this.params.txd;
     this.rx = this.params.rxd;
@@ -92,13 +96,12 @@ class GYSFDMAXB {
     this.on1pps = callback;
     if (callback) {
       this.last1pps = 2;
-      this.obniz.getAD(this.Opps).self = this;
-      this.obniz.getAD(this.Opps).start((voltage: any) => {
+      this.obniz.getAD(this.Opps).start((voltage: number) => {
         const vol: any = Math.round(voltage);
-        if (vol !== this.self.last1pps) {
-          this.self.last1pps = vol;
-          if (vol === 0 && this.self.on1pps) {
-            this.self.on1pps();
+        if (vol !== this.last1pps) {
+          this.last1pps = vol;
+          if (vol === 0 && this.on1pps) {
+            this.on1pps();
           }
         }
       });
@@ -121,7 +124,9 @@ class GYSFDMAXB {
   }
 
   public getEditedData() {
-    let n: any; let  utc: any; let  format: any;
+    let n: any;
+    let utc: any;
+    let format: any;
     let sentence: any = this.readSentence();
     this.editedData.enable = false;
     this.editedData.GPGSV = new Array(4);
@@ -187,7 +192,8 @@ class GYSFDMAXB {
   }
 
   public getGpsInfo(editedData: any) {
-    const NMEA_SATINSENTENCE: any = 4; const NMEA_MAXSAT: any = 12;
+    const NMEA_SATINSENTENCE: any = 4;
+    const NMEA_MAXSAT: any = 12;
     editedData = editedData || this.getEditedData();
     this.gpsInfo.status = "V";
     if (editedData.enable) {
@@ -206,7 +212,9 @@ class GYSFDMAXB {
         for (let n = 0; n < editedData.GPGSV.length; n++) {
           if (editedData.GPGSV[n]) {
             const gsv: any = editedData.GPGSV[n].map((v: any) => parseFloat(v));
-            const pack_count: any = gsv[1]; const pack_index: any = gsv[2]; const sat_count: any = gsv[3];
+            const pack_count: any = gsv[1];
+            const pack_index: any = gsv[2];
+            const sat_count: any = gsv[3];
             if (pack_index > pack_count) {
               continue;
             }

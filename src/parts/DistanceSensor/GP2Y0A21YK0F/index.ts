@@ -1,4 +1,8 @@
-class GP2Y0A21YK0F {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface GP2Y0A21YK0FOptions { }
+class GP2Y0A21YK0F implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,11 +10,11 @@ class GP2Y0A21YK0F {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public displayIoNames: any;
   public _unit: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_signal: any;
   public ad_signal: any;
@@ -27,7 +31,7 @@ class GP2Y0A21YK0F {
     this._unit = "mm";
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

@@ -54,5 +54,4 @@ class PeripheralAD {
     }
 }
 exports.default = PeripheralAD;
-
 //# sourceMappingURL=ad.js.map

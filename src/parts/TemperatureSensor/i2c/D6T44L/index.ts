@@ -1,4 +1,8 @@
-class D6T44L {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface D6T44LOptions { }
+class D6T44L implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class D6T44L {
     };
   }
 
-  public requiredKeys: any;
-  public keys: any;
+  public requiredKeys: string[];
+  public keys: string[];
   public address: any;
-  public ioKeys: any;
+  public ioKeys: string[];
   public commands: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public i2c: any;
 
@@ -25,7 +29,7 @@ class D6T44L {
     this.commands.read_data = [0x4c];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
 

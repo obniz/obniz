@@ -1,4 +1,8 @@
-class _24LC256 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface _24LC256Options { }
+class _24LC256 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,18 +10,18 @@ class _24LC256 {
     };
   }
 
-  public requiredKeys: any;
-  public keys: any;
+  public requiredKeys: string[];
+  public keys: string[];
   public params: any;
   public i2c: any;
-  public obniz: any;
+  public obniz!: Obniz;
 
   constructor() {
     this.requiredKeys = ["address"];
     this.keys = ["sda", "scl", "clock", "pull", "i2c", "address"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.params.mode = this.params.mode || "master"; // for i2c
     this.params.clock = this.params.clock || 400 * 1000; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);

@@ -1,4 +1,8 @@
-class FlickHat {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface FlickHatOptions { }
+class FlickHat implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,10 +10,10 @@ class FlickHat {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public displayIoNames: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public address: any;
   public params: any;
   public io_reset: any;
@@ -49,7 +53,7 @@ class FlickHat {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.address = 0x42;

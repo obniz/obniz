@@ -1,4 +1,8 @@
-class AXP192 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface AXP192Options { }
+class AXP192 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,18 +10,17 @@ class AXP192 {
     };
   }
 
-  public requiredKeys: any;
-  public keys: any;
+  public requiredKeys: string[];
+  public keys: string[];
   public params: any;
   public i2c: any;
-  public readWait: any;
 
   constructor() {
     this.requiredKeys = [];
     this.keys = ["sda", "scl", "i2c"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.params.mode = "master"; // for i2c
     this.params.clock = 400 * 1000; // for i2c
     this.i2c = obniz.getI2CWithConfig(this.params);
@@ -104,9 +107,9 @@ class AXP192 {
 
   public async getVbat() {
     this.i2c.write(AXP192_ADDRESS, [REG_VBAT_LSB]);
-    const vbat_lsb: any = await this.readWait(AXP192_ADDRESS, 1);
+    const vbat_lsb: any = await this.i2c.readWait(AXP192_ADDRESS, 1);
     this.i2c.write(AXP192_ADDRESS, [REG_VBAT_MSB]);
-    const vbat_msb: any = await this.readWait(AXP192_ADDRESS, 1);
+    const vbat_msb: any = await this.i2c.readWait(AXP192_ADDRESS, 1);
     return (vbat_lsb << 4) + vbat_msb;
   }
 }

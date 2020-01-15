@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class LED {
-    constructor() {
-        this.keys = ["anode", "cathode"];
-        this.requiredKeys = ["anode"];
-    }
     static info() {
         return {
             name: "LED",
         };
+    }
+    constructor() {
+        this.keys = ["anode", "cathode"];
+        this.requiredKeys = ["anode"];
     }
     wired(obniz) {
         function getIO(io) {
@@ -71,5 +71,4 @@ class LED {
     }
 }
 exports.default = LED;
-
 //# sourceMappingURL=index.js.map

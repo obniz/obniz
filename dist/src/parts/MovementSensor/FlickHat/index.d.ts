@@ -1,11 +1,15 @@
-declare class FlickHat {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface FlickHatOptions {
+}
+declare class FlickHat implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     displayIoNames: any;
-    obniz: any;
+    obniz: Obniz;
     address: any;
     params: any;
     io_reset: any;
@@ -31,7 +35,7 @@ declare class FlickHat {
     onairwheel: any;
     statusInfo: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     start(callbackFwInfo: any): Promise<void>;
     _dataArray2string(data: any): any;
     polling(timeout?: any): Promise<void>;

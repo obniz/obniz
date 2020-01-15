@@ -1,16 +1,20 @@
-declare class USB {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface USBOptions {
+}
+declare class USB implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     displayIoNames: any;
-    obniz: any;
+    obniz: Obniz;
     io_vdd: any;
     params: any;
     io_gnd: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     on(): void;
     off(): void;
 }

@@ -1,9 +1,13 @@
-declare class CT10 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface CT10Options {
+}
+declare class CT10 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     onChangeForStateWait: any;
     io_signal: any;
     params: any;
@@ -12,8 +16,8 @@ declare class CT10 {
     isNear: any;
     onchange: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     isNearWait(): Promise<any>;
-    stateWait(isNear: any): Promise<unknown>;
+    stateWait(isNear: any): Promise<{}>;
 }
 export default CT10;

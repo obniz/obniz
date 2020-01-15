@@ -1,14 +1,17 @@
-declare class AXP192 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface AXP192Options {
+}
+declare class AXP192 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    requiredKeys: any;
-    keys: any;
+    requiredKeys: string[];
+    keys: string[];
     params: any;
     i2c: any;
-    readWait: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     set(address: any, data: any): void;
     getWait(address: any): Promise<any>;
     setLDO2Voltage(voltage: any): Promise<void>;

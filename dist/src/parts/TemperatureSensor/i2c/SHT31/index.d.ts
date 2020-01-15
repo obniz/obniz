@@ -1,19 +1,23 @@
-declare class SHT31 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface SHT31Options {
+}
+declare class SHT31 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    requiredKeys: any;
-    keys: any;
-    ioKeys: any;
+    requiredKeys: string[];
+    keys: string[];
+    ioKeys: string[];
     commands: any;
     waitTime: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     io_adr: any;
     address: any;
     i2c: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     getData(): Promise<any>;
     getTempWait(): Promise<any>;
     getHumdWait(): Promise<any>;

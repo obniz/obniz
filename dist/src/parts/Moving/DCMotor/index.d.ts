@@ -1,4 +1,5 @@
 import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import Obniz from "../../../obniz";
 export interface DCMotorOptions {
     forward: number;
     back: number;
@@ -7,8 +8,8 @@ declare class DCMotor implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     status: any;
     pwm1_io_num: any;
     params: any;
@@ -16,7 +17,7 @@ declare class DCMotor implements ObnizPartsInterface {
     pwm1: any;
     pwm2: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     forward(): void;
     reverse(): void;
     stop(): void;

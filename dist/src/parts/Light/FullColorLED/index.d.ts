@@ -1,4 +1,8 @@
-declare class FullColorLED {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface FullColorLEDOptions {
+}
+declare class FullColorLED implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
@@ -7,17 +11,17 @@ declare class FullColorLED {
     anode_keys: any;
     cathode_keys: any;
     animationName: any;
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     params: any;
-    obniz: any;
+    obniz: Obniz;
     commontype: any;
     common: any;
     pwmR: any;
     pwmG: any;
     pwmB: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     rgb(r: any, g: any, b: any): void;
     hsv(h: any, s: any, v: any): void;
     gradation(cycletime_ms: any): void;

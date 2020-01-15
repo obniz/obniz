@@ -1,9 +1,11 @@
 import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+import Obniz from "../../../obniz";
 
 export interface DCMotorOptions {
   forward: number;
   back: number;
 }
+
 
 class DCMotor implements ObnizPartsInterface {
 
@@ -13,8 +15,8 @@ class DCMotor implements ObnizPartsInterface {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public status: any;
   public pwm1_io_num: any;
   public params: any;
@@ -27,7 +29,7 @@ class DCMotor implements ObnizPartsInterface {
     this.requiredKeys = ["forward", "back"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.status = {
       direction: null,
       power: null,

@@ -1,4 +1,8 @@
-declare class MFRC522 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface MFRC522Options {
+}
+declare class MFRC522 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
@@ -94,15 +98,15 @@ declare class MFRC522 {
     TestDAC1Reg: any;
     TestDAC2Reg: any;
     TestADCReg: any;
-    keys: any;
-    required: any;
-    obniz: any;
+    keys: string[];
+    requiredKeys: string[];
+    obniz: Obniz;
     params: any;
     rst: any;
     cs: any;
     spi: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     init(): Promise<void>;
     writeRegister(addr: any, val: any): void;
     readRegister(addr: any): Promise<any>;

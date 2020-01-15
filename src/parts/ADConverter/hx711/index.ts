@@ -1,4 +1,8 @@
-class Hx711 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface Hx711Options { }
+class Hx711 implements ObnizPartsInterface{
 
   public static info() {
     return {
@@ -6,11 +10,11 @@ class Hx711 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public _offset: any;
   public _scale: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public spi: any;
   public params: any;
   public sck: any;
@@ -23,7 +27,7 @@ class Hx711 {
     this._scale = 1;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.spi = obniz.getFreeSpi();
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");

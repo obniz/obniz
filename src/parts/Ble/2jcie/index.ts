@@ -1,4 +1,8 @@
-class OMRON_2JCIE {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface OMRON_2JCIEOptions { }
+class OMRON_2JCIE implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,10 +10,10 @@ class OMRON_2JCIE {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public periperal: any;
-  public obniz: any;
+  public obniz!: Obniz;
 
   constructor() {
     this.keys = [];
@@ -17,7 +21,7 @@ class OMRON_2JCIE {
     this.periperal = null;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
   }
 
@@ -26,7 +30,7 @@ class OMRON_2JCIE {
       localName: "Env",
     };
 
-    this.periperal = await this.obniz.ble.scan.startOneWait(target);
+    this.periperal = await this.obniz.ble!.scan.startOneWait(target);
 
     return this.periperal;
   }

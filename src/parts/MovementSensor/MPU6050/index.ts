@@ -1,4 +1,8 @@
-class MPU6050 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface MPU6050Options { }
+class MPU6050 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class MPU6050 {
     };
   }
 
-  public keys: any;
-  public required: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public _address: any;
   public i2c: any;
@@ -26,10 +30,10 @@ class MPU6050 {
       "accelerometer_range",
       "gyroscope_range",
     ];
-    this.required = [];
+    this.requiredKeys = [];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this.params.clock = 100000;

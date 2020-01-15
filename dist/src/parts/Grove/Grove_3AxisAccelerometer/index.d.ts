@@ -1,16 +1,20 @@
-declare class Grove_3AxisAccelerometer {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface Grove_3AxisAccelerometerOptions {
+}
+declare class Grove_3AxisAccelerometer implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    ioKeys: any;
+    keys: string[];
+    requiredKeys: string[];
+    ioKeys: string[];
     displayName: any;
     displayIoNames: any;
     address: any;
     regAdrs: any;
     constVal: any;
-    obniz: any;
+    obniz: Obniz;
     vcc: any;
     params: any;
     gnd: any;

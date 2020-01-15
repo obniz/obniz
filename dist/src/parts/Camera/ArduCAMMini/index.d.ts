@@ -1,14 +1,18 @@
-declare class ArduCAMMini {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface ArduCAMMiniOptions {
+}
+declare class ArduCAMMini implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    ioKeys: any;
-    displayName: any;
+    keys: string[];
+    requiredKeys: string[];
+    ioKeys: string[];
+    displayName: string;
     regs: any;
     configs: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     io_cs: any;
     sensor_addr: any;
@@ -16,7 +20,7 @@ declare class ArduCAMMini {
     i2c: any;
     _size: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     spi_write(addr: any, byteData: any): void;
     spi_readWait(addr: any): Promise<any>;
     i2c_byte_write(addr: any, byteData: any): void;

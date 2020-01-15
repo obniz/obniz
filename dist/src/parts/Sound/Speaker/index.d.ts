@@ -1,14 +1,18 @@
-declare class Speaker {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface SpeakerOptions {
+}
+declare class Speaker implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
-    obniz: any;
+    keys: string[];
+    requiredKeys: string[];
+    obniz: Obniz;
     params: any;
     pwm: any;
     constructor(obniz: any);
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     play(freq: any): void;
     stop(): void;
 }

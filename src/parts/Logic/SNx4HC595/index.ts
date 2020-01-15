@@ -1,3 +1,5 @@
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
 
 class SNx4HC595_IO {
   public chip: any;
@@ -15,8 +17,11 @@ class SNx4HC595_IO {
   }
 }
 
+export interface SNx4HC595Options {
+}
+
 // tslint:disable-next-line:max-classes-per-file
-class SNx4HC595 {
+class SNx4HC595 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -24,10 +29,10 @@ class SNx4HC595 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public autoFlash: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public io_ser: any;
   public params: any;
   public io_srclk: any;
@@ -58,7 +63,7 @@ class SNx4HC595 {
     this.autoFlash = true;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.io_ser = this.obniz.getIO(this.params.ser);

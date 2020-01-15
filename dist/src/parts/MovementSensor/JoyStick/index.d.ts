@@ -1,13 +1,17 @@
-declare class JoyStick {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface JoyStickOptions {
+}
+declare class JoyStick implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     pins: any;
     pinname: any;
     shortName: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     io_sig_sw: any;
     ad_x: any;
@@ -19,7 +23,7 @@ declare class JoyStick {
     isPressed: any;
     onchangesw: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     isPressedWait(): Promise<boolean>;
     getXWait(): Promise<number>;
     getYWait(): Promise<number>;

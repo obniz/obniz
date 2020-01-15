@@ -1,15 +1,19 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class S11059 {
+    static info() {
+        return {
+            name: "S11059",
+        };
+    }
     constructor() {
         this.keys = ["vcc", "sda", "scl", "i2c", "gnd"];
         this.requiredKeys = [];
@@ -18,11 +22,6 @@ class S11059 {
         this.regAdrs.ctrl = 0x00;
         this.regAdrs.manualTiming = 0x01;
         this.regAdrs.sensorRed = 0x03;
-    }
-    static info() {
-        return {
-            name: "S11059",
-        };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -53,5 +52,4 @@ class S11059 {
     }
 }
 exports.default = S11059;
-
 //# sourceMappingURL=index.js.map

@@ -1,6 +1,10 @@
 import {createSocket} from "dgram";
 
-class FullColorLED {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface FullColorLEDOptions { }
+class FullColorLED implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -13,10 +17,10 @@ class FullColorLED {
   public anode_keys: any;
   public cathode_keys: any;
   public animationName: any;
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public params: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public commontype: any;
   public common: any;
   public pwmR: any;
@@ -35,7 +39,7 @@ class FullColorLED {
     this.requiredKeys = ["r", "g", "b", "common", "commonType"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     const r: any = this.params.r;
     const g: any = this.params.g;
     const b: any = this.params.b;
@@ -91,7 +95,9 @@ class FullColorLED {
     const Hp: any = h / 60;
     const X: any = C * (1 - Math.abs((Hp % 2) - 1));
 
-    let R: any; let  G: any; let B: any;
+    let R: any;
+    let G: any;
+    let B: any;
     if (0 <= Hp && Hp < 1) {
       [R, G, B] = [C, X, 0];
     }
@@ -135,11 +141,11 @@ class FullColorLED {
       };
       frames.push(oneFrame);
     }
-    this.obniz.io.animation(this.animationName, "loop", frames);
+    this.obniz.io!.animation(this.animationName, "loop", frames);
   }
 
   public stopgradation() {
-    this.obniz.io.animation(this.animationName, "pause");
+    this.obniz.io!.animation(this.animationName, "pause");
   }
 }
 

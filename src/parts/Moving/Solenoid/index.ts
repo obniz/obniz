@@ -1,4 +1,8 @@
-class Solenoid {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface SolenoidOptions { }
+class Solenoid implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class Solenoid {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public io_gnd: any;
   public io_signal: any;
@@ -18,7 +22,7 @@ class Solenoid {
     this.requiredKeys = ["signal"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     if (obniz.isValidIO(this.params.gnd)) {

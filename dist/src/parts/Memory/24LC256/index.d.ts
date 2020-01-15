@@ -1,14 +1,18 @@
-declare class _24LC256 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface _24LC256Options {
+}
+declare class _24LC256 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    requiredKeys: any;
-    keys: any;
+    requiredKeys: string[];
+    keys: string[];
     params: any;
     i2c: any;
-    obniz: any;
+    obniz: Obniz;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     set(address: any, data: any): void;
     getWait(address: any, length: any): Promise<any>;
 }

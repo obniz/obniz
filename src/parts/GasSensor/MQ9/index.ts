@@ -1,4 +1,8 @@
-class MQ9 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface MQ9Options { }
+class MQ9 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,13 +10,13 @@ class MQ9 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public onchangeanalog: any;
   public onchangedigital: any;
   public onexceedvoltage: any;
   public voltageLimit: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public vcc: any;
   public params: any;
   public gnd: any;
@@ -32,7 +36,7 @@ class MQ9 {
     // this.RO = 20 * 1000;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     this.vcc = this.params.vcc;

@@ -32,5 +32,4 @@ class WSCommandBleHci {
     }
 }
 exports.default = WSCommandBleHci;
-
 //# sourceMappingURL=WSCommandBleHci.js.map

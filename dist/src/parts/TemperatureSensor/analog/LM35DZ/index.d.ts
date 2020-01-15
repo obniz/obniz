@@ -1,5 +1,8 @@
 import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
-declare class LM35DZ extends AnalogTemperatureSensor {
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface LM35DZOptions {
+}
+declare class LM35DZ extends AnalogTemperatureSensor implements ObnizPartsInterface {
     static info(): {
         name: string;
     };

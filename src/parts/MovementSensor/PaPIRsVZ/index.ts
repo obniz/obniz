@@ -1,4 +1,8 @@
-class PaPIRsVZ {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface PaPIRsVZOptions { }
+class PaPIRsVZ implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class PaPIRsVZ {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public io_signal: any;
   public params: any;
   public onchange: any;
@@ -18,7 +22,7 @@ class PaPIRsVZ {
     this.requiredKeys = ["signal"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.io_signal = obniz.getIO(this.params.signal);
     this.io_signal.pull("0v");

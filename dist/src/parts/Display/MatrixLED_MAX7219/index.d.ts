@@ -1,18 +1,22 @@
-declare class MatrixLED_MAX7219 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface MatrixLED_MAX7219Options {
+}
+declare class MatrixLED_MAX7219 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     cs: any;
     params: any;
     spi: any;
-    obniz: any;
+    obniz: Obniz;
     width: any;
     height: any;
     vram: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     init(width: any, height: any): void;
     initModule(): void;
     test(): void;

@@ -1,10 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class WS2811 {
-    constructor() {
-        this.keys = ["din", "vcc", "gnd"];
-        this.requiredKeys = ["din"];
-    }
     static info() {
         return {
             name: "WS2811",
@@ -78,6 +74,10 @@ class WS2811 {
         array = array.concat(WS2811._generateFromByte(B));
         return array;
     }
+    constructor() {
+        this.keys = ["din", "vcc", "gnd"];
+        this.requiredKeys = ["din"];
+    }
     wired(obniz) {
         this.obniz = obniz;
         obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -111,5 +111,4 @@ class WS2811 {
     }
 }
 exports.default = WS2811;
-
 //# sourceMappingURL=index.js.map

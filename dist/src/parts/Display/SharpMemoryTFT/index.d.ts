@@ -1,12 +1,16 @@
-declare class SharpMemoryTFT {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface SharpMemoryTFTOptions {
+}
+declare class SharpMemoryTFT implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     commands: any;
     _canvas: any;
-    obniz: any;
+    obniz: Obniz;
     io_cs: any;
     params: any;
     io_disp: any;
@@ -20,7 +24,7 @@ declare class SharpMemoryTFT {
     fontSize: any;
     createCanvas: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     _reverseBits(data: any): any;
     sendLSB(data: any): void;
     sendClear(): void;

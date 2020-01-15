@@ -1,1 +1,1 @@
-{"version":3,"sources":["../src/obniz/ObnizPartsList.ts"],"names":[],"mappings":"","file":"ObnizPartsList.js","sourcesContent":["import LED, {LEDOptions} from \"../parts/Light/LED/index\";\nimport DCMotor, {DCMotorOptions} from \"../parts/Moving/DCMotor\";\n\nexport interface WiredNameMap {\n  \"LED\": LED;\n  \"DCMotor\": DCMotor;\n}\n\nexport interface WiredNameOptionsMap {\n  \"LED\": LEDOptions;\n  \"DCMotor\": DCMotorOptions;\n}\n"]}
+{"version":3,"file":"ObnizPartsList.js","sourceRoot":"","sources":["../../../src/obniz/ObnizPartsList.ts"],"names":[],"mappings":""}

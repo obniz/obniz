@@ -1,4 +1,8 @@
-class BME280 {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+
+export interface BME280Options { }
+class BME280 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -8,12 +12,12 @@ class BME280 {
     };
   }
 
-  public requiredKeys: any;
-  public keys: any;
-  public ioKeys: any;
+  public requiredKeys: string[];
+  public keys: string[];
+  public ioKeys: string[];
   public configration: any;
   public commands: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_csb: any;
   public address: any;
@@ -64,7 +68,7 @@ class BME280 {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     if (obniz.isValidIO(this.params.csb)) {
@@ -179,10 +183,10 @@ class BME280 {
   }
 
   public write(data: any) {
-    this.obniz.i2c0.write(this.address, data);
-  }
+    this.i2c.write(this.address, data);
+}
 
-  public async getData() {
+public async getData() {
     this.i2c.write(this.address, [0xf7]);
     return await this.i2c.readWait(this.address, 8);
   }
@@ -202,7 +206,9 @@ class BME280 {
   }
 
   public calibration_T(adc_T: any) {
-    let var1: any; let var2: any; let T: any;
+    let var1: any;
+    let var2: any;
+    let T: any;
     var1 =
       (((adc_T >> 3) - (this._calibrated.dig_T1 << 1)) *
         this._calibrated.dig_T2) >>

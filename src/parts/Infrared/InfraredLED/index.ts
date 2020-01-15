@@ -1,4 +1,8 @@
-class InfraredLED {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface InfraredLEDOptions { }
+class InfraredLED implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,10 +10,10 @@ class InfraredLED {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public dataSymbolLength: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public io_cathode: any;
   public pwm: any;
@@ -21,7 +25,7 @@ class InfraredLED {
     this.dataSymbolLength = 0.07;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     if (!this.obniz.isValidIO(this.params.anode)) {
       throw new Error("anode is not valid io");

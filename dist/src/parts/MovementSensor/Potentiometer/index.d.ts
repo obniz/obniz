@@ -1,16 +1,20 @@
-declare class Potentiometer {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface PotentiometerOptions {
+}
+declare class Potentiometer implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     vcc_voltage: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     ad: any;
     position: any;
     onchange: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
 }
 export default Potentiometer;

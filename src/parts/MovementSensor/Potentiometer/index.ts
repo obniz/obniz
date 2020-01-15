@@ -1,4 +1,8 @@
-class Potentiometer {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface PotentiometerOptions { }
+class Potentiometer implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,10 +10,10 @@ class Potentiometer {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public vcc_voltage: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public ad: any;
   public position: any;
@@ -22,7 +26,7 @@ class Potentiometer {
     this.vcc_voltage = 5.0;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz.setVccGnd(this.params.pin0, this.params.pin2, "5v");
     this.ad = obniz.getAD(this.params.pin1);
 

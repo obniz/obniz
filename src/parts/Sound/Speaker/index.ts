@@ -1,4 +1,8 @@
-class Speaker {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface SpeakerOptions { }
+class Speaker implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class Speaker {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public pwm: any;
 
@@ -17,7 +21,7 @@ class Speaker {
     this.requiredKeys = ["signal"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     this.obniz.setVccGnd(null, this.params.gnd, "5v");
     this.pwm = obniz.getFreePwm();

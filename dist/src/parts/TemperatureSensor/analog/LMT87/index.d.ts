@@ -1,5 +1,8 @@
 import AnalogTemperatureSensor from "../AnalogTemperatureSensor";
-declare class LMT87 extends AnalogTemperatureSensor {
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface LMT87Options {
+}
+declare class LMT87 extends AnalogTemperatureSensor implements ObnizPartsInterface {
     static info(): {
         name: string;
     };

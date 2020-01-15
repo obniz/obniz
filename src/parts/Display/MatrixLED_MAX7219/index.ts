@@ -1,4 +1,8 @@
-class MatrixLED_MAX7219 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface MatrixLED_MAX7219Options { }
+class MatrixLED_MAX7219 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class MatrixLED_MAX7219 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public cs: any;
   public params: any;
   public spi: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public width: any;
   public height: any;
   public vram: any;
@@ -21,7 +25,7 @@ class MatrixLED_MAX7219 {
     this.requiredKeys = ["din", "cs", "clk"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
     if (obniz.isValidIO(this.params.vcc)) {

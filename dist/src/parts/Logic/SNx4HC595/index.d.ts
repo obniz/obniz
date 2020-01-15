@@ -1,11 +1,15 @@
-declare class SNx4HC595 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface SNx4HC595Options {
+}
+declare class SNx4HC595 implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     autoFlash: any;
-    obniz: any;
+    obniz: Obniz;
     io_ser: any;
     params: any;
     io_srclk: any;
@@ -18,7 +22,7 @@ declare class SNx4HC595 {
     _io_num: any;
     io: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     ioNum(num: any): void;
     isValidIO(io: any): boolean;
     getIO(io: any): any;

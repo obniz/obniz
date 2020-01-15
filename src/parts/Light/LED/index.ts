@@ -5,7 +5,6 @@ export interface LEDOptions {
   anode: number;
   cathode?: number;
 }
-
 class LED implements ObnizPartsInterface {
 
   public static info() {
@@ -16,7 +15,7 @@ class LED implements ObnizPartsInterface {
 
   public keys: string[];
   public requiredKeys: string[];
-  public obniz?: Obniz;
+  public obniz!: Obniz;
   public io_anode: any;
   public params: any;
   public io_cathode: any;
@@ -27,7 +26,7 @@ class LED implements ObnizPartsInterface {
     this.requiredKeys = ["anode"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     function getIO(io: any) {
       if (io && typeof io === "object") {
         if (typeof io.output === "function") {

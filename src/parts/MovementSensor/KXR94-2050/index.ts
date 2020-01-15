@@ -1,4 +1,10 @@
-class KXR94_2050 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface KXR94_2050Options {
+}
+
+class KXR94_2050 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +12,9 @@ class KXR94_2050 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public ad_x: any;
   public ad_y: any;
@@ -28,7 +34,7 @@ class KXR94_2050 {
     this.requiredKeys = ["x", "y", "z"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
 
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
@@ -40,12 +46,11 @@ class KXR94_2050 {
     if (obniz.isValidIO(this.params.enable)) {
       obniz.getIO(this.params.enable).drive("5v");
       obniz.getIO(this.params.enable).output(true);
-      obniz.display.setPinName(this.params.enable, "KXR94_2050", "E");
+
     }
     if (obniz.isValidIO(this.params.self_test)) {
       obniz.getIO(this.params.self_test).drive("5v");
       obniz.getIO(this.params.self_test).output(false);
-      obniz.display.setPinName(this.params.self_test, "KXR94_2050", "T");
     }
 
     this.changeVccVoltage(5);
@@ -84,14 +89,6 @@ class KXR94_2050 {
       this.obniz.getAD(this.params.vcc).start((value: any) => {
         this.changeVccVoltage(value);
       });
-    }
-
-    obniz.display.setPinName(this.params.x, "KXR94_2050", "x");
-    obniz.display.setPinName(this.params.y, "KXR94_2050", "y");
-    obniz.display.setPinName(this.params.z, "KXR94_2050", "z");
-
-    if (this.obniz.isValidIO(this.params.vcc)) {
-      obniz.display.setPinName(this.params.vcc, "KXR94_2050", "vcc");
     }
   }
 

@@ -1,4 +1,8 @@
-class MPU9250 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface MPU9250Options { }
+class MPU9250 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,9 +10,9 @@ class MPU9250 {
     };
   }
 
-  public keys: any;
-  public required: any;
-  public obniz: any;
+  public keys: string[];
+  public requiredKeys: string[];
+  public obniz!: Obniz;
   public params: any;
   public _address: any;
   public i2c: any;
@@ -17,10 +21,10 @@ class MPU9250 {
 
   constructor(obniz: any) {
     this.keys = ["gnd", "vcc", "sda", "scl", "i2c", "address"];
-    this.required = [];
+    this.requiredKeys = [];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
     this._address = this.params.address || 0x68;

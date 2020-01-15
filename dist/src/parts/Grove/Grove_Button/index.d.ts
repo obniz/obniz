@@ -1,9 +1,13 @@
-declare class Grove_Button {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+export interface Grove_ButtonOptions {
+}
+declare class Grove_Button implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    keys: any;
-    requiredKeys: any;
+    keys: string[];
+    requiredKeys: string[];
     onChangeForStateWait: any;
     io_signal: any;
     params: any;
@@ -12,8 +16,8 @@ declare class Grove_Button {
     isPressed: any;
     onchange: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     isPressedWait(): Promise<any>;
-    stateWait(isPressed: any): Promise<unknown>;
+    stateWait(isPressed: any): Promise<{}>;
 }
 export default Grove_Button;

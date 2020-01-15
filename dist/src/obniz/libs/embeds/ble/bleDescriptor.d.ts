@@ -4,7 +4,7 @@ declare class BleDescriptor extends BleAttributeAbstract {
     characteristic: any;
     uuid: any;
     constructor(obj: any);
-    get parentName(): string | null;
+    readonly parentName: string | null;
     addPermission(param: any): void;
     removePermission(param: any): void;
     toJSON(): any;

@@ -1,4 +1,8 @@
-class RN42 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface RN42Options { }
+class RN42 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,11 +10,11 @@ class RN42 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public params: any;
   public uart: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public onreceive: any;
 
   constructor() {
@@ -18,7 +22,7 @@ class RN42 {
     this.requiredKeys = ["tx", "rx"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     if (obniz.isValidIO(this.params.gnd)) {
       obniz.getIO(this.params.gnd).output(false);
     }

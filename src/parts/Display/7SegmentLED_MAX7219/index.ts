@@ -1,4 +1,8 @@
-class _7SegmentLED_MAX7219 {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface _7SegmentLED_MAX7219Options { }
+class _7SegmentLED_MAX7219 implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +10,12 @@ class _7SegmentLED_MAX7219 {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public cs: any;
   public params: any;
   public spi: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public numOfDisp: any;
   public digits: any;
 
@@ -20,7 +24,7 @@ class _7SegmentLED_MAX7219 {
     this.requiredKeys = ["din", "cs", "clk"];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.cs = obniz.getIO(this.params.cs);
     // logich high must 3.5v <=
     if (obniz.isValidIO(this.params.vcc)) {

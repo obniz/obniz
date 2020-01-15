@@ -10,13 +10,13 @@ declare class LED implements ObnizPartsInterface {
     };
     keys: string[];
     requiredKeys: string[];
-    obniz?: Obniz;
+    obniz: Obniz;
     io_anode: any;
     params: any;
     io_cathode: any;
     animationName: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     on(): void;
     off(): void;
     output(value: any): void;

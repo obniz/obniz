@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class _7SegmentLED_MAX7219 {
-    constructor() {
-        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
-        this.requiredKeys = ["din", "cs", "clk"];
-    }
     static info() {
         return {
             name: "7SegmentLED_MAX7219",
         };
+    }
+    constructor() {
+        this.keys = ["vcc", "gnd", "din", "cs", "clk"];
+        this.requiredKeys = ["din", "cs", "clk"];
     }
     wired(obniz) {
         this.cs = obniz.getIO(this.params.cs);
@@ -121,5 +121,4 @@ class _7SegmentLED_MAX7219 {
     }
 }
 exports.default = _7SegmentLED_MAX7219;
-
 //# sourceMappingURL=index.js.map

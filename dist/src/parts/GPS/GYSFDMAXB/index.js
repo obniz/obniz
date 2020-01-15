@@ -1,13 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class GYSFDMAXB {
-    constructor() {
-        this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
-        this.requiredKeys = ["txd", "rxd"];
-        this.ioKeys = this.keys;
-        this.displayName = "gps";
-        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
-    }
     // -------------------
     get latitude() {
         return this.nmea2dd(this._latitude);
@@ -19,6 +12,13 @@ class GYSFDMAXB {
         return {
             name: "GYSFDMAXB",
         };
+    }
+    constructor() {
+        this.keys = ["vcc", "txd", "rxd", "gnd", "Opps"];
+        this.requiredKeys = ["txd", "rxd"];
+        this.ioKeys = this.keys;
+        this.displayName = "gps";
+        this.displayIoNames = { txd: "txd", rxd: "rxd", Opps: "1pps" };
     }
     wired(obniz) {
         this.obniz = obniz;
@@ -60,13 +60,12 @@ class GYSFDMAXB {
         this.on1pps = callback;
         if (callback) {
             this.last1pps = 2;
-            this.obniz.getAD(this.Opps).self = this;
             this.obniz.getAD(this.Opps).start((voltage) => {
                 const vol = Math.round(voltage);
-                if (vol !== this.self.last1pps) {
-                    this.self.last1pps = vol;
-                    if (vol === 0 && this.self.on1pps) {
-                        this.self.on1pps();
+                if (vol !== this.last1pps) {
+                    this.last1pps = vol;
+                    if (vol === 0 && this.on1pps) {
+                        this.on1pps();
                     }
                 }
             });
@@ -343,5 +342,4 @@ class GYSFDMAXB {
     }
 }
 exports.default = GYSFDMAXB;
-
 //# sourceMappingURL=index.js.map

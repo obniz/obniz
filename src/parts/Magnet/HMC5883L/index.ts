@@ -1,4 +1,8 @@
-class HMC5883L {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface HMC5883LOptions { }
+class HMC5883L implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,14 +10,16 @@ class HMC5883L {
     };
   }
 
-  public keys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public address: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
   public i2c: any;
 
   constructor() {
     this.keys = ["gnd", "sda", "scl", "i2c"];
+    this.requiredKeys = [];
 
     this.address = {};
     this.address.device = 0x1e;
@@ -21,7 +27,7 @@ class HMC5883L {
     this.address.xMSB = [0x03];
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(null, this.params.gnd, "3v");
 

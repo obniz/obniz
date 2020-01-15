@@ -1,4 +1,8 @@
-class XBee {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface XBeeOptions { }
+class XBee implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,8 +10,8 @@ class XBee {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public displayIoNames: any;
   public uart: any;
   public currentCommand: any;
@@ -16,7 +20,7 @@ class XBee {
   public onFinishAtModeCallback: any;
   public params: any;
   public onreceive: any;
-  public obniz: any;
+  public obniz!: Obniz;
 
   constructor() {
     this.keys = ["tx", "rx", "gnd"];
@@ -25,7 +29,7 @@ class XBee {
     this.displayIoNames = {tx: "<tx", rx: ">rx"};
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.uart = obniz.getFreeUart();
     this.currentCommand = null;
     this.commands = [];

@@ -1,4 +1,10 @@
-class Grove_EarHeartRate {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface Grove_EarHeartRateOptions {
+}
+
+class Grove_EarHeartRate implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -6,12 +12,12 @@ class Grove_EarHeartRate {
     };
   }
 
-  public keys: any;
-  public requiredKeys: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public displayIoNames: any;
   public interval: any;
   public duration: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public params: any;
 
   constructor() {
@@ -28,19 +34,19 @@ class Grove_EarHeartRate {
     this.duration = 2.5 * 1000;
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.obniz = obniz;
     obniz.setVccGnd(this.params.vcc, this.params.gnd, "5v");
   }
 
   public start(callback: any) {
-    this.obniz.logicAnalyzer.start({
-      io: this.params.signal,
-      interval: this.interval,
-      duration: this.duration,
+    this.obniz.logicAnalyzer!.start({
+      io: this.params.signal as number,
+      interval: this.interval as number,
+      duration: this.duration as number,
     });
 
-    this.obniz.logicAnalyzer.onmeasured = (array: any) => {
+    this.obniz.logicAnalyzer!.onmeasured = (array: any) => {
       const edges: any = [];
       for (let i = 0; i < array.length - 1; i++) {
         if (array[i] === 0 && array[i + 1] === 1) {

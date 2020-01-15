@@ -1,17 +1,21 @@
-declare class D6T44L {
+import Obniz from "../../../../obniz";
+import ObnizPartsInterface from "../../../../obniz/ObnizPartsInterface";
+export interface D6T44LOptions {
+}
+declare class D6T44L implements ObnizPartsInterface {
     static info(): {
         name: string;
     };
-    requiredKeys: any;
-    keys: any;
+    requiredKeys: string[];
+    keys: string[];
     address: any;
-    ioKeys: any;
+    ioKeys: string[];
     commands: any;
-    obniz: any;
+    obniz: Obniz;
     params: any;
     i2c: any;
     constructor();
-    wired(obniz: any): void;
+    wired(obniz: Obniz): void;
     getOnePixWait(pixcel: any): Promise<any>;
     getAllPixWait(): Promise<any>;
 }

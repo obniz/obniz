@@ -1,5 +1,9 @@
 // SainSmart ST7735 1.8" TFT LCD 128x160 pixel
-class SainSmartTFT18LCD {
+import Obniz from "../../../obniz";
+import ObnizPartsInterface from "../../../obniz/ObnizPartsInterface";
+
+export interface SainSmartTFT18LCDOptions { }
+class SainSmartTFT18LCD implements ObnizPartsInterface {
 
   public static info() {
     return {
@@ -7,11 +11,11 @@ class SainSmartTFT18LCD {
     };
   }
 
-  public keys: any;
-  public required: any;
+  public keys: string[];
+  public requiredKeys: string[];
   public displayIoNames: any;
   public debugprint: any;
-  public obniz: any;
+  public obniz!: Obniz;
   public io_dc: any;
   public params: any;
   public io_res: any;
@@ -24,7 +28,7 @@ class SainSmartTFT18LCD {
 
   constructor() {
     this.keys = ["vcc", "gnd", "scl", "sda", "dc", "res", "cs"];
-    this.required = ["scl", "sda", "dc", "res", "cs"];
+    this.requiredKeys = ["scl", "sda", "dc", "res", "cs"];
 
     this.displayIoNames = {
       vcc: "vcc",
@@ -37,7 +41,7 @@ class SainSmartTFT18LCD {
     };
   }
 
-  public wired(obniz: any) {
+  public wired(obniz: Obniz) {
     this.debugprint = false;
     this.obniz = obniz;
     this.io_dc = obniz.getIO(this.params.dc);
@@ -568,7 +572,8 @@ class SainSmartTFT18LCD {
 
     this.setAddrWindow(x, y, x + w - 1, y);
 
-    const hi: any = color >> 8; const lo: any = color & 0xff;
+    const hi: any = color >> 8;
+    const lo: any = color & 0xff;
     const data: any = [];
     while (w--) {
       data.push(hi);

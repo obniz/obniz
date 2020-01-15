@@ -13,9 +13,9 @@ declare class Display {
     warnCanvasAvailability(): void;
     _preparedCanvas(): HTMLCanvasElement | null | undefined;
     _ctx(): any;
-    font(font: any, size: any): void;
+    font(font: string | null, size?: number): void;
     clear(): void;
-    pos(x: any, y: any): {
+    pos(x: number, y: number): {
         x: number;
         y: number;
     };
@@ -24,11 +24,11 @@ declare class Display {
     rect(x: number, y: number, width: number, height: number, mustFill: boolean): void;
     circle(x: number, y: number, r: number, mustFill: boolean): void;
     qr(text: string, correction: "L" | "M" | "Q" | "H"): void;
-    raw(data: any): void;
+    raw(data: number[]): void;
     setPinName(io: number, moduleName: string, funcName: string): void;
     setPinNames(moduleName: string, data: any): void;
     _draw(ctx: CanvasRenderingContext2D): void;
     draw(ctx: CanvasRenderingContext2D): void;
-    drawing(autoFlush: any): void;
+    drawing(autoFlush: boolean): void;
 }
 export default Display;
