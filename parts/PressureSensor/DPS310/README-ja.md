@@ -21,13 +21,13 @@ obniz.setVccGnd(11, 9, '5v'); //vcc:11, gnd:9
 var sensor = obniz.wired("DPS310", { sda:0, scl:1, gnd:2 });
 ```
 
-## [await] measurePressureOnce();
+## [await] measurePressureOnceWait();
 気圧の値を一度だけ取得します。
 
 ```javascript
 //JavaScript example
 var sensor = obniz.wired("DPS310", { sda:0, scl:1, gnd:2 });
-await sensor.init(); //センサの初期化
-var data = await sensor.measurePressureOnce();
+await sensor.initWait(); //センサの初期化
+var data = await sensor.measurePressureOnceWait();
 console.log(data);
 ```

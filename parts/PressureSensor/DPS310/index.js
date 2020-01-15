@@ -160,18 +160,18 @@ class DPS310 {
     this.obniz.wait(10);
   }
 
-  async readByte(regAddress) {
+  async readByteWait(regAddress) {
     this.obniz.i2c0.write(this.address, [regAddress]);
     await this.obniz.wait(1);
     let results = await this.obniz.i2c0.readWait(this.address, 1);
     return results[0];
   }
 
-  async readByteBitfield(field) {
+  async readByteBitfieldWait(field) {
     let regAddress = field.address,
         mask = field.mask,
         shift = field.shift;
-    let ret = await this.readByte(regAddress);
+    let ret = await this.readByteWait(regAddress);
     if (ret < 0) {
       return ret;
     }
@@ -184,7 +184,7 @@ class DPS310 {
     return ret;
   }
 
-  async readBlock(datablock) {
+  async readBlockWait(datablock) {
     let address = datablock.address,
         length = datablock.length;
     await this.obniz.wait(1);
@@ -193,49 +193,49 @@ class DPS310 {
     return results;
   }
 
-  async writeByte(regAddress, data, check) {
+  async writeByteWait(regAddress, data, check) {
     this.i2c.write(this.address, [regAddress, data]);
     if (check) {
-      if ((await this.readByte(regAddress)) !== data) {
+      if ((await this.readByteWait(regAddress)) !== data) {
         throw new Error('DPS310 data write failed');
       }
     }
   }
 
   async writeByteBitfield(field, data, check) {
-    let old = await this.readByte(field.address);
+    let old = await this.readByteWait(field.address);
     let sendData = (old & ~field.mask) | ((data << field.shift) & field.mask);
 
-    await this.writeByte(field.address, sendData, check);
+    await this.writeByteWait(field.address, sendData, check);
   }
 
-  async setOpModeDetail(background, temperature, pressure) {
+  async setOpModeDetailWait(background, temperature, pressure) {
     let opMode =
         ((background & this.DPS310__LSB) << 2) |
         ((temperature & this.DPS310__LSB) << 1) |
         (pressure & this.DPS310__LSB);
-    return await this.setOpMode(opMode);
+    return await this.setOpModeWait(opMode);
   }
 
-  async setOpMode(opMode) {
+  async setOpModeWait(opMode) {
     opMode &=
         this.bitFileds.DPS310__REG_INFO_OPMODE.mask >>
         this.bitFileds.DPS310__REG_INFO_OPMODE.shift;
 
-    await this.writeByte(
+    await this.writeByteWait(
         this.bitFileds.DPS310__REG_INFO_OPMODE.address,
         opMode
     );
     this.opMode = opMode;
   }
 
-  async standby() {
-    this.setOpMode(this.mode.IDLE);
+  async standbyWait() {
+    this.setOpModeWait(this.mode.IDLE);
     await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_FL, 1);
     await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_FIFO_EN, 0);
   }
 
-  async configTemp(tempMr, tempOsr) {
+  async configTempWait(tempMr, tempOsr) {
     await this.writeByteBitfield(
         this.bitFileds.DPS310__REG_INFO_TEMP_MR,
         tempMr
@@ -255,7 +255,7 @@ class DPS310 {
     this.tempOsr = tempOsr;
   }
 
-  async configPressure(prsMr, prsOsr) {
+  async configPressureWait(prsMr, prsOsr) {
     await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_MR, prsMr);
     await this.writeByteBitfield(this.bitFileds.DPS310__REG_INFO_PRS_OSR, prsOsr);
 
@@ -268,8 +268,8 @@ class DPS310 {
     this.prsOsr = prsOsr;
   }
 
-  async readCoeffs() {
-    let buffer = await this.readBlock(this.dataBlock.DPS310__REG_ADR_COEF);
+  async readCoeffsWait() {
+    let buffer = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_COEF);
 
     this.coeffs.m_c0Half = (buffer[0] << 4) | ((buffer[1] >> 4) & 0x0f);
     if (this.coeffs.m_c0Half & (1 << 11)) {
@@ -317,43 +317,43 @@ class DPS310 {
     }
   }
 
-  async init() {
-    let prodId = await this.readByteBitfield(
+  async initWait() {
+    let prodId = await this.readByteBitfieldWait(
         this.bitFileds.DPS310__REG_INFO_PROD_ID
     );
     if (prodId != 0) {
       throw new Error("invalid prodId")
       return;
     }
-    await this.readByteBitfield(this.bitFileds.DPS310__REG_INFO_REV_ID);
+    await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_REV_ID);
 
-    await this.readByteBitfield(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
+    await this.readByteBitfieldWait(this.bitFileds.DPS310__REG_INFO_TEMP_SENSORREC);
 
     await this.writeByteBitfield(
         this.bitFileds.DPS310__REG_INFO_TEMP_SENSOR,
         0
     );
 
-    await this.readCoeffs();
-    await this.standby();
-    await this.configTemp(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
-    await this.configPressure(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
-    await this.standby();
-    await this.measureTempOnce();
-    await this.standby();
-    await this.correctTemp();
+    await this.readCoeffsWait();
+    await this.standbyWait();
+    await this.configTempWait(this.DPS310__TEMP_STD_MR, this.DPS310__TEMP_STD_OSR);
+    await this.configPressureWait(this.DPS310__PRS_STD_MR, this.DPS310__PRS_STD_OSR);
+    await this.standbyWait();
+    await this.measureTempOnceWait();
+    await this.standbyWait();
+    await this.correctTempWait();
   }
 
-  async getSingleResult() {
+  async getSingleResultWait() {
     let rdy;
     switch (this.opMode) {
       case this.mode.CMD_TEMP:
-        rdy = await this.readByteBitfield(
+        rdy = await this.readByteBitfieldWait(
             this.bitFileds.DPS310__REG_INFO_TEMP_RDY
         );
         break;
       case this.mode.CMD_PRS:
-        rdy = await this.readByteBitfield(
+        rdy = await this.readByteBitfieldWait(
             this.bitFileds.DPS310__REG_INFO_PRS_RDY
         );
         break;
@@ -367,16 +367,16 @@ class DPS310 {
         throw new Error('DPS310__FAIL_UNKNOWN');
       case 0:
         return this.obniz.wait(10).then(() => {
-          return this.getSingleResult();
+          return this.getSingleResultWait();
         });
       case 1:
         oldMode = this.opMode;
         this.opMode = this.mode.IDLE;
         switch (oldMode) {
           case this.mode.CMD_TEMP:
-            return await this.getTemp();
+            return await this.getTempWait();
           case this.mode.CMD_PRS:
-            return await this.getPressure();
+            return await this.getPressureWait();
           default:
             throw new Error('DPS310__FAIL_UNKNOWN');
         }
@@ -384,14 +384,14 @@ class DPS310 {
     throw new Error('DPS310__FAIL_UNKNOWN');
   }
 
-  async startMeasureTempOnce(oversamplingRate) {
-    await this.configTemp(0, oversamplingRate);
-    await this.setOpModeDetail(0, 1, 0);
+  async startMeasureTempOnceWait(oversamplingRate) {
+    await this.configTempWait(0, oversamplingRate);
+    await this.setOpModeDetailWait(0, 1, 0);
   }
 
-  async startMeasurePressureOnce(oversamplingRate) {
-    await this.configPressure(0, oversamplingRate);
-    await this.setOpModeDetail(0, 0, 1);
+  async startMeasurePressureOnceWait(oversamplingRate) {
+    await this.configPressureWait(0, oversamplingRate);
+    await this.setOpModeDetailWait(0, 0, 1);
   }
 
   calcPressure(raw) {
@@ -416,38 +416,38 @@ class DPS310 {
     return temp;
   }
 
-  async correctTemp() {
-    this.writeByte(0x0E, 0xE5);
-    this.writeByte(0x0F, 0x96);
-    this.writeByte(0x62, 0x02);
-    this.writeByte(0x0E, 0x00);
-    this.writeByte(0x0F, 0x00);
+  async correctTempWait() {
+    this.writeByteWait(0x0E, 0xE5);
+    this.writeByteWait(0x0F, 0x96);
+    this.writeByteWait(0x62, 0x02);
+    this.writeByteWait(0x0E, 0x00);
+    this.writeByteWait(0x0F, 0x00);
 
-    await this.measureTempOnce();
+    await this.measureTempOnceWait();
   }
 
-  async measureTempOnce(oversamplingRate) {
+  async measureTempOnceWait(oversamplingRate) {
     if (oversamplingRate === undefined) {
       oversamplingRate = this.tempOsr;
     }
-    await this.startMeasureTempOnce(oversamplingRate);
+    await this.startMeasureTempOnceWait(oversamplingRate);
     await this.obniz.wait(100);
-    let ret = await this.getSingleResult();
+    let ret = await this.getSingleResultWait();
     return ret;
   }
 
-  async measurePressureOnce(oversamplingRate) {
+  async measurePressureOnceWait(oversamplingRate) {
     if (oversamplingRate === undefined) {
       oversamplingRate = this.prsOsr;
     }
-    await this.startMeasurePressureOnce(oversamplingRate);
+    await this.startMeasurePressureOnceWait(oversamplingRate);
     await this.obniz.wait(100);
-    let ret = await this.getSingleResult();
+    let ret = await this.getSingleResultWait();
     return ret;
   }
 
-  async getTemp() {
-    let data = await this.readBlock(this.dataBlock.DPS310__REG_ADR_TEMP);
+  async getTempWait() {
+    let data = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_TEMP);
 
     let temp = (data[0] << 16) | (data[1] << 8) | data[2];
     if (temp & (1 << 23)) {
@@ -457,8 +457,8 @@ class DPS310 {
     return result;
   }
 
-  async getPressure() {
-    let data = await this.readBlock(this.dataBlock.DPS310__REG_ADR_PRS);
+  async getPressureWait() {
+    let data = await this.readBlockWait(this.dataBlock.DPS310__REG_ADR_PRS);
     let prs = (data[0] << 16) | (data[1] << 8) | data[2];
     if (prs & (1 << 23)) {
       prs -= 1 << 24;
